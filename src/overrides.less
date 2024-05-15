@@ -1,0 +1,332 @@
+/* stylelint-disable */
+// /**高优先级全局样式文件。该文件一般专用于覆盖第三方库样式，其中所有 CSS 选择器都会附加 body 前缀以抬高优先级。**/
+
+// .ant-menu.ant-menu-sub {
+//   padding-left: 0 !important;
+// }
+
+.ant-pro-sider-logo {
+  justify-content: center !important;
+  padding-top: 0 !important;
+  border: none !important;
+}
+
+// .ant-pro-base-menu-vertical-collapsed .ant-menu-submenu-selected > .ant-menu-submenu-title {
+//   background-color: rgba(0, 0, 0, 0.04) !important;
+// }
+
+// .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-selected {
+//   color: #051c2c !important;
+//   background-color: #eee !important;
+// }
+
+.ant-pro-base-menu-inline-icon,
+.ant-pro-base-menu-vertical-icon,
+.ant-pro-base-menu-vertical-item-icon {
+  width: 22px !important;
+}
+
+// .ant-menu-inline .ant-menu-sub {
+//   background: transparent !important;
+// }
+// .css-dev-only-do-not-override-lsyxfx.ant-menu-light:not(.ant-menu-horizontal) .ant-menu-submenu-title:hover,
+// .css-dev-only-do-not-override-lsyxfx.ant-menu-light > .ant-menu:not(.ant-menu-horizontal) .ant-menu-submenu-title:hover {
+//   background-color: transparent;
+// }
+// .css-dev-only-do-not-override-lsyxfx.ant-menu-light.ant-menu-root.ant-menu-inline,
+// .css-dev-only-do-not-override-lsyxfx.ant-menu-light > .ant-menu.ant-menu-root.ant-menu-inline,
+// .css-dev-only-do-not-override-lsyxfx.ant-menu-light.ant-menu-root.ant-menu-vertical,
+// .css-dev-only-do-not-override-lsyxfx.ant-menu-light > .ant-menu.ant-menu-root.ant-menu-vertical {
+//   border-right: none;
+// }
+
+// .ant-carousel .slick-dots li.slick-active button {
+//   background: #000000 !important;
+// }
+// .ant-carousel .slick-dots li button {
+//   background: #6a7073 !important;
+// }
+
+.ant-pagination-item.ant-pagination-item-active,
+.ant-pagination:not(.ant-pagination-disabled) .ant-pagination-item:not(.ant-pagination-item-active):hover {
+  background: var(--btn-primary) !important;
+}
+.ant-pagination:not(.ant-pagination-disabled) .ant-pagination-item:not(.ant-pagination-item-active):hover a {
+  color: #fff !important;
+}
+.ant-pagination .ant-pagination-item-active a {
+  color: #fff !important;
+}
+
+.ant-pagination .ant-pagination-item,
+.ant-pagination.ant-table-pagination .ant-pagination-prev {
+  margin-right: 8px !important;
+}
+.ant-pagination:not(.ant-pagination-disabled) .ant-pagination-item:not(.ant-pagination-item-active) {
+  border: 1px solid #efefef !important;
+}
+.ant-pagination .ant-pagination-next,
+.ant-pagination .ant-pagination-prev {
+  border: 1px solid #efefef !important;
+}
+// .ant-pagination .ant-pagination-item-link {
+//   margin-top: -2px;
+// }
+
+.table-even {
+  background: #fbfbfb !important;
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    background: #fbfbfb !important;
+  }
+}
+.table-odd {
+  background: #fff !important;
+}
+
+.no-table-bordered {
+  .ant-table-wrapper .ant-table-tbody > tr > td {
+    border-bottom: none !important;
+  }
+}
+
+.ant-modal-wrap.modal-no-padding .ant-modal-content {
+  padding: 0;
+  .ant-modal-header {
+    padding-top: 20px;
+    padding-right: 20px;
+    padding-left: 20px;
+  }
+  .ant-modal-footer {
+    padding: 20px;
+  }
+  .ant-modal-close {
+    top: 24px !important;
+  }
+  .ant-modal-close {
+    width: 26px !important;
+    height: 26px !important;
+  }
+}
+
+// .phoneSelect .ant-input-group-addon {
+//   background-color: #fff !important;
+// }
+
+// .ant-layout-sider-children {
+//   display: flex;
+//   flex-direction: column;
+//   height: 100%;
+// }
+
+// 隐藏Tabbar下划线
+.custom-tabbar .ant-tabs-ink-bar {
+  visibility: hidden;
+}
+// 隐藏tabbar底部边框线
+.hide-tabbar-border {
+  .ant-tabs-nav::before {
+    border-bottom: none !important;
+  }
+}
+
+// antd message 样式修改
+.custom-message-wrapper {
+  .ant-message-notice-content {
+    padding: 11px 42px !important;
+    background: rgba(1, 1, 1, 0.6) !important;
+    border-radius: 29px !important;
+  }
+  .ant-message-custom-content {
+    color: #fff !important;
+    font-weight: 500 !important;
+    font-size: 16px !important;
+  }
+}
+
+// .ant-typography-copy {
+//   color: #6a7073 !important;
+// }
+
+// .adm-tabs-tab-active {
+//   color: #051c2c !important;
+// }
+
+// .adm-tabs {
+//   --active-line-color: #051c2c !important;
+//   --active-title-color: #051c2c !important;
+// }
+
+// 菜单字体
+@media (max-width: 768px) {
+  .ant-pro-base-menu-inline-item-text,
+  .ant-menu-title-content {
+    font-size: 16px !important;
+  }
+  .pc-popup-menu {
+    .ant-menu-item,
+    .ant-menu-submenu-title {
+      margin-bottom: 12px !important;
+      padding-left: 10px !important;
+    }
+    .ant-menu {
+      border-right: none !important;
+    }
+  }
+}
+
+// 修改投影
+.ant-pro-card-hoverable:hover {
+  box-shadow: 0 1px 2px -2px #00000029, 0 3px 6px #0000001f, 0 5px 12px -50px #00000017 !important;
+}
+
+// 导出按钮宽度
+.export-btn .ant-btn-icon {
+  width: 20px !important;
+}
+
+// 按钮间距隐藏没用的元素
+.standard-table .ant-form-item-no-colon {
+  display: none !important;
+}
+
+.standard-table {
+  // 表格按钮靠近左边
+  .ant-form-item-control-input-content {
+    text-align: left !important;
+  }
+}
+
+// 滑块颜色
+.adm-slider-fill {
+  background-color: #051c2c !important;
+}
+
+.adm-center-popup-close.adm-plain-anchor {
+  color: #051c2c;
+}
+
+// 按钮颜色，覆盖antd按钮颜色
+.ant-btn-primary {
+  background: var(--btn-primary) !important;
+}
+.ant-btn-default {
+  &:hover {
+    color: var(--btn-primary) !important;
+    border-color: var(--btn-primary) !important;
+    svg {
+      fill: var(--color-primary) !important;
+    }
+  }
+}
+
+// 搜索栏元素设置对齐方式
+.custom-search-form-item {
+  .ant-space-align-center {
+    width: 100%;
+    .ant-space-item {
+      width: 100%;
+      & > div:first-child {
+        justify-content: space-between;
+        width: 100%;
+      }
+    }
+  }
+}
+
+// 侧边栏菜单图标大小
+.ant-pro-base-menu-inline-item-icon,
+.ant-pro-base-menu-vertical-item-icon {
+  svg {
+    width: 22px;
+    height: 23px;
+  }
+}
+
+.ant-switch.ant-switch-checked {
+  background: var(--color-primary) !important;
+}
+
+// 按钮禁用样式
+.ant-btn-primary:disabled {
+  color: #6a7073 !important;
+  background: #efefef !important;
+}
+
+// 修改select、input size为lg的组件字体大小
+.ant-select-lg,
+.ant-select-lg .ant-select-selector,
+.ant-input-affix-wrapper-lg,
+.ant-input-lg,
+.ant-input-number-lg {
+  font-size: 14px !important;
+}
+.ant-input-affix-wrapper-lg {
+  padding-top: 8.5px !important;
+  padding-bottom: 8.5px !important;
+}
+.ant-input-group-wrapper-lg {
+  padding-top: 1.5px !important;
+  padding-bottom: 1.5px !important;
+}
+
+// 全局修改消息提示文本颜色
+.ant-message-custom-content {
+  color: #fff !important;
+}
+
+.ant-select-tree-treenode-active .ant-select-tree-node-content-wrapper {
+  outline: none !important;
+}
+
+// 修改树形结构多选样式
+.ant-select-tree-checkbox-checked .ant-select-tree-checkbox-inner {
+  background: var(--color-primary) !important;
+}
+.ant-select-tree-checkbox-indeterminate .ant-select-tree-checkbox-inner:after {
+  background: var(--color-primary) !important;
+}
+
+// 修改菜单样式
+.ant-layout-sider {
+  .ant-menu-item-selected {
+    position: relative;
+    box-sizing: border-box;
+    background: rgba(227, 227, 227, 0.1) !important;
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 1px solid rgba(206, 206, 206, 0.3) !important;
+      border-radius: 8px;
+      content: '';
+    }
+  }
+  .ant-menu-inline .ant-menu-item {
+    height: 50px !important;
+    line-height: 50px !important;
+  }
+  .ant-menu-item:not(.ant-menu-item-selected):active {
+    background: rgba(0, 0, 0, 0.03) !important;
+  }
+  .ant-menu-submenu-title:active {
+    background: rgba(0, 0, 0, 0.03) !important;
+  }
+}
+
+// .ant-pro-layout-header,
+// .ant-layout-header {
+//   height: 68px !important;
+// }
+
+.ant-pro-global-header-header-actions-item > * {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  &:hover {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    background: none !important;
+  }
+}

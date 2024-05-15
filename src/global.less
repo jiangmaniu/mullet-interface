@@ -1,0 +1,176 @@
+/* stylelint-disable */
+@import './styles/index.less';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: hms-regular;
+}
+
+*,
+:before,
+:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-color: currentColor;
+  border-style: solid;
+  border-width: 0;
+}
+
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+// @TODO 上线需要下载字体包，然后替换路径
+@font-face {
+  font-family: 'iconfont'; /* Project id 2989143 */
+  src: url('//at.alicdn.com/t/font_2989143_ca87qcn1l4a.woff2?t=1639729950726') format('woff2'),
+    url('//at.alicdn.com/t/font_2989143_ca87qcn1l4a.woff?t=1639729950726') format('woff'),
+    url('//at.alicdn.com/t/font_2989143_ca87qcn1l4a.ttf?t=1639729950726') format('truetype');
+}
+
+.iconfont {
+  font-size: 16px;
+  font-family: 'iconfont' !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/**数字字体-常规**/
+@font-face {
+  font-family: dingpro-regular;
+  src: url('/fonts/DINPro-Regular.otf') format('woff');
+}
+
+/**数字字体-加粗**/
+@font-face {
+  font-family: dingpro-medium;
+  src: url('/fonts/DINPro-Medium.otf') format('woff');
+}
+
+/**鸿蒙字体-常规**/
+@font-face {
+  font-family: hms-regular;
+  src: url('/fonts/HarmonyOS_Sans_Regular.ttf') format('woff');
+}
+/**鸿蒙字体-粗体**/
+@font-face {
+  font-family: hms-bold;
+  src: url('/fonts/HarmonyOS_Sans_Bold.ttf') format('woff');
+}
+/**鸿蒙字体-细体**/
+@font-face {
+  font-family: hms-thin;
+  src: url('/fonts/HarmonyOS_Sans_Thin.ttf') format('woff');
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+.colorWeak {
+  filter: invert(80%);
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+.ant-pro-sider.ant-layout-sider.ant-pro-sider-fixed {
+  left: unset;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+.proCardDivider {
+  position: relative;
+  &::after {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 10px;
+    height: 30px;
+    border-right: 1px solid #eee;
+    transform: translateY(-50%);
+    content: '';
+  }
+}
+
+/**
+.proFormSegmented {
+  .ant-segmented-item.ant-segmented-item-selected {
+    color: #fff;
+    background: #051c2c;
+    border-radius: 20px;
+  }
+}
+***/
+
+@media (max-width: 768px) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
+        > span {
+          display: block;
+        }
+      }
+    }
+  }
+  .ant-tabs-nav-wrap {
+    padding-left: 10px !important;
+  }
+}
+
+// 滚动条样式
+/*谷歌、safari、qq浏览器、360浏览器滚动条样式*/
+/*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+&::-webkit-scrollbar {
+  width: 4px;
+  height: 0;
+  background-color: #f5f5f5;
+}
+.ant-table-container {
+  ::-webkit-scrollbar {
+    height: 10px !important;
+  }
+}
+/*定义滚动条轨道 内阴影+圆角*/
+&::-webkit-scrollbar-track {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(239, 239, 239, 0.1);
+}
+/*定义滑块 内阴影+圆角*/
+&::-webkit-scrollbar-thumb {
+  background-color: rgba(239, 239, 239, 1);
+  border-radius: 10px;
+  box-shadow: inset 0 0 6px rgba(239, 239, 239, 1);
+}
+/*滑块效果*/
+&::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  box-shadow: inset 0 0 5px rgba(239, 239, 239, 1);
+}

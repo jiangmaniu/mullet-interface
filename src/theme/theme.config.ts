@@ -1,0 +1,153 @@
+// 配色参考 https://www.tailwindcss.cn/docs/customizing-colors
+
+// 灰色 色值50 - 900 阶梯加深
+export const gray = {
+  50: '#F7F7F7', // 最浅
+  100: '#f6f6f6',
+  120: '#F8F8F8',
+  150: '#EFEFEF',
+  160: '#EDEDED',
+  180: '#EEEEEE',
+  200: '#E1E1E1',
+  220: '#D9DDE3',
+  250: '#DADADA',
+  300: '#D8D8D8',
+  350: '#E6E6E6',
+  380: '#b1b1b1',
+  400: '#9BA6AD',
+  500: '#9C9C9C',
+  600: '#6A7073',
+  900: '#051C2C' // 最深
+}
+
+// 黄色 色值50 - 900 阶梯加深
+export const yellow = {
+  500: '#FDD436',
+  550: '#F5B52C',
+  600: '#C49002'
+}
+
+// 红色 色值50 - 900 阶梯加深
+export const red = {
+  600: '#C54747'
+}
+
+// 绿色 色值50 - 900 阶梯加深
+export const green = {
+  700: '#45A48A'
+}
+
+// 蓝色 色值50 - 900 阶梯加深
+export const blue = {
+  700: '#183EFC'
+}
+
+// 品牌色
+export const colorPrimary = blue['700']
+// export const colorPrimarySecondary = blue['500']
+
+// 文字
+export const colorTextPrimary = gray['900']
+export const colorTextSecondary = gray['600']
+export const colorTextWeak = gray['500']
+
+// 其他
+export const borderColor = gray['100']
+export const grayLight = gray['50']
+export const hoverBg = 'rgba(225, 225, 225, .2)'
+export const bgColorBase = gray['120']
+export const pageContainerHeaderBg = '#F8FBFD'
+
+export const colorWhite = '#fff'
+export const colorBlack = '#000'
+
+// 获取系列颜色
+const getColors = (colors: any, name: any) => {
+  const result = {}
+  Object.keys(colors).forEach((key: string) => {
+    // @ts-ignore
+    result[`--color-${name}-${key}`] = colors[key]
+  })
+  return result
+}
+
+export const ThemeVarsConst = {
+  // 品牌颜色
+  '--color-primary': colorPrimary, // 品牌主色
+  // '--color-primary-secondary': colorPrimarySecondary, // 品牌主色-第二色-衍生色1
+  // '--color-primary-weak': colorPrimaryWeak, // 品牌主色-衍生色2
+  // '--color-primary-light': colorPrimaryLight // 品牌主色-衍生色3
+
+  // 文字颜色
+  '--color-text-primary': colorTextPrimary, // 文字主色
+  '--color-text-secondary': colorTextSecondary, // 文字-第二色-衍生色1
+  '--color-text-weak': colorTextWeak, // 文字-衍生色2
+  // '--color-text-light': colorTextLight, // 文字-第二色-衍生色3
+
+  // 按钮颜色
+  '--btn-primary': colorPrimary, // 按钮主色
+  '--btn-disable-bg': gray['150'], // 禁用置灰背景色
+
+  // 链接颜色
+  '--link-color': colorPrimary,
+
+  // 边框
+  '--border-color': borderColor, // 边框颜色
+
+  // 页面颜色
+  '--page-bg': bgColorBase, // 页面背景
+  '--card-bg': bgColorBase, // 卡片背景
+  '--active-bg': bgColorBase, // 激活背景
+  '--placeholder-bg': bgColorBase, // 输入框背景
+  '--hover-bg': hoverBg, // hover颜色
+  '--page-container-header-bg': pageContainerHeaderBg, // 容器头部背景颜色
+
+  '--card-yellow-gradient-bg': 'linear-gradient(1deg, #FFFFFF 50%, #FFF8E7 100%)', // 卡片渐变背景颜色
+  '--card-yellow-gradient-header-bg': 'linear-gradient(1deg, #FFFFFF 10%, #FFF0CD 100%)', // 卡片渐变背景颜色
+
+  '--color-white': colorWhite,
+  '--color-black': colorBlack,
+
+  // 灰色系
+  ...getColors(gray, 'gray'),
+
+  // 黄色系
+  ...getColors(yellow, 'yellow'),
+
+  // 红色系
+  ...getColors(red, 'red'),
+
+  // 绿色系
+  ...getColors(green, 'green'),
+
+  // 蓝色系
+  ...getColors(blue, 'blue')
+}
+
+// 黑色主色变量
+const ThemeDarkVarsConst = {
+  ...ThemeVarsConst, // 继承
+
+  // 重写变量覆盖
+  '--color-primary': colorWhite
+}
+
+const setRootVars = (themeVars: any) => {
+  let vars = ''
+  Object.keys(themeVars).forEach((key) => {
+    vars += `${key}: ${themeVars[key]};\n`
+  })
+  return vars
+}
+
+// css变量注入页面中，通过var(--color-primary)使用
+// 定义全局主题变量
+// 黑色主题，修改<html data-theme="dark" /> 切换主题
+export const cssVars = `
+  :root {
+    ${setRootVars(ThemeVarsConst)}
+  }
+  :root[data-theme=dark] {
+    ${setRootVars(ThemeDarkVarsConst)}
+  }
+`
