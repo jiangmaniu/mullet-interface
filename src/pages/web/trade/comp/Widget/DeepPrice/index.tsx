@@ -3,19 +3,28 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import { Col, Row } from 'antd'
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 
-function getRandomProgress() {
-  return Math.floor(Math.random() * 101)
+import Liquidation from '../Liquidation'
+
+function generateRandomProgressArray() {
+  const progressArray = []
+  for (let i = 0; i < 30; i++) {
+    const randomValue = Math.floor(Math.random() * 101)
+    progressArray.push(randomValue)
+  }
+  return progressArray
 }
 
 type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 
 // 盘口深度报价
 export default function DeepPrice() {
-  const [mode, setMode] = useState<ModeType>('BUY')
+  const [mode, setMode] = useState<ModeType>('BUY_SELL')
+  const [list, setList] = useState<any>([])
+  const timerRef = useRef<any>()
   const modeList: Array<{ key: ModeType; icon: string }> = [
     {
       key: 'BUY_SELL',
@@ -31,6 +40,20 @@ export default function DeepPrice() {
     }
   ]
 
+  // 列表滚动区域高度
+  // @TODO 如果Liquidation存在情况，否则高度默认
+  const isLiquidation = false
+  const height = isLiquidation ? 512 : 600
+
+  useEffect(() => {
+    timerRef.current = setInterval(() => {
+      setList(generateRandomProgressArray())
+    }, 800)
+    return () => {
+      clearInterval(timerRef.current)
+    }
+  }, [])
+
   const className = useEmotionCss(({ token }) => {
     return {
       '&::after': {
@@ -45,8 +68,89 @@ export default function DeepPrice() {
     }
   })
 
+  const BuyHeaderDom = (
+    <div className="border-t border-b border-gray-60 py-2 px-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <span className="text-lg text-green font-dingpro-medium pr-[10px]">46,604.1</span>
+          <span className="text-sm text-gray-secondary font-dingpro-medium">¥422,311.21</span>
+        </div>
+        <span className="text-xs text-gray-secondary cursor-pointer">
+          {/* @TODO 更多打开一个页面交互没有 */}
+          <FormattedMessage id="common.more" />
+        </span>
+      </div>
+    </div>
+  )
+
+  const renderBuyList = () => {
+    return list.map((item: any, idx: number) => {
+      return (
+        <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
+          <Row className="flex items-center h-6 px-3 relative z-[2]">
+            <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
+              46,604.1
+            </Col>
+            <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
+              7.11231
+            </Col>
+            <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
+              20,120
+            </Col>
+          </Row>
+          {/* 进度条 */}
+          <div
+            className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
+            style={{
+              transform: `translateX(-${item}%)`
+            }}
+          ></div>
+        </div>
+      )
+    })
+  }
+
+  const renderBuy = () => {
+    return (
+      <>
+        {BuyHeaderDom}
+        {renderBuyList()}
+      </>
+    )
+  }
+  const renderSell = () => {
+    return (
+      <>
+        {list.map((item: any, idx: number) => {
+          return (
+            <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
+              <Row className="flex items-center h-6 px-3 relative z-[2]">
+                <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
+                  46,604.1
+                </Col>
+                <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
+                  7.11231
+                </Col>
+                <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
+                  20,120
+                </Col>
+              </Row>
+              {/* 进度条 */}
+              <div
+                className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
+                style={{
+                  transform: `translateX(-${item}%)`
+                }}
+              ></div>
+            </div>
+          )
+        })}
+      </>
+    )
+  }
+
   return (
-    <div className={classNames('w-[300px] bg-white relative', className)}>
+    <div className={classNames('w-[300px] h-[690px] overflow-hidden bg-white relative', className)}>
       <div className="flex items-center justify-between pl-3 pr-1 pt-[5px] pb-1 border-b border-gray-130">
         <div className="flex items-center gap-x-4">
           {modeList.map((item, idx) => (
@@ -109,51 +213,26 @@ export default function DeepPrice() {
             <FormattedMessage id="mt.chengjiaoe" />
           </Col>
         </Row>
-        {Array.from({ length: 10 }, (k, v) => k).map((item, idx) => {
-          return (
-            <div key={idx}>
-              <Row className="py-2 bg-[#FFDDE2] px-3">
-                <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
-                  46,604.1
-                </Col>
-                <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
-                  7.11231
-                </Col>
-                <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
-                  20,120
-                </Col>
-              </Row>
-              {/* 进度条 */}
-              <div className=""></div>
-            </div>
-          )
-        })}
-        <div className="border-t border-b border-gray-60 py-2 px-3">
-          <div className="flex items-center justify-between">
+        <div className="overflow-y-auto" style={{ height }}>
+          {mode === 'BUY_SELL' && (
+            <>
+              {renderSell()}
+              {renderBuy()}
+            </>
+          )}
+          {mode === 'BUY' && (
             <div>
-              <span className="text-lg text-green font-dingpro-medium pr-[10px]">46,604.1</span>
-              <span className="text-sm text-gray-secondary font-dingpro-medium">¥422,311.21</span>
+              {BuyHeaderDom}
+              <div className="overflow-y-auto h-[600px]">{renderBuyList()}</div>
             </div>
-            <span className="text-xs text-gray-secondary cursor-pointer">
-              <FormattedMessage id="common.more" />
-            </span>
-          </div>
+          )}
+          {mode === 'SELL' && renderSell()}
         </div>
-        {Array.from({ length: 10 }, (k, v) => k).map((item, idx) => {
-          return (
-            <Row key={idx} className="py-2 bg-[#D6FFF4] px-3">
-              <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
-                46,604.1
-              </Col>
-              <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
-                7.11231
-              </Col>
-              <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
-                20,120
-              </Col>
-            </Row>
-          )
-        })}
+        <div>
+          {/* 爆仓仓位展示 @TODO 只有开了杠杆才展示 */}
+          {/* 这里判断数字货币类型才展示，这里展示和侧边栏sidebar展示一个即可 @TODO */}
+          <Liquidation />
+        </div>
       </div>
     </div>
   )

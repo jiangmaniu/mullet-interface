@@ -4,10 +4,12 @@ import { InputNumber } from 'antd'
 import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 
+import { useEnv } from '@/context/envProvider'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 export default function FloatTradeBox() {
+  const { isMobileOrIpad } = useEnv()
   const [open, setOpen] = useState(true)
   const [inputValue, setInputValue] = useState<any>('0.01')
   const [widgetRight, setWidgetRight] = useState(400)
@@ -78,7 +80,7 @@ export default function FloatTradeBox() {
     }
   })
 
-  if (!open) return
+  if (!open || isMobileOrIpad) return
 
   return (
     <div

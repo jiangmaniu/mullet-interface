@@ -13,7 +13,7 @@ import type { SearchConfig } from '@ant-design/pro-table/es/components/Form/Form
 import type { OptionConfig } from '@ant-design/pro-table/es/components/ToolBar'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { FormInstance, message, Popconfirm, TablePaginationConfig } from 'antd'
+import { FormInstance, message,Popconfirm, TablePaginationConfig } from 'antd'
 import { type TableProps as RcTableProps } from 'antd/es/table/InternalTable'
 import classNames from 'classnames'
 import moment from 'moment'

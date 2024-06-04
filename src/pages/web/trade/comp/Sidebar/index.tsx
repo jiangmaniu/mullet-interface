@@ -12,7 +12,6 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { AllSymbols, formatQuotes } from '@/utils/wsUtil'
 
-import Liquidation from '../Widget/Liquidation'
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
 
@@ -37,6 +36,11 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const [list, setList] = useState<any>([])
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
   const searchInputRef = useRef<any>()
+
+  // 列表滚动区域高度
+  // @TODO 如果Liquidation存在情况，否则高度默认
+  const isLiquidation = false
+  const height = isLiquidation ? (current === 1 ? 400 : 450) : 500
 
   // 对外暴露接口
   useImperativeHandle(ref, () => {
@@ -98,9 +102,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
               <FormattedMessage id="mt.zuixinjiage" />/<FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
-          {/* <div className="overflow-y-auto" style={{ height: 500 }}> */}
-          {/* @TODO 这里判断数字货币类型 */}
-          <div className="overflow-y-auto" style={{ height: current === 1 ? 400 : 450 }}>
+          <div className="overflow-y-auto" style={{ height }}>
             {list.length > 0 &&
               list.map((item: any, idx: number) => {
                 const isActive = global.activeSymbolName === item.name
@@ -205,7 +207,6 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                 {/* 爆仓仓位展示 @TODO 只有开了杠杆才展示 */}
                 {/* 这里判断数字货币类型才展示 @TODO */}
                 {/* {openTradeSidebar && <Liquidation />} */}
-                <Liquidation />
               </div>
             </div>
           )}
@@ -239,7 +240,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                       onClick={() => {
                         // 记录打开的symbol
                         global.setOpenSymbolNameList(symbol)
-                        // 设置当前当前的symbol
+                        // 设置当前的symbol
                         global.setActiveSymbolName(symbol)
                       }}
                     >
@@ -254,7 +255,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
       }
       wapComponent={
         <Popup
-          title={current === 1 ? <FormattedMessage id="mt.zixuan" /> : <FormattedMessage id="mt.yongxu" />}
+          title={current === 1 ? <FormattedMessage id="mt.zixuan" /> : <FormattedMessage id="mt.pinlei" />}
           ref={popupRef}
           position="bottom"
           height="80vh"

@@ -13,7 +13,6 @@ import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
 import Sidebar from './comp/Sidebar'
 import TradeRecord from './comp/TradeRecord'
 import TradingView from './comp/TradingView'
-import DeepPrice from './comp/Widget/DeepPrice'
 import FloatTradeBox from './comp/Widget/FloatTradeBox'
 
 export default observer(() => {
@@ -29,9 +28,11 @@ export default observer(() => {
             {/* 交易 */}
             <div className="flex">
               <Sidebar />
+              {/* 中间区域 */}
               <Center />
               {/* 深度报价：盘口 */}
-              <DeepPrice />
+              {/* <DeepPrice /> */}
+              {/* 买卖交易区 */}
               <BuyAndSell />
             </div>
             {/* 交易记录 */}
