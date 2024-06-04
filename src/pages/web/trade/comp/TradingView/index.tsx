@@ -1,4 +1,4 @@
-import { Spin } from 'antd'
+// eslint-disable-next-line simple-import-sort/imports
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 
@@ -7,12 +7,13 @@ import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
+import { Spin } from 'antd'
 
 type IProps = {
   style?: React.CSSProperties
 }
 
-const TradingView = ({ style }: IProps) => {
+const TradingViewComp = ({ style }: IProps) => {
   const { isPc } = useEnv()
   const { lng } = useLang()
   const [tradeUrl, setTradeUrl] = useState('')
@@ -49,4 +50,4 @@ const TradingView = ({ style }: IProps) => {
   )
 }
 
-export default observer(TradingView)
+export default observer(TradingViewComp)

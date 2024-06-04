@@ -19,7 +19,8 @@
       "react": ["./node_modules/@types/react"],
       "@/*": ["./src/*"],
       "@@/*": ["./src/.umi/*"],
-      "@@test/*": ["./src/.umi-test/*"]
+      "@@test/*": ["./src/.umi-test/*"],
+      "public/*": ["./public/*"]
     },
     "plugins": [{ "name": "typescript-plugin-css-modules" }]
   },

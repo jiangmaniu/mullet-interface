@@ -55,6 +55,8 @@ export const STORAGE_GET_FAVORITE = genStorageGet(KEY_FAVORITE)
 export const STORAGE_SET_FAVORITE = genStorageSet(KEY_FAVORITE)
 export const STORAGE_REMOVE_FAVORITE = storageRemove(KEY_FAVORITE)
 
+// =================================================
+
 // 设置本地用户信息
 export const setLocalUserInfo = (userInfo: User.UserInfo) => {
   // 保存token到本地
@@ -67,7 +69,7 @@ export const setLocalUserInfo = (userInfo: User.UserInfo) => {
 
 // ============================================================
 // 工厂函数-获取
-function genStorageGet(key: string) {
+export function genStorageGet(key: string) {
   return (path?: string) => {
     // 获取存储
     const storage = storageGetting(key)
@@ -81,7 +83,7 @@ function genStorageGet(key: string) {
 }
 
 // 工厂函数-设置
-function genStorageSet(key: string) {
+export function genStorageSet(key: string) {
   return (value: any, path?: string) => {
     // 不穿参数，表示删除
     if (value === undefined && path === undefined) {
@@ -175,7 +177,7 @@ function storageSetting(key: string, value: any) {
   }
 }
 
-function storageRemove(key: string) {
+export function storageRemove(key: string) {
   return () => {
     try {
       localStorage.removeItem(key)
