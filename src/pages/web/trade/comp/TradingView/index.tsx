@@ -1,0 +1,52 @@
+import { Spin } from 'antd'
+import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
+
+import { URLS } from '@/constants'
+import { getTradingViewLng } from '@/constants/enum'
+import { useEnv } from '@/context/envProvider'
+import { useLang } from '@/context/languageProvider'
+import { useStores } from '@/context/mobxProvider'
+
+type IProps = {
+  style?: React.CSSProperties
+}
+
+const TradingView = ({ style }: IProps) => {
+  const { isPc } = useEnv()
+  const { lng } = useLang()
+  const [tradeUrl, setTradeUrl] = useState('')
+  const { global } = useStores()
+  const [loading, setLoading] = useState(false)
+
+  const activeSymbolName = global.activeSymbolName
+
+  useEffect(() => {
+    setLoading(true)
+    // @TODO 替换地址
+    setTradeUrl(`${URLS.tradingViewUrl}/?lang=${getTradingViewLng()}&name=${activeSymbolName}`)
+  }, [lng, activeSymbolName])
+
+  return (
+    <div style={style}>
+      <Spin spinning={loading} size="large">
+        <iframe
+          src={tradeUrl}
+          style={{
+            border: 'none',
+            height: isPc ? '591px' : 'calc(100vh - 260px)',
+            width: '100%',
+            visibility: loading ? 'hidden' : 'visible'
+          }}
+          onLoad={() => {
+            setTimeout(() => {
+              setLoading(false)
+            }, 300)
+          }}
+        />
+      </Spin>
+    </div>
+  )
+}
+
+export default observer(TradingView)

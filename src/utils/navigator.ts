@@ -1,130 +1,44 @@
-import { getLocale, history } from '@umijs/max'
-import { message } from 'antd'
-import { parse, stringify } from 'qs'
+import { history } from '@umijs/max'
+import { stringify } from 'qs'
 
-import { URLS } from '@/constants'
-import { formatEmail, formatMobile } from '@/utils'
+import { logout } from '@/services/api/user'
 
-import { isMobileDevice } from '.'
-import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_REMOVE_TOKEN, STORAGE_REMOVE_USER_INFO } from './storage'
+import { STORAGE_REMOVE_TOKEN, STORAGE_REMOVE_USER_INFO } from './storage'
 
 /**
  * 退出登录
- * @param hiddenLogin 不跳转登录页
+ * @param requestLogout 不请求退出接口
  */
-export const onLogout = (unJumpLogin?: boolean) => {
+export const onLogout = async (noRequestLogout?: boolean) => {
+  if (!noRequestLogout) {
+    await logout().catch((e) => e)
+  }
+
   STORAGE_REMOVE_TOKEN()
   STORAGE_REMOVE_USER_INFO()
-  if (!unJumpLogin) {
-    // 退出登录，并且将当前的 url 保存
-    const { search, pathname } = window.location
-    const urlParams = new URL(window.location.href).searchParams
-    /** 此方法会跳转到 redirect 参数所在的位置 */
-    const redirect = urlParams.get('redirect')
-    // Note: There may be security issues, please note
-    if (window.location.pathname !== '/user/login' && !redirect) {
-      history.replace({
-        pathname: '/user/login',
-        search: stringify({
-          redirect: pathname + search
-        })
+
+  // 退出登录，并且将当前的 url 保存
+  const { search, pathname } = window.location
+  const urlParams = new URL(window.location.href).searchParams
+  /** 此方法会跳转到 redirect 参数所在的位置 */
+  const redirect = urlParams.get('redirect')
+  // Note: There may be security issues, please note
+  if (window.location.pathname !== '/user/login' && !redirect) {
+    history.replace({
+      pathname: '/user/login',
+      search: stringify({
+        redirect: pathname + search
       })
-    }
+    })
   }
 }
 
-// 跳转客服页面
-export const goKefu = () => {
-  window.open(URLS.live800)
-}
-// 跳转注册页
-export const goRegister = () => {
-  history.push('/user/register')
-}
-// 跳转注册页
+// 跳转登页
 export const goLogin = () => {
-  history.push('/user/login')
-}
-export const onEntryAdmin = (currentUser: any, mes: any) => {
-  history.push('/admin')
-  console.log(currentUser, 'currentUser')
-
-  message.success(mes + (currentUser?.name || formatMobile(currentUser?.phone) || formatEmail(currentUser?.email)))
+  push('/user/login')
 }
 
-export const onJumpProtocol = () => {
-  window.open('/img/mandatory.pdf', '_blank')
-}
-
-export const onJumpConditon = () => {
-  window.open('/img/biao1.pdf', '_blank')
-}
-
-export function go_titok() {
-  window.open('https://www.tiktok.com/@cdexofficial')
-}
-export function go_youtube() {
-  window.open('https://www.youtube.com/@cdexofficial')
-}
-export function go_twitter() {
-  window.open('https://twitter.com/officialCDEX')
-}
-export function go_telegram() {
-  window.open('https://t.me/CDEX_Exchange')
-}
-export function go_facebook() {
-  window.open('https://www.facebook.com/CDEXofficial')
-}
-export function go_instagram() {
-  window.open('https://www.instagram.com/official_cdex')
-}
-export const tiktok = 'https://www.tiktok.com/@cdexofficial'
-export const youtube = 'https://www.youtube.com/@cdexofficial'
-export const twitter = 'https://twitter.com/officialCDEX'
-export const telegram = 'https://t.me/CDEX_Exchange'
-export const facebook = 'https://www.facebook.com/CDEXofficial'
-export const instagram = 'https://www.instagram.com/official_cdex'
-
-export const twitter_yinni = 'https://twitter.com/cdex_2023?s=21&t=ILrqg6i06ShK0PLqbKO2Zw'
-export const telegram_yinni = 'https://t.me/Cdex_indonesia'
-
-export const formatUrl = (url: string, params?: any) => {
-  const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
-  const tempUrl = new URL(url)
-  // 解析url中?后面的参数
-  const parseUrlParams = parse(tempUrl.search.slice(1)) || {}
-  const defaultParams: any = {
-    lang: getLocale(),
-    account: userInfo.realStandardAccount,
-    token: STORAGE_GET_TOKEN(),
-    loginAccount: userInfo.email || userInfo.phone,
-    ...parseUrlParams,
-    ...params
-  }
-  const retUrl = `${tempUrl.origin}${tempUrl.pathname}?${stringify(defaultParams)}`
-  return retUrl
-}
-
-/**
- * 获取入金地址
- * @param account 入金真实账户ID
- * @returns
- */
-export const getUPayUrl = ({ account, url }: { account?: number; url?: string }) => {
-  const token = STORAGE_GET_TOKEN()
-  const realStandardAccount = account || STORAGE_GET_USER_INFO('realStandardAccount')
-  const lng = getLocale() || 'en-US'
-  const language = {
-    'en-US': 'en-us',
-    'id-ID': 'en-us',
-    'zh-TW': 'zh-hk'
-  }[lng as string]
-
-  let retUrl = `${new URL(url || URLS.PAY_API).origin}/#/cPay?from=mcp&source=${
-    isMobileDevice() ? 3 : 1 // 3移动端 没有返回按钮
-  }&account=${realStandardAccount}&token=${token}&language=${language}`
-  return retUrl
-}
+export const goKefu = () => {}
 
 /**
  * 路径中是否存在语言
@@ -206,3 +120,6 @@ export const push = (path: string) => {
 export const replace = (path: string) => {
   history.replace(formatPathname(path))
 }
+
+// 跳转客服页面 @TODO
+export const goToService = () => {}

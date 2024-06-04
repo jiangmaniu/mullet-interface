@@ -1,5 +1,5 @@
 import { Line } from '@ant-design/charts'
-import { getIntl, useModel } from '@umijs/max'
+import { getIntl } from '@umijs/max'
 
 import { useEnv } from '@/context/envProvider'
 import { colorPrimary } from '@/theme/theme.config'
@@ -7,7 +7,7 @@ import { formatTime } from '@/utils'
 
 const LineChat = () => {
   const { breakPoint, isMobile } = useEnv()
-  const { homeInfo, queryHomeInfo } = useModel('home')
+  // const { homeInfo, queryHomeInfo } = useModel('home')
 
   // const { data, loading, run } = useRequest(getHomeCommissionList, { manual: true })
   // const listData = data?.result?.content?.Data?.commissions || []

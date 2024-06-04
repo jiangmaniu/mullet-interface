@@ -1,7 +1,6 @@
-import { StoresProvider } from '@/mobx'
-
 import { EnvProvider } from './envProvider'
 import { LanguageProvider } from './languageProvider'
+import { StoresProvider } from './mobxProvider'
 import { NotificationProvider } from './notification'
 
 interface IProps {

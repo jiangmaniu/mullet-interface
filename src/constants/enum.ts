@@ -1,7 +1,5 @@
 import { getIntl, getLocale as getMaxLocale } from '@umijs/max'
 
-import { CurrencyLABELS } from '@/utils/wsUtil'
-
 export enum Language {
   'en-US' = 'en-US', // 英语
   'zh-TW' = 'zh-TW' // 台湾繁体
@@ -27,25 +25,46 @@ export const LanuageTransformMap: Record<ILanguage, string> = {
   'en-US': 'en'
 }
 
-export const getLocaleForBackend = () => LanuageTransformMap[getMaxLocale() as ILanguage]
+// 获取k线对应的语言
+export const getTradingViewLng = () => {
+  const langMap = {
+    'zh-TW': 'zh_TW', // 中文繁体
+    'en-US': 'en' // 英文
+  }
 
-// 提币方式
-export const COINS_NETWORK_TYPE = ['USDT-TRC20', 'USDT-OMNI']
-
-// 名下用户组别权限标识
-export const AgentUserGroups: Record<string, string> = {
-  0: 'S0',
-  1: 'S10',
-  2: 'S20',
-  3: 'S30',
-  4: 'S40',
-  5: 'S50',
-  6: 'S502',
-  7: 'E10',
-  8: 'S8'
+  return langMap[getMaxLocale() as ILanguage] || 'en'
 }
 
-export const getAgentQuerySymbolOptions = () => {
-  const intl = getIntl()
-  return Object.keys(CurrencyLABELS).map((value) => ({ value, label: value }))
+export const getLocaleForBackend = () => LanuageTransformMap[getMaxLocale() as ILanguage]
+
+// 转换星期文本
+export type IWeekDay = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
+export const transferWeekDay = (weekDay: IWeekDay) => {
+  const text = {
+    MONDAY: getIntl().formatMessage({ id: 'mt.xingqiyi' }),
+    TUESDAY: getIntl().formatMessage({ id: 'mt.xingqier' }),
+    WEDNESDAY: getIntl().formatMessage({ id: 'mt.xingqisan' }),
+    THURSDAY: getIntl().formatMessage({ id: 'mt.xingqisi' }),
+    FRIDAY: getIntl().formatMessage({ id: 'mt.xingqisi' }),
+    SATURDAY: getIntl().formatMessage({ id: 'mt.xingqiliu' }),
+    SUNDAY: getIntl().formatMessage({ id: 'mt.xingqiri' })
+  }[weekDay]
+
+  return text
+}
+
+// 交易类型
+export const TRADE_TYPE = {
+  /**市场单买入0 */
+  MARKET_BUY: 0,
+  /**市场单卖出1 */
+  MARKET_SELL: 1,
+  /**限价挂单买入是2 */
+  LIMIT_BUY: 2,
+  /**限价挂单卖出是3 */
+  LIMIT_SELL: 3,
+  /**停损挂单买入是4 */
+  STOP_LIMIT_BUY: 4,
+  /**停损挂单卖出是5 */
+  STOP_LIMIT_SELL: 5
 }

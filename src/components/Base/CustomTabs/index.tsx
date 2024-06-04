@@ -7,7 +7,7 @@ type IProps = {
   onChange?: (key: string) => void
   items: {
     key: string
-    label: string
+    label: React.ReactNode
   }[]
   activeKey?: string
 }
@@ -28,9 +28,9 @@ export default function Tabs({ onChange, items, activeKey }: IProps) {
         return (
           <div
             className={classNames(
-              'cursor-pointer py-[7px] hover:text-gray',
+              'cursor-pointer py-[6px] hover:text-gray',
               isActive ? 'rounded-[26px] bg-sub-card text-gray' : 'text-[#9c9c9c]',
-              isZh ? 'px-[34px]' : 'px-[7px]'
+              isZh ? 'px-[26px]' : 'px-[7px]'
             )}
             onClick={() => {
               onChange?.(item.key)

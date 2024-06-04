@@ -3,16 +3,22 @@
 // 灰色 色值50 - 900 阶梯加深
 export const gray = {
   50: '#F7F7F7', // 最浅
+  60: '#f6f6f6',
+  80: '#fbfbfb',
   100: '#f6f6f6',
   120: '#F8F8F8',
+  130: '#f0f0f0',
   150: '#EFEFEF',
   160: '#EDEDED',
   180: '#EEEEEE',
+  185: '#E4E4E4',
+  190: '#E8E8E8',
   200: '#E1E1E1',
   220: '#D9DDE3',
   250: '#DADADA',
-  300: '#D8D8D8',
+  260: '#D8D8D8',
   350: '#E6E6E6',
+  360: '#C3C3C3',
   380: '#b1b1b1',
   400: '#9BA6AD',
   500: '#9C9C9C',
@@ -52,10 +58,10 @@ export const colorTextSecondary = gray['600']
 export const colorTextWeak = gray['500']
 
 // 其他
-export const borderColor = gray['100']
+export const borderColor = gray['200']
 export const grayLight = gray['50']
 export const hoverBg = 'rgba(225, 225, 225, .2)'
-export const bgColorBase = gray['120']
+export const bgColorBase = gray['50']
 export const pageContainerHeaderBg = '#F8FBFD'
 
 export const colorWhite = '#fff'
@@ -102,8 +108,8 @@ export const ThemeVarsConst = {
   '--hover-bg': hoverBg, // hover颜色
   '--page-container-header-bg': pageContainerHeaderBg, // 容器头部背景颜色
 
-  '--card-yellow-gradient-bg': 'linear-gradient(1deg, #FFFFFF 50%, #FFF8E7 100%)', // 卡片渐变背景颜色
-  '--card-yellow-gradient-header-bg': 'linear-gradient(1deg, #FFFFFF 10%, #FFF0CD 100%)', // 卡片渐变背景颜色
+  '--card-gradient-bg': 'linear-gradient(1deg, #FFFFFF 50%, #E6F1FF 100%)', // 卡片渐变背景颜色
+  '--card-gradient-header-bg': 'linear-gradient(1deg, #FFFFFF 10%, #CDE2FF 100%)', // 卡片渐变背景颜色
 
   '--color-white': colorWhite,
   '--color-black': colorBlack,

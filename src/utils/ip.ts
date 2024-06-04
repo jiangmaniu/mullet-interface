@@ -1,8 +1,26 @@
 import axios from 'axios'
 
-import { LocationData } from '@/mobx/global'
-
 import { STORAGE_GET_LOCATION, STORAGE_SET_LOCATION } from './storage'
+
+export type LocationData = {
+  area_code: string
+  city: string
+  city_code: string
+  continent: string
+  country: string
+  country_code: string
+  district: string
+  elevation: string
+  ip: string
+  isp: string
+  latitude: string
+  longitude: string
+  province: string
+  street: string
+  time_zone: string
+  weather_station: string
+  zip_code: string
+}
 
 // 获取地区信息
 export const getIpInfo = () => {

@@ -1,21 +1,22 @@
 import { Settings as LayoutSettings } from '@ant-design/pro-components'
 import { history, Link, Navigate, RunTimeLayoutConfig, useModel } from '@umijs/max'
 import React, { useState } from 'react'
+import { Helmet } from 'react-helmet'
 
 import { Provider } from '@/context'
 import { cssVars } from '@/theme/theme.config'
 
-import defaultSettings from '../config/defaultSettings'
+import defaultSettings, { iconfontUrl } from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
 import SwitchLanguage from './components/SwitchLanguage'
-import { HOME_PAGE } from './constants'
+import { ADMIN_HOME_PAGE, WEB_HOME_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
-import { stores } from './mobx'
+import { stores } from './context/mobxProvider'
 import { errorConfig } from './requestErrorConfig'
 import { getUserInfo } from './services/api/user'
-import { getBrowerLng, getPathnameLng, onLogout, replacePathnameLng } from './utils/navigator'
+import { getBrowerLng, getPathname, getPathnameLng, onLogout, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN, STORAGE_SET_USER_INFO } from './utils/storage'
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -37,10 +38,11 @@ export async function getInitialState(): Promise<{
 }> {
   // 初始化全局配置
   await stores.global.init()
+  stores.ws.reconnect()
 
   const fetchUserInfo = async () => {
-    // 初始化ws链接，暂时用不到
-    // stores.wsStore.reconnect()
+    // 初始化ws链接
+    // stores.ws.reconnect()
     if (!STORAGE_GET_TOKEN()) return
     try {
       const userInfo = await getUserInfo({
@@ -60,10 +62,10 @@ export async function getInitialState(): Promise<{
   }
   // 如果不是登录页面，执行
   const { location } = history
-  if (location.pathname !== loginPath) {
-    // 获取全局用户信息
+  // 登录页进不来
+  if (getPathname(location.pathname) !== loginPath) {
+    // 获取全局用户信息 @TODO
     // const currentUser = (await fetchUserInfo()) || STORAGE_GET_USER_INFO()
-
     return {
       fetchUserInfo,
       // currentUser, // @TODO
@@ -129,18 +131,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 自定义展开收起按钮的渲染
     collapsedButtonRender: false,
     // collapsedButtonRender: (collapsed: boolean | undefined, defaultDom: React.ReactNode) => (isMobileOrIpad ? undefined : defaultDom),
-    menuProps: {
-      // 点击菜单项
-      onClick: (info) => {
-        // 折叠侧边栏菜单
-        if (isMobileOrIpad) {
-          setCollapsed(true)
-        }
-        // 设置当前当前的path
-        stores.global.setActiveMenuPath(info.key)
-        console.log('info', info)
-      }
-    },
     // 侧边菜单底部的配置，可以增加一些底部操作
     menuFooterRender: (props) => {
       if (isMobileOrIpad && !props?.collapsed) {
@@ -282,6 +272,8 @@ export const patchClientRoutes = ({ routes }: any) => {
   const { locationLng } = getBrowerLng()
   // 获取本地缓存的语言
   const lng = localStorage.getItem('umi_locale') || locationLng
+  const token = STORAGE_GET_TOKEN()
+  const HOME_PAGE = token ? ADMIN_HOME_PAGE : WEB_HOME_PAGE
 
   // 首次默认重定向到en-US
   routes.unshift(
@@ -314,8 +306,12 @@ export const rootContainer = (container: JSX.Element) => {
   return React.createElement(
     () => (
       <>
-        {/* 注入css变量 */}
-        <style>{cssVars}</style>
+        <Helmet>
+          {/* 注入css变量 */}
+          <style>{cssVars}</style>
+          {/* 需要设置一次地址，否则不使用Layout的情况下，iconfont图标使用不显示 */}
+          <script async={true} src={iconfontUrl}></script>
+        </Helmet>
         <Provider>{container}</Provider>
       </>
     ),

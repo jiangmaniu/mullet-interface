@@ -1,0 +1,17 @@
+import { request } from '@/utils/request'
+
+// 产品K线数据-分页
+export async function getSymbolKlineList(params?: API.PageParam) {
+  return request<API.Response<API.PageResult<MarketSymbol.SymbolKlineListItem>>>('/api/trade-market/marketApi/symbol/klineList', {
+    method: 'GET',
+    params
+  })
+}
+
+// 产品实时报价-分页 成交报价
+export async function getSymbolPriceList(params?: API.PageParam & { priceValueId: any }) {
+  return request<API.Response<API.PageResult<MarketSymbol.SymbolPriceListItem>>>('/api/trade-market/marketApi/symbol/priceList', {
+    method: 'GET',
+    params
+  })
+}

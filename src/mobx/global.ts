@@ -1,133 +1,134 @@
-import { action, makeAutoObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeAutoObservable, observable, runInAction } from 'mobx'
 
-import { HOME_PAGE } from '@/constants'
-import { getIpInfo } from '@/utils/ip'
-import { getPathname, replace } from '@/utils/navigator'
 import {
-  STORAGE_GET_ACTIVE_MENU_PATH,
-  STORAGE_GET_OPEN_MENU_LIST,
-  STORAGE_SET_ACTIVE_MENU_PATH,
-  STORAGE_SET_OPEN_MENU_LIST
+  STORAGE_GET_ACTIVE_SYMBOL_NAME,
+  STORAGE_GET_FAVORITE,
+  STORAGE_GET_SYMBOL_NAME_LIST,
+  STORAGE_SET_ACTIVE_SYMBOL_NAME,
+  STORAGE_SET_FAVORITE,
+  STORAGE_SET_SYMBOL_NAME_LIST
 } from '@/utils/storage'
-
-export type LocationData = {
-  area_code: string
-  city: string
-  city_code: string
-  continent: string
-  country: string
-  country_code: string
-  district: string
-  elevation: string
-  ip: string
-  isp: string
-  latitude: string
-  longitude: string
-  province: string
-  street: string
-  time_zone: string
-  weather_station: string
-  zip_code: string
-}
+import { AllSymbols, DEFAULT_QUOTE_FAVORITES_CURRENCY } from '@/utils/wsUtil'
 
 export class GlobalStore {
-  @observable locationInfo = {} as LocationData
-
   constructor() {
     makeAutoObservable(this)
   }
 
-  @observable openMenuList: string[] = [] // 记录打开的品种名称
-  @observable currentOpenMenuPath = '/symbol' // 当前激活的品种名
+  @observable openSymbolNameList: string[] = [] // 记录打开的品种名称
+  @observable favoriteList: string[] = [] // 自选列表
+  @observable activeSymbolName = 'BTCUSDT' // 当前激活的品种名 @TODO 获取接口后，设置第一个默认币种
+  @observable currentAccount = '' // 当前切换的账户
+  @observable showBalanceEmptyModal = false // 余额为空弹窗
 
-  // 初始化本地打开的path
+  // ========= 设置打开的品种 =========
+
+  // 初始化本地打开的symbol
   @action
-  initOpenMenuList() {
-    this.openMenuList = STORAGE_GET_OPEN_MENU_LIST() || ['/symbol']
-    this.currentOpenMenuPath = STORAGE_GET_ACTIVE_MENU_PATH() || '/symbol'
+  initOpenSymbolNameList() {
+    this.openSymbolNameList = STORAGE_GET_SYMBOL_NAME_LIST() || ['BTCUSDT'] // 当前激活的品种名 @TODO 获取接口后，设置第一个默认币种
+    this.activeSymbolName = STORAGE_GET_ACTIVE_SYMBOL_NAME() || 'BTCUSDT' // 当前激活的品种名 @TODO 获取接口后，设置第一个默认币种
   }
 
-  // 记录打开的path
+  // 记录打开的symbol
   @action
-  setOpenMenuList(path: string) {
-    if (!this.currentOpenMenuPath) {
-      this.currentOpenMenuPath = path
+  setOpenSymbolNameList(name: string) {
+    if (!this.activeSymbolName) {
+      this.activeSymbolName = name
     }
-    if (this.openMenuList.some((item) => item === path)) return
-    this.openMenuList.push(path)
-    this.updateLocalOpenMenuList()
+    if (this.openSymbolNameList.some((item) => item === name)) return
+    this.openSymbolNameList.push(name)
+    this.updateLocalOpenSymbolNameList()
   }
 
-  // 移除打开的path
+  // 移除打开的symbol
   @action
-  removeOpenMenuList(path: string, removeIndex: number) {
-    const originList = JSON.parse(JSON.stringify(this.openMenuList))
-    const newList = this.openMenuList.filter((item) => item !== path)
+  removeOpenSymbolNameList(name: string, removeIndex: number) {
+    const originList = JSON.parse(JSON.stringify(this.openSymbolNameList))
+    const newList = this.openSymbolNameList.filter((item) => item !== name)
 
-    this.openMenuList = newList
-    this.updateLocalOpenMenuList()
+    this.openSymbolNameList = newList
+    this.updateLocalOpenSymbolNameList()
 
-    if (this.currentOpenMenuPath === path) {
+    if (this.activeSymbolName === name) {
       // 更新激活的索引
       const nextActiveItem = originList[removeIndex - 1] || originList[removeIndex + 1]
-      this.setActiveMenuPath(nextActiveItem)
-
-      // 激活菜单路由
-      replace(getPathname(nextActiveItem))
+      this.setActiveSymbolName(nextActiveItem)
     }
   }
 
-  // 关闭全部打开的路径
+  // 切换当前打开的symbol
   @action
-  closeOpenMenuPath = (key: string) => {
-    const isRemoveAll = key === 'all'
-    const path = isRemoveAll ? HOME_PAGE : this.currentOpenMenuPath
-    // 清空缓存
-    STORAGE_SET_OPEN_MENU_LIST([])
-    // 当前当前激活的菜单
-    this.currentOpenMenuPath = path
-    STORAGE_SET_ACTIVE_MENU_PATH(path)
-    // 设置打开的菜单列表
-    STORAGE_SET_OPEN_MENU_LIST([path])
-    this.openMenuList = [path]
-    // 跳转
-    replace(path)
+  setActiveSymbolName(key: string) {
+    this.activeSymbolName = key
+    STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
   }
 
-  // 切换当前打开的path
-  @action
-  setActiveMenuPath(path: string) {
-    const formatPath = getPathname(path)
-    this.currentOpenMenuPath = formatPath
-    STORAGE_SET_ACTIVE_MENU_PATH(formatPath)
-
-    // 更新激活的菜单路由
-    this.setOpenMenuList(formatPath)
+  // 更新本地缓存的symbol列表
+  @action updateLocalOpenSymbolNameList = () => {
+    STORAGE_SET_SYMBOL_NAME_LIST(this.openSymbolNameList)
   }
 
-  // 更新本地缓存的path列表
-  @action updateLocalOpenMenuList = () => {
-    STORAGE_SET_OPEN_MENU_LIST(this.openMenuList)
+  // =========== 收藏、取消收藏 ==============
+
+  // 是否收藏品种
+  @computed get isFavoriteSymbol() {
+    return this.favoriteList.some((item: any) => item.name === this.activeSymbolName && item.checked)
   }
 
-  // ====================
-
-  @action
-  getIp = async () => {
-    return getIpInfo().then((res) => {
+  // 获取本地自选
+  @action async initFavoriteList() {
+    const data = await STORAGE_GET_FAVORITE()
+    if (Array.isArray(data) && data.length) {
       runInAction(() => {
-        this.locationInfo = res
+        this.favoriteList = data
       })
-    })
+    } else {
+      this.setDefaultFavorite()
+    }
   }
 
-  init = async () => {
-    try {
-      this.getIp()
-      this.initOpenMenuList()
-    } catch (e) {
-      console.log('init error', e)
+  // 设置默认资讯
+  @action setDefaultFavorite() {
+    // 设置本地默认自选
+    this.setSymbolFavoriteToLocal(DEFAULT_QUOTE_FAVORITES_CURRENCY)
+  }
+
+  // 设置本地自选
+  @action async setSymbolFavoriteToLocal(data: any) {
+    if (Array.isArray(data) && data.length) {
+      this.favoriteList = data
+      STORAGE_SET_FAVORITE(data)
+    } else {
+      this.setDefaultFavorite()
     }
+  }
+
+  // 切选收藏选中状态
+  @action toggleSymbolFavorite(name?: string) {
+    const symbolName = name || this.activeSymbolName // 不传name，使用当前激活的
+    const index = this.favoriteList.findIndex((v: any) => v.name === symbolName)
+    const item: any = AllSymbols.find((v) => v.name === symbolName)
+
+    // 删除
+    if (index !== -1) {
+      this.favoriteList.splice(index, 1)
+    } else {
+      // 添加到已选列表
+      item.checked = true
+      this.favoriteList.push(item)
+    }
+    this.setSymbolFavoriteToLocal(this.favoriteList)
+  }
+
+  // ========== 页面初始化执行 ================
+
+  @action
+  init = () => {
+    // 初始化打开的品种列表
+    this.initOpenSymbolNameList()
+    // 初始化自选列表
+    this.initFavoriteList()
   }
 }
 

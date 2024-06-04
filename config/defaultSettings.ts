@@ -1,6 +1,11 @@
 import { ProLayoutProps } from '@ant-design/pro-components'
 import { gray } from '../src/theme/theme.config'
 
+// 字体图标 @TODO 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
+// 注意：UI图标更新后，需要重新更新地址和本地代码
+export const iconfontUrl =
+  process.env.NODE_ENV === 'development' ? 'https://at.alicdn.com/t/c/font_4571567_0lfu25uk1trq.js' : '/iconfont/iconfont.js'
+
 /**
  * @name
  */
@@ -19,8 +24,7 @@ const Settings: ProLayoutProps & {
   title: '',
   pwa: true,
   logo: '/logo.svg',
-  // 注意：UI图标更新后，需要重新更新地址和本地代码
-  iconfontUrl: process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4512169_ge8s3z6iz5t.js' : '/iconfont/iconfont.js', // 字体图标 @TODO 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
+  iconfontUrl,
   // iconfontUrl: '//at.alicdn.com/t/c/font_4182179_75iciez7rhj.js', // 字体图标 @TODO 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
   // 参见ts声明，demo 见文档，通过token 修改样式
   //https://procomponents.ant.design/components/layout#%E9%80%9A%E8%BF%87-token-%E4%BF%AE%E6%94%B9%E6%A0%B7%E5%BC%8F
@@ -46,7 +50,7 @@ const Settings: ProLayoutProps & {
       // colorTextSubMenuSelected: '#fff'
     },
     header: {
-      heightLayoutHeader: 68
+      heightLayoutHeader: 66
       // colorBgHeader: '#fff',
       // colorBgRightActionsItemHover: 'rgba(0,0,0,0.06)',
       // colorTextRightActionsItem: 'rgba(255,255,255,0.65)',

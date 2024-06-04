@@ -16,6 +16,7 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
+      "react": ["./node_modules/@types/react"],
       "@/*": ["./src/*"],
       "@@/*": ["./src/.umi/*"],
       "@@test/*": ["./src/.umi-test/*"]

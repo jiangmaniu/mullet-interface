@@ -20,7 +20,7 @@ function Iconfont({ name, width = 24, height = 24, color, hoverColor, hoverStyle
     if (!hoverColor || !color) {
       return {
         '&:hover': {
-          fill: `${hoverColor || !color} !important`,
+          fill: `${hoverColor || color} !important`,
           ...hoverStyle
         }
       }
@@ -30,6 +30,7 @@ function Iconfont({ name, width = 24, height = 24, color, hoverColor, hoverStyle
     <svg
       className={classNames(`w-[1rem] h-[1rem] overflow-hidden align-[-0.15em]`, hoverClassName, className)}
       style={{ width, height, fill: color, ...style }}
+      aria-hidden={true}
       {...res}
     >
       <use xlinkHref={`#icon-${name}`}></use>

@@ -1,7 +1,17 @@
 import lodashGet from 'lodash/get'
 import lodashSet from 'lodash/set'
 
-import { KEY_ACTIVE_MENU_PATH, KEY_LOCATION_INFO, KEY_OPEN_MENU_LIST, KEY_PARAMS, KEY_PWD, KEY_TOKEN, KEY_USER_INFO } from '@/constants'
+import {
+  KEY_ACTIVE_SYMBOL_NAME,
+  KEY_FAVORITE,
+  KEY_LOCATION_INFO,
+  KEY_NEXT_REFRESH_TOKEN_TIME,
+  KEY_PARAMS,
+  KEY_PWD,
+  KEY_SYMBOL_NAME_LIST,
+  KEY_TOKEN,
+  KEY_USER_INFO
+} from '@/constants'
 
 import { valuetype } from './type'
 
@@ -10,6 +20,10 @@ import { valuetype } from './type'
 export const STORAGE_GET_TOKEN = genStorageGet(KEY_TOKEN)
 export const STORAGE_SET_TOKEN = genStorageSet(KEY_TOKEN)
 export const STORAGE_REMOVE_TOKEN = storageRemove(KEY_TOKEN)
+
+// 本地存储-刷新token时间
+export const STORAGE_GET_NEXT_REFRESH_TOKEN_TIME = genStorageGet(KEY_NEXT_REFRESH_TOKEN_TIME)
+export const STORAGE_SET_NEXT_REFRESH_TOKEN_TIME = genStorageSet(KEY_NEXT_REFRESH_TOKEN_TIME)
 
 // 本地存储-用户信息
 export const STORAGE_GET_USER_INFO = genStorageGet(KEY_USER_INFO)
@@ -29,12 +43,27 @@ export const STORAGE_GET_LOCATION = genStorageGet(KEY_LOCATION_INFO)
 export const STORAGE_SET_LOCATION = genStorageSet(KEY_LOCATION_INFO)
 
 // 本地存储-打开的品种名称列表
-export const STORAGE_GET_OPEN_MENU_LIST = genStorageGet(KEY_OPEN_MENU_LIST)
-export const STORAGE_SET_OPEN_MENU_LIST = genStorageSet(KEY_OPEN_MENU_LIST)
+export const STORAGE_GET_SYMBOL_NAME_LIST = genStorageGet(KEY_SYMBOL_NAME_LIST)
+export const STORAGE_SET_SYMBOL_NAME_LIST = genStorageSet(KEY_SYMBOL_NAME_LIST)
 
 // 本地存储-激活的品种名称
-export const STORAGE_GET_ACTIVE_MENU_PATH = genStorageGet(KEY_ACTIVE_MENU_PATH)
-export const STORAGE_SET_ACTIVE_MENU_PATH = genStorageSet(KEY_ACTIVE_MENU_PATH)
+export const STORAGE_GET_ACTIVE_SYMBOL_NAME = genStorageGet(KEY_ACTIVE_SYMBOL_NAME)
+export const STORAGE_SET_ACTIVE_SYMBOL_NAME = genStorageSet(KEY_ACTIVE_SYMBOL_NAME)
+
+// 本地存储-自选列表
+export const STORAGE_GET_FAVORITE = genStorageGet(KEY_FAVORITE)
+export const STORAGE_SET_FAVORITE = genStorageSet(KEY_FAVORITE)
+export const STORAGE_REMOVE_FAVORITE = storageRemove(KEY_FAVORITE)
+
+// 设置本地用户信息
+export const setLocalUserInfo = (userInfo: User.UserInfo) => {
+  // 保存token到本地
+  STORAGE_SET_TOKEN(userInfo?.access_token)
+  // 保存登录的用户信息到本地
+  STORAGE_SET_USER_INFO(userInfo)
+  // 设置下次刷新token的时间
+  STORAGE_SET_NEXT_REFRESH_TOKEN_TIME(Date.now() + Number(userInfo?.expires_in || 0) * 1000)
+}
 
 // ============================================================
 // 工厂函数-获取

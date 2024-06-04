@@ -1,3 +1,4 @@
+import { CopyOutlined } from '@ant-design/icons'
 import { useIntl } from '@umijs/max'
 import { message, Typography } from 'antd'
 
@@ -13,7 +14,8 @@ export default function CopyComp({ children, style, textStyle }: IProps) {
     <Typography.Paragraph
       style={{ marginBottom: 0, display: 'flex', alignItems: 'baseline', ...style }}
       copyable={{
-        icon: <img src="/img/icons/copy@2x.png" className="w-[18px] h-[18px] relative top-[3px]" />,
+        // icon: <img src="/img/icons/copy@2x.png" className="w-[18px] h-[18px] relative top-[3px]" />,
+        icon: <CopyOutlined style={{ fontSize: 14, color: '#9E9E9E' }} />,
         onCopy: (event: any) => {
           message.success(intl.formatMessage({ id: 'common.copySuccess' }))
         },

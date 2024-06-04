@@ -69,6 +69,7 @@ export const toTree = <TreeNode extends Record<string, any>>(
  * @returns
  */
 export const flatTreeData = <TreeNode>(data: TreeNode[], key: keyof TreeNode, parentId?: keyof TreeNode): TreeNode[] => {
+  if (!data?.length) return []
   return data.reduce((prev: TreeNode[], curr: TreeNode) => {
     if (parentId !== undefined) {
       // @ts-ignore

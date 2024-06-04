@@ -4,11 +4,11 @@ import common from './zh-TW/common'
 import component from './zh-TW/component'
 import globalHeader from './zh-TW/globalHeader'
 import menu from './zh-TW/menu'
+import mt from './zh-TW/mt'
 import pc from './zh-TW/pc'
 import pwa from './zh-TW/pwa'
 import settingDrawer from './zh-TW/settingDrawer'
 import settings from './zh-TW/settings'
-import uc from './zh-TW/uc'
 import ws from './zh-TW/ws'
 
 export default {
@@ -28,5 +28,5 @@ export default {
   ...pc,
   ...admin,
   ...adminTable,
-  ...uc
+  ...mt
 }

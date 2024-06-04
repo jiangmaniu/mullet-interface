@@ -1,3 +1,4 @@
+import { message } from 'antd'
 import currency from 'currency.js'
 import lodash, { cloneDeep } from 'lodash'
 import moment from 'moment'
@@ -31,7 +32,8 @@ export function getUid() {
 
 export const regPassword = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,16}$/ // 至少包含一个数字、至少包含一个大写字母、至少包含一个小写字母、至少包含一个特殊字符或下划线
 
-export const regEmail = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,4}$/ // 验证是否为邮箱格式；
+export const regEmail =
+  /^[a-zA-Z0-9.!#$%&amp;'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 export const regMobile = /^\d+(.\d{1,2})?$/
 
 export function isMobile(str: string) {
@@ -282,4 +284,85 @@ export const formatMin2Time = (min: any) => {
       return d + ':' + ((c * 60).toFixed(0) < 10 ? '0' + (c * 60).toFixed(0) : (c * 60).toFixed(0))
     }
   }
+}
+
+/**
+ * 将时间字符串转换为分钟
+ * @param time 输入 01:00 输出 60 输入 24:00 输出 1440
+ * @returns
+ */
+export const formatTime2Min = (time: string) => {
+  let [hours, minutes] = time.split(':').map(Number)
+  return hours * 60 + minutes
+}
+
+/**
+ * 判断值是否为真实值（类似 JavaScript 中的 !! 操作符）
+ * 允许值为 0，空字符串，null，undefined 或者 false
+ * @param {*} value - 要检查的值
+ * @returns {boolean} - 如果值为真实值，则返回 true，否则返回 false
+ */
+export const isTruthy = (value: any) => {
+  return !!value || (value !== '' && Number(value) === 0)
+}
+
+/**
+ * 转化json中的字符串对象为Json格式
+ * @param info 对象
+ * @param fields 字符串数组
+ * @returns
+ */
+export const parseJsonFields = (info: Record<string, any>, fields: string[]) => {
+  if (!info) return
+
+  fields.forEach((field) => {
+    if (info[field]) {
+      try {
+        info[field] = JSON.parse(info[field])
+      } catch (e) {
+        console.error(`Failed to parse JSON for field: ${field}`, e)
+      }
+    }
+  })
+  return info
+}
+
+export const waitTime = (time = 100) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true)
+    }, time)
+  })
+}
+
+// 复制功能
+export const copyContent = (cotVal: string, title = 'Replicating Success') => {
+  const pEle = document.createElement('p')
+  pEle.innerHTML = cotVal || ''
+  document.body.appendChild(pEle)
+
+  const range = document.createRange() // 创造range
+  window.getSelection()?.removeAllRanges() //清除页面中已有的selection
+  range.selectNode(pEle) // 选中需要复制的节点
+  window.getSelection()?.addRange(range) // 执行选中元素
+
+  const copyStatus = document.execCommand('Copy') // 执行copy操作
+  message.info(copyStatus ? title : 'copy failed')
+  document.body.removeChild(pEle)
+  window.getSelection()?.removeAllRanges() //清除页面中已有的selection
+}
+
+/**
+ * 格式化小数位
+ * @param val
+ * @param num 小数位
+ * @returns
+ */
+export function toFixed(val: any, num = 2) {
+  let value = val || 0
+  value = parseFloat(value)
+  if (isNaN(value)) {
+    value = 0
+  }
+  return value.toFixed(num)
 }

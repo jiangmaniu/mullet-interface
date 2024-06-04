@@ -27,6 +27,7 @@ type IProps = {
   renderHeader?: React.ReactNode
   cancelText?: React.ReactNode | string
   confirmText?: React.ReactNode | string
+  open?: boolean
 } & PopupBaseProps
 
 export default forwardRef(
@@ -37,7 +38,7 @@ export default forwardRef(
       headerStyle,
       height,
       title,
-      visible,
+      open,
       trigger,
       showFooter,
       renderFooter,
@@ -65,20 +66,20 @@ export default forwardRef(
     }
 
     useEffect(() => {
-      // if (visible) {
+      // if (open) {
       //   document.documentElement.style.overflowY = 'hidden'
       // } else {
       //   document.documentElement.style.overflowY = 'auto'
       // }
-      setIsOpen(visible as boolean)
-    }, [visible])
+      setIsOpen(open as boolean)
+    }, [open])
 
     // 对外暴露接口
     useImperativeHandle(ref, () => {
       return {
         close,
         show,
-        isOpen
+        open: isOpen
       }
     })
 

@@ -1,0 +1,71 @@
+import { FormattedMessage } from '@umijs/max'
+import classNames from 'classnames'
+import { observer } from 'mobx-react'
+import Marquee from 'react-fast-marquee'
+
+import { useStores } from '@/context/mobxProvider'
+import useCurrentQuoteInfo from '@/hooks/useCurrentQuoteInfo'
+import { goToService } from '@/utils/navigator'
+import { AllSymbols } from '@/utils/wsUtil'
+
+// 底部浮动条
+function Footer() {
+  const { ws, global } = useStores()
+  const { quotes, marketInfo } = ws
+
+  return (
+    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white px-5 pb-2 pt-2 shadow-[10px_10px_10px_10px_rgba(227,227,227,.4)]">
+      {/* <div className="flex items-center border-r border-r-gray-200 pr-3">
+        <div className="flex items-center">
+          <SignalIcon color={isConnected ? `var(--color-green-700)` : 'var(--color-text-secondary)'} />
+          <span className="pl-1 text-xs font-normal text-gray-weak">{isConnected ? ws.t('lianjiezhengchang') : ws.t('duankailianjie')}</span>
+        </div>
+      </div> */}
+      <div className="flex h-full flex-1 items-center overflow-x-auto">
+        <Marquee pauseOnHover speed={30} gradient>
+          {AllSymbols.map((item, idx) => {
+            const res = useCurrentQuoteInfo(item.name)
+            const per: any = res.per
+            const bid = res.bid
+
+            return (
+              <div key={idx} className="h-full border-r border-r-gray-200 px-4">
+                <div
+                  className="flex cursor-pointer items-center"
+                  onClick={() => {
+                    // 记录打开的symbol
+                    global.setOpenSymbolNameList(item.name)
+                    // 设置当前当前的symbol
+                    global.setActiveSymbolName(item.name)
+                  }}
+                >
+                  <div className="text-wrap text-xs font-medium text-gray">{item.label}</div>
+                  <div className={classNames('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
+                    {res.bid ? (per > 0 ? `+${per}` + per : `${per}%`) : '--'}
+                  </div>
+                  <div className="px-[3px] text-xs font-medium text-gray-weak">{bid}</div>
+                </div>
+              </div>
+            )
+          })}
+        </Marquee>
+      </div>
+      <div className="flex items-center pl-3">
+        <div className="flex items-center">
+          <img src="/img/download-icon.png" width={22} height={22} alt="" />
+          <span className="text-xs font-normal text-gray-weak">
+            <FormattedMessage id="mt.xiazai" />
+          </span>
+        </div>
+      </div>
+      <div className="flex cursor-pointer items-center pl-3 " onClick={goToService}>
+        <img src="/img/kefu-icon.png" width={22} height={22} alt="" />
+        <span className="text-xs font-normal text-gray-weak">
+          <FormattedMessage id="mt.zaixiankefu" />
+        </span>
+      </div>
+    </div>
+  )
+}
+
+export default observer(Footer)

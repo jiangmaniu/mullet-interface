@@ -1,19 +1,23 @@
+/* eslint-disable simple-import-sort/imports */
 import { LoginForm, ProFormText } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form, message } from 'antd'
 import classNames from 'classnames'
+import { md5 } from 'js-md5'
 import Lottie from 'lottie-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Tabs from '@/components/Base/Tabs'
-import { HOME_PAGE } from '@/constants'
-import { login } from '@/services/api/user'
+import { WEB_HOME_PAGE } from '@/constants'
+import { getCaptcha, login } from '@/services/api/user'
 import { push } from '@/utils/navigator'
-import { STORAGE_SET_TOKEN } from '@/utils/storage'
+import { STORAGE_GET_TOKEN, setLocalUserInfo } from '@/utils/storage'
 
+import PwdTips from '@/components/PwdTips'
+import { regPassword } from '@/utils'
 import animationData from './animation.json'
 
 export default function Login() {
@@ -24,7 +28,20 @@ export default function Login() {
   const email = Form.useWatch('email', form)
   const password = Form.useWatch('password', form)
   const [isEmailTab, setIsEmailTab] = useState(true) // 邮箱和手机选项切换
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const pwdTipsRef = useRef<any>()
+
+  const [captchaInfo, setCaptchaInfo] = useState({} as User.Captcha)
+  const access_token = STORAGE_GET_TOKEN()
+
+  const handleCaptcha = async () => {
+    const res = await getCaptcha()
+    setCaptchaInfo(res)
+  }
+
+  useEffect(() => {
+    handleCaptcha()
+  }, [])
 
   const className = useEmotionCss(({ token }) => {
     return {
@@ -43,7 +60,7 @@ export default function Login() {
           position: 'absolute',
           right: 0,
           left: 0,
-          top: 64,
+          top: 58,
           borderBottom: '1px solid #f0f0f0',
           content: "''"
         }
@@ -81,31 +98,43 @@ export default function Login() {
   const handleSubmit = async (values: User.LoginParams) => {
     try {
       // 登录
-      const result = await login({
-        username: values.username,
-        password: values.password
-      })
+      const result = await login(
+        {
+          username: values.username,
+          password: md5(values.password as string),
+          tenanId: '000000',
+          type: 'account',
+          grant_type: 'captcha',
+          scope: 'all'
+        },
+        {
+          headers: {
+            'Captcha-Code': values.captchaCode,
+            'Captcha-Key': captchaInfo.key
+          }
+        }
+      )
+
       // @ts-ignore
       if (result?.success) {
-        message.success(intl.formatMessage({ id: 'mt.dengluchenggong' }))
+        // 缓存用户信息
+        setLocalUserInfo(result as User.UserInfo)
 
-        // 保存token到本地
-        STORAGE_SET_TOKEN(result.result?.token)
-
-        // 获取用户信息
+        // 重新获取用户信息
         await fetchUserInfo()
 
+        message.info(intl.formatMessage({ id: 'mt.dengluchenggong' }))
+
         const urlParams = new URL(window.location.href).searchParams
-        push(urlParams.get('redirect') || HOME_PAGE)
+        push(urlParams.get('redirect') || WEB_HOME_PAGE)
+
         return
+      } else {
+        // 刷新验证码
+        handleCaptcha()
       }
-      console.log(result)
-      // 如果失败去设置用户错误信息
-      // @ts-ignore
-      setUserLoginState(msg)
     } catch (error: any) {
-      console.log(error)
-      message.error(error.message)
+      message.info(error.message)
     }
   }
 
@@ -114,7 +143,12 @@ export default function Login() {
       {!loading && (
         <LoginForm
           title={
-            <div className="mb-8">
+            <div
+              className="mb-8 cursor-pointer"
+              onClick={() => {
+                push(WEB_HOME_PAGE)
+              }}
+            >
               <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
             </div>
           }
@@ -139,13 +173,19 @@ export default function Login() {
           form={form}
           actions={
             <div className="text-gray-500 text-sm text-center cursor-pointer">
-              <FormattedMessage id="uc.wangjimima" />
+              <FormattedMessage id="mt.wangjimima" />
             </div>
           }
         >
           <Tabs
             activeKey={activeKey}
-            onChange={setActiveKey}
+            onChange={(key) => {
+              setActiveKey(key)
+
+              if (key === 'login') {
+                form.validateFields(['password'])
+              }
+            }}
             centered
             tabBarGutter={130}
             hiddenBottomLine
@@ -154,7 +194,7 @@ export default function Login() {
                 key: 'login',
                 label: (
                   <span className="text-gray font-medium text-lg">
-                    <FormattedMessage id="uc.denglu" />
+                    <FormattedMessage id="mt.denglu" />
                   </span>
                 )
               },
@@ -162,16 +202,16 @@ export default function Login() {
                 key: 'register',
                 label: (
                   <span className="text-gray-secondary text-lg font-medium hover:text-gray">
-                    <FormattedMessage id="uc.kailixinzhanghu" />
+                    <FormattedMessage id="mt.kailixinzhanghu" />
                   </span>
                 )
               }
             ]}
           />
           <div className="flex items-center justify-between w-full pb-2">
-            <span>{!isEmailTab ? <FormattedMessage id="uc.shoujihaoma" /> : <FormattedMessage id="uc.dianziyouxiang" />}</span>
+            <span>{!isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}</span>
             <span className="cursor-pointer text-blue" onClick={() => setIsEmailTab(!isEmailTab)}>
-              {isEmailTab ? <FormattedMessage id="uc.shoujihaoma" /> : <FormattedMessage id="uc.dianziyouxiang" />}
+              {isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}
             </span>
           </div>
 
@@ -182,12 +222,12 @@ export default function Login() {
               fieldProps={{
                 size: 'large'
               }}
-              placeholder={intl.formatMessage({ id: 'uc.shurudianziyouxiang' })}
+              placeholder={intl.formatMessage({ id: 'mt.shurudianziyouxiang' })}
               required={false}
               rules={[
                 {
                   required: true,
-                  message: intl.formatMessage({ id: 'uc.shurudianziyouxiang' })
+                  message: intl.formatMessage({ id: 'mt.shurudianziyouxiang' })
                 }
               ]}
             />
@@ -195,30 +235,57 @@ export default function Login() {
 
           {/* 手机号码 */}
           {!isEmailTab && <PhoneSelectFormItem name={['phone', 'code']} form={form} />}
-
-          {/* @TODO 处理密码规则验证 */}
           <ProFormText.Password
             name="password"
-            fieldProps={{
-              size: 'large'
-            }}
             required={false}
             label={intl.formatMessage({ id: 'mt.mima' })}
-            placeholder={intl.formatMessage({ id: 'uc.shurumima' })}
+            placeholder={intl.formatMessage({ id: 'mt.shurumima' })}
+            fieldProps={{
+              size: 'large',
+              onFocus: () => {
+                pwdTipsRef?.current?.show()
+              },
+              onBlur: () => {
+                pwdTipsRef?.current?.hide()
+              }
+            }}
             rules={[
               {
                 required: true,
-                message: intl.formatMessage({ id: 'uc.shurumima' })
+                message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
+                pattern: activeKey === 'register' ? regPassword : undefined
               }
             ]}
           />
+          {activeKey === 'register' && <PwdTips pwd={password} ref={pwdTipsRef} />}
+          <div className="flex items-center gap-2">
+            <ProFormText
+              name="captchaCode"
+              fieldProps={{
+                size: 'large'
+              }}
+              label={intl.formatMessage({ id: 'mt.tuxingyanzhengma' })}
+              placeholder={intl.formatMessage({ id: 'mt.shuruyanzhengma' })}
+              required={false}
+              rules={[
+                {
+                  required: true,
+                  message: intl.formatMessage({ id: 'mt.shuruyanzhengma' })
+                }
+              ]}
+              formItemProps={{ style: { width: '100%' } }}
+            />
+            <div className="border-gray-220 border rounded-lg cursor-pointer w-[100px] overflow-hidden h-[49px]" onClick={handleCaptcha}>
+              <img src={captchaInfo.image} className="w-full h-full" />
+            </div>
+          </div>
         </LoginForm>
       )}
       {loading && (
         <div className="bg-white rounded-lg w-[490px] h-[520px] flex items-center justify-center flex-col">
           <div>
             <Lottie
-              className="w-[364px] h-[345px]"
+              className="w-[400px] h-[400px]"
               animationData={animationData}
               renderer="svg"
               autoplay={true}
@@ -226,12 +293,12 @@ export default function Login() {
               assetsPath="/img/"
             />
           </div>
-          <div className="flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center relative -top-5 px-6">
             <div className="text-lg text-gray font-semibold">
-              <FormattedMessage id="uc.dengluzhong" />
+              <FormattedMessage id="mt.dengluzhong" />
             </div>
-            <div className="pt-5 text-sm text-gray-secondary">
-              <FormattedMessage id="uc.loginTips" />
+            <div className="pt-4 text-sm text-gray-secondary">
+              <FormattedMessage id="mt.loginTips" />
             </div>
           </div>
         </div>

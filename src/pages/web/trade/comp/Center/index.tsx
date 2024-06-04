@@ -1,0 +1,39 @@
+import { FormattedMessage } from '@umijs/max'
+import { observer } from 'mobx-react'
+import { useState } from 'react'
+
+import Tabs from '@/components/Base/Tabs'
+
+import Futures from '../Futures'
+import HeaderStatisInfo from '../HeaderStatisInfo'
+import TradingView from '../TradingView'
+
+// pc端中间区域部分
+const Center = () => {
+  const [tabKey, setTabKey] = useState(1)
+
+  const TabsItems: any = [
+    { key: 1, label: <FormattedMessage id="mt.chart" /> },
+    { key: 2, label: <FormattedMessage id="mt.heyueshuxing" /> }
+  ]
+
+  return (
+    <div className="flex h-[690px] flex-1 flex-col bg-white pb-1">
+      <Tabs
+        items={TabsItems}
+        onChange={(key: any) => {
+          setTabKey(key)
+        }}
+        tabBarGutter={44}
+        tabBarStyle={{ paddingLeft: 26 }}
+        size="small"
+        marginBottom={0}
+      />
+      <HeaderStatisInfo />
+      <TradingView style={{ display: tabKey === 1 ? 'block' : 'none' }} />
+      <Futures style={{ display: tabKey === 2 ? 'block' : 'none' }} />
+    </div>
+  )
+}
+
+export default observer(Center)

@@ -119,7 +119,8 @@ export default {
   },
   extend: {
     boxShadow: {
-      custom: '0px 2px 70px 0px rgba(80,80,80,0.07)'
+      custom: '0px 2px 70px 0px rgba(80,80,80,0.07)',
+      dropdown: '0px 2px 50px 8px rgba(200,200,200,0.3)'
     }
   }
 }

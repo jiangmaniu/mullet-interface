@@ -59,6 +59,27 @@
 */
 
 export default [
+  // web端路由
+  {
+    path: '/',
+    component: '@/layouts/WebLayout',
+    layout: false,
+    routes: [
+      // {
+      //   path: '/:lng/home',
+      //   component: './web/home'
+      // },
+      // @TODO 首页暂时重定向/web/trade
+      {
+        path: '/',
+        component: './web/trade'
+      },
+      {
+        path: '/:lng/trade',
+        component: './web/trade'
+      }
+    ]
+  },
   // 用户
   {
     path: '/:lng/user',
@@ -73,11 +94,6 @@ export default [
         path: '/:lng/user/forget',
         component: './user/forgetPassword'
       }
-      // {
-      //   name: 'register',
-      //   path: '/:lng/user/register',
-      //   component: './user/register'
-      // }
     ]
   },
   {
@@ -85,24 +101,24 @@ export default [
     name: 'myAccount',
     icon: 'icon-caidan-jiaoyipinzhong',
     access: 'canAdmin', // 权限配置
-    component: './account'
+    component: './admin/account'
   },
   {
     path: '/:lng/account/transfer',
     access: 'canAdmin', // 权限配置
-    component: './account/transfer',
+    component: './admin/account/transfer',
     hideInMenu: true
   },
   {
     path: '/:lng/account/type',
     access: 'canAdmin', // 权限配置
-    component: './account/accountTypeList',
+    component: './admin/account/accountTypeList',
     hideInMenu: true
   },
   {
     path: '/:lng/account/type/add',
     access: 'canAdmin', // 权限配置
-    component: './account/accountTypeList/add',
+    component: './admin/account/accountTypeList/add',
     hideInMenu: true
   },
   {
@@ -110,19 +126,19 @@ export default [
     name: 'deposit',
     icon: 'icon-caidan-dingdan', // @TODO替换图标
     access: 'canAdmin', // 权限配置
-    component: './deposit'
+    component: './admin/deposit'
   },
   {
     path: '/:lng/withdrawal',
     name: 'withdrawal',
     icon: 'icon-caidan-shujuyuan', // @TODO替换图标
     access: 'canAdmin', // 权限配置
-    component: './withdrawal'
+    component: './admin/withdrawal'
   },
   {
     path: '/:lng/withdrawal/add',
     access: 'canAdmin', // 权限配置
-    component: './withdrawal/add',
+    component: './admin/withdrawal/add',
     hideInMenu: true
   },
   {
@@ -130,19 +146,19 @@ export default [
     name: 'depositAndwithdrawalRecord',
     icon: 'icon-caidan-kehuguanli', // @TODO替换图标
     access: 'canAdmin', // 权限配置
-    component: './record'
+    component: './admin/record'
   },
   {
     path: '/:lng/setting',
     name: 'setting',
     icon: 'icon-caidan-shezhi', // @TODO替换图标
     access: 'canAdmin', // 权限配置
-    component: './setting'
+    component: './admin/setting'
   },
   {
     path: '/:lng/setting/kyc',
     access: 'canAdmin', // 权限配置
-    component: './setting/kyc',
+    component: './admin/setting/kyc',
     hideInMenu: true
   },
   {

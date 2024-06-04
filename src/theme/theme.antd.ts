@@ -1,4 +1,4 @@
-import { blue, gray } from './theme.config'
+import { bgColorBase, blue, gray } from './theme.config'
 
 const gray500 = gray['500']
 const gray600 = gray['600']
@@ -13,13 +13,13 @@ const colorPrimary = gray['900'] //  antd的主题色设置为黑色，页面中
 export default {
   // 全局token
   colorPrimary, // 主要颜色，影响最大，同步修改config/defaultSettings中的配置
-  colorPrimaryHover: gray['600'], // 主色梯度下的悬浮态
-  colorPrimaryBorderHover: gray['600'],
+  colorPrimaryHover: gray['500'], // 主色梯度下的悬浮态
+  colorPrimaryBorderHover: gray['500'],
   colorPrimaryBgHover: 'rgba(0, 0, 0, 0.04)',
-  colorPrimaryBg: gray['100'],
+  colorPrimaryBg: bgColorBase,
   fontSize: 14, // 默认14
   borderRadius: 7, // 圆角
-  colorBgContainerDisabled: 'rgba(217, 221, 227, .2)', // 禁用背景颜色
+  colorBgContainerDisabled: bgColorBase, // 禁用背景颜色
 
   // 组件对应的token
   Tabs: {
@@ -30,14 +30,17 @@ export default {
     inkBarColor: gray900, // 指示条颜色
     titleFontSize: 16
   },
-  // Button: {
-  //   // https://ant-design.antgroup.com/components/button-cn#%E4%B8%BB%E9%A2%98%E5%8F%98%E9%87%8Fdesign-token
-  //   defaultHoverBg: bluePrimary,
-  //   defaultActiveBorderColor: bluePrimary,
-  //   defaultHoverBorderColor: bluePrimary,
-  //   defaultActiveBg: bluePrimary,
-  //   primaryColor: '#fff'
-  // },
+  Button: {
+    colorPrimary: bluePrimary,
+    colorPrimaryHover: bluePrimary, // 主色梯度下的悬浮态
+    colorPrimaryBorderHover: bluePrimary,
+    colorPrimaryActive: bluePrimary // 主色梯度下的深色激活态。
+    // https://ant-design.antgroup.com/components/button-cn#%E4%B8%BB%E9%A2%98%E5%8F%98%E9%87%8Fdesign-token
+    // defaultHoverBg: bluePrimary,
+    // defaultActiveBorderColor: bluePrimary,
+    // defaultHoverBorderColor: bluePrimary,
+    // defaultActiveBg: bluePrimary
+  },
   Select: {
     multipleItemBg: 'rgba(24, 62, 252, 0.04)',
     optionSelectedBg: '#eee' // 选项选中时背景色
@@ -65,13 +68,10 @@ export default {
   },
   Message: {
     contentBg: 'rgba(1,1,1,0.6)'
-  },
-  Slider: {
-    dotActiveBorderColor: bluePrimary,
-    handleActiveColor: bluePrimary,
-    handleColor: bluePrimary
   }
+  // Slider: {
+  //   dotActiveBorderColor: bluePrimary,
+  //   handleActiveColor: bluePrimary,
+  //   handleColor: bluePrimary
+  // }
 }
-
-// @TODO 后面删除 临时
-export const ThemeConst = {}

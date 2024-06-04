@@ -266,6 +266,18 @@ export const AllSymbols: IQuoteInfoProp[] = [
   { name: 'USOIL', label: 'USOIL', isRecommend: false, type: 4 }
 ]
 
+// 行情页默认选择的自选产品
+export const DEFAULT_QUOTE_FAVORITES_CURRENCY = [
+  { name: 'GOLD', checked: true, label: 'GOLD', type: 4 },
+  { name: 'USOIL', checked: true, label: 'USOIL', type: 4 },
+  { name: 'UKOIL', checked: true, label: 'UKOIL', type: 4 },
+  { name: 'NAS100', checked: true, label: 'NAS100', type: 3 },
+  { name: 'BTCUSDT', checked: true, label: 'BTC/USDT', type: 1 },
+  { name: 'ETHUSDT', checked: true, label: 'ETH/USDT', type: 1 },
+  { name: 'EURUSD', checked: true, label: 'EURUSD', type: 2 },
+  { name: 'GBPUSD', checked: true, label: 'GBPUSD', type: 2 }
+]
+
 export function formatQuotes() {
   const quoteList1: IQuoteInfoProp[] = [] //数字货币
   const quoteList2: IQuoteInfoProp[] = [] //外汇
@@ -377,4 +389,29 @@ export function covertProfit(quotes: any, symbols: any, trendingInfo: any) {
   }
   // 返回转化后的 profit
   return Number(profit.toFixed(2))
+}
+
+/**
+ * 格式化交易时间段
+ * @param a 分钟
+ * @returns
+ */
+export function formatSessionTime(a: any) {
+  let b: any = (a / 60).toFixed(2)
+  if (parseInt(b) === parseFloat(b)) {
+    // console.log('整数')
+    if (b < 10) {
+      return '0' + parseInt(b).toFixed(0) + ':' + '00'
+    } else {
+      return parseInt(b).toFixed(0) + ':' + '00'
+    }
+  } else {
+    let c: any = b.substring(b.indexOf('.') + 1, b.length) * 0.01
+    let d: any = parseInt(b).toFixed(0)
+    if (d < 10) {
+      return '0' + d + ':' + (c * 60).toFixed(0)
+    } else {
+      return d + ':' + (c * 60).toFixed(0)
+    }
+  }
 }

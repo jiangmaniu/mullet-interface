@@ -48,10 +48,11 @@ export default function AreaCodeSelect({
   const { isMobileOrIpad } = useEnv()
   const intl = useIntl()
   const { lng } = useLang()
+  // @ts-ignore
   const { data, loading } = useModel('areaList')
   const [langKey, setLangKey] = useState(0) // 用于触发重新渲染的 key
 
-  const options = data?.map((v) => {
+  const options = data?.map((v: any) => {
     const label = lng === 'zh-TW' ? v.areaNameZh : v.areaName
     return {
       ...v,
@@ -155,7 +156,7 @@ export default function AreaCodeSelect({
           }}
           // 自定义option列表项
           renderLabel={(item) => {
-            const areaCode = options?.find((v) => v.areaId === item.value)?.areaCode
+            const areaCode = options?.find((v: any) => v.areaId === item.value)?.areaCode
             return (
               <div className="flex items-center justify-between">
                 <span className="text-main pr-3">{areaCode}</span>
@@ -165,7 +166,7 @@ export default function AreaCodeSelect({
           }}
           // 自定义选择后展示在输入框上的项
           renderSelectItem={({ items, selectedLabel }) => {
-            const item = options?.find((v) => {
+            const item = options?.find((v: any) => {
               const label = lng === 'zh-TW' ? v.areaNameZh : v.areaName
               return label === selectedLabel
             }) as User.AreaCodeItem

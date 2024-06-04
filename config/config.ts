@@ -153,11 +153,7 @@ export default defineConfig({
    */
   headScripts: [
     // 解决首次加载时白屏的问题
-    { src: '/scripts/loading.js', async: true },
-    // gt4人机交互
-    { src: '/scripts/gt4.js', async: true },
-    // 获取地区信息
-    { src: '//geoip-js.com/js/apis/geoip2/v2.1/geoip2.js', async: true }
+    { src: '/scripts/loading.js', async: true }
   ],
 
   //================ pro 插件配置 =================

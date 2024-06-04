@@ -4,7 +4,7 @@ import { action, makeObservable, observable } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
 import { URLS } from '@/constants'
-import { STORAGE_GET_PWD, STORAGE_GET_USER_INFO } from '@/utils/storage'
+import { STORAGE_GET_USER_INFO } from '@/utils/storage'
 import {
   AllSymbols,
   covertProfit,
@@ -56,7 +56,7 @@ class WSStore {
   @observable quoteName: CurrencyType = 'BTCUSDT'
   @observable quoteLabel = 'BTC/USDT'
   @observable label: Record<CurrencyType, string> = CurrencyLABELS // 货币类型
-  @observable websocketUrl = URLS.ws.y
+  @observable websocketUrl = 'ws://192.168.5.60:19109/websocketServer'
   @observable urls = [URLS.ws.y, URLS.ws.d, URLS.ws.r] //ws链接
 
   @action
@@ -64,57 +64,48 @@ class WSStore {
     // console.log(IuserInfo.pwd)
     const userInfo = STORAGE_GET_USER_INFO()
     // console.log('xxxx', userInfo)
-    if (userInfo !== null) {
-      if (this.userType === 0) {
-        this.loginCmd.login = userInfo.realStandardAccount
-        this.loginCmd.password = STORAGE_GET_PWD()
-        this.websocketUrl = URLS.ws.d // 真实
-      } else {
-        this.websocketUrl = URLS.ws.r // 模拟
-        this.loginCmd.login = userInfo.demoAccount
-        this.loginCmd.password = STORAGE_GET_PWD()
-      }
-    } else {
-      this.websocketUrl = URLS.ws.y // 游客
-    }
-    let urlIndex = 0
-    // console.log('this.websocketUrl', this.websocketUrl)
-    const urlProvider = () => {
-      // 连接
-      const url = Array.isArray(this.websocketUrl) ? this.websocketUrl[urlIndex++ % this.websocketUrl.length] : this.websocketUrl
-      return url
-    }
+    // if (userInfo !== null) {
+    //   if (this.userType === 0) {
+    //     this.loginCmd.login = userInfo.realStandardAccount
+    //     this.loginCmd.password = STORAGE_GET_PWD()
+    //     this.websocketUrl = URLS.ws.d // 真实
+    //   } else {
+    //     this.websocketUrl = URLS.ws.r // 模拟
+    //     this.loginCmd.login = userInfo.demoAccount
+    //     this.loginCmd.password = STORAGE_GET_PWD()
+    //   }
+    // } else {
+    //   this.websocketUrl = URLS.ws.y // 游客
+    // }
     // console.log('yyy', this.websocketUrl)
-    this.socket = new ReconnectingWebSocket(urlProvider, [], {
+    const token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5hbnRfaWQiOiIwMDAwMDAiLCJ1c2VyX25hbWUiOiJhZG1pbiIsInJlYWxfbmFtZSI6IueuoeeQhuWRmCIsImF2YXRhciI6Imh0dHBzOi8vZ3cuYWxpcGF5b2JqZWN0cy5jb20vem9zL3Jtc3BvcnRhbC9CaWF6ZmFueG1hbU5Sb3h4VnhrYS5wbmciLCJhdXRob3JpdGllcyI6WyJzZW5pb3IiLCJhZG1pbmlzdHJhdG9yIiwiZGV2b3BzIl0sImNsaWVudF9pZCI6IlN0ZWxsdXhUcmFkZXIiLCJyb2xlX25hbWUiOiJhZG1pbmlzdHJhdG9yLHNlbmlvcixkZXZvcHMiLCJsaWNlbnNlIjoicG93ZXJlZCBieSBibGFkZXgiLCJwb3N0X2lkIjoiMTc5MjM3ODE0Nzc4NjcyNzQyNSIsInVzZXJfaWQiOiIxMTIzNTk4ODIxNzM4Njc1MjAxIiwicm9sZV9pZCI6IjExMjM1OTg4MTY3Mzg2NzUyMDEsMTc5MjM3NjQ2MDc1Mzc3MjU0NiwxNzkyMzc2OTEzODgxMjEwODgyIiwic2NvcGUiOlsiYWxsIl0sIm5pY2tfbmFtZSI6IueuoeeQhuWRmCIsIm9hdXRoX2lkIjoiIiwiZGV0YWlsIjp7InR5cGUiOiJ3ZWIifSwiZXhwIjoxNzE3MTQ4MDE3LCJkZXB0X2lkIjoiMTEyMzU5ODgxMzczODY3NTIwMSIsImp0aSI6IjIyNGM4ZmMxLWE2YmEtNDBlOS1iMzFlLTUwYmI1YzU5MjhmMSIsImFjY291bnQiOiJhZG1pbiJ9.raf5gK7EsQRCMk-uFPOyl9-laGtMNVI1TRHVcUrH6Kg'
+    this.socket = new ReconnectingWebSocket(this.websocketUrl, ['WebSocket', token], {
       minReconnectionDelay: 1,
       connectionTimeout: 5000, // 重连时间
       maxEnqueuedMessages: 0 // 不缓存发送失败的指令
     })
     this.socket.addEventListener('open', () => {
-      // console.log('xxxxx')
-      const list = this.quoteList //获取品种信息
-      if (STORAGE_GET_PWD()) {
-        this.send(this.loginCmd) // 默认先登录
-      }
-      let getSymbol = {}
-      let getSymbolVerb = {}
-      let getquotes = {}
-      list.map((item, i) => {
-        getSymbol = { cmd: 10001, sbl: item.name }
-        getSymbolVerb = { cmd: 10003, sbl: item.name }
-        getquotes = { cmd: 10007, sbl: item.name }
-        this.send(getSymbol) //获取品种信息
-        this.send(getSymbolVerb) //获取高开低收
-        this.send(getquotes) //获取最新报价
-      })
+      // {"header":{"tenantId":"000000","userId":"1123598821738675201","msgId":"subscribe","flowId":1717144942217},"body":{"topic":"/000000/huobi/symbol/btcusdt","cancel":false}}
+      this.socket.send(
+        JSON.stringify({
+          header: { tenantId: '000000', userId: '1123598821738675201', msgId: 'subscribe', flowId: 1717144942217 },
+          body: {
+            topic: '/000000/huobi/symbol/btcusdt',
+            cancel: false
+          }
+        })
+      )
       this.socketState = 1
     })
     this.socket.addEventListener('message', (d: any) => {
+      const res = JSON.parse(d.data)
+      console.log('message', res?.body)
       // console.log(d)
-      let res = JSON.parse(d.data)
-      // console.log('res===', res)
-      // this.option.message && this.option.message(res); // 保存相关信息
-      this.message(res)
+      // let res = JSON.parse(d.data)
+      // // console.log('res===', res)
+      // // this.option.message && this.option.message(res); // 保存相关信息
+      // this.message(res)
       // DeviceEventEmitter.emit('WS_MESSAGE', res) // 派发订阅事件
       // return true;
     })

@@ -11,6 +11,7 @@ export default () => {
   const [topTabItems, setTopTabItems] = useState<ITabItem[]>([]) // 顶部导航栏tabs
   const [topTabKey, setTopTabKey] = useState<string>('') // 顶部导航栏tabs
   const [notificationApi, setNotificationApi] = useState<any>(null) // 通知api
+  const [openTradeSidebar, setOpenTradeSidebar] = useState(true) // 控制打开交易页面侧边栏
 
   // 首次加载设置默认Key
   useEffect(() => {
@@ -30,6 +31,9 @@ export default () => {
     topTabItems,
     setTopTabItems,
     topTabKey,
-    setTopTabKey
+    setTopTabKey,
+
+    openTradeSidebar,
+    setOpenTradeSidebar
   }
 }

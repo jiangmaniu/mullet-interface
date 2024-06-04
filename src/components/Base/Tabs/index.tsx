@@ -10,8 +10,9 @@ export default function Tabs({
   type,
   tabBarGutter = 0,
   items = [],
+  marginBottom = 16,
   ...res
-}: TabsProps & { hiddenBottomLine?: boolean; showTopTabLine?: boolean }) {
+}: TabsProps & { hiddenBottomLine?: boolean; showTopTabLine?: boolean; marginBottom?: number }) {
   let rootClassName = styles.tabs
   if (showTopTabLine) {
     rootClassName = styles.topTabs
@@ -25,6 +26,9 @@ export default function Tabs({
       // 设置最后一个元素间距，通过:last-child设置不生效
       [`.ant-tabs-nav-list > .ant-tabs-tab:nth-child(${itemsLen})`]: {
         marginRight: itemsLen >= 5 ? `${tabBarGutter + 30}px` : 0
+      },
+      '.ant-tabs-nav': {
+        marginBottom: `${marginBottom} !important`
       }
     }
   })
