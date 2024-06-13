@@ -30,6 +30,7 @@ export const gray = {
 export const yellow = {
   500: '#FDD436',
   550: '#F5B52C',
+  560: '#FFA90E',
   600: '#C49002'
 }
 
