@@ -12,12 +12,12 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 
 // 余额不足提示
 export default observer((props, ref) => {
-  const { global } = useStores()
+  const { trade } = useStores()
   const { isPc } = useEnv()
   const { lng } = useLang()
 
   const close = () => {
-    global.showBalanceEmptyModal = false
+    trade.showBalanceEmptyModal = false
   }
 
   const renderContent = () => {
@@ -59,7 +59,7 @@ export default observer((props, ref) => {
     <SwitchPcOrWapLayout
       pcComponent={
         <Modal
-          open={global.showBalanceEmptyModal}
+          open={trade.showBalanceEmptyModal}
           styles={{
             header: {
               background: 'var(--card-gradient-header-bg)',
@@ -78,7 +78,7 @@ export default observer((props, ref) => {
       }
       wapComponent={
         <Popup
-          open={global.showBalanceEmptyModal}
+          open={trade.showBalanceEmptyModal}
           renderHeader={
             <div style={{ background: 'var(--card-gradient-header-bg)', height: 150, borderRadius: 16 }}>
               <CloseOutlined

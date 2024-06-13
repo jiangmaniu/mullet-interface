@@ -433,10 +433,10 @@ declare namespace Symbol {
     /**
      * 交易时间（JSON）
      */
-    tradeTimeConf?: string
+    tradeTimeConf?: Symbol.TradeTimeConf
     /**
      * 手续费配置（JSON）
      */
-    transactionFeeConf?: string
+    transactionFeeConf?: Symbol.TransactionFeeConf
   }
 }

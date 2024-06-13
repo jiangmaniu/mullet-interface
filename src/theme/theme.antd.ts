@@ -68,6 +68,9 @@ export default {
   },
   Message: {
     contentBg: 'rgba(1,1,1,0.6)'
+  },
+  Dropdown: {
+    zIndexPopup: 2000 // 下拉菜单 z-index
   }
   // Slider: {
   //   dotActiveBorderColor: bluePrimary,

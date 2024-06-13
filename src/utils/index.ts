@@ -53,6 +53,16 @@ export function formatMobile(mobile: string | undefined) {
   return `${mobile}`.replace(mobileReg, '$1****$2')
 }
 
+/**
+ *隐藏部分邮箱信息
+ * @param email
+ * @returns
+ */
+export function hideEmail(email = '') {
+  const regex = /^(.{2})(.*)(@.*)$/
+  return email.replace(regex, (_, prefix, hidden, domain) => `${prefix}${'*'.repeat(4)}${domain}`)
+}
+
 // 格式化邮箱
 export const formatEmail = (email: string | undefined) => {
   if (!email) return
@@ -336,7 +346,7 @@ export const waitTime = (time = 100) => {
 }
 
 // 复制功能
-export const copyContent = (cotVal: string, title = 'Replicating Success') => {
+export const copyContent = (cotVal: any, title = 'Replicating Success') => {
   const pEle = document.createElement('p')
   pEle.innerHTML = cotVal || ''
   document.body.appendChild(pEle)
@@ -347,7 +357,7 @@ export const copyContent = (cotVal: string, title = 'Replicating Success') => {
   window.getSelection()?.addRange(range) // 执行选中元素
 
   const copyStatus = document.execCommand('Copy') // 执行copy操作
-  message.info(copyStatus ? title : 'copy failed')
+  message.success(copyStatus ? title : 'copy failed')
   document.body.removeChild(pEle)
   window.getSelection()?.removeAllRanges() //清除页面中已有的selection
 }
@@ -365,4 +375,40 @@ export function toFixed(val: any, num = 2) {
     value = 0
   }
   return value.toFixed(num)
+}
+
+/**
+ * 格式化字符串 178****12
+ * @param str 字符串
+ * @param num 左右字符保留多少位展示
+ * @returns
+ */
+export function hiddenCenterPartStr(str: any, num = 6) {
+  if (!str) return ''
+  const reg = new RegExp(`^(.{${num}}).*(.{${num}})$`)
+  return `${str}`.replace(reg, '$1****$2')
+}
+
+// 格式化银行卡号 为1111-2222-3333-444
+export function formatBankCardCode(str: string, digits = 4) {
+  let result = ''
+  for (let i = 0; i < str.length; i++) {
+    result += str[i]
+    if ((i + 1) % digits === 0 && i !== str.length - 1) {
+      result += '-'
+    }
+  }
+  return result
+}
+
+/**
+ * 判断是否是图片
+ * @param filePath
+ * @returns
+ */
+export function isImageFile(filePath: any) {
+  // 定义正则表达式，用于匹配常见的图片文件扩展名
+  const imagePattern = /\.(jpeg|jpg|gif|png|bmp|svg|webp|tiff|ico)$/i
+  // 使用正则表达式进行匹配
+  return imagePattern.test(filePath)
 }

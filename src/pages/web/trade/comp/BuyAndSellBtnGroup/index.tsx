@@ -7,7 +7,7 @@ import Buy from '@/components/Base/Svg/Buy'
 import Sell from '@/components/Base/Svg/Sell'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
-import useCurrentQuoteInfo from '@/hooks/useCurrentQuoteInfo'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
 
 type IProps = {
@@ -30,7 +30,7 @@ export default observer(
     const { breakPoint } = useEnv()
     const [width, setWidth] = useState<any>(0)
 
-    const quoteInfo = useCurrentQuoteInfo()
+    const quoteInfo = useCurrentQuote()
 
     useEffect(() => {
       let w: any
@@ -84,9 +84,9 @@ export default observer(
             </div>
           </Sell>
         </div>
-        {!!quoteInfo.askBidDiffValue && (
+        {!!quoteInfo.spread && (
           <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-gray">
-            {quoteInfo.askBidDiffValue}
+            {quoteInfo.spread}
           </div>
         )}
         <div

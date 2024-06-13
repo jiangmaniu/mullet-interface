@@ -1,22 +1,22 @@
 // eslint-disable-next-line simple-import-sort/imports
-import { Button, Checkbox, message } from 'antd'
+import { Button, Checkbox } from 'antd'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
-import { TRADE_TYPE } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuoteInfo from '@/hooks/useCurrentQuoteInfo'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
+import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import LevelAge from './comp/LevelAge'
-import SelectPositionType from './comp/SelectPositionType'
+import SelectMarginType from './comp/SelectMarginType'
 
 type IProps = {
   type?: any
@@ -29,10 +29,11 @@ export default observer(
   forwardRef(({ popupRef, type, orderType }: IProps, ref) => {
     const intl = useIntl()
     const { isPc, isMobileOrIpad } = useEnv()
-    const { global, ws } = useStores()
-    const { tradeList } = ws
+    const { trade, ws } = useStores()
     const [checkedSpSl, setCheckedSpSl] = useState(false) // 勾选止盈止损
     const [isCrypto, setIsCrypto] = useState(true) // 是否是数字货币 @TODO 需要根据全局切换的品种名称来判断，切换不同的布局
+    const [leverageMultiple, setLeverageMultiple] = useState(0) // 杠杆倍数
+    const [marginType, setMarginType] = useState<API.MaiginType>('CROSS_MARGIN') // 保证金类型
 
     const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
 
@@ -56,10 +57,14 @@ export default observer(
     const isBuy = tradeType === OP_BUY
 
     const token = STORAGE_GET_TOKEN()
-    const { currentSymbol: symbols, currentQuote: quote, symbol, bid, ask } = useCurrentQuoteInfo()
+    const { currentSymbol: symbols, currentQuote: quote, symbol, bid, ask } = useCurrentQuote()
+    // @ts-ignore
     const d = symbols?.digits
+    // @ts-ignore
     const stopl = symbols?.stopl * Math.pow(10, -d)
+    // @ts-ignore
     const vmax = symbols?.vmax / 10000
+    // @ts-ignore
     const vmin = symbols?.vmin / 10000
     const step = Math.pow(10, -d)
 
@@ -82,60 +87,74 @@ export default observer(
     if (quote && symbols) {
       // 买入
       if (isBuy) {
+        // @ts-ignore
         priceTip = (quote.bid - stopl).toFixed(d)
         sl_scope = price ? (price - stopl).toFixed(d) : 0
         sp_scope = price ? (price + stopl).toFixed(d) : 0
+        // @ts-ignore
         slProfit = price && sl ? ((sl - price) * count * symbols.consize).toFixed(d) : 0
+        // @ts-ignore
         spProfit = price && sp ? ((sp - price) * count * symbols.consize).toFixed(d) : 0
       } else {
+        // @ts-ignore
         priceTip = (quote.ask + stopl).toFixed(d)
         sl_scope = price ? (price + stopl).toFixed(d) : 0
         sp_scope = price ? (price - stopl).toFixed(d) : 0
+        // @ts-ignore
         slProfit = price && sl ? ((price - sl) * count * symbols.consize).toFixed(d) : 0
+        // @ts-ignore
         spProfit = price && sp ? ((price - sp) * count * symbols.consize).toFixed(d) : 0
       }
     }
 
-    const onFinish = () => {
+    const onFinish = async () => {
       // sl_scope, sp_scope
       if (!token) {
         goLogin()
         return
       }
-      const reg = /^\d+(\.\d{0,2})?$/
-      if (!reg.test(count)) {
-        message.error(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
-        return
-      }
-      if (count < vmin || count > vmax) {
-        message.error(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
-        return
-      }
-      const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
-      if (slFlag) {
-        message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-        return
-      }
-      const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
-      if (spFlag) {
-        message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-        return
-      }
+      // const reg = /^\d+(\.\d{0,2})?$/
+      // if (!reg.test(count)) {
+      //   message.error(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
+      //   return
+      // }
+      // if (count < vmin || count > vmax) {
+      //   message.error(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
+      //   return
+      // }
+      // const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
+      // if (slFlag) {
+      //   message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //   return
+      // }
+      // const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
+      // if (spFlag) {
+      //   message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //   return
+      // }
 
-      let res = {
-        cmd: 'MSG_TYPE.PLACE_ORDER',
-        sbl: symbol,
-        act: 201,
-        type: isBuy ? TRADE_TYPE.LIMIT_BUY : TRADE_TYPE.LIMIT_SELL,
-        vol: count * 10000,
-        price: parseFloat(price),
-        sl: parseFloat(sl || 0),
-        tp: parseFloat(sp || 0)
-      }
+      let params = {
+        symbol,
+        buySell: isBuy ? TRADE_BUY_SELL.BUY : TRADE_BUY_SELL.SELL, // 订单方向
+        orderVolume: count,
+        stopLoss: sl ? parseFloat(sl) : undefined,
+        takeProfit: sp ? parseFloat(sp) : undefined,
+        leverageMultiple,
+        tradeAccountId: trade.currentAccountInfo?.id,
+        marginType,
+        limitPrice: priceValue,
+        type: isBuy ? ORDER_TYPE.LIMIT_BUY_ORDER : ORDER_TYPE.LIMIT_SELL_ORDER // 订单类型
+      } as Order.CreateOrder
 
-      console.log('参数', res)
+      console.log('参数', params)
       // ws.socket.send(JSON.stringify(res))
       // ws.setNewOrderFn(res)
+
+      const res = await trade.createOrder(params)
+
+      if (!res.success) {
+        return
+      }
 
       setPrice('')
       setCount(0.01)
@@ -152,7 +171,13 @@ export default observer(
       <div className="mx-[10px] mt-3 flex flex-col justify-between h-[620px]">
         <div>
           {/* 全仓、逐仓选择 */}
-          {isCrypto && <SelectPositionType />}
+          {isCrypto && (
+            <SelectMarginType
+              onChange={(value) => {
+                setMarginType(value)
+              }}
+            />
+          )}
 
           <div className="relative flex items-center justify-center rounded-xl border border-primary p-[2px]">
             <BuyAndSellBtnGroup
@@ -165,7 +190,11 @@ export default observer(
           </div>
           {/* 杠杆倍数 */}
           <LevelAge
-          // initialValue={10}
+            // initialValue={10}
+            onChange={(value) => {
+              console.log('value', value)
+              setLeverageMultiple(value)
+            }}
           />
           <InputNumber
             placeholder={intl.formatMessage({ id: 'mt.shurujiage' })}

@@ -1,6 +1,7 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { ProFormSelectProps } from '@ant-design/pro-form/es/components/Select'
-import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl } from '@umijs/max'
+import { useRequest } from 'ahooks'
 import { FormInstance } from 'antd/lib'
 import { useState } from 'react'
 
@@ -10,8 +11,16 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import useLangChange from '@/hooks/useLangChange'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
+import { getAreaCode } from '@/services/api/common'
 
-type valueKey = keyof User.AreaCodeItem
+type AreaCodeItem = API.KEYVALUE & {
+  /**英文label */
+  areaName: string
+  /**中文label */
+  areaNameZh: string
+  areaCode: string
+}
+type valueKey = keyof AreaCodeItem
 /**
  * 手机区号选择
  * @returns
@@ -48,17 +57,22 @@ export default function AreaCodeSelect({
   const { isMobileOrIpad } = useEnv()
   const intl = useIntl()
   const { lng } = useLang()
-  // @ts-ignore
-  const { data, loading } = useModel('areaList')
   const [langKey, setLangKey] = useState(0) // 用于触发重新渲染的 key
 
-  const options = data?.map((v: any) => {
-    const label = lng === 'zh-TW' ? v.areaNameZh : v.areaName
+  const { loading, data, run } = useRequest(getAreaCode)
+  const tempList = data?.data || []
+  const list = tempList as AreaCodeItem[]
+
+  const options = list?.map((v: AreaCodeItem) => {
+    const [areaNameZh, areaName] = v.value?.split(',')
+    const label = lng === 'zh-TW' ? areaNameZh : areaName || areaNameZh
     return {
-      ...v,
+      key: v.key,
       label,
-      areaCode: `+${v.areaCode}`,
-      value: v.areaId
+      areaNameZh,
+      areaName,
+      value: v.key,
+      areaCode: `+${v.key}`
     }
   })
 
@@ -118,7 +132,7 @@ export default function AreaCodeSelect({
             // 处理搜索
             filterOption: (initialValue, option) => {
               // @ts-ignore
-              return option?.areaCode?.indexOf(initialValue) !== -1 || (option?.label || '').indexOf(initialValue) !== -1
+              return option?.key?.indexOf(initialValue) !== -1 || (option?.label || '').indexOf(initialValue) !== -1
             },
             suffixIcon: <SelectSuffixIcon disabled={disabled} />
           }}
@@ -132,7 +146,7 @@ export default function AreaCodeSelect({
           valueKey={valueKey}
           required={!disabled}
           allowClear={false}
-          placeholder={<FormattedMessage id="admin.table.account.guoji" />}
+          placeholder={<FormattedMessage id="mt.quhao" />}
           options={options}
           style={{ paddingLeft: 10, paddingRight: 10 }}
           disabled={disabled}
@@ -166,12 +180,12 @@ export default function AreaCodeSelect({
           }}
           // 自定义选择后展示在输入框上的项
           renderSelectItem={({ items, selectedLabel }) => {
-            const item = options?.find((v: any) => {
+            const item = options?.find((v: AreaCodeItem) => {
               const label = lng === 'zh-TW' ? v.areaNameZh : v.areaName
               return label === selectedLabel
-            }) as User.AreaCodeItem
+            }) as AreaCodeItem
 
-            const label = lng === 'zh-TW' ? item.areaNameZh : item.areaName
+            const label = lng === 'zh-TW' ? item?.areaNameZh : item?.areaName
             return <span className="text-main">{valueKey === 'areaName' ? label : item[valueKey as valueKey] || item.areaCode}</span>
           }}
           showSearch

@@ -8,9 +8,11 @@ import ListItem from '@/components/Base/ListItem'
 import Popup from '@/components/Base/Popup'
 import { transferWeekDay } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
-import { AllSymbols, formatQuotes, formatSessionTime } from '@/utils/wsUtil'
+import { formatTimeStr } from '@/utils/business'
+import { AllSymbols, formatQuotes } from '@/utils/wsUtil'
 
 const timef = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
 
@@ -25,26 +27,33 @@ type IProps = {
 // 合约属性
 function Futures({ trigger, style }: IProps) {
   const popupRef = useRef<any>()
-  const { global, ws } = useStores()
+  const { trade, ws } = useStores()
   const { symbols } = ws as any
-  const symbol = global.activeSymbolName
+  const symbol = trade.activeSymbolName
+  const quoteInfo = useCurrentQuote()
+  const symbolConf = quoteInfo?.symbolConf
+  const prepaymentConf = quoteInfo?.prepaymentConf
+  const holdingCostConf = quoteInfo?.holdingCostConf
+  const tradeTimeConf = quoteInfo?.tradeTimeConf as any[]
+  const showPencent = holdingCostConf?.type !== 'point' // 以百分比模式
+  const marginMode = prepaymentConf?.mode // 保证金模式
 
   // 外汇
   const isWaiHui = AllSymbols.some((item) => item.type === 2)
-  const data = symbols[symbol] || { data: { sessions: [] } }
+  const data = { data: { sessions: [] } }
 
   const sessions: any = []
 
   const futrues = [
-    { label: <FormattedMessage id="mt.heyuedanwei" />, value: data?.consize },
-    { label: <FormattedMessage id="mt.huobidanwei" />, value: 'USD' },
-    { label: <FormattedMessage id="mt.baojiaxiaoshuwei" />, value: data?.digits },
+    { label: <FormattedMessage id="mt.heyuedanwei" />, value: symbolConf?.contractSize },
+    { label: <FormattedMessage id="mt.huobidanwei" />, value: symbolConf?.baseCurrency },
+    { label: <FormattedMessage id="mt.baojiaxiaoshuwei" />, value: quoteInfo?.digits },
     {
       label: <FormattedMessage id="mt.danbijiaoyishoushu" />,
       value: (
         <>
-          {(data?.vmin / 10000).toFixed(2)}
-          <FormattedMessage id="mt.lot" />-{(data?.vmax / 10000).toFixed(2)}
+          {toFixed(symbolConf?.minTrade)}
+          <FormattedMessage id="mt.lot" />-{toFixed(symbolConf?.maxTrade)}
           <FormattedMessage id="mt.lot" />
         </>
       )
@@ -53,32 +62,23 @@ function Futures({ trigger, style }: IProps) {
       label: <FormattedMessage id="mt.shoushuchazhi" />,
       value: (
         <>
-          {(data?.vstep / 10000).toFixed(2)}
+          {toFixed(symbolConf?.tradeStep)}
           <FormattedMessage id="mt.lot" />
         </>
       )
     },
-    { label: <FormattedMessage id="mt.geyelixiduodan" />, value: `${toFixed(data?.swap_long)}%` },
-    { label: <FormattedMessage id="mt.geyelixikongdan" />, value: `${toFixed(data?.swap_short)}%` },
-    { label: <FormattedMessage id="mt.xianjiahetingsunjuli" />, value: data?.stopl },
+    { label: <FormattedMessage id="mt.geyelixiduodan" />, value: `${toFixed(holdingCostConf?.buyBag)}${showPencent ? '%' : ''}` },
+    { label: <FormattedMessage id="mt.geyelixikongdan" />, value: `${toFixed(holdingCostConf?.sellBag)}${showPencent ? '%' : ''}` },
+    { label: <FormattedMessage id="mt.xianjiahetingsunjuli" />, value: symbolConf?.limitStopLevel },
 
-    // 保证金相关
-    ...(data?.margin_init
+    // 保证金-固定保证金模式
+    ...(marginMode === 'fixed_margin'
       ? [
           {
             label: <FormattedMessage id="mt.chushibaozhengjin" />,
             value: (
               <>
-                {(isWaiHui ? data.margin_init / 100 : data.margin_init).toFixed(2)} USTD/
-                <FormattedMessage id="mt.lot" />
-              </>
-            )
-          },
-          {
-            label: <FormattedMessage id="mt.jiaqibaozhengjin" />,
-            value: (
-              <>
-                {(isWaiHui ? (data.margin_init * 2) / 100 : data.margin_init * 2).toFixed(2)} USTD/
+                {(prepaymentConf?.fixed_margin?.initial_margin || 0).toFixed(2)} USD/
                 <FormattedMessage id="mt.lot" />
               </>
             )
@@ -87,7 +87,7 @@ function Futures({ trigger, style }: IProps) {
             label: <FormattedMessage id="mt.suocangbaozhengjin" />,
             value: (
               <>
-                {(isWaiHui ? (data.margin_init * 0.5) / 100 : data.margin_init * 0.5).toFixed(2)} USTD/
+                {(prepaymentConf?.fixed_margin?.locked_position_margin || 0).toFixed(2)} USD/
                 <FormattedMessage id="mt.lot" />
               </>
             )
@@ -154,17 +154,16 @@ function Futures({ trigger, style }: IProps) {
             }
           />
 
-          {sessions?.length > 0 && (
+          {tradeTimeConf?.length > 0 && (
             <div className="pt-14">
               <div className="py-4 text-xl font-medium">
                 <FormattedMessage id="mt.jiaoyishijian" />
                 <span className="text-base">（GMT+8）</span>
               </div>
               <div className="grid gap-y-4 xl:grid-cols-3 xxl:grid-cols-5">
-                {sessions.map((item: any, idx: number) => (
+                {tradeTimeConf.map((item: any, idx: number) => (
                   <div className="text-sm text-gray-weak" key={idx}>
-                    {/* @ts-ignore */}
-                    {transferWeekDay(timef[item.day])} {`(${formatSessionTime(item.open)} ~ ${formatSessionTime(item.close)})`}
+                    {transferWeekDay(item[item.weekDay])} {`${formatTimeStr(item.trade)}`}
                   </div>
                 ))}
               </div>

@@ -7,22 +7,23 @@ import { useRef, useState } from 'react'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
+import { getDefaultSymbolIcon } from '@/utils/business'
 import { getPathname } from '@/utils/navigator'
 
 import Sidebar from '../Sidebar'
 import styles from './styles.less'
 
 function HeaderTabsView() {
-  const { global } = useStores()
+  const { global, trade } = useStores()
   const { lng } = useLang()
 
-  const activeKey = global.activeSymbolName
+  const activeKey = trade.activeSymbolName
   const [showSidebar, setShowSidebar] = useState(false)
   const sidebarRef = useRef(null)
   const { openTradeSidebar } = useModel('global')
 
   const setActiveKey = (newActiveKey: string) => {
-    global.setActiveSymbolName(newActiveKey)
+    trade.setActiveSymbolName(newActiveKey)
   }
 
   useClickOutside([sidebarRef], () => {
@@ -42,40 +43,44 @@ function HeaderTabsView() {
     <div className={styles.header_view_tabs}>
       <div className="flex items-center" style={{ width: `calc(100vw - ${extraWidth} + ${!openTradeSidebar ? '60px' : '0px'})` }}>
         <Tabs style={{ '--active-line-height': '0px' }} activeKey={activeKey}>
-          {global.openSymbolNameList.map((item, idx) => (
-            <Tabs.Tab
-              key={item}
-              style={{ marginRight: 0, paddingBottom: 0 }}
-              title={
-                <div
-                  className={classNames(
-                    'flex cursor-pointer items-center justify-center rounded-t-[6px] border-x  bg-white p-2',
-                    idx > 0 ? '!border-l-0' : '',
-                    activeKey === item ? 'border-t-[4px] border-x-gray-60 border-t-blue-600' : 'border-t border-gray-60'
-                  )}
-                  onClick={() => {
-                    setActiveKey(item)
-                  }}
-                >
-                  <img width={28} height={28} alt="" src={`/img/coin-icon/${item}.png`} className="rounded-full" />
-                  <span className="select-none px-2 text-base font-semibold text-gray">{item}</span>
-                  {global.openSymbolNameList.length > 1 && (
-                    <img
-                      width={20}
-                      height={20}
-                      alt=""
-                      src="/img/close-icon.png"
-                      className="hover:rounded-xl hover:bg-gray-50"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        global.removeOpenSymbolNameList(item, idx)
-                      }}
-                    />
-                  )}
-                </div>
-              }
-            />
-          ))}
+          {trade.openSymbolNameList?.map((item, idx) => {
+            const symbolInfo = trade.symbolList.find((v) => v.symbol === item)
+            const imgUrl = symbolInfo?.imgUrl
+            return (
+              <Tabs.Tab
+                key={item}
+                style={{ marginRight: 0, paddingBottom: 0 }}
+                title={
+                  <div
+                    className={classNames(
+                      'flex cursor-pointer items-center justify-center rounded-t-[6px] border-x  bg-white p-2',
+                      idx > 0 ? '!border-l-0' : '',
+                      activeKey === item ? 'border-t-[4px] border-x-gray-60 border-t-blue-600' : 'border-t border-gray-60'
+                    )}
+                    onClick={() => {
+                      setActiveKey(item)
+                    }}
+                  >
+                    <img width={28} height={28} alt="" src={getDefaultSymbolIcon(imgUrl)} className="rounded-full" />
+                    <span className="select-none px-2 text-base font-semibold text-gray">{item}</span>
+                    {trade.openSymbolNameList.length > 1 && (
+                      <img
+                        width={20}
+                        height={20}
+                        alt=""
+                        src="/img/close-icon.png"
+                        className="hover:rounded-xl hover:bg-gray-50"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          trade.removeOpenSymbolNameList(item, idx)
+                        }}
+                      />
+                    )}
+                  </div>
+                }
+              />
+            )
+          })}
         </Tabs>
         <div className="group relative" onClick={() => setShowSidebar(true)} ref={sidebarRef}>
           <div className="add-btn mt-5 flex cursor-pointer rounded-tr-[4px] border-r border-t border-gray-60 p-[6px]">

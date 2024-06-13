@@ -1,9 +1,33 @@
 declare namespace User {
-  // 用户基本信息 @TODO 后面提供接口在修改
+  // 用户基本信息
   export type UserInfo = {
     name?: any
     imgUrl?: string
-  } & LoginResult
+  } & LoginResult &
+    ClientInfo
+  // 注册参数
+  type RegisterParams = {
+    /**
+     * 识别码：后台配置前端写死，区分不同渠道部署的应用
+     */
+    code: string
+    /**
+     * 国家
+     */
+    country?: string
+    /**
+     * 邮箱
+     */
+    email: string
+    /**
+     * 密码【加密】
+     */
+    password: string
+    /**
+     * 验证码
+     */
+    validateCode: number
+  }
   // 登录参数
   type LoginParams = {
     username?: string
@@ -45,6 +69,261 @@ declare namespace User {
     account: string
     jti: string
   }>
+  // 客户详细信息
+  type ClientInfo = {
+    accountCount?: {
+      /**
+       * 账户净值
+       */
+      availableBalance?: number
+      /**
+       * 交易账户id
+       */
+      id?: number
+      /**
+       * 总入金
+       */
+      totalDeposit?: number
+      /**
+       * 总盈亏
+       */
+      totalProfitLoss?: number
+      /**
+       * 总成交量
+       */
+      totalTradeVolume?: number
+      /**
+       * 总出金
+       */
+      totalWithdrawal?: number
+    }
+    /**
+     * 客户交易账户
+     */
+    accountList?: AccountItem[]
+    /**
+     * 地址
+     */
+    address?: string
+    /**
+     * 银行卡认证信息
+     */
+    bankCardAuth?: BankCard.ListItem[]
+    /**
+     * 客户组ID
+     */
+    clientGroupId?: number
+    /**
+     * 主键
+     */
+    id?: number
+    /**
+     * 是否绑定银行卡
+     */
+    isBankcardBind?: boolean
+    /**
+     * 是否KYC认证
+     */
+    isKycAtuh?: boolean
+    /**
+     * KYC认证信息
+     */
+    kycAuth?: KycAuth.ListItem[]
+    /**
+     * KYC身份认证ID
+     */
+    kycAuthId?: number
+    /**
+     * 备注
+     */
+    remark?: string
+    userInfo?: ClientUserInfo
+  }
+  // 客户用户信息
+  type ClientUserInfo = {
+    /**
+     * 账号
+     */
+    account?: string
+    /**
+     * 头像
+     */
+    avatar?: string
+    /**
+     * 生日
+     */
+    birthday?: string
+    /**
+     * 用户编号
+     */
+    code?: string
+    /**
+     * 创建部门
+     */
+    createDept?: number
+    /**
+     * 创建时间
+     */
+    createTime?: string
+    /**
+     * 创建人
+     */
+    createUser?: number
+    /**
+     * 部门id
+     */
+    deptId?: string
+    /**
+     * 邮箱
+     */
+    email?: string
+    /**
+     * 主键id
+     */
+    id?: number
+    /**
+     * 是否已删除
+     */
+    isDeleted?: number
+    /**
+     * 昵称
+     */
+    name?: string
+    /**
+     * 密码
+     */
+    password?: string
+    /**
+     * 手机
+     */
+    phone?: string
+    /**
+     * 岗位id
+     */
+    postId?: string
+    /**
+     * 真名
+     */
+    realName?: string
+    /**
+     * 角色id
+     */
+    roleId?: string
+    /**
+     * 性别
+     */
+    sex?: number
+    /**
+     * 业务状态
+     */
+    status?: number
+    /**
+     * 租户ID
+     */
+    tenantId?: string
+    /**
+     * 更新时间
+     */
+    updateTime?: string
+    /**
+     * 更新人
+     */
+    updateUser?: number
+    /**
+     * 用户平台
+     */
+    userType?: number
+  }
+  // 忘记密码
+  type ForgetPasswordParams = {
+    /**
+     * 邮箱
+     */
+    email: string
+    /**
+     * 新密码
+     */
+    newPassword: string
+    /**
+     * 验证码
+     */
+    validateCode: number
+  }
+  /**当前账户切换列表 */
+  type AccountItem = {
+    /**
+     * 账户组ID
+     */
+    accountGroupId?: number
+    /**
+     * 客户ID
+     */
+    clientId?: number
+    /**
+     * 创建时间
+     */
+    createTime?: string
+    /**
+     * 货币单位
+     */
+    currencyUnit?: string
+    /**
+     * 启用逐仓
+     */
+    enableIsolated?: boolean
+    /**
+     * 资金划转
+     */
+    fundTransfer?: API.FundTransfer
+    /**
+     * 组别
+     */
+    groupCode?: string
+    /**
+     * 组名称
+     */
+    groupName?: string
+    /**
+     * 主键
+     */
+    id: number
+    /**
+     * 逐仓保证金
+     */
+    isolatedMargin?: number
+    /**
+     * 是否模拟
+     */
+    isSimulate?: boolean
+    /**
+     * 最近访问
+     */
+    lastVisitedTime?: string
+    /**
+     * 保证金
+     */
+    margin?: number
+    /**
+     * 余额
+     */
+    money?: number
+    /**
+     * 名称
+     */
+    name?: string
+    /**
+     * 订单模式
+     */
+    orderMode?: API.OrderMode
+    /**
+     * 备注
+     */
+    remark?: string
+    /**
+     * 状态
+     */
+    status?: API.Status
+  }
   // 区域列表
   type AreaCodeItem = {
     areaCode: string

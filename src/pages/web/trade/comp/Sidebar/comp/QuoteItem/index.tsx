@@ -5,11 +5,12 @@ import { observer } from 'mobx-react'
 
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuoteInfo from '@/hooks/useCurrentQuoteInfo'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
+import { getDefaultSymbolIcon } from '@/utils/business'
 
 type IProps = {
-  item?: any
+  item: Account.TradeSymbolListItem
   isActive?: boolean
   popupRef?: any
 }
@@ -19,12 +20,12 @@ type IProps = {
  */
 function QuoteItem({ item, isActive, popupRef }: IProps) {
   const { isMobileOrIpad } = useEnv()
-  const { global, ws } = useStores()
-  const symbol = item.name
+  const { trade } = useStores()
+  const symbol = item.symbol
 
-  const res = useCurrentQuoteInfo(item.name)
+  const res = useCurrentQuote(symbol)
   const bid = res.bid
-  const per: any = res.per
+  const per: any = res.percent
 
   const activeClassName = useEmotionCss(({ token }) => {
     return {
@@ -46,9 +47,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         className="relative pl-1"
         onClick={() => {
           // 记录打开的symbol
-          global.setOpenSymbolNameList(symbol)
+          trade.setOpenSymbolNameList(symbol)
           // 设置当前当前的symbol
-          global.setActiveSymbolName(symbol)
+          trade.setActiveSymbolName(symbol)
 
           if (isMobileOrIpad) {
             popupRef.current?.close()
@@ -68,17 +69,17 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
               width={32}
               height={32}
               alt=""
-              src={`/img/${global.favoriteList.some((item: any) => item.name === symbol) ? 'star-active' : 'star'}.png`}
+              src={`/img/${trade.favoriteList.some((item) => item.symbol === symbol) ? 'star-active' : 'star'}.png`}
               onClick={(e) => {
                 e.stopPropagation()
-                global.toggleSymbolFavorite(symbol)
+                trade.toggleSymbolFavorite(symbol)
               }}
             />
-            <img width={28} height={28} alt="" src={`/img/coin-icon/${item.name}.png`} className="rounded-full" />
+            <img width={28} height={28} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
             <div className="flex flex-col pl-1">
-              <span className="pl-[6px] text-xs font-semibold text-gray">{item.label}</span>
-              {/* 币种描述 @TODO */}
-              <span className="pl-[6px] text-xs text-gray-weak pt-1">Bitcoin</span>
+              <span className="pl-[6px] text-xs font-semibold text-gray">{item.symbol}</span>
+              {/* 币种描述  */}
+              <span className="pl-[6px] text-xs text-gray-weak pt-1 truncate max-w-[120px]">{item.remark || '--'}</span>
             </div>
           </Col>
           <Col span={12} className="flex flex-col items-end">

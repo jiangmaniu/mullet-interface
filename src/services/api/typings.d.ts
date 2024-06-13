@@ -41,6 +41,11 @@ declare namespace API {
   }
 
   // =============== 公共枚举类型 ===================
+  type KEYVALUE = {
+    key: string
+    value: any
+    label?: string
+  }
 
   // 交易-计算类型
   type CalculationType =
@@ -202,4 +207,10 @@ declare namespace API {
 
   // 交易-到期
   type Expire = 'CLIENT_CANCEL'
+  // 保证金类型
+  type MaiginType =
+    /**全仓 */
+    | 'CROSS_MARGIN'
+    /**逐仓 */
+    | 'ISOLATED_MARGIN'
 }

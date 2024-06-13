@@ -2,7 +2,7 @@
 import { LoginForm, ProFormText } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { Form, message } from 'antd'
+import { Form } from 'antd'
 import classNames from 'classnames'
 import { md5 } from 'js-md5'
 import Lottie from 'lottie-react'
@@ -18,6 +18,7 @@ import { STORAGE_GET_TOKEN, setLocalUserInfo } from '@/utils/storage'
 
 import PwdTips from '@/components/PwdTips'
 import { regPassword } from '@/utils'
+import { message } from '@/utils/message'
 import animationData from './animation.json'
 
 export default function Login() {
@@ -25,7 +26,7 @@ export default function Login() {
   const { initialState, setInitialState } = useModel('@@initialState')
   const [activeKey, setActiveKey] = useState('login')
   const [form] = Form.useForm()
-  const email = Form.useWatch('email', form)
+  const username = Form.useWatch('username', form)
   const password = Form.useWatch('password', form)
   const [isEmailTab, setIsEmailTab] = useState(true) // 邮箱和手机选项切换
   const [loading, setLoading] = useState(false)
@@ -83,8 +84,8 @@ export default function Login() {
     }
   })
 
-  const fetchUserInfo = async () => {
-    const userInfo = await initialState?.fetchUserInfo?.()
+  const fetchUserInfo = async (token?: any) => {
+    const userInfo = await initialState?.fetchUserInfo?.(token)
     if (userInfo) {
       flushSync(() => {
         setInitialState((s) => ({
@@ -97,7 +98,7 @@ export default function Login() {
 
   const handleSubmit = async (values: User.LoginParams) => {
     try {
-      // 登录
+      setLoading(true)
       const result = await login(
         {
           username: values.username,
@@ -121,20 +122,25 @@ export default function Login() {
         setLocalUserInfo(result as User.UserInfo)
 
         // 重新获取用户信息
-        await fetchUserInfo()
+        await fetchUserInfo(result?.data?.access_token)
 
-        message.info(intl.formatMessage({ id: 'mt.dengluchenggong' }))
+        setTimeout(() => {
+          setLoading(false)
+          // message.info(intl.formatMessage({ id: 'mt.dengluchenggong' }))
 
-        const urlParams = new URL(window.location.href).searchParams
-        push(urlParams.get('redirect') || WEB_HOME_PAGE)
+          const urlParams = new URL(window.location.href).searchParams
+          push(urlParams.get('redirect') || WEB_HOME_PAGE)
+        }, 6000)
 
         return
       } else {
         // 刷新验证码
         handleCaptcha()
+        setLoading(false)
       }
     } catch (error: any) {
       message.info(error.message)
+      setLoading(false)
     }
   }
 
@@ -164,7 +170,7 @@ export default function Login() {
             searchConfig: { submitText: intl.formatMessage({ id: 'mt.denglu' }) },
             submitButtonProps: {
               style: { height: 48, width: '100%' },
-              disabled: !email || !password
+              disabled: !username || !password
             }
           }}
           onFinish={async (values) => {
@@ -218,7 +224,7 @@ export default function Login() {
           {/* 电子邮箱 */}
           {isEmailTab && (
             <ProFormText
-              name="email"
+              name="username"
               fieldProps={{
                 size: 'large'
               }}
@@ -252,7 +258,10 @@ export default function Login() {
             rules={[
               {
                 required: true,
-                message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
+                message:
+                  activeKey === 'register'
+                    ? intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' })
+                    : intl.formatMessage({ id: 'mt.qingshurumima' }),
                 pattern: activeKey === 'register' ? regPassword : undefined
               }
             ]}
@@ -290,7 +299,7 @@ export default function Login() {
               renderer="svg"
               autoplay={true}
               loop={true}
-              assetsPath="/img/"
+              assetsPath="/img/animation/"
             />
           </div>
           <div className="flex flex-col items-center justify-center relative -top-5 px-6">

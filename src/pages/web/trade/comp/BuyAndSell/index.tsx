@@ -25,7 +25,7 @@ export default observer(
   forwardRef((props, ref) => {
     const { isPc, isMobileOrIpad } = useEnv()
     const { lng } = useLang()
-    const { global } = useStores()
+    const { trade } = useStores()
     const intl = useIntl()
 
     const [orderType, setOrderType] = useState<any>(OP_MARKET_ORDER) // 订单类类型
@@ -114,7 +114,7 @@ export default observer(
             title={
               <div>
                 {tradeType === OP_BUY ? intl.formatMessage({ id: 'mt.mairuzuoduo' }) : intl.formatMessage({ id: 'mt.maichuzuokong' })}
-                <span className="pl-1">{global.activeSymbolName}</span>
+                <span className="pl-1">{trade.activeSymbolName}</span>
               </div>
             }
             position="bottom"

@@ -31,6 +31,8 @@ export async function getClientDetail(params: API.IdParam) {
   return request<API.Response<Customer.ListItem>>('/api/trade-crm/crmApi/client/detail', {
     method: 'GET',
     params
+  }).then((res) => {
+    return res?.data || {}
   })
 }
 

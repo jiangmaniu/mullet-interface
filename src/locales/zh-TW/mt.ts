@@ -206,5 +206,21 @@ export default {
   'mt.weichibaozhengjin': '维持保证金',
   'mt.wu': '无',
   'mt.zhong': '中',
-  'mt.chengjiaoe': '成交额'
+  'mt.chengjiaoe': '成交额',
+  'mt.qingshurumima': '请输入密码',
+  'mt.tianjiazixuan': '添加自选',
+  'mt.zhenshizhanghao': '真实账户',
+  'mt.monizhanghu': '模拟账户',
+  'mt.guanlizhanghu': '管理账户',
+  'mt.zhenshi': '真实',
+  'mt.moni': '模拟',
+  'mt.zhiyingdan': '止盈单',
+  'mt.zhisundan': '止损单',
+  'mt.zhuijiabaozhengjin': '追加保证金',
+  'mt.zhanyong': '占用',
+  'mt.zichanjingzhitips': '立即關閉所有當前未結頭寸的新餘額估值',
+  'mt.fudongyingkuitips': '當上倉位的浮動收益',
+  'mt.keyongtips': '可用於開立新頭寸的資金',
+  'mt.zhanyongtips': '我們為維持您當前持倉持有的資金',
+  'mt.tiqubaozhengjin': '提取保证金'
 }

@@ -1,16 +1,21 @@
 import { useIntl } from '@umijs/max'
+import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import Slider from '@/components/Web/Slider'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 
 type IProps = {
   initialValue?: number
+  onChange?: (value: any) => void
 }
 
-export default function LevelAge({ initialValue }: IProps) {
+function LevelAge({ initialValue, onChange }: IProps) {
   const intl = useIntl()
   const [value, setValue] = useState<any>(0)
+  const { prepaymentConf } = useCurrentQuote()
+  const isFixedMargin = prepaymentConf?.mode === 'fixed_margin' // 固定保证金模式，没有杠杆
 
   useEffect(() => {
     setValue(initialValue)
@@ -25,10 +30,12 @@ export default function LevelAge({ initialValue }: IProps) {
         value={value}
         onChange={(v) => {
           setValue(v)
+          onChange?.(v)
         }}
         max={30}
         min={0}
-        unit={<span className="relative left-3 text-gray-220 text-lg">x</span>}
+        unit={isFixedMargin ? undefined : <span className="relative left-3 text-gray-220 text-base">x</span>}
+        disabled={isFixedMargin}
       />
       <div className="flex flex-col pt-1 mx-3">
         <div>
@@ -46,10 +53,14 @@ export default function LevelAge({ initialValue }: IProps) {
             tooltip={{ placement: 'bottom', formatter: (value) => `${value}x` }}
             onChange={(v) => {
               setValue(v)
+              onChange?.(v)
             }}
+            disabled={isFixedMargin}
           />
         </div>
       </div>
     </div>
   )
 }
+
+export default observer(LevelAge)

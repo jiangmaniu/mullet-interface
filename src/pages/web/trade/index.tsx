@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
@@ -13,12 +13,23 @@ import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
 import Sidebar from './comp/Sidebar'
 import TradeRecord from './comp/TradeRecord'
 import TradingView from './comp/TradingView'
+import DeepPrice from './comp/Widget/DeepPrice'
 import FloatTradeBox from './comp/Widget/FloatTradeBox'
 
 export default observer(() => {
   const sidebarRef = useRef()
   const buyAndSellRef = useRef<any>(null)
-  const { global } = useStores()
+  const { ws, trade } = useStores()
+
+  useEffect(() => {
+    // 订阅深度报价
+    ws.subscribeDepth()
+
+    return () => {
+      // 取消订阅深度报价
+      ws.subscribeDepth(true)
+    }
+  }, [])
 
   return (
     <>
@@ -30,8 +41,8 @@ export default observer(() => {
               <Sidebar />
               {/* 中间区域 */}
               <Center />
-              {/* 深度报价：盘口 */}
-              {/* <DeepPrice /> */}
+              {/* 深度报价 */}
+              <DeepPrice />
               {/* 买卖交易区 */}
               <BuyAndSell />
             </div>

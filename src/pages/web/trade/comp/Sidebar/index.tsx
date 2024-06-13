@@ -1,3 +1,4 @@
+import { SwapRightOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Col, Input, Row } from 'antd'
@@ -10,7 +11,8 @@ import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { AllSymbols, formatQuotes } from '@/utils/wsUtil'
+import { getDefaultSymbolIcon } from '@/utils/business'
+import { formatQuotes } from '@/utils/wsUtil'
 
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
@@ -27,20 +29,21 @@ type IProps = {
 }
 
 const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
-  const { global } = useStores()
+  const { global, trade } = useStores()
   const intl = useIntl()
   const [searchValue, setSearchValue] = useState('')
   const popupRef = useRef()
-  const [current, setCurrent] = useState(0) // 自选、品类
+  const [activeKey, setActiveKey] = useState<'FAVORITE' | 'CATEGORY'>('CATEGORY') // 自选、品类 FAVORITE CATEGORY
   const [categoryTabKey, setCategoryTabKey] = useState(0) // 品种分类
-  const [list, setList] = useState<any>([])
+  const [list, setList] = useState([] as Account.TradeSymbolListItem[])
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
   const searchInputRef = useRef<any>()
+  const symbolList = trade.symbolList // 全部品种列表
 
   // 列表滚动区域高度
   // @TODO 如果Liquidation存在情况，否则高度默认
   const isLiquidation = false
-  const height = isLiquidation ? (current === 1 ? 400 : 450) : 500
+  const height = isLiquidation ? (activeKey === 'CATEGORY' ? 400 : 450) : 500
 
   // 对外暴露接口
   useImperativeHandle(ref, () => {
@@ -50,15 +53,15 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   // 搜索
   const handleSearchChange = (e: any) => {
     const value = e.target.value
-    const filterList = AllSymbols.filter((v) => v.name.toLowerCase().indexOf(String(value).toLowerCase()) !== -1)
+    const filterList = symbolList.filter((v) => v.symbol.toLowerCase().indexOf(String(value).toLowerCase()) !== -1)
 
     setSearchValue(value)
     setList(filterList)
   }
 
   const TabItems: any = [
-    { key: 0, label: <FormattedMessage id="mt.zixuan" /> },
-    { key: 1, label: <FormattedMessage id="mt.pinlei" /> }
+    { key: 'FAVORITE', label: <FormattedMessage id="mt.zixuan" /> },
+    { key: 'CATEGORY', label: <FormattedMessage id="mt.pinlei" /> }
   ]
 
   const getList = () => {
@@ -66,12 +69,12 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     if (searchValue) return list
 
     // 自选列表
-    if (current === 0) {
-      return global.favoriteList
+    if (activeKey === 'FAVORITE') {
+      return trade.favoriteList
     }
 
-    // 永续列表
-    return { 0: AllSymbols, 1: coinList, 2: goodsList, 3: exchangeList, 4: indexList }[categoryTabKey]
+    // 列表
+    return symbolList
   }
 
   const renderSearch = () => (
@@ -90,7 +93,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   )
 
   const renderContent = () => {
-    const list = getList()
+    const list: any = getList()
     return (
       <>
         <div className="pt-5">
@@ -104,11 +107,35 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           </Row>
           <div className="overflow-y-auto" style={{ height }}>
             {list.length > 0 &&
-              list.map((item: any, idx: number) => {
-                const isActive = global.activeSymbolName === item.name
+              list.map((item: Account.TradeSymbolListItem, idx: number) => {
+                const isActive = trade.activeSymbolName === item.symbol
                 return <QuoteItem item={item} isActive={isActive} popupRef={popupRef} key={idx} />
               })}
-            {!list.length && <Empty />}
+            {!list.length && (
+              <div className="pt-10 flex items-center flex-col">
+                <Empty
+                  description={
+                    <>
+                      {activeKey === 'FAVORITE' ? (
+                        <div
+                          className="flex justify-center gap-x-2 cursor-pointer"
+                          onClick={() => {
+                            setActiveKey('CATEGORY')
+                          }}
+                        >
+                          <div className="text-xs text-gray-secondary hover:text-gray">
+                            <FormattedMessage id="mt.tianjiazixuan" />
+                          </div>
+                          <SwapRightOutlined />
+                        </div>
+                      ) : (
+                        <FormattedMessage id="common.noData" />
+                      )}
+                    </>
+                  }
+                />
+              </div>
+            )}
           </div>
         </div>
       </>
@@ -124,8 +151,9 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
       <Tabs
         items={TabItems}
         onChange={(key: any) => {
-          setCurrent(key)
+          setActiveKey(key)
         }}
+        activeKey={activeKey}
         tabBarGutter={28}
         tabBarStyle={{ paddingLeft: 22, paddingRight: 12 }}
         size="small"
@@ -143,7 +171,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const renderCategoryTabs = () => {
     // 搜索时隐藏分类
     if (searchValue) return null
-    if (current === 0) return null
+    if (activeKey === 'FAVORITE') return null
     return (
       <CategoryTabs
         onChange={(key: any) => {
@@ -228,9 +256,9 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                 <img alt="" width={24} height={24} src="/img/search-icon.png" />
               </div>
               <div className="flex flex-col items-center w-full relative overflow-y-auto">
-                {AllSymbols.map((item, idx) => {
-                  const symbol = item.name
-                  const isActive = global.activeSymbolName === symbol
+                {symbolList.map((item, idx) => {
+                  const symbol = item.symbol
+                  const isActive = trade.activeSymbolName === symbol
                   return (
                     <div
                       key={idx}
@@ -239,12 +267,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                       })}
                       onClick={() => {
                         // 记录打开的symbol
-                        global.setOpenSymbolNameList(symbol)
-                        // 设置当前的symbol
-                        global.setActiveSymbolName(symbol)
+                        trade.setOpenSymbolNameList(symbol)
                       }}
                     >
-                      <img width={28} height={28} alt="" src={`/img/coin-icon/${item.name}.png`} className="rounded-full" />
+                      <img width={28} height={28} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
                     </div>
                   )
                 })}
@@ -255,7 +281,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
       }
       wapComponent={
         <Popup
-          title={current === 1 ? <FormattedMessage id="mt.zixuan" /> : <FormattedMessage id="mt.pinlei" />}
+          title={activeKey === 'CATEGORY' ? <FormattedMessage id="mt.zixuan" /> : <FormattedMessage id="mt.pinlei" />}
           ref={popupRef}
           position="bottom"
           height="80vh"
@@ -263,7 +289,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           <div>
             {renderSearch()}
             {!searchValue && <div className="pt-2">{renderTabs()}</div>}
-            {current === 1 && renderCategoryTabs()}
+            {activeKey === 'CATEGORY' && renderCategoryTabs()}
             {renderContent()}
           </div>
         </Popup>

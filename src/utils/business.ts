@@ -1,8 +1,11 @@
 // 业务相关工具
 
-import { transferWeekDay } from '@/constants/enum'
+import { getIntl } from '@umijs/max'
 
-import { getUid, groupBy } from '.'
+import { URLS } from '@/constants'
+import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
+
+import { formatMin2Time, getUid, groupBy, isImageFile, parseJsonFields } from '.'
 
 //  =============
 
@@ -52,6 +55,14 @@ export function transformTradeTimeShow(conf: any) {
   return result
 }
 
+// 返回交易时间段 eg. 00:06-12:00,14:00-18:00
+export const formatTimeStr = (time: number[]) => {
+  return groupBy(time, 2)
+    .map((v) => [`${formatMin2Time(v[0])}-${formatMin2Time(v[1])}`])
+    .flat()
+    .join(',') // 两个一组，分段区间的开始和结尾值
+}
+
 //  =============
 
 // 转换品种-库存费-提交参数
@@ -74,7 +85,7 @@ export function transformTradeInventorySubmit(conf: Symbol.HoldingCostConf) {
 export function transformTradeInventoryShow(conf: Symbol.HoldingCostConf) {
   const multiplierShow: any = [] // 回显的格式
 
-  Object.keys(conf?.multiplier).forEach((key: any) => {
+  Object.keys(conf?.multiplier || {}).forEach((key: any) => {
     multiplierShow.push({
       // 星期
       weekDay: key,
@@ -210,4 +221,85 @@ export const formatMultipleValueSubmit = (value: any) => {
     return value.join(',')
   }
   return value
+}
+
+// 格式化品种配置详情
+export const formatSymbolConf = (data: any) => {
+  let symbolConf = data
+  if (symbolConf) {
+    // 字符串对象转对象
+    symbolConf = parseJsonFields(symbolConf, [
+      'spreadConf', // 点差配置
+      'prepaymentConf', // 预付款配置
+      'tradeTimeConf', // 交易时间配置
+      'quotationConf', // 报价配置
+      'transactionFeeConf', // 手续费配置
+      'holdingCostConf' // 库存费配置
+    ])
+    // 格式化多选字段，转化为数组
+    symbolConf = formatMultipleValue(['orderType'], symbolConf)
+
+    // 预付款配置回显处理
+    const prepaymentConf = symbolConf?.prepaymentConf as unknown as Symbol.PrepaymentConf
+    if (prepaymentConf) {
+      // @ts-ignore
+      symbolConf.prepaymentConf = transformTradePrepaymentConfShow(prepaymentConf)
+    }
+
+    // 库存费配置回显处理
+    const holdingCostConf = symbolConf?.holdingCostConf as unknown as Symbol.HoldingCostConf
+    if (holdingCostConf) {
+      // @ts-ignore
+      symbolConf.holdingCostConf = transformTradeInventoryShow(holdingCostConf)
+    }
+
+    // 交易时间配置回显处理
+    const tradeTimeConf = symbolConf?.tradeTimeConf as unknown as Symbol.TradeTimeConf
+    if (tradeTimeConf) {
+      // @ts-ignore
+      symbolConf.tradeTimeConf = transformTradeTimeShow(tradeTimeConf)
+    }
+
+    // 手续费配置回显处理
+    const transactionFeeConf = symbolConf?.transactionFeeConf as unknown as Symbol.TransactionFeeConf
+    if (transactionFeeConf) {
+      // @ts-ignore
+      symbolConf.transactionFeeConf = transformTradeFeeShow(transactionFeeConf)
+    }
+  }
+  return symbolConf
+}
+
+/**
+ * 获取默认品种图片地址
+ * @param imgUrl 图片地址
+ * @returns
+ */
+export const getDefaultSymbolIcon = (imgUrl: any) => {
+  return isImageFile(imgUrl) ? `${URLS.imgDomain}${imgUrl}` : `/img/default-symbol-icon.png`
+}
+
+/**
+ * 获取买卖、保证金文字提示和颜色
+ * @param item
+ * @returns
+ */
+export const getBuySellInfo = (item: any) => {
+  const intl = getIntl()
+  const isBuy = item.buySell === TRADE_BUY_SELL.BUY
+  const buySellText = isBuy ? intl.formatMessage({ id: 'mt.mairu' }) : intl.formatMessage({ id: 'mt.maichu' })
+
+  const marginTypeText =
+    item.marginType === 'CROSS_MARGIN' ? intl.formatMessage({ id: 'mt.quancang' }) : intl.formatMessage({ id: 'mt.zhucang' })
+  const leverageMultiple = item.leverageMultiple
+  const leverageText = leverageMultiple ? `${leverageMultiple}X` : ''
+
+  const text = `${buySellText} · ${marginTypeText}${leverageText}`
+
+  return {
+    text,
+    buySellText,
+    marginTypeText,
+    colorClassName: isBuy ? 'text-green' : 'text-red'
+  }
 }

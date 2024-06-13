@@ -1,5 +1,4 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { message } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
@@ -8,39 +7,40 @@ import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
-import { TRADE_TYPE } from '@/constants/enum'
+import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
+import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
 
-type IProps = {
-  tradeList?: any[]
-}
+import { IPositionItem } from '../TradeRecord/Position'
 
 // 设置止盈止损
 export default observer(
-  forwardRef(({ tradeList = [] }: IProps, ref) => {
+  forwardRef((props, ref) => {
     const intl = useIntl()
-    const [tempItem, setTempItem] = useState<any>({})
-    const { ws } = useStores()
+    const [item, setItem] = useState({} as IPositionItem)
+    const { ws, trade } = useStores()
     const { symbols, quotes } = ws as any
     const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const unit = 'USD'
     const [sl, setSl] = useState<any>('') // 止损
     const [sp, setSp] = useState<any>('') // 止盈
 
-    // 获取实时的数据
-    const item = tradeList.find((v) => v.position === tempItem.position) || {}
+    const buySellInfo = getBuySellInfo(item)
+    const isBuy = item.buySell === TRADE_BUY_SELL.BUY
 
     useEffect(() => {
       if (!sl) {
-        setSl(item.sl)
+        setSl(item.stopLoss)
       }
       if (!sp) {
-        setSp(item.tp)
+        setSp(item.takeProfit)
       }
-    }, [item.sl, item.tp])
+    }, [item.stopLoss, item.takeProfit])
 
     const close = () => {
       setOpen(false)
@@ -50,7 +50,7 @@ export default observer(
 
     const show = (item: any) => {
       setOpen(true)
-      setTempItem(item)
+      setItem(item)
     }
 
     // 对外暴露接口
@@ -62,68 +62,74 @@ export default observer(
     })
 
     const symbol = item.symbol
-    const symbolInfo = symbols[symbol]
-    const quote = quotes[symbol]
-    const d = item.digits
+    const quote = useCurrentQuote(symbol)
+    const consize = quote.consize
+    const bid = quote.bid
+    const ask = quote.ask
+    const d = item.symbolDecimal
     const step = Math.pow(10, -d) * 10
-    const stopl = symbolInfo ? symbolInfo.stopl * Math.pow(10, -d) * 10 : 0
+    // const stopl = symbolInfo ? symbolInfo.stopl * Math.pow(10, -d) * 10 : 0
+    const stopl = item.stopLoss ? Number(item.stopLoss || 0) * Math.pow(10, -d) * 10 : 0
     let sl_scope: any = 0 // 止损范围
     let sp_scope: any = 0 // 止盈范围
     let slProfit: any // 止损-预计盈亏
     let spProfit: any // 止盈-预计盈亏
-    const count: any = item.number
-    const price: any = parseFloat(item.currentPrice) || 0
-    if (item.action === TRADE_TYPE.MARKET_BUY) {
+    const count: any = item.orderVolume
+    const price: any = Number(item.currentPrice || 0)
+    if (isBuy) {
       sl_scope = (price - stopl).toFixed(d)
       sp_scope = (price + stopl).toFixed(d)
 
-      slProfit = sl ? ((sl - quote?.bid) * count * symbolInfo?.consize).toFixed(d) : 0
-      spProfit = sp ? ((sp - quote?.bid) * count * symbolInfo?.consize).toFixed(d) : 0
+      slProfit = sl ? ((sl - bid) * count * consize).toFixed(d) : 0
+      spProfit = sp ? ((sp - bid) * count * consize).toFixed(d) : 0
     } else {
       sl_scope = (price + stopl).toFixed(d)
       sp_scope = (price - stopl).toFixed(d)
 
-      slProfit = sl ? ((quote?.ask - sl) * count * symbolInfo?.consize).toFixed(d) : 0
-      spProfit = sp ? ((quote?.ask - sp) * count * symbolInfo?.consize).toFixed(d) : 0
+      slProfit = sl ? ((ask - sl) * count * consize).toFixed(d) : 0
+      spProfit = sp ? ((ask - sp) * count * consize).toFixed(d) : 0
     }
 
-    const onFinish = () => {
-      // 1卖出，0买入
-      if (item.action === TRADE_TYPE.MARKET_BUY) {
-        if (sl && sl > sl_scope) {
-          setSl(item.sl)
-          message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-          return
-        }
-        if (sp && sp < sp_scope) {
-          setSp(item.sp)
-          message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-          return
-        }
-      } else {
-        if (sl && sl < sl_scope) {
-          setSl(item.sl)
-          message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-          return
-        }
-        if (sp && sp > sp_scope) {
-          setSp(item.sp)
-          message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-          return
-        }
+    const onFinish = async () => {
+      // if (item.buySell === TRADE_BUY_SELL.BUY) {
+      //   if (sl && sl > sl_scope) {
+      //     setSl(item.stopLoss)
+      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //     return
+      //   }
+      //   if (sp && sp < sp_scope) {
+      //     setSp(item.takeProfit)
+      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //     return
+      //   }
+      // } else {
+      //   if (sl && sl < sl_scope) {
+      //     setSl(item.stopLoss)
+      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //     return
+      //   }
+      //   if (sp && sp > sp_scope) {
+      //     setSp(item.takeProfit)
+      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //     return
+      //   }
+      // }
+
+      setLoading(true)
+      const params = {
+        bagOrderId: item.id,
+        stopLoss: sl ? parseFloat(sl) : undefined,
+        takeProfit: sp ? parseFloat(sp) : undefined
+      } as Order.ModifyStopProfitLossParams
+
+      console.log('参数', params)
+
+      const res = await trade.modifyStopProfitLoss(params)
+
+      setLoading(false)
+      if (!res.success) {
+        return
       }
-
-      const res = {
-        cmd: 'MSG_TYPE.POSITION_MODIFY',
-        sl: sl ? parseFloat(sl) : 0,
-        tp: sp ? parseFloat(sp) : 0,
-        ticket: item.position
-      }
-
-      console.log('参数', res)
-
-      // ws.socket.send(JSON.stringify(res))
-      // ws.sendPositionModification(res)
 
       close()
     }
@@ -135,17 +141,13 @@ export default observer(
             <div className="flex w-full flex-col pt-3">
               <div className="flex items-center justify-between max-xl:flex-col max-xl:items-start">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={`/img/coin-icon/${symbol}.png`} className="rounded-full" />
+                  <img width={24} height={24} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
-                  <span className={classNames('pl-1 text-sm', item.action === 0 ? 'text-green' : 'text-red')}>
-                    · {item.action === 0 ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} ·{' '}
-                    <FormattedMessage id="mt.zhucang" />
-                    20X
-                  </span>
+                  <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
                 </div>
                 <div className="flex items-end justify-center flex-col">
                   <span className="text-sm text-gray">
-                    {item.number}
+                    {item.orderVolume}
                     <FormattedMessage id="mt.lot" />
                   </span>
                   <span className="text-sm text-gray-secondary">
@@ -161,6 +163,7 @@ export default observer(
                     <FormattedMessage id="mt.dangqianjiage" />
                   </span>
                   <span className="text-sm text-gray">
+                    {/* @ts-ignore */}
                     {item.currentPrice} {unit}
                   </span>
                 </div>
@@ -169,7 +172,7 @@ export default observer(
                     <FormattedMessage id="mt.guadanjiage" />
                   </span>
                   <span className="text-sm text-gray">
-                    {item.price} {unit}
+                    {item.startPrice} {unit}
                   </span>
                 </div>
               </div>
@@ -206,7 +209,7 @@ export default observer(
                     <span className="font-num">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
-                      {item.action === TRADE_TYPE.MARKET_BUY ? '≤' : '≥'}&nbsp;
+                      {isBuy ? '≤' : '≥'}&nbsp;
                       {formatNum(sl_scope)} USD
                     </span>
                     <span className="pl-1 font-num">
@@ -246,8 +249,7 @@ export default observer(
                 tips={
                   <span className="font-num">
                     <FormattedMessage id="mt.fanwei" />
-                    &nbsp; {item.action === TRADE_TYPE.MARKET_BUY ? '≥' : '≤'} {formatNum(sp_scope)} USD{' '}
-                    <FormattedMessage id="mt.yujiyingkui" />
+                    &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                     &nbsp;
                     {formatNum(spProfit)} USD
                   </span>
@@ -256,7 +258,7 @@ export default observer(
             </div>
           </div>
           <div className="flex items-center justify-between pt-4">
-            <Button block onClick={onFinish} type="primary">
+            <Button block onClick={onFinish} type="primary" loading={loading}>
               <FormattedMessage id="common.queren" />
             </Button>
           </div>

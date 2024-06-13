@@ -4,6 +4,7 @@ import { FormInstance, Modal } from 'antd'
 import classNames from 'classnames'
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
+import { URLS } from '@/constants'
 import { message } from '@/utils/message'
 
 import { upload } from './upload'
@@ -30,7 +31,7 @@ interface IProps {
   name?: string
   /**表单实例 */
   form?: FormInstance | null
-  onSuccess?: (data: any) => void
+  onSuccess?: (data: { fileName: string; url: string }) => void
   /**内容区样式 */
   contentStyle?: React.CSSProperties
   /**形状 */
@@ -48,7 +49,7 @@ export default forwardRef(
   (
     {
       value = '',
-      fileSize = 2,
+      fileSize = 0.3,
       helpTips,
       showHelp = true,
       width = 125,
@@ -65,16 +66,21 @@ export default forwardRef(
     }: IProps,
     ref: any
   ) => {
-    const [fileUrl, setFileUrl] = useState<any>('')
+    const [fileUrl, setFileUrl] = useState<any>('') // 完整图片地址
+    const [fileName, setFileName] = useState<any>('') // 图片名称
     const [previewOpen, setPreviewOpen] = useState(false)
     const [previewImageUrl, setPreviewImageUrl] = useState('')
     const [loading, setLoading] = useState(false)
     const [errorTip, setErrorTip] = useState('')
     const intl = useIntl()
 
+    // 图片展示域名
+    const imgDomain = URLS.imgDomain
+
     useEffect(() => {
       if (value) {
-        setFileUrl(value)
+        setFileUrl(`${imgDomain}${value}`)
+        setFileName(fileName)
       }
     }, [value])
 
@@ -82,6 +88,7 @@ export default forwardRef(
       return {
         errorTip,
         fileUrl,
+        fileName,
         checkField: () => {
           if (fileUrl) return ''
           if (errorTip) return errorTip
@@ -166,16 +173,19 @@ export default forwardRef(
         // @ts-ignore
         if (res?.data) {
           // @ts-ignore
-          const url = res.data
+          const fileName = res?.data?.name
+          const url = `${imgDomain}${fileName}`
           setFileUrl(url)
-          form?.setFieldValue?.(name, url)
-          onSuccess?.(url)
+          setFileName(fileName)
+          form?.setFieldValue?.(name, fileName)
+          onSuccess?.({ fileName, url })
         } else {
           message.info(intl.formatMessage({ id: 'mt.shangchuanshibai' }))
         }
       } catch (error: any) {
         message.info(error?.message)
         setFileUrl('')
+        setFileName('')
       } finally {
         setLoading(false)
       }

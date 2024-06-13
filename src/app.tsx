@@ -15,9 +15,9 @@ import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { errorConfig } from './requestErrorConfig'
-import { getUserInfo } from './services/api/user'
+import { getClientDetail } from './services/api/crm/customer'
 import { getBrowerLng, getPathname, getPathnameLng, onLogout, replacePathnameLng } from './utils/navigator'
-import { STORAGE_GET_TOKEN, STORAGE_SET_USER_INFO } from './utils/storage'
+import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from './utils/storage'
 
 const isDev = process.env.NODE_ENV === 'development'
 const loginPath = '/user/login'
@@ -34,27 +34,36 @@ export async function getInitialState(): Promise<{
   settings?: Partial<LayoutSettings>
   currentUser?: User.UserInfo
   loading?: boolean
-  fetchUserInfo?: () => Promise<User.UserInfo | undefined>
+  fetchUserInfo?: (token?: any) => Promise<User.UserInfo | undefined>
 }> {
   // 初始化全局配置
   await stores.global.init()
-  stores.ws.reconnect()
 
-  const fetchUserInfo = async () => {
-    // 初始化ws链接
-    // stores.ws.reconnect()
-    if (!STORAGE_GET_TOKEN()) return
+  const fetchUserInfo = async (token?: any) => {
+    const hasToken = STORAGE_GET_TOKEN() || token
+    if (!hasToken) return
+
     try {
-      const userInfo = await getUserInfo({
-        skipErrorHandler: false
+      // 查询客户信息
+      const clientInfo = await getClientDetail({
+        id: STORAGE_GET_USER_INFO('user_id')
       })
 
-      // 获取配置接口
-      // initConfig()
+      const localUserInfo = STORAGE_GET_USER_INFO() || {}
 
-      STORAGE_SET_USER_INFO(userInfo)
+      const currentUser = {
+        ...localUserInfo,
+        ...clientInfo // 用户详细信息
+      }
+      // 更新本地的用户信息
+      STORAGE_SET_USER_INFO(currentUser)
 
-      return userInfo
+      // 初始化设置默认当前账号信息
+      if (!stores.trade.currentAccountInfo?.id) {
+        stores.trade.setCurrentAccountInfo(clientInfo.accountList?.[0])
+      }
+
+      return currentUser
     } catch (error) {
       onLogout()
     }
@@ -64,13 +73,11 @@ export async function getInitialState(): Promise<{
   const { location } = history
   // 登录页进不来
   if (getPathname(location.pathname) !== loginPath) {
-    // 获取全局用户信息 @TODO
-    // const currentUser = (await fetchUserInfo()) || STORAGE_GET_USER_INFO()
+    // 获取全局用户信息
+    const currentUser = (await fetchUserInfo()) as User.UserInfo
     return {
       fetchUserInfo,
-      // currentUser, // @TODO
-      // @ts-ignore
-      currentUser: { name: 'Clayton Gomez', avatar: '/img/test.png' },
+      currentUser,
       settings: defaultSettings as Partial<LayoutSettings>
     }
   }

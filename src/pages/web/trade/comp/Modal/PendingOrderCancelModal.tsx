@@ -10,7 +10,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 // 撤销挂单弹窗确认提示
 export default forwardRef((props, ref) => {
   const [item, setItem] = useState<any>({})
-  const { ws } = useStores()
+  const { ws, trade } = useStores()
 
   const popupRef = useRef<any>()
 
@@ -31,9 +31,7 @@ export default forwardRef((props, ref) => {
 
   // 确认撤销挂单
   const handleOk = async () => {
-    const res = { cmd: 'MSG_TYPE.PENDING_CANCEL', ticket: item.order }
-    // ws.socket.send(JSON.stringify(res))
-    // ws.sendOrderCancellationFn(res)
+    trade.cancelOrder({ id: item.id })
     close()
   }
 

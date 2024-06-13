@@ -1,5 +1,4 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { message } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
@@ -9,33 +8,32 @@ import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
 import Slider from '@/components/Web/Slider'
-import { TRADE_TYPE } from '@/constants/enum'
+import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
+import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
+import { message } from '@/utils/message'
 
-type IProps = {
-  tradeList?: any[]
-}
+import { IPositionItem } from '../TradeRecord/Position'
 
 // 平仓操作弹窗
 export default observer(
-  forwardRef(({ tradeList = [] }: IProps, ref) => {
+  forwardRef((props, ref) => {
     const intl = useIntl()
-    const [tempItem, setTempItem] = useState<any>({})
-    const { ws, global } = useStores()
+    const { ws, global, trade } = useStores()
     const [count, setCount] = useState<any>('')
     const [open, setOpen] = useState(false)
+    const [item, setItem] = useState({} as IPositionItem)
     const unit = 'USD'
 
-    // 获取实时的数据
-    const item = tradeList?.find((v: any) => v.position === tempItem.position) || {}
-
     const symbol = item.symbol
-    const number = item.number // 手数
+    const orderVolume = Number(item.orderVolume || 0) // 手数
+
+    const buySellInfo = getBuySellInfo(item)
 
     useEffect(() => {
-      setCount(number)
-    }, [number])
+      setCount(orderVolume)
+    }, [orderVolume])
 
     const close = () => {
       setOpen(false)
@@ -43,7 +41,7 @@ export default observer(
 
     const show = (item: any) => {
       setOpen(true)
-      setTempItem(item)
+      setItem(item)
     }
 
     // 对外暴露接口
@@ -54,32 +52,36 @@ export default observer(
       }
     })
 
-    const onFinish = () => {
+    const onFinish = async () => {
       const reg = /^\d+(\.\d{0,2})?$/
-      if (!count) return message.error(intl.formatMessage({ id: 'common.pleaseInput2' }))
+      if (!count) return message.info(intl.formatMessage({ id: 'common.pleaseInput2' }))
       if (!reg.test(count)) {
-        message.error(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
+        message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
         return
       }
-      if (count > item.number) {
-        message.error(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
+      if (count > orderVolume) {
+        message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
         return
       }
       if (count < 0.01) {
-        message.error(intl.formatMessage({ id: 'mt.zuixiaopingcangshoushuwei0.01shou' }))
+        message.info(intl.formatMessage({ id: 'mt.zuixiaopingcangshoushuwei0.01shou' }))
         return
       }
-      const res = {
-        cmd: 'MSG_TYPE.PLACE_ORDER',
-        sbl: symbol,
-        act: 200,
-        type: item.action === TRADE_TYPE.MARKET_BUY ? TRADE_TYPE.MARKET_SELL : TRADE_TYPE.MARKET_BUY,
-        vol: count * 10000,
-        position: item.position
-      }
+      // 平仓下一个反方向的单
+      const params = {
+        symbol,
+        buySell: item.buySell === TRADE_BUY_SELL.BUY ? TRADE_BUY_SELL.SELL : TRADE_BUY_SELL.BUY, // 订单方向
+        orderVolume: count,
+        tradeAccountId: item.tradeAccountId,
+        bagOrderId: item.id, // 持仓单号
+        type: ORDER_TYPE.MARKET_ORDER // 订单类型
+      } as Order.CreateOrder
 
-      // ws.socket.send(JSON.stringify(res))
-      // ws.setNewOrderFn(res)
+      const res = await trade.createOrder(params)
+
+      if (!res.success) {
+        return
+      }
 
       // 关闭弹窗
       close()
@@ -91,16 +93,13 @@ export default observer(
           <div className="flex flex-col items-center justify-center">
             <div className="flex w-full items-center justify-between pt-3">
               <div className="flex items-center">
-                <img width={24} height={24} alt="" src={`/img/coin-icon/${symbol}.png`} className="rounded-full" />
+                <img width={24} height={24} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
                 <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
-                <span className={classNames('pl-1 text-sm', item.action === 0 ? 'text-green' : 'text-red')}>
-                  · {item.action === 0 ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} ·{' '}
-                  <FormattedMessage id="mt.zhucang" />
-                  20X
-                </span>
+                <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className={classNames('pb-2 text-lg font-bold', item?.profit > 0 ? 'text-green' : 'text-red')}>
+                <span className={classNames('pb-2 text-lg font-bold', Number(item?.profit) > 0 ? 'text-green' : 'text-red')}>
+                  {/* @ts-ignore */}
                   {item.profitFormat} {unit}
                 </span>
                 <span className="text-xs text-gray-secondary">
@@ -116,7 +115,7 @@ export default observer(
                   <FormattedMessage id="mt.kaicangjiage" />
                 </span>
                 <span className="text-sm text-gray">
-                  {item.price} {unit}
+                  {item.startPrice} {unit}
                 </span>
               </div>
               <div className="flex items-center justify-between pl-5">
@@ -135,11 +134,11 @@ export default observer(
                 classNames={{ input: 'text-center' }}
                 value={count}
                 onChange={(value) => {
-                  if (value > item.number) return
+                  if (value > orderVolume) return
                   setCount(value)
                 }}
                 onAdd={() => {
-                  if (count >= item.number) return
+                  if (count >= orderVolume) return
                   const c = (Number(count) + 0.01).toFixed(2)
                   setCount(c)
                 }}
@@ -148,7 +147,7 @@ export default observer(
                   const c = (Number(count) - 0.01).toFixed(2)
                   setCount(c)
                 }}
-                max={item.number}
+                max={orderVolume}
                 min={0.01}
               />
               <div className="my-2 w-full">
@@ -163,7 +162,7 @@ export default observer(
                   <FormattedMessage id="mt.kepingcangshoushu" />
                 </span>
                 <span className="pl-3 text-xs text-gray">
-                  {item.number}
+                  {orderVolume}
                   <FormattedMessage id="mt.lot" />
                 </span>
               </div>

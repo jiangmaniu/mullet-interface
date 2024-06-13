@@ -1,16 +1,20 @@
 import { QuestionCircleOutlined } from '@ant-design/icons'
-import { FormattedMessage, history, SelectLang as UmiSelectLang } from '@umijs/max'
+import { FormattedMessage, history, SelectLang as UmiSelectLang, useModel } from '@umijs/max'
 import { Tooltip } from 'antd'
 import classNames from 'classnames'
-import { useState } from 'react'
+import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import CopyComp from '@/components/Base/Copy'
 import Tabs from '@/components/Base/CustomTabs'
 import Dropdown from '@/components/Base/Dropdown'
+import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
 import { useEnv } from '@/context/envProvider'
+import { useStores } from '@/context/mobxProvider'
+import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { goKefu, onLogout } from '@/utils/navigator'
 
 export type SiderTheme = 'light' | 'dark'
@@ -96,14 +100,36 @@ export const Concat = () => {
   )
 }
 
-export const HeaderRightContent = () => {
-  const [accountTabActiveKey, setAccountTabActiveKey] = useState('1') // 1 真实账户 2模拟账户
+export const HeaderRightContent = observer(() => {
+  const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
+  const { initialState } = useModel('@@initialState')
+  const { trade } = useStores()
+  const [currentAccountList, setCurrentAccountList] = useState<User.AccountItem[]>([])
+  const { fetchUserInfo } = useModel('user')
+  const currentUser = initialState?.currentUser
+  const accountList = currentUser?.accountList || []
+  const currentAccountInfo = trade.currentAccountInfo
+
+  useEffect(() => {
+    // 切换真实模拟账户列表
+    const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
+    setCurrentAccountList(list)
+  }, [accountTabActiveKey, accountList.length])
+
   const renderAccountBoxHover = () => {
+    const avaMargin = Number(currentAccountInfo.margin || 0) + Number(currentAccountInfo.isolatedMargin || 0) // 可用保证金
+    const zhanyongMargin = Number(currentAccountInfo.money || 0) - avaMargin
     const list = [
-      { label: '總資產凈值', value: 100, tips: '立即關閉所有當前未結頭寸的新餘額估值' },
-      { label: '浮動盈虧', value: 200, tips: '當上倉位的浮動收益' },
-      { label: '可用', value: 300, tips: '可用於開立新頭寸的資金' },
-      { label: '占用', value: 400, tips: '我們為維持您當前持倉持有的資金' }
+      // @TODO 计算？
+      {
+        label: <FormattedMessage id="mt.zongzichanjingzhi" />,
+        value: currentAccountInfo.money,
+        tips: <FormattedMessage id="mt.zichanjingzhitips" />
+      },
+      // @TODO 计算
+      { label: <FormattedMessage id="mt.fudongyingkui" />, value: 0, tips: <FormattedMessage id="mt.fudongyingkuitips" /> },
+      { label: <FormattedMessage id="mt.keyong" />, value: avaMargin, tips: <FormattedMessage id="mt.keyongtips" /> },
+      { label: <FormattedMessage id="mt.zhanyong" />, value: zhanyongMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
       <div className="z-[999] group-hover:block xl:absolute xl:top-[53px] hidden xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:min-w-[380px] xl:pt-[18px]">
@@ -122,7 +148,9 @@ export const HeaderRightContent = () => {
                 </span>
               </Tooltip>
               <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
-              <span className="max-w-[240px] break-all text-right font-bold text-gray">{item.value} USD</span>
+              <span className="max-w-[240px] break-all text-right text-gray font-dingpro-medium">
+                {formatNum(item.value, { precision: 2 })} USD
+              </span>
             </div>
           ))}
         </div>
@@ -130,7 +158,9 @@ export const HeaderRightContent = () => {
           <div className="flex justify-between">
             <Button className="!ml-0 text-sm max-xl:w-[48%] xl:w-[165px]">
               <img src="/img/rujin_icon.png" width={20} height={20} />
-              <span>入金</span>
+              <span>
+                <FormattedMessage id="mt.rujin" />
+              </span>
             </Button>
             <Button
               className="!ml-0 text-sm max-xl:w-[48%] xl:w-[165px]"
@@ -144,7 +174,9 @@ export const HeaderRightContent = () => {
               }}
             >
               <img src="/img/chujin_icon.png" width={20} height={20} />
-              <span>出金</span>
+              <span>
+                <FormattedMessage id="mt.chujin" />
+              </span>
             </Button>
           </div>
           <div className="mt-[10px]">
@@ -155,7 +187,9 @@ export const HeaderRightContent = () => {
               }}
             >
               <img src="/img/user_tab_icon4@2x.png" width={20} height={20} />
-              <span>出入金记录</span>
+              <span>
+                <FormattedMessage id="mt.churujinjilu" />
+              </span>
             </Button>
           </div>
         </div>
@@ -163,10 +197,10 @@ export const HeaderRightContent = () => {
           <div className="my-3 flex items-center justify-between">
             <Tabs
               items={[
-                { label: '真实账户', key: '1' },
-                { label: '模拟账户', key: '2' }
+                { label: <FormattedMessage id="mt.zhenshizhanghao" />, key: 'REAL' },
+                { label: <FormattedMessage id="mt.monizhanghu" />, key: 'DEMO' }
               ]}
-              onChange={(key) => {
+              onChange={(key: any) => {
                 setAccountTabActiveKey(key)
               }}
               activeKey={accountTabActiveKey}
@@ -177,51 +211,57 @@ export const HeaderRightContent = () => {
               }}
               className="cursor-pointer text-primary max-xl:text-right"
             >
-              管理账户
+              <FormattedMessage id="mt.guanlizhanghu" />
             </div>
           </div>
-          {[{}, {}].map((item, ind) => {
+          {currentAccountList.map((item, idx: number) => {
+            const isSimulate = item.isSimulate
             return (
               <div
                 onClick={() => {
-                  // switchAccount(item)
                   // if (isMobileOrIpad) {
                   //   hoverAccountBoxPopupRef?.current?.close()
                   // }
+                  trade.setCurrentAccountInfo(item)
                 }}
-                key={ind}
-                className="mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[#fbfbfb]"
+                key={idx}
+                className={classNames(
+                  'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[#fbfbfb]',
+                  {
+                    'bg-[#fbfbfb]': item.id === currentAccountInfo.id
+                  }
+                )}
               >
                 <div className="flex justify-between">
                   <div className="flex">
-                    <div className="flex-1 text-sm font-bold text-gray">标准账户 / 500002</div>
+                    <div className="flex-1 text-sm font-bold text-gray">
+                      {item.groupName} / {hiddenCenterPartStr(item?.id, 4)}
+                    </div>
                     <div className="ml-[10px] flex px-1">
                       <div
                         className={classNames(
-                          'flex h-5 min-w-[42px] items-center justify-center rounded bg-yellow-500 px-1 text-xs font-normal text-gray',
-                          {
-                            // '!bg-green !text-white': item?.accountType === 'Demo'
-                            '!bg-green !text-white': true
-                          }
+                          'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
+                          isSimulate ? 'bg-green' : 'bg-blue-500'
                         )}
                       >
-                        真实
+                        {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                       </div>
-                      <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                      {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
                         MT
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
                 <div className="mt-1">
                   <div>
-                    <span className="font-num text-[24px] font-medium text-gray">4033.58</span>{' '}
+                    <span className="text-[20px] text-gray font-dingpro-regular">{formatNum(item.money, { precision: 2 })}</span>{' '}
                     <span className="ml-1 text-sm font-normal text-gray-secondary">USD</span>
                   </div>
                 </div>
               </div>
             )
           })}
+          <div className="my-3">{currentAccountList.length === 0 && <Empty />}</div>
         </div>
       </div>
     )
@@ -229,13 +269,21 @@ export const HeaderRightContent = () => {
   return (
     <div className="flex items-center">
       <div className="flex items-center gap-x-[26px] mr-[28px]">
-        <div className="flex items-center">
+        <div
+          className="flex items-center group"
+          onMouseEnter={() => {
+            // 刷新账户余额信息
+            fetchUserInfo()
+          }}
+        >
           <div className="flex flex-col items-end group">
-            <span className="text-xl font-dingpro-medium text-gray">1000.00 USD</span>
+            <span className="text-xl text-gray font-dingpro-regular">{formatNum(currentAccountInfo?.money, { precision: 2 })} USD</span>
             <div className="flex items-center pt-[2px]">
-              <span className="text-xs text-blue font-dingpro-medium">真实</span>
+              <span className="text-xs text-blue font-dingpro-medium">
+                {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+              </span>
               <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200"></div>
-              <span className="text-xs text-gray-500">#59528031</span>
+              <span className="text-xs text-gray-500">#{hiddenCenterPartStr(currentAccountInfo?.id, 4)}</span>
             </div>
             {renderAccountBoxHover()}
           </div>
@@ -256,7 +304,9 @@ export const HeaderRightContent = () => {
                       <span className="text-gray font-semibold">
                         <CopyComp style={{ display: 'flex', alignItems: 'center' }}>HI,151…1450</CopyComp>
                       </span>
-                      <span className="text-green text-xs pt-[6px]">已認證</span>
+                      <span className="text-green text-xs pt-[6px]">
+                        <FormattedMessage id="mt.yirenzheng" />
+                      </span>
                     </div>
                   </div>
                   <div
@@ -281,4 +331,4 @@ export const HeaderRightContent = () => {
       <SwitchLanguage />
     </div>
   )
-}
+})

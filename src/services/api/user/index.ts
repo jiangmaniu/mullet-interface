@@ -1,4 +1,4 @@
-import qs, { stringify } from 'qs'
+import { stringify } from 'qs'
 
 import { request } from '@/utils/request'
 import { setLocalUserInfo, STORAGE_GET_USER_INFO } from '@/utils/storage'
@@ -13,16 +13,9 @@ export async function getCaptcha() {
 
 // 登录接口
 export async function login(body: User.LoginParams, options?: { [key: string]: any }) {
-  return request<API.Response<User.LoginResult>>(`/api/blade-auth/oauth/token?${qs.stringify(body)}`, {
+  return request<API.Response<User.LoginResult>>(`/api/blade-auth/oauth/token?${stringify(body)}`, {
     method: 'POST',
     ...(options || {})
-  })
-}
-
-// 退出登录接口
-export async function outLogin() {
-  return request<API.Response>('/api/blade-auth/oauth/logout', {
-    method: 'GET'
   })
 }
 
@@ -52,17 +45,48 @@ export async function logout() {
   })
 }
 
-// 获取当前的用户信息 @TODO 接口暂时没有提供
-export async function getUserInfo(options?: { [key: string]: any }) {
-  return request<User.UserInfo>('/api/GetUserInfo', {
-    method: 'GET',
-    ...(options || {})
+// 发送邮箱验证码(输入邮箱)
+export async function sendCustomEmailCode(body: { email: string }) {
+  return request<API.Response<any>>(`/api/trade-crm/crmClient/validateCode/customEmail?${stringify(body)}`, {
+    method: 'POST',
+    data: body
   })
 }
 
-// 获取国家地区列表
-export async function getAreaDataList() {
-  return request<API.Response<any>>('/api/services/app/AreaData/GetAreaDataList', {
-    method: 'GET'
+// 发送邮箱验证码（不需要输入邮箱）
+export async function sendEmailCode() {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/validateCode/email', {
+    method: 'POST'
+  })
+}
+
+// 发送手机验证码(输入手机)
+export async function sendCustomPhoneCode(body: { phone: string }) {
+  return request<API.Response<any>>(`/api/trade-crm/crmClient/validateCode/customPhone?${stringify(body)}`, {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 发送手机验证码(不需要输入手机)
+export async function sendPhoneCode() {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/validateCode/userPhone', {
+    method: 'POST'
+  })
+}
+
+// 客户用户-注册
+export async function register(body: User.RegisterParams) {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/register/submit', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 忘记密码
+export async function forgetPassword(body: User.ForgetPasswordParams) {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/register/forgetPassword', {
+    method: 'POST',
+    data: body
   })
 }

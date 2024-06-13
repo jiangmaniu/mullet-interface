@@ -17,10 +17,10 @@ const TradingViewComp = ({ style }: IProps) => {
   const { isPc } = useEnv()
   const { lng } = useLang()
   const [tradeUrl, setTradeUrl] = useState('')
-  const { global } = useStores()
+  const { trade } = useStores()
   const [loading, setLoading] = useState(false)
 
-  const activeSymbolName = global.activeSymbolName
+  const activeSymbolName = trade.activeSymbolName
 
   useEffect(() => {
     setLoading(true)

@@ -1,5 +1,4 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { message } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
@@ -12,6 +11,7 @@ import { TRADE_TYPE } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
+import { getDefaultSymbolIcon } from '@/utils/business'
 
 import OpenTips from './OpenTipsModal'
 
@@ -24,10 +24,11 @@ export default observer(
   forwardRef(({ pendingList = [] }: IProps, ref) => {
     const intl = useIntl()
     const [tempItem, setTempItem] = useState<any>({})
-    const { ws } = useStores()
+    const { ws, trade } = useStores()
     const { symbols } = ws as any
     const [price, setPrice] = useState<any>('')
     const [open, setOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const [sl, setSl] = useState<any>('') // 止损
     const [sp, setSp] = useState<any>('') // 止盈
@@ -68,7 +69,7 @@ export default observer(
     }, [item.sl, item.tp, item.price])
 
     const symbol = item.symbol
-    const symbolInfo = symbols[symbol]
+    const symbolInfo = symbols[symbol] || {}
     const d = item.digits
     const step = Math.pow(10, -d) * 10
     const stopl = symbolInfo ? symbolInfo.stopl * Math.pow(10, -d) * 10 : 0
@@ -103,37 +104,44 @@ export default observer(
         item.type === TRADE_TYPE.LIMIT_SELL ? (parseFloat(price_now) + stopl).toFixed(d) : (parseFloat(price_now) - stopl).toFixed(d)
     }
 
-    const onFinish = (values: any) => {
+    const onFinish = async (values: any) => {
       console.log('values', values)
-      if (isBuy) {
-        if (sl && sl > sl_scope) {
-          message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-          return
-        }
-        if (sp && sp < sp_scope) {
-          message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-          return
-        }
-      } else {
-        if (sl && sl < sl_scope) {
-          message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-          return
-        }
-        if (sp && sp > sp_scope) {
-          message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-          return
-        }
-      }
-      const res = {
-        cmd: 'MSG_TYPE.PENDING_MODIFY',
-        sl: parseFloat(sl),
-        tp: parseFloat(sp),
-        ticket: item.order,
-        price: parseFloat(price)
-      }
+      // if (isBuy) {
+      //   if (sl && sl > sl_scope) {
+      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //     return
+      //   }
+      //   if (sp && sp < sp_scope) {
+      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //     return
+      //   }
+      // } else {
+      //   if (sl && sl < sl_scope) {
+      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //     return
+      //   }
+      //   if (sp && sp > sp_scope) {
+      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+      //     return
+      //   }
+      // }
 
-      // ws.socket.send(JSON.stringify(res))
-      // ws.sendOrderCancellationFn(res)
+      setLoading(true)
+      const params = {
+        orderId: item.id,
+        stopLoss: parseFloat(sl),
+        takeProfit: parseFloat(sp),
+        limitPrice: parseFloat(price)
+      } as Order.UpdatePendingOrderParams
+
+      console.log('参数', params)
+
+      const res = await trade.modifyPendingOrder(params)
+
+      setLoading(false)
+      if (!res.success) {
+        return
+      }
 
       // 关闭当前弹窗
       close()
@@ -146,7 +154,7 @@ export default observer(
             <div className="flex flex-col items-center justify-center">
               <div className="flex w-full flex-col pt-3">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={`/img/coin-icon/${symbol}.png`} className="rounded-full" />
+                  <img width={24} height={24} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm text-green', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />}
@@ -306,6 +314,7 @@ export default observer(
                   'pointer-events-none !bg-gray-250': !price
                 })}
                 type="primary"
+                loading={loading}
               >
                 <FormattedMessage id="common.queren" />
               </Button>

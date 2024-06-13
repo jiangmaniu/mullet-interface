@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { fileUpload } from '@/services/api/common'
 
 export const upload = async ({ file, module, fileType }: any) => {
   return new Promise(async (resolve, reject) => {
@@ -7,13 +7,9 @@ export const upload = async ({ file, module, fileType }: any) => {
     form.append('file', file)
 
     try {
-      // 上传地址 @TODO
-      let res = await axios.post('/api/upload', form, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      resolve(res.data)
+      // 上传地址
+      let res = await fileUpload({ file })
+      resolve(res)
     } catch (e) {
       reject(e)
     }

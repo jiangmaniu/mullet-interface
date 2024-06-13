@@ -15,3 +15,14 @@ export async function getSymbolPriceList(params?: API.PageParam & { priceValueId
     params
   })
 }
+
+// 单个接口获取品种高开低收信息
+export async function getSymbolPriceInfo(params: { dataSourceCode: any; dataSourceSymbol: any }) {
+  return request<API.Response<Account.SymbolNewTicker>>(
+    `/api/trade-market/marketApi/public/symbol/newTicker/${params.dataSourceCode}/${params.dataSourceSymbol}`,
+    {
+      method: 'GET',
+      params
+    }
+  )
+}

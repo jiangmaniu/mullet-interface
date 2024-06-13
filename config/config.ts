@@ -187,7 +187,7 @@ export default defineConfig({
   // 将 node 的环境变量注入 define 配置中，可以在浏览器window.xx获取
   define: {
     BASE_URL: process.env.BASE_URL,
-    'process.env.BUILD_ENV': process.env.BUILD_ENV
+    'process.env.APP_ENV': process.env.APP_ENV
   },
   // 使用本地字体
   chainWebpack(config) {

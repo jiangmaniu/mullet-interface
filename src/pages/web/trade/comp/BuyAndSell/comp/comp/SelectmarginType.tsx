@@ -3,10 +3,15 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import classNames from 'classnames'
 
-type IProps = ProFormSelectProps
+import { useStores } from '@/context/mobxProvider'
+
+type IProps = ProFormSelectProps & {
+  onChange?: (value: API.MaiginType) => void
+}
 
 // 全仓、逐仓选择
-export default function SelectPositionType({ ...res }: IProps) {
+export default function SelectPositionType({ fieldProps, onChange, ...res }: IProps) {
+  const { trade } = useStores()
   const className = useEmotionCss(({ token }) => {
     return {
       '.ant-select-selection-item': {
@@ -29,18 +34,24 @@ export default function SelectPositionType({ ...res }: IProps) {
       <ProFormSelect
         fieldProps={{
           size: 'large',
-          defaultValue: '1',
-          suffixIcon: <img src="/img/arrow-right-icon.png" width={24} height={24} />
+          defaultValue: 'CROSS_MARGIN',
+          suffixIcon: <img src="/img/arrow-right-icon.png" width={24} height={24} />,
+          onChange: (value) => {
+            onChange?.(value)
+            // 全局设置，方便tradeBox使用
+            trade.setMarginType(value)
+          },
+          ...fieldProps
         }}
         allowClear={false}
         options={[
           {
             label: <FormattedMessage id="mt.quancang" />,
-            value: '1'
+            value: 'CROSS_MARGIN'
           },
           {
             label: <FormattedMessage id="mt.zhucang" />,
-            value: '2'
+            value: 'ISOLATED_MARGIN'
           }
         ]}
         {...res}

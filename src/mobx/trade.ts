@@ -1,0 +1,319 @@
+import { getIntl } from '@umijs/max'
+import { message } from 'antd'
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
+
+import { getTradeSymbolCategory } from '@/services/api/common'
+import { getTradeSymbolList } from '@/services/api/tradeCore/account'
+import {
+  cancelOrder,
+  createOrder,
+  getBgaOrderPage,
+  getOrderPage,
+  getTradeRecordsPage,
+  modifyPendingOrder,
+  modifyStopProfitLoss
+} from '@/services/api/tradeCore/order'
+import {
+  STORAGE_GET_ACTIVE_SYMBOL_NAME,
+  STORAGE_GET_FAVORITE,
+  STORAGE_GET_SYMBOL_NAME_LIST,
+  STORAGE_SET_ACTIVE_SYMBOL_NAME,
+  STORAGE_SET_FAVORITE,
+  STORAGE_SET_SYMBOL_NAME_LIST
+} from '@/utils/storage'
+
+import ws from './ws'
+
+class TradeStore {
+  constructor() {
+    makeObservable(this) // 使用 makeObservable mobx6.0 才会更新视图
+  }
+  @observable socket: any = null
+  @observable symbolCategory: API.KEYVALUE[] = [] // 品种分类
+  @observable symbolList: Account.TradeSymbolListItem[] = []
+  @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
+  @observable pendingList = [] as Order.OrderPageListItem[] // 挂单列表
+  @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
+  @observable historyList = [] as Order.TradeRecordsPageListItem[] // 历史成交列表
+
+  @observable openSymbolNameList: string[] = [] // 记录打开的品种名称
+  @observable favoriteList = [] as Account.TradeSymbolListItem[] // 自选列表
+  @observable activeSymbolName = '' // 当前激活的品种名
+  @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
+  @observable showBalanceEmptyModal = false // 余额为空弹窗
+  @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
+
+  // 初始化加载
+  init = () => {
+    // 初始化打开的品种列表
+    trade.initOpenSymbolNameList()
+    // 初始化自选列表
+    trade.initFavoriteList()
+  }
+
+  // 设置保证金类型
+  setMarginType = (marginType: API.MaiginType) => {
+    this.marginType = marginType
+  }
+
+  // 设置当前切换的账户信息
+  @action
+  setCurrentAccountInfo = (info: User.AccountItem) => {
+    if (info?.id !== this.currentAccountInfo?.id) {
+      this.currentAccountInfo = info
+
+      this.reloadAfterAccountChange()
+    }
+  }
+
+  // 切换账户后，重载的接口
+  @action reloadAfterAccountChange = () => {
+    // 重新加载品种列表
+    this.getSymbolList()
+  }
+
+  // ========= 设置打开的品种 =========
+
+  // 初始化本地打开的symbol
+  @action
+  initOpenSymbolNameList() {
+    this.openSymbolNameList = STORAGE_GET_SYMBOL_NAME_LIST() || []
+    this.activeSymbolName = STORAGE_GET_ACTIVE_SYMBOL_NAME()
+  }
+
+  // 获取打开的品种完整信息
+  getActiveSymbolInfo = () => {
+    const symbolList = this.symbolList
+    const info = symbolList.find((item) => item.symbol === this.activeSymbolName) || {}
+    return info as Account.TradeSymbolListItem
+  }
+
+  // 获取激活品种的dataSourceSymbol，用于获取websocket品种对应的行情
+  getActiveDataSourceSymbol = () => {
+    const symbolInfo = this.getActiveSymbolInfo()
+    return symbolInfo?.dataSourceSymbol || ''
+  }
+
+  // 记录打开的symbol
+  @action
+  setOpenSymbolNameList(name: string) {
+    this.setActiveSymbolName(name)
+    if (this.openSymbolNameList.some((item) => item === name)) return
+    this.openSymbolNameList.push(name)
+    this.updateLocalOpenSymbolNameList()
+  }
+
+  // 移除打开的symbol
+  @action
+  removeOpenSymbolNameList(name: string, removeIndex: number) {
+    const originList = JSON.parse(JSON.stringify(this.openSymbolNameList))
+    const newList = this.openSymbolNameList.filter((item) => item !== name)
+
+    this.openSymbolNameList = newList
+    this.updateLocalOpenSymbolNameList()
+
+    if (this.activeSymbolName === name) {
+      // 更新激活的索引
+      const nextActiveItem = originList[removeIndex - 1] || originList[removeIndex + 1]
+      this.setActiveSymbolName(nextActiveItem)
+    }
+  }
+
+  // 切换当前打开的symbol
+  @action
+  setActiveSymbolName(key: string) {
+    this.activeSymbolName = key
+    STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
+  }
+
+  // 更新本地缓存的symbol列表
+  @action updateLocalOpenSymbolNameList = () => {
+    STORAGE_SET_SYMBOL_NAME_LIST(this.openSymbolNameList)
+  }
+
+  // =========== 收藏、取消收藏 ==============
+
+  // 是否收藏品种
+  @computed get isFavoriteSymbol() {
+    return this.favoriteList.some((item) => item.symbol === this.activeSymbolName && item.checked)
+  }
+
+  // 获取本地自选
+  @action async initFavoriteList() {
+    const data = await STORAGE_GET_FAVORITE()
+    if (Array.isArray(data) && data.length) {
+      runInAction(() => {
+        this.favoriteList = data
+      })
+    } else {
+      this.setDefaultFavorite()
+    }
+  }
+
+  // 设置默认资讯
+  @action setDefaultFavorite() {
+    // 设置本地默认自选 @TODO 品种动态加载的，先不加默认
+    // this.setSymbolFavoriteToLocal(DEFAULT_QUOTE_FAVORITES_CURRENCY)
+  }
+
+  // 设置本地自选
+  @action async setSymbolFavoriteToLocal(data: any) {
+    if (Array.isArray(data) && data.length) {
+      this.favoriteList = data
+      STORAGE_SET_FAVORITE(data)
+    } else {
+      this.setDefaultFavorite()
+    }
+  }
+
+  // 切换收藏选中状态
+  @action toggleSymbolFavorite(name?: string) {
+    const symbolName = name || this.activeSymbolName // 不传name，使用当前激活的
+    const index = this.favoriteList.findIndex((v) => v.symbol === symbolName)
+    const item: any = this.symbolList.find((v) => v.symbol === symbolName)
+    // 删除
+    if (index !== -1) {
+      this.favoriteList.splice(index, 1)
+    } else {
+      // 添加到已选列表
+      item.checked = true
+      this.favoriteList.push(item)
+    }
+    this.setSymbolFavoriteToLocal(this.favoriteList)
+  }
+
+  // ============================
+  // 查询品种分类
+  @action
+  getSymbolCategory = async () => {
+    const res = await getTradeSymbolCategory()
+    if (res.success) {
+      runInAction(() => {
+        this.symbolCategory = [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...(res?.data || [])]
+      })
+    }
+  }
+  // 根据账户id查询侧边栏菜单交易品种列表
+  @action
+  getSymbolList = async (params = {} as Partial<Account.TradeSymbolListParams>) => {
+    // 查询全部
+    if (params.classify === '0') {
+      delete params.classify
+    }
+    const res = await getTradeSymbolList({ ...params, accountId: this.currentAccountInfo?.id })
+    if (res.success) {
+      const symbolList = (res.data || []) as Account.TradeSymbolListItem[]
+      runInAction(() => {
+        this.symbolList = symbolList
+
+        // 切换accountId后请求的品种列表可能不一致，设置第一个默认的品种名称
+        const firstSymbolName = symbolList[0]?.symbol
+        // 如果当前激活的品种名称不在返回的列表中，则重新设置第一个为激活
+        if (firstSymbolName && !symbolList.some((item) => item.symbol === this.activeSymbolName)) {
+          this.activeSymbolName = firstSymbolName
+        }
+        // 设置默认的
+        if (!this.openSymbolNameList.length) {
+          this.setOpenSymbolNameList(firstSymbolName)
+        }
+      })
+
+      // 动态获取到品种列表后在连接ws，默认查询全部的时候订阅
+      if (!params?.accountId) {
+        ws.reconnect()
+      }
+    }
+  }
+
+  // 查询持仓列表
+  @action
+  getPositionList = async () => {
+    // 查询进行中的订单
+    const res = await getBgaOrderPage({ current: 1, size: 999, status: 'BAG', accountId: this.currentAccountInfo?.id })
+    if (res.success) {
+      runInAction(() => {
+        this.positionList = (res.data?.records || []) as Order.BgaOrderPageListItem[]
+      })
+    }
+  }
+  // 查询挂单列表
+  @action
+  getPendingList = async () => {
+    const res = await getOrderPage({ current: 1, size: 999, status: 'ENTRUST', type: '40,50', accountId: this.currentAccountInfo?.id })
+    if (res.success) {
+      runInAction(() => {
+        this.pendingList = (res.data?.records || []) as Order.OrderPageListItem[]
+      })
+    }
+  }
+  // 查询止盈止损列表
+  @action
+  getStopLossProfitList = async () => {
+    const res = await getOrderPage({ current: 1, size: 999, status: 'ENTRUST', type: '20,30', accountId: this.currentAccountInfo?.id })
+    if (res.success) {
+      runInAction(() => {
+        this.stopLossProfitList = (res.data?.records || []) as Order.OrderPageListItem[]
+      })
+    }
+  }
+  // 查询历史成交列表
+  @action
+  getHistoryList = async () => {
+    const res = await getTradeRecordsPage({ current: 1, size: 999, accountId: this.currentAccountInfo?.id })
+    if (res.success) {
+      runInAction(() => {
+        this.historyList = (res.data?.records || []) as Order.TradeRecordsPageListItem[]
+      })
+    }
+  }
+  // 下单操作
+  // 携带持仓订单号则为平仓单，只需要传递持仓单号、交易账户ID、订单数量、订单类型和反向订单方向，其他参数无效
+  createOrder = async (params: Order.CreateOrder) => {
+    const orderType = params.type
+    const res = await createOrder(params)
+    if (res.success) {
+      if (['MARKET_ORDER', 'STOP_LOSS_ORDER', 'TAKE_PROFIT_ORDERR'].includes(orderType)) {
+        // 更新持仓列表
+        this.getPositionList()
+      } else if (['STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(orderType)) {
+        // 更新挂单列表
+        this.getPendingList()
+        message.success(getIntl().formatMessage({ id: 'mt.guadanchenggong' }))
+      }
+    }
+    return res
+  }
+  // 修改止盈止损
+  modifyStopProfitLoss = async (params: Order.ModifyStopProfitLossParams) => {
+    const res = await modifyStopProfitLoss(params)
+    if (res.success) {
+      // 更新持仓列表
+      this.getPositionList()
+      // 更新止盈止损列表
+      this.getStopLossProfitList()
+    }
+    return res
+  }
+  // 修改挂单
+  modifyPendingOrder = async (params: Order.UpdatePendingOrderParams) => {
+    const res = await modifyPendingOrder(params)
+    if (res.success) {
+      // 更新挂单列表
+      this.getPendingList()
+    }
+    return res
+  }
+  // 取消挂单
+  cancelOrder = async (params: API.IdParam) => {
+    const res = await cancelOrder(params)
+    if (res.success) {
+      // 更新挂单列表
+      this.getPendingList()
+    }
+    return res
+  }
+}
+
+const trade = new TradeStore()
+
+export default trade

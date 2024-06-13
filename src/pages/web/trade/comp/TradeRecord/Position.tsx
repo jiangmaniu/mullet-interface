@@ -1,22 +1,31 @@
+import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Tooltip } from 'antd'
 import classNames from 'classnames'
-import { cloneDeep } from 'lodash'
 import { observer } from 'mobx-react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
 import ListItem from '@/components/Base/ListItem'
-import { TRADE_TYPE } from '@/constants/enum'
+import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { copyContent, formatNum, formatTime, groupBy, toFixed } from '@/utils'
+import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
+import { covertProfit } from '@/utils/wsUtil'
 
 import ClosePositionConfirmModal from '../Modal/ClosePositionConfirmModal'
 import SetStopLossProfitModal from '../Modal/SetStopLossProfitModal'
-import Signal from './comp/Signal'
+import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
+
+export type IPositionItem = Order.BgaOrderPageListItem & {
+  /**格式化浮动盈亏 */
+  profitFormat: string
+  /**现价 */
+  currentPrice: number | string
+}
 
 type IProps = {
   style?: React.CSSProperties
@@ -27,28 +36,35 @@ type IProps = {
 // 持仓记录
 function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const { isPc } = useEnv()
-  const { ws, global } = useStores()
+  const { ws, trade } = useStores()
   const { lng } = useLang()
   const { quotes, symbols } = ws
   const isZh = lng === 'zh-TW'
   const intl = useIntl()
+  const [modalInfo, setModalInfo] = useState({} as IPositionItem)
 
   const closePositionRef = useRef<any>(null)
   const stopLossProfitRef = useRef<any>(null)
 
   const unit = 'USD'
-  const tradeList = cloneDeep(ws.tradeList).sort((a, b) => b.utime - a.utime)
+  const tradeList = trade.positionList as IPositionItem[]
 
-  const activeSymbolName = global.activeSymbolName
+  const activeSymbolName = trade.activeSymbolName
   let list = showActiveSymbol ? tradeList.filter((v) => v.symbol === activeSymbolName) : tradeList
-  // @ts-ignore
-  list = [{}, {}] // 测试
 
-  const formatValue = (value: any) => <span className="font-num">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="font-dingpro-regular">{formatNum(value)}</span>
 
   const slSp = [
-    { label: <FormattedMessage id="mt.zhisun" />, value: (item: any) => formatValue(toFixed(item?.sl, item?.digits)), unit },
-    { label: <FormattedMessage id="mt.zhiying" />, value: (item: any) => formatValue(toFixed(item?.tp, item?.digits)), unit }
+    {
+      label: <FormattedMessage id="mt.zhisun" />,
+      value: (item: IPositionItem) => formatValue(toFixed(item?.stopLoss || 0, item?.symbolDecimal)),
+      unit
+    },
+    {
+      label: <FormattedMessage id="mt.zhiying" />,
+      value: (item: IPositionItem) => formatValue(toFixed(item?.takeProfit, item?.symbolDecimal)),
+      unit
+    }
   ]
 
   const floatPL = {
@@ -57,38 +73,88 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       const profitFormat = formatValue(item?.profitFormat)
       return item.profit > 0 ? <>+{profitFormat}</> : profitFormat
     },
-    valueClassName: (item: any) => `${item?.profit > 0 ? '!text-green' : '!text-red'} !text-[16px]`,
+    valueClassName: (item: IPositionItem) => `${Number(item?.profit) > 0 ? '!text-green' : '!text-red'} !text-[16px]`,
     className: 'xxl:text-right',
     unit,
-    unitClassName: (item: any) => {
-      return item?.profit > 0 ? '!text-green' : 'text-red'
+    unitClassName: (item: IPositionItem) => {
+      return Number(item?.profit) > 0 ? '!text-green' : 'text-red'
     }
   }
   const time = {
     label: <FormattedMessage id="mt.jiaoyishijian" />,
     key: 'time',
-    value: (item: any) => {
-      return formatTime(item?.utime)
+    value: (item: IPositionItem) => {
+      return formatTime(item?.createTime)
     }
   }
-  const vol = { label: <FormattedMessage id="mt.shoushu" />, value: (item: any) => item?.number }
-  const openPrice = { label: <FormattedMessage id="mt.kaicangjia" />, value: (item: any) => formatValue(item?.price) }
+  const vol = { label: <FormattedMessage id="mt.shoushu" />, value: (item: IPositionItem) => item.orderVolume }
+  const openPrice = {
+    label: <FormattedMessage id="mt.kaicangjia" />,
+    value: (item: IPositionItem) => formatValue(toFixed(item?.startPrice, item.symbolDecimal))
+  }
   const currentPrice = {
     label: <FormattedMessage id="mt.xianjia" />,
     value: (item: any) => formatValue(item.currentPrice)
   }
-  const interest = { label: <FormattedMessage id="mt.lixi" />, value: (item: any) => toFixed(item.storage) || 0.0 }
-  const fee = { label: <FormattedMessage id="mt.shouxufei" />, value: (item: any) => toFixed(item.storage) || 0.0 }
-  const orderNo = { label: <FormattedMessage id="mt.chicangdanhao" />, value: (item: any) => `#${item.position}` }
-  const margin = { label: <FormattedMessage id="mt.baozhengjin" />, value: (item: any) => `#${item.margin}` }
-  const stock = { label: <FormattedMessage id="mt.kucunfei" />, value: (item: any) => `#${item.stock}` }
-  const yieldRate = { label: <FormattedMessage id="mt.shouyilv" />, value: (item: any) => `#${item.stock}` }
-  const baocangPrice = { label: <FormattedMessage id="mt.qiangpingjia" />, value: (item: any) => `#${item.stock}` }
+  const fee = { label: <FormattedMessage id="mt.shouxufei" />, value: (item: IPositionItem) => toFixed(item.handlingFees) || 0.0 }
+  const orderNo = { label: <FormattedMessage id="mt.chicangdanhao" />, value: (item: IPositionItem) => `${item.id}` }
+  const margin = {
+    label: <FormattedMessage id="mt.baozhengjin" />,
+    value: (item: IPositionItem) => (
+      <span className="items-center inline-flex">
+        <span className="pr-2">{toFixed(item.orderMargin, item.symbolDecimal)}</span>
+        {/* 逐仓才可以追加保证金 */}
+        {item.marginType === 'ISOLATED_MARGIN' && (
+          <span>
+            {/* 追加保证金 */}
+            <AddOrExtractMarginModal
+              trigger={
+                <PlusCircleOutlined
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setModalInfo(item)
+                  }}
+                />
+              }
+              info={modalInfo}
+              onClose={() => {
+                setModalInfo({} as IPositionItem)
+              }}
+              type="AddMargin"
+            />
+            {/* 提取逐仓保证金 */}
+            <AddOrExtractMarginModal
+              trigger={
+                <MinusCircleOutlined
+                  className="cursor-pointer ml-3"
+                  onClick={() => {
+                    setModalInfo(item)
+                  }}
+                />
+              }
+              info={modalInfo}
+              onClose={() => {
+                setModalInfo({} as IPositionItem)
+              }}
+              type="ExtractMargin"
+            />
+          </span>
+        )}
+      </span>
+    )
+  }
+  const interestFees = { label: <FormattedMessage id="mt.kucunfei" />, value: (item: IPositionItem) => `${item.interestFees || '-'}` }
+  // 保证金合约做多：收益=（平仓均价-开仓均价）*合约大小*交易手数；
+  // 保证金合约做空：收益=（开仓均价-平仓均价）*合约大小*交易手数；
+  // 收益率：收益/开仓保证金*100%；
+  // @ts-ignore
+  const yieldRate = { label: <FormattedMessage id="mt.shouyilv" />, value: (item: IPositionItem) => `${item.xx || '-'}` }
+  // @TODO 需要公式计算
+  // @ts-ignore
+  const baocangPrice = { label: <FormattedMessage id="mt.qiangpingjia" />, value: (item: IPositionItem) => `${item.stock}` }
 
-  // const pcList = [vol, openPrice, currentPrice, ...slSp, interest, floatPL]
-  // const mobileList = [time, vol, openPrice, currentPrice, interest, orderNo]
-  const pcList = [openPrice, margin, vol, ...slSp, baocangPrice, fee, stock, yieldRate, floatPL]
-  const mobileList = [time, vol, openPrice, margin, fee, stock, baocangPrice, yieldRate, orderNo]
+  const pcList = [openPrice, margin, vol, ...slSp, baocangPrice, fee, interestFees, yieldRate, floatPL]
+  const mobileList = [time, vol, openPrice, margin, fee, interestFees, baocangPrice, yieldRate, orderNo]
 
   const fieldList = isPc ? pcList : mobileList
 
@@ -144,64 +210,56 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   return (
     <div style={style}>
       {list.length > 0 &&
-        list.map((v: any, idx) => {
-          const symbolName = v.symbol
-          // @ts-ignore
-          // if (!quotes[symbolName] || !symbols[symbolName]) return
-          // const digits = v.digits
-          // const price =
-          //   v.action === TRADE_TYPE.MARKET_SELL
-          //     ? // @ts-ignore
-          //       quotes[symbolName]
-          //       ? // @ts-ignore
-          //         toFixed(quotes[symbolName].ask, digits)
-          //       : 0
-          //     : // @ts-ignore
-          //     quotes[symbolName]
-          //     ? // @ts-ignore
-          //       toFixed(quotes[symbolName].bid, digits)
-          //     : 0
+        list.map((v: IPositionItem, idx: number) => {
+          const dataSourceSymbol = v.dataSourceSymbol as string
+          const digits = v.symbolDecimal || 2
+          const currentPrice =
+            v.buySell === TRADE_BUY_SELL.BUY
+              ? // @ts-ignore
+                quotes[dataSourceSymbol]
+                ? // @ts-ignore
+                  toFixed(quotes[dataSourceSymbol].ask, digits)
+                : 0
+              : // @ts-ignore
+              quotes[dataSourceSymbol]
+              ? // @ts-ignore
+                toFixed(quotes[dataSourceSymbol].bid, digits)
+              : 0
 
-          // v.price = toFixed(v.price, digits) // 开仓价
-          // v.currentPrice = toFixed(price, digits) // 现价
-          // const profit = covertProfit(quotes, symbols, v) // 浮动盈亏
-          // v.profit = profit
-          // // @ts-ignore
-          // v.profitFormat = profit > 0 ? '+' + toFixed(profit) : toFixed(profit)
-          // v.number = toFixed(v?.vol / 10000) // 可平仓手数
+          v.currentPrice = toFixed(currentPrice, digits) // 现价
+          const profit = covertProfit(dataSourceSymbol, v) as number // 浮动盈亏
+          v.profit = profit
+          v.profitFormat = profit > 0 ? '+' + toFixed(profit) : toFixed(profit) // 格式化的
+          v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
+          v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
 
+          const buySellInfo = getBuySellInfo(v)
           return (
             <div key={idx} className="mb-3 rounded-xl border border-primary">
               <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
                 <div className="flex items-center">
-                  <img width={22} height={22} alt="" src={`/img/coin-icon/${symbolName}.png`} className="rounded-full" />
+                  <img width={22} height={22} alt="" src={getDefaultSymbolIcon(v.imgUrl)} className="rounded-full" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
-                  <span
-                    className={classNames('pl-[6px] text-sm font-medium', v.action === TRADE_TYPE.MARKET_BUY ? 'text-green' : 'text-red')}
-                  >
-                    {v.action === TRADE_TYPE.MARKET_BUY ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />}·{' '}
-                    <FormattedMessage id="mt.zhucang" />
-                    20X
-                  </span>
-                  <div className="ml-3">
-                    {/* @TODO 爆仓信号灯 规则是怎么样的 */}
+                  <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+                  {/*爆仓信号灯暂时不做 */}
+                  {/* <div className="ml-3">
                     <Signal />
-                  </div>
+                  </div> */}
                   {/* pc显示 */}
                   <div className="flex items-center max-xl:hidden">
                     <div
                       className="flex cursor-pointer items-center pl-[30px]"
                       onClick={() => {
-                        copyContent(v.position, intl.formatMessage({ id: 'mt.fuzhichenggong' }))
+                        copyContent(v.id, intl.formatMessage({ id: 'mt.fuzhichenggong' }))
                       }}
                     >
                       <span className="text-xs text-gray-weak">ID</span>
-                      <span className="px-[6px] text-xs text-gray-secondary">{v.position}</span>
+                      <span className="px-[6px] text-xs text-gray-secondary">{v.id}</span>
                       <img src="/img/copy-icon.png" width={16} height={16} alt="" />
                     </div>
                     <div className="flex items-center pl-[30px]">
                       <img src="/img/time.png" width={16} height={16} alt="" />
-                      <span className="pl-[6px] text-xs text-gray-secondary">{formatTime(v.utime)}</span>
+                      <span className="pl-[6px] text-xs text-gray-secondary">{formatTime(v.createTime)}</span>
                     </div>
                   </div>
                 </div>
@@ -306,9 +364,9 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         </div>
       )}
       {/* 平仓修改确认弹窗 */}
-      <ClosePositionConfirmModal ref={closePositionRef} tradeList={tradeList} />
+      <ClosePositionConfirmModal ref={closePositionRef} />
       {/* 设置止损止盈弹窗 */}
-      <SetStopLossProfitModal ref={stopLossProfitRef} tradeList={tradeList} />
+      <SetStopLossProfitModal ref={stopLossProfitRef} />
     </div>
   )
 }

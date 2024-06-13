@@ -3,9 +3,12 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import { Col, Row } from 'antd'
 import classNames from 'classnames'
+import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
+import useCurrentDepth from '@/hooks/useCurrentDepth'
+import { formatNum } from '@/utils'
 
 import Liquidation from '../Liquidation'
 
@@ -21,10 +24,14 @@ function generateRandomProgressArray() {
 type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 
 // 盘口深度报价
-export default function DeepPrice() {
+function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const [list, setList] = useState<any>([])
   const timerRef = useRef<any>()
+  const depth = useCurrentDepth()
+  const asks = depth?.asks || []
+  const bids = depth?.bids || []
+
   const modeList: Array<{ key: ModeType; icon: string }> = [
     {
       key: 'BUY_SELL',
@@ -72,37 +79,40 @@ export default function DeepPrice() {
     <div className="border-t border-b border-gray-60 py-2 px-3">
       <div className="flex items-center justify-between">
         <div>
+          {/* 当前行情卖价 */}
           <span className="text-lg text-green font-dingpro-medium pr-[10px]">46,604.1</span>
-          <span className="text-sm text-gray-secondary font-dingpro-medium">¥422,311.21</span>
         </div>
-        <span className="text-xs text-gray-secondary cursor-pointer">
-          {/* @TODO 更多打开一个页面交互没有 */}
+        {/* 更多打开一个页面交互没有 */}
+        {/* <span className="text-xs text-gray-secondary cursor-pointer">
           <FormattedMessage id="common.more" />
-        </span>
+        </span> */}
       </div>
     </div>
   )
 
+  // 渲染买列表
   const renderBuyList = () => {
-    return list.map((item: any, idx: number) => {
+    return asks.map((item, idx: number) => {
+      const total = item.price * item.amount
+      const pencent = (item.price / total) * 100
       return (
         <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
           <Row className="flex items-center h-6 px-3 relative z-[2]">
-            <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
-              46,604.1
+            <Col span={8} className="text-xs text-green font-dingpro-regular text-left">
+              {formatNum(item.price)}
             </Col>
             <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
-              7.11231
+              {formatNum(item.amount)}
             </Col>
             <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
-              20,120
+              {formatNum(total, { precision: 2 })}
             </Col>
           </Row>
           {/* 进度条 */}
           <div
             className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
             style={{
-              transform: `translateX(-${item}%)`
+              transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
             }}
           ></div>
         </div>
@@ -118,28 +128,32 @@ export default function DeepPrice() {
       </>
     )
   }
+
+  // 渲染卖列表
   const renderSell = () => {
     return (
       <>
-        {list.map((item: any, idx: number) => {
+        {bids.map((item: any, idx: number) => {
+          const total = item.price * item.amount
+          const pencent = (item.price / total) * 100
           return (
             <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
               <Row className="flex items-center h-6 px-3 relative z-[2]">
                 <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
-                  46,604.1
+                  {formatNum(item.price)}
                 </Col>
                 <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
-                  7.11231
+                  {formatNum(item.amount)}
                 </Col>
                 <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
-                  20,120
+                  {formatNum(total, { precision: 2 })}
                 </Col>
               </Row>
               {/* 进度条 */}
               <div
                 className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
                 style={{
-                  transform: `translateX(-${item}%)`
+                  transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
                 }}
               ></div>
             </div>
@@ -148,6 +162,8 @@ export default function DeepPrice() {
       </>
     )
   }
+
+  if (!asks.length && !bids.length) return
 
   return (
     <div className={classNames('w-[300px] h-[690px] overflow-hidden bg-white relative', className)}>
@@ -237,3 +253,5 @@ export default function DeepPrice() {
     </div>
   )
 }
+
+export default observer(DeepPrice)

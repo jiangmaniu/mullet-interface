@@ -5,7 +5,7 @@ import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuoteInfo from '@/hooks/useCurrentQuoteInfo'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
@@ -18,13 +18,12 @@ type IProps = {
 }
 
 function HeaderStatisInfo({ sidebarRef }: IProps) {
-  const { ws, global } = useStores()
-  const { quotes, symbols, user, marketInfo, tradeList, userType } = ws
-  const symbol = global.activeSymbolName
+  const { ws, trade } = useStores()
+  const symbol = trade.activeSymbolName
   const [showSidebar, setShowSidebar] = useState(false)
 
-  const res: any = useCurrentQuoteInfo()
-  const color = res.per > 0 ? 'text-green' : 'text-red'
+  const res: any = useCurrentQuote()
+  const color = res.percent > 0 ? 'text-green' : 'text-red'
 
   const openSidebarRef = useRef<any>()
   useClickOutside([openSidebarRef], () => {
@@ -37,77 +36,81 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
         <>
           <div className="flex items-center justify-between px-[10px] py-2">
             <div className="flex items-center">
-              <div
-                className="flex cursor-pointer items-center relative"
-                onClick={() => {
-                  setShowSidebar(true)
-                }}
-                ref={openSidebarRef}
-              >
-                <img src="/img/menu-icon2.png" height={24} width={24} />
-                <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>
-                <img
-                  src="/img/down.png"
-                  height={24}
-                  width={24}
-                  style={{ transform: showSidebar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'all 0.4s ease-in-out' }}
-                />
-
+              <div className="w-[300px] flex items-center">
                 <div
-                  className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] bg-white"
-                  style={{
-                    boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
-                    display: showSidebar ? 'block' : 'none'
+                  className="flex cursor-pointer items-center relative"
+                  onClick={() => {
+                    setShowSidebar(true)
                   }}
+                  ref={openSidebarRef}
                 >
-                  <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
+                  <img src="/img/menu-icon2.png" height={24} width={24} />
+                  <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>
+                  <img
+                    src="/img/down.png"
+                    height={24}
+                    width={24}
+                    style={{ transform: showSidebar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'all 0.4s ease-in-out' }}
+                  />
+
+                  <div
+                    className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] bg-white"
+                    style={{
+                      boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
+                      display: showSidebar ? 'block' : 'none'
+                    }}
+                  >
+                    <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center pl-6">
-                <span className={classNames('font-dingpro-medium text-xl', color)}>{formatNum(res.c)}</span>
-                {!!res.bid && <span className={classNames('pl-2 text-base', color)}>{res.per > 0 ? `+${res.per}%` : `${res.per}%`}</span>}
+                <div className="flex items-center pl-6">
+                  <span className={classNames('font-dingpro-medium text-xl', color)}>{formatNum(res.close)}</span>
+                  {!!res.bid && (
+                    <span className={classNames('pl-2 text-base', color)}>{res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}</span>
+                  )}
+                </div>
               </div>
               <div className="flex items-center pl-12 gap-x-12">
                 {/* @TODO 只有数字货币才展示 */}
-                <div className="flex flex-col">
+                {/* <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.zijinhuilvdaojishi" />
                   </span>
                   <span className="pt-1 font-dingpro-medium text-sm text-gray">0.0100% / 5:31:23</span>
-                </div>
+                </div> */}
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.kai" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.o)}</span>
+                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.open)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.gao" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-xs text-gray">{formatNum(res.h)}</span>
+                  <span className="pt-1 font-dingpro-medium text-xs text-gray">{formatNum(res.high)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.di" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.l)}</span>
+                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.low)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.shou" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.c)}</span>
+                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.close)}</span>
                 </div>
               </div>
             </div>
             <div
               onClick={() => {
-                global.toggleSymbolFavorite()
+                trade.toggleSymbolFavorite()
               }}
               className="cursor-pointer"
             >
-              <img width={32} height={32} alt="" src={`/img/${global.isFavoriteSymbol ? 'star-active' : 'star'}.png`} />
+              <img width={32} height={32} alt="" src={`/img/${trade.isFavoriteSymbol ? 'star-active' : 'star'}.png`} />
             </div>
           </div>
         </>
@@ -129,17 +132,19 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
             <div
               className="flex items-center"
               onClick={() => {
-                global.toggleSymbolFavorite()
+                trade.toggleSymbolFavorite()
               }}
             >
-              <img width={34} height={34} alt="" src={`/img/${global.isFavoriteSymbol ? 'star-active' : 'star'}.png`} />
+              <img width={34} height={34} alt="" src={`/img/${trade.isFavoriteSymbol ? 'star-active' : 'star'}.png`} />
             </div>
           </div>
           <div className="flex items-end justify-between pt-3">
             <div className="flex flex-col">
               <div className="flex items-baseline">
-                <span className={classNames('text-[26px] font-bold', color)}>{res.c}</span>
-                <span className={classNames('pl-2 text-xs font-semibold', color)}>{res.per > 0 ? '+' + res.per : res.per}%</span>
+                <span className={classNames('text-[26px] font-bold', color)}>{res.close}</span>
+                <span className={classNames('pl-2 text-xs font-semibold', color)}>
+                  {res.percent > 0 ? '+' + res.percent : res.percent}%
+                </span>
               </div>
               <div className="mt-1 flex">
                 <Futures
@@ -161,13 +166,13 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   <div className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.kai" />
                   </div>
-                  <div className="pl-2 text-xs text-gray-weak">{res.o}</div>
+                  <div className="pl-2 text-xs text-gray-weak">{res.open}</div>
                 </div>
                 <div className="flex pt-1">
                   <div className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.shou" />
                   </div>
-                  <div className="pl-2 text-xs text-gray-weak">{res.c}</div>
+                  <div className="pl-2 text-xs text-gray-weak">{res.close}</div>
                 </div>
               </div>
               <div className="flex flex-col pl-3">
@@ -175,13 +180,13 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   <div className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.gao" />{' '}
                   </div>
-                  <div className="pl-2 text-xs text-gray-weak">{res.h}</div>
+                  <div className="pl-2 text-xs text-gray-weak">{res.high}</div>
                 </div>
                 <div className="flex pt-1">
                   <div className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.di" />
                   </div>
-                  <div className="pl-2 text-xs text-gray-weak">{res.l}</div>
+                  <div className="pl-2 text-xs text-gray-weak">{res.low}</div>
                 </div>
               </div>
             </div>

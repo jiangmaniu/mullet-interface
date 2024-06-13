@@ -1,16 +1,59 @@
+import qs from 'qs'
+
+import { parseJsonFields } from '@/utils'
+import { formatSymbolConf } from '@/utils/business'
 import { request } from '@/utils/request'
 
-// 追加保证金
-export async function addMargin(body: Order.addMargin) {
-  return request<API.Response>('/api/trade-core/coreApi/orders/addMargin', {
+const formatOrderResult = (res: any) => {
+  const records = res.data?.records || []
+  if (records.length > 0 && res.data) {
+    const list = records.map((item: any) => {
+      if (item.conf) {
+        parseJsonFields(item, ['conf'])
+        item.conf = formatSymbolConf(item.conf)
+      }
+      return item
+    })
+    res.data.records = list
+  }
+  return res
+}
+
+// 下单
+export async function createOrder(body: Order.CreateOrder) {
+  return request<API.Response>(`/api/trade-core/coreApi/orders/createOrder`, {
     method: 'POST',
     data: body
   })
 }
 
-// 下单
-export async function createOrder(body: Order.CreateOrder) {
-  return request<API.Response>('/api/trade-core/coreApi/orders/createOrder', {
+// 计算新订单保证金
+export async function calcOrderMargin(body: Order.CreateOrder) {
+  return request<API.Response>('/api/trade-core/coreApi/orders/newOrderMargin', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 修改委托单（修改挂单）
+export async function modifyPendingOrder(body: Order.UpdatePendingOrderParams) {
+  return request<API.Response>('/api/trade-core/coreApi/orders/orderEdit', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 取消委托单-挂单
+export async function cancelOrder(body: API.IdParam) {
+  return request<API.Response>(`/api/trade-core/coreApi/orders/orderCancel?${qs.stringify(body)}`, {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 修改止盈止损
+export async function modifyStopProfitLoss(body: Order.ModifyStopProfitLossParams) {
+  return request<API.Response>(`/api/trade-core/coreApi/orders/stopProfitLoss`, {
     method: 'POST',
     data: body
   })
@@ -26,10 +69,10 @@ export async function updateOrder(body: Order.UpdateOrder) {
 
 // 订单-分页
 export async function getOrderPage(params?: Order.OrderPageListParams) {
-  return request<API.Response<Order.OrderPageListItem>>('/api/trade-core/coreApi/orders/orderPage', {
+  return request<API.Response<API.PageResult<Order.OrderPageListItem>>>('/api/trade-core/coreApi/orders/orderPage', {
     method: 'GET',
     params
-  })
+  }).then((res) => formatOrderResult(res))
 }
 
 // 订单-详情
@@ -45,7 +88,7 @@ export async function getBgaOrderPage(params?: Order.BgaOrderPageListParams) {
   return request<API.Response<API.PageResult<Order.BgaOrderPageListItem>>>('/api/trade-core/coreApi/orders/bgaOrderPage', {
     method: 'GET',
     params
-  })
+  }).then((res) => formatOrderResult(res))
 }
 
 // 成交记录-分页
@@ -53,5 +96,21 @@ export async function getTradeRecordsPage(params?: Order.TradeRecordsPageListPar
   return request<API.Response<API.PageResult<Order.TradeRecordsPageListItem>>>('/api/trade-core/coreApi/orders/tradeRecordsPage', {
     method: 'GET',
     params
+  }).then((res) => formatOrderResult(res))
+}
+
+// 追加保证金
+export async function addMargin(body: Order.AddMarginParams) {
+  return request<API.Response>('/api/trade-core/coreApi/orders/addMargin', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 提取逐仓保证金
+export async function extractMargin(body: Order.ExtractMarginParams) {
+  return request<API.Response>('/api/trade-core/coreApi/orders/extractMargin', {
+    method: 'POST',
+    data: body
   })
 }

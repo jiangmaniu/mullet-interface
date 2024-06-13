@@ -17,13 +17,13 @@ type IProps = {
 
 function ProductAttr({ count, sp, sl, typeText, typeClassName, openPrice }: IProps) {
   const { lng } = useLang()
-  const { ws, global } = useStores()
+  const { ws, trade } = useStores()
   const intl = useIntl()
 
   const fieldList = [
     {
       label: intl.formatMessage({ id: 'mt.chicangchanpin' }),
-      value: global.activeSymbolName
+      value: trade.activeSymbolName
     },
     {
       label: intl.formatMessage({ id: 'mt.chicangfangxiang' }),

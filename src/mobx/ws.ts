@@ -1,123 +1,128 @@
-import { getIntl } from '@umijs/max'
-import { message } from 'antd'
 import { action, makeObservable, observable } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
 import { URLS } from '@/constants'
-import { STORAGE_GET_USER_INFO } from '@/utils/storage'
-import {
-  AllSymbols,
-  covertProfit,
-  CurrencyLABELS,
-  CurrencyType,
-  formatQuotes,
-  ILoginCmd,
-  IOpenData,
-  IPendingItem,
-  IPriceInfo,
-  IQuoteItem,
-  ITrendingItem,
-  IUserProp,
-  MarketInfoProp,
-  QuotesProp,
-  SymbolProp
-} from '@/utils/wsUtil'
+import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
+
+import trade from './trade'
+
+export type IQuoteItem = {
+  /**品种名称 */
+  symbol: string
+  /**价格数据 */
+  priceData: {
+    /**卖交易量 */
+    sellSize: number
+    /**买 */
+    buy: number
+    /**卖 */
+    sell: number
+    /**这个是时间戳13位 */
+    id: number
+    /*买交易量 */
+    buySize: number
+  }
+  /**数据源code 例如huobi */
+  dataSource: string
+}
+
+export type IDepthPriceItem = {
+  amount: number
+  price: number
+}
+export type IDepth = {
+  symbol: string
+  dataSourceCode?: string
+  asks: IDepthPriceItem[]
+  bids: IDepthPriceItem[]
+  /**13位时间戳 */
+  ts?: number
+}
+
+enum MessageType {
+  /**行情 */
+  symbol = 'symbol',
+  /**深度报价 */
+  depth = 'depth'
+}
+type IMessage = {
+  header: {
+    flowId: number
+    /**消息类型 */
+    msgId: MessageType
+    tenantId: string
+    /**用户ID */
+    userId: string
+  }
+  body: any
+}
 
 class WSStore {
   constructor() {
     makeObservable(this) // 使用 makeObservable mobx6.0 才会更新视图
   }
-  quotesTempArr: any = []
-  batchTimer: any = null
-  @observable loginCmd: ILoginCmd = { cmd: 10000, login: '', password: '', device: 1 }
   @observable socket: any = null
-  @observable modal = 'dark'
-  @observable socketState = 0 //ws状态，0未连接，1已连接
-  @observable quotes = {} as QuotesProp // 当前行情
-  @observable symbols = {} as SymbolProp // 品种信息
-  @observable marketInfo = {} as MarketInfoProp // 高开收低数据
-  @observable user = {} as IUserProp // 用户信息
-  @observable tradeList: ITrendingItem[] = [] //持仓信息
-  @observable pendingList: IPendingItem[] = [] //挂单信息
-  @observable isRefresh = true
-  @observable openTips = false
-  @observable openData = {} as IOpenData
-  @observable pengdingTips = false
-  @observable heyueTips = false
-  @observable lpTips = false
-  @observable timer: any = null
-  @observable userType = 0 // 0 真实 1模拟
-  @observable editOrderTips = false
-  @observable quoteList = AllSymbols
-  @observable quoteList1 = formatQuotes().quoteList1
-  @observable quoteList2 = formatQuotes().quoteList2
-  @observable quoteList3 = formatQuotes().quoteList3
-  @observable quoteList4 = formatQuotes().quoteList4
-  @observable quoteName: CurrencyType = 'BTCUSDT'
-  @observable quoteLabel = 'BTC/USDT'
-  @observable label: Record<CurrencyType, string> = CurrencyLABELS // 货币类型
-  @observable websocketUrl = 'ws://192.168.5.60:19109/websocketServer'
-  @observable urls = [URLS.ws.y, URLS.ws.d, URLS.ws.r] //ws链接
+  @observable quotes = {} as Record<string, IQuoteItem> // 当前行情
+  @observable depth = {} as Record<string, IDepth> // 当前行情
+  @observable symbols = {} // 储存品种请求列表
+  @observable websocketUrl = URLS.ws
 
   @action
   async connect() {
-    // console.log(IuserInfo.pwd)
-    const userInfo = STORAGE_GET_USER_INFO()
-    // console.log('xxxx', userInfo)
-    // if (userInfo !== null) {
-    //   if (this.userType === 0) {
-    //     this.loginCmd.login = userInfo.realStandardAccount
-    //     this.loginCmd.password = STORAGE_GET_PWD()
-    //     this.websocketUrl = URLS.ws.d // 真实
-    //   } else {
-    //     this.websocketUrl = URLS.ws.r // 模拟
-    //     this.loginCmd.login = userInfo.demoAccount
-    //     this.loginCmd.password = STORAGE_GET_PWD()
-    //   }
-    // } else {
-    //   this.websocketUrl = URLS.ws.y // 游客
-    // }
-    // console.log('yyy', this.websocketUrl)
-    const token =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZW5hbnRfaWQiOiIwMDAwMDAiLCJ1c2VyX25hbWUiOiJhZG1pbiIsInJlYWxfbmFtZSI6IueuoeeQhuWRmCIsImF2YXRhciI6Imh0dHBzOi8vZ3cuYWxpcGF5b2JqZWN0cy5jb20vem9zL3Jtc3BvcnRhbC9CaWF6ZmFueG1hbU5Sb3h4VnhrYS5wbmciLCJhdXRob3JpdGllcyI6WyJzZW5pb3IiLCJhZG1pbmlzdHJhdG9yIiwiZGV2b3BzIl0sImNsaWVudF9pZCI6IlN0ZWxsdXhUcmFkZXIiLCJyb2xlX25hbWUiOiJhZG1pbmlzdHJhdG9yLHNlbmlvcixkZXZvcHMiLCJsaWNlbnNlIjoicG93ZXJlZCBieSBibGFkZXgiLCJwb3N0X2lkIjoiMTc5MjM3ODE0Nzc4NjcyNzQyNSIsInVzZXJfaWQiOiIxMTIzNTk4ODIxNzM4Njc1MjAxIiwicm9sZV9pZCI6IjExMjM1OTg4MTY3Mzg2NzUyMDEsMTc5MjM3NjQ2MDc1Mzc3MjU0NiwxNzkyMzc2OTEzODgxMjEwODgyIiwic2NvcGUiOlsiYWxsIl0sIm5pY2tfbmFtZSI6IueuoeeQhuWRmCIsIm9hdXRoX2lkIjoiIiwiZGV0YWlsIjp7InR5cGUiOiJ3ZWIifSwiZXhwIjoxNzE3MTQ4MDE3LCJkZXB0X2lkIjoiMTEyMzU5ODgxMzczODY3NTIwMSIsImp0aSI6IjIyNGM4ZmMxLWE2YmEtNDBlOS1iMzFlLTUwYmI1YzU5MjhmMSIsImFjY291bnQiOiJhZG1pbiJ9.raf5gK7EsQRCMk-uFPOyl9-laGtMNVI1TRHVcUrH6Kg'
-    this.socket = new ReconnectingWebSocket(this.websocketUrl, ['WebSocket', token], {
+    const token = STORAGE_GET_TOKEN()
+    // token不要传bear前缀
+    // 游客传WebSocket:visitor
+    this.socket = new ReconnectingWebSocket(this.websocketUrl, ['WebSocket', token ? token : 'visitor'], {
       minReconnectionDelay: 1,
       connectionTimeout: 5000, // 重连时间
       maxEnqueuedMessages: 0 // 不缓存发送失败的指令
     })
     this.socket.addEventListener('open', () => {
-      // {"header":{"tenantId":"000000","userId":"1123598821738675201","msgId":"subscribe","flowId":1717144942217},"body":{"topic":"/000000/huobi/symbol/btcusdt","cancel":false}}
-      this.socket.send(
-        JSON.stringify({
-          header: { tenantId: '000000', userId: '1123598821738675201', msgId: 'subscribe', flowId: 1717144942217 },
-          body: {
-            topic: '/000000/huobi/symbol/btcusdt',
-            cancel: false
-          }
-        })
-      )
-      this.socketState = 1
+      this.batchSubscribeSymbol()
     })
     this.socket.addEventListener('message', (d: any) => {
       const res = JSON.parse(d.data)
-      console.log('message', res?.body)
-      // console.log(d)
-      // let res = JSON.parse(d.data)
-      // // console.log('res===', res)
-      // // this.option.message && this.option.message(res); // 保存相关信息
-      // this.message(res)
-      // DeviceEventEmitter.emit('WS_MESSAGE', res) // 派发订阅事件
-      // return true;
+      this.message(res)
     })
   }
+  // 批量订阅行情(查询symbol列表后)
+  batchSubscribeSymbol = (cancel?: boolean) => {
+    const symbolList = trade.symbolList
+    if (!symbolList.length) return
+    symbolList.forEach((item) => {
+      this.send({
+        topic: `/000000/${item.dataSourceCode}/symbol/${item.dataSourceSymbol}`,
+        cancel
+      })
+    })
+  }
+  // 订阅当前打开的品种深度报价
+  subscribeDepth = (cancel?: boolean) => {
+    const symbolInfo = trade.getActiveSymbolInfo()
+    setTimeout(() => {
+      this.send({
+        topic: `/000000/${symbolInfo.dataSourceCode}/depth/${symbolInfo.dataSourceSymbol}`,
+        cancel
+      })
+    }, 300)
+  }
+
+  // 发送socket指令
   @action
   send(cmd = {}) {
-    // 发送socket指令
-    // console.log('发送', cmd)
-    const readyState = (this.socket && this.socket.readyState) || 0
-    if (this.socket && readyState === 1) {
-      // console.log(cmd)
-      this.socket.send(JSON.stringify(cmd))
+    const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
+    // 游客身份userId传123456789
+    const userId = userInfo?.user_id || '123456789'
+    if (this.socket) {
+      this.socket.send(
+        JSON.stringify({
+          header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now() },
+          body: {
+            cancel: false,
+            ...cmd
+          }
+        })
+      )
     }
   }
   @action
@@ -136,268 +141,39 @@ class WSStore {
   }
   @action
   resetData() {
-    this.quotes = {} as QuotesProp // 当前行情
-    this.symbols = {} as SymbolProp // 品种信息
-    this.tradeList = [] // 持仓信息
-    this.user = {} as IUserProp // 用户信息
-    this.socketState = 0
-    this.pendingList = []
-    this.quotesTempArr = []
+    // @ts-ignore
+    this.quotes = {} // 当前行情
   }
-  // 更新react组件数据
+  // 处理ws消息
   @action
-  message(data: any) {
-    // console.log(data)
-    // const lang = lan.getlang().trade
-    const getuser = { cmd: 10005 } //发送获取用户信息
-    const getPosition = { cmd: 10011 } //发送获取持仓
-    const getPending = { cmd: 10021 } //获取挂单列表
-    const symbol = data.sbl as CurrencyType
-    if (data.status !== 0 && (data.cmd === 10032 || data.cmd === 10036 || data.cmd === 10038 || data.cmd === 10034)) {
-      // message.destroy()
-      if (data.status === -12 || data.status === -13 || data.status === -14) {
-        message.error(getIntl().formatMessage({ id: 'ws.fuwuqifangmangqingshaohou' }))
-      } else if (data.status === 12) {
-        message.error(getIntl().formatMessage({ id: 'ws.qingqiupinlvtaikuai' }))
-      } else if (data.status === 10013) {
-        message.error(getIntl().formatMessage({ id: 'ws.wuxiaoqingqiu' }))
-      } else if (data.status === 10015) {
-        message.error(getIntl().formatMessage({ id: 'ws.wuxiaodeguadanijage' }))
-      } else if (data.status === 10020 || data.status === 10021) {
-        message.error(getIntl().formatMessage({ id: 'ws.fuwuqifangmangqingshaohou2' }))
-      } else if (data.status === 10033) {
-        message.error(getIntl().formatMessage({ id: 'ws.plosssettingerror' }))
-      } else if (data.status === 10019) {
-        message.error(getIntl().formatMessage({ id: 'ws.yuebuzu' }))
-      } else {
-        message.error(data.msg || data.message)
-      }
-    }
-    switch (data.cmd) {
-      case 9999:
-        //登录成功
-        // console.log('登录成功',data.cmd)
-        // const res = {"cmd": 10011}
-        if (this.timer !== null) {
-          clearInterval(this.timer)
-          this.timer = setInterval(() => {
-            this.send({ cmd: 8888 })
-          }, 30000)
-        } else {
-          this.timer = setInterval(() => {
-            this.send({ cmd: 8888 })
-          }, 30000)
-        }
-        const list = this.quoteList //获取品种信息
-        this.send(getuser)
-        this.send(getPosition)
-        let getSymbol = {}
-        let getSymbolVerb = {}
-        let getquotes = {}
-        list.map((item, i) => {
-          getSymbol = { cmd: 10001, sbl: item.name }
-          getSymbolVerb = { cmd: 10003, sbl: item.name }
-          getquotes = { cmd: 10007, sbl: item.name }
-          this.send(getSymbol) //获取品种信息
-          this.send(getSymbolVerb) //获取高开低收
-          this.send(getquotes) //获取最新报价
-        })
-        // const res = {"cmd": 10033,'ticket': }
-        // this.send(res)
-        break
-      case 9998:
-        message.warning(getIntl().formatMessage({ id: 'ws.marketclose' }))
-        break
-      case 10002:
-        //获取品种信息
-        // console.log(SymbolsArr[5])
-        this.symbols[symbol] = data
-        // console.log('品种信息', data)
-        break
-      case 10004:
-        //获取商品统计信息
-        // console.log('获取商品统计信息',data)
-        this.marketInfo[symbol] = data
-        break
-      case 10006:
-        //获取用户信息
-        // console.log('获取用户信息',data)
-        this.user = data
-        break
-      case 10008: // 收市报价、报价数据
-      case 51001:
-        // 限制更新频率，只有行情数据是高频更新的
-        if (this.quotesTempArr.length > 40) {
-          const quotes = this.quotes // 之前的值
+  message(res: IMessage) {
+    const header = res?.header || {}
+    const messageId = header.msgId
+    const data = res?.body || {}
+    const symbol = data?.symbol
 
-          // 一次性更新，避免页面卡顿的关键
-          let quotesObj: any = {}
-          this.quotesTempArr.forEach((item: IQuoteItem) => {
-            const sbl = item.sbl
-            if (quotes[sbl]) {
-              const prevBid = quotes[sbl]?.bid || 0
-              const prevAsk = quotes[sbl]?.ask || 0
-              item.bidDiff = item.bid - prevBid
-              item.askDiff = item.ask - prevAsk
-            }
-            quotesObj[sbl] = item
-          })
-          this.quotes = {
-            ...this.quotes,
-            ...quotesObj
-          }
-          this.quotesTempArr = []
-        } else {
-          this.quotesTempArr.push(data)
+    switch (messageId) {
+      // 行情
+      case MessageType.symbol:
+        if (symbol) {
+          this.quotes[symbol] = data
         }
+        // console.log('行情信息', toJS(this.quotes))
         break
-      case 10012:
-        // 更新持仓信息
-        // console.log('更新持仓信息', data)
-        this.tradeList = data.data
-        break
-      case 10022:
-        // 更新挂单信息
-        // console.log('更新挂单信息',data)
-        this.pendingList = data.data
-        break
-      case 10030:
-        // this.send(getuser)
-        this.send(getPosition)
-        this.send(getPending)
-        // console.log('通知',data)
-        break
-
-      case 10032:
-        // 交易是否成功
-        // console.log('交易是否成功', data)
-        if (data.status === 0) {
-          this.openTips = true
-          this.openData = data
-          // const getuser = {"cmd": 10005} //发送获取用户信息
-          // this.send(getuser)
-          if (data.closed) {
-            //平仓
-            this.openData = data
-            // const getPosition = {"cmd": 10011} //发送获取持仓
-            setTimeout(() => {
-              this.send(getPosition)
-            }, 1000)
-          } else {
-            if (data.type === 0 || data.type === 1) {
-              // const getPosition = {"cmd": 10011} //发送获取持仓
-              setTimeout(() => {
-                this.send(getPosition)
-              }, 1000)
-            } else {
-              // const getPending = {"cmd": 10021}//发送获取挂单指令
-              setTimeout(() => {
-                this.send(getPending)
-              }, 1000)
-            }
+      // 深度报价
+      case MessageType.depth:
+        if (symbol) {
+          const asks = data.asks ? JSON.parse(data.asks) : []
+          const bids = data.bids ? JSON.parse(data.bids) : []
+          this.depth[symbol] = {
+            ...data,
+            asks,
+            bids
           }
         }
-        // console.log('交易是否成功',data)
-        break
-      case 10034:
-        // console.log('挂单删除成功',data)
-        if (data.status === 0) {
-          message.success(getIntl().formatMessage({ id: 'ws.chexiaochenggong' }))
-          setTimeout(() => {
-            // const res = {"cmd": 10021}
-            this.send(getPending)
-          }, 1000)
-        }
-        break
-      case 10036:
-        //
-        // console.log('修改挂单',data)
-        if (data.status === 0) {
-          message.success(getIntl().formatMessage({ id: 'ws.modifySuccess' }))
-          setTimeout(() => {
-            this.editOrderTips = false
-            this.send(getPending)
-          }, 1000)
-        }
-        break
-      case 10038:
-        //
-        // console.log('修改止盈止损',data)
-        if (data.status === 0) {
-          message.success(getIntl().formatMessage({ id: 'ws.modifySuccess' }))
-          // getIntl
-          setTimeout(() => {
-            this.lpTips = false
-            // const getPosition = {"cmd": 10011}
-            this.send(getPosition)
-          }, 1000)
-        }
-        break
-      // case 51002:
-
-      //     // console.log('深度报价',data)
-      //     // const list = SymbolsArr[5] //获取品种信息
-      //     list.map((item,i) => {
-      //       if(item.name == data.sbl) {
-      //         this.deepQuotes[item.name] = data.items
-      //       }
-      //     })
-      //     break;
-      case 403:
-        // console.log('403')
-        // 服务器断开，调重连
-        // this.close()
-        // this.connect()
-        // window.sessionStorage.clear()
-        // setTimeout(() => {
-        //   window.location.reload()
-        // }, 500)
-        // toast.show(lang['连接已断开，如需重连，请刷新页面（请勿同时打开多个交易窗口）'])
-        // clearInterval(ii)
-        // this.reconnect()
-        // window.location.reload()
-        break
-      case 404:
-        message.error(getIntl().formatMessage({ id: 'ws.distconnectTips' }))
-        // clearInterval(ii)
-        this.close()
-        // this.reconnect()
-        console.log('404')
-        break
-      case 406:
-        //密码错误
-        close()
-        // clearInterval(this.timer)
-        // window.localStorage.clear()
-        // message.error(getIntl().formatMessage({ id: 'ws.pwdChangePleaseReLogin' }))
-        // setTimeout(() => {
-        //   history.push('/user/login')
-        // }, 1000)
+        // console.log('深度报价', toJS(this.depth))
         break
     }
-  }
-  getPrice = () => {
-    const { tradeList, quotes, symbols, user } = this
-    const res: IPriceInfo = {
-      balance: 0, //账户净值
-      profit: 0, //浮动盈亏
-      margin: 0, //可用保证金
-      occupy: 0 // 占用金
-    }
-    if (!quotes || !symbols || !user || !tradeList) return
-
-    if (tradeList?.length) {
-      tradeList.map((item: ITrendingItem, index: number) => {
-        if (!quotes[item.symbol]) return
-        let profit: any = covertProfit(quotes, symbols, item)
-        res.profit += profit
-      })
-    }
-    // console.log('user',res.profit)
-    res.balance = Number((user && user.balance ? res.profit + user.balance : 0).toFixed(2)) // 账户净值 = 余额 + 浮动盈亏 + 信用额
-    res.occupy = user.margin
-    res.margin = res.balance - res.occupy // 可用保证金 = 账户净值 - 占用保证金
-    return res
   }
 }
 

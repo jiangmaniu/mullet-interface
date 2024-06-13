@@ -53,7 +53,7 @@ export const transferWeekDay = (weekDay: IWeekDay) => {
   return text
 }
 
-// 交易类型
+// 交易类型 @TODO 删除
 export const TRADE_TYPE = {
   /**市场单买入0 */
   MARKET_BUY: 0,
@@ -67,4 +67,30 @@ export const TRADE_TYPE = {
   STOP_LIMIT_BUY: 4,
   /**停损挂单卖出是5 */
   STOP_LIMIT_SELL: 5
+}
+
+// 订单类型
+export const ORDER_TYPE = {
+  /**市价单 */
+  MARKET_ORDER: 'MARKET_ORDER',
+  /**限价买入单 */
+  LIMIT_BUY_ORDER: 'LIMIT_BUY_ORDER',
+  /**限价卖出单 */
+  LIMIT_SELL_ORDER: 'LIMIT_SELL_ORDER',
+  /**止损限价买入单 */
+  STOP_LOSS_LIMIT_BUY_ORDER: 'STOP_LOSS_LIMIT_BUY_ORDER',
+  /**止损限价卖出单 */
+  STOP_LOSS_LIMIT_SELL_ORDER: 'STOP_LOSS_LIMIT_SELL_ORDER',
+  /**止损单 */
+  STOP_LOSS_ORDER: 'STOP_LOSS_ORDER',
+  /**止盈单 */
+  TAKE_PROFIT_ORDERR: 'TAKE_PROFIT_ORDERR'
+}
+
+// 买卖交易方向
+export const TRADE_BUY_SELL = {
+  /**买方向 */
+  BUY: 'BUY',
+  /**买方向 */
+  SELL: 'SELL'
 }

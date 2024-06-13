@@ -4,17 +4,15 @@ import { observer } from 'mobx-react'
 import Marquee from 'react-fast-marquee'
 
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuoteInfo from '@/hooks/useCurrentQuoteInfo'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { goToService } from '@/utils/navigator'
-import { AllSymbols } from '@/utils/wsUtil'
 
 // 底部浮动条
 function Footer() {
-  const { ws, global } = useStores()
-  const { quotes, marketInfo } = ws
+  const { ws, trade } = useStores()
 
   return (
-    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white px-5 pb-2 pt-2 shadow-[10px_10px_10px_10px_rgba(227,227,227,.4)]">
+    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white px-5 pb-2 pt-2 shadow-[10px_10px_10px_10px_rgba(227,227,227,.4)] z-40">
       {/* <div className="flex items-center border-r border-r-gray-200 pr-3">
         <div className="flex items-center">
           <SignalIcon color={isConnected ? `var(--color-green-700)` : 'var(--color-text-secondary)'} />
@@ -23,9 +21,9 @@ function Footer() {
       </div> */}
       <div className="flex h-full flex-1 items-center overflow-x-auto">
         <Marquee pauseOnHover speed={30} gradient>
-          {AllSymbols.map((item, idx) => {
-            const res = useCurrentQuoteInfo(item.name)
-            const per: any = res.per
+          {trade.symbolList.map((item, idx) => {
+            const res = useCurrentQuote(item.symbol)
+            const per: any = res.percent
             const bid = res.bid
 
             return (
@@ -34,14 +32,12 @@ function Footer() {
                   className="flex cursor-pointer items-center"
                   onClick={() => {
                     // 记录打开的symbol
-                    global.setOpenSymbolNameList(item.name)
-                    // 设置当前当前的symbol
-                    global.setActiveSymbolName(item.name)
+                    trade.setOpenSymbolNameList(item.symbol)
                   }}
                 >
-                  <div className="text-wrap text-xs font-medium text-gray">{item.label}</div>
+                  <div className="text-wrap text-xs font-medium text-gray">{item.symbol}</div>
                   <div className={classNames('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
-                    {res.bid ? (per > 0 ? `+${per}` + per : `${per}%`) : '--'}
+                    {res.bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
                   </div>
                   <div className="px-[3px] text-xs font-medium text-gray-weak">{bid}</div>
                 </div>

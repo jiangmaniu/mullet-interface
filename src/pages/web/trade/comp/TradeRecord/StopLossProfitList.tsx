@@ -13,7 +13,6 @@ import { formatNum, formatTime, groupBy, toFixed } from '@/utils'
 import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
 
 import PendingOrderCancelModal from '../Modal/PendingOrderCancelModal'
-import ModifyPendingOrderModal from '../Modal/PendingOrderModifyModal'
 
 export type IPendingItem = Order.OrderPageListItem & {
   /**现价 */
@@ -28,15 +27,15 @@ type IProps = {
   showActiveSymbol?: boolean
 }
 
-// 挂单记录
-function PendingOrder({ style, parentPopup, showActiveSymbol }: IProps) {
+// 止盈止损单记录
+function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
   const { quotes, symbols } = ws
   const activeSymbolName = trade.activeSymbolName
   const unit = 'USD'
 
-  let list = trade.pendingList as IPendingItem[]
+  let list = trade.stopLossProfitList as IPendingItem[]
 
   const cancelPendingRef = useRef<any>(null)
   const modifyPendingRef = useRef<any>(null)
@@ -72,11 +71,12 @@ function PendingOrder({ style, parentPopup, showActiveSymbol }: IProps) {
     label: <FormattedMessage id="common.type" />,
     valueClassName: '!font-bold',
     value: (item: IPendingItem) => {
-      return item.isLimitOrder ? <FormattedMessage id="mt.xianjiaguadan" /> : <FormattedMessage id="mt.tingsundan" />
+      return item.type === 'STOP_LOSS_ORDER' ? <FormattedMessage id="mt.zhisundan" /> : <FormattedMessage id="mt.zhiyingdan" />
     }
   }
 
-  const pcList = [typeItem, time, orderNo, pendingPrice, ...slSp, vol]
+  // 止盈止损单没有 止盈止损
+  const pcList = [typeItem, time, orderNo, pendingPrice, vol]
 
   const mobileList = [vol, typeItem, orderNo, time]
 
@@ -107,22 +107,13 @@ function PendingOrder({ style, parentPopup, showActiveSymbol }: IProps) {
     return (
       <div className="flex items-center max-xl:mt-3 max-xl:justify-between">
         <div
-          className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-sub-card max-xl:text-sm xl:border xl:text-xs"
+          className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-sub-card max-xl:text-sm xl:border xl:text-xs"
           onClick={() => {
             parentPopup?.close()
             cancelPendingRef.current?.show(item)
           }}
         >
           <FormattedMessage id="mt.cexiao" />
-        </div>
-        <div
-          className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-sub-card max-xl:text-sm xl:border xl:text-xs"
-          onClick={() => {
-            parentPopup?.close()
-            modifyPendingRef.current?.show(item)
-          }}
-        >
-          <FormattedMessage id="mt.xiugai" />
         </div>
       </div>
     )
@@ -229,10 +220,8 @@ function PendingOrder({ style, parentPopup, showActiveSymbol }: IProps) {
       )}
       {/* 取消挂单弹窗 */}
       <PendingOrderCancelModal ref={cancelPendingRef} />
-      {/* 修改挂单弹窗 */}
-      <ModifyPendingOrderModal ref={modifyPendingRef} pendingList={list} />
     </div>
   )
 }
 
-export default observer(PendingOrder)
+export default observer(StopLossProfitList)
