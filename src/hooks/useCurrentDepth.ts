@@ -9,8 +9,9 @@ function useCurrentDepth(currentSymbolName?: string) {
   const { ws, trade } = useStores()
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
+  const dataSourceSymbol = trade.getActiveSymbolInfo(symbol)?.dataSourceSymbol as string
 
-  const currentDepth = depth[symbol] || {}
+  const currentDepth = depth[dataSourceSymbol] || {}
 
   return currentDepth
 }

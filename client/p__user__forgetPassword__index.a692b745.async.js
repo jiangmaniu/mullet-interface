@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkmt_admin=self.webpackChunkmt_admin||[]).push([[215],{66793:function(d,t,n){n.r(t),n.d(t,{default:function(){return s}});var u=n(85893);function s(){return(0,u.jsx)("div",{children:"ForgetPassword"})}}}]);

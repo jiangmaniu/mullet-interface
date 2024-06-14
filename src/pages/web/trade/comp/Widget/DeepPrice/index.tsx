@@ -51,6 +51,7 @@ function DeepPrice() {
   // @TODO 如果Liquidation存在情况，否则高度默认
   const isLiquidation = false
   const height = isLiquidation ? 512 : 600
+  const showAll = mode === 'BUY_SELL'
 
   useEffect(() => {
     timerRef.current = setInterval(() => {
@@ -92,32 +93,35 @@ function DeepPrice() {
 
   // 渲染买列表
   const renderBuyList = () => {
-    return asks.map((item, idx: number) => {
-      const total = item.price * item.amount
-      const pencent = (item.price / total) * 100
-      return (
-        <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
-          <Row className="flex items-center h-6 px-3 relative z-[2]">
-            <Col span={8} className="text-xs text-green font-dingpro-regular text-left">
-              {formatNum(item.price)}
-            </Col>
-            <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
-              {formatNum(item.amount)}
-            </Col>
-            <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
-              {formatNum(total, { precision: 2 })}
-            </Col>
-          </Row>
-          {/* 进度条 */}
-          <div
-            className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
-            style={{
-              transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
-            }}
-          ></div>
-        </div>
-      )
-    })
+    return asks
+      .slice(0, showAll ? 11 : 20)
+      .filter((v) => v)
+      .map((item, idx: number) => {
+        const total = item.price * item.amount
+        const pencent = (item.price / total) * 100
+        return (
+          <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
+            <Row className="flex items-center h-6 px-3 relative z-[2]">
+              <Col span={8} className="text-xs text-green font-dingpro-regular text-left">
+                {formatNum(item.price)}
+              </Col>
+              <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
+                {formatNum(item.amount)}
+              </Col>
+              <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
+                {formatNum(total, { precision: 2 })}
+              </Col>
+            </Row>
+            {/* 进度条 */}
+            <div
+              className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
+              style={{
+                transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
+              }}
+            ></div>
+          </div>
+        )
+      })
   }
 
   const renderBuy = () => {
@@ -133,32 +137,35 @@ function DeepPrice() {
   const renderSell = () => {
     return (
       <>
-        {bids.map((item: any, idx: number) => {
-          const total = item.price * item.amount
-          const pencent = (item.price / total) * 100
-          return (
-            <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
-              <Row className="flex items-center h-6 px-3 relative z-[2]">
-                <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
-                  {formatNum(item.price)}
-                </Col>
-                <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
-                  {formatNum(item.amount)}
-                </Col>
-                <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
-                  {formatNum(total, { precision: 2 })}
-                </Col>
-              </Row>
-              {/* 进度条 */}
-              <div
-                className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
-                style={{
-                  transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
-                }}
-              ></div>
-            </div>
-          )
-        })}
+        {bids
+          .slice(0, showAll ? 11 : 20)
+          .filter((v) => v)
+          .map((item: any, idx: number) => {
+            const total = item.price * item.amount
+            const pencent = (item.price / total) * 100
+            return (
+              <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
+                <Row className="flex items-center h-6 px-3 relative z-[2]">
+                  <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
+                    {formatNum(item.price)}
+                  </Col>
+                  <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
+                    {formatNum(item.amount)}
+                  </Col>
+                  <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
+                    {formatNum(total, { precision: 2 })}
+                  </Col>
+                </Row>
+                {/* 进度条 */}
+                <div
+                  className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
+                  style={{
+                    transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
+                  }}
+                ></div>
+              </div>
+            )
+          })}
       </>
     )
   }

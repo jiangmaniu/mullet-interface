@@ -18,6 +18,9 @@ export default defineConfig({
    */
   hash: true,
 
+  // 只设置 dev 阶段的 sourcemap
+  devtool: process.env.NODE_ENV === 'development' ? 'source-map' : false,
+
   /**
    * @name 兼容性设置
    * @description 设置 ie11 不一定完美兼容，需要检查自己使用的所有依赖

@@ -22,9 +22,6 @@ export default observer(() => {
   const { ws, trade } = useStores()
 
   useEffect(() => {
-    // 订阅深度报价
-    ws.subscribeDepth()
-
     return () => {
       // 取消订阅深度报价
       ws.subscribeDepth(true)

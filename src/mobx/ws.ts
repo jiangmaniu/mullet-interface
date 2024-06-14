@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from 'mobx'
+import { action, makeObservable, observable, toJS } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
 import { URLS } from '@/constants'
@@ -81,6 +81,7 @@ class WSStore {
     })
     this.socket.addEventListener('open', () => {
       this.batchSubscribeSymbol()
+      this.subscribeDepth()
     })
     this.socket.addEventListener('message', (d: any) => {
       const res = JSON.parse(d.data)
@@ -101,6 +102,8 @@ class WSStore {
   // 订阅当前打开的品种深度报价
   subscribeDepth = (cancel?: boolean) => {
     const symbolInfo = trade.getActiveSymbolInfo()
+    if (!symbolInfo?.dataSourceCode) return
+
     setTimeout(() => {
       this.send({
         topic: `/000000/${symbolInfo.dataSourceCode}/depth/${symbolInfo.dataSourceSymbol}`,
@@ -172,7 +175,7 @@ class WSStore {
             bids
           }
         }
-        // console.log('深度报价', toJS(this.depth))
+        console.log('深度报价', toJS(this.depth))
         break
     }
   }

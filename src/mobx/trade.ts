@@ -151,6 +151,9 @@ class TradeStore {
     this.activeSymbolName = key
     // STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
     STORAGE_SET_CONF_INFO(key, `${this.currentAccountInfo?.id}.activeSymbolName`)
+
+    // 重新订阅深度
+    ws.subscribeDepth()
   }
 
   // 更新本地缓存的symbol列表
