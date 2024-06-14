@@ -1,4 +1,4 @@
-import { action, makeObservable, observable, toJS } from 'mobx'
+import { action, makeObservable, observable } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
 import { URLS } from '@/constants'
@@ -175,7 +175,7 @@ class WSStore {
             bids
           }
         }
-        console.log('深度报价', toJS(this.depth))
+        // console.log('深度报价', toJS(this.depth))
         break
     }
   }
