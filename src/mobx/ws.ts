@@ -75,7 +75,9 @@ class WSStore {
     this.socket = new ReconnectingWebSocket(this.websocketUrl, ['WebSocket', token ? token : 'visitor'], {
       minReconnectionDelay: 1,
       connectionTimeout: 5000, // 重连时间
-      maxEnqueuedMessages: 0 // 不缓存发送失败的指令
+      maxEnqueuedMessages: 0, // 不缓存发送失败的指令
+      maxRetries: 50, // 最大重连次数
+      debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
     })
     this.socket.addEventListener('open', () => {
       this.batchSubscribeSymbol()
