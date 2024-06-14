@@ -157,9 +157,9 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
                 <div className="px-3 py-3">
                   <SwitchPcOrWapLayout
                     pcComponent={
-                      <div className="grid grid-cols-4 gap-y-3 xxl:grid-cols-7">
+                      <div className="grid gap-y-3 grid-cols-5">
                         {fieldList.map((item, idx) => (
-                          <div key={idx} className="xxl:last:text-right">
+                          <div key={idx} className="xxl:last:text-right text-left">
                             {renderLabel(item)}
                             <span className={classNames('text-xs font-normal text-gray', renderProp(item, 'valueClassName', v))}>
                               {renderProp(item, 'value', v)}

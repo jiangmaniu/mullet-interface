@@ -1,4 +1,4 @@
-import { PageLoading, ProFormDateRangePicker, ProFormSelect } from '@ant-design/pro-components'
+import { PageLoading } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import classNames from 'classnames'
@@ -12,7 +12,7 @@ import { TRADE_TYPE } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { formatNum, groupBy, toFixed } from '@/utils'
+import { formatNum, formatTime, groupBy, toFixed } from '@/utils'
 import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
 
 type Item = Order.TradeRecordsPageListItem
@@ -92,7 +92,7 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
 
   // const pcList = [time, openPrice, closePrice, vol, orderSwaps, orderNo, commission, floatPL]
   // const mobileList = [vol, orderNo, openPrice, closePrice, orderSwaps, commission, time]
-  const pcList = [typeItem, time, orderNo, openPrice, closePrice, commission, vol, ...(tabKey === 'close' ? [commission, floatPL] : [])]
+  const pcList = [typeItem, orderNo, openPrice, closePrice, commission, vol, ...(tabKey === 'close' ? [commission, floatPL] : [])]
   const mobileList = [typeItem, vol, orderNo, openPrice, closePrice, commission, time]
 
   const fieldList = isPc ? pcList : mobileList
@@ -139,7 +139,7 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
           activeKey={tabKey}
         />
         <div className={classNames('flex items-center gap-x-3', filterClassName)}>
-          <ProFormSelect
+          {/* <ProFormSelect
             options={[
               {
                 label: 'BTC',
@@ -164,8 +164,8 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
                 // @TODO 根据选择的值，筛选历史记录
               }
             }}
-          />
-          <ProFormDateRangePicker />
+          /> */}
+          {/* <ProFormDateRangePicker /> */}
         </div>
       </div>
       <div>
@@ -180,6 +180,13 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
                     <img width={22} height={22} alt="" src={getDefaultSymbolIcon(v.imgUrl)} className="rounded-full" />
                     <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
                     <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+                    {/* pc显示 */}
+                    <div className="flex items-center max-xl:hidden">
+                      <div className="flex items-center pl-[30px]">
+                        <img src="/img/time.png" width={16} height={16} alt="" />
+                        <span className="pl-[6px] text-xs text-gray-secondary">{formatTime(v.createTime)}</span>
+                      </div>
+                    </div>
                   </div>
                   {/* 分享海报位置icon */}
                   {/* <div className="flex items-center">
@@ -190,7 +197,7 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
                   <SwitchPcOrWapLayout
                     pcComponent={
                       <div
-                        className={classNames('grid gap-y-3 xl:grid-cols-6', tabKey === 'close' ? 'xxl:grid-cols-11' : 'xxl:grid-cols-9')}
+                        className={classNames('grid gap-y-3 xl:grid-cols-6', tabKey === 'close' ? 'xxl:grid-cols-8' : 'xxl:grid-cols-6')}
                       >
                         {fieldList.map((item: any, idx) => (
                           <div className={classNames('xxl:last:text-right', item.className)} key={idx}>

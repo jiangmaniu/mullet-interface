@@ -13,16 +13,23 @@ import {
   modifyPendingOrder,
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
-import {
-  STORAGE_GET_ACTIVE_SYMBOL_NAME,
-  STORAGE_GET_FAVORITE,
-  STORAGE_GET_SYMBOL_NAME_LIST,
-  STORAGE_SET_ACTIVE_SYMBOL_NAME,
-  STORAGE_SET_FAVORITE,
-  STORAGE_SET_SYMBOL_NAME_LIST
-} from '@/utils/storage'
+import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
 
 import ws from './ws'
+
+export type UserConfInfo = Record<
+  string,
+  {
+    /**自选列表 */
+    favoriteList?: Account.TradeSymbolListItem[]
+    /**激活的品种名称 */
+    activeSymbolName?: string
+    /**打开的品种名称列表 */
+    openSymbolNameList?: string[]
+    /**当前切换的账户信息 */
+    currentAccountInfo?: User.AccountItem
+  }
+>
 
 class TradeStore {
   constructor() {
@@ -36,9 +43,12 @@ class TradeStore {
   @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
   @observable historyList = [] as Order.TradeRecordsPageListItem[] // 历史成交列表
 
+  @observable userConfInfo = {} as UserConfInfo // 记录用户设置的品种名称、打开的品种列表、自选信息，按accountId储存
+  // 当前accountId的配置信息从userConfInfo展开，切换accountId时，重新设置更新
+  @observable activeSymbolName = '' // 当前激活的品种名
   @observable openSymbolNameList: string[] = [] // 记录打开的品种名称
   @observable favoriteList = [] as Account.TradeSymbolListItem[] // 自选列表
-  @observable activeSymbolName = '' // 当前激活的品种名
+
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
   @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
@@ -62,7 +72,13 @@ class TradeStore {
     if (info?.id !== this.currentAccountInfo?.id) {
       this.currentAccountInfo = info
 
+      // 缓存当前账号
+      STORAGE_SET_CONF_INFO(info, `currentAccountInfo`)
+
       this.reloadAfterAccountChange()
+
+      // 根据accountId切换本地设置的自选、打开的品种列表、激活的品种名称
+      this.init()
     }
   }
 
@@ -77,14 +93,24 @@ class TradeStore {
   // 初始化本地打开的symbol
   @action
   initOpenSymbolNameList() {
-    this.openSymbolNameList = STORAGE_GET_SYMBOL_NAME_LIST() || []
-    this.activeSymbolName = STORAGE_GET_ACTIVE_SYMBOL_NAME()
+    // this.openSymbolNameList = STORAGE_GET_SYMBOL_NAME_LIST() || []
+    // this.activeSymbolName = STORAGE_GET_ACTIVE_SYMBOL_NAME()
+
+    const userConfInfo = (STORAGE_GET_CONF_INFO() || {}) as UserConfInfo
+    this.currentAccountInfo = userConfInfo?.currentAccountInfo as User.AccountItem
+    const accountId = this.currentAccountInfo?.id
+    const currentAccountConf = accountId ? userConfInfo?.[accountId] : {}
+
+    this.userConfInfo = userConfInfo
+    this.openSymbolNameList = (currentAccountConf?.openSymbolNameList || []).filter((v) => v) as string[]
+    this.activeSymbolName = currentAccountConf?.activeSymbolName as string
   }
 
   // 获取打开的品种完整信息
-  getActiveSymbolInfo = () => {
+  getActiveSymbolInfo = (currentSymbolName?: string) => {
+    const symbol = currentSymbolName || this.activeSymbolName
     const symbolList = this.symbolList
-    const info = symbolList.find((item) => item.symbol === this.activeSymbolName) || {}
+    const info = symbolList.find((item) => item.symbol === symbol) || {}
     return info as Account.TradeSymbolListItem
   }
 
@@ -123,12 +149,17 @@ class TradeStore {
   @action
   setActiveSymbolName(key: string) {
     this.activeSymbolName = key
-    STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
+    // STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
+    STORAGE_SET_CONF_INFO(key, `${this.currentAccountInfo?.id}.activeSymbolName`)
   }
 
   // 更新本地缓存的symbol列表
   @action updateLocalOpenSymbolNameList = () => {
-    STORAGE_SET_SYMBOL_NAME_LIST(this.openSymbolNameList)
+    // STORAGE_SET_SYMBOL_NAME_LIST(this.openSymbolNameList)
+    STORAGE_SET_CONF_INFO(
+      this.openSymbolNameList.filter((v) => v),
+      `${this.currentAccountInfo?.id}.openSymbolNameList`
+    )
   }
 
   // =========== 收藏、取消收藏 ==============
@@ -140,17 +171,20 @@ class TradeStore {
 
   // 获取本地自选
   @action async initFavoriteList() {
-    const data = await STORAGE_GET_FAVORITE()
+    // const data = await STORAGE_GET_FAVORITE()
+    const data = STORAGE_GET_CONF_INFO(`${this.currentAccountInfo?.id}.favoriteList`) || []
     if (Array.isArray(data) && data.length) {
       runInAction(() => {
         this.favoriteList = data
       })
     } else {
+      // 重置
+      this.favoriteList = []
       this.setDefaultFavorite()
     }
   }
 
-  // 设置默认资讯
+  // 设置默认自选
   @action setDefaultFavorite() {
     // 设置本地默认自选 @TODO 品种动态加载的，先不加默认
     // this.setSymbolFavoriteToLocal(DEFAULT_QUOTE_FAVORITES_CURRENCY)
@@ -158,12 +192,13 @@ class TradeStore {
 
   // 设置本地自选
   @action async setSymbolFavoriteToLocal(data: any) {
-    if (Array.isArray(data) && data.length) {
-      this.favoriteList = data
-      STORAGE_SET_FAVORITE(data)
-    } else {
-      this.setDefaultFavorite()
-    }
+    // if (Array.isArray(data) && data.length) {
+    this.favoriteList = data
+    // STORAGE_SET_FAVORITE(data)
+    STORAGE_SET_CONF_INFO(data, `${this.currentAccountInfo?.id}.favoriteList`)
+    // } else {
+    // this.setDefaultFavorite()
+    // }
   }
 
   // 切换收藏选中状态

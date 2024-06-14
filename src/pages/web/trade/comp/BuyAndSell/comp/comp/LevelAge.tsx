@@ -11,6 +11,7 @@ type IProps = {
   onChange?: (value: any) => void
 }
 
+// 杠杆选择
 function LevelAge({ initialValue, onChange }: IProps) {
   const intl = useIntl()
   const [value, setValue] = useState<any>(0)

@@ -10,7 +10,7 @@ import defaultSettings, { iconfontUrl } from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
 import SwitchLanguage from './components/SwitchLanguage'
-import { ADMIN_HOME_PAGE, WEB_HOME_PAGE } from './constants'
+import { WEB_HOME_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
@@ -36,8 +36,8 @@ export async function getInitialState(): Promise<{
   loading?: boolean
   fetchUserInfo?: (token?: any) => Promise<User.UserInfo | undefined>
 }> {
-  // 初始化全局配置
-  await stores.global.init()
+  // 未登录初始化全局配置
+  // await stores.global.init()
 
   const fetchUserInfo = async (token?: any) => {
     const hasToken = STORAGE_GET_TOKEN() || token
@@ -54,13 +54,21 @@ export async function getInitialState(): Promise<{
       const currentUser = {
         ...localUserInfo,
         ...clientInfo // 用户详细信息
-      }
+      } as User.UserInfo
       // 更新本地的用户信息
       STORAGE_SET_USER_INFO(currentUser)
 
+      // 初始化交易配置，在登录后才执行
+      await stores.trade.init()
+
       // 初始化设置默认当前账号信息
-      if (!stores.trade.currentAccountInfo?.id) {
+      const localAccountId = stores.trade.currentAccountInfo?.id
+      const hasAccount = (currentUser?.accountList || []).some((item) => item.id === localAccountId)
+      // 本地不存在账号或本地存在账号但不在登录返回的accountList中，需重新设置默认值，避免切换不同账号登录使用上一次缓存
+      if (!localAccountId || (localAccountId && !hasAccount)) {
         stores.trade.setCurrentAccountInfo(clientInfo.accountList?.[0])
+      } else {
+        stores.trade.getSymbolList()
       }
 
       return currentUser
@@ -280,7 +288,8 @@ export const patchClientRoutes = ({ routes }: any) => {
   // 获取本地缓存的语言
   const lng = localStorage.getItem('umi_locale') || locationLng
   const token = STORAGE_GET_TOKEN()
-  const HOME_PAGE = token ? ADMIN_HOME_PAGE : WEB_HOME_PAGE
+  // const HOME_PAGE = token ? ADMIN_HOME_PAGE : WEB_HOME_PAGE
+  const HOME_PAGE = WEB_HOME_PAGE
 
   // 首次默认重定向到en-US
   routes.unshift(

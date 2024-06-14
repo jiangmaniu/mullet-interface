@@ -21,12 +21,13 @@ const TradingViewComp = ({ style }: IProps) => {
   const [loading, setLoading] = useState(false)
 
   const activeSymbolName = trade.activeSymbolName
+  const symbolInfo = trade.getActiveSymbolInfo()
+  const dataSourceCode = symbolInfo?.dataSourceCode
 
   useEffect(() => {
     setLoading(true)
-    // @TODO 替换地址
-    setTradeUrl(`${URLS.tradingViewUrl}/?lang=${getTradingViewLng()}&name=${activeSymbolName}`)
-  }, [lng, activeSymbolName])
+    setTradeUrl(`${URLS.tradingViewUrl}/?lang=${getTradingViewLng()}&name=${activeSymbolName}&dataSourceCode=${dataSourceCode}`)
+  }, [lng, activeSymbolName, dataSourceCode])
 
   return (
     <div style={style}>

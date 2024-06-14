@@ -25,8 +25,6 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
     trade.getSymbolCategory()
   }, [])
 
-  console.log('symbolCategory', symbolCategory)
-
   return (
     <div className={styles.tabs}>
       <Tabs

@@ -13,7 +13,7 @@ export async function getCaptcha() {
 
 // 登录接口
 export async function login(body: User.LoginParams, options?: { [key: string]: any }) {
-  return request<API.Response<User.LoginResult>>(`/api/blade-auth/oauth/token?${stringify(body)}`, {
+  return request<User.LoginResult>(`/api/blade-auth/oauth/token?${stringify(body)}`, {
     method: 'POST',
     ...(options || {})
   })

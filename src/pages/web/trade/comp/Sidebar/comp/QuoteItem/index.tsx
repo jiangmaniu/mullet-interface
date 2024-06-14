@@ -20,9 +20,8 @@ type IProps = {
  */
 function QuoteItem({ item, isActive, popupRef }: IProps) {
   const { isMobileOrIpad } = useEnv()
-  const { trade } = useStores()
+  const { trade, ws } = useStores()
   const symbol = item.symbol
-
   const res = useCurrentQuote(symbol)
   const bid = res.bid
   const per: any = res.percent

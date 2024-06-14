@@ -10,6 +10,7 @@ import {
   KEY_PWD,
   KEY_SYMBOL_NAME_LIST,
   KEY_TOKEN,
+  KEY_USER_CONF_INFO,
   KEY_USER_INFO
 } from '@/constants'
 
@@ -54,6 +55,11 @@ export const STORAGE_SET_ACTIVE_SYMBOL_NAME = genStorageSet(KEY_ACTIVE_SYMBOL_NA
 export const STORAGE_GET_FAVORITE = genStorageGet(KEY_FAVORITE)
 export const STORAGE_SET_FAVORITE = genStorageSet(KEY_FAVORITE)
 export const STORAGE_REMOVE_FAVORITE = storageRemove(KEY_FAVORITE)
+
+// 本地存储-按当前交易账号储存 自选、激活的品种名称、打开的品种名称列表
+export const STORAGE_GET_CONF_INFO = genStorageGet(KEY_USER_CONF_INFO)
+export const STORAGE_SET_CONF_INFO = genStorageSet(KEY_USER_CONF_INFO)
+export const STORAGE_REMOVE_CONF_INFO = storageRemove(KEY_USER_CONF_INFO)
 
 // =================================================
 

@@ -122,7 +122,7 @@ export default function Login() {
         setLocalUserInfo(result as User.UserInfo)
 
         // 重新获取用户信息
-        await fetchUserInfo(result?.data?.access_token)
+        await fetchUserInfo(result?.access_token)
 
         setTimeout(() => {
           setLoading(false)

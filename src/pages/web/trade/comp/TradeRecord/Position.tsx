@@ -151,7 +151,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const yieldRate = { label: <FormattedMessage id="mt.shouyilv" />, value: (item: IPositionItem) => `${item.xx || '-'}` }
   // @TODO 需要公式计算
   // @ts-ignore
-  const baocangPrice = { label: <FormattedMessage id="mt.qiangpingjia" />, value: (item: IPositionItem) => `${item.stock}` }
+  const baocangPrice = { label: <FormattedMessage id="mt.qiangpingjia" />, value: (item: IPositionItem) => toFixed(item.stock) }
 
   const pcList = [openPrice, margin, vol, ...slSp, baocangPrice, fee, interestFees, yieldRate, floatPL]
   const mobileList = [time, vol, openPrice, margin, fee, interestFees, baocangPrice, yieldRate, orderNo]

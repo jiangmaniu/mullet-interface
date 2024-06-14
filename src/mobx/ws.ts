@@ -158,7 +158,6 @@ class WSStore {
         if (symbol) {
           this.quotes[symbol] = data
         }
-        // console.log('行情信息', toJS(this.quotes))
         break
       // 深度报价
       case MessageType.depth:

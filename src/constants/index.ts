@@ -27,15 +27,32 @@ export const KEY_ACTIVE_SYMBOL_NAME = NAMESPACE + '_' + 'active_symbol_name'
 // 收藏
 export const KEY_FAVORITE = NAMESPACE + '_' + 'favorite_list'
 
+// 按账户id储存用户的设置信息：自选、打开的品种列表、激活的品种名称
+export const KEY_USER_CONF_INFO = NAMESPACE + '_' + 'user_conf_info'
+
 // 默认语言 en-US
 export const DEFAULT_LOCALE = 'en-US'
 
-// 本地测试环境、线上测试环境
-const isDev = process.env.NODE_ENV === 'development' || process.env.APP_ENV === 'dev'
+export const isProd = process.env.NODE_ENV === 'production' || process.env.APP_ENV === 'prod'
 
-export let URLS = {
+// 测试环境
+const development = {
+  tradingViewUrl: 'http://localhost:3000',
+  baseURL: 'http://192.168.5.60:8000',
+  ws: 'ws://192.168.5.60:19109/websocketServer',
+  imgDomain: 'http://192.168.5.60:19000/trade/' // 图片域名前缀
+}
+// 正式环境
+const production = {
+  tradingViewUrl: 'https://tradingview.stellux.io',
+  baseURL: 'https://manager.stellux.io',
+  ws: 'wss://websocket.stellux.io/websocketServer',
+  imgDomain: 'https://file.stellux.io/trade/'
+}
+
+const env = isProd ? production : development
+
+export const URLS = {
   offical: 'www.stellux.com',
-  tradingViewUrl: isDev ? 'http://localhost:3000' : 'https://tradingview.stellux.io',
-  ws: isDev ? 'ws://192.168.5.60:19109/websocketServer' : 'ws://172.31.26.227:19109/websocketServer',
-  imgDomain: isDev ? 'http://192.168.5.60:19000/trade/' : '' // 图片域名前缀 @TODO 替换正式环境图片域名
+  ...env
 }

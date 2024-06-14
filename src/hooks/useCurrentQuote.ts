@@ -4,18 +4,23 @@ import { toFixed } from '@/utils'
 /**
  * 获取当前激活打开的品种，高开低收，涨幅百分比
  * @param {*} currentSymbol 当前传入的symbolName
+ * @param quote 全部行情，再次传入覆盖，有些地方没有实时刷新
  * @returns
  */
-function useCurrentQuote(currentSymbolName?: string) {
+function useCurrentQuote(currentSymbolName?: string, quote?: any) {
   const { ws, global, trade } = useStores()
   const { quotes } = ws
-  const symbol = currentSymbolName || trade.activeSymbolName
+  const symbol = currentSymbolName || trade.activeSymbolName // 展示的名称
 
-  const symbolInfo = trade.symbolList.find((item) => item.symbol === symbol) || {} // 品种信息
-  const currentQuote = quotes?.[symbol] || {} // 行情信息
+  // 如果传入的currentSymbolName是dataSourceSymbol，则使用传入的
+  const isDataSourceSymbol = trade.symbolList.some((item) => item.dataSourceSymbol === currentSymbolName)
+  const symbolInfo = trade.symbolList.find((item) => item.symbol === symbol) || {} // 当前品种的详细信息
 
   // 品种配置解构方便取值
   const currentSymbol = symbolInfo as Account.TradeSymbolListItem
+  const dataSourceSymbol = (isDataSourceSymbol ? currentSymbolName : currentSymbol.dataSourceSymbol) as string // 用于订阅行情
+  const currentQuote = quote?.[dataSourceSymbol] || quotes?.[dataSourceSymbol] || {} // 行情信息
+
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf as Symbol.PrepaymentConf // 当前品种预付款配置
   const transactionFeeConf = currentSymbol?.symbolConf?.transactionFeeConf as Symbol.TransactionFeeConf // 当前品种手续费配置
@@ -36,7 +41,7 @@ function useCurrentQuote(currentSymbolName?: string) {
 
   return {
     symbol, // 用于展示的symbol自定义名称
-    dataSourceSymbol: currentSymbol.dataSourceSymbol, // 用于订阅行情、下单的名称？
+    dataSourceSymbol, // 用于订阅行情
     digits,
     currentQuote,
     currentSymbol, // 当前品种信息

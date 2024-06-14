@@ -97,13 +97,13 @@ function TradeRecord({ trigger }: IProps) {
               </span>
             )}
             {/* 历史成交没有这个按钮 */}
-            {tabKey !== 3 && (
-              <Checkbox onChange={onCheckBoxChange} className="max-xl:hidden">
-                <span className="text-gray text-xs">
-                  <FormattedMessage id="mt.zhizhanshidangqian" />
-                </span>
-              </Checkbox>
-            )}
+            {/* {tabKey !== 3 && ( */}
+            <Checkbox onChange={onCheckBoxChange} className="max-xl:hidden">
+              <span className="text-gray text-xs">
+                <FormattedMessage id="mt.zhizhanshidangqian" />
+              </span>
+            </Checkbox>
+            {/* )} */}
             {/* @TODO 接口暂时不支持 */}
             {/* {tabKey === 1 && (
               <div className="flex items-center border border-gray-250 py-[6px] px-[10px] rounded-lg ml-5 cursor-pointer">
