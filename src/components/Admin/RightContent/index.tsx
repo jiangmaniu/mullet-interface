@@ -302,8 +302,9 @@ export const HeaderRightContent = observer(() => {
                     <img src="/img/user-icon.png" width={40} height={40} />
                     <div className="flex flex-col pl-[14px]">
                       <span className="text-gray font-semibold">
-                        {/* @TODO */}
-                        <CopyComp style={{ display: 'flex', alignItems: 'center' }}>HI,151…1450</CopyComp>
+                        <CopyComp style={{ display: 'flex', alignItems: 'center' }}>
+                          HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 8)}
+                        </CopyComp>
                       </span>
                       <span className="text-green text-xs pt-[6px]">
                         <FormattedMessage id="mt.yirenzheng" />

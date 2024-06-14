@@ -3,7 +3,7 @@ import { useIntl } from '@umijs/max'
 import { message, Typography } from 'antd'
 
 type IProps = {
-  children: string
+  children: any
   style?: React.CSSProperties
   textStyle?: React.CSSProperties
 }
