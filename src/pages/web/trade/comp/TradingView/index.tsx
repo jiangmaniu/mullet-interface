@@ -23,10 +23,11 @@ const TradingViewComp = ({ style }: IProps) => {
   const activeSymbolName = trade.activeSymbolName
   const symbolInfo = trade.getActiveSymbolInfo()
   const dataSourceCode = symbolInfo?.dataSourceCode
+  const dataSourceSymbol = symbolInfo?.dataSourceSymbol
 
   useEffect(() => {
     setLoading(true)
-    setTradeUrl(`${URLS.tradingViewUrl}/?lang=${getTradingViewLng()}&name=${activeSymbolName}&dataSourceCode=${dataSourceCode}`)
+    setTradeUrl(`${URLS.tradingViewUrl}/?lang=${getTradingViewLng()}&name=${dataSourceSymbol}&dataSourceCode=${dataSourceCode}`)
   }, [lng, activeSymbolName, dataSourceCode])
 
   return (
