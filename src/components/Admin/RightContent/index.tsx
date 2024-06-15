@@ -15,7 +15,7 @@ import SwitchLanguage from '@/components/SwitchLanguage'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
-import { goKefu, onLogout } from '@/utils/navigator'
+import { goKefu, onLogout, push } from '@/utils/navigator'
 
 export type SiderTheme = 'light' | 'dark'
 
@@ -214,54 +214,57 @@ export const HeaderRightContent = observer(() => {
               <FormattedMessage id="mt.guanlizhanghu" />
             </div>
           </div>
-          {currentAccountList.map((item, idx: number) => {
-            const isSimulate = item.isSimulate
-            return (
-              <div
-                onClick={() => {
-                  // if (isMobileOrIpad) {
-                  //   hoverAccountBoxPopupRef?.current?.close()
-                  // }
-                  trade.setCurrentAccountInfo(item)
-                }}
-                key={idx}
-                className={classNames(
-                  'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[#fbfbfb]',
-                  {
-                    'bg-[#fbfbfb]': item.id === currentAccountInfo.id
-                  }
-                )}
-              >
-                <div className="flex justify-between">
-                  <div className="flex">
-                    <div className="flex-1 text-sm font-bold text-gray">
-                      {item.groupName} / {hiddenCenterPartStr(item?.id, 4)}
-                    </div>
-                    <div className="ml-[10px] flex px-1">
-                      <div
-                        className={classNames(
-                          'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                          isSimulate ? 'bg-green' : 'bg-blue-500'
-                        )}
-                      >
-                        {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+          <div className="max-h-[380px] overflow-y-auto">
+            {currentAccountList.map((item, idx: number) => {
+              const isSimulate = item.isSimulate
+              return (
+                <div
+                  onClick={() => {
+                    // if (isMobileOrIpad) {
+                    //   hoverAccountBoxPopupRef?.current?.close()
+                    // }
+                    trade.setCurrentAccountInfo(item)
+                    push('/trade')
+                  }}
+                  key={idx}
+                  className={classNames(
+                    'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[#fbfbfb]',
+                    {
+                      'bg-[#fbfbfb]': item.id === currentAccountInfo.id
+                    }
+                  )}
+                >
+                  <div className="flex justify-between">
+                    <div className="flex">
+                      <div className="flex-1 text-sm font-bold text-gray">
+                        {item.groupName} / {hiddenCenterPartStr(item?.id, 4)}
                       </div>
-                      {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                      <div className="ml-[10px] flex px-1">
+                        <div
+                          className={classNames(
+                            'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
+                            isSimulate ? 'bg-green' : 'bg-blue-500'
+                          )}
+                        >
+                          {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+                        </div>
+                        {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
                         MT
                       </div> */}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-1">
+                    <div>
+                      <span className="text-[20px] text-gray font-dingpro-regular">{formatNum(item.money, { precision: 2 })}</span>{' '}
+                      <span className="ml-1 text-sm font-normal text-gray-secondary">USD</span>
                     </div>
                   </div>
                 </div>
-                <div className="mt-1">
-                  <div>
-                    <span className="text-[20px] text-gray font-dingpro-regular">{formatNum(item.money, { precision: 2 })}</span>{' '}
-                    <span className="ml-1 text-sm font-normal text-gray-secondary">USD</span>
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-          <div className="my-3">{currentAccountList.length === 0 && <Empty />}</div>
+              )
+            })}
+            <div className="my-3">{currentAccountList.length === 0 && <Empty />}</div>
+          </div>
         </div>
       </div>
     )

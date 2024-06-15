@@ -84,8 +84,8 @@ export default function Login() {
     }
   })
 
-  const fetchUserInfo = async (token?: any) => {
-    const userInfo = await initialState?.fetchUserInfo?.(token)
+  const fetchUserInfo = async () => {
+    const userInfo = await initialState?.fetchUserInfo?.()
     if (userInfo) {
       flushSync(() => {
         setInitialState((s) => ({
@@ -122,7 +122,7 @@ export default function Login() {
         setLocalUserInfo(result as User.UserInfo)
 
         // 重新获取用户信息
-        await fetchUserInfo(result?.access_token)
+        await fetchUserInfo()
 
         setTimeout(() => {
           setLoading(false)
@@ -151,9 +151,9 @@ export default function Login() {
           title={
             <div
               className="mb-8 cursor-pointer"
-              onClick={() => {
-                push(WEB_HOME_PAGE)
-              }}
+              // onClick={() => {
+              //   push(WEB_HOME_PAGE)
+              // }}
             >
               <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
             </div>

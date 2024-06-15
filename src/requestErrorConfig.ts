@@ -64,7 +64,7 @@ export const errorConfig: RequestConfig = {
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
         const { status, data } = error.response
-        let errorMessage = data?.msg || data?.message || data?.error_description
+        let errorMessage = data?.msg || data?.message || data?.error_description || data?.error
         let statusText
         switch (status) {
           case 400:

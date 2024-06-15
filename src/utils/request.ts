@@ -10,7 +10,7 @@ export const request: typeof umiRequest = <T>(url: string, opts: RequestOptions 
     .catch((error) => {
       // 统一处理错误不继续抛出
       const errorInfo = error?.response?.data
-      const message = error.info?.message || errorInfo?.error_description
+      const message = error.info?.message || errorInfo?.error_description || errorInfo?.error
       return {
         success: false, // 失败统一加上，方便表格消费
         errorInfo, // 业务代码返回的错误信息对象
