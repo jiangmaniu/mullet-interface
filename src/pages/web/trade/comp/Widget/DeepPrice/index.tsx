@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import useCurrentDepth from '@/hooks/useCurrentDepth'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
 
 import Liquidation from '../Liquidation'
@@ -29,6 +30,7 @@ function DeepPrice() {
   const [list, setList] = useState<any>([])
   const timerRef = useRef<any>()
   const depth = useCurrentDepth()
+  const quote = useCurrentQuote()
   const asks = depth?.asks || []
   const bids = depth?.bids || []
 
@@ -81,7 +83,7 @@ function DeepPrice() {
       <div className="flex items-center justify-between">
         <div>
           {/* 当前行情卖价 */}
-          <span className="text-lg text-green font-dingpro-medium pr-[10px]">46,604.1</span>
+          <span className="text-lg text-green font-dingpro-medium pr-[10px]">{formatNum(quote.bid)}</span>
         </div>
         {/* 更多打开一个页面交互没有 */}
         {/* <span className="text-xs text-gray-secondary cursor-pointer">
@@ -99,24 +101,25 @@ function DeepPrice() {
       .map((item, idx: number) => {
         const total = item.price * item.amount
         const pencent = (item.price / total) * 100
+        const digits = quote.digits
         return (
           <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
             <Row className="flex items-center h-6 px-3 relative z-[2]">
               <Col span={8} className="text-xs text-green font-dingpro-regular text-left">
-                {formatNum(item.price)}
+                {formatNum(item.price, { precision: digits })}
               </Col>
               <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
-                {formatNum(item.amount)}
+                {formatNum(item.amount, { precision: digits })}
               </Col>
               <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
-                {formatNum(total, { precision: 2 })}
+                {formatNum(total, { precision: digits })}
               </Col>
             </Row>
             {/* 进度条 */}
             <div
               className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
               style={{
-                transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
+                transform: `translateX(-${pencent >= 100 ? 0 : pencent}%)`
               }}
             ></div>
           </div>
@@ -143,24 +146,25 @@ function DeepPrice() {
           .map((item: any, idx: number) => {
             const total = item.price * item.amount
             const pencent = (item.price / total) * 100
+            const digits = quote.digits
             return (
               <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
                 <Row className="flex items-center h-6 px-3 relative z-[2]">
                   <Col span={8} className="text-xs text-red font-dingpro-regular text-left">
-                    {formatNum(item.price)}
+                    {formatNum(item.price, { precision: digits })}
                   </Col>
                   <Col span={8} className="font-dingpro-regular text-xs text-gray text-left">
-                    {formatNum(item.amount)}
+                    {formatNum(item.amount, { precision: digits })}
                   </Col>
                   <Col span={8} className="font-dingpro-regular text-xs text-gray text-right">
-                    {formatNum(total, { precision: 2 })}
+                    {formatNum(total, { precision: digits })}
                   </Col>
                 </Row>
                 {/* 进度条 */}
                 <div
                   className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
                   style={{
-                    transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
+                    transform: `translateX(-${pencent >= 100 ? 0 : pencent}%)`
                   }}
                 ></div>
               </div>
@@ -230,7 +234,6 @@ function DeepPrice() {
           </Col>
           <Col span={8}>
             <FormattedMessage id="mt.shuliang" />
-            (BTC)
           </Col>
           <Col span={8} className="text-right">
             <FormattedMessage id="mt.chengjiaoe" />

@@ -1,4 +1,5 @@
 import { QuestionCircleOutlined } from '@ant-design/icons'
+import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, history, SelectLang as UmiSelectLang, useModel } from '@umijs/max'
 import { Tooltip } from 'antd'
 import classNames from 'classnames'
@@ -14,6 +15,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 
@@ -109,6 +111,11 @@ export const HeaderRightContent = observer(() => {
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
   const currentAccountInfo = trade.currentAccountInfo
+  const quoteInfo = useCurrentQuote() // 这里保留，取值过程，触发mobx实时更新
+  const avaMargin = trade.getCurrentAccountMargin() // 可用保证金
+  const occupyMargin = Number(currentAccountInfo.money || 0) - avaMargin
+  // 当前账户持仓总浮动盈亏
+  const totalProfit = trade.getCurrentAccountFloatProfit(trade.positionList)
 
   useEffect(() => {
     // 切换真实模拟账户列表
@@ -117,22 +124,18 @@ export const HeaderRightContent = observer(() => {
   }, [accountTabActiveKey, accountList.length])
 
   const renderAccountBoxHover = () => {
-    const avaMargin = Number(currentAccountInfo.margin || 0) + Number(currentAccountInfo.isolatedMargin || 0) // 可用保证金
-    const zhanyongMargin = Number(currentAccountInfo.money || 0) - avaMargin
     const list = [
-      // @TODO 计算？
       {
         label: <FormattedMessage id="mt.zongzichanjingzhi" />,
-        value: currentAccountInfo.money,
+        value: Number(currentAccountInfo.money || 0) + totalProfit, // 账户净值 = 余额 + 浮动盈亏
         tips: <FormattedMessage id="mt.zichanjingzhitips" />
       },
-      // @TODO 计算
-      { label: <FormattedMessage id="mt.fudongyingkui" />, value: 0, tips: <FormattedMessage id="mt.fudongyingkuitips" /> },
+      { label: <FormattedMessage id="mt.fudongyingkui" />, value: totalProfit, tips: <FormattedMessage id="mt.fudongyingkuitips" /> },
       { label: <FormattedMessage id="mt.keyong" />, value: avaMargin, tips: <FormattedMessage id="mt.keyongtips" /> },
-      { label: <FormattedMessage id="mt.zhanyong" />, value: zhanyongMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
+      { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="z-[999] group-hover:block xl:absolute xl:top-[53px] hidden xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:min-w-[380px] xl:pt-[18px]">
+      <div className="z-[999] group-hover:block xl:absolute xl:top-[50px] -left-[5px] hidden xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:min-w-[380px] xl:pt-[18px]">
         <div
           onClick={() => {
             // push('/trade')
@@ -269,17 +272,33 @@ export const HeaderRightContent = observer(() => {
       </div>
     )
   }
+
+  const groupClassName = useEmotionCss(({ token }) => {
+    return {
+      '&:hover': {
+        border: '1px solid #f3f3f3',
+        borderBottomColor: '#fff',
+        background: '#fff',
+        borderTopRightRadius: 12,
+        borderTopLeftRadius: 12,
+        boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+      }
+    }
+  })
+
   return (
     <div className="flex items-center">
       <div className="flex items-center gap-x-[26px] mr-[28px]">
         <div
-          className="flex items-center group"
+          className={classNames('flex items-center group p-1', groupClassName)}
           onMouseEnter={() => {
             // 刷新账户余额信息
-            fetchUserInfo()
+            setTimeout(() => {
+              fetchUserInfo()
+            }, 300)
           }}
         >
-          <div className="flex flex-col items-end group">
+          <div className="flex flex-col items-end group relative">
             <span className="text-xl text-gray font-dingpro-regular">{formatNum(currentAccountInfo?.money, { precision: 2 })} USD</span>
             <div className="flex items-center pt-[2px]">
               <span className="text-xs text-blue font-dingpro-medium">

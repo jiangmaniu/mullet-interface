@@ -1,60 +1,58 @@
 import { PageLoading } from '@ant-design/pro-components'
-import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import React, { useEffect, useState } from 'react'
 
-import CustomTabs from '@/components/Base/CustomTabs'
 import Empty from '@/components/Base/Empty'
 import ListItem from '@/components/Base/ListItem'
-import { TRADE_TYPE } from '@/constants/enum'
+import { getEnum, ORDER_TYPE } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { formatNum, formatTime, groupBy, toFixed } from '@/utils'
-import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
+import { copyContent, formatNum, formatTime, groupBy, toFixed } from '@/utils'
+import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 
-type Item = Order.TradeRecordsPageListItem
+type Item = Order.OrderPageListItem
 
 type IProps = {
   style?: React.CSSProperties
   showActiveSymbol?: boolean
+  selectSymbol?: string
 }
 
-// 历史记录
-function HistoryList({ style, showActiveSymbol }: IProps) {
+// 历史挂单列表
+function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
-  const [list, setList] = useState([] as Order.TradeRecordsPageListItem[])
+  const [list, setList] = useState([] as Order.OrderPageListItem[])
   const activeSymbolName = trade.activeSymbolName
   const [loading, setLoading] = useState(false)
   const currentUnit = 'USD'
-  const [tabKey, setTabKey] = useState('close') // 历史成交、历史挂单
-  const historyList = trade.historyList
+  const historyList = trade.historyPendingList
+  const intl = useIntl()
 
   useEffect(() => {
-    setList(showActiveSymbol ? historyList.filter((v) => v.symbol === activeSymbolName) : historyList)
-  }, [showActiveSymbol, activeSymbolName, historyList.length])
+    // setList(showActiveSymbol ? historyList.filter((v) => v.symbol === activeSymbolName) : historyList)
+    setList(selectSymbol ? historyList.filter((v: any) => v.symbol === selectSymbol) : historyList)
+  }, [showActiveSymbol, activeSymbolName, historyList.length, selectSymbol])
+
+  const getList = () => {
+    setLoading(true)
+    // 查询历史挂单
+    trade.getHistoryPendingList().finally(() => {
+      setLoading(false)
+    })
+  }
 
   useEffect(() => {
-    trade.getHistoryList()
+    getList()
   }, [trade.currentAccountInfo?.id])
 
-  const formatValue = (value: any) => <span className="font-num">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="font-dingpro-medium">{formatNum(value)}</span>
 
-  const floatPL: any = {
-    label: <FormattedMessage id="mt.yingkui" />,
-    value: (item: Item) => {
-      const profitFormat = formatValue(item?.profit)
-      return Number(item.profit) > 0 ? <>+{profitFormat}</> : profitFormat
-    },
-    valueClassName: (item: any) => `${item?.profit > 0 ? '!text-green' : '!text-red'} xl:!text-[16px] max-xl:!text-lg !font-bold`,
-    unit: currentUnit,
-    unitClassName: (item: any) => `${item?.profit > 0 ? '!text-green' : '!text-red'}`
-  }
   const time = {
-    label: tabKey === 'close' ? <FormattedMessage id="mt.chengjiaoshijian" /> : <FormattedMessage id="mt.guadanshijian" />,
+    label: <FormattedMessage id="mt.guadanshijian" />,
     value: (item: Item) => {
       return item.createTime
     }
@@ -64,24 +62,22 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
     label: <FormattedMessage id="common.type" />,
     valueClassName: '!font-bold',
     value: (item: Item) => {
-      // @ts-ignore
-      return item.type === TRADE_TYPE.LIMIT_BUY || item.type === TRADE_TYPE.LIMIT_SELL ? (
+      return item.type === ORDER_TYPE.LIMIT_BUY_ORDER || item.type === ORDER_TYPE.LIMIT_SELL_ORDER ? (
         <FormattedMessage id="mt.xianjiadan" />
       ) : (
-        <FormattedMessage id="mt.shijiadan" />
+        <FormattedMessage id="mt.tingsundan" />
       )
     }
   }
-  const orderNo = { label: <FormattedMessage id="mt.dingdanhao" />, value: (item: Item) => `${item.orderId}` }
+  const orderNo = { label: <FormattedMessage id="mt.dingdanhao" />, value: (item: Item) => `${item.id}` }
   const closePrice = {
-    label: tabKey === 'close' ? <FormattedMessage id="mt.pingcangjia" /> : <FormattedMessage id="mt.guadanjia" />,
-    // @TODO
-    value: (item: Item) => formatValue(toFixed(item.tradePrice, item.symbolDecimal)),
+    label: <FormattedMessage id="mt.guadanjia" />,
+    value: (item: Item) => formatValue(toFixed(item.limitPrice, item.symbolDecimal)),
     unit: currentUnit
   }
   const openPrice = {
-    label: <FormattedMessage id="mt.kaicangjia" />,
-    value: (item: Item) => formatValue(toFixed(item?.startPrice, item.symbolDecimal)),
+    label: <FormattedMessage id="mt.chengjiaojia" />,
+    value: (item: Item) => formatValue(toFixed(item?.tradePrice, item.symbolDecimal)),
     unit: currentUnit
   }
   const commission = {
@@ -90,9 +86,12 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
     unit: currentUnit
   }
 
-  // const pcList = [time, openPrice, closePrice, vol, orderSwaps, orderNo, commission, floatPL]
-  // const mobileList = [vol, orderNo, openPrice, closePrice, orderSwaps, commission, time]
-  const pcList = [typeItem, orderNo, openPrice, closePrice, commission, vol, ...(tabKey === 'close' ? [commission, floatPL] : [])]
+  const orderStatus = {
+    label: <FormattedMessage id="common.status" />,
+    value: (item: any) => getEnum().Enum.OrderStatus?.[item?.status]?.text || '-'
+  }
+
+  const pcList = [typeItem, openPrice, closePrice, commission, vol, orderStatus]
   const mobileList = [typeItem, vol, orderNo, openPrice, closePrice, commission, time]
 
   const fieldList = isPc ? pcList : mobileList
@@ -117,71 +116,34 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
     return typeof item?.[key] === 'function' ? item?.[key]?.(obj) : item?.[key]
   }
 
-  const filterClassName = useEmotionCss(({ token }) => {
-    return {
-      '.ant-select-selector,.ant-picker-range': {
-        borderRadius: '16px !important'
-      }
-    }
-  })
-
   return (
     <div style={style}>
-      <div className="flex items-center justify-between mb-4">
-        <CustomTabs
-          items={[
-            { label: <FormattedMessage id="mt.lishichengjiao" />, key: 'close' },
-            { label: <FormattedMessage id="mt.lishiguadan" />, key: 'pending' }
-          ]}
-          onChange={(key) => {
-            setTabKey(key)
-          }}
-          activeKey={tabKey}
-        />
-        <div className={classNames('flex items-center gap-x-3', filterClassName)}>
-          {/* <ProFormSelect
-            options={[
-              {
-                label: 'BTC',
-                value: '1'
-              },
-              {
-                label: 'GOLD',
-                value: '2'
-              }
-            ]}
-            fieldProps={{
-              // value: '1',
-              optionItemRender: (item: any) => {
-                return (
-                  <div className="flex items-center">
-                    <img src="/img/coin-icon/AAVEUSDT.png" alt="" className="w-[20px] h-[20px] rounded-full" />
-                    <span className="text-sub pl-1">{item.label}</span>
-                  </div>
-                )
-              },
-              onChange: (value) => {
-                // @TODO 根据选择的值，筛选历史记录
-              }
-            }}
-          /> */}
-          {/* <ProFormDateRangePicker /> */}
-        </div>
-      </div>
       <div>
         {list.length > 0 &&
           !loading &&
           list.map((v: any, idx) => {
             const buySellInfo = getBuySellInfo(v)
+            const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
+            v.isLimitOrder = isLimitOrder
             return (
               <div key={idx} className="mb-3 rounded-xl border border-primary">
                 <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
                   <div className="flex items-center">
-                    <img width={22} height={22} alt="" src={getDefaultSymbolIcon(v.imgUrl)} className="rounded-full" />
+                    <img width={22} height={22} alt="" src={getSymbolIcon(v.imgUrl)} className="rounded-full" />
                     <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
                     <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
                     {/* pc显示 */}
                     <div className="flex items-center max-xl:hidden">
+                      <div
+                        className="flex cursor-pointer items-center pl-[30px]"
+                        onClick={() => {
+                          copyContent(v.id, intl.formatMessage({ id: 'mt.fuzhichenggong' }))
+                        }}
+                      >
+                        <span className="text-xs text-gray-weak">ID</span>
+                        <span className="px-[6px] text-xs text-gray-secondary">{v.id}</span>
+                        <img src="/img/copy-icon.png" width={16} height={16} alt="" />
+                      </div>
                       <div className="flex items-center pl-[30px]">
                         <img src="/img/time.png" width={16} height={16} alt="" />
                         <span className="pl-[6px] text-xs text-gray-secondary">{formatTime(v.createTime)}</span>
@@ -196,9 +158,7 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
                 <div className="px-3 py-3">
                   <SwitchPcOrWapLayout
                     pcComponent={
-                      <div
-                        className={classNames('grid gap-y-3 xl:grid-cols-6', tabKey === 'close' ? 'xxl:grid-cols-8' : 'xxl:grid-cols-6')}
-                      >
+                      <div className={classNames('grid gap-y-3 xl:grid-cols-6 xxl:grid-cols-6')}>
                         {fieldList.map((item: any, idx) => (
                           <div className={classNames('xxl:last:text-right', item.className)} key={idx}>
                             {renderLabel(item)}
@@ -216,17 +176,6 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
                     }
                     wapComponent={
                       <>
-                        <div className={classNames('flex flex-col items-start', floatPL.className)}>
-                          <span className={classNames('text-xs font-normal text-gray', renderProp(floatPL, 'valueClassName', v))}>
-                            {renderProp(floatPL, 'value', v)}
-                            {floatPL.unit && (
-                              <span className={classNames('pl-1 text-xs text-gray-secondary', renderProp(floatPL, 'unitClassName', v))}>
-                                {floatPL.unit}
-                              </span>
-                            )}
-                          </span>
-                          {renderLabel(floatPL)}
-                        </div>
                         {groupBy(fieldList, 3).map((group, idx) => {
                           return (
                             <ListItem
@@ -272,4 +221,4 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
   )
 }
 
-export default observer(HistoryList)
+export default observer(HistoryPendingList)

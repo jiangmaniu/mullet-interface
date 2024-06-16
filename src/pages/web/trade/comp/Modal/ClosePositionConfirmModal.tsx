@@ -11,10 +11,11 @@ import Slider from '@/components/Web/Slider'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
+import { toFixed } from '@/utils'
+import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 import { message } from '@/utils/message'
 
-import { IPositionItem } from '../TradeRecord/Position'
+import { IPositionItem } from '../TradeRecord/PositionList'
 
 // 平仓操作弹窗
 export default observer(
@@ -24,6 +25,7 @@ export default observer(
     const [count, setCount] = useState<any>('')
     const [open, setOpen] = useState(false)
     const [item, setItem] = useState({} as IPositionItem)
+    const [sliderValue, setSliderValue] = useState(0)
     const unit = 'USD'
 
     const symbol = item.symbol
@@ -79,13 +81,15 @@ export default observer(
 
       const res = await trade.createOrder(params)
 
-      if (!res.success) {
-        return
+      if (res.success) {
+        // 关闭弹窗
+        close()
       }
-
-      // 关闭弹窗
-      close()
     }
+
+    useEffect(() => {
+      setSliderValue((count / orderVolume) * 100)
+    }, [count])
 
     const renderContent = () => {
       return (
@@ -93,13 +97,12 @@ export default observer(
           <div className="flex flex-col items-center justify-center">
             <div className="flex w-full items-center justify-between pt-3">
               <div className="flex items-center">
-                <img width={24} height={24} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
+                <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
                 <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                 <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
               </div>
               <div className="flex flex-col items-end">
                 <span className={classNames('pb-2 text-lg font-bold', Number(item?.profit) > 0 ? 'text-green' : 'text-red')}>
-                  {/* @ts-ignore */}
                   {item.profitFormat} {unit}
                 </span>
                 <span className="text-xs text-gray-secondary">
@@ -154,7 +157,12 @@ export default observer(
                 <Slider
                   onChange={(value: any) => {
                     console.log('value', value)
+                    // 可平仓手数*百分比
+                    setCount(toFixed((value / 100) * orderVolume, 2))
+                    setSliderValue(value)
                   }}
+                  // value={Number((count / orderVolume) * 100)}
+                  value={sliderValue}
                 />
               </div>
               <div className="flex items-center pt-2">

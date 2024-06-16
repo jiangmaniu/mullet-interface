@@ -1,6 +1,5 @@
 import { getIntl } from '@umijs/max'
-import { message } from 'antd'
-import { action, computed, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, configure, makeObservable, observable, runInAction } from 'mobx'
 
 import { getTradeSymbolCategory } from '@/services/api/common'
 import { getTradeSymbolList } from '@/services/api/tradeCore/account'
@@ -8,12 +7,16 @@ import {
   cancelOrder,
   createOrder,
   getBgaOrderPage,
+  getOrderMargin,
   getOrderPage,
   getTradeRecordsPage,
   modifyPendingOrder,
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
+import { toFixed } from '@/utils'
+import { message } from '@/utils/message'
 import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
+import { covertProfit } from '@/utils/wsUtil'
 
 import ws from './ws'
 
@@ -25,11 +28,16 @@ export type UserConfInfo = Record<
     /**激活的品种名称 */
     activeSymbolName?: string
     /**打开的品种名称列表 */
-    openSymbolNameList?: string[]
+    openSymbolNameList?: Account.TradeSymbolListItem[]
     /**当前切换的账户信息 */
     currentAccountInfo?: User.AccountItem
   }
 >
+
+export type IRecordTabKey = 'POSITION' | 'PENDING' | 'STOPLOSS_PROFIT' | 'HISTORY'
+
+// 禁用 MobX 严格模式
+configure({ enforceActions: 'never' })
 
 class TradeStore {
   constructor() {
@@ -38,20 +46,24 @@ class TradeStore {
   @observable socket: any = null
   @observable symbolCategory: API.KEYVALUE[] = [] // 品种分类
   @observable symbolList: Account.TradeSymbolListItem[] = []
+  @observable symbolListAll: Account.TradeSymbolListItem[] = [] // 首次查询的全部品种列表，不按条件查询
   @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
   @observable pendingList = [] as Order.OrderPageListItem[] // 挂单列表
   @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
-  @observable historyList = [] as Order.TradeRecordsPageListItem[] // 历史成交列表
+  @observable historyCloseList = [] as Order.TradeRecordsPageListItem[] // 历史成交列表
+  @observable historyPendingList = [] as Order.OrderPageListItem[] // 历史挂单列表
+  @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
 
   @observable userConfInfo = {} as UserConfInfo // 记录用户设置的品种名称、打开的品种列表、自选信息，按accountId储存
   // 当前accountId的配置信息从userConfInfo展开，切换accountId时，重新设置更新
   @observable activeSymbolName = '' // 当前激活的品种名
-  @observable openSymbolNameList: string[] = [] // 记录打开的品种名称
+  @observable openSymbolNameList = [] as Account.TradeSymbolListItem[] // 记录打开的品种名称列表
   @observable favoriteList = [] as Account.TradeSymbolListItem[] // 自选列表
 
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
   @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
+  @observable currentAccountMargin = 0 // 当前账户可用保证金：逐仓保证金 + 全仓保证金margin
 
   // 初始化加载
   init = () => {
@@ -82,6 +94,35 @@ class TradeStore {
     }
   }
 
+  // 当前账户可用保证金 = 逐仓保证金 + 全仓保证金
+  @action
+  getCurrentAccountMargin = () => {
+    const currentAccountInfo = this.currentAccountInfo
+    return toFixed(Number(currentAccountInfo.margin || 0) + Number(currentAccountInfo.isolatedMargin || 0))
+  }
+
+  // 计算当前账户总的浮动盈亏
+  @action
+  getCurrentAccountFloatProfit = (list: Order.BgaOrderPageListItem[]) => {
+    const data = JSON.parse(JSON.stringify(list))
+    // 持仓总浮动盈亏
+    let totalProfit = 0
+    if (data.length) {
+      data.forEach((item: Order.BgaOrderPageListItem) => {
+        const profit = covertProfit(item.dataSourceSymbol as string, item) // 浮动盈亏
+        item.profit = profit || item.profit
+        totalProfit += Number(item.profit || 0)
+      })
+    }
+    return totalProfit
+  }
+
+  // 计算保证金
+  calcMargin = async (params: Order.CreateOrder) => {
+    const res = await getOrderMargin(params)
+    return Math.abs(res.data || 0)
+  }
+
   // 切换账户后，重载的接口
   @action reloadAfterAccountChange = () => {
     // 重新加载品种列表
@@ -102,7 +143,7 @@ class TradeStore {
     const currentAccountConf = accountId ? userConfInfo?.[accountId] : {}
 
     this.userConfInfo = userConfInfo
-    this.openSymbolNameList = (currentAccountConf?.openSymbolNameList || []).filter((v) => v) as string[]
+    this.openSymbolNameList = (currentAccountConf?.openSymbolNameList || []).filter((v) => v) as Account.TradeSymbolListItem[]
     this.activeSymbolName = currentAccountConf?.activeSymbolName as string
   }
 
@@ -124,8 +165,9 @@ class TradeStore {
   @action
   setOpenSymbolNameList(name: string) {
     this.setActiveSymbolName(name)
-    if (this.openSymbolNameList.some((item) => item === name)) return
-    this.openSymbolNameList.push(name)
+    if (this.openSymbolNameList.some((item) => item.symbol === name)) return
+    const symbolItem = this.symbolList.find((item) => item.symbol === name) as Account.TradeSymbolListItem
+    this.openSymbolNameList.push(symbolItem)
     this.updateLocalOpenSymbolNameList()
   }
 
@@ -133,7 +175,7 @@ class TradeStore {
   @action
   removeOpenSymbolNameList(name: string, removeIndex: number) {
     const originList = JSON.parse(JSON.stringify(this.openSymbolNameList))
-    const newList = this.openSymbolNameList.filter((item) => item !== name)
+    const newList = this.openSymbolNameList.filter((item) => item.symbol !== name)
 
     this.openSymbolNameList = newList
     this.updateLocalOpenSymbolNameList()
@@ -243,6 +285,10 @@ class TradeStore {
       const symbolList = (res.data || []) as Account.TradeSymbolListItem[]
       runInAction(() => {
         this.symbolList = symbolList
+        // 查询全部的品种列表
+        if (!params.classify) {
+          this.symbolListAll = symbolList
+        }
 
         // 切换accountId后请求的品种列表可能不一致，设置第一个默认的品种名称
         const firstSymbolName = symbolList[0]?.symbol
@@ -263,6 +309,22 @@ class TradeStore {
     }
   }
 
+  // 切换交易记录TabKey
+  setTabKey = (tabKey: IRecordTabKey) => {
+    this.recordTabKey = tabKey
+
+    if (tabKey === 'POSITION') {
+      // 持仓
+      this.getPositionList()
+    } else if (tabKey === 'PENDING') {
+      // 挂单
+      this.getPendingList()
+    } else if (tabKey === 'STOPLOSS_PROFIT') {
+      // 止盈止损
+      this.getStopLossProfitList()
+    }
+  }
+
   // 查询持仓列表
   @action
   getPositionList = async () => {
@@ -277,7 +339,13 @@ class TradeStore {
   // 查询挂单列表
   @action
   getPendingList = async () => {
-    const res = await getOrderPage({ current: 1, size: 999, status: 'ENTRUST', type: '40,50', accountId: this.currentAccountInfo?.id })
+    const res = await getOrderPage({
+      current: 1,
+      size: 999,
+      status: 'ENTRUST',
+      type: '40,50',
+      accountId: this.currentAccountInfo?.id
+    })
     if (res.success) {
       runInAction(() => {
         this.pendingList = (res.data?.records || []) as Order.OrderPageListItem[]
@@ -300,7 +368,23 @@ class TradeStore {
     const res = await getTradeRecordsPage({ current: 1, size: 999, accountId: this.currentAccountInfo?.id })
     if (res.success) {
       runInAction(() => {
-        this.historyList = (res.data?.records || []) as Order.TradeRecordsPageListItem[]
+        this.historyCloseList = (res.data?.records || []) as Order.TradeRecordsPageListItem[]
+      })
+    }
+  }
+  // 查询历史挂单列表
+  @action
+  getHistoryPendingList = async () => {
+    const res = await getOrderPage({
+      current: 1,
+      size: 999,
+      status: 'CANCEL', // @TODO 这里参数跟后台确认一下 CANCEL,FAIL,FINISH
+      type: '40,50',
+      accountId: this.currentAccountInfo?.id
+    })
+    if (res.success) {
+      runInAction(() => {
+        this.historyPendingList = (res.data?.records || []) as Order.OrderPageListItem[]
       })
     }
   }
@@ -310,13 +394,26 @@ class TradeStore {
     const orderType = params.type
     const res = await createOrder(params)
     if (res.success) {
-      if (['MARKET_ORDER', 'STOP_LOSS_ORDER', 'TAKE_PROFIT_ORDERR'].includes(orderType)) {
+      // 市价单：买入卖出单
+      if (['MARKET_ORDER'].includes(orderType)) {
         // 更新持仓列表
         this.getPositionList()
-      } else if (['STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(orderType)) {
+        // 携带持仓订单号则为平仓单
+        if (params.bagOrderId) {
+          message.info(getIntl().formatMessage({ id: 'mt.pingcangchenggong' }))
+        } else {
+          message.info(getIntl().formatMessage({ id: 'mt.kaicangchenggong' }))
+        }
+        // 激活Tab
+        trade.setTabKey('POSITION')
+      }
+      // 限价买入卖出单、停损买入卖出单
+      else if (['LIMIT_BUY_ORDER', 'LIMIT_SELL_ORDER', 'STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(orderType)) {
         // 更新挂单列表
         this.getPendingList()
-        message.success(getIntl().formatMessage({ id: 'mt.guadanchenggong' }))
+        message.info(getIntl().formatMessage({ id: 'mt.guadanchenggong' }))
+        // 激活Tab
+        trade.setTabKey('PENDING')
       }
     }
     return res
@@ -329,6 +426,10 @@ class TradeStore {
       this.getPositionList()
       // 更新止盈止损列表
       this.getStopLossProfitList()
+
+      message.info(getIntl().formatMessage({ id: 'mt.xiugaizhiyingzhisunchenggong' }))
+      // 激活Tab
+      trade.setTabKey('STOPLOSS_PROFIT')
     }
     return res
   }
@@ -338,6 +439,8 @@ class TradeStore {
     if (res.success) {
       // 更新挂单列表
       this.getPendingList()
+
+      message.info(getIntl().formatMessage({ id: 'mt.xiugaiguadanchenggong' }))
     }
     return res
   }
@@ -347,6 +450,9 @@ class TradeStore {
     if (res.success) {
       // 更新挂单列表
       this.getPendingList()
+      // 更新止盈止损列表
+      this.getStopLossProfitList()
+      message.info(getIntl().formatMessage({ id: 'mt.cexiaochenggong' }))
     }
     return res
   }

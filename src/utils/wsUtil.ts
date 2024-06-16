@@ -1,6 +1,5 @@
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import useCurrentQuote from '@/hooks/useCurrentQuote'
-import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/Position'
 
 // 货币类型
 export const CurrencyLABELS = {
@@ -349,36 +348,40 @@ const quoteList3 = formatQuotes().quoteList3 // 指数
  * @param positionItem 持仓item
  * @returns
  */
-export function covertProfit(dataSourceSymbol: string, positionItem: IPositionItem) {
+export function covertProfit(dataSourceSymbol: string, positionItem: Order.BgaOrderPageListItem) {
   if (!dataSourceSymbol) return
   const quoteInfo = useCurrentQuote(dataSourceSymbol)
-  const currentQuote = quoteInfo.currentQuote as any
+  const quotes = quoteInfo.quotes as any // 全部行情
   let qb: any = {}
   const symbolConf = quoteInfo?.symbolConf
-  const bid = quoteInfo?.bid
-  const ask = quoteInfo?.ask
+  const bid = Number(quoteInfo?.bid || 0)
+  const ask = Number(quoteInfo?.ask || 0)
   const unit = symbolConf?.baseCurrency // 货币单位
   const isBuy = positionItem.buySell === TRADE_BUY_SELL.BUY // 是否买入
   const isSell = positionItem.buySell === TRADE_BUY_SELL.SELL // 是否卖出
-  const number = positionItem.orderVolume || 0 // 手数
-  const consize = symbolConf?.contractSize || 1 // 合约量
-  const openPrice = positionItem.startPrice || 0 // 开仓价
+  const number = Number(positionItem.orderVolume || 0) // 手数
+  const consize = Number(symbolConf?.contractSize || 1) // 合约量
+  const openPrice = Number(positionItem.startPrice || 0) // 开仓价
   const isForeign = symbolConf?.calculationType === 'FOREIGN_CURRENCY' // 外汇
   // 浮动盈亏  (买入价-卖出价) x 合约单位 x 交易手数
-  let profit = positionItem.buySell === TRADE_BUY_SELL.BUY ? (bid - openPrice) * number * consize : (openPrice - ask) * number * consize
-
+  let profit =
+    bid && ask
+      ? positionItem.buySell === TRADE_BUY_SELL.BUY
+        ? (bid - openPrice) * number * consize
+        : (openPrice - ask) * number * consize
+      : 0
   // 检查货币是否是外汇/指数，并且不是以 USD 为单位，比如AUDNZD => 这里单位是NZD，找到NZDUSD或者USDNZD的指数取值即可
   // 数字货币、商品黄金石油这些以美元结算的，单位都是USD不需要参与转化直接返回
   // 非USD单位的产品都要转化为美元
   // if ((quoteList2.some((v) => v.name === symbol) || quoteList3.some((v) => v.name === symbol)) && unit !== 'USD') {
   if (isForeign) {
     // 乘法
-    const divName = 'USD' + unit // 如 USDNZD
+    const divName = ('USD' + unit).toLocaleLowerCase() // 如 USDNZD
     // 除法
-    const mulName = unit + 'USD' // 如 NZDUSD
+    const mulName = (unit + 'USD').toLocaleLowerCase() // 如 NZDUSD
     // 检查是否存在 divName 对应的报价信息
-    if (currentQuote[divName]) {
-      qb = currentQuote[divName]
+    if (quotes[divName]) {
+      qb = quotes[divName]
       // 检查交易指令是否是买入，如果是，则获取 divName 对应的报价信息，并用其 bid 除以 profit
       if (isBuy) {
         profit = profit / qb.bid
@@ -389,15 +392,15 @@ export function covertProfit(dataSourceSymbol: string, positionItem: IPositionIt
       }
     }
     // 如果 divName 对应的报价信息不存在，则检查 mulName 对应的报价信息
-    else if (currentQuote[mulName]) {
+    else if (quotes[mulName]) {
       // 检查交易指令是否是买入，如果是，则获取 mulName 对应的报价信息，并用其 bid 乘以 profit
       if (isBuy) {
-        qb = currentQuote[mulName]
+        qb = quotes[mulName]
         profit = profit * qb.bid
       }
       // 检查交易指令是否是卖出，如果是，则获取 mulName 对应的报价信息，并用其 ask 乘以 profit
       else if (isSell) {
-        qb = currentQuote[mulName]
+        qb = quotes[mulName]
         profit = profit * qb.ask
       }
     }

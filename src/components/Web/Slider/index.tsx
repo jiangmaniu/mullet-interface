@@ -1,7 +1,7 @@
-import { Slider as AntdSlider, SliderSingleProps } from 'antd'
-import { SliderRangeProps } from 'antd/es/slider'
+import { Slider as AntdSlider } from 'antd'
+import { SliderSingleProps } from 'antd/es/slider'
 
-type IProps = Partial<SliderSingleProps & SliderRangeProps>
+type IProps = SliderSingleProps
 
 export default function Slider({ ...res }: IProps) {
   return (

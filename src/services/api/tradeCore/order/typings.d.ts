@@ -146,11 +146,11 @@ declare namespace Order {
     /**
      * 订单方向
      */
-    buySell?: API.BuySell
+    buySell?: API.TradeBuySell
     /**
      * 配置
      */
-    conf?: string
+    conf?: string | Symbol.SymbolConf
     /**
      * 创建原因
      */
@@ -330,7 +330,7 @@ declare namespace Order {
     /**
      * 订单方向
      */
-    buySell?: API.BuySell
+    buySell?: API.TradeBuySell
     /**
      * 平仓价格
      */
@@ -338,7 +338,7 @@ declare namespace Order {
     /**
      * 配置
      */
-    conf?: string
+    conf?: string | Symbol.SymbolConf
     /**
      * 创建时间
      */
@@ -478,7 +478,7 @@ declare namespace Order {
     /**
      * 订单方向
      */
-    buySell?: API.BuySell
+    buySell?: API.TradeBuySell
     /**
      * 创建时间
      */
@@ -565,6 +565,10 @@ declare namespace Order {
     userAccount: string
     /**用户名称 */
     userName: string
+    /**
+     * 配置
+     */
+    conf?: string | Symbol.SymbolConf
   }
   // 追加保证金
   type AddMarginParams = {

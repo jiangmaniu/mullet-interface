@@ -7,7 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { addMargin, extractMargin } from '@/services/api/tradeCore/order'
 import { message } from '@/utils/message'
 
-import { IPositionItem } from '../../Position'
+import { IPositionItem } from '../../PositionList'
 
 type IProps = {
   trigger: JSX.Element
@@ -21,11 +21,11 @@ type IProps = {
 function AddMarginModal({ trigger, info, onClose, type }: IProps) {
   const intl = useIntl()
   const { trade } = useStores()
-  const isAddMargin = type === 'AddMargin'
+  const isAdd = type === 'AddMargin'
 
   return (
     <ModalForm
-      title={isAddMargin ? intl.formatMessage({ id: 'mt.zhuijiabaozhengjin' }) : intl.formatMessage({ id: 'mt.tiqubaozhengjin' })}
+      title={isAdd ? intl.formatMessage({ id: 'mt.zhuijiabaozhengjin' }) : intl.formatMessage({ id: 'mt.tiqubaozhengjin' })}
       trigger={trigger}
       width={500}
       onFinish={async (values: any) => {
@@ -35,7 +35,7 @@ function AddMarginModal({ trigger, info, onClose, type }: IProps) {
           bagOrderId: info.id // 持仓订单号
         }
         console.log('params', params)
-        const reqFn = isAddMargin ? addMargin : extractMargin
+        const reqFn = isAdd ? addMargin : extractMargin
         const res = await reqFn(params)
         const success = res.success
 
@@ -53,7 +53,7 @@ function AddMarginModal({ trigger, info, onClose, type }: IProps) {
         onClose?.()
       }}
     >
-      <ProFormDigit required name={isAddMargin ? 'addMargin' : 'extractMargin'} label={intl.formatMessage({ id: 'mt.baozhengjin' })} />
+      <ProFormDigit required name={isAdd ? 'addMargin' : 'extractMargin'} label={intl.formatMessage({ id: 'mt.baozhengjin' })} />
     </ModalForm>
   )
 }

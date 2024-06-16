@@ -1,5 +1,7 @@
 import { getIntl, getLocale as getMaxLocale } from '@umijs/max'
 
+import { gray, red, yellow } from '@/theme/theme.config'
+
 export enum Language {
   'en-US' = 'en-US', // 英语
   'zh-TW' = 'zh-TW' // 台湾繁体
@@ -53,22 +55,6 @@ export const transferWeekDay = (weekDay: IWeekDay) => {
   return text
 }
 
-// 交易类型 @TODO 删除
-export const TRADE_TYPE = {
-  /**市场单买入0 */
-  MARKET_BUY: 0,
-  /**市场单卖出1 */
-  MARKET_SELL: 1,
-  /**限价挂单买入是2 */
-  LIMIT_BUY: 2,
-  /**限价挂单卖出是3 */
-  LIMIT_SELL: 3,
-  /**停损挂单买入是4 */
-  STOP_LIMIT_BUY: 4,
-  /**停损挂单卖出是5 */
-  STOP_LIMIT_SELL: 5
-}
-
 // 订单类型
 export const ORDER_TYPE = {
   /**市价单 */
@@ -93,4 +79,96 @@ export const TRADE_BUY_SELL = {
   BUY: 'BUY',
   /**买方向 */
   SELL: 'SELL'
+}
+
+// 业务枚举
+export const getEnum = () => {
+  const intl = getIntl()
+
+  //  ============= 业务枚举值 ================
+  // 使用text形式命名，方便表格 valueEnum 消费
+  const Enum = {
+    // 启用、禁用状态
+    Status: {
+      DISABLED: { text: intl.formatMessage({ id: 'mt.jinyong' }) },
+      ENABLE: { text: intl.formatMessage({ id: 'mt.qiyong' }) }
+    },
+    // 认证状态
+    ApproveStatus: {
+      TODO: { text: intl.formatMessage({ id: 'mt.daishenhe' }), color: yellow['560'] },
+      CANCEL: { text: intl.formatMessage({ id: 'mt.quxiao' }), color: gray['900'] },
+      Disallow: { text: intl.formatMessage({ id: 'mt.shenheshibai' }), color: red['600'] },
+      SUCCESS: { text: intl.formatMessage({ id: 'mt.yirenzheng' }), color: gray['900'] }
+    },
+    // 证件类型
+    IdentificationType: {
+      ID_CARD: { text: intl.formatMessage({ id: 'mt.shenfenzheng' }) },
+      PASSPORT: { text: intl.formatMessage({ id: 'mt.huzhao' }) }
+    },
+    // 银行卡类型
+    BankCardType: {
+      DEBIT_CARD: { text: intl.formatMessage({ id: 'mt.chuxuka' }) },
+      CREDIT_CARD: { text: intl.formatMessage({ id: 'mt.xingyongka' }) }
+    },
+    // 交易方向类型：只有两种 买、卖
+    TradeBuySell: {
+      BUY: { text: intl.formatMessage({ id: 'mt.mairu' }) },
+      SELL: { text: intl.formatMessage({ id: 'mt.maichu' }) }
+    },
+    // 订单类型
+    OrderType: {
+      MARKET_ORDER: { text: intl.formatMessage({ id: 'mt.shijiadan' }), value: 10 },
+      STOP_LOSS_ORDER: { text: intl.formatMessage({ id: 'mt.zhisundan' }), value: 20 },
+      TAKE_PROFIT_ORDERR: { text: intl.formatMessage({ id: 'mt.zhiyingdan' }), value: 30 },
+      LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamairudan' }), value: 40 },
+      LIMIT_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamaichudan' }), value: 50 },
+      STOP_LOSS_LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunxianjiamairudan' }), value: 60 },
+      STOP_LOSS_LIMIT_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunxianjiamaichudan' }), value: 70 }
+    },
+    // 订单状态
+    OrderStatus: {
+      CANCEL: { text: intl.formatMessage({ id: 'mt.yicexiao' }) },
+      ENTRUST: { text: intl.formatMessage({ id: 'mt.weituozhong' }) },
+      FAIL: { text: intl.formatMessage({ id: 'mt.shibai' }) },
+      FINISH: { text: intl.formatMessage({ id: 'mt.yichengjiao' }) }
+    },
+    // 订单成交方向
+    OrderInOut: {
+      IN: { text: 'IN' },
+      OUT: { text: 'OUT' },
+      IN_OUT: { text: 'IN_OUT' }
+    },
+    // 持仓单状态
+    BGAStatus: {
+      BAG: { text: intl.formatMessage({ id: 'mt.chicangzhong' }) },
+      FINISH: { text: intl.formatMessage({ id: 'mt.yiwancheng' }) }
+    }
+  }
+
+  //  ============= 枚举对象转options数组选项 ================
+  const enumToOptions = (enumKey: keyof typeof Enum, valueKey?: string) => {
+    const options: Array<{ value: any; label: string }> = []
+    const enumObj = Enum[enumKey] as any
+
+    Object.keys(enumObj).forEach((key) => {
+      options.push({
+        value: valueKey ? enumObj[key][valueKey] : key,
+        label: enumObj[key].text
+      })
+    })
+
+    return options
+  }
+
+  type RetType = {
+    Enum: Record<keyof typeof Enum, { [key: string]: { text: string; color?: string } }>
+    enumToOptions: (enumKey: keyof typeof Enum, valueKey?: string) => Array<{ value: any; label: string }>
+  }
+
+  const ret: RetType = {
+    Enum,
+    enumToOptions
+  }
+
+  return ret
 }

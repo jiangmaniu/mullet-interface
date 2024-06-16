@@ -16,7 +16,7 @@ import { STORAGE_GET_TOKEN } from '@/utils/storage'
 function FloatTradeBox() {
   const { isMobileOrIpad } = useEnv()
   const [open, setOpen] = useState(true)
-  const [count, setCount] = useState<any>('0.01')
+  const [count, setCount] = useState<any>('0.1')
   const [widgetRight, setWidgetRight] = useState(620)
   const [widgetTop, setWidgetTop] = useState(200)
   const startPosition = useRef({ x: 0, y: 0 })
@@ -24,6 +24,13 @@ function FloatTradeBox() {
   const token = STORAGE_GET_TOKEN()
   const { trade } = useStores()
   const quoteInfo = useCurrentQuote()
+  const symbolConf = quoteInfo?.symbolConf
+  const vmin = symbolConf?.minTrade || 0.1
+  const vmax = symbolConf?.maxTrade || 20
+
+  useEffect(() => {
+    setCount(vmin)
+  }, [vmin])
 
   const startDrag = (event: any) => {
     event.preventDefault()
@@ -165,9 +172,9 @@ function FloatTradeBox() {
               <FormattedMessage id="mt.shoushu" />
             </div>
             <InputNumber
-              min={'0.01'}
+              min={vmin}
               controls={false}
-              max={'10000'}
+              max={vmax}
               value={count}
               onChange={(val) => {
                 setCount(val)
@@ -190,7 +197,7 @@ function FloatTradeBox() {
           </div>
         </div>
         <div className="flex items-center justify-center gap-x-[6px] py-1 mt-[2px]">
-          {['0.01', '0.1', '0.5', '1.0'].map((item, idx) => {
+          {['0.1', '0.5', '1.0', '10.0'].map((item, idx) => {
             return (
               <span
                 key={idx}

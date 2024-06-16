@@ -8,13 +8,14 @@ import Button from '@/components/Base/Button'
 import ListItem from '@/components/Base/ListItem'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
-import { TRADE_TYPE } from '@/constants/enum'
+import { ORDER_TYPE } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
-import { getDefaultSymbolIcon } from '@/utils/business'
+import { getSymbolIcon } from '@/utils/business'
 
 // 平仓、挂单成功提示
 export default observer((props, ref) => {
@@ -22,7 +23,7 @@ export default observer((props, ref) => {
   const { ws } = useStores()
   const { openTips } = ws as any
   // @ts-ignore
-  const data = ws?.openData || {}
+  const data = (ws?.openData || {}) as Order.OrderPageListItem
 
   const { isPc } = useEnv()
   const userUnit = 'USD'
@@ -34,15 +35,21 @@ export default observer((props, ref) => {
     ws.openData = {}
   }
 
-  const isMarket = data.type === TRADE_TYPE.MARKET_BUY || data.type === TRADE_TYPE.MARKET_SELL
-  const isBuy = data.type === TRADE_TYPE.MARKET_BUY || data.type === TRADE_TYPE.LIMIT_BUY || data.type === TRADE_TYPE.STOP_LIMIT_BUY
-  const isClosed = !!data.closed // 是否是平仓 @TODO
+  const isMarket = data.type === ORDER_TYPE.MARKET_ORDER
+  const isBuy = data.buySell === 'BUY'
+  const isClosed = !!data.tradePrice // 是否是平仓
 
-  const symbol = data.sbl
-  const d = data.digits
+  const symbol = data.symbol
+  const quoteInfo = useCurrentQuote(symbol)
+  const d = quoteInfo.digits
+  const orderVolume = data.orderVolume || 0
   const vol = {
     label: isClosed ? <FormattedMessage id="mt.pingcangshoushu" /> : <FormattedMessage id="mt.kaicangshoushu" />,
-    value: `${data.vol / 10000} ${(<FormattedMessage id="mt.lot" />)}`
+    value: `${orderVolume} ${(<FormattedMessage id="mt.lot" />)}`
+  }
+  const getPrice = () => {
+    // @TODO 从接口读取价格
+    return data.tradePrice
   }
   const price = {
     label: isClosed ? (
@@ -52,14 +59,16 @@ export default observer((props, ref) => {
     ) : (
       <FormattedMessage id="mt.guadanjiage" />
     ),
-    value: `${toFixed(data.price, d)} ${userUnit}`
+    value: `${toFixed(getPrice, d)} ${userUnit}`
   }
-  const tp = { label: <FormattedMessage id="mt.zhiying" />, value: `${data.tp} ${userUnit}` }
-  const sl = { label: <FormattedMessage id="mt.zhisun" />, value: `${toFixed(data.sl, d)} ${userUnit}` }
-  const commission = { label: <FormattedMessage id="mt.shouxufei" />, value: `${data.fee || '0.00'} ${userUnit}` }
-  const storage = { label: <FormattedMessage id="mt.geyelixi" />, value: `${toFixed(data.storage, d)} ${userUnit}` }
-  const orderNo = { label: <FormattedMessage id="mt.chicangdanhao" />, value: `#${data.order}` }
-  const margin = { label: <FormattedMessage id="mt.baozhengjin" />, value: 1212 }
+  const tp = { label: <FormattedMessage id="mt.zhiying" />, value: `${toFixed(data.takeProfit, d)} ${userUnit}` }
+  const sl = { label: <FormattedMessage id="mt.zhisun" />, value: `${toFixed(data.stopLoss, d)} ${userUnit}` }
+  const commission = { label: <FormattedMessage id="mt.shouxufei" />, value: `${data.handlingFees || '0.00'} ${userUnit}` }
+  // @TODO 没有字段
+  // @ts-ignore
+  const storage = { label: <FormattedMessage id="mt.geyelixi" />, value: `${toFixed(data.handlingFees, d)} ${userUnit}` }
+  const orderNo = { label: <FormattedMessage id="mt.chicangdanhao" />, value: `#${data.id}` }
+  const margin = { label: <FormattedMessage id="mt.baozhengjin" />, value: toFixed(data.orderMargin, d) }
   const last = isClosed ? storage : margin
 
   // 挂单成功不用展示手续费、持仓单号
@@ -86,7 +95,7 @@ export default observer((props, ref) => {
             <div className="flex w-full items-center justify-between px-8 pt-3">
               <div className="flex flex-col">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={getDefaultSymbolIcon(data?.imgUrl)} className="rounded-full" />
+                  <img width={24} height={24} alt="" src={getSymbolIcon(data?.imgUrl)} className="rounded-full" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} ·{' '}
@@ -97,12 +106,15 @@ export default observer((props, ref) => {
                   <span className="text-xs text-gray-secondary">
                     <FormattedMessage id="mt.chicangdanhao" />
                   </span>
-                  <span className="pl-2 text-xs text-gray">#{data.order}</span>
+                  <span className="pl-2 text-xs text-gray">#{data.id}</span>
                 </div>
               </div>
               <div className="flex flex-col items-end">
-                <span className={classNames('font-bol pb-2 text-lg', data.profit > 0 ? 'text-green' : 'text-red')}>
-                  {toFixed(data.profit)} {userUnit}
+                {/* @TODO 没有字段 */}
+                {/* @ts-ignore */}
+                <span className={classNames('font-bol pb-2 text-lg', data?.profit > 0 ? 'text-green' : 'text-red')}>
+                  {/* @ts-ignore */}
+                  {toFixed(data?.profit)} {userUnit}
                 </span>
                 <span className="text-xs text-gray-secondary">
                   <FormattedMessage id="mt.yingkui" />

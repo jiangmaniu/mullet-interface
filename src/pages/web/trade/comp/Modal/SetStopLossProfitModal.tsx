@@ -12,9 +12,10 @@ import { useStores } from '@/context/mobxProvider'
 import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
-import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
+import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import { message } from '@/utils/message'
 
-import { IPositionItem } from '../TradeRecord/Position'
+import { IPositionItem } from '../TradeRecord/PositionList'
 
 // 设置止盈止损
 export default observer(
@@ -91,31 +92,31 @@ export default observer(
     }
 
     const onFinish = async () => {
-      // if (item.buySell === TRADE_BUY_SELL.BUY) {
-      //   if (sl && sl > sl_scope) {
-      //     setSl(item.stopLoss)
-      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //     return
-      //   }
-      //   if (sp && sp < sp_scope) {
-      //     setSp(item.takeProfit)
-      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //     return
-      //   }
-      // } else {
-      //   if (sl && sl < sl_scope) {
-      //     setSl(item.stopLoss)
-      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //     return
-      //   }
-      //   if (sp && sp > sp_scope) {
-      //     setSp(item.takeProfit)
-      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //     return
-      //   }
-      // }
+      const msg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
+      if (item.buySell === TRADE_BUY_SELL.BUY) {
+        if (sl && sl > sl_scope) {
+          setSl(item.stopLoss)
+          message.info(msg)
+          return
+        }
+        if (sp && sp < sp_scope) {
+          setSp(item.takeProfit)
+          message.info(msg)
+          return
+        }
+      } else {
+        if (sl && sl < sl_scope) {
+          setSl(item.stopLoss)
+          message.info(msg)
+          return
+        }
+        if (sp && sp > sp_scope) {
+          setSp(item.takeProfit)
+          message.info(msg)
+          return
+        }
+      }
 
-      setLoading(true)
       const params = {
         bagOrderId: item.id,
         stopLoss: sl ? parseFloat(sl) : undefined,
@@ -124,14 +125,14 @@ export default observer(
 
       console.log('参数', params)
 
-      const res = await trade.modifyStopProfitLoss(params)
+      setLoading(true)
+      const res = await trade.modifyStopProfitLoss(params).finally(() => {
+        setLoading(false)
+      })
 
-      setLoading(false)
-      if (!res.success) {
-        return
+      if (res.success) {
+        close()
       }
-
-      close()
     }
 
     const renderContent = () => {
@@ -141,7 +142,7 @@ export default observer(
             <div className="flex w-full flex-col pt-3">
               <div className="flex items-center justify-between max-xl:flex-col max-xl:items-start">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
+                  <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
                 </div>
@@ -163,7 +164,6 @@ export default observer(
                     <FormattedMessage id="mt.dangqianjiage" />
                   </span>
                   <span className="text-sm text-gray">
-                    {/* @ts-ignore */}
                     {item.currentPrice} {unit}
                   </span>
                 </div>
@@ -206,13 +206,13 @@ export default observer(
                 }}
                 tips={
                   <>
-                    <span className="font-num">
+                    <span className="font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
                       {isBuy ? '≤' : '≥'}&nbsp;
                       {formatNum(sl_scope)} USD
                     </span>
-                    <span className="pl-1 font-num">
+                    <span className="pl-1 font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp;
                       {formatNum(slProfit)} USD
@@ -247,7 +247,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <span className="font-num">
+                  <span className="font-dingpro-regular">
                     <FormattedMessage id="mt.fanwei" />
                     &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                     &nbsp;

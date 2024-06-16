@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Tooltip } from 'antd'
@@ -13,9 +14,10 @@ import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { copyContent, formatNum, formatTime, groupBy, toFixed } from '@/utils'
-import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
+import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 import { covertProfit } from '@/utils/wsUtil'
 
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import ClosePositionConfirmModal from '../Modal/ClosePositionConfirmModal'
 import SetStopLossProfitModal from '../Modal/SetStopLossProfitModal'
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
@@ -25,6 +27,10 @@ export type IPositionItem = Order.BgaOrderPageListItem & {
   profitFormat: string
   /**现价 */
   currentPrice: number | string
+  /**收益率 */
+  yieldRate: string
+  /**强平价 */
+  forceClosePrice: number
 }
 
 type IProps = {
@@ -38,7 +44,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
   const { lng } = useLang()
-  const { quotes, symbols } = ws
+  const { quotes } = ws
   const isZh = lng === 'zh-TW'
   const intl = useIntl()
   const [modalInfo, setModalInfo] = useState({} as IPositionItem)
@@ -52,12 +58,52 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const activeSymbolName = trade.activeSymbolName
   let list = showActiveSymbol ? tradeList.filter((v) => v.symbol === activeSymbolName) : tradeList
 
-  const formatValue = (value: any) => <span className="font-dingpro-regular">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="font-dingpro-medium">{formatNum(value)}</span>
+
+  // 计算收益率
+  const calcYieldRate = (item: IPositionItem) => {
+    const conf = item.conf as Symbol.SymbolConf
+    const contractSize = Number(conf?.contractSize || 0)
+    const orderVolume = Number(item.orderVolume || 0)
+    const orderMargin = Number(item.orderMargin || 0) // 开仓保证金
+    const price = Number(item.currentPrice || 0) // 现价
+    const startPrice = Number(item.startPrice || 0)
+    const yieldBuy = (price - startPrice) * contractSize * orderVolume
+    const yieldSell = (startPrice - price) * contractSize * orderVolume
+    const yieldValue = item.buySell === 'BUY' ? yieldBuy : yieldSell
+    return yieldValue && orderMargin ? toFixed((yieldValue / orderMargin) * 100) + '%' : '0.00%'
+  }
+
+  // 计算强平价
+  const calcForceClosePrice = (item: IPositionItem) => {
+    // 多仓预估强平价 =(保证金余额 - 面值*张数*开仓均价)/(面值*张数*(维持保证金率 + 手续费率 - 1))
+    // 空仓预估强平个 =(保证金余额 + 面值*张数*开仓均价)/(面值*张数*(维持保证金率 + 手续费率 + 1
+    // 维持保证金率:用户维持当前仓位所需的最低保证金率
+    // 维持保证金=您的仓位价值*维持保证金率
+    // 仓位价值=当前价格（区分买卖价格）*手数*合约大小
+    // 维持保证金率=读取后台设置的（强制平仓比例）代替
+    // 面值*张数=当前价格（买或卖）*合约大小*手数
+    // 市价（限价）手续费/当前合约价值（手数*合约大小*当前价格(买价或卖价)）*100% = 手续费率 （计算模式：货币形式，如果后台手续费百分比形式：直接获取市价/限价手续费，看哪种单）
+    const conf = item.conf as Symbol.SymbolConf
+    const contractSize = Number(conf?.contractSize || 0)
+    const orderVolume = Number(item.orderVolume || 0)
+    const orderMargin = Number(item.orderMargin || 0) // 保证金
+    const currentPrice = Number(item.currentPrice || 0)
+    const startPrice = Number(item.startPrice || 0)
+    const marginRate = 0 // @TODO 让后台返回账户组配置信息在订单列表中
+    const fee = 0 // @TODO
+    const feeRate = 0 // 手续费率 @TODO
+    const number = currentPrice * contractSize * orderVolume
+    const buyForceClosePrice = (orderMargin - number * startPrice) / (number * marginRate * feeRate - 1)
+    const sellForceClosePrice = (orderMargin + number * startPrice) / (number * marginRate * feeRate + 1)
+    const forceClosePrice = item.buySell === 'BUY' ? buyForceClosePrice : sellForceClosePrice
+    return forceClosePrice
+  }
 
   const slSp = [
     {
       label: <FormattedMessage id="mt.zhisun" />,
-      value: (item: IPositionItem) => formatValue(toFixed(item?.stopLoss || 0, item?.symbolDecimal)),
+      value: (item: IPositionItem) => formatValue(toFixed(item?.stopLoss, item?.symbolDecimal)),
       unit
     },
     {
@@ -96,7 +142,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     label: <FormattedMessage id="mt.xianjia" />,
     value: (item: any) => formatValue(item.currentPrice)
   }
-  const fee = { label: <FormattedMessage id="mt.shouxufei" />, value: (item: IPositionItem) => toFixed(item.handlingFees) || 0.0 }
+  const fee = { label: <FormattedMessage id="mt.shouxufei" />, value: (item: IPositionItem) => toFixed(item.handlingFees) }
   const orderNo = { label: <FormattedMessage id="mt.chicangdanhao" />, value: (item: IPositionItem) => `${item.id}` }
   const margin = {
     label: <FormattedMessage id="mt.baozhengjin" />,
@@ -143,18 +189,15 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       </span>
     )
   }
-  const interestFees = { label: <FormattedMessage id="mt.kucunfei" />, value: (item: IPositionItem) => `${item.interestFees || '-'}` }
-  // 保证金合约做多：收益=（平仓均价-开仓均价）*合约大小*交易手数；
-  // 保证金合约做空：收益=（开仓均价-平仓均价）*合约大小*交易手数；
-  // 收益率：收益/开仓保证金*100%；
-  // @ts-ignore
-  const yieldRate = { label: <FormattedMessage id="mt.shouyilv" />, value: (item: IPositionItem) => `${item.xx || '-'}` }
-  // @TODO 需要公式计算
-  // @ts-ignore
-  const baocangPrice = { label: <FormattedMessage id="mt.qiangpingjia" />, value: (item: IPositionItem) => toFixed(item.stock) }
+  const interestFees = { label: <FormattedMessage id="mt.kucunfei" />, value: (item: IPositionItem) => toFixed(item.interestFees) }
+  const yieldRate = {
+    label: <FormattedMessage id="mt.shouyilv" />,
+    value: (item: IPositionItem) => item.yieldRate
+  }
+  const forceClosePrice = { label: <FormattedMessage id="mt.qiangpingjia" />, value: (item: IPositionItem) => item.forceClosePrice }
 
-  const pcList = [openPrice, margin, vol, ...slSp, baocangPrice, fee, interestFees, yieldRate, floatPL]
-  const mobileList = [time, vol, openPrice, margin, fee, interestFees, baocangPrice, yieldRate, orderNo]
+  const pcList = [openPrice, margin, vol, ...slSp, forceClosePrice, fee, interestFees, yieldRate, floatPL]
+  const mobileList = [time, vol, openPrice, margin, fee, interestFees, forceClosePrice, yieldRate, orderNo]
 
   const fieldList = isPc ? pcList : mobileList
 
@@ -211,34 +254,26 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     <div style={style}>
       {list.length > 0 &&
         list.map((v: IPositionItem, idx: number) => {
-          const dataSourceSymbol = v.dataSourceSymbol as string
+          const symbol = v.dataSourceSymbol as string
+          const quoteInfo = useCurrentQuote(symbol)
           const digits = v.symbolDecimal || 2
-          const currentPrice =
-            v.buySell === TRADE_BUY_SELL.BUY
-              ? // @ts-ignore
-                quotes[dataSourceSymbol]
-                ? // @ts-ignore
-                  toFixed(quotes[dataSourceSymbol].ask, digits)
-                : 0
-              : // @ts-ignore
-              quotes[dataSourceSymbol]
-              ? // @ts-ignore
-                toFixed(quotes[dataSourceSymbol].bid, digits)
-              : 0
+          const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
 
-          v.currentPrice = toFixed(currentPrice, digits) // 现价
-          const profit = covertProfit(dataSourceSymbol, v) as number // 浮动盈亏
-          v.profit = profit
-          v.profitFormat = profit > 0 ? '+' + toFixed(profit) : toFixed(profit) // 格式化的
+          v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格
+          const profit = covertProfit(symbol, v) as number // 浮动盈亏
+          v.profit = profit || v.profit // 避免出现闪动
+          v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : toFixed(v.profit) // 格式化的
           v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
           v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
+          v.yieldRate = calcYieldRate(v) // 收益率
+          v.forceClosePrice = toFixed(calcForceClosePrice(v), digits) // 强平价
 
           const buySellInfo = getBuySellInfo(v)
           return (
             <div key={idx} className="mb-3 rounded-xl border border-primary">
               <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
                 <div className="flex items-center">
-                  <img width={22} height={22} alt="" src={getDefaultSymbolIcon(v.imgUrl)} className="rounded-full" />
+                  <img width={22} height={22} alt="" src={getSymbolIcon(v.imgUrl)} className="rounded-full" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
                   <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
                   {/*爆仓信号灯暂时不做 */}

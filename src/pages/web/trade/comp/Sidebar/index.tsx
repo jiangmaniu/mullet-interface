@@ -11,7 +11,7 @@ import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { getDefaultSymbolIcon } from '@/utils/business'
+import { getSymbolIcon } from '@/utils/business'
 import { formatQuotes } from '@/utils/wsUtil'
 
 import CategoryTabs from './comp/CategoryTab'
@@ -270,7 +270,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                         trade.setOpenSymbolNameList(symbol)
                       }}
                     >
-                      <img width={28} height={28} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
+                      <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
                     </div>
                   )
                 })}

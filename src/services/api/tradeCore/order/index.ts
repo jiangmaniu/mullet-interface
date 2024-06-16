@@ -28,7 +28,7 @@ export async function createOrder(body: Order.CreateOrder) {
 }
 
 // 计算新订单保证金
-export async function calcOrderMargin(body: Order.CreateOrder) {
+export async function getOrderMargin(body: Order.CreateOrder) {
   return request<API.Response>('/api/trade-core/coreApi/orders/newOrderMargin', {
     method: 'POST',
     data: body

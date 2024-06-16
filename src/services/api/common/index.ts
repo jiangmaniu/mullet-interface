@@ -1,3 +1,4 @@
+import { getDictLabelByLocale } from '@/utils/business'
 import { request } from '@/utils/request'
 
 // 上传文件
@@ -24,7 +25,7 @@ export async function getTradeSymbolCategory() {
     method: 'GET'
   }).then((res) => {
     if (res.success && res.data?.length) {
-      res.data = res.data.map((item) => ({ ...item, value: item.key, label: item.value }))
+      res.data = res.data.map((item) => ({ ...item, value: item.key, label: getDictLabelByLocale(item.value) }))
     }
     return res
   })

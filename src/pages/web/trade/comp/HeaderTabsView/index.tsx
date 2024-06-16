@@ -7,7 +7,7 @@ import { useRef, useState } from 'react'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
-import { getDefaultSymbolIcon } from '@/utils/business'
+import { getSymbolIcon } from '@/utils/business'
 import { getPathname } from '@/utils/navigator'
 
 import Sidebar from '../Sidebar'
@@ -44,25 +44,24 @@ function HeaderTabsView() {
       <div className="flex items-center" style={{ width: `calc(100vw - ${extraWidth} + ${!openTradeSidebar ? '60px' : '0px'})` }}>
         <Tabs style={{ '--active-line-height': '0px' }} activeKey={activeKey}>
           {trade.openSymbolNameList?.map((item, idx) => {
-            const symbolInfo = trade.symbolList.find((v) => v.symbol === item)
-            const imgUrl = symbolInfo?.imgUrl
+            const symbol = item.symbol
             return (
               <Tabs.Tab
-                key={item}
+                key={item.symbol}
                 style={{ marginRight: 0, paddingBottom: 0 }}
                 title={
                   <div
                     className={classNames(
                       'flex cursor-pointer items-center justify-center rounded-t-[6px] border-x  bg-white p-2',
                       idx > 0 ? '!border-l-0' : '',
-                      activeKey === item ? 'border-t-[4px] border-x-gray-60 border-t-blue-600' : 'border-t border-gray-60'
+                      activeKey === symbol ? 'border-t-[4px] border-x-gray-60 border-t-blue-600' : 'border-t border-gray-60'
                     )}
                     onClick={() => {
-                      setActiveKey(item)
+                      setActiveKey(symbol)
                     }}
                   >
-                    <img width={28} height={28} alt="" src={getDefaultSymbolIcon(imgUrl)} className="rounded-full" />
-                    <span className="select-none px-2 text-base font-semibold text-gray">{item}</span>
+                    <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
+                    <span className="select-none px-2 text-base font-semibold text-gray">{symbol}</span>
                     {trade.openSymbolNameList.length > 1 && (
                       <img
                         width={20}
@@ -72,7 +71,7 @@ function HeaderTabsView() {
                         className="hover:rounded-xl hover:bg-gray-50"
                         onClick={(e) => {
                           e.stopPropagation()
-                          trade.removeOpenSymbolNameList(item, idx)
+                          trade.removeOpenSymbolNameList(symbol, idx)
                         }}
                       />
                     )}

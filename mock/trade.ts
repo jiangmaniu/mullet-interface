@@ -785,23 +785,23 @@ export default {
       data: [
         {
           key: '10',
-          value: '加密货币'
+          value: '加密货币,Crypoto'
         },
         {
           key: '20',
-          value: '大宗商品'
+          value: '大宗商品,Goods'
         },
         {
           key: '30',
-          value: '外汇'
+          value: '外汇,Foregin'
         },
         {
           key: '40',
-          value: '指数'
+          value: '指数,Index'
         },
         {
           key: '50',
-          value: '股票'
+          value: '股票,Stock'
         }
       ],
       msg: '操作成功'

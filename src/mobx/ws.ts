@@ -1,4 +1,4 @@
-import { action, makeObservable, observable } from 'mobx'
+import { action, configure, makeObservable, observable } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
 import { URLS } from '@/constants'
@@ -56,6 +56,9 @@ type IMessage = {
   }
   body: any
 }
+
+// 禁用 MobX 严格模式
+configure({ enforceActions: 'never' })
 
 class WSStore {
   constructor() {
@@ -163,6 +166,7 @@ class WSStore {
         if (symbol) {
           this.quotes[symbol] = data
         }
+        // console.log('行情信息', toJS(this.quotes))
         break
       // 深度报价
       case MessageType.depth:

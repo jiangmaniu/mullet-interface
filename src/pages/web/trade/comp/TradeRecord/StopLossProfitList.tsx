@@ -5,12 +5,13 @@ import { useRef } from 'react'
 
 import Empty from '@/components/Base/Empty'
 import ListItem from '@/components/Base/ListItem'
-import { ORDER_TYPE } from '@/constants/enum'
+import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum, formatTime, groupBy, toFixed } from '@/utils'
-import { getBuySellInfo, getDefaultSymbolIcon } from '@/utils/business'
+import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 
 import PendingOrderCancelModal from '../Modal/PendingOrderCancelModal'
 
@@ -31,16 +32,13 @@ type IProps = {
 function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
-  const { quotes, symbols } = ws
-  const activeSymbolName = trade.activeSymbolName
   const unit = 'USD'
 
   let list = trade.stopLossProfitList as IPendingItem[]
 
   const cancelPendingRef = useRef<any>(null)
-  const modifyPendingRef = useRef<any>(null)
 
-  const formatValue = (value: any) => <span className="font-num">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="font-dingpro-medium">{formatNum(value)}</span>
 
   const slSp = [
     {
@@ -83,7 +81,6 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
   const fieldList = isPc ? pcList : mobileList
 
   const renderLabel = (item: any) => {
-    // 处理内容
     // return (
     //   <Tooltip placement="top" title={item?.value}>
     //     <span className="text-gray-secondary mr-2 border-b border-dashed text-xs font-normal">{item?.label}</span>
@@ -124,22 +121,13 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
       <div>
         {list.length > 0 &&
           list.map((v: IPendingItem, idx) => {
-            const symbolName = v.symbol
-            // ORDER_TYPE.LIMIT_BUY_ORDER, ORDER_TYPE.LIMIT_SELL_ORDER
-            const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
+            const dataSourceSymbol = v.dataSourceSymbol as string
+            const quoteInfo = useCurrentQuote(dataSourceSymbol)
             const digits = v.symbolDecimal || 2
-            const price = isLimitOrder
-              ? // @ts-ignore
-                quotes[v.symbol]
-                ? // @ts-ignore
-                  toFixed(quotes[v.symbol].ask, v.digits)
-                : 0
-              : // @ts-ignore
-              quotes[v.symbol]
-              ? // @ts-ignore
-                toFixed(quotes[v.symbol].bid, v.digits)
-              : 0
-            v.currentPrice = price // 现价
+            const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
+            const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
+
+            v.currentPrice = currentPrice // 现价
             v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
             v.isLimitOrder = isLimitOrder
 
@@ -148,7 +136,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
               <div key={idx} className="mb-3 rounded-xl border border-primary">
                 <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
                   <div className="flex items-center">
-                    <img width={22} height={22} alt="" src={getDefaultSymbolIcon(v.imgUrl)} className="rounded-full" />
+                    <img width={22} height={22} alt="" src={getSymbolIcon(v.imgUrl)} className="rounded-full" />
                     <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
                     <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
                   </div>

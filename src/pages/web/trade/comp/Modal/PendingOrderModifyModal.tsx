@@ -7,34 +7,28 @@ import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
-import { TRADE_TYPE } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
+import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
-import { getDefaultSymbolIcon } from '@/utils/business'
+import { getSymbolIcon } from '@/utils/business'
+import { message } from '@/utils/message'
 
+import { IPendingItem } from '../TradeRecord/PendingList'
 import OpenTips from './OpenTipsModal'
-
-type IProps = {
-  pendingList?: any[]
-}
 
 // 修改挂单
 export default observer(
-  forwardRef(({ pendingList = [] }: IProps, ref) => {
+  forwardRef((props, ref) => {
     const intl = useIntl()
-    const [tempItem, setTempItem] = useState<any>({})
+    const [item, setItem] = useState({} as IPendingItem)
     const { ws, trade } = useStores()
-    const { symbols } = ws as any
     const [price, setPrice] = useState<any>('')
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
     const [sl, setSl] = useState<any>('') // 止损
     const [sp, setSp] = useState<any>('') // 止盈
-
-    // 获取实时的数据
-    const item = pendingList?.find((v: any) => v.order === tempItem.order) || {}
 
     const close = () => {
       setOpen(false)
@@ -43,9 +37,9 @@ export default observer(
       setPrice('')
     }
 
-    const show = (item: any) => {
+    const show = (item: IPendingItem) => {
       setOpen(true)
-      setTempItem(item)
+      setItem(item)
     }
 
     // 对外暴露接口
@@ -58,75 +52,75 @@ export default observer(
 
     useEffect(() => {
       if (!price) {
-        setPrice(item.price) // 开仓价
+        setPrice(item.limitPrice) // 挂单价
       }
       if (!sl) {
-        setSl(item.sl)
+        setSl(item.stopLoss)
       }
       if (!sp) {
-        setSp(item.tp)
+        setSp(item.takeProfit)
       }
-    }, [item.sl, item.tp, item.price])
+    }, [item.limitPrice, item.stopLoss, item.takeProfit])
 
     const symbol = item.symbol
-    const symbolInfo = symbols[symbol] || {}
-    const d = item.digits
+    const dataSourceSymbol = item?.dataSourceSymbol
+    const quoteInfo = useCurrentQuote(dataSourceSymbol)
+    const consize = quoteInfo?.consize
+    const d = quoteInfo.digits
     const step = Math.pow(10, -d) * 10
-    const stopl = symbolInfo ? symbolInfo.stopl * Math.pow(10, -d) * 10 : 0
+    const stopl = item.stopLoss ? item.stopLoss * Math.pow(10, -d) * 10 : 0
     let sl_scope: any = 0 // 止损范围
     let sp_scope: any = 0 // 止盈范围
     let slProfit: any // 止损-预计盈亏
     let spProfit: any // 止盈-预计盈亏
-    const count = item.vol
-    const isBuy = item.type === TRADE_TYPE.LIMIT_BUY || item.type === TRADE_TYPE.STOP_LIMIT_BUY
+    const count = item.orderVolume || 0 // 手数
+    const isBuy = item.buySell === 'BUY'
     if (isBuy) {
       sl_scope = (parseFloat(price) - stopl).toFixed(d)
       sp_scope = (parseFloat(price) + stopl).toFixed(d)
 
-      slProfit = price && sl ? ((sl - price) * count * symbolInfo.consize).toFixed(d) : 0
-      spProfit = price && sp ? ((sp - price) * count * symbolInfo.consize).toFixed(d) : 0
+      slProfit = price && sl ? ((sl - price) * count * consize).toFixed(d) : 0
+      spProfit = price && sp ? ((sp - price) * count * consize).toFixed(d) : 0
     } else {
       sp_scope = (parseFloat(price) - stopl).toFixed(d)
       sl_scope = (parseFloat(price) + stopl).toFixed(d)
 
-      slProfit = price && sl ? ((price - sl) * count * symbolInfo.consize).toFixed(d) : 0
-      spProfit = price && sp ? ((price - sp) * count * symbolInfo.consize).toFixed(d) : 0
+      slProfit = price && sl ? ((price - sl) * count * consize).toFixed(d) : 0
+      spProfit = price && sp ? ((price - sp) * count * consize).toFixed(d) : 0
     }
-    const price_now = item.currentPrice // 现价
+    const price_now = Number(item.currentPrice || 0) // 现价
     let priceTip: any = 0
     if (isBuy) {
-      //买入挂单
-      priceTip =
-        item.type === TRADE_TYPE.LIMIT_BUY ? (parseFloat(price_now) - stopl).toFixed(d) : (parseFloat(price_now) + stopl).toFixed(d)
+      //买入挂单: 限价买入、停损买入
+      priceTip = item.type === 'LIMIT_BUY_ORDER' ? (price_now - stopl).toFixed(d) : (price_now + stopl).toFixed(d)
     } else {
-      //卖出挂单
-      priceTip =
-        item.type === TRADE_TYPE.LIMIT_SELL ? (parseFloat(price_now) + stopl).toFixed(d) : (parseFloat(price_now) - stopl).toFixed(d)
+      //卖出挂单：限价卖出、停损卖出
+      priceTip = item.type === 'LIMIT_SELL_ORDER' ? (price_now + stopl).toFixed(d) : (price_now - stopl).toFixed(d)
     }
 
     const onFinish = async (values: any) => {
       console.log('values', values)
-      // if (isBuy) {
-      //   if (sl && sl > sl_scope) {
-      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //     return
-      //   }
-      //   if (sp && sp < sp_scope) {
-      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //     return
-      //   }
-      // } else {
-      //   if (sl && sl < sl_scope) {
-      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //     return
-      //   }
-      //   if (sp && sp > sp_scope) {
-      //     message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //     return
-      //   }
-      // }
+      const msg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
+      if (isBuy) {
+        if (sl && sl > sl_scope) {
+          message.info(msg)
+          return
+        }
+        if (sp && sp < sp_scope) {
+          message.info(msg)
+          return
+        }
+      } else {
+        if (sl && sl < sl_scope) {
+          message.info(msg)
+          return
+        }
+        if (sp && sp > sp_scope) {
+          message.info(msg)
+          return
+        }
+      }
 
-      setLoading(true)
       const params = {
         orderId: item.id,
         stopLoss: parseFloat(sl),
@@ -136,15 +130,15 @@ export default observer(
 
       console.log('参数', params)
 
-      const res = await trade.modifyPendingOrder(params)
+      setLoading(true)
+      const res = await trade.modifyPendingOrder(params).finally(() => {
+        setLoading(false)
+      })
 
-      setLoading(false)
-      if (!res.success) {
-        return
+      if (res.success) {
+        // 关闭当前弹窗
+        close()
       }
-
-      // 关闭当前弹窗
-      close()
     }
 
     const renderContent = () => {
@@ -154,7 +148,7 @@ export default observer(
             <div className="flex flex-col items-center justify-center">
               <div className="flex w-full flex-col pt-3">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
+                  <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm text-green', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />}
@@ -166,11 +160,7 @@ export default observer(
                       <FormattedMessage id="common.type" />
                     </span>
                     <span className="text-sm text-gray">
-                      {item.type === TRADE_TYPE.LIMIT_BUY || item.type === TRADE_TYPE.LIMIT_SELL ? (
-                        <FormattedMessage id="mt.xianjiaguadan" />
-                      ) : (
-                        <FormattedMessage id="mt.tingsundan" />
-                      )}
+                      {item.isLimitOrder ? <FormattedMessage id="mt.xianjiaguadan" /> : <FormattedMessage id="mt.tingsundan" />}
                     </span>
                   </div>
                   <div className="flex items-center justify-between pl-5">
@@ -178,7 +168,7 @@ export default observer(
                       <FormattedMessage id="mt.guadanshoushu" />
                     </span>
                     <span className="text-sm text-gray">
-                      {item.vol}
+                      {item.orderVolume}
                       <FormattedMessage id="mt.lot" />
                     </span>
                   </div>
@@ -215,13 +205,13 @@ export default observer(
                     <>
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
-                      {item.type === TRADE_TYPE.LIMIT_BUY
+                      {item.type === 'LIMIT_BUY_ORDER'
                         ? '≤'
-                        : item.type === TRADE_TYPE.LIMIT_SELL
+                        : item.type === 'LIMIT_SELL_ORDER'
                         ? '≥'
-                        : item.type === TRADE_TYPE.STOP_LIMIT_BUY
+                        : item.type === 'STOP_LOSS_LIMIT_BUY_ORDER'
                         ? '≥'
-                        : item.type === TRADE_TYPE.STOP_LIMIT_SELL
+                        : item.type === 'STOP_LOSS_LIMIT_SELL_ORDER'
                         ? '≤'
                         : null}{' '}
                       {priceTip}
@@ -256,13 +246,13 @@ export default observer(
                   }}
                   tips={
                     <>
-                      <span className="font-num">
+                      <span className="font-dingpro-regular">
                         <FormattedMessage id="mt.fanwei" />
                         &nbsp;
                         {isBuy ? '≤' : '≥'}&nbsp;
                         {formatNum(sl_scope)} USD
                       </span>
-                      <span className="pl-1 font-num">
+                      <span className="pl-1 font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
                         &nbsp;
                         {formatNum(slProfit)} USD
@@ -297,7 +287,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <span className="font-num">
+                    <span className="font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp; {formatNum(spProfit)} USD

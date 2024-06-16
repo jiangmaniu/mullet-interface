@@ -7,7 +7,7 @@ import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
-import { getDefaultSymbolIcon } from '@/utils/business'
+import { getSymbolIcon } from '@/utils/business'
 
 type IProps = {
   item: Account.TradeSymbolListItem
@@ -74,7 +74,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
                 trade.toggleSymbolFavorite(symbol)
               }}
             />
-            <img width={28} height={28} alt="" src={getDefaultSymbolIcon(item.imgUrl)} className="rounded-full" />
+            <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
             <div className="flex flex-col pl-1">
               <span className="pl-[6px] text-xs font-semibold text-gray">{item.symbol}</span>
               {/* 币种描述  */}

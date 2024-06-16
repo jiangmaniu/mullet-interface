@@ -1,6 +1,6 @@
 // 业务相关工具
 
-import { getIntl } from '@umijs/max'
+import { getIntl, getLocale } from '@umijs/max'
 
 import { URLS } from '@/constants'
 import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
@@ -275,7 +275,7 @@ export const formatSymbolConf = (data: any) => {
  * @param imgUrl 图片地址
  * @returns
  */
-export const getDefaultSymbolIcon = (imgUrl: any) => {
+export const getSymbolIcon = (imgUrl: any) => {
   return isImageFile(imgUrl) ? `${URLS.imgDomain}${imgUrl}` : `/img/default-symbol-icon.png`
 }
 
@@ -302,4 +302,13 @@ export const getBuySellInfo = (item: any) => {
     marginTypeText,
     colorClassName: isBuy ? 'text-green' : 'text-red'
   }
+}
+
+/**
+ * 根据字典的value拆分语言，根据当前切换的语言
+ * @param value 字典的value值
+ */
+export const getDictLabelByLocale = (value: string) => {
+  const [zh, en] = (value || '').split(',')
+  return getLocale() === 'zh-TW' ? zh : en || zh
 }

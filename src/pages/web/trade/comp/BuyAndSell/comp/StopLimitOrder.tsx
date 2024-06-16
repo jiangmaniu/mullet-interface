@@ -12,6 +12,7 @@ import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
+import { message } from '@/utils/message'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
@@ -34,8 +35,10 @@ export default observer(
     const [isCrypto, setIsCrypto] = useState(true) // 是否是数字货币 @TODO 需要根据全局切换的品种名称来判断，切换不同的布局
     const [leverageMultiple, setLeverageMultiple] = useState(0) // 杠杆倍数
     const [marginType, setMarginType] = useState<API.MaiginType>('CROSS_MARGIN') // 保证金类型
-
+    const accountTotalMargin = trade.getCurrentAccountMargin()
     const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
+    const [margin, setMargin] = useState(0)
+    const [loading, setLoading] = useState(false)
 
     useEffect(() => {
       setTradeType(type || OP_BUY)
@@ -57,24 +60,27 @@ export default observer(
     const isBuy = tradeType === OP_BUY
 
     const token = STORAGE_GET_TOKEN()
-    const { currentSymbol: symbols, currentQuote: quote, symbol, bid, ask } = useCurrentQuote()
-    // @ts-ignore
-    const d = symbols?.digits
-    // @ts-ignore
-    const stopl = symbols?.stopl * Math.pow(10, -d)
-    // @ts-ignore
-    const vmax = symbols?.vmax / 10000
-    // @ts-ignore
-    const vmin = symbols?.vmin / 10000
-    const step = Math.pow(10, -d)
+    const quoteInfo = useCurrentQuote()
+    const symbolConf = quoteInfo.symbolConf
+    const bid = Number(quoteInfo?.bid || 0)
+    const ask = Number(quoteInfo?.ask || 0)
+    const consize = quoteInfo?.consize
+    const symbol = quoteInfo.symbol
+    const d = quoteInfo?.digits
+    // const stopl = symbols?.stopl * Math.pow(10, -d)
+    const stoplValue = 1 // @TODO 这里如何计算当前报价的止损值
+    const stopl = stoplValue * Math.pow(10, -d)
+    const vmax = symbolConf?.maxTrade || 20
+    const vmin = symbolConf?.minTrade || 0.01
+    const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
 
     // 切换品种、买卖重置内容
     useEffect(() => {
       setSl(0)
       setSp(0)
-      setCount(0.01)
+      setCount(vmin)
       setPrice(0)
-    }, [symbol, tradeType, orderType])
+    }, [symbol, tradeType, orderType, vmin])
 
     // 格式化数据
     const sl: any = Number(slValue)
@@ -84,28 +90,47 @@ export default observer(
 
     let sl_scope: any, sp_scope: any, slProfit: any, spProfit: any, priceTip: any
 
-    if (quote && symbols) {
+    if (bid && ask) {
       // 买入
       if (isBuy) {
-        // @ts-ignore
-        priceTip = (quote.bid - stopl).toFixed(d)
+        priceTip = (bid - stopl).toFixed(d)
         sl_scope = price ? (price - stopl).toFixed(d) : 0
         sp_scope = price ? (price + stopl).toFixed(d) : 0
-        // @ts-ignore
-        slProfit = price && sl ? ((sl - price) * count * symbols.consize).toFixed(d) : 0
-        // @ts-ignore
-        spProfit = price && sp ? ((sp - price) * count * symbols.consize).toFixed(d) : 0
+
+        slProfit = price && sl ? ((sl - price) * count * consize).toFixed(d) : 0
+
+        spProfit = price && sp ? ((sp - price) * count * consize).toFixed(d) : 0
       } else {
-        // @ts-ignore
-        priceTip = (quote.ask + stopl).toFixed(d)
+        priceTip = (ask + stopl).toFixed(d)
         sl_scope = price ? (price + stopl).toFixed(d) : 0
         sp_scope = price ? (price - stopl).toFixed(d) : 0
-        // @ts-ignore
-        slProfit = price && sl ? ((price - sl) * count * symbols.consize).toFixed(d) : 0
-        // @ts-ignore
-        spProfit = price && sp ? ((price - sp) * count * symbols.consize).toFixed(d) : 0
+
+        slProfit = price && sl ? ((price - sl) * count * consize).toFixed(d) : 0
+
+        spProfit = price && sp ? ((price - sp) * count * consize).toFixed(d) : 0
       }
     }
+
+    const orderParams = {
+      symbol,
+      buySell: isBuy ? TRADE_BUY_SELL.BUY : TRADE_BUY_SELL.SELL, // 订单方向
+      orderVolume: count,
+      stopLoss: sl ? parseFloat(sl) : undefined,
+      takeProfit: sp ? parseFloat(sp) : undefined,
+      leverageMultiple,
+      tradeAccountId: trade.currentAccountInfo?.id,
+      marginType,
+      limitPrice: priceValue,
+      type: isBuy ? ORDER_TYPE.STOP_LOSS_LIMIT_BUY_ORDER : ORDER_TYPE.STOP_LOSS_LIMIT_SELL_ORDER // 订单类型
+    } as Order.CreateOrder
+
+    useEffect(() => {
+      trade.calcMargin(orderParams).then((res: any) => {
+        if (res) {
+          setMargin(res)
+        }
+      })
+    }, [isBuy, count, sl, sp, marginType, symbol, orderType])
 
     const onFinish = async () => {
       // sl_scope, sp_scope
@@ -113,44 +138,34 @@ export default observer(
         goLogin()
         return
       }
-      // const reg = /^\d+(\.\d{0,2})?$/
-      // if (!reg.test(count)) {
-      //   message.error(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
-      //   return
-      // }
-      // if (count < vmin || count > vmax) {
-      //   message.error(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
-      //   return
-      // }
-      // const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
-      // if (slFlag) {
-      //   message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //   return
-      // }
-      // const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
-      // if (spFlag) {
-      //   message.error(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
-      //   return
-      // }
+      const reg = /^\d+(\.\d{0,2})?$/
+      if (!reg.test(count)) {
+        message.info(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
+        return
+      }
+      if (count < vmin || count > vmax) {
+        message.info(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
+        return
+      }
+      const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
+      if (slFlag) {
+        message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+        return
+      }
+      const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
+      if (spFlag) {
+        message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+        return
+      }
 
-      let params = {
-        symbol,
-        buySell: isBuy ? TRADE_BUY_SELL.BUY : TRADE_BUY_SELL.SELL, // 订单方向
-        orderVolume: count,
-        stopLoss: sl ? parseFloat(sl) : undefined,
-        takeProfit: sp ? parseFloat(sp) : undefined,
-        leverageMultiple,
-        tradeAccountId: trade.currentAccountInfo?.id,
-        marginType,
-        limitPrice: priceValue,
-        type: isBuy ? ORDER_TYPE.STOP_LOSS_LIMIT_BUY_ORDER : ORDER_TYPE.STOP_LOSS_LIMIT_SELL_ORDER // 订单类型
-      } as Order.CreateOrder
-
-      console.log('参数', params)
+      console.log('参数', orderParams)
       // ws.socket.send(JSON.stringify(res))
       // ws.setNewOrderFn(res)
 
-      const res = await trade.createOrder(params)
+      setLoading(true)
+      const res = await trade.createOrder(orderParams).finally(() => {
+        setLoading(false)
+      })
 
       if (!res.success) {
         return
@@ -221,7 +236,7 @@ export default observer(
               }
             }}
             tips={
-              <span className="font-num">
+              <span className="font-dingpro-regular">
                 {isBuy && (
                   <>
                     <FormattedMessage id="mt.mairujiafanwei" /> ≤ {formatNum(priceTip)} USD
@@ -276,13 +291,13 @@ export default observer(
                 }}
                 tips={
                   <>
-                    <span className="font-num">
+                    <span className="font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
                       {isBuy ? '≥' : '≤'}&nbsp;
                       {formatNum(sp_scope)} USD
                     </span>
-                    <span className="pl-1 font-num">
+                    <span className="pl-1 font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp;
                       {formatNum(spProfit)} USD
@@ -315,7 +330,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <span className="font-num">
+                  <span className="font-dingpro-regular">
                     <FormattedMessage id="mt.fanwei" /> {isBuy ? '≤' : '≥'} {formatNum(sl_scope)} USD{' '}
                     <FormattedMessage id="mt.yujiyingkui" /> {formatNum(slProfit)} USD
                   </span>
@@ -325,13 +340,15 @@ export default observer(
           )}
           <InputNumber
             direction="column"
-            classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[70px]' }}
+            classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[76px]' }}
             height={52}
             textAlign="left"
             rootClassName="mt-[14px]"
             label={<FormattedMessage id="mt.shoushu" />}
             unit={intl.formatMessage({ id: 'mt.lot' })}
             value={countValue}
+            max={vmax}
+            min={vmin}
             onChange={(value: any) => {
               setCount(value)
             }}
@@ -356,28 +373,21 @@ export default observer(
               </>
             }
           />
-          {/* {isPc && (
-          <ProductAttr
-            count={count}
-            sp={sp}
-            sl={sl}
-            typeClassName={isBuy ? '!text-green' : '!text-red'}
-            typeText={isBuy ? intl.formatMessage({ id: 'mt.mairu' }) : intl.formatMessage({ id: 'mt.maichu' })}
-            openPrice={isBuy ? ask : bid}
-          />
-        )} */}
         </div>
         <div>
-          <div className="mt-1 flex items-center justify-center pb-2 max-xl:mt-6">
-            <span className="text-xs text-gray-secondary">
-              <FormattedMessage id="mt.cankaobaozhengjin" />
-            </span>
-            <span className="pl-2 text-xs text-gray">
-              {/* {symbols && countNum(tradeList, symbols, symbol, count, isBuy ? 0 : 1, price)} */}
-              {/* {symbols && calcMargin(symbols, count, isBuy ? 0 : 1, price, ws.mtLoginInfo, ws.quotes)} */}
-              {/* @TODO  */}
-              122.12 &nbsp;USD
-            </span>
+          <div className="flex items-center justify-between max-xl:mt-6">
+            <div className="mt-1 flex items-center justify-center pb-2">
+              <span className="text-xs text-gray-secondary">
+                <FormattedMessage id="mt.keyong" />
+              </span>
+              <span className="pl-2 text-xs text-gray font-dingpro-medium">{formatNum(accountTotalMargin)}USD</span>
+            </div>
+            <div className="mt-1 flex items-center justify-center pb-1">
+              <span className="text-xs text-gray font-dingpro-medium">{formatNum(margin, { precision: d })}USD</span>
+              <span className="text-xs text-gray-secondary pl-1">
+                <FormattedMessage id="mt.baozhengjin" />
+              </span>
+            </div>
           </div>
           <Button
             type="primary"
@@ -385,6 +395,7 @@ export default observer(
             className="!h-[44px] !rounded-lg !text-[13px]"
             block
             onClick={onFinish}
+            loading={loading}
           >
             {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmairu" />} {count}{' '}
             <FormattedMessage id="mt.lot" />

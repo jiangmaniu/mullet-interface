@@ -1,5 +1,5 @@
 import { CloseOutlined } from '@ant-design/icons'
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import Button from '@/components/Base/Button'
@@ -9,12 +9,14 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
+import { message } from '@/utils/message'
 
 // 余额不足提示
 export default observer((props, ref) => {
   const { trade } = useStores()
   const { isPc } = useEnv()
   const { lng } = useLang()
+  const intl = useIntl()
 
   const close = () => {
     trade.showBalanceEmptyModal = false
@@ -36,6 +38,7 @@ export default observer((props, ref) => {
           onClick={() => {
             //  @TODO 跳转入金
             close()
+            message.info('unSupported currency')
           }}
         >
           <Button block onClick={close} type="primary">
