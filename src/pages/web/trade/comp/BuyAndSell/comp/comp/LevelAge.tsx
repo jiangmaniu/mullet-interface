@@ -22,6 +22,8 @@ function LevelAge({ initialValue, onChange }: IProps) {
     setValue(initialValue)
   }, [initialValue])
 
+  if (isFixedMargin) return
+
   return (
     <div>
       <InputNumber

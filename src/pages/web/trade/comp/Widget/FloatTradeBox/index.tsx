@@ -40,6 +40,7 @@ function FloatTradeBox() {
       y: event?.clientY || event?.touches?.[0]?.clientY
     }
     document.addEventListener('mousemove', drag)
+    document.addEventListener('mouseleave', stopDrag)
     document.addEventListener('touchmove', drag)
     document.addEventListener('mouseup', stopDrag)
     document.addEventListener('touchend', stopDrag)
@@ -83,6 +84,7 @@ function FloatTradeBox() {
     document.removeEventListener('mousemove', drag)
     document.removeEventListener('touchmove', drag)
     document.removeEventListener('mouseup', stopDrag)
+    document.removeEventListener('mouseleave', stopDrag)
     document.removeEventListener('touchend', stopDrag)
   }
 

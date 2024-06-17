@@ -4,23 +4,18 @@ import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Col, Input, Row } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
+import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { getSymbolIcon } from '@/utils/business'
-import { formatQuotes } from '@/utils/wsUtil'
 
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
-
-const coinList = formatQuotes().quoteList1 // 数字货币
-const goodsList = formatQuotes().quoteList4 // 商品
-const exchangeList = formatQuotes().quoteList2 // 外汇
-const indexList = formatQuotes().quoteList3 // 指数
 
 type IProps = {
   style?: React.CSSProperties
@@ -30,6 +25,7 @@ type IProps = {
 
 const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const { global, trade } = useStores()
+  const { isMobileOrIpad, breakPoint } = useEnv()
   const intl = useIntl()
   const [searchValue, setSearchValue] = useState('')
   const popupRef = useRef()
@@ -39,6 +35,11 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
   const searchInputRef = useRef<any>()
   const symbolList = trade.symbolList // 全部品种列表
+
+  useEffect(() => {
+    // 1200px-1600px收起侧边栏
+    setOpenTradeSidebar(isMobileOrIpad || breakPoint === 'xl')
+  }, [breakPoint])
 
   // 列表滚动区域高度
   // @TODO 如果Liquidation存在情况，否则高度默认

@@ -132,7 +132,7 @@ function TradeRecord({ trigger }: IProps) {
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className="pt-1 mb-3 bg-white relative z-[1]">
+          <div className="pt-1 mb-3 bg-white relative border-t border-gray-180 z-[1]">
             {renderTabs}
             {renderTabContent}
           </div>
