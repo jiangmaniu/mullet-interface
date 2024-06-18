@@ -7,10 +7,10 @@ import { useEffect, useRef, useState } from 'react'
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { IRecordTabKey } from '@/mobx/trade'
 import { toFixed } from '@/utils'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 
 import OpenTipsModal from '../Modal/OpenTipsModal'
 import HistoryRecord from './comp/HistoryRecord'
@@ -31,7 +31,7 @@ function TradeRecord({ trigger }: IProps) {
   const pendingList = trade.pendingList
   const stopLossProfitList = trade.stopLossProfitList
   const tabKey = trade.recordTabKey
-  const quoteInfo = useCurrentQuote() // 保留，取值才会触发mobx更新
+  const quoteInfo = getCurrentQuote() // 保留，取值才会触发mobx更新
 
   const activeSymbolName = trade.activeSymbolName
   const currentPositionList = showActiveSymbol ? tradeList?.filter((v: any) => v.symbol === activeSymbolName) : tradeList

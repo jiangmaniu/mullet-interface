@@ -17,7 +17,7 @@ import { copyContent, formatNum, formatTime, groupBy, toFixed } from '@/utils'
 import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 import { covertProfit } from '@/utils/wsUtil'
 
-import useCurrentQuote from '@/hooks/useCurrentQuote'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import ClosePositionConfirmModal from '../../../Modal/ClosePositionConfirmModal'
 import SetStopLossProfitModal from '../../../Modal/SetStopLossProfitModal'
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
@@ -267,7 +267,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       {list.length > 0 &&
         list.map((v: IPositionItem, idx: number) => {
           const symbol = v.dataSourceSymbol as string
-          const quoteInfo = useCurrentQuote(symbol)
+          const quoteInfo = getCurrentQuote(symbol)
           const digits = v.symbolDecimal || 2
           const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
 

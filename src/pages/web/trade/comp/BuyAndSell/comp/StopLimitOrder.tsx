@@ -6,8 +6,8 @@ import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
@@ -60,7 +60,7 @@ export default observer(
     const isBuy = tradeType === OP_BUY
 
     const token = STORAGE_GET_TOKEN()
-    const quoteInfo = useCurrentQuote()
+    const quoteInfo = getCurrentQuote()
     const symbolConf = quoteInfo.symbolConf
     const bid = Number(quoteInfo?.bid || 0)
     const ask = Number(quoteInfo?.ask || 0)

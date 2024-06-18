@@ -8,8 +8,8 @@ import { useEffect, useRef, useState } from 'react'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
@@ -23,7 +23,7 @@ function FloatTradeBox() {
   const isDragging = useRef(false)
   const token = STORAGE_GET_TOKEN()
   const { trade } = useStores()
-  const quoteInfo = useCurrentQuote()
+  const quoteInfo = getCurrentQuote()
   const symbolConf = quoteInfo?.symbolConf
   const vmin = symbolConf?.minTrade || 0.1
   const vmax = symbolConf?.maxTrade || 20

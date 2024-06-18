@@ -5,11 +5,11 @@ import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 
 import Futures from '../Futures'
 import Sidebar from '../Sidebar'
@@ -24,7 +24,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const [showSidebar, setShowSidebar] = useState(false)
   const symbolInfo = trade.openSymbolNameList.find((item) => item.symbol === symbol)
 
-  const res: any = useCurrentQuote()
+  const res: any = getCurrentQuote()
   const color = res.percent > 0 ? 'text-green' : 'text-red'
 
   const openSidebarRef = useRef<any>()

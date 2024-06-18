@@ -1,5 +1,5 @@
 import { TRADE_BUY_SELL } from '@/constants/enum'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 
 // 货币类型
 export const CurrencyLABELS = {
@@ -350,7 +350,7 @@ const quoteList3 = formatQuotes().quoteList3 // 指数
  */
 export function covertProfit(dataSourceSymbol: string, positionItem: Order.BgaOrderPageListItem) {
   if (!dataSourceSymbol) return
-  const quoteInfo = useCurrentQuote(dataSourceSymbol)
+  const quoteInfo = getCurrentQuote(dataSourceSymbol)
   const quotes = quoteInfo.quotes as any // 全部行情
   let qb: any = {}
   const symbolConf = quoteInfo?.symbolConf

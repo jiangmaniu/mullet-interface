@@ -15,8 +15,8 @@ import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 
 export type SiderTheme = 'light' | 'dark'
@@ -111,7 +111,7 @@ export const HeaderRightContent = observer(() => {
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
   const currentAccountInfo = trade.currentAccountInfo
-  const quoteInfo = useCurrentQuote() // 这里保留，取值过程，触发mobx实时更新
+  const quoteInfo = getCurrentQuote() // 这里保留，取值过程，触发mobx实时更新
   const avaMargin = trade.getCurrentAccountMargin() // 可用保证金
   const occupyMargin = Number(currentAccountInfo.money || 0) - avaMargin
   // 当前账户持仓总浮动盈亏

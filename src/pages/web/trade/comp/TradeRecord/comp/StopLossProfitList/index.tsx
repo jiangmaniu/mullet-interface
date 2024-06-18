@@ -8,10 +8,10 @@ import ListItem from '@/components/Base/ListItem'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum, formatTime, groupBy, toFixed } from '@/utils'
 import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 
 import PendingOrderCancelModal from '../../../Modal/PendingOrderCancelModal'
 
@@ -122,7 +122,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
         {list.length > 0 &&
           list.map((v: IPendingItem, idx) => {
             const dataSourceSymbol = v.dataSourceSymbol as string
-            const quoteInfo = useCurrentQuote(dataSourceSymbol)
+            const quoteInfo = getCurrentQuote(dataSourceSymbol)
             const digits = v.symbolDecimal || 2
             const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
             const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单

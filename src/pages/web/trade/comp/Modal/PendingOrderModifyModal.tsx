@@ -8,10 +8,10 @@ import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import { message } from '@/utils/message'
 
 import { IPendingItem } from '../TradeRecord/comp/PendingList'
@@ -64,7 +64,7 @@ export default observer(
 
     const symbol = item.symbol
     const dataSourceSymbol = item?.dataSourceSymbol
-    const quoteInfo = useCurrentQuote(dataSourceSymbol)
+    const quoteInfo = getCurrentQuote(dataSourceSymbol)
     const consize = quoteInfo?.consize
     const d = quoteInfo.digits
     const step = Math.pow(10, -d) * 10

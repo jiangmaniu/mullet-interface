@@ -7,7 +7,7 @@ import { toFixed } from '@/utils'
  * @param quote 全部行情，再次传入覆盖，有些地方没有实时刷新
  * @returns
  */
-function useCurrentQuote(currentSymbolName?: string, quote?: any) {
+function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   const { ws, global, trade } = useStores()
   const { quotes } = ws
   let symbol = currentSymbolName || trade.activeSymbolName // 展示的名称(后台自定义的品种名称)
@@ -68,4 +68,4 @@ function useCurrentQuote(currentSymbolName?: string, quote?: any) {
   }
 }
 
-export default useCurrentQuote
+export default getCurrentQuote

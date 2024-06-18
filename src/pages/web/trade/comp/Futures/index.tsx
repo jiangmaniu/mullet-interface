@@ -8,10 +8,10 @@ import ListItem from '@/components/Base/ListItem'
 import Popup from '@/components/Base/Popup'
 import { transferWeekDay } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { formatTimeStr } from '@/utils/business'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import { AllSymbols, formatQuotes } from '@/utils/wsUtil'
 
 const timef = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
@@ -30,7 +30,7 @@ function Futures({ trigger, style }: IProps) {
   const { trade, ws } = useStores()
   const { symbols } = ws as any
   const symbol = trade.activeSymbolName
-  const quoteInfo = useCurrentQuote()
+  const quoteInfo = getCurrentQuote()
   const symbolConf = quoteInfo?.symbolConf
   const prepaymentConf = quoteInfo?.prepaymentConf
   const holdingCostConf = quoteInfo?.holdingCostConf

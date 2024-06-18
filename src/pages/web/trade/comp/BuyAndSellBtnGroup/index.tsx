@@ -7,8 +7,8 @@ import Buy from '@/components/Base/Svg/Buy'
 import Sell from '@/components/Base/Svg/Sell'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 
 type IProps = {
   type?: string
@@ -30,7 +30,7 @@ export default observer(
     const { breakPoint } = useEnv()
     const [width, setWidth] = useState<any>(0)
 
-    const quoteInfo = useCurrentQuote()
+    const quoteInfo = getCurrentQuote()
 
     useEffect(() => {
       let w: any

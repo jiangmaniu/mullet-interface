@@ -5,7 +5,7 @@ import { useStores } from '@/context/mobxProvider'
  * @param {*} currentSymbol 当前传入的symbolName
  * @returns
  */
-function useCurrentDepth(currentSymbolName?: string) {
+function getCurrentDepth(currentSymbolName?: string) {
   const { ws, trade } = useStores()
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
@@ -16,4 +16,4 @@ function useCurrentDepth(currentSymbolName?: string) {
   return currentDepth
 }
 
-export default useCurrentDepth
+export default getCurrentDepth

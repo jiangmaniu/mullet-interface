@@ -9,10 +9,10 @@ import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import { message } from '@/utils/message'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
@@ -63,7 +63,7 @@ export default observer(
     })
 
     const symbol = item.symbol
-    const quote = useCurrentQuote(symbol)
+    const quote = getCurrentQuote(symbol)
     const consize = quote.consize
     const bid = quote.bid
     const ask = quote.ask

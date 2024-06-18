@@ -11,7 +11,7 @@ import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import { message } from '@/utils/message'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { OP_BUY } from '..'
@@ -60,7 +60,7 @@ export default observer(
     const isBuy = tradeType === OP_BUY
 
     const token = STORAGE_GET_TOKEN()
-    const quoteInfo = useCurrentQuote()
+    const quoteInfo = getCurrentQuote()
     const symbolConf = quoteInfo.symbolConf
     const bid = Number(quoteInfo?.bid || 0)
     const ask = Number(quoteInfo?.ask || 0)

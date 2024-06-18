@@ -4,7 +4,7 @@ import { observer } from 'mobx-react'
 import Marquee from 'react-fast-marquee'
 
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 import { goToService } from '@/utils/navigator'
 
 // 底部浮动条
@@ -22,7 +22,7 @@ function Footer() {
       <div className="flex h-full flex-1 items-center overflow-x-auto">
         <Marquee pauseOnHover speed={30} gradient>
           {trade.symbolList.map((item, idx) => {
-            const res = useCurrentQuote(item.symbol)
+            const res = getCurrentQuote(item.symbol)
             const per: any = res.percent
             const bid = res.bid
 

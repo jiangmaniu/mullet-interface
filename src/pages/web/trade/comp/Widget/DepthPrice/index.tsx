@@ -7,9 +7,9 @@ import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
-import useCurrentDepth from '@/hooks/useCurrentDepth'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
+import getCurrentDepth from '@/utils/getCurrentDepth'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 
 function generateRandomProgressArray() {
   const progressArray = []
@@ -27,8 +27,8 @@ function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const [list, setList] = useState<any>([])
   const timerRef = useRef<any>()
-  const depth = useCurrentDepth()
-  const quote = useCurrentQuote()
+  const depth = getCurrentDepth()
+  const quote = getCurrentQuote()
   const asks = depth?.asks || []
   const bids = depth?.bids || []
 

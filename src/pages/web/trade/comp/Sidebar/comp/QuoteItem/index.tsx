@@ -5,9 +5,9 @@ import { observer } from 'mobx-react'
 
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useCurrentQuote from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
+import getCurrentQuote from '@/utils/getCurrentQuote'
 
 type IProps = {
   item: Account.TradeSymbolListItem
@@ -22,7 +22,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   const { isMobileOrIpad } = useEnv()
   const { trade, ws } = useStores()
   const symbol = item.symbol
-  const res = useCurrentQuote(symbol)
+  const res = getCurrentQuote(symbol)
   const bid = res.bid
   const per: any = res.percent
 
