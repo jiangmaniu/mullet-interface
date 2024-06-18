@@ -13,10 +13,10 @@ import { IRecordTabKey } from '@/mobx/trade'
 import { toFixed } from '@/utils'
 
 import OpenTipsModal from '../Modal/OpenTipsModal'
-import HistoryRecord from './HistoryRecord'
-import PendingList from './PendingList'
-import PositionList from './PositionList'
-import StopLossProfitList from './StopLossProfitList'
+import HistoryRecord from './comp/HistoryRecord'
+import PendingList from './comp/PendingList'
+import PositionList from './comp/PositionList'
+import StopLossProfitList from './comp/StopLossProfitList'
 
 type IProps = {
   trigger?: JSX.Element

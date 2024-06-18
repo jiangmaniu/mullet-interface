@@ -18,8 +18,8 @@ import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 import { covertProfit } from '@/utils/wsUtil'
 
 import useCurrentQuote from '@/hooks/useCurrentQuote'
-import ClosePositionConfirmModal from '../Modal/ClosePositionConfirmModal'
-import SetStopLossProfitModal from '../Modal/SetStopLossProfitModal'
+import ClosePositionConfirmModal from '../../../Modal/ClosePositionConfirmModal'
+import SetStopLossProfitModal from '../../../Modal/SetStopLossProfitModal'
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 
 export type IPositionItem = Order.BgaOrderPageListItem & {

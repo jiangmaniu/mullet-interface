@@ -14,7 +14,7 @@ import { formatNum } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
 import { message } from '@/utils/message'
 
-import { IPendingItem } from '../TradeRecord/PendingList'
+import { IPendingItem } from '../TradeRecord/comp/PendingList'
 import OpenTips from './OpenTipsModal'
 
 // 修改挂单

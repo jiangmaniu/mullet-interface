@@ -13,7 +13,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum, formatTime, groupBy, toFixed } from '@/utils'
 import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 
-import PendingOrderCancelModal from '../Modal/PendingOrderCancelModal'
+import PendingOrderCancelModal from '../../../Modal/PendingOrderCancelModal'
 
 export type IPendingItem = Order.OrderPageListItem & {
   /**现价 */

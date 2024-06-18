@@ -96,7 +96,7 @@ class TradeStore {
   @action
   getCurrentAccountMargin = () => {
     const currentAccountInfo = this.currentAccountInfo
-    return toFixed(Number(currentAccountInfo.margin || 0) + Number(currentAccountInfo.isolatedMargin || 0))
+    return toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0))
   }
 
   // 计算当前账户总的浮动盈亏
@@ -136,7 +136,7 @@ class TradeStore {
     // this.activeSymbolName = STORAGE_GET_ACTIVE_SYMBOL_NAME()
 
     const userConfInfo = (STORAGE_GET_CONF_INFO() || {}) as UserConfInfo
-    this.currentAccountInfo = userConfInfo?.currentAccountInfo as User.AccountItem
+    this.currentAccountInfo = (userConfInfo?.currentAccountInfo || {}) as User.AccountItem
     const accountId = this.currentAccountInfo?.id
     const currentAccountConf = accountId ? userConfInfo?.[accountId] : {}
 

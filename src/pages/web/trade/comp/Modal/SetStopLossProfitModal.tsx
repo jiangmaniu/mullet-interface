@@ -15,7 +15,7 @@ import { formatNum } from '@/utils'
 import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 import { message } from '@/utils/message'
 
-import { IPositionItem } from '../TradeRecord/PositionList'
+import { IPositionItem } from '../TradeRecord/comp/PositionList'
 
 // 设置止盈止损
 export default observer(

@@ -7,7 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { addMargin, extractMargin } from '@/services/api/tradeCore/order'
 import { message } from '@/utils/message'
 
-import { IPositionItem } from '../../PositionList'
+import { IPositionItem } from '../..'
 
 type IProps = {
   trigger: JSX.Element

@@ -15,7 +15,7 @@ import { toFixed } from '@/utils'
 import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 import { message } from '@/utils/message'
 
-import { IPositionItem } from '../TradeRecord/PositionList'
+import { IPositionItem } from '../TradeRecord/comp/PositionList'
 
 // 平仓操作弹窗
 export default observer(

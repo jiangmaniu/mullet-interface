@@ -10,8 +10,8 @@ import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { getSymbolIcon } from '@/utils/business'
 
-import HistoryCloseList from './HistoryCloseList'
-import HistoryPendingList from './HistoryPendingList'
+import HistoryCloseList from './comp/HistoryCloseList'
+import HistoryPendingList from './comp/HistoryPendingList'
 
 type IProps = {
   style?: React.CSSProperties
