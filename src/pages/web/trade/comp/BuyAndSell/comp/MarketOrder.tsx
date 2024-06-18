@@ -263,13 +263,13 @@ export default observer(
                   }}
                   tips={
                     <>
-                      <span className="font-dingpro-regular">
+                      <span className="!font-dingpro-regular">
                         <FormattedMessage id="mt.fanwei" />
                         &nbsp;
                         {isBuy ? '≥' : '≤'}&nbsp;
                         {formatNum(sp_scope)} USD
                       </span>
-                      <span className="pl-1 font-dingpro-regular">
+                      <span className="pl-1 !font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
                         &nbsp;
                         {formatNum(spProfit)} USD
@@ -302,7 +302,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <span className="font-dingpro-regular">
+                    <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp; {isBuy ? '≤' : '≥'} {formatNum(sl_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp; {formatNum(slProfit)} USD
@@ -359,10 +359,10 @@ export default observer(
                 <span className="text-xs text-gray-secondary">
                   <FormattedMessage id="mt.keyong" />
                 </span>
-                <span className="pl-2 text-xs text-gray font-dingpro-medium">{formatNum(accountTotalMargin)}USD</span>
+                <span className="pl-2 text-xs text-gray !font-dingpro-medium">{formatNum(accountTotalMargin)}USD</span>
               </div>
               <div className="mt-1 flex items-center justify-center pb-1">
-                <span className="text-xs text-gray font-dingpro-medium">{formatNum(margin, { precision: d })}USD</span>
+                <span className="text-xs text-gray !font-dingpro-medium">{formatNum(margin, { precision: d })}USD</span>
                 <span className="text-xs text-gray-secondary pl-1">
                   <FormattedMessage id="mt.baozhengjin" />
                 </span>

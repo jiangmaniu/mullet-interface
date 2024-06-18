@@ -26,6 +26,8 @@ function Footer() {
             const per: any = res.percent
             const bid = res.bid
 
+            console.log('res', res)
+
             return (
               <div key={idx} className="h-full border-r border-r-gray-200 px-4">
                 <div

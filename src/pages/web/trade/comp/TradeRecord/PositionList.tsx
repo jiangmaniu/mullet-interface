@@ -58,7 +58,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const activeSymbolName = trade.activeSymbolName
   let list = showActiveSymbol ? tradeList.filter((v) => v.symbol === activeSymbolName) : tradeList
 
-  const formatValue = (value: any) => <span className="font-dingpro-medium">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="!font-dingpro-medium">{formatNum(value)}</span>
 
   // 计算收益率
   const calcYieldRate = (item: IPositionItem) => {
@@ -87,29 +87,40 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     const conf = item.conf as Symbol.SymbolConf
     const contractSize = Number(conf?.contractSize || 0)
     const orderVolume = Number(item.orderVolume || 0)
-    const orderMargin = Number(item.orderMargin || 0) // 保证金
+    // 区分全仓、逐仓保证金
+    const orderMargin = item.marginType === 'ISOLATED_MARGIN' ? Number(item.orderMargin || 0) : trade.currentAccountInfo?.margin || 0
     const currentPrice = Number(item.currentPrice || 0)
     const startPrice = Number(item.startPrice || 0)
-    const marginRate = 0 // @TODO 让后台返回账户组配置信息在订单列表中
-    const fee = 0 // @TODO
-    const feeRate = 0 // 手续费率 @TODO
+    const marginRate = item.compelCloseRatio // 强制平仓比例
+    const feeConfList =
+      conf.transactionFeeConf?.type === 'trade_vol' ? conf.transactionFeeConf?.trade_vol : conf.transactionFeeConf?.trade_hand // 手续费配置列表
+    const feeConfItem = (feeConfList || []).filter((v) => orderVolume >= v.from && orderVolume <= v.to)?.[0]
+    const feeComputeMode = feeConfItem?.compute_mode // 手续费计算模式
+    const marketFee = Number(feeConfItem?.market_fee || 0) // 市价手续费
+    let feeRate = 0
+    if (feeComputeMode === 'percentage') {
+      // 后台品种配置的手续费，选择百分比形式：手续费率 = 市价手续费(限价)
+      feeRate = marketFee / 100 // 读取市价手续费的百分比值
+    } else if (feeComputeMode === 'currency') {
+      // 后台品种配置的手续费，选择货币形式：手续费率 = 市价(限价)手续费 / 合约价值（当前价格*合约大小*手数） * 100%
+      feeRate = marketFee / (currentPrice * contractSize * orderVolume)
+    }
     const number = currentPrice * contractSize * orderVolume
     const buyForceClosePrice = (orderMargin - number * startPrice) / (number * marginRate * feeRate - 1)
     const sellForceClosePrice = (orderMargin + number * startPrice) / (number * marginRate * feeRate + 1)
     const forceClosePrice = item.buySell === 'BUY' ? buyForceClosePrice : sellForceClosePrice
-    return forceClosePrice
+
+    return formatNum(forceClosePrice, { precision: item.symbolDecimal })
   }
 
   const slSp = [
     {
       label: <FormattedMessage id="mt.zhisun" />,
-      value: (item: IPositionItem) => formatValue(toFixed(item?.stopLoss, item?.symbolDecimal)),
-      unit
+      value: (item: IPositionItem) => formatValue(toFixed(item?.stopLoss, item?.symbolDecimal))
     },
     {
       label: <FormattedMessage id="mt.zhiying" />,
-      value: (item: IPositionItem) => formatValue(toFixed(item?.takeProfit, item?.symbolDecimal)),
-      unit
+      value: (item: IPositionItem) => formatValue(toFixed(item?.takeProfit, item?.symbolDecimal))
     }
   ]
 
@@ -146,6 +157,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const orderNo = { label: <FormattedMessage id="mt.chicangdanhao" />, value: (item: IPositionItem) => `${item.id}` }
   const margin = {
     label: <FormattedMessage id="mt.baozhengjin" />,
+    key: 'margin',
     value: (item: IPositionItem) => (
       <span className="items-center inline-flex">
         <span className="pr-2">{toFixed(item.orderMargin, item.symbolDecimal)}</span>
@@ -303,26 +315,28 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
               <div className="px-3 py-3">
                 <SwitchPcOrWapLayout
                   pcComponent={
-                    <div className="grid gap-y-3 xl:grid-cols-6 xxl:grid-cols-10">
-                      {fieldList.map((item: any, idx) => (
-                        <div
-                          className={classNames(
-                            'text-left xxl:first:w-[160px] xxl:first:!text-left xxl:[&:not(:first-child,:last-child)]:pl-6 xxl:[&:nth-child(2)]:pl-0',
-                            item.className
-                          )}
-                          key={idx}
-                        >
-                          {renderLabel(item)}
-                          <span className={classNames('text-xs font-normal text-gray', renderProp(item, 'valueClassName', v))}>
-                            {renderProp(item, 'value', v)}
-                            {item.unit && (
-                              <span className={classNames('text-xs text-gray-secondary', renderProp(item, 'unitClassName', v))}>
-                                &nbsp;{item.unit}
-                              </span>
+                    <div className={classNames('grid gap-y-3 xl:grid-cols-6 xxl:grid-cols-10')}>
+                      {fieldList.map((item: any, idx) => {
+                        return (
+                          <div
+                            className={classNames(
+                              'text-left xxl:first:w-[160px] xxl:first:!text-left xxl:[&:not(:first-child,:last-child)]:pl-6 xxl:[&:nth-child(2)]:pl-0',
+                              item.className
                             )}
-                          </span>
-                        </div>
-                      ))}
+                            key={idx}
+                          >
+                            {renderLabel(item)}
+                            <span className={classNames('text-xs font-normal text-gray', renderProp(item, 'valueClassName', v))}>
+                              {renderProp(item, 'value', v)}
+                              {item.unit && (
+                                <span className={classNames('text-xs text-gray-secondary', renderProp(item, 'unitClassName', v))}>
+                                  &nbsp;{item.unit}
+                                </span>
+                              )}
+                            </span>
+                          </div>
+                        )
+                      })}
                     </div>
                   }
                   wapComponent={

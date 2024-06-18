@@ -252,5 +252,7 @@ export default {
   'mt.quxiaoguadanchenggong': '取消挂单成功',
   'mt.cexiaochenggong': '撤销成功',
   'mt.chengjiaojia': '成交价',
-  'mt.shousushuruyouwu': '手数输入有误'
+  'mt.shousushuruyouwu': '手数输入有误',
+  'mt.24xiaoshizuigao': '24小时最高',
+  'mt.24xiaoshizuidi': '24小时最低'
 }

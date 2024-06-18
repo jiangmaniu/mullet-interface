@@ -35,6 +35,9 @@ export class GlobalStore {
       // 本地不存在账号或本地存在账号但不在登录返回的accountList中，需重新设置默认值，避免切换不同账号登录使用上一次缓存
       if (!localAccountId || (localAccountId && !hasAccount)) {
         stores.trade.setCurrentAccountInfo(clientInfo.accountList?.[0])
+      } else if (localAccountId) {
+        // 更新本地本地存在的账号信息
+        stores.trade.setCurrentAccountInfo(clientInfo.accountList?.find((item) => item.id === localAccountId))
       } else {
         stores.trade.getSymbolList()
       }

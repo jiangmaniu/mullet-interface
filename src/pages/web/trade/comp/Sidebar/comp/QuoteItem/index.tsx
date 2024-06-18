@@ -65,8 +65,8 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         >
           <Col span={12} className="!flex items-center">
             <img
-              width={32}
-              height={32}
+              width={24}
+              height={24}
               alt=""
               src={`/img/${trade.favoriteList.some((item) => item.symbol === symbol) ? 'star-active' : 'star'}.png`}
               onClick={(e) => {
@@ -76,14 +76,14 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             />
             <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
             <div className="flex flex-col pl-1">
-              <span className="pl-[6px] text-xs font-semibold text-gray">{item.symbol}</span>
+              <span className="pl-[6px] text-xs font-semibold text-gray tracking-[0.5px]">{item.symbol}</span>
               {/* 币种描述  */}
               <span className="pl-[6px] text-xs text-gray-weak pt-1 truncate max-w-[120px]">{item.remark || '--'}</span>
             </div>
           </Col>
           <Col span={12} className="flex flex-col items-end">
-            <div className="font-dingpro-medium text-[15px] text-gray text-right">{formatNum(bid)}</div>
-            <div className={classNames('text-right font-dingpro-medium text-xs', per > 0 ? 'text-green' : 'text-red')}>
+            <div className="!font-dingpro-medium text-sx text-gray text-right">{formatNum(bid)}</div>
+            <div className={classNames('text-right !font-dingpro-medium text-xs pt-1', per > 0 ? 'text-green' : 'text-red')}>
               {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
             </div>
           </Col>

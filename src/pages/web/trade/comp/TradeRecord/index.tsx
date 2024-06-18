@@ -2,7 +2,7 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { Checkbox } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
@@ -72,7 +72,7 @@ function TradeRecord({ trigger }: IProps) {
     setShowActiveSymbol(e.target.checked)
   }
 
-  const renderTabs = useMemo(() => {
+  const renderTabs = () => {
     return (
       <Tabs
         items={TabItems}
@@ -115,9 +115,9 @@ function TradeRecord({ trigger }: IProps) {
         activeKey={trade.recordTabKey}
       />
     )
-  }, [tradeListLen, pendingListLen, stopLossProfitListLen, showActiveSymbol, totalProfit, tabKey])
+  }
 
-  const renderTabContent = useMemo(() => {
+  const renderTabContent = () => {
     return (
       <div className="px-2 pb-1 mb-6 pt-1">
         {tabKey === 'POSITION' && <PositionList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}
@@ -126,21 +126,21 @@ function TradeRecord({ trigger }: IProps) {
         {tabKey === 'HISTORY' && <HistoryRecord showActiveSymbol={showActiveSymbol} />}
       </div>
     )
-  }, [tabKey, showActiveSymbol, popupRef.current])
+  }
 
   return (
     <>
       <SwitchPcOrWapLayout
         pcComponent={
           <div className="pt-1 mb-3 bg-white relative border-t border-gray-180 z-[1]">
-            {renderTabs}
-            {renderTabContent}
+            {renderTabs()}
+            {renderTabContent()}
           </div>
         }
         wapComponent={
           <Popup title={labelName} trigger={trigger} ref={popupRef} position="bottom" height="80vh">
-            {renderTabs}
-            <div className="h-[70vh] overflow-y-auto pb-10">{renderTabContent}</div>
+            {renderTabs()}
+            <div className="h-[70vh] overflow-y-auto pb-10">{renderTabContent()}</div>
           </Popup>
         }
       />

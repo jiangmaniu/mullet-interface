@@ -81,17 +81,15 @@ class TradeStore {
   // 设置当前切换的账户信息
   @action
   setCurrentAccountInfo = (info: User.AccountItem) => {
-    if (info?.id !== this.currentAccountInfo?.id) {
-      this.currentAccountInfo = info
+    this.currentAccountInfo = info
 
-      // 缓存当前账号
-      STORAGE_SET_CONF_INFO(info, `currentAccountInfo`)
+    // 缓存当前账号
+    STORAGE_SET_CONF_INFO(info, `currentAccountInfo`)
 
-      this.reloadAfterAccountChange()
+    this.reloadAfterAccountChange()
 
-      // 根据accountId切换本地设置的自选、打开的品种列表、激活的品种名称
-      this.init()
-    }
+    // 根据accountId切换本地设置的自选、打开的品种列表、激活的品种名称
+    this.init()
   }
 
   // 当前账户可用保证金 = 逐仓保证金 + 全仓保证金
@@ -343,7 +341,7 @@ class TradeStore {
       current: 1,
       size: 999,
       status: 'ENTRUST',
-      type: '40,50',
+      type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER',
       accountId: this.currentAccountInfo?.id
     })
     if (res.success) {
@@ -355,7 +353,13 @@ class TradeStore {
   // 查询止盈止损列表
   @action
   getStopLossProfitList = async () => {
-    const res = await getOrderPage({ current: 1, size: 999, status: 'ENTRUST', type: '20,30', accountId: this.currentAccountInfo?.id })
+    const res = await getOrderPage({
+      current: 1,
+      size: 999,
+      status: 'ENTRUST',
+      type: 'STOP_LOSS_ORDER,TAKE_PROFIT_ORDERR',
+      accountId: this.currentAccountInfo?.id
+    })
     if (res.success) {
       runInAction(() => {
         this.stopLossProfitList = (res.data?.records || []) as Order.OrderPageListItem[]
@@ -378,8 +382,8 @@ class TradeStore {
     const res = await getOrderPage({
       current: 1,
       size: 999,
-      status: 'CANCEL', // @TODO 这里参数跟后台确认一下 CANCEL,FAIL,FINISH
-      type: '40,50',
+      status: 'CANCEL,FAIL,FINISH',
+      type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER',
       accountId: this.currentAccountInfo?.id
     })
     if (res.success) {

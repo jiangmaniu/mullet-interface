@@ -13,8 +13,7 @@ import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
 import Sidebar from './comp/Sidebar'
 import TradeRecord from './comp/TradeRecord'
 import TradingView from './comp/TradingView'
-import DeepPrice from './comp/Widget/DeepPrice'
-import FloatTradeBox from './comp/Widget/FloatTradeBox'
+import DepthPrice from './comp/Widget/DepthPrice'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -39,7 +38,7 @@ export default observer(() => {
               {/* 中间区域 */}
               <Center />
               {/* 深度报价 */}
-              <DeepPrice />
+              <DepthPrice />
               {/* 买卖交易区 */}
               <BuyAndSell />
             </div>
@@ -48,7 +47,7 @@ export default observer(() => {
             {/* 底部固定状态栏 */}
             <Footer />
             {/* 浮动交易窗口 */}
-            <FloatTradeBox />
+            {/* <FloatTradeBox /> */}
           </div>
         }
         wapComponent={

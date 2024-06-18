@@ -25,7 +25,7 @@ type IProps = {
 
 const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const { global, trade } = useStores()
-  const { isMobileOrIpad, breakPoint } = useEnv()
+  const { isMobileOrIpad, breakPoint, screenSize } = useEnv()
   const intl = useIntl()
   const [searchValue, setSearchValue] = useState('')
   const popupRef = useRef()
@@ -38,13 +38,12 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
 
   useEffect(() => {
     // 1200px-1600px收起侧边栏
-    setOpenTradeSidebar(isMobileOrIpad || breakPoint === 'xl')
-  }, [breakPoint])
-
-  // 列表滚动区域高度
-  // @TODO 如果Liquidation存在情况，否则高度默认
-  const isLiquidation = false
-  const height = isLiquidation ? (activeKey === 'CATEGORY' ? 400 : 450) : 500
+    if (screenSize.width > 1200 && screenSize.width < 1600) {
+      setOpenTradeSidebar(false)
+    } else {
+      setOpenTradeSidebar(true)
+    }
+  }, [screenSize])
 
   // 对外暴露接口
   useImperativeHandle(ref, () => {
@@ -97,16 +96,16 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     const list: any = getList()
     return (
       <>
-        <div className="pt-5">
-          <Row className="px-5 pb-3">
-            <Col span={12} className="text-xs text-gray-weak">
+        <div className="pt-2">
+          <Row className="px-5 pb-2">
+            <Col span={12} className="!text-xs text-gray-weak">
               <FormattedMessage id="mt.pinpai" />
             </Col>
-            <Col span={12} className="text-right text-xs text-gray-weak">
+            <Col span={12} className="text-right !text-xs text-gray-weak">
               <FormattedMessage id="mt.zuixinjiage" />/<FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
-          <div className="overflow-y-auto" style={{ height }}>
+          <div className="overflow-y-auto" style={{ height: 500 }}>
             {list.length > 0 &&
               list.map((item: Account.TradeSymbolListItem, idx: number) => {
                 const isActive = trade.activeSymbolName === item.symbol
@@ -224,10 +223,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   return (
     <SwitchPcOrWapLayout
       pcComponent={
-        <div>
+        <>
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
-            <div className={classNames('h-[690px] w-[300px] bg-white relative', { [borderClassName]: showFixSidebar })} style={style}>
+            <div className={classNames('h-[700px] w-[300px] bg-white relative', { [borderClassName]: showFixSidebar })} style={style}>
               {renderTabs()}
               {renderSearch()}
               {renderCategoryTabs()}
@@ -241,7 +240,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           )}
           {/* 收起侧边栏视图 */}
           {!openTradeSidebar && (
-            <div className={classNames('h-[690px] w-[60px] bg-white flex flex-col items-center relative', borderClassName)}>
+            <div className={classNames('h-[700px] w-[60px] bg-white flex flex-col items-center relative', borderClassName)}>
               <div className="border-b border-gray-100 pb-2 pt-[11px] text-center w-full cursor-pointer" onClick={openSidebar}>
                 <img src="/img/menu-icon.png" height={24} width={24} style={{ transform: 'rotate(180deg)' }} />
               </div>
@@ -278,7 +277,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
               </div>
             </div>
           )}
-        </div>
+        </>
       }
       wapComponent={
         <Popup

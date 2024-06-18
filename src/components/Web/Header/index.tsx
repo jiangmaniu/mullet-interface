@@ -1,8 +1,6 @@
 import { useModel } from '@umijs/max'
 import classNames from 'classnames'
 
-import HeaderTabsView from '@/pages/web/trade/comp/HeaderTabsView'
-
 import Logo from '../../Admin/Header/Logo'
 import { HeaderRightContent } from '../../Admin/RightContent'
 
@@ -21,10 +19,10 @@ export default function Header() {
             </div>
           </div>
           <div className="flex items-center flex-1">
-            <div className="flex-1 h-full">
+            {/* <div className="flex-1 h-full">
               <HeaderTabsView />
-            </div>
-            <div className="min-w-[565px] h-full box-border">
+            </div> */}
+            <div className="min-w-[565px] h-full box-border flex-1">
               <div className="h-full">
                 <div className="flex items-center justify-end h-full">
                   <HeaderRightContent />

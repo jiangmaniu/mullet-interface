@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
 import ListItem from '@/components/Base/ListItem'
+import { getEnum } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
@@ -47,7 +48,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
     getList()
   }, [trade.currentAccountInfo?.id])
 
-  const formatValue = (value: any) => <span className="font-dingpro-medium">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="!font-dingpro-regular">{formatNum(value)}</span>
 
   const floatPL: any = {
     label: <FormattedMessage id="mt.yingkui" />,
@@ -70,7 +71,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
     label: <FormattedMessage id="common.type" />,
     valueClassName: '!font-bold',
     value: (item: Item) => {
-      return <FormattedMessage id="mt.shijiadan" />
+      return getEnum().Enum.OrderInOut?.[item.inOut as string]?.text || '-'
     }
   }
   const orderNo = { label: <FormattedMessage id="mt.dingdanhao" />, value: (item: Item) => `${item.id}` }

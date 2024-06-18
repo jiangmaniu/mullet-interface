@@ -167,7 +167,7 @@ function FloatTradeBox() {
             <div className="select-none text-white text-xs">
               <FormattedMessage id="mt.maichuzuokong" />
             </div>
-            <div className="text-white font-dingpro-medium text-base select-none">{formatNum(quoteInfo.bid)}</div>
+            <div className="text-white !font-dingpro-medium text-base select-none">{formatNum(quoteInfo.bid)}</div>
           </div>
           <div className="flex flex-col h-[56px] px-3 items-center justify-center w-[105px]">
             <div className="text-gray text-xs select-none">
@@ -192,7 +192,7 @@ function FloatTradeBox() {
             <div className="select-none text-white text-xs">
               <FormattedMessage id="mt.mairuzuoduo" />
             </div>
-            <div className="text-white font-dingpro-medium text-base select-none">{formatNum(quoteInfo.ask)}</div>
+            <div className="text-white !font-dingpro-medium text-base select-none">{formatNum(quoteInfo.ask)}</div>
           </div>
           <div className="px-[2px] cursor-pointer" onClick={() => setOpen(false)}>
             <img width="14" height="28" src="/img/close.png" />

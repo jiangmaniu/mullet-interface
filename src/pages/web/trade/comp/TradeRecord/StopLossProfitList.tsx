@@ -38,7 +38,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
 
   const cancelPendingRef = useRef<any>(null)
 
-  const formatValue = (value: any) => <span className="font-dingpro-medium">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="!font-dingpro-medium">{formatNum(value)}</span>
 
   const slSp = [
     {

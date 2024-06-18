@@ -151,7 +151,7 @@ export const HeaderRightContent = observer(() => {
                 </span>
               </Tooltip>
               <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
-              <span className="max-w-[240px] break-all text-right text-gray font-dingpro-medium">
+              <span className="max-w-[240px] break-all text-right text-gray !font-dingpro-medium">
                 {formatNum(item.value, { precision: 2 })} USD
               </span>
             </div>
@@ -259,7 +259,7 @@ export const HeaderRightContent = observer(() => {
                   </div>
                   <div className="mt-1">
                     <div>
-                      <span className="text-[20px] text-gray font-dingpro-regular">{formatNum(item.money, { precision: 2 })}</span>{' '}
+                      <span className="text-[20px] text-gray !font-dingpro-regular">{formatNum(item.money, { precision: 2 })}</span>{' '}
                       <span className="ml-1 text-sm font-normal text-gray-secondary">USD</span>
                     </div>
                   </div>
@@ -299,9 +299,9 @@ export const HeaderRightContent = observer(() => {
           }}
         >
           <div className="flex flex-col items-end group relative">
-            <span className="text-xl text-gray font-dingpro-regular">{formatNum(currentAccountInfo?.money, { precision: 2 })} USD</span>
+            <span className="text-xl text-gray !font-dingpro-regular">{formatNum(currentAccountInfo?.money, { precision: 2 })} USD</span>
             <div className="flex items-center pt-[2px]">
-              <span className="text-xs text-blue font-dingpro-medium">
+              <span className="text-xs text-blue">
                 {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
               </span>
               <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200"></div>

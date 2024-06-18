@@ -80,15 +80,13 @@ export default observer(
               <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', sellColor)}>
                 <FormattedMessage id="mt.maichuzuokong" />
               </div>
-              <div className={classNames('font-dingpro-medium text-base max-xl:hidden', sellColor)}>{formatNum(quoteInfo.bid)}</div>
+              <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', sellColor)}>{formatNum(quoteInfo.bid)}</div>
             </div>
           </Sell>
         </div>
-        {!!quoteInfo.spread && (
-          <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-gray">
-            {quoteInfo.spread}
-          </div>
-        )}
+        <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-gray">
+          {quoteInfo.spread || 0}
+        </div>
         <div
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
           onClick={() => {
@@ -105,7 +103,7 @@ export default observer(
               <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', buyColor)}>
                 <FormattedMessage id="mt.mairuzuoduo" />
               </div>
-              <div className={classNames('font-dingpro-medium text-base max-xl:hidden', buyColor)}>{formatNum(quoteInfo.ask)}</div>
+              <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', buyColor)}>{formatNum(quoteInfo.ask)}</div>
             </div>
           </Buy>
         </div>

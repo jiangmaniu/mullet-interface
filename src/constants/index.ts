@@ -1,4 +1,4 @@
-const NAMESPACE = 'mt_uc'
+const NAMESPACE = 'stellux_client'
 
 // 秘钥
 export const clientId = 'StelluxTrader' // 客户端id

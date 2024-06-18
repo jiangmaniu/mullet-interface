@@ -19,7 +19,7 @@ function LevelAge({ initialValue, onChange }: IProps) {
   const isFixedMargin = prepaymentConf?.mode === 'fixed_margin' // 固定保证金模式，没有杠杆
 
   useEffect(() => {
-    setValue(initialValue)
+    setValue(initialValue || 6)
   }, [initialValue])
 
   if (isFixedMargin) return
@@ -38,7 +38,7 @@ function LevelAge({ initialValue, onChange }: IProps) {
         max={30}
         min={0}
         unit={isFixedMargin ? undefined : <span className="relative left-3 text-gray-220 text-base">x</span>}
-        disabled={isFixedMargin}
+        disabled={false}
       />
       <div className="flex flex-col pt-1 mx-3">
         <div>
@@ -48,12 +48,11 @@ function LevelAge({ initialValue, onChange }: IProps) {
             max={30}
             marks={{
               0: '0x',
-              6: '6x',
               10: '10x',
               20: '20x',
               30: '30x'
             }}
-            tooltip={{ placement: 'bottom', formatter: (value) => `${value}x` }}
+            tooltip={{ placement: 'bottom', formatter: (value: any) => `${value}x` }}
             onChange={(v) => {
               setValue(v)
               onChange?.(v)

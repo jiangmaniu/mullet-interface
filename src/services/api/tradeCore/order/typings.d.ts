@@ -127,7 +127,7 @@ declare namespace Order {
     /**
      * 状态
      */
-    status?: API.OrderStatus
+    status?: API.OrderStatus | string
     /**
      * 交易品种
      */
@@ -443,6 +443,10 @@ declare namespace Order {
     userAccount: string
     /**用户名称 */
     userName: string
+    /**追加预付款比例 */
+    addAdvanceCharge: number
+    /**强制平仓比例 */
+    compelCloseRatio: number
   }
   // 成交记录-分页-参数
   type TradeRecordsPageListParams = {

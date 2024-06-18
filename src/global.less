@@ -1,23 +1,6 @@
 /* stylelint-disable */
 @import './styles/index.less';
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: hms-regular;
-}
-
-*,
-:before,
-:after {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  border-color: currentColor;
-  border-style: solid;
-  border-width: 0;
-}
-
 /* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
 // @TODO 上线需要下载字体包，然后替换路径
 @font-face {
@@ -55,12 +38,34 @@
 /**鸿蒙字体-粗体**/
 @font-face {
   font-family: hms-bold;
-  src: url('/fonts/HarmonyOS_Sans_Bold.ttf') format('woff');
+  src: url('/fonts/HarmonyOS_Sans_Medium.ttf') format('woff');
 }
 /**鸿蒙字体-细体**/
 @font-face {
   font-family: hms-thin;
-  src: url('/fonts/HarmonyOS_Sans_Thin.ttf') format('woff');
+  src: url('/fonts/HarmonyOS_Sans_Light.ttf') format('woff');
+}
+
+@font-face {
+  font-family: pfFont;
+  src: url('/fonts/PingFangMedium.ttf') format('woff');
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: pfFont !important; // 全局使用平方字体，不要修复权重，否则页面出现字体问题
+}
+
+*,
+:before,
+:after {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  border-color: currentColor;
+  border-style: solid;
+  border-width: 0;
 }
 
 html,
@@ -69,8 +74,6 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
-    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 .colorWeak {

@@ -206,13 +206,13 @@ export default observer(
                 }}
                 tips={
                   <>
-                    <span className="font-dingpro-regular">
+                    <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
                       {isBuy ? '≤' : '≥'}&nbsp;
                       {formatNum(sl_scope)} USD
                     </span>
-                    <span className="pl-1 font-dingpro-regular">
+                    <span className="pl-1 !font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp;
                       {formatNum(slProfit)} USD
@@ -247,7 +247,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <span className="font-dingpro-regular">
+                  <span className="!font-dingpro-regular">
                     <FormattedMessage id="mt.fanwei" />
                     &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                     &nbsp;

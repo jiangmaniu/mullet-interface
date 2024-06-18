@@ -6,24 +6,29 @@ import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 
 import trade from './trade'
 
+export type IQuotePriceItem = {
+  /**卖交易量 */
+  sellSize: number
+  /**买 */
+  buy: number
+  /**卖 */
+  sell: number
+  /**这个是时间戳13位 */
+  id: number
+  /*买交易量 */
+  buySize: number
+}
 export type IQuoteItem = {
   /**品种名称 */
   symbol: string
   /**价格数据 */
-  priceData: {
-    /**卖交易量 */
-    sellSize: number
-    /**买 */
-    buy: number
-    /**卖 */
-    sell: number
-    /**这个是时间戳13位 */
-    id: number
-    /*买交易量 */
-    buySize: number
-  }
+  priceData: IQuotePriceItem
   /**数据源code 例如huobi */
   dataSource: string
+  /**前端计算的 卖价 上一口报价和下一口报价对比 */
+  bidDiff?: number
+  /**前端计算的 买价 上一口报价和下一口报价对比 */
+  askDiff?: number
 }
 
 export type IDepthPriceItem = {
@@ -64,6 +69,10 @@ class WSStore {
   constructor() {
     makeObservable(this) // 使用 makeObservable mobx6.0 才会更新视图
   }
+  heartbeatInterval: any = null
+  heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
+  quotesTempArr: any = []
+  depthQuoteTempArr: any = []
   @observable socket: any = null
   @observable quotes = {} as Record<string, IQuoteItem> // 当前行情
   @observable depth = {} as Record<string, IDepth> // 当前行情
@@ -77,20 +86,45 @@ class WSStore {
     // 游客传WebSocket:visitor
     this.socket = new ReconnectingWebSocket(this.websocketUrl, ['WebSocket', token ? token : 'visitor'], {
       minReconnectionDelay: 1,
-      connectionTimeout: 5000, // 重连时间
+      connectionTimeout: 3000, // 重连时间
       maxEnqueuedMessages: 0, // 不缓存发送失败的指令
-      maxRetries: 50, // 最大重连次数
-      debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
+      maxRetries: 10000 // 最大重连次数
+      // debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
     })
     this.socket.addEventListener('open', () => {
       this.batchSubscribeSymbol()
       this.subscribeDepth()
+      this.startHeartbeat()
     })
     this.socket.addEventListener('message', (d: any) => {
       const res = JSON.parse(d.data)
       this.message(res)
     })
+    this.socket.addEventListener('close', () => {
+      // this.close()
+    })
+    this.socket.addEventListener('error', () => {
+      // this.close()
+    })
   }
+
+  // 开始心跳
+  startHeartbeat() {
+    if (!STORAGE_GET_TOKEN()) return
+    this.stopHeartbeat()
+    this.heartbeatInterval = setInterval(() => {
+      this.send({}, { msgId: 'heartbeat' })
+    }, this.heartbeatTimeout)
+  }
+
+  // 停止心跳
+  stopHeartbeat() {
+    if (this.heartbeatInterval) {
+      clearInterval(this.heartbeatInterval)
+      this.heartbeatInterval = null
+    }
+  }
+
   // 批量订阅行情(查询symbol列表后)
   batchSubscribeSymbol = (cancel?: boolean) => {
     const symbolList = trade.symbolList
@@ -117,14 +151,14 @@ class WSStore {
 
   // 发送socket指令
   @action
-  send(cmd = {}) {
+  send(cmd = {}, header = {}) {
     const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
     // 游客身份userId传123456789
     const userId = userInfo?.user_id || '123456789'
     if (this.socket) {
       this.socket.send(
         JSON.stringify({
-          header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now() },
+          header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now(), ...header },
           body: {
             cancel: false,
             ...cmd
@@ -136,7 +170,10 @@ class WSStore {
   @action
   close() {
     // 关闭socket指令
-    if (this.socket) this.socket.close()
+    if (this.socket) {
+      this.socket.close()
+      this.stopHeartbeat()
+    }
   }
   @action
   reconnect() {
@@ -163,8 +200,28 @@ class WSStore {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        if (symbol) {
-          this.quotes[symbol] = data
+        if (this.quotesTempArr.length > 30) {
+          const quotes = this.quotes // 之前的值
+          const quotesObj: any = {} // 一次性更新，避免卡顿
+          this.quotesTempArr.forEach((item: IQuoteItem) => {
+            const sbl = item.symbol
+            if (quotes[sbl]) {
+              const prevBid = quotes[sbl]?.priceData?.sell || 0
+              const prevAsk = quotes[sbl]?.priceData?.buy || 0
+              item.bidDiff = item.priceData?.sell - prevBid
+              item.askDiff = item.priceData?.buy - prevAsk
+            }
+            if (sbl) {
+              quotesObj[sbl] = item
+            }
+          })
+          this.quotes = {
+            ...this.quotes,
+            ...quotesObj
+          }
+          this.quotesTempArr = []
+        } else {
+          this.quotesTempArr.push(data)
         }
         // console.log('行情信息', toJS(this.quotes))
         break

@@ -9,6 +9,7 @@ import useCurrentQuote from '@/hooks/useCurrentQuote'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
+import { getSymbolIcon } from '@/utils/business'
 
 import Futures from '../Futures'
 import Sidebar from '../Sidebar'
@@ -21,6 +22,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const { ws, trade } = useStores()
   const symbol = trade.activeSymbolName
   const [showSidebar, setShowSidebar] = useState(false)
+  const symbolInfo = trade.openSymbolNameList.find((item) => item.symbol === symbol)
 
   const res: any = useCurrentQuote()
   const color = res.percent > 0 ? 'text-green' : 'text-red'
@@ -35,8 +37,8 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
       pcComponent={
         <>
           <div className="flex items-center justify-between px-[10px] py-2">
-            <div className="flex items-center">
-              <div className="w-[300px] flex items-center">
+            <div className="flex items-center w-full">
+              <div className="flex items-center w-[300px] xxl:flex-row xl:flex-col">
                 <div
                   className="flex cursor-pointer items-center relative"
                   onClick={() => {
@@ -44,7 +46,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   }}
                   ref={openSidebarRef}
                 >
-                  <img src="/img/menu-icon2.png" height={24} width={24} />
+                  <img width={24} height={24} alt="" src={getSymbolIcon(symbolInfo?.imgUrl)} className="rounded-full" />
                   <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>
                   <img
                     src="/img/down.png"
@@ -64,43 +66,45 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   </div>
                 </div>
                 <div className="flex items-center pl-6">
-                  <span className={classNames('font-dingpro-medium text-xl', color)}>{formatNum(res.close)}</span>
+                  <span className={classNames('!font-dingpro-medium text-xl', color)}>{formatNum(res.bid)}</span>
                   {!!res.bid && (
-                    <span className={classNames('pl-2 text-base', color)}>{res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}</span>
+                    <span className={classNames('pl-2 text-base !font-dingpro-medium', color)}>
+                      {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}
+                    </span>
                   )}
                 </div>
               </div>
-              <div className="flex items-center pl-12 gap-x-12">
+              <div className="flex items-center pl-12 gap-x-12 flex-1">
                 {/* @TODO 只有数字货币才展示 */}
                 {/* <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.zijinhuilvdaojishi" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-sm text-gray">0.0100% / 5:31:23</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">0.0100% / 5:31:23</span>
                 </div> */}
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
-                    <FormattedMessage id="mt.kai" />
+                    <FormattedMessage id="mt.kaipanjiage" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.open)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">{formatNum(res.open)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
-                    <FormattedMessage id="mt.gao" />
+                    <FormattedMessage id="mt.shoupanjiage" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-xs text-gray">{formatNum(res.high)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">{formatNum(res.close)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
-                    <FormattedMessage id="mt.di" />
+                    <FormattedMessage id="mt.24xiaoshizuigao" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.low)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-xs text-gray">{formatNum(res.high)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">
-                    <FormattedMessage id="mt.shou" />
+                    <FormattedMessage id="mt.24xiaoshizuidi" />
                   </span>
-                  <span className="pt-1 font-dingpro-medium text-sm text-gray">{formatNum(res.close)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">{formatNum(res.low)}</span>
                 </div>
               </div>
             </div>

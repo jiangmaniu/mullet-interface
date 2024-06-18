@@ -40,18 +40,16 @@ function PendingOrder({ style, parentPopup, showActiveSymbol }: IProps) {
   const cancelPendingRef = useRef<any>(null)
   const modifyPendingRef = useRef<any>(null)
 
-  const formatValue = (value: any) => <span className="font-dingpro-medium">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="!font-dingpro-medium">{formatNum(value)}</span>
 
   const slSp = [
     {
       label: <FormattedMessage id="mt.zhisun" />,
-      value: (item: IPendingItem) => formatValue(toFixed(item?.stopLoss, item?.symbolDecimal)),
-      unit
+      value: (item: IPendingItem) => formatValue(toFixed(item?.stopLoss, item?.symbolDecimal))
     },
     {
       label: <FormattedMessage id="mt.zhiying" />,
-      value: (item: IPendingItem) => formatValue(toFixed(item?.takeProfit, item?.symbolDecimal)),
-      unit
+      value: (item: IPendingItem) => formatValue(toFixed(item?.takeProfit, item?.symbolDecimal))
     }
   ]
 

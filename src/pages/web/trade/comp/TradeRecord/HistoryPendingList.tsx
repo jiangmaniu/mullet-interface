@@ -49,7 +49,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
     getList()
   }, [trade.currentAccountInfo?.id])
 
-  const formatValue = (value: any) => <span className="font-dingpro-medium">{formatNum(value)}</span>
+  const formatValue = (value: any) => <span className="!font-dingpro-medium">{formatNum(value)}</span>
 
   const time = {
     label: <FormattedMessage id="mt.guadanshijian" />,

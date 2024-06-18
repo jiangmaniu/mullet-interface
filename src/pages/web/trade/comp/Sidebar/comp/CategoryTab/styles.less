@@ -1,18 +1,24 @@
 .tabs {
-  margin-top: 12px;
+  margin-top: 8px;
   :global {
     .adm-tabs-tab {
-      padding: 5px 9px !important;
+      padding: 2px 5px !important;
       color: var(--color-text-secondary);
       border-radius: 4px;
       &:hover {
         color: var(--color-text-primary);
-        background: var(--active-bg);
       }
     }
     .adm-tabs-tab-active {
       color: var(--color-text-primary);
       background: var(--active-bg);
+    }
+    .adm-tabs-tab-list {
+      padding-left: 9px !important;
+      .adm-tabs-tab-wrapper {
+        padding-right: 0px !important;
+        padding-left: 0px !important;
+      }
     }
   }
 }

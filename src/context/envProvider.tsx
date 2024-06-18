@@ -59,12 +59,29 @@ export const EnvProvider = ({ children }: IProps) => {
   const [screenSize, setScreenSize] = useState<SizeInfo>()
   const breakPoint = useBreakpoint() || ''
 
+  // 根据不同分辨率缩放屏幕大小
+  function adjustScale(size: SizeInfo) {
+    const width = size.width
+    let scale = 1
+
+    if (width >= 1540) {
+      scale = 1 // 100%
+    } else if (width < 1540 && width >= 1470) {
+      scale = 0.94 // 94%
+    } else if (width < 1470 && width >= 1200) {
+      scale = 0.88 // 88%
+    }
+    // @ts-ignore
+    document.body.style.zoom = scale
+  }
+
   const onResize = useCallback(() => {
     const size: SizeInfo = {
       width: document.documentElement.clientWidth,
       height: document.documentElement.clientHeight
     }
     setScreenSize(size)
+    adjustScale(size)
   }, [])
 
   useEffect(() => {
