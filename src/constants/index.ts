@@ -1,8 +1,8 @@
 const NAMESPACE = 'stellux_client'
 
 // 秘钥
-export const clientId = 'StelluxTrader' // 客户端id
-export const clientSecret = 'stellux_trader_secret' // 客户端密钥
+export const clientId = 'StelluxTrader-client' // 客户端id
+export const clientSecret = 'stellux_trader_client_secret' // 客户端密钥
 
 // 首页
 export const WEB_HOME_PAGE = '/trade'

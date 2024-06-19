@@ -1,16 +1,15 @@
-import { PageLoading } from '@ant-design/pro-components'
+import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import React, { useEffect, useState } from 'react'
 
-import Empty from '@/components/Base/Empty'
-import ListItem from '@/components/Base/ListItem'
+import StandardTable from '@/components/Admin/StandardTable'
 import { getEnum } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { copyContent, formatNum, formatTime, groupBy, toFixed } from '@/utils'
+import useStyle from '@/hooks/useStyle'
+import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
 
 type Item = Order.TradeRecordsPageListItem
@@ -25,6 +24,7 @@ type IProps = {
 function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
+  const { recordListClassName } = useStyle()
   const [list, setList] = useState([] as Order.TradeRecordsPageListItem[])
   const activeSymbolName = trade.activeSymbolName
   const [loading, setLoading] = useState(false)
@@ -48,185 +48,218 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
     getList()
   }, [trade.currentAccountInfo?.id])
 
-  const formatValue = (value: any) => <span className="!font-dingpro-regular">{formatNum(value)}</span>
-
-  const floatPL: any = {
-    label: <FormattedMessage id="mt.yingkui" />,
-    value: (item: Item) => {
-      const profitFormat = formatValue(item?.profit)
-      return Number(item.profit) > 0 ? <>+{profitFormat}</> : profitFormat
+  const columns: ProColumns<Order.TradeRecordsPageListItem>[] = [
+    {
+      title: (
+        <span className="!pl-1">
+          <FormattedMessage id="mt.pinlei" />
+        </span>
+      ), // 与 antd 中基本相同，但是支持通过传入一个方法
+      dataIndex: 'category',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      fixed: 'left',
+      width: 180,
+      renderText(text, record, index, action) {
+        const buySellInfo = getBuySellInfo(record)
+        return (
+          <div className="flex items-center">
+            <img width={26} height={26} alt="" src={getSymbolIcon(record.imgUrl)} className="rounded-full" />
+            <div className="flex flex-col pl-4">
+              <span className="text-base font-semibold text-gray">{record.symbol}</span>
+              <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+            </div>
+          </div>
+        )
+      }
     },
-    valueClassName: (item: any) => `${item?.profit > 0 ? '!text-green' : '!text-red'} xl:!text-[16px] max-xl:!text-lg !font-bold`,
-    unit: currentUnit,
-    unitClassName: (item: any) => `${item?.profit > 0 ? '!text-green' : '!text-red'}`
-  }
-  const time = {
-    label: <FormattedMessage id="mt.chengjiaoshijian" />,
-    value: (item: Item) => {
-      return item.createTime
+    {
+      title: <FormattedMessage id="common.type" />,
+      dataIndex: 'type',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      copyable: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 120,
+      align: 'left',
+      className: '!text-[13px] text-gray',
+      renderText(text, record, index, action) {
+        return getEnum().Enum.OrderInOut?.[record.inOut!]?.text || '-'
+      }
+    },
+    {
+      title: <FormattedMessage id="mt.kaicangjia" />,
+      dataIndex: 'startPrice',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 150,
+      renderText(text, record, index, action) {
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+      }
+    },
+    {
+      title: <FormattedMessage id="mt.chengjiaojia" />,
+      dataIndex: 'tradePrice',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 150,
+      renderText(text, record, index, action) {
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+      }
+    },
+    {
+      title: <FormattedMessage id="mt.shoushu" />,
+      dataIndex: 'tradingVolume',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      copyable: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 150,
+      align: 'left',
+      className: '!text-[13px] text-gray !font-dingpro-medium'
+    },
+    {
+      title: <FormattedMessage id="mt.shouxufei" />,
+      dataIndex: 'handlingFees',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 150,
+      renderText(text, record, index, action) {
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+      }
+    },
+    {
+      title: <FormattedMessage id="mt.jiaoyishijian" />,
+      dataIndex: 'createTime',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 180,
+      className: '!text-[13px] text-gray'
+    },
+    {
+      title: <FormattedMessage id="mt.chengjiaodanhao" />,
+      dataIndex: 'id',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      copyable: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 200
+    },
+    {
+      title: <FormattedMessage id="mt.yingkui" />,
+      dataIndex: 'profit',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      copyable: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 160,
+      align: 'right',
+      fixed: 'right',
+      renderText(text, record, index, action) {
+        const profit = record.profit
+        const flag = Number(profit) > 0
+        const color = flag ? 'text-green' : 'text-red'
+        const profitFormat = formatNum(profit)
+        return (
+          <>
+            {profit ? (
+              <span className={classNames('font-[800] !font-dingpro-medium', color)}>{flag ? '+' + profitFormat : profitFormat} USD</span>
+            ) : (
+              '0.00'
+            )}
+          </>
+        )
+      }
     }
-  }
-  const vol = { label: <FormattedMessage id="mt.shoushu" />, value: (item: Item) => toFixed(item.tradingVolume, item.symbolDecimal) }
-  const typeItem = {
-    label: <FormattedMessage id="common.type" />,
-    valueClassName: '!font-bold',
-    value: (item: Item) => {
-      return getEnum().Enum.OrderInOut?.[item.inOut as string]?.text || '-'
-    }
-  }
-  const orderNo = { label: <FormattedMessage id="mt.dingdanhao" />, value: (item: Item) => `${item.id}` }
-  const closePrice = {
-    label: <FormattedMessage id="mt.pingcangjia" />,
-    value: (item: Item) => formatValue(toFixed(item.tradePrice, item.symbolDecimal)),
-    unit: currentUnit
-  }
-  const openPrice = {
-    label: <FormattedMessage id="mt.kaicangjia" />,
-    value: (item: Item) => formatValue(toFixed(item?.startPrice, item.symbolDecimal)),
-    unit: currentUnit
-  }
-  const fee = {
-    label: <FormattedMessage id="mt.shouxufei" />,
-    value: (item: Item) => toFixed(item.handlingFees, item.symbolDecimal),
-    unit: currentUnit
-  }
+  ]
 
-  const pcList = [typeItem, openPrice, closePrice, fee, vol, floatPL]
-  const mobileList = [typeItem, vol, orderNo, openPrice, closePrice, fee, time]
+  const dataSource = list.map((v) => {
+    const digits = v.symbolDecimal || 2
+    v.tradePrice = toFixed(v.tradePrice, digits)
+    v.startPrice = toFixed(v.startPrice, digits)
+    v.handlingFees = toFixed(v.handlingFees, digits)
+    v.tradingVolume = toFixed(v.tradingVolume, digits)
+    v.profit = toFixed(v.profit, digits)
 
-  const fieldList = isPc ? pcList : mobileList
-
-  const renderLabel = (item: any) => {
-    // return (
-    //   <Tooltip placement="top" title={item?.value}>
-    //     <span className="text-gray-secondary mr-2 border-b border-dashed text-xs font-normal">{item?.label}</span>
-    //   </Tooltip>
-    // )
-    return <span className="text-xs font-normal text-gray-secondary xl:mr-2">{item?.label}</span>
-  }
-
-  /**
-   * 渲染属性值
-   * @param {*} item 配置item
-   * @param {*} key 配置item key
-   * @param {*} obj 数据item
-   * @returns
-   */
-  const renderProp = (item: any, key: any, obj: any) => {
-    return typeof item?.[key] === 'function' ? item?.[key]?.(obj) : item?.[key]
-  }
+    return v
+  })
 
   return (
-    <div style={style}>
-      <div>
-        {list.length > 0 &&
-          !loading &&
-          list.map((v: any, idx) => {
-            const buySellInfo = getBuySellInfo(v)
-            return (
-              <div key={idx} className="mb-3 rounded-xl border border-primary">
-                <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
-                  <div className="flex items-center">
-                    <img width={22} height={22} alt="" src={getSymbolIcon(v.imgUrl)} className="rounded-full" />
-                    <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
-                    <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
-                    {/* pc显示 */}
-                    <div className="flex items-center max-xl:hidden">
-                      <div
-                        className="flex cursor-pointer items-center pl-[30px]"
-                        onClick={() => {
-                          copyContent(v.id, intl.formatMessage({ id: 'mt.fuzhichenggong' }))
-                        }}
-                      >
-                        <span className="text-xs text-gray-weak">ID</span>
-                        <span className="px-[6px] text-xs text-gray-secondary">{v.id}</span>
-                        <img src="/img/copy-icon.png" width={16} height={16} alt="" />
-                      </div>
-                      <div className="flex items-center pl-[30px]">
-                        <img src="/img/time.png" width={16} height={16} alt="" />
-                        <span className="pl-[6px] text-xs text-gray-secondary">{formatTime(v.createTime)}</span>
-                      </div>
-                    </div>
-                  </div>
-                  {/* 分享海报位置icon */}
-                  {/* <div className="flex items-center">
-                  <Image src='' width={} height={}  alt='' />
-                </div> */}
-                </div>
-                <div className="px-3 py-3">
-                  <SwitchPcOrWapLayout
-                    pcComponent={
-                      <div className={classNames('grid gap-y-3 grid-cols-6')}>
-                        {fieldList.map((item: any, idx) => (
-                          <div className={classNames('xxl:last:text-right', item.className)} key={idx}>
-                            {renderLabel(item)}
-                            <span className={classNames('text-xs font-normal text-gray', renderProp(item, 'valueClassName', v))}>
-                              {renderProp(item, 'value', v)}
-                              {item.unit && (
-                                <span className={classNames('text-xs text-gray-secondary', renderProp(item, 'unitClassName', v))}>
-                                  &nbsp;{item.unit}
-                                </span>
-                              )}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    }
-                    wapComponent={
-                      <>
-                        <div className={classNames('flex flex-col items-start', floatPL.className)}>
-                          <span className={classNames('text-xs font-normal text-gray', renderProp(floatPL, 'valueClassName', v))}>
-                            {renderProp(floatPL, 'value', v)}
-                            {floatPL.unit && (
-                              <span className={classNames('pl-1 text-xs text-gray-secondary', renderProp(floatPL, 'unitClassName', v))}>
-                                {floatPL.unit}
-                              </span>
-                            )}
-                          </span>
-                          {renderLabel(floatPL)}
-                        </div>
-                        {groupBy(fieldList, 3).map((group, idx) => {
-                          return (
-                            <ListItem
-                              key={idx}
-                              left={{
-                                value: renderProp(group?.[0], 'value', v),
-                                label: renderLabel(group[0])
-                              }}
-                              center={
-                                group[1]
-                                  ? {
-                                      value: renderProp(group?.[1], 'value', v),
-                                      label: renderLabel(group[1])
-                                    }
-                                  : undefined
-                              }
-                              right={
-                                group[2]
-                                  ? {
-                                      value: renderProp(group?.[2], 'value', v),
-                                      label: renderLabel(group[2])
-                                    }
-                                  : undefined
-                              }
-                            />
-                          )
-                        })}
-                      </>
-                    }
-                  />
-                </div>
-              </div>
-            )
-          })}
-      </div>
-      {list.length === 0 && !loading && (
-        <div className="mb-6">
-          <Empty />
-        </div>
-      )}
-      {loading && <PageLoading className="h-[100px]" />}
-    </div>
+    <>
+      <StandardTable
+        columns={columns}
+        // ghost
+        showOptionColumn={false}
+        dataSource={dataSource}
+        stripe={false}
+        hasTableBordered
+        hideSearch
+        cardBordered={false}
+        bordered={false}
+        className={recordListClassName}
+        cardProps={{
+          bodyStyle: { padding: 0 },
+          headStyle: { borderRadius: 0 },
+          className: ''
+        }}
+        rowClassName={(record, i) => {
+          return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
+        }}
+        size="small"
+        loading={loading}
+        pageSize={20}
+      />
+    </>
   )
 }
 

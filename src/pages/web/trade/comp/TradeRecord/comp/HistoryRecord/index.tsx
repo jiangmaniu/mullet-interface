@@ -36,7 +36,7 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
 
   return (
     <div style={style}>
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between m-4">
         <CustomTabs
           items={[
             { label: <FormattedMessage id="mt.lishichengjiao" />, key: 'close' },

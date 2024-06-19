@@ -1,6 +1,7 @@
 import {
   ActionType,
   BaseQueryFilterProps,
+  ProCardProps,
   ProColumns,
   ProFormInstance,
   ProFormProps,
@@ -101,6 +102,7 @@ interface IProps<T, U> extends ProTableProps<T, U> {
   /**展示删除弹窗 */
   showDeleteModal?: boolean
   setDeleteModalText?: (record: T) => React.ReactNode
+  cardProps?: ProCardProps
 }
 
 export default <T extends Record<string, any>, U extends ParamsType = ParamsType>({
@@ -137,6 +139,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   searchFormBgColor,
   setDeleteModalText,
   showDeleteModal,
+  cardProps,
   ...res
 }: IProps<T, U>) => {
   const proTableOptions: ProTableProps<T, U> = { search: false }
@@ -314,7 +317,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
 
   columns.forEach((v) => {
     if (!v.valueType) {
-      v.className = '!px-5' // 统一修改单元格间距
+      v.className += ' !px-5' // 统一修改单元格间距
     }
 
     // 多语言 统一修改单元格宽度
@@ -465,7 +468,8 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       cardProps={{
         bodyStyle: { padding: '16px', ...bodyStyle },
         className: '!rounded-2xl border border-gray-150',
-        headStyle: { borderRadius: '12px 12px 0px 0px', ...headStyle }
+        headStyle: { borderRadius: '12px 12px 0px 0px', ...headStyle },
+        ...cardProps
       }}
       rowClassName={(record, i) => {
         if (stripe) {

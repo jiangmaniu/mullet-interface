@@ -9,9 +9,9 @@ import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
-import getCurrentQuote from '@/utils/getCurrentQuote'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 function FloatTradeBox() {
   const { isMobileOrIpad } = useEnv()

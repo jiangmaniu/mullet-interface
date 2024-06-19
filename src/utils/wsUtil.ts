@@ -1,5 +1,8 @@
 import { TRADE_BUY_SELL } from '@/constants/enum'
-import getCurrentQuote from '@/utils/getCurrentQuote'
+import { useStores } from '@/context/mobxProvider'
+import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
+
+import { formatNum, toFixed } from '.'
 
 // 货币类型
 export const CurrencyLABELS = {
@@ -431,5 +434,143 @@ export function formatSessionTime(a: any) {
     } else {
       return d + ':' + (c * 60).toFixed(0)
     }
+  }
+}
+
+// 计算收益率
+export const calcYieldRate = (item: IPositionItem) => {
+  const conf = item.conf as Symbol.SymbolConf
+  const contractSize = Number(conf?.contractSize || 0)
+  const orderVolume = Number(item.orderVolume || 0)
+  const orderMargin = Number(item.orderMargin || 0) // 开仓保证金
+  const price = Number(item.currentPrice || 0) // 现价
+  const startPrice = Number(item.startPrice || 0)
+  const yieldBuy = (price - startPrice) * contractSize * orderVolume
+  const yieldSell = (startPrice - price) * contractSize * orderVolume
+  const yieldValue = item.buySell === 'BUY' ? yieldBuy : yieldSell
+  return yieldValue && orderMargin ? toFixed((yieldValue / orderMargin) * 100) + '%' : '0.00%'
+}
+
+// 计算强平价
+export const calcForceClosePrice = (item: IPositionItem) => {
+  const { trade } = useStores()
+  // 多仓预估强平价 =(保证金余额 - 面值*张数*开仓均价)/(面值*张数*(维持保证金率 + 手续费率 - 1))
+  // 空仓预估强平个 =(保证金余额 + 面值*张数*开仓均价)/(面值*张数*(维持保证金率 + 手续费率 + 1
+  // 维持保证金率:用户维持当前仓位所需的最低保证金率
+  // 维持保证金=您的仓位价值*维持保证金率
+  // 仓位价值=当前价格（区分买卖价格）*手数*合约大小
+  // 维持保证金率=读取后台设置的（强制平仓比例）代替
+  // 面值*张数=当前价格（买或卖）*合约大小*手数
+  // 市价（限价）手续费/当前合约价值（手数*合约大小*当前价格(买价或卖价)）*100% = 手续费率 （计算模式：货币形式，如果后台手续费百分比形式：直接获取市价/限价手续费，看哪种单）
+  const conf = item.conf as Symbol.SymbolConf
+  const contractSize = Number(conf?.contractSize || 0)
+  const orderVolume = Number(item.orderVolume || 0)
+  // 区分全仓、逐仓保证金
+  const orderMargin = item.marginType === 'ISOLATED_MARGIN' ? Number(item.orderMargin || 0) : trade.currentAccountInfo?.margin || 0
+  const currentPrice = Number(item.currentPrice || 0)
+  const startPrice = Number(item.startPrice || 0)
+  const marginRate = item.compelCloseRatio // 强制平仓比例
+  const feeConfList =
+    conf.transactionFeeConf?.type === 'trade_vol' ? conf.transactionFeeConf?.trade_vol : conf.transactionFeeConf?.trade_hand // 手续费配置列表
+  const feeConfItem = (feeConfList || []).filter((v) => orderVolume >= v.from && orderVolume <= v.to)?.[0]
+  const feeComputeMode = feeConfItem?.compute_mode // 手续费计算模式
+  const marketFee = Number(feeConfItem?.market_fee || 0) // 市价手续费
+  let feeRate = 0
+  if (feeComputeMode === 'percentage') {
+    // 后台品种配置的手续费，选择百分比形式：手续费率 = 市价手续费(限价)
+    feeRate = marketFee / 100 // 读取市价手续费的百分比值
+  } else if (feeComputeMode === 'currency') {
+    // 后台品种配置的手续费，选择货币形式：手续费率 = 市价(限价)手续费 / 合约价值（当前价格*合约大小*手数） * 100%
+    feeRate = marketFee / (currentPrice * contractSize * orderVolume)
+  }
+  const number = currentPrice * contractSize * orderVolume
+  const buyForceClosePrice = (orderMargin - number * startPrice) / (number * marginRate * feeRate - 1)
+  const sellForceClosePrice = (orderMargin + number * startPrice) / (number * marginRate * feeRate + 1)
+  const forceClosePrice = item.buySell === 'BUY' ? buyForceClosePrice : sellForceClosePrice
+
+  const retValue = formatNum(forceClosePrice, { precision: item.symbolDecimal })
+  return Number(retValue) > 0 ? retValue : '-'
+}
+
+/**
+ * 获取当前激活打开的品种深度报价
+ * @param {*} currentSymbol 当前传入的symbolName
+ * @returns
+ */
+export function getCurrentDepth(currentSymbolName?: string) {
+  const { ws, trade } = useStores()
+  const { depth } = ws
+  const symbol = currentSymbolName || trade.activeSymbolName
+  const dataSourceSymbol = trade.getActiveSymbolInfo(symbol)?.dataSourceSymbol as string
+
+  const currentDepth = depth[dataSourceSymbol] || {}
+
+  return currentDepth
+}
+
+/**
+ * 获取当前激活打开的品种，高开低收，涨幅百分比
+ * @param {*} currentSymbol 当前传入的symbolName
+ * @param quote 全部行情，再次传入覆盖，有些地方没有实时刷新
+ * @returns
+ */
+export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
+  const { ws, global, trade } = useStores()
+  const { quotes } = ws
+  let symbol = currentSymbolName || trade.activeSymbolName // 展示的名称(后台自定义的品种名称)
+
+  // 如果传入的currentSymbolName是dataSourceSymbol，则使用传入的
+  const dataSourceSymbolItem = trade.symbolList.find((item) => item.dataSourceSymbol === currentSymbolName)
+  const isDataSourceSymbol = !!dataSourceSymbolItem
+  // 重要：如果传入的currentSymbolName是dataSourceSymbol，则获取对应的symbol自定义名称
+  symbol = isDataSourceSymbol ? dataSourceSymbolItem?.symbol : symbol
+  const symbolInfo = trade.symbolList.find((item) => item.symbol === symbol) || {} // 当前品种的详细信息
+
+  // 品种配置解构方便取值
+  const currentSymbol = symbolInfo as Account.TradeSymbolListItem
+  const dataSourceSymbol = (isDataSourceSymbol ? currentSymbolName : currentSymbol.dataSourceSymbol) as string // 用于订阅行情
+  const currentQuote = quote?.[dataSourceSymbol] || quotes?.[dataSourceSymbol] || {} // 行情信息
+  const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
+  const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf as Symbol.PrepaymentConf // 当前品种预付款配置
+  const transactionFeeConf = currentSymbol?.symbolConf?.transactionFeeConf as Symbol.TransactionFeeConf // 当前品种手续费配置
+  const holdingCostConf = currentSymbol?.symbolConf?.holdingCostConf as Symbol.HoldingCostConf // 当前品种手续费配置
+  const spreadConf = currentSymbol?.symbolConf?.spreadConf as Symbol.SpreadConf // 当前品种点差配置
+  const tradeTimeConf = currentSymbol?.symbolConf?.tradeTimeConf as Symbol.TradeTimeConf // 当前品种交易时间配置
+  const quotationConf = currentSymbol?.symbolConf?.quotationConf as Symbol.QuotationConf // 当前品种交易时间配置
+  const symbolNewTicker = currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
+
+  const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
+  const ask = Number(currentQuote?.priceData?.buy || 0) // 买价
+  const bid = Number(currentQuote?.priceData?.sell || 0) // 卖价
+  const open = Number(symbolNewTicker?.open || 0) // 开盘价
+  const high = Math.max.apply(Math, [Number(symbolNewTicker?.open || 0), bid]) // 拿当前价格跟首次返回的比
+  const low = Math.max.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
+  const close = Number(bid || symbolNewTicker?.close || 0) // 使用卖价作为最新的收盘价格
+  const percent = Number(bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0)
+
+  return {
+    symbol, // 用于展示的symbol自定义名称
+    dataSourceSymbol, // 用于订阅行情
+    digits,
+    currentQuote,
+    currentSymbol, // 当前品种信息
+    symbolConf, // 全部品种配置
+    prepaymentConf, // 预付款配置
+    transactionFeeConf, // 手续费配置
+    holdingCostConf, // 库存费配置
+    spreadConf, // 点差配置
+    tradeTimeConf, // 交易时间配置
+    quotationConf, // 报价配置
+    symbolNewTicker, // 高开低收
+    percent, //涨幅百分比
+    quotes,
+    consize: Number(symbolConf?.contractSize || 0),
+    ask: toFixed(ask, digits),
+    bid: toFixed(bid, digits),
+    high: toFixed(high, digits), //高
+    low: toFixed(low, digits), //低
+    open: toFixed(open, digits), //开
+    close: toFixed(close, digits), //收
+    spread: Math.abs(parseInt(String((bid - ask) * Math.pow(10, digits)))) // 买卖点差
   }
 }

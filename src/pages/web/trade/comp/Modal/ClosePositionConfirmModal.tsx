@@ -39,6 +39,7 @@ export default observer(
 
     const close = () => {
       setOpen(false)
+      setItem({} as IPositionItem)
     }
 
     const show = (item: any) => {

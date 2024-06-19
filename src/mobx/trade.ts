@@ -117,6 +117,7 @@ class TradeStore {
 
   // 计算保证金
   calcMargin = async (params: Order.CreateOrder) => {
+    if (!params.orderVolume || !params.symbol) return
     const res = await getOrderMargin(params)
     return Math.abs(res.data || 0)
   }

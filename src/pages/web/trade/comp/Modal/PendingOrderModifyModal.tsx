@@ -11,8 +11,8 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
-import getCurrentQuote from '@/utils/getCurrentQuote'
 import { message } from '@/utils/message'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPendingItem } from '../TradeRecord/comp/PendingList'
 import OpenTips from './OpenTipsModal'
@@ -35,6 +35,7 @@ export default observer(
       setSl('')
       setSp('')
       setPrice('')
+      setItem({} as IPendingItem)
     }
 
     const show = (item: IPendingItem) => {

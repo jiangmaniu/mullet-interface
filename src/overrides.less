@@ -206,13 +206,22 @@
   color: #051c2c;
 }
 
+// .ant-btn-default {
+//   &:hover {
+//     color: var(--btn-primary) !important;
+//     border-color: var(--btn-primary) !important;
+//     svg {
+//       fill: var(--color-primary) !important;
+//     }
+//   }
+// }
+
+// 修改默认按钮悬停效果
 .ant-btn-default {
   &:hover {
-    color: var(--btn-primary) !important;
-    border-color: var(--btn-primary) !important;
-    svg {
-      fill: var(--color-primary) !important;
-    }
+    color: var(--color-text-primary) !important;
+    background-color: hsla(0, 0%, 97%, 0.7) !important;
+    border-color: #d9d9d9 !important;
   }
 }
 
@@ -330,4 +339,15 @@
 // 去掉输入框outline
 input:focus {
   outline: none;
+}
+
+.ant-app {
+  height: 100%;
+}
+
+.table-row-red > td:first-child {
+  border-left: 5px solid var(--color-red-600);
+}
+.table-row-green > td:first-child {
+  border-left: 5px solid var(--color-green-700);
 }

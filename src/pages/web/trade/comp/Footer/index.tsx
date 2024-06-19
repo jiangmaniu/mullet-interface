@@ -4,8 +4,8 @@ import { observer } from 'mobx-react'
 import Marquee from 'react-fast-marquee'
 
 import { useStores } from '@/context/mobxProvider'
-import getCurrentQuote from '@/utils/getCurrentQuote'
 import { goToService } from '@/utils/navigator'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 底部浮动条
 function Footer() {
@@ -25,8 +25,6 @@ function Footer() {
             const res = getCurrentQuote(item.symbol)
             const per: any = res.percent
             const bid = res.bid
-
-            console.log('res', res)
 
             return (
               <div key={idx} className="h-full border-r border-r-gray-200 px-4">

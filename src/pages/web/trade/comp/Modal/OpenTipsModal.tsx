@@ -15,7 +15,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
-import getCurrentQuote from '@/utils/getCurrentQuote'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 平仓、挂单成功提示
 export default observer((props, ref) => {

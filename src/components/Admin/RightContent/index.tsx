@@ -16,8 +16,8 @@ import SwitchLanguage from '@/components/SwitchLanguage'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
-import getCurrentQuote from '@/utils/getCurrentQuote'
 import { goKefu, onLogout, push } from '@/utils/navigator'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 export type SiderTheme = 'light' | 'dark'
 

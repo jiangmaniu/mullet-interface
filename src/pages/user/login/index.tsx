@@ -145,7 +145,7 @@ export default function Login() {
   }
 
   return (
-    <div className={classNames('flex items-center justify-center mt-10 flex-1', rootClassName)}>
+    <div className={classNames('flex items-center justify-center mt-10 flex-1 h-full', rootClassName)}>
       {!loading && (
         <LoginForm
           title={

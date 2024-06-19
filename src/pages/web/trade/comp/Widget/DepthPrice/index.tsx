@@ -1,4 +1,3 @@
-import { ProFormSelect } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import { Col, Row } from 'antd'
@@ -8,8 +7,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
-import getCurrentDepth from '@/utils/getCurrentDepth'
-import getCurrentQuote from '@/utils/getCurrentQuote'
+import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
 
 function generateRandomProgressArray() {
   const progressArray = []
@@ -72,7 +70,7 @@ function DeepPrice() {
     }
   })
 
-  const BuyHeaderDom = (
+  const BidPriceDom = (
     <div className="border-t border-b border-gray-60 py-2 px-3">
       <div className="flex items-center justify-between">
         <div>
@@ -127,14 +125,14 @@ function DeepPrice() {
   const renderBuy = () => {
     return (
       <>
-        {BuyHeaderDom}
+        {BidPriceDom}
         {renderBuyList()}
       </>
     )
   }
 
   // 渲染卖列表
-  const renderSell = () => {
+  const renderSellList = () => {
     const list = bids.slice(0, showAll ? 12 : 20)
     const maxAmount = Math.max(...list.map((item) => item.amount))
     return (
@@ -191,7 +189,7 @@ function DeepPrice() {
             />
           ))}
         </div>
-        <div>
+        {/* <div>
           <ProFormSelect
             fieldProps={{
               size: 'small',
@@ -223,7 +221,7 @@ function DeepPrice() {
               }
             ]}
           />
-        </div>
+        </div> */}
       </div>
       <div className="py-3">
         <Row className="pb-2 px-3">
@@ -240,17 +238,22 @@ function DeepPrice() {
         <div style={{ height: 622 }}>
           {mode === 'BUY_SELL' && (
             <>
-              {renderSell()}
+              {renderSellList()}
               {renderBuy()}
             </>
           )}
           {mode === 'BUY' && (
             <div>
-              {BuyHeaderDom}
+              {BidPriceDom}
               <div className="overflow-y-auto h-[600px]">{renderBuyList()}</div>
             </div>
           )}
-          {mode === 'SELL' && renderSell()}
+          {mode === 'SELL' && (
+            <div>
+              {BidPriceDom}
+              <div className="overflow-y-auto h-[600px]">{renderSellList()}</div>
+            </div>
+          )}
         </div>
       </div>
     </div>

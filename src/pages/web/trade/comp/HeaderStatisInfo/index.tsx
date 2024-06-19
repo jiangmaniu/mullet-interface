@@ -9,7 +9,7 @@ import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
-import getCurrentQuote from '@/utils/getCurrentQuote'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Futures from '../Futures'
 import Sidebar from '../Sidebar'
@@ -22,7 +22,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const { ws, trade } = useStores()
   const symbol = trade.activeSymbolName
   const [showSidebar, setShowSidebar] = useState(false)
-  const symbolInfo = trade.openSymbolNameList.find((item) => item.symbol === symbol)
+  const symbolInfo = (trade.openSymbolNameList || []).find((item) => item?.symbol === symbol)
 
   const res: any = getCurrentQuote()
   const color = res.percent > 0 ? 'text-green' : 'text-red'
@@ -38,7 +38,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
         <>
           <div className="flex items-center justify-between px-[10px] py-2">
             <div className="flex items-center w-full">
-              <div className="flex items-center w-[300px] xxl:flex-row xl:flex-col">
+              <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
                 <div
                   className="flex cursor-pointer items-center relative"
                   onClick={() => {

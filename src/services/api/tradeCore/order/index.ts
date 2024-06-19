@@ -84,7 +84,7 @@ export async function getOrderDetail(params?: API.IdParam) {
 }
 
 // 持仓订单-分页
-export async function getBgaOrderPage(params?: Order.BgaOrderPageListParams) {
+export async function getBgaOrderPage(params: Order.BgaOrderPageListParams) {
   return request<API.Response<API.PageResult<Order.BgaOrderPageListItem>>>('/api/trade-core/coreApi/orders/bgaOrderPage', {
     method: 'GET',
     params

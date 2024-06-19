@@ -28,7 +28,7 @@ export default function Tabs({
         marginRight: itemsLen >= 5 ? `${tabBarGutter + 30}px` : 0
       },
       '.ant-tabs-nav': {
-        marginBottom: `${marginBottom} !important`
+        marginBottom: `${marginBottom}px !important`
       }
     }
   })

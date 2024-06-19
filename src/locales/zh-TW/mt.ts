@@ -254,5 +254,9 @@ export default {
   'mt.chengjiaojia': '成交价',
   'mt.shousushuruyouwu': '手数输入有误',
   'mt.24xiaoshizuigao': '24小时最高',
-  'mt.24xiaoshizuidi': '24小时最低'
+  'mt.24xiaoshizuidi': '24小时最低',
+  'mt.zhiyingzhisun2': '止盈 / 止损',
+  'mt.fudongyingkui_shouyilv': '浮动盈亏/收益率',
+  'mt.biaojijia': '标记价',
+  'mt.tianjia': '添加'
 }

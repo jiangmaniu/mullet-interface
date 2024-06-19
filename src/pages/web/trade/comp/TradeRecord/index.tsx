@@ -9,8 +9,8 @@ import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { IRecordTabKey } from '@/mobx/trade'
-import { toFixed } from '@/utils'
-import getCurrentQuote from '@/utils/getCurrentQuote'
+import { formatNum, toFixed } from '@/utils'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import OpenTipsModal from '../Modal/OpenTipsModal'
 import HistoryRecord from './comp/HistoryRecord'
@@ -53,6 +53,7 @@ function TradeRecord({ trigger }: IProps) {
 
   // 当前筛选列表的持仓总浮动盈亏
   const totalProfit = trade.getCurrentAccountFloatProfit(currentPositionList)
+  const totalProfitShow = formatNum(toFixed(totalProfit))
 
   const TabItems: { key: IRecordTabKey; label: any }[] = [
     { key: 'POSITION', label: `${intl.formatMessage({ id: 'mt.chicang' })}(${tradeListLen})` },
@@ -82,8 +83,8 @@ function TradeRecord({ trigger }: IProps) {
               <span className="mr-5 text-sm text-gray-secondary">
                 <span className="pr-[5px]">{activeSymbolName}</span>
                 <FormattedMessage id="mt.fudongyingkui" />
-                <span className={classNames('pl-2', totalProfit > 0 ? 'text-green' : 'text-red')}>
-                  {totalProfit > 0 ? '+' + toFixed(totalProfit) : toFixed(totalProfit)} USD
+                <span className={classNames('pl-2 !font-dingpro-medium', totalProfit > 0 ? 'text-green' : 'text-red')}>
+                  {totalProfit > 0 ? '+' + totalProfitShow : totalProfitShow} USD
                 </span>
               </span>
             )}
@@ -113,13 +114,14 @@ function TradeRecord({ trigger }: IProps) {
         tabBarStyle={{ paddingLeft: 27 }}
         size="small"
         activeKey={trade.recordTabKey}
+        marginBottom={0}
       />
     )
   }
 
   const renderTabContent = () => {
     return (
-      <div className="px-2 pb-1 mb-6 pt-1">
+      <div className="pb-[50px]">
         {tabKey === 'POSITION' && <PositionList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}
         {tabKey === 'PENDING' && <PendingList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}
         {tabKey === 'STOPLOSS_PROFIT' && <StopLossProfitList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import Slider from '@/components/Web/Slider'
-import getCurrentQuote from '@/utils/getCurrentQuote'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
   initialValue?: number
@@ -19,7 +19,7 @@ function LevelAge({ initialValue, onChange }: IProps) {
   const isFixedMargin = prepaymentConf?.mode === 'fixed_margin' // 固定保证金模式，没有杠杆
 
   useEffect(() => {
-    setValue(initialValue || 6)
+    setValue(initialValue || 0)
   }, [initialValue])
 
   if (isFixedMargin) return

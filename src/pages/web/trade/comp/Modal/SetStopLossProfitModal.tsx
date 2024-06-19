@@ -12,8 +12,8 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
-import getCurrentQuote from '@/utils/getCurrentQuote'
 import { message } from '@/utils/message'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
 
@@ -47,6 +47,7 @@ export default observer(
       setOpen(false)
       setSl('')
       setSp('')
+      setItem({} as IPositionItem)
     }
 
     const show = (item: any) => {

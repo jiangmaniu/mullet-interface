@@ -7,7 +7,7 @@ import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
-import getCurrentQuote from '@/utils/getCurrentQuote'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
   item: Account.TradeSymbolListItem

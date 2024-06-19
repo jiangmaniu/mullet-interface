@@ -11,8 +11,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { formatTimeStr } from '@/utils/business'
-import getCurrentQuote from '@/utils/getCurrentQuote'
-import { AllSymbols, formatQuotes } from '@/utils/wsUtil'
+import { AllSymbols, formatQuotes, getCurrentQuote } from '@/utils/wsUtil'
 
 const timef = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
 

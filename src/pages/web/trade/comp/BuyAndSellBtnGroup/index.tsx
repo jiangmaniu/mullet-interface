@@ -8,7 +8,7 @@ import Sell from '@/components/Base/Svg/Sell'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { formatNum } from '@/utils'
-import getCurrentQuote from '@/utils/getCurrentQuote'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
   type?: string
