@@ -466,7 +466,8 @@ export const calcForceClosePrice = (item: IPositionItem) => {
   const isCrossMargin = item.marginType === 'CROSS_MARGIN' // 全仓
   const currentPrice = Number(item.currentPrice || 0)
   const startPrice = Number(item.startPrice || 0) // 开仓价格
-  const compelCloseRatio = item.compelCloseRatio || 0 // 强制平仓比例
+  let compelCloseRatio = item.compelCloseRatio || 0 // 强制平仓比例
+  compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
 
   // 净值 = 账户余额 - 库存费 - 手续费 + 浮动盈亏
   // 汇率品种USD在前面，用除法

@@ -139,7 +139,8 @@ class TradeStore {
     let { money, occupyMargin, availableMargin, balance } = this.getAccountBalance()
     let marginRate = 0
     let margin = 0 // 维持保证金=强制平仓比例*保证金余额
-    const compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+    let compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+    compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
     if (isCrossMargin) {
       marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
       margin = Number(toFixed(availableMargin * compelCloseRatio))

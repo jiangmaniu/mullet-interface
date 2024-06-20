@@ -97,7 +97,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       align: 'left',
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
@@ -150,11 +150,12 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 180,
+      width: 150,
       renderText(text, record, index, action) {
+        const orderMargin = Number(record.orderMargin || 0)
         return (
           <span className="items-center inline-flex">
-            <span className="pr-2 !font-dingpro-medium text-gray text-[13px]">{formatNum(record.orderMargin)} USD</span>
+            <span className="pr-2 !font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) + 'USD' : '-'} </span>
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (
               <span>

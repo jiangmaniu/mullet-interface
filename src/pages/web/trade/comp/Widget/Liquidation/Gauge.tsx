@@ -21,7 +21,13 @@ function Gauge() {
   useEffect(() => {
     const echarts = instance.current?.echarts
     setOptions({
-      tooltip: {},
+      tooltip: {
+        show: false,
+        formatter: function (v: any) {
+          console.log('v', v)
+          return `${v.value}%`
+        }
+      },
       series: [
         {
           type: 'gauge',

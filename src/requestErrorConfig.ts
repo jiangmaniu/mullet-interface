@@ -6,11 +6,18 @@ import type { RequestOptions } from '@@/plugin-request/request'
 
 import { clientId, clientSecret } from './constants'
 import { message } from './utils/message'
-import { onLogout } from './utils/navigator'
+import { goLogin, onLogout } from './utils/navigator'
 
 type IErrorInfo = {
   code: number
   message: string
+}
+
+type IRequestOptions = RequestOptions & {
+  /**该请求是否需要token */
+  needToken?: boolean
+  /**接口是否需要客户端鉴权 */
+  authorization?: boolean
 }
 
 /**
@@ -98,7 +105,7 @@ export const errorConfig: RequestConfig = {
         message.info('Request Timeout')
       } else {
         // 发送请求时出了点问题
-        message.info('Request error, please retry.')
+        // message.info('Request error, please retry.')
       }
     }
   },
@@ -106,7 +113,7 @@ export const errorConfig: RequestConfig = {
   // 请求拦截器
   // https://github.com/umijs/umi-request#interceptor
   requestInterceptors: [
-    (config: RequestOptions) => {
+    (config: IRequestOptions) => {
       // 请求之前添加token
       const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
       const token = config.token || STORAGE_GET_TOKEN() || ''
@@ -130,6 +137,12 @@ export const errorConfig: RequestConfig = {
         // 传给后台分页大小是size
         config.params.size = config.params.pageSize
         delete config.params.pageSize
+      }
+
+      // token不存在并且该请求需要token，则不发送请求
+      if (!token && config.needToken !== false) {
+        goLogin()
+        return Promise.reject('')
       }
 
       return { ...config, interceptors: true, headers }

@@ -7,6 +7,7 @@ import { setLocalUserInfo, STORAGE_GET_USER_INFO } from '@/utils/storage'
 export async function getCaptcha() {
   return request<User.Captcha>('/api/blade-auth/oauth/captcha', {
     method: 'GET',
+    needToken: false,
     authorization: false
   })
 }
@@ -15,6 +16,7 @@ export async function getCaptcha() {
 export async function login(body: User.LoginParams, options?: { [key: string]: any }) {
   return request<User.LoginResult>(`/api/blade-auth/oauth/token?${stringify(body)}`, {
     method: 'POST',
+    needToken: false,
     ...(options || {})
   })
 }
@@ -49,6 +51,7 @@ export async function logout() {
 export async function sendCustomEmailCode(body: { email: string }) {
   return request<API.Response<any>>(`/api/trade-crm/crmClient/validateCode/customEmail?${stringify(body)}`, {
     method: 'POST',
+    needToken: false,
     data: body
   })
 }
@@ -64,6 +67,7 @@ export async function sendEmailCode() {
 export async function sendCustomPhoneCode(body: { phone: string }) {
   return request<API.Response<any>>(`/api/trade-crm/crmClient/validateCode/customPhone?${stringify(body)}`, {
     method: 'POST',
+    needToken: false,
     data: body
   })
 }
@@ -79,6 +83,7 @@ export async function sendPhoneCode() {
 export async function register(body: User.RegisterParams) {
   return request<API.Response<any>>('/api/trade-crm/crmClient/register/submit', {
     method: 'POST',
+    needToken: false,
     data: body
   })
 }
