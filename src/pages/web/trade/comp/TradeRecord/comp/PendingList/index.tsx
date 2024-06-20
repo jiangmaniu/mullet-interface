@@ -139,7 +139,9 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       align: 'left',
-      className: '!text-[13px] text-gray !font-dingpro-medium'
+      renderText(text, record, index, action) {
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+      }
     },
     {
       title: <FormattedMessage id="mt.zhiyingzhisun2" />,
@@ -188,7 +190,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 188,
+      width: 180,
       className: '!text-[13px] text-gray'
     },
     {

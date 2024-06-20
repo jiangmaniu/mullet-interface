@@ -412,3 +412,22 @@ export function isImageFile(filePath: any) {
   // 使用正则表达式进行匹配
   return imagePattern.test(filePath)
 }
+
+/**
+ * 对象数组去重
+ * @param arr 数组
+ * @param key 对象的key唯一
+ * @returns
+ */
+export function uniqueObjectArray(arr: any, key: string) {
+  if (!arr?.length) return []
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[i][key] === arr[j][key]) {
+        arr.splice(j, 1)
+        j--
+      }
+    }
+  }
+  return arr
+}

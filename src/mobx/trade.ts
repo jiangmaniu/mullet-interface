@@ -63,7 +63,7 @@ class TradeStore {
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
   @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
-  @observable currentAccountMargin = 0 // 当前账户可用保证金：逐仓保证金 + 全仓保证金margin
+  @observable currentLiquidationSelect = 'CROSS_MARGIN' // 右下角爆仓选择逐仓、全仓切换
 
   // 初始化加载
   init = () => {
@@ -71,6 +71,11 @@ class TradeStore {
     trade.initOpenSymbolNameList()
     // 初始化自选列表
     trade.initFavoriteList()
+  }
+
+  // 右下角爆仓选择逐仓、全仓切换
+  setCurrentLiquidationSelect = (value: any) => {
+    this.currentLiquidationSelect = value
   }
 
   // 设置保证金类型
@@ -92,11 +97,73 @@ class TradeStore {
     this.init()
   }
 
-  // 当前账户可用保证金 = 逐仓保证金 + 全仓保证金
+  // 获取当前账户账户余额、保证金信息
   @action
-  getCurrentAccountMargin = () => {
+  getAccountBalance = () => {
     const currentAccountInfo = this.currentAccountInfo
-    return toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0))
+    // 账户余额
+    const money = Number(toFixed(currentAccountInfo.money || 0))
+    // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
+    const occupyMargin = Number(toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0)))
+    // 可用保证金
+    const availableMargin = Number(toFixed(money - occupyMargin))
+    // 持仓总浮动盈亏
+    const totalProfit = Number(toFixed(this.getCurrentAccountFloatProfit(trade.positionList), 2))
+    // 持仓单总的库存费
+    const totalInterestFees = trade.positionList.reduce((total, next) => total + Number(next.interestFees), 0) || 0
+    // 持仓单总的手续费
+    const totalHandlingFees = trade.positionList.reduce((total, next) => total + Number(next.handlingFees), 0) || 0
+    // 净值 = 账户余额 - 库存费 - 手续费 + 浮动盈亏
+    const balance = Number(toFixed(Number(currentAccountInfo.money || 0) - totalInterestFees - totalHandlingFees + totalProfit))
+
+    return {
+      occupyMargin,
+      availableMargin,
+      balance,
+      totalProfit,
+      currentAccountInfo,
+      money
+    }
+  }
+
+  /**
+   * 计算全仓/逐仓：保证金率、维持保证金
+   * @returns
+   */
+  getMarginRateInfo = () => {
+    const currentLiquidationSelect = this.currentLiquidationSelect
+    const isCrossMargin = currentLiquidationSelect === 'CROSS_MARGIN' // 全仓
+    // 全仓保证金率：净值/占用 = 保证金率
+    // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
+    // 净值=账户余额-库存费-手续费+浮动盈亏
+    let { money, occupyMargin, availableMargin, balance } = this.getAccountBalance()
+    let marginRate = 0
+    let margin = 0 // 维持保证金=强制平仓比例*保证金余额
+    const compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+    if (isCrossMargin) {
+      marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
+      margin = Number(toFixed(availableMargin * compelCloseRatio))
+    } else {
+      const positionItem = this.positionList.find((item) => item.symbol === currentLiquidationSelect) // 当前筛选的订单信息
+      const orderMargin = positionItem?.orderMargin || 0
+      // 逐仓净值=账户余额（单笔交易保证金）-库存费-手续费+浮动盈亏
+      const isolatedBalance = Number(
+        toFixed(
+          orderMargin -
+            Number(positionItem?.interestFees || 0) -
+            Number(positionItem?.handlingFees || 0) +
+            Number(positionItem?.profit || 0)
+        )
+      )
+      marginRate = orderMargin ? toFixed((isolatedBalance / orderMargin) * 100) : 0
+      margin = Number(toFixed(orderMargin * compelCloseRatio))
+      balance = isolatedBalance
+    }
+    return {
+      marginRate,
+      margin,
+      balance
+    }
   }
 
   // 计算当前账户总的浮动盈亏

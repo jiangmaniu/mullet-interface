@@ -1,3 +1,4 @@
+import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Checkbox } from 'antd'
 import classNames from 'classnames'
@@ -35,6 +36,7 @@ function TradeRecord({ trigger }: IProps) {
 
   const activeSymbolName = trade.activeSymbolName
   const currentPositionList = showActiveSymbol ? tradeList?.filter((v: any) => v.symbol === activeSymbolName) : tradeList
+
   const currentPendingList = showActiveSymbol ? pendingList?.filter((v: any) => v.symbol === activeSymbolName) : pendingList
   const currentStopLossProfitList = showActiveSymbol
     ? stopLossProfitList?.filter((v: any) => v.symbol === activeSymbolName)
@@ -130,11 +132,26 @@ function TradeRecord({ trigger }: IProps) {
     )
   }
 
+  const borderClassName = useEmotionCss(({ token }) => {
+    return {
+      '&::after': {
+        content: "''",
+        background: '#E8E8E8',
+        width: 1,
+        height: '100%',
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 10
+      }
+    }
+  })
+
   return (
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className="pt-1 mb-3 bg-white relative border-t border-gray-180 z-[1]">
+          <div className={classNames('pt-1 mb-3 bg-white relative z-[1]', borderClassName)}>
             {renderTabs()}
             {renderTabContent()}
           </div>

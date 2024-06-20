@@ -112,10 +112,7 @@ export const HeaderRightContent = observer(() => {
   const accountList = currentUser?.accountList || []
   const currentAccountInfo = trade.currentAccountInfo
   const quoteInfo = getCurrentQuote() // 这里保留，取值过程，触发mobx实时更新
-  const avaMargin = trade.getCurrentAccountMargin() // 可用保证金
-  const occupyMargin = Number(currentAccountInfo.money || 0) - avaMargin
-  // 当前账户持仓总浮动盈亏
-  const totalProfit = trade.getCurrentAccountFloatProfit(trade.positionList)
+  const { balance, availableMargin, totalProfit, occupyMargin } = trade.getAccountBalance()
 
   useEffect(() => {
     // 切换真实模拟账户列表
@@ -127,11 +124,11 @@ export const HeaderRightContent = observer(() => {
     const list = [
       {
         label: <FormattedMessage id="mt.zongzichanjingzhi" />,
-        value: Number(currentAccountInfo.money || 0) + totalProfit, // 账户净值 = 余额 + 浮动盈亏
+        value: balance,
         tips: <FormattedMessage id="mt.zichanjingzhitips" />
       },
       { label: <FormattedMessage id="mt.fudongyingkui" />, value: totalProfit, tips: <FormattedMessage id="mt.fudongyingkuitips" /> },
-      { label: <FormattedMessage id="mt.keyong" />, value: avaMargin, tips: <FormattedMessage id="mt.keyongtips" /> },
+      { label: <FormattedMessage id="mt.keyong" />, value: availableMargin, tips: <FormattedMessage id="mt.keyongtips" /> },
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
@@ -299,7 +296,7 @@ export const HeaderRightContent = observer(() => {
           }}
         >
           <div className="flex flex-col items-end group relative">
-            <span className="text-xl text-gray !font-dingpro-regular">{formatNum(currentAccountInfo?.money, { precision: 2 })} USD</span>
+            <span className="text-xl text-gray !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
             <div className="flex items-center pt-[2px]">
               <span className="text-xs text-blue">
                 {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
@@ -325,7 +322,7 @@ export const HeaderRightContent = observer(() => {
                     <div className="flex flex-col pl-[14px]">
                       <span className="text-gray font-semibold">
                         <CopyComp style={{ display: 'flex', alignItems: 'center' }}>
-                          HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 8)}
+                          HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
                         </CopyComp>
                       </span>
                       <span className="text-green text-xs pt-[6px]">

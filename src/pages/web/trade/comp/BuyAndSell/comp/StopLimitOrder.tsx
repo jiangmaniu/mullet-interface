@@ -35,7 +35,7 @@ export default observer(
     const [isCrypto, setIsCrypto] = useState(true) // 是否是数字货币 @TODO 需要根据全局切换的品种名称来判断，切换不同的布局
     const [leverageMultiple, setLeverageMultiple] = useState(0) // 杠杆倍数
     const [marginType, setMarginType] = useState<API.MaiginType>('CROSS_MARGIN') // 保证金类型
-    const accountTotalMargin = trade.getCurrentAccountMargin()
+    const { availableMargin } = trade.getAccountBalance()
     const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
     const [margin, setMargin] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -340,7 +340,7 @@ export default observer(
           )}
           <InputNumber
             direction="column"
-            classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[76px]' }}
+            classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[68px]' }}
             height={52}
             textAlign="left"
             rootClassName="mt-[14px]"
@@ -380,7 +380,7 @@ export default observer(
               <span className="text-xs text-gray-secondary">
                 <FormattedMessage id="mt.keyong" />
               </span>
-              <span className="pl-2 text-xs text-gray !font-dingpro-medium">{formatNum(accountTotalMargin)}USD</span>
+              <span className="pl-2 text-xs text-gray !font-dingpro-medium">{formatNum(availableMargin)}USD</span>
             </div>
             <div className="mt-1 flex items-center justify-center pb-1">
               <span className="text-xs text-gray !font-dingpro-medium">{formatNum(margin, { precision: d })}USD</span>

@@ -29,6 +29,9 @@ export default function Tabs({
       },
       '.ant-tabs-nav': {
         marginBottom: `${marginBottom}px !important`
+      },
+      '.ant-tabs-tab-active .ant-tabs-tab-btn': {
+        fontWeight: '600 !important'
       }
     }
   })

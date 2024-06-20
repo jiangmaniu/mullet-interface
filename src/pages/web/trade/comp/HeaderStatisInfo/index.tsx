@@ -40,20 +40,28 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
             <div className="flex items-center w-full">
               <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
                 <div
-                  className="flex cursor-pointer items-center relative"
+                  className="flex cursor-pointer items-center relative xxl:top-1"
                   onClick={() => {
                     setShowSidebar(true)
                   }}
                   ref={openSidebarRef}
                 >
-                  <img width={24} height={24} alt="" src={getSymbolIcon(symbolInfo?.imgUrl)} className="rounded-full" />
-                  <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>
                   <img
-                    src="/img/down.png"
-                    height={24}
                     width={24}
-                    style={{ transform: showSidebar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'all 0.4s ease-in-out' }}
+                    height={24}
+                    alt=""
+                    src={getSymbolIcon(symbolInfo?.imgUrl)}
+                    className="rounded-full relative xl:top-[9px] xxl:top-0"
                   />
+                  <div className="flex items-center">
+                    <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>
+                    <img
+                      src="/img/down.png"
+                      height={24}
+                      width={24}
+                      style={{ transform: showSidebar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'all 0.4s ease-in-out' }}
+                    />
+                  </div>
 
                   <div
                     className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] bg-white"
@@ -65,7 +73,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                     <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
                   </div>
                 </div>
-                <div className="flex items-center pl-6">
+                <div className="flex items-center xxl:pl-6 xl:pl-7">
                   <span className={classNames('!font-dingpro-medium text-xl', color)}>{formatNum(res.bid)}</span>
                   {!!res.bid && (
                     <span className={classNames('pl-2 text-base !font-dingpro-medium', color)}>

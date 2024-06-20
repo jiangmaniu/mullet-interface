@@ -144,7 +144,9 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       align: 'left',
-      className: '!text-[13px] text-gray !font-dingpro-medium'
+      renderText(text, record, index, action) {
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+      }
     },
     {
       title: <FormattedMessage id="mt.shouxufei" />,

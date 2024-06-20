@@ -1,163 +1,151 @@
 import ReactECharts from 'echarts-for-react'
+import { observer } from 'mobx-react'
+import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'umi'
 
+import { useStores } from '@/context/mobxProvider'
+import { getCurrentQuote } from '@/utils/wsUtil'
+
 // https://git.hust.cc/echarts-for-react/
-export default function Gauge() {
+function Gauge() {
   const intl = useIntl()
-  //数据
-  let data = {
-    name: '',
-    //0 - 100
-    value: 10
-  }
+  const instance = useRef<any>(null)
+  const { trade } = useStores()
+  const quoteInfo = getCurrentQuote() // 保留，取值触发更新
+  const [options, setOptions] = useState<any>({})
+  const marginRateInfo = trade.getMarginRateInfo()
+  const marginRate = marginRateInfo.marginRate
 
-  //文本
-  let textMap: any = {
-    12: intl.formatMessage({ id: 'mt.wu' }),
-    38: intl.formatMessage({ id: 'mt.di' }),
-    63: intl.formatMessage({ id: 'mt.zhong' }),
-    88: intl.formatMessage({ id: 'mt.gao' })
-  }
+  const colors = ['#FF2222', '#FFE322', '#45A48A', '#45A48A']
 
-  //颜色区间
-  let colorList = [
-    {
-      x: 0,
-      y: 1,
-      x2: 0,
-      y2: 0,
-      colorStops: [
+  useEffect(() => {
+    const echarts = instance.current?.echarts
+    setOptions({
+      tooltip: {},
+      series: [
         {
-          offset: 0,
-          color: '#7BB2FF' // 0% 处的颜色
-        },
-        {
-          offset: 1,
-          color: '#4186FF' // 100% 处的颜色
-        }
-      ]
-    },
-    {
-      x: 0,
-      y: 1,
-      x2: 0,
-      y2: 0,
-      colorStops: [
-        {
-          offset: 0,
-          color: '#00D0BF' // 0% 处的颜色
-        },
-        {
-          offset: 1,
-          color: '#05C399' // 100% 处的颜色
-        }
-      ]
-    },
-    {
-      x: 0,
-      y: 1,
-      x2: 0,
-      y2: 0,
-      colorStops: [
-        {
-          offset: 0,
-          color: '#FFD18C' // 0% 处的颜色
-        },
-        {
-          offset: 1,
-          color: '#FEAD5A' // 100% 处的颜色
-        }
-      ]
-    },
-    {
-      x: 0,
-      y: 1,
-      x2: 0,
-      y2: 0,
-      colorStops: [
-        {
-          offset: 0,
-          color: '#fc6b84' // 0% 处的颜色
-        },
-        {
-          offset: 1,
-          color: '#e43c59' // 100% 处的颜色
-        }
-      ]
-    }
-  ]
-  const options = {
-    tooltip: {},
-    series: [
-      {
-        type: 'gauge',
-        splitNumber: 100,
-        radius: '69%',
-        startAngle: 180,
-        endAngle: 0,
-        min: 0,
-        max: 100,
-        center: ['50%', '65%'],
-        pointer: {
-          show: true,
-          width: 7,
-          length: '60%',
-          // @ts-ignore
-          borderColor: '#000',
-          borderWidth: '10',
-          itemStyle: {
-            color: 'auto'
-          }
-        },
-        axisLine: {
-          show: true,
-          lineStyle: {
-            width: 10,
-            color: [
-              [0.25, colorList[0]],
-              [0.5, colorList[1]],
-              [0.75, colorList[2]],
-              [1, colorList[3]]
-            ],
+          type: 'gauge',
+          splitNumber: 100,
+          radius: '100%',
+          startAngle: 220,
+          endAngle: -38,
+          min: 0,
+          max: 100,
+          center: ['50%', '65%'],
+          pointer: {
+            show: true,
+            width: 7,
+            length: '60%',
+            // @ts-ignore
             borderColor: '#000',
-            borderWidth: '10'
-          }
-        },
-        axisLabel: {
-          show: true,
-          color: '#666',
-          distance: -44,
-          fontSize: 12,
-          formatter: function (v: any) {
-            return textMap[v]
-          }
-        }, //刻度标签。
-        axisTick: {
-          show: 0
-        }, //刻度样式
-        splitLine: {
-          show: 0,
+            borderWidth: '10',
+            itemStyle: {
+              color: 'auto'
+            }
+          },
+          // axisLine: {
+          //   show: true,
+          //   lineStyle: {
+          //     width: 12,
+          //     color: [
+          //       [0.25, colorList[0]],
+          //       [0.5, colorList[1]],
+          //       [0.75, colorList[2]],
+          //       [1, colorList[3]]
+          //     ],
+          //     borderColor: '#000',
+          //     borderWidth: '10'
+          //   }
+          // },
+          // 轴线
+          axisLine: {
+            show: true,
+            lineStyle: {
+              width: 10,
+              color: [
+                [
+                  0.4,
+                  new echarts.graphic.LinearGradient(
+                    // 右下左上，渐变色从正下方开始，下面的以此类推
+                    0,
+                    1,
+                    0,
+                    0,
+                    [
+                      { offset: 0, color: colors[0] },
+                      { offset: 0.85, color: colors[1] }
+                    ]
+                  )
+                ],
+                [
+                  0.6,
+                  new echarts.graphic.LinearGradient(0, 1, 1, 0, [
+                    { offset: 0, color: colors[1] },
+                    { offset: 1, color: colors[2] }
+                  ])
+                ],
+                [
+                  0.7,
+                  new echarts.graphic.LinearGradient(0, 0, 1, 1, [
+                    { offset: 0.0, color: colors[2] },
+                    { offset: 1, color: colors[3] }
+                  ])
+                ],
+                [
+                  1,
+                  new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0.3, color: colors[3] },
+                    { offset: 1, color: colors[3] }
+                  ])
+                ]
+              ]
+            }
+          },
 
-          lineStyle: {
-            color: '#fff',
-            width: 2
-          }
-        }, //分隔线样式
-        detail: {
-          show: 0
-        },
-        title: {
-          show: false
-        },
-        data: [data]
+          axisLabel: {
+            show: false,
+            color: '#666',
+            distance: -44,
+            fontSize: 12
+            // formatter: function (v: any) {
+            //   return textMap[v]
+            // }
+          }, //刻度标签。
+          axisTick: {
+            show: 0
+          }, //刻度样式
+          splitLine: {
+            show: 0,
+
+            lineStyle: {
+              color: '#fff',
+              width: 2
+            }
+          }, //分隔线样式
+          detail: {
+            show: 0
+          },
+          title: {
+            show: false
+          },
+          data: [
+            {
+              name: '',
+              //0 - 100
+              value: marginRate >= 100 ? 100 : marginRate
+            }
+          ]
+        }
+      ],
+
+      grid: {
+        containLabel: true,
+        top: '50%'
       }
-    ],
+    })
+  }, [marginRate])
 
-    grid: {
-      containLabel: true,
-      top: '50%'
-    }
-  }
-
-  return <ReactECharts option={options} style={{ width: 120, height: 120 }} />
+  return <ReactECharts option={options} ref={instance} style={{ width: 110, height: 110 }} />
 }
+
+export default observer(Gauge)

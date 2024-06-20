@@ -174,7 +174,7 @@ function DeepPrice() {
 
   return (
     <div className={classNames('w-[260px] h-[700px] overflow-hidden bg-white relative', className)}>
-      <div className="flex items-center justify-between pl-3 pr-1 pt-[5px] pb-1 border-b border-gray-130">
+      <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130">
         <div className="flex items-center gap-x-4">
           {modeList.map((item, idx) => (
             <Iconfont

@@ -1,3 +1,5 @@
+import { useEmotionCss } from '@ant-design/use-emotion-css'
+import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
@@ -14,6 +16,7 @@ import Sidebar from './comp/Sidebar'
 import TradeRecord from './comp/TradeRecord'
 import TradingView from './comp/TradingView'
 import DepthPrice from './comp/Widget/DepthPrice'
+import Liquidation from './comp/Widget/Liquidation'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -26,6 +29,21 @@ export default observer(() => {
       ws.subscribeDepth(true)
     }
   }, [])
+
+  const borderClassName = useEmotionCss(({ token }) => {
+    return {
+      '&::after': {
+        content: "''",
+        background: '#E8E8E8',
+        width: '100%',
+        height: 0.5,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 10
+      }
+    }
+  })
 
   return (
     <>
@@ -42,8 +60,15 @@ export default observer(() => {
               {/* 买卖交易区 */}
               <BuyAndSell />
             </div>
-            {/* 交易记录 */}
-            <TradeRecord />
+            <div className={classNames('flex items-start justify-between relative', borderClassName)}>
+              {/* 交易记录 */}
+              <div style={{ width: 'calc(100vw - 303px)' }} className="flex-1">
+                <TradeRecord />
+              </div>
+              <div className="w-[300px]">
+                <Liquidation />
+              </div>
+            </div>
             {/* 底部固定状态栏 */}
             <Footer />
             {/* 浮动交易窗口 */}

@@ -83,7 +83,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           </Col>
           <Col span={12} className="flex flex-col items-end">
             <div className="!font-dingpro-medium text-sx text-gray text-right">{formatNum(bid)}</div>
-            <div className={classNames('text-right !font-dingpro-medium text-xs pt-1', per > 0 ? 'text-green' : 'text-red')}>
+            <div className={classNames('text-right !font-dingpro-medium text-xs', per > 0 ? 'text-green' : 'text-red')}>
               {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
             </div>
           </Col>

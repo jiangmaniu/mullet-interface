@@ -363,7 +363,27 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       // 表格圆角
       '.ant-table-content': {
         borderTopLeftRadius: '12px !important',
-        borderTopRightRadius: '12px !important'
+        borderTopRightRadius: '12px !important',
+        '&::-webkit-scrollbar': {
+          height: '7px !important',
+          width: 0,
+          overflowY: 'auto'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          borderRadius: 5,
+          background: '#fafafa'
+        },
+        '&::-webkit-scrollbar-track': {
+          '-webkit-box-shadow': 0,
+          borderRadius: 0,
+          background: '#fff'
+        },
+        /*滑块效果*/
+        '&::-webkit-scrollbar-thumb:hover': {
+          background: 'rgba(0, 0, 0, 0.4)',
+          borderRadius: 5,
+          boxShadow: 'inset 0 0 5px rgba(239, 239, 239, 1)'
+        }
       },
       '.ant-form': {
         background: `${searchFormBgColor || 'rgb(248, 248, 248)'} !important`
@@ -385,7 +405,10 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       '.ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before':
         {
           width: '0 !important'
-        }
+        },
+      '.ant-pagination': {
+        marginRight: '10px !important'
+      }
     }
   })
 

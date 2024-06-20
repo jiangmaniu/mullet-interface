@@ -12,7 +12,7 @@ function Footer() {
   const { ws, trade } = useStores()
 
   return (
-    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white px-5 pb-2 pt-2 shadow-[10px_10px_10px_10px_rgba(227,227,227,.4)] z-40">
+    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white px-5 pb-2 pt-2 border-t border-gray-100 z-40">
       {/* <div className="flex items-center border-r border-r-gray-200 pr-3">
         <div className="flex items-center">
           <SignalIcon color={isConnected ? `var(--color-green-700)` : 'var(--color-text-secondary)'} />
@@ -46,14 +46,14 @@ function Footer() {
           })}
         </Marquee>
       </div>
-      <div className="flex items-center pl-3">
+      {/* <div className="flex items-center pl-3">
         <div className="flex items-center">
           <img src="/img/download-icon.png" width={22} height={22} alt="" />
           <span className="text-xs font-normal text-gray-weak">
             <FormattedMessage id="mt.xiazai" />
           </span>
         </div>
-      </div>
+      </div> */}
       <div className="flex cursor-pointer items-center pl-3 " onClick={goToService}>
         <img src="/img/kefu-icon.png" width={22} height={22} alt="" />
         <span className="text-xs font-normal text-gray-weak">
