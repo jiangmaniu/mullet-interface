@@ -219,7 +219,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
 
           v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格
-          const profit = covertProfit(symbol, v) as number // 浮动盈亏
+          const profit = covertProfit(v) as number // 浮动盈亏
           v.profit = profit || v.profit // 避免出现闪动
           v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : toFixed(v.profit) // 格式化的
           v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化

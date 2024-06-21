@@ -28,6 +28,8 @@ export type IPositionItem = Order.BgaOrderPageListItem & {
   yieldRate: string
   /**强平价 */
   forceClosePrice: number
+  /**保证金率 */
+  marginRate?: string
 }
 
 type IProps = {
@@ -104,6 +106,22 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       }
     },
     {
+      title: <FormattedMessage id="mt.kaicangjia" />,
+      dataIndex: 'startPrice',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 150,
+      renderText(text, record, index, action) {
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+      }
+    },
+    {
       title: <FormattedMessage id="mt.biaojijia" />,
       dataIndex: 'currentPrice',
       hideInSearch: true, // 在 table的查询表单 中隐藏
@@ -124,8 +142,8 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="mt.kaicangjia" />,
-      dataIndex: 'startPrice',
+      title: <FormattedMessage id="mt.qiangpingjia" />,
+      dataIndex: 'forceClosePrice',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
       fieldProps: {
@@ -137,6 +155,22 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+      }
+    },
+    {
+      title: <FormattedMessage id="mt.baozhengjinlv" />,
+      dataIndex: 'marginRate',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 150,
+      renderText(text, record, index, action) {
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text || '-'}</span>
       }
     },
     {
@@ -231,22 +265,6 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
             </span>
           </div>
         )
-      }
-    },
-    {
-      title: <FormattedMessage id="mt.qiangpingjia" />,
-      dataIndex: 'forceClosePrice',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
       }
     },
     {
@@ -368,13 +386,15 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   ]
 
   const dataSource = list.map((v) => {
+    const conf = v.conf as Symbol.SymbolConf
     const symbol = v.dataSourceSymbol as string
+    const contractSize = conf.contractSize || 0
     const quoteInfo = getCurrentQuote(symbol)
     const digits = v.symbolDecimal || 2
     const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
 
     v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格
-    const profit = covertProfit(symbol, v) as number // 浮动盈亏
+    const profit = covertProfit(v) as number // 浮动盈亏
     v.profit = profit || v.profit // 避免出现闪动
     v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : toFixed(v.profit) // 格式化的
     v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
@@ -386,7 +406,23 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     v.handlingFees = toFixed(v.handlingFees, digits)
     v.interestFees = toFixed(v.interestFees, digits)
 
-    v.orderMargin = toFixed(v.orderMargin, digits)
+    const isCrossMargin = v.marginType === 'CROSS_MARGIN'
+
+    // 保证金率
+    const { marginRate } = trade.getMarginRateInfo(v)
+    v.marginRate = `${marginRate}%`
+
+    if (isCrossMargin) {
+      // 全仓保证金 = 现价* 合约大小 * 手数 / 杠杆
+      // 如果没有设置杠杆，读后台配置的杠杆
+      const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
+      const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
+      const leverageMultiple = v.leverageMultiple || leverage
+      v.orderMargin = toFixed(leverageMultiple ? (currentPrice * contractSize * Number(v.orderVolume)) / leverageMultiple : 0, digits)
+    } else {
+      // 逐仓保证金
+      v.orderMargin = toFixed(v.orderMargin, digits)
+    }
     return v
   })
 

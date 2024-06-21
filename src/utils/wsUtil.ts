@@ -342,16 +342,14 @@ export function formatWS(data: any) {
   return res
 }
 
-const quoteList2 = formatQuotes().quoteList2 // 外汇
-const quoteList3 = formatQuotes().quoteList3 // 指数
-
 /**
  * 将计算的浮动盈亏转化为美元单位
  * @param dataSourceSymbol 数据源品种名称
  * @param positionItem 持仓item
  * @returns
  */
-export function covertProfit(dataSourceSymbol: string, positionItem: Order.BgaOrderPageListItem) {
+export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
+  const dataSourceSymbol = positionItem?.dataSourceSymbol
   if (!dataSourceSymbol) return
   const quoteInfo = getCurrentQuote(dataSourceSymbol)
   const quotes = quoteInfo.quotes as any // 全部行情
@@ -377,6 +375,7 @@ export function covertProfit(dataSourceSymbol: string, positionItem: Order.BgaOr
   // 数字货币、商品黄金石油这些以美元结算的，单位都是USD不需要参与转化直接返回
   // 非USD单位的产品都要转化为美元
   // if ((quoteList2.some((v) => v.name === symbol) || quoteList3.some((v) => v.name === symbol)) && unit !== 'USD') {
+  // @TODO 取值需要处理一下
   if (isForeign) {
     // 乘法
     const divName = ('USD' + unit).toLocaleLowerCase() // 如 USDNZD
@@ -440,15 +439,10 @@ export function formatSessionTime(a: any) {
 // 计算收益率
 export const calcYieldRate = (item: IPositionItem) => {
   const conf = item.conf as Symbol.SymbolConf
-  const contractSize = Number(conf?.contractSize || 0)
-  const orderVolume = Number(item.orderVolume || 0)
   const orderMargin = Number(item.orderMargin || 0) // 开仓保证金
-  const price = Number(item.currentPrice || 0) // 现价
-  const startPrice = Number(item.startPrice || 0)
-  const yieldBuy = (price - startPrice) * contractSize * orderVolume
-  const yieldSell = (startPrice - price) * contractSize * orderVolume
-  const yieldValue = item.buySell === 'BUY' ? yieldBuy : yieldSell
-  return yieldValue && orderMargin ? toFixed((yieldValue / orderMargin) * 100) + '%' : '0.00%'
+  // 收益率 = 浮动盈亏 / 保证金
+  const profit = item.profit
+  return profit && orderMargin ? toFixed((profit / orderMargin) * 100) + '%' : '0.00%'
 }
 
 /**
@@ -550,6 +544,17 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   const low = Math.max.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
   const close = Number(bid || symbolNewTicker?.close || 0) // 使用卖价作为最新的收盘价格
   const percent = Number(bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0)
+  const spreadValue = Math.abs(parseInt(String((bid - ask) * Math.pow(10, digits)))) // 买卖点差
+  // 区分固定点差 浮动点差
+  let spread = 0
+  if (spreadConf?.type === 'fixed') {
+    // 固定点差模式
+    const { buy = 0, sell = 0 } = spreadConf.fixed || {}
+    spread = Math.abs(parseInt(String((sell - buy) * Math.pow(10, digits))))
+  } else {
+    // @TODO 浮动点差模式
+    spread = spreadValue
+  }
 
   return {
     symbol, // 用于展示的symbol自定义名称
@@ -574,6 +579,6 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
     low: toFixed(low, digits), //低
     open: toFixed(open, digits), //开
     close: toFixed(close, digits), //收
-    spread: Math.abs(parseInt(String((bid - ask) * Math.pow(10, digits)))) // 买卖点差
+    spread
   }
 }

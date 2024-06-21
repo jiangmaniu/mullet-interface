@@ -1,10 +1,10 @@
 import { ProFormSelect } from '@ant-design/pro-components'
+import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, uniqueObjectArray } from '@/utils'
-import { getSymbolIcon } from '@/utils/business'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Gauge from './Gauge'
@@ -18,8 +18,8 @@ function Liquidation() {
   const marginRateInfo = trade.getMarginRateInfo()
 
   // 筛选逐仓列表
-  const positionList = trade.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN')
-  const list = uniqueObjectArray(positionList, 'symbol').map((item: any) => ({
+  const isolatedMarginList = trade.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN')
+  const list = uniqueObjectArray(isolatedMarginList, 'symbol').map((item: any) => ({
     ...item,
     label: `${item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}`,
     value: item.symbol
@@ -27,33 +27,53 @@ function Liquidation() {
 
   const options = [
     {
-      label: `${activeSymbolName} ${intl.formatMessage({ id: 'mt.quancang' })}`,
+      label: intl.formatMessage({ id: 'mt.quancang' }),
       value: 'CROSS_MARGIN',
       imgUrl: trade.getActiveSymbolInfo().imgUrl
     },
     ...list
   ]
 
+  const selectClassName = useEmotionCss(({ token }) => {
+    return {
+      '.ant-select-item-option-content': {
+        display: 'flex',
+        alignItems: 'center',
+        fontSize: '12px !important'
+      },
+      '.ant-select-selection-item': {
+        fontSize: '12px !important'
+      }
+    }
+  })
+
   return (
     <div>
       <div className="px-4">
         <div className="flex items-center pb-2 pt-2">
-          {trade.positionList.length > 0 && activeSymbolName && (
+          {!isolatedMarginList.length && (
+            <div className="text-gray text-xs pt-3">
+              <FormattedMessage id="mt.quancang" />
+            </div>
+          )}
+          {isolatedMarginList.length > 0 && (
             <ProFormSelect
               fieldProps={{
                 size: 'middle',
+                popupClassName: selectClassName,
+                className: selectClassName,
                 value: trade.currentLiquidationSelect,
                 onChange: (value: any) => {
                   trade.setCurrentLiquidationSelect(value)
                 },
-                optionItemRender: (item: any) => {
-                  return (
-                    <div className="flex items-center truncate w-full">
-                      <img src={getSymbolIcon(item.imgUrl)} alt="" className="w-[20px] h-[20px] rounded-full" />
-                      <span className="text-gray !text-xs pl-1">{item.label}</span>
-                    </div>
-                  )
-                },
+                // optionItemRender: (item: any) => {
+                //   return (
+                //     <div className="flex items-center truncate w-full">
+                //       <img src={getSymbolIcon(item.imgUrl)} alt="" className="w-[20px] h-[20px] rounded-full" />
+                //       <span className="text-gray !text-xs pl-1">{item.label}</span>
+                //     </div>
+                //   )
+                // },
                 style: { minWidth: 120 },
                 suffixIcon: <img src="/img/down2.png" width={14} height={14} style={{ opacity: 0.4 }} />
               }}
@@ -69,7 +89,7 @@ function Liquidation() {
           )}
         </div>
         <div className="flex items-center flex-col">
-          <div className="flex items-center justify-center flex-col relative">
+          <div className="flex items-center justify-center flex-col relative w-full">
             <Gauge />
             <span className="text-base !font-dingpro-medium absolute -bottom-8">
               {formatNum(marginRateInfo.balance, { precision: 2 })} USD

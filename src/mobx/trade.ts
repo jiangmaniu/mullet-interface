@@ -128,11 +128,12 @@ class TradeStore {
 
   /**
    * 计算全仓/逐仓：保证金率、维持保证金
+   * @param item 持仓单item
    * @returns
    */
-  getMarginRateInfo = () => {
+  getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
     const currentLiquidationSelect = this.currentLiquidationSelect
-    const isCrossMargin = currentLiquidationSelect === 'CROSS_MARGIN' // 全仓
+    const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelect === 'CROSS_MARGIN') // 全仓
     // 全仓保证金率：净值/占用 = 保证金率
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
     // 净值=账户余额-库存费-手续费+浮动盈亏
@@ -145,7 +146,7 @@ class TradeStore {
       marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
       margin = Number(toFixed(availableMargin * compelCloseRatio))
     } else {
-      const positionItem = this.positionList.find((item) => item.symbol === currentLiquidationSelect) // 当前筛选的订单信息
+      const positionItem = item || this.positionList.find((item) => item.symbol === currentLiquidationSelect) // 当前筛选的订单信息
       const orderMargin = positionItem?.orderMargin || 0
       // 逐仓净值=账户余额（单笔交易保证金）-库存费-手续费+浮动盈亏
       const isolatedBalance = Number(
@@ -175,7 +176,7 @@ class TradeStore {
     let totalProfit = 0
     if (data.length) {
       data.forEach((item: Order.BgaOrderPageListItem) => {
-        const profit = covertProfit(item.dataSourceSymbol as string, item) // 浮动盈亏
+        const profit = covertProfit(item) // 浮动盈亏
         item.profit = profit || item.profit
         totalProfit += Number(item.profit || 0)
       })

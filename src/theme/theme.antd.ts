@@ -43,7 +43,8 @@ export default {
   },
   Select: {
     multipleItemBg: 'rgba(24, 62, 252, 0.04)',
-    optionSelectedBg: '#eee' // 选项选中时背景色
+    optionActiveBg: '#fafafa',
+    optionSelectedBg: '#fafafa' // 选项选中时背景色
   },
   InputNumber: {
     activeBorderColor: gray500, // 激活态边框色

@@ -258,5 +258,6 @@ export default {
   'mt.zhiyingzhisun2': '止盈 / 止损',
   'mt.fudongyingkui_shouyilv': '浮动盈亏/收益率',
   'mt.biaojijia': '标记价',
-  'mt.tianjia': '添加'
+  'mt.tianjia': '添加',
+  'mt.baozhengjinbili': '保证金比例'
 }
