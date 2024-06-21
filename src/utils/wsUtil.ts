@@ -1,5 +1,5 @@
 import { TRADE_BUY_SELL } from '@/constants/enum'
-import { useStores } from '@/context/mobxProvider'
+import { stores } from '@/context/mobxProvider'
 import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 
 import { toFixed } from '.'
@@ -451,7 +451,7 @@ export const calcYieldRate = (item: IPositionItem) => {
  * @returns
  */
 export const calcForceClosePrice = (item: IPositionItem) => {
-  const { trade } = useStores()
+  const { trade } = stores
   let { occupyMargin, balance } = trade.getAccountBalance()
   const conf = item.conf as Symbol.SymbolConf
   const contractSize = Number(conf?.contractSize || 0) // 合约大小
@@ -495,7 +495,7 @@ export const calcForceClosePrice = (item: IPositionItem) => {
  * @returns
  */
 export function getCurrentDepth(currentSymbolName?: string) {
-  const { ws, trade } = useStores()
+  const { ws, trade } = stores
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
   const dataSourceSymbol = trade.getActiveSymbolInfo(symbol)?.dataSourceSymbol as string
@@ -512,7 +512,7 @@ export function getCurrentDepth(currentSymbolName?: string) {
  * @returns
  */
 export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
-  const { ws, global, trade } = useStores()
+  const { ws, trade } = stores
   const { quotes } = ws
   let symbol = currentSymbolName || trade.activeSymbolName // 展示的名称(后台自定义的品种名称)
 

@@ -103,6 +103,8 @@ interface IProps<T, U> extends ProTableProps<T, U> {
   showDeleteModal?: boolean
   setDeleteModalText?: (record: T) => React.ReactNode
   cardProps?: ProCardProps
+  /**获取request返回的结果 */
+  getRequestResult?: (result: { total: number; data: T[]; success: boolean }) => void
 }
 
 export default <T extends Record<string, any>, U extends ParamsType = ParamsType>({
@@ -140,6 +142,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   setDeleteModalText,
   showDeleteModal,
   cardProps,
+  getRequestResult,
   ...res
 }: IProps<T, U>) => {
   const proTableOptions: ProTableProps<T, U> = { search: false }
@@ -150,7 +153,8 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
   const actionRef = useRef<ActionType>(null)
-
+  // 记录列表request请求结果
+  const [requestResult, setRequestResult] = useState({} as { total: number; data: T[]; success: boolean })
   const { setHasProList } = useModel('global')
 
   const [showExportWhenData, setShowExportWhenData] = useState(false)
@@ -164,6 +168,10 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       form: formRef.current
     })
   }, [formRef.current])
+
+  useEffect(() => {
+    getRequestResult?.(requestResult)
+  }, [requestResult])
 
   // 格式化参数
   // antd form 的配置
@@ -358,6 +366,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
     }
   })
 
+  // @ts-ignore
   const classNameWrapper = useEmotionCss(({ token }) => {
     return {
       // 表格圆角
@@ -374,7 +383,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           background: '#fafafa'
         },
         '&::-webkit-scrollbar-track': {
-          '-webkit-box-shadow': 0,
+          boxShadow: 0,
           borderRadius: 0,
           background: '#fff'
         },
@@ -452,13 +461,22 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         // 这里需要返回一个 Promise,在返回之前你可以进行数据转化、如果需要转化参数可以在这里进行修改
         const res = (await action?.query(queryParams)) as any
 
-        setHasProList(res.data?.length > 0)
+        const records = res?.data?.records || []
+        const isArray = Array.isArray(res?.data)
+        const dataList = isArray ? res.data : records
+        const total = isArray ? dataList.length : res?.data?.total
 
-        return {
-          data: res.data,
-          success: res.success,
-          total: res?.total
+        const result = {
+          data: dataList,
+          success: res?.success,
+          total
         }
+
+        setHasProList(dataList?.length > 0)
+
+        setRequestResult(result)
+
+        return result
         // return request<{
         //   data: AgentReport.UserCloseReportListItem[]
         // }>('https://proapi.azurewebsites.net/github/issues', {

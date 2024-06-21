@@ -2,6 +2,7 @@ import { PlusCircleOutlined } from '@ant-design/icons'
 import { ProColumns, useIntl } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 import classNames from 'classnames'
+import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
@@ -385,7 +386,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     }
   ]
 
-  const dataSource = list.map((v) => {
+  const dataSource = toJS(list).map((v) => {
     const conf = v.conf as Symbol.SymbolConf
     const symbol = v.dataSourceSymbol as string
     const contractSize = conf.contractSize || 0

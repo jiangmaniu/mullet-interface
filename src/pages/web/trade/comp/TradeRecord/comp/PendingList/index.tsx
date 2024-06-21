@@ -1,6 +1,7 @@
 import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 import classNames from 'classnames'
+import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useRef } from 'react'
 
@@ -234,7 +235,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
     }
   ]
 
-  const dataSource = list.map((v) => {
+  const dataSource = toJS(list).map((v) => {
     const dataSourceSymbol = v.dataSourceSymbol as string
     const quoteInfo = getCurrentQuote(dataSourceSymbol)
     const digits = v.symbolDecimal || 2
