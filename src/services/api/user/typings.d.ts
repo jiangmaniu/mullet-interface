@@ -16,9 +16,9 @@ declare namespace User {
      */
     country?: string
     /**
-     * 邮箱
+     * 邮箱或者手机
      */
-    email: string
+    emailOrPhone: string
     /**
      * 密码【加密】
      */
@@ -32,6 +32,7 @@ declare namespace User {
   type LoginParams = {
     username?: string
     password?: string
+    areaCode?: string
     /**刷新token */
     refresh_token?: string
     /**租户ID：默认值 000000 */
@@ -68,6 +69,7 @@ declare namespace User {
     dept_id: string
     account: string
     jti: string
+    success?: boolean
   }>
   // 客户详细信息
   type ClientInfo = {
@@ -124,7 +126,7 @@ declare namespace User {
     /**
      * 是否KYC认证
      */
-    isKycAtuh?: boolean
+    isKycAuth?: boolean
     /**
      * KYC认证信息
      */
@@ -237,9 +239,9 @@ declare namespace User {
   // 忘记密码
   type ForgetPasswordParams = {
     /**
-     * 邮箱
+     * 邮箱或者手机
      */
-    email: string
+    emailOrPhone: string
     /**
      * 新密码
      */

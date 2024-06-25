@@ -160,7 +160,7 @@ export default function InputNumber(props: IProps) {
 
   return (
     <div className={classnames('relative w-full', rootClassName, innerRootClassName)}>
-      {label && <div className={classnames('text-xs pb-[4px] text-left font-normal text-gray-weak', classNames?.label)}>{label}</div>}
+      {label && <div className={classnames('text-sm pb-[4px] text-left font-normal text-gray', classNames?.label)}>{label}</div>}
       <div
         className={classnames(
           'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border border-primary bg-white',

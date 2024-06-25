@@ -71,7 +71,7 @@ export default function AreaCodeSelect({
       label,
       areaNameZh,
       areaName,
-      value: v.key,
+      value: `+${v.key}`,
       areaCode: `+${v.key}`
     }
   })
@@ -112,12 +112,10 @@ export default function AreaCodeSelect({
           initialValue={initialValue}
           onChange={(value, option = {}) => {
             // @ts-ignore
-            const val = valueKey === 'areaName' ? value : option[valueKey] || value
+            const val = option?.['data-item']?.[valueKey] || value
 
             console.log('val', val)
             console.log('option', option)
-            // 重新赋值，否则数据不准
-            option.label = option['data-item']?.label
 
             // @ts-ignore
             form.setFieldsValue({ [name]: val }) // 表单重新正确的赋值，避免option中value值影响
@@ -127,7 +125,7 @@ export default function AreaCodeSelect({
           {...selectProps}
           fieldProps={{
             // @ts-ignore
-            ...(selectProps.fieldProps || {}),
+            ...(selectProps?.fieldProps || {}),
             ...fieldOptions,
             // 处理搜索
             filterOption: (initialValue, option) => {

@@ -1,4 +1,4 @@
-import { Outlet } from '@umijs/max'
+import { FormattedMessage, Outlet } from '@umijs/max'
 
 import SwitchLanguage from '@/components/SwitchLanguage'
 
@@ -22,7 +22,9 @@ export default function UserLayout() {
           <img src="/img/uc/kefu.png" width={28} height={28} />
         </div>
       </div>
-      <Outlet />
+      <div className="flex-1 flex flex-col">
+        <Outlet />
+      </div>
       <div className="flex mb-7 justify-center">
         <div className="w-[1200px] flex flex-col items-center justify-center">
           <div className="mb-5">
@@ -35,7 +37,8 @@ export default function UserLayout() {
             })}
           </div>
           <div className="text-center text-xs mb-2 text-gray-380">
-            風險警告:Digital asset trading is an emerging industry with bright prospects, but it also co
+            <FormattedMessage id="mt.fengxianjinggao" />
+            :Digital asset trading is an emerging industry with bright prospects, but it also co
             <br />
             <span>StelluX © 2023Cookie Preferences</span>
           </div>

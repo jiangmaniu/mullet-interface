@@ -1,15 +1,230 @@
+import { PlusCircleOutlined } from '@ant-design/icons'
+import { FormattedMessage, useModel } from '@umijs/max'
+import { useCountDown } from 'ahooks'
+import { Tooltip } from 'antd'
+import classNames from 'classnames'
+import { observer } from 'mobx-react'
+import { MenuInfo } from 'rc-menu/lib/interface'
+import { useEffect, useState } from 'react'
+
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
+import Tabs from '@/components/Base/CustomTabs'
+import Dropdown from '@/components/Base/Dropdown'
+import { useEnv } from '@/context/envProvider'
+import { useStores } from '@/context/mobxProvider'
+import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { push } from '@/utils/navigator'
 
 import Header from './comp/Header'
 
-export default function Account() {
+type IAccountItem = User.AccountItem & {
+  isEyeOpen?: boolean
+  isRefresh?: boolean
+}
+
+function Account() {
+  const { isPc } = useEnv()
+  const { initialState } = useModel('@@initialState')
+  const { fetchUserInfo } = useModel('user')
+  const { trade } = useStores()
+  const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL')
+  const [leftTime, setLeftTime] = useState<any>(0)
+
+  const [currentAccountList, setCurrentAccountList] = useState<IAccountItem[]>([])
+  const currentUser = initialState?.currentUser
+  const accountList = currentUser?.accountList || []
+
+  const [countDown] = useCountDown({
+    leftTime,
+    onEnd: () => {
+      // 倒计时结束重置
+      setLeftTime(undefined)
+    }
+  })
+  const countDownSeconds = Math.round(countDown / 1000)
+
+  useEffect(() => {
+    if (accountList?.length) {
+      setLeftTime(5 * 1000)
+    }
+  }, [accountList])
+
+  useEffect(() => {
+    // 切换真实模拟账户列表
+    const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
+    setCurrentAccountList(list)
+  }, [accountTabActiveKey, accountList.length])
+
   return (
     <PageContainer pageBgColorMode="white" renderHeader={() => <Header />}>
       <img src="/img/rujin-banner.png" className="w-full h-[108px]" />
-      <Button href="/account/type">账户类型选择</Button>
-      <Button href="/account/transfer">账户划转</Button>
-      我的账户页面
+      <div className="flex items-center justify-between mt-10">
+        <Tabs
+          items={[
+            { label: <FormattedMessage id="mt.zhenshizhanghao" />, key: 'REAL' },
+            { label: <FormattedMessage id="mt.monizhanghu" />, key: 'DEMO' }
+          ]}
+          onChange={(key: any) => {
+            setAccountTabActiveKey(key)
+          }}
+          activeKey={accountTabActiveKey}
+          itemStyle={{ paddingBlock: 6 }}
+        />
+        <Button
+          icon={<PlusCircleOutlined style={{ fontSize: 16 }} />}
+          onClick={() => {
+            push('/account/type')
+          }}
+        >
+          <FormattedMessage id="mt.chuangjianxinzhanghu" />
+        </Button>
+      </div>
+      <div className="pt-6">
+        {currentAccountList.map((item, idx) => {
+          const isSimulate = item.isSimulate
+          return (
+            <div className="flex items-center justify-between py-4 px-[20px] rounded-lg border-[0.5px] border-gray-200 mb-5" key={idx}>
+              <div className="flex flex-col">
+                <div className="flex flex-col">
+                  <div className="flex items-center">
+                    <div className="text-sm font-bold text-gray">
+                      {item.groupName} / {hiddenCenterPartStr(item?.id, 4)}
+                    </div>
+                    <div className="ml-[10px] flex px-1 items-center">
+                      <div
+                        className={classNames(
+                          'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
+                          isSimulate ? 'bg-green' : 'bg-primary'
+                        )}
+                      >
+                        {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+                      </div>
+                      <div className="pl-[6px] flex items-center">
+                        <div
+                          className="py-[2px] px-[3px] hover:bg-gray-80 rounded-[10px]"
+                          onClick={() => {
+                            setCurrentAccountList(
+                              currentAccountList.map((v) => ({ ...v, isEyeOpen: v.id === item.id ? !v.isEyeOpen : v.isEyeOpen }))
+                            )
+                          }}
+                        >
+                          <img
+                            src={`/img/${!item.isEyeOpen ? 'eye_open' : 'eye_close'}.png`}
+                            width={20}
+                            height={20}
+                            className="align-middle cursor-pointer"
+                          />
+                        </div>
+                        <div
+                          className="py-[2px] px-[3px] hover:bg-gray-80 rounded-[10px]"
+                          onClick={() => {
+                            setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: v.id === item.id })))
+                            fetchUserInfo().then((res) => {
+                              setTimeout(() => {
+                                setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: false })))
+                              }, 3000)
+                            })
+                          }}
+                        >
+                          <img
+                            src="/img/shuaxin.png"
+                            width={20}
+                            height={20}
+                            className={classNames('align-middle cursor-pointer', {
+                              rotate: item.isRefresh
+                            })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-baseline">
+                  <span className="text-[30px] !font-dingpro-medium text-gray">
+                    {!item.isEyeOpen ? formatNum(item.money, { precision: 2 }) : '∗∗∗∗'}
+                  </span>
+                  <span className="pl-[6px] text-sm text-gray-secondary">USD</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-x-3">
+                <Tooltip
+                  overlayClassName="tooltipBoxDeposit"
+                  zIndex={100}
+                  open={Number(item.money) <= 0 && countDownSeconds > 0}
+                  placement={isPc ? 'leftBottom' : 'bottomRight'}
+                  title={
+                    <div className="contentBox">
+                      <FormattedMessage id="mt.cunruzijinkaishijiaoyi" />
+                      <img src="/img/tips_icon.png" />
+                    </div>
+                  }
+                >
+                  <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
+                    <FormattedMessage id="mt.rujin" />
+                  </Button>
+                </Tooltip>
+                {!isSimulate && (
+                  <Button style={{ height: 46, width: 108 }} icon={<img src="/img/chujin_icon.png" width={20} height={20} />}>
+                    <FormattedMessage id="mt.chujin" />
+                  </Button>
+                )}
+                <Button
+                  type="primary"
+                  style={{ height: 46, width: 108 }}
+                  onClick={() => {
+                    trade.setCurrentAccountInfo(item)
+                    // 切换张哈
+                    push('/trade')
+                  }}
+                >
+                  <FormattedMessage id="mt.jiaoyi" />
+                </Button>
+                <Dropdown
+                  menu={{
+                    onClick: (event: MenuInfo) => {
+                      const { key } = event
+                      console.log('key', key)
+                    },
+                    items: [
+                      {
+                        key: 'transfer',
+                        label: (
+                          <span className="text-sm text-gray-secondary hover:text-gray">
+                            <FormattedMessage id="mt.zhuanzhang" />
+                          </span>
+                        )
+                      },
+                      {
+                        key: 'rename',
+                        label: (
+                          <span className="text-sm text-gray-secondary hover:text-gray">
+                            <FormattedMessage id="mt.zhanghuchongmingming" />
+                          </span>
+                        )
+                      },
+                      {
+                        key: 'editPwd',
+                        label: (
+                          <span className="text-sm text-gray-secondary hover:text-gray">
+                            <FormattedMessage id="mt.genggaijiaoyimima" />
+                          </span>
+                        )
+                      }
+                    ]
+                  }}
+                >
+                  <div className="hover:bg-gray-50 flex items-center justify-center p-3 rounded-full w-[46px] h-[46px] cursor-pointer">
+                    <img src="/img/dian.png" width={4} height={22} />
+                  </div>
+                </Dropdown>
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </PageContainer>
   )
 }
+
+export default observer(Account)

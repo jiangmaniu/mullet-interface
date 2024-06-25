@@ -225,7 +225,7 @@ export default observer(
                 onChange={(e: any) => {
                   setCheckedSpSl(e.target.checked)
                 }}
-                className="max-xl:hidden !mb-3"
+                className="max-xl:hidden !mb-3 mt-1"
               >
                 <span className="text-gray text-xs">
                   <FormattedMessage id="mt.zhiyingzhisun" />
@@ -317,7 +317,7 @@ export default observer(
               height={52}
               textAlign="left"
               placeholder={intl.formatMessage({ id: 'mt.shoushu' })}
-              label={intl.formatMessage({ id: 'mt.shoushu' })}
+              label={isBuy ? intl.formatMessage({ id: 'mt.mairushoushu' }) : intl.formatMessage({ id: 'mt.maichushoushu' })}
               unit={intl.formatMessage({ id: 'mt.lot' })}
               value={countValue}
               max={vmax}
@@ -327,7 +327,7 @@ export default observer(
               }}
               onAdd={() => {
                 if (count && (isBuy ? count < vmax : count < 30)) {
-                  const c = (((count + 0.01) * 100) / 100).toFixed(2)
+                  const c = (((count + step) * 100) / 100).toFixed(2)
                   setCount(c)
                 } else {
                   // setCount(1)
@@ -335,12 +335,12 @@ export default observer(
                 }
               }}
               onMinus={() => {
-                if (count && count > 0.01) {
-                  const c = (((count - 0.01) * 100) / 100).toFixed(2)
+                if (count && count > step) {
+                  const c = (((count - step) * 100) / 100).toFixed(2)
                   setCount(c)
                 } else {
                   // setCount(1)
-                  setCount(0.01)
+                  setCount(step)
                 }
               }}
               tips={

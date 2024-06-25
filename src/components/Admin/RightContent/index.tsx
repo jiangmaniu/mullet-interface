@@ -102,12 +102,13 @@ export const Concat = () => {
   )
 }
 
-export const HeaderRightContent = observer(() => {
+export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) => {
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
   const { initialState } = useModel('@@initialState')
   const { trade } = useStores()
   const [currentAccountList, setCurrentAccountList] = useState<User.AccountItem[]>([])
   const { fetchUserInfo } = useModel('user')
+  const [accountBoxOpen, setAccountBoxOpen] = useState(false)
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
   const currentAccountInfo = trade.currentAccountInfo
@@ -132,7 +133,7 @@ export const HeaderRightContent = observer(() => {
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="z-[999] group-hover:block xl:absolute xl:top-[50px] -left-[5px] hidden xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:min-w-[380px] xl:pt-[18px]">
+      <div className="xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:w-[420px] xl:pt-[18px]">
         <div
           onClick={() => {
             // push('/trade')
@@ -140,7 +141,7 @@ export const HeaderRightContent = observer(() => {
           className="mb-[26px] cursor-pointer px-[18px]"
         >
           {list.map((item, idx) => (
-            <div className="mt-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
+            <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
               <span className="text-gray">{item.label}</span>
               <Tooltip overlayClassName="max-w-[300px]" placement="top" title={item.tips}>
                 <span className="ml-[5px]">
@@ -155,15 +156,13 @@ export const HeaderRightContent = observer(() => {
           ))}
         </div>
         <div className="mb-[13px] px-[18px]">
-          <div className="flex justify-between">
-            <Button className="!ml-0 text-sm max-xl:w-[48%] xl:w-[165px]">
-              <img src="/img/rujin_icon.png" width={20} height={20} />
-              <span>
-                <FormattedMessage id="mt.rujin" />
-              </span>
+          <div className="flex justify-between gap-x-3">
+            <Button className="!ml-0 text-sm" type="primary" block icon={<img src="/img/rujin-white.png" width={20} height={20} />}>
+              <FormattedMessage id="mt.rujin" />
             </Button>
             <Button
-              className="!ml-0 text-sm max-xl:w-[48%] xl:w-[165px]"
+              className="!ml-0 text-sm"
+              block
               onClick={() => {
                 // if (isMobileOrIpad) {
                 //   push('/user/cashOut')
@@ -172,11 +171,9 @@ export const HeaderRightContent = observer(() => {
                 //   push('/user')
                 // }
               }}
+              icon={<img src="/img/chujin_icon.png" width={20} height={20} style={{}} />}
             >
-              <img src="/img/chujin_icon.png" width={20} height={20} />
-              <span>
-                <FormattedMessage id="mt.chujin" />
-              </span>
+              <FormattedMessage id="mt.chujin" />
             </Button>
           </div>
           <div className="mt-[10px]">
@@ -185,11 +182,9 @@ export const HeaderRightContent = observer(() => {
               onClick={() => {
                 //
               }}
+              icon={<img src="/img/user_tab_icon4@2x.png" width={20} height={20} />}
             >
-              <img src="/img/user_tab_icon4@2x.png" width={20} height={20} />
-              <span>
-                <FormattedMessage id="mt.churujinjilu" />
-              </span>
+              <FormattedMessage id="mt.churujinjilu" />
             </Button>
           </div>
         </div>
@@ -207,7 +202,7 @@ export const HeaderRightContent = observer(() => {
             />
             <div
               onClick={() => {
-                // jumpMyAccount()
+                push('/account')
               }}
               className="cursor-pointer text-primary max-xl:text-right"
             >
@@ -243,7 +238,7 @@ export const HeaderRightContent = observer(() => {
                         <div
                           className={classNames(
                             'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                            isSimulate ? 'bg-green' : 'bg-blue-500'
+                            isSimulate ? 'bg-green' : 'bg-primary'
                           )}
                         >
                           {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
@@ -279,6 +274,14 @@ export const HeaderRightContent = observer(() => {
         borderTopRightRadius: 12,
         borderTopLeftRadius: 12,
         boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+      },
+      '&.active': {
+        border: '1px solid #f3f3f3',
+        borderBottomColor: '#fff',
+        background: '#fff',
+        borderTopRightRadius: 12,
+        borderTopLeftRadius: 12,
+        boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
       }
     }
   })
@@ -286,31 +289,48 @@ export const HeaderRightContent = observer(() => {
   return (
     <div className="flex items-center">
       <div className="flex items-center gap-x-[26px] mr-[28px]">
-        <div
-          className={classNames('flex items-center group p-1', groupClassName)}
-          onMouseEnter={() => {
-            // 刷新账户余额信息
-            setTimeout(() => {
-              fetchUserInfo()
-            }, 300)
+        <Dropdown
+          placement="topLeft"
+          dropdownRender={(origin) => {
+            return renderAccountBoxHover()
           }}
+          onOpenChange={(open) => {
+            setAccountBoxOpen(open)
+          }}
+          align={{ offset: [0, 0] }}
         >
-          <div className="flex flex-col items-end group relative">
-            <span className="text-xl text-gray !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
-            <div className="flex items-center pt-[2px]">
-              <span className="text-xs text-blue">
-                {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
-              </span>
-              <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200"></div>
-              <span className="text-xs text-gray-500">#{hiddenCenterPartStr(currentAccountInfo?.id, 4)}</span>
+          <div
+            className={classNames('flex items-center px-2 h-[57px]', groupClassName, { active: accountBoxOpen })}
+            onMouseEnter={() => {
+              // 刷新账户余额信息
+              setTimeout(() => {
+                fetchUserInfo()
+              }, 300)
+            }}
+          >
+            <div className="flex flex-col items-end group relative">
+              <span className="text-xl text-gray !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
+              <div className="flex items-center pt-[2px]">
+                <span className="text-xs text-blue">
+                  {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+                </span>
+                <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200"></div>
+                <span className="text-xs text-gray-500">#{hiddenCenterPartStr(currentAccountInfo?.id, 4)}</span>
+              </div>
             </div>
-            {renderAccountBoxHover()}
+            <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200"></div>
+            <div>
+              <img
+                src="/img/uc/select.png"
+                width={24}
+                height={24}
+                style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
+                className="transition-all duration-300"
+              />
+            </div>
           </div>
-          <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200"></div>
-          <div>
-            <img src="/img/uc/select.png" width={24} height={24} />
-          </div>
-        </div>
+        </Dropdown>
+
         <Dropdown
           placement="topRight"
           dropdownRender={(origin) => {

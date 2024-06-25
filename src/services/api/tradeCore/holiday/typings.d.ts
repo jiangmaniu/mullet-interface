@@ -8,7 +8,7 @@ declare namespace Holiday {
     /**
      * 结束时间
      */
-    entTime: string
+    endTime: string
     /**
      * 主键
      */
@@ -39,7 +39,7 @@ declare namespace Holiday {
     /**
      * 结束时间
      */
-    entTime: string
+    endTime: string
     /**
      * 主键
      */

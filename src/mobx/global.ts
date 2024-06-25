@@ -1,6 +1,7 @@
-import { action, makeAutoObservable } from 'mobx'
+import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
+import { getRegisterWay } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
 import { onLogout } from '@/utils/navigator'
 import { STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
@@ -9,6 +10,7 @@ export class GlobalStore {
   constructor() {
     makeAutoObservable(this)
   }
+  @observable registerWay: API.RegisterWay = 'EMAIL' // 注册方式: EMAIL | PHONE
 
   fetchUserInfo = async () => {
     try {
@@ -49,10 +51,18 @@ export class GlobalStore {
     return undefined
   }
 
+  // 获取该应用支持的注册方式，目前只支持一种，不支持同时切换手机、邮箱注册
+  getRegisterWay = async () => {
+    const res = await getRegisterWay()
+    runInAction(() => {
+      this.registerWay = res.data as API.RegisterWay
+    })
+  }
+
   // ========== 全局页面初始化执行 ================
   @action
   init = () => {
-    // trade.init()
+    this.getRegisterWay()
   }
 }
 

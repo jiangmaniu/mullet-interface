@@ -55,7 +55,10 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: pfFont !important; // 全局使用平方字体，不要修复权重，否则页面出现字体问题
+  font-family: pfFont !important; // 全局使用平方字体，不要去掉权重，否则页面出现字体问题
+  // 用这个样式去覆盖antd的样式，滚动条样式就可以继续被伪类修改了 https://github.com/ant-design/ant-design/issues/47592
+  scrollbar-width: auto;
+  scrollbar-color: auto;
 }
 
 *,
@@ -176,4 +179,50 @@ ol {
   background: rgba(0, 0, 0, 0.4);
   border-radius: 5px;
   box-shadow: inset 0 0 5px rgba(239, 239, 239, 1);
+}
+
+.rotate {
+  animation: rotateAnimation 2s linear infinite;
+}
+
+// 入金提示
+.tooltipBoxDeposit {
+  animation: shake 2s linear infinite;
+  .contentBox {
+    position: relative;
+    padding-left: 10px;
+    img {
+      position: absolute;
+      top: -12px;
+      left: -40px;
+      width: 50px;
+      height: 46px;
+    }
+  }
+  :global {
+    .ant-tooltip-inner {
+      box-shadow: none;
+    }
+  }
+}
+
+@keyframes rotateAnimation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  } /* 初始位置为原点 */
+  50% {
+    transform: translateX(-5px);
+  } /* X轴向左移动10像素并逆时针旋转3度 */
+  100% {
+    transform: translateX(0);
+  } /* 结束位置返回原点 */
 }

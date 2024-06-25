@@ -155,7 +155,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text ? formatNum(text) + 'USD' : '-'} </span>
       }
     },
     {
@@ -394,6 +394,27 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     const digits = v.symbolDecimal || 2
     const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
 
+    const isCrossMargin = v.marginType === 'CROSS_MARGIN'
+
+    if (isCrossMargin) {
+      // 全仓单笔保证金 = 开盘价 * 合约大小 * 手数 / 杠杆
+      // 如果没有设置杠杆，读后台配置的杠杆
+      const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
+      const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
+      const leverageMultiple = v.leverageMultiple || leverage
+      const initialMargin = prepaymentConf?.mode === 'fixed_margin' ? prepaymentConf?.fixed_margin?.initial_margin : 0 // 读后台初始预付款的值
+
+      // 杠杆存在
+      if (leverageMultiple) {
+        v.orderMargin = v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
+      } else {
+        v.orderMargin = toFixed(initialMargin, digits)
+      }
+    } else {
+      // 逐仓保证金
+      v.orderMargin = toFixed(v.orderMargin, digits)
+    }
+
     v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格
     const profit = covertProfit(v) as number // 浮动盈亏
     v.profit = profit || v.profit // 避免出现闪动
@@ -401,29 +422,16 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
     v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
     v.yieldRate = calcYieldRate(v) // 收益率
-    v.forceClosePrice = toFixed(calcForceClosePrice(v), digits) // 强平价
+    v.forceClosePrice = calcForceClosePrice(v) // 强平价
     v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价
     v.stopLoss = toFixed(v.stopLoss, digits) // 止损价
     v.handlingFees = toFixed(v.handlingFees, digits)
     v.interestFees = toFixed(v.interestFees, digits)
 
-    const isCrossMargin = v.marginType === 'CROSS_MARGIN'
-
     // 保证金率
     const { marginRate } = trade.getMarginRateInfo(v)
     v.marginRate = `${marginRate}%`
 
-    if (isCrossMargin) {
-      // 全仓保证金 = 现价* 合约大小 * 手数 / 杠杆
-      // 如果没有设置杠杆，读后台配置的杠杆
-      const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
-      const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
-      const leverageMultiple = v.leverageMultiple || leverage
-      v.orderMargin = toFixed(leverageMultiple ? (currentPrice * contractSize * Number(v.orderVolume)) / leverageMultiple : 0, digits)
-    } else {
-      // 逐仓保证金
-      v.orderMargin = toFixed(v.orderMargin, digits)
-    }
     return v
   })
 

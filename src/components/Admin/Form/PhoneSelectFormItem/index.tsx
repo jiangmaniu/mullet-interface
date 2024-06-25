@@ -1,16 +1,19 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import { Form, FormInstance, Input } from 'antd'
+import { useEffect } from 'react'
 
 import AreaCodeSelect from '@/components/Form/AreaCodeSelect'
 import { regMobile } from '@/utils'
 
 type IProps = {
-  name: string[]
+  names: string[]
   form: FormInstance
+  label?: React.ReactNode
+  required?: boolean
 }
 
-export default function PhoneSelectFormItem({ form, name = [] }: IProps) {
+export default function PhoneSelectFormItem({ form, label, required, names = [] }: IProps) {
   const intl = useIntl()
 
   const className = useEmotionCss(({ token }) => {
@@ -37,41 +40,54 @@ export default function PhoneSelectFormItem({ form, name = [] }: IProps) {
     }
   })
 
+  useEffect(() => {
+    // 默认显示香港区号
+    form.setFieldValue(names[1], '+852')
+  }, [])
+
   return (
     <Form.Item
-      name={name[0]}
+      name={names[0]}
       rootClassName={className}
-      rules={[
-        {
-          required: true,
-          validateTrigger: 'onBlur',
-          validator(rule, value, callback) {
-            if (!value) {
-              callback(intl.formatMessage({ id: 'mt.shurudianhua' }))
-            } else if (!regMobile.test(value)) {
-              callback(intl.formatMessage({ id: 'mt.shoujihaobuzhengque' }))
-            } else if (!form.getFieldValue('areaCode')) {
-              callback(intl.formatMessage({ id: 'mt.xuanzequhao' }))
-            } else {
-              callback()
-            }
-          }
-        }
-      ]}
+      required={required}
+      rules={
+        required
+          ? [
+              {
+                required: true,
+                validateTrigger: 'onBlur',
+                validator(rule, value, callback) {
+                  if (!value) {
+                    callback(intl.formatMessage({ id: 'mt.shurushoujihaoma' }))
+                  } else if (!regMobile.test(value)) {
+                    callback(intl.formatMessage({ id: 'mt.shoujihaobuzhengque' }))
+                  } else if (!form.getFieldValue('areaCode')) {
+                    callback(intl.formatMessage({ id: 'mt.xuanzequhao' }))
+                  } else {
+                    callback()
+                  }
+                }
+              }
+            ]
+          : []
+      }
       className="phoneSelect"
+      label={label}
     >
       <Input
         size="large"
         addonBefore={
           <AreaCodeSelect
-            name={name[1]}
+            name={names[1]}
             form={form}
-            valueKey="areaCode"
+            // valueKey="areaCode"
             onChange={(value, option = {}) => {
-              form.setFieldsValue({ countryName: option.label, country: option.areaId })
+              // 重新验证input表单错误提示
+              form.validateFields([names[0]])
             }}
             selectProps={{
               fieldProps: {
+                allowClear: false,
                 bordered: false,
                 style: { height: 30, width: 'auto', textAlign: 'left', paddingRight: 10, backgroundColor: '#fff', borderRadius: 12 },
                 dropdownStyle: { width: 410 }

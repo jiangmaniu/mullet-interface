@@ -453,6 +453,7 @@ export const calcYieldRate = (item: IPositionItem) => {
 export const calcForceClosePrice = (item: IPositionItem) => {
   const { trade } = stores
   let { occupyMargin, balance } = trade.getAccountBalance()
+  const digits = item?.symbolDecimal
   const conf = item.conf as Symbol.SymbolConf
   const contractSize = Number(conf?.contractSize || 0) // 合约大小
   const orderVolume = Number(item.orderVolume || 0) // 手数
@@ -475,18 +476,22 @@ export const calcForceClosePrice = (item: IPositionItem) => {
 
   // 全仓
   if (isCrossMargin) {
-    buyForceClosePrice = toFixed((startPrice - (balance - occupyMargin * compelCloseRatio)) / (contractSize * orderVolume))
-    sellForceClosePrice = toFixed((startPrice + (balance - occupyMargin * compelCloseRatio)) / (contractSize * orderVolume))
+    const value = (balance - occupyMargin * compelCloseRatio) / (contractSize * orderVolume)
+    buyForceClosePrice = toFixed(startPrice - value)
+    sellForceClosePrice = toFixed(startPrice + value)
   } else {
     // 逐仓的净值 = 账户余额(单笔订单的保证金) - 库存费 - 手续费 + 浮动盈亏
     balance = orderMargin - Number(item.interestFees || 0) - Number(item.handlingFees || 0) + Number(item.profit || 0)
     // 单笔订单的占用保证金
     occupyMargin = orderMargin
-    buyForceClosePrice = toFixed((startPrice - (balance - occupyMargin * compelCloseRatio)) / (contractSize * orderVolume))
-    sellForceClosePrice = toFixed((startPrice + (balance - occupyMargin * compelCloseRatio)) / (contractSize * orderVolume))
+    const value = (balance - occupyMargin * compelCloseRatio) / (contractSize * orderVolume)
+    buyForceClosePrice = toFixed(startPrice - value)
+    sellForceClosePrice = toFixed(startPrice + value)
   }
 
-  return item.buySell === 'BUY' ? buyForceClosePrice : sellForceClosePrice
+  const retValue = item.buySell === 'BUY' ? buyForceClosePrice : sellForceClosePrice
+
+  return retValue > 0 ? toFixed(retValue, digits) : ''
 }
 
 /**

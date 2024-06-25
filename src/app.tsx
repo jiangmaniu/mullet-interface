@@ -36,12 +36,13 @@ export async function getInitialState(): Promise<{
   fetchUserInfo?: (token?: any) => Promise<User.UserInfo | undefined>
 }> {
   // 未登录初始化全局配置
-  // await stores.global.init()
+  await stores.global.init()
+
   // 如果不是登录页面，执行
   const { location } = history
   const fetchUserInfo = stores.global.fetchUserInfo
   // 登录页进不来
-  if (getPathname(location.pathname) !== loginPath) {
+  if (getPathname(location.pathname) !== loginPath && STORAGE_GET_TOKEN()) {
     // 获取全局用户信息
     const currentUser = (await fetchUserInfo()) as User.UserInfo
     return {
@@ -84,7 +85,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       paddingTop: 0
     },
     // actionsRender: () => [],
-    actionsRender: () => [<HeaderRightContent key="content" />],
+    actionsRender: () => [<HeaderRightContent key="content" isAdmin />],
     // avatarProps: {
     //   src: initialState?.currentUser?.avatar || '/img/logo.png',
     //   title: <AvatarName />,
@@ -202,14 +203,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
 
         formatMenuPath(defaultMenuData)
 
-        console.log('defaultMenuData', defaultMenuData)
+        // console.log('defaultMenuData', defaultMenuData)
 
         return defaultMenuData
       }
     },
 
     menuItemRender: (menuItemProps, defaultDom) => {
-      console.log('menuItemProps', menuItemProps)
+      // console.log('menuItemProps', menuItemProps)
       if (menuItemProps.isUrl || !menuItemProps.path) {
         return defaultDom
       }
@@ -250,7 +251,7 @@ export const patchClientRoutes = ({ routes }: any) => {
   const lng = localStorage.getItem('umi_locale') || locationLng
   const token = STORAGE_GET_TOKEN()
   // const HOME_PAGE = token ? ADMIN_HOME_PAGE : WEB_HOME_PAGE
-  const HOME_PAGE = WEB_HOME_PAGE
+  const HOME_PAGE = token ? WEB_HOME_PAGE : loginPath
 
   // 首次默认重定向到en-US
   routes.unshift(

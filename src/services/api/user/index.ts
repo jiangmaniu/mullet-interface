@@ -48,7 +48,7 @@ export async function logout() {
 }
 
 // 发送邮箱验证码(输入邮箱)
-export async function sendCustomEmailCode(body: { email: string }) {
+export async function sendCustomEmailCode(body: { email?: string }) {
   return request<API.Response<any>>(`/api/trade-crm/crmClient/validateCode/customEmail?${stringify(body)}`, {
     method: 'POST',
     needToken: false,
@@ -64,7 +64,7 @@ export async function sendEmailCode() {
 }
 
 // 发送手机验证码(输入手机)
-export async function sendCustomPhoneCode(body: { phone: string }) {
+export async function sendCustomPhoneCode(body: { phone?: string }) {
   return request<API.Response<any>>(`/api/trade-crm/crmClient/validateCode/customPhone?${stringify(body)}`, {
     method: 'POST',
     needToken: false,
@@ -79,19 +79,38 @@ export async function sendPhoneCode() {
   })
 }
 
-// 客户用户-注册
-export async function register(body: User.RegisterParams) {
-  return request<API.Response<any>>('/api/trade-crm/crmClient/register/submit', {
+// 客户用户-手机注册
+export async function registerSubmitPhone(body: User.RegisterParams) {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/register/submitPhone', {
     method: 'POST',
     needToken: false,
     data: body
   })
 }
 
-// 忘记密码
-export async function forgetPassword(body: User.ForgetPasswordParams) {
-  return request<API.Response<any>>('/api/trade-crm/crmClient/register/forgetPassword', {
+// 客户用户-邮箱注册
+export async function registerSubmitEmail(body: User.RegisterParams) {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/register/submitEmail', {
     method: 'POST',
+    needToken: false,
+    data: body
+  })
+}
+
+// 客户用户-忘记密码【手机】
+export async function forgetPasswordPhone(body: User.ForgetPasswordParams) {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/register/forgetPasswordPhone', {
+    method: 'POST',
+    needToken: false,
+    data: body
+  })
+}
+
+// 客户用户-忘记密码【邮箱】
+export async function forgetPasswordEmail(body: User.ForgetPasswordParams) {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/register/forgetPasswordEmail', {
+    method: 'POST',
+    needToken: false,
     data: body
   })
 }

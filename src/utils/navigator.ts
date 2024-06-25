@@ -121,5 +121,21 @@ export const replace = (path: string) => {
   history.replace(formatPathname(path))
 }
 
+/**
+ * 返回上一个页面
+ */
+export const onBack = () => {
+  const path = location.pathname
+    .split('/')
+    .filter((v) => v)
+    .slice(0, -1)
+    .join('/')
+
+  // 不能在返回了
+  if (path.length === 1) return
+
+  push(getPathname(`/${path}`))
+}
+
 // 跳转客服页面 @TODO
 export const goToService = () => {}

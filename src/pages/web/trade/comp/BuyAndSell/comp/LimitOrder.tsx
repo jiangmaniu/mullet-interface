@@ -354,13 +354,13 @@ export default observer(
             }}
             onAdd={() => {
               if (count && (isBuy ? count < vmax : count <= 5)) {
-                const c = (((count + 0.01) * 100) / 100).toFixed(2)
+                const c = (((count + step) * 100) / 100).toFixed(2)
                 setCount(c)
               }
             }}
             onMinus={() => {
-              if (count && (isBuy ? count > vmin : count > 0.01)) {
-                const c = (((count - 0.01) * 100) / 100).toFixed(2)
+              if (count && (isBuy ? count > vmin : count > step)) {
+                const c = (((count - step) * 100) / 100).toFixed(2)
                 setCount(c)
               }
             }}

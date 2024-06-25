@@ -1,7 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 import { LoginForm, ProFormText } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { FormattedHTMLMessage, FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
 import classNames from 'classnames'
 import { md5 } from 'js-md5'
@@ -11,29 +11,45 @@ import { flushSync } from 'react-dom'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Tabs from '@/components/Base/Tabs'
-import { WEB_HOME_PAGE } from '@/constants'
-import { getCaptcha, login } from '@/services/api/user'
+import { ADMIN_HOME_PAGE, REGISTER_APP_CODE, WEB_HOME_PAGE } from '@/constants'
+import { getCaptcha, login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
 import { push } from '@/utils/navigator'
-import { STORAGE_GET_TOKEN, setLocalUserInfo } from '@/utils/storage'
+import { setLocalUserInfo } from '@/utils/storage'
 
+import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem'
 import PwdTips from '@/components/PwdTips'
+import { useStores } from '@/context/mobxProvider'
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
+import { observer } from 'mobx-react'
+import RegisterValidateCode, { IValidateCodeType } from '../comp/RegisterValidateCode'
 import animationData from './animation.json'
 
-export default function Login() {
+type ITabType = 'LOGIN' | 'REGISTER'
+
+function Login() {
   const intl = useIntl()
+  const { global } = useStores()
   const { initialState, setInitialState } = useModel('@@initialState')
-  const [activeKey, setActiveKey] = useState('login')
+  const [tabActiveKey, setTabActiveKey] = useState<ITabType>('LOGIN') // 登录、注册
   const [form] = Form.useForm()
-  const username = Form.useWatch('username', form)
-  const password = Form.useWatch('password', form)
+
   const [isEmailTab, setIsEmailTab] = useState(true) // 邮箱和手机选项切换
   const [loading, setLoading] = useState(false)
+  const [showValidateCodeInput, setShowValidateCodeInput] = useState(false) // 打开验证码输入框
+  const [validateCodeType, setValidateCodeType] = useState<IValidateCodeType>('REGISTER') // 验证码类型 忘记密码、注册
+
+  const isLoginTab = tabActiveKey === 'LOGIN'
+  const registerWay = global.registerWay
+
+  const username = Form.useWatch('username', form)
+  const password = Form.useWatch('password', form)
+  const areaCode = Form.useWatch('areaCode', form) || '+852' // 默认香港区号
+
+  const validateCodeRef = useRef<any>() // 注册、重置密码验证码
   const pwdTipsRef = useRef<any>()
 
   const [captchaInfo, setCaptchaInfo] = useState({} as User.Captcha)
-  const access_token = STORAGE_GET_TOKEN()
 
   const handleCaptcha = async () => {
     const res = await getCaptcha()
@@ -44,11 +60,16 @@ export default function Login() {
     handleCaptcha()
   }, [])
 
+  useEffect(() => {
+    // 确定用哪种方式登录或注册
+    setIsEmailTab(registerWay === 'EMAIL')
+  }, [registerWay])
+
   const className = useEmotionCss(({ token }) => {
     return {
       position: 'relative',
       '.ant-form-item': {
-        marginBottom: 32
+        marginBottom: 30
       }
     }
   })
@@ -94,15 +115,18 @@ export default function Login() {
         }))
       })
     }
+    return userInfo
   }
 
-  const handleSubmit = async (values: User.LoginParams) => {
+  // 登录
+  const handleSubmitLogin = async (values: User.LoginParams) => {
     try {
       setLoading(true)
       const result = await login(
         {
           username: values.username,
           password: md5(values.password as string),
+          areaCode,
           tenanId: '000000',
           type: 'account',
           grant_type: 'captcha',
@@ -116,20 +140,18 @@ export default function Login() {
         }
       )
 
-      // @ts-ignore
       if (result?.success) {
         // 缓存用户信息
         setLocalUserInfo(result as User.UserInfo)
 
         // 重新获取用户信息
-        await fetchUserInfo()
-
+        const currentUser = await fetchUserInfo()
+        // @ts-ignore
+        const hasAccount = currentUser?.accountList?.length > 0
+        const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
         setTimeout(() => {
           setLoading(false)
-          // message.info(intl.formatMessage({ id: 'mt.dengluchenggong' }))
-
-          const urlParams = new URL(window.location.href).searchParams
-          push(urlParams.get('redirect') || WEB_HOME_PAGE)
+          push(jumpPath)
         }, 6000)
 
         return
@@ -144,174 +166,301 @@ export default function Login() {
     }
   }
 
-  return (
-    <div className={classNames('flex items-center justify-center mt-10 flex-1 h-full', rootClassName)}>
-      {!loading && (
-        <LoginForm
-          title={
-            <div
-              className="mb-8 cursor-pointer"
-              // onClick={() => {
-              //   push(WEB_HOME_PAGE)
-              // }}
-            >
-              <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
-            </div>
-          }
-          rootClassName={className}
-          contentStyle={{
-            width: 490,
-            padding: '6px 40px 40px',
-            borderRadius: 8,
-            marginTop: 24,
-            background: '#fff'
-          }}
-          submitter={{
-            searchConfig: { submitText: intl.formatMessage({ id: 'mt.denglu' }) },
-            submitButtonProps: {
-              style: { height: 48, width: '100%' },
-              disabled: !username || !password
+  // 获取六位数验证码
+  const handleSendValidateCode = async () => {
+    setShowValidateCodeInput(true)
+    setValidateCodeType('REGISTER')
+    setTimeout(() => {
+      validateCodeRef.current?.sendCode({
+        emailOrPhone: username,
+        areaCode
+      })
+    }, 300)
+  }
+
+  // 注册-输入验证码后回退调用
+  const handleSubmitRegister = async () => {
+    setLoading(true)
+    const formData = form.getFieldsValue() // 注册表单数据
+    const validateCodeFormData = validateCodeRef.current?.form?.getFieldsValue?.() || {} // 验证码表单数据
+    const values = {
+      ...formData,
+      ...validateCodeFormData
+    }
+    // console.log('values===', values)
+    const reqFn = isEmailTab ? registerSubmitEmail : registerSubmitPhone
+    const params = {
+      emailOrPhone: username,
+      validateCode: values.validateCode,
+      password: values.password,
+      country: values.country,
+      code: REGISTER_APP_CODE
+    } as User.RegisterParams
+    const res = await reqFn(params)
+    setLoading(false)
+    if (res.success) {
+      // 关闭定时器
+      validateCodeRef.current?.stopCountDown?.()
+      setTabActiveKey('LOGIN')
+      message.info(intl.formatMessage({ id: 'mt.zhucechenggong' }))
+
+      // 自动登录(无需验证码方式)
+      const result = await login({
+        username,
+        password: md5(values.password as string),
+        areaCode,
+        tenanId: '000000',
+        type: 'account',
+        grant_type: 'password',
+        scope: 'all'
+      })
+
+      if (result?.success) {
+        // 缓存用户信息
+        setLocalUserInfo(result)
+
+        // 重新获取用户信息
+        const currentUser = await fetchUserInfo()
+        // @ts-ignore
+        const hasAccount = currentUser?.accountList?.length > 0
+        const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
+        push(jumpPath)
+      }
+    }
+  }
+
+  const renderLoginContent = () => {
+    return (
+      <div
+        className={classNames('flex items-center justify-center mt-10 flex-1 h-full', rootClassName)}
+        style={{ display: showValidateCodeInput ? 'none' : 'flex' }}
+      >
+        {!loading && (
+          <LoginForm
+            title={
+              <div
+                className="mb-8 cursor-pointer"
+                // onClick={() => {
+                //   push(WEB_HOME_PAGE)
+                // }}
+              >
+                <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
+              </div>
             }
-          }}
-          onFinish={async (values) => {
-            await handleSubmit(values as User.LoginParams)
-          }}
-          form={form}
-          actions={
-            <div className="text-gray-500 text-sm text-center cursor-pointer">
-              <FormattedMessage id="mt.wangjimima" />
-            </div>
-          }
-        >
-          <Tabs
-            activeKey={activeKey}
-            onChange={(key) => {
-              setActiveKey(key)
-
-              if (key === 'login') {
-                form.validateFields(['password'])
+            rootClassName={className}
+            contentStyle={{
+              width: 490,
+              padding: '6px 40px 40px',
+              borderRadius: 8,
+              marginTop: 24,
+              background: '#fff'
+            }}
+            submitter={{
+              searchConfig: {
+                submitText: isLoginTab ? intl.formatMessage({ id: 'mt.denglu' }) : <span>{intl.formatMessage({ id: 'mt.lijizhuce' })}</span>
+              },
+              submitButtonProps: {
+                style: { height: 48, width: '100%' },
+                disabled: !username || !password
               }
             }}
-            centered
-            tabBarGutter={130}
-            hiddenBottomLine
-            items={[
-              {
-                key: 'login',
-                label: (
-                  <span className="text-gray font-medium text-lg">
-                    <FormattedMessage id="mt.denglu" />
-                  </span>
-                )
-              },
-              {
-                key: 'register',
-                label: (
-                  <span className="text-gray-secondary text-lg font-medium hover:text-gray">
-                    <FormattedMessage id="mt.kailixinzhanghu" />
-                  </span>
-                )
+            onFinish={async (values) => {
+              if (isLoginTab) {
+                handleSubmitLogin(values as User.LoginParams)
+              } else {
+                handleSendValidateCode()
               }
-            ]}
-          />
-          <div className="flex items-center justify-between w-full pb-2">
-            <span>{!isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}</span>
-            <span className="cursor-pointer text-blue" onClick={() => setIsEmailTab(!isEmailTab)}>
-              {isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}
-            </span>
-          </div>
+            }}
+            form={form}
+            actions={
+              <>
+                {isLoginTab && (
+                  <div
+                    className="text-gray-500 text-sm text-center cursor-pointer"
+                    onClick={() => {
+                      setValidateCodeType('RESET_PWD')
+                      setShowValidateCodeInput(true)
+                    }}
+                  >
+                    <FormattedMessage id="mt.wangjimima" />
+                  </div>
+                )}
+                {!isLoginTab && (
+                  <div>
+                    <FormattedHTMLMessage id="mt.zhucetips" />
+                  </div>
+                )}
+              </>
+            }
+          >
+            <Tabs
+              activeKey={tabActiveKey}
+              onChange={(key: any) => {
+                setTabActiveKey(key)
 
-          {/* 电子邮箱 */}
-          {isEmailTab && (
-            <ProFormText
-              name="username"
-              fieldProps={{
-                size: 'large'
+                if (key === 'LOGIN') {
+                  form.validateFields(['password'])
+                }
               }}
-              placeholder={intl.formatMessage({ id: 'mt.shurudianziyouxiang' })}
-              required={false}
-              rules={[
+              centered
+              tabBarGutter={130}
+              hiddenBottomLine
+              items={[
                 {
-                  required: true,
-                  message: intl.formatMessage({ id: 'mt.shurudianziyouxiang' })
+                  key: 'LOGIN',
+                  label: (
+                    <span className="text-gray font-medium text-lg">
+                      <FormattedMessage id="mt.denglu" />
+                    </span>
+                  )
+                },
+                {
+                  key: 'REGISTER',
+                  label: (
+                    <span className="text-gray-secondary text-lg font-medium hover:text-gray">
+                      <FormattedMessage id="mt.kailixinzhanghu" />
+                    </span>
+                  )
                 }
               ]}
             />
-          )}
+            {/* <div className="flex items-center justify-between w-full pb-2">
+          <span>{!isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}</span>
+          <span className="cursor-pointer text-blue" onClick={() => setIsEmailTab(!isEmailTab)}>
+            {isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}
+          </span>
+        </div> */}
 
-          {/* 手机号码 */}
-          {!isEmailTab && <PhoneSelectFormItem name={['phone', 'code']} form={form} />}
-          <ProFormText.Password
-            name="password"
-            required={false}
-            label={intl.formatMessage({ id: 'mt.mima' })}
-            placeholder={intl.formatMessage({ id: 'mt.shurumima' })}
-            fieldProps={{
-              size: 'large',
-              onFocus: () => {
-                pwdTipsRef?.current?.show()
-              },
-              onBlur: () => {
-                pwdTipsRef?.current?.hide()
-              }
-            }}
-            rules={[
-              {
-                required: true,
-                message:
-                  activeKey === 'register'
-                    ? intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' })
-                    : intl.formatMessage({ id: 'mt.qingshurumima' }),
-                pattern: activeKey === 'register' ? regPassword : undefined
-              }
-            ]}
-          />
-          {activeKey === 'register' && <PwdTips pwd={password} ref={pwdTipsRef} />}
-          <div className="flex items-center gap-2">
-            <ProFormText
-              name="captchaCode"
-              fieldProps={{
-                size: 'large'
-              }}
-              label={intl.formatMessage({ id: 'mt.tuxingyanzhengma' })}
-              placeholder={intl.formatMessage({ id: 'mt.shuruyanzhengma' })}
+            {/* 选择国家地区 */}
+            {!isLoginTab && <SelectCountryFormItem form={form} />}
+
+            {/* 电子邮箱 */}
+            {isEmailTab && (
+              <ProFormText
+                name="username"
+                fieldProps={{
+                  size: 'large'
+                }}
+                placeholder={intl.formatMessage({ id: 'mt.shurudianziyouxiang' })}
+                required={false}
+                label={<FormattedMessage id="mt.dianziyouxiang" />}
+                rules={[
+                  {
+                    required: true,
+                    message: intl.formatMessage({ id: 'mt.shurudianziyouxiang' })
+                  }
+                ]}
+              />
+            )}
+
+            {/* 手机号码 */}
+            {!isEmailTab && (
+              <PhoneSelectFormItem
+                names={['username', 'areaCode']}
+                form={form}
+                label={<FormattedMessage id="mt.shoujihaoma" />}
+                required={false}
+              />
+            )}
+            <ProFormText.Password
+              name="password"
               required={false}
+              label={intl.formatMessage({ id: 'mt.mima' })}
+              placeholder={intl.formatMessage({ id: 'mt.shurumima' })}
+              fieldProps={{
+                size: 'large',
+                onFocus: () => {
+                  pwdTipsRef?.current?.show()
+                },
+                onBlur: () => {
+                  pwdTipsRef?.current?.hide()
+                }
+              }}
               rules={[
                 {
                   required: true,
-                  message: intl.formatMessage({ id: 'mt.shuruyanzhengma' })
+                  message: isLoginTab
+                    ? intl.formatMessage({ id: 'mt.qingshurumima' })
+                    : intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
+                  pattern: isLoginTab ? undefined : regPassword
                 }
               ]}
-              formItemProps={{ style: { width: '100%' } }}
             />
-            <div className="border-gray-220 border rounded-lg cursor-pointer w-[100px] overflow-hidden h-[49px]" onClick={handleCaptcha}>
-              <img src={captchaInfo.image} className="w-full h-full" />
+            {!isLoginTab && (
+              <div className="mb-4">
+                <PwdTips pwd={password} ref={pwdTipsRef} />
+              </div>
+            )}
+            {isLoginTab && (
+              <div className="flex items-center gap-2">
+                <ProFormText
+                  name="captchaCode"
+                  fieldProps={{
+                    size: 'large'
+                  }}
+                  label={intl.formatMessage({ id: 'mt.tuxingyanzhengma' })}
+                  placeholder={intl.formatMessage({ id: 'mt.shuruyanzhengma' })}
+                  required={false}
+                  rules={[
+                    {
+                      required: true,
+                      message: intl.formatMessage({ id: 'mt.shuruyanzhengma' })
+                    }
+                  ]}
+                  formItemProps={{ style: { width: '100%' } }}
+                />
+                <div className="border-gray-220 border rounded-lg cursor-pointer w-auto overflow-hidden h-[49px]" onClick={handleCaptcha}>
+                  <img src={captchaInfo.image} className="w-full h-full" />
+                </div>
+              </div>
+            )}
+          </LoginForm>
+        )}
+
+        {loading && (
+          <div className="bg-white rounded-lg w-[490px] h-[520px] flex items-center justify-center flex-col">
+            <div>
+              <Lottie
+                className="w-[400px] h-[400px]"
+                animationData={animationData}
+                renderer="svg"
+                autoplay={true}
+                loop={true}
+                assetsPath="/img/animation/"
+              />
+            </div>
+            <div className="flex flex-col items-center justify-center relative -top-5 px-6">
+              <div className="text-lg text-gray font-semibold">
+                <FormattedMessage id="mt.dengluzhong" />
+              </div>
+              <div className="pt-4 text-sm text-gray-secondary">
+                <FormattedMessage id="mt.loginTips" />
+              </div>
             </div>
           </div>
-        </LoginForm>
-      )}
-      {loading && (
-        <div className="bg-white rounded-lg w-[490px] h-[520px] flex items-center justify-center flex-col">
-          <div>
-            <Lottie
-              className="w-[400px] h-[400px]"
-              animationData={animationData}
-              renderer="svg"
-              autoplay={true}
-              loop={true}
-              assetsPath="/img/animation/"
-            />
-          </div>
-          <div className="flex flex-col items-center justify-center relative -top-5 px-6">
-            <div className="text-lg text-gray font-semibold">
-              <FormattedMessage id="mt.dengluzhong" />
-            </div>
-            <div className="pt-4 text-sm text-gray-secondary">
-              <FormattedMessage id="mt.loginTips" />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {/* 登录、注册切换 */}
+      {renderLoginContent()}
+      {/* 发送注册验证码组件、忘记密码 */}
+      <RegisterValidateCode
+        sendType={isEmailTab ? 'EMIAL' : 'PHONE'}
+        ref={validateCodeRef}
+        onConfirm={handleSubmitRegister}
+        onBack={() => {
+          setShowValidateCodeInput(false)
+        }}
+        // 注册验证码、重置密码
+        type={validateCodeType}
+        open={showValidateCodeInput}
+      />
+    </>
   )
 }
+
+export default observer(Login)

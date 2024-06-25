@@ -60,7 +60,7 @@ function TradeRecord({ trigger }: IProps) {
   const TabItems: { key: IRecordTabKey; label: any }[] = [
     { key: 'POSITION', label: `${intl.formatMessage({ id: 'mt.chicang' })}(${tradeListLen})` },
     { key: 'PENDING', label: `${intl.formatMessage({ id: 'mt.guadan' })}(${pendingListLen})` },
-    { key: 'STOPLOSS_PROFIT', label: `${intl.formatMessage({ id: 'mt.zhiyingzhisun' })}(${stopLossProfitListLen})` },
+    // { key: 'STOPLOSS_PROFIT', label: `${intl.formatMessage({ id: 'mt.zhiyingzhisun' })}(${stopLossProfitListLen})` },
     { key: 'HISTORY', label: intl.formatMessage({ id: 'mt.lishichengjiao' }) }
   ]
 

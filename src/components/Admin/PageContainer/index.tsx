@@ -65,7 +65,7 @@ export default function PageContainer({
             paddingInline: '9.5%'
           }}
           className={classNames('flex items-center', {
-            'sticky top-[68px] z-[99]': fixedHeader
+            'sticky top-[66px] z-[99]': fixedHeader
           })}
         >
           {renderHeader?.()}

@@ -120,7 +120,8 @@ class TradeStore {
       occupyMargin,
       availableMargin,
       balance,
-      totalProfit,
+      // 账户总盈亏 = 所有订单的盈亏 - 所有订单的库存费 - 所有订单的手续费
+      totalProfit: toFixed(totalProfit - totalHandlingFees - totalHandlingFees, 2),
       currentAccountInfo,
       money
     }
@@ -138,6 +139,7 @@ class TradeStore {
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
     // 净值=账户余额-库存费-手续费+浮动盈亏
     let { money, occupyMargin, availableMargin, balance } = this.getAccountBalance()
+
     let marginRate = 0
     let margin = 0 // 维持保证金=强制平仓比例*保证金余额
     let compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
@@ -344,11 +346,13 @@ class TradeStore {
   // 根据账户id查询侧边栏菜单交易品种列表
   @action
   getSymbolList = async (params = {} as Partial<Account.TradeSymbolListParams>) => {
+    const accountId = params?.accountId || this.currentAccountInfo?.id
+    if (!accountId) return
     // 查询全部
     if (params.classify === '0') {
       delete params.classify
     }
-    const res = await getTradeSymbolList({ ...params, accountId: this.currentAccountInfo?.id })
+    const res = await getTradeSymbolList({ ...params, accountId })
     if (res.success) {
       const symbolList = (res.data || []) as Account.TradeSymbolListItem[]
       runInAction(() => {
@@ -453,7 +457,7 @@ class TradeStore {
       current: 1,
       size: 999,
       status: 'CANCEL,FAIL,FINISH',
-      type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER',
+      type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_ORDER,TAKE_PROFIT_ORDERR',
       accountId: this.currentAccountInfo?.id
     })
     if (res.success) {

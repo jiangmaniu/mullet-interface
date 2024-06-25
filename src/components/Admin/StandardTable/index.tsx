@@ -1,3 +1,4 @@
+/* eslint-disable simple-import-sort/imports */
 import {
   ActionType,
   BaseQueryFilterProps,
@@ -14,7 +15,7 @@ import type { SearchConfig } from '@ant-design/pro-table/es/components/Form/Form
 import type { OptionConfig } from '@ant-design/pro-table/es/components/ToolBar'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { FormInstance, message,Popconfirm, TablePaginationConfig } from 'antd'
+import { FormInstance, Popconfirm, TablePaginationConfig, message } from 'antd'
 import { type TableProps as RcTableProps } from 'antd/es/table/InternalTable'
 import classNames from 'classnames'
 import moment from 'moment'
@@ -380,14 +381,13 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         },
         '&::-webkit-scrollbar-thumb': {
           borderRadius: 5,
-          background: '#fafafa'
+          backgroundColor: '#f7f7f7 !important'
         },
         '&::-webkit-scrollbar-track': {
           boxShadow: 0,
           borderRadius: 0,
-          background: '#fff'
+          background: '#fff !important'
         },
-        /*滑块效果*/
         '&::-webkit-scrollbar-thumb:hover': {
           background: 'rgba(0, 0, 0, 0.4)',
           borderRadius: 5,

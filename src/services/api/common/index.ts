@@ -15,7 +15,16 @@ export async function fileUpload(body: any) {
 // 查询手机区号选择
 export async function getAreaCode() {
   return request<API.Response<API.KEYVALUE[]>>('/api/trade-crm/crmClient/public/dictBiz/area_code', {
-    method: 'GET'
+    method: 'GET',
+    needToken: false
+  })
+}
+
+// 查询注册方式（客户组创建客户用到）
+export async function getRegisterWay() {
+  return request<API.Response<API.RegisterWay>>('/api/trade-crm/crmClient/public/param/trade.recharge', {
+    method: 'GET',
+    needToken: false
   })
 }
 

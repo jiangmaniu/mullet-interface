@@ -60,7 +60,7 @@ declare namespace Customer {
     /**
      * 是否KYC认证
      */
-    isKycAtuh?: boolean
+    isKycAuth?: boolean
     /**
      * KYC身份认证ID
      */

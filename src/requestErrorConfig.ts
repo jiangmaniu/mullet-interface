@@ -6,7 +6,7 @@ import type { RequestOptions } from '@@/plugin-request/request'
 
 import { clientId, clientSecret } from './constants'
 import { message } from './utils/message'
-import { goLogin, onLogout } from './utils/navigator'
+import { onLogout } from './utils/navigator'
 
 type IErrorInfo = {
   code: number
@@ -95,7 +95,9 @@ export const errorConfig: RequestConfig = {
             break
         }
         statusText = errorMessage || statusText
-        statusText && message.info(statusText)
+        if (status !== 401) {
+          statusText && message.info(statusText)
+        }
       } else if (error.request) {
         // 请求已经成功发起，但没有收到响应
         // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
@@ -141,7 +143,6 @@ export const errorConfig: RequestConfig = {
 
       // token不存在并且该请求需要token，则不发送请求
       if (!token && config.needToken !== false) {
-        goLogin()
         return Promise.reject('')
       }
 

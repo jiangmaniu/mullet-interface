@@ -3,28 +3,17 @@ import { FormattedMessage } from '@umijs/max'
 import { Col, Row } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
 import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
-
-function generateRandomProgressArray() {
-  const progressArray = []
-  for (let i = 0; i < 30; i++) {
-    const randomValue = Math.floor(Math.random() * 101)
-    progressArray.push(randomValue)
-  }
-  return progressArray
-}
 
 type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 
 // 盘口深度报价
 function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
-  const [list, setList] = useState<any>([])
-  const timerRef = useRef<any>()
   const depth = getCurrentDepth()
   const quote = getCurrentQuote()
   const asks = depth?.asks || []
@@ -46,15 +35,6 @@ function DeepPrice() {
   ]
 
   const showAll = mode === 'BUY_SELL'
-
-  useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setList(generateRandomProgressArray())
-    }, 800)
-    return () => {
-      clearInterval(timerRef.current)
-    }
-  }, [])
 
   const className = useEmotionCss(({ token }) => {
     return {
