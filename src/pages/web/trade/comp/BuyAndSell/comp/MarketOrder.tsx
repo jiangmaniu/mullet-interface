@@ -179,7 +179,7 @@ export default observer(
         return
       }
 
-      setCount(0.01)
+      setCount(vmin)
       setSp('')
       setSl('')
 

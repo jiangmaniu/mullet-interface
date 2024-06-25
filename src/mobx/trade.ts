@@ -154,7 +154,7 @@ class TradeStore {
       margin = Number(toFixed(availableMargin * compelCloseRatio))
     } else {
       const positionItem = item || this.positionList.find((item) => item.symbol === currentLiquidationSelect) // 当前筛选的订单信息
-      const orderMargin = positionItem?.orderMargin || 0
+      const orderMargin = Number(positionItem?.orderMargin || 0)
       // 逐仓净值=账户余额（单笔交易保证金）-库存费-手续费+浮动盈亏
       const isolatedBalance = Number(
         toFixed(
@@ -164,7 +164,8 @@ class TradeStore {
             Number(positionItem?.profit || 0)
         )
       )
-      marginRate = orderMargin ? toFixed((isolatedBalance / orderMargin) * 100) : 0
+      marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
+
       margin = Number(toFixed(orderMargin * compelCloseRatio))
       balance = isolatedBalance
     }

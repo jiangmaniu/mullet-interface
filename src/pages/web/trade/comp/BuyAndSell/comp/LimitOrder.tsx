@@ -177,7 +177,7 @@ export default observer(
       }
 
       setPrice('')
-      setCount(0.01)
+      setCount(vmin)
       setSp('')
       setSl('')
 

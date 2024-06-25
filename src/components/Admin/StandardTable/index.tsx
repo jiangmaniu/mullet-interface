@@ -106,6 +106,7 @@ interface IProps<T, U> extends ProTableProps<T, U> {
   cardProps?: ProCardProps
   /**获取request返回的结果 */
   getRequestResult?: (result: { total: number; data: T[]; success: boolean }) => void
+  dataSource?: any
 }
 
 export default <T extends Record<string, any>, U extends ParamsType = ParamsType>({
@@ -144,6 +145,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   showDeleteModal,
   cardProps,
   getRequestResult,
+  dataSource,
   ...res
 }: IProps<T, U>) => {
   const proTableOptions: ProTableProps<T, U> = { search: false }
@@ -156,8 +158,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   const actionRef = useRef<ActionType>(null)
   // 记录列表request请求结果
   const [requestResult, setRequestResult] = useState({} as { total: number; data: T[]; success: boolean })
-  const { setHasProList } = useModel('global')
-
+  const { setHasProList, hasProList } = useModel('global')
   const [showExportWhenData, setShowExportWhenData] = useState(false)
   const handleExport = async (searchConfig: Omit<BaseQueryFilterProps, 'submitter' | 'isForm'>) => {
     const values = searchConfig?.form?.getFieldsValue()
@@ -173,6 +174,10 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   useEffect(() => {
     getRequestResult?.(requestResult)
   }, [requestResult])
+
+  useEffect(() => {
+    setHasProList(dataSource?.length > 0)
+  }, [dataSource])
 
   // 格式化参数
   // antd form 的配置
@@ -375,7 +380,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         borderTopLeftRadius: '12px !important',
         borderTopRightRadius: '12px !important',
         '&::-webkit-scrollbar': {
-          height: '7px !important',
+          height: `${hasProList ? 7 : 0}px !important`,
           width: 0,
           overflowY: 'auto'
         },
@@ -417,6 +422,9 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         },
       '.ant-pagination': {
         marginRight: '10px !important'
+      },
+      '.ant-table-tbody >tr >td': {
+        borderBottom: !hasProList && 'none !important'
       }
     }
   })
@@ -471,7 +479,6 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           success: res?.success,
           total
         }
-
         setHasProList(dataList?.length > 0)
 
         setRequestResult(result)
@@ -558,6 +565,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         className
       )}
       formRef={formRef}
+      dataSource={dataSource}
       {...proTableOptions}
       {...res}
     />
