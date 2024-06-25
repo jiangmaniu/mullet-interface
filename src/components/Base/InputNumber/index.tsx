@@ -4,7 +4,7 @@ import { useIntl } from '@umijs/max'
 import { FormInstance } from 'antd/lib'
 import classnames from 'classnames'
 import { debounce } from 'lodash'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { toFixed } from '@/utils'
 
@@ -32,6 +32,12 @@ type IProps = {
   placeholder?: string
   /**文本对齐方式 */
   textAlign?: 'center' | 'left' | 'right'
+  /**是否展示加减号 */
+  showAddMinus?: boolean
+  addonBefore?: React.ReactNode
+  width?: number
+  /**自动聚焦表单 */
+  autoFocus?: boolean
 }
 
 export default function InputNumber(props: IProps) {
@@ -57,8 +63,13 @@ export default function InputNumber(props: IProps) {
     precision = 2,
     onAdd,
     onMinus,
-    placeholder = intl.formatMessage({ id: 'common.pleaseInput2' })
+    showAddMinus = false,
+    placeholder = intl.formatMessage({ id: 'common.pleaseInput2' }),
+    addonBefore,
+    width,
+    autoFocus = true
   } = props
+  const inputRef = useRef<any>()
   const [inputValue, setInputValue] = useState<any>('')
   const [isFocus, setFocus] = useState(false)
   const newValue = Number(inputValue || 0)
@@ -77,6 +88,10 @@ export default function InputNumber(props: IProps) {
     if (name) {
       // 设置表单值
       form?.setFieldValue?.(name, inputValue === 0 || inputValue ? Number(inputValue) : '')
+    }
+    // 设置表单聚焦
+    if (autoFocus && inputValue) {
+      inputRef.current?.focus?.()
     }
   }, [inputValue])
 
@@ -143,7 +158,8 @@ export default function InputNumber(props: IProps) {
       input: {
         height,
         // paddingLeft: 12,
-        textAlign: textAlign || 'center'
+        textAlign: textAlign || 'center',
+        width: width || 'auto'
       },
       '.ant-input-number-group-addon': {
         background: '#fff !important',
@@ -168,7 +184,7 @@ export default function InputNumber(props: IProps) {
         )}
         style={{ height }}
       >
-        {direction === 'row' && MinusIcon}
+        {showAddMinus && direction === 'row' && MinusIcon}
         <ProFormDigit
           placeholder={placeholder}
           className={classnames(
@@ -177,6 +193,9 @@ export default function InputNumber(props: IProps) {
             disabled && 'cursor-not-allowed'
           )}
           onChange={(val: any) => {
+            if (!val) {
+              setFocus(false)
+            }
             if (onChange) {
               onChange(val)
             } else {
@@ -194,7 +213,9 @@ export default function InputNumber(props: IProps) {
             style: { marginBottom: 0, flex: 1, lineHeight: `${height}px` },
             className: disabled ? 'bg-sub-disable cursor-not-allowed' : ''
           }}
+          addonBefore={inputValue && addonBefore ? <span className="text-xs text-gray-secondary pl-3">{addonBefore}</span> : undefined}
           fieldProps={{
+            ref: inputRef,
             controls: false,
             maxLength: 12,
             autoFocus: false,
@@ -215,7 +236,7 @@ export default function InputNumber(props: IProps) {
             classNames: { input: classNames?.input, wrapper: 'flex items-center justify-between px-[10px]' }
           }}
         />
-        {direction === 'row' && AddIcon}
+        {showAddMinus && direction === 'row' && AddIcon}
         {isColumn && (
           <div className="flex h-full items-center">
             <div className="flex h-full flex-col items-center justify-center border-l border-primary">

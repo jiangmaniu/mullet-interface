@@ -4,29 +4,27 @@ import { useEffect, useState } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import Slider from '@/components/Web/Slider'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useStores } from '@/context/mobxProvider'
 
 type IProps = {
-  initialValue?: number
   onChange?: (value: any) => void
 }
 
 // 杠杆选择
-function LevelAge({ initialValue, onChange }: IProps) {
+function LevelAge({ onChange }: IProps) {
+  const { trade } = useStores()
   const intl = useIntl()
   const [value, setValue] = useState<any>(0)
-  const { prepaymentConf } = getCurrentQuote()
-  const isFixedMargin = prepaymentConf?.mode === 'fixed_margin' // 固定保证金模式，没有杠杆
+  const leverageMultiple = trade.leverageMultiple
 
   useEffect(() => {
-    setValue(initialValue || 0)
-  }, [initialValue])
-
-  if (isFixedMargin) return
+    setValue(leverageMultiple || 0)
+  }, [leverageMultiple])
 
   return (
     <div>
       <InputNumber
+        showAddMinus
         placeholder={intl.formatMessage({ id: 'mt.gangganbeishu' })}
         rootClassName="!z-50 mt-3"
         classNames={{ input: 'text-center' }}
@@ -37,8 +35,8 @@ function LevelAge({ initialValue, onChange }: IProps) {
         }}
         max={30}
         min={0}
-        unit={isFixedMargin ? undefined : <span className="relative left-3 text-gray-220 text-base">x</span>}
         disabled={false}
+        height={40}
       />
       <div className="flex flex-col pt-1 mx-3">
         <div>
@@ -57,7 +55,6 @@ function LevelAge({ initialValue, onChange }: IProps) {
               setValue(v)
               onChange?.(v)
             }}
-            disabled={isFixedMargin}
           />
         </div>
       </div>

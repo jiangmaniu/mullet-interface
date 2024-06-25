@@ -450,7 +450,7 @@ export const calcYieldRate = (item: IPositionItem) => {
  * @param item 持仓单Item
  * @returns
  */
-export const calcForceClosePrice = (item: IPositionItem) => {
+export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
   const { trade } = stores
   let { occupyMargin, balance } = trade.getAccountBalance()
   const digits = item?.symbolDecimal
@@ -459,7 +459,6 @@ export const calcForceClosePrice = (item: IPositionItem) => {
   const orderVolume = Number(item.orderVolume || 0) // 手数
   const orderMargin = item.orderMargin || 0 // 单笔订单的占用保证金
   const isCrossMargin = item.marginType === 'CROSS_MARGIN' // 全仓
-  const currentPrice = Number(item.currentPrice || 0)
   const startPrice = Number(item.startPrice || 0) // 开仓价格
   let compelCloseRatio = item.compelCloseRatio || 0 // 强制平仓比例
   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
@@ -492,6 +491,53 @@ export const calcForceClosePrice = (item: IPositionItem) => {
   const retValue = item.buySell === 'BUY' ? buyForceClosePrice : sellForceClosePrice
 
   return retValue > 0 ? toFixed(retValue, digits) : ''
+}
+
+type IExpectedForceClosePriceProp = {
+  orderVolume: number
+  /**订单保证金 */
+  orderMargin: number
+  /**买卖方向 */
+  buySell: API.TradeBuySell
+  /**订单类型 */
+  orderType: API.OrderType | string
+}
+/**
+ * 计算下单预估强平价
+ * @returns
+ */
+export const calcExpectedForceClosePrice = ({ orderVolume, orderType, orderMargin, buySell }: IExpectedForceClosePriceProp) => {
+  const { trade } = stores
+  const quote = getCurrentQuote()
+
+  const conf = quote?.symbolConf
+  const feeConfList =
+    conf?.transactionFeeConf?.type === 'trade_vol' ? conf?.transactionFeeConf?.trade_vol : conf?.transactionFeeConf?.trade_hand // 手续费配置列表
+  const feeConfItem = (feeConfList || []).filter((v) => orderVolume >= v.from && orderVolume <= v.to)?.[0]
+  const feeComputeMode = feeConfItem?.compute_mode // 手续费计算模式
+  let marketFee = Number(feeConfItem?.market_fee || 0) // 市价手续费
+  let limitFee = Number(feeConfItem?.limit_fee || 0) // 限价手续费
+
+  if (feeComputeMode === 'percentage') {
+    // 后台品种配置的手续费，选择百分比形式
+    marketFee = marketFee / 100 // 读取市价手续费的百分比值
+    limitFee = limitFee / 100 // 读取市价手续费的百分比值
+  }
+  const handlingFees = orderType === 'MARKET_ORDER' ? marketFee : limitFee // 手续费
+
+  const item = {
+    conf,
+    symbolDecimal: quote?.digits,
+    orderVolume,
+    orderMargin,
+    marginType: trade.marginType,
+    startPrice: buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid,
+    compelCloseRatio: trade?.currentAccountInfo?.compelCloseRatio || 0,
+    interestFees: 0, // 库存费0
+    handlingFees, // 手续费
+    profit: 0 // 浮动盈亏0
+  }
+  return calcForceClosePrice(item)
 }
 
 /**

@@ -27,7 +27,7 @@ const TradingViewComp = ({ style }: IProps) => {
 
   useEffect(() => {
     if (dataSourceSymbol) {
-      // setLoading(true)
+      setLoading(true)
       setTradeUrl(`${URLS.tradingViewUrl}/?lang=${getTradingViewLng()}&name=${dataSourceSymbol}&dataSourceCode=${dataSourceCode}`)
     }
   }, [lng, activeSymbolName, dataSourceCode])
@@ -40,13 +40,13 @@ const TradingViewComp = ({ style }: IProps) => {
           style={{
             border: 'none',
             height: isPc ? '591px' : 'calc(100vh - 260px)',
-            width: '100%'
-            // visibility: loading ? 'hidden' : 'visible'
+            width: '100%',
+            visibility: loading ? 'hidden' : 'visible'
           }}
           onLoad={() => {
             setTimeout(() => {
               setLoading(false)
-            }, 300)
+            }, 100)
           }}
         />
       </Spin>

@@ -325,6 +325,10 @@ declare namespace User {
      * 状态
      */
     status?: API.Status
+    /**追加预付款比例 */
+    addAdvanceCharge?: number
+    /**强制平仓比例 */
+    compelCloseRatio?: number
   }
   // 区域列表
   type AreaCodeItem = {

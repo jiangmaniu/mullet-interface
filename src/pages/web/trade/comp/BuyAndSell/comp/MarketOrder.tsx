@@ -12,12 +12,11 @@ import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { message } from '@/utils/message'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { calcExpectedForceClosePrice, getCurrentQuote } from '@/utils/wsUtil'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
-import LevelAge from './comp/LevelAge'
-import SelectMarginType from './comp/SelectMarginType'
+import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
 type IProps = {
   popupRef?: any
@@ -33,13 +32,11 @@ export default observer(
     const [form] = Form.useForm()
     const intl = useIntl()
     const [checkedSpSl, setCheckedSpSl] = useState(false) // 勾选止盈止损
-    const [isCrypto, setIsCrypto] = useState(true) // 是否是数字货币 @TODO 需要根据全局切换的品种名称来判断，切换不同的布局
-    const [leverageMultiple, setLeverageMultiple] = useState<any>('') // 杠杆倍数
-    const [marginType, setMarginType] = useState<API.MaiginType>('CROSS_MARGIN') // 保证金类型
     const { availableMargin } = trade.getAccountBalance()
     const [margin, setMargin] = useState(0)
     const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
     const [loading, setLoading] = useState(false)
+    const marginType = trade.marginType
 
     useEffect(() => {
       setTradeType(type || OP_BUY)
@@ -73,6 +70,14 @@ export default observer(
     const vmax = symbolConf?.maxTrade || 20
     const vmin = symbolConf?.minTrade || 0.01
     const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
+
+    // 实时计算预估强平价
+    const expectedForceClosePrice = calcExpectedForceClosePrice({
+      orderVolume: countValue,
+      orderMargin: margin,
+      orderType: 'MARKET_ORDER',
+      buySell: tradeType === 1 ? 'BUY' : 'SELL'
+    })
 
     // 切换品种、买卖重置内容
     useEffect(() => {
@@ -121,7 +126,7 @@ export default observer(
       orderVolume: count,
       stopLoss: sl ? parseFloat(sl) : undefined,
       takeProfit: sp ? parseFloat(sp) : undefined,
-      leverageMultiple,
+      leverageMultiple: trade.leverageMultiple || undefined,
       tradeAccountId: trade.currentAccountInfo?.id,
       marginType,
       type: ORDER_TYPE.MARKET_ORDER // 订单类型
@@ -186,14 +191,10 @@ export default observer(
 
     return (
       <Form form={form}>
-        <div className="mx-[10px] mt-3 flex flex-col justify-between h-[620px]">
+        <div className="mx-[10px] mt-3 flex flex-col justify-between h-[630px]">
           <div>
-            {/* 全仓、逐仓选择 */}
-            <SelectMarginType
-              onChange={(value) => {
-                setMarginType(value)
-              }}
-            />
+            {/* 全仓、逐仓、杠杆选择 */}
+            <SelectMarginTypeOrLevelAge />
 
             <div className="relative flex items-center justify-center rounded-xl border border-primary p-[2px]">
               <BuyAndSellBtnGroup
@@ -205,39 +206,38 @@ export default observer(
               />
             </div>
 
-            {/* 杠杆倍数 */}
-            <LevelAge
-              // initialValue={10}
-              onChange={(value) => {
-                console.log('value', value)
-                setLeverageMultiple(value)
-              }}
-            />
+            <div className="flex items-center justify-between mt-3 mb-1">
+              <div className="mt-1 flex items-center justify-center pb-2">
+                <span className="text-xs text-gray-secondary">
+                  <FormattedMessage id="mt.keyong" />
+                </span>
+                <span className="pl-2 text-xs text-gray !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
+              </div>
+            </div>
 
             <InputNumber
               placeholder={intl.formatMessage({ id: 'mt.yidangqianzuixinjia' })}
-              rootClassName="!z-50 my-3"
+              rootClassName="!z-50 mb-3"
               classNames={{ input: 'text-center' }}
               disabled
             />
-            {isCrypto && (
-              <Checkbox
-                onChange={(e: any) => {
-                  setCheckedSpSl(e.target.checked)
-                }}
-                className="max-xl:hidden !mb-3 mt-1"
-              >
-                <span className="text-gray text-xs">
-                  <FormattedMessage id="mt.zhiyingzhisun" />
-                </span>
-              </Checkbox>
-            )}
-            {/* 数字货币类型并且勾选了才展示止盈止损、非数字货币类型直接展示 */}
-            {((isCrypto && checkedSpSl) || !isCrypto) && (
-              <>
+            <Checkbox
+              onChange={(e: any) => {
+                setCheckedSpSl(e.target.checked)
+              }}
+              className="max-xl:hidden !mb-3 mt-1"
+            >
+              <span className="text-gray text-xs">
+                <FormattedMessage id="mt.zhiyingzhisun" />
+              </span>
+            </Checkbox>
+            {checkedSpSl && (
+              <div className="flex items-center justify-between gap-x-3">
                 <InputNumber
                   placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
+                  addonBefore={intl.formatMessage({ id: 'mt.zhiying' })}
                   rootClassName="!z-40 mb-3"
+                  width={65}
                   classNames={{ input: 'text-center' }}
                   value={spValue}
                   onChange={(value: any) => {
@@ -262,24 +262,24 @@ export default observer(
                     }
                   }}
                   tips={
-                    <>
-                      <span className="!font-dingpro-regular">
+                    <div className="flex flex-col items-start w-full pl-[2px]">
+                      <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
-                        &nbsp;
-                        {isBuy ? '≥' : '≤'}&nbsp;
+                        <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
                         {formatNum(sp_scope)} USD
                       </span>
-                      <span className="pl-1 !font-dingpro-regular">
+                      <span className="!font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
-                        &nbsp;
-                        {formatNum(spProfit)} USD
+                        <span className="pl-[2px]">{formatNum(spProfit)} USD</span>
                       </span>
-                    </>
+                    </div>
                   }
                 />
                 <InputNumber
                   placeholder={intl.formatMessage({ id: 'mt.zhisun' })}
+                  addonBefore={intl.formatMessage({ id: 'mt.zhisun' })}
                   rootClassName="!z-30 !mb-3"
+                  width={65}
                   classNames={{ input: 'text-center' }}
                   value={slValue}
                   onChange={(value: any) => {
@@ -302,18 +302,26 @@ export default observer(
                     }
                   }}
                   tips={
-                    <span className="!font-dingpro-regular">
-                      <FormattedMessage id="mt.fanwei" />
-                      &nbsp; {isBuy ? '≤' : '≥'} {formatNum(sl_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
-                      &nbsp; {formatNum(slProfit)} USD
-                    </span>
+                    <div className="flex flex-col items-start w-full pl-[2px]">
+                      <span className="!font-dingpro-regular pb-[2px]">
+                        <FormattedMessage id="mt.fanwei" />
+                        <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>
+                        {formatNum(sl_scope)} USD
+                      </span>
+                      <span className="!font-dingpro-regular">
+                        <FormattedMessage id="mt.yujiyingkui" />
+                        <span className="pl-[2px]">{formatNum(slProfit)} USD</span>
+                      </span>
+                    </div>
                   }
                 />
-              </>
+              </div>
             )}
             <InputNumber
+              showAddMinus
+              autoFocus={false}
               direction="column"
-              classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[68px]' }}
+              classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[74px]' }}
               height={52}
               textAlign="left"
               placeholder={intl.formatMessage({ id: 'mt.shoushu' })}
@@ -354,20 +362,6 @@ export default observer(
             />
           </div>
           <div>
-            <div className="flex items-center justify-between max-xl:mt-6">
-              <div className="mt-1 flex items-center justify-center pb-2">
-                <span className="text-xs text-gray-secondary">
-                  <FormattedMessage id="mt.keyong" />
-                </span>
-                <span className="pl-2 text-xs text-gray !font-dingpro-medium">{formatNum(availableMargin)}USD</span>
-              </div>
-              <div className="mt-1 flex items-center justify-center pb-1">
-                <span className="text-xs text-gray !font-dingpro-medium">{formatNum(margin, { precision: d })}USD</span>
-                <span className="text-xs text-gray-secondary pl-1">
-                  <FormattedMessage id="mt.baozhengjin" />
-                </span>
-              </div>
-            </div>
             <Button
               type="primary"
               style={{ background: isBuy ? 'var(--color-green-700)' : 'var(--color-red-600)' }}
@@ -379,6 +373,28 @@ export default observer(
               {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {count}{' '}
               <FormattedMessage id="mt.lot" />
             </Button>
+            <div className="mt-4">
+              <div className="flex items-center justify-between pb-[6px] w-full">
+                <span className="text-xs text-gray-secondary">
+                  <FormattedMessage id="mt.yuguqiangpingjiage" />
+                </span>
+                <span className="text-xs text-gray !font-dingpro-medium">{expectedForceClosePrice} USD</span>
+              </div>
+              <div className="flex items-center justify-between pb-[6px] w-full">
+                <span className="text-xs text-gray-secondary">
+                  <FormattedMessage id="mt.baozhengjin" />
+                </span>
+                <span className="text-xs text-gray !font-dingpro-medium">{formatNum(margin, { precision: d })} USD</span>
+              </div>
+              <div className="flex items-center justify-between pb-[6px] w-full">
+                <span className="text-xs text-gray-secondary">
+                  <FormattedMessage id="mt.kekai" />
+                </span>
+                <span className="text-xs text-gray !font-dingpro-medium">
+                  {vmax} <FormattedMessage id="mt.lot" />
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </Form>

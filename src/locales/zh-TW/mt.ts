@@ -292,5 +292,16 @@ export default {
   'mt.genggaijiaoyimima': '更改交易密码',
   'mt.cunruzijinkaishijiaoyi': '存入資金，開始交易',
   'mt.mairushoushu': '买入手数',
-  'mt.maichushoushu': '卖出手数'
+  'mt.maichushoushu': '卖出手数',
+  'mt.gudingyufukuan': '固定预付款',
+  'mt.yuguqiangpingjiage': '预估强平价格',
+  'mt.kekai': '可开',
+  'mt.baozhengjinmoshi': '保证金模式',
+  'mt.baozhengjinmoshitips': '调整保证金模式仅对当前标的生效',
+  'mt.quancangdesc': '所有仓位共用保证金，盈亏互抵。抵御强平风险，但可能损失全部仓位',
+  'mt.zhucangdesc': '各仓位的保证金与盈亏单独核算。强平事件中只会损失当前仓位',
+  'mt.tiaozhengganggan': '调整杠杆',
+  'mt.tiaozhengganggantip1': '当前杠杆倍数最高可开:100,000,000 USDT',
+  'mt.tiaozhengganggantip2': '杠杆调整将同时影响当前仓位和挂单的杠杆',
+  'mt.tiaozhengganggantip3': '选择超过[10x]杠杆交易会增加强行平仓风险，请注意相关风险'
 }

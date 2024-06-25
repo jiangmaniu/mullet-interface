@@ -63,6 +63,7 @@ class TradeStore {
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
   @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
+  @observable leverageMultiple = 0 // 杠杆倍数
   @observable currentLiquidationSelect = 'CROSS_MARGIN' // 右下角爆仓选择逐仓、全仓切换
 
   // 初始化加载
@@ -76,6 +77,10 @@ class TradeStore {
   // 右下角爆仓选择逐仓、全仓切换
   setCurrentLiquidationSelect = (value: any) => {
     this.currentLiquidationSelect = value
+  }
+  // 设置交易浮动杠杆倍数
+  setLeverageMultiple = (value: any) => {
+    this.leverageMultiple = value
   }
 
   // 设置保证金类型
@@ -120,8 +125,8 @@ class TradeStore {
       occupyMargin,
       availableMargin,
       balance,
-      // 账户总盈亏 = 所有订单的盈亏 - 所有订单的库存费 - 所有订单的手续费
-      totalProfit: toFixed(totalProfit - totalHandlingFees - totalHandlingFees, 2),
+      // 账户总盈亏 = 所有订单的盈亏 - 所有订单的库存费
+      totalProfit: toFixed(totalProfit - totalInterestFees, 2),
       currentAccountInfo,
       money
     }
@@ -507,7 +512,7 @@ class TradeStore {
 
       message.info(getIntl().formatMessage({ id: 'mt.xiugaizhiyingzhisunchenggong' }))
       // 激活Tab
-      trade.setTabKey('STOPLOSS_PROFIT')
+      // trade.setTabKey('STOPLOSS_PROFIT')
     }
     return res
   }
