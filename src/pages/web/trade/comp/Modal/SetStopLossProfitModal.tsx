@@ -17,11 +17,15 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
 
+type IProps = {
+  list: IPositionItem[]
+}
+
 // 设置止盈止损
 export default observer(
-  forwardRef((props, ref) => {
+  forwardRef(({ list = [] }: IProps, ref) => {
     const intl = useIntl()
-    const [item, setItem] = useState({} as IPositionItem)
+    const [tempItem, setTempItem] = useState({} as IPositionItem)
     const { ws, trade } = useStores()
     const { symbols, quotes } = ws as any
     const [open, setOpen] = useState(false)
@@ -31,6 +35,7 @@ export default observer(
     const [sl, setSl] = useState<any>('') // 止损
     const [sp, setSp] = useState<any>('') // 止盈
 
+    const item = (list.find((v) => v.id === tempItem.id) || {}) as IPositionItem // 获取的是最新实时变化的
     const buySellInfo = getBuySellInfo(item)
     const isBuy = item.buySell === TRADE_BUY_SELL.BUY
 
@@ -47,12 +52,12 @@ export default observer(
       setOpen(false)
       setSl('')
       setSp('')
-      setItem({} as IPositionItem)
+      setTempItem({} as IPositionItem)
     }
 
     const show = (item: any) => {
       setOpen(true)
-      setItem(item)
+      setTempItem(item)
     }
 
     // 对外暴露接口
@@ -180,6 +185,7 @@ export default observer(
             </div>
             <div className="flex w-full flex-col items-center pt-5">
               <InputNumber
+                autoFocus={false}
                 label={intl.formatMessage({ id: 'mt.zhisun' })}
                 placeholder={intl.formatMessage({ id: 'mt.zhisun' })}
                 rootClassName="!z-30"
@@ -222,6 +228,7 @@ export default observer(
                 }
               />
               <InputNumber
+                autoFocus={false}
                 label={intl.formatMessage({ id: 'mt.zhiying' })}
                 placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
                 className="h-[38px]"

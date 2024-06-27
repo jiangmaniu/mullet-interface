@@ -9,11 +9,11 @@ import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
-import { calcExpectedForceClosePrice, getCurrentQuote } from '@/utils/wsUtil'
+import { calcExpectedForceClosePrice, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { message } from '@/utils/message'
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
@@ -30,7 +30,8 @@ export default observer(
     const intl = useIntl()
     const { isPc, isMobileOrIpad } = useEnv()
     const { trade, ws } = useStores()
-    const [checkedSpSl, setCheckedSpSl] = useState(false) // 勾选止盈止损
+    const { fetchUserInfo } = useModel('user')
+    const [checkedSpSl, setCheckedSpSl] = useState(true) // 勾选止盈止损
     const { availableMargin } = trade.getAccountBalance()
     const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
     const [margin, setMargin] = useState(0)
@@ -75,7 +76,9 @@ export default observer(
     // const stopl = symbols?.stopl * Math.pow(10, -d)
     const stoplValue = 1 // @TODO 这里如何计算当前报价的止损值
     const stopl = stoplValue * Math.pow(10, -d)
-    const vmax = symbolConf?.maxTrade || 20
+    const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 20
+    const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
+    const vmax = maxOpenVolume // 当前账户保证金最大可开手数
     const vmin = symbolConf?.minTrade || 0.01
     const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
 
@@ -122,7 +125,8 @@ export default observer(
       orderVolume: count,
       stopLoss: sl ? parseFloat(sl) : undefined,
       takeProfit: sp ? parseFloat(sp) : undefined,
-      leverageMultiple: trade.leverageMultiple || undefined,
+      // 浮动杠杆默认1
+      leverageMultiple: quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined,
       tradeAccountId: trade.currentAccountInfo?.id,
       marginType,
       limitPrice: priceValue,
@@ -130,11 +134,13 @@ export default observer(
     } as Order.CreateOrder
 
     useEffect(() => {
-      trade.calcMargin(orderParams).then((res: any) => {
-        if (res) {
-          setMargin(res)
-        }
-      })
+      if (orderType === 3) {
+        trade.calcMargin(orderParams).then((res: any) => {
+          if (res) {
+            setMargin(res)
+          }
+        })
+      }
     }, [isBuy, count, sl, sp, marginType, symbol, orderType, price])
 
     const onFinish = async () => {
@@ -143,9 +149,13 @@ export default observer(
         goLogin()
         return
       }
+      if (!priceValue) {
+        message.info(intl.formatMessage({ id: 'mt.qingshurujiage' }))
+        return
+      }
       const reg = /^\d+(\.\d{0,2})?$/
-      if (!reg.test(count)) {
-        message.info(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
+      if (!count) {
+        message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
         return
       }
       if (count < vmin || count > vmax) {
@@ -153,12 +163,12 @@ export default observer(
         return
       }
       const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
-      if (slFlag) {
+      if (slFlag && sl) {
         message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
         return
       }
       const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
-      if (spFlag) {
+      if (spFlag && sp) {
         message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
         return
       }
@@ -172,19 +182,20 @@ export default observer(
         setLoading(false)
       })
 
-      if (!res.success) {
-        return
+      if (res.success) {
+        setPrice('')
+        setCount(vmin)
+        setSp('')
+        setSl('')
+
+        if (isMobileOrIpad) {
+          // 关闭弹窗
+          popupRef?.current?.close()
+        }
       }
 
-      setPrice('')
-      setCount(vmin)
-      setSp('')
-      setSl('')
-
-      if (isMobileOrIpad) {
-        // 关闭弹窗
-        popupRef?.current?.close()
-      }
+      // 更新账户余额信息
+      fetchUserInfo()
     }
 
     return (
@@ -211,6 +222,7 @@ export default observer(
             </div>
           </div>
           <InputNumber
+            showAddMinus={false}
             placeholder={intl.formatMessage({ id: 'mt.shurujiage' })}
             addonBefore={intl.formatMessage({ id: 'mt.jiage' })}
             rootClassName="!z-50 mb-3"
@@ -255,17 +267,18 @@ export default observer(
               setCheckedSpSl(e.target.checked)
             }}
             className="max-xl:hidden !mb-3"
+            checked={checkedSpSl}
           >
             <span className="text-gray text-xs">
               <FormattedMessage id="mt.zhiyingzhisun" />
             </span>
           </Checkbox>
           {checkedSpSl && (
-            <div className="flex items-center justify-between gap-x-3">
+            <>
               <InputNumber
+                showFloatTips={false}
                 placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
-                addonBefore={intl.formatMessage({ id: 'mt.zhiying' })}
-                rootClassName="!z-40"
+                rootClassName="!z-40 mb-3"
                 width={65}
                 classNames={{ input: 'text-center' }}
                 value={spValue}
@@ -290,7 +303,7 @@ export default observer(
                 }}
                 tips={
                   <>
-                    <div className="flex flex-col items-start w-full pl-[2px]">
+                    <div className="flex gap-x-2 items-start w-full pl-[2px]">
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
@@ -305,8 +318,8 @@ export default observer(
                 }
               />
               <InputNumber
+                showFloatTips={false}
                 placeholder={intl.formatMessage({ id: 'mt.zhisun' })}
-                addonBefore={intl.formatMessage({ id: 'mt.zhisun' })}
                 rootClassName="!z-30"
                 width={65}
                 classNames={{ input: 'text-center' }}
@@ -331,7 +344,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <div className="flex flex-col items-start w-full pl-[2px]">
+                  <div className="flex gap-x-2 items-start w-full pl-[2px]">
                     <span className="!font-dingpro-regular pb-[2px]">
                       <FormattedMessage id="mt.fanwei" />
                       <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>
@@ -344,7 +357,7 @@ export default observer(
                   </div>
                 }
               />
-            </div>
+            </>
           )}
           <InputNumber
             showAddMinus
@@ -354,13 +367,13 @@ export default observer(
             height={52}
             textAlign="left"
             rootClassName="mt-[14px]"
-            label={<FormattedMessage id="mt.shoushu" />}
+            label={isBuy ? intl.formatMessage({ id: 'mt.mairushoushu' }) : intl.formatMessage({ id: 'mt.maichushoushu' })}
             unit={intl.formatMessage({ id: 'mt.lot' })}
             value={countValue}
             max={vmax}
             min={vmin}
             onChange={(value: any) => {
-              setCount(value)
+              setCount(value || vmin)
             }}
             onAdd={() => {
               if (count && (isBuy ? count < vmax : count <= 5)) {
@@ -378,7 +391,7 @@ export default observer(
               <>
                 <FormattedMessage id="mt.shoushufanwei" />
                 <span className="pl-1">
-                  {vmin}-{vmax}
+                  {vmin}-{vmaxShow}
                 </span>
               </>
             }
@@ -399,9 +412,11 @@ export default observer(
           <div className="mt-4">
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-gray-secondary">
-                <FormattedMessage id="mt.yuguqiangpingjiage" />
+                <FormattedMessage id="mt.yuguqiangpingjia" />
               </span>
-              <span className="text-xs text-gray !font-dingpro-medium">{expectedForceClosePrice} USD</span>
+              <span className="text-xs text-gray !font-dingpro-medium">
+                {expectedForceClosePrice ? `${expectedForceClosePrice} USD` : '-'}
+              </span>
             </div>
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-gray-secondary">
@@ -414,7 +429,7 @@ export default observer(
                 <FormattedMessage id="mt.kekai" />
               </span>
               <span className="text-xs text-gray !font-dingpro-medium">
-                {vmax} <FormattedMessage id="mt.lot" />
+                {maxOpenVolume} <FormattedMessage id="mt.lot" />
               </span>
             </div>
           </div>

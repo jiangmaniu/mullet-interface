@@ -17,11 +17,15 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 import { IPendingItem } from '../TradeRecord/comp/PendingList'
 import OpenTips from './OpenTipsModal'
 
+type IProps = {
+  list: IPendingItem[]
+}
+
 // 修改挂单
 export default observer(
-  forwardRef((props, ref) => {
+  forwardRef(({ list = [] }: IProps, ref) => {
     const intl = useIntl()
-    const [item, setItem] = useState({} as IPendingItem)
+    const [tempItem, setTempItem] = useState({} as IPendingItem)
     const { ws, trade } = useStores()
     const [price, setPrice] = useState<any>('')
     const [open, setOpen] = useState(false)
@@ -30,17 +34,19 @@ export default observer(
     const [sl, setSl] = useState<any>('') // 止损
     const [sp, setSp] = useState<any>('') // 止盈
 
+    const item = (list.find((v) => v.id === tempItem.id) || {}) as IPendingItem // 获取的是最新实时变化的
+
     const close = () => {
       setOpen(false)
       setSl('')
       setSp('')
       setPrice('')
-      setItem({} as IPendingItem)
+      setTempItem({} as IPendingItem)
     }
 
     const show = (item: IPendingItem) => {
       setOpen(true)
-      setItem(item)
+      setTempItem(item)
     }
 
     // 对外暴露接口

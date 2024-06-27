@@ -202,7 +202,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
     const dataSourceSymbol = v.dataSourceSymbol as string
     const quoteInfo = getCurrentQuote(dataSourceSymbol)
     const digits = v.symbolDecimal || 2
-    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
+    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格取反方向的
     const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
 
     v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格

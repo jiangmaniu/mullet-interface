@@ -6,7 +6,7 @@ import classnames from 'classnames'
 import { debounce } from 'lodash'
 import { useEffect, useRef, useState } from 'react'
 
-import { toFixed } from '@/utils'
+import { isTruthy, toFixed } from '@/utils'
 
 type IProps = {
   name?: string
@@ -38,6 +38,8 @@ type IProps = {
   width?: number
   /**自动聚焦表单 */
   autoFocus?: boolean
+  /**提示是否浮动在输入框展示 */
+  showFloatTips?: boolean
 }
 
 export default function InputNumber(props: IProps) {
@@ -63,11 +65,12 @@ export default function InputNumber(props: IProps) {
     precision = 2,
     onAdd,
     onMinus,
-    showAddMinus = false,
+    showAddMinus = true,
     placeholder = intl.formatMessage({ id: 'common.pleaseInput2' }),
     addonBefore,
     width,
-    autoFocus = true
+    autoFocus = true,
+    showFloatTips = true
   } = props
   const inputRef = useRef<any>()
   const [inputValue, setInputValue] = useState<any>('')
@@ -170,6 +173,9 @@ export default function InputNumber(props: IProps) {
       },
       '.ant-input-number-group .ant-input-number:hover': {
         border: 'none !important'
+      },
+      '.ant-input-number-input': {
+        background: disabled ? 'transparent' : '#fff'
       }
     }
   })
@@ -193,8 +199,10 @@ export default function InputNumber(props: IProps) {
             disabled && 'cursor-not-allowed'
           )}
           onChange={(val: any) => {
-            if (!val) {
+            if (!isTruthy(val)) {
               setFocus(false)
+            } else {
+              setFocus(true)
             }
             if (onChange) {
               onChange(val)
@@ -246,7 +254,7 @@ export default function InputNumber(props: IProps) {
           </div>
         )}
       </div>
-      {isFocus && tips && (
+      {isFocus && tips && showFloatTips && (
         <div
           className={classnames(
             'absolute top-[35px] z-10 flex w-full items-end justify-center rounded-b-lg border border-primary bg-gray-50 px-1 py-2 text-center text-xs text-gray-weak',
@@ -256,6 +264,7 @@ export default function InputNumber(props: IProps) {
           {tips}
         </div>
       )}
+      {tips && !showFloatTips && <div className="text-xs text-gray-secondary pt-[7px]">{tips}</div>}
     </div>
   )
 }

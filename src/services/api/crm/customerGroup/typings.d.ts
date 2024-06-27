@@ -92,5 +92,6 @@ declare namespace CustomerGroup {
      * 备注
      */
     remark?: string
+    accountGroupId?: string
   }
 }

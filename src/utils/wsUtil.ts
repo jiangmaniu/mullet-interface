@@ -446,7 +446,7 @@ export const calcYieldRate = (item: IPositionItem) => {
 }
 
 /**
- * 计算强平价
+ * 计算订单的预估强平价
  * @param item 持仓单Item
  * @returns
  */
@@ -470,7 +470,7 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
 
   // 买：多头强平价格 = 开仓价格 - (净值 - 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除)) @TODO 处理汇率取值问题
   let buyForceClosePrice = 0
-  // 卖：空头强平价格 = 开仓价格 + (净值 - 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除))  @TODO 处理汇率取值问题
+  // 卖：空头强平价格 = 开仓价格 + (净值 + 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除))  @TODO 处理汇率取值问题
   let sellForceClosePrice = 0
 
   // 全仓
@@ -503,7 +503,7 @@ type IExpectedForceClosePriceProp = {
   orderType: API.OrderType | string
 }
 /**
- * 计算下单预估强平价
+ * 计算下单时的预估强平价
  * @returns
  */
 export const calcExpectedForceClosePrice = ({ orderVolume, orderType, orderMargin, buySell }: IExpectedForceClosePriceProp) => {
@@ -530,6 +530,7 @@ export const calcExpectedForceClosePrice = ({ orderVolume, orderType, orderMargi
     symbolDecimal: quote?.digits,
     orderVolume,
     orderMargin,
+    buySell,
     marginType: trade.marginType,
     startPrice: buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid,
     compelCloseRatio: trade?.currentAccountInfo?.compelCloseRatio || 0,
@@ -538,6 +539,41 @@ export const calcExpectedForceClosePrice = ({ orderVolume, orderType, orderMargi
     profit: 0 // 浮动盈亏0
   }
   return calcForceClosePrice(item)
+}
+
+/**
+ * 计算可开仓手数
+ * @param param0
+ * @returns
+ */
+export const getMaxOpenVolume = ({ buySell }: { buySell: API.TradeBuySell }) => {
+  const trade = stores.trade
+  const { availableMargin } = trade.getAccountBalance()
+  const quote = getCurrentQuote()
+  const prepaymentConf = quote?.prepaymentConf
+  const consize = quote.consize
+  const mode = prepaymentConf?.mode
+  const currentPrice = buySell === 'SELL' ? quote?.ask : quote?.bid // 价格取反
+  let volume = 0
+
+  if (mode === 'fixed_margin') {
+    // 可用/固定预付款
+    const initial_margin = Number(prepaymentConf?.fixed_margin?.initial_margin || 0)
+    volume = initial_margin ? Number(availableMargin / initial_margin) : 0
+  } else if (mode === 'fixed_leverage') {
+    // 固定杠杆：可用/（价格*合约大小*手数/固定杠杆）
+    const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
+    if (fixed_leverage) {
+      volume = (availableMargin * fixed_leverage) / (currentPrice * consize)
+    }
+  } else if (mode === 'float_leverage') {
+    // 浮动杠杆：可用/（价格*合约大小*手数/浮动杠杆）
+    const float_leverage = Number(trade.leverageMultiple || 1)
+    if (float_leverage) {
+      volume = (availableMargin * float_leverage) / (currentPrice * consize)
+    }
+  }
+  return Number(toFixed(volume))
 }
 
 /**
@@ -601,7 +637,7 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   if (spreadConf?.type === 'fixed') {
     // 固定点差模式
     const { buy = 0, sell = 0 } = spreadConf.fixed || {}
-    spread = Math.abs(parseInt(String((sell - buy) * Math.pow(10, digits))))
+    spread = buy * Math.pow(10, -digits)
   } else {
     // @TODO 浮动点差模式
     spread = spreadValue

@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
@@ -17,17 +17,22 @@ import { message } from '@/utils/message'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
 
+type IProps = {
+  list: IPositionItem[]
+}
+
 // 平仓操作弹窗
 export default observer(
-  forwardRef((props, ref) => {
+  forwardRef(({ list = [] }: IProps, ref) => {
     const intl = useIntl()
     const { ws, global, trade } = useStores()
+    const { fetchUserInfo } = useModel('user')
     const [count, setCount] = useState<any>('')
     const [open, setOpen] = useState(false)
-    const [item, setItem] = useState({} as IPositionItem)
+    const [tempItem, setTempItem] = useState({} as IPositionItem)
     const [sliderValue, setSliderValue] = useState(0)
     const unit = 'USD'
-
+    const item = (list.find((v) => v.id === tempItem.id) || {}) as IPositionItem // 获取的是最新实时变化的
     const symbol = item.symbol
     const orderVolume = Number(item.orderVolume || 0) // 手数
 
@@ -39,12 +44,12 @@ export default observer(
 
     const close = () => {
       setOpen(false)
-      setItem({} as IPositionItem)
+      setTempItem({} as IPositionItem)
     }
 
     const show = (item: any) => {
       setOpen(true)
-      setItem(item)
+      setTempItem(item)
     }
 
     // 对外暴露接口
@@ -85,6 +90,9 @@ export default observer(
       if (res.success) {
         // 关闭弹窗
         close()
+
+        // 更新账户余额信息
+        fetchUserInfo()
       }
     }
 

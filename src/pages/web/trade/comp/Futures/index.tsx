@@ -97,16 +97,13 @@ function Futures({ trigger, style }: IProps) {
 
   const renderContent = () => {
     return (
-      <div
-        style={{ background: 'var(--card-gradient-bg)', ...style }}
-        className="relative h-full px-[37px] max-xl:rounded-t-[16px] xl:py-[26px]"
-      >
+      <div style={{ ...style }} className="relative h-full px-[37px] max-xl:rounded-t-[16px] xl:py-[26px]">
         <div className="absolute left-8 flex w-[92%] justify-between">
           <div
             style={{ backgroundImage: 'url(/img/heyue-logo.png)' }}
             className="relative top-8 h-[92px] w-[328px] bg-cover bg-no-repeat"
           />
-          <div style={{ backgroundImage: 'url(/img/future-bg.png)' }} className="h-[180px] w-[227px] bg-cover bg-no-repeat" />
+          <div style={{ backgroundImage: 'url(/img/heyue-mask.png)' }} className="h-[180px] w-[227px] bg-cover bg-no-repeat" />
         </div>
         <div className="relative top-[47px] z-10">
           <div className="pb-12 text-[24px] font-bold">

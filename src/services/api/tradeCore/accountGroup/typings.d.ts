@@ -1,4 +1,82 @@
 declare namespace AccountGroup {
+  type AccountGroupItem = {
+    /**
+     * 追加预付款比例
+     */
+    addAdvanceCharge?: number
+    /**
+     * 强制平仓比例
+     */
+    compelCloseRatio?: number
+    /**
+     * 货币小数位
+     */
+    currencyDecimal?: number
+    /**
+     * 货币单位
+     */
+    currencyUnit?: string
+    /**
+     * 默认入金
+     */
+    defaultDeposit?: number
+    /**
+     * 启用链接
+     */
+    enableConnect?: boolean
+    /**
+     * 启用逐仓
+     */
+    enableIsolated?: boolean
+    /**
+     * 强平后补偿后结余
+     */
+    enableQphbcfjy?: boolean
+    /**
+     * 启用交易
+     */
+    enableTrade?: boolean
+    /**
+     * 资金划转
+     */
+    fundTransfer?: API.FundTransfer
+    /**
+     * 组别
+     */
+    groupCode?: string
+    /**
+     * 组名称
+     */
+    groupName?: string
+    /**
+     * 主键
+     */
+    id?: string
+    /**
+     * 是否模拟
+     */
+    isSimulate?: boolean
+    /**
+     * 订单模式
+     */
+    orderMode?: API.OrderMode
+    /**
+     * 备注
+     */
+    remark?: string
+    /**
+     * 状态
+     */
+    status?: API.Status
+    /**
+     * 可用预付款
+     */
+    usableAdvanceCharge?: API.UsableAdvanceCharge
+    /**
+     * 可用历史
+     */
+    usableHistory?: string
+  }
   // 交易账户组-新增
   type SubmitAccountGroupParams = {
     id?: number

@@ -123,7 +123,7 @@ function TradeRecord({ trigger }: IProps) {
 
   const renderTabContent = () => {
     return (
-      <div className="pb-[50px]">
+      <div className="pb-[50px] min-h-[200px]">
         {tabKey === 'POSITION' && <PositionList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}
         {tabKey === 'PENDING' && <PendingList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}
         {tabKey === 'STOPLOSS_PROFIT' && <StopLossProfitList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}

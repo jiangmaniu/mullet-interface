@@ -45,6 +45,7 @@ export async function getInitialState(): Promise<{
   if (getPathname(location.pathname) !== loginPath && STORAGE_GET_TOKEN()) {
     // 获取全局用户信息
     const currentUser = (await fetchUserInfo()) as User.UserInfo
+
     return {
       fetchUserInfo,
       currentUser,

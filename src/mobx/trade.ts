@@ -3,6 +3,7 @@ import { action, computed, configure, makeObservable, observable, runInAction } 
 
 import { getTradeSymbolCategory } from '@/services/api/common'
 import { getTradeSymbolList } from '@/services/api/tradeCore/account'
+import { getAccountGroupList } from '@/services/api/tradeCore/accountGroup'
 import {
   cancelOrder,
   createOrder,
@@ -63,8 +64,9 @@ class TradeStore {
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
   @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
-  @observable leverageMultiple = 0 // 杠杆倍数
+  @observable leverageMultiple = 0 // 浮动杠杆倍数
   @observable currentLiquidationSelect = 'CROSS_MARGIN' // 右下角爆仓选择逐仓、全仓切换
+  @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
 
   // 初始化加载
   init = () => {
@@ -86,6 +88,16 @@ class TradeStore {
   // 设置保证金类型
   setMarginType = (marginType: API.MaiginType) => {
     this.marginType = marginType
+  }
+
+  // 获取创建账户页面-账户组列表
+  getAccountGroupList = async () => {
+    const res = await getAccountGroupList()
+    const accountList = (res?.data || []) as AccountGroup.AccountGroupItem[]
+    runInAction(() => {
+      this.accountGroupList = accountList
+    })
+    return res
   }
 
   // 设置当前切换的账户信息
@@ -143,27 +155,35 @@ class TradeStore {
     // 全仓保证金率：净值/占用 = 保证金率
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
     // 净值=账户余额-库存费-手续费+浮动盈亏
-    let { money, occupyMargin, availableMargin, balance } = this.getAccountBalance()
+    let { occupyMargin, balance } = this.getAccountBalance()
 
     let marginRate = 0
-    let margin = 0 // 维持保证金=强制平仓比例*保证金余额
+    let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
     let compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
     compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
     if (isCrossMargin) {
       marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
-      margin = Number(toFixed(availableMargin * compelCloseRatio))
+      margin = Number(toFixed(occupyMargin * compelCloseRatio))
+
+      console.log('marginRate', marginRate)
+      console.log('margin', margin)
+      console.log('occupyMargin', occupyMargin)
+      console.log('balance', balance)
     } else {
-      const positionItem = item || this.positionList.find((item) => item.symbol === currentLiquidationSelect) // 当前筛选的订单信息
-      const orderMargin = Number(positionItem?.orderMargin || 0)
-      // 逐仓净值=账户余额（单笔交易保证金）-库存费-手续费+浮动盈亏
-      const isolatedBalance = Number(
-        toFixed(
-          orderMargin -
-            Number(positionItem?.interestFees || 0) -
-            Number(positionItem?.handlingFees || 0) +
-            Number(positionItem?.profit || 0)
-        )
-      )
+      // 当前筛选的订单信息
+      const filterPositionList = item ? [item] : this.positionList.filter((item) => item.symbol === currentLiquidationSelect)
+      let orderMargin = 0 // 订单总的保证金
+      let handlingFees = 0 // 订单总的手续费
+      let interestFees = 0 // 订单总的库存费
+      let profit = 0 // 订单总的浮动盈亏
+      filterPositionList.map((item) => {
+        orderMargin += Number(item.orderMargin || 0)
+        handlingFees += Number(item.handlingFees || 0)
+        interestFees += Number(item.interestFees || 0)
+        profit += Number(item.profit || 0)
+      })
+      // 逐仓净值=账户余额（单笔或多笔交易保证金）-库存费-手续费+浮动盈亏
+      const isolatedBalance = Number(toFixed(orderMargin - Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0)))
       marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
 
       margin = Number(toFixed(orderMargin * compelCloseRatio))
@@ -509,7 +529,7 @@ class TradeStore {
       // 更新持仓列表
       this.getPositionList()
       // 更新止盈止损列表
-      this.getStopLossProfitList()
+      // this.getStopLossProfitList()
 
       message.info(getIntl().formatMessage({ id: 'mt.xiugaizhiyingzhisunchenggong' }))
       // 激活Tab
@@ -535,7 +555,7 @@ class TradeStore {
       // 更新挂单列表
       this.getPendingList()
       // 更新止盈止损列表
-      this.getStopLossProfitList()
+      // this.getStopLossProfitList()
       message.info(getIntl().formatMessage({ id: 'mt.cexiaochenggong' }))
     }
     return res

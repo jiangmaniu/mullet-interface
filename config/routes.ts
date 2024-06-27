@@ -112,13 +112,13 @@ export default [
   {
     path: '/:lng/account/type',
     access: 'canAdmin', // 权限配置
-    component: './admin/account/accountTypeList',
+    component: './admin/account/accountTypeSelect',
     hideInMenu: true
   },
   {
-    path: '/:lng/account/type/add',
+    path: `/:lng/account/type/add/:accountId`,
     access: 'canAdmin', // 权限配置
-    component: './admin/account/accountTypeList/add',
+    component: './admin/account/accountTypeSelect/add',
     hideInMenu: true
   },
   // {

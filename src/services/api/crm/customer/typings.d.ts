@@ -138,8 +138,8 @@ declare namespace Customer {
       deptId: string
       postId: string
     }
-    children?: Account.AccountPageListItem[]
-    accountList?: Account.AccountPageListItem[]
+    children?: User.AccountItem[]
+    accountList?: User.AccountItem[]
   }
   // 修改或新增
   type AddOrUpdateParams = {

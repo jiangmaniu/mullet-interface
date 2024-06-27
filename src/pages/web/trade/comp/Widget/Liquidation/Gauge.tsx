@@ -151,7 +151,7 @@ function Gauge() {
     })
   }, [marginRate])
 
-  return <ReactECharts option={options} ref={instance} style={{ width: 110, height: 110 }} />
+  return <ReactECharts option={options} ref={instance} style={{ width: 100, height: 100 }} />
 }
 
 export default observer(Gauge)

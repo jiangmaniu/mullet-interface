@@ -17,6 +17,7 @@ import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { push } from '@/utils/navigator'
 
 import Header from './comp/Header'
+import RenameAccountModal from './comp/RenameAccountModal'
 
 type IAccountItem = User.AccountItem & {
   isEyeOpen?: boolean
@@ -54,11 +55,11 @@ function Account() {
     // 切换真实模拟账户列表
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
     setCurrentAccountList(list)
-  }, [accountTabActiveKey, accountList.length])
+  }, [accountTabActiveKey, currentUser])
 
   return (
     <PageContainer pageBgColorMode="white" renderHeader={() => <Header />}>
-      <img src="/img/rujin-banner.png" className="w-full h-[108px]" />
+      <img src="/img/rujin-banner.png" className="w-full h-[108px] bg-gray-100" />
       <div className="flex items-center justify-between mt-10">
         <Tabs
           items={[
@@ -89,7 +90,7 @@ function Account() {
                 <div className="flex flex-col">
                   <div className="flex items-center">
                     <div className="text-sm font-bold text-gray">
-                      {item.groupName} / {hiddenCenterPartStr(item?.id, 4)}
+                      {item.name} / {hiddenCenterPartStr(item?.id, 4)}
                     </div>
                     <div className="ml-[10px] flex px-1 items-center">
                       <div
@@ -187,30 +188,35 @@ function Account() {
                       console.log('key', key)
                     },
                     items: [
-                      {
-                        key: 'transfer',
-                        label: (
-                          <span className="text-sm text-gray-secondary hover:text-gray">
-                            <FormattedMessage id="mt.zhuanzhang" />
-                          </span>
-                        )
-                      },
+                      // {
+                      //   key: 'transfer',
+                      //   label: (
+                      //     <span className="text-sm text-gray-secondary hover:text-gray">
+                      //       <FormattedMessage id="mt.zhuanzhang" />
+                      //     </span>
+                      //   )
+                      // },
                       {
                         key: 'rename',
                         label: (
-                          <span className="text-sm text-gray-secondary hover:text-gray">
-                            <FormattedMessage id="mt.zhanghuchongmingming" />
-                          </span>
-                        )
-                      },
-                      {
-                        key: 'editPwd',
-                        label: (
-                          <span className="text-sm text-gray-secondary hover:text-gray">
-                            <FormattedMessage id="mt.genggaijiaoyimima" />
-                          </span>
+                          <RenameAccountModal
+                            trigger={
+                              <span className="text-sm text-gray-secondary hover:text-gray">
+                                <FormattedMessage id="mt.zhanghuchongmingming" />
+                              </span>
+                            }
+                            info={item}
+                          />
                         )
                       }
+                      // {
+                      //   key: 'editPwd',
+                      //   label: (
+                      //     <span className="text-sm text-gray-secondary hover:text-gray">
+                      //       <FormattedMessage id="mt.genggaijiaoyimima" />
+                      //     </span>
+                      //   )
+                      // }
                     ]
                   }}
                 >

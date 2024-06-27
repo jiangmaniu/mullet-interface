@@ -1,4 +1,5 @@
 import { useModel } from '@umijs/max'
+import { flushSync } from 'react-dom'
 
 import { stores } from '@/context/mobxProvider'
 
@@ -9,10 +10,12 @@ export default function User() {
   const fetchUserInfo = async () => {
     const userInfo = await stores.global.fetchUserInfo()
     if (userInfo) {
-      setInitialState((s) => ({
-        ...s,
-        ...userInfo
-      }))
+      flushSync(() => {
+        setInitialState((s) => ({
+          ...s,
+          currentUser: userInfo
+        }))
+      })
     }
   }
 

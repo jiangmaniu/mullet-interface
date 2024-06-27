@@ -9,6 +9,13 @@ import {
 } from '@/utils/business'
 import { request } from '@/utils/request'
 
+// 客户用户-交易账户组
+export async function getAccountGroupList() {
+  return request<API.Response<AccountGroup.AccountGroupItem>>('/api/trade-crm/crmClient/account/accountGroup', {
+    method: 'GET'
+  })
+}
+
 // 交易账户组-分页
 export async function getAccountGroupPageList(params?: AccountGroup.AccountGroupPageListParams) {
   const isSimulate = location.pathname?.indexOf('/account-group/demo') !== -1

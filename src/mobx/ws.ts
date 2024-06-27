@@ -200,7 +200,7 @@ class WSStore {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        if (this.quotesTempArr.length > 30) {
+        if (this.quotesTempArr.length > 20) {
           const quotes = this.quotes // 之前的值
           const quotesObj: any = {} // 一次性更新，避免卡顿
           this.quotesTempArr.forEach((item: IQuoteItem) => {
@@ -210,7 +210,14 @@ class WSStore {
               const prevAsk = quotes[sbl]?.priceData?.buy || 0
               item.bidDiff = item.priceData?.sell - prevBid
               item.askDiff = item.priceData?.buy - prevAsk
+
+              if (item.priceData) {
+                // 如果没有最新报价，获取上一口报价
+                item.priceData.buy = item.priceData.buy || prevAsk
+                item.priceData.sell = item.priceData.sell || prevBid
+              }
             }
+
             if (sbl) {
               quotesObj[sbl] = item
             }

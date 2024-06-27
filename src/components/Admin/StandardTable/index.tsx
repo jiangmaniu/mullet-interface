@@ -394,7 +394,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           background: '#fff !important'
         },
         '&::-webkit-scrollbar-thumb:hover': {
-          background: 'rgba(0, 0, 0, 0.4)',
+          background: 'rgba(0, 0, 0, 0.4) !important',
           borderRadius: 5,
           boxShadow: 'inset 0 0 5px rgba(239, 239, 239, 1)'
         }
@@ -422,9 +422,6 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         },
       '.ant-pagination': {
         marginRight: '10px !important'
-      },
-      '.ant-table-tbody >tr >td': {
-        borderBottom: !hasProList && 'none !important'
       }
     }
   })

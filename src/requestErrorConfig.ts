@@ -142,9 +142,9 @@ export const errorConfig: RequestConfig = {
       }
 
       // token不存在并且该请求需要token，则不发送请求
-      if (!token && config.needToken !== false) {
-        return Promise.reject('')
-      }
+      // if (!token && config.needToken !== false) {
+      //   return Promise.reject('')
+      // }
 
       return { ...config, interceptors: true, headers }
     }

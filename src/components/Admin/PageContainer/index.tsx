@@ -21,6 +21,8 @@ interface IProps {
   backTitle?: React.ReactNode
   /**左右间距使用百分百，不固定宽度 */
   fluidWidth?: boolean
+  backUrl?: string
+  backStyle?: React.CSSProperties
 }
 export default function PageContainer({
   children,
@@ -30,6 +32,8 @@ export default function PageContainer({
   renderHeader,
   backTitle,
   fluidWidth,
+  backUrl,
+  backStyle,
   style = {}
 }: IProps & PageContainerProps) {
   const { setPageBgColor } = useModel('global')
@@ -61,37 +65,37 @@ export default function PageContainer({
             background: '#fff',
             height: 70,
             lineHeight: 70,
-            borderBottom: '1px solid rgba(218, 218, 218, .3)',
-            paddingInline: '9.5%'
+            borderBottom: '1px solid rgba(218, 218, 218, .3)'
+            // paddingInline: '9.5%'
           }}
           className={classNames('flex items-center', {
             'sticky top-[66px] z-[99]': fixedHeader
           })}
         >
-          {renderHeader?.()}
+          <div className={classNames('w-[1200px]', !fluidWidth ? 'm-auto' : '')}>{renderHeader?.()}</div>
         </div>
       )}
 
       {/* 返回按钮 */}
       {backTitle && backPath && (
-        <div className={classNames('pt-7', renderHeader ? 'px-[9.5%]' : 'px-6')}>
-          <div className="flex items-center relative -left-2">
+        <div className={classNames('pt-7 flex items-center px-6 justify-center')} style={backStyle}>
+          <div className="flex items-center relative -left-2 w-[1200px]">
             <div
               className="hover:bg-gray-100 rounded-full cursor-pointer"
               onClick={() => {
-                push(`/${backPath}`)
+                push(backUrl || `/${backPath}`)
               }}
             >
               <img src="/img/uc/arrow-left.png" width={40} height={40} />
             </div>
-            <span className="text-[24px] font-bold ml-3">{backTitle}</span>
+            <div className="text-[24px] font-bold ml-3 w-full">{backTitle}</div>
           </div>
         </div>
       )}
 
       {/* 内容区域 */}
-      <div style={contentStyle} className={classNames('py-7', renderHeader || fluidWidth ? 'px-[9.5%]' : 'px-6')}>
-        <div className="max-w-[1120px]">{children}</div>
+      <div style={contentStyle} className={classNames('py-7 flex items-center justify-center', 'px-6')}>
+        <div className="w-[1200px]">{children}</div>
       </div>
     </div>
   )

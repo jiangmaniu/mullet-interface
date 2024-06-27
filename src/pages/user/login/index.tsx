@@ -5,7 +5,6 @@ import { FormattedHTMLMessage, FormattedMessage, useIntl, useModel } from '@umij
 import { Form } from 'antd'
 import classNames from 'classnames'
 import { md5 } from 'js-md5'
-import Lottie from 'lottie-react'
 import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
@@ -17,13 +16,13 @@ import { push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
 
 import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem'
+import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
 import RegisterValidateCode, { IValidateCodeType } from '../comp/RegisterValidateCode'
-import animationData from './animation.json'
 
 type ITabType = 'LOGIN' | 'REGISTER'
 
@@ -420,14 +419,7 @@ function Login() {
         {loading && (
           <div className="bg-white rounded-lg w-[490px] h-[520px] flex items-center justify-center flex-col">
             <div>
-              <Lottie
-                className="w-[400px] h-[400px]"
-                animationData={animationData}
-                renderer="svg"
-                autoplay={true}
-                loop={true}
-                assetsPath="/img/animation/"
-              />
+              <Loading />
             </div>
             <div className="flex flex-col items-center justify-center relative -top-5 px-6">
               <div className="text-lg text-gray font-semibold">

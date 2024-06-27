@@ -217,7 +217,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       {/* 取消挂单弹窗 */}
       <PendingOrderCancelModal ref={cancelPendingRef} />
       {/* 修改挂单弹窗 */}
-      <ModifyPendingOrderModal ref={modifyPendingRef} />
+      <ModifyPendingOrderModal ref={modifyPendingRef} list={[]} />
     </div>
   )
 }

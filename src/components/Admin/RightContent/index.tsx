@@ -232,7 +232,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
                   <div className="flex justify-between">
                     <div className="flex">
                       <div className="flex-1 text-sm font-bold text-gray">
-                        {item.groupName} / {hiddenCenterPartStr(item?.id, 4)}
+                        {item.name} / {hiddenCenterPartStr(item?.id, 4)}
                       </div>
                       <div className="ml-[10px] flex px-1">
                         <div

@@ -30,7 +30,7 @@ export default observer(() => {
     }
   }, [])
 
-  const borderClassName = useEmotionCss(({ token }) => {
+  const borderTopClassName = useEmotionCss(({ token }) => {
     return {
       '&::after': {
         content: "''",
@@ -60,12 +60,12 @@ export default observer(() => {
               {/* 买卖交易区 */}
               <BuyAndSell />
             </div>
-            <div className={classNames('flex items-start justify-between relative', borderClassName)}>
+            <div className={classNames('flex items-start justify-between relative', borderTopClassName)}>
               {/* 交易记录 */}
-              <div style={{ width: 'calc(100vw - 303px)' }} className="flex-1">
+              <div style={{ width: 'calc(100vw - 303px)' }} className={classNames('flex-1')}>
                 <TradeRecord />
               </div>
-              <div className="w-[300px]">
+              <div className={classNames('w-[300px] min-h-[270px] relative')}>
                 <Liquidation />
               </div>
             </div>

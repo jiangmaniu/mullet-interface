@@ -143,7 +143,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="mt.qiangpingjia" />,
+      title: <FormattedMessage id="mt.yuguqiangpingjia" />,
       dataIndex: 'forceClosePrice',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -194,7 +194,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (
               <span>
-                {/* 追加保证金 */}
+                {/* 追加、提取保证金 */}
                 <AddOrExtractMarginModal
                   trigger={
                     <PlusCircleOutlined
@@ -208,24 +208,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
                   onClose={() => {
                     setModalInfo({} as IPositionItem)
                   }}
-                  type="AddMargin"
                 />
-                {/* 提取逐仓保证金 */}
-                {/* <AddOrExtractMarginModal
-                  trigger={
-                    <MinusCircleOutlined
-                      className="cursor-pointer ml-3"
-                      onClick={() => {
-                        setModalInfo(record)
-                      }}
-                    />
-                  }
-                  info={modalInfo}
-                  onClose={() => {
-                    setModalInfo({} as IPositionItem)
-                  }}
-                  type="ExtractMargin"
-                /> */}
               </span>
             )}
           </span>
@@ -392,23 +375,24 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     const contractSize = conf.contractSize || 0
     const quoteInfo = getCurrentQuote(symbol)
     const digits = v.symbolDecimal || 2
-    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
+    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格取反方向的
 
     const isCrossMargin = v.marginType === 'CROSS_MARGIN'
 
     if (isCrossMargin) {
-      // 全仓单笔保证金 = 开盘价 * 合约大小 * 手数 / 杠杆
+      // 全仓单笔保证金 = (开盘价 * 合约大小 * 手数) / 杠杆
       // 如果没有设置杠杆，读后台配置的杠杆
       const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
       const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
       const leverageMultiple = v.leverageMultiple || leverage
       const initialMargin = prepaymentConf?.mode === 'fixed_margin' ? prepaymentConf?.fixed_margin?.initial_margin : 0 // 读后台初始预付款的值
 
-      // 杠杆存在
+      // 存在杠杆
       if (leverageMultiple) {
         v.orderMargin = v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
       } else {
-        v.orderMargin = toFixed(initialMargin, digits)
+        // 固定保证金 * 手数
+        v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)
       }
     } else {
       // 逐仓保证金
@@ -460,9 +444,9 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         pageSize={999}
       />
       {/* 平仓修改确认弹窗 */}
-      <ClosePositionConfirmModal ref={closePositionRef} />
+      <ClosePositionConfirmModal ref={closePositionRef} list={dataSource} />
       {/* 设置止损止盈弹窗 */}
-      <SetStopLossProfitModal ref={stopLossProfitRef} />
+      <SetStopLossProfitModal ref={stopLossProfitRef} list={dataSource} />
     </>
   )
 }

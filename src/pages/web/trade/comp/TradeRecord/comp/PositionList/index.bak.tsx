@@ -125,7 +125,6 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
               onClose={() => {
                 setModalInfo({} as IPositionItem)
               }}
-              type="AddMargin"
             />
             {/* 提取逐仓保证金 */}
             <AddOrExtractMarginModal
@@ -141,7 +140,6 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
               onClose={() => {
                 setModalInfo({} as IPositionItem)
               }}
-              type="ExtractMargin"
             />
           </span>
         )}
@@ -216,7 +214,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           const symbol = v.dataSourceSymbol as string
           const quoteInfo = getCurrentQuote(symbol)
           const digits = v.symbolDecimal || 2
-          const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
+          const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格取反
 
           v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格
           const profit = covertProfit(v) as number // 浮动盈亏
@@ -360,9 +358,9 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         </div>
       )}
       {/* 平仓修改确认弹窗 */}
-      <ClosePositionConfirmModal ref={closePositionRef} />
+      <ClosePositionConfirmModal ref={closePositionRef} list={[]} />
       {/* 设置止损止盈弹窗 */}
-      <SetStopLossProfitModal ref={stopLossProfitRef} />
+      <SetStopLossProfitModal ref={stopLossProfitRef} list={[]} />
     </div>
   )
 }

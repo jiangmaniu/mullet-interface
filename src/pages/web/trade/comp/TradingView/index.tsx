@@ -1,6 +1,6 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { URLS } from '@/constants'
 import { getTradingViewLng } from '@/constants/enum'
@@ -32,8 +32,8 @@ const TradingViewComp = ({ style }: IProps) => {
     }
   }, [lng, activeSymbolName, dataSourceCode])
 
-  return (
-    <div style={style}>
+  const iframeDom = useMemo(() => {
+    return (
       <Spin spinning={loading} size="large">
         <iframe
           src={tradeUrl}
@@ -50,8 +50,10 @@ const TradingViewComp = ({ style }: IProps) => {
           }}
         />
       </Spin>
-    </div>
-  )
+    )
+  }, [tradeUrl, loading])
+
+  return <div style={style}>{iframeDom}</div>
 }
 
 export default observer(TradingViewComp)

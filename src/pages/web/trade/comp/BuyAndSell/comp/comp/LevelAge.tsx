@@ -14,11 +14,11 @@ type IProps = {
 function LevelAge({ onChange }: IProps) {
   const { trade } = useStores()
   const intl = useIntl()
-  const [value, setValue] = useState<any>(0)
+  const [value, setValue] = useState<any>(1)
   const leverageMultiple = trade.leverageMultiple
 
   useEffect(() => {
-    setValue(leverageMultiple || 0)
+    setValue(leverageMultiple || 1)
   }, [leverageMultiple])
 
   return (
@@ -34,7 +34,7 @@ function LevelAge({ onChange }: IProps) {
           onChange?.(v)
         }}
         max={30}
-        min={0}
+        min={1}
         disabled={false}
         height={40}
       />
@@ -42,10 +42,10 @@ function LevelAge({ onChange }: IProps) {
         <div>
           <Slider
             value={value}
-            min={0}
+            min={1}
             max={30}
             marks={{
-              0: '0x',
+              1: '1x',
               10: '10x',
               20: '20x',
               30: '30x'
