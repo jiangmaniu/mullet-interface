@@ -7,7 +7,7 @@ import Modal from '@/components/Base/Modal'
 import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'
 import { addMargin, extractMargin } from '@/services/api/tradeCore/order'
-import { formatNum } from '@/utils'
+import { formatNum, toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import { calcForceClosePrice } from '@/utils/wsUtil'
 
@@ -27,8 +27,14 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
   const { availableMargin } = trade.getAccountBalance()
   const [inputValue, setInputValue] = useState(0)
   const modalRef = useRef<any>()
+  const marginInputRef = useRef<any>()
+
   const [activeKey, setActiveKey] = useState<'ADD' | 'MINUS'>('ADD')
   const isAdd = activeKey === 'ADD'
+
+  const orderMargin = info?.orderMargin || 0 // 订单追加的保证金
+  const orderBaseMargin = info?.orderBaseMargin || 0 // 订单基础保证金，减少的保证金不能低于基础保证金
+  const avaMargin = parseInt(toFixed(isAdd ? availableMargin : orderMargin - orderBaseMargin)) // 增加、减少保证金的可用额度
 
   const forceClosePrice = inputValue
     ? calcForceClosePrice({
@@ -65,8 +71,8 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
       footer={null}
       width={410}
       centered
-      onClose={close}
       onCancel={() => {
+        modalRef?.current?.close?.()
         onClose?.()
       }}
       afterClose={() => {
@@ -89,6 +95,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
             ]}
             onChange={(key: any) => {
               setActiveKey(key)
+              marginInputRef?.current?.reset?.()
             }}
             tabBarGutter={90}
             tabBarStyle={{ paddingLeft: 90 }}
@@ -106,18 +113,26 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
                 setInputValue(value)
               }}
               isAdd={isAdd}
+              availableMargin={avaMargin}
+              ref={marginInputRef}
             />
             <div className="pt-5">
               <div className="pb-1">
                 <img src="/img/lingxing-2.png" width={8} height={8} />
                 <span className="text-xs text-gray pl-[5px] !font-dingpro-medium">
-                  <FormattedMessage id="mt.zuiduokezengjia" /> {formatNum(availableMargin)} USD
+                  {isAdd ? <FormattedMessage id="mt.zuiduokezengjia" /> : <FormattedMessage id="mt.zuiduokejianshao" />}{' '}
+                  {formatNum(avaMargin)} USD
                 </span>
               </div>
               <div>
                 <img src="/img/lingxing-2.png" width={8} height={8} />
                 <span className="text-xs text-gray pl-[5px] !font-dingpro-medium">
-                  <FormattedMessage id="mt.zengjiahoudeyuguqiangpingjiagewei" /> {formatNum(forceClosePrice)} USD
+                  {isAdd ? (
+                    <FormattedMessage id="mt.zengjiahoudeyuguqiangpingjiagewei" />
+                  ) : (
+                    <FormattedMessage id="mt.jianshaohoudeyuguqiangpingjiagewei" />
+                  )}{' '}
+                  {forceClosePrice ? formatNum(forceClosePrice) + 'USD' : '-'}
                 </span>
               </div>
             </div>

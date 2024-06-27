@@ -200,7 +200,7 @@ class WSStore {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        if (this.quotesTempArr.length > 20) {
+        if (this.quotesTempArr.length > 30) {
           const quotes = this.quotes // 之前的值
           const quotesObj: any = {} // 一次性更新，避免卡顿
           this.quotesTempArr.forEach((item: IQuoteItem) => {

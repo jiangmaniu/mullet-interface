@@ -164,11 +164,6 @@ class TradeStore {
     if (isCrossMargin) {
       marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
       margin = Number(toFixed(occupyMargin * compelCloseRatio))
-
-      console.log('marginRate', marginRate)
-      console.log('margin', margin)
-      console.log('occupyMargin', occupyMargin)
-      console.log('balance', balance)
     } else {
       // 当前筛选的订单信息
       const filterPositionList = item ? [item] : this.positionList.filter((item) => item.symbol === currentLiquidationSelect)

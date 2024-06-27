@@ -93,9 +93,9 @@ export default function InputNumber(props: IProps) {
       form?.setFieldValue?.(name, inputValue === 0 || inputValue ? Number(inputValue) : '')
     }
     // 设置表单聚焦
-    if (autoFocus && inputValue) {
-      inputRef.current?.focus?.()
-    }
+    // if (autoFocus && inputValue) {
+    //   inputRef.current?.focus?.()
+    // }
   }, [inputValue])
 
   const handleAdd = () => {

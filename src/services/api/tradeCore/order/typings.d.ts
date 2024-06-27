@@ -384,6 +384,10 @@ declare namespace Order {
      */
     orderMargin?: number
     /**
+     * 订单基础保证金
+     */
+    orderBaseMargin?: number
+    /**
      * 订单数量
      */
     orderVolume?: number

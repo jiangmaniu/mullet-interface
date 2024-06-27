@@ -624,23 +624,41 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   const symbolNewTicker = currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
-  const ask = Number(currentQuote?.priceData?.buy || 0) // 买价
-  const bid = Number(currentQuote?.priceData?.sell || 0) // 卖价
+  let ask = Number(currentQuote?.priceData?.buy || 0) // 买价
+  let bid = Number(currentQuote?.priceData?.sell || 0) // 卖价
   const open = Number(symbolNewTicker?.open || 0) // 开盘价
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.open || 0), bid]) // 拿当前价格跟首次返回的比
   const low = Math.max.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
   const close = Number(bid || symbolNewTicker?.close || 0) // 使用卖价作为最新的收盘价格
   const percent = Number(bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0)
-  const spreadValue = Math.abs(parseInt(String((bid - ask) * Math.pow(10, digits)))) // 买卖点差
   // 区分固定点差 浮动点差
   let spread = 0
-  if (spreadConf?.type === 'fixed') {
-    // 固定点差模式
-    const { buy = 0, sell = 0 } = spreadConf.fixed || {}
-    spread = buy * Math.pow(10, -digits)
-  } else {
-    // @TODO 浮动点差模式
-    spread = spreadValue
+  if (bid && ask) {
+    if (spreadConf?.type === 'fixed') {
+      // 固定点差模式
+      const { buy = 0, sell = 0 } = spreadConf?.fixed || {}
+      // 新买价 = (买价 + 卖价) / 2 + 设置的点差*小数点
+      const newBuy = (bid + ask) / 2 + buy * Math.pow(10, -digits)
+      // 新卖价 = （买价 + 卖价) / 2 - 设置的点差*小数点
+      const newSell = (bid + ask) / 2 - sell * Math.pow(10, -digits)
+      // 点差
+      spread = Math.abs(newSell - newBuy)
+      // 新买价、新卖价重新赋值到 bid ask上替换 @TODO 需要跟k线段同步修改
+      // ask = newBuy
+      // bid = newSell
+    } else if (spreadConf?.type === 'float') {
+      // 浮动点差模式
+      const { buy = 0, sell = 0 } = spreadConf?.float || {}
+      // 新买价 = 买价 + 设置的点差*小数点
+      const newBuy = (ask + buy) * Math.pow(10, -digits)
+      // 新卖价 = 卖价 - 设置的点差*小数点
+      const newSell = (bid - sell) * Math.pow(10, -digits)
+      // 点差
+      spread = Math.abs(newSell - newBuy)
+      // 新买价、新卖价重新赋值到 bid ask上替换 @TODO 需要跟k线段同步修改
+      // ask = newBuy
+      // bid = newSell
+    }
   }
 
   return {
@@ -666,6 +684,6 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
     low: toFixed(low, digits), //低
     open: toFixed(open, digits), //开
     close: toFixed(close, digits), //收
-    spread
+    spread: Number(toFixed(spread, digits))
   }
 }

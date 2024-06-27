@@ -222,9 +222,9 @@ export default observer(
             </div>
           </div>
           <InputNumber
-            showAddMinus={false}
+            // showAddMinus={false}
             placeholder={intl.formatMessage({ id: 'mt.shurujiage' })}
-            addonBefore={intl.formatMessage({ id: 'mt.jiage' })}
+            // addonBefore={intl.formatMessage({ id: 'mt.jiage' })}
             rootClassName="!z-50 mb-3"
             classNames={{ input: 'text-center' }}
             value={priceValue}
@@ -279,7 +279,6 @@ export default observer(
                 showFloatTips={false}
                 placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
                 rootClassName="!z-40 mb-3"
-                width={65}
                 classNames={{ input: 'text-center' }}
                 value={spValue}
                 onChange={(value: any) => {
@@ -321,7 +320,6 @@ export default observer(
                 showFloatTips={false}
                 placeholder={intl.formatMessage({ id: 'mt.zhisun' })}
                 rootClassName="!z-30"
-                width={65}
                 classNames={{ input: 'text-center' }}
                 value={slValue}
                 onChange={(value) => {

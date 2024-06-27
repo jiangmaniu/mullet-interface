@@ -154,8 +154,8 @@ export default function AreaCodeSelect({
             // @ts-ignore
             const val = option[valueKey] || value?.[0]
 
-            console.log('value', value)
-            console.log('option', option)
+            // console.log('value', value)
+            // console.log('option', option)
 
             // 重新再次赋值一次，针对areaName，表单需要设置value即aredId的唯一值
             if (valueKey === 'areaName') {
