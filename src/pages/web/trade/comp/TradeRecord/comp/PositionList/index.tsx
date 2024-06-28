@@ -1,4 +1,3 @@
-import { PlusCircleOutlined } from '@ant-design/icons'
 import { ProColumns, useIntl } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 import classNames from 'classnames'
@@ -187,22 +186,28 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
+        const buySellInfo = getBuySellInfo(record)
         const orderMargin = Number(record.orderMargin || 0)
         return (
-          <span className="items-center inline-flex">
-            <span className="pr-2 !font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) + 'USD' : '-'} </span>
+          <div className="flex items-center">
+            <div className="flex flex-col">
+              <span className="pr-2 !font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) + 'USD' : '-'} </span>
+              <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.marginTypeText}</span>
+            </div>
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (
               <span>
                 {/* 追加、提取保证金 */}
                 <AddOrExtractMarginModal
                   trigger={
-                    <PlusCircleOutlined
+                    <div
                       className="cursor-pointer"
                       onClick={() => {
                         setModalInfo(record)
                       }}
-                    />
+                    >
+                      <img src="/img/addMargin.png" width={30} height={30} />
+                    </div>
                   }
                   info={modalInfo}
                   onClose={() => {
@@ -211,7 +216,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
                 />
               </span>
             )}
-          </span>
+          </div>
         )
       }
     },

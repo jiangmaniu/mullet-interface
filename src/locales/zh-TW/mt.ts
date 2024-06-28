@@ -322,5 +322,6 @@ export default {
   'mt.zhanghuchongmingmingtips': '如果您有多個帳戶，您可以以不同名稱命名每個帳戶以便區分。',
   'mt.zhanghu': '账户',
   'mt.qingshurujiage': '请输入价格',
-  'mt.qingshurushoushu': '请输入手数'
+  'mt.qingshurushoushu': '请输入手数',
+  'mt.guding': '固定'
 }

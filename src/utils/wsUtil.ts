@@ -636,28 +636,24 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   if (bid && ask) {
     if (spreadConf?.type === 'fixed') {
       // 固定点差模式
-      const { buy = 0, sell = 0 } = spreadConf?.fixed || {}
+      // const { buy = 0, sell = 0 } = spreadConf?.fixed || {}
+      // 后台处理
       // 新买价 = (买价 + 卖价) / 2 + 设置的点差*小数点
-      const newBuy = (bid + ask) / 2 + buy * Math.pow(10, -digits)
+      // const newBuy = (bid + ask) / 2 + buy * Math.pow(10, -digits)
       // 新卖价 = （买价 + 卖价) / 2 - 设置的点差*小数点
-      const newSell = (bid + ask) / 2 - sell * Math.pow(10, -digits)
+      // const newSell = (bid + ask) / 2 - sell * Math.pow(10, -digits)
       // 点差
-      spread = Math.abs(newSell - newBuy)
-      // 新买价、新卖价重新赋值到 bid ask上替换 @TODO 需要跟k线段同步修改
-      // ask = newBuy
-      // bid = newSell
+      spread = Math.abs(bid - ask)
     } else if (spreadConf?.type === 'float') {
       // 浮动点差模式
-      const { buy = 0, sell = 0 } = spreadConf?.float || {}
-      // 新买价 = 买价 + 设置的点差*小数点
-      const newBuy = (ask + buy) * Math.pow(10, -digits)
-      // 新卖价 = 卖价 - 设置的点差*小数点
-      const newSell = (bid - sell) * Math.pow(10, -digits)
+      // const { buy = 0, sell = 0 } = spreadConf?.float || {}
+      // 后台处理
+      // // 新买价 = 买价 + 设置的点差*小数点
+      // const newBuy = (ask + buy) * Math.pow(10, -digits)
+      // // 新卖价 = 卖价 - 设置的点差*小数点
+      // const newSell = (bid - sell) * Math.pow(10, -digits)
       // 点差
-      spread = Math.abs(newSell - newBuy)
-      // 新买价、新卖价重新赋值到 bid ask上替换 @TODO 需要跟k线段同步修改
-      // ask = newBuy
-      // bid = newSell
+      spread = Math.abs(bid - ask)
     }
   }
 

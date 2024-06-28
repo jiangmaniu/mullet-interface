@@ -97,8 +97,8 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
               setActiveKey(key)
               marginInputRef?.current?.reset?.()
             }}
-            tabBarGutter={90}
-            tabBarStyle={{ paddingLeft: 90 }}
+            tabBarGutter={40}
+            tabBarStyle={{ paddingLeft: 20 }}
             size="small"
             activeKey={activeKey}
             marginBottom={0}

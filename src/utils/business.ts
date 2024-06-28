@@ -286,15 +286,25 @@ export const getSymbolIcon = (imgUrl: any) => {
  */
 export const getBuySellInfo = (item: any) => {
   const intl = getIntl()
+  const mode = item?.conf?.prepaymentConf?.mode
+  const isFixedMargin = mode === 'fixed_margin' // 固定保证金
   const isBuy = item.buySell === TRADE_BUY_SELL.BUY
   const buySellText = isBuy ? intl.formatMessage({ id: 'mt.mairu' }) : intl.formatMessage({ id: 'mt.maichu' })
 
-  const marginTypeText =
-    item.marginType === 'CROSS_MARGIN' ? intl.formatMessage({ id: 'mt.quancang' }) : intl.formatMessage({ id: 'mt.zhucang' })
+  let marginTypeText = ''
+  if (item.marginType) {
+    marginTypeText =
+      item.marginType === 'CROSS_MARGIN' ? intl.formatMessage({ id: 'mt.quancang' }) : intl.formatMessage({ id: 'mt.zhucang' })
+  }
+  const fixedMarginText = isFixedMargin ? intl.formatMessage({ id: 'mt.guding' }) : ''
   const leverageMultiple = item.leverageMultiple
-  const leverageText = leverageMultiple ? `${leverageMultiple}X` : ''
+  const leverageText = leverageMultiple ? `${leverageMultiple}X` : fixedMarginText
 
-  const text = `${buySellText} · ${marginTypeText}${leverageText}`
+  let text = buySellText
+
+  if (leverageText) {
+    text += ` · ${leverageText}`
+  }
 
   return {
     text,
