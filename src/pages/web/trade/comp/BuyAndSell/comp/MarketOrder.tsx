@@ -65,9 +65,7 @@ export default observer(
     const consize = quoteInfo?.consize
     const symbol = quoteInfo.symbol
     const d = quoteInfo?.digits
-    // const stopl = symbols?.stopl * Math.pow(10, -d)
-    const stoplValue = 1 // @TODO 这里如何计算当前报价的止损值
-    const stopl = stoplValue * Math.pow(10, -d)
+    const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
     const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 20
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
     const vmax = maxOpenVolume // 当前账户保证金最大可开手数

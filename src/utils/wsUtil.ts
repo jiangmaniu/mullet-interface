@@ -442,7 +442,7 @@ export const calcYieldRate = (item: IPositionItem) => {
   const orderMargin = Number(item.orderMargin || 0) // 开仓保证金
   // 收益率 = 浮动盈亏 / 保证金
   const profit = item.profit
-  return profit && orderMargin ? toFixed((profit / orderMargin) * 100) + '%' : '0.00%'
+  return profit && orderMargin ? toFixed((profit / orderMargin) * 100) + '%' : ''
 }
 
 /**

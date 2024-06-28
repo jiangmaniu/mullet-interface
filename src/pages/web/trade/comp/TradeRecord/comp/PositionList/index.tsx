@@ -135,9 +135,15 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       renderText(text, record, index, action) {
         return (
-          <span className={classNames('!text-[13px] !font-dingpro-medium', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
-            {formatNum(record.currentPrice)} USD
-          </span>
+          <>
+            {Number(record.currentPrice) ? (
+              <span className={classNames('!text-[13px] !font-dingpro-medium', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
+                {formatNum(record.currentPrice)} USD
+              </span>
+            ) : (
+              '-'
+            )}
+          </>
         )
       }
     },
@@ -189,14 +195,14 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         const buySellInfo = getBuySellInfo(record)
         const orderMargin = Number(record.orderMargin || 0)
         return (
-          <div className="flex items-center">
+          <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
-              <span className="pr-2 !font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) + 'USD' : '-'} </span>
-              <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.marginTypeText}</span>
+              <span className="!font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) + 'USD' : '-'} </span>
+              <span className={classNames('text-xs font-medium pt-[2px]')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (
-              <span>
+              <div className="pl-[6px]">
                 {/* 追加、提取保证金 */}
                 <AddOrExtractMarginModal
                   trigger={
@@ -206,7 +212,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
                         setModalInfo(record)
                       }}
                     >
-                      <img src="/img/addMargin.png" width={30} height={30} />
+                      <img src="/img/edit-icon.png" width={30} height={30} />
                     </div>
                   }
                   info={modalInfo}
@@ -214,7 +220,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
                     setModalInfo({} as IPositionItem)
                   }}
                 />
-              </span>
+              </div>
             )}
           </div>
         )
@@ -338,13 +344,13 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         const profitDom = profit ? (
           <span className={classNames('font-[800] !font-dingpro-medium', color)}>{formatNum(record.profitFormat)} USD</span>
         ) : (
-          '0.00'
+          '-'
         )
-        const yieldRate = record.yieldRate || '0.00%'
+        const yieldRate = record.yieldRate
         return (
           <div className="flex flex-col">
             <div>{profitDom}</div>
-            <div className={classNames('!text-xs !font-dingpro-medium', color)}>({yieldRate})</div>
+            {yieldRate && <div className={classNames('!text-xs !font-dingpro-medium', color)}>({yieldRate})</div>}
           </div>
         )
       }
@@ -407,7 +413,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格
     const profit = covertProfit(v) as number // 浮动盈亏
     v.profit = profit || v.profit // 避免出现闪动
-    v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : toFixed(v.profit) // 格式化的
+    v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : '-' // 格式化的
     v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
     v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
     v.yieldRate = calcYieldRate(v) // 收益率
