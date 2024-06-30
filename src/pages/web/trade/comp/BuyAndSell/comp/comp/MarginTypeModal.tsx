@@ -16,14 +16,6 @@ function MarginTypeModal({ trigger }: IProps) {
   const modalRef = useRef<any>()
   const [current, setCurrent] = useState('')
   const marginType = trade.marginType
-  const titleDom = (
-    <div
-      className="flex flex-col items-center justify-center bg-no-repeat pt-3"
-      style={{ backgroundImage: 'url(/img/mask2.png)', backgroundSize: '300px auto' }}
-    >
-      <img src={'/img/margintype.png'} width={121} height={121} alt="" />
-    </div>
-  )
 
   const marginOptions = [
     {
@@ -51,7 +43,6 @@ function MarginTypeModal({ trigger }: IProps) {
       footer={null}
       width={410}
       centered
-      onClose={close}
       ref={modalRef}
       maskClosable={false}
     >

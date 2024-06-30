@@ -16,6 +16,7 @@ function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const depth = getCurrentDepth()
   const quote = getCurrentQuote()
+  // const asks = toJS(depth?.asks || []).reverse()
   const asks = depth?.asks || []
   const bids = depth?.bids || []
 
@@ -55,9 +56,13 @@ function DeepPrice() {
       <div className="flex items-center justify-between">
         <div>
           {/* 当前行情卖价 */}
-          <span className={classNames('text-lg !font-dingpro-regular pr-[10px]', quote.percent > 0 ? 'text-green' : 'text-red')}>
-            {formatNum(quote.bid)}
-          </span>
+          {quote.hasQuote ? (
+            <span className={classNames('text-lg !font-dingpro-regular pr-[10px]', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
+              {formatNum(quote.bid)}
+            </span>
+          ) : (
+            <span className="!font-dingpro-regular text-[13px]">--</span>
+          )}
         </div>
         {/* 更多打开一个页面交互没有 */}
         {/* <span className="!text-xs text-gray-secondary cursor-pointer">

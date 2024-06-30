@@ -29,8 +29,15 @@ export default observer(
     const { lng } = useLang()
     const { breakPoint } = useEnv()
     const [width, setWidth] = useState<any>(0)
+    const [loading, setLoading] = useState(true)
 
     const quoteInfo = getCurrentQuote()
+
+    useEffect(() => {
+      setTimeout(() => {
+        setLoading(false)
+      }, 100)
+    }, [])
 
     useEffect(() => {
       let w: any
@@ -62,6 +69,8 @@ export default observer(
       setCurrent(activeKey || 1)
     }, [activeKey])
 
+    const hasQuote = quoteInfo.hasQuote
+
     return (
       <>
         <div
@@ -76,17 +85,23 @@ export default observer(
           }}
         >
           <Sell isActive={isFooterBtnGroup || current === 2} width={width} bgColor={sellBgColor}>
-            <div className={classNames('flex h-full flex-col items-center justify-center xl:pt-1 left-6')}>
-              <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', sellColor)}>
-                <FormattedMessage id="mt.maichuzuokong" />
+            {!loading && (
+              <div className={classNames('flex h-full flex-col items-center justify-center xl:pt-1 left-6')}>
+                <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', sellColor)}>
+                  <FormattedMessage id="mt.maichuzuokong" />
+                </div>
+                <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', sellColor)}>
+                  {hasQuote ? formatNum(quoteInfo.bid) : '--'}
+                </div>
               </div>
-              <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', sellColor)}>{formatNum(quoteInfo.bid)}</div>
-            </div>
+            )}
           </Sell>
         </div>
-        <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-gray">
-          {quoteInfo.spread || 0}
-        </div>
+        {hasQuote && (
+          <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] !font-dingpro-medium translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-gray">
+            {quoteInfo.spread || 0}
+          </div>
+        )}
         <div
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
           onClick={() => {
@@ -99,12 +114,16 @@ export default observer(
           }}
         >
           <Buy isActive={isFooterBtnGroup || current === 1} width={width}>
-            <div className={classNames('flex h-full flex-col items-center justify-center xl:pt-1 right-6')}>
-              <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', buyColor)}>
-                <FormattedMessage id="mt.mairuzuoduo" />
+            {!loading && (
+              <div className={classNames('flex h-full flex-col items-center justify-center xl:pt-1 right-6')}>
+                <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', buyColor)}>
+                  <FormattedMessage id="mt.mairuzuoduo" />
+                </div>
+                <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', buyColor)}>
+                  {hasQuote ? formatNum(quoteInfo.ask) : '--'}
+                </div>
               </div>
-              <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', buyColor)}>{formatNum(quoteInfo.ask)}</div>
-            </div>
+            )}
           </Buy>
         </div>
       </>

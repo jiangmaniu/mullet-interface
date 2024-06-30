@@ -1,7 +1,7 @@
 import { SwapRightOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { Col, Input, Row } from 'antd'
+import { Col, Input, Row, Skeleton } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
@@ -35,6 +35,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
   const searchInputRef = useRef<any>()
   const symbolList = trade.symbolList // 全部品种列表
+  const loading = trade.symbolListLoading
 
   useEffect(() => {
     // 1200px-1600px收起侧边栏
@@ -106,35 +107,44 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
             </Col>
           </Row>
           <div className="overflow-y-auto" style={{ height: 500 }}>
-            {list.length > 0 &&
-              list.map((item: Account.TradeSymbolListItem, idx: number) => {
-                const isActive = trade.activeSymbolName === item.symbol
-                return <QuoteItem item={item} isActive={isActive} popupRef={popupRef} key={idx} />
-              })}
-            {!list.length && (
-              <div className="pt-10 flex items-center flex-col">
-                <Empty
-                  description={
-                    <>
-                      {activeKey === 'FAVORITE' ? (
-                        <div
-                          className="flex justify-center gap-x-2 cursor-pointer"
-                          onClick={() => {
-                            setActiveKey('CATEGORY')
-                          }}
-                        >
-                          <div className="text-xs text-gray-secondary hover:text-gray">
-                            <FormattedMessage id="mt.tianjiazixuan" />
-                          </div>
-                          <SwapRightOutlined />
-                        </div>
-                      ) : (
-                        <FormattedMessage id="common.noData" />
-                      )}
-                    </>
-                  }
-                />
+            {loading && (
+              <div className="mx-5 mt-8">
+                <Skeleton loading={loading} />
               </div>
+            )}
+            {!loading && (
+              <>
+                {list.length > 0 &&
+                  list.map((item: Account.TradeSymbolListItem, idx: number) => {
+                    const isActive = trade.activeSymbolName === item.symbol
+                    return <QuoteItem item={item} isActive={isActive} popupRef={popupRef} key={idx} />
+                  })}
+                {!list.length && (
+                  <div className="pt-10 flex items-center flex-col">
+                    <Empty
+                      description={
+                        <>
+                          {activeKey === 'FAVORITE' ? (
+                            <div
+                              className="flex justify-center gap-x-2 cursor-pointer"
+                              onClick={() => {
+                                setActiveKey('CATEGORY')
+                              }}
+                            >
+                              <div className="text-xs text-gray-secondary hover:text-gray">
+                                <FormattedMessage id="mt.tianjiazixuan" />
+                              </div>
+                              <SwapRightOutlined />
+                            </div>
+                          ) : (
+                            <FormattedMessage id="common.noData" />
+                          )}
+                        </>
+                      }
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

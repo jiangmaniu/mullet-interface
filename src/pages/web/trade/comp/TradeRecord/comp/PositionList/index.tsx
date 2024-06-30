@@ -118,7 +118,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} </span>
       }
     },
     {
@@ -134,14 +134,15 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
+        const quote = getCurrentQuote(record.symbol)
         return (
           <>
             {Number(record.currentPrice) ? (
-              <span className={classNames('!text-[13px] !font-dingpro-medium', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
-                {formatNum(record.currentPrice)} USD
+              <span className={classNames('!text-[13px] !font-dingpro-medium', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+                {formatNum(record.currentPrice)}
               </span>
             ) : (
-              '-'
+              <span className="!text-[13px] !font-dingpro-medium">--</span>
             )}
           </>
         )
@@ -160,7 +161,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text ? formatNum(text) + 'USD' : '-'} </span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text ? formatNum(text) + 'USD' : '--'} </span>
       }
     },
     {
@@ -176,7 +177,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text || '-'}</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text || '--'}</span>
       }
     },
     {
@@ -197,7 +198,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
-              <span className="!font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) + 'USD' : '-'} </span>
+              <span className="!font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) + 'USD' : '--'} </span>
               <span className={classNames('text-xs font-medium pt-[2px]')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
@@ -334,7 +335,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 170,
       align: 'center',
       fixed: 'right',
       renderText(text, record, index, action) {
@@ -342,9 +343,9 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
         const profitDom = profit ? (
-          <span className={classNames('font-[800] !font-dingpro-medium', color)}>{formatNum(record.profitFormat)} USD</span>
+          <span className={classNames('font-[800] !font-dingpro-medium', color)}>{formatNum(record.profitFormat)}</span>
         ) : (
-          '-'
+          <span className="!text-[13px] !font-dingpro-medium">--</span>
         )
         const yieldRate = record.yieldRate
         return (

@@ -74,11 +74,15 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   </div>
                 </div>
                 <div className="flex items-center xxl:pl-6 xl:pl-7">
-                  <span className={classNames('!font-dingpro-medium text-xl', color)}>{formatNum(res.bid)}</span>
-                  {!!res.bid && (
-                    <span className={classNames('pl-2 text-base !font-dingpro-medium', color)}>
-                      {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}
-                    </span>
+                  {res.hasQuote && (
+                    <>
+                      <span className={classNames('!font-dingpro-medium text-xl', res?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+                        {formatNum(res.bid)}
+                      </span>
+                      <span className={classNames('pl-2 text-base !font-dingpro-medium', color)}>
+                        {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}
+                      </span>
+                    </>
                   )}
                 </div>
               </div>
@@ -106,7 +110,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   <span className="text-xs text-gray-weak">
                     <FormattedMessage id="mt.24xiaoshizuigao" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-xs text-gray">{formatNum(res.high)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">{formatNum(res.high)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-weak">

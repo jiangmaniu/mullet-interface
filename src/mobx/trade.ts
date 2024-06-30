@@ -46,6 +46,7 @@ class TradeStore {
   }
   @observable socket: any = null
   @observable symbolCategory: API.KEYVALUE[] = [] // 品种分类
+  @observable symbolListLoading = true
   @observable symbolList: Account.TradeSymbolListItem[] = []
   @observable symbolListAll: Account.TradeSymbolListItem[] = [] // 首次查询的全部品种列表，不按条件查询
   @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
@@ -373,7 +374,10 @@ class TradeStore {
     if (params.classify === '0') {
       delete params.classify
     }
-    const res = await getTradeSymbolList({ ...params, accountId })
+    const res = await getTradeSymbolList({ ...params, accountId }).catch((e) => e)
+    runInAction(() => {
+      this.symbolListLoading = false
+    })
     if (res.success) {
       const symbolList = (res.data || []) as Account.TradeSymbolListItem[]
       runInAction(() => {

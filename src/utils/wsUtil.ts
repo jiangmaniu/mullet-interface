@@ -680,6 +680,9 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
     low: toFixed(low, digits), //低
     open: toFixed(open, digits), //开
     close: toFixed(close, digits), //收
-    spread: Number(toFixed(spread, digits))
+    spread: Number(toFixed(spread, digits)),
+    bidDiff: currentQuote.bidDiff,
+    askDiff: currentQuote.askDiff,
+    hasQuote: Number(bid) > 0 // 是否存在行情
   }
 }

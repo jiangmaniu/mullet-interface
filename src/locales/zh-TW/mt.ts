@@ -256,7 +256,7 @@ export default {
   'mt.24xiaoshizuigao': '24小时最高',
   'mt.24xiaoshizuidi': '24小时最低',
   'mt.zhiyingzhisun2': '止盈 / 止损',
-  'mt.fudongyingkui_shouyilv': '浮动盈亏/收益率',
+  'mt.fudongyingkui_shouyilv': '浮动盈亏(USD)/收益率',
   'mt.biaojijia': '标记价',
   'mt.tianjia': '添加',
   'mt.baozhengjinbili': '保证金比例',
