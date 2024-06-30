@@ -1,0 +1,21 @@
+.footer-dwINHZFL {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 40px;
+  max-height: 65px;
+  padding: 9px 20px;
+  color: #6a6d78;
+  font-size: 13px;
+  line-height: 17px;
+  text-align: center;
+  background-color: #f8f9fd;
+  border-radius: 0 0 6px 6px;
+  cursor: default;
+}
+html.theme-dark .footer-dwINHZFL {
+  color: #868993;
+  background-color: #2a2e39;
+}

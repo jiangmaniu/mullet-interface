@@ -1,0 +1,85 @@
+.errorCard-S9sXvhAu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--textColor, #434651);
+  background: var(--backgroundColor, #fff);
+}
+html.theme-dark .errorCard-S9sXvhAu {
+  color: var(--textColor, #9598a1);
+  background: var(--backgroundColor, #131722);
+}
+.errorCard__icon-S9sXvhAu {
+  margin-bottom: 12px;
+}
+.errorCard_size_big-S9sXvhAu .errorCard__icon-S9sXvhAu {
+  margin-bottom: 21px;
+}
+.errorCard__message-S9sXvhAu {
+  font-size: 14px;
+  line-height: 22px;
+  text-align: center;
+}
+.errorCard_size_big-S9sXvhAu .errorCard__message-S9sXvhAu {
+  font-size: 18px;
+  line-height: 28px;
+}
+.errorCard_limitWidth-S9sXvhAu .errorCard__message-S9sXvhAu {
+  max-width: 350px;
+}
+.errorCard__link-S9sXvhAu {
+  color: #2962ff;
+  line-height: 28px;
+  cursor: pointer;
+  fill: #2962ff;
+}
+.errorCard__link-S9sXvhAu:visited,
+html.theme-dark .errorCard__link-S9sXvhAu {
+  color: #2962ff;
+  fill: #2962ff;
+}
+html.theme-dark .errorCard__link-S9sXvhAu:visited {
+  color: #2962ff;
+  fill: #2962ff;
+}
+@media (any-hover: hover) {
+  .errorCard__link-S9sXvhAu:hover {
+    color: #1e53e5;
+    fill: #1e53e5;
+  }
+  html.theme-dark .errorCard__link-S9sXvhAu:hover {
+    color: #1e53e5;
+    fill: #1e53e5;
+  }
+}
+.errorCard__link-S9sXvhAu:active {
+  color: #1848cc;
+  fill: #1848cc;
+}
+html.theme-dark .errorCard__link-S9sXvhAu:active {
+  color: #1848cc;
+  fill: #1848cc;
+}
+.errorCard__link-S9sXvhAu:focus {
+  outline: auto;
+}
+.errorCard__link-S9sXvhAu:focus-visible {
+  outline: auto;
+}
+.errorCard__link-S9sXvhAu:focus:not(:focus-visible) {
+  outline: none;
+}
+.errorCardRendererContainer-S9sXvhAu {
+  --backgroundColor: initial;
+  --textColor: initial;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: default;
+}
+.errorCardRendererContainer-S9sXvhAu:empty {
+  visibility: hidden;
+}

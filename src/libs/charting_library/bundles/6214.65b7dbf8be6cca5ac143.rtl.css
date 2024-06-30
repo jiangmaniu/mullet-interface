@@ -1,0 +1,106 @@
+.container-zLVm6B4t {
+  display: flex;
+  align-items: flex-start;
+  padding: 8px;
+  overflow: auto;
+  background: #2962ff;
+  border-radius: 4px;
+  cursor: default;
+}
+html.theme-dark .container-zLVm6B4t {
+  background: #2962ff;
+}
+.content-zLVm6B4t {
+  padding: 4px 8px;
+}
+.arrowHolder-zLVm6B4t {
+  position: absolute;
+}
+.arrowHolder-zLVm6B4t:after {
+  position: absolute;
+  display: block;
+  box-sizing: border-box;
+  width: 0;
+  height: 0;
+  border: 0 solid #2962ff;
+  content: '';
+}
+html.theme-dark .arrowHolder-zLVm6B4t:after {
+  border-color: #2962ff;
+}
+.arrowHolder--above-zLVm6B4t:after,
+.arrowHolder--below-zLVm6B4t:after {
+  left: 50%;
+  margin-left: -6px;
+  border-right: 6px solid #0000;
+  border-left: 6px solid #0000;
+}
+html.theme-dark .arrowHolder--above-zLVm6B4t:after,
+html.theme-dark .arrowHolder--below-zLVm6B4t:after {
+  border-right-color: #0000;
+  border-left-color: #0000;
+}
+.arrowHolder--below-zLVm6B4t:after {
+  bottom: 100%;
+  border-bottom-width: 4px;
+}
+.arrowHolder--above-zLVm6B4t:after {
+  top: 100%;
+  border-top-width: 4px;
+}
+.arrowHolder--after-zLVm6B4t:after,
+.arrowHolder--before-zLVm6B4t:after {
+  top: 50%;
+  margin-top: -6px;
+  border-top: 6px solid #0000;
+  border-bottom: 6px solid #0000;
+}
+html.theme-dark .arrowHolder--after-zLVm6B4t:after,
+html.theme-dark .arrowHolder--before-zLVm6B4t:after {
+  border-top-color: #0000;
+  border-bottom-color: #0000;
+}
+.arrowHolder--before-zLVm6B4t:after {
+  right: 100%;
+  border-right-width: 4px;
+}
+.arrowHolder--after-zLVm6B4t:after {
+  left: 100%;
+  border-left-width: 4px;
+}
+.arrowHolder--above-fix-zLVm6B4t {
+  bottom: 0;
+}
+.arrowHolder--before-rtl-fix-zLVm6B4t {
+  left: 0;
+}
+.arrowHolder--after-ltr-fix-zLVm6B4t {
+  right: 0;
+}
+.label-zLVm6B4t {
+  display: flex;
+  flex: 1 1 auto;
+  margin-left: 24px;
+}
+.closeButton-zLVm6B4t {
+  color: #fff;
+}
+.container-kfvcmk8t {
+  position: absolute;
+  right: 10px;
+  left: 10px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.centerElement-kfvcmk8t {
+  z-index: 1;
+  pointer-events: auto;
+}
+.text-kfvcmk8t {
+  margin-bottom: auto;
+  color: #fff;
+  font-size: 14px;
+  line-height: 21px;
+  word-wrap: break-word;
+}

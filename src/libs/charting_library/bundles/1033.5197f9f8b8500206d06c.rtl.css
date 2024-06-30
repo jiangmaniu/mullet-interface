@@ -1,0 +1,13 @@
+.title-u3QJgF_p {
+  margin: 6px 0;
+  padding: 0 12px;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  cursor: default;
+}
+.title-u3QJgF_p,
+html.theme-dark .title-u3QJgF_p {
+  color: var(--tv-color-popup-element-secondary-text, #787b86);
+}

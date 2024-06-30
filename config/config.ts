@@ -181,9 +181,10 @@ export default defineConfig({
     }
   ],
 
-  mfsu: {
-    strategy: 'normal'
-  },
+  // mfsu: {
+  //   strategy: 'normal'
+  // },
+  mfsu: false, // 不使用mfsu，否则引入tradingview组件会有兼容问题
   requestRecord: {},
   tailwindcss: {},
   extraPostCSSPlugins: [require('tailwindcss'), require('autoprefixer')],

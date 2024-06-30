@@ -4,6 +4,7 @@ import ReconnectingWebSocket from 'reconnecting-websocket'
 import { URLS } from '@/constants'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 
+import klineStore from './kline'
 import trade from './trade'
 
 export type IQuotePriceItem = {
@@ -226,6 +227,10 @@ class WSStore {
             ...this.quotes,
             ...quotesObj
           }
+
+          // 实时更新k线数据
+          klineStore.updateKlineData(this.quotes)
+
           this.quotesTempArr = []
         } else {
           this.quotesTempArr.push(data)

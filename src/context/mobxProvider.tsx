@@ -1,6 +1,7 @@
 import React from 'react'
 
 import globalStore from '../mobx/global'
+import klineStore from '../mobx/kline'
 import tradeStore from '../mobx/trade'
 import wsStore from '../mobx/ws'
 
@@ -8,6 +9,7 @@ class Stores {
   ws = wsStore
   global = globalStore
   trade = tradeStore
+  kline = klineStore
 }
 export const stores = new Stores()
 

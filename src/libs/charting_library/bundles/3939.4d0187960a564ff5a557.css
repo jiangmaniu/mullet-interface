@@ -1,0 +1,41 @@
+.button-LkmyTVRc {
+  position: relative;
+  display: flex;
+  all: unset;
+}
+.button-LkmyTVRc:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  outline: 2px none #2962ff;
+  outline-offset: -2px;
+  content: none;
+  pointer-events: none;
+}
+.button-LkmyTVRc:focus-visible:before {
+  outline-style: solid;
+  content: '';
+}
+.button-LkmyTVRc.active-LkmyTVRc:before {
+  outline-color: #fffc;
+}
+.item-zwyEh4hn {
+  align-items: flex-start;
+  padding-right: 20px;
+  font-size: 16px;
+  white-space: normal;
+}
+.label-zwyEh4hn {
+  overflow: visible;
+  line-height: 24px;
+}
+.labelRow-zwyEh4hn {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+.toolbox-zwyEh4hn {
+  margin-top: 3px;
+}

@@ -29,5 +29,5 @@ declare const BASE_URL: string
 
 // 为 Window 增加参数
 interface Window {
-  initGeetest4: any
+  tvWidget: any
 }
