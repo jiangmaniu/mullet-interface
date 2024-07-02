@@ -24,7 +24,8 @@ const Tradingview = () => {
   const dataSourceCode = symbolInfo?.dataSourceCode
   const symbolName = symbolInfo?.symbol
   const previousSymbolName = usePrevious(symbolName)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
+  const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
 
   const datafeedParams = {
     setActiveSymbolInfo: kline.setActiveSymbolInfo, // 记录当前的symbol
@@ -64,9 +65,12 @@ const Tradingview = () => {
     const widgetOptions = getWidgetOpts(params, chartContainerRef.current, datafeedParams)
     const tvWidget = new widget(widgetOptions)
 
-    setLoading(true)
-    tvWidget.onChartReady(async () => {
+    setTimeout(() => {
       setLoading(false)
+    }, 800)
+
+    tvWidget.onChartReady(async () => {
+      setIsChartLoading(false)
 
       // 动态设置css变量
       setCSSCustomProperty({ tvWidget, theme })
@@ -179,11 +183,14 @@ const Tradingview = () => {
     if (!symbolName) return
     // 实例存在
     if (kline.tvWidget) {
-      if (symbolName !== previousSymbolName) {
-        // 实例已经初始化，直接切换品种
-        setSymbol(symbolName, kline.tvWidget)
-      }
-      // 动态设置语言 @TODO
+      kline.tvWidget.onChartReady(() => {
+        if (symbolName !== previousSymbolName) {
+          // 实例已经初始化，直接切换品种
+          setSymbol(symbolName, kline.tvWidget)
+        }
+        // 动态设置语言 @TODO
+      })
+
       return
     }
 
@@ -202,8 +209,8 @@ const Tradingview = () => {
   return (
     <div className={classNames('h-[585px] relative', className)}>
       <div id="tradingview" ref={chartContainerRef} className="relative flex flex-1 h-full" style={{ opacity: loading ? 0 : 1 }} />
-      {loading && (
-        <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-full z-40 bg-white">
+      {isChartLoading && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-full z-40">
           <LoadingOutlined style={{ color: colorPrimary, fontSize: 30 }} />
         </div>
       )}

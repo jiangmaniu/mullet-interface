@@ -76,7 +76,8 @@ export default observer(
     const d = item.symbolDecimal
     const step = Math.pow(10, -d) * 10
     // const stopl = symbolInfo ? symbolInfo.stopl * Math.pow(10, -d) * 10 : 0
-    const stopl = item.stopLoss ? Number(item.stopLoss || 0) * Math.pow(10, -d) * 10 : 0
+    const symbolConf = quote.symbolConf
+    const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
     let sl_scope: any = 0 // 止损范围
     let sp_scope: any = 0 // 止盈范围
     let slProfit: any // 止损-预计盈亏

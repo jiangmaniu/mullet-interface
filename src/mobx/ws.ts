@@ -73,7 +73,7 @@ class WSStore {
   heartbeatInterval: any = null
   heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
   quotesTempArr: any = []
-  depthQuoteTempArr: any = []
+  @observable depthQuoteTempArr: any = []
   @observable socket: any = null
   @observable quotes = {} as Record<string, IQuoteItem> // 当前行情
   @observable depth = {} as Record<string, IDepth> // 当前行情
@@ -132,7 +132,7 @@ class WSStore {
     if (!symbolList.length) return
     symbolList.forEach((item) => {
       this.send({
-        topic: `/000000/${item.dataSourceCode}/symbol/${item.dataSourceSymbol}`,
+        topic: `/000000/${item.dataSourceCode}/symbol/${item.dataSourceSymbol}/${item.accountGroupId}`,
         cancel
       })
     })
@@ -143,8 +143,9 @@ class WSStore {
     if (!symbolInfo?.dataSourceCode) return
 
     setTimeout(() => {
+      // accountGroupId从交易品种列表获取
       this.send({
-        topic: `/000000/${symbolInfo.dataSourceCode}/depth/${symbolInfo.dataSourceSymbol}`,
+        topic: `/000000/${symbolInfo.dataSourceCode}/depth/${symbolInfo.dataSourceSymbol}/${symbolInfo.accountGroupId}`,
         cancel
       })
     }, 300)
@@ -201,7 +202,7 @@ class WSStore {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        if (this.quotesTempArr.length > 30 || this.quotesTempArr.length === 1) {
+        if (this.quotesTempArr.length > 30) {
           const quotes = this.quotes // 之前的值
           const quotesObj: any = {} // 一次性更新，避免卡顿
           this.quotesTempArr.forEach((item: IQuoteItem) => {
@@ -239,15 +240,41 @@ class WSStore {
         break
       // 深度报价
       case MessageType.depth:
-        if (symbol) {
-          const asks = data.asks ? JSON.parse(data.asks) : []
-          const bids = data.bids ? JSON.parse(data.bids) : []
-          this.depth[symbol] = {
-            ...data,
-            asks,
-            bids
+        // if (symbol) {
+        //   const asks = data.asks ? JSON.parse(data.asks) : []
+        //   const bids = data.bids ? JSON.parse(data.bids) : []
+        //   this.depth[symbol] = {
+        //     ...data,
+        //     asks,
+        //     bids
+        //   }
+        // }
+        // 限流
+        if (this.depthQuoteTempArr.length > 2) {
+          const depthObj: any = {} // 一次性更新，避免卡顿
+          this.depthQuoteTempArr.forEach((item: IDepth) => {
+            const sbl = item.symbol
+            if (sbl) {
+              if (typeof item.asks === 'string') {
+                item.asks = item.asks ? JSON.parse(item.asks) : []
+              }
+              if (typeof item.bids === 'string') {
+                item.bids = item.bids ? JSON.parse(item.bids) : []
+              }
+              depthObj[sbl] = item
+            }
+          })
+
+          this.depth = {
+            ...this.depth,
+            ...depthObj
           }
+
+          this.depthQuoteTempArr = []
+        } else {
+          this.depthQuoteTempArr.push(data)
         }
+
         // console.log('深度报价', toJS(this.depth))
         break
     }

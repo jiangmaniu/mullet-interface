@@ -16,9 +16,11 @@ import {
 } from '@/services/api/tradeCore/order'
 import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
+import { push } from '@/utils/navigator'
 import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
 import { covertProfit } from '@/utils/wsUtil'
 
+import klineStore from './kline'
 import ws from './ws'
 
 export type UserConfInfo = Record<
@@ -113,6 +115,15 @@ class TradeStore {
 
     // 根据accountId切换本地设置的自选、打开的品种列表、激活的品种名称
     this.init()
+  }
+
+  @action
+  jumpTrade = () => {
+    if (location.pathname.indexOf('/trade') === -1) {
+      push('/trade')
+      // @ts-ignore
+      klineStore.tvWidget = null // 非交易页面需要重置trandview实例，否则报错
+    }
   }
 
   // 获取当前账户账户余额、保证金信息

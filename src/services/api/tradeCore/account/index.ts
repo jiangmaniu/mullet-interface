@@ -81,3 +81,19 @@ export async function getAccountDetail(params: API.IdParam) {
     return res
   })
 }
+
+// 资金划转
+export async function transferAccount(body: Account.TransferAccountParams) {
+  return request<API.Response>('/api/trade-core/coreApi/account/transfer', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 模拟入金
+export async function rechargeSimulate(body: Account.RechargeSimulateParams) {
+  return request<API.Response>('/api/trade-core/coreApi/account/rechargeSimulate', {
+    method: 'POST',
+    data: body
+  })
+}

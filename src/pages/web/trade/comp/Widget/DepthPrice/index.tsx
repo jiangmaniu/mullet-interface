@@ -16,7 +16,6 @@ function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const depth = getCurrentDepth()
   const quote = getCurrentQuote()
-  // const asks = toJS(depth?.asks || []).reverse()
   const asks = depth?.asks || []
   const bids = depth?.bids || []
 
@@ -74,7 +73,7 @@ function DeepPrice() {
 
   // 渲染买列表
   const renderBuyList = () => {
-    const list = asks.slice(0, showAll ? 12 : 20)
+    const list = bids.slice(0, showAll ? 12 : 20)
     const maxAmount = Math.max(...list.map((item) => item.amount))
     return list
       .filter((v) => v)
@@ -99,7 +98,8 @@ function DeepPrice() {
             <div
               className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
               style={{
-                transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
+                transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`,
+                transition: 'transform .3s ease-in-out'
               }}
             ></div>
           </div>
@@ -118,7 +118,7 @@ function DeepPrice() {
 
   // 渲染卖列表
   const renderSellList = () => {
-    const list = bids.slice(0, showAll ? 12 : 20)
+    const list = asks.slice(0, showAll ? 12 : 20)
     const maxAmount = Math.max(...list.map((item) => item.amount))
     return (
       <>
@@ -145,7 +145,8 @@ function DeepPrice() {
                 <div
                   className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
                   style={{
-                    transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`
+                    transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`,
+                    transition: 'transform .3s ease-in-out'
                   }}
                 ></div>
               </div>

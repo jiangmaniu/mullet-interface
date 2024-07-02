@@ -76,7 +76,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                 <div className="flex items-center xxl:pl-6 xl:pl-7">
                   {res.hasQuote && (
                     <>
-                      <span className={classNames('!font-dingpro-medium text-xl', res?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+                      <span className={classNames('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>
                         {formatNum(res.bid)}
                       </span>
                       <span className={classNames('pl-2 text-base !font-dingpro-medium', color)}>

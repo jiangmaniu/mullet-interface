@@ -91,7 +91,7 @@ export default observer(
                   <FormattedMessage id="mt.maichuzuokong" />
                 </div>
                 <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', sellColor)}>
-                  {hasQuote ? formatNum(quoteInfo.bid) : '--'}
+                  {hasQuote ? formatNum(quoteInfo.ask) : '--'}
                 </div>
               </div>
             )}
@@ -120,7 +120,7 @@ export default observer(
                   <FormattedMessage id="mt.mairuzuoduo" />
                 </div>
                 <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', buyColor)}>
-                  {hasQuote ? formatNum(quoteInfo.ask) : '--'}
+                  {hasQuote ? formatNum(quoteInfo.bid) : '--'}
                 </div>
               </div>
             )}

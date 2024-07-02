@@ -35,6 +35,8 @@ function LevelAge({ onChange }: IProps) {
         }}
         max={30}
         min={1}
+        hiddenPrecision={false}
+        step={1}
         disabled={false}
         height={40}
       />

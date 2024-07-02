@@ -68,6 +68,8 @@ class KlineStore {
     let rounded = serverTime
     const bid = socketData?.priceData?.sell
 
+    if (!resolution) return
+
     if (!isNaN(resolution) || resolution.includes('D')) {
       if (resolution.includes('D')) {
         resolution = 1440

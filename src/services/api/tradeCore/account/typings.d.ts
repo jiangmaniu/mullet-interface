@@ -67,7 +67,24 @@ declare namespace Account {
      * 自定义添加的是否选中
      */
     checked?: boolean
+    /**品种高开低收 */
     symbolNewTicker?: SymbolNewTicker
+    /**第一口报价信息 */
+    symbolNewPrice?: SymbolNewPrice
+    /**账户组ID */
+    accountGroupId?: string
+  }
+  type SymbolNewPrice = {
+    /**卖交易量 */
+    sellSize: string
+    /**卖价 */
+    sell: number
+    /**买价 */
+    buy: number
+    /**时间戳 */
+    id: number
+    /**买交易量 */
+    buySize: string
   }
   // 高开低收，初始值
   type SymbolNewTicker = {
@@ -81,60 +98,6 @@ declare namespace Account {
     low: string
     /**最高 */
     high: string
-  }
-
-  // 账号交易品种及配置-集合-列表
-  type TradeSymbolListItem = {
-    /**
-     * 别名
-     */
-    alias?: string
-    /**
-     * 数据源code
-     */
-    dataSourceCode?: string
-    /**
-     * 数据源Symbol
-     */
-    dataSourceSymbol?: string
-    /**
-     * 主键
-     */
-    id: number
-    /**
-     * 图标
-     */
-    imgUrl?: string
-    /**
-     * 备注
-     */
-    remark?: string
-    /**
-     * 状态
-     */
-    status?: API.Status
-    /**
-     * 品种名称
-     */
-    symbol: string
-    symbolConf?: Symbol.SymbolConf
-    /**
-     * 品种组配置ID
-     */
-    symbolConfId?: number
-    /**
-     * 品种小数位
-     */
-    symbolDecimal?: number
-    /**
-     * 品种组ID
-     */
-    symbolGroupId?: number
-    /**
-     * 自定义添加的是否选中
-     */
-    checked?: boolean
-    symbolNewTicker?: SymbolNewTicker
   }
   // 资金变更记录-分页-参数
   type MoneyRecordsPageListParams = API.PageParam & {
@@ -320,57 +283,42 @@ declare namespace Account {
      */
     status?: API.Status
   }
-  // 账号交易品种及配置-集合-列表
-  type TradeSymbolListItem = {
+  // 资金划转
+  type TransferAccountParams = {
     /**
-     * 别名
+     * 转出交易账户ID
      */
-    alias?: string
+    fromAccountId: string
     /**
-     * 数据源code
+     * 金额
      */
-    dataSourceCode?: string
-    /**
-     * 数据源Symbol
-     */
-    dataSourceSymbol?: string
-    /**
-     * 主键
-     */
-    id: number
-    /**
-     * 图标
-     */
-    imgUrl?: string
+    money: number
     /**
      * 备注
      */
     remark?: string
     /**
-     * 状态
+     * 转入交易账户ID
      */
-    status?: API.Status
+    toAccountId: string
+  }
+  // 模拟入金
+  type RechargeSimulateParams = {
     /**
-     * 品种名称
+     * 交易账户ID
      */
-    symbol: string
-    symbolConf?: Symbol.SymbolConf
+    accountId: string
     /**
-     * 品种组配置ID
+     * 金额
      */
-    symbolConfId?: number
+    money?: number
     /**
-     * 品种小数位
+     * 备注
      */
-    symbolDecimal?: number
+    remark?: string
     /**
-     * 品种组ID
+     * 类型
      */
-    symbolGroupId?: number
-    /**
-     * 自定义添加的是否选中
-     */
-    checked?: boolean
-    symbolNewTicker?: SymbolNewTicker
+    type: API.MoneyType
   }
 }

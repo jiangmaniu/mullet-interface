@@ -26,7 +26,6 @@ function LevelAgeModal({ trigger }: IProps) {
       footer={null}
       width={410}
       centered
-      onClose={close}
       ref={modalRef}
       maskClosable={false}
     >

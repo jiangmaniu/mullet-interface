@@ -14,7 +14,7 @@ type IProps = {
   info: User.AccountItem
 }
 
-// 追加保证金
+// 重命名账户
 function RenameAccountModal({ trigger, info }: IProps) {
   const intl = useIntl()
   const { global, trade } = useStores()

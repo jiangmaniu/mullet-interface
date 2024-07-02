@@ -6,7 +6,6 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 
-import Button from '@/components/Base/Button'
 import CopyComp from '@/components/Base/Copy'
 import Tabs from '@/components/Base/CustomTabs'
 import Dropdown from '@/components/Base/Dropdown'
@@ -134,12 +133,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
     ]
     return (
       <div className="xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:w-[420px] xl:pt-[18px]">
-        <div
-          onClick={() => {
-            // push('/trade')
-          }}
-          className="mb-[26px] cursor-pointer px-[18px]"
-        >
+        <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
             <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
               <span className="text-gray">{item.label}</span>
@@ -155,7 +149,8 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
             </div>
           ))}
         </div>
-        <div className="mb-[13px] px-[18px]">
+        {/* @TODO 暂时不做 */}
+        {/* <div className="mb-[13px] px-[18px]">
           <div className="flex justify-between gap-x-3">
             <Button className="!ml-0 text-sm" type="primary" block icon={<img src="/img/rujin-white.png" width={20} height={20} />}>
               <FormattedMessage id="mt.rujin" />
@@ -187,7 +182,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
               <FormattedMessage id="mt.churujinjilu" />
             </Button>
           </div>
-        </div>
+        </div> */}
         <div className="px-[18px] py-0 xl:border-t-[2px] xl:border-[rgba(218,218,218,0.2)]">
           <div className="my-3 flex items-center justify-between">
             <Tabs
@@ -219,7 +214,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
                     //   hoverAccountBoxPopupRef?.current?.close()
                     // }
                     trade.setCurrentAccountInfo(item)
-                    push('/trade')
+                    trade.jumpTrade()
                   }}
                   key={idx}
                   className={classNames(
@@ -304,7 +299,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
             onMouseEnter={() => {
               // 刷新账户余额信息
               setTimeout(() => {
-                fetchUserInfo()
+                fetchUserInfo(false)
               }, 300)
             }}
           >

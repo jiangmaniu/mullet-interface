@@ -441,8 +441,9 @@ export const calcYieldRate = (item: IPositionItem) => {
   const conf = item.conf as Symbol.SymbolConf
   const orderMargin = Number(item.orderMargin || 0) // 开仓保证金
   // 收益率 = 浮动盈亏 / 保证金
-  const profit = item.profit
-  return profit && orderMargin ? toFixed((profit / orderMargin) * 100) + '%' : ''
+  const profit = item.profit || 0
+  const value = toFixed((profit / orderMargin) * 100)
+  return profit && orderMargin ? (value > 0 ? '+' + value : value) + '%' : ''
 }
 
 /**
@@ -622,10 +623,11 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   const tradeTimeConf = currentSymbol?.symbolConf?.tradeTimeConf as Symbol.TradeTimeConf // 当前品种交易时间配置
   const quotationConf = currentSymbol?.symbolConf?.quotationConf as Symbol.QuotationConf // 当前品种交易时间配置
   const symbolNewTicker = currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
+  const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
-  let ask = Number(currentQuote?.priceData?.buy || 0) // 买价
-  let bid = Number(currentQuote?.priceData?.sell || 0) // 卖价
+  let ask = Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0) // 买价
+  let bid = Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0) // 卖价
   const open = Number(symbolNewTicker?.open || 0) // 开盘价
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.open || 0), bid]) // 拿当前价格跟首次返回的比
   const low = Math.max.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
@@ -671,6 +673,7 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
     tradeTimeConf, // 交易时间配置
     quotationConf, // 报价配置
     symbolNewTicker, // 高开低收
+    symbolNewPrice, // 第一口报价信息
     percent, //涨幅百分比
     quotes,
     consize: Number(symbolConf?.contractSize || 0),

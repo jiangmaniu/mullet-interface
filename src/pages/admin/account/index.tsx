@@ -17,6 +17,7 @@ import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { push } from '@/utils/navigator'
 
 import Header from './comp/Header'
+import RechargeSimulateModal from './comp/RechargeSimulateModal'
 import RenameAccountModal from './comp/RenameAccountModal'
 
 type IAccountItem = User.AccountItem & {
@@ -75,7 +76,7 @@ function Account() {
         <Button
           icon={<PlusCircleOutlined style={{ fontSize: 16 }} />}
           onClick={() => {
-            push('/account/type')
+            push(`/account/type`)
           }}
         >
           <FormattedMessage id="mt.chuangjianxinzhanghu" />
@@ -161,22 +162,36 @@ function Account() {
                     </div>
                   }
                 >
-                  <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
-                    <FormattedMessage id="mt.rujin" />
-                  </Button>
+                  {isSimulate ? (
+                    <RechargeSimulateModal
+                      trigger={
+                        <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
+                          <FormattedMessage id="mt.rujin" />
+                        </Button>
+                      }
+                      info={item}
+                    />
+                  ) : (
+                    <>
+                      {/* @TODO 真实账户暂时不支持入金 */}
+                      {/* <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
+                        <FormattedMessage id="mt.rujin" />
+                      </Button> */}
+                    </>
+                  )}
                 </Tooltip>
-                {!isSimulate && (
+                {/* @TODO 真实账户暂时不支持出金 */}
+                {/* {!isSimulate && (
                   <Button style={{ height: 46, width: 108 }} icon={<img src="/img/chujin_icon.png" width={20} height={20} />}>
                     <FormattedMessage id="mt.chujin" />
                   </Button>
-                )}
+                )} */}
                 <Button
                   type="primary"
                   style={{ height: 46, width: 108 }}
                   onClick={() => {
                     trade.setCurrentAccountInfo(item)
-                    // 切换张哈
-                    push('/trade')
+                    trade.jumpTrade()
                   }}
                 >
                   <FormattedMessage id="mt.jiaoyi" />
@@ -186,16 +201,20 @@ function Account() {
                     onClick: (event: MenuInfo) => {
                       const { key } = event
                       console.log('key', key)
+                      if (key === 'transfer') {
+                        push(`/account/transfer?from=${item.id}`)
+                      }
                     },
                     items: [
-                      // {
-                      //   key: 'transfer',
-                      //   label: (
-                      //     <span className="text-sm text-gray-secondary hover:text-gray">
-                      //       <FormattedMessage id="mt.zhuanzhang" />
-                      //     </span>
-                      //   )
-                      // },
+                      // @ts-ignore
+                      !isSimulate && {
+                        key: 'transfer',
+                        label: (
+                          <span className="text-sm text-gray-secondary hover:text-gray">
+                            <FormattedMessage id="mt.zhuanzhang" />
+                          </span>
+                        )
+                      },
                       {
                         key: 'rename',
                         label: (

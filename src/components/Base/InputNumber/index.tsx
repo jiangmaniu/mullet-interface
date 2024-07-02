@@ -40,6 +40,7 @@ type IProps = {
   autoFocus?: boolean
   /**提示是否浮动在输入框展示 */
   showFloatTips?: boolean
+  hiddenPrecision?: boolean
 }
 
 export default function InputNumber(props: IProps) {
@@ -70,7 +71,8 @@ export default function InputNumber(props: IProps) {
     addonBefore,
     width,
     autoFocus = true,
-    showFloatTips = true
+    showFloatTips = true,
+    hiddenPrecision = true
   } = props
   const inputRef = useRef<any>()
   const [inputValue, setInputValue] = useState<any>('')
@@ -230,7 +232,7 @@ export default function InputNumber(props: IProps) {
             max,
             min,
             value: inputValue,
-            // precision: 2,
+            precision: hiddenPrecision ? undefined : 0,
             onFocus: () => setFocus(true),
             onBlur: () => setFocus(false),
             autoComplete: 'off',

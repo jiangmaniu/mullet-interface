@@ -21,7 +21,7 @@ import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 
 export type IPositionItem = Order.BgaOrderPageListItem & {
   /**格式化浮动盈亏 */
-  profitFormat: string
+  profitFormat: string | number
   /**现价 */
   currentPrice: number | string
   /**收益率 */
@@ -343,7 +343,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
         const profitDom = profit ? (
-          <span className={classNames('font-[800] !font-dingpro-medium', color)}>{formatNum(record.profitFormat)}</span>
+          <span className={classNames('font-[800] !font-dingpro-medium', color)}>{record.profitFormat}</span>
         ) : (
           <span className="!text-[13px] !font-dingpro-medium">--</span>
         )
@@ -413,8 +413,8 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
 
     v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格
     const profit = covertProfit(v) as number // 浮动盈亏
-    v.profit = profit || v.profit // 避免出现闪动
-    v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : '-' // 格式化的
+    v.profit = profit
+    v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : v.profit || '-' // 格式化的
     v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
     v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
     v.yieldRate = calcYieldRate(v) // 收益率

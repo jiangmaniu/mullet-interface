@@ -81,6 +81,9 @@ declare namespace API {
     | 'PROFIT'
     /**提现 */
     | 'WITHDRAWAL'
+
+  type MoneyType = 'DEPOSIT' | 'DEPOSIT_SIMULATE' | 'WITHDRAWAL' | 'MARGIN' | 'PROFIT' | 'GIFT' | 'TRANSFER' | 'BALANCE'
+
   // 可用预付款
   type UsableAdvanceCharge =
     /**不计算未实现的盈利/亏损 */
