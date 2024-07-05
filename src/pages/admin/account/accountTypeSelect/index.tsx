@@ -27,10 +27,12 @@ function AccountList() {
   const accountList = trade.accountGroupList
 
   useEffect(() => {
-    setLoading(true)
-    trade.getAccountGroupList().finally(() => {
-      setLoading(false)
-    })
+    if (!accountList.length) {
+      setLoading(true)
+      trade.getAccountGroupList().finally(() => {
+        setLoading(false)
+      })
+    }
   }, [])
 
   useEffect(() => {

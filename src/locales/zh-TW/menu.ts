@@ -89,5 +89,6 @@ export default {
   'menu.deposit': '入金',
   'menu.withdrawal': '出金',
   'menu.depositAndwithdrawalRecord': '出入金记录',
+  'menu.copyTrading': '跟单管理',
   'menu.setting': '设置'
 }

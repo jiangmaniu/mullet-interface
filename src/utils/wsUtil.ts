@@ -461,6 +461,7 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
   const orderMargin = item.orderMargin || 0 // 单笔订单的占用保证金
   const isCrossMargin = item.marginType === 'CROSS_MARGIN' // 全仓
   const startPrice = Number(item.startPrice || 0) // 开仓价格
+  let profit = item.profit || 0 // 本单浮动盈亏
   let compelCloseRatio = item.compelCloseRatio || 0 // 强制平仓比例
   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
 
@@ -469,14 +470,14 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
   // 汇率品种USD在后，用乘法
   // 净值 - (开仓价格 - 强平价格) * 合约大小 * 手数 * 汇率(乘或除) / 占用保证金 = 强平比例
 
-  // 买：多头强平价格 = 开仓价格 - (净值 - 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除)) @TODO 处理汇率取值问题
+  // 买：多头强平价格 = 开仓价格 - (净值 - 本单盈亏 - 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除)) @TODO 处理汇率取值问题
   let buyForceClosePrice = 0
-  // 卖：空头强平价格 = 开仓价格 + (净值 + 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除))  @TODO 处理汇率取值问题
+  // 卖：空头强平价格 = 开仓价格 + (净值 - 本单盈亏 + 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除))  @TODO 处理汇率取值问题
   let sellForceClosePrice = 0
 
   // 全仓
   if (isCrossMargin) {
-    const value = (balance - occupyMargin * compelCloseRatio) / (contractSize * orderVolume)
+    const value = (balance - profit - occupyMargin * compelCloseRatio) / (contractSize * orderVolume)
     buyForceClosePrice = toFixed(startPrice - value)
     sellForceClosePrice = toFixed(startPrice + value)
   } else {
@@ -484,7 +485,7 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
     balance = orderMargin - Number(item.interestFees || 0) - Number(item.handlingFees || 0) + Number(item.profit || 0)
     // 单笔订单的占用保证金
     occupyMargin = orderMargin
-    const value = (balance - occupyMargin * compelCloseRatio) / (contractSize * orderVolume)
+    const value = (balance - profit - occupyMargin * compelCloseRatio) / (contractSize * orderVolume)
     buyForceClosePrice = toFixed(startPrice - value)
     sellForceClosePrice = toFixed(startPrice + value)
   }
@@ -626,8 +627,8 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
-  let ask = Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0) // 买价
-  let bid = Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0) // 卖价
+  let ask = Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0) // ask是买价，切记ask买价一般都比bid卖价高
+  let bid = Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0) // bid是卖价
   const open = Number(symbolNewTicker?.open || 0) // 开盘价
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.open || 0), bid]) // 拿当前价格跟首次返回的比
   const low = Math.max.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比

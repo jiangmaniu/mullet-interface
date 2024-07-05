@@ -32,7 +32,7 @@ declare namespace User {
   type LoginParams = {
     username?: string
     password?: string
-    areaCode?: string
+    phoneAreaCode?: string
     /**刷新token */
     refresh_token?: string
     /**租户ID：默认值 000000 */
@@ -332,7 +332,7 @@ declare namespace User {
   }
   // 区域列表
   type AreaCodeItem = {
-    areaCode: string
+    phoneAreaCode: string
     areaGroup: string
     areaId: number
     areaName: string
@@ -398,5 +398,33 @@ declare namespace User {
      * 菜单资源
      */
     source?: string
+  }
+  type EditPhoneParams = {
+    /**
+     * 新手机
+     */
+    newPhone: string
+    /**
+     * 新手机验证码
+     */
+    newPhoneCode: number
+    /**
+     * 旧手机验证码
+     */
+    oldPhoneCode: number
+  }
+  type EditEmailParams = {
+    /**
+     * 新邮箱
+     */
+    newEmail: string
+    /**
+     * 新邮箱验证码
+     */
+    newEmailCode: number
+    /**
+     * 旧邮箱验证码
+     */
+    oldEmailCode: number
   }
 }

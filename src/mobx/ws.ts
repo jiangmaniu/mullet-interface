@@ -2,6 +2,7 @@ import { action, configure, makeObservable, observable } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
 import { URLS } from '@/constants'
+import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 
 import klineStore from './kline'
@@ -49,7 +50,9 @@ enum MessageType {
   /**行情 */
   symbol = 'symbol',
   /**深度报价 */
-  depth = 'depth'
+  depth = 'depth',
+  /**行情 */
+  trade = 'trade'
 }
 type IMessage = {
   header: {
@@ -62,6 +65,16 @@ type IMessage = {
   }
   body: any
 }
+
+type ITradeType =
+  /** 限价单下单 */
+  | 'LIMIT_ORDER'
+  /**订单变更 */
+  | 'ORDER'
+  /**账户变更 */
+  | 'ACCOUNT'
+  /**成交记录 */
+  | 'TRADING'
 
 // 禁用 MobX 严格模式
 configure({ enforceActions: 'never' })
@@ -95,6 +108,7 @@ class WSStore {
     this.socket.addEventListener('open', () => {
       this.batchSubscribeSymbol()
       this.subscribeDepth()
+      this.subscribeTrade()
       this.startHeartbeat()
     })
     this.socket.addEventListener('message', (d: any) => {
@@ -150,6 +164,16 @@ class WSStore {
       })
     }, 300)
   }
+  // 订阅持仓记录、挂单记录、账户余额信息
+  subscribeTrade = (cancel?: boolean) => {
+    const currentAccountInfo = trade.currentAccountInfo
+    const accountId = currentAccountInfo?.id
+    if (!accountId) return
+    this.send({
+      topic: `/000000/trade/${accountId}`,
+      cancel
+    })
+  }
 
   // 发送socket指令
   @action
@@ -202,7 +226,7 @@ class WSStore {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        if (this.quotesTempArr.length > 30) {
+        if (this.quotesTempArr.length > 12) {
           const quotes = this.quotes // 之前的值
           const quotesObj: any = {} // 一次性更新，避免卡顿
           this.quotesTempArr.forEach((item: IQuoteItem) => {
@@ -224,13 +248,16 @@ class WSStore {
               quotesObj[sbl] = item
             }
           })
-          this.quotes = {
+
+          const newQuotes = {
             ...this.quotes,
             ...quotesObj
           }
 
           // 实时更新k线数据
-          klineStore.updateKlineData(this.quotes)
+          klineStore.updateKlineData(newQuotes)
+
+          this.quotes = newQuotes
 
           this.quotesTempArr = []
         } else {
@@ -276,6 +303,31 @@ class WSStore {
         }
 
         // console.log('深度报价', toJS(this.depth))
+        break
+      // 交易信息：账户余额变动、持仓列表、挂单列表
+      case MessageType.trade:
+        const type = data.type as ITradeType
+        // 账户余额变动
+        if (type === 'ACCOUNT') {
+          const accountInfo = data.account || {}
+          trade.currentAccountInfo = {
+            ...trade.currentAccountInfo,
+            ...accountInfo
+          }
+        }
+        // 持仓列表、挂单列表
+        else if (type === 'ORDER') {
+          // 使用ws实时数据更新
+          const positionList = data.bagOrderList || []
+          const pendingList = data.limiteOrderList || []
+
+          trade.positionList = formaOrderList(positionList)
+          trade.pendingList = formaOrderList(pendingList)
+        } else if (type === 'LIMIT_ORDER') {
+        }
+        // 历史成交记录,用不到
+        else if (type === 'TRADING') {
+        }
         break
     }
   }

@@ -66,7 +66,7 @@ class KlineStore {
     const serverTime = socketData?.priceData?.id / 1000 // 服务器返回的时间戳
 
     let rounded = serverTime
-    const bid = socketData?.priceData?.sell
+    const ask = socketData?.priceData?.buy
 
     if (!resolution) return
 
@@ -100,19 +100,19 @@ class KlineStore {
     if (rounded > lastBarSec) {
       newLastBar = {
         time: rounded * 1000,
-        open: NP.round(bid, precision),
-        high: NP.round(bid, precision),
-        low: NP.round(bid, precision),
-        close: NP.round(bid, precision)
+        open: NP.round(ask, precision),
+        high: NP.round(ask, precision),
+        low: NP.round(ask, precision),
+        close: NP.round(ask, precision)
       }
       // log('新建k线', newLastBar)
     } else {
       newLastBar = {
         time: lastBar.time,
         open: lastBar.open,
-        high: NP.round(Math.max(lastBar.high, bid), precision),
-        low: NP.round(Math.min(lastBar.low, bid), precision),
-        close: NP.round(bid, precision)
+        high: NP.round(Math.max(lastBar.high, ask), precision),
+        low: NP.round(Math.min(lastBar.low, ask), precision),
+        close: NP.round(ask, precision)
       }
       // log('更新k线', newLastBar)
     }

@@ -416,7 +416,7 @@ export default observer(
             </div>
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-gray-secondary">
-                <FormattedMessage id="mt.baozhengjin" />
+                <FormattedMessage id="mt.yugubaozhengjin" />
               </span>
               <span className="text-xs text-gray !font-dingpro-medium">{formatNum(margin, { precision: d })} USD</span>
             </div>

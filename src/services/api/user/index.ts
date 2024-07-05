@@ -114,3 +114,19 @@ export async function forgetPasswordEmail(body: User.ForgetPasswordParams) {
     data: body
   })
 }
+
+// 更换手机号
+export async function editPhone(body: User.EditPhoneParams) {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/user/editPhone', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 更换邮箱
+export async function editEmail(body: User.EditEmailParams) {
+  return request<API.Response<any>>('/api/trade-crm/crmClient/user/editEmail', {
+    method: 'POST',
+    data: body
+  })
+}

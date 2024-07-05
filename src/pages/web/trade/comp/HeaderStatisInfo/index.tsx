@@ -77,7 +77,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   {res.hasQuote && (
                     <>
                       <span className={classNames('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>
-                        {formatNum(res.bid)}
+                        {formatNum(res.ask)}
                       </span>
                       <span className={classNames('pl-2 text-base !font-dingpro-medium', color)}>
                         {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}

@@ -28,7 +28,7 @@ type Params = {
   /**手机或邮箱 */
   emailOrPhone: string
   /**手机区号 */
-  areaCode?: string
+  phoneAreaCode?: string
 }
 
 // 重置密码
@@ -51,12 +51,12 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
       message.info(intl.formatMessage({ id: 'mt.qingshuru' }))
     }
     // 手机方式
-    if (!values.areaCode && !isEmailTab) {
+    if (!values.phoneAreaCode && !isEmailTab) {
       message.info(intl.formatMessage({ id: 'mt.qingxuanzequhao' }))
     }
     const success = await validateCodeInputRef.current?.sendCode?.({
       emailOrPhone: values.emailOrPhone,
-      areaCode: values.areaCode
+      phoneAreaCode: values.phoneAreaCode
     })
     if (success) {
       setStep('TWO')
@@ -72,7 +72,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
       newPassword,
       emailOrPhone: values.emailOrPhone,
       validateCode: values.validateCode,
-      areaCode: values.areaCode
+      phoneAreaCode: values.phoneAreaCode
     }
 
     console.log('params', params)
@@ -127,7 +127,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                 {/* 手机号码 */}
                 {!isEmailTab && (
                   <PhoneSelectFormItem
-                    names={['emailOrPhone', 'areaCode']}
+                    names={['emailOrPhone', 'phoneAreaCode']}
                     form={form}
                     label={<FormattedMessage id="mt.shoujihaoma" />}
                     required={false}

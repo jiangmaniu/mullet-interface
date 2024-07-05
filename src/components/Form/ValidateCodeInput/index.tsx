@@ -10,7 +10,7 @@ export type Params = {
   /**手机或邮箱 */
   emailOrPhone: string
   /**手机区号 */
-  areaCode?: string
+  phoneAreaCode?: string
 }
 
 export type ISendType = 'EMIAL' | 'PHONE'
@@ -19,9 +19,11 @@ type IProps = {
   /**手机或邮箱 */
   sendType: ISendType
   form?: FormInstance
+  style?: React.CSSProperties
+  showReSendBtn?: boolean
 }
 
-function ValidateCodeInput({ sendType, form }: IProps, ref: any) {
+function ValidateCodeInput({ sendType, form, style, showReSendBtn = true }: IProps, ref: any) {
   const [leftTime, setLeftTime] = useState<any>(0)
   const [params, setParams] = useState({} as Params)
   const isEmail = sendType === 'EMIAL'
@@ -44,15 +46,15 @@ function ValidateCodeInput({ sendType, form }: IProps, ref: any) {
   const sendCode = async (values?: Params) => {
     const reqFn = isEmail ? sendCustomEmailCode : sendCustomPhoneCode
     const reqParams: any = {}
-    const { emailOrPhone, areaCode } = values || params || {}
+    const { emailOrPhone, phoneAreaCode } = values || params || {}
     // 邮箱
     if (isEmail) {
       reqParams.email = emailOrPhone
     }
     // 手机
-    if (!isEmail && areaCode && emailOrPhone) {
+    if (!isEmail && phoneAreaCode && emailOrPhone) {
       reqParams.phone = emailOrPhone
-      reqParams.areaCode = areaCode
+      reqParams.phoneAreaCode = phoneAreaCode
     }
 
     const res = await reqFn(reqParams)
@@ -76,7 +78,7 @@ function ValidateCodeInput({ sendType, form }: IProps, ref: any) {
   })
 
   return (
-    <div className="px-10 pt-5 flex-1">
+    <div className="px-10 pt-5 flex-1" style={style}>
       <div className="text-gray font-semibold text-[24px] pb-3">
         {isEmail ? <FormattedMessage id="mt.chakanyouxianghuoquyanzhengma" /> : <FormattedMessage id="mt.chakanshoujihuoquyanzhengma" />}
       </div>
@@ -92,7 +94,7 @@ function ValidateCodeInput({ sendType, form }: IProps, ref: any) {
         <FormattedMessage id="mt.weishoudaoyanzhengma" />
         {seconds ? (
           <FormattedMessage id="mt.qingzaixxmiaohouchongshi" values={{ count: seconds }} />
-        ) : (
+        ) : showReSendBtn ? (
           <span
             className="text-primary text-xs cursor-pointer"
             onClick={() => {
@@ -100,6 +102,10 @@ function ValidateCodeInput({ sendType, form }: IProps, ref: any) {
             }}
           >
             <FormattedMessage id="mt.chongxinfasong" />
+          </span>
+        ) : (
+          <span className="text-gray-weak text-xs">
+            <FormattedMessage id="mt.qingfasongyanzhengmahuoqu" />
           </span>
         )}
       </div>

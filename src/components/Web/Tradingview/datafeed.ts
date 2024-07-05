@@ -53,7 +53,7 @@ class DataFeedBase {
       ...symbolInfo,
       precision: symbolInfo?.symbolDecimal || 2,
       description: symbolInfo?.remark || '',
-      exchange: '', // 交易所名称
+      exchange: 'Stellux', // 交易所名称
       session: '24x7',
       timezone: 'Europe/London',
       name: symbolInfo.symbol, // 展示的自定义名称
@@ -92,7 +92,7 @@ class DataFeedBase {
       ...commonSymbolInfo,
       ...currentSymbol,
       description: this.isZh ? currentSymbol.description : currentSymbol?.name, // 商品说明
-      exchange: this.isZh ? currentSymbol?.exchange : '',
+      exchange: currentSymbol?.exchange,
       // 该交易品种的交易时间
       // 写法参考：https://www.tradingview.com/charting-library-docs/latest/connecting_data/Trading-Sessions
       // 在线验证写法是否正确：http://tradingview.github.io/checksession.html

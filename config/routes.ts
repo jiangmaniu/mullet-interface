@@ -99,7 +99,7 @@ export default [
   {
     path: '/:lng/account',
     name: 'myAccount',
-    icon: 'icon-caidan-jiaoyipinzhong',
+    icon: 'icon-geren-zhanghu',
     access: 'canAdmin', // 权限配置
     component: './admin/account'
   },
@@ -124,14 +124,14 @@ export default [
   // {
   //   path: '/:lng/deposit',
   //   name: 'deposit',
-  //   icon: 'icon-caidan-dingdan', // @TODO替换图标
+  //   icon: 'icon-geren-rujin',
   //   access: 'canAdmin', // 权限配置
   //   component: './admin/deposit'
   // },
   // {
   //   path: '/:lng/withdrawal',
   //   name: 'withdrawal',
-  //   icon: 'icon-caidan-shujuyuan', // @TODO替换图标
+  //   icon: 'icon-geren-chujin',
   //   access: 'canAdmin', // 权限配置
   //   component: './admin/withdrawal'
   // },
@@ -144,23 +144,31 @@ export default [
   // {
   //   path: '/:lng/record',
   //   name: 'depositAndwithdrawalRecord',
-  //   icon: 'icon-caidan-kehuguanli', // @TODO替换图标
+  //   icon: 'icon-geren-churujinjilu',
   //   access: 'canAdmin', // 权限配置
   //   component: './admin/record'
   // },
+  // 跟单管理
   // {
-  //   path: '/:lng/setting',
-  //   name: 'setting',
-  //   icon: 'icon-caidan-shezhi', // @TODO替换图标
+  //   path: '/:lng/copyTrading',
   //   access: 'canAdmin', // 权限配置
-  //   component: './admin/setting'
+  //   name: 'copyTrading',
+  //   icon: 'icon-geren-shezhi',
+  //   component: './admin/copyTrading'
   // },
-  // {
-  //   path: '/:lng/setting/kyc',
-  //   access: 'canAdmin', // 权限配置
-  //   component: './admin/setting/kyc',
-  //   hideInMenu: true
-  // },
+  {
+    path: '/:lng/setting',
+    name: 'setting',
+    icon: 'icon-geren-shezhi',
+    access: 'canAdmin', // 权限配置
+    component: './admin/setting'
+  },
+  {
+    path: '/:lng/setting/kyc',
+    access: 'canAdmin', // 权限配置
+    component: './admin/setting/kycStepForm',
+    hideInMenu: true
+  },
   {
     path: '*',
     layout: false,

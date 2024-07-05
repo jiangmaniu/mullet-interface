@@ -96,6 +96,136 @@ function TransferAccount() {
     }
   ]
 
+  const renderOneStep = () => {
+    return (
+      <ProForm
+        onFinish={async (values: Account.TransferAccountParams) => {
+          console.log('values', values)
+          setStep('TWO')
+
+          return
+        }}
+        submitter={false}
+        layout="vertical"
+        form={form}
+      >
+        <div>
+          {/* 转出 */}
+          <div className="mb-6">
+            <TransferFromFormSelectItem form={form} />
+          </div>
+          <div className="flex items-center justify-center">
+            <img src="/img/transfer-arrow-down.png" width={29} height={29} />
+          </div>
+          {/* 转入 */}
+          <div className="mb-6 mt-1">
+            <TransferToFormSelectItem form={form} />
+          </div>
+        </div>
+        <ProFormDigit
+          name="money"
+          label={
+            <span className="text-sm text-gray font-medium">
+              <FormattedMessage id="mt.jine" />
+            </span>
+          }
+          placeholder={intl.formatMessage({ id: 'mt.qingshuruyue' })}
+          fieldProps={{
+            size: 'large',
+            style: { height: 42 },
+            maxLength: 8,
+            autoFocus: false,
+            precision: 2,
+            suffix: 'USD',
+            controls: false
+          }}
+          rules={[
+            {
+              required: true,
+              validator(rule, value, callback) {
+                if (!value) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruyue' }))
+                } else if (value && value > Number(fromAccountInfo?.money || 0)) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.yuebuzu' }))
+                } else {
+                  return Promise.resolve()
+                }
+              }
+            }
+          ]}
+          colProps={{ span: 12 }}
+        />
+        <Button type="primary" style={{ height: 46, marginTop: 38 }} block htmlType="submit">
+          <FormattedMessage id="mt.huazhuan" />
+          <ArrowRightOutlined />
+        </Button>
+      </ProForm>
+    )
+  }
+
+  const renderTwoStep = () => {
+    return (
+      <div>
+        {listData.map((item, idx) => (
+          <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
+            <span className="text-gray">{item.leftLabel}</span>
+            <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
+            <div className="flex max-w-[240px] break-all text-right">{item.rightText}</div>
+          </div>
+        ))}
+        <div className="mt-10">
+          <div className="bg-gray-50 rounded-[10px] py-[22px] px-4 flex items-center justify-between">
+            <span className="text-sm text-gray-secondary">
+              <FormattedMessage id="mt.daichujinjine" />
+            </span>
+            <span className="text-xl text-gray !font-dingpro-medium">{formatNum(money)} USD</span>
+          </div>
+          <Button
+            type="primary"
+            style={{ height: 46, marginTop: 34 }}
+            block
+            onClick={() => {
+              handleSubmit()
+            }}
+            loading={loading}
+          >
+            <FormattedMessage id="common.queren" />
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  const renderThreeStep = () => {
+    return (
+      <div>
+        <div className="mt-3 flex items-center flex-col justify-center">
+          <img src="/img/transfer-success.png" width={56} height={56} />
+          <div className="text-[22px] text-gray font-semibold my-[14px]">
+            <FormattedMessage id="mt.nindezijinjijiangdaozhang" />
+          </div>
+          <div className="text-base text-gray-secondary">
+            <FormattedMessage id="mt.jiaoyiyichuliwancheng" />
+          </div>
+        </div>
+        <Button
+          type="primary"
+          style={{ height: 46, marginTop: 70 }}
+          block
+          onClick={() => {
+            push('/account')
+
+            setTimeout(() => {
+              setStep('ONE')
+            }, 200)
+          }}
+        >
+          <FormattedMessage id="mt.lijichakan" />
+        </Button>
+      </div>
+    )
+  }
+
   return (
     <PageContainer
       pageBgColorMode="gray"
@@ -109,127 +239,9 @@ function TransferAccount() {
               {['ONE', 'TWO'].includes(step) && <FormattedMessage id="mt.zhuanzhang" />}
               {['THREE'].includes(step) && <FormattedMessage id="mt.zhuanzhangjieguo" />}
             </div>
-            <Hidden show={step === 'ONE'}>
-              <ProForm
-                onFinish={async (values: Account.TransferAccountParams) => {
-                  console.log('values', values)
-                  setStep('TWO')
-
-                  return
-                }}
-                submitter={false}
-                layout="vertical"
-                form={form}
-              >
-                <div>
-                  {/* 转出 */}
-                  <div className="mb-6">
-                    <TransferFromFormSelectItem form={form} />
-                  </div>
-                  <div className="flex items-center justify-center">
-                    <img src="/img/transfer-arrow-down.png" width={29} height={29} />
-                  </div>
-                  {/* 转入 */}
-                  <div className="mb-6 mt-1">
-                    <TransferToFormSelectItem form={form} />
-                  </div>
-                </div>
-                <ProFormDigit
-                  name="money"
-                  label={
-                    <span className="text-sm text-gray font-medium">
-                      <FormattedMessage id="mt.jine" />
-                    </span>
-                  }
-                  placeholder={intl.formatMessage({ id: 'mt.qingshuruyue' })}
-                  fieldProps={{
-                    size: 'large',
-                    style: { height: 42 },
-                    maxLength: 8,
-                    autoFocus: false,
-                    precision: 2,
-                    suffix: 'USD',
-                    controls: false
-                  }}
-                  rules={[
-                    {
-                      required: true,
-                      validator(rule, value, callback) {
-                        if (!value) {
-                          return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruyue' }))
-                        } else if (value && value > Number(fromAccountInfo?.money || 0)) {
-                          return Promise.reject(intl.formatMessage({ id: 'mt.yuebuzu' }))
-                        } else {
-                          return Promise.resolve()
-                        }
-                      }
-                    }
-                  ]}
-                  colProps={{ span: 12 }}
-                />
-                <Button type="primary" style={{ height: 46, marginTop: 38 }} block htmlType="submit">
-                  <FormattedMessage id="mt.huazhuan" />
-                  <ArrowRightOutlined />
-                </Button>
-              </ProForm>
-            </Hidden>
-            <Hidden show={step === 'TWO'}>
-              <div>
-                {listData.map((item, idx) => (
-                  <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
-                    <span className="text-gray">{item.leftLabel}</span>
-                    <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
-                    <div className="flex max-w-[240px] break-all text-right">{item.rightText}</div>
-                  </div>
-                ))}
-                <div className="mt-10">
-                  <div className="bg-gray-50 rounded-[10px] py-[22px] px-4 flex items-center justify-between">
-                    <span className="text-sm text-gray-secondary">
-                      <FormattedMessage id="mt.daichujinjine" />
-                    </span>
-                    <span className="text-xl text-gray !font-dingpro-medium">{formatNum(money)} USD</span>
-                  </div>
-                  <Button
-                    type="primary"
-                    style={{ height: 46, marginTop: 34 }}
-                    block
-                    onClick={() => {
-                      handleSubmit()
-                    }}
-                    loading={loading}
-                  >
-                    <FormattedMessage id="common.queren" />
-                  </Button>
-                </div>
-              </div>
-            </Hidden>
-            <Hidden show={step === 'THREE'}>
-              <div>
-                <div className="mt-3 flex items-center flex-col justify-center">
-                  <img src="/img/transfer-success.png" width={56} height={56} />
-                  <div className="text-[22px] text-gray font-semibold my-[14px]">
-                    <FormattedMessage id="mt.nindezijinjijiangdaozhang" />
-                  </div>
-                  <div className="text-base text-gray-secondary">
-                    <FormattedMessage id="mt.jiaoyiyichuliwancheng" />
-                  </div>
-                </div>
-                <Button
-                  type="primary"
-                  style={{ height: 46, marginTop: 70 }}
-                  block
-                  onClick={() => {
-                    push('/account')
-
-                    setTimeout(() => {
-                      setStep('ONE')
-                    }, 200)
-                  }}
-                >
-                  <FormattedMessage id="mt.lijichakan" />
-                </Button>
-              </div>
-            </Hidden>
+            <Hidden show={step === 'ONE'}>{renderOneStep()}</Hidden>
+            <Hidden show={step === 'TWO'}>{renderTwoStep()}</Hidden>
+            <Hidden show={step === 'THREE'}>{renderThreeStep()}</Hidden>
           </div>
         </div>
       </div>

@@ -429,7 +429,7 @@ class TradeStore {
       this.getPendingList()
     } else if (tabKey === 'STOPLOSS_PROFIT') {
       // 止盈止损
-      this.getStopLossProfitList()
+      // this.getStopLossProfitList()
     }
   }
 
@@ -510,8 +510,8 @@ class TradeStore {
     if (res.success) {
       // 市价单：买入卖出单
       if (['MARKET_ORDER'].includes(orderType)) {
-        // 更新持仓列表
-        this.getPositionList()
+        // 更新持仓列表,通过ws推送更新
+        // this.getPositionList()
         // 携带持仓订单号则为平仓单
         if (params.bagOrderId) {
           message.info(getIntl().formatMessage({ id: 'mt.pingcangchenggong' }))
@@ -523,8 +523,8 @@ class TradeStore {
       }
       // 限价买入卖出单、停损买入卖出单
       else if (['LIMIT_BUY_ORDER', 'LIMIT_SELL_ORDER', 'STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(orderType)) {
-        // 更新挂单列表
-        this.getPendingList()
+        // 更新挂单列表,通过ws推送更新
+        // this.getPendingList()
         message.info(getIntl().formatMessage({ id: 'mt.guadanchenggong' }))
         // 激活Tab
         trade.setTabKey('PENDING')

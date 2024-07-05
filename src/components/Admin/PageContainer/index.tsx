@@ -1,11 +1,14 @@
 import { PageContainerProps } from '@ant-design/pro-components'
 import { useModel, useSelectedRoutes } from '@umijs/max'
 import classNames from 'classnames'
-import { useEffect } from 'react'
+import { TabBarExtraContent } from 'rc-tabs/lib/interface'
+import { useEffect, useState } from 'react'
 
 import { useEnv } from '@/context/envProvider'
 import { bgColorBase } from '@/theme/theme.config'
 import { push } from '@/utils/navigator'
+
+import Tabs, { ITabItem } from '../Tabs'
 
 interface IProps {
   children: React.ReactNode
@@ -23,6 +26,11 @@ interface IProps {
   fluidWidth?: boolean
   backUrl?: string
   backStyle?: React.CSSProperties
+  tabList?: ITabItem[]
+  tabActiveKey?: string
+  tabBarExtraContent?: TabBarExtraContent
+  onChangeTab?: (activeKey: string, activeLabel: string) => void
+  headerWrapperStyle?: React.CSSProperties
 }
 export default function PageContainer({
   children,
@@ -34,11 +42,17 @@ export default function PageContainer({
   fluidWidth,
   backUrl,
   backStyle,
-  style = {}
+  style = {},
+  tabList = [],
+  tabActiveKey,
+  tabBarExtraContent,
+  onChangeTab,
+  headerWrapperStyle
 }: IProps & PageContainerProps) {
   const { setPageBgColor } = useModel('global')
   const { isMobileOrIpad, isMobile } = useEnv()
   const routes = useSelectedRoutes()
+  const [tabKey, setTabKey] = useState(tabList[0]?.key || '')
 
   const lastRoute = routes
     .at(-1)
@@ -55,6 +69,24 @@ export default function PageContainer({
     setPageBgColor(pageBgColorMode === 'white' ? '#fff' : bgColorBase)
   }, [pageBgColorMode])
 
+  useEffect(() => {
+    if (tabActiveKey) {
+      setTabKey(tabActiveKey)
+    }
+  }, [tabActiveKey])
+
+  const headerStyle: React.CSSProperties = {
+    ...(tabList.length
+      ? {
+          height: 108,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-end'
+        }
+      : {}),
+    ...headerWrapperStyle
+  }
+
   return (
     <div style={{ ...style }}>
       {/* 头部区域 */}
@@ -64,22 +96,39 @@ export default function PageContainer({
             overflow: 'hidden',
             background: '#fff',
             height: 70,
-            lineHeight: 70,
-            borderBottom: '1px solid rgba(218, 218, 218, .3)'
+            borderBottom: '1px solid rgba(218, 218, 218, .3)',
+            ...headerStyle
             // paddingInline: '9.5%'
           }}
           className={classNames('flex items-center', {
             'sticky top-[66px] z-[99]': fixedHeader
           })}
         >
-          <div className={classNames('w-[1200px]', !fluidWidth ? 'm-auto' : '')}>{renderHeader?.()}</div>
+          <div className={classNames('w-[1120px]', !fluidWidth ? 'm-auto' : '')}>
+            <div className="flex flex-col items-start">
+              {renderHeader?.()}
+              <Tabs
+                tabList={tabList}
+                activeKey={tabKey}
+                tabBarGutter={57}
+                tabBarStyle={{ paddingLeft: 0 }}
+                onChangeTab={(activeKey, activeLabel) => {
+                  setTabKey(activeKey)
+                  onChangeTab?.(activeKey, activeLabel)
+                }}
+                tabBarExtraContent={tabBarExtraContent}
+                marginBottom={0}
+                indicator={{ size: 45 }}
+              />
+            </div>
+          </div>
         </div>
       )}
 
       {/* 返回按钮 */}
       {backTitle && backPath && (
         <div className={classNames('pt-7 flex items-center px-6 justify-center')} style={backStyle}>
-          <div className="flex items-center relative -left-2 w-[1200px]">
+          <div className="flex items-center relative -left-2 w-[1120px]">
             <div
               className="hover:bg-gray-100 rounded-full cursor-pointer"
               onClick={() => {
@@ -95,7 +144,7 @@ export default function PageContainer({
 
       {/* 内容区域 */}
       <div style={contentStyle} className={classNames('py-7 flex items-center justify-center', 'px-6')}>
-        <div className="w-[1200px]">{children}</div>
+        <div className="w-[1120px]">{children}</div>
       </div>
     </div>
   )

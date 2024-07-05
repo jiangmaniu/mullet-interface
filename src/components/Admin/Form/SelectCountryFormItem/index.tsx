@@ -5,9 +5,12 @@ import AreaCodeSelect from '@/components/Form/AreaCodeSelect'
 
 type IProps = {
   form: FormInstance
+  height?: number
+  placeholder?: string
+  label?: React.ReactNode
 }
 
-export default function SelectCountryFormItem({ form }: IProps) {
+export default function SelectCountryFormItem({ form, height = 49, placeholder, label }: IProps) {
   const intl = useIntl()
   return (
     <AreaCodeSelect
@@ -18,9 +21,9 @@ export default function SelectCountryFormItem({ form }: IProps) {
       selectProps={{
         allowClear: false,
         fieldProps: { size: 'large' },
-        style: { height: 49 },
-        placeholder: intl.formatMessage({ id: 'mt.xuanzeguojia' }),
-        label: intl.formatMessage({ id: 'mt.juzhuguojiadiqu' })
+        style: { height },
+        placeholder: placeholder || intl.formatMessage({ id: 'mt.xuanzeguojia' }),
+        label: label || intl.formatMessage({ id: 'mt.juzhuguojiadiqu' })
       }}
     />
   )

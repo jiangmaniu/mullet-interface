@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="21px" height="22px" viewBox="0 0 21 22" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 29</title>
+    <g id="页面-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="设置-账户安全-状态" transform="translate(-32.000000, -365.000000)">
+            <g id="编组-29" transform="translate(32.000000, 365.000000)">
+                <rect id="矩形备份-10" x="0" y="0" width="21" height="22"></rect>
+                <g id="编组-24" transform="translate(1.500000, 3.034483)">
+                    <path d="M9,0.496140248 L16.3314664,4.44967895 L16.3314664,12.2399762 L9,16.1935149 L1.6685336,12.2399762 L1.6685336,4.44967895 L9,0.496140248 Z" id="多边形" stroke="#110E23" stroke-width="2.02672237" transform="translate(9.000000, 8.344828) rotate(-270.000000) translate(-9.000000, -8.344828) "></path>
+                    <polygon id="多边形备份" fill="#110E23" transform="translate(9.214286, 8.290640) rotate(-270.000000) translate(-9.214286, -8.290640) " points="9.21428571 5.07635468 12.1945813 6.68349754 12.1945813 9.89778325 9.21428571 11.5049261 6.23399015 9.89778325 6.23399015 6.68349754"></polygon>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

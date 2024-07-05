@@ -6,6 +6,62 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "40945802",
+      "name": "个人-账户",
+      "font_class": "geren-zhanghu",
+      "unicode": "e720",
+      "unicode_decimal": 59168
+    },
+    {
+      "icon_id": "40945801",
+      "name": "个人-设置",
+      "font_class": "geren-shezhi",
+      "unicode": "e721",
+      "unicode_decimal": 59169
+    },
+    {
+      "icon_id": "40945800",
+      "name": "个人-入金icon",
+      "font_class": "geren-rujinicon",
+      "unicode": "e722",
+      "unicode_decimal": 59170
+    },
+    {
+      "icon_id": "40945799",
+      "name": "个人-入金",
+      "font_class": "geren-rujin",
+      "unicode": "e723",
+      "unicode_decimal": 59171
+    },
+    {
+      "icon_id": "40945798",
+      "name": "个人-出入金记录",
+      "font_class": "geren-churujinjilu",
+      "unicode": "e724",
+      "unicode_decimal": 59172
+    },
+    {
+      "icon_id": "40945797",
+      "name": "个人-添加",
+      "font_class": "geren-tianjia",
+      "unicode": "e725",
+      "unicode_decimal": 59173
+    },
+    {
+      "icon_id": "40945796",
+      "name": "个人-出金",
+      "font_class": "geren-chujin",
+      "unicode": "e726",
+      "unicode_decimal": 59174
+    },
+    {
+      "icon_id": "40945795",
+      "name": "个人-锁",
+      "font_class": "geren-suo",
+      "unicode": "e727",
+      "unicode_decimal": 59175
+    },
+    {
       "icon_id": "40582669",
       "name": "更多-操作",
       "font_class": "gengduo-caozuo",

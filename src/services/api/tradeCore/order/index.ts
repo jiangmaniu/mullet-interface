@@ -4,17 +4,21 @@ import { parseJsonFields } from '@/utils'
 import { formatSymbolConf } from '@/utils/business'
 import { request } from '@/utils/request'
 
+export const formaOrderList = (list = []) => {
+  if (!list?.length) return []
+  return list.map((item: any) => {
+    if (item.conf) {
+      parseJsonFields(item, ['conf'])
+      item.conf = formatSymbolConf(item.conf)
+    }
+    return item
+  })
+}
+
 const formatOrderResult = (res: any) => {
   const records = res.data?.records || []
   if (records.length > 0 && res.data) {
-    const list = records.map((item: any) => {
-      if (item.conf) {
-        parseJsonFields(item, ['conf'])
-        item.conf = formatSymbolConf(item.conf)
-      }
-      return item
-    })
-    res.data.records = list
+    res.data.records = formaOrderList(records)
   }
   return res
 }

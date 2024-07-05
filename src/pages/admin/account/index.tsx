@@ -47,6 +47,10 @@ function Account() {
   const countDownSeconds = Math.round(countDown / 1000)
 
   useEffect(() => {
+    trade.getAccountGroupList()
+  }, [])
+
+  useEffect(() => {
     if (accountList?.length) {
       setLeftTime(5 * 1000)
     }

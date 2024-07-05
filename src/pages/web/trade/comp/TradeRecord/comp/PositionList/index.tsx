@@ -401,7 +401,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
 
       // 存在杠杆
       if (leverageMultiple) {
-        v.orderMargin = v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
+        v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
       } else {
         // 固定保证金 * 手数
         v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)

@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4571567 */
-  src: url('iconfont.woff2?t=1718208462789') format('woff2'),
-       url('iconfont.woff?t=1718208462789') format('woff'),
-       url('iconfont.ttf?t=1718208462789') format('truetype');
+  src: url('iconfont.woff2?t=1719974605793') format('woff2'),
+       url('iconfont.woff?t=1719974605793') format('woff'),
+       url('iconfont.ttf?t=1719974605793') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,38 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-geren-zhanghu:before {
+  content: "\e720";
+}
+
+.icon-geren-shezhi:before {
+  content: "\e721";
+}
+
+.icon-geren-rujinicon:before {
+  content: "\e722";
+}
+
+.icon-geren-rujin:before {
+  content: "\e723";
+}
+
+.icon-geren-churujinjilu:before {
+  content: "\e724";
+}
+
+.icon-geren-tianjia:before {
+  content: "\e725";
+}
+
+.icon-geren-chujin:before {
+  content: "\e726";
+}
+
+.icon-geren-suo:before {
+  content: "\e727";
 }
 
 .icon-gengduo-caozuo:before {

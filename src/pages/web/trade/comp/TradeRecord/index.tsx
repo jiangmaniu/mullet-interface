@@ -50,7 +50,7 @@ function TradeRecord({ trigger }: IProps) {
     // 获取挂单、持仓、止盈止损接口
     trade.getPositionList()
     trade.getPendingList()
-    trade.getStopLossProfitList()
+    // trade.getStopLossProfitList()
   }, [trade.currentAccountInfo?.id])
 
   // 当前筛选列表的持仓总浮动盈亏

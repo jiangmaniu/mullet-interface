@@ -34,6 +34,7 @@ interface IProps extends TabsProps {
   /**展示移动端Tabs组件 */
   showMobileTabs?: boolean
   tabPaddingBottom?: number
+  marginBottom?: number
 }
 
 export default function Tabs({
@@ -48,6 +49,7 @@ export default function Tabs({
   showMobileTabs = false,
   tabPaddingBottom,
   hiddenBottomLine = true,
+  marginBottom,
   ...res
 }: IProps) {
   let tabItems = tabList as ITabItem[]
@@ -156,6 +158,7 @@ export default function Tabs({
               })}
               hiddenBottomLine={hiddenBottomLine}
               tabBarGutter={tabBarGutter}
+              marginBottom={marginBottom}
               {...res}
             />
           )}

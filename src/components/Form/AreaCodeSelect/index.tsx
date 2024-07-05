@@ -18,7 +18,7 @@ type AreaCodeItem = API.KEYVALUE & {
   areaName: string
   /**中文label */
   areaNameZh: string
-  areaCode: string
+  phoneAreaCode: string
 }
 type valueKey = keyof AreaCodeItem
 /**
@@ -72,7 +72,7 @@ export default function AreaCodeSelect({
       areaNameZh,
       areaName,
       value: `+${v.key}`,
-      areaCode: `+${v.key}`
+      phoneAreaCode: `+${v.key}`
     }
   })
 
@@ -85,7 +85,7 @@ export default function AreaCodeSelect({
         return (
           <div className="flex justify-between">
             <span>{option.label}</span>
-            <span>{option?.areaCode}</span>
+            <span>{option?.phoneAreaCode}</span>
           </div>
         )
       },
@@ -168,10 +168,10 @@ export default function AreaCodeSelect({
           }}
           // 自定义option列表项
           renderLabel={(item) => {
-            const areaCode = options?.find((v: any) => v.areaId === item.value)?.areaCode
+            const phoneAreaCode = options?.find((v: any) => v.areaId === item.value)?.phoneAreaCode
             return (
               <div className="flex items-center justify-between">
-                <span className="text-main pr-3">{areaCode}</span>
+                <span className="text-main pr-3">{phoneAreaCode}</span>
                 <span className="text-main">{item.label}</span>
               </div>
             )
@@ -184,7 +184,7 @@ export default function AreaCodeSelect({
             }) as AreaCodeItem
 
             const label = lng === 'zh-TW' ? item?.areaNameZh : item?.areaName
-            return <span className="text-main">{valueKey === 'areaName' ? label : item[valueKey as valueKey] || item.areaCode}</span>
+            return <span className="text-main">{valueKey === 'areaName' ? label : item[valueKey as valueKey] || item.phoneAreaCode}</span>
           }}
           showSearch
           label={label}

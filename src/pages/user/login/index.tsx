@@ -43,7 +43,7 @@ function Login() {
 
   const username = Form.useWatch('username', form)
   const password = Form.useWatch('password', form)
-  const areaCode = Form.useWatch('areaCode', form) || '+852' // 默认香港区号
+  const phoneAreaCode = Form.useWatch('phoneAreaCode', form) || '+852' // 默认香港区号
 
   const validateCodeRef = useRef<any>() // 注册、重置密码验证码
   const pwdTipsRef = useRef<any>()
@@ -125,7 +125,7 @@ function Login() {
         {
           username: values.username,
           password: md5(values.password as string),
-          areaCode,
+          phoneAreaCode,
           tenanId: '000000',
           type: 'account',
           grant_type: 'captcha',
@@ -172,7 +172,7 @@ function Login() {
     setTimeout(() => {
       validateCodeRef.current?.sendCode({
         emailOrPhone: username,
-        areaCode
+        phoneAreaCode
       })
     }, 300)
   }
@@ -207,7 +207,7 @@ function Login() {
       const result = await login({
         username,
         password: md5(values.password as string),
-        areaCode,
+        phoneAreaCode,
         tenanId: '000000',
         type: 'account',
         grant_type: 'password',
@@ -355,7 +355,7 @@ function Login() {
             {/* 手机号码 */}
             {!isEmailTab && (
               <PhoneSelectFormItem
-                names={['username', 'areaCode']}
+                names={['username', 'phoneAreaCode']}
                 form={form}
                 label={<FormattedMessage id="mt.shoujihaoma" />}
                 required={false}

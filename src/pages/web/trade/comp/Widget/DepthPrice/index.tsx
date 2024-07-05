@@ -2,6 +2,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import { Col, Row } from 'antd'
 import classNames from 'classnames'
+import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useState } from 'react'
 
@@ -16,7 +17,7 @@ function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const depth = getCurrentDepth()
   const quote = getCurrentQuote()
-  const asks = depth?.asks || []
+  const asks = toJS(depth?.asks || []).reverse() // 倒过来 从大到小
   const bids = depth?.bids || []
 
   const modeList: Array<{ key: ModeType; icon: string }> = [
@@ -57,7 +58,7 @@ function DeepPrice() {
           {/* 当前行情卖价 */}
           {quote.hasQuote ? (
             <span className={classNames('text-lg !font-dingpro-regular pr-[10px]', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
-              {formatNum(quote.bid)}
+              {formatNum(quote.ask)}
             </span>
           ) : (
             <span className="!font-dingpro-regular text-[13px]">--</span>
@@ -73,7 +74,7 @@ function DeepPrice() {
 
   // 渲染买列表
   const renderBuyList = () => {
-    const list = bids.slice(0, showAll ? 12 : 20)
+    const list = asks.slice(0, showAll ? 12 : 20)
     const maxAmount = Math.max(...list.map((item) => item.amount))
     return list
       .filter((v) => v)
@@ -84,7 +85,7 @@ function DeepPrice() {
         return (
           <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
             <Row className="flex items-center h-6 px-3 relative z-[2]">
-              <Col span={8} className="!text-xs text-green !font-dingpro-regular font-medium text-left">
+              <Col span={8} className="!text-xs text-red !font-dingpro-regular font-medium text-left">
                 {formatNum(item.price, { precision: digits })}
               </Col>
               <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-left">
@@ -96,7 +97,7 @@ function DeepPrice() {
             </Row>
             {/* 进度条 */}
             <div
-              className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
+              className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
               style={{
                 transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`,
                 transition: 'transform .3s ease-in-out'
@@ -116,9 +117,18 @@ function DeepPrice() {
     )
   }
 
+  const renderSell = () => {
+    return (
+      <>
+        {BidPriceDom}
+        {renderSellList()}
+      </>
+    )
+  }
+
   // 渲染卖列表
   const renderSellList = () => {
-    const list = asks.slice(0, showAll ? 12 : 20)
+    const list = bids.slice(0, showAll ? 12 : 20)
     const maxAmount = Math.max(...list.map((item) => item.amount))
     return (
       <>
@@ -131,7 +141,7 @@ function DeepPrice() {
             return (
               <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
                 <Row className="flex items-center h-6 px-3 relative z-[2]">
-                  <Col span={8} className="!text-xs text-red !font-dingpro-regular font-medium text-left">
+                  <Col span={8} className="!text-xs text-green !font-dingpro-regular font-medium text-left">
                     {formatNum(item.price, { precision: digits })}
                   </Col>
                   <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-left">
@@ -143,7 +153,7 @@ function DeepPrice() {
                 </Row>
                 {/* 进度条 */}
                 <div
-                  className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
+                  className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
                   style={{
                     transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`,
                     transition: 'transform .3s ease-in-out'
@@ -224,8 +234,8 @@ function DeepPrice() {
         <div style={{ height: 622 }}>
           {mode === 'BUY_SELL' && (
             <>
-              {renderSellList()}
-              {renderBuy()}
+              {renderBuyList()}
+              {renderSell()}
             </>
           )}
           {mode === 'BUY' && (

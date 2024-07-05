@@ -297,10 +297,10 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
           <div
             className={classNames('flex items-center px-2 h-[57px]', groupClassName, { active: accountBoxOpen })}
             onMouseEnter={() => {
-              // 刷新账户余额信息
-              setTimeout(() => {
-                fetchUserInfo(false)
-              }, 300)
+              // 刷新账户余额信息,使用ws最新的
+              // setTimeout(() => {
+              //   fetchUserInfo(false)
+              // }, 300)
             }}
           >
             <div className="flex flex-col items-end group relative">
