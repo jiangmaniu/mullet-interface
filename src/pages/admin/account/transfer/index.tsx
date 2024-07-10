@@ -10,7 +10,7 @@ import PageContainer from '@/components/Admin/PageContainer'
 import Hidden from '@/components/Base/Hidden'
 import { useStores } from '@/context/mobxProvider'
 import { transferAccount } from '@/services/api/tradeCore/account'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { formatNum, hiddenCenterPartStr, toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
@@ -36,6 +36,11 @@ function TransferAccount() {
   const money = Form.useWatch('money', form) // 金额
   const fromAccountInfo = accountList.find((item) => item.id === fromAccountId) // 转出账号信息
   const toAccountInfo = accountList.find((item) => item.id === toAccountId) // 转入账号信息
+
+  // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
+  const occupyMargin = Number(toFixed(Number(fromAccountInfo?.margin || 0) + Number(fromAccountInfo?.isolatedMargin || 0)))
+  // 可用余额
+  const availableMoney = Number(toFixed(Number(fromAccountInfo?.money || 0) - occupyMargin))
 
   const handleSubmit = async () => {
     const values = form.getFieldsValue()
@@ -145,7 +150,7 @@ function TransferAccount() {
               validator(rule, value, callback) {
                 if (!value) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruyue' }))
-                } else if (value && value > Number(fromAccountInfo?.money || 0)) {
+                } else if (value && value > Number(availableMoney)) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.yuebuzu' }))
                 } else {
                   return Promise.resolve()
