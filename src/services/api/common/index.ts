@@ -14,7 +14,7 @@ export async function fileUpload(body: any) {
 
 // 查询手机区号选择
 export async function getAreaCode() {
-  return request<API.Response<API.KEYVALUE[]>>('/api/trade-crm/crmClient/public/dictBiz/area_code', {
+  return request<API.Response<Common.AreaCodeItem[]>>('/api/trade-crm/crmClient/public/countryList', {
     method: 'GET',
     needToken: false
   })

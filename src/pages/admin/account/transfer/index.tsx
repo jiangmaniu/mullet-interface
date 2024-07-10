@@ -48,7 +48,7 @@ function TransferAccount() {
       message.info(intl.formatMessage({ id: 'common.opSuccess' }))
 
       // 刷新用户信息
-      fetchUserInfo()
+      fetchUserInfo(false)
     }
   }
 

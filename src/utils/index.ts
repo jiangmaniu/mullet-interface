@@ -36,7 +36,7 @@ export const regEmail =
   /^[a-zA-Z0-9.!#$%&amp;'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 export const regMobile = /^\d+(.\d{1,2})?$/
 
-export function isMobile(str: string) {
+export function isMobile(str: any) {
   return regMobile.test(str)
 }
 export function isPassword(str: string) {

@@ -40,6 +40,7 @@ const FormCaptcha: React.FC<IProps> = ({ onSend, fieldProps, ...res }) => {
         } catch (error) {
           captchaRef?.current?.endTiming()
           setLoading(false)
+          throw error
         }
       }}
       fieldRef={captchaRef}

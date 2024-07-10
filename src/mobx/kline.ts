@@ -66,7 +66,7 @@ class KlineStore {
     const serverTime = socketData?.priceData?.id / 1000 // 服务器返回的时间戳
 
     let rounded = serverTime
-    const ask = socketData?.priceData?.buy
+    const ask = socketData?.priceData?.buy // 卖价
 
     if (!resolution) return
 

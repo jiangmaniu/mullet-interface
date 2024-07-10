@@ -10,4 +10,20 @@ declare namespace Common {
     originalName: string
     attachId: null
   }
+  /**国家区号列表 */
+  type AreaCodeItem = {
+    /**国家id */
+    id: string
+    abbr: string
+    /**英文名称 */
+    nameEn: string
+    /**中文名称 */
+    nameCn: string
+    /**繁体名称 */
+    nameTw: string
+    /**手机区号 */
+    areaCode: string
+    sort: any
+    remark: string
+  }
 }

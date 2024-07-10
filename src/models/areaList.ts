@@ -1,19 +1,34 @@
+import { useRequest } from 'ahooks'
+import { useEffect } from 'react'
+
+import { useLang } from '@/context/languageProvider'
+import { getAreaCode } from '@/services/api/common'
+
+/**获取国家地区、手机区号 */
 export default function AreaList() {
-  // 使用ahooks
-  // const { data, loading } = useRequest(async () => {
-  //   const res = await getAreaDataList()
-  //   if (res.success) {
-  //     // @ts-ignore
-  //     const data = res.result
-  //     return data
-  //   }
-  //   return []
-  // })
-  // return {
-  //   data,
-  //   loading
-  // }
+  const { lng } = useLang()
+  const { data, loading, run } = useRequest(getAreaCode, { manual: true })
+  const list = data?.data || []
+
+  useEffect(() => {
+    run()
+  }, [])
+
+  // 根据国家简称获取国家名称
+  const getCountryName = (abbr: any) => {
+    if (!abbr) return ''
+
+    const info = list.find((item) => item.abbr === abbr)
+
+    const countryName = lng === 'zh-TW' ? info?.nameTw : info?.nameEn
+
+    return countryName
+  }
+
   return {
-    data: []
+    list,
+    loading,
+    getCountryName,
+    run
   }
 }

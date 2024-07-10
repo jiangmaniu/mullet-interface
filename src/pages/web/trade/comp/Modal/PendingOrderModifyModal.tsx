@@ -11,6 +11,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
+import { message } from '@/utils/message'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPendingItem } from '../TradeRecord/comp/PendingList'
@@ -107,25 +108,18 @@ export default observer(
     const onFinish = async (values: any) => {
       console.log('values', values)
       const msg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
-      // if (isBuy) {
-      //   if (sl && sl > sl_scope) {
-      //     message.info(msg)
-      //     return
-      //   }
-      //   if (sp && sp < sp_scope) {
-      //     message.info(msg)
-      //     return
-      //   }
-      // } else {
-      //   if (sl && sl < sl_scope) {
-      //     message.info(msg)
-      //     return
-      //   }
-      //   if (sp && sp > sp_scope) {
-      //     message.info(msg)
-      //     return
-      //   }
-      // }
+
+      const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
+
+      if (slFlag) {
+        message.info(msg)
+        return
+      }
+      const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
+      if (spFlag) {
+        message.info(msg)
+        return
+      }
 
       const params = {
         orderId: item.id,

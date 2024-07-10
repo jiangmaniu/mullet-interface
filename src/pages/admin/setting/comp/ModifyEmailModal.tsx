@@ -1,11 +1,13 @@
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import Modal from '@/components/Admin/ModalForm'
 import Button from '@/components/Base/Button'
 import FormCaptcha from '@/components/Form/Captcha'
+import { editEmail, sendCustomEmailCode, sendEmailCode } from '@/services/api/user'
+import { message } from '@/utils/message'
 
 type IProps = {
   trigger: JSX.Element
@@ -14,8 +16,10 @@ type IProps = {
 export default function ModifyEmailModal({ trigger }: IProps) {
   const intl = useIntl()
   const pwdTipsRef = useRef<any>()
+  const { fetchUserInfo } = useModel('user')
   const { initialState } = useModel('@@initialState')
   const [form] = Form.useForm()
+  const [submitLoading, setSubmitLoading] = useState(false)
   const currentUser = initialState?.currentUser
   const phone = currentUser?.userInfo?.phone
 
@@ -28,9 +32,20 @@ export default function ModifyEmailModal({ trigger }: IProps) {
       onFinish={async (values) => {
         console.log('values', values)
 
-        const { newPassword, confirmNewPassword } = values
+        setSubmitLoading(true)
 
-        return false
+        const res = await editEmail(values)
+        const success = res.success
+        setSubmitLoading(false)
+
+        if (success) {
+          message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+
+          // 更新用户信息
+          fetchUserInfo()
+        }
+
+        return success
       }}
       hiddenSubmitter
       form={form}
@@ -54,7 +69,13 @@ export default function ModifyEmailModal({ trigger }: IProps) {
       <FormCaptcha
         name="newEmailCode"
         onSend={async () => {
-          return
+          const email = form.getFieldValue('newEmail')
+          if (!email) {
+            message.info(intl.formatMessage({ id: 'mt.qingshuruxinyouxiang' }))
+            throw {}
+          }
+          const res = await sendCustomEmailCode({ email })
+          return res.success
         }}
         label={intl.formatMessage({ id: 'mt.xinyouxiangyanzheng' })}
         rules={[
@@ -69,7 +90,8 @@ export default function ModifyEmailModal({ trigger }: IProps) {
       <FormCaptcha
         name="oldEmailCode"
         onSend={async () => {
-          return
+          const res = await sendEmailCode()
+          return res.success
         }}
         label={intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' })}
         rules={[
@@ -88,7 +110,7 @@ export default function ModifyEmailModal({ trigger }: IProps) {
             <FormattedMessage id="mt.yanzhengshiyudaowenti" />?
           </span>
         </div>
-        <Button className="!h-[44px] !w-[225px]" type="primary" block htmlType="submit">
+        <Button className="!h-[44px] !w-[225px]" type="primary" block htmlType="submit" loading={submitLoading}>
           <FormattedMessage id="common.queren" />
         </Button>
       </div>

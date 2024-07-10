@@ -123,20 +123,21 @@ function Login() {
       setLoading(true)
       const result = await login(
         {
-          username: values.username,
+          username: values.username?.trim(),
           password: md5(values.password as string),
           phoneAreaCode,
           tenanId: '000000',
           type: 'account',
-          grant_type: 'captcha',
+          // grant_type: 'captcha',
+          grant_type: 'password',
           scope: 'all'
-        },
-        {
-          headers: {
-            'Captcha-Code': values.captchaCode,
-            'Captcha-Key': captchaInfo.key
-          }
         }
+        // {
+        //   headers: {
+        //     'Captcha-Code': values.captchaCode,
+        //     'Captcha-Key': captchaInfo.key
+        //   }
+        // }
       )
 
       if (result?.success) {
@@ -193,8 +194,13 @@ function Login() {
       validateCode: values.validateCode,
       password: values.password,
       country: values.country,
-      code: REGISTER_APP_CODE
+      code: REGISTER_APP_CODE,
+      phoneAreaCode: values.phoneAreaCode
     } as User.RegisterParams
+
+    if (!isEmailTab) {
+      params.phoneAreaCode = phoneAreaCode
+    }
     const res = await reqFn(params)
     setLoading(false)
     if (res.success) {
@@ -390,7 +396,7 @@ function Login() {
                 <PwdTips pwd={password} ref={pwdTipsRef} />
               </div>
             )}
-            {isLoginTab && (
+            {/* {isLoginTab && (
               <div className="flex items-center gap-2">
                 <ProFormText
                   name="captchaCode"
@@ -412,7 +418,7 @@ function Login() {
                   <img src={captchaInfo.image} className="w-full h-full" />
                 </div>
               </div>
-            )}
+            )} */}
           </LoginForm>
         )}
 
@@ -445,7 +451,9 @@ function Login() {
         ref={validateCodeRef}
         onConfirm={handleSubmitRegister}
         onBack={() => {
+          // 返回重置
           setShowValidateCodeInput(false)
+          setValidateCodeType('REGISTER')
         }}
         // 注册验证码、重置密码
         type={validateCodeType}

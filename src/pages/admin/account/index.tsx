@@ -48,6 +48,9 @@ function Account() {
 
   useEffect(() => {
     trade.getAccountGroupList()
+
+    // 刷新用户信息
+    fetchUserInfo(false)
   }, [])
 
   useEffect(() => {
@@ -126,7 +129,7 @@ function Account() {
                           className="py-[2px] px-[3px] hover:bg-gray-80 rounded-[10px]"
                           onClick={() => {
                             setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: v.id === item.id })))
-                            fetchUserInfo().then((res) => {
+                            fetchUserInfo(false).then((res) => {
                               setTimeout(() => {
                                 setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: false })))
                               }, 3000)

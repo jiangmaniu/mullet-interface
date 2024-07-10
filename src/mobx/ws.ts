@@ -102,7 +102,7 @@ class WSStore {
       minReconnectionDelay: 1,
       connectionTimeout: 3000, // 重连时间
       maxEnqueuedMessages: 0, // 不缓存发送失败的指令
-      maxRetries: 10000 // 最大重连次数
+      maxRetries: 10000000 // 最大重连次数
       // debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
     })
     this.socket.addEventListener('open', () => {

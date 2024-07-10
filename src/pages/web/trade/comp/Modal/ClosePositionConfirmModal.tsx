@@ -31,10 +31,13 @@ export default observer(
     const [open, setOpen] = useState(false)
     const [tempItem, setTempItem] = useState({} as IPositionItem)
     const [sliderValue, setSliderValue] = useState(0)
+    const [submitLoading, setSubmitLoading] = useState(false)
     const unit = 'USD'
     const item = (list.find((v) => v.id === tempItem.id) || {}) as IPositionItem // 获取的是最新实时变化的
     const symbol = item.symbol
     const orderVolume = Number(item.orderVolume || 0) // 手数
+    const conf = item?.conf as Symbol.SymbolConf
+    const vmin = conf?.minTrade || 0.01
 
     const buySellInfo = getBuySellInfo(item)
 
@@ -85,7 +88,10 @@ export default observer(
         type: ORDER_TYPE.MARKET_ORDER // 订单类型
       } as Order.CreateOrder
 
-      const res = await trade.createOrder(params)
+      setSubmitLoading(true)
+      const res = await trade.createOrder(params).finally(() => {
+        setSubmitLoading(false)
+      })
 
       if (res.success) {
         // 关闭弹窗
@@ -167,7 +173,9 @@ export default observer(
                   onChange={(value: any) => {
                     // console.log('value', value)
                     // 可平仓手数*百分比
-                    setCount(toFixed((value / 100) * orderVolume, 2))
+                    const vol = toFixed((value / 100) * orderVolume, 2)
+                    // 不能小于最小手数
+                    setCount(vol < vmin ? vmin : vol)
                     setSliderValue(value)
                   }}
                   // value={Number((count / orderVolume) * 100)}
@@ -189,7 +197,12 @@ export default observer(
             <Button className="!w-[45%]" onClick={close}>
               <FormattedMessage id="common.cancel" />
             </Button>
-            <Button className={classNames('flex-1', { 'pointer-events-none !bg-gray-250': !count })} onClick={onFinish} type="primary">
+            <Button
+              className={classNames('flex-1', { 'pointer-events-none !bg-gray-250': !count })}
+              onClick={onFinish}
+              type="primary"
+              loading={submitLoading}
+            >
               <FormattedMessage id="mt.quedingpingcang" />
             </Button>
           </div>

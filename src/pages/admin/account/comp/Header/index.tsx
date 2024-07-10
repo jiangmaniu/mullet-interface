@@ -3,6 +3,7 @@ import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { hiddenCenterPartStr } from '@/utils'
+import { push } from '@/utils/navigator'
 
 function Header() {
   const { trade } = useStores()
@@ -24,7 +25,12 @@ function Header() {
           </span>
         )}
         {!isKycAuth && (
-          <span className="text-red text-sm ml-3 px-[7px] py-1 rounded bg-[rgba(69,164,138,0.04)]">
+          <span
+            className="text-red text-sm ml-3 px-[7px] py-1 rounded bg-[rgba(69,164,138,0.04)] cursor-pointer"
+            onClick={() => {
+              push('/setting/kyc')
+            }}
+          >
             <FormattedMessage id="mt.weirenzheng" />
           </span>
         )}

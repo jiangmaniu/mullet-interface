@@ -42,7 +42,7 @@ function RenameAccountModal({ trigger, info }: IProps) {
           message.info(intl.formatMessage({ id: 'common.opSuccess' }))
 
           // 刷新账户列表
-          fetchUserInfo()
+          fetchUserInfo(false)
         }
 
         return success

@@ -1,9 +1,8 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { ProFormSelectProps } from '@ant-design/pro-form/es/components/Select'
-import { FormattedMessage, useIntl } from '@umijs/max'
-import { useRequest } from 'ahooks'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { FormInstance } from 'antd/lib'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Picker, { PickerIProps } from '@/components/Base/MobilePicker'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
@@ -11,24 +10,14 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import useLangChange from '@/hooks/useLangChange'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { getAreaCode } from '@/services/api/common'
 
-type AreaCodeItem = API.KEYVALUE & {
-  /**英文label */
-  areaName: string
-  /**中文label */
-  areaNameZh: string
-  phoneAreaCode: string
-}
-type valueKey = keyof AreaCodeItem
+type AreaCodeItem = Common.AreaCodeItem
 /**
  * 手机区号选择
  * @returns
  */
 interface IProps {
   disabled?: boolean
-  /** value的key */
-  valueKey?: valueKey
   selectProps?: ProFormSelectProps
   pickerProps?: Omit<PickerIProps, 'options'>
   /**@name 表单实例 */
@@ -43,7 +32,6 @@ interface IProps {
 }
 
 export default function AreaCodeSelect({
-  valueKey,
   selectProps,
   pickerProps,
   form,
@@ -57,22 +45,22 @@ export default function AreaCodeSelect({
   const { isMobileOrIpad } = useEnv()
   const intl = useIntl()
   const { lng } = useLang()
+  const { list, run } = useModel('areaList')
   const [langKey, setLangKey] = useState(0) // 用于触发重新渲染的 key
 
-  const { loading, data, run } = useRequest(getAreaCode)
-  const tempList = data?.data || []
-  const list = tempList as AreaCodeItem[]
+  useEffect(() => {
+    run?.()
+  }, [])
 
   const options = list?.map((v: AreaCodeItem) => {
-    const [areaNameZh, areaName] = v.value?.split(',')
+    const areaNameZh = v.nameTw
+    const areaName = v.nameEn
     const label = lng === 'zh-TW' ? areaNameZh : areaName || areaNameZh
     return {
-      key: v.key,
+      ...v,
       label,
-      areaNameZh,
-      areaName,
-      value: `+${v.key}`,
-      phoneAreaCode: `+${v.key}`
+      value: v.id,
+      areaCode: `+${v.areaCode}`
     }
   })
 
@@ -85,12 +73,12 @@ export default function AreaCodeSelect({
         return (
           <div className="flex justify-between">
             <span>{option.label}</span>
-            <span>{option?.phoneAreaCode}</span>
+            <span>{option?.areaCode}</span>
           </div>
         )
       },
       // 回填到选择框的 Option 的属性值，默认是 Option 的子元素
-      optionLabelProp: valueKey || 'value'
+      optionLabelProp: 'value'
     }
   }
 
@@ -112,7 +100,7 @@ export default function AreaCodeSelect({
           initialValue={initialValue}
           onChange={(value, option = {}) => {
             // @ts-ignore
-            const val = option?.['data-item']?.[valueKey] || value
+            const val = option.areaCode
 
             console.log('val', val)
             console.log('option', option)
@@ -130,7 +118,7 @@ export default function AreaCodeSelect({
             // 处理搜索
             filterOption: (initialValue, option) => {
               // @ts-ignore
-              return option?.key?.indexOf(initialValue) !== -1 || (option?.label || '').indexOf(initialValue) !== -1
+              return option?.areaCode?.indexOf(initialValue) !== -1 || (option?.label || '').indexOf(initialValue) !== -1
             },
             suffixIcon: <SelectSuffixIcon disabled={disabled} />
           }}
@@ -141,7 +129,6 @@ export default function AreaCodeSelect({
         <Picker
           name={name}
           form={form}
-          valueKey={valueKey}
           required={!disabled}
           allowClear={false}
           placeholder={<FormattedMessage id="mt.quhao" />}
@@ -152,23 +139,16 @@ export default function AreaCodeSelect({
           key={langKey}
           onConfirm={(value, option) => {
             // @ts-ignore
-            const val = option[valueKey] || value?.[0]
+            const val = option?.areaCode
 
             // console.log('value', value)
             // console.log('option', option)
-
-            // 重新再次赋值一次，针对areaName，表单需要设置value即aredId的唯一值
-            if (valueKey === 'areaName') {
-              setTimeout(() => {
-                form?.setFieldsValue({ [name]: value?.[0] })
-              }, 100)
-            }
 
             onChange?.(val, option)
           }}
           // 自定义option列表项
           renderLabel={(item) => {
-            const phoneAreaCode = options?.find((v: any) => v.areaId === item.value)?.phoneAreaCode
+            const phoneAreaCode = options?.find((v: any) => v.id === item.value)?.areaCode
             return (
               <div className="flex items-center justify-between">
                 <span className="text-main pr-3">{phoneAreaCode}</span>
@@ -178,13 +158,14 @@ export default function AreaCodeSelect({
           }}
           // 自定义选择后展示在输入框上的项
           renderSelectItem={({ items, selectedLabel }) => {
+            // @ts-ignore
             const item = options?.find((v: AreaCodeItem) => {
-              const label = lng === 'zh-TW' ? v.areaNameZh : v.areaName
+              const label = lng === 'zh-TW' ? v.nameTw : v.nameEn
               return label === selectedLabel
             }) as AreaCodeItem
 
-            const label = lng === 'zh-TW' ? item?.areaNameZh : item?.areaName
-            return <span className="text-main">{valueKey === 'areaName' ? label : item[valueKey as valueKey] || item.phoneAreaCode}</span>
+            const label = lng === 'zh-TW' ? item?.nameTw : item?.nameEn
+            return <span className="text-main">{item.areaCode}</span>
           }}
           showSearch
           label={label}

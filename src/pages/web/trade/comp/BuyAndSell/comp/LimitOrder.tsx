@@ -88,6 +88,14 @@ export default observer(
       setPrice(0)
     }, [symbol, tradeType, orderType, vmin])
 
+    useEffect(() => {
+      // 取消勾选了止盈止损，重置值
+      if (!checkedSpSl) {
+        setSp(0)
+        setSl(0)
+      }
+    }, [checkedSpSl])
+
     // 格式化数据
     const sl: any = Number(slValue)
     const sp: any = Number(spValue)
@@ -133,13 +141,11 @@ export default observer(
 
     useEffect(() => {
       if (orderType === 2) {
-        trade.calcMargin(orderParams).then((res) => {
-          if (res) {
-            setMargin(res)
-          }
+        trade.calcMargin(orderParams).then((res: any) => {
+          setMargin(res)
         })
       }
-    }, [isBuy, count, sl, sp, marginType, symbol, orderType, price])
+    }, [isBuy, count, sl, sp, marginType, symbol, orderType, price, trade.leverageMultiple])
 
     const onFinish = async () => {
       // sl_scope, sp_scope

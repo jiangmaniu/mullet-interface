@@ -127,7 +127,10 @@ export default function PageContainer({
 
       {/* 返回按钮 */}
       {backTitle && backPath && (
-        <div className={classNames('pt-7 flex items-center px-6 justify-center')} style={backStyle}>
+        <div
+          className={classNames('pt-7 flex items-center px-6 justify-center sticky top-[66px] z-10')}
+          style={{ background: pageBgColorMode === 'white' ? '#fff' : bgColorBase, ...backStyle }}
+        >
           <div className="flex items-center relative -left-2 w-[1120px]">
             <div
               className="hover:bg-gray-100 rounded-full cursor-pointer"

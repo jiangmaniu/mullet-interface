@@ -64,4 +64,29 @@ declare namespace KycAuth {
      */
     status: API.ApproveStatus
   }
+  // 提交kyc认证审核
+  type SubmitKycAuthParams = {
+    /**
+     * 认证图片，多个逗号分隔
+     */
+    authImgsUrl: string
+    /**
+     * 名(名字)
+     */
+    firstName: string
+    /**
+     * 证件号
+     */
+    identificationCode: string
+    /**
+     * 证件类型
+     */
+    identificationType: API.IdentificationType
+    /**
+     * 姓(姓氏)
+     */
+    lastName: string
+    /**国家-简称 */
+    country?: string
+  }
 }

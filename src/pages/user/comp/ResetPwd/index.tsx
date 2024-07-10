@@ -34,7 +34,7 @@ type Params = {
 // 重置密码
 function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
   const { global } = useStores()
-  const [step, setStep] = useState<'ONE' | 'TWO' | 'THREE' | 'FOUR'>('ONE') // 表单步骤
+  const [step, setStep] = useState<'ONE' | 'TWO' | 'THREE' | 'FOUR'>('FOUR') // 表单步骤
   const [form] = Form.useForm()
   const intl = useIntl()
   const registerWay = global.registerWay
@@ -55,7 +55,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
       message.info(intl.formatMessage({ id: 'mt.qingxuanzequhao' }))
     }
     const success = await validateCodeInputRef.current?.sendCode?.({
-      emailOrPhone: values.emailOrPhone,
+      emailOrPhone: values.emailOrPhone?.trim(),
       phoneAreaCode: values.phoneAreaCode
     })
     if (success) {

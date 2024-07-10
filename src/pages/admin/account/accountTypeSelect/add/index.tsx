@@ -74,7 +74,7 @@ function AddAccountComp() {
                 loadingRef?.current?.show()
                 const res = await AddAccount({ accountGroupId, clientId: currentUser?.user_id, ...values })
                 // 刷新用户信息
-                fetchUserInfo()
+                fetchUserInfo(false)
 
                 if (res.success) {
                   setTimeout(() => {

@@ -27,6 +27,10 @@ declare namespace User {
      * 验证码
      */
     validateCode: number
+    /**
+     * 手机区号
+     */
+    phoneAreaCode?: string
   }
   // 登录参数
   type LoginParams = {
@@ -140,6 +144,8 @@ declare namespace User {
      */
     remark?: string
     userInfo?: ClientUserInfo
+    /**国家-简称 */
+    country?: string
   }
   // 客户用户信息
   type ClientUserInfo = {
@@ -199,6 +205,10 @@ declare namespace User {
      * 手机
      */
     phone?: string
+    /**
+     * 手机区号
+     */
+    phoneAreaCode?: string
     /**
      * 岗位id
      */
@@ -426,5 +436,27 @@ declare namespace User {
      * 旧邮箱验证码
      */
     oldEmailCode: number
+  }
+  // 绑定手机
+  type BindPhoneParams = {
+    /**
+     * 手机
+     */
+    phone: string
+    /**
+     * 手机验证码
+     */
+    phoneCode: number
+  }
+  // 绑定邮箱
+  type BindEmailParams = {
+    /**
+     * 邮箱
+     */
+    email: string
+    /**
+     * 邮箱验证码
+     */
+    emailCode: number
   }
 }

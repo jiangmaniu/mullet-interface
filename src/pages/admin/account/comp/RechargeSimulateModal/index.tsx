@@ -44,7 +44,7 @@ function RechargeSimulateModal({ trigger, info }: IProps) {
           message.info(intl.formatMessage({ id: 'mt.monizhanghurujinchenggong' }))
 
           // 刷新账户列表
-          fetchUserInfo()
+          fetchUserInfo(false)
         }
 
         return success

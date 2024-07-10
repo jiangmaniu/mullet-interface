@@ -1,10 +1,12 @@
 import { ArrowRightOutlined } from '@ant-design/icons'
-import { FormattedMessage, useModel } from '@umijs/max'
-import { useState } from 'react'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { useEffect, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import { gray } from '@/theme/theme.config'
+import { formatEmail, formatMobile } from '@/utils'
+import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
 import KycApproveInfoModal from './comp/KycApproveInfoModal'
@@ -17,9 +19,34 @@ import ModifyPhoneModal from './comp/ModifyPhoneModal'
 export default function Setting() {
   const [tabKey, setTabKey] = useState('')
   const [showPersonInfo, setShowPersonInfo] = useState(false)
+  const intl = useIntl()
+  const kycSuccModalRef = useRef<any>()
+  const { isEmailRegisterWay, fetchUserInfo } = useModel('user')
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const phone = currentUser?.userInfo?.phone
+  const userInfo = currentUser?.userInfo
+  const kycAuthInfo = currentUser?.kycAuth?.[0]
+  const kycStatus = kycAuthInfo?.status as API.ApproveStatus
+  const phone = userInfo?.phone
+  const email = userInfo?.email
+  const userName = userInfo?.name || userInfo?.realName
+  const isKycAuth = currentUser?.isKycAuth
+  const isFinished = isKycAuth && email && phone // 验证是否完成
+  let finishedStep = 0 // 已完成步数
+
+  if (isFinished) {
+    finishedStep = 2
+  } else if (email && phone) {
+    finishedStep = 1
+  }
+
+  // @ts-ignore
+  const kycStatusName = {
+    TODO: <FormattedMessage id="mt.daishenhe" />,
+    CANCEL: <FormattedMessage id="mt.quxiao" />,
+    DISALLOW: <FormattedMessage id="mt.shenheshibai" />
+    // SUCCESS: <FormattedMessage id="mt.yirenzheng" />
+  }[kycStatus]
 
   const tabList = [
     {
@@ -31,6 +58,30 @@ export default function Setting() {
     //   key: 'address'
     // }
   ]
+
+  useEffect(() => {
+    // 刷新用户信息
+    fetchUserInfo(false)
+  }, [])
+
+  // 跳转kyc认证
+  const handleJumpKycAuth = () => {
+    if (!kycStatus || kycStatus === 'DISALLOW') {
+      push('/setting/kyc')
+      return
+    }
+    if (kycStatus === 'TODO') {
+      message.info(intl.formatMessage({ id: 'mt.shenfenrenzhengshenhezhong' }))
+    } else if (kycStatus === 'SUCCESS') {
+      // 认证成功弹窗
+      handleKycSuccModal()
+    }
+  }
+
+  // 实名认证成功弹窗
+  const handleKycSuccModal = () => {
+    kycSuccModalRef?.current?.show()
+  }
 
   return (
     <PageContainer
@@ -55,34 +106,48 @@ export default function Setting() {
           <div className="border border-gray-150 rounded-[7px] p-[30px] flex-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <KycStepPie />
+                <KycStepPie step={finishedStep} />
                 <div className="flex flex-col pl-5">
                   <div className="text-gray text-sm">
                     <FormattedMessage id="mt.yanzhengzhuangtai" />
                   </div>
-                  {/* <div className="text-green text-base py-[6px]">
-                  <FormattedMessage id="mt.yiwancheng" />
-                </div> */}
-                  <div className="text-red-700 text-base py-[6px]">
-                    <FormattedMessage id="mt.zanweiwancheng" />
-                  </div>
+                  {isFinished && (
+                    <div className="text-green text-base py-[6px]">
+                      <FormattedMessage id="mt.yiwancheng" />
+                    </div>
+                  )}
+                  {!isFinished && (
+                    <div className="text-red-700 text-base py-[6px]">{kycStatusName || <FormattedMessage id="mt.zanweiwancheng" />}</div>
+                  )}
                   <div className="text-gray text-xs">
-                    <FormattedMessage id="mt.yiwanchengxxstep" values={{ step: '2' }} />
+                    <FormattedMessage id="mt.yiwanchengxxstep" values={{ step: finishedStep }} />
                   </div>
                 </div>
               </div>
               <div className="flex items-center cursor-pointer">
-                {/* <span className="text-gray text-base font-semibold pr-2">
-                  <FormattedMessage id="mt.quwancheng" />
-                </span> */}
-                <KycApproveInfoModal
-                  trigger={
-                    <span className="text-gray text-base font-semibold pr-2">
-                      <FormattedMessage id="common.chakan" />
-                    </span>
-                  }
-                />
-                <ArrowRightOutlined style={{ color: gray[900], fontSize: 16 }} />
+                {/* 没有提交kyc申请 */}
+                {!kycStatus && (
+                  <span className="text-gray text-base font-semibold pr-2" onClick={handleJumpKycAuth}>
+                    <FormattedMessage id="mt.quwancheng" />
+                  </span>
+                )}
+                {/* 实名认证成功 */}
+                {kycStatus === 'SUCCESS' && (
+                  <span className="text-gray text-base font-semibold pr-2" onClick={handleKycSuccModal}>
+                    <FormattedMessage id="common.chakan" />
+                  </span>
+                )}
+                {/* 实名认证失败 */}
+                {kycStatus === 'DISALLOW' && (
+                  <KycFailModal
+                    trigger={
+                      <span className="text-gray text-base font-semibold pr-2">
+                        <FormattedMessage id="common.chakan" />
+                      </span>
+                    }
+                  />
+                )}
+                {kycStatus !== 'TODO' && <ArrowRightOutlined style={{ color: gray[900], fontSize: 16 }} />}
               </div>
             </div>
           </div>
@@ -115,73 +180,84 @@ export default function Setting() {
             <div
               className="flex items-center justify-between cursor-pointer"
               onClick={() => {
-                setShowPersonInfo(!showPersonInfo)
+                // 手机、邮箱都存在才可以展开
+                if (email && phone) {
+                  setShowPersonInfo(!showPersonInfo)
+                } else {
+                  handleJumpKycAuth()
+                }
               }}
             >
               <div className="flex items-center">
-                <img src="/img/kyc-succ.png" width={24} height={24} />
+                <img src={`/img/${phone && email ? 'kyc-succ' : 'kyc-fail'}.png`} width={24} height={24} />
                 <div className="pl-2 font-semibold text-base">
-                  <FormattedMessage id="mt.yiquerengerenziliao" />
+                  {phone && email && <FormattedMessage id="mt.yiquerengerenziliao" />}
+                  {!email && <FormattedMessage id="mt.bangdingyouxiang" />}
+                  {!phone && <FormattedMessage id="mt.bangdingshouji" />}
                 </div>
               </div>
               <img src={`/img/${showPersonInfo ? 'arrow-down' : 'arrow-right'}.png`} width={24} height={24} />
             </div>
             {showPersonInfo && (
-              <div className="pl-8">
-                <div className="text-xs text-gray py-2">
+              <div className="pl-8 pt-3">
+                {/* <div className="text-xs text-gray py-2">
                   <FormattedMessage id="mt.ninyiquerengerenziliao" />
-                </div>
+                </div> */}
                 <div className="flex items-center">
                   <div className="flex items-center">
                     <img src="/img/youxiang.png" width={14} height={14} />
-                    <span className="text-sm text-gray pl-2">12····383@qq.com</span>
+                    <span className="text-sm text-gray pl-2">{formatEmail(email)}</span>
                   </div>
-                  <div className="size-[3px] bg-gray rounded-full mx-4"></div>
-                  <div className="flex items-center">
-                    <img src="/img/shouji.png" width={14} height={14} />
-                    <span className="text-sm text-gray pl-2">12···2234</span>
-                  </div>
-                  <div className="size-[3px] bg-gray rounded-full mx-4"></div>
-                  <div className="flex items-center">
-                    <img src="/img/yonghu.png" width={14} height={14} />
-                    <span className="text-sm text-gray pl-2">用户名称</span>
-                  </div>
+                  {phone && (
+                    <>
+                      <div className="size-[3px] bg-gray rounded-full mx-4"></div>
+                      <div className="flex items-center">
+                        <img src="/img/shouji.png" width={14} height={14} />
+                        <span className="text-sm text-gray pl-2">
+                          {userInfo.phoneAreaCode} {formatMobile(phone)}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  {userName && (
+                    <>
+                      <div className="size-[3px] bg-gray rounded-full mx-4"></div>
+                      <div className="flex items-center">
+                        <img src="/img/yonghu.png" width={14} height={14} />
+                        <span className="text-sm text-gray pl-2">{userName}</span>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
           </div>
-          <div className="flex items-center justify-between py-[18px] border-b border-gray-150 px-4 cursor-pointer">
+          {/* <div
+            className="flex items-center justify-between py-[18px] border-b border-gray-150 px-4 cursor-pointer"
+            onClick={handleJumpKycAuth}
+          >
             <div className="flex items-center">
-              <img src="/img/kyc-succ.png" width={24} height={24} />
+              <img src={`/img/${isKycAuth ? 'kyc-succ' : 'kyc-fail'}.png`} width={24} height={24} />
               <div className="pl-2 font-semibold text-base">
-                <FormattedMessage id="mt.nindeshenfenyirenzheng" />
+                {isKycAuth ? <FormattedMessage id="mt.nindeshenfenyirenzheng" /> : <FormattedMessage id="mt.nindesshenfenrenzheng" />}
               </div>
             </div>
             <img src="/img/arrow-right.png" width={24} height={24} />
-          </div>
-          <div className="flex items-center justify-between py-[18px] px-4 cursor-pointer">
-            <KycFailModal
-              trigger={
-                <div className="flex items-center">
-                  <img src="/img/kyc-fail.png" width={24} height={24} />
-                  <div className="pl-2 font-semibold text-base">
-                    <FormattedMessage id="mt.nindezhengjianrenzheng" />
-                  </div>
-                </div>
-              }
-            />
+          </div> */}
+          <div className="flex items-center justify-between py-[18px] px-4 cursor-pointer" onClick={handleJumpKycAuth}>
             <div className="flex items-center">
-              <Button
-                size="small"
-                autoInsertSpace={false}
-                className="mr-2 !font-semibold !rounded-lg !h-[30px] !text-sm !border-gray"
-                onClick={() => {
-                  push('/setting/kyc')
-                }}
-              >
-                <FormattedMessage id="mt.wanshan" />
-                <ArrowRightOutlined className="ml-1" />
-              </Button>
+              <img src={`/img/${isKycAuth ? 'kyc-succ' : 'kyc-fail'}.png`} width={24} height={24} />
+              <div className="pl-2 font-semibold text-base">
+                {isKycAuth ? <FormattedMessage id="mt.nindeshenfenyirenzheng" /> : <FormattedMessage id="mt.nindesshenfenrenzheng" />}
+              </div>
+            </div>
+            <div className="flex items-center">
+              {!kycStatus && (
+                <Button size="small" autoInsertSpace={false} className="mr-2 !font-semibold !rounded-lg !h-[30px] !text-sm !border-gray">
+                  <FormattedMessage id="mt.wanshan" />
+                  <ArrowRightOutlined className="ml-1" />
+                </Button>
+              )}
               <img src="/img/arrow-right.png" width={24} height={24} />
             </div>
           </div>
@@ -199,12 +275,11 @@ export default function Setting() {
             <span className="">
               <FormattedMessage id="mt.zhanghao" />：
             </span>
-            <span className="pl-2">1234….122@qq.com</span>
+            <span className="pl-2">{isEmailRegisterWay ? formatEmail(currentUser?.account) : formatMobile(currentUser?.account)}</span>
           </div>
           <div className="flex items-center justify-between flex-1 pl-7">
-            <span className="text-gray text-sm !font-dingpro-medium">
-              <FormattedMessage id="mt.mima" />
-              ：﹡﹡﹡﹡﹡﹡
+            <span className="text-gray text-sm">
+              <FormattedMessage id="mt.mima" />：<span className="font-medium">﹡﹡﹡﹡﹡﹡﹡﹡﹡﹡</span>
             </span>
             <ModifyPasswordModal
               trigger={
@@ -228,7 +303,7 @@ export default function Setting() {
             <span className="">
               <FormattedMessage id="mt.anquanleixing" />：
             </span>
-            <span className="pl-2">151…450</span>
+            <span className="pl-2">{phone ? formatMobile(phone) : formatEmail(email)}</span>
           </div>
           {phone ? (
             <ModifyPhoneModal
@@ -249,6 +324,8 @@ export default function Setting() {
           )}
         </div>
       </div>
+      {/* 实名认证成功弹窗 */}
+      <KycApproveInfoModal ref={kycSuccModalRef} />
     </PageContainer>
   )
 }

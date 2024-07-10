@@ -33,9 +33,9 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
   if (isFixedMargin) {
     leverage = <FormattedMessage id="mt.gudingyufukuan" />
   } else if (isFixedLeverage) {
-    leverage = `${prepaymentConf?.fixed_leverage?.leverage_multiple}x`
+    leverage = `${prepaymentConf?.fixed_leverage?.leverage_multiple}X`
   } else if (isFloatLeverage) {
-    leverage = `${trade.leverageMultiple}x`
+    leverage = `${trade.leverageMultiple || 1}X`
   }
   return (
     <div className="flex items-center justify-between gap-x-3">

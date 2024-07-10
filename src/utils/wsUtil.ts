@@ -456,6 +456,7 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
   let { occupyMargin, balance } = trade.getAccountBalance()
   const digits = item?.symbolDecimal
   const conf = item.conf as Symbol.SymbolConf
+  const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
   const contractSize = Number(conf?.contractSize || 0) // 合约大小
   const orderVolume = Number(item.orderVolume || 0) // 手数
   const orderMargin = item.orderMargin || 0 // 单笔订单的占用保证金
@@ -465,19 +466,30 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
   let compelCloseRatio = item.compelCloseRatio || 0 // 强制平仓比例
   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
 
+  let leverage = 1
+  if (prepaymentConf?.mode === 'fixed_leverage') {
+    // 固定杠杆
+    leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple)
+  } else if (prepaymentConf?.mode === 'float_leverage') {
+    leverage = trade.leverageMultiple
+  }
+
+  // 优先获取订单列表存在的值
+  leverage = item.leverageMultiple || leverage || 1
+
   // 净值 = 账户余额 - 库存费 - 手续费 + 浮动盈亏
   // 汇率品种USD在前面，用除法
   // 汇率品种USD在后，用乘法
   // 净值 - (开仓价格 - 强平价格) * 合约大小 * 手数 * 汇率(乘或除) / 占用保证金 = 强平比例
 
-  // 买：多头强平价格 = 开仓价格 - (净值 - 本单盈亏 - 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除)) @TODO 处理汇率取值问题
+  // 买：多头强平价格 = 开仓价格 - (净值 - 本单盈亏 - 账户占用保证金*强平比例) / (合约大小 * 手数 * (1/杠杆) * 汇率(乘或除)) @TODO 处理汇率取值问题
   let buyForceClosePrice = 0
-  // 卖：空头强平价格 = 开仓价格 + (净值 - 本单盈亏 + 账户占用保证金*强平比例) / (合约大小 * 手数 * 汇率(乘或除))  @TODO 处理汇率取值问题
+  // 卖：空头强平价格 = 开仓价格 + (净值 - 本单盈亏 + 账户占用保证金*强平比例) / (合约大小 * 手数 * (1/杠杆) * 汇率(乘或除))  @TODO 处理汇率取值问题
   let sellForceClosePrice = 0
 
   // 全仓
   if (isCrossMargin) {
-    const value = (balance - profit - occupyMargin * compelCloseRatio) / (contractSize * orderVolume)
+    const value = (balance - profit - occupyMargin * compelCloseRatio) / (contractSize * orderVolume * (1 / leverage))
     buyForceClosePrice = toFixed(startPrice - value)
     sellForceClosePrice = toFixed(startPrice + value)
   } else {
@@ -485,7 +497,7 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
     balance = orderMargin - Number(item.interestFees || 0) - Number(item.handlingFees || 0) + Number(item.profit || 0)
     // 单笔订单的占用保证金
     occupyMargin = orderMargin
-    const value = (balance - profit - occupyMargin * compelCloseRatio) / (contractSize * orderVolume)
+    const value = (balance - profit - occupyMargin * compelCloseRatio) / (contractSize * orderVolume * (1 / leverage))
     buyForceClosePrice = toFixed(startPrice - value)
     sellForceClosePrice = toFixed(startPrice + value)
   }
@@ -508,7 +520,8 @@ type IExpectedForceClosePriceProp = {
  * 计算下单时的预估强平价
  * @returns
  */
-export const calcExpectedForceClosePrice = ({ orderVolume, orderType, orderMargin, buySell }: IExpectedForceClosePriceProp) => {
+export const calcExpectedForceClosePrice = (obj: IExpectedForceClosePriceProp) => {
+  const { orderVolume, orderType, orderMargin, buySell } = obj
   const { trade } = stores
   const quote = getCurrentQuote()
 
@@ -534,7 +547,7 @@ export const calcExpectedForceClosePrice = ({ orderVolume, orderType, orderMargi
     orderMargin,
     buySell,
     marginType: trade.marginType,
-    startPrice: buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid,
+    startPrice: buySell === TRADE_BUY_SELL.BUY ? quote?.bid : quote?.ask,
     compelCloseRatio: trade?.currentAccountInfo?.compelCloseRatio || 0,
     interestFees: 0, // 库存费0
     handlingFees, // 手续费
@@ -627,38 +640,13 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
-  let ask = Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0) // ask是买价，切记ask买价一般都比bid卖价高
-  let bid = Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0) // bid是卖价
+  let ask = Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0) // ask是买价，切记ask买价一般都比bid卖价高
+  let bid = Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0) // bid是卖价
   const open = Number(symbolNewTicker?.open || 0) // 开盘价
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.open || 0), bid]) // 拿当前价格跟首次返回的比
   const low = Math.max.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
   const close = Number(bid || symbolNewTicker?.close || 0) // 使用卖价作为最新的收盘价格
   const percent = Number(bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0)
-  // 区分固定点差 浮动点差
-  let spread = 0
-  if (bid && ask) {
-    if (spreadConf?.type === 'fixed') {
-      // 固定点差模式
-      // const { buy = 0, sell = 0 } = spreadConf?.fixed || {}
-      // 后台处理
-      // 新买价 = (买价 + 卖价) / 2 + 设置的点差*小数点
-      // const newBuy = (bid + ask) / 2 + buy * Math.pow(10, -digits)
-      // 新卖价 = （买价 + 卖价) / 2 - 设置的点差*小数点
-      // const newSell = (bid + ask) / 2 - sell * Math.pow(10, -digits)
-      // 点差
-      spread = Math.abs(bid - ask)
-    } else if (spreadConf?.type === 'float') {
-      // 浮动点差模式
-      // const { buy = 0, sell = 0 } = spreadConf?.float || {}
-      // 后台处理
-      // // 新买价 = 买价 + 设置的点差*小数点
-      // const newBuy = (ask + buy) * Math.pow(10, -digits)
-      // // 新卖价 = 卖价 - 设置的点差*小数点
-      // const newSell = (bid - sell) * Math.pow(10, -digits)
-      // 点差
-      spread = Math.abs(bid - ask)
-    }
-  }
 
   return {
     symbol, // 用于展示的symbol自定义名称
@@ -684,7 +672,7 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
     low: toFixed(low, digits), //低
     open: toFixed(open, digits), //开
     close: toFixed(close, digits), //收
-    spread: Number(toFixed(spread, digits)),
+    spread: Math.abs(parseInt(String(bid * Math.pow(10, digits) - ask * Math.pow(10, digits)))), // 买卖点差
     bidDiff: currentQuote.bidDiff,
     askDiff: currentQuote.askDiff,
     hasQuote: Number(bid) > 0 // 是否存在行情

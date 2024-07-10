@@ -2,9 +2,9 @@ import qs from 'qs'
 
 import { request } from '@/utils/request'
 
-// KYC身份认证-审核
-export async function approveKycAuth(body: KycAuth.ApproveParams) {
-  return request<API.Response>('/api/trade-crm/crmApi/kycAuth/examine', {
+// KYC身份认证-提交审核
+export async function submitKycAuth(body: KycAuth.SubmitKycAuthParams) {
+  return request<API.Response>('/api/trade-crm/crmClient/user/kycAuth', {
     method: 'POST',
     data: body
   })

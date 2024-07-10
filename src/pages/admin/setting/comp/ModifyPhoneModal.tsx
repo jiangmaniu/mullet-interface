@@ -1,11 +1,13 @@
-import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
+import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Modal from '@/components/Admin/ModalForm'
 import Button from '@/components/Base/Button'
 import FormCaptcha from '@/components/Form/Captcha'
+import { editPhone, sendCustomPhoneCode, sendPhoneCode } from '@/services/api/user'
+import { message } from '@/utils/message'
 
 type IProps = {
   trigger: JSX.Element
@@ -15,6 +17,8 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
   const intl = useIntl()
   const pwdTipsRef = useRef<any>()
   const { initialState } = useModel('@@initialState')
+  const { fetchUserInfo } = useModel('user')
+  const [submitLoading, setSubmitLoading] = useState(false)
   const [form] = Form.useForm()
   const currentUser = initialState?.currentUser
   const phone = currentUser?.userInfo?.phone
@@ -28,33 +32,44 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
       onFinish={async (values) => {
         console.log('values', values)
 
-        const { newPassword, confirmNewPassword } = values
+        setSubmitLoading(true)
 
-        return false
+        const res = await editPhone(values)
+        const success = res.success
+        setSubmitLoading(false)
+
+        if (success) {
+          message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+
+          // 更新用户信息
+          fetchUserInfo()
+        }
+
+        return success
       }}
       hiddenSubmitter
       form={form}
     >
-      <ProFormText
-        name="newPhone"
-        label={intl.formatMessage({ id: 'mt.xinshoujihaoma' })}
-        placeholder={intl.formatMessage({ id: 'mt.shurushoujihaoma' })}
-        fieldProps={{
-          size: 'large',
-          style: { height: 42 }
-        }}
-        rules={[
-          {
-            required: true,
-            message: intl.formatMessage({ id: 'mt.shurushoujihaoma' })
-          }
-        ]}
-        formItemProps={{ style: { marginBottom: 24 } }}
-      />
+      <div className="mb-6">
+        <PhoneSelectFormItem
+          names={['newPhone', 'phoneAreaCode']}
+          form={form}
+          label={intl.formatMessage({ id: 'mt.xinshoujihaoma' })}
+          placeholder={intl.formatMessage({ id: 'mt.shurushoujihaoma' })}
+          required
+        />
+      </div>
       <FormCaptcha
         name="newPhoneCode"
         onSend={async () => {
-          return
+          const phone = form.getFieldValue('newPhone')
+          const phoneAreaCode = form.getFieldValue('phoneAreaCode')
+          if (!phone) {
+            message.info(intl.formatMessage({ id: 'mt.qingshuruxinshouji' }))
+            throw {}
+          }
+          const res = await sendCustomPhoneCode({ phone, phoneAreaCode })
+          return res.success
         }}
         label={intl.formatMessage({ id: 'mt.xinshoujiyanzheng' })}
         rules={[
@@ -69,7 +84,8 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
       <FormCaptcha
         name="oldPhoneCode"
         onSend={async () => {
-          return
+          const res = await sendPhoneCode()
+          return res.success
         }}
         label={intl.formatMessage({ id: 'mt.yuanshishoujiyanzheng' })}
         rules={[
@@ -88,7 +104,7 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
             <FormattedMessage id="mt.yanzhengshiyudaowenti" />?
           </span>
         </div>
-        <Button className="!h-[44px] !w-[225px]" type="primary" block htmlType="submit">
+        <Button className="!h-[44px] !w-[225px]" type="primary" block htmlType="submit" loading={submitLoading}>
           <FormattedMessage id="common.queren" />
         </Button>
       </div>

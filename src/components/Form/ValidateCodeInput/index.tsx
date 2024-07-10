@@ -1,6 +1,7 @@
 import { FormattedMessage } from '@umijs/max'
 import { useCountDown } from 'ahooks'
 import { FormInstance } from 'antd'
+import { NamePath } from 'antd/es/form/interface'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
 import CodeInput from '@/components/Base/CodeInput'
@@ -19,11 +20,12 @@ type IProps = {
   /**手机或邮箱 */
   sendType: ISendType
   form?: FormInstance
+  name?: NamePath
   style?: React.CSSProperties
   showReSendBtn?: boolean
 }
 
-function ValidateCodeInput({ sendType, form, style, showReSendBtn = true }: IProps, ref: any) {
+function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true }: IProps, ref: any) {
   const [leftTime, setLeftTime] = useState<any>(0)
   const [params, setParams] = useState({} as Params)
   const isEmail = sendType === 'EMIAL'
@@ -89,7 +91,7 @@ function ValidateCodeInput({ sendType, form, style, showReSendBtn = true }: IPro
           <FormattedMessage id="mt.yanzhengmayifasongzhixx" values={{ value: params.emailOrPhone }} />
         )}
       </div>
-      <CodeInput form={form} />
+      <CodeInput form={form} name={name} />
       <div className="text-xs text-gray-weak pt-5">
         <FormattedMessage id="mt.weishoudaoyanzhengma" />
         {seconds ? (

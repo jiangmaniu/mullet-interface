@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { formatNum, hiddenCenterPartStr, toFixed } from '@/utils'
 
 type IProps = {
   form: FormInstance
@@ -25,6 +25,12 @@ export default function TransferToFormSelectItem({ form }: IProps) {
   const fromAccountInfo = accountList.find((item) => item.id === fromAccountId) // 转出账号信息
   const toAccountInfo = accountList.find((item) => item.id === toAccountId) // 转入账号信息
 
+  // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
+  const occupyMargin = Number(toFixed(Number(toAccountInfo?.margin || 0) + Number(toAccountInfo?.isolatedMargin || 0)))
+  const money = toAccountInfo?.money || 0
+  // 可用余额
+  const availableMoney = Number(toFixed(money - occupyMargin))
+
   return (
     <ProFormSelect
       label={
@@ -42,7 +48,7 @@ export default function TransferToFormSelectItem({ form }: IProps) {
           <>
             <SelectSuffixIcon opacity={0.5} />
             <div className="bg-gray-250 h-3 w-[1px] mr-3"></div>
-            <div className="text-gray text-sm py-3 !font-dingpro-medium">{formatNum(toAccountInfo?.money, { precision: 2 })} USD</div>
+            <div className="text-gray text-sm py-3 !font-dingpro-medium">{formatNum(availableMoney, { precision: 2 })} USD</div>
           </>
         ),
         showSearch: false,

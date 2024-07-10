@@ -100,28 +100,18 @@ export default observer(
 
     const onFinish = async () => {
       const msg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
-      if (item.buySell === TRADE_BUY_SELL.BUY) {
-        if (sl && sl > sl_scope) {
-          setSl(item.stopLoss)
-          message.info(msg)
-          return
-        }
-        if (sp && sp < sp_scope) {
-          setSp(item.takeProfit)
-          message.info(msg)
-          return
-        }
-      } else {
-        if (sl && sl < sl_scope) {
-          setSl(item.stopLoss)
-          message.info(msg)
-          return
-        }
-        if (sp && sp > sp_scope) {
-          setSp(item.takeProfit)
-          message.info(msg)
-          return
-        }
+
+      const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
+      if (slFlag) {
+        message.info(msg)
+        setSl(item.stopLoss)
+        return
+      }
+      const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
+      if (spFlag) {
+        message.info(msg)
+        setSp(item.takeProfit)
+        return
       }
 
       const params = {

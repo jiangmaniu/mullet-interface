@@ -1,7 +1,8 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { useCountDown } from 'ahooks'
-import { Form, FormInstance, Input } from 'antd'
+import { Button, Form, FormInstance, Input } from 'antd'
+import { InputProps } from 'antd/lib'
 import { useEffect, useState } from 'react'
 
 import AreaCodeSelect from '@/components/Form/AreaCodeSelect'
@@ -17,6 +18,8 @@ type IProps = {
   /**发送验证码 */
   onSend?: () => Promise<boolean>
   dropdownWidth?: number
+  inputProps?: InputProps
+  placeholder?: string
 }
 
 export default function PhoneSelectFormItem({
@@ -27,9 +30,12 @@ export default function PhoneSelectFormItem({
   height = 49,
   addonAfter,
   onSend,
-  dropdownWidth = 410
+  dropdownWidth = 410,
+  placeholder,
+  inputProps
 }: IProps) {
   const intl = useIntl()
+  const [loading, setLoading] = useState(false)
   const [leftTime, setLeftTime] = useState<any>(0)
 
   const [countDown] = useCountDown({
@@ -72,7 +78,9 @@ export default function PhoneSelectFormItem({
 
   const handleSendCode = async () => {
     if (onSend) {
+      setLoading(true)
       const success = await onSend()
+      setLoading(false)
       if (success) {
         // 开始倒计时
         setLeftTime(60 * 1000)
@@ -96,7 +104,7 @@ export default function PhoneSelectFormItem({
                     callback(intl.formatMessage({ id: 'mt.shurushoujihaoma' }))
                   } else if (!regMobile.test(value)) {
                     callback(intl.formatMessage({ id: 'mt.shoujihaobuzhengque' }))
-                  } else if (!form.getFieldValue('areaCode')) {
+                  } else if (!form.getFieldValue('phoneAreaCode')) {
                     callback(intl.formatMessage({ id: 'mt.xuanzequhao' }))
                   } else {
                     callback()
@@ -135,7 +143,7 @@ export default function PhoneSelectFormItem({
             }}
           />
         }
-        placeholder={intl.formatMessage({ id: 'mt.shurudianhua' })}
+        placeholder={placeholder || intl.formatMessage({ id: 'mt.shurudianhua' })}
         style={{ width: '100%' }}
         autoComplete="off"
         addonAfter={
@@ -146,13 +154,14 @@ export default function PhoneSelectFormItem({
                   <FormattedMessage id="mt.codeDownload" values={{ count: seconds }} />
                 </span>
               ) : (
-                <span className="text-gray text-sm cursor-pointer" onClick={handleSendCode}>
+                <Button className="!text-gray text-sm cursor-pointer" onClick={handleSendCode} type="link" loading={loading}>
                   <FormattedMessage id="mt.fasongyanzhengma" />
-                </span>
+                </Button>
               )}
             </>
           ) : undefined
         }
+        {...inputProps}
       />
     </Form.Item>
   )

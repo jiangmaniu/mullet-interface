@@ -67,7 +67,7 @@ class TradeStore {
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
   @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
-  @observable leverageMultiple = 0 // 浮动杠杆倍数
+  @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
   @observable currentLiquidationSelect = 'CROSS_MARGIN' // 右下角爆仓选择逐仓、全仓切换
   @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
 

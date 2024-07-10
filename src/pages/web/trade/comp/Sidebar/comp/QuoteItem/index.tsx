@@ -23,7 +23,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   const { trade, ws } = useStores()
   const symbol = item.symbol
   const res = getCurrentQuote(symbol)
-  const ask = res.ask
+  const bid = res.bid // 卖价
   const per: any = res.percent
 
   const activeClassName = useEmotionCss(({ token }) => {
@@ -82,10 +82,10 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             </div>
           </Col>
           <Col span={12} className="flex flex-col items-end">
-            <div className="!font-dingpro-medium text-sx text-gray text-right">{res.hasQuote ? formatNum(ask) : '--'}</div>
+            <div className="!font-dingpro-medium text-sx text-gray text-right">{res.hasQuote ? formatNum(bid) : '--'}</div>
             {res.hasQuote && (
               <div className={classNames('text-right !font-dingpro-medium text-xs', per > 0 ? 'text-green' : 'text-red')}>
-                {ask ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
+                {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
               </div>
             )}
           </Col>

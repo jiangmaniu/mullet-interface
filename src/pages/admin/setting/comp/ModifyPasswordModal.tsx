@@ -1,12 +1,13 @@
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import Modal from '@/components/Admin/ModalForm'
 import Button from '@/components/Base/Button'
 import FormCaptcha from '@/components/Form/Captcha'
 import PwdTips from '@/components/PwdTips'
+import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
 
@@ -17,11 +18,15 @@ type IProps = {
 export default function ModifyPasswordModal({ trigger }: IProps) {
   const intl = useIntl()
   const pwdTipsRef = useRef<any>()
+  const { isEmailRegisterWay } = useModel('user')
   const { initialState } = useModel('@@initialState')
   const [form] = Form.useForm()
   const newPassword = Form.useWatch('newPassword', form)
+  const [submitLoading, setSubmitLoading] = useState(false)
   const currentUser = initialState?.currentUser
-  const phone = currentUser?.userInfo?.phone
+  const phone = currentUser?.userInfo?.phone as string
+  const email = currentUser?.userInfo?.email as string
+  const account = currentUser?.account as string
 
   return (
     <Modal
@@ -32,14 +37,28 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
       onFinish={async (values) => {
         console.log('values', values)
 
-        const { newPassword, confirmNewPassword } = values
+        const { newPassword, confirmNewPassword, validateCode } = values
 
         if (newPassword !== confirmNewPassword) {
           message.info(intl.formatMessage({ id: 'admin.table.account.xinmimashurubuyizhi' }))
           return
         }
 
-        return false
+        setSubmitLoading(true)
+        const reqFn = isEmailRegisterWay ? forgetPasswordEmail : forgetPasswordPhone
+        const res = await reqFn({
+          emailOrPhone: currentUser?.account as string,
+          newPassword,
+          validateCode
+        })
+        setSubmitLoading(false)
+        const success = res.success
+
+        if (success) {
+          message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+        }
+
+        return success
       }}
       hiddenSubmitter
       form={form}
@@ -91,9 +110,13 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
       <FormCaptcha
         name="validateCode"
         onSend={async () => {
-          return
+          const reqFn = isEmailRegisterWay ? sendEmailCode : sendPhoneCode
+          const res = await reqFn()
+          return res.success
         }}
-        label={phone ? intl.formatMessage({ id: 'mt.shoujiyanzheng' }) : intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' })}
+        label={
+          isEmailRegisterWay ? intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' }) : intl.formatMessage({ id: 'mt.shoujiyanzheng' })
+        }
         rules={[
           {
             required: true,
@@ -110,7 +133,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
             <FormattedMessage id="mt.yanzhengshiyudaowenti" />?
           </span>
         </div>
-        <Button className="!h-[44px] !w-[225px]" type="primary" block htmlType="submit">
+        <Button className="!h-[44px] !w-[225px]" type="primary" block htmlType="submit" loading={submitLoading}>
           <FormattedMessage id="common.queren" />
         </Button>
       </div>
