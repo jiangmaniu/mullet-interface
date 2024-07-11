@@ -111,11 +111,15 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
       }
     },
     {
-      title: <FormattedMessage id="mt.chengjiaojia" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.chengjiaojia" />
+        </>
+      ),
       dataIndex: 'tradePrice',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -127,7 +131,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
       }
     },
     {
@@ -149,7 +153,12 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="mt.shouxufei" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.shouxufei" />
+          (USD)
+        </>
+      ),
       dataIndex: 'handlingFees',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -161,7 +170,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
       }
     },
     {
@@ -193,7 +202,12 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       width: 200
     },
     {
-      title: <FormattedMessage id="mt.yingkui" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.yingkui" />
+          (USD)
+        </>
+      ),
       dataIndex: 'profit',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -215,7 +229,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
         return (
           <>
             {profit ? (
-              <span className={classNames('font-[800] !font-dingpro-medium', color)}>{flag ? '+' + profitFormat : profitFormat} USD</span>
+              <span className={classNames('font-[800] !font-dingpro-medium', color)}>{flag ? '+' + profitFormat : profitFormat}</span>
             ) : (
               '0.00'
             )}

@@ -105,7 +105,11 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="mt.guadanjia" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.guadanjia" />
+        </>
+      ),
       dataIndex: 'limitPrice',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -117,11 +121,15 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
       }
     },
     {
-      title: <FormattedMessage id="mt.chengjiaojia" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.chengjiaojia" />
+        </>
+      ),
       dataIndex: 'tradePrice',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -133,7 +141,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
       }
     },
     {
@@ -155,7 +163,12 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="mt.shouxufei" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.shouxufei" />
+          (USD)
+        </>
+      ),
       dataIndex: 'handlingFees',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -167,7 +180,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
       }
     },
     {
