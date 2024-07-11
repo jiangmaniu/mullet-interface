@@ -161,7 +161,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text ? formatNum(text) + 'USD' : '--'} </span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text ? formatNum(text) : '--'} </span>
       }
     },
     {
@@ -181,7 +181,12 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="mt.baozhengjin" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.baozhengjin" />
+          (USD)
+        </>
+      ),
       dataIndex: 'margin',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -198,7 +203,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
-              <span className="!font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) + 'USD' : '--'} </span>
+              <span className="!font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
               <span className={classNames('text-xs font-medium pt-[2px]')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
@@ -264,7 +269,12 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="mt.shouxufei" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.shouxufei" />
+          (USD)
+        </>
+      ),
       dataIndex: 'handlingFees',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -276,11 +286,16 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
       }
     },
     {
-      title: <FormattedMessage id="mt.kucunfei" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.kucunfei" />
+          (USD)
+        </>
+      ),
       dataIndex: 'interestFees',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -292,7 +307,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
       }
     },
     {

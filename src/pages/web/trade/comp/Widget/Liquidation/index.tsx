@@ -1,5 +1,5 @@
-import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
+import { cloneDeep, groupBy } from 'lodash'
 import { observer } from 'mobx-react'
 
 import Dropdown from '@/components/Base/Dropdown'
@@ -17,39 +17,52 @@ function Liquidation() {
   const activeSymbolName = trade.activeSymbolName
   const quoteInfo = getCurrentQuote() // 保留，取值触发更新
   const marginRateInfo = trade.getMarginRateInfo()
+  const currentAccountInfo = trade.currentAccountInfo
+  const isLockedMode = currentAccountInfo.orderMode === 'LOCKED_POSITION' // 锁仓模式
 
   // 筛选逐仓列表
-  const isolatedMarginList = trade.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN')
-  const list = uniqueObjectArray(isolatedMarginList, 'symbol').map((item: any) => ({
-    ...item,
-    label: `${item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}`,
-    value: item.symbol,
-    key: item.symbol
-  }))
+  const isolatedMarginList = cloneDeep(trade.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN'))
+
+  let list = []
+  // 逐仓单 + 订单锁仓模式 分开多笔订单筛选，不做合并展示
+  if (isLockedMode) {
+    // 按品种进行分组
+    const tempGroupMap = groupBy(isolatedMarginList, 'symbol')
+    let tempArr: any = []
+    Object.keys(tempGroupMap).forEach((key) => {
+      if (tempGroupMap[key]?.length) {
+        // 分组在按顺序展开合并
+        tempArr.push(
+          ...tempGroupMap[key].map((item: any, idx: number) => ({
+            ...item,
+            value: item.id, // 持仓单号
+            key: item.id,
+            label: `${item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}${idx + 1}`
+          }))
+        )
+      }
+    })
+    list = tempArr
+  } else {
+    // 合并多笔相同的逐仓单
+    list = uniqueObjectArray(isolatedMarginList, 'symbol').map((item: any) => ({
+      ...item,
+      label: `${item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}`,
+      value: item.id, // 持仓单号
+      key: item.id
+    }))
+  }
 
   const options = [
     {
       label: intl.formatMessage({ id: 'mt.quancang' }),
       value: 'CROSS_MARGIN',
-      key: 'CROSS_MARGIN',
-      imgUrl: trade.getActiveSymbolInfo().imgUrl
+      key: 'CROSS_MARGIN'
+      // imgUrl: trade.getActiveSymbolInfo().imgUrl
     },
     ...list
   ]
-  const currentLiquidationSelectLabel = options.find((item) => item?.value === trade.currentLiquidationSelect)?.label
-
-  const selectClassName = useEmotionCss(({ token }) => {
-    return {
-      '.ant-select-item-option-content': {
-        display: 'flex',
-        alignItems: 'center',
-        fontSize: '12px !important'
-      },
-      '.ant-select-selection-item': {
-        fontSize: '12px !important'
-      }
-    }
-  })
+  const selectInfo = options.find((item) => item?.value === trade.currentLiquidationSelectBgaId)
 
   return (
     <div>
@@ -67,33 +80,24 @@ function Liquidation() {
               </span>
             )}
           </div>
-          {/* <ProFormSelect
-              bordered={false}
-              fieldProps={{
-                size: 'middle',
-                popupClassName: selectClassName,
-                className: selectClassName,
-                value: trade.currentLiquidationSelect,
-                onChange: (value: any) => {
-                  trade.setCurrentLiquidationSelect(value)
-                },
-                style: { minWidth: 0 },
-                suffixIcon: <img src="/img/down2.png" width={14} height={14} style={{ opacity: 0.4 }} />
-              }}
-              allowClear={false}
-              options={options}
-            /> */}
           {isolatedMarginList.length > 0 && (
             <Dropdown
               menu={{
                 items: options,
                 onClick: (item) => {
-                  trade.setCurrentLiquidationSelect(item.key)
+                  trade.setCurrentLiquidationSelectBgaId(item.key)
                 }
               }}
             >
               <div className="cursor-pointer flex items-center mt-2">
-                <span className="text-xs text-gray select-none">{currentLiquidationSelectLabel}</span>
+                <span className="text-xs text-gray select-none">
+                  {selectInfo?.label}
+                  {trade.currentLiquidationSelectBgaId !== 'CROSS_MARGIN' && (
+                    <span className="text-gray bg-gray-150/60 px-[6px] py-[1px] text-[11px] rounded ml-[5px]">
+                      {selectInfo.buySell === 'BUY' ? <FormattedMessage id="mt.duo" /> : <FormattedMessage id="mt.kong" />}
+                    </span>
+                  )}
+                </span>
                 <SelectSuffixIcon opacity={0.4} />
               </div>
             </Dropdown>

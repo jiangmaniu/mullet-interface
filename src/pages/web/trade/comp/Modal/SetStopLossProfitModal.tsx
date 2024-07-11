@@ -41,10 +41,10 @@ export default observer(
 
     useEffect(() => {
       if (!sl) {
-        setSl(item.stopLoss)
+        setSl(Number(item.stopLoss || 0))
       }
       if (!sp) {
-        setSp(item.takeProfit)
+        setSp(Number(item.takeProfit || 0))
       }
     }, [item.stopLoss, item.takeProfit])
 

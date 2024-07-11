@@ -62,10 +62,10 @@ export default observer(
         setPrice(item.limitPrice) // 挂单价
       }
       if (!sl) {
-        setSl(item.stopLoss)
+        setSl(Number(item.stopLoss || 0))
       }
       if (!sp) {
-        setSp(item.takeProfit)
+        setSp(Number(item.takeProfit || 0))
       }
     }, [item.limitPrice, item.stopLoss, item.takeProfit])
 

@@ -68,7 +68,7 @@ class TradeStore {
   @observable showBalanceEmptyModal = false // 余额为空弹窗
   @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
-  @observable currentLiquidationSelect = 'CROSS_MARGIN' // 右下角爆仓选择逐仓、全仓切换
+  @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓， 右下角爆仓选择逐仓、全仓切换
   @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
 
   // 初始化加载
@@ -80,8 +80,8 @@ class TradeStore {
   }
 
   // 右下角爆仓选择逐仓、全仓切换
-  setCurrentLiquidationSelect = (value: any) => {
-    this.currentLiquidationSelect = value
+  setCurrentLiquidationSelectBgaId = (value: any) => {
+    this.currentLiquidationSelectBgaId = value
   }
   // 设置交易浮动杠杆倍数
   setLeverageMultiple = (value: any) => {
@@ -137,11 +137,11 @@ class TradeStore {
     // 可用保证金
     const availableMargin = Number(toFixed(money - occupyMargin))
     // 持仓总浮动盈亏
-    const totalProfit = Number(toFixed(this.getCurrentAccountFloatProfit(trade.positionList), 2))
+    const totalProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), 2))
     // 持仓单总的库存费
-    const totalInterestFees = trade.positionList.reduce((total, next) => total + Number(next.interestFees), 0) || 0
+    const totalInterestFees = this.positionList.reduce((total, next) => total + Number(next.interestFees || 0), 0) || 0
     // 持仓单总的手续费
-    const totalHandlingFees = trade.positionList.reduce((total, next) => total + Number(next.handlingFees), 0) || 0
+    const totalHandlingFees = this.positionList.reduce((total, next) => total + Number(next.handlingFees || 0), 0) || 0
     // 净值 = 账户余额 - 库存费 - 手续费 + 浮动盈亏
     const balance = Number(toFixed(Number(currentAccountInfo.money || 0) - totalInterestFees - totalHandlingFees + totalProfit))
 
@@ -162,8 +162,8 @@ class TradeStore {
    * @returns
    */
   getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
-    const currentLiquidationSelect = this.currentLiquidationSelect
-    const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelect === 'CROSS_MARGIN') // 全仓
+    const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
+    const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
     // 全仓保证金率：净值/占用 = 保证金率
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
     // 净值=账户余额-库存费-手续费+浮动盈亏
@@ -177,8 +177,19 @@ class TradeStore {
       marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
       margin = Number(toFixed(occupyMargin * compelCloseRatio))
     } else {
-      // 当前筛选的订单信息
-      const filterPositionList = item ? [item] : this.positionList.filter((item) => item.symbol === currentLiquidationSelect)
+      // 当前筛选的逐仓单订单信息
+      const currentLiquidationSelectItem = this.positionList.find((item) => item.id === currentLiquidationSelectBgaId)
+      const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
+      const isLockedMode = currentLiquidationSelectItem?.mode === 'LOCKED_POSITION' // 当前筛选的项，是否是锁仓模式的订单
+
+      let filterPositionList = []
+      // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
+      if (isLockedMode) {
+        filterPositionList = [currentLiquidationSelectItem]
+      } else {
+        filterPositionList = item ? [item] : this.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
+      }
+
       let orderMargin = 0 // 订单总的保证金
       let handlingFees = 0 // 订单总的手续费
       let interestFees = 0 // 订单总的库存费

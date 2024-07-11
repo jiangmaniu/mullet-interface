@@ -4,7 +4,7 @@ declare namespace Order {
     /**
      * 携带持仓订单号则为平仓单，只需要传递持仓单号、交易账户ID、订单数量、订单类型和反向订单方向，其他参数无效
      */
-    bagOrderId?: number
+    bagOrderId?: any
     /**
      * 订单方向
      */
@@ -24,7 +24,7 @@ declare namespace Order {
     /**
      * 订单数量
      */
-    orderVolume: number
+    orderVolume: any
     /**
      * 止损
      */
@@ -89,11 +89,11 @@ declare namespace Order {
   // 修改止盈止损参数
   type ModifyStopProfitLossParams = {
     /**持仓订单号 */
-    bagOrderId: number
+    bagOrderId: any
     /**止损 */
-    stopLoss: number
+    stopLoss: any
     /**止盈 */
-    takeProfit: number
+    takeProfit: any
   }
 
   // 订单分页-参数
@@ -358,7 +358,7 @@ declare namespace Order {
     /**
      * 主键
      */
-    id: number
+    id: string
     /**
      * 图标
      */
@@ -426,7 +426,7 @@ declare namespace Order {
     /**
      * 交易账户ID
      */
-    tradeAccountId?: number
+    tradeAccountId?: any
     /**
      * 更新时间
      */

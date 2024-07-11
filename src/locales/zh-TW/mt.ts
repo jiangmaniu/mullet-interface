@@ -436,5 +436,7 @@ export default {
   'mt.nindesshenfenrenzheng': '您的身份认证',
   'mt.tijiaochenggong': '提交成功',
   'mt.qingshuruyouxiang': '请输入邮箱',
-  'mt.bangdingshoujihuoyouxiang': '绑定手机/邮箱'
+  'mt.bangdingshoujihuoyouxiang': '绑定手机/邮箱',
+  'mt.duo': '多',
+  'mt.kong': '空'
 }

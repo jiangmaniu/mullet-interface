@@ -12,7 +12,7 @@ import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { message } from '@/utils/message'
-import { calcExpectedForceClosePrice, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
+import { calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
@@ -80,6 +80,13 @@ export default observer(
       buySell: tradeType === 1 ? 'BUY' : 'SELL'
     })
 
+    // 实时计算下单时预估保证金
+    const expectedMargin = calcExpectedMargin({
+      buySell: tradeType === 1 ? 'BUY' : 'SELL',
+      orderVolume: countValue,
+      orderType: 'MARKET_ORDER'
+    })
+
     // 切换品种、买卖重置内容
     useEffect(() => {
       setSl(0)
@@ -142,13 +149,13 @@ export default observer(
       type: ORDER_TYPE.MARKET_ORDER // 订单类型
     } as Order.CreateOrder
 
-    useEffect(() => {
-      if (orderType === 1) {
-        trade.calcMargin(orderParams).then((res: any) => {
-          setMargin(res)
-        })
-      }
-    }, [isBuy, count, sl, sp, marginType, symbol, orderType, trade.leverageMultiple])
+    // useEffect(() => {
+    //   if (orderType === 1) {
+    //     trade.calcMargin(orderParams).then((res: any) => {
+    //       setMargin(res)
+    //     })
+    //   }
+    // }, [isBuy, count, sl, sp, marginType, symbol, orderType, trade.leverageMultiple])
 
     const onFinish = async () => {
       // sl_scope, sp_scope
@@ -389,15 +396,15 @@ export default observer(
                 <span className="text-xs text-gray-secondary">
                   <FormattedMessage id="mt.yuguqiangpingjia" />
                 </span>
-                <span className="text-xs text-gray !font-dingpro-medium">
-                  {expectedForceClosePrice ? `${expectedForceClosePrice} USD` : '-'}
-                </span>
+                <span className="text-xs text-gray !font-dingpro-medium">{expectedForceClosePrice || '-'}</span>
               </div>
               <div className="flex items-center justify-between pb-[6px] w-full">
                 <span className="text-xs text-gray-secondary">
                   <FormattedMessage id="mt.yugubaozhengjin" />
                 </span>
-                <span className="text-xs text-gray !font-dingpro-medium">{formatNum(margin, { precision: d })} USD</span>
+                <span className="text-xs text-gray !font-dingpro-medium">
+                  {expectedMargin ? formatNum(expectedMargin, { precision: 2 }) + 'USD' : '-'}
+                </span>
               </div>
               <div className="flex items-center justify-between pb-[6px] w-full">
                 <span className="text-xs text-gray-secondary">

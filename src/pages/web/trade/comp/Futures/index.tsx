@@ -11,12 +11,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { formatTimeStr } from '@/utils/business'
-import { AllSymbols, formatQuotes, getCurrentQuote } from '@/utils/wsUtil'
-
-const timef = ['Sun', 'Mon', 'Tues', 'Wed', 'Thurs', 'Fri', 'Sat']
-
-const coinList = formatQuotes().quoteList1 // 数字货币
-const exchangeList = formatQuotes().quoteList2 // 外汇
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
   style?: React.CSSProperties
@@ -36,12 +31,6 @@ function Futures({ trigger, style }: IProps) {
   const tradeTimeConf = quoteInfo?.tradeTimeConf as any[]
   const showPencent = holdingCostConf?.type !== 'point' // 以百分比模式
   const marginMode = prepaymentConf?.mode // 保证金模式
-
-  // 外汇
-  const isWaiHui = AllSymbols.some((item) => item.type === 2)
-  const data = { data: { sessions: [] } }
-
-  const sessions: any = []
 
   const futrues = [
     { label: <FormattedMessage id="mt.heyuedanwei" />, value: symbolConf?.contractSize },
