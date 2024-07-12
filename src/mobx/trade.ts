@@ -66,7 +66,7 @@ class TradeStore {
 
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
-  @observable marginType: API.MaiginType = 'CROSS_MARGIN' // 保证金类型
+  @observable marginType: API.MarginType = 'CROSS_MARGIN' // 保证金类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
   @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓， 右下角爆仓选择逐仓、全仓切换
   @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
@@ -89,7 +89,7 @@ class TradeStore {
   }
 
   // 设置保证金类型
-  setMarginType = (marginType: API.MaiginType) => {
+  setMarginType = (marginType: API.MarginType) => {
     this.marginType = marginType
   }
 
@@ -122,7 +122,7 @@ class TradeStore {
     if (location.pathname.indexOf('/trade') === -1) {
       push('/trade')
       // @ts-ignore
-      klineStore.tvWidget = null // 非交易页面需要重置trandview实例，否则报错
+      klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
     }
   }
 
@@ -230,7 +230,7 @@ class TradeStore {
     return totalProfit
   }
 
-  // 计算保证金
+  // 调用接口计算保证金
   calcMargin = async (params: Order.CreateOrder) => {
     if (!params.orderVolume || !params.symbol) return
     const res = await getOrderMargin(params)

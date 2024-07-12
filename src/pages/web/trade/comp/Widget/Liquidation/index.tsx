@@ -80,9 +80,6 @@ function Liquidation() {
       },
       '.ant-select-selection-item': {
         fontSize: '12px !important'
-      },
-      '.ant-select-selector': {
-        borderColor: '#d9d9d9 !important'
       }
     }
   })
@@ -128,7 +125,7 @@ function Liquidation() {
           {isolatedMarginList.length > 0 && (
             <ProFormSelect
               fieldProps={{
-                size: 'middle',
+                size: 'large',
                 popupClassName: selectClassName,
                 className: selectClassName,
                 value: trade.currentLiquidationSelectBgaId,
@@ -138,8 +135,8 @@ function Liquidation() {
                 optionRender: (item: any) => {
                   return <>{item.label}</>
                 },
-                style: { width: 270, height: 36, marginTop: 10 },
-                suffixIcon: <img src="/img/select-down.png" width={22} height={22} style={{ opacity: 0.6 }} />,
+                style: { width: 282, height: 40, marginTop: 10, position: 'relative', left: -7 },
+                suffixIcon: <img src="/img/select-down.png" width={24} height={24} style={{ opacity: 0.5 }} />,
                 // 回填到选择框的 Option 的属性值，默认是 Option 的子元素
                 optionLabelProp: 'label'
               }}
@@ -150,7 +147,7 @@ function Liquidation() {
                 return {
                   ...item,
                   label: (
-                    <div className="flex items-center truncate w-full h-[24px]">
+                    <div className="flex items-center truncate w-full h-[26px]">
                       {/* 全仓 使用默认icon*/}
                       <img
                         src={item.value === 'CROSS_MARGIN' ? '/img/all.png' : getSymbolIcon(item.imgUrl)}

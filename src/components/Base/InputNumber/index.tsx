@@ -178,6 +178,9 @@ export default function InputNumber(props: IProps) {
       },
       '.ant-input-number-input': {
         background: disabled ? 'transparent' : '#fff'
+      },
+      '.input-wrapper:hover': {
+        border: `1px solid ${disabled ? '#E1E1E1' : '#9c9c9c'}`
       }
     }
   })
@@ -187,7 +190,7 @@ export default function InputNumber(props: IProps) {
       {label && <div className={classnames('text-sm pb-[4px] text-left font-normal text-gray', classNames?.label)}>{label}</div>}
       <div
         className={classnames(
-          'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border border-primary bg-white',
+          'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border border-primary bg-white input-wrapper',
           className
         )}
         style={{ height }}

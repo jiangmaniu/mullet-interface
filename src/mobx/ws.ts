@@ -231,6 +231,7 @@ class WSStore {
           const quotesObj: any = {} // 一次性更新，避免卡顿
           this.quotesTempArr.forEach((item: IQuoteItem) => {
             const sbl = item.symbol
+            const dataSourceCode = item.dataSource
             if (quotes[sbl]) {
               const prevBid = quotes[sbl]?.priceData?.sell || 0
               const prevAsk = quotes[sbl]?.priceData?.buy || 0
@@ -245,7 +246,8 @@ class WSStore {
             }
 
             if (sbl) {
-              quotesObj[sbl] = item
+              // 数据源-品种拼接，避免被覆盖
+              quotesObj[`${dataSourceCode}/${sbl}`] = item
             }
           })
 
@@ -281,6 +283,7 @@ class WSStore {
           const depthObj: any = {} // 一次性更新，避免卡顿
           this.depthQuoteTempArr.forEach((item: IDepth) => {
             const sbl = item.symbol
+            const dataSourceCode = item.dataSourceCode
             if (sbl) {
               if (typeof item.asks === 'string') {
                 item.asks = item.asks ? JSON.parse(item.asks) : []
@@ -288,7 +291,8 @@ class WSStore {
               if (typeof item.bids === 'string') {
                 item.bids = item.bids ? JSON.parse(item.bids) : []
               }
-              depthObj[sbl] = item
+              // 数据源-品种拼接，避免被覆盖
+              depthObj[`${dataSourceCode}/${sbl}`] = item
             }
           })
 

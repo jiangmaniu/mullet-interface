@@ -39,7 +39,8 @@ class KlineStore {
     const symbolInfo = this.activeSymbolInfo.symbolInfo
     if (symbolInfo && quotes) {
       const dataSourceSymbol = symbolInfo.dataSourceSymbol
-      const data = quotes[dataSourceSymbol]
+      const dataSourceCode = symbolInfo.dataSourceCode
+      const data = quotes[`${dataSourceCode}/${dataSourceSymbol}`]
       if (data && data.symbol === dataSourceSymbol) {
         const resolution = this.activeSymbolInfo.resolution
         const precision = symbolInfo.precision

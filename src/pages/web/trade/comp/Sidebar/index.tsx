@@ -278,6 +278,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                       onClick={() => {
                         // 记录打开的symbol
                         trade.setOpenSymbolNameList(symbol)
+                        // 设置当前当前的symbol
+                        trade.setActiveSymbolName(symbol)
                       }}
                     >
                       <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
