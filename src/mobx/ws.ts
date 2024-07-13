@@ -83,10 +83,11 @@ class WSStore {
   constructor() {
     makeObservable(this) // 使用 makeObservable mobx6.0 才会更新视图
   }
+  batchTimer: any = null
   heartbeatInterval: any = null
   heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
-  quotesTempArr: any = []
-  @observable depthQuoteTempArr: any = []
+  quotesCacheArr: any = [] // 行情缓存区
+  depthCacheArr: any = [] // 深度缓存区
   @observable socket: any = null
   @observable quotes = {} as Record<string, IQuoteItem> // 当前行情
   @observable depth = {} as Record<string, IDepth> // 当前行情
@@ -110,6 +111,9 @@ class WSStore {
       this.subscribeDepth()
       this.subscribeTrade()
       this.startHeartbeat()
+
+      // 开启定时器推送数据
+      this.batchUpdateDataByTimer()
     })
     this.socket.addEventListener('message', (d: any) => {
       const res = JSON.parse(d.data)
@@ -206,7 +210,7 @@ class WSStore {
     // 中断连接再重连
     // console.log(store.account+store.pwd)
     this.close()
-    this.resetData()
+    // this.resetData()
     // 重新连接
     this.connect()
   }
@@ -214,7 +218,107 @@ class WSStore {
   resetData() {
     // @ts-ignore
     this.quotes = {} // 当前行情
+    this.depth = {}
+    this.quotesCacheArr = []
+    this.depthCacheArr = []
   }
+
+  // 更新行情数据
+  @action
+  updateQuoteData = () => {
+    if (this.quotesCacheArr.length) {
+      const quotes = this.quotes // 之前的值
+      const quotesObj: any = {} // 一次性更新，避免卡顿
+      this.quotesCacheArr.forEach((item: IQuoteItem) => {
+        const sbl = item.symbol
+        const dataSourceCode = item.dataSource
+        if (quotes[sbl]) {
+          const prevBid = quotes[sbl]?.priceData?.sell || 0
+          const prevAsk = quotes[sbl]?.priceData?.buy || 0
+          item.bidDiff = item.priceData?.sell - prevBid
+          item.askDiff = item.priceData?.buy - prevAsk
+
+          if (item.priceData) {
+            // 如果没有最新报价，获取上一口报价
+            item.priceData.buy = item.priceData.buy || prevAsk
+            item.priceData.sell = item.priceData.sell || prevBid
+          }
+        }
+
+        if (sbl) {
+          // 数据源-品种拼接，避免被覆盖
+          quotesObj[`${dataSourceCode}/${sbl}`] = item
+        }
+      })
+
+      const newQuotes = {
+        ...this.quotes,
+        ...quotesObj
+      }
+
+      // 实时更新k线数据
+      klineStore.updateKlineData(newQuotes)
+
+      this.quotes = newQuotes
+
+      this.quotesCacheArr = []
+    }
+  }
+
+  // 定时更新数据
+  @action
+  batchUpdateDataByTimer = () => {
+    if (this.batchTimer) {
+      clearInterval(this.batchTimer)
+    }
+    this.batchTimer = setInterval(() => {
+      // 更新行情
+      this.updateQuoteData()
+    }, 300)
+  }
+
+  // 批量更新行情数据，通过指定数量
+  @action
+  batchUpdateQuoteDataByNumber = (data: any) => {
+    if (this.quotesCacheArr.length > 12) {
+      this.updateQuoteData()
+    } else {
+      this.quotesCacheArr.push(data)
+    }
+  }
+
+  // 批量更新深度数据，通过指定数量
+  @action
+  batchUpdateDepthDataByNumber = (data: any) => {
+    // 限流
+    if (this.depthCacheArr.length > 2) {
+      const depthObj: any = {} // 一次性更新，避免卡顿
+      this.depthCacheArr.forEach((item: IDepth) => {
+        const sbl = item.symbol
+        const dataSourceCode = item.dataSourceCode
+        if (sbl) {
+          if (typeof item.asks === 'string') {
+            item.asks = item.asks ? JSON.parse(item.asks) : []
+          }
+          if (typeof item.bids === 'string') {
+            item.bids = item.bids ? JSON.parse(item.bids) : []
+          }
+          // 数据源-品种拼接，避免被覆盖
+          depthObj[`${dataSourceCode}/${sbl}`] = item
+        }
+      })
+
+      this.depth = {
+        ...this.depth,
+        ...depthObj
+      }
+
+      this.depthCacheArr = []
+    } else {
+      this.depthCacheArr.push(data)
+    }
+  }
+
   // 处理ws消息
   @action
   message(res: IMessage) {
@@ -226,45 +330,11 @@ class WSStore {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        if (this.quotesTempArr.length > 12) {
-          const quotes = this.quotes // 之前的值
-          const quotesObj: any = {} // 一次性更新，避免卡顿
-          this.quotesTempArr.forEach((item: IQuoteItem) => {
-            const sbl = item.symbol
-            const dataSourceCode = item.dataSource
-            if (quotes[sbl]) {
-              const prevBid = quotes[sbl]?.priceData?.sell || 0
-              const prevAsk = quotes[sbl]?.priceData?.buy || 0
-              item.bidDiff = item.priceData?.sell - prevBid
-              item.askDiff = item.priceData?.buy - prevAsk
+        // this.batchUpdateQuoteDataByNumber(data)
 
-              if (item.priceData) {
-                // 如果没有最新报价，获取上一口报价
-                item.priceData.buy = item.priceData.buy || prevAsk
-                item.priceData.sell = item.priceData.sell || prevBid
-              }
-            }
+        // 推入缓冲区
+        this.quotesCacheArr.push(data)
 
-            if (sbl) {
-              // 数据源-品种拼接，避免被覆盖
-              quotesObj[`${dataSourceCode}/${sbl}`] = item
-            }
-          })
-
-          const newQuotes = {
-            ...this.quotes,
-            ...quotesObj
-          }
-
-          // 实时更新k线数据
-          klineStore.updateKlineData(newQuotes)
-
-          this.quotes = newQuotes
-
-          this.quotesTempArr = []
-        } else {
-          this.quotesTempArr.push(data)
-        }
         // console.log('行情信息', toJS(this.quotes))
         break
       // 深度报价
@@ -278,33 +348,8 @@ class WSStore {
         //     bids
         //   }
         // }
-        // 限流
-        if (this.depthQuoteTempArr.length > 2) {
-          const depthObj: any = {} // 一次性更新，避免卡顿
-          this.depthQuoteTempArr.forEach((item: IDepth) => {
-            const sbl = item.symbol
-            const dataSourceCode = item.dataSourceCode
-            if (sbl) {
-              if (typeof item.asks === 'string') {
-                item.asks = item.asks ? JSON.parse(item.asks) : []
-              }
-              if (typeof item.bids === 'string') {
-                item.bids = item.bids ? JSON.parse(item.bids) : []
-              }
-              // 数据源-品种拼接，避免被覆盖
-              depthObj[`${dataSourceCode}/${sbl}`] = item
-            }
-          })
 
-          this.depth = {
-            ...this.depth,
-            ...depthObj
-          }
-
-          this.depthQuoteTempArr = []
-        } else {
-          this.depthQuoteTempArr.push(data)
-        }
+        this.batchUpdateDepthDataByNumber(data)
 
         // console.log('深度报价', toJS(this.depth))
         break

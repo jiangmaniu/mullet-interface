@@ -374,7 +374,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.open || 0), bid]) // 拿当前价格跟首次返回的比
   const low = Math.max.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
   const close = Number(bid || symbolNewTicker?.close || 0) // 使用卖价作为最新的收盘价格
-  const percent = Number(bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0)
+  const percent = bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0
 
   return {
     symbol, // 用于展示的symbol自定义名称
