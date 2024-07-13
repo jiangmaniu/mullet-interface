@@ -2,30 +2,37 @@ import { FormattedMessage, useModel } from '@umijs/max'
 import { useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
+import Hidden from '@/components/Base/Hidden'
+
+import CopyTrading from './comp/CopyTrading'
+import Square from './comp/Square'
+import Take from './comp/Take'
 
 // 跟单管理
 export default function copyTrading() {
-  const [tabKey, setTabKey] = useState('')
+  const [tabKey, setTabKey] = useState('square')
   const [showPersonInfo, setShowPersonInfo] = useState(false)
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const phone = currentUser?.userInfo?.phone
 
   const tabList = [
     {
       label: <FormattedMessage id="mt.gendanguangchang" />,
       key: 'square',
-      icon: 'geren-shezhi' // 填写iconfont的name，不要icon-前缀
+      icon: 'geren-shezhi', // 填写iconfont的name，不要icon-前缀
+      component: <Square />
     },
     {
       label: <FormattedMessage id="mt.gendanguanli" />,
       key: 'copyTrading',
-      icon: 'geren-shezhi'
+      icon: 'geren-shezhi',
+      component: <CopyTrading />
     },
     {
       label: <FormattedMessage id="mt.daidanguanli" />,
       key: 'take',
-      icon: 'geren-shezhi'
+      icon: 'geren-shezhi',
+      component: <Take />
     }
   ]
 
@@ -45,7 +52,13 @@ export default function copyTrading() {
       }}
       tabActiveKey={tabKey}
     >
-      <div className="pb-[26px]"></div>
+      <div className="pb-[26px]">
+        {tabList.map((item, idx) => (
+          <Hidden show={item.key === tabKey} key={idx}>
+            {item.component}
+          </Hidden>
+        ))}
+      </div>
     </PageContainer>
   )
 }

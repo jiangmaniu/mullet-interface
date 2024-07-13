@@ -149,13 +149,36 @@ export default [
   //   component: './admin/record'
   // },
   // 跟单管理
-  // {
-  //   path: '/:lng/copyTrading',
-  //   access: 'canAdmin', // 权限配置
-  //   name: 'copyTrading',
-  //   icon: 'icon-geren-shezhi',
-  //   component: './admin/copyTrading'
-  // },
+  {
+    path: '/:lng/copy-trading',
+    access: 'canAdmin', // 权限配置
+    name: 'copyTrading',
+    icon: 'icon-geren-shezhi',
+    component: './admin/copyTrading'
+  },
+  {
+    path: '/:lng/copy-trading/detail/:id',
+    access: 'canAdmin', // 权限配置
+    component: './admin/copyTrading/copyTradingDetail',
+    hideInMenu: true,
+    menuRender: false // 当前路由不展示菜单
+  },
+  {
+    path: '/:lng/copy-trading/take-detail/:id',
+    access: 'canAdmin', // 权限配置
+    component: './admin/copyTrading/takeDetail',
+    hideInMenu: true,
+    menuRender: false // 当前路由不展示菜单
+  },
+  {
+    path: '/:lng/copy-trading/apply',
+    access: 'canAdmin', // 权限配置
+    component: './admin/copyTrading/apply',
+    hideInMenu: true,
+    menuRender: false, // 当前路由不展示菜单
+    headerRender: true,
+    layout: false // 关闭页面布局，使用自定义布局
+  },
   {
     path: '/:lng/setting',
     name: 'setting',
