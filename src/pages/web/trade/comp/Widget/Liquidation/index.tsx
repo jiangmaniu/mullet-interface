@@ -152,7 +152,7 @@ function Liquidation() {
                       <img
                         src={item.value === 'CROSS_MARGIN' ? '/img/all.png' : getSymbolIcon(item.imgUrl)}
                         alt=""
-                        className="w-[20px] h-[20px] rounded-full"
+                        className="w-[20px] h-[20px] rounded-full border border-gray-90"
                       />
                       <span className="text-gray !text-xs pl-1">{item.label}</span>
                       {/* 逐仓-锁仓模式展示 */}

@@ -335,12 +335,11 @@ export function getCurrentDepth(currentSymbolName?: string) {
 }
 
 /**
- * 获取当前激活打开的品种，高开低收，涨幅百分比
+ * 获取当前激活打开的品种行情，高开低收，涨幅百分比
  * @param {*} currentSymbol 当前传入的symbolName
- * @param quote 全部行情，再次传入覆盖，有些地方没有实时刷新
  * @returns
  */
-export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
+export function getCurrentQuote(currentSymbolName?: string) {
   const { ws, trade } = stores
   const { quotes } = ws
   let symbol = currentSymbolName || trade.activeSymbolName // 展示的名称(后台自定义的品种名称)
@@ -357,7 +356,7 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
   const dataSourceSymbol = (isDataSourceSymbol ? currentSymbolName : currentSymbol.dataSourceSymbol) as string
   const dataSourceCode = trade.symbolList.find((item) => item.dataSourceSymbol === dataSourceSymbol)?.dataSourceCode
   const dataSourceKey = `${dataSourceCode}/${dataSourceSymbol}` // 获取行情的KEY，数据源+数据源品种去获取
-  const currentQuote = quote?.[dataSourceKey] || quotes?.[dataSourceKey] || {} // 行情信息
+  const currentQuote = quotes?.[dataSourceKey] || {} // 行情信息
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf as Symbol.PrepaymentConf // 当前品种预付款配置
   const transactionFeeConf = currentSymbol?.symbolConf?.transactionFeeConf as Symbol.TransactionFeeConf // 当前品种手续费配置
@@ -403,8 +402,8 @@ export function getCurrentQuote(currentSymbolName?: string, quote?: any) {
     open: toFixed(open, digits), //开
     close: toFixed(close, digits), //收
     spread: Math.abs(parseInt(String(bid * Math.pow(10, digits) - ask * Math.pow(10, digits)))), // 买卖点差
-    bidDiff: currentQuote.bidDiff,
-    askDiff: currentQuote.askDiff,
+    bidDiff: currentQuote.bidDiff || 0,
+    askDiff: currentQuote.askDiff || 0,
     hasQuote: Number(bid) > 0 // 是否存在行情
   }
 }

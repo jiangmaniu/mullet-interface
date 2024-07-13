@@ -51,7 +51,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                     height={24}
                     alt=""
                     src={getSymbolIcon(symbolInfo?.imgUrl)}
-                    className="rounded-full relative xl:top-[9px] xxl:top-0"
+                    className="rounded-full relative xl:top-[9px] xxl:top-0 border border-gray-90"
                   />
                   <div className="flex items-center">
                     <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>

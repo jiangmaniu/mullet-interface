@@ -78,7 +78,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         const buySellInfo = getBuySellInfo(record)
         return (
           <div className="flex items-center">
-            <img width={26} height={26} alt="" src={getSymbolIcon(record.imgUrl)} className="rounded-full" />
+            <img width={26} height={26} alt="" src={getSymbolIcon(record.imgUrl)} className="rounded-full border border-gray-90" />
             <div className="flex flex-col pl-4">
               <span className="text-base font-semibold text-gray">{record.symbol}</span>
               <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>

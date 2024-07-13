@@ -74,7 +74,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
                 trade.toggleSymbolFavorite(symbol)
               }}
             />
-            <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
+            <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
             <div className="flex flex-col pl-1">
               <span className="pl-[6px] text-xs font-semibold text-gray tracking-[0.5px]">{item.symbol}</span>
               {/* 币种描述  */}

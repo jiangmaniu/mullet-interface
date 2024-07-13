@@ -95,7 +95,7 @@ export default observer((props, ref) => {
             <div className="flex w-full items-center justify-between px-8 pt-3">
               <div className="flex flex-col">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={getSymbolIcon(data?.imgUrl)} className="rounded-full" />
+                  <img width={24} height={24} alt="" src={getSymbolIcon(data?.imgUrl)} className="rounded-full border border-gray-90" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} ·{' '}

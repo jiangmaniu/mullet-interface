@@ -230,7 +230,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
             <div key={idx} className="mb-3 rounded-xl border border-primary">
               <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
                 <div className="flex items-center">
-                  <img width={22} height={22} alt="" src={getSymbolIcon(v.imgUrl)} className="rounded-full" />
+                  <img width={22} height={22} alt="" src={getSymbolIcon(v.imgUrl)} className="rounded-full border border-gray-90" />
                   <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
                   <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
                   {/*爆仓信号灯暂时不做 */}

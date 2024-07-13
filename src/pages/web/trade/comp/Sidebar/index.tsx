@@ -282,7 +282,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                         trade.setActiveSymbolName(symbol)
                       }}
                     >
-                      <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
+                      <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
                     </div>
                   )
                 })}

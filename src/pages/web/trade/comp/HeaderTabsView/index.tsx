@@ -60,7 +60,7 @@ function HeaderTabsView() {
                       setActiveKey(symbol)
                     }}
                   >
-                    <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
+                    <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
                     <span className="select-none px-2 text-base font-semibold text-gray">{symbol}</span>
                     {trade.openSymbolNameList.length > 1 && (
                       <img

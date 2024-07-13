@@ -24,6 +24,7 @@ type IProps = ButtonProps & {
 export default function Button({ children, href, params, onClick, height = 38, style, ...res }: IProps) {
   const { isMobileOrIpad } = useEnv()
   const btnHeight = isMobileOrIpad ? 44 : height
+
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
       onClick(e)

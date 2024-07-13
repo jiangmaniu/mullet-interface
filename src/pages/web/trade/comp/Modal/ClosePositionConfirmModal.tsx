@@ -112,7 +112,7 @@ export default observer(
           <div className="flex flex-col items-center justify-center">
             <div className="flex w-full items-center justify-between pt-3">
               <div className="flex items-center">
-                <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full" />
+                <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
                 <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                 <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
               </div>

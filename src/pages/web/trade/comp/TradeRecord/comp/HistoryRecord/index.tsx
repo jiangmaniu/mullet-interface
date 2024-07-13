@@ -55,7 +55,7 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
               optionItemRender: (item: Account.TradeSymbolListItem) => {
                 return (
                   <div className="flex items-center truncate w-full">
-                    <img src={getSymbolIcon(item.imgUrl)} alt="" className="w-[20px] h-[20px] rounded-full" />
+                    <img src={getSymbolIcon(item.imgUrl)} alt="" className="w-[20px] h-[20px] rounded-full border border-gray-90" />
                     <span className="text-sub pl-1">{item.symbol}</span>
                   </div>
                 )
