@@ -21,12 +21,15 @@ import Liquidation from './comp/Widget/Liquidation'
 export default observer(() => {
   const sidebarRef = useRef()
   const buyAndSellRef = useRef<any>(null)
-  const { ws, trade } = useStores()
+  const { ws, trade, kline } = useStores()
 
   useEffect(() => {
     return () => {
       // 取消订阅深度报价
       ws.subscribeDepth(true)
+
+      // 重置tradingview实例，否则报错
+      kline.tvWidget = null as any
     }
   }, [])
 
