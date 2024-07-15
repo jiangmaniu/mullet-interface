@@ -1,4 +1,4 @@
-import { action, configure, makeObservable, observable } from 'mobx'
+import { action, configure, makeObservable, observable, runInAction } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
 import { URLS } from '@/constants'
@@ -259,7 +259,9 @@ class WSStore {
       // 实时更新k线数据
       klineStore.updateKlineData(newQuotes)
 
-      this.quotes = newQuotes
+      runInAction(() => {
+        this.quotes = newQuotes
+      })
 
       this.quotesCacheArr = []
     }
