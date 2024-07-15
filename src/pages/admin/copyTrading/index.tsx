@@ -11,7 +11,6 @@ import Take from './comp/Take'
 // 跟单管理
 export default function copyTrading() {
   const [tabKey, setTabKey] = useState('square')
-  const [showPersonInfo, setShowPersonInfo] = useState(false)
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
 
@@ -19,19 +18,19 @@ export default function copyTrading() {
     {
       label: <FormattedMessage id="mt.gendanguangchang" />,
       key: 'square',
-      icon: 'geren-shezhi', // 填写iconfont的name，不要icon-前缀
+      icon: 'gendanguangchang', // 填写iconfont的name，不要icon-前缀
       component: <Square />
     },
     {
       label: <FormattedMessage id="mt.gendanguanli" />,
       key: 'copyTrading',
-      icon: 'geren-shezhi',
+      icon: 'gendanguanli',
       component: <CopyTrading />
     },
     {
       label: <FormattedMessage id="mt.daidanguanli" />,
       key: 'take',
-      icon: 'geren-shezhi',
+      icon: 'daidanguanli',
       component: <Take />
     }
   ]

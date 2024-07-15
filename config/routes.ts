@@ -153,7 +153,7 @@ export default [
     path: '/:lng/copy-trading',
     access: 'canAdmin', // 权限配置
     name: 'copyTrading',
-    icon: 'icon-geren-shezhi',
+    icon: 'icon-gendanguanli',
     component: './admin/copyTrading'
   },
   {

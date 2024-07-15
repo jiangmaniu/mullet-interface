@@ -118,7 +118,7 @@ export default function PageContainer({
                 }}
                 tabBarExtraContent={tabBarExtraContent}
                 marginBottom={0}
-                indicator={{ size: 45 }}
+                indicator={{ size: 64 }}
               />
             </div>
           </div>
