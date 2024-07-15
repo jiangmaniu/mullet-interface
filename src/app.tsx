@@ -10,7 +10,7 @@ import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
 import SwitchLanguage from './components/SwitchLanguage'
-import { iconfontUrl, WEB_HOME_PAGE } from './constants'
+import { ICONFONT_URL, WEB_HOME_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
@@ -289,7 +289,7 @@ export const rootContainer = (container: JSX.Element) => {
           {/* 注入css变量 */}
           <style>{cssVars}</style>
           {/* 需要设置一次地址，否则不使用Layout的情况下，iconfont图标使用不显示 */}
-          <script async={true} src={iconfontUrl}></script>
+          <script async={true} src={ICONFONT_URL}></script>
         </Helmet>
         <Provider>{container}</Provider>
       </>

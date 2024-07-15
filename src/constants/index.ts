@@ -1,14 +1,14 @@
 const NAMESPACE = 'stellux_client'
 
 // 秘钥
-export const clientId = 'StelluxTrader-client' // 客户端id
-export const clientSecret = 'stellux_trader_client_secret' // 客户端密钥
+export const CLIENT_ID = 'StelluxTrader-client' // 客户端id
+export const CLIENT_SECRET = 'stellux_trader_client_secret' // 客户端密钥
 // 注册识别码(从后台客户组获取，部署每套应用都需要填写不同的识别码，区分不同的应用，例如mc/cc/cd)
 export const REGISTER_APP_CODE = '123456' // @TODO 正式部署在修改
 
 // 字体图标 @TODO 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码
-export const iconfontUrl =
+export const ICONFONT_URL =
   process.env.NODE_ENV === 'development' ? 'https://at.alicdn.com/t/c/font_4571567_lbr09wdyvro.js' : '/iconfont/iconfont.js'
 
 // 首页
