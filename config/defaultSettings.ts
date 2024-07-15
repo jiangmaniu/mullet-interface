@@ -1,5 +1,5 @@
 import { ProLayoutProps } from '@ant-design/pro-components'
-import { iconfontUrl } from '../src/constants'
+import { ICONFONT_URL } from '../src/constants'
 import { gray } from '../src/theme/theme.config'
 
 /**
@@ -20,7 +20,7 @@ const Settings: ProLayoutProps & {
   title: '',
   pwa: true,
   logo: '/logo.svg',
-  iconfontUrl,
+  iconfontUrl: ICONFONT_URL,
   // iconfontUrl: '//at.alicdn.com/t/c/font_4182179_75iciez7rhj.js', // 字体图标 @TODO 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
   // 参见ts声明，demo 见文档，通过token 修改样式
   //https://procomponents.ant.design/components/layout#%E9%80%9A%E8%BF%87-token-%E4%BF%AE%E6%94%B9%E6%A0%B7%E5%BC%8F
