@@ -20,6 +20,9 @@ yarn install
 # 启动本地开发
 yarn dev
 
+# 启动本地线上环境
+yarn dev:prod
+
 # 启动本地mock服务
 yarn start:mock
 ```
@@ -72,18 +75,10 @@ server {
 }
 ```
 
-**jenkins 打包到测试环境**
-
-> https://jenkins.internalworld.net/job/test_mcp_deploy_all/build?delay=0sec
-
-- 合并`dev`分支到`release_mcp`，在`jenkins`上选择`UC`，然后打包到测试环境
-- 测试环境地址 `http://uc.mcp.lan`
-
 **关于分支说明**
 
 - 开发提交分支 `dev`
-- 测试环境打包分支 `release_mcp`
-- 正式环境分支 `master`（发版需合并`release_mcp`到`master``）
+- 正式环境分支 `main`（发版需合并`dev`到`main`）
 
 ## 提交代码规范
 
