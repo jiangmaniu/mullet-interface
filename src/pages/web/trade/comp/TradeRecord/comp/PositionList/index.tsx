@@ -468,7 +468,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
         }}
         size="small"
-        pageSize={999}
+        pageSize={10}
       />
       {/* 平仓修改确认弹窗 */}
       <ClosePositionConfirmModal ref={closePositionRef} list={dataSource} />

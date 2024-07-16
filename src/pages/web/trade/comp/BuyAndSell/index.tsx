@@ -72,7 +72,8 @@ export default observer(
         <div
           className={classNames({
             'h-[700px] w-[300px] bg-white relative': isPc,
-            [className]: isPc
+            [className]: isPc,
+            'pointer-events-none': trade.isDisabledSymbol
           })}
         >
           <Tabs

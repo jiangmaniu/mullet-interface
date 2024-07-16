@@ -272,7 +272,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
           return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
         }}
         size="small"
-        pageSize={999}
+        pageSize={10}
       />
       {/* 取消挂单弹窗 */}
       <PendingOrderCancelModal ref={cancelPendingRef} />

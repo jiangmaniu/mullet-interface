@@ -288,7 +288,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
         }}
         size="small"
         loading={loading}
-        pageSize={20}
+        pageSize={10}
       />
     </>
   )
