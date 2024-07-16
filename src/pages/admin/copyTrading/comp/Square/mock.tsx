@@ -81,5 +81,85 @@ export const defaultTakers: IOrderTaker[] = [
     },
     tags: ['dipin'],
     state: 'wufagendan'
+  },
+  {
+    account: {
+      id: '1',
+      name: 'Linen_Bitnex',
+      type: 'meifen',
+      avatar: '/img/avatar_demo.png',
+      followers: 234,
+      limitFollowers: 400
+    },
+    datas: {
+      rate1: 19.81,
+      rate2: -0.13,
+      rate3: 12883,
+      rate4: 12883,
+      rate5: 12883,
+      rate6: 0.98
+    },
+    tags: ['dipin'],
+    state: 'gendan'
+  },
+  {
+    account: {
+      id: '1',
+      name: 'Linen_Bitnex',
+      type: 'meifen',
+      avatar: '/img/avatar_demo.png',
+      followers: 234,
+      limitFollowers: 400
+    },
+    datas: {
+      rate1: 19.81,
+      rate2: -0.13,
+      rate3: 12883,
+      rate4: 12883,
+      rate5: 12883,
+      rate6: 0.98
+    },
+    tags: ['dipin'],
+    state: 'yigendan'
+  },
+  {
+    account: {
+      id: '1',
+      name: 'Linen_Bitnex',
+      type: 'meifen',
+      avatar: '/img/avatar_demo.png',
+      followers: 234,
+      limitFollowers: 400
+    },
+    datas: {
+      rate1: 19.81,
+      rate2: -0.13,
+      rate3: 12883,
+      rate4: 12883,
+      rate5: 12883,
+      rate6: 0.98
+    },
+    tags: ['dipin'],
+    state: 'wufagendan'
+  },
+  {
+    account: {
+      id: '1',
+      name: 'Linen_Bitnex',
+      type: 'meifen',
+      avatar: '/img/avatar_demo.png',
+      followers: 234,
+      limitFollowers: 400
+    },
+    datas: {
+      rate1: 19.81,
+      rate2: -0.13,
+      rate3: 12883,
+      rate4: 12883,
+      rate5: 12883,
+      rate6: 0.98
+    },
+    tags: ['dipin'],
+    state: 'wufagendan'
   }
 ]

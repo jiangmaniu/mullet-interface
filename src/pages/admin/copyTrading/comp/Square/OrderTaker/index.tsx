@@ -9,6 +9,8 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { colorTextPrimary } from '@/theme/theme.config'
 
+import OrderTakerChart from './Chart'
+
 export type IOrderTakerState = 'gendan' | 'yigendan' | 'yimanyuan' | 'wufagendan'
 export type IOrderAccountType = 'biaozhun' | 'luodian' | 'meifen'
 
@@ -96,8 +98,8 @@ export const OrderTaker = ({ taker: { account, datas, tags, state: takerState },
         </div>
         {/* datas */}
         <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col gap-2">
+          <div className=" grid grid-cols-2 gap-1">
+            <div className="flex flex-col gap-2 justify-between">
               <span className="tips">
                 <FormattedMessage id="mt.jinqiyingkui" values={{ range: jinqi }} />
                 &nbsp;USD
@@ -113,7 +115,8 @@ export const OrderTaker = ({ taker: { account, datas, tags, state: takerState },
                 </span>
               </span>
             </div>
-            <div>图表</div>
+
+            <OrderTakerChart />
           </div>
           <div className=" grid grid-cols-3">
             <div className="flex flex-col gap-1">
@@ -136,7 +139,7 @@ export const OrderTaker = ({ taker: { account, datas, tags, state: takerState },
               </span>
             </div>
 
-            <div className="flex flex-row gap-1 items-end">
+            <div className="flex flex-row gap-1 items-end col-span-3">
               <span className="tips">
                 <FormattedMessage id="mt.jinqishenglv" values={{ range: jinqi }} />
               </span>
