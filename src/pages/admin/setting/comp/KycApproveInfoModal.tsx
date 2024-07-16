@@ -28,7 +28,11 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
       <div className="flex items-center">
         <img src="/img/default-avatar.png" width={40} height={40} />
         <div className="pl-3">
-          <div className="text-base text-gray font-semibold">{userInfo?.realName || userInfo?.name}</div>
+          <div className="text-base text-gray font-semibold">
+            <span>{kycAuthInfo?.firstName}</span>
+            <span className="p-[2px] rounded-full bg-gray-220 w-[5px] h-[5px] mx-1 inline-block"></span>
+            <span>{kycAuthInfo?.lastName}</span>
+          </div>
           <div className="text-xs text-gray pt-2">
             <FormattedMessage id="mt.guojia" />：{countryName || '-'}
           </div>

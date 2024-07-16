@@ -130,6 +130,7 @@ export default {
   'mt.maichupingcang': '賣出平倉',
   'mt.mairupingcang': '買入平倉',
   'mt.chicang': '持倉',
+  'mt.baozhengjinleix': '保证金类型',
   'mt.guadan': '掛單',
   'mt.dangrichengjiao': '當日成交',
   'mt.cexiaoguadan': '撤銷掛單',

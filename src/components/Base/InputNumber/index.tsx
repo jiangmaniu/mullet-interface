@@ -167,7 +167,7 @@ export default function InputNumber(props: IProps) {
         width: width || 'auto'
       },
       '.ant-input-number-group-addon': {
-        background: '#fff !important',
+        background: `${disabled ? '#f8f8f8' : '#fff'} !important`,
         border: 'none !important'
       },
       '.ant-input-number-input-wrap input::placeholder': {
@@ -181,6 +181,9 @@ export default function InputNumber(props: IProps) {
       },
       '.input-wrapper:hover': {
         border: `1px solid ${disabled ? '#E1E1E1' : '#9c9c9c'}`
+      },
+      '.ant-form-item-control-input-content': {
+        background: disabled ? '#f8f8f8' : '#fff'
       }
     }
   })
