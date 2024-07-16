@@ -2,6 +2,7 @@ import { FormattedMessage, useModel } from '@umijs/max'
 import { useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
+import Button from '@/components/Base/Button'
 import Hidden from '@/components/Base/Hidden'
 
 import CopyTrading from './comp/CopyTrading'
@@ -41,8 +42,34 @@ export default function copyTrading() {
       fluidWidth
       tabList={tabList}
       renderHeader={() => (
-        <div className="w-full mb-2 cursor-pointer">
-          <img src="/img/gendan-banner.png" className="w-full h-[80px] bg-gray-100" />
+        <div
+          className="w-full mb-2 cursor-pointer h-[5rem] bg-no-repeat bg-contain px-[1.125rem] py-4 flex items-center "
+          style={{
+            backgroundImage: 'url(/img/gendan-banner.png)',
+            backgroundSize: '100% 100%'
+          }}
+        >
+          <div
+            className="p-[1px] rounded-xl xl:h-[50px] h-[46px] w-[10rem] ml-auto "
+            style={{
+              background: 'linear-gradient(315deg, rgba(236, 236, 236, 0.61), rgba(255, 255, 255, 1))'
+            }}
+          >
+            <Button
+              type="primary"
+              height={48}
+              style={{
+                background: 'linear-gradient( 270deg, #8035FE 0%, #183EFC 100%)',
+                width: '100%',
+                borderRadius: 12
+              }}
+              onClick={() => {
+                // todo 跳转
+              }}
+            >
+              <FormattedMessage id="mt.lijicanjia" />
+            </Button>
+          </div>
         </div>
       )}
       headerWrapperStyle={{ height: 160 }}

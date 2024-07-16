@@ -32,6 +32,7 @@ export const gray = {
 
 // 黄色 色值50 - 900 阶梯加深
 export const yellow = {
+  490: '#FCD535',
   500: '#FDD436',
   550: '#F5B52C',
   560: '#FFA90E',

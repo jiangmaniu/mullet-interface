@@ -1,0 +1,179 @@
+import './style.less'
+
+import { SwapRightOutlined } from '@ant-design/icons'
+import { FormattedMessage, useIntl } from '@umijs/max'
+import { Space, Tag } from 'antd'
+import classNames from 'classnames'
+
+import Button from '@/components/Base/Button'
+import Iconfont from '@/components/Base/Iconfont'
+import { colorTextPrimary } from '@/theme/theme.config'
+
+export type IOrderTakerState = 'gendan' | 'yigendan' | 'yimanyuan' | 'wufagendan'
+export type IOrderAccountType = 'biaozhun' | 'luodian' | 'meifen'
+
+export type IOrderAccount = {
+  id: string
+  name: string
+  avatar?: string
+  type: IOrderAccountType
+  followers: number
+  limitFollowers: number
+}
+
+export type IOrderTaker = {
+  account: IOrderAccount
+  datas: Record<string, any>
+  tags: any[]
+  state: IOrderTakerState
+}
+
+export type IOrderTakerProps = {
+  taker: IOrderTaker
+  state: Record<string, any> // 页面状态
+}
+
+export const OrderTaker = ({ taker: { account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
+  const intl = useIntl()
+
+  // xx(xx:时间区间)盈亏
+  const jinqi = intl.formatMessage({ id: `mt.${state.jinqi}` })
+
+  const getColor = (val: number) => (val > 0 ? 'text-green' : 'text-red')
+
+  return (
+    <div className=" border rounded-2xl border-gray-150 flex flex-col xl:w-[25rem] max-w-full flex-1 p-5.5">
+      {/* header */}
+      <div className=" flex flex-col gap-5">
+        {/* account */}
+        <div className=" flex items-center gap-4 justify-between">
+          <div className=" flex flex-row gap-4">
+            <img src={account.avatar} width={54} height={54} className=" rounded-xl border border-solid border-gray-500" />
+            <div className=" flex flex-col gap-2">
+              <div className=" flex gap-2 items-center ">
+                <span className="account-name">{account.name}</span>
+                {account.type === 'biaozhun' ? (
+                  <Tag style={{ background: 'var(--color-yellow-490)', width: '2.625rem', height: '1.25rem', fontSize: '0.75rem' }}>
+                    <FormattedMessage id={`mt.${account.type}`} />
+                  </Tag>
+                ) : account.type === 'luodian' ? (
+                  <Tag
+                    style={{
+                      background: 'var(--color-green-700)',
+                      color: 'white',
+                      width: '2.625rem',
+                      height: '1.25rem',
+                      fontSize: '0.75rem'
+                    }}
+                  >
+                    <FormattedMessage id={`mt.${account.type}`} />
+                  </Tag>
+                ) : (
+                  <Tag style={{ background: 'black', color: 'white', width: '2.625rem', height: '1.25rem', fontSize: '0.75rem' }}>
+                    <FormattedMessage id={`mt.${account.type}`} />
+                  </Tag>
+                )}
+              </div>
+              <div className="flex items-center gap-1">
+                <Iconfont name="renshu" width={16} color="black" height={16} hoverColor={colorTextPrimary} />
+                <span>
+                  <span className=" text-sm">{account.followers}</span>
+                  <span className=" text-sm text-gray-500">/{account.limitFollowers}</span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <Button
+            height={26}
+            style={{
+              width: 54,
+              borderRadius: 16
+            }}
+          >
+            <SwapRightOutlined style={{ color: 'black' }} />
+          </Button>
+        </div>
+        {/* datas */}
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-2">
+              <span className="tips">
+                <FormattedMessage id="mt.jinqiyingkui" values={{ range: jinqi }} />
+                &nbsp;USD
+              </span>
+              <span className={classNames('  text-2xl font-bold ', getColor(datas.rate1))}>
+                {datas.rate1 > 0 ? `+${datas.rate1}` : datas.rate1}
+              </span>
+              <span className="tips">
+                <FormattedMessage id="mt.shouyilv" />
+                &nbsp;
+                <span className={classNames('font-medium', getColor(datas.rate2))}>
+                  {datas.rate2 > 0 ? `+${datas.rate2}` : datas.rate2}%
+                </span>
+              </span>
+            </div>
+            <div>图表</div>
+          </div>
+          <div className=" grid grid-cols-3">
+            <div className="flex flex-col gap-1">
+              <span className="count">{Number(datas.rate3).toLocaleString()}</span>
+              <span className="tips">
+                <FormattedMessage id="mt.quanbuyingkui" />
+                &nbsp;USD
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="count">{Number(datas.rate4).toLocaleString()}</span>
+              <span className="tips">
+                <FormattedMessage id="mt.leijijiaoyibishu" />
+              </span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="count">{Number(datas.rate5).toLocaleString()}</span>
+              <span className="tips">
+                <FormattedMessage id="mt.leijigensuirenshu" />
+              </span>
+            </div>
+
+            <div className="flex flex-row gap-1 items-end">
+              <span className="tips">
+                <FormattedMessage id="mt.jinqishenglv" values={{ range: jinqi }} />
+              </span>
+              <span className={classNames('count', getColor(datas.rate6))}>{datas.rate6 > 0 ? `+${datas.rate6}` : datas.rate6}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* footer */}
+      <Space direction="vertical" size={10} className="border-t mt-4 border-gray-150">
+        <Space>
+          {' '}
+          {tags.map((tag, idx) => (
+            <Tag key={idx} color="green">
+              <FormattedMessage id={`mt.${tag}`} />
+            </Tag>
+          ))}{' '}
+        </Space>
+        <Button
+          height={42}
+          type="primary"
+          style={{
+            background: takerState === 'yimanyuan' ? '#f49b1e' : '',
+            width: '100%',
+            borderRadius: 8
+          }}
+          disabled={takerState === 'wufagendan'}
+          onClick={() => {
+            // todo 跳转
+          }}
+        >
+          <div className=" flex items-center">
+            {takerState === 'yimanyuan' && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}
+            <FormattedMessage id={`mt.${takerState}`} />
+          </div>
+        </Button>
+      </Space>
+    </div>
+  )
+}
