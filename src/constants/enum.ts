@@ -142,6 +142,11 @@ export const getEnum = () => {
     BGAStatus: {
       BAG: { text: intl.formatMessage({ id: 'mt.chicangzhong' }) },
       FINISH: { text: intl.formatMessage({ id: 'mt.yiwancheng' }) }
+    },
+    // 保证金类型
+    MarginType: {
+      CROSS_MARGIN: { text: intl.formatMessage({ id: 'mt.quancang' }) },
+      ISOLATED_MARGIN: { text: intl.formatMessage({ id: 'mt.zhucang' }) }
     }
   }
 

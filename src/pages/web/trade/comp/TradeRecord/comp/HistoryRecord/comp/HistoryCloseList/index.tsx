@@ -174,6 +174,21 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       }
     },
     {
+      title: <FormattedMessage id="mt.baozhengjinleix" />,
+      dataIndex: 'marginType',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      valueEnum: getEnum().Enum.MarginType,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 160,
+      className: '!text-[13px] text-gray'
+    },
+    {
       title: <FormattedMessage id="mt.jiaoyishijian" />,
       dataIndex: 'createTime',
       hideInSearch: true, // 在 table的查询表单 中隐藏
