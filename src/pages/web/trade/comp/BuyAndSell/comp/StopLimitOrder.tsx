@@ -273,6 +273,7 @@ export default observer(
                 )}
               </span>
             }
+            disabled={trade.isDisabledSymbol}
           />
           <Checkbox
             onChange={(e: any) => {
@@ -327,6 +328,7 @@ export default observer(
                     </div>
                   </>
                 }
+                disabled={trade.isDisabledSymbol}
               />
               <InputNumber
                 showFloatTips={false}
@@ -366,6 +368,7 @@ export default observer(
                     </span>
                   </div>
                 }
+                disabled={trade.isDisabledSymbol}
               />
             </>
           )}
@@ -405,6 +408,7 @@ export default observer(
                 </span>
               </>
             }
+            disabled={trade.isDisabledSymbol}
           />
         </div>
         <div>
@@ -415,6 +419,7 @@ export default observer(
             block
             onClick={onFinish}
             loading={loading}
+            disabled={trade.isDisabledSymbol}
           >
             {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmairu" />} {count}{' '}
             <FormattedMessage id="mt.lot" />
