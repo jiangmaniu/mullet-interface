@@ -390,7 +390,7 @@ class TradeStore {
 
   // 判断本地收藏的品种是否禁用被下架的
   @computed get isDisabledSymbol() {
-    return !this.symbolList.some((item) => item.symbol === this.activeSymbolName)
+    return !this.symbolListAll.some((item) => item.symbol === this.activeSymbolName)
   }
 
   // 根据账户id查询侧边栏菜单交易品种列表
