@@ -29,7 +29,8 @@ export default function Setting() {
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus
   const phone = userInfo?.phone
   const email = userInfo?.email
-  const userName = userInfo?.name || userInfo?.realName
+  const firstName = kycAuthInfo?.firstName
+  const lastName = kycAuthInfo?.lastName
   const isKycAuth = currentUser?.isKycAuth
   const isFinished = isKycAuth && email && phone // 验证是否完成
   let finishedStep = 0 // 已完成步数
@@ -219,12 +220,14 @@ export default function Setting() {
                       </div>
                     </>
                   )}
-                  {userName && (
+                  {firstName && (
                     <>
                       <div className="size-[3px] bg-gray rounded-full mx-4"></div>
                       <div className="flex items-center">
                         <img src="/img/yonghu.png" width={14} height={14} />
-                        <span className="text-sm text-gray pl-2">{userName}</span>
+                        <span className="text-sm text-gray pl-2">
+                          {firstName}·{lastName}
+                        </span>
                       </div>
                     </>
                   )}

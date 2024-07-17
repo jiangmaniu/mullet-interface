@@ -133,7 +133,7 @@ export default function PageContainer({
         >
           <div className="flex items-center relative -left-2 xl:w-1300 w-1120 px-4">
             <div
-              className="hover:bg-gray-100 rounded-full cursor-pointer"
+              className="hover:bg-gray-150 rounded-full cursor-pointer"
               onClick={() => {
                 push(backUrl || `/${backPath}`)
               }}
