@@ -11,8 +11,19 @@ import { request } from '@/utils/request'
 
 // 客户用户-交易账户组
 export async function getAccountGroupList() {
-  return request<API.Response<AccountGroup.AccountGroupItem>>('/api/trade-crm/crmClient/account/accountGroup', {
+  return request<API.Response<AccountGroup.AccountGroupItem[]>>('/api/trade-crm/crmClient/account/accountGroup', {
     method: 'GET'
+  }).then((res) => {
+    if (res?.success && res.data?.length) {
+      res.data.forEach((item) => {
+        const synopsis = item.synopsis
+        if (synopsis && typeof synopsis === 'string') {
+          // 解析账户介绍内容回显
+          item.synopsis = JSON.parse(synopsis)
+        }
+      })
+    }
+    return res
   })
 }
 

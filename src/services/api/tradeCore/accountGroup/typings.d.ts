@@ -76,6 +76,18 @@ declare namespace AccountGroup {
      * 可用历史
      */
     usableHistory?: string
+    /**简介配置 */
+    synopsis?: SynopsisConf
+  }
+  type SynopsisConf = {
+    /**自定义展示的账户名称 */
+    name: string
+    /**简介 */
+    remark: string
+    /**标签 */
+    tag?: string
+    /**动态描述列表 */
+    list?: Array<{ title: string; content: string }>
   }
   // 交易账户组-新增
   type SubmitAccountGroupParams = {

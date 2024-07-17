@@ -64,28 +64,28 @@ export async function getSymbolDetail(params: API.IdParam) {
       symbolConf = formatMultipleValue(['orderType'], symbolConf)
 
       // 预付款配置回显处理
-      const prepaymentConf = symbolConf?.prepaymentConf as unknown as Symbol.PrepaymentConf
+      const prepaymentConf = symbolConf?.prepaymentConf
       if (prepaymentConf) {
         // @ts-ignore
         symbolConf.prepaymentConf = transformTradePrepaymentConfShow(prepaymentConf)
       }
 
       // 库存费配置回显处理
-      const holdingCostConf = symbolConf?.holdingCostConf as unknown as Symbol.HoldingCostConf
+      const holdingCostConf = symbolConf?.holdingCostConf
       if (holdingCostConf) {
         // @ts-ignore
         symbolConf.holdingCostConf = transformTradeInventoryShow(holdingCostConf)
       }
 
       // 交易时间配置回显处理
-      const tradeTimeConf = symbolConf?.tradeTimeConf as unknown as Symbol.TradeTimeConf
+      const tradeTimeConf = symbolConf?.tradeTimeConf
       if (tradeTimeConf) {
         // @ts-ignore
         symbolConf.tradeTimeConf = transformTradeTimeShow(tradeTimeConf)
       }
 
       // 手续费配置回显处理
-      const transactionFeeConf = symbolConf?.transactionFeeConf as unknown as Symbol.TransactionFeeConf
+      const transactionFeeConf = symbolConf?.transactionFeeConf
       if (transactionFeeConf) {
         // @ts-ignore
         symbolConf.transactionFeeConf = transformTradeFeeShow(transactionFeeConf)
