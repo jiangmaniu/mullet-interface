@@ -7,33 +7,10 @@ import classNames from 'classnames'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
+import { IOrderTakerProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 
 import OrderTakerChart from './Chart'
-
-export type IOrderTakerState = 'gendan' | 'yigendan' | 'yimanyuan' | 'wufagendan'
-export type IOrderAccountType = 'biaozhun' | 'luodian' | 'meifen'
-
-export type IOrderAccount = {
-  id: string
-  name: string
-  avatar?: string
-  type: IOrderAccountType
-  followers: number
-  limitFollowers: number
-}
-
-export type IOrderTaker = {
-  account: IOrderAccount
-  datas: Record<string, any>
-  tags: any[]
-  state: IOrderTakerState
-}
-
-export type IOrderTakerProps = {
-  taker: IOrderTaker
-  state: Record<string, any> // 页面状态
-}
 
 export const OrderTaker = ({ taker: { account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
   const intl = useIntl()

@@ -52,55 +52,65 @@ export default function Tabs({
   marginBottom,
   ...res
 }: IProps) {
-  let tabItems = tabList as ITabItem[]
-  const [tabKey, setTabKey] = useState(tabItems[0]?.key || '')
+  // let tabItems = tabList as ITabItem[]
+  const [tabItems, setTabItems] = useState<ITabItem[]>([])
+  const [tabKey, setTabKey] = useState(tabList[0]?.key || '')
 
-  let tabLabel: any = ''
-  if (tabItems.length) {
-    const item = tabItems.find((item) => item.key === tabKey) || ({} as ITabItem)
-    tabLabel = item.label
-    tabItems = tabItems.map((v: ITabItem) => {
-      if (v.icon && typeof v.icon === 'string') {
-        const isActive = tabKey === v.key
-        const color = isActive ? colorTextPrimary : colorTextSecondary
+  const hoverClassName = useEmotionCss(({ token }) => {
+    return {
+      '&:hover svg': {
+        fill: `${colorTextPrimary} !important`
+      },
+      '&:hover span': {
+        color: `${colorTextPrimary} !important`
+      }
+    }
+  })
 
-        const hoverClassName = useEmotionCss(({ token }) => {
+  useEffect(() => {
+    let tabLabel: any = ''
+    if (tabList.length) {
+      const item = tabList.find((item) => item.key === tabKey) || ({} as ITabItem)
+      tabLabel = item.label
+
+      setTabItems(
+        tabList.map((v: ITabItem) => {
+          let tab = v.label
+          if (v.icon && typeof v.icon === 'string') {
+            const isActive = tabKey === v.key
+            const color = isActive ? colorTextPrimary : colorTextSecondary
+
+            let tab = (
+              <span
+                className={classNames('flex justify-center items-center', hoverClassName)}
+                onClick={() => {
+                  if (showMobileTabs) {
+                    handleChange(v.key)
+                  }
+                }}
+              >
+                <Iconfont name={v.icon} width={v.iconWidth || 26} color={color} height={v.iconHeight || 26} hoverColor={colorTextPrimary} />
+                <span className="font-bold pl-1 text-base" style={{ color }}>
+                  {v.label}
+                </span>
+              </span>
+            )
+          }
+
           return {
-            '&:hover svg': {
-              fill: `${colorTextPrimary} !important`
-            },
-            '&:hover span': {
-              color: `${colorTextPrimary} !important`
-            }
+            ...v,
+            tab
           }
         })
-
-        v.tab = (
-          <span
-            className={classNames('flex justify-center items-center', hoverClassName)}
-            onClick={() => {
-              if (showMobileTabs) {
-                handleChange(v.key)
-              }
-            }}
-          >
-            <Iconfont name={v.icon} width={v.iconWidth || 26} color={color} height={v.iconHeight || 26} hoverColor={colorTextPrimary} />
-            <span className="font-bold pl-1 text-base" style={{ color }}>
-              {v.label}
-            </span>
-          </span>
-        )
-      } else {
-        v.tab = v.tab || v.label
-      }
-      return v
-    })
-  }
+      )
+    }
+  }, [tabList])
 
   // 外部传入的key激活
   useEffect(() => {
-    setTabKey(activeKey || tabItems[0]?.key)
-  }, [activeKey])
+    console.log('tabList')
+    setTabKey(activeKey ?? tabList[0]?.key)
+  }, [activeKey, tabList])
 
   const handleChange = (activeKey: string) => {
     setTabKey(activeKey)
@@ -133,6 +143,30 @@ export default function Tabs({
       </>
     )
   }
+
+  useEffect(() => {
+    console.log(tabItems.length)
+    console.log(showMobileTabs)
+    console.log(tabKey)
+    console.log(tabBarStyle)
+    console.log(tabBarExtraContent)
+    console.log(hiddenBottomLine)
+    console.log(hiddenTabbarLine)
+    console.log(tabBarGutter)
+    console.log(marginBottom)
+    console.log(res)
+  }, [
+    tabItems,
+    showMobileTabs,
+    tabKey,
+    tabBarStyle,
+    tabBarExtraContent,
+    hiddenBottomLine,
+    hiddenTabbarLine,
+    tabBarGutter,
+    marginBottom,
+    res
+  ])
 
   return (
     <>

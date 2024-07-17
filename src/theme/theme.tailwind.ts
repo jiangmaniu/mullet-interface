@@ -130,6 +130,9 @@ export default {
     width: {
       '1120': '70rem',
       '1300': '81.25rem'
+    },
+    gap: {
+      '15': '3.75rem'
     }
   }
 }

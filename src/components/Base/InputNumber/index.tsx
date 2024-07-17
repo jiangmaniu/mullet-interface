@@ -3,7 +3,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import { FormInstance } from 'antd/lib'
 import classnames from 'classnames'
-import { debounce } from 'lodash'
+import { debounce } from 'lodash-es'
 import { useEffect, useRef, useState } from 'react'
 
 import { isTruthy, toFixed } from '@/utils'

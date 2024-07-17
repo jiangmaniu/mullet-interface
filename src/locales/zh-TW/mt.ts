@@ -459,5 +459,14 @@ export default {
   'mt.leijijiaoyibishu': '累計交易筆數',
   'mt.leijigensuirenshu': '累計跟隨人數',
   'mt.jinqishenglv': '{range}勝率',
-  'mt.changjianwenti': '常見問題'
+  'mt.changjianwenti': '常見問題',
+  'mt.daidan': '帶單',
+  'mt.leijifenrun': '累計分潤',
+  'mt.jinrifenrun': '今日分潤',
+  'mt.dangqiangensuirenshu': '當前跟隨人數',
+  'mt.ruzhutianshu': '入住天數',
+  'mt.daidanbaozhengjinyue': '帶單保證金餘額',
+  'mt.guanlizichanguimo': '管理資產規模',
+  'mt.fenrunbili': '分潤比例',
+  'mt.shenqingchengweidaidanyuan': '申請成為帶單員'
 }

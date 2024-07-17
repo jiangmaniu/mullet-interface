@@ -104,7 +104,7 @@ export default function PageContainer({
             'sticky top-[66px] z-[99]': fixedHeader
           })}
         >
-          <div className={classNames('xl:w-1300 w-1120 px-4', !fluidWidth ? 'm-auto' : '')}>
+          <div className={classNames('xl:w-1300 w-1120 mx-4', !fluidWidth ? 'm-auto' : '')}>
             <div className="flex flex-col items-start">
               {renderHeader?.()}
               <Tabs
@@ -131,7 +131,7 @@ export default function PageContainer({
           className={classNames('pt-7 flex items-center px-6 justify-center sticky top-[66px] z-10')}
           style={{ background: pageBgColorMode === 'white' ? '#fff' : bgColorBase, ...backStyle }}
         >
-          <div className="flex items-center relative -left-2 xl:w-1300 w-1120 px-4">
+          <div className="flex items-center relative -left-2 xl:w-1300 w-1120 mx-4">
             <div
               className="hover:bg-gray-150 rounded-full cursor-pointer"
               onClick={() => {

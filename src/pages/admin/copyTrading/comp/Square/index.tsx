@@ -6,9 +6,10 @@ import { useState } from 'react'
 
 import QA from '@/components/Admin/QA'
 import SelectRounded from '@/components/Base/SelectRounded'
+import { IOrderTaker } from '@/models/takers'
 
 import { defaultAccountTypes, defaultTags, defaultTakers, defaultTimeRange } from './mock'
-import { IOrderTaker, OrderTaker } from './OrderTaker'
+import { OrderTaker } from './OrderTaker'
 
 export default function Square() {
   const intl = useIntl()
@@ -49,7 +50,7 @@ export default function Square() {
         <SelectRounded defaultValue={tag} onChange={(i) => handleChange('biaoqian', i.value)} options={tags} />
         <SelectRounded defaultValue={rateOfReturnNear} onChange={(i) => handleChange('jinqi', i.value)} options={timeRange} />
       </Space>
-      <div className="grid xl:grid-cols-3 grid-cols-2 w-full gap-5">
+      <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
         {takers.map((item, idx) => (
           <OrderTaker key={idx} taker={item} state={state} />
         ))}

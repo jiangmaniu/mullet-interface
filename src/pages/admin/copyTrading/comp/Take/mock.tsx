@@ -1,30 +1,13 @@
-import { FormattedMessage } from '@umijs/max'
 import { random } from 'lodash-es'
 
 import { IOrderTaker } from '@/models/takers'
 
-export const defaultAccountTypes = [
-  { value: 'biaozhun', label: <FormattedMessage id="mt.biaozhun" /> },
-  { value: 'luodian', label: <FormattedMessage id="mt.luodian" /> },
-  { value: 'meifen', label: <FormattedMessage id="mt.meifen" /> }
-]
-
-export const defaultTags = [{ value: 'dipin', label: <FormattedMessage id="mt.dipin" /> }]
-
-export const defaultTimeRange = [
-  {
-    value: 'liangzhou',
-    label: <FormattedMessage id="mt.liangzhou" />
-  },
-  {
-    value: 'yiyue',
-    label: <FormattedMessage id="mt.yiyue" />
-  }
-]
+// export const defaultTakers: IOrderTaker[] = []
 
 export const defaultTakers: IOrderTaker[] = [
   {
     account: {
+      // 八位數字隨機數
       id: `${random(10000000, 99999999)}`,
       name: 'Linen_Bitnex',
       type: 'biaozhun',
@@ -38,7 +21,8 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 443300,
+      rate7: 88
     },
     tags: ['dipin'],
     state: 'gendan'
@@ -58,7 +42,8 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: -0.98
+      rate6: 443300,
+      rate7: -88
     },
     tags: ['dipin'],
     state: 'yimanyuan'
@@ -78,7 +63,8 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 443300,
+      rate7: 88
     },
     tags: ['dipin'],
     state: 'wufagendan'
@@ -98,7 +84,8 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 443300,
+      rate7: 88
     },
     tags: ['dipin'],
     state: 'gendan'
@@ -118,7 +105,8 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 443300,
+      rate7: 88
     },
     tags: ['dipin'],
     state: 'yigendan'
@@ -138,7 +126,8 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 443300,
+      rate7: 88
     },
     tags: ['dipin'],
     state: 'wufagendan'
@@ -158,7 +147,8 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 443300,
+      rate7: 88
     },
     tags: ['dipin'],
     state: 'wufagendan'

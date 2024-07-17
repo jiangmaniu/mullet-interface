@@ -1,6 +1,6 @@
 import { message } from 'antd'
 import currency from 'currency.js'
-import lodash, { cloneDeep } from 'lodash'
+import lodash, { cloneDeep } from 'lodash-es'
 import moment from 'moment'
 
 import { DATE } from '@/constants/date'

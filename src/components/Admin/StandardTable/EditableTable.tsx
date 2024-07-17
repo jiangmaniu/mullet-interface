@@ -13,7 +13,7 @@ import { ButtonProps, Popconfirm } from 'antd'
 import { NamePath } from 'antd/es/form/interface'
 import { FormInstance } from 'antd/lib'
 import classNames from 'classnames'
-import { cloneDeep } from 'lodash'
+import { cloneDeep } from 'lodash-es'
 import React, { useEffect, useRef, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'

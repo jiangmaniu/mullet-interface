@@ -4,7 +4,7 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { FormInstance } from 'antd'
 import { DatePicker, DatePickerProps, Toast } from 'antd-mobile'
 import { PickerDate } from 'antd-mobile/es/components/date-picker/util'
-import lodash from 'lodash'
+import lodash from 'lodash-es'
 import moment from 'moment'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 

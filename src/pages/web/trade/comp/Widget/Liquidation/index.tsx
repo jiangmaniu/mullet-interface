@@ -2,7 +2,7 @@ import { ProFormSelect } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import classNames from 'classnames'
-import { cloneDeep, groupBy } from 'lodash'
+import { cloneDeep, groupBy } from 'lodash-es'
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
