@@ -37,6 +37,9 @@ export const KEY_FAVORITE = NAMESPACE + '_' + 'favorite_list'
 // 按账户id储存用户的设置信息：自选、打开的品种列表、激活的品种名称
 export const KEY_USER_CONF_INFO = NAMESPACE + '_' + 'user_conf_info'
 
+// 当前切换的主题色
+export const KEY_THEME = NAMESPACE + '_' + 'theme'
+
 // 默认语言 en-US
 export const DEFAULT_LOCALE = 'en-US'
 

@@ -52,7 +52,6 @@ export default function Tabs({
   marginBottom,
   ...res
 }: IProps) {
-  // let tabItems = tabList as ITabItem[]
   const [tabItems, setTabItems] = useState<ITabItem[]>([])
   const [tabKey, setTabKey] = useState(tabList[0]?.key || '')
 
@@ -80,7 +79,7 @@ export default function Tabs({
             const isActive = tabKey === v.key
             const color = isActive ? colorTextPrimary : colorTextSecondary
 
-            let tab = (
+            tab = (
               <span
                 className={classNames('flex justify-center items-center', hoverClassName)}
                 onClick={() => {

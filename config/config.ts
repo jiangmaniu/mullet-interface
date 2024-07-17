@@ -2,7 +2,6 @@
 import { defineConfig } from '@umijs/max'
 import { join } from 'path'
 import { DEFAULT_LOCALE } from '../src/constants/index'
-import themeColor from '../src/theme/theme.antd'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 import routes from './routes'
@@ -120,11 +119,11 @@ export default defineConfig({
     // shortcut of `configProvider.theme`
     // use to configure theme token, antd v5 only
     // 配置 antd@5 的 theme token，等同于配置 configProvider.theme，且该配置项拥有更高的优先级
-    theme: {
-      token: {
-        ...themeColor
-      }
-    },
+    // theme: {
+    //   token: {
+    //     ...themeColor
+    //   }
+    // },
     // antd <App /> valid for version 5.1.0 or higher, default: undefined
     appConfig: {},
     // 配置 antd 的 DatePicker、TimePicker、Calendar 组件是否使用 moment 作为日期处理库，默认为 false
