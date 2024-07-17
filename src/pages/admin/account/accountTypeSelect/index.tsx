@@ -100,32 +100,25 @@ function AccountList() {
                   className="absolute left-[-2px] top-0"
                 />
                 <div className="h-[60px] flex items-center justify-end">
-                  {idx === 0 && (
+                  {/* 标签 */}
+                  {item.synopsis?.tag && (
                     <div className="flex items-center justify-end">
-                      <div className="text-white text-sm bg-primary rounded px-3 py-[3px]">
-                        <FormattedMessage id="mt.jianyi" />
-                      </div>
+                      <div className="text-white text-sm bg-primary rounded px-3 py-[3px]">{item.synopsis?.tag}</div>
                     </div>
                   )}
                 </div>
                 <div>
-                  <div className="pb-[14px] text-gray text-[24px] font-bold truncate">{item.groupName}</div>
-                  <div className="text-gray-secondary text-sm">最热门！适合所有交易者的理想账户</div>
+                  <div className="pb-[14px] text-gray text-[24px] font-bold truncate">{item.synopsis?.name || item?.groupName}</div>
+                  <div className="text-gray-secondary text-sm truncate">{item.synopsis?.remark}</div>
                 </div>
                 <div className="border-b border-gray-250/25 my-7"></div>
                 <div>
-                  <div className="flex items-center justify-between pb-7">
-                    <div className="text-base text-gray-secondary">最低入金金额</div>
-                    <div className="text-base text-gray font-semibold">1 {item.currencyUnit}</div>
-                  </div>
-                  <div className="flex items-center justify-between pb-7">
-                    <div className="text-base text-gray-secondary">点差</div>
-                    <div className="text-base text-gray font-semibold">0.30 起</div>
-                  </div>
-                  <div className="flex items-center justify-between pb-7">
-                    <div className="text-base text-gray-secondary">手续费</div>
-                    <div className="text-base text-gray font-semibold">无手续费</div>
-                  </div>
+                  {(item.synopsis?.list || []).slice(0, 3).map((v, index) => (
+                    <div className="flex items-center justify-between pb-7" key={index}>
+                      <div className="text-base text-gray-secondary">{v.title}</div>
+                      <div className="text-base text-gray font-semibold">{v.content}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             )

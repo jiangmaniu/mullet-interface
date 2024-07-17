@@ -42,7 +42,7 @@ declare namespace Symbol {
     /**
      * 库存费配置（JSON）
      */
-    holdingCostConf?: string | HoldingCostConf
+    holdingCostConf?: HoldingCostConf
     /**
      * 图标
      */
@@ -74,7 +74,7 @@ declare namespace Symbol {
     /**
      * 预付款配置（JSON）
      */
-    prepaymentConf?: string | PrepaymentConf
+    prepaymentConf?: PrepaymentConf
     /**
      * 货币-预付款货币
      */
@@ -94,7 +94,7 @@ declare namespace Symbol {
     /**
      * 报价配置（JSON）
      */
-    quotationConf?: string | QuotationConf
+    quotationConf?: QuotationConf
     /**
      * 交易-最高报价延迟
      */
@@ -106,7 +106,7 @@ declare namespace Symbol {
     /**
      * 常规-点差配置（JSON）
      */
-    spreadConf?: string | SpreadConf
+    spreadConf?: SpreadConf
     /**
      * 状态
      */
@@ -142,11 +142,11 @@ declare namespace Symbol {
     /**
      * 交易时间（JSON）
      */
-    tradeTimeConf?: string | TradeTimeConf
+    tradeTimeConf?: TradeTimeConf
     /**
      * 手续费配置（JSON）
      */
-    transactionFeeConf?: string | TransactionFeeConf
+    transactionFeeConf?: TransactionFeeConf
   }
 
   // 点差配置
@@ -361,7 +361,7 @@ declare namespace Symbol {
     /**
      * 库存费配置（JSON）
      */
-    holdingCostConf?: string | HoldingCostConf
+    holdingCostConf?: HoldingCostConf
     /**
      * 主键
      */
@@ -385,7 +385,7 @@ declare namespace Symbol {
     /**
      * 预付款配置（JSON）
      */
-    prepaymentConf?: string | PrepaymentConf
+    prepaymentConf?: PrepaymentConf
     /**
      * 货币-预付款货币
      */
@@ -405,7 +405,7 @@ declare namespace Symbol {
     /**
      * 报价配置（JSON）
      */
-    quotationConf?: string | QuotationConf
+    quotationConf?: QuotationConf
     /**
      * 交易-最高报价延迟
      */
@@ -413,7 +413,7 @@ declare namespace Symbol {
     /**
      * 常规-点差配置（JSON）
      */
-    spreadConf?: string | SpreadConf
+    spreadConf?: SpreadConf
     /**
      * 交易-交易方向
      */
