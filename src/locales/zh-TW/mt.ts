@@ -458,5 +458,6 @@ export default {
   'mt.quanbuyingkui': '全部盈虧',
   'mt.leijijiaoyibishu': '累計交易筆數',
   'mt.leijigensuirenshu': '累計跟隨人數',
-  'mt.jinqishenglv': '{range}勝率'
+  'mt.jinqishenglv': '{range}勝率',
+  'mt.changjianwenti': '常見問題'
 }

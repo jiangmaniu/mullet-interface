@@ -4,6 +4,7 @@ import { useIntl } from '@umijs/max'
 import { Space } from 'antd'
 import { useState } from 'react'
 
+import QA from '@/components/Admin/QA'
 import SelectRounded from '@/components/Base/SelectRounded'
 
 import { defaultAccountTypes, defaultTags, defaultTakers, defaultTimeRange } from './mock'
@@ -53,6 +54,7 @@ export default function Square() {
           <OrderTaker key={idx} taker={item} state={state} />
         ))}
       </div>
+      <QA />
     </Space>
   )
 }

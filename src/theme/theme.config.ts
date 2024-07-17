@@ -71,6 +71,7 @@ export const hoverBg = 'rgba(225, 225, 225, .2)'
 export const bgColorBase = gray['50']
 export const pageContainerHeaderBg = '#F8FBFD'
 
+export const colorSoftWhite = 'rgba(250, 250, 250, 1)'
 export const colorWhite = '#fff'
 export const colorBlack = '#000'
 
