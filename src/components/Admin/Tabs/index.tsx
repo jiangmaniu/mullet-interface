@@ -55,6 +55,17 @@ export default function Tabs({
   let tabItems = tabList as ITabItem[]
   const [tabKey, setTabKey] = useState(tabItems[0]?.key || '')
 
+  const hoverClassName = useEmotionCss(({ token }) => {
+    return {
+      '&:hover svg': {
+        fill: `${colorTextPrimary} !important`
+      },
+      '&:hover span': {
+        color: `${colorTextPrimary} !important`
+      }
+    }
+  })
+
   let tabLabel: any = ''
   if (tabItems.length) {
     const item = tabItems.find((item) => item.key === tabKey) || ({} as ITabItem)
@@ -63,17 +74,6 @@ export default function Tabs({
       if (v.icon && typeof v.icon === 'string') {
         const isActive = tabKey === v.key
         const color = isActive ? colorTextPrimary : colorTextSecondary
-
-        const hoverClassName = useEmotionCss(({ token }) => {
-          return {
-            '&:hover svg': {
-              fill: `${colorTextPrimary} !important`
-            },
-            '&:hover span': {
-              color: `${colorTextPrimary} !important`
-            }
-          }
-        })
 
         v.tab = (
           <span

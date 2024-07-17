@@ -9,6 +9,7 @@ import {
   KEY_PARAMS,
   KEY_PWD,
   KEY_SYMBOL_NAME_LIST,
+  KEY_THEME,
   KEY_TOKEN,
   KEY_USER_CONF_INFO,
   KEY_USER_INFO
@@ -60,6 +61,10 @@ export const STORAGE_REMOVE_FAVORITE = storageRemove(KEY_FAVORITE)
 export const STORAGE_GET_CONF_INFO = genStorageGet(KEY_USER_CONF_INFO)
 export const STORAGE_SET_CONF_INFO = genStorageSet(KEY_USER_CONF_INFO)
 export const STORAGE_REMOVE_CONF_INFO = storageRemove(KEY_USER_CONF_INFO)
+
+// 主题色
+export const STORAGE_GET_THEME = genStorageGet(KEY_THEME)
+export const STORAGE_SET_THEME = genStorageSet(KEY_THEME)
 
 // =================================================
 

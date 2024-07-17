@@ -41,7 +41,7 @@ export const goLogin = () => {
 export const goKefu = () => {}
 
 /**
- * 路径中是否存在语言
+ * 获取多语言路径信息
  */
 export const getPathnameLng = () => {
   const pathname = location.pathname
