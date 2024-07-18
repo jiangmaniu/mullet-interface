@@ -6,12 +6,13 @@ import { observer } from 'mobx-react'
 import { useRef } from 'react'
 
 import StandardTable from '@/components/Admin/StandardTable'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { formatNum, toFixed } from '@/utils'
-import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import { getBuySellInfo } from '@/utils/business'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import PendingOrderCancelModal from '../../../Modal/PendingOrderCancelModal'
@@ -62,7 +63,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
         const buySellInfo = getBuySellInfo(record)
         return (
           <div className="flex items-center">
-            <img width={26} height={26} alt="" src={getSymbolIcon(record.imgUrl)} className="rounded-full border border-gray-90" />
+            <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-semibold text-gray">{record.symbol}</span>
               <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>

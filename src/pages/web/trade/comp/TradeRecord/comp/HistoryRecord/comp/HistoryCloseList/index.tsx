@@ -5,12 +5,13 @@ import { observer } from 'mobx-react'
 import React, { useEffect, useState } from 'react'
 
 import StandardTable from '@/components/Admin/StandardTable'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { formatNum, toFixed } from '@/utils'
-import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import { getBuySellInfo } from '@/utils/business'
 
 type Item = Order.TradeRecordsPageListItem
 
@@ -70,7 +71,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
         const buySellInfo = getBuySellInfo(record)
         return (
           <div className="flex items-center">
-            <img width={26} height={26} alt="" src={getSymbolIcon(record.imgUrl)} className="rounded-full border border-gray-90" />
+            <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-semibold text-gray">{record.symbol}</span>
               <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>

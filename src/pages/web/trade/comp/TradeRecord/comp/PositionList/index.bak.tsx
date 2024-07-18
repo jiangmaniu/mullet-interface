@@ -14,9 +14,10 @@ import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { copyContent, formatNum, formatTime, groupBy, toFixed } from '@/utils'
-import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import { getBuySellInfo } from '@/utils/business'
 import { calcForceClosePrice, calcYieldRate, covertProfit } from '@/utils/wsUtil'
 
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getCurrentQuote } from '@/utils/wsUtil'
 import ClosePositionConfirmModal from '../../../Modal/ClosePositionConfirmModal'
 import SetStopLossProfitModal from '../../../Modal/SetStopLossProfitModal'
@@ -230,7 +231,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
             <div key={idx} className="mb-3 rounded-xl border border-primary">
               <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
                 <div className="flex items-center">
-                  <img width={22} height={22} alt="" src={getSymbolIcon(v.imgUrl)} className="rounded-full border border-gray-90" />
+                  <SymbolIcon src={v?.imgUrl} width={22} height={22} />
                   <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
                   <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
                   {/*爆仓信号灯暂时不做 */}
