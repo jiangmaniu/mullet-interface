@@ -332,13 +332,19 @@ declare namespace User {
      */
     remark?: string
     /**
-     * 状态
+     * 启用禁用交易账号连接状态
      */
     status?: API.Status
+    /**启用禁用交易账号 */
+    isTrade?: boolean
     /**追加预付款比例 */
     addAdvanceCharge?: number
     /**强制平仓比例 */
     compelCloseRatio?: number
+    /**禁用账户组选择连接 */
+    enableConnect: boolean
+    /**禁用账户组交易 */
+    enableTrade: boolean
   }
   // 区域列表
   type AreaCodeItem = {
