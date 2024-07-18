@@ -1,5 +1,6 @@
 import { FormattedMessage } from '@umijs/max'
 import { useNetwork } from 'ahooks'
+import { Tooltip } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import Marquee from 'react-fast-marquee'
@@ -16,24 +17,44 @@ function Footer() {
   const connectStatus = ws.connectStatus
   const isConnected = connectStatus === 'CONNECTED' && networkState.online
 
-  let connectedStatusName = networkState.online ? (
-    {
-      NOCONNECT: <FormattedMessage id="mt.lianjiezhong" />,
-      DISCONNECTING: <FormattedMessage id="mt.duankailianjie" />,
-      CONNECTED: <FormattedMessage id="mt.lianjiezhengchang" />
-    }[connectStatus]
-  ) : (
-    <FormattedMessage id="mt.duankailianjie" />
-  )
+  const DISCONNECTING = {
+    title: <FormattedMessage id="mt.duankailianjie" />,
+    desc: <FormattedMessage id="mt.hangqingyiduankaitips" />,
+    color: '--color-red-600',
+    status: 'DISCONNECTING'
+  }
+  let connectedStatusMap = networkState.online
+    ? {
+        NOCONNECT: {
+          title: <FormattedMessage id="mt.lianjiezhong" />,
+          desc: <FormattedMessage id="mt.hangqinglianjiezhongtips" />,
+          color: '--color-yellow-500',
+          status: 'NOCONNECT'
+        },
+        DISCONNECTING,
+        CONNECTED: {
+          title: <FormattedMessage id="mt.lianjiezhengchang" />,
+          desc: <FormattedMessage id="mt.hangqinglianjiezhengchengtips" />,
+          color: '--color-green-700',
+          status: 'CONNECTED'
+        }
+      }[connectStatus]
+    : DISCONNECTING
 
   return (
     <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white px-5 pb-2 pt-2 border-t border-gray-100 z-40">
-      <div className="flex items-center border-r border-r-gray-200 pr-3">
-        <div className="flex items-center">
-          <SignalIcon color={isConnected ? `var(--color-green-700)` : 'var(--color-text-secondary)'} />
-          <span className="pl-1 text-xs font-normal text-gray-weak">{connectedStatusName}</span>
+      <Tooltip placement="topLeft" title={connectedStatusMap.desc}>
+        <div className="flex items-center border-r border-r-gray-200 pr-3">
+          <div className="flex items-center">
+            {connectedStatusMap.status === 'DISCONNECTING' ? (
+              <img src="/img/duankailianjie.png" width={16} height={14} />
+            ) : (
+              <SignalIcon color={`var(${connectedStatusMap.color})`} />
+            )}
+            <span className="pl-1 text-xs font-normal text-gray-weak">{connectedStatusMap.title}</span>
+          </div>
         </div>
-      </div>
+      </Tooltip>
       <div className="flex h-full flex-1 items-center overflow-x-auto">
         <Marquee pauseOnHover speed={30} gradient>
           {trade.symbolList.map((item, idx) => {
