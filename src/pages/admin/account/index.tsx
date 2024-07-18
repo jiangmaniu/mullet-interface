@@ -200,6 +200,7 @@ function Account() {
                     trade.setCurrentAccountInfo(item)
                     trade.jumpTrade()
                   }}
+                  disabled={trade.disabledConect(item)}
                 >
                   <FormattedMessage id="mt.jiaoyi" />
                 </Button>

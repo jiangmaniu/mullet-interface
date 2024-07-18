@@ -73,7 +73,7 @@ export default observer(
           className={classNames({
             'h-[700px] w-[300px] bg-white relative': isPc,
             [className]: isPc,
-            'pointer-events-none': trade.isDisabledSymbol
+            'pointer-events-none': trade.disabledTrade
           })}
         >
           <Tabs
