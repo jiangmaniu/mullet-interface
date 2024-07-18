@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 import themeColor from '@/theme/theme.antd'
 import themeDarkColor from '@/theme/theme.antd.dark'
+import { showInsetEffect } from '@/utils/antdWave'
 import { STORAGE_GET_THEME, STORAGE_SET_THEME } from '@/utils/storage'
 
 export type IThemeMode = 'default' | 'dark'
@@ -46,6 +47,9 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
           token: {
             ...themeToken
           }
+        }}
+        wave={{
+          showEffect: showInsetEffect
         }}
       >
         {children}
