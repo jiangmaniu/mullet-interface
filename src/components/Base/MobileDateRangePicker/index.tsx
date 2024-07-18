@@ -83,24 +83,24 @@ export default forwardRef(
       const formattedDate = moment(val).format('YYYY-MM-DD')
       if (selectedKey === 'start') {
         if (dates.endDate && moment(dates.endDate).isBefore(val)) {
-          return Toast.show(intl.formatMessage({ id: 'admin.timeTips1' }))
+          return Toast.show(intl.formatMessage({ id: 'mt.timeTips1' }))
         }
         const diffDay = Math.abs(moment(val).diff(moment(dates.endDate), 'days'))
 
         if (diffDay > 90 && showLimit) {
-          return Toast.show(intl.formatMessage({ id: 'admin.shijianbunengdayusangeyue' }))
+          return Toast.show(intl.formatMessage({ id: 'mt.shijianbunengdayusangeyue' }))
         }
 
         setDates({ ...dates, startDate: formattedDate })
       } else if (selectedKey === 'end') {
         if (dates.startDate && moment(dates.startDate).isAfter(val)) {
-          return Toast.show(intl.formatMessage({ id: 'admin.timeTips2' }))
+          return Toast.show(intl.formatMessage({ id: 'mt.timeTips2' }))
         }
 
         const diffDay = Math.abs(moment(val).diff(moment(dates.startDate), 'days'))
 
         if (diffDay > 90 && showLimit) {
-          return Toast.show(intl.formatMessage({ id: 'admin.shijianbunengdayusangeyue' }))
+          return Toast.show(intl.formatMessage({ id: 'mt.shijianbunengdayusangeyue' }))
         }
 
         setDates({ ...dates, endDate: formattedDate })

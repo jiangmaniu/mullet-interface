@@ -122,7 +122,7 @@ const LineChat = () => {
     tooltip: {
       showMarkers: false,
       formatter: (d: any) => {
-        return { name: getIntl().formatMessage({ id: 'admin.yongjin' }), value: d.value }
+        return { name: getIntl().formatMessage({ id: 'mt.yongjin' }), value: d.value }
       }
     },
     // padding: [40, 0, 40, 40],

@@ -69,7 +69,7 @@ export const Message = () => {
     return messageDom
   }
   return (
-    <Tooltip placement="bottomRight" title={<FormattedMessage id="admin.message.myMessage" />}>
+    <Tooltip placement="bottomRight" title={<FormattedMessage id="mt.myMessage" />}>
       {messageDom}
     </Tooltip>
   )
