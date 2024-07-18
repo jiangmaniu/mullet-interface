@@ -133,6 +133,9 @@ export default observer(
       }
     }
 
+    // 禁用交易按钮
+    const disabledBtn = (sp && sp < sp_scope) || (sl && sl > sl_scope)
+
     const renderContent = () => {
       return (
         <>
@@ -204,7 +207,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <>
+                  <div className={classNames('!font-dingpro-regular', { '!text-red': sl && sl > sl_scope })}>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
@@ -216,7 +219,7 @@ export default observer(
                       &nbsp;
                       {formatNum(slProfit)} USD
                     </span>
-                  </>
+                  </div>
                 }
               />
               <InputNumber
@@ -247,7 +250,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <span className="!font-dingpro-regular">
+                  <span className={classNames('!font-dingpro-regular', { '!text-red': sp && sp < sp_scope })}>
                     <FormattedMessage id="mt.fanwei" />
                     &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                     &nbsp;
@@ -258,7 +261,7 @@ export default observer(
             </div>
           </div>
           <div className="flex items-center justify-between pt-4">
-            <Button block onClick={onFinish} type="primary" loading={loading}>
+            <Button block onClick={onFinish} type="primary" loading={loading} disabled={disabledBtn}>
               <FormattedMessage id="common.queren" />
             </Button>
           </div>

@@ -141,6 +141,9 @@ export default observer(
       }
     }
 
+    // 禁用交易按钮
+    const disabledBtn = (sp && sp < sp_scope) || (sl && sl > sl_scope) || (price && price > priceTip)
+
     const renderContent = () => {
       return (
         <>
@@ -202,7 +205,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <>
+                    <div className={classNames('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
                       {item.type === 'LIMIT_BUY_ORDER'
@@ -215,7 +218,7 @@ export default observer(
                         ? '≤'
                         : null}{' '}
                       {priceTip}
-                    </>
+                    </div>
                   }
                 />
                 <InputNumber
@@ -245,8 +248,8 @@ export default observer(
                     }
                   }}
                   tips={
-                    <>
-                      <span className="!font-dingpro-regular">
+                    <div className={classNames('!font-dingpro-regular', { '!text-red': sl && sl > sl_scope })}>
+                      <span>
                         <FormattedMessage id="mt.fanwei" />
                         &nbsp;
                         {isBuy ? '≤' : '≥'}&nbsp;
@@ -257,7 +260,7 @@ export default observer(
                         &nbsp;
                         {formatNum(slProfit)} USD
                       </span>
-                    </>
+                    </div>
                   }
                 />
                 <InputNumber
@@ -287,7 +290,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <span className="!font-dingpro-regular">
+                    <span className={classNames('!font-dingpro-regular', { '!text-red': sp && sp < sp_scope })}>
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp; {formatNum(spProfit)} USD
@@ -305,6 +308,7 @@ export default observer(
                 })}
                 type="primary"
                 loading={loading}
+                disabled={disabledBtn}
               >
                 <FormattedMessage id="common.queren" />
               </Button>
