@@ -4,11 +4,11 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
-import { getSymbolIcon } from '@/utils/business'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Futures from '../Futures'
@@ -46,13 +46,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   }}
                   ref={openSidebarRef}
                 >
-                  <img
-                    width={24}
-                    height={24}
-                    alt=""
-                    src={getSymbolIcon(symbolInfo?.imgUrl)}
-                    className="rounded-full relative xl:top-[9px] xxl:top-0 border border-gray-90"
-                  />
+                  <SymbolIcon width={24} height={24} src={symbolInfo?.imgUrl} className="relative xl:top-[9px] xxl:top-0" />
                   <div className="flex items-center">
                     <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>
                     <img

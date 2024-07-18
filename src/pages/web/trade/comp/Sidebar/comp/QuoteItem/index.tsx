@@ -3,10 +3,10 @@ import { Col, Row } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
-import { getSymbolIcon } from '@/utils/business'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
@@ -74,7 +74,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
                 trade.toggleSymbolFavorite(symbol)
               }}
             />
-            <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
+            <SymbolIcon src={item?.imgUrl} width={28} height={28} />
             <div className="flex flex-col pl-1">
               <span className="pl-[6px] text-xs font-semibold text-gray tracking-[0.5px]">{item.symbol}</span>
               {/* 币种描述  */}

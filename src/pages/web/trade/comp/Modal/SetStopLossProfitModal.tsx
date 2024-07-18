@@ -7,11 +7,12 @@ import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
-import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import { getBuySellInfo } from '@/utils/business'
 import { message } from '@/utils/message'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -139,7 +140,7 @@ export default observer(
             <div className="flex w-full flex-col pt-3">
               <div className="flex items-center justify-between max-xl:flex-col max-xl:items-start">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
+                  <SymbolIcon src={item?.imgUrl} width={24} height={24} />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
                 </div>

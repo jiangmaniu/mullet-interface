@@ -7,12 +7,13 @@ import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import Slider from '@/components/Web/Slider'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { toFixed } from '@/utils'
-import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import { getBuySellInfo } from '@/utils/business'
 import { message } from '@/utils/message'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
@@ -112,7 +113,7 @@ export default observer(
           <div className="flex flex-col items-center justify-center">
             <div className="flex w-full items-center justify-between pt-3">
               <div className="flex items-center">
-                <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
+                <SymbolIcon src={item.imgUrl} />
                 <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                 <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
               </div>

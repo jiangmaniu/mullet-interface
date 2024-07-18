@@ -5,12 +5,13 @@ import { useRef } from 'react'
 
 import Empty from '@/components/Base/Empty'
 import ListItem from '@/components/Base/ListItem'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum, formatTime, groupBy, toFixed } from '@/utils'
-import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import { getBuySellInfo } from '@/utils/business'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import PendingOrderCancelModal from '../../../Modal/PendingOrderCancelModal'
@@ -144,7 +145,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
               <div key={idx} className="mb-3 rounded-xl border border-primary">
                 <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
                   <div className="flex items-center">
-                    <img width={22} height={22} alt="" src={getSymbolIcon(v.imgUrl)} className="rounded-full border border-gray-90" />
+                    <SymbolIcon src={v?.imgUrl} width={22} height={22} />
                     <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
                     <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
                   </div>

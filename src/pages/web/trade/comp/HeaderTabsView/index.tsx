@@ -4,10 +4,10 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
-import { getSymbolIcon } from '@/utils/business'
 import { getPathname } from '@/utils/navigator'
 
 import Sidebar from '../Sidebar'
@@ -60,7 +60,7 @@ function HeaderTabsView() {
                       setActiveKey(symbol)
                     }}
                   >
-                    <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
+                    <SymbolIcon src={item.imgUrl} width={28} height={28} />
                     <span className="select-none px-2 text-base font-semibold text-gray">{symbol}</span>
                     {trade.openSymbolNameList.length > 1 && (
                       <img

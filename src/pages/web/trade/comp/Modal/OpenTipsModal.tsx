@@ -8,13 +8,13 @@ import Button from '@/components/Base/Button'
 import ListItem from '@/components/Base/ListItem'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { ORDER_TYPE } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
-import { getSymbolIcon } from '@/utils/business'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 平仓、挂单成功提示
@@ -95,7 +95,7 @@ export default observer((props, ref) => {
             <div className="flex w-full items-center justify-between px-8 pt-3">
               <div className="flex flex-col">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={getSymbolIcon(data?.imgUrl)} className="rounded-full border border-gray-90" />
+                  <SymbolIcon src={data?.imgUrl} width={24} height={24} />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} ·{' '}
