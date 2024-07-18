@@ -76,6 +76,14 @@ type ITradeType =
   /**成交记录 */
   | 'TRADING'
 
+type IConnectStatus =
+  /**未连接 */
+  | 'NOCONNECT'
+  /**断开连接 */
+  | 'DISCONNECTING'
+  /**已连接 */
+  | 'CONNECTED'
+
 // 禁用 MobX 严格模式
 configure({ enforceActions: 'never' })
 
@@ -88,6 +96,7 @@ class WSStore {
   heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
   quotesCacheArr: any = [] // 行情缓存区
   depthCacheArr: any = [] // 深度缓存区
+  @observable connectStatus: IConnectStatus = 'NOCONNECT' // ws连接状态
   @observable socket: any = null
   @observable quotes = {} as Record<string, IQuoteItem> // 当前行情
   @observable depth = {} as Record<string, IDepth> // 当前行情
@@ -107,6 +116,8 @@ class WSStore {
       // debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
     })
     this.socket.addEventListener('open', () => {
+      this.connectStatus = 'CONNECTED'
+
       this.batchSubscribeSymbol()
       this.subscribeDepth()
       this.subscribeTrade()
@@ -121,9 +132,11 @@ class WSStore {
     })
     this.socket.addEventListener('close', () => {
       // this.close()
+      this.connectStatus = 'DISCONNECTING'
     })
     this.socket.addEventListener('error', () => {
       // this.close()
+      this.connectStatus = 'DISCONNECTING'
     })
   }
 
@@ -203,6 +216,7 @@ class WSStore {
     if (this.socket) {
       this.socket.close()
       this.stopHeartbeat()
+      this.connectStatus = 'DISCONNECTING'
     }
   }
   @action
