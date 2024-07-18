@@ -47,7 +47,7 @@ export const transferWeekDay = (weekDay: IWeekDay) => {
     TUESDAY: getIntl().formatMessage({ id: 'mt.xingqier' }),
     WEDNESDAY: getIntl().formatMessage({ id: 'mt.xingqisan' }),
     THURSDAY: getIntl().formatMessage({ id: 'mt.xingqisi' }),
-    FRIDAY: getIntl().formatMessage({ id: 'mt.xingqisi' }),
+    FRIDAY: getIntl().formatMessage({ id: 'mt.xingqiwu' }),
     SATURDAY: getIntl().formatMessage({ id: 'mt.xingqiliu' }),
     SUNDAY: getIntl().formatMessage({ id: 'mt.xingqiri' })
   }[weekDay]
