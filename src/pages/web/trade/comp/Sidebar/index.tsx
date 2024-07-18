@@ -167,6 +167,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         tabBarGutter={28}
         tabBarStyle={{ paddingLeft: 22, paddingRight: 12 }}
         size="small"
+        marginBottom={16}
         tabBarExtraContent={
           showFixSidebar ? (
             <div className="cursor-pointer" onClick={openSidebar}>
