@@ -14,39 +14,40 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 function Footer() {
   const networkState = useNetwork()
   const { ws, trade } = useStores()
-  const connectStatus = ws.connectStatus
-  const isConnected = connectStatus === 'CONNECTED' && networkState.online
+  const readyState = ws.readyState
+  const isConnected = readyState === 'OPEN' && networkState.online
 
-  const DISCONNECTING = {
+  const CLOSED = {
     title: <FormattedMessage id="mt.duankailianjie" />,
     desc: <FormattedMessage id="mt.hangqingyiduankaitips" />,
     color: '--color-red-600',
-    status: 'DISCONNECTING'
+    status: 'CLOSED'
   }
   let connectedStatusMap = networkState.online
     ? {
-        NOCONNECT: {
+        CONNECTING: {
           title: <FormattedMessage id="mt.lianjiezhong" />,
           desc: <FormattedMessage id="mt.hangqinglianjiezhongtips" />,
           color: '--color-yellow-500',
-          status: 'NOCONNECT'
+          status: 'CONNECTING'
         },
-        DISCONNECTING,
-        CONNECTED: {
+        CLOSED,
+        CLOSEING: CLOSED,
+        OPEN: {
           title: <FormattedMessage id="mt.lianjiezhengchang" />,
           desc: <FormattedMessage id="mt.hangqinglianjiezhengchengtips" />,
           color: '--color-green-700',
-          status: 'CONNECTED'
+          status: 'OPEN'
         }
-      }[connectStatus]
-    : DISCONNECTING
+      }[readyState]
+    : CLOSED
 
   return (
     <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white px-5 pb-2 pt-2 border-t border-gray-100 z-40">
       <Tooltip placement="topLeft" title={connectedStatusMap.desc}>
         <div className="flex items-center border-r border-r-gray-200 pr-3">
           <div className="flex items-center">
-            {connectedStatusMap.status === 'DISCONNECTING' ? (
+            {connectedStatusMap.status === 'CLOSED' ? (
               <img src="/img/duankailianjie.png" width={16} height={14} />
             ) : (
               <SignalIcon color={`var(${connectedStatusMap.color})`} />

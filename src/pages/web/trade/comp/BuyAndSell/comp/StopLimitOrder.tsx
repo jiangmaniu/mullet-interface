@@ -212,7 +212,7 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = trade.disabledTrade || (sp && sp < sp_scope) || (sl && sl > sl_scope) || (price && price > priceTip)
+    const disabledBtn = trade.disabledTrade || (sp && sp < sp_scope) || (sl && sl > sl_scope)
     // 禁用交易
     const disabledTrade = trade.disabledTrade
 
