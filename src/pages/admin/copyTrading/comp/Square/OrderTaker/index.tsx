@@ -9,10 +9,11 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
+import { formatNum } from '@/utils'
 
 import OrderTakerChart from './Chart'
 
-export const OrderTaker = ({ taker: { account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
+export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
   const intl = useIntl()
 
   // xx(xx:时间区间)盈亏
@@ -27,7 +28,7 @@ export const OrderTaker = ({ taker: { account, datas, tags, state: takerState },
         {/* account */}
         <div className=" flex items-center gap-4 justify-between">
           <div className=" flex flex-row gap-4">
-            <img src={account.avatar} width={54} height={54} className=" rounded-xl border border-solid border-gray-500" />
+            <img src={account.avatar} width={54} height={54} className=" rounded-xl border border-solid border-gray-340" />
             <div className=" flex flex-col gap-2">
               <div className=" flex gap-2 items-center ">
                 <span className="account-name">{account.name}</span>
@@ -97,20 +98,20 @@ export const OrderTaker = ({ taker: { account, datas, tags, state: takerState },
           </div>
           <div className=" grid grid-cols-3">
             <div className="flex flex-col gap-1">
-              <span className="count">{Number(datas.rate3).toLocaleString()}</span>
+              <span className="count">{formatNum(datas.rate3)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.quanbuyingkui" />
                 &nbsp;USD
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="count">{Number(datas.rate4).toLocaleString()}</span>
+              <span className="count">{formatNum(datas.rate4)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijijiaoyibishu" />
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="count">{Number(datas.rate5).toLocaleString()}</span>
+              <span className="count">{formatNum(datas.rate5)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijigensuirenshu" />
               </span>
@@ -128,12 +129,11 @@ export const OrderTaker = ({ taker: { account, datas, tags, state: takerState },
       {/* footer */}
       <Space direction="vertical" size={10} className="border-t mt-4 border-gray-150">
         <Space>
-          {' '}
           {tags.map((tag, idx) => (
             <Tag key={idx} color="green">
               <FormattedMessage id={`mt.${tag}`} />
             </Tag>
-          ))}{' '}
+          ))}
         </Space>
         <Button
           height={42}

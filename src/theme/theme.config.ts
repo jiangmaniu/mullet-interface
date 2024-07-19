@@ -14,12 +14,13 @@ export const gray = {
   180: '#EEEEEE',
   185: '#E4E4E4',
   190: '#E8E8E8',
+  195: '#E6E6E6',
   200: '#E1E1E1',
   220: '#D9DDE3',
   250: '#DADADA',
   260: '#D8D8D8',
   300: '#D8D8D8',
-  350: '#E6E6E6',
+  340: '#C8C8C8',
   360: '#C3C3C3',
   380: '#b1b1b1',
   400: '#9BA6AD',
@@ -54,6 +55,11 @@ export const green = {
 // 蓝色 色值50 - 900 阶梯加深
 export const blue = {
   700: '#183EFC'
+}
+
+export const black = {
+  800: '#222222',
+  900: '#110E23'
 }
 
 // 品牌色

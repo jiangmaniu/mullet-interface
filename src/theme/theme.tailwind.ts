@@ -2,6 +2,7 @@ import colors from 'tailwindcss/colors'
 
 import {
   bgColorBase,
+  black,
   blue,
   borderColor,
   colorPrimary,
@@ -33,6 +34,12 @@ delete colors['blueGray']
 const themeColor = {
   // 系统自带默认颜色
   ...colors,
+
+  black: {
+    DEFAULT: colors.black,
+    800: black[800],
+    900: black[900]
+  },
 
   // 黄色系
   yellow: {
@@ -122,17 +129,23 @@ export default {
       custom: '0px 2px 70px 0px rgba(80,80,80,0.07)',
       dropdown: '0px 2px 50px 8px rgba(200,200,200,0.3)'
     },
+    margin: {
+      '7.5': '1.875rem',
+      '4.5': '1.125rem'
+    },
     // padding
     padding: {
       '5': '1.25rem',
-      '5.5': '1.375rem'
+      '5.5': '1.375rem',
+      '6.5': '1.875rem'
     },
     width: {
       '1120': '70rem',
       '1300': '81.25rem'
     },
     gap: {
-      '15': '3.75rem'
+      '15': '3.75rem',
+      '18': '4.5rem'
     }
   }
 }

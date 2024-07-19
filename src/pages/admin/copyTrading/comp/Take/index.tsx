@@ -19,7 +19,7 @@ export default function Take() {
   return (
     <div className="flex flex-col w-full gap-6">
       {takers.length > 0 ? (
-        takers.map((item: IOrderTaker, idx: number) => <TakeItem key={idx} taker={item} state={state} />)
+        takers.map((item: IOrderTaker, idx: number) => <TakeItem key={idx} item={item} state={state} />)
       ) : (
         <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem]">
           <Empty src="/img/empty-daidan.png" description={<FormattedMessage id="mt.zanwujilu" />} />

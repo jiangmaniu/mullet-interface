@@ -283,7 +283,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
 
   return (
     <div className="flex items-center">
-      <div className="flex items-center gap-x-[26px] mr-[28px]">
+      <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
         <Dropdown
           placement="topLeft"
           dropdownRender={(origin) => {
@@ -304,7 +304,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
             }}
           >
             <div className="flex flex-col items-end group relative">
-              <span className="text-xl text-gray !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
+              <span className="sm:text-xl text-base text-gray !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
               <div className="flex items-center pt-[2px]">
                 <span className="text-xs text-blue">
                   {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}

@@ -6,17 +6,19 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
+import { formatNum } from '@/utils'
+import { push } from '@/utils/navigator'
 
-export const TakeItem = ({ taker: { account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
+export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
   const getColor = (val: number) => (val > 0 ? 'text-green' : 'text-red')
 
   return (
     <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full">
       {/* header */}
       <div className="flex gap-3 py-2.5 px-3.5">
-        <img src={account.avatar} width={24} height={24} className=" rounded-full border border-solid border-gray-500" />
+        <img src={account.avatar} width={24} height={24} className=" rounded-full border border-solid border-gray-340" />
 
-        <span className="account-name">
+        <span className=" text-base font-bold">
           {account.name}·{account.id}
         </span>
         {account.type === 'biaozhun' ? (
@@ -42,8 +44,8 @@ export const TakeItem = ({ taker: { account, datas, tags, state: takerState }, s
         )}
       </div>
       {/* footer */}
-      <div className="border-t  border-gray-150 p-4 flex items-center justify-between">
-        <div className="grid md:grid-cols-7 grid-cols-4 md:gap-15 gap-12">
+      <div className="border-t  border-gray-150 p-4 flex items-center justify-between md:gap-4 gap-2">
+        <div className="grid xl:grid-cols-7 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 xl:gap-15 md:gap-10 gap-5">
           {/* 累計分潤 */}
           <div className=" flex flex-col items-start gap-0.5">
             <span className={classNames(' text-base font-medium', getColor(datas.rate1))}>
@@ -66,28 +68,28 @@ export const TakeItem = ({ taker: { account, datas, tags, state: takerState }, s
           </div>
           {/* 當前跟隨人數 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{datas.rate3}</span>
+            <span className=" text-base font-medium">{formatNum(datas.rate3)}</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.dangqiangensuirenshu" />
             </span>
           </div>
           {/* 入住天數 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{datas.rate4}</span>
+            <span className=" text-base font-medium">{formatNum(datas.rate4)}</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.ruzhutianshu" />
             </span>
           </div>
           {/* 帶單保證金餘額 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{datas.rate5}</span>
+            <span className=" text-base font-medium">{formatNum(datas.rate5)}</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.daidanbaozhengjinyue" />
             </span>
           </div>
           {/* 管理資產規模 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{datas.rate6}</span>
+            <span className=" text-base font-medium">{formatNum(datas.rate6)}</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.guanlizichanguimo" />
             </span>
@@ -101,7 +103,7 @@ export const TakeItem = ({ taker: { account, datas, tags, state: takerState }, s
           </div>
         </div>
 
-        <div className=" flex items-center justify-end gap-3.5">
+        <div className=" flex items-center justify-end gap-3.5 md:flex-row flex-col">
           <Button
             height={44}
             type="primary"
@@ -112,6 +114,7 @@ export const TakeItem = ({ taker: { account, datas, tags, state: takerState }, s
             disabled={takerState === 'wufagendan'}
             onClick={() => {
               // todo 跳转
+              push(`/copy-trading/take-detail/${id}`)
             }}
           >
             <div className="flex items-center text-base">

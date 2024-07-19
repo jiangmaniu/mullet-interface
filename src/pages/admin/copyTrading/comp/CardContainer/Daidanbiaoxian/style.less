@@ -1,0 +1,61 @@
+.daidanbiaoxian {
+  .lv {
+    animation: ltr 300ms forwards;
+  }
+
+  /* // 动画从左到右展开 */
+  @keyframes ltr {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(0) skewX(-15deg);
+    }
+  }
+
+  .hon {
+    animation: rtl 450ms forwards;
+  }
+
+  @keyframes rtl {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(0) skewX(-15deg);
+    }
+  }
+
+  .fade-list > div {
+    opacity: 0;
+    animation: fade-in 450ms forwards;
+  }
+
+  .fade-list > div:nth-child(1) {
+    animation-delay: 1 * 150ms;
+  }
+  .fade-list > div:nth-child(2) {
+    animation-delay: 2 * 150ms;
+  }
+  .fade-list > div:nth-child(3) {
+    animation-delay: 3 * 150ms;
+  }
+  .fade-list > div:nth-child(4) {
+    animation-delay: 4 * 150ms;
+  }
+  .fade-list > div:nth-child(5) {
+    animation-delay: 5 * 150ms;
+  }
+
+  /* // fade-in: 逐漸從下往上偏移 10px 並顯現 */
+  @keyframes fade-in {
+    0% {
+      transform: translateY(5px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}

@@ -52,7 +52,7 @@ export default function Square() {
       </Space>
       <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
         {takers.map((item, idx) => (
-          <OrderTaker key={idx} taker={item} state={state} />
+          <OrderTaker key={idx} item={item} state={state} />
         ))}
       </div>
       <QA />

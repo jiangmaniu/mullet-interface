@@ -24,6 +24,7 @@ export const defaultTimeRange = [
 
 export const defaultTakers: IOrderTaker[] = [
   {
+    id: `${random(10000000, 99999999)}`,
     account: {
       id: `${random(10000000, 99999999)}`,
       name: 'Linen_Bitnex',
@@ -44,6 +45,7 @@ export const defaultTakers: IOrderTaker[] = [
     state: 'gendan'
   },
   {
+    id: `${random(10000000, 99999999)}`,
     account: {
       id: `${random(10000000, 99999999)}`,
       name: 'Linen_Bitnex',
@@ -64,6 +66,7 @@ export const defaultTakers: IOrderTaker[] = [
     state: 'yimanyuan'
   },
   {
+    id: `${random(10000000, 99999999)}`,
     account: {
       id: `${random(10000000, 99999999)}`,
       name: 'Linen_Bitnex',
@@ -84,6 +87,7 @@ export const defaultTakers: IOrderTaker[] = [
     state: 'wufagendan'
   },
   {
+    id: `${random(10000000, 99999999)}`,
     account: {
       id: `${random(10000000, 99999999)}`,
       name: 'Linen_Bitnex',
@@ -104,6 +108,7 @@ export const defaultTakers: IOrderTaker[] = [
     state: 'gendan'
   },
   {
+    id: `${random(10000000, 99999999)}`,
     account: {
       id: `${random(10000000, 99999999)}`,
       name: 'Linen_Bitnex',
@@ -124,6 +129,7 @@ export const defaultTakers: IOrderTaker[] = [
     state: 'yigendan'
   },
   {
+    id: `${random(10000000, 99999999)}`,
     account: {
       id: `${random(10000000, 99999999)}`,
       name: 'Linen_Bitnex',
@@ -144,6 +150,7 @@ export const defaultTakers: IOrderTaker[] = [
     state: 'wufagendan'
   },
   {
+    id: `${random(10000000, 99999999)}`,
     account: {
       id: `${random(10000000, 99999999)}`,
       name: 'Linen_Bitnex',

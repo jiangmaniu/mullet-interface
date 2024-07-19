@@ -72,10 +72,14 @@ export default {
   },
   Dropdown: {
     zIndexPopup: 1020 // 下拉菜单 z-index
-  }
+  },
   // Slider: {
   //   dotActiveBorderColor: bluePrimary,
   //   handleActiveColor: bluePrimary,
   //   handleColor: bluePrimary
   // }
+  Carousel: {
+    dotHeight: 0,
+    dotWidth: 0
+  }
 }

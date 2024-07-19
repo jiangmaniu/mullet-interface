@@ -1,0 +1,33 @@
+// 丨 分割線
+
+.item {
+  position: relative;
+}
+
+.gap-24 .item {
+  width: 96px;
+}
+
+.gap-18 .item {
+  width: 72px;
+}
+
+.gap-24 .item:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  left: 96px;
+  color: #c2c2c2;
+  font-size: 22px;
+  transform: translate(100%, -50%);
+  content: '丨';
+}
+
+.gap-18 .item:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  left: 72px;
+  color: #c2c2c2;
+  font-size: 22px;
+  transform: translate(100%, -50%);
+  content: '丨';
+}
