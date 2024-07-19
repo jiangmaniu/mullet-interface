@@ -4,6 +4,7 @@ import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
+import usePageVisibility from '@/hooks/usePageVisibility'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 
 import BuyAndSell from './comp/BuyAndSell'
@@ -32,6 +33,27 @@ export default observer(() => {
       kline.tvWidget = null as any
     }
   }, [])
+
+  usePageVisibility(
+    () => {
+      console.log('Page is visible')
+      // 用户从后台切换回前台时执行的操作
+      ws.reconnect()
+
+      // 重置k线实例
+      // @ts-ignore
+      kline.tvWidget = null
+    },
+    () => {
+      console.log('Page is hidden')
+      // 用户从前台切换到后台时执行的操作
+      // @ts-ignore
+      kline.tvWidget = null
+
+      // 关闭ws行情跳动
+      ws.close()
+    }
+  )
 
   const borderTopClassName = useEmotionCss(({ token }) => {
     return {
