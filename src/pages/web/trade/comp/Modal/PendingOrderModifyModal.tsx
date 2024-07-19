@@ -7,10 +7,10 @@ import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
-import { getSymbolIcon } from '@/utils/business'
 import { message } from '@/utils/message'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -141,6 +141,9 @@ export default observer(
       }
     }
 
+    // 禁用交易按钮
+    const disabledBtn = (sp && sp < sp_scope) || (sl && sl > sl_scope) || (price && price > priceTip)
+
     const renderContent = () => {
       return (
         <>
@@ -148,7 +151,7 @@ export default observer(
             <div className="flex flex-col items-center justify-center">
               <div className="flex w-full flex-col pt-3">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
+                  <SymbolIcon src={item?.imgUrl} width={24} height={24} />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm text-green', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />}
@@ -202,7 +205,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <>
+                    <div className={classNames('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
                       {item.type === 'LIMIT_BUY_ORDER'
@@ -215,7 +218,7 @@ export default observer(
                         ? '≤'
                         : null}{' '}
                       {priceTip}
-                    </>
+                    </div>
                   }
                 />
                 <InputNumber
@@ -245,8 +248,8 @@ export default observer(
                     }
                   }}
                   tips={
-                    <>
-                      <span className="!font-dingpro-regular">
+                    <div className={classNames('!font-dingpro-regular', { '!text-red': sl && sl > sl_scope })}>
+                      <span>
                         <FormattedMessage id="mt.fanwei" />
                         &nbsp;
                         {isBuy ? '≤' : '≥'}&nbsp;
@@ -257,7 +260,7 @@ export default observer(
                         &nbsp;
                         {formatNum(slProfit)} USD
                       </span>
-                    </>
+                    </div>
                   }
                 />
                 <InputNumber
@@ -287,7 +290,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <span className="!font-dingpro-regular">
+                    <span className={classNames('!font-dingpro-regular', { '!text-red': sp && sp < sp_scope })}>
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp; {formatNum(spProfit)} USD
@@ -305,6 +308,7 @@ export default observer(
                 })}
                 type="primary"
                 loading={loading}
+                disabled={disabledBtn}
               >
                 <FormattedMessage id="common.queren" />
               </Button>

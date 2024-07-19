@@ -8,11 +8,11 @@ import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } f
 
 import Empty from '@/components/Base/Empty'
 import Popup from '@/components/Base/Popup'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import Tabs from '@/components/Base/Tabs'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { getSymbolIcon } from '@/utils/business'
 
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
@@ -167,6 +167,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         tabBarGutter={28}
         tabBarStyle={{ paddingLeft: 22, paddingRight: 12 }}
         size="small"
+        marginBottom={16}
         tabBarExtraContent={
           showFixSidebar ? (
             <div className="cursor-pointer" onClick={openSidebar}>
@@ -282,7 +283,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                         trade.setActiveSymbolName(symbol)
                       }}
                     >
-                      <img width={28} height={28} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
+                      <SymbolIcon src={item?.imgUrl} width={28} height={28} />
                     </div>
                   )
                 })}

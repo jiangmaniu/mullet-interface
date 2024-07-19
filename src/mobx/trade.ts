@@ -389,8 +389,23 @@ class TradeStore {
   }
 
   // 判断本地收藏的品种是否禁用被下架的
-  @computed get isDisabledSymbol() {
+  @computed get disabledSymbol() {
     return !this.symbolListAll.some((item) => item.symbol === this.activeSymbolName)
+  }
+
+  // 禁用交易
+  @computed get disabledTrade() {
+    // enableConnect 启用禁用账户组
+    // isTrade 启用禁用账户交易
+    return this.disabledSymbol || !this.currentAccountInfo.enableTrade || !this.currentAccountInfo.isTrade
+  }
+
+  // 禁用切换账户
+  disabledConect = (accountItem?: User.AccountItem) => {
+    // enableConnect 启用禁用账户组
+    // status 启用禁用账号
+    const item = accountItem || this.currentAccountInfo
+    return !item.enableConnect || item?.status === 'DISABLED'
   }
 
   // 根据账户id查询侧边栏菜单交易品种列表

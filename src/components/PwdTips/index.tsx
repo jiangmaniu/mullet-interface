@@ -61,30 +61,30 @@ export default forwardRef(({ pwd }: IProps, ref: any) => {
   return (
     <div style={{ backgroundColor: '#fff', marginTop: -10 }}>
       <div style={{ color: '#3B3B3B', fontSize: 14, paddingBottom: 10 }}>
-        <FormattedMessage id="admin.table.account.YourPasswordMustContain" />
+        <FormattedMessage id="mt.YourPasswordMustContain" />
       </div>
       <div className="pb-2 flex items-center">
         <img src={numberInfo.icon} className="w-[16px] h-[16px] mr-1" />
         <span style={{ fontSize: 12, color: numberInfo.checked ? '#222' : '#9c9c9c' }}>
-          <FormattedMessage id="admin.table.account.ContainsatLeastOneNumber" />
+          <FormattedMessage id="mt.ContainsatLeastOneNumber" />
         </span>
       </div>
       <div className="pb-2 flex items-center">
         <img src={usLetterInfo.icon} className="w-[16px] h-[16px] mr-1" />
         <span style={{ fontSize: 12, color: usLetterInfo.checked ? '#222' : '#9c9c9c' }}>
-          <FormattedMessage id="admin.table.account.ContainsuppercaseAndLowercaseCharacters" />
+          <FormattedMessage id="mt.ContainsuppercaseAndLowercaseCharacters" />
         </span>
       </div>
       <div className="pb-2 flex items-center">
         <img src={specialInfo.icon} className="w-[16px] h-[16px] mr-1" />
         <span style={{ fontSize: 12, color: specialInfo.checked ? '#222' : '#9c9c9c' }}>
-          <FormattedMessage id="admin.table.account.ContainsAtLeastOneSpecialCharacter" />
+          <FormattedMessage id="mt.ContainsAtLeastOneSpecialCharacter" />
         </span>
       </div>
       <div className="pb-2 flex items-center">
         <img src={lenInfo.icon} className="w-[16px] h-[16px] mr-1" />
         <span style={{ fontSize: 12, color: lenInfo.checked ? '#222' : '#9c9c9c' }}>
-          <FormattedMessage id="admin.table.account.PasswordlengthIs8To16Characters" />
+          <FormattedMessage id="mt.PasswordlengthIs8To16Characters" />
         </span>
       </div>
     </div>

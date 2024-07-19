@@ -1,6 +1,5 @@
 import { Settings as LayoutSettings } from '@ant-design/pro-components'
 import { history, Link, Navigate, RunTimeLayoutConfig, useModel } from '@umijs/max'
-import { ConfigProvider } from 'antd'
 import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 
@@ -16,8 +15,6 @@ import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { errorConfig } from './requestErrorConfig'
-import themeColor from './theme/theme.antd'
-import themeDarkColor from './theme/theme.antd.dark'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN } from './utils/storage'
 
@@ -68,12 +65,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   const { breakPoint, isMobileOrIpad, isMobile, isIpad } = useEnv()
   const { lng, count } = useLang()
   const [showMenuExtra, setShowMenuExtra] = useState(false)
-  const { pageBgColor, theme } = useModel('global')
-
-  const themeToken = {
-    default: themeColor,
-    dark: themeDarkColor // 黑色主题
-  }[theme]
+  const { pageBgColor } = useModel('global')
 
   return {
     ...initialState?.settings,
@@ -153,20 +145,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
-      return (
-        <>
-          {/* 使用ConfigProvider配置主题，方便动态切换主题，不在使用config/theme来配置 */}
-          <ConfigProvider
-            theme={{
-              token: {
-                ...themeToken
-              }
-            }}
-          >
-            <>{children}</>
-          </ConfigProvider>
-        </>
-      )
+      return <>{children}</>
     },
     menuHeaderRender: () => {
       return <div></div>

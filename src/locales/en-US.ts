@@ -1,16 +1,12 @@
-import admin from './en-US/admin'
-import adminTable from './en-US/admin.table'
 import common from './en-US/common'
 import component from './en-US/component'
 import globalHeader from './en-US/globalHeader'
 import menu from './en-US/menu'
 import mt from './en-US/mt'
 import pages from './en-US/pages'
-import pc from './en-US/pc'
 import pwa from './en-US/pwa'
 import settingDrawer from './en-US/settingDrawer'
 import settings from './en-US/settings'
-import ws from './en-US/ws'
 
 export default {
   'navBar.lang': 'Languages',
@@ -24,13 +20,9 @@ export default {
   ...menu,
   ...settingDrawer,
   ...settings,
-  ...ws,
   ...pwa,
   ...component,
   ...pages,
   ...common,
-  ...pc,
-  ...admin,
-  ...adminTable,
   ...mt
 }

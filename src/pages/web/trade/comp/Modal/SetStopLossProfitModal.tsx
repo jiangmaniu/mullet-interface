@@ -7,11 +7,12 @@ import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import Popup from '@/components/Base/Popup'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
-import { getBuySellInfo, getSymbolIcon } from '@/utils/business'
+import { getBuySellInfo } from '@/utils/business'
 import { message } from '@/utils/message'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -132,6 +133,9 @@ export default observer(
       }
     }
 
+    // 禁用交易按钮
+    const disabledBtn = (sp && sp < sp_scope) || (sl && sl > sl_scope)
+
     const renderContent = () => {
       return (
         <>
@@ -139,7 +143,7 @@ export default observer(
             <div className="flex w-full flex-col pt-3">
               <div className="flex items-center justify-between max-xl:flex-col max-xl:items-start">
                 <div className="flex items-center">
-                  <img width={24} height={24} alt="" src={getSymbolIcon(item.imgUrl)} className="rounded-full border border-gray-90" />
+                  <SymbolIcon src={item?.imgUrl} width={24} height={24} />
                   <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
                   <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
                 </div>
@@ -203,7 +207,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <>
+                  <div className={classNames('!font-dingpro-regular', { '!text-red': sl && sl > sl_scope })}>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
@@ -215,7 +219,7 @@ export default observer(
                       &nbsp;
                       {formatNum(slProfit)} USD
                     </span>
-                  </>
+                  </div>
                 }
               />
               <InputNumber
@@ -246,7 +250,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <span className="!font-dingpro-regular">
+                  <span className={classNames('!font-dingpro-regular', { '!text-red': sp && sp < sp_scope })}>
                     <FormattedMessage id="mt.fanwei" />
                     &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                     &nbsp;
@@ -257,7 +261,7 @@ export default observer(
             </div>
           </div>
           <div className="flex items-center justify-between pt-4">
-            <Button block onClick={onFinish} type="primary" loading={loading}>
+            <Button block onClick={onFinish} type="primary" loading={loading} disabled={disabledBtn}>
               <FormattedMessage id="common.queren" />
             </Button>
           </div>

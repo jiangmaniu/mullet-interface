@@ -14,6 +14,7 @@ import { calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMa
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { message } from '@/utils/message'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import classNames from 'classnames'
 import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
@@ -210,6 +211,11 @@ export default observer(
       fetchUserInfo()
     }
 
+    // 禁用交易按钮
+    const disabledBtn = trade.disabledTrade || (sp && sp < sp_scope) || (sl && sl > sl_scope)
+    // 禁用交易
+    const disabledTrade = trade.disabledTrade
+
     return (
       <div className="mx-[10px] mt-3 flex flex-col justify-between h-[630px]">
         <div>
@@ -260,7 +266,7 @@ export default observer(
               }
             }}
             tips={
-              <span className="!font-dingpro-regular">
+              <span className={classNames('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
                 {isBuy && (
                   <>
                     <FormattedMessage id="mt.mairujiafanwei" /> ≤ {formatNum(priceTip)} USD
@@ -273,7 +279,7 @@ export default observer(
                 )}
               </span>
             }
-            disabled={trade.isDisabledSymbol}
+            disabled={disabledTrade}
           />
           <Checkbox
             onChange={(e: any) => {
@@ -315,7 +321,7 @@ export default observer(
                 }}
                 tips={
                   <>
-                    <div className="flex gap-x-2 items-start w-full pl-[2px]">
+                    <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
@@ -328,7 +334,7 @@ export default observer(
                     </div>
                   </>
                 }
-                disabled={trade.isDisabledSymbol}
+                disabled={disabledTrade}
               />
               <InputNumber
                 showFloatTips={false}
@@ -356,7 +362,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <div className="flex gap-x-2 items-start w-full pl-[2px]">
+                  <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
                     <span className="!font-dingpro-regular pb-[2px]">
                       <FormattedMessage id="mt.fanwei" />
                       <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>
@@ -368,7 +374,7 @@ export default observer(
                     </span>
                   </div>
                 }
-                disabled={trade.isDisabledSymbol}
+                disabled={disabledTrade}
               />
             </>
           )}
@@ -408,7 +414,7 @@ export default observer(
                 </span>
               </>
             }
-            disabled={trade.isDisabledSymbol}
+            disabled={disabledTrade}
           />
         </div>
         <div>
@@ -419,7 +425,7 @@ export default observer(
             block
             onClick={onFinish}
             loading={loading}
-            disabled={trade.isDisabledSymbol}
+            disabled={disabledBtn}
           >
             {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmairu" />} {count}{' '}
             <FormattedMessage id="mt.lot" />

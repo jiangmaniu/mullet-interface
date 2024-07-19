@@ -40,7 +40,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
         const { newPassword, confirmNewPassword, validateCode } = values
 
         if (newPassword !== confirmNewPassword) {
-          message.info(intl.formatMessage({ id: 'admin.table.account.xinmimashurubuyizhi' }))
+          message.info(intl.formatMessage({ id: 'mt.xinmimashurubuyizhi' }))
           return
         }
 

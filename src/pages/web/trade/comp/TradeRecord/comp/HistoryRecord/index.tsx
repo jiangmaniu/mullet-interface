@@ -6,9 +6,9 @@ import { observer } from 'mobx-react'
 import React, { useState } from 'react'
 
 import CustomTabs from '@/components/Base/CustomTabs'
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import { getSymbolIcon } from '@/utils/business'
 
 import HistoryCloseList from './comp/HistoryCloseList'
 import HistoryPendingList from './comp/HistoryPendingList'
@@ -55,7 +55,7 @@ function HistoryList({ style, showActiveSymbol }: IProps) {
               optionItemRender: (item: Account.TradeSymbolListItem) => {
                 return (
                   <div className="flex items-center truncate w-full">
-                    <img src={getSymbolIcon(item.imgUrl)} alt="" className="w-[20px] h-[20px] rounded-full border border-gray-90" />
+                    <SymbolIcon src={item?.imgUrl} width={20} height={20} />
                     <span className="text-sub pl-1">{item.symbol}</span>
                   </div>
                 )

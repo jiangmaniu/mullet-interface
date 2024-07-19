@@ -364,7 +364,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
               // 重置日期表单
               formRef.current?.resetFields(['dates'])
 
-              message.warning(intl.formatMessage({ id: 'admin.shijianbunengdayusangeyue' }))
+              message.warning(intl.formatMessage({ id: 'mt.shijianbunengdayusangeyue' }))
             }
           }, 300)
         }

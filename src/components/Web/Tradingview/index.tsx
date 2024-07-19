@@ -196,7 +196,7 @@ const Tradingview = () => {
 
     // 初始化图表实例
     initChart()
-  }, [isPc, isMobile, params])
+  }, [isPc, isMobile, params, kline.tvWidget])
 
   const className = useEmotionCss(({ token }) => {
     return {

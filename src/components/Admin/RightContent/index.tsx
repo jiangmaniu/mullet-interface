@@ -69,7 +69,7 @@ export const Message = () => {
     return messageDom
   }
   return (
-    <Tooltip placement="bottomRight" title={<FormattedMessage id="admin.message.myMessage" />}>
+    <Tooltip placement="bottomRight" title={<FormattedMessage id="mt.myMessage" />}>
       {messageDom}
     </Tooltip>
   )
@@ -207,12 +207,16 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
           <div className="max-h-[380px] overflow-y-auto">
             {currentAccountList.map((item, idx: number) => {
               const isSimulate = item.isSimulate
+              const disabledTrade = item?.status === 'DISABLED' || !item.enableTrade || !item.isTrade
               return (
                 <div
                   onClick={() => {
                     // if (isMobileOrIpad) {
                     //   hoverAccountBoxPopupRef?.current?.close()
                     // }
+                    if (disabledTrade) {
+                      return
+                    }
                     trade.setCurrentAccountInfo(item)
                     trade.jumpTrade()
                   }}
@@ -220,7 +224,8 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
                   className={classNames(
                     'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[#fbfbfb]',
                     {
-                      'bg-[#fbfbfb]': item.id === currentAccountInfo.id
+                      'bg-gray-80': item.id === currentAccountInfo.id,
+                      '!bg-gray-100 cursor-no-drop opacity-40': disabledTrade
                     }
                   )}
                 >
