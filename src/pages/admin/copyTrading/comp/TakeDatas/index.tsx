@@ -5,6 +5,8 @@ import { Statistic, StatisticProps } from 'antd'
 import classNames from 'classnames'
 import CountUp from 'react-countup'
 
+import { getColorClass } from '@/utils'
+
 type IProps = {
   datas?: Record<string, number>
   gap?: 'gap-24' | 'gap-18'
@@ -24,9 +26,7 @@ const formatter: StatisticProps['formatter'] = (value, props) => {
   return <CountUp {...props} end={value as number} decimals={2} separator="," duration={duration} />
 }
 const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
-  const getColor = (val: number | undefined) => (val && val > 0 ? 'text-green' : 'text-red')
-
-  const usColor3 = getColor(datas?.rate3)
+  const usColor3 = getColorClass(datas?.rate3 ?? 0)
 
   return (
     <div className={classNames('flex items-center flex-wrap gap-y-4', gap)}>
@@ -35,7 +35,7 @@ const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
           title={<></>}
           value={datas?.rate1}
           formatter={(val) => formatter(datas?.rate1 ?? 0)}
-          valueRender={(val) => <span className="text-xl font-medium">{val}</span>}
+          valueRender={(val) => <span className="text-xl font-medium !font-dingpro-medium">{val}</span>}
         />
         <span className="text-sm text-gray-600 whitespace-nowrap ">
           <FormattedMessage id="mt.leijigendanrenshu" />
@@ -46,7 +46,7 @@ const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
           title={<></>}
           value={datas?.rate2}
           formatter={(val) => formatter(val)}
-          valueRender={(val) => <span className="text-xl font-medium">{val}</span>}
+          valueRender={(val) => <span className="text-xl font-medium !font-dingpro-medium">{val}</span>}
         />
         <span className="text-sm text-gray-600 whitespace-nowrap ">
           <FormattedMessage id="mt.ruzhutianshu" />
@@ -57,7 +57,7 @@ const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
           title={<></>}
           value={datas?.rate3}
           formatter={(val) => formatter(val)}
-          valueRender={(val) => <span className={`text-xl font-medium ${usColor3}`}>{val}</span>}
+          valueRender={(val) => <span className={`text-xl font-medium !font-dingpro-medium ${usColor3}`}>{val}</span>}
         />
         <span className="text-sm text-gray-600 whitespace-nowrap ">
           <FormattedMessage id="mt.yonghuyingkui" />
@@ -70,7 +70,7 @@ const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
           title={<></>}
           value={datas?.rate4}
           formatter={(val) => formatter(val)}
-          valueRender={(val) => <span className="text-xl font-medium">{val}</span>}
+          valueRender={(val) => <span className="text-xl font-medium !font-dingpro-medium">{val}</span>}
         />
         <span className="text-sm text-gray-600 whitespace-nowrap ">
           <FormattedMessage id="mt.fenrunbili" />
@@ -82,7 +82,7 @@ const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
           title={<></>}
           value={datas?.rate5}
           formatter={(val) => formatter(val)}
-          valueRender={(val) => <span className="text-xl font-medium">{val}</span>}
+          valueRender={(val) => <span className="text-xl font-medium !font-dingpro-medium">{val}</span>}
         />
         <span className="text-sm text-gray-600 whitespace-nowrap ">
           <FormattedMessage id="mt.zichanyaoqiu" />
@@ -93,7 +93,7 @@ const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
           title={<></>}
           value={datas?.rate6}
           formatter={(val) => formatter(val)}
-          valueRender={(val) => <span className="text-xl font-medium">{val}</span>}
+          valueRender={(val) => <span className="text-xl font-medium !font-dingpro-medium">{val}</span>}
         />
         {/* <span className="text-xl font-medium">{formatNum(datas?.rate6)}</span> */}
         <span className="text-sm text-gray-600 whitespace-nowrap ">

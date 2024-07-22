@@ -6,12 +6,10 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
-import { formatNum } from '@/utils'
+import { formatNum, getColorClass } from '@/utils'
 import { push } from '@/utils/navigator'
 
 export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
-  const getColor = (val: number) => (val > 0 ? 'text-green' : 'text-red')
-
   return (
     <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full">
       {/* header */}
@@ -48,7 +46,7 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
         <div className="grid xl:grid-cols-7 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 xl:gap-15 md:gap-10 gap-5">
           {/* 累計分潤 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className={classNames(' text-base font-medium', getColor(datas.rate1))}>
+            <span className={classNames(' text-base font-medium', getColorClass(datas.rate1))}>
               {datas.rate1 > 0 ? `+${datas.rate1}` : datas.rate1}
             </span>
             <span className=" text-xs font-normal text-gray-500">
@@ -58,7 +56,7 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
           </div>
           {/* 今日分潤 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className={classNames(' text-base font-medium', getColor(datas.rate2))}>
+            <span className={classNames(' text-base font-medium', getColorClass(datas.rate2))}>
               {datas.rate2 > 0 ? `+${datas.rate2}` : datas.rate2}
             </span>
             <span className=" text-xs font-normal text-gray-500">

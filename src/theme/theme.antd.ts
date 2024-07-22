@@ -66,6 +66,9 @@ export default {
   },
   Table: {
     // rowHoverBg: 'rgba(24,62,252,0.05)'
+    headerBg: 'white',
+    headerColor: '#6A7073',
+    headerSplitColor: 'white'
   },
   Message: {
     contentBg: 'rgba(1,1,1,0.6)'

@@ -117,6 +117,15 @@ export const formatValue = (value: any, opts?: any) => {
   return currency(val, opts).toString()
 }
 
+/** 獲取颜色樣式名 */
+export const getColorClass = (value: number) => {
+  // 不是一个数字
+  if (isNaN(value) || !Number(value)) {
+    return 'text-red'
+  }
+  return value >= 0 ? 'text-green' : 'text-red'
+}
+
 /**
  * 格式化数字
  * @param value

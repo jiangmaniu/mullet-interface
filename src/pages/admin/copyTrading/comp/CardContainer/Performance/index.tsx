@@ -15,7 +15,11 @@ type IProps = {
 const formatter: StatisticProps['formatter'] = (value, props) => (
   <CountUp {...props} end={value as number} decimals={2} separator="," duration={0.3} />
 )
-export const Daidanbiaoxian = ({ time, datas }: IProps) => {
+
+/**
+ * 帶單表現
+ */
+export const Performance = ({ time, datas }: IProps) => {
   const delay = 0.15
 
   useEffect(() => {
@@ -53,19 +57,16 @@ export const Daidanbiaoxian = ({ time, datas }: IProps) => {
 
   return (
     <div className="flex flex-col gap-4" ref={containerRef}>
-      <div className="flex flex-row items-end gap-1">
-        <FormattedMessage id="mt.shenglv" />
-        <span className=" text-xl font-medium text-black-900">
+      <div className="h-8 overflow-hidden relative">
+        <span className="absolute bottom-0 l-0">
+          <FormattedMessage id="mt.shenglv" />
+        </span>
+        <span className=" absolute -bottom-1 left-8">
           <Statistic
             title={<></>}
             value={datas?.rate1}
             formatter={(val) => formatter(val, { suffix: '%' } as FormatConfig)}
-            valueStyle={{
-              fontSize: '1.25rem',
-              lineHeight: '1.75rem',
-              fontWeight: 500,
-              color: 'rgb(17 14 35 / var(--tw-text-opacity))'
-            }}
+            valueRender={(val) => <span className="text-xl font-medium text-black-900 !font-dingpro-medium">{val}</span>}
           />
         </span>
       </div>

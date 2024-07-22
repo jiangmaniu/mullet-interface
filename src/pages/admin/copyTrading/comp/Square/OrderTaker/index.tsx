@@ -9,7 +9,7 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
-import { formatNum } from '@/utils'
+import { formatNum, getColorClass } from '@/utils'
 
 import OrderTakerChart from './Chart'
 
@@ -18,8 +18,6 @@ export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, 
 
   // xx(xx:时间区间)盈亏
   const jinqi = intl.formatMessage({ id: `mt.${state.jinqi}` })
-
-  const getColor = (val: number) => (val > 0 ? 'text-green' : 'text-red')
 
   return (
     <div className=" border rounded-2xl border-gray-150 flex flex-col xl:w-[25rem] max-w-full flex-1 p-5.5">
@@ -82,13 +80,13 @@ export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, 
                 <FormattedMessage id="mt.jinqiyingkui" values={{ range: jinqi }} />
                 &nbsp;USD
               </span>
-              <span className={classNames('  text-2xl font-bold ', getColor(datas.rate1))}>
+              <span className={classNames('  text-2xl font-bold ', getColorClass(datas.rate1))}>
                 {datas.rate1 > 0 ? `+${datas.rate1}` : datas.rate1}
               </span>
               <span className="tips">
                 <FormattedMessage id="mt.shouyilv" />
                 &nbsp;
-                <span className={classNames('font-medium', getColor(datas.rate2))}>
+                <span className={classNames('font-medium', getColorClass(datas.rate2))}>
                   {datas.rate2 > 0 ? `+${datas.rate2}` : datas.rate2}%
                 </span>
               </span>
@@ -121,7 +119,7 @@ export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, 
               <span className="tips">
                 <FormattedMessage id="mt.jinqishenglv" values={{ range: jinqi }} />
               </span>
-              <span className={classNames('count', getColor(datas.rate6))}>{datas.rate6 > 0 ? `+${datas.rate6}` : datas.rate6}%</span>
+              <span className={classNames('count', getColorClass(datas.rate6))}>{datas.rate6 > 0 ? `+${datas.rate6}` : datas.rate6}%</span>
             </div>
           </div>
         </div>

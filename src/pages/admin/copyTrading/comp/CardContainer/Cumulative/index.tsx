@@ -12,7 +12,10 @@ type IProps = {
   time?: string
 }
 
-const Leijiyingkui = ({
+/**
+ * 累計盈虧
+ */
+const Cumulative = ({
   time,
   shouyilvs = [1, 2, 3, 4, 5, 6],
   yingkuies = [6, 5, 4, 3, 2, 1],
@@ -52,6 +55,7 @@ const Leijiyingkui = ({
     //     saveAsImage: {}
     //   }
     // },
+
     grid: {
       left: '2%',
       right: '2%',
@@ -109,12 +113,13 @@ const Leijiyingkui = ({
   const chartRef = useRef(null)
 
   useEffect(() => {
-    const chartInstance = echarts.init(chartRef.current)
+    const chartInstance = echarts.init(chartRef.current, null, { width: 'auto' })
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           chartInstance.setOption(option)
+          chartInstance.resize()
           // 动画开始
           chartInstance.on('finished', () => {
             console.log('动画完成')
@@ -146,4 +151,4 @@ const Leijiyingkui = ({
   )
 }
 
-export default Leijiyingkui
+export default Cumulative

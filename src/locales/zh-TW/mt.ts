@@ -517,5 +517,18 @@ export default {
   'mt.jieshudaidan': '結束帶單',
   'mt.daidanshuju': '帶單數據',
   'mt.zongzichan': '總資產',
-  'mt.jiaoyiyingkui': '交易盈亏'
+  'mt.jiaoyiyingkui': '交易盈亏',
+  'mt.kaicangjunjia': '开仓均价',
+  'mt.qiangpinjia': '強平價',
+  'mt.pingcangshijian': '平倉時間',
+  'mt.kaicangshijian': '開倉時間',
+  'mt.zuidachicangliang': '最大持倉量',
+  'mt.pingcangjunjia': '平倉均價',
+  'mt.pingcangshuliang': '平倉數量',
+  'mt.chicangjunjia': '持倉均價',
+  'mt.yonghu': '用戶',
+  'mt.gendanyingkui': '跟單盈虧',
+  'mt.gendanjine': '跟單金額',
+  'mt.gensuitianshu': '跟隨天數',
+  'mt.days': '{count}天'
 }

@@ -6,10 +6,9 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
+import { getColorClass } from '@/utils'
 
 export const TradingItem = ({ item: { id, title, account, followers, datas }, state }: IOrderProps) => {
-  const getColor = (val: number) => (val > 0 ? 'text-green' : 'text-red')
-
   return (
     <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full">
       {/* header */}
@@ -88,7 +87,7 @@ export const TradingItem = ({ item: { id, title, account, followers, datas }, st
           </div>
           {/* 累計盈虧 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className={classNames('text-base font-medium', getColor(datas.rate2))}>
+            <span className={classNames('text-base font-medium', getColorClass(datas.rate2))}>
               {datas.rate3 > 0 ? `+${datas.rate3}` : datas.rate3}
             </span>
             <span className=" text-xs font-normal text-gray-500">

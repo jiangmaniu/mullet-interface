@@ -1,4 +1,4 @@
-import { FormattedMessage, useModel } from '@umijs/max'
+import { FormattedMessage, useModel, useParams } from '@umijs/max'
 import { Select } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -8,14 +8,15 @@ import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTaker } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
-import { getPathnameLng, push } from '@/utils/navigator'
+import { push } from '@/utils/navigator'
 
 import AccountSelect from '../comp/AccountSelect'
 import { CardContainer } from '../comp/CardContainer'
-import { Daidanbiaoxian } from '../comp/CardContainer/Daidanbiaoxian'
-import Jiaoyipianhao from '../comp/CardContainer/Jiaoyipianhao'
-import Leijiyingkui from '../comp/CardContainer/Leijiyingkui'
+import Cumulative from '../comp/CardContainer/Cumulative'
+import { Performance } from '../comp/CardContainer/Performance'
+import Preferences from '../comp/CardContainer/Preferences'
 import { Introduction } from '../comp/Introduction'
+import TabTable from '../comp/TabTable'
 import TakeDatas from '../comp/TakeDatas'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
 
@@ -23,8 +24,11 @@ export default function TakeDetail() {
   const { setPageBgColor } = useModel('global')
 
   // 獲取路由中的 id
-  const { pathname } = getPathnameLng()
-  const takeId = pathname.split('/').at(-1)
+  // const { pathname } = getPathnameLng()
+  // const takeId = pathname.split('/').at(-1)
+
+  const params = useParams()
+  const { takeId } = params
 
   const [taker, setTaker] = useState<IOrderTaker>()
 
@@ -118,7 +122,7 @@ export default function TakeDetail() {
                       />
                     </div>
                     <div className="flex items-end gap-1">
-                      <span className=" text-3xl font-medium text-black-900"> {taker?.datas.rate1}</span>
+                      <span className=" text-3xl font-medium text-black-900 !font-dingpro-medium"> {taker?.datas.rate1}</span>
                       <span className=" text-sm font-normal text-black-900">USDT</span>
                     </div>
                   </div>
@@ -127,26 +131,26 @@ export default function TakeDetail() {
               {/* 帶單人數據 */}
               <div className="flex items-center justify-start gap-18 flex-wrap gap-y-4">
                 <div className="flex flex-col gap-1">
-                  <span className="text-xl font-medium">{formatNum(taker?.datas.rate1)}</span>
+                  <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
                   <span className="text-sm text-gray-600">
                     <FormattedMessage id="mt.jinrifenrun" />
                     (USDT)
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-xl font-medium">{formatNum(taker?.datas.rate1)}</span>
+                  <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
                   <span className="text-sm text-gray-600">
                     <FormattedMessage id="mt.ruzhutianshu" />
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-xl font-medium">{formatNum(taker?.datas.rate1)}</span>
+                  <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
                   <span className="text-sm text-gray-600">
                     <FormattedMessage id="mt.daidanbaozhengjinyue" />
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-xl font-medium">{formatNum(taker?.datas.rate4)}</span>
+                  <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate4)}</span>
                   <span className="text-sm text-gray-600">
                     <FormattedMessage id="mt.guanlizichanguimo" />
                   </span>
@@ -249,7 +253,7 @@ export default function TakeDetail() {
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Daidanbiaoxian datas={taker?.datas} />
+              <Performance datas={taker?.datas} />
             </CardContainer>
             <CardContainer
               title={
@@ -262,7 +266,7 @@ export default function TakeDetail() {
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Leijiyingkui />
+              <Cumulative />
             </CardContainer>
             <CardContainer
               title={<FormattedMessage id="mt.jiaoyipianhao" />}
@@ -270,11 +274,16 @@ export default function TakeDetail() {
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Jiaoyipianhao />
+              <Preferences />
             </CardContainer>
+          </div>
+          {/* 表格数据 */}
+          <div className="mt-9 border border-gray-150 rounded-2xl px-5">
+            <TabTable />
           </div>
         </div>
       </div>
+      {/* <Footer /> */}
     </div>
   )
 }

@@ -45,6 +45,9 @@ export const DEFAULT_LOCALE = 'en-US'
 
 export const isProd = process.env.NODE_ENV === 'production' || process.env.APP_ENV === 'prod'
 
+// 貨幣
+export const CURRENCY = 'USDT'
+
 // 测试环境
 const development = {
   tradingViewUrl: 'http://localhost:3000',

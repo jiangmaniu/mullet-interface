@@ -8,7 +8,10 @@ type IProps = {
   time?: string
 }
 
-const Jiaoyipianhao = ({ time }: IProps) => {
+/**
+ * 交易偏好
+ */
+const Preferences = ({ time }: IProps) => {
   const intl = useIntl()
 
   const jiaoyidui = intl.formatMessage({ id: 'mt.jiaoyidui' })
@@ -44,8 +47,8 @@ const Jiaoyipianhao = ({ time }: IProps) => {
                 type: 'text',
                 style: {
                   text: `${jiaoyidui}                   ${jiaoyicishu}                   ${jiaoyiyingkui}`,
-                  font: 'bold 12px Arial',
-                  fill: '#666'
+                  font: '400 12px Arial',
+                  fill: '#6a7073'
                 },
                 position: [0, 0]
               }
@@ -73,7 +76,9 @@ const Jiaoyipianhao = ({ time }: IProps) => {
               const arr = [
                 '{name|' + name + '}',
                 '{value|' + target.value + '}',
-                '{amount|' + formatNum(target.meta.yingkui || 0) + ' USDT}'
+                target.meta.yingkui > 0
+                  ? '{amount1|+' + formatNum(target.meta.yingkui || 0) + ' USDT}'
+                  : '{amount2|' + formatNum(target.meta.yingkui || 0) + ' USDT}'
               ]
 
               return arr.join('')
@@ -82,11 +87,7 @@ const Jiaoyipianhao = ({ time }: IProps) => {
           },
           icon: 'circle',
           itemStyle: {
-            borderWidth: 0,
-            alignSelf: 'self-end',
-            verticalAlign: 'end',
-            position: 'absolute',
-            bottom: 0
+            borderWidth: 0
           },
           itemWidth: 10,
           itemHeight: 10,
@@ -101,31 +102,38 @@ const Jiaoyipianhao = ({ time }: IProps) => {
                 padding: [0, 0, 5, 0],
                 color: '#666'
               },
-              hr: {
-                width: '100%',
-                borderColor: '#aaa',
-                borderWidth: 0.5,
-                height: 0,
-                lineHeight: 10
-              },
-              blank: {
-                height: 1,
-                lineHeight: 1
-              },
               name: {
                 width: 100,
+                color: '#110e23',
+                fontWeight: 500,
                 align: 'left',
+                fontSize: 14,
                 height: 20,
                 lineHeight: 20
               },
               value: {
                 width: 100,
+                color: '#110e23',
+                fontWeight: 500,
                 align: 'center',
+                fontSize: 14,
                 height: 20,
                 lineHeight: 20
               },
-              amount: {
+              amount1: {
                 width: 100,
+                color: '#45a48a',
+                fontWeight: 500,
+                align: 'right',
+                fontSize: 14,
+                height: 20,
+                lineHeight: 20
+              },
+              amount2: {
+                width: 100,
+                color: '#c54747',
+                fontWeight: 500,
+                fontSize: 14,
                 align: 'right',
                 height: 20,
                 lineHeight: 20
@@ -181,6 +189,7 @@ const Jiaoyipianhao = ({ time }: IProps) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           chartInstance.setOption(option)
+          chartInstance.resize()
           // 动画开始
           chartInstance.on('finished', () => {
             console.log('动画完成')
@@ -211,4 +220,4 @@ const Jiaoyipianhao = ({ time }: IProps) => {
   )
 }
 
-export default Jiaoyipianhao
+export default Preferences
