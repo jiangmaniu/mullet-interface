@@ -1,5 +1,5 @@
-import { FormattedMessage, useModel } from '@umijs/max'
-import { useState } from 'react'
+import { FormattedMessage, history, useModel } from '@umijs/max'
+import { useEffect, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
@@ -11,9 +11,15 @@ import Take from './comp/Take'
 
 // 跟单管理
 export default function copyTrading() {
-  const [tabKey, setTabKey] = useState('square')
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
+
+  // tab持久化
+  const hash = history.location.hash?.replace(/^#/, '')
+
+  const [tabKey, setTabKey] = useState(hash || 'square')
+
+  useEffect(() => {}, [])
 
   const tabList = [
     {
@@ -41,6 +47,7 @@ export default function copyTrading() {
       pageBgColorMode="white"
       fluidWidth
       tabList={tabList}
+      tabPersistence={true}
       renderHeader={() => (
         <div
           className="w-full mb-2 cursor-pointer h-[5rem] bg-no-repeat bg-contain px-[1.125rem] py-4 flex items-center "

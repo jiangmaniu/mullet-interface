@@ -111,7 +111,6 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
             }}
             disabled={takerState === 'wufagendan'}
             onClick={() => {
-              // todo 跳转
               push(`/copy-trading/take-detail/${id}`)
             }}
           >

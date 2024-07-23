@@ -1,5 +1,5 @@
 import { PageContainerProps } from '@ant-design/pro-components'
-import { useModel, useSelectedRoutes } from '@umijs/max'
+import { history, useModel, useSelectedRoutes } from '@umijs/max'
 import classNames from 'classnames'
 import { TabBarExtraContent } from 'rc-tabs/lib/interface'
 import { useEffect, useState } from 'react'
@@ -28,6 +28,8 @@ interface IProps {
   backStyle?: React.CSSProperties
   tabList?: ITabItem[]
   tabActiveKey?: string
+  /** 持久化 tab 當前值 */
+  tabPersistence?: boolean
   tabBarExtraContent?: TabBarExtraContent
   onChangeTab?: (activeKey: string, activeLabel: string) => void
   headerWrapperStyle?: React.CSSProperties
@@ -45,6 +47,7 @@ export default function PageContainer({
   style = {},
   tabList = [],
   tabActiveKey,
+  tabPersistence,
   tabBarExtraContent,
   onChangeTab,
   headerWrapperStyle
@@ -53,6 +56,17 @@ export default function PageContainer({
   const { isMobileOrIpad, isMobile } = useEnv()
   const routes = useSelectedRoutes()
   const [tabKey, setTabKey] = useState(tabList[0]?.key || '')
+
+  const onSetTabKey = (tabKey: string) => {
+    setTabKey(tabKey)
+
+    if (tabPersistence) {
+      // 配置到路由錨點中
+      // push(`${backPath}#${tabKey}`)
+      const { pathname, search } = history.location
+      history.push(`${pathname}${search}#${tabKey}`)
+    }
+  }
 
   const lastRoute = routes
     .at(-1)
@@ -113,7 +127,7 @@ export default function PageContainer({
                 tabBarGutter={57}
                 tabBarStyle={{ paddingLeft: 0 }}
                 onChangeTab={(activeKey, activeLabel) => {
-                  setTabKey(activeKey)
+                  onSetTabKey(activeKey)
                   onChangeTab?.(activeKey, activeLabel)
                 }}
                 tabBarExtraContent={tabBarExtraContent}

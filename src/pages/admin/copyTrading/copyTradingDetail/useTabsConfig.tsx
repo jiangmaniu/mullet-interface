@@ -1,18 +1,122 @@
-import './style.less'
-
 import { useIntl } from '@umijs/max'
-import type { TableProps } from 'antd'
-import { Table } from 'antd'
+import { TableProps, TabsProps } from 'antd'
 import classNames from 'classnames'
 
 import { CURRENCY } from '@/constants'
 import { formatNum, getColorClass } from '@/utils'
 
-import { data } from './mock'
-const TabTableHistory = () => {
+import TabList from '../comp/TabsTable/List'
+import { IListItemTypes } from '../comp/TabsTable/List/ListItem'
+import TabTable from '../comp/TabsTable/Table'
+import { mockHistory, orders } from './mockTabTable'
+
+export const useTabsConfig = () => {
   const intl = useIntl()
 
-  const columns: TableProps['columns'] = [
+  const onChange = (key: string) => {
+    console.log(key)
+  }
+
+  // 进行中
+  const cols1: IListItemTypes[] = [
+    {
+      format: {
+        id: 'mt.jingyingkui'
+      },
+      currency: true,
+      color: true,
+      prefix: true,
+      field: 'jingyingkui'
+    },
+    {
+      format: {
+        id: 'mt.gendanjine'
+      },
+      currency: true,
+      color: true,
+      prefix: true,
+      field: 'gendanjine'
+    },
+    {
+      format: {
+        id: 'mt.baozhengjinyue'
+      },
+      field: 'baozhengjinyue'
+    },
+    {
+      format: {
+        id: 'mt.yishixianyingkui'
+      },
+      field: 'yishixianyingkui'
+    },
+    {
+      format: {
+        id: 'mt.weishixianyingkui'
+      },
+      field: 'weishixianyingkui'
+    },
+    {
+      format: {
+        id: 'mt.fenrunjine'
+      },
+      field: 'fenrunjine'
+    }
+  ]
+
+  // 已结束
+  const cols2: IListItemTypes[] = [
+    {
+      format: {
+        id: 'mt.jingyingkui'
+      },
+      currency: true,
+      color: true,
+      prefix: true,
+      field: 'jingyingkui'
+    },
+    {
+      format: {
+        id: 'mt.yishixianyingkui'
+      },
+      currency: true,
+      field: 'yishixianyingkui'
+    },
+    {
+      format: {
+        id: 'mt.gensuitianshui'
+      },
+      suffix: true,
+      showSuffix: (item) => {
+        return intl.formatMessage({ id: 'mt.days' }, { count: item.gensuitianshu })
+      }
+    },
+    {
+      format: {
+        id: 'mt.gensuikaishishijian'
+      },
+      suffix: true,
+      showSuffix: (item) => {
+        return item.gensuikaishishijian
+      }
+    },
+    {
+      format: {
+        id: 'mt.gensuijieshushijian'
+      },
+      suffix: true,
+      showSuffix: (item) => {
+        return item.gensuijieshushijian
+      }
+    },
+    {
+      format: {
+        id: 'mt.fenrunjine'
+      },
+      field: 'fenrunjine'
+    }
+  ]
+
+  const historyColumns: TableProps['columns'] = [
     {
       title: intl.formatMessage({ id: 'mt.pinzhong' }),
       dataIndex: 'pinzhong',
@@ -92,7 +196,26 @@ const TabTableHistory = () => {
     }
   ]
 
-  return <Table columns={columns} dataSource={data} className="className" />
-}
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: intl.formatMessage({ id: 'mt.jinxingzhong' }),
+      children: <TabList datas={orders} columns={cols1} />
+    },
+    {
+      key: '2',
+      label: intl.formatMessage({ id: 'mt.yijieshu' }),
+      children: <TabList datas={orders} columns={cols2} />
+    },
+    {
+      key: '3',
+      label: intl.formatMessage({ id: 'mt.lishicangwei' }),
+      children: <TabTable columns={historyColumns} datas={mockHistory} />
+    }
+  ]
 
-export default TabTableHistory
+  return {
+    items,
+    onChange
+  }
+}

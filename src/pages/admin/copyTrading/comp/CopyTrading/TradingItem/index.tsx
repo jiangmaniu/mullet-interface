@@ -7,6 +7,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { IOrderProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { getColorClass } from '@/utils'
+import { push } from '@/utils/navigator'
 
 export const TradingItem = ({ item: { id, title, account, followers, datas }, state }: IOrderProps) => {
   return (
@@ -113,7 +114,7 @@ export const TradingItem = ({ item: { id, title, account, followers, datas }, st
               borderRadius: 8
             }}
             onClick={() => {
-              // todo 跳转
+              push(`/copy-trading/detail/${id}`)
             }}
           >
             <div className="flex items-center text-base">

@@ -8,7 +8,6 @@ import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTaker } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
-import { push } from '@/utils/navigator'
 
 import AccountSelect from '../comp/AccountSelect'
 import { CardContainer } from '../comp/CardContainer'
@@ -16,19 +15,16 @@ import Cumulative from '../comp/CardContainer/Cumulative'
 import { Performance } from '../comp/CardContainer/Performance'
 import Preferences from '../comp/CardContainer/Preferences'
 import { Introduction } from '../comp/Introduction'
-import TabTable from '../comp/TabTable'
+import TabsTable from '../comp/TabsTable'
 import TakeDatas from '../comp/TakeDatas'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
+import { useTabsConfig } from './useTabsConfig'
 
 export default function TakeDetail() {
   const { setPageBgColor } = useModel('global')
 
-  // 獲取路由中的 id
-  // const { pathname } = getPathnameLng()
-  // const takeId = pathname.split('/').at(-1)
-
   const params = useParams()
-  const { takeId } = params
+  const { id } = params
 
   const [taker, setTaker] = useState<IOrderTaker>()
 
@@ -66,16 +62,13 @@ export default function TakeDetail() {
     if (selected) setTimeRange(selected.value)
   }
 
+  const { items: tabs, onChange } = useTabsConfig()
+
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 100%)' }} className="min-h-screen">
       <div className="max-w-[1332px] px-4 mx-auto mt-6">
         <div className="flex items-center">
-          <div
-            className="hover:bg-gray-100 rounded-full cursor-pointer"
-            onClick={() => {
-              push(`/copy-trading`)
-            }}
-          >
+          <div className="hover:bg-gray-100 rounded-full cursor-pointer" onClick={() => history.back()}>
             <img src="/img/uc/arrow-left.png" width={40} height={40} />
           </div>
           <div className="flex items-center w-full gap-x-5">
@@ -84,7 +77,7 @@ export default function TakeDetail() {
 
               <Iconfont name="daidan" width={22} height={22} hoverColor={colorTextPrimary} />
               <div className="text-[20px] font-bold pl-2">
-                <FormattedMessage id="mt.daidan" />
+                <FormattedMessage id="mt.daidanguanli" />
               </div>
             </div>
             <AccountSelect />
@@ -279,7 +272,7 @@ export default function TakeDetail() {
           </div>
           {/* 表格数据 */}
           <div className="mt-9 border border-gray-150 rounded-2xl px-5">
-            <TabTable />
+            <TabsTable items={tabs} onChange={onChange} />
           </div>
         </div>
       </div>

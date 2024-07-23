@@ -530,5 +530,14 @@ export default {
   'mt.gendanyingkui': '跟單盈虧',
   'mt.gendanjine': '跟單金額',
   'mt.gensuitianshu': '跟隨天數',
-  'mt.days': '{count}天'
+  'mt.days': '{count}天',
+  'mt.quanbugendanbaozhengjin': '全部跟單保證金',
+  'mt.zhanghuzongzichan': '賬戶總資產',
+  'mt.jinxingzhong': '進行中',
+  'mt.yijieshu': '已結束',
+  'mt.lishicangwei': '歷史倉位',
+  'mt.baozhengjinyue': '保證金餘額',
+  'mt.yishixianyingkui': '已實現盈虧',
+  'mt.fenrunjine': '分潤金額',
+  'mt.gensuitianshui': '跟隨天數'
 }

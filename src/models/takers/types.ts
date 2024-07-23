@@ -9,17 +9,39 @@ export interface IAccount {
 }
 
 /** 帶單賬戶信息 */
-export interface IOrderAccount extends IAccount {
+export interface ITaker extends IAccount {
   type: IOrderAccountType
   followers: number
   limitFollowers: number
   introduction?: string
 }
 
+/** 跟單賬戶信息 */
+export interface IFollower extends IAccount {
+  /** 淨盈虧 */
+  jingyingkui: number
+  /** 跟單金額 */
+  gendanjine: number
+  /** 保證金餘額 */
+  baozhengjinyue: number
+  /** 已實現盈虧 */
+  yishixianyingkui: number
+  /** 未實現盈虧 */
+  weishixianyingkui: number
+  /** 跟随天数 */
+  gensuitianshu: number
+  /** 跟随开始时间 */
+  gensuikaishishijian: string
+  /** 跟随结束时间 */
+  gensuijieshushijian: string
+  /** 分润金额 */
+  fenrunjine: number
+}
+
 /** 帶單員 */
 export type IOrderTaker = {
   id: string
-  account: IOrderAccount
+  account: ITaker
   datas: Record<string, any>
   tags: any[]
   state: IOrderTakerState
@@ -31,7 +53,7 @@ export type IOrder = {
   /** 任務名稱 */
   title: string
   /** 帶單賬戶 */
-  account: IOrderAccount
+  account: ITaker
   /** 跟單人列表 */
   followers: IAccount[]
   /** 任務狀態 */
@@ -51,7 +73,7 @@ export type IOrder = {
   // }
 }
 
-/** 跟單頁面參數 */
+/** 帶單頁面參數 */
 export type IOrderTakerProps = {
   item: IOrderTaker
   state: Record<string, any> // 页面状态
