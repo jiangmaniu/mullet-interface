@@ -1,5 +1,3 @@
-import './style.less'
-
 import { useIntl } from '@umijs/max'
 import { Space } from 'antd'
 import { useState } from 'react'

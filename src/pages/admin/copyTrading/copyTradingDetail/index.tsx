@@ -1,9 +1,9 @@
-import { FormattedMessage, useModel, useParams } from '@umijs/max'
-import { useEffect, useState } from 'react'
+import { FormattedMessage, useLocation, useModel, useParams } from '@umijs/max'
+import { useEffect, useMemo, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
-import { IOrderTaker } from '@/models/takers'
+import { IOrderTaker, IOrderTakerState } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 
 import AccountSelect from '../comp/AccountSelect'
@@ -22,6 +22,15 @@ export default function copyTradingDetail() {
 
   const params = useParams()
   const { id } = params
+
+  const location = useLocation()
+  useEffect(() => {
+    const query = new URLSearchParams(location.search)
+
+    query.get('state') && setTakeState(query.get('state') as IOrderTakerState)
+  }, [location])
+
+  const [takeState, setTakeState] = useState<IOrderTakerState>('gendan')
 
   const [taker, setTaker] = useState<IOrderTaker>()
 
@@ -59,7 +68,9 @@ export default function copyTradingDetail() {
     if (selected) setTimeRange(selected.value)
   }
 
-  const { items: tabs, onChange } = useTabsConfig()
+  const { items: tabs, items2: tabs2, onChange } = useTabsConfig()
+
+  const tab = useMemo(() => (takeState === 'yigendan' ? tabs : tabs2), [takeState])
 
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 100%)' }} className="min-h-screen">
@@ -100,24 +111,71 @@ export default function copyTradingDetail() {
             </div>
             {/* 操作区 */}
             <div className="flex flex-col gap-3.5">
-              <Button
-                height={42}
-                type="primary"
-                style={{
-                  width: 158,
-                  borderRadius: 8
-                }}
-                onClick={() => {
-                  // todo 跳转
-                }}
-              >
-                <div className=" flex items-center gap-1">
-                  <Iconfont name="gendanguanli" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                  <span className=" font-medium text-base ">
-                    <FormattedMessage id="mt.gendan" />
-                  </span>
-                </div>
-              </Button>
+              {takeState === 'yigendan' ? (
+                <>
+                  <Button
+                    height={42}
+                    type="primary"
+                    danger
+                    style={{
+                      width: 158,
+                      borderRadius: 8
+                    }}
+                    onClick={() => {
+                      // todo 跳转
+                      setTakeState('gendan')
+                    }}
+                  >
+                    <div className=" flex items-center gap-1">
+                      <Iconfont name="jieshudaidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                      <span className=" font-medium text-base ">
+                        <FormattedMessage id="mt.jieshugendan" />
+                      </span>
+                    </div>
+                  </Button>
+                  <Button
+                    height={42}
+                    type="primary"
+                    style={{
+                      width: 158,
+                      borderRadius: 8,
+                      backgroundColor: 'black'
+                    }}
+                    onClick={() => {
+                      // todo 跳转
+                    }}
+                  >
+                    <div className=" flex items-center gap-1">
+                      <Iconfont name="gendanguanli" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                      <span className=" font-medium text-base text-white ">
+                        <FormattedMessage id="mt.shezhi" />
+                      </span>
+                    </div>
+                  </Button>
+                </>
+              ) : (
+                takeState === 'gendan' && (
+                  <Button
+                    height={42}
+                    type="primary"
+                    style={{
+                      width: 158,
+                      borderRadius: 8
+                    }}
+                    onClick={() => {
+                      // todo 跳转
+                      setTakeState('yigendan')
+                    }}
+                  >
+                    <div className=" flex items-center gap-1">
+                      <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                      <span className=" font-medium text-base ">
+                        <FormattedMessage id="mt.gendan" />
+                      </span>
+                    </div>
+                  </Button>
+                )
+              )}
             </div>
           </div>
           {/* 通知 */}
@@ -158,7 +216,7 @@ export default function copyTradingDetail() {
           </div>
           {/* 表格数据 */}
           <div className="mt-9 border border-gray-150 rounded-2xl px-5">
-            <TabsTable items={tabs} onChange={onChange} />
+            <TabsTable items={tab} onChange={onChange} />
           </div>
         </div>
       </div>

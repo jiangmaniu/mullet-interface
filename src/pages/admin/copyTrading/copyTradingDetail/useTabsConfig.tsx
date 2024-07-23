@@ -6,7 +6,7 @@ import { CURRENCY } from '@/constants'
 import { formatNum, getColorClass } from '@/utils'
 
 import TabTable from '../comp/TabsTable/Table'
-import { mockHistory, mockUsers, orders } from './mockTabTable'
+import { mockHistory, orders } from './mockTabTable'
 
 export const useTabsConfig = () => {
   const intl = useIntl()
@@ -221,26 +221,30 @@ export const useTabsConfig = () => {
     }
   ]
 
+  const items2: TabsProps['items'] = [
+    {
+      key: '2',
+      label: intl.formatMessage({ id: 'mt.lishigendan' }),
+      children: <TabTable columns={historyColumns} datas={mockHistory} />
+    }
+  ]
+
   const items: TabsProps['items'] = [
     {
       key: '1',
-      label: intl.formatMessage({ id: 'mt.dangqiandaidan' }),
+      label: intl.formatMessage({ id: 'mt.dangqiangendan' }),
       children: <TabTable columns={orderColumns} datas={orders} />
     },
     {
       key: '2',
-      label: intl.formatMessage({ id: 'mt.lishidaidan' }),
+      label: intl.formatMessage({ id: 'mt.lishigendan' }),
       children: <TabTable columns={historyColumns} datas={mockHistory} />
-    },
-    {
-      key: '3',
-      label: intl.formatMessage({ id: 'mt.gendanyonghu' }),
-      children: <TabTable columns={userColumns} datas={mockUsers} />
     }
   ]
 
   return {
     items,
+    items2,
     onChange
   }
 }

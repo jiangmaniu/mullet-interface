@@ -15,6 +15,7 @@ export default function SelectRounded({ defaultValue, onChange, options }: IProp
   const intl = useIntl()
   return (
     <Select
+      className="rounded-select"
       style={{ width: 132, height: 38 }}
       defaultValue={defaultValue}
       onChange={onChange}

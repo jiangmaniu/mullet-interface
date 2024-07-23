@@ -2,7 +2,7 @@ import './style.less'
 
 import { SwapRightOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { Space, Tag } from 'antd'
+import { Space } from 'antd'
 import classNames from 'classnames'
 
 import Button from '@/components/Base/Button'
@@ -50,6 +50,10 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
               width: 54,
               borderRadius: 16
             }}
+            onClick={() => {
+              // todo 跳转
+              push(`/copy-trading/detail/${id}?state=${takerState}`)
+            }}
           >
             <SwapRightOutlined style={{ color: 'black' }} />
           </Button>
@@ -76,21 +80,21 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
 
             <OrderTakerChart />
           </div>
-          <div className=" grid grid-cols-3">
-            <div className="flex flex-col gap-1">
+          <div className=" grid grid-cols-3 gap-y-2">
+            <div className="flex flex-col ">
               <span className="count !font-dingpro-medium ">{formatNum(datas.rate3)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.quanbuyingkui" />
                 &nbsp;USD
               </span>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col ">
               <span className="count !font-dingpro-medium ">{formatNum(datas.rate4)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijijiaoyibishu" />
               </span>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col ">
               <span className="count !font-dingpro-medium ">{formatNum(datas.rate5)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijigensuirenshu" />
@@ -109,12 +113,15 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
         </div>
       </div>
       {/* footer */}
-      <Space direction="vertical" size={10} className="border-t mt-4 border-gray-150">
+      <Space direction="vertical" size={8} className="border-t mt-4 pt-1 border-gray-150">
         <Space>
           {tags.map((tag, idx) => (
-            <Tag key={idx} color="green">
+            // <Tag key={idx} color="green">
+            //   <FormattedMessage id={`mt.${tag}`} />
+            // </Tag>
+            <span key={idx} className={classNames('text-xs font-light border-none px-1 rounded', 'text-green bg-green bg-opacity-20')}>
               <FormattedMessage id={`mt.${tag}`} />
-            </Tag>
+            </span>
           ))}
         </Space>
         <Button
@@ -128,7 +135,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
           disabled={takerState === 'wufagendan'}
           onClick={() => {
             // todo 跳转
-            push(`/copy-trading/detail/${id}`)
+            push(`/copy-trading/detail/${id}?state=${takerState}`)
           }}
         >
           <div className=" flex items-center">

@@ -468,6 +468,7 @@ export default {
   'mt.yiyue': '一月',
   'mt.yigendan': '已跟單',
   'mt.gendan': '跟單',
+  'mt.jieshugendan': '結束跟單',
   'mt.wufagendan': '無法跟單',
   'mt.yimanyuan': '已滿員',
   'mt.jinqiyingkui': '{range}盈虧',
@@ -539,5 +540,9 @@ export default {
   'mt.baozhengjinyue': '保證金餘額',
   'mt.yishixianyingkui': '已實現盈虧',
   'mt.fenrunjine': '分潤金額',
-  'mt.gensuitianshui': '跟隨天數'
+  'mt.gensuitianshui': '跟隨天數',
+  'mt.gensuikaishishijian': '跟隨開始時間',
+  'mt.gensuijieshushijian': '跟隨結束時間',
+  'mt.dangqiangendan': '當前跟單',
+  'mt.lishigendan': '歷史跟單'
 }
