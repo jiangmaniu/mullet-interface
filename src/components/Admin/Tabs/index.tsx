@@ -143,30 +143,6 @@ export default function Tabs({
     )
   }
 
-  useEffect(() => {
-    console.log(tabItems.length)
-    console.log(showMobileTabs)
-    console.log(tabKey)
-    console.log(tabBarStyle)
-    console.log(tabBarExtraContent)
-    console.log(hiddenBottomLine)
-    console.log(hiddenTabbarLine)
-    console.log(tabBarGutter)
-    console.log(marginBottom)
-    console.log(res)
-  }, [
-    tabItems,
-    showMobileTabs,
-    tabKey,
-    tabBarStyle,
-    tabBarExtraContent,
-    hiddenBottomLine,
-    hiddenTabbarLine,
-    tabBarGutter,
-    marginBottom,
-    res
-  ])
-
   return (
     <>
       {tabItems.length > 0 && (

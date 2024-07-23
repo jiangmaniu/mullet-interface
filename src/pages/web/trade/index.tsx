@@ -1,4 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
+import { useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
@@ -23,6 +24,7 @@ export default observer(() => {
   const sidebarRef = useRef()
   const buyAndSellRef = useRef<any>(null)
   const { ws, trade, kline } = useStores()
+  const { fetchUserInfo } = useModel('user')
 
   useEffect(() => {
     return () => {
@@ -39,6 +41,9 @@ export default observer(() => {
       console.log('Page is visible')
       // 用户从后台切换回前台时执行的操作
       ws.reconnect()
+
+      // ws没有返回token失效状态，需要查询一次用户信息，看当前登录态是否失效，避免长时间没有操作情况
+      fetchUserInfo(true)
 
       // 重置k线实例
       // @ts-ignore

@@ -2,8 +2,6 @@
 import { ChartingLibraryWidgetOptions, DatafeedConfiguration, LibrarySymbolInfo } from '@/libs/charting_library'
 import { request } from '@/utils/request'
 
-import { symbolInfoArr } from './constant'
-
 // https://www.tradingview.com/charting-library-docs/latest/tutorials/implement_datafeed_tutorial/Widget-Setup
 class DataFeedBase {
   constructor(props: Partial<ChartingLibraryWidgetOptions>) {
@@ -117,6 +115,7 @@ class DataFeedBase {
    */
   searchSymbols(userInput, exchange, symbolType, onResultReadyCallback) {
     const keyword = userInput || ''
+    const symbolInfoArr = [] // 获取品种列表
     const resultArr = symbolInfoArr
       .filter((item) => item.name.includes(keyword))
       .map((item) => {
