@@ -157,6 +157,13 @@ export default [
     component: './admin/copyTrading'
   },
   {
+    path: '/:lng/copy-trading/management',
+    access: 'canAdmin', // 权限配置
+    component: './admin/copyTrading/copyTradingManagement',
+    hideInMenu: true,
+    menuRender: false // 当前路由不展示菜单
+  },
+  {
     path: '/:lng/copy-trading/detail/:id',
     access: 'canAdmin', // 权限配置
     component: './admin/copyTrading/copyTradingDetail',

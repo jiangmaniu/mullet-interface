@@ -35,6 +35,42 @@ export const defaultTakers: IOrder[] = [
         id: `${random(10000000, 99999999)}`,
         name: 'Linen_Bitnex',
         avatar: '/img/avatar_demo.png'
+      },
+      {
+        // 八位數字隨機數
+        id: `${random(10000000, 99999999)}`,
+        name: 'Linen_Bitnex',
+        avatar: '/img/avatar_demo.png'
+      },
+      {
+        // 八位數字隨機數
+        id: `${random(10000000, 99999999)}`,
+        name: 'Linen_Bitnex',
+        avatar: '/img/avatar_demo.png'
+      },
+      {
+        // 八位數字隨機數
+        id: `${random(10000000, 99999999)}`,
+        name: 'Linen_Bitnex',
+        avatar: '/img/avatar_demo.png'
+      },
+      {
+        // 八位數字隨機數
+        id: `${random(10000000, 99999999)}`,
+        name: 'Linen_Bitnex',
+        avatar: '/img/avatar_demo.png'
+      },
+      {
+        // 八位數字隨機數
+        id: `${random(10000000, 99999999)}`,
+        name: 'Linen_Bitnex',
+        avatar: '/img/avatar_demo.png'
+      },
+      {
+        // 八位數字隨機數
+        id: `${random(10000000, 99999999)}`,
+        name: 'Linen_Bitnex',
+        avatar: '/img/avatar_demo.png'
       }
     ],
     datas: {

@@ -1,5 +1,4 @@
 import { FormattedMessage } from '@umijs/max'
-import { Tag } from 'antd'
 import classNames from 'classnames'
 
 import Button from '@/components/Base/Button'
@@ -9,44 +8,26 @@ import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
 import { push } from '@/utils/navigator'
 
+import { AccountTag } from '../../AccountTag'
+
 export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
   return (
     <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full">
       {/* header */}
-      <div className="flex gap-3 py-2.5 px-3.5">
+      <div className="flex gap-3 py-2.5 px-3.5 items-center">
         <img src={account.avatar} width={24} height={24} className=" rounded-full border border-solid border-gray-340" />
 
         <span className=" text-base font-bold">
           {account.name}·{account.id}
         </span>
-        {account.type === 'biaozhun' ? (
-          <Tag style={{ background: 'var(--color-yellow-490)', width: '2.625rem', height: '1.25rem', fontSize: '0.75rem' }}>
-            <FormattedMessage id={`mt.${account.type}`} />
-          </Tag>
-        ) : account.type === 'luodian' ? (
-          <Tag
-            style={{
-              background: 'var(--color-green-700)',
-              color: 'white',
-              width: '2.625rem',
-              height: '1.25rem',
-              fontSize: '0.75rem'
-            }}
-          >
-            <FormattedMessage id={`mt.${account.type}`} />
-          </Tag>
-        ) : (
-          <Tag style={{ background: 'black', color: 'white', width: '2.625rem', height: '1.25rem', fontSize: '0.75rem' }}>
-            <FormattedMessage id={`mt.${account.type}`} />
-          </Tag>
-        )}
+        <AccountTag type={account.type} />
       </div>
       {/* footer */}
       <div className="border-t  border-gray-150 p-4 flex items-center justify-between md:gap-4 gap-2">
-        <div className="grid xl:grid-cols-7 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 xl:gap-15 md:gap-10 gap-5">
+        <div className="grid xl:grid-cols-7 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 xl:gap-12 md:gap-10 gap-8">
           {/* 累計分潤 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className={classNames(' text-base font-medium', getColorClass(datas.rate1))}>
+            <span className={classNames(' text-base !font-dingpro-regular', getColorClass(datas.rate1))}>
               {datas.rate1 > 0 ? `+${datas.rate1}` : datas.rate1}
             </span>
             <span className=" text-xs font-normal text-gray-500">
@@ -56,7 +37,7 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
           </div>
           {/* 今日分潤 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className={classNames(' text-base font-medium', getColorClass(datas.rate2))}>
+            <span className={classNames(' text-base !font-dingpro-regular', getColorClass(datas.rate2))}>
               {datas.rate2 > 0 ? `+${datas.rate2}` : datas.rate2}
             </span>
             <span className=" text-xs font-normal text-gray-500">
@@ -66,35 +47,35 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
           </div>
           {/* 當前跟隨人數 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{formatNum(datas.rate3)}</span>
+            <span className=" text-base !font-dingpro-regular">{formatNum(datas.rate3)}</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.dangqiangensuirenshu" />
             </span>
           </div>
           {/* 入住天數 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{formatNum(datas.rate4)}</span>
+            <span className=" text-base !font-dingpro-regular">{formatNum(datas.rate4)}</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.ruzhutianshu" />
             </span>
           </div>
           {/* 帶單保證金餘額 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{formatNum(datas.rate5)}</span>
+            <span className=" text-base !font-dingpro-regular">{formatNum(datas.rate5)}</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.daidanbaozhengjinyue" />
             </span>
           </div>
           {/* 管理資產規模 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{formatNum(datas.rate6)}</span>
+            <span className=" text-base !font-dingpro-regular">{formatNum(datas.rate6)}</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.guanlizichanguimo" />
             </span>
           </div>
           {/* 分潤比例 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base font-medium">{datas.rate7}%</span>
+            <span className=" text-base !font-dingpro-regular">{datas.rate7}%</span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.fenrunbili" />
             </span>

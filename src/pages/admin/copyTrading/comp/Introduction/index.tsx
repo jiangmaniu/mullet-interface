@@ -1,5 +1,6 @@
 import { FormattedMessage } from '@umijs/max'
-import { Space, Tag } from 'antd'
+import { Space } from 'antd'
+import classNames from 'classnames'
 
 type IProps = {
   avatar?: string
@@ -21,11 +22,11 @@ export const Introduction = (props: IProps) => {
         {/* 名字 & 標籤 */}
         <div className=" flex items-center gap-4 ">
           <span className=" text-xl font-medium text-black-900"> {props.name} </span>
-          <Space direction="horizontal" size={0}>
+          <Space direction="horizontal" size={2}>
             {props.tags?.map((tag, idx) => (
-              <Tag key={idx} color="green">
+              <span key={idx} className={classNames('text-xs font-light border-none px-1 rounded', 'text-green bg-green bg-opacity-20')}>
                 <FormattedMessage id={`mt.${tag}`} />
-              </Tag>
+              </span>
             ))}
           </Space>
         </div>

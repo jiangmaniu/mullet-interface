@@ -38,7 +38,7 @@ export interface IFollower extends IAccount {
   fenrunjine: number
 }
 
-/** 帶單員 */
+/** 帶單任务 */
 export type IOrderTaker = {
   id: string
   account: ITaker

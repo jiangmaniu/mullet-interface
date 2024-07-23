@@ -10,10 +10,12 @@ import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
+import { push } from '@/utils/navigator'
 
+import { AccountTag } from '../../AccountTag'
 import OrderTakerChart from './Chart'
 
-export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
+export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
   const intl = useIntl()
 
   // xx(xx:时间区间)盈亏
@@ -30,27 +32,7 @@ export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, 
             <div className=" flex flex-col gap-2">
               <div className=" flex gap-2 items-center ">
                 <span className="account-name">{account.name}</span>
-                {account.type === 'biaozhun' ? (
-                  <Tag style={{ background: 'var(--color-yellow-490)', width: '2.625rem', height: '1.25rem', fontSize: '0.75rem' }}>
-                    <FormattedMessage id={`mt.${account.type}`} />
-                  </Tag>
-                ) : account.type === 'luodian' ? (
-                  <Tag
-                    style={{
-                      background: 'var(--color-green-700)',
-                      color: 'white',
-                      width: '2.625rem',
-                      height: '1.25rem',
-                      fontSize: '0.75rem'
-                    }}
-                  >
-                    <FormattedMessage id={`mt.${account.type}`} />
-                  </Tag>
-                ) : (
-                  <Tag style={{ background: 'black', color: 'white', width: '2.625rem', height: '1.25rem', fontSize: '0.75rem' }}>
-                    <FormattedMessage id={`mt.${account.type}`} />
-                  </Tag>
-                )}
+                <AccountTag type={account.type} />
               </div>
               <div className="flex items-center gap-1">
                 <Iconfont name="renshu" width={16} color="black" height={16} hoverColor={colorTextPrimary} />
@@ -80,13 +62,13 @@ export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, 
                 <FormattedMessage id="mt.jinqiyingkui" values={{ range: jinqi }} />
                 &nbsp;USD
               </span>
-              <span className={classNames('  text-2xl font-bold ', getColorClass(datas.rate1))}>
+              <span className={classNames('  text-2xl font-bold !font-dingpro-medium ', getColorClass(datas.rate1))}>
                 {datas.rate1 > 0 ? `+${datas.rate1}` : datas.rate1}
               </span>
               <span className="tips">
                 <FormattedMessage id="mt.shouyilv" />
                 &nbsp;
-                <span className={classNames('font-medium', getColorClass(datas.rate2))}>
+                <span className={classNames('font-medium !font-dingpro-medium', getColorClass(datas.rate2))}>
                   {datas.rate2 > 0 ? `+${datas.rate2}` : datas.rate2}%
                 </span>
               </span>
@@ -96,20 +78,20 @@ export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, 
           </div>
           <div className=" grid grid-cols-3">
             <div className="flex flex-col gap-1">
-              <span className="count">{formatNum(datas.rate3)}</span>
+              <span className="count !font-dingpro-medium ">{formatNum(datas.rate3)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.quanbuyingkui" />
                 &nbsp;USD
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="count">{formatNum(datas.rate4)}</span>
+              <span className="count !font-dingpro-medium ">{formatNum(datas.rate4)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijijiaoyibishu" />
               </span>
             </div>
             <div className="flex flex-col gap-1">
-              <span className="count">{formatNum(datas.rate5)}</span>
+              <span className="count !font-dingpro-medium ">{formatNum(datas.rate5)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijigensuirenshu" />
               </span>
@@ -119,7 +101,9 @@ export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, 
               <span className="tips">
                 <FormattedMessage id="mt.jinqishenglv" values={{ range: jinqi }} />
               </span>
-              <span className={classNames('count', getColorClass(datas.rate6))}>{datas.rate6 > 0 ? `+${datas.rate6}` : datas.rate6}%</span>
+              <span className={classNames('count !font-dingpro-medium ', getColorClass(datas.rate6))}>
+                {datas.rate6 > 0 ? `+${datas.rate6}` : datas.rate6}%
+              </span>
             </div>
           </div>
         </div>
@@ -144,6 +128,7 @@ export const OrderTaker = ({ item: { account, datas, tags, state: takerState }, 
           disabled={takerState === 'wufagendan'}
           onClick={() => {
             // todo 跳转
+            push(`/copy-trading/detail/${id}`)
           }}
         >
           <div className=" flex items-center">

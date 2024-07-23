@@ -39,7 +39,7 @@ const ListItemValue = ({
         <FormattedMessage id={format.id} values={format.values} />
         {currency && showCurrency()}
       </span>
-      <span className={classNames(' text-base font-medium !font-dingpro-medium', color && getColorClass(Number(value)))}>
+      <span className={classNames(' text-base !font-dingpro-medium', color && getColorClass(Number(value)))}>
         {prefix ? (showPrefix ? showPrefix(item) : Number(value) > 0 ? `+` : '') : ''}
         {value && formatNum(value)}
         {suffix && showSuffix(item)}
@@ -48,11 +48,19 @@ const ListItemValue = ({
   )
 }
 
-export const ListItem = ({ item, columns }: { columns: IListItemTypes[]; item: IFollower }) => {
+export const ListItem = ({
+  item,
+  columns,
+  onClick
+}: {
+  columns: IListItemTypes[]
+  item: IFollower
+  onClick?: (item: IFollower) => void
+}) => {
   return (
     <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full">
       {/* header */}
-      <div className="flex gap-3 py-2.5 px-3.5">
+      <div className="flex gap-3 py-2.5 px-3.5 cursor-pointer" onClick={() => onClick?.(item)}>
         <img src={item.avatar} width={24} height={24} className=" rounded-full border border-solid border-gray-340" />
 
         <div className=" flex flex-row gap-1 items-center">
