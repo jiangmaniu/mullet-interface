@@ -1,3 +1,4 @@
+import { LeftOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Input, Radio, Select, Upload } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
@@ -26,15 +27,42 @@ export default function Apply() {
     <div
       style={{
         backgroundImage: 'url(/img/apply_bg.png)',
-        backgroundSize: '100% 100%'
+        backgroundSize: '100% 100%',
+        height: '100%',
+        position: 'relative'
       }}
     >
       <Header classes=" bg-opacity-0 " theme="white" />
       <div className="h-[57px]"></div>
+
+      <div className="flex items-center absolute top-[82px] lg:left-[310px] md:left-[250px]">
+        <Button
+          height={40}
+          style={{
+            width: 40,
+            borderRadius: 40,
+            color: 'white',
+            fontWeight: 600,
+            backgroundColor: '#000F95'
+          }}
+          onClick={() => history.back()}
+        >
+          <span>
+            <LeftOutlined color="#fff" width={40} height={40} />
+          </span>
+        </Button>
+        <div className="flex items-center w-full gap-x-5">
+          <div className="ml-2 flex items-center">
+            <span className=" text-base font-medium pl-2 text-white">
+              <FormattedMessage id="mt.gendan" />
+            </span>
+          </div>
+        </div>
+      </div>
       <div
-        className="w-[623px] mx-auto max-w-full h-[988px] mt-8 flex flex-col gap-1 justify-between items-center p-6 rounded-t-3xl"
+        className="absolute bottom-0 overflow-y-scroll no-scrollbar left-0 right-0 top-[92px] w-[623px] mx-auto max-w-full max-h-[988px] mt-8 flex flex-col gap-32 justify-between items-center p-6 rounded-t-3xl"
         style={{
-          background: 'linear-gradient( 180deg, rgba(218,234,255,0.9) 0%, #FFFFFF 100%)'
+          background: 'linear-gradient( 180deg, rgba(218,234,255,0.9) 0%, #FFFFFF 25%, #FFFFFF 100%)'
         }}
       >
         <div className=" flex flex-col gap-4.5">

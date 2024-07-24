@@ -232,7 +232,7 @@ export default function TakeDetail() {
             <Carousel dotPosition="left" items={notifications}></Carousel>
           </div>
           {/* 带单数据 */}
-          <div className="border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5">
+          <div className="border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
             <span className=" text-black-800 text-xl font-medium">
               <FormattedMessage id="mt.daidanshuju" />
             </span>
@@ -271,7 +271,7 @@ export default function TakeDetail() {
             </CardContainer>
           </div>
           {/* 表格数据 */}
-          <div className="mt-9 border border-gray-150 rounded-2xl px-5">
+          <div className="mt-9 border border-gray-150 rounded-2xl px-5 bg-white">
             <TabsTable items={tabs} onChange={onChange} />
           </div>
         </div>

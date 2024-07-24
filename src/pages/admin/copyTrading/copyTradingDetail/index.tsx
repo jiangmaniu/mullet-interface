@@ -214,7 +214,7 @@ export default function copyTradingDetail() {
             </CardContainer>
           </div>
           {/* 表格数据 */}
-          <div className="mt-9 border border-gray-150 rounded-2xl px-5">
+          <div className="mt-9 border border-gray-150 rounded-2xl px-5 bg-white">
             <TabsTable items={tab} onChange={onChange} />
           </div>
         </div>

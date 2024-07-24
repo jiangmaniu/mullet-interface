@@ -15,7 +15,7 @@ type IProps = {
 export const CardContainer = ({ title, defaultValue, onChange, options, children }: IProps) => {
   const [value, setValue] = useState(defaultValue)
   return (
-    <div className=" border border-gray-150 rounded-2xl flex flex-col xl:gap-5 gap-2 pt-5 pb-6.5 px-5">
+    <div className=" border border-gray-150 rounded-2xl flex flex-col xl:gap-5 gap-2 pt-5 pb-6.5 px-5 bg-white">
       {/* Header */}
       <div className=" flex flex-row justify-between items-center">
         <span className=" text-xl text-black-800 font-medium">{title}</span>
