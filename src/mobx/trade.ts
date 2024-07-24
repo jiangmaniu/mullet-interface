@@ -545,7 +545,7 @@ class TradeStore {
         // 更新持仓列表,通过ws推送更新
         // this.getPositionList()
         // 携带持仓订单号则为平仓单
-        if (params.bagOrderId) {
+        if (params.executeOrderId) {
           message.info(getIntl().formatMessage({ id: 'mt.pingcangchenggong' }))
         } else {
           message.info(getIntl().formatMessage({ id: 'mt.kaicangchenggong' }))
