@@ -85,7 +85,7 @@ export default observer(
         buySell: item.buySell === TRADE_BUY_SELL.BUY ? TRADE_BUY_SELL.SELL : TRADE_BUY_SELL.BUY, // 订单方向
         orderVolume: count,
         tradeAccountId: item.tradeAccountId,
-        bagOrderId: item.id, // 持仓单号
+        executeOrderId: item.id, // 持仓单号
         type: ORDER_TYPE.MARKET_ORDER // 订单类型
       } as Order.CreateOrder
 

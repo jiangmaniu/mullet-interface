@@ -4,7 +4,7 @@ declare namespace Order {
     /**
      * 携带持仓订单号则为平仓单，只需要传递持仓单号、交易账户ID、订单数量、订单类型和反向订单方向，其他参数无效
      */
-    bagOrderId?: any
+    executeOrderId?: any
     /**
      * 订单方向
      */
