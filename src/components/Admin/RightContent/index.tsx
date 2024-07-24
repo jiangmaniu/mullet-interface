@@ -4,7 +4,7 @@ import { FormattedMessage, history, SelectLang as UmiSelectLang, useModel } from
 import { Tooltip } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import CopyComp from '@/components/Base/Copy'
 import Tabs from '@/components/Base/CustomTabs'
@@ -17,6 +17,8 @@ import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
+
+import { HeaderTheme } from '../Header/types'
 
 export type SiderTheme = 'light' | 'dark'
 
@@ -101,7 +103,7 @@ export const Concat = () => {
   )
 }
 
-export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) => {
+export const HeaderRightContent = observer(({ isAdmin, theme = 'black' }: { isAdmin?: boolean; theme?: HeaderTheme }) => {
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
   const { initialState } = useModel('@@initialState')
   const { trade } = useStores()
@@ -271,6 +273,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
         border: '1px solid #f3f3f3',
         borderBottomColor: '#fff',
         background: '#fff',
+        color: theme === 'white' ? 'black' : 'white',
         borderTopRightRadius: 12,
         borderTopLeftRadius: 12,
         boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
@@ -279,12 +282,27 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
         border: '1px solid #f3f3f3',
         borderBottomColor: '#fff',
         background: '#fff',
+        color: theme === 'white' ? 'black' : 'white',
         borderTopRightRadius: 12,
         borderTopLeftRadius: 12,
         boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
       }
     }
   })
+
+  const themeClass = useEmotionCss(({ token }) => {
+    return {
+      color: theme === 'white' ? 'white' : 'black',
+      '&:hover': {
+        color: 'black'
+      },
+      '&.active': {
+        color: 'black'
+      }
+    }
+  })
+
+  const iconDownColor = useMemo(() => (theme === 'white' ? (accountBoxOpen ? 'black' : 'white') : 'black'), [accountBoxOpen, theme])
 
   return (
     <div className="flex items-center">
@@ -300,7 +318,7 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
           align={{ offset: [0, 0] }}
         >
           <div
-            className={classNames('flex items-center px-2 h-[57px]', groupClassName, { active: accountBoxOpen })}
+            className={classNames('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}
             onMouseEnter={() => {
               // 刷新账户余额信息,使用ws最新的
               // setTimeout(() => {
@@ -309,28 +327,69 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
             }}
           >
             <div className="flex flex-col items-end group relative">
-              <span className="sm:text-xl text-base text-gray !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
+              <span className="sm:text-xl text-base  !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
               <div className="flex items-center pt-[2px]">
-                <span className="text-xs text-blue">
+                <span className={classNames('text-xs ', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
                   {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                 </span>
                 <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200"></div>
-                <span className="text-xs text-gray-500">#{hiddenCenterPartStr(currentAccountInfo?.id, 4)}</span>
+                <span className={classNames('text-xs ', iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500')}>
+                  #{hiddenCenterPartStr(currentAccountInfo?.id, 4)}
+                </span>
               </div>
             </div>
             <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200"></div>
             <div>
-              <img
+              {/* <img
                 src="/img/uc/select.png"
                 width={24}
                 height={24}
                 style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
                 className="transition-all duration-300"
+              /> */}
+              <Iconfont
+                name="down"
+                width={24}
+                height={24}
+                color={iconDownColor}
+                className=" cursor-pointer rounded-lg transition-all duration-300"
+                style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
               />
             </div>
           </div>
         </Dropdown>
 
+        <Iconfont
+          name="caidan"
+          width={36}
+          height={36}
+          color={theme}
+          className=" cursor-pointer rounded-lg"
+          hoverStyle={{
+            background: theme === 'black' ? '#fbfbfb' : '#222222'
+          }}
+        />
+        <Iconfont
+          name="quan"
+          width={36}
+          height={36}
+          color={theme}
+          className=" cursor-pointer rounded-lg"
+          hoverStyle={{
+            background: theme === 'black' ? '#fbfbfb' : '#222222'
+          }}
+        />
+
+        <Iconfont
+          name="kefu"
+          width={36}
+          height={36}
+          color={theme}
+          className=" cursor-pointer rounded-lg"
+          hoverStyle={{
+            background: theme === 'black' ? '#fbfbfb' : '#222222'
+          }}
+        />
         <Dropdown
           placement="topRight"
           dropdownRender={(origin) => {
@@ -363,13 +422,20 @@ export const HeaderRightContent = observer(({ isAdmin }: { isAdmin?: boolean }) 
             )
           }}
         >
-          <img src="/img/uc/user.png" width={36} height={36} className=" cursor-pointer rounded-lg hover:bg-gray-80" />
+          {/* <img src="/img/uc/user.png" width={36} height={36} className=" cursor-pointer rounded-lg hover:bg-gray-80" /> */}
+          <Iconfont
+            name="user"
+            width={36}
+            height={36}
+            color={theme}
+            className=" cursor-pointer rounded-lg"
+            hoverStyle={{
+              background: theme === 'black' ? '#fbfbfb' : '#222222'
+            }}
+          />
         </Dropdown>
-        <img src="/img/uc/kefu.png" width={36} height={36} className=" cursor-pointer rounded-lg hover:bg-gray-80" />
-        <img src="/img/uc/quan.png" width={36} height={36} className=" cursor-pointer rounded-lg hover:bg-gray-80" />
-        <img src="/img/uc/caidan.png" width={36} height={36} className=" cursor-pointer rounded-lg hover:bg-gray-80" />
       </div>
-      <SwitchLanguage />
+      <SwitchLanguage isAdmin={isAdmin} theme={theme} />
     </div>
   )
 })

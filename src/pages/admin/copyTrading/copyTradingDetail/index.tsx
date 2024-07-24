@@ -26,7 +26,6 @@ export default function copyTradingDetail() {
   const location = useLocation()
   useEffect(() => {
     const query = new URLSearchParams(location.search)
-
     query.get('state') && setTakeState(query.get('state') as IOrderTakerState)
   }, [location])
 

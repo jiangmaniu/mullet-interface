@@ -1,12 +1,13 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl, useModel } from '@umijs/max'
+import { DefaultOptionType } from 'antd/es/select'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
 import { hiddenCenterPartStr } from '@/utils'
 
-export default function AccountSelect() {
+export default function AccountSelect({ onClick, style }: { onClick?: (item: any) => void; style?: React.CSSProperties | undefined }) {
   const { initialState } = useModel('@@initialState')
   const intl = useIntl()
   const [accountId, setAccountId] = useState<any>('')
@@ -32,6 +33,15 @@ export default function AccountSelect() {
     }
   })
 
+  const clickHandler = (item: DefaultOptionType) => {
+    setOpen(false)
+    setAccountId(item.id)
+
+    if (onClick) {
+      onClick(item)
+    }
+  }
+
   return (
     <ProFormSelect
       options={accountList.map((item) => ({
@@ -50,15 +60,14 @@ export default function AccountSelect() {
         value: accountId,
         popupClassName: popupClassName,
         className: popupClassName,
-        style: { minWidth: 260, height: 38 },
+        style: { minWidth: 260, height: 38, ...style },
         optionRender: (option) => {
           const item = option?.data || {}
 
           return (
             <div
               onClick={() => {
-                setOpen(false)
-                setAccountId(item.id)
+                clickHandler(item)
               }}
               className={classNames('cursor-pointer rounded-lg border border-gray-250 px-2 py-1  hover:bg-[#fbfbfb]', {
                 'bg-[#fbfbfb]': item.id === accountId

@@ -9,12 +9,12 @@ export enum Language {
 export const LanguageMap: Record<string, any> = {
   'en-US': {
     key: 'en-US',
-    label: 'English',
+    label: 'EN',
     icon: '🇺🇸'
   },
   'zh-TW': {
     key: 'zh-TW',
-    label: '繁體中文',
+    label: 'ZH',
     icon: '🇨🇳'
   }
 }

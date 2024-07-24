@@ -1,9 +1,10 @@
 import { FormattedMessage, history, useModel } from '@umijs/max'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import Hidden from '@/components/Base/Hidden'
+import { push } from '@/utils/navigator'
 
 import CopyTrading from './comp/CopyTrading'
 import Square from './comp/Square'
@@ -18,8 +19,6 @@ export default function copyTrading() {
   const hash = history.location.hash?.replace(/^#/, '')
 
   const [tabKey, setTabKey] = useState(hash || 'square')
-
-  useEffect(() => {}, [])
 
   const tabList = [
     {
@@ -72,6 +71,7 @@ export default function copyTrading() {
               }}
               onClick={() => {
                 // todo 跳转
+                push('/copy-trading/apply')
               }}
             >
               <FormattedMessage id="mt.lijicanjia" />

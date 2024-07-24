@@ -1,10 +1,13 @@
+import { DownOutlined } from '@ant-design/icons'
+import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { getAllLocales } from '@umijs/max'
 import { Dropdown } from 'antd'
 
 import { LanguageMap } from '@/constants/enum'
 import { useLang } from '@/context/languageProvider'
 
-import SelectSuffixIcon from '../Base/SelectSuffixIcon'
+import { HeaderTheme } from '../Admin/Header/types'
+import Iconfont from '../Base/Iconfont'
 
 const inlineStyle = {
   cursor: 'pointer',
@@ -17,9 +20,10 @@ const inlineStyle = {
 
 type IProps = {
   isAdmin?: boolean
+  theme?: HeaderTheme
 }
 
-export default function SwitchLanguage({ isAdmin = true }: IProps) {
+export default function SwitchLanguage({ isAdmin = true, theme = 'black' }: IProps) {
   const { lng, setLng } = useLang()
   const languages = getAllLocales()
   const pickerOptions = languages.map((v: any) => ({ value: v, label: LanguageMap[v]?.label || 'English' }))
@@ -44,18 +48,42 @@ export default function SwitchLanguage({ isAdmin = true }: IProps) {
     })
   }
 
+  const className = useEmotionCss(({ token }) => {
+    return {
+      cursor: 'pointer',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 14,
+      verticalAlign: 'middle',
+      borderRadius: 8,
+      padding: '2px 4px 2px 0',
+      '&:hover': {
+        backgroundColor: theme === 'black' ? '#fbfbfb' : '#222222'
+      }
+    }
+  })
+
   return (
     <>
-      <div className="flex justify-center bg-gray-120 rounded-lg h-9 px-1">
+      <div className="flex justify-center  rounded-lg h-9 px-1">
         <Dropdown menu={langMenu} placement="bottomRight">
-          <span style={inlineStyle}>
-            <img src="/img/lang_icon.png" width={30} height={30} />
-            {isAdmin && (
-              <>
-                &nbsp;{LanguageMap[lng]?.label || 'EN'}&nbsp;
-                <SelectSuffixIcon opacity={0.6} style={{ width: 24 }} />
-              </>
-            )}
+          <span className={className}>
+            {/* <img src="/img/lang_icon.png" width={30} height={30} /> */}
+
+            <Iconfont name="lng" width={36} height={36} color={theme} className=" cursor-pointer rounded-lg" />
+            <span
+              style={{
+                color: theme
+              }}
+            >
+              {isAdmin && (
+                <>
+                  &nbsp;{LanguageMap[lng]?.label || 'EN'}&nbsp;
+                  <DownOutlined width={24} height={24} color={theme} />
+                </>
+              )}
+            </span>
           </span>
         </Dropdown>
       </div>
