@@ -258,6 +258,15 @@
   background: rgba(156, 156, 156, 0.5) !important;
 }
 
+// textarea 覆盖， 禁用拖动，数量提示在输入框内展示
+textarea.ant-input {
+  resize: none !important;
+}
+.ant-input-textarea-show-count .ant-input-data-count {
+  right: 8px !important;
+  bottom: 2px !important;
+}
+
 // 修改select、input size为lg的组件字体大小
 .ant-select-lg,
 .ant-select-lg .ant-select-selector,

@@ -1,4 +1,3 @@
-import { LeftOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Input, Radio, Select, Upload } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
@@ -38,23 +37,21 @@ export default function Apply() {
       <div className="flex items-center absolute top-[82px] lg:left-[310px] md:left-[250px]">
         <Button
           height={40}
+          type="primary"
           style={{
             width: 40,
             borderRadius: 40,
             color: 'white',
-            fontWeight: 600,
-            backgroundColor: '#000F95'
+            fontWeight: 600
           }}
           onClick={() => history.back()}
         >
-          <span>
-            <LeftOutlined color="#fff" width={40} height={40} />
-          </span>
+          <img src="/img/apply_back.png" width={40} height={40} />
         </Button>
         <div className="flex items-center w-full gap-x-5">
           <div className="ml-2 flex items-center">
             <span className=" text-base font-medium pl-2 text-white">
-              <FormattedMessage id="mt.gendan" />
+              <FormattedMessage id="mt.fanhuigendan" />
             </span>
           </div>
         </div>

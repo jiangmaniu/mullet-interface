@@ -1,6 +1,6 @@
-import { FormattedMessage } from '@umijs/max'
 import { Space } from 'antd'
-import classNames from 'classnames'
+
+import Tags from '@/components/Admin/Tags'
 
 type IProps = {
   avatar?: string
@@ -24,9 +24,7 @@ export const Introduction = (props: IProps) => {
           <span className=" text-xl font-medium text-black-900"> {props.name} </span>
           <Space direction="horizontal" size={2}>
             {props.tags?.map((tag, idx) => (
-              <span key={idx} className={classNames('text-xs font-light border-none px-1 rounded', 'text-green bg-green bg-opacity-20')}>
-                <FormattedMessage id={`mt.${tag}`} />
-              </span>
+              <Tags size="small" color="green" format={{ id: `mt.${tag}` }} key={idx} />
             ))}
           </Space>
         </div>

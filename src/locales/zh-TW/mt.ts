@@ -559,5 +559,15 @@ export default {
   'mt.touxiangdaxiao': '注意：头像大小大于500kb，小于2m',
   'mt.yuedubingtingyu': '我已閱讀並同意跟單交易{fuwu}和{yinsi}',
   'mt.fuwutiaokuan': '服務條款',
-  'mt.yinsizhengceshengming': '隐私政策声明'
+  'mt.yinsizhengceshengming': '隐私政策声明',
+  'mt.fanhuigendan': '返回跟單',
+  'mt.daidanshezhi': '帶單設置',
+  'mt.jibenxinxi': '基本信息',
+  'mt.daidancanshu': '帶單參數',
+  'mt.baocun': '保存',
+  'mt.lirunfenchengbili': '利潤分成比例',
+  'mt.zichanguimo': '資產規模',
+  'mt.zuidazhichirenshu': '最大支持人數',
+  'mt.daidanbiaoqian': '帶單標籤',
+  'mt.ren': '人'
 }

@@ -2,6 +2,7 @@ import { useIntl } from '@umijs/max'
 import { TableProps, TabsProps } from 'antd'
 import classNames from 'classnames'
 
+import Tags from '@/components/Admin/Tags'
 import { CURRENCY } from '@/constants'
 import { formatNum, getColorClass } from '@/utils'
 
@@ -26,16 +27,13 @@ export const useTabsConfig = () => {
           <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
           <span className=" flex flex-col items-start">
             <span className="text-sm font-medium text-black-800">{pz.pinzhong}</span>
-            <span>
-              <span
-                className={classNames(
-                  'text-xs font-light border-none px-1 rounded',
-                  pz.zhuangtai === '空' ? 'text-red bg-red bg-opacity-20' : 'text-green bg-green bg-opacity-20'
-                )}
-              >
+            <span className="flex items-center gap-1">
+              <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
                 {pz.zhuangtai}
-              </span>{' '}
-              <span className="text-xs font-light border-none px-1 rounded bg-gray-120">{pz.desc}</span>
+              </Tags>
+              <Tags size="tiny" color="gray">
+                {pz.desc}
+              </Tags>
             </span>
           </span>
         </span>
@@ -106,16 +104,13 @@ export const useTabsConfig = () => {
           <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
           <span className=" flex flex-col items-start">
             <span className="text-sm font-medium text-black-800">{pz.pinzhong}</span>
-            <span>
-              <span
-                className={classNames(
-                  'text-xs font-light border-none px-1 rounded',
-                  pz.zhuangtai === '空' ? 'text-red bg-red bg-opacity-20' : 'text-green bg-green bg-opacity-20'
-                )}
-              >
+            <span className="flex items-center gap-1">
+              <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
                 {pz.zhuangtai}
-              </span>{' '}
-              <span className="text-xs font-light border-none px-1 rounded bg-gray-120">{pz.desc}</span>
+              </Tags>
+              <Tags size="tiny" color="gray">
+                {pz.desc}
+              </Tags>
             </span>
           </span>
         </span>

@@ -5,6 +5,7 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { Space } from 'antd'
 import classNames from 'classnames'
 
+import Tags from '@/components/Admin/Tags'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
@@ -119,9 +120,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
             // <Tag key={idx} color="green">
             //   <FormattedMessage id={`mt.${tag}`} />
             // </Tag>
-            <span key={idx} className={classNames('text-xs font-light border-none px-1 rounded', 'text-green bg-green bg-opacity-20')}>
-              <FormattedMessage id={`mt.${tag}`} />
-            </span>
+            <Tags size="small" color="green" format={{ id: `mt.${tag}` }} key={idx} />
           ))}
         </Space>
         <Button
