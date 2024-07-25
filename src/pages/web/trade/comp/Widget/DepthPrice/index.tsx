@@ -78,7 +78,7 @@ function DeepPrice() {
 
   // 渲染买列表
   const renderBuyList = () => {
-    const list = bids.slice(0, showAll ? 20 : 12)
+    const list = showAll ? bids : bids.slice(0, 12)
     const maxAmount = Math.max(...list.map((item) => item.amount))
     return list
       .filter((v) => v)
