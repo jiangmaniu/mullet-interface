@@ -1,6 +1,7 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Input, Radio, Select, Upload } from 'antd'
 import TextArea from 'antd/es/input/TextArea'
+import { useState } from 'react'
 
 import Header from '@/components/Admin/Header'
 import Button from '@/components/Base/Button'
@@ -22,6 +23,12 @@ export default function Apply() {
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
 
+  const [read, setRead] = useState<number | undefined>(1)
+
+  const onClickRadio = () => {
+    read === 1 ? setRead(undefined) : setRead(1)
+  }
+
   return (
     <div
       style={{
@@ -35,9 +42,10 @@ export default function Apply() {
       <div className="h-[57px]"></div>
 
       <div className="flex items-center absolute top-[82px] lg:left-[310px] md:left-[250px]">
-        <Button
+        {/* <Button
           height={40}
           type="primary"
+          className="hover:shadow-[2px_2px_4px_rgba(100,100,100,0.25)]"
           style={{
             width: 40,
             borderRadius: 40,
@@ -46,8 +54,12 @@ export default function Apply() {
           }}
           onClick={() => history.back()}
         >
-          <img src="/img/apply_back.png" width={40} height={40} />
-        </Button>
+
+        </Button> */}
+        <div
+          onClick={() => history.back()}
+          className=" w-14 h-10 text-white font-semibold rounded-full hover:drop-shadow-[2px_2px_4px_rgba(155,155,255,0.3)] cursor-pointer bg-[url(/img/apply_back.png)]  bg-[length:100%_100%]"
+        ></div>
         <div className="flex items-center w-full gap-x-5">
           <div className="ml-2 flex items-center">
             <span className=" text-base font-medium pl-2 text-white">
@@ -176,20 +188,38 @@ export default function Apply() {
 
         {/* 提交申请 */}
         <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-[532px] max-w-full">
-          <Radio>
-            <FormattedMessage
-              id="mt.yuedubingtingyu"
-              values={{
-                fuwu: <FormattedMessage id="mt.fuwutiaokuan" />,
-                yinsi: (
-                  <>
-                    {SYSTEM_NAME}
-                    <FormattedMessage id="mt.yinsizhengceshengming" />
-                  </>
-                )
-              }}
-            />
-          </Radio>
+          <Radio.Group value={read}>
+            <Radio onClick={onClickRadio} value={1}>
+              <FormattedMessage
+                id="mt.yuedubingtingyu"
+                values={{
+                  fuwu: (
+                    <span
+                      className=" underline underline-offset-1 cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        console.log('fuwutiaokuan')
+                      }}
+                    >
+                      <FormattedMessage id="mt.fuwutiaokuan" />
+                    </span>
+                  ),
+                  yinsi: (
+                    <span
+                      className=" underline underline-offset-1 cursor-pointer"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        console.log('zhengceshengming')
+                      }}
+                    >
+                      {SYSTEM_NAME}
+                      <FormattedMessage id="mt.yinsizhengceshengming" />
+                    </span>
+                  )
+                }}
+              />
+            </Radio>
+          </Radio.Group>
           <Button
             height={48}
             type="primary"

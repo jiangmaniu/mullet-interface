@@ -1,6 +1,7 @@
 import './style.less'
 
 import { ModalForm } from '@ant-design/pro-components'
+import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import { Form, message, Tabs, TabsProps } from 'antd'
 
@@ -34,40 +35,60 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
     }
   ]
 
-  return (
-    <ModalForm<{
-      name: string
-      company: string
-    }>
-      title={title}
-      trigger={trigger}
-      form={form}
-      width={430}
-      autoFocusFirstInput
-      modalProps={{
-        destroyOnClose: true,
-        onCancel: () => console.log('run')
-      }}
-      submitTimeout={2000}
-      onFinish={async (values) => {
-        await waitTime(2000)
-        console.log(values.name)
-        message.success('提交成功')
-        return true
-      }}
-      submitter={{
-        render: (props, defaultDoms) => {
-          return []
+  const className = useEmotionCss(() => {
+    return {
+      '.ant-tabs': {
+        '.ant-tabs-ink-bar.ant-tabs-ink-bar-animated': {
+          width: '40.9994px !important',
+          height: '10px !important',
+          borderRadius: '8px !important',
+          transform: 'translateX(-50%) translateY(50%) !important'
         }
-      }}
-    >
-      <div className="flex flex-col items-center gap-2">
-        <div className=" w-[165px] h-[142px] bg-[url('/img/modal-bg.png')] bg-[length:100%_100%] flex items-center justify-center">
-          <AvatarUpload />
-        </div>
+      },
 
-        <Tabs items={items} className="flex-1  w-full flex-grow" />
-      </div>
-    </ModalForm>
+      '.ant-tabs-top > .ant-tabs-nav::before': {
+        borderBottom: '1px solid #efefef !important'
+      }
+    }
+  })
+
+  return (
+    <div>
+      <ModalForm<{
+        name: string
+        company: string
+      }>
+        title={title}
+        trigger={trigger}
+        form={form}
+        width={430}
+        autoFocusFirstInput
+        modalProps={{
+          className: 'custom',
+          destroyOnClose: true,
+          onCancel: () => console.log('run')
+        }}
+        submitTimeout={2000}
+        onFinish={async (values) => {
+          await waitTime(2000)
+          console.log(values.name)
+          message.success('提交成功')
+          return true
+        }}
+        submitter={{
+          render: (props, defaultDoms) => {
+            return []
+          }
+        }}
+      >
+        <div className="flex flex-col items-center">
+          <div className=" w-[165px] h-[142px] bg-[url('/img/modal-bg.png')] bg-[length:100%_100%] flex items-center justify-center -mt-7">
+            <AvatarUpload width={81} height={81} />
+          </div>
+
+          <Tabs items={items} className="flex-1  w-full flex-grow" />
+        </div>
+      </ModalForm>
+    </div>
   )
 }

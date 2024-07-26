@@ -9,17 +9,6 @@ export const defaultAccountTypes = [
 
 export const defaultTags = [{ value: 'dipin', label: <FormattedMessage id="mt.dipin" /> }]
 
-export const defaultTimeRange = [
-  {
-    value: 'liangzhou',
-    label: <FormattedMessage id="mt.liangzhou" />
-  },
-  {
-    value: 'yiyue',
-    label: <FormattedMessage id="mt.yiyue" />
-  }
-]
-
 export const orders = Array.from({ length: 20 }, (v, i) => {
   return {
     key: i + 1,

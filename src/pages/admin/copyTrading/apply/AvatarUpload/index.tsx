@@ -3,6 +3,7 @@ import { GetProp, message, Upload, UploadProps } from 'antd'
 import { useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
+
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
 const getBase64 = (img: FileType, callback?: (url: string) => void) => {
@@ -22,7 +23,7 @@ const beforeUpload = (file: FileType) => {
   }
   return isJpgOrPng && isLt2M
 }
-export const AvatarUpload = () => {
+export const AvatarUpload = ({ width = 112, height = 113 }) => {
   const [loading, setLoading] = useState(false)
   const [imageUrl, setImageUrl] = useState<string>()
   const [previewOpen, setPreviewOpen] = useState(false)
@@ -48,9 +49,15 @@ export const AvatarUpload = () => {
   )
 
   return (
-    <Upload listType="picture-card" showUploadList={false} beforeUpload={beforeUpload} onChange={handleChange}>
+    <Upload showUploadList={false} beforeUpload={beforeUpload} onChange={handleChange}>
       <div className="flex items-center justify-center">
-        <div className="flex items-center justify-center bg-[url(/img/logo-only.png)] bg-cover w-[112px] h-[113px] rounded-xl bg-gray-120 border border-gray-340">
+        <div
+          className="flex items-center justify-center bg-[url(/img/logo-only.png)] bg-cover rounded-xl bg-gray-120 border border-gray-340 overflow-hidden"
+          style={{
+            width,
+            height
+          }}
+        >
           {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
         </div>
       </div>

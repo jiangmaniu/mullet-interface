@@ -84,5 +84,8 @@ export default {
   Carousel: {
     dotHeight: 0,
     dotWidth: 0
+  },
+  Radio: {
+    buttonColor: 'red'
   }
 }

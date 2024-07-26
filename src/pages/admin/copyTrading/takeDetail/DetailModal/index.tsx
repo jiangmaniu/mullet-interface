@@ -1,3 +1,5 @@
+import './style.less'
+
 import { LeftOutlined } from '@ant-design/icons'
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
@@ -7,7 +9,7 @@ import { useState } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import SelectRounded from '@/components/Base/SelectRounded'
 
-import { defaultTimeRange, orders } from './mock'
+import { orders } from './mock'
 import ModalItem from './ModalItem'
 import ModalItemDetail from './ModalItemDetail'
 
@@ -23,10 +25,20 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.fenrunmingxi' })
-  const range = intl.formatMessage({ id: 'mt.jin' }, { range: intl.formatMessage({ id: 'mt.liangzhou' }) })
+
+  const timeRange = [
+    {
+      value: 'liangzhou',
+      label: intl.formatMessage({ id: 'mt.liangzhou' })
+    },
+    {
+      value: 'yiyue',
+      label: intl.formatMessage({ id: 'mt.yigeyue' })
+    }
+  ]
 
   const [state, setState] = useState({
-    time: defaultTimeRange[0].value
+    time: timeRange[0].value
   })
 
   const handleChange = (key: string, value: string) => {
@@ -35,9 +47,6 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
       [key]: value
     })
   }
-
-  // 时间區間
-  const [timeRange, setTimeRange] = useState(defaultTimeRange)
 
   const [filter, setFilter] = useState<number | undefined>(1)
 
@@ -65,6 +74,7 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
       width={620}
       autoFocusFirstInput
       modalProps={{
+        className: 'custom',
         destroyOnClose: true,
         onCancel: () => console.log('run')
       }}
@@ -91,7 +101,7 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
             <div className="flex flex-col  gap-3 mt-1 w-full absolute top-0 bottom-0 items-start ">
               <div className=" flex flex-row gap-3 items-center mb-1 ">
                 <div
-                  className=" h-[2.375rem] flex items-center justify-center rounded-2xl bg-[rgba(0,0,0,0.04)] px-3"
+                  className=" h-[2.375rem] flex items-center justify-center rounded-2xl bg-gray-150 opacity-60 px-3 cursor-pointer hover:shadow-[2px_2px_4px_rgba(100,100,100,0.25)]"
                   onClick={() => {
                     setShowDetail(false)
                   }}
@@ -119,7 +129,7 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
           <>
             <div className="flex flex-col items-start gap-3 mt-1 w-full absolute top-0 bottom-0 ">
               <div className=" flex flex-row gap-3 items-center mb-1 ">
-                <div className=" h-[2.375rem] flex items-center justify-center rounded-2xl bg-[rgba(0,0,0,0.04)] px-3">
+                <div className=" h-[2.375rem] flex items-center justify-center rounded-2xl bg-gray-150 opacity-60 px-3 cursor-pointer">
                   <Radio.Group value={filter}>
                     <Radio onClick={onClickRadio} value={1}>
                       <FormattedMessage id="mt.yincangfenrunwei0deriqi" />
@@ -130,7 +140,8 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
                   variant="filled"
                   labelRender={(item) => (
                     <span className=" text-black-900 text-sm font-normal">
-                      <FormattedMessage id="mt.jin" values={{ range: item.label }} />
+                      <FormattedMessage id="mt.jin" />
+                      {item.label}
                     </span>
                   )}
                   value={state.time}

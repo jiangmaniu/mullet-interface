@@ -28,9 +28,9 @@ export default ({ item, onClick }: { item: any; onClick: (item: any) => void }) 
         onClick={() => {
           onClick(item)
         }}
-        className="w-7 h-7  rounded-lg bg-white flex items-center justify-center border border-solid border-gray-150 cursor-pointer"
+        className="w-7 h-7  rounded-lg bg-white flex items-center justify-center border border-solid border-gray-150 cursor-pointer hover:shadow-[2px_2px_2px_rgba(100,100,100,0.25)]"
       >
-        <Iconfont name="gengduo-caozuo" width={10} color="black" height={10} />
+        <Iconfont name="gengduo-caozuo" width={14} color="black" height={14} />
       </div>
     </div>
   )

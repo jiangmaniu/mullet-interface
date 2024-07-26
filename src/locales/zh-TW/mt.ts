@@ -464,7 +464,7 @@ export default {
   'mt.biaoqian': '標籤',
   'mt.dipin': '低頻',
   'mt.jinqishouyilv': '近{range}收益率',
-  'mt.jin': '近{range}',
+  'mt.jin': '近',
   'mt.liangzhou': '兩週',
   'mt.yiyue': '一月',
   'mt.yigeyue': '一個月',
