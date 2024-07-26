@@ -464,8 +464,11 @@ export default {
   'mt.biaoqian': '標籤',
   'mt.dipin': '低頻',
   'mt.jinqishouyilv': '近{range}收益率',
+  'mt.jin': '近{range}',
   'mt.liangzhou': '兩週',
   'mt.yiyue': '一月',
+  'mt.yigeyue': '一個月',
+  'mt.lianggeyue': '兩個月',
   'mt.yigendan': '已跟單',
   'mt.gendan': '跟單',
   'mt.jieshugendan': '結束跟單',
@@ -569,5 +572,9 @@ export default {
   'mt.zichanguimo': '資產規模',
   'mt.zuidazhichirenshu': '最大支持人數',
   'mt.daidanbiaoqian': '帶單標籤',
-  'mt.ren': '人'
+  'mt.ren': '人',
+  'mt.yincangfenrunwei0deriqi': '隱藏分潤為 0 的日期',
+  'mt.daidanfenrun': '帶單分潤',
+  'mt.fenrun': '分潤',
+  'mt.meiyougengduojilu': '沒有更多記錄了...'
 }

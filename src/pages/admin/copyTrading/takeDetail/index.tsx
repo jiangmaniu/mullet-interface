@@ -17,6 +17,7 @@ import Preferences from '../comp/CardContainer/Preferences'
 import { Introduction } from '../comp/Introduction'
 import TabsTable from '../comp/TabsTable'
 import TakeDatas from '../comp/TakeDatas'
+import DetailModal from './DetailModal'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
 import SettingModal from './SettingModal'
 import { useTabsConfig } from './useTabsConfig'
@@ -193,24 +194,28 @@ export default function TakeDetail() {
                   </Button>
                 }
               />
-              <Button
-                height={42}
-                type="default"
-                style={{
-                  width: 158,
-                  borderRadius: 8
-                }}
-                onClick={() => {
-                  // todo 跳转
-                }}
-              >
-                <div className=" flex items-center gap-1">
-                  <Iconfont name="fenrunmingxi" width={20} height={20} hoverColor={colorTextPrimary} />
-                  <span className=" font-medium text-base ">
-                    <FormattedMessage id="mt.fenrunmingxi" />
-                  </span>
-                </div>
-              </Button>
+              <DetailModal
+                trigger={
+                  <Button
+                    height={42}
+                    type="default"
+                    style={{
+                      width: 158,
+                      borderRadius: 8
+                    }}
+                    onClick={() => {
+                      // todo 跳转
+                    }}
+                  >
+                    <div className=" flex items-center gap-1">
+                      <Iconfont name="fenrunmingxi" width={20} height={20} hoverColor={colorTextPrimary} />
+                      <span className=" font-medium text-base ">
+                        <FormattedMessage id="mt.fenrunmingxi" />
+                      </span>
+                    </div>
+                  </Button>
+                }
+              />
               <Button
                 height={42}
                 type="primary"
