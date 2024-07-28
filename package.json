@@ -104,6 +104,7 @@
     "@umijs/fabric": "^2.14.1",
     "@umijs/lint": "^4.0.52",
     "autoprefixer": "^10.4.16",
+    "click-to-react-component": "^1.1.0",
     "commitizen": "^4.3.0",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog-zh": "^0.0.2",

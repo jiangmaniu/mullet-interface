@@ -1,5 +1,6 @@
 import { Settings as LayoutSettings } from '@ant-design/pro-components'
 import { history, Link, Navigate, RunTimeLayoutConfig, useModel } from '@umijs/max'
+import { ClickToComponent } from 'click-to-react-component'
 import React, { useState } from 'react'
 import { Helmet } from 'react-helmet'
 
@@ -292,6 +293,11 @@ export const rootContainer = (container: JSX.Element) => {
           <script async={true} src={ICONFONT_URL}></script>
         </Helmet>
         <Provider>{container}</Provider>
+        {/* 快速调试组件
+          按住 option + 单击，就会直接打开它的对应的组件的源码。
+          如果按住 option + 右键单击，可以看到它的所有父级组件，然后选择一个组件打
+        */}
+        <ClickToComponent />
       </>
     ),
     null,
