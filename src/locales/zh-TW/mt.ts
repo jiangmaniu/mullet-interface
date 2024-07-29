@@ -595,5 +595,21 @@ export default {
   'mt.jieshudaidanhou': '結束帶單後，需要再次申請才能成為帶單員',
   'mt.qupingcang': '去平倉',
   'mt.wujiaoyizhanghu': '無交易賬戶',
-  'mt.dangqianwujiaoyizhanghu': '您當前無此交易賬戶，是否需要創建？'
+  'mt.dangqianwujiaoyizhanghu': '您當前無此交易賬戶，是否需要創建？',
+  'mt.cdexsshequ': 'CDEX 社區',
+  'mt.guanyucdex': '關於 CDEX',
+  'mt.gongsijianjie': '公司簡介',
+  'mt.boke': '博客',
+  'mt.fuwu': '服務',
+  'mt.haoyoutuijian': '好友推薦',
+  'mt.bangzhuzhongxin': '幫助中心',
+  'mt.jiaoyifeiyong': '交易費用',
+  'mt.jiangli': '獎勵',
+  'mt.xueyuan': '學院',
+  'mt.chanpin': '產品',
+  'mt.xinshouzhinan': '新手指南',
+  'mt.tiaokuan': '條款',
+  'mt.fengxiantishi': '風險提示',
+  'mt.yinsiquantiaokuan': '隱私權條款',
+  'mt.saomajiaruwomen': '掃碼加入我們'
 }

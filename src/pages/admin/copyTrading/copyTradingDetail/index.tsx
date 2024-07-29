@@ -1,6 +1,7 @@
 import { FormattedMessage, useLocation, useModel, useParams } from '@umijs/max'
 import { useEffect, useMemo, useState } from 'react'
 
+import Footer from '@/components/Admin/Footer'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTaker, IOrderTakerState } from '@/models/takers'
@@ -228,7 +229,7 @@ export default function copyTradingDetail() {
           </div>
         </div>
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   )
 }

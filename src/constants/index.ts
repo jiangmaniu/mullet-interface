@@ -50,6 +50,7 @@ export const isProd = process.env.NODE_ENV === 'production' || process.env.APP_E
 
 // 貨幣
 export const CURRENCY = 'USDT'
+export const CURRENT_YEAR = 2024
 
 // 测试环境
 const development = {

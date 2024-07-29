@@ -3,6 +3,7 @@ import { Select } from 'antd'
 import { useEffect, useState } from 'react'
 
 import Carousel from '@/components/Admin/Carousel'
+import Footer from '@/components/Admin/Footer'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTaker } from '@/models/takers'
@@ -291,7 +292,7 @@ export default function TakeDetail() {
           </div>
         </div>
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   )
 }

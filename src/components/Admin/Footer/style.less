@@ -1,0 +1,15 @@
+.footer_item {
+  position: relative;
+  // width: 268px;
+}
+
+.footer_item:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: -20px;
+  width: 1px;
+  height: 160px;
+  background-color: #eeeeee;
+  transform: translate(-100%, -50%);
+  content: '';
+}
