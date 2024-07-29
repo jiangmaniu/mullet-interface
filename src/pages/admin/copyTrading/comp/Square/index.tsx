@@ -1,6 +1,6 @@
 import { useIntl, useModel } from '@umijs/max'
 import { Space } from 'antd'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import QA from '@/components/Admin/QA'
 import SelectRounded from '@/components/Base/SelectRounded'
@@ -22,8 +22,8 @@ export default function Square() {
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
 
-  // const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
-  const ableList = []
+  const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
+  // const ableList = [] // test
 
   const handleChange = (key: string, value: string) => {
     setState({
