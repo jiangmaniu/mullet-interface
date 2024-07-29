@@ -53,7 +53,7 @@ export default function Square() {
   const [open, setOpen] = useState(false)
 
   const onOpenChange = (val: boolean) => setOpen(val)
-  const onClick = (id: string) => {
+  const onClick = (id: string, state: string) => {
     if (ableList.length === 0) {
       setOpen(true)
       return

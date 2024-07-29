@@ -92,7 +92,7 @@ const Cumulative = ({
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             {
               offset: 0,
-              color: 'rgba(24, 62, 252, 1)'
+              color: 'rgba(24, 62, 252, 0.3)'
             },
             {
               offset: 1,

@@ -15,7 +15,7 @@ import { formatNum, getColorClass } from '@/utils'
 import { AccountTag } from '../../AccountTag'
 import OrderTakerChart from './Chart'
 
-type IProps = IOrderTakerProps & { onClick: (id: string) => void }
+type IProps = IOrderTakerProps & { onClick: (id: string, state: string) => void }
 export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState }, state, onClick }: IProps) => {
   const intl = useIntl()
 
@@ -51,7 +51,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
               width: 54,
               borderRadius: 16
             }}
-            onClick={() => onClick(id)}
+            onClick={() => onClick(id, takerState)}
           >
             <SwapRightOutlined style={{ color: 'black' }} />
           </Button>
@@ -129,7 +129,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
             borderRadius: 8
           }}
           disabled={takerState === 'wufagendan'}
-          onClick={() => onClick(id)}
+          onClick={() => onClick(id, takerState)}
         >
           <div className=" flex items-center">
             {takerState === 'yimanyuan' && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}
