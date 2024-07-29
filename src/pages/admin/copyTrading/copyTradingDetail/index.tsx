@@ -14,7 +14,9 @@ import Preferences from '../comp/CardContainer/Preferences'
 import { Introduction } from '../comp/Introduction'
 import TabsTable from '../comp/TabsTable'
 import TakeDatas from '../comp/TakeDatas'
+import EndModal from './EndModal'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
+import SettingModal from './SettingModal'
 import { useTabsConfig } from './useTabsConfig'
 
 export default function copyTradingDetail() {
@@ -29,7 +31,7 @@ export default function copyTradingDetail() {
     query.get('state') && setTakeState(query.get('state') as IOrderTakerState)
   }, [location])
 
-  const [takeState, setTakeState] = useState<IOrderTakerState>('gendan')
+  const [takeState, setTakeState] = useState<IOrderTakerState>('yigendan')
 
   const [taker, setTaker] = useState<IOrderTaker>()
 
@@ -112,26 +114,30 @@ export default function copyTradingDetail() {
             <div className="flex flex-col gap-3.5">
               {takeState === 'yigendan' ? (
                 <>
-                  <Button
-                    height={42}
-                    type="primary"
-                    danger
-                    style={{
-                      width: 158,
-                      borderRadius: 8
-                    }}
-                    onClick={() => {
+                  <EndModal
+                    onConfirm={() => {
                       // todo 跳转
                       setTakeState('gendan')
                     }}
-                  >
-                    <div className=" flex items-center gap-1">
-                      <Iconfont name="jieshudaidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-medium text-base ">
-                        <FormattedMessage id="mt.jieshugendan" />
-                      </span>
-                    </div>
-                  </Button>
+                    trigger={
+                      <Button
+                        height={42}
+                        type="primary"
+                        danger
+                        style={{
+                          width: 158,
+                          borderRadius: 8
+                        }}
+                      >
+                        <div className=" flex items-center gap-1">
+                          <Iconfont name="jieshudaidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                          <span className=" font-medium text-base ">
+                            <FormattedMessage id="mt.jieshugendan" />
+                          </span>
+                        </div>
+                      </Button>
+                    }
+                  />
                   <Button
                     height={42}
                     type="primary"
@@ -154,25 +160,28 @@ export default function copyTradingDetail() {
                 </>
               ) : (
                 takeState === 'gendan' && (
-                  <Button
-                    height={42}
-                    type="primary"
-                    style={{
-                      width: 158,
-                      borderRadius: 8
-                    }}
-                    onClick={() => {
-                      // todo 跳转
+                  <SettingModal
+                    onConfirm={() => {
                       setTakeState('yigendan')
                     }}
-                  >
-                    <div className=" flex items-center gap-1">
-                      <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-medium text-base ">
-                        <FormattedMessage id="mt.gendan" />
-                      </span>
-                    </div>
-                  </Button>
+                    trigger={
+                      <Button
+                        height={42}
+                        type="primary"
+                        style={{
+                          width: 158,
+                          borderRadius: 8
+                        }}
+                      >
+                        <div className=" flex items-center gap-1">
+                          <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                          <span className=" font-medium text-base ">
+                            <FormattedMessage id="mt.gendan" />
+                          </span>
+                        </div>
+                      </Button>
+                    }
+                  />
                 )
               )}
             </div>

@@ -144,6 +144,7 @@ export default function Apply() {
                     <span className=" text-sm !font-dingpro-medium"> 231.3 USD</span>
                   </span>
                 )}
+                placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
                 options={accountList.map((item) => ({
                   ...item,
                   value: item.id,

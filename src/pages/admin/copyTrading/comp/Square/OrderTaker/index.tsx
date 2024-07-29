@@ -11,12 +11,12 @@ import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
-import { push } from '@/utils/navigator'
 
 import { AccountTag } from '../../AccountTag'
 import OrderTakerChart from './Chart'
 
-export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
+type IProps = IOrderTakerProps & { onClick: (id: string) => void }
+export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState }, state, onClick }: IProps) => {
   const intl = useIntl()
 
   // xx(xx:时间区间)盈亏
@@ -51,10 +51,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
               width: 54,
               borderRadius: 16
             }}
-            onClick={() => {
-              // todo 跳转
-              push(`/copy-trading/detail/${id}?state=${takerState}`)
-            }}
+            onClick={() => onClick(id)}
           >
             <SwapRightOutlined style={{ color: 'black' }} />
           </Button>
@@ -132,10 +129,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
             borderRadius: 8
           }}
           disabled={takerState === 'wufagendan'}
-          onClick={() => {
-            // todo 跳转
-            push(`/copy-trading/detail/${id}?state=${takerState}`)
-          }}
+          onClick={() => onClick(id)}
         >
           <div className=" flex items-center">
             {takerState === 'yimanyuan' && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}

@@ -18,6 +18,7 @@ import { Introduction } from '../comp/Introduction'
 import TabsTable from '../comp/TabsTable'
 import TakeDatas from '../comp/TakeDatas'
 import DetailModal from './DetailModal'
+import EndModal from './EndModal'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
 import SettingModal from './SettingModal'
 import { useTabsConfig } from './useTabsConfig'
@@ -216,25 +217,29 @@ export default function TakeDetail() {
                   </Button>
                 }
               />
-              <Button
-                height={42}
-                type="primary"
-                danger
-                style={{
-                  width: 158,
-                  borderRadius: 8
-                }}
-                onClick={() => {
-                  // todo 跳转
-                }}
-              >
-                <div className=" flex items-center gap-1">
-                  <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                  <span className=" font-medium text-base ">
-                    <FormattedMessage id="mt.jieshudaidan" />
-                  </span>
-                </div>
-              </Button>
+              <EndModal
+                trigger={
+                  <Button
+                    height={42}
+                    type="primary"
+                    danger
+                    style={{
+                      width: 158,
+                      borderRadius: 8
+                    }}
+                    onClick={() => {
+                      // todo 跳转
+                    }}
+                  >
+                    <div className=" flex items-center gap-1">
+                      <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                      <span className=" font-medium text-base ">
+                        <FormattedMessage id="mt.jieshudaidan" />
+                      </span>
+                    </div>
+                  </Button>
+                }
+              />
             </div>
           </div>
           {/* 通知 */}

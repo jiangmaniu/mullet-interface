@@ -1,11 +1,13 @@
-import { useIntl } from '@umijs/max'
+import { useIntl, useModel } from '@umijs/max'
 import { Space } from 'antd'
 import { useState } from 'react'
 
 import QA from '@/components/Admin/QA'
 import SelectRounded from '@/components/Base/SelectRounded'
 import { IOrderTaker } from '@/models/takers'
+import { push } from '@/utils/navigator'
 
+import NoAccountModal from '../NoAccountModal'
 import { defaultAccountTypes, defaultTags, defaultTakers, defaultTimeRange } from './mock'
 import { OrderTaker } from './OrderTaker'
 
@@ -15,6 +17,13 @@ export default function Square() {
   const accountType = intl.formatMessage({ id: 'mt.zhanghuleixing' })
   const tag = intl.formatMessage({ id: 'mt.biaoqian' })
   const rateOfReturnNear = intl.formatMessage({ id: 'mt.jinqishouyilv' }, { range: intl.formatMessage({ id: 'mt.liangzhou' }) })
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const accountList = currentUser?.accountList || []
+
+  // const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
+  const ableList = []
 
   const handleChange = (key: string, value: string) => {
     setState({
@@ -41,6 +50,17 @@ export default function Square() {
   // 帶單員
   const [takers, setTakers] = useState<IOrderTaker[]>(defaultTakers)
 
+  const [open, setOpen] = useState(false)
+
+  const onOpenChange = (val: boolean) => setOpen(val)
+  const onClick = (id: string) => {
+    if (ableList.length === 0) {
+      setOpen(true)
+      return
+    }
+    push(`/copy-trading/detail/${id}?state=${state}`)
+  }
+
   return (
     <Space direction="vertical" size={24} className="w-full">
       <Space>
@@ -50,10 +70,11 @@ export default function Square() {
       </Space>
       <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
         {takers.map((item, idx) => (
-          <OrderTaker key={idx} item={item} state={state} />
+          <OrderTaker key={idx} item={item} state={state} onClick={onClick} />
         ))}
       </div>
       <QA />
+      <NoAccountModal open={open} onOpenChange={onOpenChange} />
     </Space>
   )
 }
