@@ -1,10 +1,10 @@
 import { ProFormText as FormText } from '@ant-design/pro-components'
-import type { ProFormFieldItemProps } from '@ant-design/pro-form/es/typing'
 import { useIntl } from '@umijs/max'
+import { GetProps } from 'antd'
 
 import { useLang } from '@/context/languageProvider'
 
-type IProps = ProFormFieldItemProps & {
+type IProps = GetProps<typeof FormText> & {
   /**标签label加上星号提示必填 */
   requiredLabel?: boolean
   autoFocus?: boolean

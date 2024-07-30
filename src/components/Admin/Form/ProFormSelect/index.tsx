@@ -1,10 +1,11 @@
-import { ProFormSelect as FormSelect, ProFormSelectProps } from '@ant-design/pro-components'
+import { ProFormSelect as FormSelect } from '@ant-design/pro-components'
 import { useIntl } from '@umijs/max'
+import { GetProps } from 'antd'
 
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { useLang } from '@/context/languageProvider'
 
-type IProps = ProFormSelectProps & {
+type IProps = GetProps<typeof FormSelect> & {
   /**标签label加上星号提示必填 */
   requiredLabel?: boolean
 }
