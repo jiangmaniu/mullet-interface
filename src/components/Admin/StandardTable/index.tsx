@@ -330,7 +330,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   }
 
   columns.forEach((v) => {
-    if (!v.valueType) {
+    if (!v.valueType && (v.className || '')?.indexOf('!px-5') === -1) {
       v.className += ' !px-5' // 统一修改单元格间距
     }
 
