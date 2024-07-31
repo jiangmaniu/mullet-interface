@@ -1,6 +1,6 @@
 import './style.less'
 
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import React from 'react'
 
 import { CURRENT_YEAR } from '@/constants'
@@ -8,22 +8,34 @@ import { CURRENT_YEAR } from '@/constants'
 import Logo from '../Header/Logo'
 
 const Footer: React.FC = () => {
+  const intl = useIntl()
   const list = [
     {
-      title: 'mt.guanyucdex',
-      value: ['mt.cdexsshequ', 'mt.gongsijianjie', 'mt.boke']
+      title: intl.formatMessage({ id: 'mt.guanyucdex' }),
+      value: [
+        intl.formatMessage({ id: 'mt.cdexsshequ' }),
+        intl.formatMessage({ id: 'mt.gongsijianjie' }),
+        intl.formatMessage({ id: 'mt.boke' })
+      ]
     },
     {
-      title: 'mt.fuwu',
-      value: ['mt.haoyoutuijian', 'mt.jiaoyi', 'mt.xiazai', 'mt.bangzhuzhongxin', 'mt.jiaoyifeiyong', 'mt.jiangli']
+      title: intl.formatMessage({ id: 'mt.fuwu' }),
+      value: [
+        intl.formatMessage({ id: 'mt.haoyoutuijian' }),
+        intl.formatMessage({ id: 'mt.jiaoyi' }),
+        intl.formatMessage({ id: 'mt.xiazai' }),
+        intl.formatMessage({ id: 'mt.bangzhuzhongxin' }),
+        intl.formatMessage({ id: 'mt.jiaoyifeiyong' }),
+        intl.formatMessage({ id: 'mt.jiangli' })
+      ]
     },
     {
-      title: 'mt.xueyuan',
-      value: ['mt.chanpin', 'mt.xinshouzhinan']
+      title: intl.formatMessage({ id: 'mt.xueyuan' }),
+      value: [intl.formatMessage({ id: 'mt.chanpin' }), intl.formatMessage({ id: 'mt.xinshouzhinan' })]
     },
     {
-      title: 'mt.tiaokuan',
-      value: ['mt.fengxiantishi', 'mt.yinsiquantiaokuan']
+      title: intl.formatMessage({ id: 'mt.tiaokuan' }),
+      value: [intl.formatMessage({ id: 'mt.fengxiantishi' }), intl.formatMessage({ id: 'mt.yinsiquantiaokuan' })]
     }
   ]
 
@@ -52,12 +64,10 @@ const Footer: React.FC = () => {
         <div className=" flex flex-row justify-start items-start gap-20 flex-1">
           {list.map((item, index) => (
             <div key={index} className=" flex flex-col gap-2 items-start  text-xs text-gray-700">
-              <span className=" text-md text-gray-700 font-semibold mb-1">
-                <FormattedMessage id={item.title} />
-              </span>
+              <span className=" text-md text-gray-700 font-semibold mb-1">{item.title}</span>
               {item.value.map((item, index) => (
                 <span key={index} className=" text-xs text-gray-700 cursor-pointer ">
-                  <FormattedMessage id={item} />
+                  {item}
                 </span>
               ))}
             </div>

@@ -1,8 +1,9 @@
+import './style.less'
+
 import { FormattedMessage, useModel, useParams } from '@umijs/max'
 import { Select } from 'antd'
 import { useEffect, useState } from 'react'
 
-import Carousel from '@/components/Admin/Carousel'
 import Footer from '@/components/Admin/Footer'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
@@ -10,7 +11,7 @@ import { IOrderTaker } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
 
-import AccountSelect from '../comp/AccountSelect'
+import AccountSelectFull from '../comp/AccountSelectFull'
 import { CardContainer } from '../comp/CardContainer'
 import Cumulative from '../comp/CardContainer/Cumulative'
 import { Performance } from '../comp/CardContainer/Performance'
@@ -18,12 +19,11 @@ import Preferences from '../comp/CardContainer/Preferences'
 import { Introduction } from '../comp/Introduction'
 import TabsTable from '../comp/TabsTable'
 import TakeDatas from '../comp/TakeDatas'
+import TakeSettingModal from '../comp/TakeSettingModal'
 import DetailModal from './DetailModal'
 import EndModal from './EndModal'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
-import SettingModal from './SettingModal'
 import { useTabsConfig } from './useTabsConfig'
-
 export default function TakeDetail() {
   const { setPageBgColor } = useModel('global')
 
@@ -69,22 +69,28 @@ export default function TakeDetail() {
   const { items: tabs, onChange } = useTabsConfig()
 
   return (
-    <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 100%)' }} className="min-h-screen">
+    <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
       <div className="max-w-[1332px] px-4 mx-auto mt-6">
         <div className="flex items-center">
-          <div className="hover:bg-gray-100 rounded-full cursor-pointer" onClick={() => history.back()}>
-            <img src="/img/uc/arrow-left.png" width={40} height={40} />
-          </div>
           <div className="flex items-center w-full gap-x-5">
-            <div className="ml-2 flex items-center">
-              {/* <img src="/img/gendan.png" width={24} height={24} /> */}
-
-              <Iconfont name="daidan" width={22} height={22} hoverColor={colorTextPrimary} />
-              <div className="text-[20px] font-bold pl-2">
-                <FormattedMessage id="mt.daidanguanli" />
+            <Button
+              height={56}
+              type="default"
+              style={{
+                width: 148,
+                borderRadius: 12
+              }}
+              onClick={() => history.back()}
+            >
+              <div className="flex items-center">
+                <img src="/img/uc/arrow-left.png" width={40} height={40} />
+                <Iconfont name="daidan" width={22} height={22} />
+                <div className="text-[20px] font-bold">
+                  <FormattedMessage id="mt.daidan" />
+                </div>
               </div>
-            </div>
-            <AccountSelect />
+            </Button>
+            <AccountSelectFull />
           </div>
         </div>
         <div className="mt-10">
@@ -109,6 +115,7 @@ export default function TakeDetail() {
                       </span>
                       <Select
                         defaultValue={'778321'}
+                        rootClassName=" bg-unset"
                         style={{ width: 132, height: 30 }}
                         onChange={handleSelectAccount}
                         labelRender={(option) => <span className=" text-sm">{option.label}</span>}
@@ -127,26 +134,26 @@ export default function TakeDetail() {
               </div>
               {/* 帶單人數據 */}
               <div className="flex items-center justify-start gap-18 flex-wrap gap-y-4">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1.5">
                   <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
                   <span className="text-sm text-gray-600">
                     <FormattedMessage id="mt.jinrifenrun" />
                     (USDT)
                   </span>
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1.5">
                   <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
                   <span className="text-sm text-gray-600">
                     <FormattedMessage id="mt.ruzhutianshu" />
                   </span>
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1.5">
                   <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
                   <span className="text-sm text-gray-600">
                     <FormattedMessage id="mt.daidanbaozhengjinyue" />
                   </span>
                 </div>
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-1.5">
                   <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate4)}</span>
                   <span className="text-sm text-gray-600">
                     <FormattedMessage id="mt.guanlizichanguimo" />
@@ -169,12 +176,12 @@ export default function TakeDetail() {
               >
                 <div className=" flex items-center gap-1">
                   <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                  <span className=" font-medium text-base ">
+                  <span className=" font-semibold text-base ">
                     <FormattedMessage id="mt.jiaoyi" />
                   </span>
                 </div>
               </Button>
-              <SettingModal
+              <TakeSettingModal
                 trigger={
                   <Button
                     height={42}
@@ -189,7 +196,7 @@ export default function TakeDetail() {
                   >
                     <div className=" flex items-center gap-1">
                       <Iconfont name="shezhi" width={20} height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-medium text-base ">
+                      <span className=" font-semibold text-base ">
                         <FormattedMessage id="mt.shezhi" />
                       </span>
                     </div>
@@ -211,7 +218,7 @@ export default function TakeDetail() {
                   >
                     <div className=" flex items-center gap-1">
                       <Iconfont name="fenrunmingxi" width={20} height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-medium text-base ">
+                      <span className=" font-semibold text-base ">
                         <FormattedMessage id="mt.fenrunmingxi" />
                       </span>
                     </div>
@@ -234,7 +241,7 @@ export default function TakeDetail() {
                   >
                     <div className=" flex items-center gap-1">
                       <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-medium text-base ">
+                      <span className=" font-semibold text-base ">
                         <FormattedMessage id="mt.jieshudaidan" />
                       </span>
                     </div>
@@ -244,11 +251,11 @@ export default function TakeDetail() {
             </div>
           </div>
           {/* 通知 */}
-          <div className="mt-7.5 mb-7">
+          {/* <div className="mt-7.5">
             <Carousel dotPosition="left" items={notifications}></Carousel>
-          </div>
+          </div> */}
           {/* 带单数据 */}
-          <div className="border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
+          <div className="mt-7 border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
             <span className=" text-black-800 text-xl font-medium">
               <FormattedMessage id="mt.daidanshuju" />
             </span>

@@ -101,7 +101,7 @@ export default ({ trigger, onSuccess, onConfirm }: IProps) => {
               }}
             >
               <div className=" flex items-center gap-1">
-                <span className=" font-medium text-base ">{confirms[status]}</span>
+                <span className=" font-semibold text-base ">{confirms[status]}</span>
               </div>
             </Button>
           </div>

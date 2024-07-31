@@ -43,25 +43,29 @@ export const useTabsConfig = () => {
       format: {
         id: 'mt.baozhengjinyue'
       },
-      field: 'baozhengjinyue'
+      field: 'baozhengjinyue',
+      fontWeight: 'font-dingpro-regular'
     },
     {
       format: {
         id: 'mt.yishixianyingkui'
       },
-      field: 'yishixianyingkui'
+      field: 'yishixianyingkui',
+      fontWeight: 'font-dingpro-regular'
     },
     {
       format: {
         id: 'mt.weishixianyingkui'
       },
-      field: 'weishixianyingkui'
+      field: 'weishixianyingkui',
+      fontWeight: 'font-dingpro-regular'
     },
     {
       format: {
         id: 'mt.fenrunjine'
       },
-      field: 'fenrunjine'
+      field: 'fenrunjine',
+      fontWeight: 'font-dingpro-regular'
     }
   ]
 
@@ -81,7 +85,8 @@ export const useTabsConfig = () => {
         id: 'mt.yishixianyingkui'
       },
       currency: true,
-      field: 'yishixianyingkui'
+      field: 'yishixianyingkui',
+      fontWeight: 'font-dingpro-regular'
     },
     {
       format: {
@@ -90,7 +95,8 @@ export const useTabsConfig = () => {
       suffix: true,
       showSuffix: (item) => {
         return intl.formatMessage({ id: 'mt.days' }, { count: item.gensuitianshu })
-      }
+      },
+      fontWeight: 'font-dingpro-regular'
     },
     {
       format: {
@@ -99,7 +105,8 @@ export const useTabsConfig = () => {
       suffix: true,
       showSuffix: (item) => {
         return item.gensuikaishishijian
-      }
+      },
+      fontWeight: 'font-dingpro-regular'
     },
     {
       format: {
@@ -108,13 +115,15 @@ export const useTabsConfig = () => {
       suffix: true,
       showSuffix: (item) => {
         return item.gensuijieshushijian
-      }
+      },
+      fontWeight: 'font-dingpro-regular'
     },
     {
       format: {
         id: 'mt.fenrunjine'
       },
-      field: 'fenrunjine'
+      field: 'fenrunjine',
+      fontWeight: 'font-dingpro-regular'
     }
   ]
 
@@ -127,7 +136,7 @@ export const useTabsConfig = () => {
         <span className=" flex gap-1 items-center">
           <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
           <span className=" flex flex-col items-start">
-            <span className="text-sm font-medium text-black-800">{pz.pinzhong}</span>
+            <span className="text-sm font-semibold text-black-800">{pz.pinzhong}</span>
             <span className="flex items-center gap-1">
               <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
                 {pz.zhuangtai}
@@ -155,43 +164,43 @@ export const useTabsConfig = () => {
       title: intl.formatMessage({ id: 'mt.pingcangshijian' }),
       dataIndex: 'pingcangshijian',
       key: 'pingcangshijian',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{text}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.kaicangshijian' }),
       dataIndex: 'kaicangshijian',
       key: 'kaicangshijian',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{text}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.zuidachicangliang' }),
       dataIndex: 'zuidachicangliang',
       key: 'zuidachicangliang',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{`${formatNum(text)} BTC`}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} BTC`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.pingcangjunjia' }),
       dataIndex: 'pingcangjunjia',
       key: 'pingcangjunjia',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.kaicangjunjia' }),
       dataIndex: 'kaicangjunjia',
       key: 'kaicangjunjia',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.pingcangshuliang' }),
       dataIndex: 'pingcangshuliang',
       key: 'pingcangshuliang',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{`${formatNum(text)} BTC`}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} BTC`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.gensuirenshu' }),
       dataIndex: 'gensuirenshu',
       key: 'gensuirenshu',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     }
   ]
 

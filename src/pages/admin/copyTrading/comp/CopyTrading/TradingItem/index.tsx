@@ -108,7 +108,7 @@ export const TradingItem = ({ item: { id, title, account, followers, datas }, st
               push(`/copy-trading/management`)
             }}
           >
-            <div className="flex items-center text-base">
+            <div className="flex items-center text-base font-semibold gap-1">
               <Iconfont name="gendanguanli" width={22} color="white" height={22} />
               <FormattedMessage id="mt.gendanguanli" />
             </div>

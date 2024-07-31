@@ -50,6 +50,7 @@ export default () => {
             height: '2.8125rem',
             lineHeight: '2.8125rem'
           }}
+          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.lirunfenchengbili' })}`}
           count={{
             show: false,
             max: 10
@@ -69,6 +70,7 @@ export default () => {
             height: '2.8125rem',
             lineHeight: '2.8125rem'
           }}
+          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanyaoqiu' })}`}
           count={{
             show: false,
             max: 10
@@ -88,6 +90,7 @@ export default () => {
             height: '2.8125rem',
             lineHeight: '2.8125rem'
           }}
+          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanguimo' })}`}
           count={{
             show: false,
             max: 10
@@ -107,6 +110,7 @@ export default () => {
             height: '2.8125rem',
             lineHeight: '2.8125rem'
           }}
+          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zuidazhichirenshu' })}`}
           count={{
             show: false,
             max: 10
@@ -151,7 +155,7 @@ export default () => {
           }}
         >
           <div className=" flex items-center gap-1">
-            <span className=" font-medium text-base ">
+            <span className=" font-semibold text-base ">
               <FormattedMessage id="mt.baocun" />
             </span>
           </div>

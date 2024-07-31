@@ -15,6 +15,7 @@ export type IListItemTypes = {
   field?: keyof IFollower
   suffix?: boolean
   showSuffix?: (...args: any) => string
+  fontWeight?: 'font-dingpro-regular' | 'font-dingpro-medium'
 }
 
 const ListItemValue = ({
@@ -27,7 +28,8 @@ const ListItemValue = ({
   showPrefix,
   color,
   suffix,
-  showSuffix = () => '(USDT)'
+  showSuffix = () => '(USDT)',
+  fontWeight = 'font-dingpro-medium'
 }: {
   item: IFollower
 } & IListItemTypes) => {
@@ -35,11 +37,11 @@ const ListItemValue = ({
 
   return (
     <div className=" flex flex-col items-start gap-0.5">
-      <span className=" text-xs font-normal text-gray-500 !">
+      <span className=" text-xs text-gray-500 ">
         <FormattedMessage id={format.id} values={format.values} />
         {currency && showCurrency()}
       </span>
-      <span className={classNames(' text-base !font-dingpro-medium', color && getColorClass(Number(value)))}>
+      <span className={classNames(' text-base ', `!${fontWeight}`, color && getColorClass(Number(value)))}>
         {prefix ? (showPrefix ? showPrefix(item) : Number(value) > 0 ? `+` : '') : ''}
         {value && formatNum(value)}
         {suffix && showSuffix(item)}

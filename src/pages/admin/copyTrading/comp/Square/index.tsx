@@ -4,10 +4,12 @@ import { useMemo, useState } from 'react'
 
 import QA from '@/components/Admin/QA'
 import SelectRounded from '@/components/Base/SelectRounded'
-import { IOrderTaker } from '@/models/takers'
+import { IOrderTaker, IOrderTakerState } from '@/models/takers'
+import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
 import NoAccountModal from '../NoAccountModal'
+import TradingSettingModal from '../TradingSettingModal'
 import { defaultAccountTypes, defaultTags, defaultTakers, defaultTimeRange } from './mock'
 import { OrderTaker } from './OrderTaker'
 
@@ -20,8 +22,6 @@ export default function Square() {
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const accountList = currentUser?.accountList || []
-
   const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
   // const ableList = [] // test
 
@@ -50,15 +50,30 @@ export default function Square() {
   // 帶單員
   const [takers, setTakers] = useState<IOrderTaker[]>(defaultTakers)
 
-  const [open, setOpen] = useState(false)
+  // 无账号提示弹窗
+  const [openTips, setOpenTips] = useState(false)
+  const onOpenChangeTips = (val: boolean) => setOpenTips(val)
 
-  const onOpenChange = (val: boolean) => setOpen(val)
+  // 跟单设置弹窗
+  const [openSetting, setOpenSetting] = useState(false)
+  const onOpenChangeSetting = (val: boolean) => setOpenSetting(val)
+
   const onClick = (id: string, state: string) => {
-    if (ableList.length === 0) {
-      setOpen(true)
-      return
-    }
     push(`/copy-trading/detail/${id}?state=${state}`)
+  }
+
+  const onFollow = (takerState: IOrderTakerState) => {
+    if (takerState === 'gendan' || takerState === 'yigendan') {
+      if (ableList.length === 0) {
+        setOpenTips(true)
+        return
+      }
+      setOpenSetting(true)
+    } else if (takerState === 'wufagendan') {
+      message.info(intl.formatMessage({ id: 'mt.wufagendan' }))
+    } else if (takerState === 'yimanyuan') {
+      message.info(intl.formatMessage({ id: 'mt.yimanyuan' }))
+    }
   }
 
   return (
@@ -70,11 +85,19 @@ export default function Square() {
       </Space>
       <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
         {takers.map((item, idx) => (
-          <OrderTaker key={idx} item={item} state={state} onClick={onClick} />
+          <OrderTaker key={idx} item={item} state={state} onClick={onClick} onFollow={onFollow} />
         ))}
       </div>
       <QA />
-      <NoAccountModal open={open} onOpenChange={onOpenChange} />
+      <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
+
+      <TradingSettingModal
+        open={openSetting}
+        onOpenChange={onOpenChangeSetting}
+        onConfirm={() => {
+          onOpenChangeSetting(false)
+        }}
+      />
     </Space>
   )
 }

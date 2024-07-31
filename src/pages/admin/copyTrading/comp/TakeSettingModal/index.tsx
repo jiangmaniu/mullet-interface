@@ -17,7 +17,14 @@ const waitTime = (time = 100) => {
   })
 }
 
-export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () => void }) => {
+type IProps = {
+  open?: boolean
+  onOpenChange?: ((open: boolean) => void) | undefined
+  trigger?: JSX.Element
+  onConfirm?: (values: any) => void
+}
+
+export default ({ trigger, open, onOpenChange }: IProps) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.daidanshezhi' })
@@ -62,8 +69,11 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
         trigger={trigger}
         form={form}
         width={430}
+        open={open}
+        onOpenChange={onOpenChange}
         autoFocusFirstInput
         modalProps={{
+          centered: true,
           className: 'custom',
           destroyOnClose: true,
           onCancel: () => console.log('run')

@@ -4,26 +4,37 @@ import { SwapRightOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Space } from 'antd'
 import classNames from 'classnames'
+import { MouseEventHandler } from 'react'
 
 import Tags from '@/components/Admin/Tags'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
-import { IOrderTakerProps } from '@/models/takers'
+import { IOrderTakerProps, IOrderTakerState } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
 
 import { AccountTag } from '../../AccountTag'
 import OrderTakerChart from './Chart'
 
-type IProps = IOrderTakerProps & { onClick: (id: string, state: string) => void }
-export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState }, state, onClick }: IProps) => {
+type IProps = IOrderTakerProps & { onClick: (id: string, state: string) => void; onFollow: (bo: IOrderTakerState) => void }
+export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState }, state, onClick, onFollow }: IProps) => {
   const intl = useIntl()
 
   // xx(xx:时间区间)盈亏
   const jinqi = intl.formatMessage({ id: `mt.${state.jinqi}` })
 
+  const handleOnOpen: MouseEventHandler<HTMLElement> = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    onFollow(takerState)
+  }
+
   return (
-    <div className=" border rounded-2xl border-gray-150 flex flex-col xl:w-[25rem] max-w-full flex-1 p-5.5">
+    <div
+      className=" border rounded-2xl border-gray-150 flex flex-col xl:w-[25rem] max-w-full flex-1 p-5.5 cursor-pointer"
+      onClick={() => onClick(id, takerState)}
+    >
       {/* header */}
       <div className=" flex flex-col gap-5">
         {/* account */}
@@ -51,7 +62,6 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
               width: 54,
               borderRadius: 16
             }}
-            onClick={() => onClick(id, takerState)}
           >
             <SwapRightOutlined style={{ color: 'black' }} />
           </Button>
@@ -129,9 +139,9 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
             borderRadius: 8
           }}
           disabled={takerState === 'wufagendan'}
-          onClick={() => onClick(id, takerState)}
+          onClick={handleOnOpen}
         >
-          <div className=" flex items-center">
+          <div className=" flex items-center font-semibold gap-1">
             {takerState === 'yimanyuan' && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}
             <FormattedMessage id={`mt.${takerState}`} />
           </div>

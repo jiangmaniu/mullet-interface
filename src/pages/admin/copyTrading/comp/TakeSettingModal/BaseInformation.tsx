@@ -5,13 +5,10 @@ import TextArea from 'antd/es/input/TextArea'
 import Button from '@/components/Base/Button'
 import { hiddenCenterPartStr } from '@/utils'
 
-import { AccountTag } from '../../comp/AccountTag'
+import { AccountTag } from '../AccountTag'
 
 export default () => {
   const intl = useIntl()
-  const placeholderName = intl.formatMessage({
-    id: 'mt.mingcheng'
-  })
 
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
@@ -26,6 +23,7 @@ export default () => {
         <Select
           suffixIcon={null}
           size="large"
+          placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
           labelRender={(item) => (
             <span className=" flex flex-row gap-2.5 items-center justify-between">
               <span className="flex flex-row justify-between items-center gap-1.5 ">
@@ -59,7 +57,7 @@ export default () => {
             show: true,
             max: 10
           }}
-          placeholder={placeholderName}
+          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.mingcheng' })}`}
         />
       </div>
       {/* 介绍 */}
@@ -68,6 +66,7 @@ export default () => {
           <FormattedMessage id="mt.jieshao" />
         </span>
         <TextArea
+          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.jieshao' })}`}
           rows={4}
           maxLength={200}
           count={{
@@ -90,7 +89,7 @@ export default () => {
           }}
         >
           <div className=" flex items-center gap-1">
-            <span className=" font-medium text-base ">
+            <span className=" font-semibold text-base ">
               <FormattedMessage id="mt.baocun" />
             </span>
           </div>

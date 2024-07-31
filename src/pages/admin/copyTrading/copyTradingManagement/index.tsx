@@ -1,12 +1,11 @@
 import { FormattedMessage, useModel, useParams } from '@umijs/max'
 import { useEffect, useState } from 'react'
 
-import Carousel from '@/components/Admin/Carousel'
-import Iconfont from '@/components/Base/Iconfont'
+import Button from '@/components/Base/Button'
 import { CURRENCY } from '@/constants'
 import { formatNum } from '@/utils'
 
-import AccountSelect from '../comp/AccountSelect'
+import AccountSelectFull from '../comp/AccountSelectFull'
 import TabsTable from '../comp/TabsTable'
 import { defaultDatas, mockNotifications } from './mock'
 import { useTabsConfig } from './useTabsConfig'
@@ -35,20 +34,28 @@ export default function CopyTradingManagement() {
   const { items: tabs, onChange } = useTabsConfig()
 
   return (
-    <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 100%)' }} className="min-h-screen">
+    <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%,#FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
       <div className="max-w-[1332px] px-4 mx-auto mt-6">
         <div className="flex items-center">
-          <div className="hover:bg-gray-100 rounded-full cursor-pointer" onClick={() => history.back()}>
-            <img src="/img/uc/arrow-left.png" width={40} height={40} />
-          </div>
           <div className="flex items-center w-full gap-x-5">
-            <div className="ml-2 flex items-center">
-              <Iconfont name="gendan" width={22} height={22} />
-              <div className="text-[20px] font-bold pl-2">
-                <FormattedMessage id="mt.gendanguanli" />
+            <Button
+              height={56}
+              type="default"
+              style={{
+                width: 148,
+                borderRadius: 12
+              }}
+              onClick={() => history.back()}
+            >
+              <div className="flex items-center">
+                <img src="/img/uc/arrow-left.png" width={40} height={40} />
+                {/* <Iconfont name="daidan" width={22} height={22} /> */}
+                <div className="text-[20px] font-bold">
+                  <FormattedMessage id="mt.gendanguanli" />
+                </div>
               </div>
-            </div>
-            <AccountSelect />
+            </Button>
+            <AccountSelectFull />
           </div>
         </div>
 
@@ -63,7 +70,7 @@ export default function CopyTradingManagement() {
                   <div className="flex flex-col items-start gap-2">
                     <div className="flex items-center gap-2">
                       <span className=" text-sm font-normal text-gray-600">
-                        <FormattedMessage id="mt.quanbugendanbaozhengjin" />
+                        <FormattedMessage id="mt.quanbugendanjine" />
                       </span>
                     </div>
                     <div className="flex items-end gap-1">
@@ -98,9 +105,9 @@ export default function CopyTradingManagement() {
                   </div>
                 </div>
                 {/* 通知 */}
-                <div>
+                {/* <div>
                   <Carousel dotPosition="left" items={notifications}></Carousel>
-                </div>
+                </div> */}
               </div>
             </div>
             {/* 操作区 */}

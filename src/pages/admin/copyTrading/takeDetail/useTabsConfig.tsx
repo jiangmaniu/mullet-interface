@@ -26,7 +26,7 @@ export const useTabsConfig = () => {
         <span className=" flex gap-1 items-center">
           <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
           <span className=" flex flex-col items-start">
-            <span className="text-sm font-medium text-black-800">{pz.pinzhong}</span>
+            <span className="text-sm font-semibold text-black-800">{pz.pinzhong}</span>
             <span className="flex items-center gap-1">
               <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
                 {pz.zhuangtai}
@@ -60,37 +60,37 @@ export const useTabsConfig = () => {
       title: intl.formatMessage({ id: 'mt.kaicangjunjia' }),
       dataIndex: 'kaicangjunjia',
       key: 'kaicangjunjia',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.biaojijia' }),
       dataIndex: 'biaojijia',
       key: 'biaojijia',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.baozhengjin' }),
       dataIndex: 'baozhengjin',
       key: 'baozhengjin',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.chicangshuliang' }),
       dataIndex: 'chicangshuliang',
       key: 'chicangshuliang',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.qiangpinjia' }),
       dataIndex: 'qiangpinjia',
       key: 'qiangpinjia',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.gensuirenshu' }),
       dataIndex: 'gensuirenshu',
       key: 'gensuirenshu',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     }
   ]
 
@@ -103,7 +103,7 @@ export const useTabsConfig = () => {
         <span className=" flex gap-1 items-center">
           <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
           <span className=" flex flex-col items-start">
-            <span className="text-sm font-medium text-black-800">{pz.pinzhong}</span>
+            <span className="text-sm font-semibold text-black-800">{pz.pinzhong}</span>
             <span className="flex items-center gap-1">
               <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
                 {pz.zhuangtai}
@@ -131,43 +131,43 @@ export const useTabsConfig = () => {
       title: intl.formatMessage({ id: 'mt.pingcangshijian' }),
       dataIndex: 'pingcangshijian',
       key: 'pingcangshijian',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{text}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.kaicangshijian' }),
       dataIndex: 'kaicangshijian',
       key: 'kaicangshijian',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{text}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.zuidachicangliang' }),
       dataIndex: 'zuidachicangliang',
       key: 'zuidachicangliang',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{`${formatNum(text)} BTC`}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} BTC`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.pingcangjunjia' }),
       dataIndex: 'pingcangjunjia',
       key: 'pingcangjunjia',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.kaicangjunjia' }),
       dataIndex: 'kaicangjunjia',
       key: 'kaicangjunjia',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.pingcangshuliang' }),
       dataIndex: 'pingcangshuliang',
       key: 'pingcangshuliang',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{`${formatNum(text)} BTC`}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} BTC`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.gensuirenshu' }),
       dataIndex: 'gensuirenshu',
       key: 'gensuirenshu',
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{formatNum(text)}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     }
   ]
 
@@ -180,7 +180,7 @@ export const useTabsConfig = () => {
       render: (pz) => (
         <span className=" flex gap-1 items-center">
           <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
-          <span className="text-sm font-medium text-black-800">{pz.pinzhong}</span>
+          <span className="text-sm font-regular text-black-800">{pz.pinzhong}</span>
         </span>
       )
     },
@@ -203,7 +203,7 @@ export const useTabsConfig = () => {
       key: 'gendanjine',
       align: 'left',
       width: 240,
-      render: (text) => <span className="!font-dingpro-medium text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.gensuitianshu' }),
@@ -211,7 +211,7 @@ export const useTabsConfig = () => {
       key: 'gensuitianshu',
       align: 'right',
       render: (text) => (
-        <span className="!font-dingpro-medium text-black-900">{intl.formatMessage({ id: 'mt.days' }, { count: text })}</span>
+        <span className="!font-dingpro-regular text-black-900">{intl.formatMessage({ id: 'mt.days' }, { count: text })}</span>
       )
     }
   ]

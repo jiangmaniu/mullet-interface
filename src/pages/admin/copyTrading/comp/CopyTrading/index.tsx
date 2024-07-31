@@ -34,7 +34,7 @@ export default function CopyTrading() {
               // todo 跳转
             }}
           >
-            <div className="flex items-center text-base">
+            <div className="flex items-center text-base font-semibold">
               <Iconfont name="gendanguanli" width={22} color="white" height={22} hoverColor={colorTextPrimary} />
               <FormattedMessage id="mt.qugendan" />
             </div>

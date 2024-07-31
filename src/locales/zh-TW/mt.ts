@@ -537,6 +537,7 @@ export default {
   'mt.gensuitianshu': '跟隨天數',
   'mt.days': '{count}天',
   'mt.quanbugendanbaozhengjin': '全部跟單保證金',
+  'mt.quanbugendanjine': '全部跟單金額',
   'mt.zhanghuzongzichan': '賬戶總資產',
   'mt.jinxingzhong': '進行中',
   'mt.yijieshu': '已結束',

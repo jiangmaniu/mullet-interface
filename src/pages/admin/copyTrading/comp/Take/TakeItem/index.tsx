@@ -10,7 +10,10 @@ import { push } from '@/utils/navigator'
 
 import { AccountTag } from '../../AccountTag'
 
-export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }, state }: IOrderTakerProps) => {
+type IProps = IOrderTakerProps & {
+  onClick?: (id: string) => void
+}
+export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }, state, onClick }: IProps) => {
   return (
     <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full">
       {/* header */}
@@ -95,7 +98,7 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
               push(`/copy-trading/take-detail/${id}`)
             }}
           >
-            <div className="flex items-center text-base">
+            <div className="flex items-center text-base font-semibold gap-1">
               <Iconfont name="daidan" width={22} color="white" height={22} hoverColor={colorTextPrimary} />
               <FormattedMessage id="mt.daidan" />
             </div>
@@ -108,11 +111,9 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
               borderRadius: 8
             }}
             disabled={takerState === 'wufagendan'}
-            onClick={() => {
-              // todo 跳转
-            }}
+            onClick={() => onClick?.(id)}
           >
-            <div className="flex items-center text-base">
+            <div className="flex items-center text-base font-semibold gap-1 align-middle">
               <Iconfont name="shezhi" width={22} color="black" height={22} hoverColor={colorTextPrimary} />
               <FormattedMessage id="mt.shezhi" />
             </div>

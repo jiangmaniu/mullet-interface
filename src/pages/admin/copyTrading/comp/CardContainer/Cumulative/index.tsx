@@ -3,7 +3,8 @@ import './style.less'
 import { useIntl } from '@umijs/max'
 import { Segmented } from 'antd'
 import * as echarts from 'echarts'
-import { useEffect, useRef, useState } from 'react'
+import ReactECharts from 'echarts-for-react'
+import { useEffect, useMemo, useState } from 'react'
 
 type IProps = {
   xAxis?: string[]
@@ -40,113 +41,84 @@ const Cumulative = ({
     }
   }
 
-  const option = {
-    // title: {
-    //   text: '堆叠区域图'
-    // },
-    tooltip: {
-      trigger: 'axis'
-    },
-    legend: {
-      data: [shouyilv, yingkuie]
-    },
-    // toolbox: {
-    //   feature: {
-    //     saveAsImage: {}
-    //   }
-    // },
+  const option = useMemo(
+    () => ({
+      // title: {
+      //   text: '堆叠区域图'
+      // },
+      tooltip: {
+        trigger: 'axis'
+      },
+      legend: {
+        data: [shouyilv, yingkuie]
+      },
 
-    grid: {
-      left: '2%',
-      right: '2%',
-      bottom: '2%',
-      top: '2%',
+      grid: {
+        left: '2%',
+        right: '2%',
+        bottom: '2%',
+        top: '2%',
 
-      containLabel: true
-    },
-    xAxis: [
-      {
-        type: 'category',
-        boundaryGap: false,
-        data: xAxis
-      }
-    ],
-    yAxis: [
-      {
-        type: 'value',
-        axisLabel: {
-          formatter: '{value}%'
+        containLabel: true
+      },
+      xAxis: [
+        {
+          type: 'category',
+          boundaryGap: false,
+          data: xAxis
         }
-      }
-    ],
-    series: [
-      {
-        name: '邮件营销',
-        type: 'line',
-        stack: '总量',
-        lineStyle: {
-          color: '#183EFC',
-          width: 1
-        },
-        areaStyle: {
-          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-            {
-              offset: 0,
-              color: 'rgba(24, 62, 252, 0.3)'
-            },
-            {
-              offset: 1,
-              color: 'rgba(24, 62, 252, 0)'
+      ],
+      yAxis: [
+        {
+          type: 'value',
+          axisLabel: {
+            formatter: '{value}%'
+          },
+          splitLine: {
+            show: true,
+            lineStyle: {
+              color: '#f0f0f0' // 设置辅助线颜色为浅灰色
             }
-          ])
-        },
-        showSymbol: false,
-        emphasis: {
-          // focus: 'series'
-        },
-
-        data
-      }
-    ]
-  } as echarts.EChartOption
-
-  const chartRef = useRef(null)
-
-  useEffect(() => {
-    const chartInstance = echarts.init(chartRef.current, null, { width: 'auto' })
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          chartInstance.setOption(option)
-          chartInstance.resize()
-          // 动画开始
-          chartInstance.on('finished', () => {
-            console.log('动画完成')
-          })
-
-          // 停止观察元素（可选）
-          chartRef.current && observer.unobserve(chartRef.current)
+          }
         }
-      })
-    })
+      ],
+      series: [
+        {
+          name: '邮件营销',
+          type: 'line',
+          stack: '总量',
+          lineStyle: {
+            color: '#183EFC',
+            width: 1
+          },
+          areaStyle: {
+            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: 'rgba(24, 62, 252, 0.3)'
+              },
+              {
+                offset: 1,
+                color: 'rgba(24, 62, 252, 0)'
+              }
+            ])
+          },
+          showSymbol: false,
+          emphasis: {
+            // focus: 'series'
+          },
 
-    if (chartRef.current) {
-      observer.observe(chartRef.current)
-    }
-
-    return () => {
-      if (chartRef.current) {
-        chartInstance.dispose()
-        observer.unobserve(chartRef.current)
-      }
-    }
-  }, [])
+          data
+        }
+      ]
+    }),
+    [data, xAxis, shouyilv, yingkuie]
+  ) as echarts.EChartOption
 
   return (
     <div className="leijiyingkui flex flex-col items-start gap-4">
       <Segmented<string> options={[shouyilv, yingkuie]} onChange={onChange} />
-      <div ref={chartRef} style={{ height: 230, width: '100%' }} />
+      <ReactECharts option={option} style={{ height: 230, width: '100%' }} />
     </div>
   )
 }

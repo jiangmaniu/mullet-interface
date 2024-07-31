@@ -7,17 +7,18 @@ import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTaker, IOrderTakerState } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 
-import AccountSelect from '../comp/AccountSelect'
+import AccountSelectFull from '../comp/AccountSelectFull'
 import { CardContainer } from '../comp/CardContainer'
 import Cumulative from '../comp/CardContainer/Cumulative'
 import { Performance } from '../comp/CardContainer/Performance'
 import Preferences from '../comp/CardContainer/Preferences'
 import { Introduction } from '../comp/Introduction'
+import NoAccountModal from '../comp/NoAccountModal'
 import TabsTable from '../comp/TabsTable'
 import TakeDatas from '../comp/TakeDatas'
+import TradingSettingModal from '../comp/TradingSettingModal'
 import EndModal from './EndModal'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
-import SettingModal from './SettingModal'
 import { useTabsConfig } from './useTabsConfig'
 
 export default function copyTradingDetail() {
@@ -74,23 +75,52 @@ export default function copyTradingDetail() {
 
   const tab = useMemo(() => (takeState === 'yigendan' ? tabs : tabs2), [takeState])
 
+  // 无账号提示弹窗
+  const [openTips, setOpenTips] = useState(false)
+  const onOpenChangeTips = (val: boolean) => setOpenTips(val)
+
+  // 跟单配置弹窗
+  const [openSetting, setOpenSetting] = useState(false)
+  const onOpenChangeSetting = (val: boolean) => setOpenSetting(val)
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
+  const onFollow = (takerState: IOrderTakerState) => {
+    if (takerState === 'gendan' || takerState === 'yigendan') {
+      if (ableList.length === 0) {
+        setOpenTips(true)
+        return
+      }
+
+      setOpenSetting(true)
+    }
+  }
+
   return (
-    <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 100%)' }} className="min-h-screen">
+    <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
       <div className="max-w-[1332px] px-4 mx-auto mt-6">
         <div className="flex items-center">
-          <div className="hover:bg-gray-100 rounded-full cursor-pointer" onClick={() => history.back()}>
-            <img src="/img/uc/arrow-left.png" width={40} height={40} />
-          </div>
           <div className="flex items-center w-full gap-x-5">
-            <div className="ml-2 flex items-center">
-              {/* <img src="/img/gendan.png" width={24} height={24} /> */}
-
-              <Iconfont name="daidan" width={22} height={22} hoverColor={colorTextPrimary} />
-              <div className="text-[20px] font-bold pl-2">
-                <FormattedMessage id="mt.gendan" />
+            <Button
+              height={56}
+              type="default"
+              style={{
+                width: 148,
+                borderRadius: 12
+              }}
+              onClick={() => history.back()}
+            >
+              <div className="flex items-center">
+                <img src="/img/uc/arrow-left.png" width={40} height={40} />
+                <Iconfont name="daidan" width={22} height={22} hoverColor={colorTextPrimary} />
+                <div className="text-[20px] font-bold">
+                  <FormattedMessage id="mt.gendan" />
+                </div>
               </div>
-            </div>
-            <AccountSelect />
+            </Button>
+
+            <AccountSelectFull />
           </div>
         </div>
         <div className="mt-10">
@@ -132,7 +162,7 @@ export default function copyTradingDetail() {
                       >
                         <div className=" flex items-center gap-1">
                           <Iconfont name="jieshudaidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                          <span className=" font-medium text-base ">
+                          <span className=" font-semibold text-base ">
                             <FormattedMessage id="mt.jieshugendan" />
                           </span>
                         </div>
@@ -147,13 +177,11 @@ export default function copyTradingDetail() {
                       borderRadius: 8,
                       backgroundColor: 'black'
                     }}
-                    onClick={() => {
-                      // todo 跳转
-                    }}
+                    onClick={() => onFollow(takeState)}
                   >
                     <div className=" flex items-center gap-1">
                       <Iconfont name="gendanguanli" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-medium text-base text-white ">
+                      <span className=" font-semibold text-base text-white ">
                         <FormattedMessage id="mt.shezhi" />
                       </span>
                     </div>
@@ -161,28 +189,22 @@ export default function copyTradingDetail() {
                 </>
               ) : (
                 takeState === 'gendan' && (
-                  <SettingModal
-                    onConfirm={() => {
-                      setTakeState('yigendan')
+                  <Button
+                    height={42}
+                    type="primary"
+                    style={{
+                      width: 158,
+                      borderRadius: 8
                     }}
-                    trigger={
-                      <Button
-                        height={42}
-                        type="primary"
-                        style={{
-                          width: 158,
-                          borderRadius: 8
-                        }}
-                      >
-                        <div className=" flex items-center gap-1">
-                          <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                          <span className=" font-medium text-base ">
-                            <FormattedMessage id="mt.gendan" />
-                          </span>
-                        </div>
-                      </Button>
-                    }
-                  />
+                    onClick={() => onFollow(takeState)}
+                  >
+                    <div className=" flex items-center gap-1">
+                      <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                      <span className=" font-semibold text-base ">
+                        <FormattedMessage id="mt.gendan" />
+                      </span>
+                    </div>
+                  </Button>
                 )
               )}
             </div>
@@ -230,6 +252,15 @@ export default function copyTradingDetail() {
         </div>
       </div>
       <Footer />
+      <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
+      <TradingSettingModal
+        open={openSetting}
+        onOpenChange={onOpenChangeSetting}
+        onConfirm={() => {
+          setTakeState('yigendan')
+          onOpenChangeSetting(false)
+        }}
+      />
     </div>
   )
 }

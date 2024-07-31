@@ -1,5 +1,6 @@
 import { useIntl } from '@umijs/max'
 import * as echarts from 'echarts'
+import ReactECharts from 'echarts-for-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { formatNum } from '@/utils'
@@ -30,14 +31,34 @@ const Preferences = ({ time }: IProps) => {
   const option = useMemo(
     () =>
       ({
-        tooltip: {
-          trigger: 'item'
-        },
+        // tooltip: {
+        //   trigger: 'item'
+        // },
+        // tooltip: {
+        //   trigger: 'item',
+        //   formatter: '{a} <br/>{b}: {c} ({d}%)'
+        // },
         // legend: {
         //   top: '5%',
         //   left: 'center'
         // },
         graphic: [
+          {
+            type: 'group',
+            left: 30,
+            bottom: 70,
+            children: [
+              {
+                type: 'text',
+                style: {
+                  text: `${jiaoyidui}`,
+                  font: '400 12px Arial',
+                  fill: '#6a7073'
+                },
+                position: [0, 0]
+              }
+            ]
+          },
           {
             type: 'group',
             left: 'center',
@@ -46,7 +67,23 @@ const Preferences = ({ time }: IProps) => {
               {
                 type: 'text',
                 style: {
-                  text: `${jiaoyidui}                   ${jiaoyicishu}                   ${jiaoyiyingkui}`,
+                  text: `${jiaoyicishu}`,
+                  font: '400 12px Arial',
+                  fill: '#6a7073'
+                },
+                position: [0, 0]
+              }
+            ]
+          },
+          {
+            type: 'group',
+            right: 30,
+            bottom: 70,
+            children: [
+              {
+                type: 'text',
+                style: {
+                  text: `${jiaoyiyingkui}`,
                   font: '400 12px Arial',
                   fill: '#6a7073'
                 },
@@ -141,23 +178,66 @@ const Preferences = ({ time }: IProps) => {
             }
           }
         },
+        select: {
+          label: {
+            show: true,
+            formatter: (params: any) => {
+              return [`{name|${params.name}}`, `{percent|${params.percent.toFixed(2)}%}`].join('\n')
+            },
+            rich: {
+              name: {
+                fontSize: 14,
+                fontWeight: '600',
+                color: '#110E23'
+              },
+              percent: {
+                fontSize: 26,
+                fontWeight: '600',
+                color: '#45a48a',
+                padding: [8, 0, 0, 0]
+              }
+            }
+          }
+        },
         series: [
           {
             name: 'Access From',
             type: 'pie',
             top: 0,
-            radius: ['50%', '65%'],
+            radius: ['40%', '60%'],
             center: ['50%', '35%'],
             avoidLabelOverlap: false,
+            legendHoverLink: true,
             label: {
               show: false,
               position: 'center'
             },
+            selectedMode: 'single', // 允许选中
+            selectedOffset: 0,
             emphasis: {
+              itemStyle: {
+                // shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              },
               label: {
-                show: true,
-                fontSize: 12,
-                fontWeight: 'bold'
+                show: false,
+                formatter: (params: any) => {
+                  return [`{name|${params.name}}`, `{percent|${params.percent.toFixed(2)}%}`].join('\n')
+                },
+                rich: {
+                  name: {
+                    fontSize: 14,
+                    fontWeight: '600',
+                    color: '#110E23'
+                  },
+                  percent: {
+                    fontSize: 26,
+                    fontWeight: '600',
+                    color: '#45a48a',
+                    padding: [8, 0, 0, 0]
+                  }
+                }
               }
             },
             labelLine: {
@@ -180,42 +260,55 @@ const Preferences = ({ time }: IProps) => {
     [data]
   )
 
-  const chartRef = useRef(null)
+  const chartRef = useRef<ReactECharts>(null)
 
   useEffect(() => {
-    const chartInstance = echarts.init(chartRef.current)
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          chartInstance.setOption(option)
-          chartInstance.resize()
-          // 动画开始
-          chartInstance.on('finished', () => {
-            console.log('动画完成')
-          })
-
-          // 停止观察元素（可选）
-          chartRef.current && observer.unobserve(chartRef.current)
-        }
-      })
-    })
-
     if (chartRef.current) {
-      observer.observe(chartRef.current)
-    }
+      const chartInstance = chartRef.current.getEchartsInstance()
 
-    return () => {
-      if (chartRef.current) {
-        chartInstance.dispose()
-        observer.unobserve(chartRef.current)
-      }
+      chartInstance.dispatchAction({
+        type: 'toggleSelect',
+        dataIndex: 0
+      })
     }
+    // const observer = new IntersectionObserver((entries) => {
+    //   entries.forEach((entry) => {
+    //     if (entry.isIntersecting) {
+    //       chartInstance.setOption(option)
+    //       chartInstance.resize()
+    //       // 动画开始
+    //       chartInstance.on('finished', () => {
+    //         console.log('动画完成')
+    //       })
+
+    //       // 停止观察元素（可选）
+    //       chartRef.current && observer.unobserve(chartRef.current)
+
+    //       // 选中索引为 2 的扇区（对应 "邮件营销"）
+    //       chartInstance.dispatchAction({
+    //         type: 'toggleSelect',
+    //         dataIndex: 0
+    //       })
+    //     }
+    //   })
+    // })
+
+    // if (chartRef.current) {
+    //   observer.observe(chartRef.current)
+    // }
+
+    // return () => {
+    //   if (chartRef.current) {
+    //     chartInstance.dispose()
+    //     observer.unobserve(chartRef.current)
+    //   }
+    // }
   }, [])
 
   return (
     <div className="jiaoyipianhao flex flex-col items-start gap-4">
-      <div ref={chartRef} style={{ height: 280, width: '100%' }} />
+      {/* <div ref={chartRef} style={{ height: 280, width: '100%' }} /> */}
+      <ReactECharts ref={chartRef} option={option} style={{ height: 280, width: '100%' }} />
     </div>
   )
 }

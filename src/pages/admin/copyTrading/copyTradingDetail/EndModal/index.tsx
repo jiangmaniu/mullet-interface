@@ -91,7 +91,7 @@ export default ({ trigger, onSuccess, onConfirm }: IProps) => {
               }}
             >
               <div className=" flex items-center gap-1">
-                <span className=" font-medium text-base ">
+                <span className=" font-semibold text-base ">
                   <FormattedMessage id="mt.jieshugendan" />
                 </span>
               </div>

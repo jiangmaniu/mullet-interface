@@ -92,7 +92,7 @@ export default ({ trigger, open, onSuccess, onConfirm, onOpenChange }: IProps) =
               }}
             >
               <div className=" flex items-center gap-1">
-                <span className=" font-medium text-base ">
+                <span className=" text-base font-semibold">
                   <FormattedMessage id="mt.zaikaolvxia" />
                 </span>
               </div>
@@ -105,8 +105,8 @@ export default ({ trigger, open, onSuccess, onConfirm, onOpenChange }: IProps) =
                 borderRadius: 8
               }}
             >
-              <div className=" flex items-center gap-1">
-                <span className=" font-medium text-base ">
+              <div className=" flex items-center gap-1 ">
+                <span className="font-semibold text-base ">
                   <FormattedMessage id="mt.chuangjianzhanghu" />
                 </span>
               </div>

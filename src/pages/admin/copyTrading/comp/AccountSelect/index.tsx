@@ -1,11 +1,11 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl, useModel } from '@umijs/max'
-import { DefaultOptionType } from 'antd/es/select'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
 import { hiddenCenterPartStr } from '@/utils'
+import { message } from '@/utils/message'
 
 export default function AccountSelect({ onClick, style }: { onClick?: (item: any) => void; style?: React.CSSProperties | undefined }) {
   const { initialState } = useModel('@@initialState')
@@ -33,9 +33,13 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
     }
   })
 
-  const clickHandler = (item: DefaultOptionType) => {
+  const clickHandler = (key: string) => {
     setOpen(false)
-    setAccountId(item.id)
+    const item = accountList.find((item) => item.id === key)
+
+    if (!item) {
+      message.info('error')
+    }
 
     if (onClick) {
       onClick(item)
@@ -67,7 +71,7 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
           return (
             <div
               onClick={() => {
-                clickHandler(item)
+                clickHandler(item.value as string)
               }}
               className={classNames('cursor-pointer rounded-lg border border-gray-250 px-2 py-1  hover:bg-[#fbfbfb]', {
                 'bg-[#fbfbfb]': item.id === accountId

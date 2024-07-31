@@ -1,5 +1,6 @@
 import { bgColorBase, blue, gray } from './theme.config'
 
+const gray150 = gray['150']
 const gray500 = gray['500']
 const gray600 = gray['600']
 const gray900 = gray['900']
@@ -34,7 +35,8 @@ export default {
     colorPrimary: bluePrimary,
     colorPrimaryHover: bluePrimary, // 主色梯度下的悬浮态
     colorPrimaryBorderHover: bluePrimary,
-    colorPrimaryActive: bluePrimary // 主色梯度下的深色激活态。
+    colorPrimaryActive: bluePrimary, // 主色梯度下的深色激活态。
+    defaultBorderColor: gray150
     // https://ant-design.antgroup.com/components/button-cn#%E4%B8%BB%E9%A2%98%E5%8F%98%E9%87%8Fdesign-token
     // defaultHoverBg: bluePrimary,
     // defaultActiveBorderColor: bluePrimary,
@@ -87,5 +89,12 @@ export default {
   },
   Radio: {
     buttonColor: 'red'
+  },
+  Segmented: {
+    // itemActiveBg: 'rgb(247, 247, 247)',
+    itemSelectedBg: 'rgb(247, 247, 247)',
+    itemSelectedColor: '#222222',
+    boxShadowTertiary: 'none',
+    trackBg: 'white'
   }
 }
