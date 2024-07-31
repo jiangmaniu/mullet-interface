@@ -116,6 +116,9 @@ export default {
     xxl: '1600px' // 屏幕 ≥ 1600px
   },
   fontFamily: {
+    // 平方常规、加粗字体
+    'pf-regular': ['pf-regular'],
+    'pf-bold': ['pf-bold'],
     // 数字常规、加粗字体
     'dingpro-regular': ['dingpro-regular'],
     'dingpro-medium': ['dingpro-medium'],

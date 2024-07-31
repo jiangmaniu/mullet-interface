@@ -93,7 +93,7 @@ function TradeRecord({ trigger }: IProps) {
             {/* 历史成交没有这个按钮 */}
             {tabKey !== 'HISTORY' && (
               <Checkbox onChange={onCheckBoxChange} className="max-xl:hidden">
-                <span className="text-gray text-xs">
+                <span className="text-gray text-sm">
                   <FormattedMessage id="mt.zhizhanshidangqian" />
                 </span>
               </Checkbox>

@@ -205,7 +205,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
               <span className="!font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
-              <span className={classNames('text-xs font-medium pt-[2px]')}>{buySellInfo.marginTypeText}</span>
+              <span className={classNames('text-xs font-medium')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (

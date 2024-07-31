@@ -61,11 +61,11 @@ function DeepPrice() {
         <div>
           {/* 当前行情卖价 */}
           {quote.hasQuote ? (
-            <span className={classNames('text-lg !font-dingpro-regular pr-[10px]', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
+            <span className={classNames('text-lg pr-[10px] font-pf-bold', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
               {formatNum(quote.bid)}
             </span>
           ) : (
-            <span className="!font-dingpro-regular text-[13px]">--</span>
+            <span className="text-[13px]">--</span>
           )}
         </div>
         {/* 更多打开一个页面交互没有 */}
@@ -89,13 +89,13 @@ function DeepPrice() {
         return (
           <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
             <Row className="flex items-center h-6 px-3 relative z-[2]">
-              <Col span={8} className="!text-xs text-green !font-dingpro-regular font-medium text-left">
+              <Col span={8} className="!text-xs text-green font-medium text-left">
                 {formatNum(item.price, { precision: digits })}
               </Col>
-              <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-left">
+              <Col span={8} className="font-medium !text-xs text-gray text-left">
                 {formatNum(item.amount, { precision: digits })}
               </Col>
-              <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-right">
+              <Col span={8} className="font-medium !text-xs text-gray text-right">
                 {formatNum(total, { precision: digits })}
               </Col>
             </Row>
@@ -145,13 +145,13 @@ function DeepPrice() {
             return (
               <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
                 <Row className="flex items-center h-6 px-3 relative z-[2]">
-                  <Col span={8} className="!text-xs text-red !font-dingpro-regular font-medium text-left">
+                  <Col span={8} className="!text-xs text-red font-medium text-left">
                     {formatNum(item.price, { precision: digits })}
                   </Col>
-                  <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-left">
+                  <Col span={8} className="font-medium !text-xs text-gray text-left">
                     {formatNum(item.amount, { precision: digits })}
                   </Col>
-                  <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-right">
+                  <Col span={8} className="font-medium !text-xs text-gray text-right">
                     {formatNum(total, { precision: digits })}
                   </Col>
                 </Row>
