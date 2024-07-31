@@ -95,7 +95,7 @@ function Futures({ trigger, style }: IProps) {
           <div style={{ backgroundImage: 'url(/img/heyue-mask.png)' }} className="h-[180px] w-[227px] bg-cover bg-no-repeat" />
         </div>
         <div className="relative top-[47px] z-10">
-          <div className="pb-12 text-[24px] font-bold">
+          <div className="pb-12 text-[24px] font-pf-bold">
             <FormattedMessage id="mt.heyueshuxing" />
           </div>
         </div>
@@ -141,7 +141,7 @@ function Futures({ trigger, style }: IProps) {
 
           {tradeTimeConf?.length > 0 && (
             <div className="pt-14">
-              <div className="py-4 text-xl font-medium">
+              <div className="py-4 text-xl font-pf-bold">
                 <FormattedMessage id="mt.jiaoyishijian" />
                 <span className="text-base">（GMT+8）</span>
               </div>

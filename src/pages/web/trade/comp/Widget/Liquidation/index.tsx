@@ -88,9 +88,9 @@ function Liquidation() {
     <div>
       <div className="px-4">
         <div className="flex items-center pb-2 pt-2">
-          <div className="pt-3 flex items-center">
+          <div className="pt-2 flex items-center">
             {!isolatedMarginList.length && (
-              <div className="text-gray text-xs">
+              <div className="text-gray text-sm font-pf-bold">
                 <FormattedMessage id="mt.quancang" />
               </div>
             )}
@@ -179,7 +179,7 @@ function Liquidation() {
           </div>
           <div className="flex flex-col w-full mt-[45px]">
             <div className="flex items-center justify-between">
-              <span className="text-gray-weak text-xs">
+              <span className="text-gray-secondary text-xs">
                 <FormattedMessage id="mt.baozhengjinlv" />：
               </span>
               <span className="text-green font-semibold text-xs">
@@ -187,7 +187,7 @@ function Liquidation() {
               </span>
             </div>
             <div className="flex items-center pt-[10px] justify-between">
-              <span className="text-gray-weak text-xs">
+              <span className="text-gray-secondary text-xs">
                 <FormattedMessage id="mt.weichibaozhengjin" />：
               </span>
               <span className="text-green !font-dingpro-medium font-medium text-xs">{formatNum(marginRateInfo.margin)}USD</span>

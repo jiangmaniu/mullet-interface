@@ -31,7 +31,7 @@ export default function Tabs({
         marginBottom: `${marginBottom}px !important`
       },
       '.ant-tabs-tab-active .ant-tabs-tab-btn': {
-        fontWeight: '600 !important'
+        fontFamily: 'pf-bold !important'
       }
     }
   })
