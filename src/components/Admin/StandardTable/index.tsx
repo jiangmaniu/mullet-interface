@@ -153,6 +153,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   const dateRangeRef = useRef(null)
   const [loading, setLoading] = useState(false)
   const formRef = useRef<ProFormInstance>()
+  const [tableColumns, setTableColumns] = useState<ProColumns<T>[]>([])
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
   const actionRef = useRef<ActionType>(null)
@@ -261,116 +262,119 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
     }
   }
 
-  // 显示操作项
-  if (showOptionColumn && !columns.some((v) => v.key === 'option')) {
-    columns.push({
-      title: <FormattedMessage id="common.op" />,
-      key: 'option',
-      fixed: 'right',
-      width: opColumnWidth || 120,
-      align: 'right',
-      hideInForm: true,
-      hideInSearch: true,
-      render: (text, record, _, _action) => [
-        <>
-          {renderOptionColumn?.(text, record, _)}
-          {!renderOptionColumn && (
-            <>
-              {!hiddenEditBtn &&
-                (renderEditBtn ? (
-                  renderEditBtn(record)
-                ) : (
-                  <a
-                    key="editable"
-                    onClick={async () => {
-                      onEditItem?.(record)
-                    }}
-                    className="!text-gray text-sm font-medium"
-                  >
-                    <FormattedMessage id="common.bianji" />
-                  </a>
-                ))}
-              {!hiddenDeleteBtn && (
-                <>
-                  {showDeleteModal && (
-                    <DeleteConfirmModal
-                      trigger={
+  useEffect(() => {
+    // 显示操作项
+    if (showOptionColumn && !columns.some((v) => v.key === 'option')) {
+      columns.push({
+        title: <FormattedMessage id="common.op" />,
+        key: 'option',
+        fixed: 'right',
+        width: opColumnWidth || 120,
+        align: 'right',
+        hideInForm: true,
+        hideInSearch: true,
+        render: (text, record, _, _action) => [
+          <>
+            {renderOptionColumn?.(text, record, _)}
+            {!renderOptionColumn && (
+              <>
+                {!hiddenEditBtn &&
+                  (renderEditBtn ? (
+                    renderEditBtn(record)
+                  ) : (
+                    <a
+                      key="editable"
+                      onClick={async () => {
+                        onEditItem?.(record)
+                      }}
+                      className="!text-gray text-sm font-medium"
+                    >
+                      <FormattedMessage id="common.bianji" />
+                    </a>
+                  ))}
+                {!hiddenDeleteBtn && (
+                  <>
+                    {showDeleteModal && (
+                      <DeleteConfirmModal
+                        trigger={
+                          <a className="!text-gray font-medium text-sm ml-6">
+                            <FormattedMessage id="common.delete" />
+                          </a>
+                        }
+                        text={() => setDeleteModalText?.(record)}
+                        onConfirm={() => {
+                          onDeleteConfirm(record)
+                        }}
+                      />
+                    )}
+                    {!showDeleteModal && (
+                      <Popconfirm
+                        title={intl.formatMessage({ id: 'common.confirmDelete' })}
+                        onConfirm={() => {
+                          onDeleteConfirm(record)
+                        }}
+                        key="delete"
+                      >
                         <a className="!text-gray font-medium text-sm ml-6">
                           <FormattedMessage id="common.delete" />
                         </a>
-                      }
-                      text={() => setDeleteModalText?.(record)}
-                      onConfirm={() => {
-                        onDeleteConfirm(record)
-                      }}
-                    />
-                  )}
-                  {!showDeleteModal && (
-                    <Popconfirm
-                      title={intl.formatMessage({ id: 'common.confirmDelete' })}
-                      onConfirm={() => {
-                        onDeleteConfirm(record)
-                      }}
-                      key="delete"
-                    >
-                      <a className="!text-gray font-medium text-sm ml-6">
-                        <FormattedMessage id="common.delete" />
-                      </a>
-                      {/* <LoadingOutlined /> */}
-                    </Popconfirm>
-                  )}
-                </>
-              )}
-            </>
-          )}
-        </>,
-        ...(getOpColumnItems?.(record, actionRef.current as ActionType, formRef.current as FormInstance) || [])
-      ]
-    })
-  }
-
-  columns.forEach((v) => {
-    if (!v.valueType) {
-      v.className += ' !px-5' // 统一修改单元格间距
+                        {/* <LoadingOutlined /> */}
+                      </Popconfirm>
+                    )}
+                  </>
+                )}
+              </>
+            )}
+          </>,
+          ...(getOpColumnItems?.(record, actionRef.current as ActionType, formRef.current as FormInstance) || [])
+        ]
+      })
     }
 
-    // 多语言 统一修改单元格宽度
-    if (!isZh) {
-      v.width = v.width ? Number(v.width) + 40 : v.width
-    }
-
-    if (v.valueType === 'select') {
-      v.fieldProps = {
-        showSearch: true,
-        ...v.fieldProps,
-        suffixIcon: <SelectSuffixIcon opacity={0.4} />
+    columns.forEach((v) => {
+      if (!v.valueType && (v.className || '')?.indexOf('!px-5') === -1) {
+        v.className = classNames('!px-5', v.className) // 统一修改单元格间距
       }
-    }
-    // 统一限制时间选择
-    if (v.valueType === 'dateRange') {
-      v.fieldProps = {
-        ...v.fieldProps,
-        onCalendarChange: (value: any) => {
-          console.log('val', value)
-          dateRangeRef.current = value
-        },
-        // 监听日期选择面板打开状态
-        onOpenChange: (open: boolean) => {
-          const dates = dateRangeRef.current
-          setTimeout(() => {
-            if (!open && dates && Math.abs(moment(dates?.[0]).diff(dates?.[1], 'days')) > 91) {
-              // 当天在内和之前90天
-              dateRangeRef.current = null
-              // 重置日期表单
-              formRef.current?.resetFields(['dates'])
 
-              message.warning(intl.formatMessage({ id: 'mt.shijianbunengdayusangeyue' }))
-            }
-          }, 300)
+      // 多语言 统一修改单元格宽度
+      if (!isZh) {
+        v.width = v.width ? Number(v.width) + 40 : v.width
+      }
+
+      if (v.valueType === 'select') {
+        v.fieldProps = {
+          showSearch: true,
+          ...v.fieldProps,
+          suffixIcon: <SelectSuffixIcon opacity={0.4} />
         }
       }
-    }
-  })
+      // 统一限制时间选择
+      if (v.valueType === 'dateRange') {
+        v.fieldProps = {
+          ...v.fieldProps,
+          onCalendarChange: (value: any) => {
+            console.log('val', value)
+            dateRangeRef.current = value
+          },
+          // 监听日期选择面板打开状态
+          onOpenChange: (open: boolean) => {
+            const dates = dateRangeRef.current
+            setTimeout(() => {
+              if (!open && dates && Math.abs(moment(dates?.[0]).diff(dates?.[1], 'days')) > 91) {
+                // 当天在内和之前90天
+                dateRangeRef.current = null
+                // 重置日期表单
+                formRef.current?.resetFields(['dates'])
+
+                message.warning(intl.formatMessage({ id: 'mt.shijianbunengdayusangeyue' }))
+              }
+            }, 300)
+          }
+        }
+      }
+    })
+    setTableColumns(columns)
+  }, [columns.length])
 
   // @ts-ignore
   const classNameWrapper = useEmotionCss(({ token }) => {
@@ -429,7 +433,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   return (
     <ProTable<T, U>
       cardBordered={false}
-      columns={columns}
+      columns={tableColumns}
       actionRef={actionRef}
       rowKey="id"
       // false则不显示table工具栏
