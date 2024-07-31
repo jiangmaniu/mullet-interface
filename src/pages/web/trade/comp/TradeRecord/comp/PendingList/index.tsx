@@ -105,7 +105,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       renderText(text, record, index, action) {
         return (
-          <span className={classNames('!text-[13px] !font-dingpro-medium', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
+          <span className={classNames('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
             {formatNum(record.currentPrice)}
           </span>
         )
@@ -124,7 +124,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {
@@ -159,7 +159,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 180,
       renderText(text, record, index, action) {
         const AddDom = (
-          <span className="font-extrabold">
+          <span className="font-pf-bold">
             <FormattedMessage id="mt.tianjia" />
           </span>
         )
@@ -170,11 +170,11 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
               modifyPendingRef.current?.show(record)
             }}
           >
-            <span className="!text-[13px] text-gray !font-dingpro-medium border-b border-dashed border-gray-weak">
+            <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
               {Number(record?.takeProfit) ? formatNum(record?.takeProfit) : AddDom}
             </span>
             <span> / </span>
-            <span className="!text-[13px] text-gray !font-dingpro-medium border-b border-dashed border-gray-weak">
+            <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
               {Number(record?.stopLoss) ? formatNum(record?.stopLoss) : AddDom}
             </span>
           </div>
