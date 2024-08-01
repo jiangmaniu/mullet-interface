@@ -1,7 +1,7 @@
 import { FormattedMessage } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef, useEffect, useState, useTransition } from 'react'
 
 import Buy from '@/components/Base/Svg/Buy'
 import Sell from '@/components/Base/Svg/Sell'
@@ -22,6 +22,7 @@ type IProps = {
 // 买卖切换按钮
 export default observer(
   forwardRef(({ type, activeKey, onChange, sellBgColor, onBuy, onSell }: IProps, ref) => {
+    const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
     const [current, setCurrent] = useState(1)
     const isFooterBtnGroup = type === 'footer'
     const buyColor = current === 1 ? 'text-white' : 'text-gray'
@@ -76,12 +77,14 @@ export default observer(
         <div
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
           onClick={() => {
-            if (onSell) {
-              onSell()
-            } else {
-              onChange?.(2)
-              setCurrent(2)
-            }
+            startTransition(() => {
+              if (onSell) {
+                onSell()
+              } else {
+                onChange?.(2)
+                setCurrent(2)
+              }
+            })
           }}
         >
           <Sell isActive={isFooterBtnGroup || current === 2} width={width} bgColor={sellBgColor}>
@@ -105,12 +108,14 @@ export default observer(
         <div
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
           onClick={() => {
-            if (onBuy) {
-              onBuy()
-            } else {
-              setCurrent(1)
-              onChange?.(1)
-            }
+            startTransition(() => {
+              if (onBuy) {
+                onBuy()
+              } else {
+                setCurrent(1)
+                onChange?.(1)
+              }
+            })
           }}
         >
           <Buy isActive={isFooterBtnGroup || current === 1} width={width}>

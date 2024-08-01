@@ -4,7 +4,7 @@ import { Col, Row } from 'antd'
 import classNames from 'classnames'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
@@ -15,6 +15,7 @@ type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 // 盘口深度报价
 function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
+  const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
   const depth = getCurrentDepth()
   const quote = getCurrentQuote()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
@@ -184,7 +185,9 @@ function DeepPrice() {
               className={classNames('cursor-pointer', item.key === mode ? 'opacity-100' : 'opacity-30')}
               key={idx}
               onClick={() => {
-                setMode(item.key)
+                startTransition(() => {
+                  setMode(item.key)
+                })
               }}
             />
           ))}

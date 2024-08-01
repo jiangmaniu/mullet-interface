@@ -2,7 +2,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState, useTransition } from 'react'
 
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
@@ -27,6 +27,7 @@ export default observer(
     const { lng } = useLang()
     const { trade } = useStores()
     const intl = useIntl()
+    const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
 
     const [orderType, setOrderType] = useState<any>(OP_MARKET_ORDER) // 订单类类型
     const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
@@ -83,7 +84,9 @@ export default observer(
             tabBarGutter={lng === 'zh-TW' ? 50 : 70}
             className="max-xl:pl-3"
             onChange={(key) => {
-              setOrderType(key)
+              startTransition(() => {
+                setOrderType(key)
+              })
             }}
             size="small"
             marginBottom={0}
