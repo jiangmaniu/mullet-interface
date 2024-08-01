@@ -2,6 +2,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Col, Row } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
+import { useTransition } from 'react'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useEnv } from '@/context/envProvider'
@@ -19,6 +20,7 @@ type IProps = {
  * @returns
  */
 function QuoteItem({ item, isActive, popupRef }: IProps) {
+  const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
   const { isMobileOrIpad } = useEnv()
   const { trade, ws } = useStores()
   const symbol = item.symbol
@@ -45,14 +47,16 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
       <div
         className="relative pl-1"
         onClick={() => {
-          // 记录打开的symbol
-          trade.setOpenSymbolNameList(symbol)
-          // 设置当前当前的symbol
-          trade.setActiveSymbolName(symbol)
+          startTransition(() => {
+            // 记录打开的symbol
+            trade.setOpenSymbolNameList(symbol)
+            // 设置当前当前的symbol
+            trade.setActiveSymbolName(symbol)
 
-          if (isMobileOrIpad) {
-            popupRef.current?.close()
-          }
+            if (isMobileOrIpad) {
+              popupRef.current?.close()
+            }
+          })
         }}
       >
         {/*激活打开的项展示当前的箭头 */}
