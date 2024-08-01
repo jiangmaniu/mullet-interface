@@ -19,7 +19,7 @@ import getWidgetOpts from './widgetOpts'
 const Tradingview = () => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
   const { kline, trade } = useStores()
-  const { isMobile, isIpad, isPc } = useEnv()
+  const { isMobile, isIpad, isMobileOrIpad, isPc } = useEnv()
   const symbolInfo = trade.getActiveSymbolInfo()
   const dataSourceCode = symbolInfo?.dataSourceCode
   const symbolName = symbolInfo?.symbol
@@ -75,7 +75,7 @@ const Tradingview = () => {
       // 动态设置css变量
       setCSSCustomProperty({ tvWidget, theme })
 
-      setSymbol(symbolName, tvWidget)
+      // setSymbol(symbolName, tvWidget)
 
       // 默认显示MACD指标在k线底部
       if (showBottomMACD === 1) {
@@ -180,6 +180,18 @@ const Tradingview = () => {
   }
 
   useEffect(() => {
+    // 重置tradingview实例，否则报错
+    kline.tvWidget = null as any
+  }, [isMobileOrIpad, isPc])
+
+  useEffect(() => {
+    if (!symbolName || kline.tvWidget) return
+    // 初始化图表实例
+    initChart()
+  }, [params, kline.tvWidget])
+
+  // 监听切换品种
+  useEffect(() => {
     if (!symbolName) return
     // 实例存在
     if (kline.tvWidget) {
@@ -188,15 +200,9 @@ const Tradingview = () => {
           // 实例已经初始化，直接切换品种
           setSymbol(symbolName, kline.tvWidget)
         }
-        // 动态设置语言 @TODO
       })
-
-      return
     }
-
-    // 初始化图表实例
-    initChart()
-  }, [isPc, isMobile, params, kline.tvWidget])
+  }, [symbolName])
 
   const className = useEmotionCss(({ token }) => {
     return {
