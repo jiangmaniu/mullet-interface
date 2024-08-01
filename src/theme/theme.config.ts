@@ -73,9 +73,9 @@ export const pageContainerHeaderBg = '#F8FBFD'
 export const colorWhite = '#fff'
 export const colorBlack = '#000'
 
-// 定义全局使用的平方常规字体，优先使用pf-regular
+// 定义全局使用的平方常规字体，优先使用pf-medium当做常规字体
 export const fontFamily =
-  "pf-regular, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+  "pf-medium, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
 
 // 获取系列颜色
 const getColors = (colors: any, name: any) => {
