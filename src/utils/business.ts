@@ -2,8 +2,8 @@
 
 import { getIntl, getLocale } from '@umijs/max'
 
-import { URLS } from '@/constants'
 import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
+import ENV from '@/env'
 
 import { formatMin2Time, getUid, groupBy, isImageFile, parseJsonFields } from '.'
 
@@ -276,7 +276,7 @@ export const formatSymbolConf = (data: any) => {
  * @returns
  */
 export const getSymbolIcon = (imgUrl: any) => {
-  return isImageFile(imgUrl) ? `${URLS.imgDomain}${imgUrl}` : `/img/default-symbol-icon.png`
+  return isImageFile(imgUrl) ? `${ENV.imgDomain}${imgUrl}` : `/img/default-symbol-icon.png`
 }
 
 /**

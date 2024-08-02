@@ -42,3 +42,4 @@ build
 
 # .docker-volumes/nginx/html
 .docker-volumes/nginx/log
+.env.local

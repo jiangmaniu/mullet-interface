@@ -2,11 +2,11 @@
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
-import { URLS } from '@/constants'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
+import ENV from '@/env'
 import { Spin } from 'antd'
 
 type IProps = {
@@ -30,7 +30,7 @@ const TradingViewComp = ({ style }: IProps) => {
       setLoading(true)
       setTradeUrl(
         `${
-          URLS.tradingViewUrl
+          ENV.tradingViewUrl
         }/?lang=${getTradingViewLng()}&dataSourceSymbol=${dataSourceSymbol}&dataSourceCode=${dataSourceCode}&symbolName=${
           symbolInfo?.symbol
         }`
