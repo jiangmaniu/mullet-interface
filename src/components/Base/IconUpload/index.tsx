@@ -4,7 +4,7 @@ import { FormInstance, Modal } from 'antd'
 import classNames from 'classnames'
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
-import { URLS } from '@/constants'
+import ENV from '@/env'
 import { message } from '@/utils/message'
 
 import { upload } from './upload'
@@ -75,7 +75,7 @@ export default forwardRef(
     const intl = useIntl()
 
     // 图片展示域名
-    const imgDomain = URLS.imgDomain
+    const imgDomain = ENV.imgDomain
 
     useEffect(() => {
       if (value) {

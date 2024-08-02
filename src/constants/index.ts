@@ -1,7 +1,4 @@
-export const isDev = process.env.APP_ENV === 'dev'
-const ENV_PREFIX = isDev ? 'dev' : 'prod'
-
-const NAMESPACE = `stellux_client_${ENV_PREFIX}` // 命名空间
+const NAMESPACE = `stellux_client_${process.env.APP_ENV}` // 命名空间
 
 // 秘钥
 export const CLIENT_ID = 'StelluxTrader-client' // 客户端id
@@ -42,25 +39,3 @@ export const KEY_USER_CONF_INFO = NAMESPACE + '_' + 'user_conf_info'
 
 // 默认语言 en-US
 export const DEFAULT_LOCALE = 'en-US'
-
-// 测试环境
-const development = {
-  tradingViewUrl: 'https://tradingview-dev.stellux.io',
-  baseURL: 'https://manager-dev.stellux.io',
-  ws: 'wss://websocket-dev.stellux.io/websocketServer',
-  imgDomain: 'https://file-dev.stellux.io/trade/' // 图片域名前缀
-}
-// 正式环境
-const production = {
-  tradingViewUrl: 'https://tradingview.stellux.io',
-  baseURL: 'https://manager.stellux.io',
-  ws: 'wss://websocket.stellux.io/websocketServer',
-  imgDomain: 'https://file.stellux.io/trade/'
-}
-
-const env = isDev ? development : production
-
-export const URLS = {
-  offical: 'www.stellux.com',
-  ...env
-}

@@ -1,7 +1,7 @@
 import { action, configure, makeObservable, observable } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
-import { URLS } from '@/constants'
+import ENV from '@/env'
 import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 
@@ -104,7 +104,7 @@ class WSStore {
   @observable quotes = {} as Record<string, IQuoteItem> // 当前行情
   @observable depth = {} as Record<string, IDepth> // 当前行情
   @observable symbols = {} // 储存品种请求列表
-  @observable websocketUrl = URLS.ws
+  @observable websocketUrl = ENV.ws
 
   @action
   async connect() {
