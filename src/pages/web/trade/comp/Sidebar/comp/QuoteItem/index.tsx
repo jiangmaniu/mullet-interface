@@ -20,7 +20,7 @@ type IProps = {
  * @returns
  */
 function QuoteItem({ item, isActive, popupRef }: IProps) {
-  const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { isMobileOrIpad } = useEnv()
   const { trade, ws } = useStores()
   const symbol = item.symbol

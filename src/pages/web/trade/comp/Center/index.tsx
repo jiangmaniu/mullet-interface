@@ -11,7 +11,7 @@ import TradingView from '../TradingView'
 // pc端中间区域部分
 const Center = () => {
   const [tabKey, setTabKey] = useState(1)
-  const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
 
   const TabsItems: any = [
     { key: 1, label: <FormattedMessage id="mt.chart" /> },

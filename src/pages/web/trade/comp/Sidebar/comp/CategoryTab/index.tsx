@@ -14,7 +14,7 @@ type IProps = {
 function CategoryTabs({ onChange, activeKey }: IProps) {
   const [current, setCurrent] = useState('0')
   const { trade } = useStores()
-  const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
 
   const symbolCategory = trade.symbolCategory
 

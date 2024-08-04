@@ -22,7 +22,7 @@ type IProps = {
 // 买卖切换按钮
 export default observer(
   forwardRef(({ type, activeKey, onChange, sellBgColor, onBuy, onSell }: IProps, ref) => {
-    const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
+    const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
     const [current, setCurrent] = useState(1)
     const isFooterBtnGroup = type === 'footer'
     const buyColor = current === 1 ? 'text-white' : 'text-gray'

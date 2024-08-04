@@ -28,7 +28,7 @@ function TradeRecord({ trigger }: IProps) {
   const [showActiveSymbol, setShowActiveSymbol] = useState(false)
   const popupRef = useRef()
   const { ws, trade } = useStores()
-  const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
 
   const tradeList = trade.positionList
   const pendingList = trade.pendingList

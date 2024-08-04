@@ -15,7 +15,7 @@ type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 // 盘口深度报价
 function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
-  const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const depth = getCurrentDepth()
   const quote = getCurrentQuote()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)

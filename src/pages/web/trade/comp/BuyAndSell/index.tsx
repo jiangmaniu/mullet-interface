@@ -27,7 +27,7 @@ export default observer(
     const { lng } = useLang()
     const { trade } = useStores()
     const intl = useIntl()
-    const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
+    const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
 
     const [orderType, setOrderType] = useState<any>(OP_MARKET_ORDER) // 订单类类型
     const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出

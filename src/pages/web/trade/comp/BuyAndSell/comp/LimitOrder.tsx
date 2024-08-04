@@ -28,7 +28,7 @@ type IProps = {
 // 限价单
 export default observer(
   forwardRef(({ popupRef, type, orderType }: IProps, ref) => {
-    const [isPending, startTransition] = useTransition() // 提高优先级，避免页面阻塞事件
+    const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
     const intl = useIntl()
     const { isPc, isMobileOrIpad } = useEnv()
     const { trade, ws } = useStores()
