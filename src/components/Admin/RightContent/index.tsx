@@ -12,7 +12,6 @@ import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
-import SwitchTheme from '@/components/SwitchTheme'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
@@ -446,7 +445,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           />
         </Dropdown>
       </div>
-      {isTradePage && <SwitchTheme />}
+      {/* {isTradePage && <SwitchTheme />} */}
       <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />
     </div>
   )
