@@ -1,0 +1,35 @@
+import classNames from 'classnames'
+import { observer } from 'mobx-react'
+
+import { useTheme } from '@/context/themeProvider'
+
+import Iconfont from '../Base/Iconfont'
+
+// 主题切换
+function SwitchTheme() {
+  const { theme, setTheme } = useTheme()
+  const isDark = theme === 'dark'
+
+  return (
+    <div
+      className={classNames(
+        'py-[5px] px-[5px] w-[48px] rounded-[18px] cursor-pointer flex items-center mr-5',
+        isDark ? 'bg-gray-700 justify-end' : 'bg-gray-150 justify-start border border-gray-200'
+      )}
+      onClick={() => {
+        setTheme(isDark ? 'light' : 'dark')
+      }}
+    >
+      <div
+        className={classNames(
+          'w-[17px] h-[17px] rounded-full p-1 flex items-center justify-center',
+          isDark ? 'bg-gray-secondary' : 'bg-white'
+        )}
+      >
+        <Iconfont name={isDark ? 'yueliang' : 'rijianmoshi-'} width={14} height={14} color={isDark ? '#fff' : '#6B6B6B'} />
+      </div>
+    </div>
+  )
+}
+
+export default observer(SwitchTheme)

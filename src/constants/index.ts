@@ -9,10 +9,10 @@ export const CLIENT_SECRET = 'stellux_trader_client_secret' // 客户端密钥
 // 注册识别码(从后台客户组获取，部署每套应用都需要填写不同的识别码，区分不同的应用，例如mc/cc/cd)
 export const REGISTER_APP_CODE = '123456' // @TODO 正式部署在修改
 
-// 字体图标 @TODO 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
+// 字体图标 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码
 export const ICONFONT_URL =
-  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_et8j395g6v.js' : '/iconfont/iconfont.js'
+  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_ans2p7qu736.js' : '/iconfont/iconfont.js'
 
 // 首页
 export const WEB_HOME_PAGE = '/trade'

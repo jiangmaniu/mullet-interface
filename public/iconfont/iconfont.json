@@ -6,6 +6,83 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "5098386",
+      "name": "日间模式",
+      "font_class": "rijianmoshi-",
+      "unicode": "e6f1",
+      "unicode_decimal": 59121
+    },
+    {
+      "icon_id": "11611921",
+      "name": "日间模式（暗黑）",
+      "font_class": "yueliang",
+      "unicode": "e634",
+      "unicode_decimal": 58932
+    },
+    {
+      "icon_id": "19965183",
+      "name": "断开连接",
+      "font_class": "duankailianjie",
+      "unicode": "e747",
+      "unicode_decimal": 59207
+    },
+    {
+      "icon_id": "41236997",
+      "name": "huazhuan",
+      "font_class": "huazhuan",
+      "unicode": "e60a",
+      "unicode_decimal": 58890
+    },
+    {
+      "icon_id": "41187072",
+      "name": "down",
+      "font_class": "down",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    },
+    {
+      "icon_id": "41184795",
+      "name": "kefu",
+      "font_class": "kefu",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "41184033",
+      "name": "lng",
+      "font_class": "lng",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "41183965",
+      "name": "caidan",
+      "font_class": "caidan",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "41184013",
+      "name": "user",
+      "font_class": "user",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "41183887",
+      "name": "quan",
+      "font_class": "quan",
+      "unicode": "e602",
+      "unicode_decimal": 58882
+    },
+    {
+      "icon_id": "133258",
+      "name": "fire",
+      "font_class": "fire",
+      "unicode": "e905",
+      "unicode_decimal": 59653
+    },
+    {
       "icon_id": "41089347",
       "name": "带单管理",
       "font_class": "daidanguanli",
