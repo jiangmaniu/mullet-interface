@@ -134,7 +134,7 @@ export const getColorClass = (value: number) => {
 export const formatNum = (value: any, opts = {}) => {
   // 不是一个数字
   if (isNaN(value) || !Number(value)) {
-    return '-'
+    return '--'
   }
   const val = value || '0.00'
   const precision = String(value).split('.')?.[1]?.length || 2

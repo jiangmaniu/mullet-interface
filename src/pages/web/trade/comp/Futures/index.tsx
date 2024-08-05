@@ -29,7 +29,7 @@ function Futures({ trigger, style }: IProps) {
   const prepaymentConf = quoteInfo?.prepaymentConf
   const holdingCostConf = quoteInfo?.holdingCostConf
   const tradeTimeConf = quoteInfo?.tradeTimeConf as any[]
-  const showPencent = holdingCostConf?.type !== 'point' // 以百分比模式
+  const showPencent = holdingCostConf?.type !== 'pointMode' // 以百分比模式
   const marginMode = prepaymentConf?.mode // 保证金模式
 
   const futrues = [
