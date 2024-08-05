@@ -38,7 +38,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
   }
 
   useEffect(() => {
-    const themeMode = STORAGE_GET_THEME() || 'default'
+    const themeMode = STORAGE_GET_THEME() || 'light'
     setTheme(themeMode)
     setThemeClassName(themeMode)
   }, [])
