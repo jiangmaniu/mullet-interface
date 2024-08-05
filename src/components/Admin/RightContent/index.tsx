@@ -1,6 +1,6 @@
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, history, SelectLang as UmiSelectLang, useModel } from '@umijs/max'
+import { FormattedMessage, history, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
 import { Tooltip } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
@@ -12,6 +12,7 @@ import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
+import SwitchTheme from '@/components/SwitchTheme'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
@@ -103,7 +104,15 @@ export const Concat = () => {
   )
 }
 
-export const HeaderRightContent = observer(({ isAdmin, theme = 'black' }: { isAdmin?: boolean; theme?: HeaderTheme }) => {
+type IHeaderRightProps = {
+  /**管理端 */
+  isAdmin?: boolean
+  /**是否是交易页面 */
+  isTrade?: boolean
+  /**主题 */
+  theme?: HeaderTheme
+}
+export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' }: IHeaderRightProps) => {
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
   const { initialState } = useModel('@@initialState')
   const { trade } = useStores()
@@ -115,6 +124,8 @@ export const HeaderRightContent = observer(({ isAdmin, theme = 'black' }: { isAd
   const currentAccountInfo = trade.currentAccountInfo
   const quoteInfo = getCurrentQuote() // 这里保留，取值过程，触发mobx实时更新
   const { balance, availableMargin, totalProfit, occupyMargin } = trade.getAccountBalance()
+  const { pathname } = useLocation()
+  const isTradePage = pathname.indexOf('/trade') !== -1
 
   useEffect(() => {
     // 切换真实模拟账户列表
@@ -327,18 +338,18 @@ export const HeaderRightContent = observer(({ isAdmin, theme = 'black' }: { isAd
             }}
           >
             <div className="flex flex-col items-end group relative">
-              <span className="sm:text-xl text-base  !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
+              <span className="sm:text-xl text-base !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
               <div className="flex items-center pt-[2px]">
-                <span className={classNames('text-xs ', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
+                <span className={classNames('text-xs dark:text-primary', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
                   {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                 </span>
-                <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200"></div>
-                <span className={classNames('text-xs ', iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500')}>
+                <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
+                <span className={classNames('text-xs dark:text-gray-570', iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500')}>
                   #{hiddenCenterPartStr(currentAccountInfo?.id, 4)}
                 </span>
               </div>
             </div>
-            <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200"></div>
+            <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200 dark:bg-gray-570"></div>
             <div>
               {/* <img
                 src="/img/uc/select.png"
@@ -435,7 +446,8 @@ export const HeaderRightContent = observer(({ isAdmin, theme = 'black' }: { isAd
           />
         </Dropdown>
       </div>
-      <SwitchLanguage isAdmin={isAdmin} theme={theme} />
+      {isTradePage && <SwitchTheme />}
+      <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />
     </div>
   )
 })

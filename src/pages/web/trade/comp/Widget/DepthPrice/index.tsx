@@ -174,7 +174,7 @@ function DeepPrice() {
   if (!asks.length && !bids.length) return
 
   return (
-    <div className={classNames('w-[260px] h-[700px] overflow-hidden bg-white relative', className)}>
+    <div className={classNames('w-[260px] h-[700px] overflow-hidden bg-white relative dark:bg-dark-page', className)}>
       <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130">
         <div className="flex items-center gap-x-4">
           {modeList.map((item, idx) => (

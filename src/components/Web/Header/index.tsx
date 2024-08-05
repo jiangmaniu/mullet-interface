@@ -1,11 +1,23 @@
 import { useModel } from '@umijs/max'
 import classNames from 'classnames'
 
+import { useTheme } from '@/context/themeProvider'
+
 import Logo from '../../Admin/Header/Logo'
 import { HeaderRightContent } from '../../Admin/RightContent'
 
 export default function Header() {
   const { openTradeSidebar } = useModel('global')
+  const { theme } = useTheme()
+  const logoProps =
+    theme === 'dark'
+      ? {
+          textColor: 'white',
+          iconColor1: 'white',
+          iconColor2: 'white'
+        }
+      : {}
+
   return (
     <>
       <header className="h-[66px] z-[19] bg-transparent"></header>
@@ -14,7 +26,7 @@ export default function Header() {
           <div className={classNames('flex items-center', !openTradeSidebar ? 'w-[200px]' : 'w-[284px]')}>
             <div className="flex items-center">
               <a className="flex items-center m-h-[22px] h-full">
-                <Logo />
+                <Logo {...logoProps} />
               </a>
             </div>
           </div>
@@ -25,7 +37,7 @@ export default function Header() {
             <div className="min-w-[565px] h-full box-border flex-1">
               <div className="h-full">
                 <div className="flex items-center justify-end h-full">
-                  <HeaderRightContent />
+                  <HeaderRightContent theme={theme === 'light' ? 'black' : 'white'} isTrade />
                 </div>
               </div>
             </div>
