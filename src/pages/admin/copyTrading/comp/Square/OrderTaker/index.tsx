@@ -49,7 +49,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
               <div className="flex items-center gap-1">
                 <Iconfont name="renshu" width={16} color="black" height={16} hoverColor={colorTextPrimary} />
                 <span>
-                  <span className=" text-sm">{account.followers}</span>
+                  <span className=" text-sm font-pf-medium">{account.followers}</span>
                   <span className=" text-sm text-gray-500">/{account.limitFollowers}</span>
                 </span>
               </div>
@@ -63,7 +63,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
               borderRadius: 16
             }}
           >
-            <SwapRightOutlined style={{ color: 'black' }} />
+            <SwapRightOutlined style={{ color: 'black', fontSize: 20 }} />
           </Button>
         </div>
         {/* datas */}

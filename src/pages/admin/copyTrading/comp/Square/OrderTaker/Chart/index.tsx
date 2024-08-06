@@ -1,8 +1,11 @@
+import { useIntl } from '@umijs/max'
 import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
 import React from 'react'
 
 const OrderTakerChart: React.FC = () => {
+  const intl = useIntl()
+
   const option = {
     // title: {
     //   text: '堆叠区域图'
@@ -41,17 +44,18 @@ const OrderTakerChart: React.FC = () => {
     ],
     series: [
       {
-        name: '邮件营销',
+        name: intl.formatMessage({ id: 'mt.yingkui' }),
         type: 'line',
         stack: '总量',
         lineStyle: {
-          color: '#45A48A'
+          color: '#45A48A',
+          width: 1
         },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             {
               offset: 0,
-              color: 'rgba(69, 164, 138, 0.30)'
+              color: 'rgba(69, 164, 138, 0.20)'
             },
             {
               offset: 1,

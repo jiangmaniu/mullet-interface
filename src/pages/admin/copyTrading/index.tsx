@@ -74,7 +74,7 @@ export default function copyTrading() {
                 push('/copy-trading/apply')
               }}
             >
-              <span className=" font-semibold">
+              <span className=" font-pf-bold">
                 <FormattedMessage id="mt.lijicanjia" />
               </span>
             </Button>

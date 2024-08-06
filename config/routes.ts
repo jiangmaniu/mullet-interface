@@ -166,16 +166,16 @@ export default [
   {
     path: '/:lng/copy-trading/detail/:id',
     access: 'canAdmin', // 权限配置
-    component: './admin/copyTrading/copyTradingDetail',
-    hideInMenu: true,
-    menuRender: false // 当前路由不展示菜单
+    component: './admin/copyTrading/copyTradingDetail'
+    // hideInMenu: true,
+    // menuRender: false // 当前路由不展示菜单
   },
   {
     path: '/:lng/copy-trading/take-detail/:id',
     access: 'canAdmin', // 权限配置
-    component: './admin/copyTrading/takeDetail',
-    hideInMenu: true,
-    menuRender: false // 当前路由不展示菜单
+    component: './admin/copyTrading/takeDetail'
+    // hideInMenu: true,
+    // menuRender: false // 当前路由不展示菜单
   },
   {
     path: '/:lng/copy-trading/apply',
