@@ -3,7 +3,7 @@ import './style.less'
 import { ModalForm } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { Form, Tabs, TabsProps, message } from 'antd'
+import { Form, message, Tabs, TabsProps } from 'antd'
 
 import { CURRENCY } from '@/constants'
 import { formatNum } from '@/utils'
