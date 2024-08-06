@@ -47,7 +47,7 @@ function AddAccountComp() {
                 <div className="text-gray font-semibold text-[20px] pb-2 truncate">
                   {currentAccount.synopsis?.name || currentAccount?.groupName}
                 </div>
-                <div className="text-gray-secondary text-sm truncate">{currentAccount.synopsis?.remark}</div>
+                <div className="text-gray-secondary text-sm line-clamp-2">{currentAccount.synopsis?.remark}</div>
               </div>
             </div>
             <div className="h-[90px] px-7 py-3">

@@ -198,7 +198,7 @@ declare namespace Symbol {
     /**考虑假期 */
     isHoliday: boolean
     /**类型:点模式、以百分比形式，使用现价、以百分比形式，使用开仓价	 */
-    type: 'point' | 'percentageCurrentPrice' | 'percentageOpenPrice'
+    type: 'pointMode' | 'percentageCurrentPrice' | 'percentageOpenPrice'
     /**买入持仓 */
     buyBag: number
     /**卖出持仓 */

@@ -82,6 +82,10 @@ export const colorSoftWhite = 'rgba(250, 250, 250, 1)'
 export const colorWhite = '#fff'
 export const colorBlack = '#000'
 
+// 定义全局使用的平方常规字体，优先使用pf-medium当做常规字体
+export const fontFamily =
+  "pf-medium, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
+
 // 获取系列颜色
 const getColors = (colors: any, name: any) => {
   const result = {}
@@ -128,6 +132,7 @@ export const ThemeVarsConst = {
 
   '--color-white': colorWhite,
   '--color-black': colorBlack,
+  '--font-family': fontFamily, // 字体
 
   // 灰色系
   ...getColors(gray, 'gray'),

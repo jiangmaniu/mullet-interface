@@ -332,7 +332,7 @@ declare namespace User {
      */
     remark?: string
     /**
-     * 启用禁用交易账号连接状态
+     * 状态
      */
     status?: API.Status
     /**启用禁用交易账号 */
@@ -341,7 +341,7 @@ declare namespace User {
     addAdvanceCharge?: number
     /**强制平仓比例 */
     compelCloseRatio?: number
-    /**禁用账户组选择连接 */
+    /**启用禁用交易账号连接状态 */
     enableConnect: boolean
     /**禁用账户组交易 */
     enableTrade: boolean

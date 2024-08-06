@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { Checkbox } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
@@ -28,6 +28,8 @@ function TradeRecord({ trigger }: IProps) {
   const [showActiveSymbol, setShowActiveSymbol] = useState(false)
   const popupRef = useRef()
   const { ws, trade } = useStores()
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
+
   const tradeList = trade.positionList
   const pendingList = trade.pendingList
   const stopLossProfitList = trade.stopLossProfitList
@@ -93,7 +95,7 @@ function TradeRecord({ trigger }: IProps) {
             {/* 历史成交没有这个按钮 */}
             {tabKey !== 'HISTORY' && (
               <Checkbox onChange={onCheckBoxChange} className="max-xl:hidden">
-                <span className="text-gray text-xs">
+                <span className="text-gray text-sm">
                   <FormattedMessage id="mt.zhizhanshidangqian" />
                 </span>
               </Checkbox>
@@ -110,7 +112,9 @@ function TradeRecord({ trigger }: IProps) {
           </div>
         }
         onChange={(key) => {
-          trade.setTabKey(key as IRecordTabKey)
+          startTransition(() => {
+            trade.setTabKey(key as IRecordTabKey)
+          })
         }}
         tabBarGutter={46}
         tabBarStyle={{ paddingLeft: 27 }}

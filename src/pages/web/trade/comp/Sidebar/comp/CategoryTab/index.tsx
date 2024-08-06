@@ -1,6 +1,6 @@
 import { Tabs } from 'antd-mobile'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 
@@ -14,6 +14,7 @@ type IProps = {
 function CategoryTabs({ onChange, activeKey }: IProps) {
   const [current, setCurrent] = useState('0')
   const { trade } = useStores()
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
 
   const symbolCategory = trade.symbolCategory
 
@@ -29,11 +30,13 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
     <div className={styles.tabs}>
       <Tabs
         onChange={(key) => {
-          onChange?.(key)
-          setCurrent(key)
+          startTransition(() => {
+            onChange?.(key)
+            setCurrent(key)
 
-          // 请求分类下的品种
-          trade.getSymbolList({ classify: key })
+            // 请求分类下的品种
+            trade.getSymbolList({ classify: key })
+          })
         }}
         activeKey={current}
         // @ts-ignore

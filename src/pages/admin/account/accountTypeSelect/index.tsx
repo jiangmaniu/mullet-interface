@@ -109,9 +109,9 @@ function AccountList() {
                 </div>
                 <div>
                   <div className="pb-[14px] text-gray text-[24px] font-bold truncate">{item.synopsis?.name || item?.groupName}</div>
-                  <div className="text-gray-secondary text-sm truncate">{item.synopsis?.remark}</div>
+                  <div className="text-gray-secondary text-sm line-clamp-2">{item.synopsis?.remark}</div>
                 </div>
-                <div className="border-b border-gray-250/25 my-7"></div>
+                <div className="border-b border-gray-250/25 my-5"></div>
                 <div>
                   {(item.synopsis?.list || []).slice(0, 3).map((v, index) => (
                     <div className="flex items-center justify-between pb-7" key={index}>

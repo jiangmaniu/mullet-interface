@@ -112,7 +112,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {
@@ -132,7 +132,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {
@@ -171,7 +171,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {
@@ -242,15 +242,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
         const profitFormat = formatNum(profit)
-        return (
-          <>
-            {profit ? (
-              <span className={classNames('font-[800] !font-dingpro-medium', color)}>{flag ? '+' + profitFormat : profitFormat}</span>
-            ) : (
-              '0.00'
-            )}
-          </>
-        )
+        return <>{profit ? <span className={classNames('font-pf-bold', color)}>{flag ? '+' + profitFormat : profitFormat}</span> : '-'}</>
       }
     }
   ]

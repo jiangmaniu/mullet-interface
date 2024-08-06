@@ -29,7 +29,7 @@ function Futures({ trigger, style }: IProps) {
   const prepaymentConf = quoteInfo?.prepaymentConf
   const holdingCostConf = quoteInfo?.holdingCostConf
   const tradeTimeConf = quoteInfo?.tradeTimeConf as any[]
-  const showPencent = holdingCostConf?.type !== 'point' // 以百分比模式
+  const showPencent = holdingCostConf?.type !== 'pointMode' // 以百分比模式
   const marginMode = prepaymentConf?.mode // 保证金模式
 
   const futrues = [
@@ -90,16 +90,16 @@ function Futures({ trigger, style }: IProps) {
         <div className="absolute left-8 flex w-[92%] justify-between">
           <div
             style={{ backgroundImage: 'url(/img/heyue-logo.png)' }}
-            className="relative top-8 h-[92px] w-[328px] bg-cover bg-no-repeat"
+            className="relative top-0 h-[92px] w-[328px] bg-cover bg-no-repeat"
           />
           <div style={{ backgroundImage: 'url(/img/heyue-mask.png)' }} className="h-[180px] w-[227px] bg-cover bg-no-repeat" />
         </div>
-        <div className="relative top-[47px] z-10">
-          <div className="pb-12 text-[24px] font-bold">
+        <div className="relative top-[30px] z-10">
+          <div className="pb-12 text-[24px] font-pf-bold">
             <FormattedMessage id="mt.heyueshuxing" />
           </div>
         </div>
-        <div className="mt-7 overflow-x-hidden max-xl:max-h-[60vh] max-xl:overflow-y-auto max-xl:pb-8">
+        <div className="mt-3 overflow-x-hidden max-xl:max-h-[60vh] max-xl:overflow-y-auto max-xl:pb-8">
           <SwitchPcOrWapLayout
             pcComponent={
               <div className="grid gap-y-4 xl:grid-cols-3 xxl:grid-cols-4">
@@ -140,12 +140,12 @@ function Futures({ trigger, style }: IProps) {
           />
 
           {tradeTimeConf?.length > 0 && (
-            <div className="pt-14">
-              <div className="py-4 text-xl font-medium">
+            <div className="pt-5">
+              <div className="py-4 text-xl font-pf-bold">
                 <FormattedMessage id="mt.jiaoyishijian" />
                 <span className="text-base">（GMT+8）</span>
               </div>
-              <div className="grid gap-y-4 xl:grid-cols-3 xxl:grid-cols-5">
+              <div className="grid gap-y-4 grid-cols-3">
                 {tradeTimeConf.map((item: any, idx: number) => (
                   <div className="text-sm text-gray-weak" key={idx}>
                     {transferWeekDay(item.weekDay)} {`${formatTimeStr(item.trade)}`}

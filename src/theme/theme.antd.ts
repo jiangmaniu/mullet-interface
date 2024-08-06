@@ -1,4 +1,4 @@
-import { bgColorBase, blue, gray } from './theme.config'
+import { bgColorBase, blue, fontFamily, gray } from './theme.config'
 
 const gray150 = gray['150']
 const gray500 = gray['500']
@@ -21,6 +21,7 @@ export default {
   fontSize: 14, // 默认14
   borderRadius: 7, // 圆角
   colorBgContainerDisabled: bgColorBase, // 禁用背景颜色
+  fontFamily, // 字体
 
   // 组件对应的token
   Tabs: {

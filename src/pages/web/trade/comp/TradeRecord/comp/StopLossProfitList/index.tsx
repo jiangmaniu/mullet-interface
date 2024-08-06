@@ -104,7 +104,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       renderText(text, record, index, action) {
         return (
-          <span className={classNames('!text-[13px] !font-dingpro-medium', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
+          <span className={classNames('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
             {formatNum(record.currentPrice)} USD
           </span>
         )
@@ -123,7 +123,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)} USD</span>
       }
     },
     {

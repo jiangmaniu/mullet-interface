@@ -46,16 +46,22 @@
   src: url('/fonts/HarmonyOS_Sans_Light.ttf') format('woff');
 }
 
+/**平方字体-中等字体**/
 @font-face {
-  font-family: pfFont;
+  font-family: pf-medium;
   src: url('/fonts/PingFangMedium.ttf') format('woff');
+}
+/**平方字体-加粗字体**/
+@font-face {
+  font-family: pf-bold;
+  src: url('/fonts/PingFangBold.ttf') format('woff');
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: pfFont !important; // 全局使用平方字体，不要去掉权重，否则页面出现字体问题
+  font-family: var(--font-family); // 全局使用平方字体
   // 用这个样式去覆盖antd的样式，滚动条样式就可以继续被伪类修改了 https://github.com/ant-design/ant-design/issues/47592
   scrollbar-width: auto;
   scrollbar-color: auto;

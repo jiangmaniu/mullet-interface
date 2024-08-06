@@ -210,7 +210,7 @@ export const HeaderRightContent = observer(({ isAdmin, theme = 'black' }: { isAd
           <div className="max-h-[380px] overflow-y-auto">
             {currentAccountList.map((item, idx: number) => {
               const isSimulate = item.isSimulate
-              const disabledTrade = item?.status === 'DISABLED' || !item.enableTrade || !item.isTrade
+              const disabledTrade = !item?.enableConnect
               return (
                 <div
                   onClick={() => {

@@ -4,7 +4,7 @@ import { Col, Row } from 'antd'
 import classNames from 'classnames'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
@@ -15,6 +15,7 @@ type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 // 盘口深度报价
 function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const depth = getCurrentDepth()
   const quote = getCurrentQuote()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
@@ -61,11 +62,11 @@ function DeepPrice() {
         <div>
           {/* 当前行情卖价 */}
           {quote.hasQuote ? (
-            <span className={classNames('text-lg !font-dingpro-regular pr-[10px]', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
+            <span className={classNames('text-lg pr-[10px] font-pf-bold', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
               {formatNum(quote.bid)}
             </span>
           ) : (
-            <span className="!font-dingpro-regular text-[13px]">--</span>
+            <span className="text-[13px]">--</span>
           )}
         </div>
         {/* 更多打开一个页面交互没有 */}
@@ -89,13 +90,13 @@ function DeepPrice() {
         return (
           <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
             <Row className="flex items-center h-6 px-3 relative z-[2]">
-              <Col span={8} className="!text-xs text-green !font-dingpro-regular font-medium text-left">
+              <Col span={8} className="!text-xs text-green font-medium text-left">
                 {formatNum(item.price, { precision: digits })}
               </Col>
-              <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-left">
+              <Col span={8} className="font-medium !text-xs text-gray text-left">
                 {formatNum(item.amount, { precision: digits })}
               </Col>
-              <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-right">
+              <Col span={8} className="font-medium !text-xs text-gray text-right">
                 {formatNum(total, { precision: digits })}
               </Col>
             </Row>
@@ -145,13 +146,13 @@ function DeepPrice() {
             return (
               <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
                 <Row className="flex items-center h-6 px-3 relative z-[2]">
-                  <Col span={8} className="!text-xs text-red !font-dingpro-regular font-medium text-left">
+                  <Col span={8} className="!text-xs text-red font-medium text-left">
                     {formatNum(item.price, { precision: digits })}
                   </Col>
-                  <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-left">
+                  <Col span={8} className="font-medium !text-xs text-gray text-left">
                     {formatNum(item.amount, { precision: digits })}
                   </Col>
-                  <Col span={8} className="!font-dingpro-regular font-medium !text-xs text-gray text-right">
+                  <Col span={8} className="font-medium !text-xs text-gray text-right">
                     {formatNum(total, { precision: digits })}
                   </Col>
                 </Row>
@@ -184,7 +185,9 @@ function DeepPrice() {
               className={classNames('cursor-pointer', item.key === mode ? 'opacity-100' : 'opacity-30')}
               key={idx}
               onClick={() => {
-                setMode(item.key)
+                startTransition(() => {
+                  setMode(item.key)
+                })
               }}
             />
           ))}

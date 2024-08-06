@@ -1,4 +1,4 @@
-import { URLS, isProd } from '../src/constants'
+import ENV from '../src/env'
 
 /**
  * @name 代理的配置
@@ -17,29 +17,13 @@ export default {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/api/': {
       // 要代理的地址
-      target: URLS.baseURL,
+      target: ENV.baseURL,
       // target: 'https://www.cd-ex.com/apis',
       // target: 'https://awapis.cd-ex.com',
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
       changeOrigin: true,
-      pathRewrite: { '^/api/': isProd ? '/api/' : '' }
-    },
-    // 导出下载报表
-    '/relationfile/': {
-      target: process.env.AGET_REPORT,
-      changeOrigin: true
-    },
-    // 入金支付api
-    '/deposit-api/': {
-      target: 'https://cdex2my.kiwyh.com',
-      changeOrigin: true,
-      pathRewrite: { '^/deposit-api': '' }
-    },
-    // 测试
-    '/apis/': {
-      target: 'https://uc.pw-pro.com',
-      changeOrigin: true
+      pathRewrite: { '^/api/': '/api/' }
     }
   },
 

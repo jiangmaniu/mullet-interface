@@ -1,6 +1,6 @@
 import { FormattedMessage } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 
 import Tabs from '@/components/Base/Tabs'
 
@@ -11,6 +11,7 @@ import TradingView from '../TradingView'
 // pc端中间区域部分
 const Center = () => {
   const [tabKey, setTabKey] = useState(1)
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
 
   const TabsItems: any = [
     { key: 1, label: <FormattedMessage id="mt.chart" /> },
@@ -22,7 +23,9 @@ const Center = () => {
       <Tabs
         items={TabsItems}
         onChange={(key: any) => {
-          setTabKey(key)
+          startTransition(() => {
+            setTabKey(key)
+          })
         }}
         tabBarGutter={44}
         tabBarStyle={{ paddingLeft: 26 }}

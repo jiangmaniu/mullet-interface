@@ -122,7 +122,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {
@@ -142,7 +142,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {
@@ -181,7 +181,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {

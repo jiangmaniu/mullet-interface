@@ -46,8 +46,8 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   }}
                   ref={openSidebarRef}
                 >
-                  <SymbolIcon width={24} height={24} src={symbolInfo?.imgUrl} className="relative xl:top-[9px] xxl:top-0" />
-                  <div className="flex items-center">
+                  <SymbolIcon width={28} height={28} src={symbolInfo?.imgUrl} className="relative xl:top-[9px] xxl:top-0" />
+                  <div className="flex items-center xl:relative xl:left-[5px] xxl:left-0">
                     <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>
                     <img
                       src="/img/down.png"
@@ -67,7 +67,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                     <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
                   </div>
                 </div>
-                <div className="flex items-center xxl:pl-6 xl:pl-7">
+                <div className="flex items-center xxl:pl-6 xl:pl-7 xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
                   {res.hasQuote && (
                     <>
                       <span className={classNames('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>

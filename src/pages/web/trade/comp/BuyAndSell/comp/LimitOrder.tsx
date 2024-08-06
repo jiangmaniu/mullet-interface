@@ -1,7 +1,7 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { Button, Checkbox } from 'antd'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useState, useTransition } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
@@ -28,6 +28,7 @@ type IProps = {
 // 限价单
 export default observer(
   forwardRef(({ popupRef, type, orderType }: IProps, ref) => {
+    const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
     const intl = useIntl()
     const { isPc, isMobileOrIpad } = useEnv()
     const { trade, ws } = useStores()
@@ -423,7 +424,11 @@ export default observer(
             style={{ background: isBuy ? 'var(--color-green-700)' : 'var(--color-red-600)' }}
             className="!h-[44px] !rounded-lg !text-[13px]"
             block
-            onClick={onFinish}
+            onClick={() => {
+              startTransition(() => {
+                onFinish()
+              })
+            }}
             loading={loading}
             disabled={disabledBtn}
           >

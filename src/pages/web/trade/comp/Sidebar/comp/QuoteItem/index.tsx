@@ -2,6 +2,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Col, Row } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
+import { useTransition } from 'react'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useEnv } from '@/context/envProvider'
@@ -19,6 +20,7 @@ type IProps = {
  * @returns
  */
 function QuoteItem({ item, isActive, popupRef }: IProps) {
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { isMobileOrIpad } = useEnv()
   const { trade, ws } = useStores()
   const symbol = item.symbol
@@ -45,14 +47,16 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
       <div
         className="relative pl-1"
         onClick={() => {
-          // 记录打开的symbol
-          trade.setOpenSymbolNameList(symbol)
-          // 设置当前当前的symbol
-          trade.setActiveSymbolName(symbol)
+          startTransition(() => {
+            // 记录打开的symbol
+            trade.setOpenSymbolNameList(symbol)
+            // 设置当前当前的symbol
+            trade.setActiveSymbolName(symbol)
 
-          if (isMobileOrIpad) {
-            popupRef.current?.close()
-          }
+            if (isMobileOrIpad) {
+              popupRef.current?.close()
+            }
+          })
         }}
       >
         {/*激活打开的项展示当前的箭头 */}
@@ -76,9 +80,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             />
             <SymbolIcon src={item?.imgUrl} width={28} height={28} />
             <div className="flex flex-col pl-1">
-              <span className="pl-[6px] text-xs font-semibold text-gray tracking-[0.5px]">{item.symbol}</span>
+              <span className="pl-[6px] text-sm font-pf-bold text-gray tracking-[0.5px]">{item.symbol}</span>
               {/* 币种描述  */}
-              <span className="pl-[6px] text-xs text-gray-weak pt-1 truncate max-w-[120px]">{item.remark || '--'}</span>
+              <span className="pl-[6px] text-xs text-gray-weak truncate max-w-[120px]">{item.remark || '--'}</span>
             </div>
           </Col>
           <Col span={12} className="flex flex-col items-end">

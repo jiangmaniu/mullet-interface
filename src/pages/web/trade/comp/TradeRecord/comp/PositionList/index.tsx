@@ -81,7 +81,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           <div className="flex items-center">
             <SymbolIcon src={record.imgUrl} />
             <div className="flex flex-col pl-4">
-              <span className="text-base font-semibold text-gray">{record.symbol}</span>
+              <span className="text-base font-pf-bold text-gray">{record.symbol}</span>
               <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
@@ -119,7 +119,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)} </span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)} </span>
       }
     },
     {
@@ -139,11 +139,11 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <>
             {Number(record.currentPrice) ? (
-              <span className={classNames('!text-[13px] !font-dingpro-medium', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+              <span className={classNames('!text-[13px]', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
                 {formatNum(record.currentPrice)}
               </span>
             ) : (
-              <span className="!text-[13px] !font-dingpro-medium">--</span>
+              <span className="!text-[13px]">-</span>
             )}
           </>
         )
@@ -162,7 +162,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text ? formatNum(text) : '--'} </span>
+        return <span className="!text-[13px] text-gray">{text ? formatNum(text) : '-'} </span>
       }
     },
     {
@@ -178,7 +178,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{text || '--'}</span>
+        return <span className="!text-[13px] text-gray">{text || '-'}</span>
       }
     },
     {
@@ -204,8 +204,8 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
-              <span className="!font-dingpro-medium text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
-              <span className={classNames('text-xs font-medium pt-[2px]')}>{buySellInfo.marginTypeText}</span>
+              <span className="text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
+              <span className={classNames('text-xs font-medium')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (
@@ -247,7 +247,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 180,
       renderText(text, record, index, action) {
         const AddDom = (
-          <span className="font-extrabold">
+          <span className="font-pf-bold">
             <FormattedMessage id="mt.tianjia" />
           </span>
         )
@@ -258,11 +258,11 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
               stopLossProfitRef.current?.show(record)
             }}
           >
-            <span className="!text-[13px] text-gray !font-dingpro-medium border-b border-dashed border-gray-weak">
+            <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
               {Number(record?.takeProfit) ? formatNum(record?.takeProfit) : AddDom}
             </span>
             <span> / </span>
-            <span className="!text-[13px] text-gray !font-dingpro-medium border-b border-dashed border-gray-weak">
+            <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
               {Number(record?.stopLoss) ? formatNum(record?.stopLoss) : AddDom}
             </span>
           </div>
@@ -287,7 +287,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {
@@ -308,7 +308,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray !font-dingpro-medium">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
       }
     },
     {
@@ -359,15 +359,15 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
         const profitDom = profit ? (
-          <span className={classNames('font-[800] !font-dingpro-medium', color)}>{record.profitFormat}</span>
+          <span className={classNames('font-pf-bold', color)}>{record.profitFormat}</span>
         ) : (
-          <span className="!text-[13px] !font-dingpro-medium">--</span>
+          <span className="!text-[13px]m">-</span>
         )
         const yieldRate = record.yieldRate
         return (
           <div className="flex flex-col">
             <div>{profitDom}</div>
-            {yieldRate && <div className={classNames('!text-xs !font-dingpro-medium', color)}>({yieldRate})</div>}
+            {yieldRate && <div className={classNames('!text-xs font-pf-bold', color)}>({yieldRate})</div>}
           </div>
         )
       }
