@@ -7,14 +7,14 @@ const gray900 = gray['900']
 const bluePrimary = blue['700']
 
 // antd的主题色
-const colorPrimary = gray['900'] //  antd的主题色设置为黑色，页面中大部分组件使用到黑色，避免修改太多
+const colorPrimary = gray['95'] //  antd的主题色设置为黑色，页面中大部分组件使用到黑色，避免修改太多
 
 // antd5 token主题配置 ==== 黑色主题配置
 export default {
   // 全局token
   colorPrimary, // 主要颜色，影响最大，同步修改config/defaultSettings中的配置
-  colorPrimaryHover: gray['500'], // 主色梯度下的悬浮态
-  colorPrimaryBorderHover: gray['500'],
+  colorPrimaryHover: gray['95'], // 主色梯度下的悬浮态
+  colorPrimaryBorderHover: gray['95'],
   colorPrimaryBgHover: 'rgba(0, 0, 0, 0.04)',
   colorPrimaryBg: bgColorBase,
   fontSize: 14, // 默认14
@@ -23,11 +23,11 @@ export default {
 
   // 组件对应的token
   Tabs: {
-    itemHoverColor: gray900, // 标签悬浮态文本颜色
-    itemActiveColor: gray900, // 标签激活态文本颜色
-    itemSelectedColor: gray900,
-    itemColor: gray500,
-    inkBarColor: gray900, // 指示条颜色
+    itemHoverColor: gray['95'], // 标签悬浮态文本颜色
+    itemActiveColor: gray['95'], // 标签激活态文本颜色
+    itemSelectedColor: gray['95'],
+    itemColor: gray['570'],
+    inkBarColor: gray['95'], // 指示条颜色
     titleFontSize: 16
   },
   Button: {
@@ -73,9 +73,4 @@ export default {
   Dropdown: {
     zIndexPopup: 1020 // 下拉菜单 z-index
   }
-  // Slider: {
-  //   dotActiveBorderColor: bluePrimary,
-  //   handleActiveColor: bluePrimary,
-  //   handleColor: bluePrimary
-  // }
 }

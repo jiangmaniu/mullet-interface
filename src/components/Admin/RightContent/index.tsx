@@ -12,6 +12,7 @@ import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
+import SwitchTheme from '@/components/SwitchTheme'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
@@ -144,7 +145,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:w-[420px] xl:pt-[18px]">
+      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-dark-border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white dark:bg-dark-page pb-1 xl:w-[420px] xl:pt-[18px]">
         <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
             <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
@@ -219,7 +220,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           <div className="max-h-[380px] overflow-y-auto">
             {currentAccountList.map((item, idx: number) => {
               const isSimulate = item.isSimulate
-              const disabledTrade = !item?.enableConnect
+              const disabledTrade = item?.status === 'DISABLED' || !item.enableTrade || !item.isTrade
               return (
                 <div
                   onClick={() => {
@@ -445,7 +446,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           />
         </Dropdown>
       </div>
-      {/* {isTradePage && <SwitchTheme />} */}
+      {isTradePage && <SwitchTheme />}
       <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />
     </div>
   )

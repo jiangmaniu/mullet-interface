@@ -205,7 +205,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
               <span className="text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
-              <span className={classNames('text-xs font-medium')}>{buySellInfo.marginTypeText}</span>
+              <span className={classNames('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (
@@ -384,7 +384,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center max-xl:mt-3 max-xl:justify-between">
             <div
-              className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center text-gray max-xl:w-[48%] max-xl:bg-sub-card max-xl:text-sm xl:border text-sm"
+              className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-gray text-sm"
               onClick={() => {
                 closePositionRef.current?.show(record)
               }}

@@ -1,12 +1,14 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { useModel } from '@umijs/max'
+import { useLocation, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
+import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
 
 import BuyAndSell from './comp/BuyAndSell'
 import BtnGroup from './comp/BuyAndSellBtnGroup'
@@ -25,6 +27,17 @@ export default observer(() => {
   const buyAndSellRef = useRef<any>(null)
   const { ws, trade, kline } = useStores()
   const { fetchUserInfo } = useModel('user')
+  const { pathname } = useLocation()
+  const { setTheme } = useTheme()
+
+  useEffect(() => {
+    // 设置交易页面主题变量为全局主题
+    setTheme(STORAGE_GET_TRADE_THEME())
+    return () => {
+      // 重置全局主题
+      setTheme('light')
+    }
+  }, [pathname])
 
   useEffect(() => {
     return () => {
@@ -64,7 +77,7 @@ export default observer(() => {
     return {
       '&::after': {
         content: "''",
-        background: '#E8E8E8',
+        background: 'var(--border-line-color)',
         width: '100%',
         height: 0.5,
         position: 'absolute',

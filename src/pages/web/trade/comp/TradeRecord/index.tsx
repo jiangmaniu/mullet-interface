@@ -140,7 +140,7 @@ function TradeRecord({ trigger }: IProps) {
     return {
       '&::after': {
         content: "''",
-        background: '#E8E8E8',
+        background: 'var(--border-line-color)',
         width: 1,
         height: '100%',
         position: 'absolute',
@@ -155,7 +155,7 @@ function TradeRecord({ trigger }: IProps) {
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className={classNames('pt-1 mb-3 bg-white relative z-[1]', borderClassName)}>
+          <div className={classNames('pt-1 mb-3 bg-white dark:bg-dark-page relative z-[1]', borderClassName)}>
             {renderTabs()}
             {renderTabContent()}
           </div>

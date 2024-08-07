@@ -58,7 +58,7 @@ export default observer(
       return {
         '&::after': {
           content: "''",
-          background: '#EEEEEE',
+          background: 'var(--border-line-color)',
           width: 1,
           height: '100%',
           position: 'absolute',

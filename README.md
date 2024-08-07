@@ -32,14 +32,14 @@ yarn start:mock
 ### 打包线上测试环境
 
 ```bash
-yarn build:dev
+yarn build:test
 ```
 
 ### 打包到生产环境
 
 ```bash
 # 执行打包命令
-yarn build
+yarn build:prod
 ```
 
 打包成功目录是`dist`，把`dist`下的静态资源部署即可

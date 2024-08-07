@@ -90,13 +90,13 @@ function DeepPrice() {
         return (
           <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
             <Row className="flex items-center h-6 px-3 relative z-[2]">
-              <Col span={8} className="!text-xs text-green font-medium text-left">
+              <Col span={8} className="!text-xs text-green text-left">
                 {formatNum(item.price, { precision: digits })}
               </Col>
-              <Col span={8} className="font-medium !text-xs text-gray text-left">
+              <Col span={8} className="!text-xs text-gray text-left">
                 {formatNum(item.amount, { precision: digits })}
               </Col>
-              <Col span={8} className="font-medium !text-xs text-gray text-right">
+              <Col span={8} className="!text-xs text-gray text-right">
                 {formatNum(total, { precision: digits })}
               </Col>
             </Row>
@@ -146,13 +146,13 @@ function DeepPrice() {
             return (
               <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
                 <Row className="flex items-center h-6 px-3 relative z-[2]">
-                  <Col span={8} className="!text-xs text-red font-medium text-left">
+                  <Col span={8} className="!text-xs text-red text-left">
                     {formatNum(item.price, { precision: digits })}
                   </Col>
-                  <Col span={8} className="font-medium !text-xs text-gray text-left">
+                  <Col span={8} className="!text-xs text-gray text-left">
                     {formatNum(item.amount, { precision: digits })}
                   </Col>
-                  <Col span={8} className="font-medium !text-xs text-gray text-right">
+                  <Col span={8} className="!text-xs text-gray text-right">
                     {formatNum(total, { precision: digits })}
                   </Col>
                 </Row>

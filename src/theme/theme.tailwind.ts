@@ -6,8 +6,6 @@ import {
   blue,
   borderColor,
   colorPrimary,
-  colorTextSecondary,
-  colorTextWeak,
   gray,
   green,
   hoverBg,
@@ -32,6 +30,19 @@ delete colors['coolGray']
 // @ts-ignore
 delete colors['blueGray']
 
+// 该方法是为了颜色基础类可以提供设置透明度的快捷方式
+function withOpacityValue(variable: any) {
+  // 返回一个函数，透明度为可选参数，这样在 HTML 元素中使用颜色基础类时，既可以采用 text-blue-500 方式，也支持 text-blue-500/20 快捷同时设置透明度的形式
+  return ({ opacityValue }: any) => {
+    if (opacityValue === undefined) {
+      return `rgb(var(${variable}))`
+    }
+    return `rgba(var(${variable}), ${opacityValue})`
+  }
+}
+
+// 请注意：使用了css变量的值，没有使用withOpacityValue继承透明度(改动太大)，则透明度不能这样写text-gray/10，其他值可以正常写
+
 const themeColor = {
   // 系统自带默认颜色
   ...colors,
@@ -46,35 +57,36 @@ const themeColor = {
   yellow: {
     ...colors.yellow,
     ...yellow,
-    DEFAULT: yellow['600'] // 默认值 text-yellow
+    DEFAULT: 'var(--color-yellow)' // 默认值 text-yellow
   },
   // 灰色系
   gray: {
     ...colors.gray,
     ...gray,
     // 文字颜色
-    DEFAULT: gray['900'], // 默认值，文字主色 text-gray
-    secondary: colorTextSecondary, // 文字-第二色-衍生色1
-    weak: colorTextWeak // 文字-衍生色2
+    DEFAULT: 'var(--color-text-primary)', // 默认值，文字主色 text-gray
+    // DEFAULT: gray['900'], // 默认值，文字主色 text-gray
+    secondary: 'var(--color-text-secondary)', // 文字-第二色-衍生色1
+    weak: 'var(--color-text-weak)' // 文字-衍生色2
     // light: colorTextLight,// 文字-衍生色3
   },
   // 绿色系
   green: {
     ...colors.green,
     ...green,
-    DEFAULT: green['700'] // 默认值 text-green
+    DEFAULT: 'var(--color-green)' // 默认值 text-green
   },
   // 红色系
   red: {
     ...colors.red,
     ...red,
-    DEFAULT: red['600'] // 默认值 text-red
+    DEFAULT: 'var(--color-red)' // 默认值 text-red
   },
   // 蓝色系
   blue: {
     ...colors.blue,
     ...blue,
-    DEFAULT: blue['700'] // 默认值 text-blue
+    DEFAULT: 'var(--color-blue)' // 默认值 text-blue
   }
 }
 

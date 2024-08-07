@@ -173,7 +173,7 @@ function Liquidation() {
         <div className="flex items-center flex-col">
           <div className="flex items-center justify-center flex-col relative w-full">
             <Gauge />
-            <span className="text-base !font-dingpro-medium absolute -bottom-8">
+            <span className="text-base !font-dingpro-medium text-gray absolute -bottom-8">
               {formatNum(marginRateInfo.balance, { precision: 2 })} USD
             </span>
           </div>

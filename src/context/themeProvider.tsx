@@ -4,12 +4,14 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import themeColor from '@/theme/theme.antd'
 import themeDarkColor from '@/theme/theme.antd.dark'
 import { showInsetEffect } from '@/utils/antdWave'
-import { STORAGE_GET_THEME, STORAGE_SET_THEME } from '@/utils/storage'
+import { STORAGE_GET_THEME, STORAGE_GET_TRADE_THEME, STORAGE_SET_THEME } from '@/utils/storage'
 
 export type IThemeMode = 'light' | 'dark'
 
 interface IThemeContextProps {
+  /**全局主题色 */
   theme: IThemeMode
+  /**设置全局主题色 */
   setTheme: (theme: IThemeMode) => void
 }
 
@@ -21,7 +23,7 @@ export const ThemeContext = createContext<IThemeContextProps>({} as IThemeContex
 
 export const ThemeProvider = ({ children }: IProps): JSX.Element => {
   const [theme, setTheme] = useState<IThemeMode>('light') // 主题色
-
+  const [tradeTheme, setTradeTheme] = useState<IThemeMode>('light') // 主题色
   const themeToken = {
     light: themeColor,
     dark: themeDarkColor // 黑色主题
@@ -32,15 +34,24 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     // 只有在交易页面才需要切换主题模式
     if (location.pathname.indexOf('/trade') !== -1) {
       document.documentElement.className = theme
+      document.body.style.background = 'var(--page-bg)'
     } else {
       document.documentElement.className = 'light'
+      document.body.style.background = '#fff'
     }
   }
 
+  const handleSetTheme = (mode: IThemeMode) => {
+    STORAGE_SET_THEME(mode)
+    setTheme(mode)
+    setThemeClassName(mode)
+  }
+
   useEffect(() => {
-    const themeMode = STORAGE_GET_THEME() || 'light'
+    // 优先获取交易页面主题，如果没有获取到，则获取全局主题
+    const themeMode = STORAGE_GET_TRADE_THEME() || STORAGE_GET_THEME() || 'light'
     setTheme(themeMode)
-    setThemeClassName(themeMode)
+    setTradeTheme(themeMode)
   }, [])
 
   return (
@@ -48,9 +59,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
       value={{
         theme,
         setTheme: (mode: IThemeMode) => {
-          STORAGE_SET_THEME(mode)
-          setTheme(mode)
-          setThemeClassName(mode)
+          handleSetTheme(mode)
         }
       }}
     >

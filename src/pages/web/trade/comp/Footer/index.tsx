@@ -7,11 +7,13 @@ import Marquee from 'react-fast-marquee'
 
 import SignalIcon from '@/components/Base/Svg/SignalIcon'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 import { goToService } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 底部浮动条
 function Footer() {
+  const { theme } = useTheme()
   const networkState = useNetwork()
   const { ws, trade } = useStores()
   const readyState = ws.readyState
@@ -43,7 +45,7 @@ function Footer() {
     : CLOSED
 
   return (
-    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white dark:bg-dark-page px-5 pb-2 pt-2 border-t border-gray-100 z-40">
+    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white dark:bg-dark-page px-5 pb-2 pt-2 border-t border-gray-100 dark:border-dark-border z-40">
       <Tooltip placement="topLeft" title={connectedStatusMap.desc}>
         <div className="flex items-center border-r border-r-gray-200 pr-3">
           <div className="flex items-center">
@@ -57,7 +59,7 @@ function Footer() {
         </div>
       </Tooltip>
       <div className="flex h-full flex-1 items-center overflow-x-auto">
-        <Marquee pauseOnHover speed={30} gradient>
+        <Marquee pauseOnHover speed={30} gradient={theme === 'dark' ? false : true}>
           {trade.symbolList.map((item, idx) => {
             const res = getCurrentQuote(item.symbol)
             const per: any = res.percent

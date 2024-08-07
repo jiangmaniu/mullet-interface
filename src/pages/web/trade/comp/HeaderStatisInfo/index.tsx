@@ -5,6 +5,7 @@ import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
+import FavoriteIcon from '@/components/Web/FavoriteIcon'
 import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
@@ -58,7 +59,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   </div>
 
                   <div
-                    className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] bg-white"
+                    className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] dark:border-dark-border bg-white dark:!shadow-none"
                     style={{
                       boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
                       display: showSidebar ? 'block' : 'none'
@@ -120,7 +121,15 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
               }}
               className="cursor-pointer"
             >
-              <img width={32} height={32} alt="" src={`/img/${trade.isFavoriteSymbol ? 'star-active' : 'star'}.png`} />
+              <FavoriteIcon
+                width={34}
+                height={34}
+                symbol={symbol}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  trade.toggleSymbolFavorite(symbol)
+                }}
+              />
             </div>
           </div>
         </>

@@ -43,9 +43,10 @@ const Tradingview = () => {
     theme: themeMode,
     colorType: 1 as ColorType, // 1绿涨红跌 2红涨绿跌
     isMobile: !isPc
-    // bgGradientStartColor: '', // 背景渐变色
-    // bgGradientEndColor: ''
   }
+
+  const bgGradientStartColor = '#161A1E' // 背景渐变色
+  const bgGradientEndColor = '#161A1E'
 
   const initChart = () => {
     const showBottomMACD = 1 // 1 展示 2 隐藏
@@ -118,9 +119,9 @@ const Tradingview = () => {
       // 通过api设置overview样式
       applyOverrides({
         tvWidget,
-        chartType
-        // bgGradientStartColor: bgGradientStartColor,
-        // bgGradientEndColor: bgGradientEndColor
+        chartType,
+        bgGradientStartColor,
+        bgGradientEndColor
       })
 
       // 添加水印LOGO

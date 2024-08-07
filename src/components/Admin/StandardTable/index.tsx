@@ -28,6 +28,7 @@ import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { useLang } from '@/context/languageProvider'
 import { bgColorBase } from '@/theme/theme.config'
 
+import { IThemeMode, useTheme } from '@/context/themeProvider'
 import Export from './Export'
 
 type Instance = {
@@ -107,6 +108,8 @@ interface IProps<T, U> extends ProTableProps<T, U> {
   /**获取request返回的结果 */
   getRequestResult?: (result: { total: number; data: T[]; success: boolean }) => void
   dataSource?: any
+  /**主题模式 */
+  theme?: IThemeMode
 }
 
 export default <T extends Record<string, any>, U extends ParamsType = ParamsType>({
@@ -146,6 +149,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   cardProps,
   getRequestResult,
   dataSource,
+  theme,
   ...res
 }: IProps<T, U>) => {
   const proTableOptions: ProTableProps<T, U> = { search: false }
@@ -161,6 +165,10 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   const [requestResult, setRequestResult] = useState({} as { total: number; data: T[]; success: boolean })
   const { setHasProList, hasProList } = useModel('global')
   const [showExportWhenData, setShowExportWhenData] = useState(false)
+  const themeConfig = useTheme()
+  const themeMode = theme || themeConfig.theme
+  const isDark = themeMode === 'dark'
+
   const handleExport = async (searchConfig: Omit<BaseQueryFilterProps, 'submitter' | 'isForm'>) => {
     const values = searchConfig?.form?.getFieldsValue()
     return onExport?.(values)
@@ -381,21 +389,21 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
     return {
       // 表格圆角
       '.ant-table-content': {
-        borderTopLeftRadius: '12px !important',
-        borderTopRightRadius: '12px !important',
+        borderTopLeftRadius: `${isDark ? 0 : 12}px !important`,
+        borderTopRightRadius: `${isDark ? 0 : 12}px !important`,
         '&::-webkit-scrollbar': {
-          height: `${hasProList ? 7 : 0}px !important`,
+          height: isDark ? '4px !important' : `${hasProList ? 7 : 0}px !important`,
           width: 0,
           overflowY: 'auto'
         },
         '&::-webkit-scrollbar-thumb': {
           borderRadius: 5,
-          backgroundColor: '#f7f7f7 !important'
+          backgroundColor: `${isDark ? '#17171c' : '#f7f7f7'} !important`
         },
         '&::-webkit-scrollbar-track': {
           boxShadow: 0,
           borderRadius: 0,
-          background: '#fff !important'
+          background: `${isDark ? '#17171c' : '#fff'}  !important`
         },
         '&::-webkit-scrollbar-thumb:hover': {
           background: 'rgba(0, 0, 0, 0.4) !important',
@@ -408,10 +416,10 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       },
       // 设置表头圆角样式
       '.ant-table-container table > thead > tr:first-child > *:first-child': {
-        borderTopLeftRadius: '12px !important'
+        borderTopLeftRadius: `${isDark ? 0 : 12}px !important`
       },
       '.ant-table-container table > thead > tr:last-child > *:last-child': {
-        borderTopRightRadius: '12px !important'
+        borderTopRightRadius: `${isDark ? 0 : 12}px !important`
       },
       '.ant-table-thead > tr > th': {
         padding: '12px 20px !important'
@@ -426,6 +434,18 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         },
       '.ant-pagination': {
         marginRight: '10px !important'
+      }
+    }
+  })
+  const darkClassName = useEmotionCss(({ token }) => {
+    return {
+      '.ant-table-thead > tr > th': {
+        background: 'var(--page-bg) !important',
+        borderBottom: '1px solid var(--border-line-color) !important'
+      },
+      'tr > td': {
+        background: 'var(--page-bg) !important',
+        borderBottom: '1px solid var(--border-line-color) !important'
       }
     }
   })
@@ -563,7 +583,8 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         'standard-table',
         classNameWrapper,
         { 'no-table-bordered': !hasTableBordered, [className as string]: true },
-        className
+        className,
+        isDark ? darkClassName : ''
       )}
       formRef={formRef}
       dataSource={dataSource}

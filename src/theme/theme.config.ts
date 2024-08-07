@@ -1,5 +1,21 @@
 // 配色参考 https://www.tailwindcss.cn/docs/customizing-colors
 
+function hexToRgb(hex: string) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `${r},${g},${b})`
+}
+
+const transferHexToRgb = (obj: any) => {
+  const result: any = {}
+  Object.keys(obj).forEach((key) => {
+    result[key] = hexToRgb(obj[key])
+  })
+
+  return result
+}
+
 // 灰色 色值50 - 900 阶梯加深
 export const gray = {
   50: '#F7F7F7', // 最浅
@@ -31,7 +47,10 @@ export const gray = {
   570: '#767E8A',
   600: '#6A7073',
   650: '#514F4F',
+  660: '#1D2025',
+  670: '#2E3338',
   700: '#29292C',
+  720: '#1D2125',
   750: '#1E2226',
   800: '#191C20',
   900: '#051C2C' // 最深
@@ -39,6 +58,7 @@ export const gray = {
 
 // 黄色 色值50 - 900 阶梯加深
 export const yellow = {
+  400: '#FFDA00',
   490: '#FCD535',
   500: '#FDD436',
   550: '#F5B52C',
@@ -125,16 +145,17 @@ export const ThemeVarsConst = {
 
   // 边框
   '--border-color': borderColor, // 边框颜色
+  '--tabs-border-color': gray['130'], // tabs组件底部边框线颜色
+  '--border-line-color': gray['190'], // 边框分割线条颜色
 
   // 页面颜色
-  '--page-bg': bgColorBase, // 页面背景
+  '--page-bg': colorWhite, // 页面背景
   '--card-bg': bgColorBase, // 卡片背景
   '--active-bg': bgColorBase, // 激活背景
   '--placeholder-bg': bgColorBase, // 输入框背景
+  '--placeholder-text-color': colorTextSecondary, // 文字颜色
   '--hover-bg': hoverBg, // hover颜色
   '--page-container-header-bg': pageContainerHeaderBg, // 容器头部背景颜色
-  '--color-green': green['700'], // 全局绿
-  '--color-red': red['600'], // 全局红
 
   '--card-gradient-bg': 'linear-gradient(1deg, #FFFFFF 50%, #E6F1FF 100%)', // 卡片渐变背景颜色
   '--card-gradient-header-bg': 'linear-gradient(1deg, #FFFFFF 10%, #CDE2FF 100%)', // 卡片渐变背景颜色
@@ -142,6 +163,13 @@ export const ThemeVarsConst = {
   '--color-white': colorWhite,
   '--color-black': colorBlack,
   '--font-family': fontFamily, // 字体
+
+  // 默认颜色
+  '--color-gray': gray['900'], // 默认全局黑
+  '--color-green': green['700'], // 默认全局绿
+  '--color-red': red['600'], // 默认全局红
+  '--color-blue': blue['700'], // 默认全局蓝
+  '--color-yellow': yellow['600'], // 默认全局黄
 
   // 灰色系
   ...getColors(gray, 'gray'),
@@ -165,14 +193,21 @@ export const ThemeDarkVarsConst = {
 
   // 重写变量覆盖
   '--color-primary': gray['95'], // 文字主色-正文
+  '--color-text-primary': gray['95'], // 文字主色-正文
   '--color-text-secondary': gray['570'], // 文字-第二色-衍生色1
   '--color-text-weak': gray['570'], // 文字-衍生色2
   '--border-color': gray['700'], // 边框颜色
+  '--border-line-color': gray['700'], // 边框分割线条颜色
   '--page-bg': gray['800'], // 页面背景
+  '--placeholder-bg': gray['720'], // 输入框底色背景
+  '--placeholder-text-color': gray['570'], // 文字颜色
+  '--input-border': gray['650'], // 输入框边框
+  '--tabs-border-color': gray['700'], // tabs组件底部边框线颜色
+  '--active-bg': gray['670'], // 激活背景
+
+  '--color-gray': gray['95'], // 默认全局黑
   '--color-green': green['600'], // 全局绿
-  '--color-red': red['650'], // 全局红
-  '--placeholder-bg': gray['750'], // 输入框底色背景
-  '--input-border': gray['650'] // 输入框边框
+  '--color-red': red['650'] // 全局红
 }
 
 const setRootVars = (themeVars: any) => {
@@ -185,12 +220,12 @@ const setRootVars = (themeVars: any) => {
 
 // css变量注入页面中，通过var(--color-primary)使用
 // 定义全局主题变量
-// 黑色主题，修改<html data-theme="dark" /> 切换主题
+// 黑色主题，修改<html class="dark" /> 切换主题
 export const cssVars = `
   :root {
     ${setRootVars(ThemeVarsConst)}
   }
-  :root[data-theme=dark] {
+  :root[class=dark] {
     ${setRootVars(ThemeDarkVarsConst)}
   }
 `

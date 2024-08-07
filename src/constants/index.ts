@@ -42,6 +42,7 @@ export const KEY_USER_CONF_INFO = NAMESPACE + '_' + 'user_conf_info'
 
 // 当前切换的主题色
 export const KEY_THEME = NAMESPACE + '_' + 'theme'
+export const KEY_TRADE_THEME = NAMESPACE + '_' + 'trade_theme'
 
 // 默认语言 en-US
 export const DEFAULT_LOCALE = 'en-US'

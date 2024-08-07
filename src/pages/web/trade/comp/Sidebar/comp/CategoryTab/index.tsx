@@ -1,10 +1,10 @@
+import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Tabs } from 'antd-mobile'
 import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
-
-import styles from './styles.less'
+import { useTheme } from '@/context/themeProvider'
 
 type IProps = {
   onChange?: (key: any) => void
@@ -15,7 +15,8 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
   const [current, setCurrent] = useState('0')
   const { trade } = useStores()
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
-
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const symbolCategory = trade.symbolCategory
 
   useEffect(() => {
@@ -26,8 +27,38 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
     trade.getSymbolCategory()
   }, [])
 
+  const className = useEmotionCss(({ token }) => {
+    return {
+      '&': {
+        marginTop: 8,
+        '.adm-tabs-header': {
+          borderBottom: 'none'
+        },
+        '.adm-tabs-tab': {
+          padding: '2px 5px !important',
+          color: 'var(--color-text-secondary)',
+          borderRadius: '4px',
+          '&:hover': {
+            color: 'var(--color-text-primary)'
+          }
+        },
+        '.adm-tabs-tab-active': {
+          color: 'var(--color-text-primary)',
+          background: 'var(--active-bg)'
+        },
+        '.adm-tabs-tab-list': {
+          paddingLeft: '9px !important',
+          '.adm-tabs-tab-wrapper': {
+            paddingRight: '0px !important',
+            paddingLeft: '0px !important'
+          }
+        }
+      }
+    }
+  })
+
   return (
-    <div className={styles.tabs}>
+    <div className={className}>
       <Tabs
         onChange={(key) => {
           startTransition(() => {
