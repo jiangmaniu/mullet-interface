@@ -164,7 +164,7 @@ function AccountList() {
           style={{ width: 340, height: 46, marginTop: 38 }}
           disabled={!current?.id}
           onClick={() => {
-            push(`/account/type/add/${current.id}`)
+            push(`/account/type/add/${current.id}?key=${accountTabActiveKey.toLowerCase()}`)
           }}
         >
           <FormattedMessage id="mt.jixu" />
