@@ -6,6 +6,7 @@ import { useStores } from '@/context/mobxProvider'
 
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
+import { useTheme } from '@/context/themeProvider'
 import { colorPrimary } from '@/theme/theme.config'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
@@ -26,6 +27,7 @@ const Tradingview = () => {
   const previousSymbolName = usePrevious(symbolName)
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
   const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
+  const { theme } = useTheme()
 
   const datafeedParams = {
     setActiveSymbolInfo: kline.setActiveSymbolInfo, // 记录当前的symbol
@@ -34,11 +36,11 @@ const Tradingview = () => {
     dataSourceCode // 数据源
   }
 
-  const theme = 'light' as ThemeName
+  const themeMode = (theme || 'light') as ThemeName
   const params = {
     symbol: symbolName as string, // 品种名称
     locale: (getTradingViewLng() || 'en') as LanguageCode, // 英文 en 繁体zh_TW 印尼id_ID
-    theme,
+    theme: themeMode,
     colorType: 1 as ColorType, // 1绿涨红跌 2红涨绿跌
     isMobile: !isPc
     // bgGradientStartColor: '', // 背景渐变色

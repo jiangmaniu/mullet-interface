@@ -6,6 +6,7 @@ export const gray = {
   60: '#f6f6f6',
   80: '#fbfbfb',
   90: '#F3F3F3',
+  95: '#F4F4F4',
   100: '#f6f6f6',
   120: '#F8F8F8',
   130: '#f0f0f0',
@@ -27,9 +28,14 @@ export const gray = {
   450: '#9E9E9E',
   500: '#9C9C9C',
   550: '#929292',
+  570: '#767E8A',
   600: '#6A7073',
+  650: '#514F4F',
+  700: '#29292C',
+  750: '#1E2226',
+  800: '#191C20',
   900: '#051C2C' // 最深
-}
+} as const
 
 // 黄色 色值50 - 900 阶梯加深
 export const yellow = {
@@ -38,24 +44,25 @@ export const yellow = {
   550: '#F5B52C',
   560: '#FFA90E',
   600: '#C49002'
-}
+} as const
 
 // 红色 色值50 - 900 阶梯加深
 export const red = {
   600: '#C54747',
+  650: '#F95050',
   700: '#FF3D3D'
-}
+} as const
 
 // 绿色 色值50 - 900 阶梯加深
 export const green = {
-  700: '#45A48A',
-  800: '#17A83C'
-}
+  600: '#29BE95',
+  700: '#45A48A'
+} as const
 
 // 蓝色 色值50 - 900 阶梯加深
 export const blue = {
   700: '#183EFC'
-}
+} as const
 
 export const black = {
   800: '#222222',
@@ -126,6 +133,8 @@ export const ThemeVarsConst = {
   '--placeholder-bg': bgColorBase, // 输入框背景
   '--hover-bg': hoverBg, // hover颜色
   '--page-container-header-bg': pageContainerHeaderBg, // 容器头部背景颜色
+  '--color-green': green['700'], // 全局绿
+  '--color-red': red['600'], // 全局红
 
   '--card-gradient-bg': 'linear-gradient(1deg, #FFFFFF 50%, #E6F1FF 100%)', // 卡片渐变背景颜色
   '--card-gradient-header-bg': 'linear-gradient(1deg, #FFFFFF 10%, #CDE2FF 100%)', // 卡片渐变背景颜色
@@ -151,11 +160,19 @@ export const ThemeVarsConst = {
 }
 
 // 黑色主色变量
-const ThemeDarkVarsConst = {
+export const ThemeDarkVarsConst = {
   ...ThemeVarsConst, // 继承
 
   // 重写变量覆盖
-  '--color-primary': colorWhite
+  '--color-primary': gray['95'], // 文字主色-正文
+  '--color-text-secondary': gray['570'], // 文字-第二色-衍生色1
+  '--color-text-weak': gray['570'], // 文字-衍生色2
+  '--border-color': gray['700'], // 边框颜色
+  '--page-bg': gray['800'], // 页面背景
+  '--color-green': green['600'], // 全局绿
+  '--color-red': red['650'], // 全局红
+  '--placeholder-bg': gray['750'], // 输入框底色背景
+  '--input-border': gray['650'] // 输入框边框
 }
 
 const setRootVars = (themeVars: any) => {

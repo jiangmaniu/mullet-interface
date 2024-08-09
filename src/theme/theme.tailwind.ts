@@ -13,6 +13,7 @@ import {
   hoverBg,
   pageContainerHeaderBg,
   red,
+  ThemeDarkVarsConst,
   yellow
 } from './theme.config'
 
@@ -99,13 +100,30 @@ export default {
       headerBg: pageContainerHeaderBg
     },
 
+    // 黑色主题变量
+    dark: {
+      page: ThemeDarkVarsConst['--page-bg'], // 页面背景颜色
+      text: ThemeDarkVarsConst['--color-text-primary'], // 文字主色-正文
+      'text-secondary': ThemeDarkVarsConst['--color-text-secondary'], // 文字-第二色-衍生色1
+      'text-weak': ThemeDarkVarsConst['--color-text-weak'], // 文字-衍生色2
+      green: ThemeDarkVarsConst['--color-green'], // 全局绿
+      red: ThemeDarkVarsConst['--color-red'], // 全局红
+      placeholder: ThemeDarkVarsConst['--placeholder-bg'] // 输入框底色背景
+    },
+
     // =========== 颜色覆盖 ==============
     ...themeColor
   },
   // 边框样式
   borderColor: {
     ...themeColor,
-    primary: borderColor
+    primary: borderColor,
+
+    // 黑色主题变量
+    dark: {
+      border: ThemeDarkVarsConst['--border-color'], // 边框颜色
+      'input-border': ThemeDarkVarsConst['--input-border'] // 输入框边框
+    }
   },
   // 响应式
   screens: {

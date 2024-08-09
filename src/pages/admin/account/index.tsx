@@ -1,5 +1,5 @@
 import { PlusCircleOutlined } from '@ant-design/icons'
-import { FormattedMessage, useModel } from '@umijs/max'
+import { FormattedMessage, useModel, useSearchParams } from '@umijs/max'
 import { useCountDown } from 'ahooks'
 import { Segmented, Tooltip } from 'antd'
 import classNames from 'classnames'
@@ -32,6 +32,9 @@ function Account() {
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL')
   const [leftTime, setLeftTime] = useState<any>(0)
 
+  const [searchParams] = useSearchParams()
+  const searchKey = searchParams.get('key') as any
+
   const [currentAccountList, setCurrentAccountList] = useState<IAccountItem[]>([])
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
@@ -63,6 +66,12 @@ function Account() {
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
     setCurrentAccountList(list)
   }, [accountTabActiveKey, currentUser])
+
+  useEffect(() => {
+    if (searchKey) {
+      setAccountTabActiveKey(searchKey.toUpperCase())
+    }
+  }, [searchKey])
 
   return (
     <PageContainer pageBgColorMode="white" renderHeader={() => <Header />}>
@@ -162,7 +171,7 @@ function Account() {
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-[30px] !font-dingpro-medium text-gray">
-                    {!item.isEyeOpen ? formatNum(item.money, { precision: 2 }) : '∗∗∗∗'}
+                    {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision: 2 })) : '∗∗∗∗'}
                   </span>
                   <span className="pl-[6px] text-sm text-gray-secondary">USD</span>
                 </div>

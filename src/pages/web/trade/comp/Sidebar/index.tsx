@@ -237,7 +237,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         <>
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
-            <div className={classNames('h-[700px] w-[300px] bg-white relative', { [borderClassName]: showFixSidebar })} style={style}>
+            <div
+              className={classNames('h-[700px] w-[300px] bg-white relative dark:bg-dark-page', { [borderClassName]: showFixSidebar })}
+              style={style}
+            >
               {renderTabs()}
               {renderSearch()}
               {renderCategoryTabs()}

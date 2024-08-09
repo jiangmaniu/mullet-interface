@@ -72,7 +72,7 @@ export default observer(
       return (
         <div
           className={classNames({
-            'h-[700px] w-[300px] bg-white relative': isPc,
+            'h-[700px] w-[300px] bg-white relative dark:bg-dark-page': isPc,
             [className]: isPc,
             'pointer-events-none': trade.disabledTrade
           })}

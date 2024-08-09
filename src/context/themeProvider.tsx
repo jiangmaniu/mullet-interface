@@ -6,7 +6,7 @@ import themeDarkColor from '@/theme/theme.antd.dark'
 import { showInsetEffect } from '@/utils/antdWave'
 import { STORAGE_GET_THEME, STORAGE_SET_THEME } from '@/utils/storage'
 
-export type IThemeMode = 'default' | 'dark'
+export type IThemeMode = 'light' | 'dark'
 
 interface IThemeContextProps {
   theme: IThemeMode
@@ -20,15 +20,27 @@ interface IProps {
 export const ThemeContext = createContext<IThemeContextProps>({} as IThemeContextProps)
 
 export const ThemeProvider = ({ children }: IProps): JSX.Element => {
-  const [theme, setTheme] = useState<IThemeMode>('default') // 主题色
+  const [theme, setTheme] = useState<IThemeMode>('light') // 主题色
 
   const themeToken = {
-    default: themeColor,
+    light: themeColor,
     dark: themeDarkColor // 黑色主题
   }[theme]
 
+  // 切换主题模式
+  const setThemeClassName = (theme: IThemeMode) => {
+    // 只有在交易页面才需要切换主题模式
+    if (location.pathname.indexOf('/trade') !== -1) {
+      document.documentElement.className = theme
+    } else {
+      document.documentElement.className = 'light'
+    }
+  }
+
   useEffect(() => {
-    setTheme(STORAGE_GET_THEME() || 'default')
+    const themeMode = STORAGE_GET_THEME() || 'light'
+    setTheme(themeMode)
+    setThemeClassName(themeMode)
   }, [])
 
   return (
@@ -38,6 +50,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
         setTheme: (mode: IThemeMode) => {
           STORAGE_SET_THEME(mode)
           setTheme(mode)
+          setThemeClassName(mode)
         }
       }}
     >
