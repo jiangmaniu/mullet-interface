@@ -219,7 +219,7 @@ export const calcExpectedForceClosePrice = (obj: IExpectedForceClosePrice) => {
     orderMargin,
     buySell,
     marginType: trade.marginType,
-    startPrice: buySell === TRADE_BUY_SELL.BUY ? quote?.bid : quote?.ask,
+    startPrice: buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid,
     compelCloseRatio: trade?.currentAccountInfo?.compelCloseRatio || 0,
     interestFees: 0, // 库存费0
     handlingFees, // 手续费
@@ -254,7 +254,7 @@ export const calcExpectedMargin = (obj: IExpectedMargin) => {
   const prepaymentConf = quote?.prepaymentConf
   const contractSize = Number(conf?.contractSize || 0) // 合约大小
   const isCrossMargin = trade.marginType === 'CROSS_MARGIN' // 全仓
-  const currentPrice = buySell === TRADE_BUY_SELL.BUY ? quote?.bid : quote?.ask // 现价
+  const currentPrice = buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid // 现价
 
   let compelCloseRatio = trade?.currentAccountInfo?.compelCloseRatio || 0 // 强平比例
   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
@@ -295,7 +295,7 @@ export const getMaxOpenVolume = ({ buySell }: { buySell: API.TradeBuySell }) => 
   const prepaymentConf = quote?.prepaymentConf
   const consize = quote.consize
   const mode = prepaymentConf?.mode
-  const currentPrice = buySell === 'SELL' ? quote?.ask : quote?.bid // 价格取反
+  const currentPrice = buySell === 'SELL' ? quote?.bid : quote?.ask
   let volume = 0
 
   if (mode === 'fixed_margin') {
@@ -303,13 +303,13 @@ export const getMaxOpenVolume = ({ buySell }: { buySell: API.TradeBuySell }) => 
     const initial_margin = Number(prepaymentConf?.fixed_margin?.initial_margin || 0)
     volume = initial_margin ? Number(availableMargin / initial_margin) : 0
   } else if (mode === 'fixed_leverage') {
-    // 固定杠杆：可用/（价格*合约大小*手数/固定杠杆）
+    // 固定杠杆：可用/（价格*合约大小*手数x/固定杠杆）
     const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
     if (fixed_leverage) {
       volume = (availableMargin * fixed_leverage) / (currentPrice * consize)
     }
   } else if (mode === 'float_leverage') {
-    // 浮动杠杆：可用/（价格*合约大小*手数/浮动杠杆）
+    // 浮动杠杆：可用/（价格*合约大小*手数x/浮动杠杆）
     const float_leverage = Number(trade.leverageMultiple || 1)
     if (float_leverage) {
       volume = (availableMargin * float_leverage) / (currentPrice * consize)

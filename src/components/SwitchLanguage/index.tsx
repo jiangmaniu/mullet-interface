@@ -1,7 +1,7 @@
-import { DownOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { getAllLocales } from '@umijs/max'
 import { Dropdown } from 'antd'
+import classNames from 'classnames'
 
 import { LanguageMap } from '@/constants/enum'
 import { useLang } from '@/context/languageProvider'
@@ -19,11 +19,15 @@ const inlineStyle = {
 }
 
 type IProps = {
+  /**管理端 */
   isAdmin?: boolean
+  /**交易页面 */
+  isTrade?: boolean
+  /**主题 */
   theme?: HeaderTheme
 }
 
-export default function SwitchLanguage({ isAdmin = true, theme = 'black' }: IProps) {
+export default function SwitchLanguage({ isAdmin = true, isTrade = false, theme = 'black' }: IProps) {
   const { lng, setLng } = useLang()
   const languages = getAllLocales()
   const pickerOptions = languages.map((v: any) => ({ value: v, label: LanguageMap[v]?.label || 'English' }))
@@ -66,21 +70,20 @@ export default function SwitchLanguage({ isAdmin = true, theme = 'black' }: IPro
 
   return (
     <>
-      <div className="flex justify-center  rounded-lg h-9 px-1">
+      <div className="flex justify-center rounded-lg h-9 px-1">
         <Dropdown menu={langMenu} placement="bottomRight">
-          <span className={className}>
-            {/* <img src="/img/lang_icon.png" width={30} height={30} /> */}
-
-            <Iconfont name="lng" width={36} height={36} color={theme} className=" cursor-pointer rounded-lg" />
+          <span className={classNames(className, isTrade ? 'dark:!bg-gray-700 bg-gray-120' : '')}>
+            <Iconfont name="lng" width={36} height={36} color={theme} className="cursor-pointer rounded-lg" />
             <span
               style={{
                 color: theme
               }}
+              className="flex items-center"
             >
               {isAdmin && (
                 <>
                   &nbsp;{LanguageMap[lng]?.label || 'EN'}&nbsp;
-                  <DownOutlined width={24} height={24} color={theme} />
+                  <Iconfont name="down" width={24} height={24} color={theme} />
                 </>
               )}
             </span>

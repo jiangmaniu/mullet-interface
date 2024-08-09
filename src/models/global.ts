@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react'
 import { ITabItem } from '@/components/Admin/Tabs'
 import { bgColorBase } from '@/theme/theme.config'
 
-type IThemeMode = 'default' | 'dark'
-
 // 全局状态管理
 export default () => {
   const [hasProList, setHasProList] = useState(false) // 表格/列表是否有数据
