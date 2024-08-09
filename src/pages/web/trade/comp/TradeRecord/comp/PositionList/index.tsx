@@ -162,7 +162,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{text ? formatNum(text) : '-'} </span>
+        return <span className="!text-[13px] text-gray">{text ? formatNum(text) : '--'} </span>
       }
     },
     {
@@ -258,11 +258,11 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
               stopLossProfitRef.current?.show(record)
             }}
           >
-            <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
+            <span className="!text-[13px] text-gray border-b border-dashed dark:border-gray-570 border-gray-weak">
               {Number(record?.takeProfit) ? formatNum(record?.takeProfit) : AddDom}
             </span>
-            <span> / </span>
-            <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
+            <span className="dark:text-gray-95"> / </span>
+            <span className="!text-[13px] text-gray border-b border-dashed dark:border-gray-570 border-gray-weak">
               {Number(record?.stopLoss) ? formatNum(record?.stopLoss) : AddDom}
             </span>
           </div>

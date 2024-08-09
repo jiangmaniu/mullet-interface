@@ -46,7 +46,7 @@ function DeepPrice() {
     return {
       '&::after': {
         content: "''",
-        background: '#EEEEEE',
+        background: 'var(--border-line-color)',
         width: 1,
         height: '100%',
         position: 'absolute',
@@ -57,7 +57,7 @@ function DeepPrice() {
   })
 
   const BidPriceDom = (
-    <div className="border-t border-b border-gray-60 py-2 px-3">
+    <div className="border-t border-b border-gray-60 dark:border-dark-border py-2 px-3">
       <div className="flex items-center justify-between">
         <div>
           {/* 当前行情卖价 */}
@@ -102,7 +102,7 @@ function DeepPrice() {
             </Row>
             {/* 进度条 */}
             <div
-              className="absolute r-0 z-[1] w-full bg-[#D6FFF4] h-6 opacity-50 left-[100%] right-0 top-0"
+              className="absolute r-0 z-[1] w-full bg-[var(--depth-buy-bg)] h-6 opacity-50 left-[100%] right-0 top-0"
               style={{
                 transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`,
                 transition: 'transform .3s ease-in-out'
@@ -158,7 +158,7 @@ function DeepPrice() {
                 </Row>
                 {/* 进度条 */}
                 <div
-                  className="absolute r-0 z-[1] w-full bg-[#FFDDE2] h-6 opacity-50 left-[100%] right-0 top-0"
+                  className="absolute r-0 z-[1] w-full bg-[var(--depth-sell-bg)] h-6 opacity-50 left-[100%] right-0 top-0"
                   style={{
                     transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`,
                     transition: 'transform .3s ease-in-out'
@@ -175,7 +175,7 @@ function DeepPrice() {
 
   return (
     <div className={classNames('w-[260px] h-[700px] overflow-hidden bg-white relative dark:bg-dark-page', className)}>
-      <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130">
+      <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130 dark:border-dark-border">
         <div className="flex items-center gap-x-4">
           {modeList.map((item, idx) => (
             <Iconfont

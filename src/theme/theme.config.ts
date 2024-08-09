@@ -45,7 +45,9 @@ export const gray = {
   500: '#9C9C9C',
   550: '#929292',
   570: '#767E8A',
+  580: '#424242',
   600: '#6A7073',
+  620: '#454548',
   650: '#514F4F',
   660: '#1D2025',
   670: '#2E3338',
@@ -68,6 +70,9 @@ export const yellow = {
 
 // 红色 色值50 - 900 阶梯加深
 export const red = {
+  100: '#FFDDE2',
+  300: 'rgba(250, 46, 76, 0.2)',
+  500: '#FA2E4C',
   600: '#C54747',
   650: '#F95050',
   700: '#FF3D3D'
@@ -75,6 +80,8 @@ export const red = {
 
 // 绿色 色值50 - 900 阶梯加深
 export const green = {
+  100: '#D6FFF4',
+  300: 'rgba(41, 190, 149, 0.3)',
   600: '#29BE95',
   700: '#45A48A'
 } as const
@@ -145,8 +152,13 @@ export const ThemeVarsConst = {
 
   // 边框
   '--border-color': borderColor, // 边框颜色
+  '--input-border': gray['200'], // 输入框、选择框边框颜色
   '--tabs-border-color': gray['130'], // tabs组件底部边框线颜色
   '--border-line-color': gray['190'], // 边框分割线条颜色
+
+  // 深度进度条颜色
+  '--depth-buy-bg': green['100'], // 买
+  '--depth-sell-bg': red['100'], // 卖
 
   // 页面颜色
   '--page-bg': colorWhite, // 页面背景
@@ -198,12 +210,17 @@ export const ThemeDarkVarsConst = {
   '--color-text-weak': gray['570'], // 文字-衍生色2
   '--border-color': gray['700'], // 边框颜色
   '--border-line-color': gray['700'], // 边框分割线条颜色
+  '--border-modal-color': gray['620'], // 弹窗悬浮框边框颜色
   '--page-bg': gray['800'], // 页面背景
   '--placeholder-bg': gray['720'], // 输入框底色背景
   '--placeholder-text-color': gray['570'], // 文字颜色
   '--input-border': gray['650'], // 输入框边框
   '--tabs-border-color': gray['700'], // tabs组件底部边框线颜色
   '--active-bg': gray['670'], // 激活背景
+
+  // 深度进度条颜色
+  '--depth-buy-bg': green['300'], // 买
+  '--depth-sell-bg': red['300'], // 卖
 
   '--color-gray': gray['95'], // 默认全局黑
   '--color-green': green['600'], // 全局绿

@@ -47,7 +47,7 @@ function Footer() {
   return (
     <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-white dark:bg-dark-page px-5 pb-2 pt-2 border-t border-gray-100 dark:border-dark-border z-40">
       <Tooltip placement="topLeft" title={connectedStatusMap.desc}>
-        <div className="flex items-center border-r border-r-gray-200 pr-3">
+        <div className="flex items-center border-r border-r-gray-200 dark:border-r-gray-700 pr-3">
           <div className="flex items-center">
             {connectedStatusMap.status === 'CLOSED' ? (
               <img src="/img/duankailianjie.png" width={16} height={14} />
@@ -66,7 +66,7 @@ function Footer() {
             const bid = res.bid
 
             return (
-              <div key={idx} className="h-full border-r border-r-gray-200 px-4">
+              <div key={idx} className="h-full border-r border-r-gray-200 dark:border-gray-700 px-4">
                 <div
                   className="flex cursor-pointer items-center"
                   onClick={() => {

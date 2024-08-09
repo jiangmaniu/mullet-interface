@@ -1,5 +1,5 @@
 // eslint-disable-next-line simple-import-sort/imports
-import { Button, Checkbox } from 'antd'
+import { Button } from 'antd'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState, useTransition } from 'react'
 
@@ -11,6 +11,7 @@ import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 
+import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { message } from '@/utils/message'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
@@ -223,7 +224,7 @@ export default observer(
           {/* 全仓、逐仓、杠杆选择 */}
           <SelectMarginTypeOrLevelAge />
 
-          <div className="relative flex items-center justify-center rounded-xl border border-primary p-[2px]">
+          <div className="relative flex items-center justify-center rounded-xl border border-primary dark:border-gray-580 p-[2px]">
             <BuyAndSellBtnGroup
               activeKey={tradeType}
               onChange={(key: any) => {

@@ -80,6 +80,9 @@ function Liquidation() {
       },
       '.ant-select-selection-item': {
         fontSize: '12px !important'
+      },
+      '.ant-select-selector': {
+        border: `1px solid var(--input-border) !important`
       }
     }
   })

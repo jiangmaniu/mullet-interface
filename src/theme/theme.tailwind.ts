@@ -134,7 +134,8 @@ export default {
     // 黑色主题变量
     dark: {
       border: ThemeDarkVarsConst['--border-color'], // 边框颜色
-      'input-border': ThemeDarkVarsConst['--input-border'] // 输入框边框
+      'input-border': ThemeDarkVarsConst['--input-border'], // 输入框边框
+      'modal-border': ThemeDarkVarsConst['--border-modal-color'] // 弹窗悬浮框边框颜色
     }
   },
   // 响应式

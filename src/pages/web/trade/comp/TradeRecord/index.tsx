@@ -1,10 +1,10 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { Checkbox } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef, useState, useTransition } from 'react'
 
+import Checkbox from '@/components/Base/Checkbox'
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'

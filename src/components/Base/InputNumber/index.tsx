@@ -4,8 +4,11 @@ import { useIntl } from '@umijs/max'
 import { FormInstance } from 'antd/lib'
 import classnames from 'classnames'
 import { debounce } from 'lodash-es'
+import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { useTheme } from '@/context/themeProvider'
+import { gray } from '@/theme/theme.config'
 import { isTruthy, toFixed } from '@/utils'
 
 type IProps = {
@@ -43,7 +46,7 @@ type IProps = {
   hiddenPrecision?: boolean
 }
 
-export default function InputNumber(props: IProps) {
+function InputNumber(props: IProps) {
   const intl = useIntl()
   const {
     textAlign,
@@ -78,6 +81,8 @@ export default function InputNumber(props: IProps) {
   const [inputValue, setInputValue] = useState<any>('')
   const [isFocus, setFocus] = useState(false)
   const newValue = Number(inputValue || 0)
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
 
   const isColumn = direction === 'column'
 
@@ -131,7 +136,7 @@ export default function InputNumber(props: IProps) {
   const AddIcon = (
     <div
       className={classnames(
-        'flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-r-lg border-l border-primary text-xl text-gray-weak',
+        'flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-r-lg border-l border-primary dark:bg-gray-750 text-xl text-gray-weak',
         isColumn && '!rounded-r-[0px] border-b border-l-0',
         { '!cursor-not-allowed !text-gray-weak/50': disabled || (max && newValue >= max) },
         classNames?.add
@@ -144,7 +149,7 @@ export default function InputNumber(props: IProps) {
   const MinusIcon = (
     <div
       className={classnames(
-        'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-l-lg border-r border-primary text-xl text-gray-weak',
+        'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-l-lg border-r border-primary dark:bg-gray-750 text-xl text-gray-weak',
         isColumn && 'border-none',
         { '!cursor-not-allowed !text-gray-weak/50': (min && newValue <= min) || disabled },
         classNames?.minus
@@ -164,7 +169,8 @@ export default function InputNumber(props: IProps) {
         height,
         // paddingLeft: 12,
         textAlign: textAlign || 'center',
-        width: width || 'auto'
+        width: width || 'auto',
+        background: isDark ? gray[750] : '#fff'
       },
       '.ant-input-number-group-addon': {
         background: `${disabled ? '#f8f8f8' : '#fff'} !important`,
@@ -177,7 +183,7 @@ export default function InputNumber(props: IProps) {
         border: 'none !important'
       },
       '.ant-input-number-input': {
-        background: disabled ? 'transparent' : '#fff'
+        background: disabled ? 'transparent' : isDark ? gray[750] : '#fff'
       },
       '.input-wrapper:hover': {
         border: `1px solid ${disabled ? '#E1E1E1' : '#9c9c9c'}`
@@ -276,3 +282,5 @@ export default function InputNumber(props: IProps) {
     </div>
   )
 }
+
+export default observer(InputNumber)
