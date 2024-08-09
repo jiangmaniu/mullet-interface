@@ -1,0 +1,88 @@
+import { useIntl } from '@umijs/max'
+import { TableProps } from 'antd'
+import classNames from 'classnames'
+
+import Tags from '@/components/Admin/Tags'
+import { CURRENCY } from '@/constants'
+import { formatNum, getColorClass } from '@/utils'
+
+export default () => {
+  const intl = useIntl()
+
+  // 订单表格
+  const orderColumns: TableProps['columns'] = [
+    {
+      title: intl.formatMessage({ id: 'mt.pinzhong' }),
+      dataIndex: 'pinzhong',
+      key: 'pinzhong',
+      render: (pz) => (
+        <span className=" flex gap-1 items-center">
+          <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
+          <span className=" flex flex-col items-start">
+            <span className="text-sm font-semibold text-black-800">{pz.pinzhong}</span>
+            <span className="flex items-center gap-1">
+              <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
+                {pz.zhuangtai}
+              </Tags>
+              <Tags size="tiny" color="gray">
+                {pz.desc}
+              </Tags>
+            </span>
+          </span>
+        </span>
+      )
+    },
+    {
+      title: `${intl.formatMessage({ id: 'mt.yingkui' })}(${CURRENCY})`,
+      dataIndex: 'yingkui',
+      key: 'yingkui',
+      render: (text) => (
+        <span className={classNames('!font-dingpro-medium text-black-900 font-semibold', getColorClass(text))}>
+          {text > 0 ? '+' : ''}
+          {formatNum(text)}
+        </span>
+      )
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.shouxufei' }),
+      dataIndex: 'shouxufei',
+      key: 'shouxufei',
+      render: (text) => <span className={classNames('!font-dingpro-regular text-black-900')}>{formatNum(text)}%</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.chengjiaojiage' }),
+      dataIndex: 'chengjiaojiage',
+      key: 'chengjiaojiage',
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.kaicangjiage' }),
+      dataIndex: 'kaicangjiage',
+      key: 'kaicangjiage',
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.shoushu' }),
+      dataIndex: 'shoushu',
+      key: 'shoushu',
+      render: (text) => (
+        <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} ${intl.formatMessage({ id: 'mt.shou2' })}`}</span>
+      )
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.fenrunjine' }),
+      dataIndex: 'fenrunjine',
+      key: 'fenrunjine',
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)}`}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.jiaoyishijian' }),
+      dataIndex: 'jiaoyishijian',
+      key: 'jiaoyishijian',
+      align: 'end',
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
+    }
+  ]
+
+  return orderColumns
+}

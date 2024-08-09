@@ -39,7 +39,9 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 0.98,
+      rate7: [10, 20, 30, 15, 25, 50, 44],
+      xData: ['02-11', '02-12', '02-13', '02-14', '02-15', '02-16', '02-17']
     },
     tags: ['dipin'],
     state: 'gendan'
@@ -60,7 +62,9 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: -0.98
+      rate6: -0.98,
+      rate7: [40, 20, 30, 15, 25, 50, 24],
+      xData: ['02-11', '02-12', '02-13', '02-14', '02-15', '02-16', '02-17']
     },
     tags: ['dipin'],
     state: 'yimanyuan'
@@ -81,7 +85,9 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 0.98,
+      rate7: [10, 20, 30, 15, 25, 50, 44],
+      xData: ['02-11', '02-12', '02-13', '02-14', '02-15', '02-16', '02-17']
     },
     tags: ['dipin'],
     state: 'wufagendan'
@@ -102,7 +108,9 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 0.98,
+      rate7: [10, 20, 30, 15, 25, 50, 44],
+      xData: ['02-11', '02-12', '02-13', '02-14', '02-15', '02-16', '02-17']
     },
     tags: ['dipin'],
     state: 'gendan'
@@ -123,7 +131,9 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 0.98,
+      rate7: [10, 20, 30, 15, 25, 50, 44],
+      xData: ['02-11', '02-12', '02-13', '02-14', '02-15', '02-16', '02-17']
     },
     tags: ['dipin'],
     state: 'yigendan'
@@ -144,7 +154,9 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 0.98,
+      rate7: [10, 20, 30, 15, 25, 50, 44],
+      xData: ['02-11', '02-12', '02-13', '02-14', '02-15', '02-16', '02-17']
     },
     tags: ['dipin'],
     state: 'wufagendan'
@@ -165,7 +177,9 @@ export const defaultTakers: IOrderTaker[] = [
       rate3: 12883,
       rate4: 12883,
       rate5: 12883,
-      rate6: 0.98
+      rate6: 0.98,
+      rate7: [10, 20, 30, 15, 25, 50, 44],
+      xData: ['02-11', '02-12', '02-13', '02-14', '02-15', '02-16', '02-17']
     },
     tags: ['dipin'],
     state: 'wufagendan'

@@ -187,7 +187,7 @@ export const HeaderRightContent = observer(({ isAdmin, theme = 'black' }: { isAd
         <div className="px-[18px] py-0 xl:border-t-[2px] xl:border-[rgba(218,218,218,0.2)] flex flex-col">
           <div className="my-3 flex items-center justify-between flex-shrink-0 flex-grow-0">
             <Segmented
-              className="main"
+              className="account"
               // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
               onChange={(value: any) => {
                 setAccountTabActiveKey(value)

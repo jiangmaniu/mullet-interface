@@ -55,6 +55,7 @@ export default {
   'mt.di': '低',
   'mt.kai': '開',
   'mt.shou': '收',
+  'mt.shou2': '手',
   'mt.heyueshuxing': '合約屬性',
   'mt.zixuan': '自選',
   'mt.mingcheng': '名稱',
@@ -534,6 +535,7 @@ export default {
   'mt.yonghu': '用戶',
   'mt.gendanyingkui': '跟單盈虧',
   'mt.gendanjine': '跟單金額',
+  'mt.zuidagendanjine': '最大跟單金額',
   'mt.gensuitianshu': '跟隨天數',
   'mt.days': '{count}天',
   'mt.quanbugendanbaozhengjin': '全部跟單保證金',
@@ -612,5 +614,13 @@ export default {
   'mt.tiaokuan': '條款',
   'mt.fengxiantishi': '風險提示',
   'mt.yinsiquantiaokuan': '隱私權條款',
-  'mt.saomajiaruwomen': '掃碼加入我們'
+  'mt.saomajiaruwomen': '掃碼加入我們',
+  'mt.chuangjianxinjiaoyizhanghu': '創建新交易賬戶',
+  'mt.youyuningdangqianzhanghuyouchicang': '由于您当前账户有持仓，或没有可用的交易账户、交易账户正在跟单，是否需要创建新的交易账户？',
+  'mt.zidongjiechugendanguanxi': '當跟單該交易員淨{type}達到{value}時，將自動解除跟單關係',
+  'mt.sunshi': '損失',
+  'mt.yingli': '盈利',
+  'mt.jingzichan': '淨資產',
+  'mt.xiangqing': '詳情',
+  'mt.chengjiaojiage': '成交價格'
 }

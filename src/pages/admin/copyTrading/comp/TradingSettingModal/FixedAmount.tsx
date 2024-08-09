@@ -1,17 +1,28 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { Input, Radio, Select } from 'antd'
-import { useState } from 'react'
+import { Input, InputNumber, Radio, Select } from 'antd'
+import { useMemo, useState } from 'react'
 import { black } from 'tailwindcss/colors'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
-import { hiddenCenterPartStr } from '@/utils'
+import { CURRENCY } from '@/constants'
+import { formatNum, hiddenCenterPartStr } from '@/utils'
 
 import { AccountTag } from '../../comp/AccountTag'
 
 type IProp = {
   onConfirm?: (values: any) => void
+}
+
+const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
+  const { value: inputValue } = e.target
+  const reg = /^-?\d*(\.\d*)?$/
+  if (reg.test(inputValue) || inputValue === '' || inputValue === '-') {
+    cb(Number(inputValue))
+  } else {
+    cb(0)
+  }
 }
 
 export default (props: IProp) => {
@@ -46,7 +57,10 @@ export default (props: IProp) => {
     }
   ]
 
+  const [baozhengjin, setBaozhengjin] = useState<number | undefined>()
   const [gendanjine, setGendanjine] = useState<number | undefined>()
+  const [zhiying, setZhiying] = useState<number | undefined>()
+  const [zhisun, setZhisun] = useState<number | undefined>()
 
   const [read, setRead] = useState<number | undefined>(1)
 
@@ -56,6 +70,18 @@ export default (props: IProp) => {
   const onClickRadio = () => {
     read === 1 ? setRead(undefined) : setRead(1)
   }
+
+  // 止盈/止損输入框聚焦
+  const [focusInputKey, setFocusInputKey] = useState<string | undefined>()
+  const calcFocusInputValue = useMemo(
+    () =>
+      focusInputKey === 'mt.yingli'
+        ? formatNum((Number(gendanjine || 0) * Number(zhiying || 0)) / 100)
+        : focusInputKey === 'mt.sunshi'
+        ? formatNum((Number(gendanjine || 0) * Number(zhisun || 0)) / 100)
+        : 0,
+    [gendanjine, focusInputKey, zhiying, zhisun]
+  )
 
   return (
     <div className="flex flex-col justify-between gap-4.5 w-full max-w-full">
@@ -102,6 +128,8 @@ export default (props: IProp) => {
             height: '2.8125rem',
             lineHeight: '2.8125rem'
           }}
+          value={baozhengjin}
+          onChange={(e) => checkNumber(e, setBaozhengjin)}
           placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}10~999999999`}
           count={{
             show: false,
@@ -113,7 +141,7 @@ export default (props: IProp) => {
       {/* 跟单金额 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
         <span className=" text-sm font-normal text-black-800">
-          <FormattedMessage id="mt.gendanjine" />
+          <FormattedMessage id="mt.zuidagendanjine" />
         </span>
         <Input
           size="large"
@@ -123,11 +151,8 @@ export default (props: IProp) => {
             lineHeight: '2.8125rem'
           }}
           value={gendanjine}
+          onChange={(e) => checkNumber(e, setGendanjine)}
           placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}10~1000000`}
-          count={{
-            show: false,
-            max: 10
-          }}
           suffix={
             <span className=" flex flex-row gap-2 items-center">
               <span className=" text-sm text-blue cursor-pointer" onClick={() => setGendanjine(231.3)}>
@@ -156,7 +181,7 @@ export default (props: IProp) => {
       </div>
       {/* 止盈止损 */}
       <div
-        className="grid grid-cols-2 gap-3.5 collapsible"
+        className="grid grid-cols-2 gap-x-3.5 gap-y-1 collapsible"
         style={{
           display: isCollapse ? 'none' : 'grid'
         }}
@@ -165,18 +190,19 @@ export default (props: IProp) => {
           <span className=" text-sm font-normal text-black-800">
             <FormattedMessage id="mt.zhiying" />
           </span>
-          <Input
+          <InputNumber
             size="large"
             style={{
               width: '100%',
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             }}
+            min={0}
             placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}`}
-            count={{
-              show: false,
-              max: 10
-            }}
+            onFocus={() => setFocusInputKey('mt.yingli')}
+            value={zhiying}
+            // @ts-ignore
+            onChange={setZhiying}
             suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
           />
         </div>
@@ -184,21 +210,40 @@ export default (props: IProp) => {
           <span className=" text-sm font-normal text-black-800">
             <FormattedMessage id="mt.zhisun" />
           </span>
-          <Input
+          <InputNumber
             size="large"
+            min={0}
             style={{
               width: '100%',
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             }}
+            onFocus={() => setFocusInputKey('mt.sunshi')}
+            onBlur={() => setFocusInputKey(undefined)}
+            value={zhisun}
+            // @ts-ignore
+            onChange={setZhisun}
             placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}`}
-            count={{
-              show: false,
-              max: 10
-            }}
             suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
           />
         </div>
+        {focusInputKey && (
+          <div className="col-span-2">
+            <span className=" text-xs  text-gray-500 font-normal">
+              <FormattedMessage
+                id="mt.zidongjiechugendanguanxi"
+                values={{
+                  type: <FormattedMessage id={focusInputKey} />,
+                  value: (
+                    <span className=" text-black-900">
+                      {calcFocusInputValue || '--'} {CURRENCY}
+                    </span>
+                  )
+                }}
+              />
+            </span>
+          </div>
+        )}
       </div>
       {/* 确认 */}
       <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-full max-w-full">

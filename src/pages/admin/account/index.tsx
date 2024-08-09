@@ -80,7 +80,7 @@ function Account() {
           itemStyle={{ paddingBlock: 6 }}
         /> */}
         <Segmented
-          className="main"
+          className="account"
           // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
           onChange={(value: any) => {
             setAccountTabActiveKey(value)

@@ -8,7 +8,7 @@ import { formatNum, getColorClass } from '@/utils'
 import { push } from '@/utils/navigator'
 
 import TabList from '../comp/TabsTable/List'
-import { IListItemTypes } from '../comp/TabsTable/List/ListItem'
+import { IListItemColumn } from '../comp/TabsTable/List/ListItem'
 import TabTable from '../comp/TabsTable/Table'
 import { mockHistory, orders } from './mockTabTable'
 
@@ -20,7 +20,7 @@ export const useTabsConfig = () => {
   }
 
   // 进行中
-  const cols1: IListItemTypes[] = [
+  const cols1: IListItemColumn[] = [
     {
       format: {
         id: 'mt.jingyingkui'
@@ -70,7 +70,7 @@ export const useTabsConfig = () => {
   ]
 
   // 已结束
-  const cols2: IListItemTypes[] = [
+  const cols2: IListItemColumn[] = [
     {
       format: {
         id: 'mt.jingyingkui'

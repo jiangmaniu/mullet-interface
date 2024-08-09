@@ -3,49 +3,31 @@ import { FormattedMessage } from '@umijs/max'
 import classNames from 'classnames'
 
 import { IFollower } from '@/models/takers'
-import { formatNum, getColorClass } from '@/utils'
 
-export type IListItemTypes = {
+import ListItemNumber, { IListItemNumber } from '../../../ListItemNumber'
+
+export type IListItemColumn = {
   format: Record<string, any>
   currency?: boolean
   showCurrency?: (...args: any) => string
-  color?: boolean
-  prefix?: boolean
-  showPrefix?: (...args: any) => string
-  field?: keyof IFollower
-  suffix?: boolean
-  showSuffix?: (...args: any) => string
-  fontWeight?: 'font-dingpro-regular' | 'font-dingpro-medium'
-}
+} & IListItemNumber
 
-const ListItemValue = ({
-  item,
-  format,
-  currency,
-  showCurrency = () => '(USD)',
-  field,
-  prefix,
-  showPrefix,
-  color,
-  suffix,
-  showSuffix = () => '(USDT)',
-  fontWeight = 'font-dingpro-medium'
-}: {
-  item: IFollower
-} & IListItemTypes) => {
-  const value = field ? item[field] : undefined
-
+/**
+ * @description 通過列表项展示數字通用組件
+ */
+export const ListItemColumn = ({ format, currency, showCurrency = () => '(USD)', ...config }: IListItemColumn & { item: IFollower }) => {
   return (
     <div className=" flex flex-col items-start gap-0.5">
       <span className=" text-xs text-gray-500 ">
         <FormattedMessage id={format.id} values={format.values} />
         {currency && showCurrency()}
       </span>
-      <span className={classNames(' text-base ', `!${fontWeight}`, color && getColorClass(Number(value)))}>
+      <ListItemNumber {...config} />
+      {/* <span className={classNames(' text-base ', `!${fontWeight}`, color && getColorClass(Number(value)))}>
         {prefix ? (showPrefix ? showPrefix(item) : Number(value) > 0 ? `+` : '') : ''}
         {value && formatNum(value)}
         {suffix && showSuffix(item)}
-      </span>
+      </span> */}
     </div>
   )
 }
@@ -55,7 +37,7 @@ export const ListItem = ({
   columns,
   onClick
 }: {
-  columns: IListItemTypes[]
+  columns: IListItemColumn[]
   item: IFollower
   onClick?: (item: IFollower) => void
 }) => {
@@ -79,7 +61,7 @@ export const ListItem = ({
           )}
         >
           {columns.map((col, idx) => (
-            <ListItemValue item={item} {...col} key={idx} />
+            <ListItemColumn item={item} {...col} key={idx.toString()} />
           ))}
         </div>
       </div>

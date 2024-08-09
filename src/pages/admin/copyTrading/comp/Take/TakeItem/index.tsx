@@ -98,8 +98,8 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
               push(`/copy-trading/take-detail/${id}`)
             }}
           >
-            <div className="flex items-center text-base font-semibold gap-1">
-              <Iconfont name="daidan" width={22} color="white" height={22} hoverColor={colorTextPrimary} />
+            <div className="flex items-center text-sm font-semibold gap-1">
+              <Iconfont name="daidan" width={18} color="white" height={18} hoverColor={colorTextPrimary} />
               <FormattedMessage id="mt.daidan" />
             </div>
           </Button>
@@ -113,8 +113,8 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
             disabled={takerState === 'wufagendan'}
             onClick={() => onClick?.(id)}
           >
-            <div className="flex items-center text-base font-semibold gap-1 align-middle">
-              <Iconfont name="shezhi" width={22} color="black" height={22} hoverColor={colorTextPrimary} />
+            <div className="flex items-center text-sm font-semibold gap-1 align-middle">
+              <Iconfont name="shezhi" width={18} color="black" height={18} hoverColor={colorTextPrimary} />
               <FormattedMessage id="mt.shezhi" />
             </div>
           </Button>

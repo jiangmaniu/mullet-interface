@@ -1,7 +1,7 @@
-import { IListItemTypes, ListItem } from './ListItem'
+import { IListItemColumn, ListItem } from './ListItem'
 
 type IProps = {
-  columns: IListItemTypes[]
+  columns: IListItemColumn[]
   datas: any[]
   onClick?: (item: any) => void
 }

@@ -86,7 +86,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
               </span>
             </div>
 
-            <OrderTakerChart />
+            <OrderTakerChart datas={datas} />
           </div>
           <div className=" grid grid-cols-3 gap-y-2">
             <div className="flex flex-col ">

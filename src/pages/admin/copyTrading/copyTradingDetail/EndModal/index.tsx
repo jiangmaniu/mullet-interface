@@ -15,12 +15,14 @@ const waitTime = (time = 100) => {
 }
 
 type IProps = {
-  trigger: JSX.Element
+  trigger?: JSX.Element
   onSuccess?: () => void
   onConfirm?: (values: any) => void
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export default ({ trigger, onSuccess, onConfirm }: IProps) => {
+export default ({ trigger, onSuccess, onConfirm, open, onOpenChange }: IProps) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.gendanpeizhi' })
@@ -31,6 +33,8 @@ export default ({ trigger, onSuccess, onConfirm }: IProps) => {
         name: string
         company: string
       }>
+        open={open}
+        onOpenChange={onOpenChange}
         title={<></>}
         trigger={trigger}
         form={form}

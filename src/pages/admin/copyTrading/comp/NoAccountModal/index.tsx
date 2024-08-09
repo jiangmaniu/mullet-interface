@@ -72,17 +72,23 @@ export default ({ trigger, open, onSuccess, onConfirm, onOpenChange }: IProps) =
         }}
       >
         <div className="flex flex-col items-center gap-6">
-          <div className=" w-[227px] h-[195px] flex items-center justify-center">
-            <img src="/img/jieshugendan.svg" width={227} height={195} />
+          {/* <div className=" w-[227px] h-[195px] flex items-center justify-center">
+            <img src="/img/chuangjianzhanghu.svg" width={227} height={195} />
+          </div> */}
+          <div className=" w-[227px] h-[202px] bg-[url('/img/modal-bg.png')] bg-[length:100%_100%] flex flex-col items-center justify-start -mt-2 mb-2 gap-1.5">
+            <div className="flex flex-col items-center gap-1">
+              <img src="/img/chuangjianzhanghu.svg" width={133} height={133} />
+            </div>
+            <div className="flex flex-col flex-1 items-center gap-1.5 ">
+              <span className=" text-lg text-black-800 font-semibold">
+                <FormattedMessage id="mt.wujiaoyizhanghu" />
+              </span>
+              <span className=" text-sm text-black-800 text-center w-[321px]">
+                <FormattedMessage id="mt.youyuningdangqianzhanghuyouchicang" />
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col flex-1 items-center gap-1.5 -mt-20">
-            <span className=" text-lg text-black-800 font-semibold">
-              <FormattedMessage id="mt.wujiaoyizhanghu" />
-            </span>
-            <span className=" text-sm text-black-800">
-              <FormattedMessage id="mt.dangqianwujiaoyizhanghu" />
-            </span>
-          </div>
+
           <div className=" flex flex-row items-center justify-between w-full gap-3.5">
             <Button
               height={38}

@@ -92,10 +92,9 @@ export default {
     buttonColor: 'red'
   },
   Segmented: {
-    // itemActiveBg: 'rgb(247, 247, 247)',
-    itemSelectedBg: 'rgb(247, 247, 247)',
-    itemSelectedColor: '#222222',
-    boxShadowTertiary: 'none',
-    trackBg: 'white'
+    // itemSelectedBg: 'rgb(247, 247, 247)',
+    // itemSelectedColor: '#222222',
+    // boxShadowTertiary: 'none',
+    // trackBg: 'white'
   }
 }

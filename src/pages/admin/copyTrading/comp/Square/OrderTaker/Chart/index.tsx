@@ -1,10 +1,20 @@
 import { useIntl } from '@umijs/max'
 import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
-import React from 'react'
 
-const OrderTakerChart: React.FC = () => {
+import { green, red } from '@/theme/theme.config'
+import { colorToRGBA } from '@/utils/color'
+
+type IProps = {
+  datas: Record<string, any>
+}
+
+const OrderTakerChart = ({ datas }: IProps) => {
   const intl = useIntl()
+
+  const color = datas.rate1 > 0 ? green['700'] : red['600']
+  const data = datas.rate7
+  const xData = datas.xData
 
   const option = {
     // title: {
@@ -33,7 +43,7 @@ const OrderTakerChart: React.FC = () => {
         type: 'category',
         boundaryGap: false,
         show: false,
-        data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+        data: xData
       }
     ],
     yAxis: [
@@ -48,18 +58,18 @@ const OrderTakerChart: React.FC = () => {
         type: 'line',
         stack: '总量',
         lineStyle: {
-          color: '#45A48A',
+          color,
           width: 1
         },
         areaStyle: {
           color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
             {
               offset: 0,
-              color: 'rgba(69, 164, 138, 0.20)'
+              color: colorToRGBA(color, 0.2)
             },
             {
               offset: 1,
-              color: 'rgba(69, 164, 138, 0)'
+              color: colorToRGBA(color, 0)
             }
           ])
         },
@@ -69,7 +79,7 @@ const OrderTakerChart: React.FC = () => {
           focus: 'series'
         },
 
-        data: [190, 332, 181, 164, 390, 630, 700]
+        data
       }
     ]
   }

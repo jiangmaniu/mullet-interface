@@ -47,5 +47,6 @@ export const KEY_THEME = NAMESPACE + '_' + 'theme'
 export const DEFAULT_LOCALE = 'en-US'
 
 // 貨幣
+export const SOURCE_CURRENCY = 'USD'
 export const CURRENCY = 'USDT'
 export const CURRENT_YEAR = 2024

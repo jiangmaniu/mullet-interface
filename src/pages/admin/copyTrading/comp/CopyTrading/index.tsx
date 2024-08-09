@@ -1,46 +1,51 @@
-import { FormattedMessage } from '@umijs/max'
+import { useIntl } from '@umijs/max'
+import { Segmented } from 'antd'
 import { useState } from 'react'
 
-import Button from '@/components/Base/Button'
-import Empty from '@/components/Base/Empty'
-import Iconfont from '@/components/Base/Iconfont'
-import { IOrder } from '@/models/takers'
-import { colorTextPrimary } from '@/theme/theme.config'
+import Footer from '@/components/Admin/Footer'
+import Hidden from '@/components/Base/Hidden'
 
-import { defaultTakers } from './mock'
-import { TradingItem } from './TradingItem'
+import Ended from './Ended'
+import Historical from './Historical'
+import InProgress from './InProgress'
 
 export default function CopyTrading() {
-  const [state, setState] = useState({})
+  const intl = useIntl()
 
   // 帶單員
-  const [takers, setTakers] = useState<IOrder[]>(defaultTakers)
+  // const [takers, setTakers] = useState<IOrder[]>(defaultTakers)
+
+  const [segment, setSegment] = useState('jingxingzhong')
+
+  const options = [
+    {
+      label: intl.formatMessage({ id: 'mt.jinxingzhong' }),
+      value: 'jingxingzhong',
+      component: <InProgress />
+    },
+    {
+      label: intl.formatMessage({ id: 'mt.yijieshu' }),
+      value: 'yijieshu',
+      component: <Ended />
+    },
+    {
+      label: intl.formatMessage({ id: 'mt.lishicangwei' }),
+      value: 'lishicangwei',
+      component: <Historical />
+    }
+  ]
 
   return (
-    <div className="flex flex-col w-full gap-6">
-      {takers.length > 0 ? (
-        takers.map((item: IOrder, idx: number) => <TradingItem key={idx} item={item} state={state} />)
-      ) : (
-        <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem]">
-          <Empty src="/img/empty-gendanguanli.png" description={<FormattedMessage id="mt.zanwujilu" />} />
-          <Button
-            height={44}
-            type="primary"
-            style={{
-              width: 197,
-              borderRadius: 8
-            }}
-            onClick={() => {
-              // todo 跳转
-            }}
-          >
-            <div className="flex items-center text-base font-semibold">
-              <Iconfont name="gendanguanli" width={22} color="white" height={22} hoverColor={colorTextPrimary} />
-              <FormattedMessage id="mt.qugendan" />
-            </div>
-          </Button>
-        </div>
-      )}
-    </div>
+    <>
+      <div className=" mb-3.5">
+        <Segmented<string> options={options.map(({ component, ...option }) => option)} value={segment} onChange={setSegment} />
+      </div>
+      {options.map((item, idx) => (
+        <Hidden show={item.value === segment} key={idx}>
+          {item.component}
+        </Hidden>
+      ))}
+      <Footer />
+    </>
   )
 }
