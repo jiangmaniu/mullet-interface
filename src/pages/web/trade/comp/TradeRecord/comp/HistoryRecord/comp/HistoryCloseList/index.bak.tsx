@@ -126,7 +126,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
             const buySellInfo = getBuySellInfo(v)
             return (
               <div key={idx} className="mb-3 rounded-xl border border-primary">
-                <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
+                <div className="flex items-center justify-between bg-gray-50/50 px-3 py-[6px]">
                   <div className="flex items-center">
                     <SymbolIcon src={v?.imgUrl} width={22} height={22} />
                     <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>

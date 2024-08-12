@@ -105,7 +105,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
     return (
       <div className="flex items-center max-xl:mt-3 max-xl:justify-between">
         <div
-          className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-sub-card max-xl:text-sm xl:border xl:text-xs"
+          className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-gray-50 max-xl:text-sm xl:border xl:text-xs"
           onClick={() => {
             parentPopup?.close()
             cancelPendingRef.current?.show(item)
@@ -135,7 +135,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
             const buySellInfo = getBuySellInfo(v)
             return (
               <div key={idx} className="mb-3 rounded-xl border border-primary">
-                <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
+                <div className="flex items-center justify-between bg-gray-50/50 px-3 py-[6px]">
                   <div className="flex items-center">
                     <SymbolIcon src={v?.imgUrl} width={22} height={22} />
                     <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
@@ -164,7 +164,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
                           <span className="text-xs text-gray">{renderProp(pendingPrice, 'value', v)}</span>
                         </div>
                         <div className="my-2">
-                          <span className="bg-gray-ef rounded-l bg-sub-card px-2 py-[2px] text-gray">
+                          <span className="bg-gray-ef rounded-l bg-gray-50 px-2 py-[2px] text-gray">
                             <FormattedMessage id="mt.zhiyingzhisun" />
                           </span>
                           <span className="bg-red px-2 py-[2px] text-white">{renderProp(slSp[0], 'value', v)}</span>

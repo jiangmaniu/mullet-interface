@@ -147,6 +147,9 @@ export const ThemeVarsConst = {
   '--btn-primary': colorPrimary, // 按钮主色
   '--btn-disable-bg': gray['150'], // 禁用置灰背景色
 
+  // 输入框
+  '--input-disabled-bg': gray['150'], // 输入框禁用置灰背景色
+
   // 链接颜色
   '--link-color': colorPrimary,
 
@@ -217,6 +220,10 @@ export const ThemeDarkVarsConst = {
   '--input-border': gray['650'], // 输入框边框
   '--tabs-border-color': gray['700'], // tabs组件底部边框线颜色
   '--active-bg': gray['670'], // 激活背景
+  '--hover-bg': hoverBg, // hover颜色
+
+  // 输入框
+  '--input-disabled-bg': gray['150'], // 输入框禁用置灰背景色
 
   // 深度进度条颜色
   '--depth-buy-bg': green['300'], // 买

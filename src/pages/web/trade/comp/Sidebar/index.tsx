@@ -252,7 +252,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
             <div
-              className={classNames('h-[700px] w-[300px] bg-white relative dark:bg-dark-page', { [borderClassName]: showFixSidebar })}
+              className={classNames('h-[700px] w-[300px] bg-base-primary relative', { [borderClassName]: showFixSidebar })}
               style={style}
             >
               {renderTabs()}
@@ -268,9 +268,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           )}
           {/* 收起侧边栏视图 */}
           {!openTradeSidebar && (
-            <div
-              className={classNames('h-[700px] w-[60px] bg-white dark:bg-dark-page flex flex-col items-center relative', borderClassName)}
-            >
+            <div className={classNames('h-[700px] w-[60px] bg-base-primary flex flex-col items-center relative', borderClassName)}>
               <div
                 className="border-b border-gray-100 dark:border-dark-border pb-[2px] pt-[11px] text-center w-full cursor-pointer"
                 onClick={openSidebar}

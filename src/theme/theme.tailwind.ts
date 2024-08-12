@@ -1,19 +1,6 @@
 import colors from 'tailwindcss/colors'
 
-import {
-  bgColorBase,
-  black,
-  blue,
-  borderColor,
-  colorPrimary,
-  gray,
-  green,
-  hoverBg,
-  pageContainerHeaderBg,
-  red,
-  ThemeDarkVarsConst,
-  yellow
-} from './theme.config'
+import { black, blue, borderColor, colorPrimary, gray, green, red, ThemeDarkVarsConst, yellow } from './theme.config'
 
 // https://github.com/tailwindlabs/tailwindcss/issues/4690#issuecomment-1046087220
 // 对于任何将 Tailwind 的完整默认颜色传播到 theme.colors 的人，都会收到警告
@@ -104,25 +91,6 @@ export default {
       // light: ThemeVarsConst.colorPrimaryLight // 品牌色-衍生色3
     },
 
-    // 辅助颜色-自定义命名
-    sub: {
-      disable: gray['150'], // 禁用颜色
-      hover: hoverBg, // hover背景
-      card: bgColorBase, // 卡片背景
-      headerBg: pageContainerHeaderBg
-    },
-
-    // 黑色主题变量
-    dark: {
-      page: ThemeDarkVarsConst['--page-bg'], // 页面背景颜色
-      text: ThemeDarkVarsConst['--color-text-primary'], // 文字主色-正文
-      'text-secondary': ThemeDarkVarsConst['--color-text-secondary'], // 文字-第二色-衍生色1
-      'text-weak': ThemeDarkVarsConst['--color-text-weak'], // 文字-衍生色2
-      green: ThemeDarkVarsConst['--color-green'], // 全局绿
-      red: ThemeDarkVarsConst['--color-red'], // 全局红
-      placeholder: ThemeDarkVarsConst['--placeholder-bg'] // 输入框底色背景
-    },
-
     // =========== 颜色覆盖 ==============
     ...themeColor
   },
@@ -159,6 +127,16 @@ export default {
     'hms-thin': ['hms-thin']
   },
   extend: {
+    // 使用css变量，方便切换主题，使用方法：text-base-primary
+    textColor: {
+      'base-primary': 'var(--color-text-primary)',
+      'base-secondary': 'var(--color-text-secondary)',
+      'base-weak': 'var(--color-text-weak)'
+    },
+    backgroundColor: {
+      'base-primary': 'var(--page-bg)', // 页面背景颜色
+      'base-hover': 'var(--hover-bg)' // hover背景颜色
+    },
     boxShadow: {
       custom: '0px 2px 70px 0px rgba(80,80,80,0.07)',
       dropdown: '0px 2px 50px 8px rgba(200,200,200,0.3)'

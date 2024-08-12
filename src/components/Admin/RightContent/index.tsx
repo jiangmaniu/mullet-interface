@@ -145,7 +145,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-dark-modal-border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white dark:bg-dark-page pb-1 xl:w-[420px] xl:pt-[18px]">
+      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-dark-modal-border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-base-primary pb-1 xl:w-[420px] xl:pt-[18px]">
         <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
             <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>

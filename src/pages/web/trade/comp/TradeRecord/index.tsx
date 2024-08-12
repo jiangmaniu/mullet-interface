@@ -155,7 +155,7 @@ function TradeRecord({ trigger }: IProps) {
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className={classNames('pt-1 mb-3 bg-white dark:bg-dark-page relative z-[1]', borderClassName)}>
+          <div className={classNames('pt-1 mb-3 bg-base-primary relative z-[1]', borderClassName)}>
             {renderTabs()}
             {renderTabContent()}
           </div>

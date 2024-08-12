@@ -185,7 +185,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center justify-end">
             <div
-              className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-sub-card text-sm xl:border"
+              className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-gray-50 text-sm xl:border"
               onClick={() => {
                 parentPopup?.close()
                 cancelPendingRef.current?.show(record)

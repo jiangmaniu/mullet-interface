@@ -233,7 +233,7 @@ function InputNumber(props: IProps) {
           disabled={disabled}
           filedConfig={{
             style: { marginBottom: 0, flex: 1, lineHeight: `${height}px` },
-            className: disabled ? 'bg-sub-disable cursor-not-allowed' : ''
+            className: disabled ? 'bg-[--input-disabled-bg] cursor-not-allowed' : ''
           }}
           addonBefore={inputValue && addonBefore ? <span className="text-xs text-gray-secondary pl-3">{addonBefore}</span> : undefined}
           fieldProps={{

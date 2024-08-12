@@ -67,9 +67,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
         <Row
           className={classNames(
-            'flex cursor-pointer pr-4 items-center rounded px-3 py-[10px] hover:bg-sub-hover dark:hover:bg-gray-660 relative',
+            'flex cursor-pointer pr-4 items-center rounded px-3 py-[10px] hover:bg-base-hover dark:hover:bg-gray-660 relative',
             {
-              'dark:bg-gray-660 bg-sub-hover': isActive,
+              'dark:bg-gray-660 bg-base-hover': isActive,
               [activeClassName]: isActive
             }
           )}

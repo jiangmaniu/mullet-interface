@@ -103,7 +103,7 @@ export default observer(() => {
               {/* 买卖交易区 */}
               <BuyAndSell />
             </div>
-            <div className={classNames('flex items-start justify-between relative dark:bg-dark-page', borderTopClassName)}>
+            <div className={classNames('flex items-start justify-between relative bg-base-primary', borderTopClassName)}>
               {/* 交易记录 */}
               <div style={{ width: 'calc(100vw - 303px)' }} className={classNames('flex-1')}>
                 <TradeRecord />
