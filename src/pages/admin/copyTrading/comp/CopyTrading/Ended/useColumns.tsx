@@ -4,7 +4,7 @@ import { SOURCE_CURRENCY } from '@/constants'
 
 import { IListItemNumber } from '../../ListItemNumber'
 
-type Item = IListItemNumber & { label: React.ReactNode }
+type Item = IListItemNumber & { label: React.ReactNode; align?: 'left' | 'right' }
 
 export default (): Item[] => {
   return [
@@ -62,7 +62,8 @@ export default (): Item[] => {
       ),
       field: 'rate4',
       fontWeight: 'font-dingpro-medium',
-      showSuffix: undefined
+      showSuffix: undefined,
+      align: 'right'
     }
   ]
 }

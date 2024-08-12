@@ -1,33 +1,37 @@
-import { FormattedMessage, useLocation, useModel, useParams } from '@umijs/max'
-import { useEffect, useMemo, useState } from 'react'
+import { FormattedMessage, useIntl, useLocation, useModel, useParams } from '@umijs/max'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import Footer from '@/components/Admin/Footer'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { IOrderTaker, IOrderTakerState } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
+import { message } from '@/utils/message'
 
 import AccountSelectFull from '../comp/AccountSelectFull'
 import { CardContainer } from '../comp/CardContainer'
 import Cumulative from '../comp/CardContainer/Cumulative'
 import { Performance } from '../comp/CardContainer/Performance'
 import Preferences from '../comp/CardContainer/Preferences'
+import CopyTradingDatas from '../comp/CopyTradingDatas'
 import { Introduction } from '../comp/Introduction'
 import NoAccountModal from '../comp/NoAccountModal'
 import TabsTable from '../comp/TabsTable'
-import TakeDatas from '../comp/TakeDatas'
 import TradingSettingModal from '../comp/TradingSettingModal'
 import EndModal from './EndModal'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
 import { useTabsConfig } from './useTabsConfig'
 
 export default function copyTradingDetail() {
+  const intl = useIntl()
   const { setPageBgColor } = useModel('global')
 
   const params = useParams()
   const { id } = params
 
   const location = useLocation()
+  const loadingRef = useRef<any>()
   useEffect(() => {
     const query = new URLSearchParams(location.search)
     query.get('state') && setTakeState(query.get('state') as IOrderTakerState)
@@ -137,7 +141,7 @@ export default function copyTradingDetail() {
                     introduction={taker?.account.introduction}
                     tags={taker?.tags}
                   />
-                  <TakeDatas datas={taker?.datas} gap="gap-18" />
+                  <CopyTradingDatas datas={taker?.datas} gap="gap-18" />
                 </div>
               </div>
             </div>
@@ -148,7 +152,12 @@ export default function copyTradingDetail() {
                   <EndModal
                     onConfirm={() => {
                       // todo 跳转
-                      setTakeState('gendan')
+                      loadingRef.current?.show()
+                      setTimeout(() => {
+                        loadingRef.current?.close()
+                        message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                        setTakeState('gendan')
+                      }, 3000)
                     }}
                     trigger={
                       <Button
@@ -260,6 +269,12 @@ export default function copyTradingDetail() {
           setTakeState('yigendan')
           onOpenChangeSetting(false)
         }}
+      />
+
+      <ModalLoading
+        ref={loadingRef}
+        title={intl.formatMessage({ id: 'mt.jieshugendan' })}
+        tips={intl.formatMessage({ id: 'mt.jieshugendanzhong' })}
       />
     </div>
   )

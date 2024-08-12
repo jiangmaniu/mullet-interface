@@ -1,11 +1,13 @@
-import { FormattedMessage } from '@umijs/max'
-import { useState } from 'react'
+import { FormattedMessage, useIntl } from '@umijs/max'
+import { useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { IOrder } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
+import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
 import EndModal from '../../../copyTradingDetail/EndModal'
@@ -17,6 +19,7 @@ import useColumns from './useColumns'
 export default () => {
   const [takers, setTakers] = useState<IOrder[]>(defaultTakers)
   const [state, setState] = useState({})
+  const intl = useIntl()
 
   const [openEnd, setOpenEnd] = useState(false)
   const onOpenChangeEnd = (val: boolean) => setOpenEnd(val)
@@ -27,6 +30,7 @@ export default () => {
 
   const columns = useColumns()
 
+  const loadingRef = useRef<any>()
   return (
     <div className="flex flex-col gap-5 w-full">
       {takers.length > 0 ? (
@@ -108,6 +112,11 @@ export default () => {
         onOpenChange={onOpenChangeEnd}
         onConfirm={() => {
           onOpenChangeEnd(false)
+          loadingRef.current?.show()
+          setTimeout(() => {
+            loadingRef.current?.close()
+            message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+          }, 3000)
         }}
       />
 
@@ -117,6 +126,12 @@ export default () => {
         onConfirm={() => {
           onOpenChangeSetting(false)
         }}
+      />
+
+      <ModalLoading
+        ref={loadingRef}
+        title={intl.formatMessage({ id: 'mt.jieshugendan' })}
+        tips={intl.formatMessage({ id: 'mt.jieshugendanzhong' })}
       />
     </div>
   )

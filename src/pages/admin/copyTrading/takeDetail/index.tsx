@@ -1,15 +1,17 @@
 import './style.less'
 
-import { FormattedMessage, useModel, useParams } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel, useParams } from '@umijs/max'
 import { Select } from 'antd'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
+import Carousel from '@/components/Admin/Carousel'
 import Footer from '@/components/Admin/Footer'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { IOrderTaker } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
-import { formatNum } from '@/utils'
+import { message } from '@/utils/message'
 
 import AccountSelectFull from '../comp/AccountSelectFull'
 import { CardContainer } from '../comp/CardContainer'
@@ -25,7 +27,9 @@ import EndModal from './EndModal'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
 import { useTabsConfig } from './useTabsConfig'
 export default function TakeDetail() {
+  const intl = useIntl()
   const { setPageBgColor } = useModel('global')
+  const loadingRef = useRef<any>()
 
   const params = useParams()
   const { id } = params
@@ -67,6 +71,9 @@ export default function TakeDetail() {
   }
 
   const { items: tabs, onChange } = useTabsConfig()
+
+  const [status, setStatus] = useState<'abled' | 'disabled'>('disabled')
+  const [openEnd, setOpenEnd] = useState(false)
 
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
@@ -133,7 +140,7 @@ export default function TakeDetail() {
                 </div>
               </div>
               {/* 帶單人數據 */}
-              <div className="flex items-center justify-start gap-18 flex-wrap gap-y-4">
+              {/* <div className="flex items-center justify-start gap-18 flex-wrap gap-y-4">
                 <div className="flex flex-col gap-1.5">
                   <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
                   <span className="text-sm text-gray-600">
@@ -159,6 +166,10 @@ export default function TakeDetail() {
                     <FormattedMessage id="mt.guanlizichanguimo" />
                   </span>
                 </div>
+              </div> */}
+
+              <div className="">
+                <Carousel dotPosition="left" items={notifications}></Carousel>
               </div>
             </div>
             {/* 操作区 */}
@@ -225,28 +236,50 @@ export default function TakeDetail() {
                   </Button>
                 }
               />
+
+              <Button
+                height={42}
+                type="primary"
+                danger
+                style={{
+                  width: 158,
+                  borderRadius: 8
+                }}
+                onClick={() => {
+                  setOpenEnd(true)
+                }}
+              >
+                <div className=" flex items-center gap-1">
+                  <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                  <span className=" font-semibold text-base ">
+                    <FormattedMessage id="mt.jieshudaidan" />
+                  </span>
+                </div>
+              </Button>
               <EndModal
-                trigger={
-                  <Button
-                    height={42}
-                    type="primary"
-                    danger
-                    style={{
-                      width: 158,
-                      borderRadius: 8
-                    }}
-                    onClick={() => {
-                      // todo 跳转
-                    }}
-                  >
-                    <div className=" flex items-center gap-1">
-                      <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-semibold text-base ">
-                        <FormattedMessage id="mt.jieshudaidan" />
-                      </span>
-                    </div>
-                  </Button>
-                }
+                open={openEnd}
+                onOpenChange={setOpenEnd}
+                onConfirm={() => {
+                  if (status === 'abled') {
+                    loadingRef.current?.show()
+                    setTimeout(() => {
+                      loadingRef.current?.close()
+                      message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                    }, 3000)
+                    setOpenEnd(false)
+
+                    return
+                  }
+
+                  setStatus('abled')
+                  setOpenEnd(false)
+                }}
+                status={status}
+              />
+              <ModalLoading
+                ref={loadingRef}
+                title={intl.formatMessage({ id: 'mt.jieshudaidan' })}
+                tips={intl.formatMessage({ id: 'mt.jieshudaidanzhong' })}
               />
             </div>
           </div>
@@ -255,11 +288,11 @@ export default function TakeDetail() {
             <Carousel dotPosition="left" items={notifications}></Carousel>
           </div> */}
           {/* 带单数据 */}
-          <div className="mt-7 border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
+          <div className="mt-2 border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
             <span className=" text-black-800 text-xl font-medium">
               <FormattedMessage id="mt.daidanshuju" />
             </span>
-            <TakeDatas datas={taker?.datas} />
+            <TakeDatas datas={taker?.datas} gap="gap-16" />
           </div>
           {/* 帶單表現，累計盈虧，交易偏好 */}
           <div className=" grid xl:grid-cols-3 sm:grid-cols-1 items-start gap-5  ">

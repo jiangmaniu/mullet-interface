@@ -151,7 +151,7 @@ export const mockHistory: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     kaicangjunjia: '1182.2',
@@ -170,7 +170,7 @@ export const mockHistory: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     kaicangjunjia: '1182.2',
@@ -189,7 +189,7 @@ export const mockHistory: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     kaicangjunjia: '1182.2',
@@ -208,7 +208,7 @@ export const mockHistory: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     kaicangjunjia: '1182.2',
@@ -227,7 +227,7 @@ export const mockHistory: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     kaicangjunjia: '1182.2',
@@ -246,7 +246,7 @@ export const mockHistory: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     kaicangjunjia: '1182.2',
@@ -265,7 +265,7 @@ export const mockHistory: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     kaicangjunjia: '1182.2',
@@ -284,7 +284,7 @@ export const mockHistory: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     kaicangjunjia: '1182.2',
@@ -307,7 +307,7 @@ export const mockUsers: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '-12',
     pingcangjunjia: '1182.2',
     gendanyingkui: '1182.2',
@@ -326,7 +326,7 @@ export const mockUsers: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     gendanyingkui: '1182.2',
@@ -345,7 +345,7 @@ export const mockUsers: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     gendanyingkui: '-1182.2',
@@ -364,7 +364,7 @@ export const mockUsers: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     gendanyingkui: '1182.2',
@@ -383,7 +383,7 @@ export const mockUsers: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     gendanyingkui: '1182.2',
@@ -402,7 +402,7 @@ export const mockUsers: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     gendanyingkui: '1182.2',
@@ -421,7 +421,7 @@ export const mockUsers: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     gendanyingkui: '1182.2',
@@ -440,7 +440,7 @@ export const mockUsers: any[] = [
       desc: '全倉 20X'
     },
     pingcangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
-    kaicangshijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
+    jiaoyishijian: dayjs().format('YYYY-MM-DD HH:mm:ss'),
     zuidachicangliang: '12',
     pingcangjunjia: '1182.2',
     gendanyingkui: '1182.2',

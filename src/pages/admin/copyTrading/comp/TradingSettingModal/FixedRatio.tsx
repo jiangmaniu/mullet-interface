@@ -1,17 +1,27 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { Input, Radio, Select } from 'antd'
-import { useState } from 'react'
+import { Input, InputNumber, Radio, Select } from 'antd'
+import { useMemo, useState } from 'react'
 import { black } from 'tailwindcss/colors'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
-import { hiddenCenterPartStr } from '@/utils'
+import { CURRENCY } from '@/constants'
+import { formatNum, hiddenCenterPartStr } from '@/utils'
 
 import { AccountTag } from '../../comp/AccountTag'
 
 type IProp = {
   onConfirm?: (values: any) => void
+}
+const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
+  const { value: inputValue } = e.target
+  const reg = /^-?\d*(\.\d*)?$/
+  if (reg.test(inputValue) || inputValue === '' || inputValue === '-') {
+    cb(Number(inputValue))
+  } else {
+    cb(0)
+  }
 }
 
 export default (props: IProp) => {
@@ -47,6 +57,8 @@ export default (props: IProp) => {
   ]
 
   const [gendanjine, setGendanjine] = useState<number | undefined>()
+  const [zhiying, setZhiying] = useState<number | undefined>()
+  const [zhisun, setZhisun] = useState<number | undefined>()
 
   const [read, setRead] = useState<number | undefined>(1)
 
@@ -56,6 +68,18 @@ export default (props: IProp) => {
   const onClickRadio = () => {
     read === 1 ? setRead(undefined) : setRead(1)
   }
+
+  // 止盈/止損输入框聚焦
+  const [focusInputKey, setFocusInputKey] = useState<string | undefined>()
+  const calcFocusInputValue = useMemo(
+    () =>
+      focusInputKey === 'mt.yingli'
+        ? formatNum((Number(gendanjine || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
+        : focusInputKey === 'mt.sunshi'
+        ? formatNum((Number(gendanjine || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
+        : 0,
+    [gendanjine, focusInputKey, zhiying, zhisun]
+  )
 
   return (
     <div className="flex flex-col justify-between gap-4.5 w-full max-w-full">
@@ -123,6 +147,7 @@ export default (props: IProp) => {
             lineHeight: '2.8125rem'
           }}
           value={gendanjine}
+          onChange={(e) => checkNumber(e, setGendanjine)}
           placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}10~1000000`}
           count={{
             show: false,
@@ -165,18 +190,20 @@ export default (props: IProp) => {
           <span className=" text-sm font-normal text-black-800">
             <FormattedMessage id="mt.zhiying" />
           </span>
-          <Input
+          <InputNumber
             size="large"
+            min={0}
             style={{
               width: '100%',
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             }}
             placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}`}
-            count={{
-              show: false,
-              max: 10
-            }}
+            onFocus={() => setFocusInputKey('mt.yingli')}
+            onBlur={() => setFocusInputKey(undefined)}
+            value={zhiying}
+            // @ts-ignore
+            onChange={setZhiying}
             suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
           />
         </div>
@@ -184,21 +211,40 @@ export default (props: IProp) => {
           <span className=" text-sm font-normal text-black-800">
             <FormattedMessage id="mt.zhisun" />
           </span>
-          <Input
+          <InputNumber
             size="large"
+            min={0}
             style={{
               width: '100%',
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             }}
             placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}`}
-            count={{
-              show: false,
-              max: 10
-            }}
+            value={zhisun}
+            onFocus={() => setFocusInputKey('mt.sunshi')}
+            onBlur={() => setFocusInputKey(undefined)}
+            // @ts-ignore
+            onChange={setZhisun}
             suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
           />
         </div>
+        {focusInputKey && (
+          <div className="col-span-2">
+            <span className=" text-xs  text-gray-500 font-normal">
+              <FormattedMessage
+                id="mt.zidongjiechugendanguanxi"
+                values={{
+                  type: <FormattedMessage id={focusInputKey} />,
+                  value: (
+                    <span className=" text-black-900">
+                      {calcFocusInputValue || '--'} {CURRENCY}
+                    </span>
+                  )
+                }}
+              />
+            </span>
+          </div>
+        )}
       </div>
       {/* 确认 */}
       <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-full max-w-full">

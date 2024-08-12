@@ -47,7 +47,7 @@ export default () => {
       title: intl.formatMessage({ id: 'mt.shouxufei' }),
       dataIndex: 'shouxufei',
       key: 'shouxufei',
-      render: (text) => <span className={classNames('!font-dingpro-regular text-black-900')}>{formatNum(text)}%</span>
+      render: (text) => <span className={classNames('!font-dingpro-regular text-black-900')}>{formatNum(text)}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.chengjiaojiage' }),
@@ -57,9 +57,9 @@ export default () => {
     },
     {
       title: intl.formatMessage({ id: 'mt.kaicangjiage' }),
-      dataIndex: 'kaicangjiage',
-      key: 'kaicangjiage',
-      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} ${CURRENCY}`}</span>
+      dataIndex: 'kaicangjunjia',
+      key: 'kaicangjunjia',
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.shoushu' }),

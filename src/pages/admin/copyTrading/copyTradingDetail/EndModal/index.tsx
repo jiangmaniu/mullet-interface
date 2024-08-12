@@ -67,8 +67,8 @@ export default ({ trigger, onSuccess, onConfirm, open, onOpenChange }: IProps) =
             <span className=" text-lg text-black-800 font-semibold">
               <FormattedMessage id="mt.jieshugendan" />
             </span>
-            <span className=" text-sm text-black-800">
-              <FormattedMessage id="mt.jieshugendanhou" />
+            <span className=" text-sm text-black-800 w-[321px]">
+              <FormattedMessage id="mt.youyudangqianzhanghuyouchicang" />
             </span>
           </div>
           <div className=" flex flex-row items-center justify-between w-full gap-3.5">
@@ -93,6 +93,7 @@ export default ({ trigger, onSuccess, onConfirm, open, onOpenChange }: IProps) =
                 width: '100%',
                 borderRadius: 8
               }}
+              onClick={onConfirm}
             >
               <div className=" flex items-center gap-1">
                 <span className=" font-semibold text-base ">

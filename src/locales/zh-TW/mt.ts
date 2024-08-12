@@ -313,7 +313,7 @@ export default {
   'mt.shuruzhanghumima': '输入账户密码',
   'mt.shezhizhanghumima': '设置账户密码',
   'mt.chuangjianchanghuchenggong': '创建账户成功',
-  'mt.chuangjianzhanghuzhong': '创建账户中...',
+  'mt.chuangjianzhanghuzhong': '创建账户中',
   'mt.qingshurubaozhengjin': '请输入保证金',
   'mt.zengjiazhengjin': '增加保证金',
   'mt.jianshaobaozhengjin': '减少保证金',
@@ -474,6 +474,8 @@ export default {
   'mt.yigendan': '已跟單',
   'mt.gendan': '跟單',
   'mt.jieshugendan': '結束跟單',
+  'mt.jieshugendanzhong': '結束跟單中',
+  'mt.jieshudaidanzhong': '結束帶單中',
   'mt.wufagendan': '無法跟單',
   'mt.yimanyuan': '已滿員',
   'mt.jinqiyingkui': '{range}盈虧',
@@ -594,6 +596,7 @@ export default {
   'mt.queren': '確認',
   'mt.zaikaolvxia': '再考慮下',
   'mt.jieshugendanhou': '結束跟單後，已跟隨未平倉的合約仍然會參與收益',
+  'mt.youyudangqianzhanghuyouchicang': '由於您當前賬戶有持倉，或沒有可用的交易賬戶、交易賬戶正在跟單，是否需要創建新的交易賬戶？',
   'mt.dingdanweichuli': '你有訂單未處理，無法結束帶單，請先平倉',
   'mt.jieshudaidanhou': '結束帶單後，需要再次申請才能成為帶單員',
   'mt.qupingcang': '去平倉',
@@ -622,5 +625,6 @@ export default {
   'mt.yingli': '盈利',
   'mt.jingzichan': '淨資產',
   'mt.xiangqing': '詳情',
-  'mt.chengjiaojiage': '成交價格'
+  'mt.chengjiaojiage': '成交價格',
+  'mt.caozuochenggong': '操作成功'
 }

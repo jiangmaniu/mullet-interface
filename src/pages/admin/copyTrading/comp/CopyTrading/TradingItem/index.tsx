@@ -13,7 +13,11 @@ export const TradingItem = ({
   state,
   onClick,
   children
-}: IOrderProps & { columns?: IListItemNumber & { label: React.ReactNode }[]; onClick?: () => void; children?: React.ReactNode }) => {
+}: IOrderProps & {
+  columns?: IListItemNumber & { label: React.ReactNode; align?: 'left' | 'right' }[]
+  onClick?: () => void
+  children?: React.ReactNode
+}) => {
   return (
     <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full cursor-pointer" onClick={onClick}>
       {/* header */}
@@ -74,10 +78,10 @@ export const TradingItem = ({
             )} */}
           </div>
         </div>
-
-        <div className={classNames(`grid grid-cols-${columns?.length} flex-1 flex-grow gap-6 `)}>
+        {/* flex flex-row justify-between */}
+        <div className={classNames(`flex flex-row justify-between flex-1 flex-grow gap-6  `)}>
           {columns?.map((col, idx) => (
-            <div className=" flex flex-col items-start gap-0.5" key={idx}>
+            <div className={classNames(`flex flex-col gap-0.5 ${col.align === 'right' ? 'items-end' : 'items-start'}`)} key={idx}>
               <ListItemNumber item={datas} {...col} key={idx} />
               <span className=" text-xs font-normal text-gray-600">{col.label}</span>
             </div>

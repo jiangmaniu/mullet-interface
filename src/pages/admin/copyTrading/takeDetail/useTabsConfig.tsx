@@ -127,28 +127,28 @@ export const useTabsConfig = () => {
         </span>
       )
     },
+    // {
+    //   title: intl.formatMessage({ id: 'mt.pingcangshijian' }),
+    //   dataIndex: 'pingcangshijian',
+    //   key: 'pingcangshijian',
+    //   render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
+    // },
+    // {
+    //   title: intl.formatMessage({ id: 'mt.kaicangshijian' }),
+    //   dataIndex: 'kaicangshijian',
+    //   key: 'kaicangshijian',
+    //   render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
+    // },
     {
-      title: intl.formatMessage({ id: 'mt.pingcangshijian' }),
-      dataIndex: 'pingcangshijian',
-      key: 'pingcangshijian',
-      render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
+      title: intl.formatMessage({ id: 'mt.shouxufei' }),
+      dataIndex: 'shouxufei',
+      key: 'shouxufei',
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
-      title: intl.formatMessage({ id: 'mt.kaicangshijian' }),
-      dataIndex: 'kaicangshijian',
-      key: 'kaicangshijian',
-      render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
-    },
-    {
-      title: intl.formatMessage({ id: 'mt.zuidachicangliang' }),
-      dataIndex: 'zuidachicangliang',
-      key: 'zuidachicangliang',
-      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} BTC`}</span>
-    },
-    {
-      title: intl.formatMessage({ id: 'mt.pingcangjunjia' }),
-      dataIndex: 'pingcangjunjia',
-      key: 'pingcangjunjia',
+      title: intl.formatMessage({ id: 'mt.chengjiaojia' }),
+      dataIndex: 'chengjiaojia',
+      key: 'chengjiaojia',
       render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
@@ -158,16 +158,37 @@ export const useTabsConfig = () => {
       render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
     },
     {
-      title: intl.formatMessage({ id: 'mt.pingcangshuliang' }),
-      dataIndex: 'pingcangshuliang',
-      key: 'pingcangshuliang',
-      render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} BTC`}</span>
+      title: intl.formatMessage({ id: 'mt.shoushu' }),
+      dataIndex: 'zuidachicangliang',
+      key: 'zuidachicangliang',
+      render: (text) => (
+        <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} ${intl.formatMessage({ id: 'mt.shou2' })}`}</span>
+      )
     },
+    // {
+    //   title: intl.formatMessage({ id: 'mt.pingcangjunjia' }),
+    //   dataIndex: 'pingcangjunjia',
+    //   key: 'pingcangjunjia',
+    //   render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
+    // },
+    // {
+    //   title: intl.formatMessage({ id: 'mt.pingcangshuliang' }),
+    //   dataIndex: 'pingcangshuliang',
+    //   key: 'pingcangshuliang',
+    //   render: (text) => <span className="!font-dingpro-regular text-black-900">{`${formatNum(text)} BTC`}</span>
+    // },
     {
       title: intl.formatMessage({ id: 'mt.gensuirenshu' }),
       dataIndex: 'gensuirenshu',
       key: 'gensuirenshu',
       render: (text) => <span className="!font-dingpro-regular text-black-900">{formatNum(text)}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.jiaoyishijian' }),
+      dataIndex: 'jiaoyishijian',
+      key: 'jiaoyishijian',
+      align: 'right',
+      render: (text) => <span className="!font-dingpro-regular text-black-900">{text}</span>
     }
   ]
 

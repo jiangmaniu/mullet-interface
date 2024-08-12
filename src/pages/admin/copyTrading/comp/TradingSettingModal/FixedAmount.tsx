@@ -76,9 +76,9 @@ export default (props: IProp) => {
   const calcFocusInputValue = useMemo(
     () =>
       focusInputKey === 'mt.yingli'
-        ? formatNum((Number(gendanjine || 0) * Number(zhiying || 0)) / 100)
+        ? formatNum((Number(gendanjine || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
         : focusInputKey === 'mt.sunshi'
-        ? formatNum((Number(gendanjine || 0) * Number(zhisun || 0)) / 100)
+        ? formatNum((Number(gendanjine || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
         : 0,
     [gendanjine, focusInputKey, zhiying, zhisun]
   )
@@ -200,6 +200,7 @@ export default (props: IProp) => {
             min={0}
             placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}`}
             onFocus={() => setFocusInputKey('mt.yingli')}
+            onBlur={() => setFocusInputKey(undefined)}
             value={zhiying}
             // @ts-ignore
             onChange={setZhiying}

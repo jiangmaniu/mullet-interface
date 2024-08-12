@@ -45,6 +45,17 @@ const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
       <div className="flex flex-col gap-1 item">
         <Statistic
           title={<></>}
+          value={datas?.rate2}
+          formatter={(val) => formatter(val)}
+          valueRender={(val) => <span className="text-xl ">{val}</span>}
+        />
+        <span className="text-sm text-gray-600 whitespace-nowrap ">
+          <FormattedMessage id="mt.ruzhutianshu" />
+        </span>
+      </div>
+      <div className="flex flex-col gap-1 item">
+        <Statistic
+          title={<></>}
           value={datas?.rate3}
           formatter={(val) => formatter(val)}
           valueRender={(val) => <span className={`text-xl  ${usColor3}`}>{val}</span>}
@@ -87,41 +98,6 @@ const TakeDatas = ({ datas, gap = 'gap-24' }: IProps) => {
         {/* <span className="text-xl ">{formatNum(datas?.rate6)}</span> */}
         <span className="text-sm text-gray-600 whitespace-nowrap ">
           <FormattedMessage id="mt.zongzichan" />
-        </span>
-      </div>
-      <div className="flex flex-col gap-1 item">
-        <Statistic
-          title={<></>}
-          value={datas?.rate6}
-          formatter={(val) => formatter(val)}
-          valueRender={(val) => <span className="text-xl ">{val}</span>}
-        />
-        {/* <span className="text-xl ">{formatNum(datas?.rate6)}</span> */}
-        <span className="text-sm text-gray-600 whitespace-nowrap ">
-          <FormattedMessage id="mt.jinrifenrun" />({CURRENCY})
-        </span>
-      </div>
-      <div className="flex flex-col gap-1 item">
-        <Statistic
-          title={<></>}
-          value={datas?.rate2}
-          formatter={(val) => formatter(val)}
-          valueRender={(val) => <span className="text-xl ">{val}</span>}
-        />
-        <span className="text-sm text-gray-600 whitespace-nowrap ">
-          <FormattedMessage id="mt.ruzhutianshu" />
-        </span>
-      </div>
-      <div className="flex flex-col gap-1 item">
-        <Statistic
-          title={<></>}
-          value={datas?.rate6}
-          formatter={(val) => formatter(val)}
-          valueRender={(val) => <span className="text-xl ">{val}</span>}
-        />
-        {/* <span className="text-xl ">{formatNum(datas?.rate6)}</span> */}
-        <span className="text-sm text-gray-600 whitespace-nowrap ">
-          <FormattedMessage id="mt.zichanguimo" />
         </span>
       </div>
     </div>

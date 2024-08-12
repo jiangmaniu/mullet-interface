@@ -3,7 +3,6 @@ import './style.less'
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form, message } from 'antd'
-import { useState } from 'react'
 
 import Button from '@/components/Base/Button'
 
@@ -16,16 +15,19 @@ const waitTime = (time = 100) => {
 }
 
 type IProps = {
-  trigger: JSX.Element
+  trigger?: JSX.Element
   onSuccess?: () => void
   onConfirm?: (values: any) => void
+  status?: 'abled' | 'disabled'
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export default ({ trigger, onSuccess, onConfirm }: IProps) => {
+export default ({ trigger, onSuccess, onConfirm, status = 'disabled', open, onOpenChange }: IProps) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
 
-  const [status, setStatus] = useState<'abled' | 'disabled'>('disabled')
+  // const [status, setStatus] = useState<'abled' | 'disabled'>('disabled')
 
   const tips = {
     disabled: intl.formatMessage({ id: 'mt.dingdanweichuli' }),
@@ -47,6 +49,8 @@ export default ({ trigger, onSuccess, onConfirm }: IProps) => {
         trigger={trigger}
         form={form}
         width={430}
+        open={open}
+        onOpenChange={onOpenChange}
         autoFocusFirstInput
         modalProps={{
           centered: true,
@@ -99,6 +103,7 @@ export default ({ trigger, onSuccess, onConfirm }: IProps) => {
                 width: '100%',
                 borderRadius: 8
               }}
+              onClick={onConfirm}
             >
               <div className=" flex items-center gap-1">
                 <span className=" font-semibold text-base ">{confirms[status]}</span>
