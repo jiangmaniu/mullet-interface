@@ -264,7 +264,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   </div>
                   <div className="mt-1">
                     <div>
-                      <span className="text-[20px] text-gray !font-dingpro-regular">{formatNum(item.money, { precision: 2 })}</span>{' '}
+                      <span className="text-[20px] text-gray !font-dingpro-regular">
+                        {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: 2 })}
+                      </span>{' '}
                       <span className="ml-1 text-sm font-normal text-gray-secondary">USD</span>
                     </div>
                   </div>

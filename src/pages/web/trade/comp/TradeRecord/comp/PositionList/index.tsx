@@ -213,19 +213,11 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
                 {/* 追加、提取保证金 */}
                 <AddOrExtractMarginModal
                   trigger={
-                    <div
-                      className="cursor-pointer"
-                      onClick={() => {
-                        setModalInfo(record)
-                      }}
-                    >
+                    <div className="cursor-pointer">
                       <img src="/img/edit-icon.png" width={30} height={30} />
                     </div>
                   }
-                  info={modalInfo}
-                  onClose={() => {
-                    setModalInfo({} as IPositionItem)
-                  }}
+                  info={record}
                 />
               </div>
             )}

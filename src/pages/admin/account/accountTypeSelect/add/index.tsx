@@ -1,9 +1,9 @@
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { ProForm, ProFormText } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl, useModel, useParams } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel, useParams, useSearchParams } from '@umijs/max'
 import { Button, Form } from 'antd'
 import { observer } from 'mobx-react'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
@@ -29,6 +29,15 @@ function AddAccountComp() {
   const currentAccount = (accountList.find((item) => item?.id === accountGroupId) || {}) as AccountGroup.AccountGroupItem
   const password = Form.useWatch('password', form)
 
+  const [searchParams] = useSearchParams()
+  const searchKey = searchParams.get('key') || ''
+
+  useEffect(() => {
+    if (!accountList.length) {
+      trade.getAccountGroupList()
+    }
+  }, [])
+
   return (
     <PageContainer
       pageBgColorMode="gray"
@@ -40,14 +49,14 @@ function AddAccountComp() {
         <div className="w-[552px] bg-white rounded-xl border border-gray-180">
           <div className="border-[0.5px] border-gray-250 rounded-lg m-7">
             <div
-              className="h-[90px] border-b border-gray-180 rounded-lg"
+              className="border-b border-gray-180 rounded-lg"
               style={{ background: 'linear-gradient(180deg, #DCECFF 0%, #FFFFFF 100%)' }}
             >
               <div className="px-7 py-3">
                 <div className="text-gray font-semibold text-[20px] pb-2 truncate">
                   {currentAccount.synopsis?.name || currentAccount?.groupName}
                 </div>
-                <div className="text-gray-secondary text-sm truncate">{currentAccount.synopsis?.remark}</div>
+                <div className="text-gray-secondary text-sm line-clamp-3">{currentAccount.synopsis?.remark}</div>
               </div>
             </div>
             <div className="h-[90px] px-7 py-3">
@@ -75,7 +84,7 @@ function AddAccountComp() {
                   setTimeout(() => {
                     loadingRef?.current?.close()
                     message.info(intl.formatMessage({ id: 'mt.chuangjianchanghuchenggong' }))
-                    push('/account')
+                    push(`/account?key=${searchKey}`)
                   }, 5000)
                 } else {
                   loadingRef?.current?.close()
