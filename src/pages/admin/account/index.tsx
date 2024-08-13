@@ -181,7 +181,7 @@ function Account() {
                   overlayClassName="tooltipBoxDeposit"
                   zIndex={100}
                   open={Number(item.money) <= 0 && countDownSeconds > 0}
-                  placement={isPc ? 'leftBottom' : 'bottomRight'}
+                  placement={isPc ? 'left' : 'bottomRight'}
                   title={
                     <div className="contentBox">
                       <FormattedMessage id="mt.cunruzijinkaishijiaoyi" />
@@ -193,7 +193,9 @@ function Account() {
                     <RechargeSimulateModal
                       trigger={
                         <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
-                          <FormattedMessage id="mt.rujin" />
+                          <span className="font-pf-bold">
+                            <FormattedMessage id="mt.rujin" />
+                          </span>
                         </Button>
                       }
                       info={item}
@@ -222,7 +224,9 @@ function Account() {
                   }}
                   disabled={trade.disabledConect(item)}
                 >
-                  <FormattedMessage id="mt.jiaoyi" />
+                  <span className="font-pf-bold">
+                    <FormattedMessage id="mt.jiaoyi" />
+                  </span>
                 </Button>
                 <Dropdown
                   menu={{

@@ -135,7 +135,7 @@ export default (props: IProp) => {
         />
       </div>
       {/* 跟单金额 */}
-      <div className="flex flex-col gap-2.5 justify-start flex-1">
+      {/* <div className="flex flex-col gap-2.5 justify-start flex-1">
         <span className=" text-sm font-normal text-black-800">
           <FormattedMessage id="mt.gendanjine" />
         </span>
@@ -162,7 +162,7 @@ export default (props: IProp) => {
             </span>
           }
         />
-      </div>
+      </div> */}
       <div className=" flex flex-row justify-between items-center">
         <span
           className=" text-sm font-normal text-black-800 flex items-center gap-1 cursor-pointer"

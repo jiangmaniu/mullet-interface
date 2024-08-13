@@ -1,3 +1,5 @@
+import { shadeColor } from '@/utils/color'
+
 import { bgColorBase, blue, fontFamily, gray } from './theme.config'
 
 const gray150 = gray['150']
@@ -34,8 +36,8 @@ export default {
   },
   Button: {
     colorPrimary: bluePrimary,
-    colorPrimaryHover: bluePrimary, // 主色梯度下的悬浮态
-    colorPrimaryBorderHover: bluePrimary,
+    colorPrimaryHover: shadeColor(bluePrimary, 60), // 主色梯度下的悬浮态
+    colorPrimaryBorderHover: shadeColor(bluePrimary, 60), // 主色梯度下的悬浮态
     colorPrimaryActive: bluePrimary, // 主色梯度下的深色激活态。
     defaultBorderColor: gray150
     // https://ant-design.antgroup.com/components/button-cn#%E4%B8%BB%E9%A2%98%E5%8F%98%E9%87%8Fdesign-token

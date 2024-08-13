@@ -57,8 +57,8 @@ export default (props: IProp) => {
     }
   ]
 
+  const [zhanghuyue, setZhanghuyue] = useState<number | undefined>(231.3)
   const [baozhengjin, setBaozhengjin] = useState<number | undefined>()
-  const [gendanjine, setGendanjine] = useState<number | undefined>()
   const [zhiying, setZhiying] = useState<number | undefined>()
   const [zhisun, setZhisun] = useState<number | undefined>()
 
@@ -76,11 +76,11 @@ export default (props: IProp) => {
   const calcFocusInputValue = useMemo(
     () =>
       focusInputKey === 'mt.yingli'
-        ? formatNum((Number(gendanjine || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
+        ? formatNum((Number(zhanghuyue || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
         : focusInputKey === 'mt.sunshi'
-        ? formatNum((Number(gendanjine || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
+        ? formatNum((Number(zhanghuyue || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
         : 0,
-    [gendanjine, focusInputKey, zhiying, zhisun]
+    [zhanghuyue, focusInputKey, zhiying, zhisun]
   )
 
   return (
@@ -105,7 +105,7 @@ export default (props: IProp) => {
               </span>
               <span className=" w-[1px] h-[11px] bg-gray-260"></span>
               {/* <span className=" text-sm !font-dingpro-regular"> {item.jine} USD</span> */}
-              <span className=" text-sm !font-dingpro-medium"> 231.3 USD</span>
+              <span className=" text-sm !font-dingpro-medium"> {zhanghuyue} USD</span>
             </span>
           )}
           placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.gendanzhanghu' })}`}
@@ -139,7 +139,7 @@ export default (props: IProp) => {
         />
       </div>
       {/* 跟单金额 */}
-      <div className="flex flex-col gap-2.5 justify-start flex-1">
+      {/* <div className="flex flex-col gap-2.5 justify-start flex-1">
         <span className=" text-sm font-normal text-black-800">
           <FormattedMessage id="mt.zuidagendanjine" />
         </span>
@@ -162,7 +162,7 @@ export default (props: IProp) => {
             </span>
           }
         />
-      </div>
+      </div> */}
       <div className=" flex flex-row justify-between items-center">
         <span
           className=" text-sm font-normal text-black-800 flex items-center gap-1 cursor-pointer"

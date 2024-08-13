@@ -10,7 +10,7 @@ import Tags from '@/components/Admin/Tags'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps, IOrderTakerState } from '@/models/takers'
-import { colorTextPrimary } from '@/theme/theme.config'
+import { colorTextPrimary, gray } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
 
 import { AccountTag } from '../../AccountTag'
@@ -58,7 +58,10 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
 
           <Button
             height={26}
+            type="link"
             style={{
+              borderWidth: 1,
+              borderColor: gray[150],
               width: 54,
               borderRadius: 16
             }}
@@ -134,14 +137,15 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
           height={42}
           type="primary"
           style={{
-            background: takerState === 'yimanyuan' ? '#f49b1e' : '',
+            // background: takerState === 'yimanyuan' ? '#f49b1e' : '',
             width: '100%',
             borderRadius: 8
           }}
+          className={takerState}
           disabled={takerState === 'wufagendan'}
           onClick={handleOnOpen}
         >
-          <div className=" flex items-center font-semibold gap-1">
+          <div className=" flex items-center font-semibold gap-1 text-base">
             {takerState === 'yimanyuan' && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}
             <FormattedMessage id={`mt.${takerState}`} />
           </div>

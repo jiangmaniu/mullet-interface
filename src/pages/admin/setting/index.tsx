@@ -125,37 +125,39 @@ export default function Setting() {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center cursor-pointer">
-                {/* 没有提交kyc申请 */}
-                {!kycStatus && (
-                  <span className="text-gray text-base font-semibold pr-2" onClick={handleJumpKycAuth}>
-                    <FormattedMessage id="mt.quwancheng" />
-                  </span>
-                )}
-                {/* 实名认证成功 */}
-                {kycStatus === 'SUCCESS' && (
-                  <span className="text-gray text-base font-semibold pr-2" onClick={handleKycSuccModal}>
-                    <FormattedMessage id="common.chakan" />
-                  </span>
-                )}
-                {/* 实名认证失败 */}
-                {kycStatus === 'DISALLOW' && (
-                  <KycFailModal
-                    trigger={
-                      <span className="text-gray text-base font-semibold pr-2">
-                        <FormattedMessage id="common.chakan" />
-                      </span>
-                    }
-                  />
-                )}
-                {kycStatus !== 'TODO' && <ArrowRightOutlined style={{ color: gray[900], fontSize: 16 }} />}
-              </div>
+              <Button type="text">
+                <div className="flex items-center cursor-pointer">
+                  {/* 没有提交kyc申请 */}
+                  {!kycStatus && (
+                    <span className="text-gray text-base leading-4 font-semibold pr-2" onClick={handleJumpKycAuth}>
+                      <FormattedMessage id="mt.quwancheng" />
+                    </span>
+                  )}
+                  {/* 实名认证成功 */}
+                  {kycStatus === 'SUCCESS' && (
+                    <span className="text-gray text-base leading-4 font-semibold pr-2" onClick={handleKycSuccModal}>
+                      <FormattedMessage id="common.chakan" />
+                    </span>
+                  )}
+                  {/* 实名认证失败 */}
+                  {kycStatus === 'DISALLOW' && (
+                    <KycFailModal
+                      trigger={
+                        <span className="text-gray text-base leading-4 font-semibold pr-2">
+                          <FormattedMessage id="common.chakan" />
+                        </span>
+                      }
+                    />
+                  )}
+                  {kycStatus !== 'TODO' && <ArrowRightOutlined style={{ color: gray[900], fontSize: 16 }} />}
+                </div>
+              </Button>
             </div>
           </div>
           <div className="border border-gray-150 rounded-[7px] p-[30px] flex-1">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <img src="/img/wuxian.png" width={60} height={34} />
+                <img src="/img/wuxian.png" width={70} height={70} />
                 <div className="flex flex-col pl-7">
                   <div className="text-gray text-sm">
                     <FormattedMessage id="mt.rujinxianzhi" />
@@ -286,9 +288,11 @@ export default function Setting() {
             </span>
             <ModifyPasswordModal
               trigger={
-                <span className="text-gray text-sm font-semibold cursor-pointer">
-                  <FormattedMessage id="mt.genggai" />
-                </span>
+                <Button type="text">
+                  <span className="text-gray text-sm font-semibold cursor-pointer">
+                    <FormattedMessage id="mt.genggai" />
+                  </span>
+                </Button>
               }
             />
           </div>
@@ -311,17 +315,21 @@ export default function Setting() {
           {phone ? (
             <ModifyPhoneModal
               trigger={
-                <span className="text-gray text-sm font-semibold cursor-pointer">
-                  <FormattedMessage id="mt.genggai" />
-                </span>
+                <Button type="text">
+                  <span className="text-gray text-sm font-semibold cursor-pointer">
+                    <FormattedMessage id="mt.genggai" />
+                  </span>
+                </Button>
               }
             />
           ) : (
             <ModifyEmailModal
               trigger={
-                <span className="text-gray text-sm font-semibold cursor-pointer">
-                  <FormattedMessage id="mt.genggai" />
-                </span>
+                <Button type="text">
+                  <span className="text-gray text-sm font-semibold cursor-pointer">
+                    <FormattedMessage id="mt.genggai" />
+                  </span>
+                </Button>
               }
             />
           )}

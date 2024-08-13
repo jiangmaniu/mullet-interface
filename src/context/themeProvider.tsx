@@ -64,6 +64,9 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
         wave={{
           showEffect: showInsetEffect
         }}
+        button={{
+          autoInsertSpace: false
+        }}
       >
         {children}
       </ConfigProvider>

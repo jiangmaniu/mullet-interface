@@ -1,3 +1,5 @@
+import './style.less'
+
 import { FormattedMessage, history, useModel } from '@umijs/max'
 import { useState } from 'react'
 
@@ -56,16 +58,17 @@ export default function copyTrading() {
           }}
         >
           <div
-            className="p-[1px] rounded-xl xl:h-[50px] h-[46px] w-[10rem] ml-auto "
+            className="p-[1px] rounded-xl xl:h-[50px] h-[46px] w-[10rem] ml-auto hover:bg-transparent "
             style={{
               background: 'linear-gradient(315deg, rgba(236, 236, 236, 0.61), rgba(255, 255, 255, 1))'
             }}
           >
             <Button
               type="primary"
+              className="lijicanjia"
               height={48}
               style={{
-                background: 'linear-gradient( 270deg, #8035FE 0%, #183EFC 100%)',
+                background: '#183efc',
                 width: '100%',
                 borderRadius: 12
               }}
