@@ -30,6 +30,76 @@ export function formatSessionTime(a: any) {
 }
 
 /**
+ * 计算汇率
+ * @param value 转换的值
+ * @param unit 盈利货币单位
+ * @param buySell 买卖方向
+ * @returns
+ */
+type IExchangeRateParams = {
+  /**需要转化的值 */
+  value: any
+  /**盈利货币单位 */
+  unit: any
+  /**买卖方向 */
+  buySell: API.TradeBuySell | undefined
+}
+export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) => {
+  const { trade, ws } = stores
+  const quotes = ws.quotes
+  // 检查货币是否是外汇/指数，并且不是以 USD 为单位，比如AUDNZD => 这里单位是NZD，找到NZDUSD或者USDNZD的指数取值即可
+  // 数字货币、商品黄金石油这些以美元结算的，单位都是USD不需要参与转化直接返回
+  // 非USD单位的产品都要转化为美元
+  // if ((quoteList2.some((v) => v.name === symbol) || quoteList3.some((v) => v.name === symbol)) && unit !== 'USD') {
+  const allSimpleSymbolsMap = trade.allSimpleSymbolsMap // 全部品种map
+  let qb: any = {}
+  let profit = value || 0
+  const isBuy = buySell === TRADE_BUY_SELL.BUY // 是否买入
+  const isSell = buySell === TRADE_BUY_SELL.SELL // 是否卖出
+
+  // if (isForeign && trade.currentAccountInfo?.currencyUnit !== unit) {
+  // 交易品种配置的盈利货币单位和账户组配置的货币单位不一致时，需要转换
+  if (trade.currentAccountInfo?.currencyUnit !== unit) {
+    // 乘法
+    const divName = ('USD' + unit).toUpperCase() // 如 USDNZD
+    // 除法
+    const mulName = (unit + 'USD').toUpperCase() // 如 NZDUSD
+
+    // 使用汇率品种的dataSourceCode去获取行情
+    const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[divName] || {})?.dataSourceCode
+    const divNameKey = `${dataSourceCode}/${divName}`
+    const mulNameKey = `${dataSourceCode}/${mulName}`
+
+    // 检查是否存在 divName 对应的报价信息
+    if (quotes[divNameKey]) {
+      qb = quotes[divNameKey]
+
+      // 检查交易指令是否是买入，如果是，则获取 divName 对应的报价信息，并用其 bid 除以 profit
+      if (isBuy) {
+        profit = profit / Number(qb?.priceData?.buy)
+      }
+      // 检查交易指令是否是卖出，如果是，则获取 divName 对应的报价信息，并用其 ask 除以 profit
+      else if (isSell) {
+        profit = profit / Number(qb?.priceData?.sell)
+      }
+    }
+    // 如果 divName 对应的报价信息不存在，则检查 mulName 对应的报价信息
+    else if (quotes[mulNameKey]) {
+      qb = quotes[mulNameKey]
+      // 检查交易指令是否是买入，如果是，则获取 mulName 对应的报价信息，并用其 bid 乘以 profit
+      if (isBuy) {
+        profit = profit * Number(qb?.priceData?.buy)
+      }
+      // 检查交易指令是否是卖出，如果是，则获取 mulName 对应的报价信息，并用其 ask 乘以 profit
+      else if (isSell) {
+        profit = profit * Number(qb?.priceData?.sell)
+      }
+    }
+  }
+  return Number(toFixed(profit))
+}
+
+/**
  * 将计算的浮动盈亏转化为美元单位
  * @param dataSourceSymbol 数据源品种名称
  * @param positionItem 持仓item
@@ -39,18 +109,15 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
   const dataSourceSymbol = positionItem?.dataSourceSymbol
   if (!dataSourceSymbol) return
   const quoteInfo = getCurrentQuote(dataSourceSymbol)
-  const quotes = quoteInfo.quotes as any // 全部行情
-  let qb: any = {}
-  const symbolConf = quoteInfo?.symbolConf
+  const symbolConf = positionItem?.conf
   const bid = Number(quoteInfo?.bid || 0)
   const ask = Number(quoteInfo?.ask || 0)
-  const unit = symbolConf?.baseCurrency // 货币单位
-  const isBuy = positionItem.buySell === TRADE_BUY_SELL.BUY // 是否买入
-  const isSell = positionItem.buySell === TRADE_BUY_SELL.SELL // 是否卖出
+  const unit = symbolConf?.profitCurrency // 货币单位
   const number = Number(positionItem.orderVolume || 0) // 手数
   const consize = Number(symbolConf?.contractSize || 1) // 合约量
   const openPrice = Number(positionItem.startPrice || 0) // 开仓价
   const isForeign = symbolConf?.calculationType === 'FOREIGN_CURRENCY' // 外汇
+
   // 浮动盈亏  (买入价-卖出价) x 合约单位 x 交易手数
   let profit =
     bid && ask
@@ -58,44 +125,16 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
         ? (bid - openPrice) * number * consize
         : (openPrice - ask) * number * consize
       : 0
-  // 检查货币是否是外汇/指数，并且不是以 USD 为单位，比如AUDNZD => 这里单位是NZD，找到NZDUSD或者USDNZD的指数取值即可
-  // 数字货币、商品黄金石油这些以美元结算的，单位都是USD不需要参与转化直接返回
-  // 非USD单位的产品都要转化为美元
-  // if ((quoteList2.some((v) => v.name === symbol) || quoteList3.some((v) => v.name === symbol)) && unit !== 'USD') {
-  // @TODO 取值需要处理一下
-  if (isForeign) {
-    // 乘法
-    const divName = ('USD' + unit).toLocaleLowerCase() // 如 USDNZD
-    // 除法
-    const mulName = (unit + 'USD').toLocaleLowerCase() // 如 NZDUSD
-    // 检查是否存在 divName 对应的报价信息
-    if (quotes[divName]) {
-      qb = quotes[divName]
-      // 检查交易指令是否是买入，如果是，则获取 divName 对应的报价信息，并用其 bid 除以 profit
-      if (isBuy) {
-        profit = profit / qb.bid
-      }
-      // 检查交易指令是否是卖出，如果是，则获取 divName 对应的报价信息，并用其 ask 除以 profit
-      else if (isSell) {
-        profit = profit / qb.ask
-      }
-    }
-    // 如果 divName 对应的报价信息不存在，则检查 mulName 对应的报价信息
-    else if (quotes[mulName]) {
-      // 检查交易指令是否是买入，如果是，则获取 mulName 对应的报价信息，并用其 bid 乘以 profit
-      if (isBuy) {
-        qb = quotes[mulName]
-        profit = profit * qb.bid
-      }
-      // 检查交易指令是否是卖出，如果是，则获取 mulName 对应的报价信息，并用其 ask 乘以 profit
-      else if (isSell) {
-        qb = quotes[mulName]
-        profit = profit * qb.ask
-      }
-    }
-  }
+
+  // 转换汇率
+  profit = calcExchangeRate({
+    value: profit,
+    unit,
+    buySell: positionItem.buySell
+  })
+
   // 返回转化后的 profit
-  return Number(profit.toFixed(2))
+  return Number(toFixed(profit))
 }
 
 // 计算收益率
@@ -128,6 +167,8 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
   let compelCloseRatio = item.compelCloseRatio || 0 // 强制平仓比例
   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
 
+  const isBuy = item.buySell === 'BUY'
+
   let leverage = 1
   if (prepaymentConf?.mode === 'fixed_leverage') {
     // 固定杠杆
@@ -145,14 +186,21 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
   // 汇率品种USD在后，用乘法
   // 净值 - (开仓价格 - 强平价格) * 合约大小 * 手数 * 汇率(乘或除) / 占用保证金 = 强平比例
 
-  // 买：多头强平价格 = 开仓价格 - (净值 - 本单盈亏 - 账户占用保证金*强平比例) / (合约大小 * 手数 * (1/杠杆) * 汇率(乘或除)) @TODO 处理汇率取值问题
+  // 买：多头强平价格 = 开仓价格 - (净值 - 本单盈亏 - 账户占用保证金*强平比例) / (合约大小 * 手数 * (1/杠杆) * 汇率(乘或除))
   let buyForceClosePrice = 0
-  // 卖：空头强平价格 = 开仓价格 + (净值 - 本单盈亏 + 账户占用保证金*强平比例) / (合约大小 * 手数 * (1/杠杆) * 汇率(乘或除))  @TODO 处理汇率取值问题
+  // 卖：空头强平价格 = 开仓价格 + (净值 - 本单盈亏 + 账户占用保证金*强平比例) / (合约大小 * 手数 * (1/杠杆) * 汇率(乘或除))
   let sellForceClosePrice = 0
+
+  // 计算汇率
+  let exchangeRateValue = calcExchangeRate({
+    value: contractSize * orderVolume * (1 / leverage),
+    unit: conf.profitCurrency,
+    buySell: item.buySell
+  })
 
   // 全仓
   if (isCrossMargin) {
-    const value = (balance - profit - occupyMargin * compelCloseRatio) / (contractSize * orderVolume * (1 / leverage))
+    const value = (balance - profit - occupyMargin * compelCloseRatio) / exchangeRateValue
     buyForceClosePrice = toFixed(startPrice - value)
     sellForceClosePrice = toFixed(startPrice + value)
   } else {
@@ -160,12 +208,12 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
     balance = orderMargin - Number(item.interestFees || 0) - Number(item.handlingFees || 0) + Number(item.profit || 0)
     // 单笔订单的占用保证金
     occupyMargin = orderMargin
-    const value = (balance - profit - occupyMargin * compelCloseRatio) / (contractSize * orderVolume * (1 / leverage))
+    const value = (balance - profit - occupyMargin * compelCloseRatio) / exchangeRateValue
     buyForceClosePrice = toFixed(startPrice - value)
     sellForceClosePrice = toFixed(startPrice + value)
   }
 
-  const retValue = item.buySell === 'BUY' ? buyForceClosePrice : sellForceClosePrice
+  const retValue = isBuy ? buyForceClosePrice : sellForceClosePrice
 
   return retValue > 0 ? toFixed(retValue, digits) : ''
 }
@@ -280,7 +328,12 @@ export const calcExpectedMargin = (obj: IExpectedMargin) => {
     expectedMargin = (contractSize * orderVolume * price) / leverage
   }
 
-  return expectedMargin
+  // 转化汇率
+  return calcExchangeRate({
+    value: expectedMargin,
+    unit: conf?.profitCurrency,
+    buySell
+  })
 }
 
 /**

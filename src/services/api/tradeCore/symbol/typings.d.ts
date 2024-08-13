@@ -439,4 +439,11 @@ declare namespace Symbol {
      */
     transactionFeeConf?: Symbol.TransactionFeeConf
   }
+  // 全部品种Item列表
+  type AllSymbolItem = {
+    id: string
+    symbol: string
+    dataSourceCode: string
+    dataSourceSymbol: string
+  }
 }
