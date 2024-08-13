@@ -338,7 +338,7 @@ declare namespace Order {
     /**
      * 配置
      */
-    conf?: string | Symbol.SymbolConf
+    conf: Symbol.SymbolConf
     /**
      * 创建时间
      */

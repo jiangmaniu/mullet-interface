@@ -4,6 +4,7 @@ import ReconnectingWebSocket from 'reconnecting-websocket'
 import ENV from '@/env'
 import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import klineStore from './kline'
 import trade from './trade'
@@ -159,16 +160,54 @@ class WSStore {
   }
 
   // 批量订阅行情(查询symbol列表后)
-  batchSubscribeSymbol = (cancel?: boolean) => {
-    const symbolList = trade.symbolList
+  batchSubscribeSymbol = ({
+    cancel = false,
+    list = []
+  }: {
+    cancel?: boolean
+    needAccountGroupId?: boolean
+    list?: Array<{ accountGroupId?: string; dataSourceSymbol: string; dataSourceCode: string }>
+  } = {}) => {
+    const symbolList = list?.length ? list : trade.symbolList
     if (!symbolList.length) return
     symbolList.forEach((item) => {
+      const topic = `/000000/${item.dataSourceCode}/symbol/${item.dataSourceSymbol}`
       this.send({
-        topic: `/000000/${item.dataSourceCode}/symbol/${item.dataSourceSymbol}/${item.accountGroupId}`,
+        // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
+        topic: item.accountGroupId ? `${topic}/${item.accountGroupId}` : topic,
         cancel
       })
     })
   }
+
+  // 动态订阅汇率品种行情
+  subscribeExchangeRateQuote = (symbolConf?: Symbol.SymbolConf) => {
+    const quote = getCurrentQuote()
+    // 如果不传，使用当前激活的品种配置
+    const conf = symbolConf || quote?.symbolConf
+    if (!conf) return
+
+    const allSimpleSymbolsMap = trade.allSimpleSymbolsMap
+    const unit = conf?.profitCurrency // 货币单位
+    // 乘法
+    const divName = ('USD' + unit).toUpperCase() // 如 USDNZD
+    // 除法
+    const mulName = (unit + 'USD').toUpperCase() // 如 NZDUSD
+
+    const symbolInfo = allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName]
+
+    if (!symbolInfo) return
+
+    this.batchSubscribeSymbol({
+      list: [
+        {
+          dataSourceCode: symbolInfo.dataSourceCode,
+          dataSourceSymbol: symbolInfo.dataSourceSymbol
+        }
+      ]
+    })
+  }
+
   // 订阅当前打开的品种深度报价
   subscribeDepth = (cancel?: boolean) => {
     const symbolInfo = trade.getActiveSymbolInfo()

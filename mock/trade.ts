@@ -807,6 +807,75 @@ export default {
       msg: '操作成功'
     })
   },
+  '/api/trade-core/coreApi/symbols/list': async (req: Request, res: Response) => {
+    res.send({
+      code: 200,
+      success: true,
+      data: [
+        {
+          id: '1806228806628356098',
+          symbol: 'BTC',
+          dataSourceCode: 'binance',
+          dataSourceSymbol: 'BTCUSDT'
+        },
+        {
+          id: '1806229837382758401',
+          symbol: 'LTC',
+          dataSourceCode: 'binance',
+          dataSourceSymbol: 'LTCUSDT'
+        },
+        {
+          id: '1806231775646134274',
+          symbol: 'ETH',
+          dataSourceCode: 'binance',
+          dataSourceSymbol: 'ETHUSDT'
+        },
+        {
+          id: '1807709029528096770',
+          symbol: 'BTCUSDT',
+          dataSourceCode: 'binance',
+          dataSourceSymbol: 'BTCUSDT'
+        },
+        {
+          id: '1807710393574477826',
+          symbol: 'ETHUSDT',
+          dataSourceCode: 'binance',
+          dataSourceSymbol: 'ETHUSDT'
+        },
+        {
+          id: '1808329258267357185',
+          symbol: 'EOS',
+          dataSourceCode: 'binance',
+          dataSourceSymbol: 'ETHUSDT'
+        },
+        {
+          id: '1808444845169618946',
+          symbol: 'DOT',
+          dataSourceCode: 'huobi',
+          dataSourceSymbol: 'dotusdt'
+        },
+        {
+          id: '1815575838636175362',
+          symbol: 'ADA',
+          dataSourceCode: 'binance',
+          dataSourceSymbol: 'ADAUSDT'
+        },
+        {
+          id: '1819261278334541826',
+          symbol: 'EURUSD',
+          dataSourceCode: 'mt5',
+          dataSourceSymbol: 'EURUSD'
+        },
+        {
+          id: '1821788269461942274',
+          symbol: 'USDHKD',
+          dataSourceCode: 'mt5',
+          dataSourceSymbol: 'USDHKD'
+        }
+      ],
+      msg: '操作成功'
+    })
+  },
   '/api/services/app/Customer/GetUserInfo': async (req: Request, res: Response) => {
     res.send({})
   }

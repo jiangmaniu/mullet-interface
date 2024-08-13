@@ -100,3 +100,11 @@ export async function getSymbolDetail(params: API.IdParam) {
     return res
   })
 }
+
+// 获取后台配置的全部品种列表，用于验证汇率品种是否配置
+export async function getAllSymbols(params?: API.PageParam) {
+  return request<API.Response<Symbol.AllSymbolItem[]>>('/api/trade-core/coreApi/symbols/list', {
+    method: 'GET',
+    params
+  })
+}
