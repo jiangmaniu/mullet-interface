@@ -41,6 +41,22 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     }
   }
 
+  // 监听系统主题模式
+  useEffect(() => {
+    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    setTheme(darkModeMediaQuery.matches ? 'dark' : 'light')
+    const listener = (event: any) => {
+      const themeMode = event.matches ? 'dark' : 'light'
+      setTheme(themeMode)
+      setThemeClassName(themeMode)
+    }
+
+    darkModeMediaQuery.addEventListener('change', listener)
+    return () => {
+      darkModeMediaQuery.removeEventListener('change', listener)
+    }
+  }, [])
+
   const handleSetTheme = (mode: IThemeMode) => {
     STORAGE_SET_THEME(mode)
     setTheme(mode)

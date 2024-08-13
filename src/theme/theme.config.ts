@@ -251,5 +251,6 @@ export const cssVars = `
   }
   :root[class=dark] {
     ${setRootVars(ThemeDarkVarsConst)}
+    color-scheme: dark;
   }
 `

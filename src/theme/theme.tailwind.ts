@@ -1,6 +1,6 @@
 import colors from 'tailwindcss/colors'
 
-import { black, blue, borderColor, colorPrimary, gray, green, red, ThemeDarkVarsConst, yellow } from './theme.config'
+import { black, blue, borderColor, colorPrimary, gray, green, red, ThemeDarkVarsConst, ThemeVarsConst, yellow } from './theme.config'
 
 // https://github.com/tailwindlabs/tailwindcss/issues/4690#issuecomment-1046087220
 // 对于任何将 Tailwind 的完整默认颜色传播到 theme.colors 的人，都会收到警告
@@ -44,36 +44,36 @@ const themeColor = {
   yellow: {
     ...colors.yellow,
     ...yellow,
-    DEFAULT: 'var(--color-yellow)' // 默认值 text-yellow
+    DEFAULT: `var(--color-yellow,${ThemeVarsConst['--color-yellow']})` // 默认值 text-yellow
   },
   // 灰色系
   gray: {
     ...colors.gray,
     ...gray,
     // 文字颜色
-    DEFAULT: 'var(--color-text-primary)', // 默认值，文字主色 text-gray
+    DEFAULT: `var(--color-text-primary,${ThemeVarsConst['--color-text-primary']})`, // 默认值，文字主色 text-gray
     // DEFAULT: gray['900'], // 默认值，文字主色 text-gray
-    secondary: 'var(--color-text-secondary)', // 文字-第二色-衍生色1
-    weak: 'var(--color-text-weak)' // 文字-衍生色2
+    secondary: `var(--color-text-secondary,${ThemeVarsConst['--color-text-secondary']})`, // 文字-第二色-衍生色1
+    weak: `var(--color-text-weak,${ThemeVarsConst['--color-text-weak']})` // 文字-衍生色2
     // light: colorTextLight,// 文字-衍生色3
   },
   // 绿色系
   green: {
     ...colors.green,
     ...green,
-    DEFAULT: 'var(--color-green)' // 默认值 text-green
+    DEFAULT: `var(--color-green,${ThemeVarsConst['--color-green']})` // 默认值 text-green
   },
   // 红色系
   red: {
     ...colors.red,
     ...red,
-    DEFAULT: 'var(--color-red)' // 默认值 text-red
+    DEFAULT: `var(--color-red,${ThemeVarsConst['--color-red']})` // 默认值 text-red
   },
   // 蓝色系
   blue: {
     ...colors.blue,
     ...blue,
-    DEFAULT: 'var(--color-blue)' // 默认值 text-blue
+    DEFAULT: `var(--color-blue,${ThemeVarsConst['--color-blue']})` // 默认值 text-blue
   }
 }
 
@@ -129,13 +129,13 @@ export default {
   extend: {
     // 使用css变量，方便切换主题，使用方法：text-base-primary
     textColor: {
-      'base-primary': 'var(--color-text-primary)',
-      'base-secondary': 'var(--color-text-secondary)',
-      'base-weak': 'var(--color-text-weak)'
+      'base-primary': `var(--color-text-primary,${ThemeVarsConst['--color-text-primary']})`, // 多写一个默认值，为了让编辑器识别颜色变量
+      'base-secondary': `var(--color-text-secondary,${ThemeVarsConst['--color-text-secondary']})`,
+      'base-weak': `var(--color-text-weak,${ThemeVarsConst['--color-text-weak']})`
     },
     backgroundColor: {
-      'base-primary': 'var(--page-bg)', // 页面背景颜色
-      'base-hover': 'var(--hover-bg)' // hover背景颜色
+      'base-primary': `var(--page-bg,${ThemeVarsConst['--page-bg']})`, // 页面背景颜色
+      'base-hover': `var(--hover-bg,${ThemeVarsConst['--hover-bg']})` // hover背景颜色
     },
     boxShadow: {
       custom: '0px 2px 70px 0px rgba(80,80,80,0.07)',

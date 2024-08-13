@@ -184,12 +184,10 @@ function storageSetting(key: string, value: any) {
   if (valuetype(result, 'string')) {
     localStorage.setItem(key, result)
   } else {
-    throw {
-      error: {
-        msg: '本地存储失败',
-        result: result
-      }
-    }
+    console.log({
+      msg: '本地存储失败',
+      result: result
+    })
   }
 }
 
@@ -303,12 +301,10 @@ function storageSessionSetting(key: string, value: any) {
   if (valuetype(result, 'string')) {
     sessionStorage.setItem(key, result)
   } else {
-    throw {
-      error: {
-        msg: '本地存储失败',
-        result: result
-      }
-    }
+    console.log({
+      msg: '本地存储失败',
+      result: result
+    })
   }
 }
 
