@@ -53,18 +53,18 @@ function AddAccountComp() {
               style={{ background: 'linear-gradient(180deg, #DCECFF 0%, #FFFFFF 100%)' }}
             >
               <div className="px-7 py-3">
-                <div className="text-gray font-semibold text-[20px] pb-2 truncate">
+                <div className="text-primary font-semibold text-[20px] pb-2 truncate">
                   {currentAccount.synopsis?.name || currentAccount?.groupName}
                 </div>
-                <div className="text-gray-secondary text-sm line-clamp-3">{currentAccount.synopsis?.remark}</div>
+                <div className="text-secondary text-sm line-clamp-3">{currentAccount.synopsis?.remark}</div>
               </div>
             </div>
             <div className="h-[90px] px-7 py-3">
               <div className="flex items-center justify-between">
                 {(currentAccount.synopsis?.list || []).slice(0, 3).map((v, index) => (
                   <div className="flex flex-col" key={index}>
-                    <div className="text-gray text-lg font-semibold pb-[7px]">{v.content}</div>
-                    <div className="text-gray text-sm">{v.title}</div>
+                    <div className="text-primary text-lg font-semibold pb-[7px]">{v.content}</div>
+                    <div className="text-primary text-sm">{v.title}</div>
                   </div>
                 ))}
               </div>

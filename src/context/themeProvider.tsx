@@ -33,8 +33,9 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
   const setThemeClassName = (theme: IThemeMode) => {
     // 只有在交易页面才需要切换主题模式
     if (location.pathname.indexOf('/trade') !== -1) {
-      document.documentElement.className = theme
-      document.body.style.background = 'var(--page-bg)'
+      // 避免设置null值
+      document.documentElement.className = ['dark', 'light'].includes(theme) ? theme : 'light'
+      document.body.style.background = 'var(--bg-primary)'
     } else {
       document.documentElement.className = 'light'
       document.body.style.background = '#fff'

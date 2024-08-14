@@ -90,7 +90,7 @@ export default observer(() => {
     return {
       '&::after': {
         content: "''",
-        background: 'var(--border-line-color)',
+        background: 'var(--divider-line-color)',
         width: '100%',
         height: 0.5,
         position: 'absolute',
@@ -116,7 +116,7 @@ export default observer(() => {
               {/* 买卖交易区 */}
               <BuyAndSell />
             </div>
-            <div className={classNames('flex items-start justify-between relative bg-base-primary', borderTopClassName)}>
+            <div className={classNames('flex items-start justify-between relative bg-primary', borderTopClassName)}>
               {/* 交易记录 */}
               <div style={{ width: 'calc(100vw - 303px)' }} className={classNames('flex-1')}>
                 <TradeRecord />

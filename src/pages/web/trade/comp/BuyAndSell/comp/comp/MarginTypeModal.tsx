@@ -53,10 +53,10 @@ function MarginTypeModal({ trigger }: IProps) {
           <img src={'/img/margintype.png'} width={121} height={121} alt="" />
         </div>
         <div className="relative -top-1 flex flex-col items-center justify-center px-4">
-          <div className="text-base text-gray font-semibold">
+          <div className="text-base text-primary font-semibold">
             <FormattedMessage id="mt.baozhengjinmoshi" />
           </div>
-          <div className="text-sm text-gray pt-[6px]">
+          <div className="text-sm text-primary pt-[6px]">
             <FormattedMessage id="mt.baozhengjinmoshitips" />
           </div>
         </div>
@@ -80,10 +80,10 @@ function MarginTypeModal({ trigger }: IProps) {
                   }}
                 >
                   <div className="flex items-center justify-between pb-2">
-                    <span className="text-gray font-semibold text-base">{item.label}</span>
+                    <span className="text-primary font-semibold text-base">{item.label}</span>
                     {isActive && <img src="/img/check-icon.png" width={18} height={18} />}
                   </div>
-                  <div className="text-xs text-gray-secondary">{item.desc}</div>
+                  <div className="text-xs text-secondary">{item.desc}</div>
                 </div>
               )
             })}

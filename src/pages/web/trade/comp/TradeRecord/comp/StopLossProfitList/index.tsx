@@ -64,7 +64,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
           <div className="flex items-center">
             <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
-              <span className="text-base font-semibold text-gray">{record.symbol}</span>
+              <span className="text-base font-semibold text-primary">{record.symbol}</span>
               <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
@@ -85,7 +85,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 120,
       align: 'left',
-      className: '!text-[13px] text-gray',
+      className: '!text-[13px] text-primary',
       renderText(text, record, index, action) {
         return record.type === 'STOP_LOSS_ORDER' ? <FormattedMessage id="mt.zhisundan" /> : <FormattedMessage id="mt.zhiyingdan" />
       }
@@ -123,7 +123,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)} USD</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)} USD</span>
       }
     },
     {
@@ -141,7 +141,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
     {
@@ -156,7 +156,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
         label: '' // 去掉form label
       },
       width: 180,
-      className: '!text-[13px] text-gray'
+      className: '!text-[13px] text-primary'
     },
     {
       title: <FormattedMessage id="mt.dingdanhao" />,
@@ -171,7 +171,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
         label: '' // 去掉form label
       },
       width: 200,
-      className: '!text-[13px] text-gray'
+      className: '!text-[13px] text-primary'
     },
     {
       title: <FormattedMessage id="common.op" />,
@@ -185,7 +185,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center justify-end">
             <div
-              className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-gray-50 text-sm xl:border"
+              className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-primary max-xl:w-[48%] max-xl:bg-gray-50 text-sm xl:border"
               onClick={() => {
                 parentPopup?.close()
                 cancelPendingRef.current?.show(record)

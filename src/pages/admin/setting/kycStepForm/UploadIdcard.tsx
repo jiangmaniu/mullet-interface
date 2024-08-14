@@ -58,7 +58,7 @@ export default function ({ form }: IProps) {
         ) : (
           <div className="flex items-center justify-center">
             <div className="bg-[url(/img/idcard-bg.png)] bg-cover w-[230px] h-[114px] px-8 py-7">
-              <span className="text-gray text-sm font-semibold">
+              <span className="text-primary text-sm font-semibold">
                 <FormattedMessage id="mt.dianjishangchuantupian" />
               </span>
               <Button className="!h-[30px] px-5 text-sm mt-5 !rounded-[22px]" type="primary">

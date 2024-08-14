@@ -26,10 +26,10 @@ export default observer((props, ref) => {
     return (
       <>
         <div className="relative -top-9 flex flex-col items-center justify-center px-4">
-          <div className="text-lg font-bold text-gray">
+          <div className="text-lg font-bold text-primary">
             <FormattedMessage id="mt.zijinbuzu" />
           </div>
-          <div className="pt-5 text-sm text-gray">
+          <div className="pt-5 text-sm text-primary">
             <FormattedMessage id="mt.nidezijinbuzuqingrujin" />
           </div>
         </div>

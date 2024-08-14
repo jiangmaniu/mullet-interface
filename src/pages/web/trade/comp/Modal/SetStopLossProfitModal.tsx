@@ -144,15 +144,15 @@ export default observer(
               <div className="flex items-center justify-between max-xl:flex-col max-xl:items-start">
                 <div className="flex items-center">
                   <SymbolIcon src={item?.imgUrl} width={24} height={24} />
-                  <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
+                  <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
                   <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
                 </div>
                 <div className="flex items-end justify-center flex-col">
-                  <span className="text-sm text-gray">
+                  <span className="text-sm text-primary">
                     {item.orderVolume}
                     <FormattedMessage id="mt.lot" />
                   </span>
-                  <span className="text-sm text-gray-secondary">
+                  <span className="text-sm text-secondary">
                     <FormattedMessage id="mt.kaicangshoushu" />
                   </span>
                 </div>
@@ -161,18 +161,18 @@ export default observer(
               <div className="my-3 xl:hidden"></div>
               <div className="flex w-full items-center pt-2">
                 <div className="flex items-center max-xl:pt-2 xl:pl-4">
-                  <span className="pr-3 text-sm text-gray-secondary">
+                  <span className="pr-3 text-sm text-secondary">
                     <FormattedMessage id="mt.dangqianjiage" />
                   </span>
-                  <span className="text-sm text-gray">
+                  <span className="text-sm text-primary">
                     {item.currentPrice} {unit}
                   </span>
                 </div>
                 <div className="flex items-center justify-between pl-7">
-                  <span className="pr-3 text-sm text-gray-secondary">
+                  <span className="pr-3 text-sm text-secondary">
                     <FormattedMessage id="mt.guadanjiage" />
                   </span>
-                  <span className="text-sm text-gray">
+                  <span className="text-sm text-primary">
                     {item.startPrice} {unit}
                   </span>
                 </div>

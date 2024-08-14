@@ -152,10 +152,10 @@ export default function KycStepForm() {
     return (
       <div>
         <div className="mb-3">
-          <div className="text-gray font-semibold text-[22px]">
+          <div className="text-primary font-semibold text-[22px]">
             {isBindPhone ? <FormattedMessage id="mt.shurunindeshoujihaoma" /> : <FormattedMessage id="mt.qingshurunindeyouxiang" />}
           </div>
-          <div className="text-gray-secondary text-sm pt-1 mb-4">
+          <div className="text-secondary text-sm pt-1 mb-4">
             <FormattedMessage id="mt.yongyuyanzhengnidezhanghu" />
           </div>
           {isBindPhone ? (
@@ -223,7 +223,7 @@ export default function KycStepForm() {
         <div className="mt-[60px]">
           <div className="flex items-center justify-center flex-1">
             <img src="/img/kefu.png" width={28} height={28} />
-            <span className="text-sm text-gray cursor-pointer">
+            <span className="text-sm text-primary cursor-pointer">
               <FormattedMessage id="mt.yanzhengshiyudaowenti" />?
             </span>
           </div>
@@ -247,7 +247,7 @@ export default function KycStepForm() {
         <SelectCountryFormItem
           form={form}
           height={40}
-          label={<span className="text-sm font-semibold text-gray">1.{intl.formatMessage({ id: 'mt.xuanzeguojia' })}</span>}
+          label={<span className="text-sm font-semibold text-primary">1.{intl.formatMessage({ id: 'mt.xuanzeguojia' })}</span>}
         />
         <div className="grid grid-cols-2 gap-x-[18px] my-[22px]">
           <ProFormText
@@ -263,7 +263,7 @@ export default function KycStepForm() {
             required
           />
         </div>
-        <div className="text-gray text-sm font-semibold mb-1">
+        <div className="text-primary text-sm font-semibold mb-1">
           2.
           <FormattedMessage id="mt.xuanzezhengjianleixing" />
         </div>
@@ -278,7 +278,7 @@ export default function KycStepForm() {
                 }}
               >
                 <img src={`/img/${item.key === identificationType ? '' : 'un'}checked-icon.png`} width={20} height={20} />
-                <span className="text-xs text-gray pl-3">{item.label}</span>
+                <span className="text-xs text-primary pl-3">{item.label}</span>
               </div>
             )
           })}
@@ -314,7 +314,7 @@ export default function KycStepForm() {
     return (
       <div className="mt-3">
         <div>
-          <div className="text-gray text-sm font-semibold mb-3">
+          <div className="text-primary text-sm font-semibold mb-3">
             <FormattedMessage id="mt.shangchuanzhengjian" />
           </div>
           <div className="flex items-center justify-center">
@@ -333,17 +333,17 @@ export default function KycStepForm() {
   const renderFourStep = () => {
     return (
       <div className="mt-3">
-        <div className="text-gray text-sm font-semibold mb-3">
+        <div className="text-primary text-sm font-semibold mb-3">
           <FormattedMessage id="mt.shenhezhong" />
         </div>
 
         <div className="flex justify-center">
           <div className="flex items-center justify-center flex-col w-[320px]">
             <img src="/img/shenhezhong.png" width={136} height={136} />
-            <div className="my-4 text-gray font-semibold text-[22px]">
+            <div className="my-4 text-primary font-semibold text-[22px]">
               <FormattedMessage id="mt.shenfenrenzhengshenhezhong" />
             </div>
-            <div className="text-gray-secondary text-base">
+            <div className="text-secondary text-base">
               <FormattedMessage id="mt.shenfenrenzhengshenhezhongtips" />
             </div>
             <Button
@@ -371,30 +371,30 @@ export default function KycStepForm() {
       <>
         {step === 'ONE' && (
           <div>
-            <div className="text-gray font-semibold text-[22px]">
+            <div className="text-primary font-semibold text-[22px]">
               {isBindPhone ? <FormattedMessage id="mt.bangdingshouji" /> : <FormattedMessage id="mt.bangdingyouxiang" />}
             </div>
-            <div className="text-gray-secondary text-sm pt-1">
+            <div className="text-secondary text-sm pt-1">
               <FormattedMessage id="mt.yongyuyanzhengnidezhanghu" />
             </div>
           </div>
         )}
         {step === 'TWO' && (
           <div>
-            <div className="text-gray font-semibold text-[22px]">
+            <div className="text-primary font-semibold text-[22px]">
               <FormattedMessage id="mt.shenfenrenzheng" />
             </div>
-            <div className="text-gray-secondary text-sm pt-1">
+            <div className="text-secondary text-sm pt-1">
               <FormattedMessage id="mt.shenfenrenzhengtips" />
             </div>
           </div>
         )}
         {step === 'THREE' && (
           <div>
-            <div className="text-gray font-semibold text-[22px]">
+            <div className="text-primary font-semibold text-[22px]">
               <FormattedMessage id="mt.pingzhengrenzheng" />
             </div>
-            <div className="text-gray-secondary text-sm pt-1">
+            <div className="text-secondary text-sm pt-1">
               <FormattedMessage id="mt.pingzhengrenzhengtips" />
             </div>
           </div>
@@ -409,7 +409,7 @@ export default function KycStepForm() {
                     <div
                       className={classNames(
                         'w-[56px] h-[56px] rounded-full flex items-center justify-center',
-                        isActive ? 'bg-primary' : 'bg-white border border-gray-250'
+                        isActive ? 'bg-brand' : 'bg-white border border-gray-250'
                       )}
                     >
                       <img src={isActive ? item.activeIcon : item.icon} width={30} height={30} />
@@ -417,7 +417,7 @@ export default function KycStepForm() {
                     <div
                       className={classNames(
                         'text-sm pt-4 truncate w-[130px] text-center',
-                        isActive ? 'text-gray font-semibold' : 'text-gray-secondary'
+                        isActive ? 'text-primary font-semibold' : 'text-secondary'
                       )}
                     >
                       {item.desc}
@@ -427,7 +427,7 @@ export default function KycStepForm() {
                     <div
                       className={classNames(
                         'h-1 w-[80px] absolute top-[30px] left-[116px] rounded-sm',
-                        activeLineStep.includes(item.key) ? 'bg-primary' : 'bg-gray-185'
+                        activeLineStep.includes(item.key) ? 'bg-brand' : 'bg-gray-185'
                       )}
                     ></div>
                   )}

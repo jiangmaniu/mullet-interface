@@ -7,11 +7,11 @@ export default function TreeComp({ ...res }: IProps) {
   const rootClassName = useEmotionCss(({ token }) => {
     return {
       '.ant-tree-checkbox-checked .ant-tree-checkbox-inner': {
-        borderColor: 'var(--color-primary) !important',
-        background: 'var(--color-primary) !important'
+        borderColor: 'var(--color-brand-primary) !important',
+        background: 'var(--color-brand-primary) !important'
       },
       '.ant-tree-checkbox-inner:after': {
-        background: 'var(--color-primary) !important'
+        background: 'var(--color-brand-primary) !important'
       }
     }
   })

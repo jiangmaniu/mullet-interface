@@ -26,7 +26,6 @@ import DeleteConfirmModal from '@/components/Base/DeleteConfirmModal'
 import Empty from '@/components/Base/Empty'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { useLang } from '@/context/languageProvider'
-import { bgColorBase } from '@/theme/theme.config'
 
 import { IThemeMode, useTheme } from '@/context/themeProvider'
 import Export from './Export'
@@ -242,7 +241,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           </div>
         ]
       },
-      style: { background: bgColorBase, padding: 0 },
+      style: { background: 'var(--bg-base-gray)', padding: 0 },
       ...search
     }
     if (showOnlyExportBtn) {
@@ -295,7 +294,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
                       onClick={async () => {
                         onEditItem?.(record)
                       }}
-                      className="!text-gray text-sm font-medium"
+                      className="!text-primary text-sm font-medium"
                     >
                       <FormattedMessage id="common.bianji" />
                     </a>
@@ -305,7 +304,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
                     {showDeleteModal && (
                       <DeleteConfirmModal
                         trigger={
-                          <a className="!text-gray font-medium text-sm ml-6">
+                          <a className="!text-primary font-medium text-sm ml-6">
                             <FormattedMessage id="common.delete" />
                           </a>
                         }
@@ -323,7 +322,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
                         }}
                         key="delete"
                       >
-                        <a className="!text-gray font-medium text-sm ml-6">
+                        <a className="!text-primary font-medium text-sm ml-6">
                           <FormattedMessage id="common.delete" />
                         </a>
                         {/* <LoadingOutlined /> */}
@@ -440,12 +439,12 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   const darkClassName = useEmotionCss(({ token }) => {
     return {
       '.ant-table-thead > tr > th': {
-        background: 'var(--page-bg) !important',
-        borderBottom: '1px solid var(--border-line-color) !important'
+        background: 'var(--bg-primary) !important',
+        borderBottom: '1px solid var(--divider-line-color) !important'
       },
       'tr > td': {
-        background: 'var(--page-bg) !important',
-        borderBottom: '1px solid var(--border-line-color) !important'
+        background: 'var(--bg-primary) !important',
+        borderBottom: '1px solid var(--divider-line-color) !important'
       }
     }
   })

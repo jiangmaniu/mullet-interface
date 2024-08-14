@@ -132,7 +132,7 @@ function Modal(
               {!renderTitle && (
                 <>
                   {title && <span className="text-lg text-black font-semibold">{title}</span>}
-                  {subTitle && <span className="text-sm text-gray pl-[14px]">{subTitle}</span>}
+                  {subTitle && <span className="text-sm text-primary pl-[14px]">{subTitle}</span>}
                 </>
               )}
               {renderTitle?.()}
@@ -165,7 +165,7 @@ function Modal(
         wrapClassName="modal-no-padding"
         styles={{
           header: {
-            background: isTabList ? 'var(--page-container-header-bg)' : '#fff',
+            background: isTabList ? 'var(--modal-header-bg)' : '#fff',
             paddingTop: 24,
             paddingLeft: 0,
             paddingRight: 0

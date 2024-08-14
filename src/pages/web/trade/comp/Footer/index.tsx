@@ -45,7 +45,7 @@ function Footer() {
     : CLOSED
 
   return (
-    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-base-primary px-5 pb-2 pt-2 border-t border-gray-100 dark:border-dark-border z-40">
+    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-primary px-5 pb-2 pt-2 border-t border-gray-100 dark:border-[var(--border-primary-color)] z-40">
       <Tooltip placement="topLeft" title={connectedStatusMap.desc}>
         <div className="flex items-center border-r border-r-gray-200 dark:border-r-gray-700 pr-3">
           <div className="flex items-center">
@@ -54,7 +54,7 @@ function Footer() {
             ) : (
               <SignalIcon color={`var(${connectedStatusMap.color})`} />
             )}
-            <span className="pl-1 text-xs font-normal text-gray-weak">{connectedStatusMap.title}</span>
+            <span className="pl-1 text-xs font-normal text-weak">{connectedStatusMap.title}</span>
           </div>
         </div>
       </Tooltip>
@@ -74,11 +74,11 @@ function Footer() {
                     trade.setOpenSymbolNameList(item.symbol)
                   }}
                 >
-                  <div className="text-wrap text-xs font-medium text-gray">{item.symbol}</div>
+                  <div className="text-wrap text-xs font-medium text-primary">{item.symbol}</div>
                   <div className={classNames('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
                     {res.bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
                   </div>
-                  <div className="px-[3px] text-xs font-medium text-gray-weak">{bid}</div>
+                  <div className="px-[3px] text-xs font-medium text-weak">{bid}</div>
                 </div>
               </div>
             )
@@ -88,14 +88,14 @@ function Footer() {
       {/* <div className="flex items-center pl-3">
         <div className="flex items-center">
           <img src="/img/download-icon.png" width={22} height={22} alt="" />
-          <span className="text-xs font-normal text-gray-weak">
+          <span className="text-xs font-normal text-weak">
             <FormattedMessage id="mt.xiazai" />
           </span>
         </div>
       </div> */}
       <div className="flex cursor-pointer items-center pl-3 " onClick={goToService}>
         <img src="/img/kefu-icon.png" width={22} height={22} alt="" />
-        <span className="text-xs font-normal text-gray-weak">
+        <span className="text-xs font-normal text-weak">
           <FormattedMessage id="mt.zaixiankefu" />
         </span>
       </div>

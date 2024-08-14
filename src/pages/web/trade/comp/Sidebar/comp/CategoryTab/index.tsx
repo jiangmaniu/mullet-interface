@@ -44,7 +44,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
         },
         '.adm-tabs-tab-active': {
           color: 'var(--color-text-primary)',
-          background: 'var(--active-bg)'
+          background: 'var(--tabs-active-bg)'
         },
         '.adm-tabs-tab-list': {
           paddingLeft: '9px !important',

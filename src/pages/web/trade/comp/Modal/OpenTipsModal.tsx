@@ -89,24 +89,24 @@ export default observer((props, ref) => {
     return (
       <>
         <div className="relative -top-9 flex flex-col items-center justify-center px-4">
-          <div className="text-lg font-bold text-gray">{title}</div>
+          <div className="text-lg font-bold text-primary">{title}</div>
           {/* 平仓 */}
           {isClosed && (
             <div className="flex w-full items-center justify-between px-8 pt-3">
               <div className="flex flex-col">
                 <div className="flex items-center">
                   <SymbolIcon src={data?.imgUrl} width={24} height={24} />
-                  <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
+                  <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
                   <span className={classNames('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} ·{' '}
                     <FormattedMessage id="mt.zhucang" />
                   </span>
                 </div>
                 <div className="flex pt-2">
-                  <span className="text-xs text-gray-secondary">
+                  <span className="text-xs text-secondary">
                     <FormattedMessage id="mt.chicangdanhao" />
                   </span>
-                  <span className="pl-2 text-xs text-gray">#{data.id}</span>
+                  <span className="pl-2 text-xs text-primary">#{data.id}</span>
                 </div>
               </div>
               <div className="flex flex-col items-end">
@@ -116,7 +116,7 @@ export default observer((props, ref) => {
                   {/* @ts-ignore */}
                   {toFixed(data?.profit)} {userUnit}
                 </span>
-                <span className="text-xs text-gray-secondary">
+                <span className="text-xs text-secondary">
                   <FormattedMessage id="mt.yingkui" />
                 </span>
               </div>
@@ -126,7 +126,7 @@ export default observer((props, ref) => {
           {!isClosed && (
             <div className="flex items-center py-3">
               <img width={24} height={24} alt="" src={`/img/coin-icon/${symbol}.png`} className="rounded-full" />
-              <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
+              <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
               <span className={classNames('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
                 · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} · <FormattedMessage id="mt.zhucang" />
                 20X
@@ -141,14 +141,14 @@ export default observer((props, ref) => {
                   <Row className="w-full px-8 pb-4" key={idx}>
                     <Col span={10}>
                       <div className="flex items-center justify-between">
-                        <span className="pr-5 text-sm text-gray-secondary">{item?.[0]?.label}</span>
-                        <span className="text-sm text-gray">{item?.[0]?.value}</span>
+                        <span className="pr-5 text-sm text-secondary">{item?.[0]?.label}</span>
+                        <span className="text-sm text-primary">{item?.[0]?.value}</span>
                       </div>
                     </Col>
                     <Col push={4} span={10}>
                       <div className="flex items-center justify-between">
-                        <span className="pr-5 text-sm text-gray-secondary">{item?.[1]?.label}</span>
-                        <span className="text-sm text-gray">{item?.[1]?.value}</span>
+                        <span className="pr-5 text-sm text-secondary">{item?.[1]?.label}</span>
+                        <span className="text-sm text-primary">{item?.[1]?.value}</span>
                       </div>
                     </Col>
                   </Row>

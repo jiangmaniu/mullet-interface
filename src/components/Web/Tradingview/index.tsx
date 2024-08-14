@@ -7,7 +7,6 @@ import { useStores } from '@/context/mobxProvider'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
-import { colorPrimary } from '@/theme/theme.config'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { usePrevious } from 'ahooks'
@@ -220,7 +219,7 @@ const Tradingview = () => {
       <div id="tradingview" ref={chartContainerRef} className="relative flex flex-1 h-full" style={{ opacity: loading ? 0 : 1 }} />
       {isChartLoading && (
         <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-full z-40">
-          <LoadingOutlined style={{ color: colorPrimary, fontSize: 30 }} />
+          <LoadingOutlined style={{ color: 'var(--color-brand-primary)', fontSize: 30 }} />
         </div>
       )}
     </div>

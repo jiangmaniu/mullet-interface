@@ -49,12 +49,12 @@ function RenameAccountModal({ trigger, info }: IProps) {
       }}
     >
       <div className="mb-4 flex">
-        <div className="text-primary bg-primary/10 px-2 rounded flex items-center justify-center h-7">
+        <div className="text-brand bg-brand/10 px-2 rounded flex items-center justify-center h-7">
           <FormattedMessage id="mt.zhanghu" />
           {hiddenCenterPartStr(info.id, 4)}
         </div>
       </div>
-      <div className="text-sm text-gray-secondary mb-5">
+      <div className="text-sm text-secondary mb-5">
         <FormattedMessage id="mt.zhanghuchongmingmingtips" />
       </div>
       <ProFormText required name="name" label={intl.formatMessage({ id: 'mt.xinmingcheng' })} initialValue={info?.name} />

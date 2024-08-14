@@ -106,14 +106,14 @@ function Account() {
               <div className="flex flex-col">
                 <div className="flex flex-col">
                   <div className="flex items-center">
-                    <div className="text-sm font-bold text-gray">
+                    <div className="text-sm font-bold text-primary">
                       {item.name} / {hiddenCenterPartStr(item?.id, 4)}
                     </div>
                     <div className="ml-[10px] flex px-1 items-center">
                       <div
                         className={classNames(
                           'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                          isSimulate ? 'bg-green' : 'bg-primary'
+                          isSimulate ? 'bg-green' : 'bg-brand'
                         )}
                       >
                         {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
@@ -159,10 +159,10 @@ function Account() {
                   </div>
                 </div>
                 <div className="flex items-baseline">
-                  <span className="text-[30px] !font-dingpro-medium text-gray">
+                  <span className="text-[30px] !font-dingpro-medium text-primary">
                     {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision: 2 })) : '∗∗∗∗'}
                   </span>
-                  <span className="pl-[6px] text-sm text-gray-secondary">USD</span>
+                  <span className="pl-[6px] text-sm text-secondary">USD</span>
                 </div>
               </div>
               <div className="flex items-center gap-x-3">
@@ -227,7 +227,7 @@ function Account() {
                       !isSimulate && {
                         key: 'transfer',
                         label: (
-                          <span className="text-sm text-gray-secondary hover:text-gray">
+                          <span className="text-sm text-secondary hover:text-primary">
                             <FormattedMessage id="mt.zhuanzhang" />
                           </span>
                         )
@@ -237,7 +237,7 @@ function Account() {
                         label: (
                           <RenameAccountModal
                             trigger={
-                              <span className="text-sm text-gray-secondary hover:text-gray">
+                              <span className="text-sm text-secondary hover:text-primary">
                                 <FormattedMessage id="mt.zhanghuchongmingming" />
                               </span>
                             }
@@ -248,7 +248,7 @@ function Account() {
                       // {
                       //   key: 'editPwd',
                       //   label: (
-                      //     <span className="text-sm text-gray-secondary hover:text-gray">
+                      //     <span className="text-sm text-secondary hover:text-primary">
                       //       <FormattedMessage id="mt.genggaijiaoyimima" />
                       //     </span>
                       //   )

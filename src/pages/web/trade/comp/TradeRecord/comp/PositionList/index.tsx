@@ -81,7 +81,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           <div className="flex items-center">
             <SymbolIcon src={record.imgUrl} />
             <div className="flex flex-col pl-4">
-              <span className="text-base font-pf-bold text-gray">{record.symbol}</span>
+              <span className="text-base font-pf-bold text-primary">{record.symbol}</span>
               <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
@@ -103,7 +103,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 120,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
     {
@@ -119,7 +119,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)} </span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)} </span>
       }
     },
     {
@@ -162,7 +162,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{text ? formatNum(text) : '--'} </span>
+        return <span className="!text-[13px] text-primary">{text ? formatNum(text) : '--'} </span>
       }
     },
     {
@@ -178,7 +178,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{text || '-'}</span>
+        return <span className="!text-[13px] text-primary">{text || '-'}</span>
       }
     },
     {
@@ -204,7 +204,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
-              <span className="text-gray text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
+              <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
               <span className={classNames('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
@@ -250,11 +250,11 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
               stopLossProfitRef.current?.show(record)
             }}
           >
-            <span className="!text-[13px] text-gray border-b border-dashed dark:border-gray-570 border-gray-weak">
+            <span className="!text-[13px] text-primary border-b border-dashed dark:border-gray-570 border-gray-weak">
               {Number(record?.takeProfit) ? formatNum(record?.takeProfit) : AddDom}
             </span>
             <span className="dark:text-gray-95"> / </span>
-            <span className="!text-[13px] text-gray border-b border-dashed dark:border-gray-570 border-gray-weak">
+            <span className="!text-[13px] text-primary border-b border-dashed dark:border-gray-570 border-gray-weak">
               {Number(record?.stopLoss) ? formatNum(record?.stopLoss) : AddDom}
             </span>
           </div>
@@ -279,7 +279,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
     {
@@ -300,7 +300,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
     {
@@ -315,7 +315,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         label: '' // 去掉form label
       },
       width: 180,
-      className: '!text-[13px] text-gray'
+      className: '!text-[13px] text-primary'
     },
     {
       title: <FormattedMessage id="mt.chicangdanhao" />,
@@ -330,7 +330,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         label: '' // 去掉form label
       },
       width: 200,
-      className: '!text-[13px] text-gray'
+      className: '!text-[13px] text-primary'
     },
     {
       title: <FormattedMessage id="mt.fudongyingkui_shouyilv" />,
@@ -376,7 +376,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center max-xl:mt-3 max-xl:justify-between">
             <div
-              className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-gray text-sm"
+              className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-primary text-sm"
               onClick={() => {
                 closePositionRef.current?.show(record)
               }}

@@ -34,7 +34,7 @@ export default function TransferToFormSelectItem({ form }: IProps) {
   return (
     <ProFormSelect
       label={
-        <span className="text-sm text-gray font-medium">
+        <span className="text-sm text-primary font-medium">
           <FormattedMessage id="mt.zhuanruzhanghao" />
         </span>
       }
@@ -48,7 +48,7 @@ export default function TransferToFormSelectItem({ form }: IProps) {
           <>
             <SelectSuffixIcon opacity={0.5} />
             <div className="bg-gray-250 h-3 w-[1px] mr-3"></div>
-            <div className="text-gray text-sm py-3 !font-dingpro-medium">{formatNum(availableMoney, { precision: 2 })} USD</div>
+            <div className="text-primary text-sm py-3 !font-dingpro-medium">{formatNum(availableMoney, { precision: 2 })} USD</div>
           </>
         ),
         showSearch: false,
@@ -97,7 +97,7 @@ export default function TransferToFormSelectItem({ form }: IProps) {
             <div className="flex px-1">
               <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">SX</div>
             </div>
-            <div className="flex-1 text-sm font-bold text-gray truncate">
+            <div className="flex-1 text-sm font-bold text-primary truncate">
               {item.name} / {hiddenCenterPartStr(item?.id, 4)}
             </div>
           </div>

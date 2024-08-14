@@ -46,7 +46,7 @@ function DeepPrice() {
     return {
       '&::after': {
         content: "''",
-        background: 'var(--border-line-color)',
+        background: 'var(--divider-line-color)',
         width: 1,
         height: '100%',
         position: 'absolute',
@@ -57,7 +57,7 @@ function DeepPrice() {
   })
 
   const BidPriceDom = (
-    <div className="border-t border-b border-gray-60 dark:border-dark-border py-2 px-3">
+    <div className="border-t border-b border-gray-60 dark:dark:border-[var(--border-primary-color)] py-2 px-3">
       <div className="flex items-center justify-between">
         <div>
           {/* 当前行情卖价 */}
@@ -70,7 +70,7 @@ function DeepPrice() {
           )}
         </div>
         {/* 更多打开一个页面交互没有 */}
-        {/* <span className="!text-xs text-gray-secondary cursor-pointer">
+        {/* <span className="!text-xs text-secondary cursor-pointer">
           <FormattedMessage id="common.more" />
         </span> */}
       </div>
@@ -93,10 +93,10 @@ function DeepPrice() {
               <Col span={8} className="!text-xs text-green text-left">
                 {formatNum(item.price, { precision: digits })}
               </Col>
-              <Col span={8} className="!text-xs text-gray text-left">
+              <Col span={8} className="!text-xs text-primary text-left">
                 {formatNum(item.amount, { precision: digits })}
               </Col>
-              <Col span={8} className="!text-xs text-gray text-right">
+              <Col span={8} className="!text-xs text-primary text-right">
                 {formatNum(total, { precision: digits })}
               </Col>
             </Row>
@@ -149,10 +149,10 @@ function DeepPrice() {
                   <Col span={8} className="!text-xs text-red text-left">
                     {formatNum(item.price, { precision: digits })}
                   </Col>
-                  <Col span={8} className="!text-xs text-gray text-left">
+                  <Col span={8} className="!text-xs text-primary text-left">
                     {formatNum(item.amount, { precision: digits })}
                   </Col>
-                  <Col span={8} className="!text-xs text-gray text-right">
+                  <Col span={8} className="!text-xs text-primary text-right">
                     {formatNum(total, { precision: digits })}
                   </Col>
                 </Row>
@@ -174,8 +174,8 @@ function DeepPrice() {
   if (!asks.length && !bids.length) return
 
   return (
-    <div className={classNames('w-[260px] h-[700px] overflow-hidden relative bg-base-primary', className)}>
-      <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130 dark:border-dark-border">
+    <div className={classNames('w-[260px] h-[700px] overflow-hidden relative bg-primary', className)}>
+      <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130 dark:border-[var(--border-primary-color)]">
         <div className="flex items-center gap-x-4">
           {modeList.map((item, idx) => (
             <Iconfont
@@ -228,13 +228,13 @@ function DeepPrice() {
       </div>
       <div className="py-3">
         <Row className="pb-2 px-3">
-          <Col span={8} className="text-gray-weak !text-xs">
+          <Col span={8} className="text-weak !text-xs">
             <FormattedMessage id="mt.jiage" />
           </Col>
-          <Col span={8} className="text-gray-weak !text-xs">
+          <Col span={8} className="text-weak !text-xs">
             <FormattedMessage id="mt.shuliang" />
           </Col>
-          <Col span={8} className="text-right text-gray-weak !text-xs">
+          <Col span={8} className="text-right text-weak !text-xs">
             <FormattedMessage id="mt.chengjiaoe" />
           </Col>
         </Row>

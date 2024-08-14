@@ -84,10 +84,10 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
   const renderLabel = (item: any) => {
     // return (
     //   <Tooltip placement="top" title={item?.value}>
-    //     <span className="text-gray-secondary mr-2 border-b border-dashed text-xs font-normal">{item?.label}</span>
+    //     <span className="text-secondary mr-2 border-b border-dashed text-xs font-normal">{item?.label}</span>
     //   </Tooltip>
     // )
-    return <span className="text-xs font-normal text-gray-secondary xl:mr-2">{item?.label}</span>
+    return <span className="text-xs font-normal text-secondary xl:mr-2">{item?.label}</span>
   }
 
   /**
@@ -105,7 +105,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
     return (
       <div className="flex items-center max-xl:mt-3 max-xl:justify-between">
         <div
-          className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-gray-50 max-xl:text-sm xl:border xl:text-xs"
+          className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-primary max-xl:w-[48%] max-xl:bg-gray-50 max-xl:text-sm xl:border xl:text-xs"
           onClick={() => {
             parentPopup?.close()
             cancelPendingRef.current?.show(item)
@@ -138,7 +138,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
                 <div className="flex items-center justify-between bg-gray-50/50 px-3 py-[6px]">
                   <div className="flex items-center">
                     <SymbolIcon src={v?.imgUrl} width={22} height={22} />
-                    <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
+                    <span className="pl-[6px] text-base font-semibold text-primary">{v.symbol}</span>
                     <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
                   </div>
                   <div className="max-xl:hidden">{renderActionButton(v)}</div>
@@ -150,7 +150,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
                         {fieldList.map((item, idx) => (
                           <div key={idx} className="xxl:last:text-right text-left">
                             {renderLabel(item)}
-                            <span className={classNames('text-xs font-normal text-gray', renderProp(item, 'valueClassName', v))}>
+                            <span className={classNames('text-xs font-normal text-primary', renderProp(item, 'valueClassName', v))}>
                               {renderProp(item, 'value', v)}
                             </span>
                           </div>
@@ -161,10 +161,10 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
                       <>
                         <div className="flex items-center pb-1">
                           {renderLabel(pendingPrice)}
-                          <span className="text-xs text-gray">{renderProp(pendingPrice, 'value', v)}</span>
+                          <span className="text-xs text-primary">{renderProp(pendingPrice, 'value', v)}</span>
                         </div>
                         <div className="my-2">
-                          <span className="bg-gray-ef rounded-l bg-gray-50 px-2 py-[2px] text-gray">
+                          <span className="bg-gray-ef rounded-l bg-gray-50 px-2 py-[2px] text-primary">
                             <FormattedMessage id="mt.zhiyingzhisun" />
                           </span>
                           <span className="bg-red px-2 py-[2px] text-white">{renderProp(slSp[0], 'value', v)}</span>

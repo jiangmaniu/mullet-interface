@@ -86,7 +86,7 @@ function DrawerForm<T = Record<string, any>, U = Record<string, any>>({
             {!renderTitle && (
               <>
                 {title && <span className="text-lg text-black font-semibold">{title}</span>}
-                {subTitle && <span className="text-sm text-gray pl-[14px]">{subTitle}</span>}
+                {subTitle && <span className="text-sm text-primary pl-[14px]">{subTitle}</span>}
               </>
             )}
             {renderTitle?.()}

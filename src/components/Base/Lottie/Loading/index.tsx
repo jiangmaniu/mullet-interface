@@ -51,7 +51,7 @@ export const ModalLoading = forwardRef((props, ref: any) => {
       <div className="relative -top-8">
         <Loading height={300} />
       </div>
-      <div className="flex items-center justify-center text-gray-secondary text-base relative -top-12">
+      <div className="flex items-center justify-center text-secondary text-base relative -top-12">
         <FormattedMessage id="mt.chuangjianzhanghuzhong" />
       </div>
     </Modal>

@@ -43,7 +43,7 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
         trigger={
           <div className="mb-3 flex flex-1 items-center border border-gray-200 hover:border-gray-380 dark:border-gray-580 rounded-lg cursor-pointer p-[6.8px]">
             <img src="/img/margin-1.png" width={24} height={24} />
-            <div className="text-gray text-sm font-semibold flex-1 text-center">{marginLabel}</div>
+            <div className="text-primary text-sm font-semibold flex-1 text-center">{marginLabel}</div>
             <img src="/img/arrow-right-icon.png" width={24} height={24} />
           </div>
         }
@@ -59,7 +59,7 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
             )}
           >
             <img src={isFixedMargin ? '/img/margin-3.png' : '/img/margin-2.png'} width={24} height={24} />
-            <div className="text-gray text-sm flex-1 text-center font-semibold">{leverage}</div>
+            <div className="text-primary text-sm flex-1 text-center font-semibold">{leverage}</div>
             {isFloatLeverage && <img src="/img/arrow-right-icon.png" width={24} height={24} />}
           </div>
         }

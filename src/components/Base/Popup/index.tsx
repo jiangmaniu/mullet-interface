@@ -5,8 +5,6 @@ import { Popup } from 'antd-mobile'
 import { PopupBaseProps } from 'antd-mobile/es/components/popup/popup-base-props'
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 
-import Theme from '@/theme/theme.antd'
-
 type IProps = {
   children: React.ReactNode
   bodyStyle?: React.CSSProperties
@@ -106,7 +104,7 @@ export default forwardRef(
         <>
           <div className="flex justify-between items-center" style={headerStyle}>
             <h1 className="flex items-center justify-center p-3 text-base font-bold">{title || <FormattedMessage id="common.tips" />}</h1>
-            <CloseOutlined style={{ color: Theme.colorPrimary, fontSize: 18, paddingRight: 12 }} onClick={close} />
+            <CloseOutlined style={{ color: 'var(--color-text-primary)', fontSize: 18, paddingRight: 12 }} onClick={close} />
           </div>
           <Divider style={{ marginBottom: 10, marginTop: 0 }} />
         </>

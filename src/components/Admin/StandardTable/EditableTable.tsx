@@ -118,7 +118,7 @@ export default <T extends Record<string, any>, U extends ParamsType>({
               action?.startEditable?.(record?.id)
               setCurrentRow(record)
             }}
-            className="!text-gray"
+            className="!text-primary"
           >
             {intl.formatMessage({ id: 'common.bianji' })}
           </a>
@@ -134,7 +134,7 @@ export default <T extends Record<string, any>, U extends ParamsType>({
               }}
               key="delete"
             >
-              <a key="delete" className="!text-gray">
+              <a key="delete" className="!text-primary">
                 {intl.formatMessage({ id: 'common.delete' })}
               </a>
             </Popconfirm>
@@ -146,7 +146,7 @@ export default <T extends Record<string, any>, U extends ParamsType>({
                 id: (Math.random() * 1000000).toFixed(0)
               }}
             >
-              <a className="!text-gray">{intl.formatMessage({ id: 'common.copy' })}</a>
+              <a className="!text-primary">{intl.formatMessage({ id: 'common.copy' })}</a>
             </EditableProTable.RecordCreator>
           )}
         </div>

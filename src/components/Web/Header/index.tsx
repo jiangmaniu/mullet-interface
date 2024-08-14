@@ -21,7 +21,7 @@ export default function Header() {
   return (
     <>
       <header className="h-[66px] z-[19] bg-transparent"></header>
-      <header className="h-[66px] fixed top-0 z-[100] w-full border-b border-[rgba(5,5,5,0.06)] bg-base-primary">
+      <header className="h-[66px] fixed top-0 z-[100] w-full border-b border-[rgba(5,5,5,0.06)] bg-primary">
         <div className="px-4 h-[66px] relative flex items-center">
           <div className={classNames('flex items-center', !openTradeSidebar ? 'w-[200px]' : 'w-[284px]')}>
             <div className="flex items-center">

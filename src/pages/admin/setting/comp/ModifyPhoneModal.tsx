@@ -100,7 +100,7 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
       <div className="flex items-center justify-between gap-x-5 mt-8">
         <div className="flex items-center flex-1">
           <img src="/img/kefu.png" width={28} height={28} />
-          <span className="text-sm text-gray cursor-pointer">
+          <span className="text-sm text-primary cursor-pointer">
             <FormattedMessage id="mt.yanzhengshiyudaowenti" />?
           </span>
         </div>

@@ -67,9 +67,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
         <Row
           className={classNames(
-            'flex cursor-pointer pr-4 items-center rounded px-3 py-[10px] hover:bg-base-hover dark:hover:bg-gray-660 relative',
+            'flex cursor-pointer pr-4 items-center rounded px-3 py-[10px] hover:bg-[var(--hover-primary-bg)] dark:hover:bg-gray-660 relative',
             {
-              'dark:bg-gray-660 bg-base-hover': isActive,
+              'dark:bg-gray-660 bg-[var(--hover-primary-bg)]': isActive,
               [activeClassName]: isActive
             }
           )}
@@ -84,13 +84,13 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             />
             <SymbolIcon src={item?.imgUrl} width={28} height={28} />
             <div className="flex flex-col pl-1">
-              <span className="pl-[6px] text-sm font-pf-bold text-gray tracking-[0.5px]">{item.symbol}</span>
+              <span className="pl-[6px] text-sm font-pf-bold text-primary tracking-[0.5px]">{item.symbol}</span>
               {/* 币种描述  */}
-              <span className="pl-[6px] text-xs text-gray-weak truncate max-w-[120px]">{item.remark || '--'}</span>
+              <span className="pl-[6px] text-xs text-weak truncate max-w-[120px]">{item.remark || '--'}</span>
             </div>
           </Col>
           <Col span={12} className="flex flex-col items-end">
-            <div className="!font-dingpro-medium text-sx text-gray text-right">{res.hasQuote ? formatNum(bid) : '--'}</div>
+            <div className="!font-dingpro-medium text-sx text-primary text-right">{res.hasQuote ? formatNum(bid) : '--'}</div>
             {res.hasQuote && (
               <div
                 className={classNames('text-right !font-dingpro-medium text-xs', per > 0 ? 'text-green dark:text-green-600' : 'text-red')}

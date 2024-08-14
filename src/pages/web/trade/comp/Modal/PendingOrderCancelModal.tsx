@@ -41,7 +41,7 @@ export default forwardRef((props, ref) => {
         <div className="flex items-center justify-center pb-4">
           <img src="/img/yuebuzu.png" width={75} height={75} alt="" />
         </div>
-        <div className="flex items-center justify-center pt-2 text-sm font-medium text-gray">
+        <div className="flex items-center justify-center pt-2 text-sm font-medium text-primary">
           <FormattedMessage id="mt.shifoucexiaogaibidingdan" />?
         </div>
         <div className="flex items-center justify-between pt-6">

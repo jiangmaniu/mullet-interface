@@ -4,7 +4,7 @@ import { Collapse, theme } from 'antd'
 import React, { useCallback, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
-import { colorSoftWhite, colorWhite } from '@/theme/theme.config'
+import { colorWhite } from '@/theme/theme.config'
 
 const text = `
   A dog is a type of domesticated animal.
@@ -39,7 +39,7 @@ const QA: React.FC = () => {
   const getStyle = (isActive: boolean) => ({
     // margin: 0,
     margin: ' 1.125rem 1.5rem',
-    background: isActive ? colorSoftWhite : colorWhite,
+    background: isActive ? colorWhite : colorWhite,
     borderRadius: 12,
     border: 'none'
   })

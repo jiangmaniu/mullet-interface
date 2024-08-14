@@ -51,6 +51,7 @@ export const gray = {
   650: '#514F4F',
   660: '#1D2025',
   670: '#2E3338',
+  680: '#23262A',
   700: '#29292C',
   720: '#1D2125',
   750: '#1E2226',
@@ -88,6 +89,7 @@ export const green = {
 
 // 蓝色 色值50 - 900 阶梯加深
 export const blue = {
+  50: '#F8FBFD',
   700: '#183EFC'
 } as const
 
@@ -97,8 +99,8 @@ export const black = {
 }
 
 // 品牌色
-export const colorPrimary = blue['700']
-// export const colorPrimarySecondary = blue['500']
+export const colorBrandPrimary = blue['700']
+// export const colorBrandSecondary = blue['500']
 
 // 文字
 export const colorTextPrimary = gray['900']
@@ -106,15 +108,9 @@ export const colorTextSecondary = gray['600']
 export const colorTextWeak = gray['500']
 
 // 其他
-export const borderColor = gray['200']
-export const grayLight = gray['50']
-export const hoverBg = 'rgba(225, 225, 225, .2)'
 export const bgColorBase = gray['50']
-export const pageContainerHeaderBg = '#F8FBFD'
 
-export const colorSoftWhite = 'rgba(250, 250, 250, 1)'
 export const colorWhite = '#fff'
-export const colorBlack = '#000'
 
 // 定义全局使用的平方常规字体，优先使用pf-medium当做常规字体
 export const fontFamily =
@@ -131,53 +127,66 @@ const getColors = (colors: any, name: any) => {
 }
 
 export const ThemeVarsConst = {
-  // 品牌颜色
-  '--color-primary': colorPrimary, // 品牌主色
-  // '--color-primary-secondary': colorPrimarySecondary, // 品牌主色-第二色-衍生色1
-  // '--color-primary-weak': colorPrimaryWeak, // 品牌主色-衍生色2
-  // '--color-primary-light': colorPrimaryLight // 品牌主色-衍生色3
+  // brand
+  '--color-brand-primary': colorBrandPrimary, // 品牌主色
+  // '---color-brand-secondary': colorBrandSecondary, // 品牌主色-第二色-衍生色1
+  // '---color-brand-weak': colorBrandWeak, // 品牌主色-衍生色2
+  // '---color-brand-light': colorBrandLight // 品牌主色-衍生色3
 
-  // 文字颜色
+  // text
   '--color-text-primary': colorTextPrimary, // 文字主色
   '--color-text-secondary': colorTextSecondary, // 文字-第二色-衍生色1
   '--color-text-weak': colorTextWeak, // 文字-衍生色2
   // '--color-text-light': colorTextLight, // 文字-第二色-衍生色3
 
-  // 按钮颜色
-  '--btn-primary': colorPrimary, // 按钮主色
-  '--btn-disable-bg': gray['150'], // 禁用置灰背景色
+  // button
+  '--btn-primary': colorBrandPrimary, // 按钮主色
+  '--btn-disabled-bg': gray['150'], // 禁用置灰背景色
 
-  // 输入框
+  // input
   '--input-disabled-bg': gray['150'], // 输入框禁用置灰背景色
-
-  // 链接颜色
-  '--link-color': colorPrimary,
-
-  // 边框
-  '--border-color': borderColor, // 边框颜色
   '--input-border': gray['200'], // 输入框、选择框边框颜色
+  '--input-placeholder-bg': bgColorBase, // 输入框背景
+  '--input-placeholder-text-color': colorTextSecondary,
+
+  // tabs
+  '--tabs-active-bg': bgColorBase, // 激活背景
   '--tabs-border-color': gray['130'], // tabs组件底部边框线颜色
-  '--border-line-color': gray['190'], // 边框分割线条颜色
+
+  // select
+  // '--select-border': '',
+
+  // modal
+  '--modal-bg': colorWhite, // 弹窗背景颜色
+  '--modal-border-color': gray['200'], // 弹窗悬浮框边框颜色
+  '--modal-header-bg': blue['50'], // 头部背景颜色
+
+  // divider
+  '--divider-line-color': gray['190'], // 分割线条颜色
+
+  // dropdown
+  '--dropdown-bg': colorWhite, // 背景颜色
+  '--dropdown-border-color': gray['200'], // 弹窗悬浮框边框颜色
+
+  // border
+  '--border-primary-color': gray['200'], // 通用边框颜色
+
+  // hover
+  '--hover-primary-bg': 'rgba(225, 225, 225, .2)', // hover颜色
+
+  // 页面颜色
+  '--bg-primary': colorWhite, // 页面背景
+  '--bg-base-gray': bgColorBase, // 页面背景-灰色
+
+  // 卡片
+  '--card-gradient-header-bg': 'linear-gradient(1deg, #FFFFFF 10%, #CDE2FF 100%)', // 卡片渐变背景颜色
+
+  // 字体
+  '--font-family': fontFamily,
 
   // 深度进度条颜色
   '--depth-buy-bg': green['100'], // 买
   '--depth-sell-bg': red['100'], // 卖
-
-  // 页面颜色
-  '--page-bg': colorWhite, // 页面背景
-  '--card-bg': bgColorBase, // 卡片背景
-  '--active-bg': bgColorBase, // 激活背景
-  '--placeholder-bg': bgColorBase, // 输入框背景
-  '--placeholder-text-color': colorTextSecondary, // 文字颜色
-  '--hover-bg': hoverBg, // hover颜色
-  '--page-container-header-bg': pageContainerHeaderBg, // 容器头部背景颜色
-
-  '--card-gradient-bg': 'linear-gradient(1deg, #FFFFFF 50%, #E6F1FF 100%)', // 卡片渐变背景颜色
-  '--card-gradient-header-bg': 'linear-gradient(1deg, #FFFFFF 10%, #CDE2FF 100%)', // 卡片渐变背景颜色
-
-  '--color-white': colorWhite,
-  '--color-black': colorBlack,
-  '--font-family': fontFamily, // 字体
 
   // 默认颜色
   '--color-gray': gray['900'], // 默认全局黑
@@ -185,6 +194,7 @@ export const ThemeVarsConst = {
   '--color-red': red['600'], // 默认全局红
   '--color-blue': blue['700'], // 默认全局蓝
   '--color-yellow': yellow['600'], // 默认全局黄
+  '--color-white': colorWhite, // 默认全局白
 
   // 灰色系
   ...getColors(gray, 'gray'),
@@ -206,29 +216,62 @@ export const ThemeVarsConst = {
 export const ThemeDarkVarsConst = {
   ...ThemeVarsConst, // 继承
 
-  // 重写变量覆盖
-  '--color-primary': gray['95'], // 文字主色-正文
+  // brand
+  '--color-brand-primary': gray['95'], // 品牌主色
+  // '--color-brand-secondary': colorBrandSecondary, // 品牌主色-第二色-衍生色1
+  // '--color-brand-weak': colorBrandWeak, // 品牌主色-衍生色2
+  // '--color-brand-light': colorBrandLight // 品牌主色-衍生色3
+
+  // text
   '--color-text-primary': gray['95'], // 文字主色-正文
   '--color-text-secondary': gray['570'], // 文字-第二色-衍生色1
   '--color-text-weak': gray['570'], // 文字-衍生色2
-  '--border-color': gray['700'], // 边框颜色
-  '--border-line-color': gray['700'], // 边框分割线条颜色
-  '--border-modal-color': gray['620'], // 弹窗悬浮框边框颜色
-  '--page-bg': gray['800'], // 页面背景
-  '--placeholder-bg': gray['720'], // 输入框底色背景
-  '--placeholder-text-color': gray['570'], // 文字颜色
-  '--input-border': gray['650'], // 输入框边框
-  '--tabs-border-color': gray['700'], // tabs组件底部边框线颜色
-  '--active-bg': gray['670'], // 激活背景
-  '--hover-bg': hoverBg, // hover颜色
+  // '--color-text-light': colorTextLight, // 文字-第二色-衍生色3
 
-  // 输入框
+  // button
+  '--btn-primary': gray['95'], // 按钮主色
+  '--btn-disabled-bg': gray['150'], // 禁用置灰背景色 @TODO
+
+  // input
   '--input-disabled-bg': gray['150'], // 输入框禁用置灰背景色
+  '--input-border': gray['650'], // 输入框、选择框边框颜色
+  '--input-placeholder-bg': gray['720'], // 输入框背景
+  '--input-placeholder-text-color': gray['570'],
+
+  // tabs
+  '--tabs-active-bg': gray['670'], // 激活背景
+  '--tabs-border-color': gray['700'], // tabs组件底部边框线颜色
+
+  // select
+  // '--select-border': '',
+
+  // modal
+  '--modal-bg': gray['680'], // 弹窗背景颜色
+  '--modal-header-bg': blue['50'], // 头部背景颜色
+  '--modal-border-color': gray['620'], // 弹窗悬浮框边框颜色
+
+  // divider
+  '--divider-line-color': gray['700'], // 边框分割线条颜色
+
+  // dropdown
+  '--dropdown-bg': '', // 背景颜色
+  '--dropdown-border-color': gray['620'], // 弹窗悬浮框边框颜色
+
+  // border
+  '--border-primary-color': gray['700'], // 通用边框颜色
+
+  // hover
+  '--hover-primary-bg': 'rgba(225, 225, 225, .2)', // hover颜色
+
+  // 页面背景
+  '--bg-primary': gray['800'],
+  '--bg-base-gray': bgColorBase, // 页面背景-灰色 @TODO 替换
 
   // 深度进度条颜色
   '--depth-buy-bg': green['300'], // 买
   '--depth-sell-bg': red['300'], // 卖
 
+  // 默认颜色
   '--color-gray': gray['95'], // 默认全局黑
   '--color-green': green['600'], // 全局绿
   '--color-red': red['650'] // 全局红
@@ -242,7 +285,7 @@ const setRootVars = (themeVars: any) => {
   return vars
 }
 
-// css变量注入页面中，通过var(--color-primary)使用
+// css变量注入页面中，通过var(--color-brand-primary)使用
 // 定义全局主题变量
 // 黑色主题，修改<html class="dark" /> 切换主题
 export const cssVars = `

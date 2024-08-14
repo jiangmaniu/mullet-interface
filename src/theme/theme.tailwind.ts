@@ -1,6 +1,6 @@
 import colors from 'tailwindcss/colors'
 
-import { black, blue, borderColor, colorPrimary, gray, green, red, ThemeDarkVarsConst, ThemeVarsConst, yellow } from './theme.config'
+import { black, blue, gray, green, red, ThemeVarsConst, yellow } from './theme.config'
 
 // https://github.com/tailwindlabs/tailwindcss/issues/4690#issuecomment-1046087220
 // 对于任何将 Tailwind 的完整默认颜色传播到 theme.colors 的人，都会收到警告
@@ -28,7 +28,7 @@ function withOpacityValue(variable: any) {
   }
 }
 
-// 请注意：使用了css变量的值，没有使用withOpacityValue继承透明度(改动太大)，则透明度不能这样写text-gray/10，其他值可以正常写
+// 请注意：使用了css变量的值，没有使用withOpacityValue继承透明度(改动太大)，则透明度不能这样写text-primary/10，其他值可以正常写
 
 const themeColor = {
   // 系统自带默认颜色
@@ -51,11 +51,7 @@ const themeColor = {
     ...colors.gray,
     ...gray,
     // 文字颜色
-    DEFAULT: `var(--color-text-primary,${ThemeVarsConst['--color-text-primary']})`, // 默认值，文字主色 text-gray
-    // DEFAULT: gray['900'], // 默认值，文字主色 text-gray
-    secondary: `var(--color-text-secondary,${ThemeVarsConst['--color-text-secondary']})`, // 文字-第二色-衍生色1
-    weak: `var(--color-text-weak,${ThemeVarsConst['--color-text-weak']})` // 文字-衍生色2
-    // light: colorTextLight,// 文字-衍生色3
+    DEFAULT: `var(--color-text-primary,${ThemeVarsConst['--color-text-primary']})` // 默认值，文字主色 text-primary
   },
   // 绿色系
   green: {
@@ -84,11 +80,11 @@ export default {
   },
   colors: {
     // 品牌主色
-    primary: {
-      DEFAULT: colorPrimary // 默认值 text-primary
-      // secondary: colorPrimarySecondary // 品牌色-第二色-衍生色1
-      // weak: ThemeVarsConst.colorPrimaryWeak // 品牌色-衍生色2
-      // light: ThemeVarsConst.colorPrimaryLight // 品牌色-衍生色3
+    brand: {
+      DEFAULT: `var(--color-brand-primary,${ThemeVarsConst['--color-brand-primary']})` // 默认值 text-brand
+      // secondary: colorBrandSecondary // 品牌色-第二色-衍生色1
+      // weak: ThemeVarsConst.colorBrandWeak // 品牌色-衍生色2
+      // light: ThemeVarsConst.colorBrandLight // 品牌色-衍生色3
     },
 
     // =========== 颜色覆盖 ==============
@@ -97,14 +93,7 @@ export default {
   // 边框样式
   borderColor: {
     ...themeColor,
-    primary: borderColor,
-
-    // 黑色主题变量
-    dark: {
-      border: ThemeDarkVarsConst['--border-color'], // 边框颜色
-      'input-border': ThemeDarkVarsConst['--input-border'], // 输入框边框
-      'modal-border': ThemeDarkVarsConst['--border-modal-color'] // 弹窗悬浮框边框颜色
-    }
+    primary: `var(--border-primary-color,${ThemeVarsConst['--border-primary-color']})`
   },
   // 响应式
   screens: {
@@ -127,15 +116,16 @@ export default {
     'hms-thin': ['hms-thin']
   },
   extend: {
-    // 使用css变量，方便切换主题，使用方法：text-base-primary
+    // ======== 使用css变量，方便切换主题，使用方法：text-primary ==============
+    // 主题文字变量
     textColor: {
-      'base-primary': `var(--color-text-primary,${ThemeVarsConst['--color-text-primary']})`, // 多写一个默认值，为了让编辑器识别颜色变量
-      'base-secondary': `var(--color-text-secondary,${ThemeVarsConst['--color-text-secondary']})`,
-      'base-weak': `var(--color-text-weak,${ThemeVarsConst['--color-text-weak']})`
+      primary: `var(--color-text-primary,${ThemeVarsConst['--color-text-primary']})`, // 多写一个默认值，为了让编辑器识别颜色变量
+      secondary: `var(--color-text-secondary,${ThemeVarsConst['--color-text-secondary']})`,
+      weak: `var(--color-text-weak,${ThemeVarsConst['--color-text-weak']})`
     },
+    // 主题背景颜色变量
     backgroundColor: {
-      'base-primary': `var(--page-bg,${ThemeVarsConst['--page-bg']})`, // 页面背景颜色
-      'base-hover': `var(--hover-bg,${ThemeVarsConst['--hover-bg']})` // hover背景颜色
+      primary: `var(--bg-primary,${ThemeVarsConst['--bg-primary']})` // 页面背景颜色
     },
     boxShadow: {
       custom: '0px 2px 70px 0px rgba(80,80,80,0.07)',

@@ -94,8 +94,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         suffix={SearchIcon}
         allowClear
         style={{
-          background: 'var(--placeholder-bg)',
-          borderColor: 'var(--border-line-color)',
+          background: 'var(--input-placeholder-bg)',
+          borderColor: 'var(--divider-line-color)',
           height: 36,
           transition: 'background 0s ease-in-out',
           color: 'var(--color-text-primary)'
@@ -113,10 +113,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
       <>
         <div className="pt-2">
           <Row className="px-5 pb-2">
-            <Col span={12} className="!text-xs text-gray-weak">
+            <Col span={12} className="!text-xs text-weak">
               <FormattedMessage id="mt.pinpai" />
             </Col>
-            <Col span={12} className="text-right !text-xs text-gray-weak">
+            <Col span={12} className="text-right !text-xs text-weak">
               <FormattedMessage id="mt.zuixinjiage" />/<FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
@@ -145,7 +145,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                                 setActiveKey('CATEGORY')
                               }}
                             >
-                              <div className="text-xs text-gray-secondary hover:text-gray">
+                              <div className="text-xs text-secondary hover:text-primary">
                                 <FormattedMessage id="mt.tianjiazixuan" />
                               </div>
                               <SwapRightOutlined />
@@ -212,7 +212,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     return {
       '&::after': {
         content: "''",
-        background: 'var(--border-line-color)',
+        background: 'var(--divider-line-color)',
         width: 1,
         height: '100%',
         position: 'absolute',
@@ -251,10 +251,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         <>
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
-            <div
-              className={classNames('h-[700px] w-[300px] bg-base-primary relative', { [borderClassName]: showFixSidebar })}
-              style={style}
-            >
+            <div className={classNames('h-[700px] w-[300px] bg-primary relative', { [borderClassName]: showFixSidebar })} style={style}>
               {renderTabs()}
               {renderSearch()}
               {renderCategoryTabs()}
@@ -268,9 +265,9 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           )}
           {/* 收起侧边栏视图 */}
           {!openTradeSidebar && (
-            <div className={classNames('h-[700px] w-[60px] bg-base-primary flex flex-col items-center relative', borderClassName)}>
+            <div className={classNames('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
               <div
-                className="border-b border-gray-100 dark:border-dark-border pb-[2px] pt-[11px] text-center w-full cursor-pointer"
+                className="border-b border-gray-100 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"
                 onClick={openSidebar}
               >
                 <Iconfont

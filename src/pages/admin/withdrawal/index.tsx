@@ -6,7 +6,7 @@ import Button from '@/components/Base/Button'
 export default function Withdrawal() {
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
-      <div className="text-gray font-bold text-[24px]">
+      <div className="text-primary font-bold text-[24px]">
         <FormattedMessage id="mt.chujin" />
       </div>
       出金列表页面
