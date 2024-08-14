@@ -45,7 +45,7 @@ function Footer() {
     : CLOSED
 
   return (
-    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-primary px-5 pb-2 pt-2 border-t border-gray-100 dark:border-[var(--border-primary-color)] z-40">
+    <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-primary px-5 pb-2 pt-2 border-t border-gray-60 dark:border-[var(--border-primary-color)] z-40">
       <Tooltip placement="topLeft" title={connectedStatusMap.desc}>
         <div className="flex items-center border-r border-r-gray-200 dark:border-r-gray-700 pr-3">
           <div className="flex items-center">

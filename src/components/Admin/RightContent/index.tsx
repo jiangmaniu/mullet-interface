@@ -235,10 +235,10 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   }}
                   key={idx}
                   className={classNames(
-                    'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[#fbfbfb]',
+                    'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
                     {
-                      'bg-gray-80': item.id === currentAccountInfo.id,
-                      '!bg-gray-100 cursor-no-drop opacity-40': disabledTrade
+                      'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
+                      'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade
                     }
                   )}
                 >

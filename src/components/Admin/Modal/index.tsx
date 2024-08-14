@@ -131,7 +131,7 @@ function Modal(
             <div className="flex items-center pb-3 px-7">
               {!renderTitle && (
                 <>
-                  {title && <span className="text-lg text-black font-semibold">{title}</span>}
+                  {title && <span className="text-lg text-primary font-semibold">{title}</span>}
                   {subTitle && <span className="text-sm text-primary pl-[14px]">{subTitle}</span>}
                 </>
               )}

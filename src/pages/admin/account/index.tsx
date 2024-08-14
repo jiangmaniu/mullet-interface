@@ -76,7 +76,7 @@ function Account() {
 
   return (
     <PageContainer pageBgColorMode="white" renderHeader={() => <Header />}>
-      <img src="/img/rujin-banner.png" className="w-full h-[108px] bg-gray-100" />
+      <img src="/img/rujin-banner.png" className="w-full h-[108px] bg-gray-60" />
       <div className="flex items-center justify-between mt-10">
         <Tabs
           items={[

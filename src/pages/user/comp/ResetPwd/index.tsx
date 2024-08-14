@@ -94,7 +94,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
       )}
       <div className="bg-white rounded-lg w-[490px] min-h-[200px] flex flex-col">
         {step !== 'FOUR' && (
-          <div className="border-b border-gray-100 py-5">
+          <div className="border-b border-gray-60 py-5">
             <div className="text-primary text-lg font-semibold px-10">
               <FormattedMessage id="mt.chongzhimima" />
             </div>

@@ -81,7 +81,8 @@ export default {
   colors: {
     // 品牌主色
     brand: {
-      DEFAULT: `var(--color-brand-primary,${ThemeVarsConst['--color-brand-primary']})` // 默认值 text-brand
+      DEFAULT: `var(--color-brand-primary,${ThemeVarsConst['--color-brand-primary']})`, // 默认值 text-brand
+      'text-primary': `var(--color-brand-text-primary,${ThemeVarsConst['--color-brand-text-primary']})` // 品牌主色-文字颜色
       // secondary: colorBrandSecondary // 品牌色-第二色-衍生色1
       // weak: ThemeVarsConst.colorBrandWeak // 品牌色-衍生色2
       // light: ThemeVarsConst.colorBrandLight // 品牌色-衍生色3

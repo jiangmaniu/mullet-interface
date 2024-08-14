@@ -94,7 +94,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         suffix={SearchIcon}
         allowClear
         style={{
-          background: 'var(--input-placeholder-bg)',
+          background: 'var(--input-bg)',
           borderColor: 'var(--divider-line-color)',
           height: 36,
           transition: 'background 0s ease-in-out',
@@ -267,7 +267,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           {!openTradeSidebar && (
             <div className={classNames('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
               <div
-                className="border-b border-gray-100 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"
+                className="border-b border-gray-60 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"
                 onClick={openSidebar}
               >
                 <Iconfont
