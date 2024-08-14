@@ -194,7 +194,7 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
   // 计算汇率
   let exchangeRateValue = calcExchangeRate({
     value: contractSize * orderVolume * (1 / leverage),
-    unit: conf.profitCurrency,
+    unit: conf?.profitCurrency,
     buySell: item.buySell
   })
 
