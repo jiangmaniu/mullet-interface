@@ -1,10 +1,12 @@
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, theme } from 'antd'
 import { createContext, useContext, useEffect, useState } from 'react'
 
 import themeColor from '@/theme/theme.antd'
 import themeDarkColor from '@/theme/theme.antd.dark'
 import { showInsetEffect } from '@/utils/antdWave'
 import { STORAGE_GET_THEME, STORAGE_GET_TRADE_THEME, STORAGE_SET_THEME } from '@/utils/storage'
+
+const { defaultAlgorithm, darkAlgorithm } = theme
 
 export type IThemeMode = 'light' | 'dark'
 
@@ -85,8 +87,11 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
         theme={{
           token: {
             ...themeToken
-          }
+          },
+          cssVar: true,
+          algorithm: theme === 'dark' ? darkAlgorithm : defaultAlgorithm
         }}
+        warning={{ strict: false }}
         wave={{
           showEffect: showInsetEffect
         }}
