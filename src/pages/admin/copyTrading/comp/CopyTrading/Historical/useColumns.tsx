@@ -19,7 +19,7 @@ export default () => {
         <span className=" flex gap-1 items-center">
           <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
           <span className=" flex flex-col items-start">
-            <span className="text-sm font-semibold text-black-800">{pz.pinzhong}</span>
+            <span className="text-sm  font-pf-bold text-black-800">{pz.pinzhong}</span>
             <span className="flex items-center gap-1">
               <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
                 {pz.zhuangtai}
@@ -37,7 +37,7 @@ export default () => {
       dataIndex: 'yingkui',
       key: 'yingkui',
       render: (text) => (
-        <span className={classNames('!font-dingpro-medium text-black-900 font-semibold', getColorClass(text))}>
+        <span className={classNames(' font-dingpro-medium  text-black-900 ', getColorClass(text))}>
           {text > 0 ? '+' : ''}
           {formatNum(text)}
         </span>

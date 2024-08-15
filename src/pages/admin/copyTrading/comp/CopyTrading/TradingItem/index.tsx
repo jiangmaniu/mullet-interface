@@ -19,7 +19,7 @@ export const TradingItem = ({
   children?: React.ReactNode
 }) => {
   return (
-    <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full cursor-pointer" onClick={onClick}>
+    <div className="hover:shadow-md border rounded-lg border-gray-150 flex flex-col flex-1 w-full cursor-pointer" onClick={onClick}>
       {/* header */}
       <div className="flex justify-between py-2.5 px-3.5">
         <div className="flex gap-3  items-center">

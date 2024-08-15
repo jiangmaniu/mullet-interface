@@ -1,7 +1,6 @@
 import './style.less'
 
 import { ModalForm } from '@ant-design/pro-components'
-import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import { Form, message, Tabs, TabsProps } from 'antd'
 
@@ -41,23 +40,6 @@ export default ({ trigger, open, onOpenChange }: IProps) => {
       children: <TakerParams />
     }
   ]
-
-  const className = useEmotionCss(() => {
-    return {
-      '.ant-tabs': {
-        '.ant-tabs-ink-bar.ant-tabs-ink-bar-animated': {
-          width: '40.9994px !important',
-          height: '10px !important',
-          borderRadius: '8px !important',
-          transform: 'translateX(-50%) translateY(50%) !important'
-        }
-      },
-
-      '.ant-tabs-top > .ant-tabs-nav::before': {
-        borderBottom: '1px solid #efefef !important'
-      }
-    }
-  })
 
   return (
     <div>

@@ -56,7 +56,8 @@ export default ({ trigger, onSuccess, onConfirm, status = 'disabled', open, onOp
           centered: true,
           className: 'red',
           destroyOnClose: true,
-          onCancel: () => console.log('run')
+          onCancel: () => console.log('run'),
+          footer: null
         }}
         submitTimeout={2000}
         onFinish={async (values) => {
@@ -87,6 +88,9 @@ export default ({ trigger, onSuccess, onConfirm, status = 'disabled', open, onOp
               style={{
                 width: '100%',
                 borderRadius: 8
+              }}
+              onClick={() => {
+                onOpenChange?.(false)
               }}
             >
               <div className=" flex items-center gap-1">

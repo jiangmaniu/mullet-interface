@@ -15,7 +15,7 @@ type IProps = IOrderTakerProps & {
 }
 export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }, state, onClick }: IProps) => {
   return (
-    <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full">
+    <div className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full hover:shadow-sm">
       {/* header */}
       <div className="flex gap-3 py-2.5 px-3.5 items-center">
         <img src={account.avatar} width={24} height={24} className=" rounded-full border border-solid border-gray-340" />
@@ -93,7 +93,7 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
               width: 124,
               borderRadius: 8
             }}
-            disabled={takerState === 'wufagendan'}
+            // disabled={takerState === 'wufagendan'}
             onClick={() => {
               push(`/copy-trading/take-detail/${id}`)
             }}
@@ -110,7 +110,7 @@ export const TakeItem = ({ item: { id, account, datas, tags, state: takerState }
               width: 124,
               borderRadius: 8
             }}
-            disabled={takerState === 'wufagendan'}
+            // disabled={takerState === 'wufagendan'}
             onClick={() => onClick?.(id)}
           >
             <div className="flex items-center text-sm font-semibold gap-1 align-middle">

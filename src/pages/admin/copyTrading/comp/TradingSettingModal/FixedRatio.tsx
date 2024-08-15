@@ -1,12 +1,13 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { Input, InputNumber, Radio, Select } from 'antd'
+import { Input, Radio, Select } from 'antd'
 import { useMemo, useState } from 'react'
 import { black } from 'tailwindcss/colors'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { CURRENCY } from '@/constants'
+import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 
 import { AccountTag } from '../../comp/AccountTag'
@@ -28,6 +29,9 @@ export default (props: IProp) => {
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
+
+  const { trade } = useStores()
+  const { currentAccountInfo } = trade.getAccountBalance()
 
   const tags = [
     {
@@ -56,6 +60,7 @@ export default (props: IProp) => {
     }
   ]
 
+  const [zhanghuyue, setZhanghuyue] = useState<number | undefined>(231.3)
   const [gendanjine, setGendanjine] = useState<number | undefined>()
   const [zhiying, setZhiying] = useState<number | undefined>()
   const [zhisun, setZhisun] = useState<number | undefined>()
@@ -103,7 +108,7 @@ export default (props: IProp) => {
               </span>
               <span className=" w-[1px] h-[11px] bg-gray-260"></span>
               {/* <span className=" text-sm !font-dingpro-regular"> {item.jine} USD</span> */}
-              <span className=" text-sm !font-dingpro-medium"> 231.3 USD</span>
+              <span className=" text-sm !font-dingpro-medium"> {zhanghuyue} USD</span>
             </span>
           )}
           placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.gendanzhanghu' })}`}
@@ -112,6 +117,23 @@ export default (props: IProp) => {
             value: item.id,
             label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
           }))}
+          optionRender={(option) => {
+            const item = option?.data || {}
+
+            return (
+              <span className=" flex flex-row gap-2.5 items-center justify-center">
+                <span className="flex flex-row justify-between items-center flex-1">
+                  <span className="flex flex-row justify-between items-center gap-1.5 ">
+                    <AccountTag type="meifen" />
+                    <span>{item.value}</span>
+                  </span>
+                  <span className=" w-5 h-5"></span>
+                </span>
+                <span className=" w-[1px] h-[11px] bg-gray-260"></span>
+                <span className=" text-sm !font-dingpro-medium"> {zhanghuyue} USD</span>
+              </span>
+            )
+          }}
         />
       </div>
       {/* 每笔跟单保证金比例 */}
@@ -174,10 +196,21 @@ export default (props: IProp) => {
             style={{ color: 'black', transform: isCollapse ? 'rotate(180deg)' : 'rotate(0deg)' }}
           />
         </span>
-        <span className=" text-sm font-normal text-black-800 flex items-center">
-          <Iconfont name="huazhuan" width={18} height={18} color={black['900']} />
-          <FormattedMessage id="mt.huazhuan" />
-        </span>
+
+        <Button
+          type="text"
+          style={{
+            width: 60
+          }}
+          onClick={() => {
+            window.open(`account/transfer?from=${currentAccountInfo?.id}`)
+          }}
+        >
+          <span className=" text-sm font-normal text-black-800 flex items-center ">
+            <Iconfont name="huazhuan" width={18} height={18} color={black['900']} />
+            <FormattedMessage id="mt.huazhuan" />
+          </span>
+        </Button>
       </div>
       {/* 止盈止损 */}
       <div
@@ -190,7 +223,7 @@ export default (props: IProp) => {
           <span className=" text-sm font-normal text-black-800">
             <FormattedMessage id="mt.zhiying" />
           </span>
-          <InputNumber
+          <Input
             size="large"
             min={0}
             style={{
@@ -202,8 +235,7 @@ export default (props: IProp) => {
             onFocus={() => setFocusInputKey('mt.yingli')}
             onBlur={() => setFocusInputKey(undefined)}
             value={zhiying}
-            // @ts-ignore
-            onChange={setZhiying}
+            onChange={(e) => checkNumber(e, setZhiying)}
             suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
           />
         </div>
@@ -211,7 +243,7 @@ export default (props: IProp) => {
           <span className=" text-sm font-normal text-black-800">
             <FormattedMessage id="mt.zhisun" />
           </span>
-          <InputNumber
+          <Input
             size="large"
             min={0}
             style={{
@@ -223,8 +255,7 @@ export default (props: IProp) => {
             value={zhisun}
             onFocus={() => setFocusInputKey('mt.sunshi')}
             onBlur={() => setFocusInputKey(undefined)}
-            // @ts-ignore
-            onChange={setZhisun}
+            onChange={(e) => checkNumber(e, setZhisun)}
             suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
           />
         </div>

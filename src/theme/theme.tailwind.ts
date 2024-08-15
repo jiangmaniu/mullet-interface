@@ -152,6 +152,7 @@ export default {
     },
     margin: {
       '7.5': '1.875rem',
+      '5.5': '1.375rem',
       '4.5': '1.125rem'
     },
     // padding
@@ -169,6 +170,20 @@ export default {
       '15': '3.75rem',
       '18': '4.5rem',
       '21': '5.25rem'
+    },
+    keyframes: {
+      'fade-out-up': {
+        '0%': { opacity: '1', transform: 'translateY(0)' },
+        '100%': { opacity: '0', transform: 'translateY(-16px)' }
+      },
+      'fade-in-down': {
+        '0%': { opacity: '0', transform: 'translateY(-16px)' },
+        '100%': { opacity: '1', transform: 'translateY(0)' }
+      }
+    },
+    animation: {
+      'fade-out-up': 'fade-out-up 0.25s ease-in-out forwards',
+      'fade-in-down': 'fade-in-down 0.25s ease-in-out forwards'
     }
   }
 }

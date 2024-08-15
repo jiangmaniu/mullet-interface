@@ -59,7 +59,7 @@ export default () => {
                 }}
               >
                 <div className="flex items-center text-sm font-semibold gap-1">
-                  <Iconfont name="shezhi" width={18} color="black" height={18} />
+                  <Iconfont name="shezhi" width={16} color="black" height={16} />
                   <FormattedMessage id="mt.shezhi" />
                 </div>
               </Button>
@@ -78,7 +78,7 @@ export default () => {
                 }}
               >
                 <div className="flex items-center text-sm font-semibold gap-1">
-                  <Iconfont name="jieshudaidan" width={18} color="white" height={18} />
+                  <Iconfont name="jieshudaidan" width={16} color="white" height={16} />
                   <FormattedMessage id="mt.jieshugendan" />
                 </div>
               </Button>

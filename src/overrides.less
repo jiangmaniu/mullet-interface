@@ -90,6 +90,10 @@
   }
 }
 
+.ant-modal-footer {
+  margin: 0 !important;
+}
+
 .ant-modal-wrap.modal-no-padding .ant-modal-content {
   padding: 0;
   .ant-modal-header {
@@ -241,6 +245,30 @@
     color: var(--color-text-primary) !important;
     background-color: hsla(0, 0%, 97%, 0.7) !important;
     border-color: #d9d9d9 !important;
+  }
+}
+
+// 覆盖系统危险按钮样式： 主要是颜色调整
+.ant-btn-dangerous:not(disabled) {
+  border-width: 0;
+
+  > span {
+    position: relative;
+  }
+
+  &::before {
+    position: absolute;
+    background-color: #fb4e4e;
+    border-radius: inherit;
+    opacity: 1;
+    transition: opacity 0.3s;
+    content: '';
+    inset: 0;
+  }
+
+  &:hover::before {
+    opacity: 0.1;
+    transition: opacity 0.3s;
   }
 }
 

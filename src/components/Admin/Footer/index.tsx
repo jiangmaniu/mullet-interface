@@ -61,12 +61,12 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className=" flex flex-row justify-start items-start gap-20 flex-1">
+        <div className=" flex flex-row justify-start items-start gap-12 flex-1">
           {list.map((item, index) => (
-            <div key={index} className=" flex flex-col gap-2 items-start text-base text-black-900">
+            <div key={index} className=" flex flex-col gap-2 items-start text-base text-black-900 w-20">
               <span className=" text-sm text-gray-700 font-semibold mb-1">{item.title}</span>
               {item.value.map((item, index) => (
-                <span key={index} className=" text-xs text-gray-700 cursor-pointer ">
+                <span key={index} className=" text-xs text-gray-700 cursor-pointer hover:text-black ">
                   {item}
                 </span>
               ))}
@@ -75,7 +75,7 @@ const Footer: React.FC = () => {
           <div className=" w-32"></div>
         </div>
         <div className=" flex flex-col gap-4 items-end text-base font-semibold text-black-900">
-          <span>
+          <span className=" mr-2">
             <FormattedMessage id="mt.saomajiaruwomen" />
           </span>
           <img src="/img/footer/qrcode.png" width={120} height={120} />

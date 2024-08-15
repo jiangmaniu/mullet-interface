@@ -32,7 +32,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
 
   return (
     <div
-      className=" border rounded-2xl border-gray-150 flex flex-col xl:w-[25rem] max-w-full flex-1 p-5.5 cursor-pointer"
+      className=" border rounded-2xl border-gray-150 flex flex-col xl:w-[25rem] max-w-full flex-1 p-5.5 cursor-pointer hover:shadow-md"
       onClick={() => onClick(id, takerState)}
     >
       {/* header */}
@@ -41,7 +41,7 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
         <div className=" flex items-center gap-4 justify-between">
           <div className=" flex flex-row gap-4">
             <img src={account.avatar} width={54} height={54} className=" rounded-xl border border-solid border-gray-340" />
-            <div className=" flex flex-col gap-2">
+            <div className=" flex flex-col gap-1.5">
               <div className=" flex gap-2 items-center ">
                 <span className="account-name">{account.name}</span>
                 <AccountTag type={account.type} />
@@ -105,8 +105,8 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
                 <FormattedMessage id="mt.leijijiaoyibishu" />
               </span>
             </div>
-            <div className="flex flex-col ">
-              <span className="count !font-dingpro-medium ">{formatNum(datas.rate5)}</span>
+            <div className="flex flex-col justify-self-end mr-2 ">
+              <span className="count !font-dingpro-medium  ">{formatNum(datas.rate5)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijigensuirenshu" />
               </span>

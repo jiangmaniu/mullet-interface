@@ -5,7 +5,6 @@ import { Select } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
 import Carousel from '@/components/Admin/Carousel'
-import Footer from '@/components/Admin/Footer'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
@@ -332,7 +331,7 @@ export default function TakeDetail() {
           </div>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }

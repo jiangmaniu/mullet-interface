@@ -1,7 +1,6 @@
 import { FormattedMessage, useIntl, useLocation, useModel, useParams } from '@umijs/max'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import Footer from '@/components/Admin/Footer'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
@@ -260,7 +259,7 @@ export default function copyTradingDetail() {
           </div>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
       <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
       <TradingSettingModal
         open={openSetting}

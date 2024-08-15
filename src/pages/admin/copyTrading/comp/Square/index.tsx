@@ -78,7 +78,7 @@ export default function Square() {
 
   return (
     <Space direction="vertical" size={24} className="w-full">
-      <Space>
+      <Space size={12}>
         <SelectRounded defaultValue={accountType} onChange={(i) => handleChange('zhanghuleixing', i.value)} options={accountTypes} />
         <SelectRounded defaultValue={tag} onChange={(i) => handleChange('biaoqian', i.value)} options={tags} />
         <SelectRounded defaultValue={rateOfReturnNear} onChange={(i) => handleChange('jinqi', i.value)} options={timeRange} />
