@@ -447,9 +447,9 @@ class TradeStore {
         }
 
         // 切换accountId后请求的品种列表可能不一致，设置第一个默认的品种名称
-        const firstSymbolName = symbolList[0]?.symbol
+        const firstSymbolName = this.symbolListAll[0]?.symbol
         // 如果当前激活的品种名称不在返回的列表中，则重新设置第一个为激活
-        if (firstSymbolName && !symbolList.some((item) => item.symbol === this.activeSymbolName)) {
+        if (firstSymbolName && !this.symbolListAll.some((item) => item.symbol === this.activeSymbolName)) {
           this.activeSymbolName = firstSymbolName
         }
         // 设置默认的
