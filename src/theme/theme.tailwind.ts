@@ -1,6 +1,6 @@
 import colors from 'tailwindcss/colors'
 
-import { black, blue, gray, green, red, ThemeVarsConst, yellow } from './theme.config'
+import { blue, gray, green, red, ThemeVarsConst, yellow } from './theme.config'
 
 // https://github.com/tailwindlabs/tailwindcss/issues/4690#issuecomment-1046087220
 // 对于任何将 Tailwind 的完整默认颜色传播到 theme.colors 的人，都会收到警告
@@ -22,29 +22,35 @@ function withOpacityValue(variable: any) {
   // 返回一个函数，透明度为可选参数，这样在 HTML 元素中使用颜色基础类时，既可以采用 text-blue-500 方式，也支持 text-blue-500/20 快捷同时设置透明度的形式
   return ({ opacityValue }: any) => {
     if (opacityValue === undefined) {
-      return `rgb(var(${variable}))`
+      // @ts-ignore
+      // 加上默认值，否则没有颜色提示
+      return `rgb(var(${variable},${ThemeVarsConst[variable]}))`
     }
-    return `rgba(var(${variable}), ${opacityValue})`
+    // @ts-ignore
+    // 加上默认值，否则没有颜色提示
+    return `rgba(var(${variable},${ThemeVarsConst[variable]}), ${opacityValue})`
   }
 }
 
-// 请注意：使用了css变量的值，没有使用withOpacityValue继承透明度(改动太大)，则透明度不能这样写text-primary/10，其他值可以正常写
+/**
+ * ！！！请注意：不能在css变量包裹后的值的基础上设置透明度 例如 bg-green/10，可以使用bg-green-700/10
+ * 使用了css变量的值，会丢失透明度，导致颜色透明度颜色不生效
+ * 没有使用withOpacityValue包裹原因：
+ * 1、需要把config中的十六进制转为rgb格式 例如 --color-primary: 255 115 179 不方便在代码中实时查看颜色
+ * 2、不方便在antd中使用
+ * 3、使用到css变量统一修改主题
+ * 4、透明度失效问题，可以使用非css变量包裹的值即可
+ */
 
 const themeColor = {
   // 系统自带默认颜色
   ...colors,
 
-  black: {
-    DEFAULT: colors.black,
-    800: black[800],
-    900: black[900]
-  },
-
   // 黄色系
   yellow: {
     ...colors.yellow,
     ...yellow,
-    DEFAULT: `var(--color-yellow,${ThemeVarsConst['--color-yellow']})` // 默认值 text-yellow
+    DEFAULT: `var(--color-yellow,${ThemeVarsConst['--color-yellow']})` // 默认值，方便编辑器识别颜色提示 text-yellow
   },
   // 灰色系
   gray: {
@@ -134,6 +140,7 @@ export default {
     },
     margin: {
       '7.5': '1.875rem',
+      '5.5': '1.375rem',
       '4.5': '1.125rem'
     },
     // padding
@@ -151,6 +158,20 @@ export default {
       '15': '3.75rem',
       '18': '4.5rem',
       '21': '5.25rem'
+    },
+    keyframes: {
+      'fade-out-up': {
+        '0%': { opacity: '1', transform: 'translateY(0)' },
+        '100%': { opacity: '0', transform: 'translateY(-16px)' }
+      },
+      'fade-in-down': {
+        '0%': { opacity: '0', transform: 'translateY(-16px)' },
+        '100%': { opacity: '1', transform: 'translateY(0)' }
+      }
+    },
+    animation: {
+      'fade-out-up': 'fade-out-up 0.25s ease-in-out forwards',
+      'fade-in-down': 'fade-in-down 0.25s ease-in-out forwards'
     }
   }
 }

@@ -105,11 +105,6 @@ export const blue = {
   700: '#183EFC'
 } as const
 
-export const black = {
-  800: '#222222',
-  900: '#110E23'
-}
-
 // 品牌色
 export const colorBrandPrimary = blue['700']
 // export const colorBrandSecondary = blue['500']
