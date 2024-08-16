@@ -1,4 +1,5 @@
 import { getIntl } from '@umijs/max'
+import { keyBy } from 'lodash'
 import { action, computed, configure, makeObservable, observable, runInAction } from 'mobx'
 
 import { getTradeSymbolCategory } from '@/services/api/common'
@@ -14,6 +15,7 @@ import {
   modifyPendingOrder,
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
+import { getAllSymbols } from '@/services/api/tradeCore/symbol'
 import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
@@ -71,12 +73,16 @@ class TradeStore {
   @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓， 右下角爆仓选择逐仓、全仓切换
   @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
 
+  @observable allSimpleSymbolsMap = {} as { [key: string]: Symbol.AllSymbolItem } // 全部品种列表map，校验汇率品种用到
+
   // 初始化加载
   init = () => {
     // 初始化打开的品种列表
-    trade.initOpenSymbolNameList()
+    this.initOpenSymbolNameList()
     // 初始化自选列表
-    trade.initFavoriteList()
+    this.initFavoriteList()
+    // 获取全部品种列表作为汇率校验
+    this.getAllSimbleSymbols()
   }
 
   // 右下角爆仓选择逐仓、全仓切换
@@ -408,6 +414,16 @@ class TradeStore {
     return !item.enableConnect || item?.status === 'DISABLED'
   }
 
+  // 获取全部品种列表
+  @action
+  getAllSimbleSymbols = async () => {
+    const res = await getAllSymbols()
+    runInAction(() => {
+      const data = res.data as Symbol.AllSymbolItem[]
+      this.allSimpleSymbolsMap = keyBy(data, 'symbol')
+    })
+  }
+
   // 根据账户id查询侧边栏菜单交易品种列表
   @action
   getSymbolList = async (params = {} as Partial<Account.TradeSymbolListParams>) => {
@@ -431,9 +447,9 @@ class TradeStore {
         }
 
         // 切换accountId后请求的品种列表可能不一致，设置第一个默认的品种名称
-        const firstSymbolName = symbolList[0]?.symbol
+        const firstSymbolName = this.symbolListAll[0]?.symbol
         // 如果当前激活的品种名称不在返回的列表中，则重新设置第一个为激活
-        if (firstSymbolName && !symbolList.some((item) => item.symbol === this.activeSymbolName)) {
+        if (firstSymbolName && !this.symbolListAll.some((item) => item.symbol === this.activeSymbolName)) {
           this.activeSymbolName = firstSymbolName
         }
         // 设置默认的
@@ -471,9 +487,17 @@ class TradeStore {
     // 查询进行中的订单
     const res = await getBgaOrderPage({ current: 1, size: 999, status: 'BAG', accountId: this.currentAccountInfo?.id })
     if (res.success) {
+      const data = (res.data?.records || []) as Order.BgaOrderPageListItem[]
       runInAction(() => {
-        this.positionList = (res.data?.records || []) as Order.BgaOrderPageListItem[]
+        this.positionList = data
       })
+
+      // 动态订阅汇率品种行情
+      if (data.length) {
+        data.forEach((item) => {
+          ws.subscribeExchangeRateQuote(item.conf)
+        })
+      }
     }
   }
   // 查询挂单列表

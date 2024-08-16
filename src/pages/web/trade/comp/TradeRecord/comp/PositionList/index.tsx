@@ -16,7 +16,7 @@ import ClosePositionConfirmModal from '@/pages/web/trade/comp/Modal/ClosePositio
 import SetStopLossProfitModal from '@/pages/web/trade/comp/Modal/SetStopLossProfitModal'
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
-import { calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import { calcExchangeRate, calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 
@@ -395,7 +395,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     const contractSize = conf.contractSize || 0
     const quoteInfo = getCurrentQuote(symbol)
     const digits = v.symbolDecimal || 2
-    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格取反方向的
+    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
 
     const isCrossMargin = v.marginType === 'CROSS_MARGIN'
 
@@ -414,12 +414,20 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         // 固定保证金 * 手数
         v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)
       }
+      if (v.orderMargin) {
+        // 计算保证金汇率
+        v.orderMargin = calcExchangeRate({
+          value: v.orderMargin,
+          unit: v.conf?.profitCurrency,
+          buySell: v.buySell
+        })
+      }
     } else {
       // 逐仓保证金
       v.orderMargin = toFixed(v.orderMargin, digits)
     }
 
-    v.currentPrice = currentPrice // 现价，根据买卖方向获取当前价格
+    v.currentPrice = currentPrice // 现价
     const profit = covertProfit(v) as number // 浮动盈亏
     v.profit = profit
     v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : v.profit || '-' // 格式化的

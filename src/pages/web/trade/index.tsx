@@ -26,6 +26,13 @@ export default observer(() => {
   const { ws, trade, kline } = useStores()
   const { fetchUserInfo } = useModel('user')
 
+  const onSubscribeExchangeRateQuote = () => {
+    // 订阅当前激活的汇率品种行情
+    setTimeout(() => {
+      ws.subscribeExchangeRateQuote()
+    }, 1000)
+  }
+
   useEffect(() => {
     return () => {
       // 取消订阅深度报价
@@ -36,11 +43,17 @@ export default observer(() => {
     }
   }, [])
 
+  useEffect(() => {
+    onSubscribeExchangeRateQuote()
+  }, [trade.activeSymbolName])
+
   usePageVisibility(
     () => {
       console.log('Page is visible')
       // 用户从后台切换回前台时执行的操作
       ws.reconnect()
+
+      onSubscribeExchangeRateQuote()
 
       // ws没有返回token失效状态，需要查询一次用户信息，看当前登录态是否失效，避免长时间没有操作情况
       fetchUserInfo(true)
