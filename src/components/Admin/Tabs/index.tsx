@@ -89,7 +89,7 @@ export default function Tabs({
                 }}
               >
                 <Iconfont name={v.icon} width={v.iconWidth || 26} color={color} height={v.iconHeight || 26} hoverColor={colorTextPrimary} />
-                <span className="font-bold pl-1 text-base" style={{ color }}>
+                <span className="font-pf-bold pl-1 text-lg" style={{ color }}>
                   {v.label}
                 </span>
               </span>

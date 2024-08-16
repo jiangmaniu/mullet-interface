@@ -1,4 +1,6 @@
-import { FormattedMessage } from '@umijs/max'
+import './index.less'
+
+import { useIntl } from '@umijs/max'
 import Lottie from 'lottie-react'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 
@@ -23,8 +25,12 @@ export default function Loading({ width = 400, height = 400 }: IProps) {
   )
 }
 
-export const ModalLoading = forwardRef((props, ref: any) => {
+export const ModalLoading = forwardRef((props: { title?: string; tips?: string }, ref: any) => {
   const [open, setOpen] = useState(false)
+  const intl = useIntl()
+
+  const _title = props.title || intl.formatMessage({ id: 'mt.chuangjianzhanghu' })
+  const _tips = props.tips || intl.formatMessage({ id: 'mt.chuangjianzhanghuzhong' })
 
   // 暴露给父组件的方法
   useImperativeHandle(ref, () => {
@@ -45,14 +51,15 @@ export const ModalLoading = forwardRef((props, ref: any) => {
       closable={false}
       footer={null}
       centered
-      title={<FormattedMessage id="mt.chuangjianzhanghu" />}
+      title={_title}
       styles={{ content: { padding: 0 }, header: { paddingInline: 20, paddingTop: 20 } }}
     >
       <div className="relative -top-8">
         <Loading height={300} />
       </div>
-      <div className="flex items-center justify-center text-gray-secondary text-base relative -top-12">
-        <FormattedMessage id="mt.chuangjianzhanghuzhong" />
+      <div className="flex items-center justify-center text-gray-secondary text-base relative -top-12 ">
+        {_tips}
+        <span className="dot-ani" />
       </div>
     </Modal>
   )

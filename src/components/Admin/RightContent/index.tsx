@@ -1,13 +1,12 @@
 import { QuestionCircleOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, history, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
-import { Tooltip } from 'antd'
+import { Segmented, Tooltip } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
 import CopyComp from '@/components/Base/Copy'
-import Tabs from '@/components/Base/CustomTabs'
 import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
@@ -144,7 +143,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:w-[420px] xl:pt-[18px]">
+      <div className="xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:w-[420px] xl:pt-[18px] ">
         <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
             <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
@@ -195,17 +194,19 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             </Button>
           </div>
         </div> */}
-        <div className="px-[18px] py-0 xl:border-t-[2px] xl:border-[rgba(218,218,218,0.2)]">
-          <div className="my-3 flex items-center justify-between">
-            <Tabs
-              items={[
-                { label: <FormattedMessage id="mt.zhenshizhanghao" />, key: 'REAL' },
-                { label: <FormattedMessage id="mt.monizhanghu" />, key: 'DEMO' }
-              ]}
-              onChange={(key: any) => {
-                setAccountTabActiveKey(key)
+        <div className="px-[18px] py-0 xl:border-t-[2px] xl:border-[rgba(218,218,218,0.2)] flex flex-col">
+          <div className="my-3 flex items-center justify-between flex-shrink-0 flex-grow-0">
+            <Segmented
+              className="account"
+              // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
+              onChange={(value: any) => {
+                setAccountTabActiveKey(value)
               }}
-              activeKey={accountTabActiveKey}
+              value={accountTabActiveKey}
+              options={[
+                { label: <FormattedMessage id="mt.zhenshizhanghao" />, value: 'REAL' },
+                { label: <FormattedMessage id="mt.monizhanghu" />, value: 'DEMO' }
+              ]}
             />
             <div
               onClick={() => {
@@ -232,7 +233,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                     trade.setCurrentAccountInfo(item)
                     trade.jumpTrade()
                   }}
-                  key={idx}
+                  key={item.id}
                   className={classNames(
                     'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[#fbfbfb]',
                     {
@@ -321,9 +322,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
         <Dropdown
           placement="topLeft"
-          dropdownRender={(origin) => {
-            return renderAccountBoxHover()
-          }}
+          dropdownRender={renderAccountBoxHover}
           onOpenChange={(open) => {
             setAccountBoxOpen(open)
           }}

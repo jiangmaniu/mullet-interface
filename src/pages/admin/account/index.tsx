@@ -1,7 +1,7 @@
 import { PlusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useModel, useSearchParams } from '@umijs/max'
 import { useCountDown } from 'ahooks'
-import { Tooltip } from 'antd'
+import { Segmented, Tooltip } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { MenuInfo } from 'rc-menu/lib/interface'
@@ -9,7 +9,6 @@ import { useEffect, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
-import Tabs from '@/components/Base/CustomTabs'
 import Dropdown from '@/components/Base/Dropdown'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
@@ -78,7 +77,7 @@ function Account() {
     <PageContainer pageBgColorMode="white" renderHeader={() => <Header />}>
       <img src="/img/rujin-banner.png" className="w-full h-[108px] bg-gray-100" />
       <div className="flex items-center justify-between mt-10">
-        <Tabs
+        {/* <Tabs
           items={[
             { label: <FormattedMessage id="mt.zhenshizhanghao" />, key: 'REAL' },
             { label: <FormattedMessage id="mt.monizhanghu" />, key: 'DEMO' }
@@ -88,6 +87,18 @@ function Account() {
           }}
           activeKey={accountTabActiveKey}
           itemStyle={{ paddingBlock: 6 }}
+        /> */}
+        <Segmented
+          className="account"
+          // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
+          onChange={(value: any) => {
+            setAccountTabActiveKey(value)
+          }}
+          value={accountTabActiveKey}
+          options={[
+            { label: <FormattedMessage id="mt.zhenshizhanghao" />, value: 'REAL' },
+            { label: <FormattedMessage id="mt.monizhanghu" />, value: 'DEMO' }
+          ]}
         />
         <Button
           icon={<PlusCircleOutlined style={{ fontSize: 16 }} />}
@@ -170,7 +181,7 @@ function Account() {
                   overlayClassName="tooltipBoxDeposit"
                   zIndex={100}
                   open={Number(item.money) <= 0 && countDownSeconds > 0}
-                  placement={isPc ? 'leftBottom' : 'bottomRight'}
+                  placement={isPc ? 'left' : 'bottomRight'}
                   title={
                     <div className="contentBox">
                       <FormattedMessage id="mt.cunruzijinkaishijiaoyi" />
@@ -182,7 +193,9 @@ function Account() {
                     <RechargeSimulateModal
                       trigger={
                         <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
-                          <FormattedMessage id="mt.rujin" />
+                          <span className="font-pf-bold">
+                            <FormattedMessage id="mt.rujin" />
+                          </span>
                         </Button>
                       }
                       info={item}
@@ -211,7 +224,9 @@ function Account() {
                   }}
                   disabled={trade.disabledConect(item)}
                 >
-                  <FormattedMessage id="mt.jiaoyi" />
+                  <span className="font-pf-bold">
+                    <FormattedMessage id="mt.jiaoyi" />
+                  </span>
                 </Button>
                 <Dropdown
                   menu={{

@@ -90,6 +90,10 @@
   }
 }
 
+.ant-modal-footer {
+  margin: 0 !important;
+}
+
 .ant-modal-wrap.modal-no-padding .ant-modal-content {
   padding: 0;
   .ant-modal-header {
@@ -158,6 +162,11 @@
 // }
 
 // 菜单字体
+
+.ant-pro-base-menu-inline-item-title {
+  gap: 20px;
+}
+
 @media (max-width: 768px) {
   .ant-pro-base-menu-inline-item-text,
   .ant-menu-title-content {
@@ -172,6 +181,20 @@
     .ant-menu {
       border-right: none !important;
     }
+  }
+}
+
+// 覆盖菜单样式
+.ant-pro-base-menu-inline-item-text,
+.ant-pro-base-menu-inline-item-icon {
+  color: #6a7073;
+  font-size: 1rem;
+}
+
+.ant-menu-item-selected {
+  .ant-pro-base-menu-inline-item-text,
+  .ant-pro-base-menu-inline-item-icon {
+    color: black;
   }
 }
 
@@ -222,6 +245,30 @@
     color: var(--color-text-primary) !important;
     background-color: hsla(0, 0%, 97%, 0.7) !important;
     border-color: #d9d9d9 !important;
+  }
+}
+
+// 覆盖系统危险按钮样式： 主要是颜色调整
+.ant-btn-dangerous:not(disabled) {
+  border-width: 0;
+
+  > span {
+    position: relative;
+  }
+
+  &::before {
+    position: absolute;
+    background-color: #fb4e4e;
+    border-radius: inherit;
+    opacity: 1;
+    transition: opacity 0.3s;
+    content: '';
+    inset: 0;
+  }
+
+  &:hover::before {
+    opacity: 0.1;
+    transition: opacity 0.3s;
   }
 }
 
@@ -298,6 +345,9 @@ textarea.ant-input {
 
 // 修改菜单样式
 .ant-layout-sider {
+  .ant-pro-base-menu-inline-item-text {
+    font-family: pf-bold;
+  }
   .ant-menu-item-selected {
     position: relative;
     box-sizing: border-box;
@@ -359,4 +409,47 @@ input:focus {
 .ant-layout-header {
   background: #fff !important;
   backdrop-filter: none !important;
+}
+
+.account.ant-segmented {
+  overflow: hidden;
+  background: white;
+  border: 0.5px solid rgb(218, 218, 218);
+  border-radius: 26px;
+
+  .ant-segmented-item-selected {
+    background: rgb(247, 247, 247);
+    box-shadow: none !important;
+  }
+
+  .ant-segmented-thumb {
+    height: 30px;
+    margin: 1px;
+    padding: 1px 10px;
+    background: rgb(247, 247, 247);
+    border-radius: 26px;
+    box-shadow: none !important;
+    animation: borderRadiusChange 0.3s ease-in-out forwards;
+    animation-play-state: paused;
+    animation-timing-function: steps(5, end);
+  }
+
+  .ant-segmented-item {
+    margin: 1px;
+    padding: 1px 10px;
+    border-radius: 26px;
+  }
+}
+
+@keyframes borderRadiusChange {
+  0% {
+    margin: 1px 0 3px 0;
+    border-radius: 26px;
+    box-shadow: none !important;
+  }
+  100% {
+    margin: 1px 0 3px 0;
+    border-radius: 26px;
+    box-shadow: none !important;
+  }
 }
