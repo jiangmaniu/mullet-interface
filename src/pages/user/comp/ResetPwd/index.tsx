@@ -88,13 +88,13 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
   return (
     <div className="flex items-center flex-col justify-center mt-[100px]">
       {step !== 'FOUR' && (
-        <div className="mb-8">
+        <div className="mb-8 cursor-pointer" onClick={onBack}>
           <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
         </div>
       )}
       <div className="bg-white rounded-lg w-[490px] min-h-[200px] flex flex-col">
         {step !== 'FOUR' && (
-          <div className="border-b border-gray-100 py-5">
+          <div className="border-b border-gray-100 py-5" onClick={onBack}>
             <div className="text-gray text-lg font-semibold px-10">
               <FormattedMessage id="mt.chongzhimima" />
             </div>

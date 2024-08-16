@@ -12,7 +12,7 @@ import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Tabs from '@/components/Base/Tabs'
 import { ADMIN_HOME_PAGE, REGISTER_APP_CODE, WEB_HOME_PAGE } from '@/constants'
 import { getCaptcha, login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
-import { push } from '@/utils/navigator'
+import { goHome, push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
 
 import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem'
@@ -148,7 +148,8 @@ function Login() {
         const currentUser = await fetchUserInfo()
         // @ts-ignore
         const hasAccount = currentUser?.accountList?.length > 0
-        const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
+        // const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
+        const jumpPath = ADMIN_HOME_PAGE // 直接跳转到个人中心
         setTimeout(() => {
           setLoading(false)
           push(jumpPath)
@@ -243,12 +244,7 @@ function Login() {
         {!loading && (
           <LoginForm
             title={
-              <div
-                className="mb-8 cursor-pointer"
-                // onClick={() => {
-                //   push(WEB_HOME_PAGE)
-                // }}
-              >
+              <div className="mb-8 cursor-pointer" onClick={goHome}>
                 <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
               </div>
             }
