@@ -23,8 +23,8 @@ export type ILanguage = 'en-US' | 'zh-TW'
 
 // 传给后台的值，转化一下
 export const LanuageTransformMap: Record<ILanguage, string> = {
-  'zh-TW': 'zh-Hant',
-  'en-US': 'en'
+  'zh-TW': 'zh-TW',
+  'en-US': 'en-US'
 }
 
 // 获取k线对应的语言

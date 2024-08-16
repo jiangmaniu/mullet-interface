@@ -1,9 +1,10 @@
 import { history } from '@umijs/max'
 import { stringify } from 'qs'
 
+import { WEB_HOME_PAGE } from '@/constants'
 import { logout } from '@/services/api/user'
 
-import { STORAGE_REMOVE_TOKEN, STORAGE_REMOVE_USER_INFO } from './storage'
+import { STORAGE_GET_TOKEN, STORAGE_REMOVE_TOKEN, STORAGE_REMOVE_USER_INFO } from './storage'
 
 /**
  * 退出登录
@@ -139,3 +140,12 @@ export const onBack = () => {
 
 // 跳转客服页面 @TODO
 export const goToService = () => {}
+
+// 跳转首页
+export const goHome = () => {
+  if (STORAGE_GET_TOKEN()) {
+    push(WEB_HOME_PAGE)
+  } else {
+    push('/user/login')
+  }
+}
