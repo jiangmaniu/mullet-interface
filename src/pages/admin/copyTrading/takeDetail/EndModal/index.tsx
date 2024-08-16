@@ -77,10 +77,10 @@ export default ({ trigger, onSuccess, onConfirm, status = 'disabled', open, onOp
             <img src="/img/jieshugendan.svg" width={227} height={195} />
           </div>
           <div className="flex flex-col flex-1 items-center gap-1.5 -mt-20">
-            <span className=" text-lg text-black-800 font-semibold">
+            <span className=" text-lg text-primary font-semibold">
               <FormattedMessage id="mt.jieshudaidan" />
             </span>
-            <span className=" text-sm text-black-800">{tips[status]}</span>
+            <span className=" text-sm text-primary">{tips[status]}</span>
           </div>
           <div className=" flex flex-row items-center justify-between w-full gap-3.5">
             <Button

@@ -4,8 +4,11 @@ import { useIntl } from '@umijs/max'
 import { FormInstance } from 'antd/lib'
 import classnames from 'classnames'
 import { debounce } from 'lodash-es'
+import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
+import { useTheme } from '@/context/themeProvider'
+import { gray } from '@/theme/theme.config'
 import { isTruthy, toFixed } from '@/utils'
 
 type IProps = {
@@ -43,7 +46,7 @@ type IProps = {
   hiddenPrecision?: boolean
 }
 
-export default function InputNumber(props: IProps) {
+function InputNumber(props: IProps) {
   const intl = useIntl()
   const {
     textAlign,
@@ -78,6 +81,8 @@ export default function InputNumber(props: IProps) {
   const [inputValue, setInputValue] = useState<any>('')
   const [isFocus, setFocus] = useState(false)
   const newValue = Number(inputValue || 0)
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
 
   const isColumn = direction === 'column'
 
@@ -131,9 +136,9 @@ export default function InputNumber(props: IProps) {
   const AddIcon = (
     <div
       className={classnames(
-        'flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-r-lg border-l border-primary text-xl text-gray-weak',
+        'flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-r-lg border-l border-primary dark:bg-gray-750 text-xl text-weak',
         isColumn && '!rounded-r-[0px] border-b border-l-0',
-        { '!cursor-not-allowed !text-gray-weak/50': disabled || (max && newValue >= max) },
+        { '!cursor-not-allowed !text-weak/50': disabled || (max && newValue >= max) },
         classNames?.add
       )}
       onClick={debounce(handleAdd, 100)}
@@ -144,9 +149,9 @@ export default function InputNumber(props: IProps) {
   const MinusIcon = (
     <div
       className={classnames(
-        'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-l-lg border-r border-primary text-xl text-gray-weak',
+        'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-l-lg border-r border-primary dark:bg-gray-750 text-xl text-weak',
         isColumn && 'border-none',
-        { '!cursor-not-allowed !text-gray-weak/50': (min && newValue <= min) || disabled },
+        { '!cursor-not-allowed !text-weak/50': (min && newValue <= min) || disabled },
         classNames?.minus
       )}
       onClick={debounce(handleMinus, 100)}
@@ -164,7 +169,8 @@ export default function InputNumber(props: IProps) {
         height,
         // paddingLeft: 12,
         textAlign: textAlign || 'center',
-        width: width || 'auto'
+        width: width || 'auto',
+        background: isDark ? gray[750] : '#fff'
       },
       '.ant-input-number-group-addon': {
         background: `${disabled ? '#f8f8f8' : '#fff'} !important`,
@@ -177,7 +183,7 @@ export default function InputNumber(props: IProps) {
         border: 'none !important'
       },
       '.ant-input-number-input': {
-        background: disabled ? 'transparent' : '#fff'
+        background: disabled ? 'transparent' : isDark ? gray[750] : '#fff'
       },
       '.input-wrapper:hover': {
         border: `1px solid ${disabled ? '#E1E1E1' : '#9c9c9c'}`
@@ -190,7 +196,7 @@ export default function InputNumber(props: IProps) {
 
   return (
     <div className={classnames('relative w-full', rootClassName, innerRootClassName)}>
-      {label && <div className={classnames('text-sm pb-[4px] text-left font-normal text-gray', classNames?.label)}>{label}</div>}
+      {label && <div className={classnames('text-sm pb-[4px] text-left font-normal text-primary', classNames?.label)}>{label}</div>}
       <div
         className={classnames(
           'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border border-primary bg-white input-wrapper',
@@ -202,7 +208,7 @@ export default function InputNumber(props: IProps) {
         <ProFormDigit
           placeholder={placeholder}
           className={classnames(
-            'h-full w-full flex-1 px-4 text-center text-sm font-bold text-gray placeholder:text-gray-secondary disabled:bg-gray-50/60',
+            'h-full w-full flex-1 px-4 text-center text-sm font-bold text-primary placeholder:text-secondary disabled:bg-gray-50/60',
             classNames?.input,
             disabled && 'cursor-not-allowed'
           )}
@@ -227,9 +233,9 @@ export default function InputNumber(props: IProps) {
           disabled={disabled}
           filedConfig={{
             style: { marginBottom: 0, flex: 1, lineHeight: `${height}px` },
-            className: disabled ? 'bg-sub-disable cursor-not-allowed' : ''
+            className: disabled ? 'bg-[--input-disabled-bg] cursor-not-allowed' : ''
           }}
-          addonBefore={inputValue && addonBefore ? <span className="text-xs text-gray-secondary pl-3">{addonBefore}</span> : undefined}
+          addonBefore={inputValue && addonBefore ? <span className="text-xs text-secondary pl-3">{addonBefore}</span> : undefined}
           fieldProps={{
             ref: inputRef,
             controls: false,
@@ -242,7 +248,7 @@ export default function InputNumber(props: IProps) {
             onFocus: () => setFocus(true),
             onBlur: () => setFocus(false),
             autoComplete: 'off',
-            addonAfter: unit && <span className="text-xs font-normal text-gray-weak">{unit}</span>,
+            addonAfter: unit && <span className="text-xs font-normal text-weak">{unit}</span>,
             // @ts-ignore
             styles: { border: 'none', input: { height } },
             className: `custom-inputnumber ${classNames?.input}`, // @hack处理 样式在globals.scss中添加
@@ -265,14 +271,16 @@ export default function InputNumber(props: IProps) {
       {isFocus && tips && showFloatTips && (
         <div
           className={classnames(
-            'absolute top-[35px] z-10 flex w-full items-end justify-center rounded-b-lg border border-primary bg-gray-50 px-1 py-2 text-center text-xs text-gray-weak',
+            'absolute top-[35px] z-10 flex w-full items-end justify-center rounded-b-lg border border-primary bg-gray-50 px-1 py-2 text-center text-xs text-weak',
             classNames?.tips
           )}
         >
           {tips}
         </div>
       )}
-      {tips && !showFloatTips && <div className="text-xs text-gray-secondary pt-[7px]">{tips}</div>}
+      {tips && !showFloatTips && <div className="text-xs text-secondary pt-[7px]">{tips}</div>}
     </div>
   )
 }
+
+export default observer(InputNumber)

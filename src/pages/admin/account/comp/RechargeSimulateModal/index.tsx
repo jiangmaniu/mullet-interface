@@ -51,18 +51,18 @@ function RechargeSimulateModal({ trigger, info }: IProps) {
       }}
     >
       <div className="mb-4 flex justify-center">
-        <div className="text-primary bg-primary/10 px-2 rounded flex items-center justify-center h-7">
+        <div className="text-brand bg-brand/10 px-2 rounded flex items-center justify-center h-7">
           <FormattedMessage id="mt.zhanghu" />
           {hiddenCenterPartStr(info.id, 4)}
         </div>
       </div>
       <div className="flex flex-col items-center">
-        <div className="text-gray-secondary text-sm pb-1">
+        <div className="text-secondary text-sm pb-1">
           <FormattedMessage id="mt.meirikerujin" />
         </div>
         <div className="flex items-baseline">
           <span className="text-[30px] !font-dingpro-medium">10,000.00</span>
-          <span className="text-sm text-gray-secondary pl-2">USD</span>
+          <span className="text-sm text-secondary pl-2">USD</span>
         </div>
       </div>
       <Button type="primary" style={{ height: 42 }} block className="!mt-7" htmlType="submit" loading={loading}>

@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react'
 
 import { useTheme } from '@/context/themeProvider'
+import { STORAGE_SET_TRADE_THEME } from '@/utils/storage'
 
 import Iconfont from '../Base/Iconfont'
 
@@ -17,7 +18,10 @@ function SwitchTheme() {
         isDark ? 'bg-gray-700 justify-end' : 'bg-gray-150 justify-start border border-gray-200'
       )}
       onClick={() => {
-        setTheme(isDark ? 'light' : 'dark')
+        const themeMode = isDark ? 'light' : 'dark'
+        setTheme(themeMode)
+        // 设置交易页面主题，因为交易页面主题不是全局的，所以需要单独设置
+        STORAGE_SET_TRADE_THEME(themeMode)
       }}
     >
       <div

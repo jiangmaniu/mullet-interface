@@ -75,7 +75,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
           <div className="flex items-center">
             <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
-              <span className="text-base font-semibold text-gray">{record.symbol}</span>
+              <span className="text-base font-semibold text-primary">{record.symbol}</span>
               <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
@@ -96,7 +96,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 120,
       align: 'left',
-      className: '!text-[13px] text-gray',
+      className: '!text-[13px] text-primary',
       renderText(text, record, index, action) {
         return record.type === ORDER_TYPE.LIMIT_BUY_ORDER || record.type === ORDER_TYPE.LIMIT_SELL_ORDER ? (
           <FormattedMessage id="mt.xianjiadan" />
@@ -122,7 +122,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
     {
@@ -142,7 +142,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
     {
@@ -160,7 +160,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       width: 150,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
     {
@@ -181,7 +181,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
     {
@@ -196,7 +196,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
         label: '' // 去掉form label
       },
       width: 180,
-      className: '!text-[13px] text-gray'
+      className: '!text-[13px] text-primary'
     },
     {
       title: <FormattedMessage id="mt.dingdanhao" />,
@@ -226,7 +226,7 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       width: 150,
       align: 'right',
       fixed: 'right',
-      className: '!text-[13px] text-gray',
+      className: '!text-[13px] text-primary',
       renderText(text, record, index, action) {
         return <span>{getEnum().Enum.OrderStatus?.[record.status!]?.text || '-'}</span>
       }

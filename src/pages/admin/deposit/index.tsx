@@ -5,7 +5,7 @@ import PageContainer from '@/components/Admin/PageContainer'
 export default function Deposit() {
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
-      <div className="text-gray font-bold text-[24px]">
+      <div className="text-primary font-bold text-[24px]">
         <FormattedMessage id="mt.rujin" />
       </div>
       入金页面

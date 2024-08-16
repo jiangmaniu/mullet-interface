@@ -143,18 +143,18 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="xl:shadow-dropdown xl:border xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white pb-1 xl:w-[420px] xl:pt-[18px] ">
+      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-primary pb-1 xl:w-[420px] xl:pt-[18px]">
         <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
-            <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
-              <span className="text-gray">{item.label}</span>
+            <div className="mb-6 flex flex-wrap items-center justify-between text-weak" key={idx}>
+              <span className="text-primary">{item.label}</span>
               <Tooltip overlayClassName="max-w-[300px]" placement="top" title={item.tips}>
                 <span className="ml-[5px]">
                   <img src="/img/warring_icon.png" className="h-4 w-4 p-0" />
                 </span>
               </Tooltip>
               <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
-              <span className="max-w-[240px] break-all text-right text-gray !font-dingpro-medium">
+              <span className="max-w-[240px] break-all text-right text-primary !font-dingpro-medium">
                 {formatNum(item.value, { precision: 2 })} USD
               </span>
             </div>
@@ -220,7 +220,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           <div className="max-h-[380px] overflow-y-auto">
             {currentAccountList.map((item, idx: number) => {
               const isSimulate = item.isSimulate
-              const disabledTrade = !item?.enableConnect
+              const disabledTrade = item?.status === 'DISABLED' || !item.enableTrade || !item.isTrade
               return (
                 <div
                   onClick={() => {
@@ -235,23 +235,23 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   }}
                   key={item.id}
                   className={classNames(
-                    'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[#fbfbfb]',
+                    'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
                     {
-                      'bg-gray-80': item.id === currentAccountInfo.id,
-                      '!bg-gray-100 cursor-no-drop opacity-40': disabledTrade
+                      'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
+                      'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade
                     }
                   )}
                 >
                   <div className="flex justify-between">
                     <div className="flex">
-                      <div className="flex-1 text-sm font-bold text-gray">
+                      <div className="flex-1 text-sm font-bold text-primary">
                         {item.name} / {hiddenCenterPartStr(item?.id, 4)}
                       </div>
                       <div className="ml-[10px] flex px-1">
                         <div
                           className={classNames(
                             'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                            isSimulate ? 'bg-green' : 'bg-primary'
+                            isSimulate ? 'bg-green' : 'bg-brand'
                           )}
                         >
                           {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
@@ -264,10 +264,10 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   </div>
                   <div className="mt-1">
                     <div>
-                      <span className="text-[20px] text-gray !font-dingpro-regular">
+                      <span className="text-[20px] text-primary !font-dingpro-regular">
                         {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: 2 })}
                       </span>{' '}
-                      <span className="ml-1 text-sm font-normal text-gray-secondary">USD</span>
+                      <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                     </div>
                   </div>
                 </div>
@@ -340,7 +340,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             <div className="flex flex-col items-end group relative">
               <span className="sm:text-xl text-base !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
               <div className="flex items-center pt-[2px]">
-                <span className={classNames('text-xs dark:text-primary', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
+                <span className={classNames('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
                   {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                 </span>
                 <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
@@ -410,7 +410,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   <div className="flex items-center">
                     <img src="/img/user-icon.png" width={40} height={40} />
                     <div className="flex flex-col pl-[14px]">
-                      <span className="text-gray font-semibold">
+                      <span className="text-primary font-semibold">
                         <CopyComp style={{ display: 'flex', alignItems: 'center' }}>
                           HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
                         </CopyComp>

@@ -89,7 +89,7 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
           <div className="flex flex-row justify-start items-center gap-3">
             <Iconfont name="zhanghu" width={28} height={28} color={gray['600']} />
             <div className="flex flex-col items-start justify-center">
-              <span className=" text-black-900 font-semibold text-base !font-dingpro-medium">
+              <span className=" text-primary font-semibold text-base !font-dingpro-medium">
                 {curr?.name}#{curr?.clientId}
               </span>
               <span className=" text-gray-600 text-xs ">{curr?.groupName}</span>
@@ -143,7 +143,7 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
     //         >
     //           <div className="flex justify-between w-full p-2">
     //             <div className="flex justify-between w-full">
-    //               <div className="flex-1 text-sm font-bold text-gray truncate">
+    //               <div className="flex-1 text-sm font-bold text-primary truncate">
     //                 {item.name} #{hiddenCenterPartStr(item?.id, 4)}
     //               </div>
     //             </div>

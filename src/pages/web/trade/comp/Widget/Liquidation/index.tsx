@@ -80,6 +80,9 @@ function Liquidation() {
       },
       '.ant-select-selection-item': {
         fontSize: '12px !important'
+      },
+      '.ant-select-selector': {
+        border: `1px solid var(--input-border) !important`
       }
     }
   })
@@ -90,12 +93,12 @@ function Liquidation() {
         <div className="flex items-center pb-2 pt-2">
           <div className="pt-2 flex items-center">
             {!isolatedMarginList.length && (
-              <div className="text-gray text-sm font-pf-bold">
+              <div className="text-primary text-sm font-pf-bold">
                 <FormattedMessage id="mt.quancang" />
               </div>
             )}
             {!trade.positionList.length && (
-              <span className="text-xs text-gray-weak pl-2">
+              <span className="text-xs text-weak pl-2">
                 <FormattedMessage id="mt.weicangwei" />
               </span>
             )}
@@ -110,10 +113,10 @@ function Liquidation() {
               }}
             >
               <div className="cursor-pointer flex items-center mt-2">
-                <span className="text-xs text-gray select-none">
+                <span className="text-xs text-primary select-none">
                   {selectInfo?.label}
                   {trade.currentLiquidationSelectBgaId !== 'CROSS_MARGIN' && (
-                    <span className="text-gray bg-gray-150/60 px-[6px] py-[1px] text-[11px] rounded ml-[5px]">
+                    <span className="text-primary bg-gray-150/60 px-[6px] py-[1px] text-[11px] rounded ml-[5px]">
                       {selectInfo.buySell === 'BUY' ? <FormattedMessage id="mt.duo" /> : <FormattedMessage id="mt.kong" />}
                     </span>
                   )}
@@ -154,7 +157,7 @@ function Liquidation() {
                         alt=""
                         className="w-[20px] h-[20px] rounded-full border border-gray-90"
                       />
-                      <span className="text-gray !text-xs pl-1">{item.label}</span>
+                      <span className="text-primary !text-xs pl-1">{item.label}</span>
                       {/* 逐仓-锁仓模式展示 */}
                       {isLockedPosition && (
                         <span
@@ -173,13 +176,13 @@ function Liquidation() {
         <div className="flex items-center flex-col">
           <div className="flex items-center justify-center flex-col relative w-full">
             <Gauge />
-            <span className="text-base !font-dingpro-medium absolute -bottom-8">
+            <span className="text-base !font-dingpro-medium text-primary absolute -bottom-8">
               {formatNum(marginRateInfo.balance, { precision: 2 })} USD
             </span>
           </div>
           <div className="flex flex-col w-full mt-[45px]">
             <div className="flex items-center justify-between">
-              <span className="text-gray-secondary text-xs">
+              <span className="text-secondary text-xs">
                 <FormattedMessage id="mt.baozhengjinlv" />：
               </span>
               <span className="text-green font-semibold text-xs">
@@ -187,7 +190,7 @@ function Liquidation() {
               </span>
             </div>
             <div className="flex items-center pt-[10px] justify-between">
-              <span className="text-gray-secondary text-xs">
+              <span className="text-secondary text-xs">
                 <FormattedMessage id="mt.weichibaozhengjin" />：
               </span>
               <span className="text-green !font-dingpro-medium font-medium text-xs">{formatNum(marginRateInfo.margin)}USD</span>

@@ -1,6 +1,6 @@
 import { shadeColor } from '@/utils/color'
 
-import { bgColorBase, blue, fontFamily, gray } from './theme.config'
+import { bgColorBase, blue, colorTextPrimary, fontFamily, gray } from './theme.config'
 
 const gray150 = gray['150']
 const gray500 = gray['500']
@@ -24,6 +24,7 @@ export default {
   borderRadius: 7, // 圆角
   colorBgContainerDisabled: bgColorBase, // 禁用背景颜色
   fontFamily, // 字体
+  colorText: colorTextPrimary, // 文字主色
 
   // 组件对应的token
   Tabs: {

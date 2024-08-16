@@ -314,7 +314,7 @@ function Login() {
                 {
                   key: 'LOGIN',
                   label: (
-                    <span className="text-gray font-medium text-lg">
+                    <span className="text-primary font-medium text-lg">
                       <FormattedMessage id="mt.denglu" />
                     </span>
                   )
@@ -322,7 +322,7 @@ function Login() {
                 {
                   key: 'REGISTER',
                   label: (
-                    <span className="text-gray-secondary text-lg font-medium hover:text-gray">
+                    <span className="text-secondary text-lg font-medium hover:text-primary">
                       <FormattedMessage id="mt.kailixinzhanghu" />
                     </span>
                   )
@@ -428,10 +428,10 @@ function Login() {
               <Loading />
             </div>
             <div className="flex flex-col items-center justify-center relative -top-5 px-6">
-              <div className="text-lg text-gray font-semibold">
+              <div className="text-lg text-primary font-semibold">
                 <FormattedMessage id="mt.dengluzhong" />
               </div>
-              <div className="pt-4 text-sm text-gray-secondary">
+              <div className="pt-4 text-sm text-secondary">
                 <FormattedMessage id="mt.loginTips" />
               </div>
             </div>

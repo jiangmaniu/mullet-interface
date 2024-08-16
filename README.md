@@ -32,14 +32,14 @@ yarn start:mock
 ### 打包线上测试环境
 
 ```bash
-yarn build:dev
+yarn build:test
 ```
 
 ### 打包到生产环境
 
 ```bash
 # 执行打包命令
-yarn build
+yarn build:prod
 ```
 
 打包成功目录是`dist`，把`dist`下的静态资源部署即可
@@ -116,3 +116,11 @@ yarn cz
 - Tailwind CSS IntelliSense
 - Tailwind Docs
 - px to rem & rpx & vw (cssrem)
+
+## 主题变量使用注意事项
+
+- 不要使用 `text-gray-xx` `bg-gray-xx` `border-gray-xx` 改变颜色，否则不好统一管理切换主题，尽量使用 css 变量来管理。
+  - 切换黑色主题时，如遇到特殊情况，使用`dark`来改变主题，例如 `dark:bg-gray-xx`， 其他大部分情况使用 css 变量
+  - 如果公用颜色变量，使用 css 变量来管理
+- 使用`src/theme/theme.config`中的 css 变量
+- 使用 tailwindcss `src/theme.tailwind` 自定义快捷类名，具备语义化 `text-primary`(正文) `text-secondary`(次描述文 1) `text-weak`(次描述文 2) `text-brand`（文字品牌主色） 改变文字颜色，或者结合 css 变量使用 `bg-[var(--btn-primary)]`有颜色提示，`bg-[--btn-primary]`没有颜色提示

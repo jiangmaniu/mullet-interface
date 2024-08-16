@@ -5,7 +5,7 @@ import PageContainer from '@/components/Admin/PageContainer'
 export default function Record() {
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
-      <div className="text-[24px] font-bold text-gray">
+      <div className="text-[24px] font-bold text-primary">
         <FormattedMessage id="mt.churujinjilu" />
       </div>
     </PageContainer>

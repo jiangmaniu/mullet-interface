@@ -61,7 +61,7 @@ function HeaderTabsView() {
                     }}
                   >
                     <SymbolIcon src={item.imgUrl} width={28} height={28} />
-                    <span className="select-none px-2 text-base font-semibold text-gray">{symbol}</span>
+                    <span className="select-none px-2 text-base font-semibold text-primary">{symbol}</span>
                     {trade.openSymbolNameList.length > 1 && (
                       <img
                         width={20}

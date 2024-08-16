@@ -313,14 +313,14 @@ export default forwardRef(
           {showHelp && (
             <div>
               {helpTitle}
-              <div className="text-xs text-gray-secondary leading-5 pt-3" style={{ maxWidth: width }}>
+              <div className="text-xs text-secondary leading-5 pt-3" style={{ maxWidth: width }}>
                 {helpTips || <FormattedMessage id="mt.uploadHelpTips" />}
               </div>
             </div>
           )}
         </div>
 
-        {helpTips && <div className="text-xs text-gray-secondary">{helpTips}</div>}
+        {helpTips && <div className="text-xs text-secondary">{helpTips}</div>}
 
         <Modal centered open={previewOpen} maskClosable onCancel={() => setPreviewOpen(false)} footer={null}>
           <img src={previewImageUrl} className="w-full h-full" />

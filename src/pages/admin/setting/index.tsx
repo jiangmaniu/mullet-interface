@@ -90,7 +90,7 @@ export default function Setting() {
       fluidWidth
       tabList={tabList}
       renderHeader={() => (
-        <div className="text-[24px] font-bold text-gray">
+        <div className="text-[24px] font-bold text-primary">
           <FormattedMessage id="mt.shezhi" />
         </div>
       )}
@@ -100,7 +100,7 @@ export default function Setting() {
       tabActiveKey={tabKey}
     >
       <div className="pb-[26px]">
-        <div className="text-gray font-dingpro-medium text-xl font-semibold pb-[18px]">
+        <div className="text-primary font-dingpro-medium text-xl font-semibold pb-[18px]">
           <FormattedMessage id="mt.zhanghu" />
         </div>
         <div className="flex items-center justify-between gap-x-[27px]">
@@ -109,7 +109,7 @@ export default function Setting() {
               <div className="flex items-center">
                 <KycStepPie step={finishedStep} />
                 <div className="flex flex-col pl-5">
-                  <div className="text-gray text-sm">
+                  <div className="text-primary text-sm">
                     <FormattedMessage id="mt.yanzhengzhuangtai" />
                   </div>
                   {isFinished && (
@@ -120,7 +120,7 @@ export default function Setting() {
                   {!isFinished && (
                     <div className="text-red-700 text-base py-[6px]">{kycStatusName || <FormattedMessage id="mt.zanweiwancheng" />}</div>
                   )}
-                  <div className="text-gray text-xs">
+                  <div className="text-primary text-xs">
                     <FormattedMessage id="mt.yiwanchengxxstep" values={{ step: finishedStep }} />
                   </div>
                 </div>
@@ -129,13 +129,13 @@ export default function Setting() {
                 <div className="flex items-center cursor-pointer">
                   {/* 没有提交kyc申请 */}
                   {!kycStatus && (
-                    <span className="text-gray text-base leading-4 font-semibold pr-2" onClick={handleJumpKycAuth}>
+                    <span className="text-primary text-base leading-4 font-semibold pr-2" onClick={handleJumpKycAuth}>
                       <FormattedMessage id="mt.quwancheng" />
                     </span>
                   )}
                   {/* 实名认证成功 */}
                   {kycStatus === 'SUCCESS' && (
-                    <span className="text-gray text-base leading-4 font-semibold pr-2" onClick={handleKycSuccModal}>
+                    <span className="text-primary text-base leading-4 font-semibold pr-2" onClick={handleKycSuccModal}>
                       <FormattedMessage id="common.chakan" />
                     </span>
                   )}
@@ -143,7 +143,7 @@ export default function Setting() {
                   {kycStatus === 'DISALLOW' && (
                     <KycFailModal
                       trigger={
-                        <span className="text-gray text-base leading-4 font-semibold pr-2">
+                        <span className="text-primary text-base leading-4 font-semibold pr-2">
                           <FormattedMessage id="common.chakan" />
                         </span>
                       }
@@ -159,13 +159,13 @@ export default function Setting() {
               <div className="flex items-center">
                 <img src="/img/wuxian.png" width={70} height={70} />
                 <div className="flex flex-col pl-7">
-                  <div className="text-gray text-sm">
+                  <div className="text-primary text-sm">
                     <FormattedMessage id="mt.rujinxianzhi" />
                   </div>
                   <div className="text-green text-xl py-[6px]">
                     <FormattedMessage id="mt.wuxian" />
                   </div>
-                  <div className="text-gray text-sm">
+                  <div className="text-primary text-sm">
                     <FormattedMessage id="mt.qujueyuzhifufangshi" />
                   </div>
                 </div>
@@ -175,7 +175,7 @@ export default function Setting() {
         </div>
       </div>
       <div className="pb-[26px]">
-        <div className="text-gray font-dingpro-medium text-xl font-semibold pb-[18px]">
+        <div className="text-primary font-dingpro-medium text-xl font-semibold pb-[18px]">
           <FormattedMessage id="mt.yanzhengbuzhou" />
         </div>
         <div className="border border-gray-150 rounded-[7px]">
@@ -203,20 +203,20 @@ export default function Setting() {
             </div>
             {showPersonInfo && (
               <div className="pl-8 pt-3">
-                {/* <div className="text-xs text-gray py-2">
+                {/* <div className="text-xs text-primary py-2">
                   <FormattedMessage id="mt.ninyiquerengerenziliao" />
                 </div> */}
                 <div className="flex items-center">
                   <div className="flex items-center">
                     <img src="/img/youxiang.png" width={14} height={14} />
-                    <span className="text-sm text-gray pl-2">{formatEmail(email)}</span>
+                    <span className="text-sm text-primary pl-2">{formatEmail(email)}</span>
                   </div>
                   {phone && (
                     <>
                       <div className="size-[3px] bg-gray rounded-full mx-4"></div>
                       <div className="flex items-center">
                         <img src="/img/shouji.png" width={14} height={14} />
-                        <span className="text-sm text-gray pl-2">
+                        <span className="text-sm text-primary pl-2">
                           {userInfo.phoneAreaCode} {formatMobile(phone)}
                         </span>
                       </div>
@@ -227,7 +227,7 @@ export default function Setting() {
                       <div className="size-[3px] bg-gray rounded-full mx-4"></div>
                       <div className="flex items-center">
                         <img src="/img/yonghu.png" width={14} height={14} />
-                        <span className="text-sm text-gray pl-2">
+                        <span className="text-sm text-primary pl-2">
                           {firstName}·{lastName}
                         </span>
                       </div>
@@ -269,27 +269,27 @@ export default function Setting() {
         </div>
       </div>
       <div className="pb-[26px]">
-        <div className="text-gray font-dingpro-medium text-xl font-semibold">
+        <div className="text-primary font-dingpro-medium text-xl font-semibold">
           <FormattedMessage id="mt.zhanghuguanli" />
         </div>
-        <div className="text-gray-secondary text-sm pb-[16px] pt-2">
+        <div className="text-secondary text-sm pb-[16px] pt-2">
           <FormattedMessage id="mt.zhanghuguanlitips" />
         </div>
         <div className="border border-gray-150 rounded-[7px] h-[64px] px-[26px] flex items-center justify-between">
-          <div className="text-gray text-sm flex-1 border-r border-gray-150 flex items-center h-full">
+          <div className="text-primary text-sm flex-1 border-r border-gray-150 flex items-center h-full">
             <span className="">
               <FormattedMessage id="mt.zhanghao" />：
             </span>
             <span className="pl-2">{isEmailRegisterWay ? formatEmail(currentUser?.account) : formatMobile(currentUser?.account)}</span>
           </div>
           <div className="flex items-center justify-between flex-1 pl-7">
-            <span className="text-gray text-sm">
+            <span className="text-primary text-sm">
               <FormattedMessage id="mt.mima" />：<span className="font-medium">﹡﹡﹡﹡﹡﹡﹡﹡﹡﹡</span>
             </span>
             <ModifyPasswordModal
               trigger={
                 <Button type="text">
-                  <span className="text-gray text-sm font-semibold cursor-pointer">
+                  <span className="text-primary text-sm font-semibold cursor-pointer">
                     <FormattedMessage id="mt.genggai" />
                   </span>
                 </Button>
@@ -299,14 +299,14 @@ export default function Setting() {
         </div>
       </div>
       <div className="pb-[26px]">
-        <div className="text-gray font-dingpro-medium text-xl font-semibold">
+        <div className="text-primary font-dingpro-medium text-xl font-semibold">
           <FormattedMessage id="mt.anquanrenzhengfangshi" />
         </div>
-        <div className="text-gray-secondary text-sm pb-[16px] pt-2">
+        <div className="text-secondary text-sm pb-[16px] pt-2">
           <FormattedMessage id="mt.anquanrenzhengfangshitips" />
         </div>
         <div className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
-          <div className="text-gray text-sm">
+          <div className="text-primary text-sm">
             <span className="">
               <FormattedMessage id="mt.anquanleixing" />：
             </span>
@@ -316,7 +316,7 @@ export default function Setting() {
             <ModifyPhoneModal
               trigger={
                 <Button type="text">
-                  <span className="text-gray text-sm font-semibold cursor-pointer">
+                  <span className="text-primary text-sm font-semibold cursor-pointer">
                     <FormattedMessage id="mt.genggai" />
                   </span>
                 </Button>
@@ -326,7 +326,7 @@ export default function Setting() {
             <ModifyEmailModal
               trigger={
                 <Button type="text">
-                  <span className="text-gray text-sm font-semibold cursor-pointer">
+                  <span className="text-primary text-sm font-semibold cursor-pointer">
                     <FormattedMessage id="mt.genggai" />
                   </span>
                 </Button>

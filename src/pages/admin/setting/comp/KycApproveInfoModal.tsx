@@ -29,27 +29,29 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
         <img src="/img/default-avatar.png" width={40} height={40} />
         <div className="pl-3">
           {kycAuthInfo?.firstName && (
-            <div className="text-base text-gray font-semibold">
+            <div className="text-base text-primary font-semibold">
               {kycAuthInfo?.firstName}·{kycAuthInfo?.lastName}
             </div>
           )}
-          <div className="text-xs text-gray pt-2">
+          <div className="text-xs text-primary pt-2">
             <FormattedMessage id="mt.guojia" />：{countryName || '-'}
           </div>
         </div>
       </div>
       <div className="py-7 flex items-center">
         <div className="flex flex-col">
-          <div className="text-gray-secondary text-sm">
+          <div className="text-secondary text-sm">
             <FormattedMessage id="mt.zhengjianleixing" />
           </div>
-          <div className="text-gray text-sm font-semibold pt-2">{getEnum().Enum.IdentificationType[identificationType]?.text || '-'}</div>
+          <div className="text-primary text-sm font-semibold pt-2">
+            {getEnum().Enum.IdentificationType[identificationType]?.text || '-'}
+          </div>
         </div>
         <div className="flex flex-col pl-[50px]">
-          <div className="text-gray-secondary text-sm">
+          <div className="text-secondary text-sm">
             <FormattedMessage id="mt.zhengjianhaoma" />
           </div>
-          <div className="text-gray text-sm font-semibold pt-2">{kycAuthInfo?.identificationCode || '-'}</div>
+          <div className="text-primary text-sm font-semibold pt-2">{kycAuthInfo?.identificationCode || '-'}</div>
         </div>
       </div>
       <Button

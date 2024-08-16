@@ -40,7 +40,7 @@ export default () => {
     <div className="flex flex-col justify-between gap-4.5 w-full max-w-full">
       {/* 利潤分成比例 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.lirunfenchengbili" />
         </span>
         <Input
@@ -55,12 +55,12 @@ export default () => {
             show: false,
             max: 10
           }}
-          suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
+          suffix={<span className=" text-sm font-semibold text-primary">%</span>}
         />
       </div>
       {/* 資產要求 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.zichanyaoqiu" />
         </span>
         <Input
@@ -75,12 +75,12 @@ export default () => {
             show: false,
             max: 10
           }}
-          suffix={<span className=" text-sm font-semibold text-black-800">USD</span>}
+          suffix={<span className=" text-sm font-semibold text-primary">USD</span>}
         />
       </div>
       {/* 資產規模 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.zichanguimo" />
         </span>
         <Input
@@ -95,12 +95,12 @@ export default () => {
             show: false,
             max: 10
           }}
-          suffix={<span className=" text-sm font-semibold text-black-800">USD</span>}
+          suffix={<span className=" text-sm font-semibold text-primary">USD</span>}
         />
       </div>
       {/* 最大支持人數 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.zuidazhichirenshu" />
         </span>
         <Input
@@ -116,7 +116,7 @@ export default () => {
             max: 10
           }}
           suffix={
-            <span className=" text-sm font-semibold text-black-800">
+            <span className=" text-sm font-semibold text-primary">
               <FormattedMessage id="mt.ren" />
             </span>
           }
@@ -124,7 +124,7 @@ export default () => {
       </div>
       {/* 帶單標籤 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.daidanbiaoqian" />
         </span>
         <div className="flex flex-row flex-wrap gap-3">

@@ -36,7 +36,7 @@ function LevelAgeModal({ trigger }: IProps) {
           <img src={'/img/levelage.png'} width={121} height={121} alt="" />
         </div>
         <div className="relative -top-1 flex flex-col items-center justify-center px-4">
-          <div className="text-base text-gray font-semibold">
+          <div className="text-base text-primary font-semibold">
             <FormattedMessage id="mt.tiaozhengganggan" />
           </div>
         </div>
@@ -51,19 +51,19 @@ function LevelAgeModal({ trigger }: IProps) {
             <div className="pt-5">
               <div className="pb-[7px]">
                 <img src="/img/lingxing-1.png" width={8} height={8} />
-                <span className="text-xs text-gray-secondary pl-[5px]">
+                <span className="text-xs text-secondary pl-[5px]">
                   <FormattedMessage id="mt.tiaozhengganggantip1" />
                 </span>
               </div>
-              <div className="text-xs text-gray-secondary pb-[7px]">
+              <div className="text-xs text-secondary pb-[7px]">
                 <img src="/img/lingxing-1.png" width={8} height={8} />
-                <span className="text-xs text-gray-secondary pl-[5px]">
+                <span className="text-xs text-secondary pl-[5px]">
                   <FormattedMessage id="mt.tiaozhengganggantip2" />
                 </span>
               </div>
               <div className="">
                 <img src="/img/lingxing-2.png" width={8} height={8} />
-                <span className="text-xs text-gray pl-[5px]">
+                <span className="text-xs text-primary pl-[5px]">
                   <FormattedMessage id="mt.tiaozhengganggantip3" />
                 </span>
               </div>

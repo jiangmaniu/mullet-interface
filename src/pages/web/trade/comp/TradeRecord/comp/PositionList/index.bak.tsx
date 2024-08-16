@@ -160,7 +160,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const fieldList = isPc ? pcList : mobileList
 
   const renderLabel = (item: any) => {
-    return <span className="pr-1 text-xs font-normal text-gray-secondary">{item?.label}</span>
+    return <span className="pr-1 text-xs font-normal text-secondary">{item?.label}</span>
   }
 
   /**
@@ -176,7 +176,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       const value = formatTime(obj?.utime)
       return (
         <Tooltip placement="top" title={value}>
-          <span className="mr-2 text-xs font-normal text-gray-secondary">{value}</span>
+          <span className="mr-2 text-xs font-normal text-secondary">{value}</span>
         </Tooltip>
       )
     }
@@ -187,7 +187,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     return (
       <div className="flex items-center max-xl:mt-3 max-xl:justify-between">
         <div
-          className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-sub-card max-xl:text-sm xl:border xl:text-xs"
+          className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-primary max-xl:w-[48%] max-xl:bg-gray-50 max-xl:text-sm xl:border xl:text-xs"
           onClick={() => {
             parentPopup?.close()
             closePositionRef.current?.show(item)
@@ -196,7 +196,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           <FormattedMessage id="mt.pingcang" />
         </div>
         <div
-          className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-gray max-xl:w-[48%] max-xl:bg-sub-card max-xl:text-sm xl:border xl:text-xs"
+          className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-primary max-xl:w-[48%] max-xl:bg-gray-50 max-xl:text-sm xl:border xl:text-xs"
           onClick={() => {
             parentPopup?.close()
             stopLossProfitRef.current?.show(item)
@@ -229,10 +229,10 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           const buySellInfo = getBuySellInfo(v)
           return (
             <div key={idx} className="mb-3 rounded-xl border border-primary">
-              <div className="flex items-center justify-between bg-sub-card/50 px-3 py-[6px]">
+              <div className="flex items-center justify-between bg-gray-50/50 px-3 py-[6px]">
                 <div className="flex items-center">
                   <SymbolIcon src={v?.imgUrl} width={22} height={22} />
-                  <span className="pl-[6px] text-base font-semibold text-gray">{v.symbol}</span>
+                  <span className="pl-[6px] text-base font-semibold text-primary">{v.symbol}</span>
                   <span className={classNames('pl-[6px] text-sm font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
                   {/*爆仓信号灯暂时不做 */}
                   {/* <div className="ml-3">
@@ -246,13 +246,13 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
                         copyContent(v.id, intl.formatMessage({ id: 'mt.fuzhichenggong' }))
                       }}
                     >
-                      <span className="text-xs text-gray-weak">ID</span>
-                      <span className="px-[6px] text-xs text-gray-secondary">{v.id}</span>
+                      <span className="text-xs text-weak">ID</span>
+                      <span className="px-[6px] text-xs text-secondary">{v.id}</span>
                       <img src="/img/copy-icon.png" width={16} height={16} alt="" />
                     </div>
                     <div className="flex items-center pl-[30px]">
                       <img src="/img/time.png" width={16} height={16} alt="" />
-                      <span className="pl-[6px] text-xs text-gray-secondary">{formatTime(v.createTime)}</span>
+                      <span className="pl-[6px] text-xs text-secondary">{formatTime(v.createTime)}</span>
                     </div>
                   </div>
                 </div>
@@ -272,10 +272,10 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
                             key={idx}
                           >
                             {renderLabel(item)}
-                            <span className={classNames('text-xs font-normal text-gray', renderProp(item, 'valueClassName', v))}>
+                            <span className={classNames('text-xs font-normal text-primary', renderProp(item, 'valueClassName', v))}>
                               {renderProp(item, 'value', v)}
                               {item.unit && (
-                                <span className={classNames('text-xs text-gray-secondary', renderProp(item, 'unitClassName', v))}>
+                                <span className={classNames('text-xs text-secondary', renderProp(item, 'unitClassName', v))}>
                                   &nbsp;{item.unit}
                                 </span>
                               )}
@@ -289,17 +289,17 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
                     <>
                       <div className={classNames('flex items-center', floatPL.className)}>
                         {renderLabel(floatPL)}
-                        <span className={classNames('text-xs font-normal text-gray', renderProp(floatPL, 'valueClassName', v))}>
+                        <span className={classNames('text-xs font-normal text-primary', renderProp(floatPL, 'valueClassName', v))}>
                           {renderProp(floatPL, 'value', v)}
                           {floatPL.unit && (
-                            <span className={classNames('text-xs text-gray-secondary', renderProp(floatPL, 'unitClassName', v))}>
+                            <span className={classNames('text-xs text-secondary', renderProp(floatPL, 'unitClassName', v))}>
                               &nbsp;{floatPL.unit}
                             </span>
                           )}
                         </span>
                       </div>
                       <div className="my-2">
-                        <span className="bg-gray-ef rounded-l bg-sub-card px-2 py-[2px] text-gray">
+                        <span className="bg-gray-ef rounded-l bg-gray-50 px-2 py-[2px] text-primary">
                           <FormattedMessage id="mt.zhiyingzhisun" />
                         </span>
                         <span className="bg-red px-2 py-[2px] text-white">{renderProp(slSp[0], 'value', v)}</span>

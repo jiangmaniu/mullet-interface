@@ -91,7 +91,7 @@ export default (props: IProp) => {
     <div className="flex flex-col justify-between gap-4.5 w-full max-w-full">
       {/* 跟单账户 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.gendanzhanghu" />
         </span>
 
@@ -139,7 +139,7 @@ export default (props: IProp) => {
       </div>
       {/* 每笔跟单保证金 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.meibigendanbaozhengjin" />
         </span>
         <Input
@@ -156,12 +156,12 @@ export default (props: IProp) => {
             show: false,
             max: 10
           }}
-          suffix={<span className=" text-sm font-semibold text-black-800">USD</span>}
+          suffix={<span className=" text-sm font-semibold text-primary">USD</span>}
         />
       </div>
       {/* 跟单金额 */}
       {/* <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.zuidagendanjine" />
         </span>
         <Input
@@ -179,14 +179,14 @@ export default (props: IProp) => {
               <span className=" text-sm text-blue cursor-pointer" onClick={() => setGendanjine(231.3)}>
                 <FormattedMessage id="mt.quanbu" />
               </span>
-              <span className=" text-sm font-semibold text-black-800">USD</span>
+              <span className=" text-sm font-semibold text-primary">USD</span>
             </span>
           }
         />
       </div> */}
       <div className=" flex flex-row justify-between items-center">
         <span
-          className=" text-sm font-normal text-black-800 flex items-center gap-1 cursor-pointer"
+          className=" text-sm font-normal text-primary flex items-center gap-1 cursor-pointer"
           onClick={() => setIsCollapse(!isCollapse)}
         >
           <FormattedMessage id="mt.gaojishezhi" />
@@ -204,7 +204,7 @@ export default (props: IProp) => {
             window.open(`account/transfer?from=${currentAccountInfo?.id}`)
           }}
         >
-          <span className=" text-sm font-normal text-black-800 flex items-center ">
+          <span className=" text-sm font-normal text-primary flex items-center ">
             <Iconfont name="huazhuan" width={18} height={18} color={black['900']} />
             <FormattedMessage id="mt.huazhuan" />
           </span>
@@ -218,7 +218,7 @@ export default (props: IProp) => {
         }}
       >
         <div className="flex flex-col gap-2.5 justify-start flex-1">
-          <span className=" text-sm font-normal text-black-800">
+          <span className=" text-sm font-normal text-primary">
             <FormattedMessage id="mt.zhiying" />
           </span>
           <Input
@@ -234,11 +234,11 @@ export default (props: IProp) => {
             onBlur={() => setFocusInputKey(undefined)}
             value={zhiying}
             onChange={(e) => checkNumber(e, setZhiying)}
-            suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
+            suffix={<span className=" text-sm font-semibold text-primary">%</span>}
           />
         </div>
         <div className="flex flex-col gap-2.5 justify-start flex-1">
-          <span className=" text-sm font-normal text-black-800">
+          <span className=" text-sm font-normal text-primary">
             <FormattedMessage id="mt.zhisun" />
           </span>
           <Input
@@ -254,7 +254,7 @@ export default (props: IProp) => {
             value={zhisun}
             onChange={(e) => checkNumber(e, setZhisun)}
             placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}`}
-            suffix={<span className=" text-sm font-semibold text-black-800">%</span>}
+            suffix={<span className=" text-sm font-semibold text-primary">%</span>}
           />
         </div>
         {focusInputKey && (
@@ -265,7 +265,7 @@ export default (props: IProp) => {
                 values={{
                   type: <FormattedMessage id={focusInputKey} />,
                   value: (
-                    <span className=" text-black-900">
+                    <span className=" text-primary">
                       {calcFocusInputValue || '--'} {CURRENCY}
                     </span>
                   )
@@ -279,7 +279,7 @@ export default (props: IProp) => {
       <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-full max-w-full">
         <Radio.Group value={read}>
           <Radio onClick={onClickRadio} value={1}>
-            <span className=" text-black-800 font-normal text-xs">
+            <span className=" text-primary font-normal text-xs">
               <FormattedMessage id="mt.woyiyuedubingtongyi" />
               <span
                 className="  cursor-pointer text-blue"

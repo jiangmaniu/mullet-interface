@@ -1,5 +1,5 @@
 // eslint-disable-next-line simple-import-sort/imports
-import { Button, Checkbox } from 'antd'
+import { Button } from 'antd'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState, useTransition } from 'react'
 
@@ -11,6 +11,7 @@ import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 
+import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { message } from '@/utils/message'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
@@ -223,7 +224,7 @@ export default observer(
           {/* 全仓、逐仓、杠杆选择 */}
           <SelectMarginTypeOrLevelAge />
 
-          <div className="relative flex items-center justify-center rounded-xl border border-primary p-[2px]">
+          <div className="relative flex items-center justify-center rounded-xl border border-primary dark:border-gray-580 p-[2px]">
             <BuyAndSellBtnGroup
               activeKey={tradeType}
               onChange={(key: any) => {
@@ -234,10 +235,10 @@ export default observer(
           </div>
           <div className="flex items-center justify-between mt-3 mb-1">
             <div className="mt-1 flex items-center justify-center pb-2">
-              <span className="text-xs text-gray-secondary">
+              <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.keyong" />
               </span>
-              <span className="pl-2 text-xs text-gray !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
+              <span className="pl-2 text-xs text-primary !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
             </div>
           </div>
           <InputNumber
@@ -289,7 +290,7 @@ export default observer(
             className="max-xl:hidden !mb-3"
             checked={checkedSpSl}
           >
-            <span className="text-gray text-xs">
+            <span className="text-primary text-xs">
               <FormattedMessage id="mt.zhiyingzhisun" />
             </span>
           </Checkbox>
@@ -437,24 +438,24 @@ export default observer(
           </Button>
           <div className="mt-4">
             <div className="flex items-center justify-between pb-[6px] w-full">
-              <span className="text-xs text-gray-secondary">
+              <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.yuguqiangpingjia" />
               </span>
-              <span className="text-xs text-gray !font-dingpro-medium">{expectedForceClosePrice || '-'}</span>
+              <span className="text-xs text-primary !font-dingpro-medium">{expectedForceClosePrice || '-'}</span>
             </div>
             <div className="flex items-center justify-between pb-[6px] w-full">
-              <span className="text-xs text-gray-secondary">
+              <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.yugubaozhengjin" />
               </span>
-              <span className="text-xs text-gray !font-dingpro-medium">
+              <span className="text-xs text-primary !font-dingpro-medium">
                 {expectedMargin ? formatNum(expectedMargin, { precision: 2 }) + 'USD' : '-'}
               </span>
             </div>
             <div className="flex items-center justify-between pb-[6px] w-full">
-              <span className="text-xs text-gray-secondary">
+              <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.kekai" />
               </span>
-              <span className="text-xs text-gray !font-dingpro-medium">
+              <span className="text-xs text-primary !font-dingpro-medium">
                 {maxOpenVolume} <FormattedMessage id="mt.lot" />
               </span>
             </div>

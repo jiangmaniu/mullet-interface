@@ -114,14 +114,14 @@ export default observer(
             <div className="flex w-full items-center justify-between pt-3">
               <div className="flex items-center">
                 <SymbolIcon src={item.imgUrl} />
-                <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
+                <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
                 <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
               </div>
               <div className="flex flex-col items-end">
                 <span className={classNames('pb-2 text-lg font-bold', Number(item?.profit) > 0 ? 'text-green' : 'text-red')}>
                   {item.profitFormat} {unit}
                 </span>
-                <span className="text-xs text-gray-secondary">
+                <span className="text-xs text-secondary">
                   <FormattedMessage id="mt.fudongyingkui" />
                 </span>
               </div>
@@ -130,18 +130,18 @@ export default observer(
             <div className="my-4"></div>
             <div className="flex w-full items-center">
               <div className="flex items-center justify-between">
-                <span className="pr-3 text-sm text-gray-secondary">
+                <span className="pr-3 text-sm text-secondary">
                   <FormattedMessage id="mt.kaicangjiage" />
                 </span>
-                <span className="text-sm text-gray">
+                <span className="text-sm text-primary">
                   {item.startPrice} {unit}
                 </span>
               </div>
               <div className="flex items-center justify-between pl-5">
-                <span className="pr-3 text-sm text-gray-secondary">
+                <span className="pr-3 text-sm text-secondary">
                   <FormattedMessage id="mt.pingcangjiage" />
                 </span>
-                <span className="text-sm text-gray">
+                <span className="text-sm text-primary">
                   {item.currentPrice}&nbsp;{unit}
                 </span>
               </div>
@@ -184,10 +184,10 @@ export default observer(
                 />
               </div>
               <div className="flex items-center pt-2">
-                <span className="text-xs text-gray-secondary">
+                <span className="text-xs text-secondary">
                   <FormattedMessage id="mt.kepingcangshoushu" />
                 </span>
-                <span className="pl-3 text-xs text-gray">
+                <span className="pl-3 text-xs text-primary">
                   {orderVolume}
                   <FormattedMessage id="mt.lot" />
                 </span>

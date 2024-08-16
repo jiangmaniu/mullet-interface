@@ -63,7 +63,7 @@ function TransferAccount() {
       rightText: (
         <div className="flex items-center">
           <img src="/img/zhuanzhang-icon.png" width={18} height={18} />
-          <span className="text-gray text-sm font-semibold pl-[6px]">
+          <span className="text-primary text-sm font-semibold pl-[6px]">
             <FormattedMessage id="mt.zichizhanghujianzhuanzhang" />
           </span>
         </div>
@@ -74,7 +74,7 @@ function TransferAccount() {
       rightText: (
         <div className="flex items-center">
           <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2">SX</div>
-          <div className="pl-[10px] text-sm text-gray font-semibold">{hiddenCenterPartStr(toAccountId, 4)}</div>
+          <div className="pl-[10px] text-sm text-primary font-semibold">{hiddenCenterPartStr(toAccountId, 4)}</div>
         </div>
       )
     },
@@ -83,18 +83,18 @@ function TransferAccount() {
       rightText: (
         <div className="flex items-center">
           <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2">SX</div>
-          <div className="pl-[10px] text-sm text-gray font-semibold">{hiddenCenterPartStr(fromAccountId, 4)}</div>
+          <div className="pl-[10px] text-sm text-primary font-semibold">{hiddenCenterPartStr(fromAccountId, 4)}</div>
         </div>
       )
     },
     {
       leftLabel: <FormattedMessage id="mt.jine" />,
-      rightText: <div className="text-sm text-gray !font-dingpro-medium">{formatNum(money)} USD</div>
+      rightText: <div className="text-sm text-primary !font-dingpro-medium">{formatNum(money)} USD</div>
     },
     {
       leftLabel: <FormattedMessage id="mt.shouxufei" />,
       rightText: (
-        <div className="text-sm text-gray font-semibold">
+        <div className="text-sm text-primary font-semibold">
           <FormattedMessage id="mt.mianshouxufei" />
         </div>
       )
@@ -130,7 +130,7 @@ function TransferAccount() {
         <ProFormDigit
           name="money"
           label={
-            <span className="text-sm text-gray font-medium">
+            <span className="text-sm text-primary font-medium">
               <FormattedMessage id="mt.jine" />
             </span>
           }
@@ -172,18 +172,18 @@ function TransferAccount() {
     return (
       <div>
         {listData.map((item, idx) => (
-          <div className="mb-6 flex flex-wrap items-center justify-between text-gray-weak" key={idx}>
-            <span className="text-gray">{item.leftLabel}</span>
+          <div className="mb-6 flex flex-wrap items-center justify-between text-weak" key={idx}>
+            <span className="text-primary">{item.leftLabel}</span>
             <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
             <div className="flex max-w-[240px] break-all text-right">{item.rightText}</div>
           </div>
         ))}
         <div className="mt-10">
           <div className="bg-gray-50 rounded-[10px] py-[22px] px-4 flex items-center justify-between">
-            <span className="text-sm text-gray-secondary">
+            <span className="text-sm text-secondary">
               <FormattedMessage id="mt.daichujinjine" />
             </span>
-            <span className="text-xl text-gray !font-dingpro-medium">{formatNum(money)} USD</span>
+            <span className="text-xl text-primary !font-dingpro-medium">{formatNum(money)} USD</span>
           </div>
           <Button
             type="primary"
@@ -206,10 +206,10 @@ function TransferAccount() {
       <div>
         <div className="mt-3 flex items-center flex-col justify-center">
           <img src="/img/transfer-success.png" width={56} height={56} />
-          <div className="text-[22px] text-gray font-semibold my-[14px]">
+          <div className="text-[22px] text-primary font-semibold my-[14px]">
             <FormattedMessage id="mt.nindezijinjijiangdaozhang" />
           </div>
-          <div className="text-base text-gray-secondary">
+          <div className="text-base text-secondary">
             <FormattedMessage id="mt.jiaoyiyichuliwancheng" />
           </div>
         </div>
@@ -240,7 +240,7 @@ function TransferAccount() {
       <div className="flex justify-center">
         <div className="w-[552px] bg-white rounded-xl border border-gray-180">
           <div className="px-8 py-6">
-            <div className="text-gray text-[22px] font-bold pb-5">
+            <div className="text-primary text-[22px] font-bold pb-5">
               {['ONE', 'TWO'].includes(step) && <FormattedMessage id="mt.zhuanzhang" />}
               {['THREE'].includes(step) && <FormattedMessage id="mt.zhuanzhangjieguo" />}
             </div>
@@ -251,10 +251,10 @@ function TransferAccount() {
         </div>
       </div>
       <div className="mt-[70px]">
-        <div className="text-gray text-sm pb-4 font-semibold">
+        <div className="text-primary text-sm pb-4 font-semibold">
           <FormattedMessage id="mt.zhuanzhangxuzhi" />
         </div>
-        <div className="text-xs text-gray-secondary leading-6">
+        <div className="text-xs text-secondary leading-6">
           <div>
             <FormattedMessage id="mt.zhuanzhangtip1" />
           </div>

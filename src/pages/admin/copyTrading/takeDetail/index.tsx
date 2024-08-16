@@ -132,8 +132,8 @@ export default function TakeDetail() {
                       />
                     </div>
                     <div className="flex items-end gap-1">
-                      <span className=" text-3xl font-medium text-black-900 !font-dingpro-medium"> {taker?.datas.rate1}</span>
-                      <span className=" text-sm font-normal text-black-900">USDT</span>
+                      <span className=" text-3xl font-medium text-primary !font-dingpro-medium"> {taker?.datas.rate1}</span>
+                      <span className=" text-sm font-normal text-primary">USDT</span>
                     </div>
                   </div>
                 </div>
@@ -288,7 +288,7 @@ export default function TakeDetail() {
           </div> */}
           {/* 带单数据 */}
           <div className="mt-2 border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
-            <span className=" text-black-800 text-xl font-medium">
+            <span className=" text-primary text-xl font-medium">
               <FormattedMessage id="mt.daidanshuju" />
             </span>
             <TakeDatas datas={taker?.datas} gap="gap-16" />

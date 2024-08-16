@@ -84,6 +84,10 @@ export default function Tabs({
       '.ant-tabs-nav': {
         marginBottom: `${marginBottom}px !important`
       },
+      // 隐藏tabbar底部边框线
+      '.ant-tabs-nav::before': {
+        borderBottom: hiddenBottomLine ? 'none !important' : '1px solid var(--tabs-border-color) !important'
+      },
       '.ant-tabs-tab-active .ant-tabs-tab-btn': {
         fontFamily: 'pf-bold !important'
       },
@@ -93,15 +97,5 @@ export default function Tabs({
     }
   })
 
-  return (
-    <AntdTabs
-      rootClassName={classNames(rootClassName, className, {
-        'hide-tabbar-border': hiddenBottomLine
-      })}
-      type={type}
-      tabBarGutter={tabBarGutter}
-      items={items}
-      {...res}
-    />
-  )
+  return <AntdTabs rootClassName={classNames(rootClassName, className)} type={type} tabBarGutter={tabBarGutter} items={items} {...res} />
 }

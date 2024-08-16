@@ -80,10 +80,10 @@ export default ({ trigger, open, onSuccess, onConfirm, onOpenChange }: IProps) =
               <img src="/img/chuangjianzhanghu.svg" width={133} height={133} />
             </div>
             <div className="flex flex-col flex-1 items-center gap-1.5 ">
-              <span className=" text-lg text-black-800 font-semibold">
+              <span className=" text-lg text-primary font-semibold">
                 <FormattedMessage id="mt.wujiaoyizhanghu" />
               </span>
-              <span className=" text-sm text-black-800 text-center w-[321px]">
+              <span className=" text-sm text-primary text-center w-[321px]">
                 <FormattedMessage id="mt.youyuningdangqianzhanghuyouchicang" />
               </span>
             </div>

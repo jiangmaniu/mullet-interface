@@ -66,7 +66,7 @@ export const Performance = ({ time, datas }: IProps) => {
             title={<></>}
             value={datas?.rate1}
             formatter={(val) => formatter(val, { suffix: '%' } as FormatConfig)}
-            valueRender={(val) => <span className="text-xl font-medium text-black-900 !font-dingpro-medium">{val}</span>}
+            valueRender={(val) => <span className="text-xl font-medium text-primary !font-dingpro-medium">{val}</span>}
           />
         </span>
       </div>

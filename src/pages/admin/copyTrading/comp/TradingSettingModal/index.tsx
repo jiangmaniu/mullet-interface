@@ -2,7 +2,7 @@ import './style.less'
 
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { Form, message, Tabs, TabsProps } from 'antd'
+import { Form, Tabs, TabsProps, message } from 'antd'
 
 import { CURRENCY } from '@/constants'
 import { formatNum } from '@/utils'
@@ -81,13 +81,13 @@ export default ({ trigger, open, onOpenChange, onConfirm }: IProps) => {
               <img src="/img/follow-icon.png" width={188} height={150} className="-mt-14" />
               <div className="flex flex-row justify-between gap-20">
                 <div className="flex flex-col gap-2 w-24 items-center">
-                  <span className=" text-lg leading-5 !font-dingpro-medium text-black-900">{formatNum('15')}%</span>
+                  <span className=" text-lg leading-5 !font-dingpro-medium text-primary">{formatNum('15')}%</span>
                   <span className=" text-xs text-gray-600">
                     <FormattedMessage id="mt.lirunfenchengbili" />
                   </span>
                 </div>
                 <div className="flex flex-col gap-2 w-24 items-center">
-                  <span className=" text-lg leading-5 !font-dingpro-medium text-black-900">{formatNum('15')}</span>
+                  <span className=" text-lg leading-5 !font-dingpro-medium text-primary">{formatNum('15')}</span>
                   <span className=" text-xs text-gray-600">
                     <FormattedMessage id="mt.zichanyaoqiu" />
                     {CURRENCY}

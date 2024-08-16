@@ -5,6 +5,7 @@ import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
+import FavoriteIcon from '@/components/Web/FavoriteIcon'
 import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
@@ -48,7 +49,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                 >
                   <SymbolIcon width={28} height={28} src={symbolInfo?.imgUrl} className="relative xl:top-[9px] xxl:top-0" />
                   <div className="flex items-center xl:relative xl:left-[5px] xxl:left-0">
-                    <span className="pl-[6px] pr-[5px] text-base font-semibold text-gray">{symbol}</span>
+                    <span className="pl-[6px] pr-[5px] text-base font-semibold text-primary">{symbol}</span>
                     <img
                       src="/img/down.png"
                       height={24}
@@ -58,7 +59,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   </div>
 
                   <div
-                    className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] bg-white"
+                    className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] dark:border-[var(--border-primary-color)] bg-white dark:!shadow-none"
                     style={{
                       boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
                       display: showSidebar ? 'block' : 'none'
@@ -83,34 +84,34 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
               <div className="flex items-center pl-12 gap-x-12 flex-1">
                 {/* @TODO 只有数字货币才展示 */}
                 {/* <div className="flex flex-col">
-                  <span className="text-xs text-gray-weak">
+                  <span className="text-xs text-weak">
                     <FormattedMessage id="mt.zijinhuilvdaojishi" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">0.0100% / 5:31:23</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">0.0100% / 5:31:23</span>
                 </div> */}
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-weak">
+                  <span className="text-xs text-weak">
                     <FormattedMessage id="mt.kaipanjiage" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">{formatNum(res.open)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.open)}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-weak">
+                  <span className="text-xs text-weak">
                     <FormattedMessage id="mt.shoupanjiage" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">{formatNum(res.close)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.close)}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-weak">
+                  <span className="text-xs text-weak">
                     <FormattedMessage id="mt.24xiaoshizuigao" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">{formatNum(res.high)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.high)}</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-weak">
+                  <span className="text-xs text-weak">
                     <FormattedMessage id="mt.24xiaoshizuidi" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-gray">{formatNum(res.low)}</span>
+                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.low)}</span>
                 </div>
               </div>
             </div>
@@ -120,7 +121,15 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
               }}
               className="cursor-pointer"
             >
-              <img width={32} height={32} alt="" src={`/img/${trade.isFavoriteSymbol ? 'star-active' : 'star'}.png`} />
+              <FavoriteIcon
+                width={34}
+                height={34}
+                symbol={symbol}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  trade.toggleSymbolFavorite(symbol)
+                }}
+              />
             </div>
           </div>
         </>
@@ -136,8 +145,8 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
             >
               <MenuUnfoldOutlined className="mr-3 text-xl" />
               <img width={26} height={26} alt="" src={`/img/coin-icon/${symbol}.png`} className="rounded-full" />
-              <span className="pl-[6px] pr-1 text-base font-semibold text-gray">{symbol}</span>
-              <CaretDownOutlined className="text-gray-weak" />
+              <span className="pl-[6px] pr-1 text-base font-semibold text-primary">{symbol}</span>
+              <CaretDownOutlined className="text-weak" />
             </div>
             <div
               className="flex items-center"
@@ -159,12 +168,12 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
               <div className="mt-1 flex">
                 <Futures
                   trigger={
-                    <div className="flex cursor-pointer items-center rounded-[4px] bg-primary-secondary/20 px-2 py-1">
-                      <InfoCircleOutlined className="text-primary" />
-                      <span className="px-1 text-xs text-primary">
+                    <div className="flex cursor-pointer items-center rounded-[4px] bg-brand/20 px-2 py-1">
+                      <InfoCircleOutlined className="text-brand" />
+                      <span className="px-1 text-xs text-brand">
                         <FormattedMessage id="mt.heyueshuxing" />
                       </span>
-                      <RightOutlined className="text-primary" />
+                      <RightOutlined className="text-brand" />
                     </div>
                   }
                 />
@@ -173,30 +182,30 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
             <div className="flex">
               <div className="flex flex-col">
                 <div className="flex">
-                  <div className="text-xs text-gray-weak">
+                  <div className="text-xs text-weak">
                     <FormattedMessage id="mt.kai" />
                   </div>
-                  <div className="pl-2 text-xs text-gray-weak">{res.open}</div>
+                  <div className="pl-2 text-xs text-weak">{res.open}</div>
                 </div>
                 <div className="flex pt-1">
-                  <div className="text-xs text-gray-weak">
+                  <div className="text-xs text-weak">
                     <FormattedMessage id="mt.shou" />
                   </div>
-                  <div className="pl-2 text-xs text-gray-weak">{res.close}</div>
+                  <div className="pl-2 text-xs text-weak">{res.close}</div>
                 </div>
               </div>
               <div className="flex flex-col pl-3">
                 <div className="flex">
-                  <div className="text-xs text-gray-weak">
+                  <div className="text-xs text-weak">
                     <FormattedMessage id="mt.gao" />{' '}
                   </div>
-                  <div className="pl-2 text-xs text-gray-weak">{res.high}</div>
+                  <div className="pl-2 text-xs text-weak">{res.high}</div>
                 </div>
                 <div className="flex pt-1">
-                  <div className="text-xs text-gray-weak">
+                  <div className="text-xs text-weak">
                     <FormattedMessage id="mt.di" />
                   </div>
-                  <div className="pl-2 text-xs text-gray-weak">{res.low}</div>
+                  <div className="pl-2 text-xs text-weak">{res.low}</div>
                 </div>
               </div>
             </div>

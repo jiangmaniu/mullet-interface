@@ -31,8 +31,8 @@ export default function Tabs({ onChange, items, activeKey, itemStyle, activeBg }
         return (
           <div
             className={classNames(
-              'cursor-pointer py-[5px] hover:text-gray text-sm',
-              isActive ? `rounded-[26px] text-gray` : 'text-gray-secondary',
+              'cursor-pointer py-[5px] hover:text-primary text-sm',
+              isActive ? `rounded-[26px] text-primary` : 'text-secondary',
               isZh ? 'px-[26px]' : 'px-[7px]'
             )}
             onClick={() => {

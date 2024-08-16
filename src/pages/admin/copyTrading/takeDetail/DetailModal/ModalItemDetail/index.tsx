@@ -9,7 +9,7 @@ export default ({ item }: { item: any }) => {
       <div className=" flex gap-1 items-center">
         <img src={item.img} alt="" className="w-8 h-8 rounded-full" />
         <div className=" flex flex-col items-start">
-          <span className="text-sm font-semibold text-black-800">{item.pinzhong}</span>
+          <span className="text-sm font-semibold text-primary">{item.pinzhong}</span>
           <span className="flex items-center gap-1">
             <Tags size="tiny" color={item.zhuangtai === '空' ? 'red' : 'green'}>
               {item.zhuangtai}

@@ -150,11 +150,11 @@ export default function PhoneSelectFormItem({
           addonAfter || onSend ? (
             <>
               {seconds ? (
-                <span className="text-gray text-sm cursor-pointer">
+                <span className="text-primary text-sm cursor-pointer">
                   <FormattedMessage id="mt.codeDownload" values={{ count: seconds }} />
                 </span>
               ) : (
-                <Button className="!text-gray text-sm cursor-pointer" onClick={handleSendCode} type="link" loading={loading}>
+                <Button className="!text-primary text-sm cursor-pointer" onClick={handleSendCode} type="link" loading={loading}>
                   <FormattedMessage id="mt.fasongyanzhengma" />
                 </Button>
               )}

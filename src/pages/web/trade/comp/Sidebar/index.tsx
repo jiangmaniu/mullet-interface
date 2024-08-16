@@ -7,12 +7,15 @@ import { observer } from 'mobx-react'
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
+import Iconfont from '@/components/Base/Iconfont'
 import Popup from '@/components/Base/Popup'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import Tabs from '@/components/Base/Tabs'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
+import { gray } from '@/theme/theme.config'
 
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
@@ -33,6 +36,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const [categoryTabKey, setCategoryTabKey] = useState(0) // 品种分类
   const [list, setList] = useState([] as Account.TradeSymbolListItem[])
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const searchInputRef = useRef<any>()
   const symbolList = trade.symbolList // 全部品种列表
   const loading = trade.symbolListLoading
@@ -78,17 +83,26 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     return symbolList
   }
 
+  const SearchIcon = <Iconfont name="sousuo" width={24} height={24} color={isDark ? '#fff' : gray['600']} />
+
   const renderSearch = () => (
     <div className="px-3 max-xl:pt-[5px]">
       <Input
         value={searchValue}
         onChange={handleSearchChange}
         placeholder={intl.formatMessage({ id: 'mt.sousuo' })}
-        suffix={<img alt="" width={24} height={24} src="/img/search-icon.png" />}
+        suffix={SearchIcon}
         allowClear
-        style={{ background: 'var(--placeholder-bg)', height: 36 }}
+        style={{
+          background: 'var(--input-bg)',
+          borderColor: 'var(--divider-line-color)',
+          height: 36,
+          transition: 'background 0s ease-in-out',
+          color: 'var(--color-text-primary)'
+        }}
         styles={{ input: { background: 'transparent' } }}
         ref={searchInputRef}
+        classNames={{ input: 'dark:placeholder:!text-gray-570' }}
       />
     </div>
   )
@@ -99,10 +113,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
       <>
         <div className="pt-2">
           <Row className="px-5 pb-2">
-            <Col span={12} className="!text-xs text-gray-weak">
+            <Col span={12} className="!text-xs text-weak">
               <FormattedMessage id="mt.pinpai" />
             </Col>
-            <Col span={12} className="text-right !text-xs text-gray-weak">
+            <Col span={12} className="text-right !text-xs text-weak">
               <FormattedMessage id="mt.zuixinjiage" />/<FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
@@ -131,7 +145,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                                 setActiveKey('CATEGORY')
                               }}
                             >
-                              <div className="text-xs text-gray-secondary hover:text-gray">
+                              <div className="text-xs text-secondary hover:text-primary">
                                 <FormattedMessage id="mt.tianjiazixuan" />
                               </div>
                               <SwapRightOutlined />
@@ -171,7 +185,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         tabBarExtraContent={
           showFixSidebar ? (
             <div className="cursor-pointer" onClick={openSidebar}>
-              <img src="/img/menu-icon.png" height={24} width={24} />
+              <Iconfont name="shouqi" height={24} width={24} color={isDark ? '#fff' : gray['900']} />
             </div>
           ) : undefined
         }
@@ -198,7 +212,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     return {
       '&::after': {
         content: "''",
-        background: '#E8E8E8',
+        background: 'var(--divider-line-color)',
         width: 1,
         height: '100%',
         position: 'absolute',
@@ -237,10 +251,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         <>
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
-            <div
-              className={classNames('h-[700px] w-[300px] bg-white relative dark:bg-dark-page', { [borderClassName]: showFixSidebar })}
-              style={style}
-            >
+            <div className={classNames('h-[700px] w-[300px] bg-primary relative', { [borderClassName]: showFixSidebar })} style={style}>
               {renderTabs()}
               {renderSearch()}
               {renderCategoryTabs()}
@@ -254,9 +265,18 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           )}
           {/* 收起侧边栏视图 */}
           {!openTradeSidebar && (
-            <div className={classNames('h-[700px] w-[60px] bg-white flex flex-col items-center relative', borderClassName)}>
-              <div className="border-b border-gray-100 pb-2 pt-[11px] text-center w-full cursor-pointer" onClick={openSidebar}>
-                <img src="/img/menu-icon.png" height={24} width={24} style={{ transform: 'rotate(180deg)' }} />
+            <div className={classNames('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
+              <div
+                className="border-b border-gray-60 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"
+                onClick={openSidebar}
+              >
+                <Iconfont
+                  name="shouqi"
+                  height={24}
+                  width={24}
+                  color={isDark ? '#fff' : gray['900']}
+                  style={{ transform: 'rotate(180deg)' }}
+                />
               </div>
               <div
                 className="py-4 cursor-pointer"
@@ -267,7 +287,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                   }, 300)
                 }}
               >
-                <img alt="" width={24} height={24} src="/img/search-icon.png" />
+                {SearchIcon}
               </div>
               <div className="flex flex-col items-center w-full relative overflow-y-auto">
                 {symbolList.map((item, idx) => {

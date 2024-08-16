@@ -1,10 +1,10 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { Checkbox } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef, useState, useTransition } from 'react'
 
+import Checkbox from '@/components/Base/Checkbox'
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'
@@ -84,7 +84,7 @@ function TradeRecord({ trigger }: IProps) {
         tabBarExtraContent={
           <div className="flex items-center mr-2">
             {showActiveSymbol && !!totalProfit && tabKey === 'POSITION' && (
-              <span className="mr-5 text-sm text-gray-secondary">
+              <span className="mr-5 text-sm text-secondary">
                 <span className="pr-[5px]">{activeSymbolName}</span>
                 <FormattedMessage id="mt.fudongyingkui" />
                 <span className={classNames('pl-2 !font-dingpro-medium', totalProfit > 0 ? 'text-green' : 'text-red')}>
@@ -95,7 +95,7 @@ function TradeRecord({ trigger }: IProps) {
             {/* 历史成交没有这个按钮 */}
             {tabKey !== 'HISTORY' && (
               <Checkbox onChange={onCheckBoxChange} className="max-xl:hidden">
-                <span className="text-gray text-sm">
+                <span className="text-primary text-sm">
                   <FormattedMessage id="mt.zhizhanshidangqian" />
                 </span>
               </Checkbox>
@@ -104,7 +104,7 @@ function TradeRecord({ trigger }: IProps) {
             {/* {tabKey === 'POSITION' && (
               <div className="flex items-center border border-gray-250 py-[6px] px-[10px] rounded-lg ml-5 cursor-pointer">
                 <img src="/img/shandian.png" width={14} height={14} />
-                <span className="text-xs text-gray pl-[3px]">
+                <span className="text-xs text-primary pl-[3px]">
                   <FormattedMessage id="mt.quanbupingcang" />
                 </span>
               </div>
@@ -140,7 +140,7 @@ function TradeRecord({ trigger }: IProps) {
     return {
       '&::after': {
         content: "''",
-        background: '#E8E8E8',
+        background: 'var(--divider-line-color)',
         width: 1,
         height: '100%',
         position: 'absolute',
@@ -155,7 +155,7 @@ function TradeRecord({ trigger }: IProps) {
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className={classNames('pt-1 mb-3 bg-white relative z-[1]', borderClassName)}>
+          <div className={classNames('pt-1 mb-3 bg-primary relative z-[1]', borderClassName)}>
             {renderTabs()}
             {renderTabContent()}
           </div>

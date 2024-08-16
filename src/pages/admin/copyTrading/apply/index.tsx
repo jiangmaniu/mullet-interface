@@ -7,7 +7,6 @@ import Header from '@/components/Admin/Header'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { SYSTEM_NAME } from '@/constants'
-import { black } from '@/theme/theme.config'
 import { hiddenCenterPartStr } from '@/utils'
 
 import AccountSelect from '../comp/AccountSelect'
@@ -79,7 +78,7 @@ export default function Apply() {
             <div className="flex flex-row items-center gap-4 w-full">
               <img src="/img/shenqingdaidan.svg" width={121} height={121} />
               <div className="flex flex-col gap-2 flex-grow flex-1">
-                <span className=" font-bold text-black-800 text-2xl ">
+                <span className=" font-bold text-primary text-2xl ">
                   <FormattedMessage id="mt.daidanjiaoyiyuanshenqing" />
                 </span>
                 <span className=" font-normal text-sm text-gray-600">
@@ -91,7 +90,7 @@ export default function Apply() {
             <div className=" flex flex-row items-start gap-6">
               <AvatarUpload />
               <div className="flex flex-col gap-2.5 justify-start">
-                <span className=" text-sm font-normal text-black-800">
+                <span className=" text-sm font-normal text-primary">
                   <FormattedMessage id="mt.mingcheng" />
                 </span>
                 <Input
@@ -115,7 +114,7 @@ export default function Apply() {
             {/* 带单账户 */}
             <div className="flex items-center justify-between gap-3 w-[532px] max-w-full">
               <div className="flex flex-col gap-2.5 justify-start w-[198px]">
-                <span className=" text-sm font-normal text-black-800">
+                <span className=" text-sm font-normal text-primary">
                   <FormattedMessage id="mt.daidanzhanghuleixing" />
                 </span>
                 <AccountSelect
@@ -127,7 +126,7 @@ export default function Apply() {
                 />
               </div>
               <div className="flex flex-col gap-2.5 justify-start flex-1">
-                <span className=" text-sm font-normal text-black-800">
+                <span className=" text-sm font-normal text-primary">
                   <FormattedMessage id="mt.daidanzhanghu" />
                 </span>
                 <Select
@@ -138,7 +137,7 @@ export default function Apply() {
                       <span className="flex flex-row justify-between items-center flex-1">
                         <span>{item.value}</span>
 
-                        <Iconfont name="down" width={20} height={20} color={black['900']} />
+                        <Iconfont name="down" width={20} height={20} color={'var(--color-text-primary)'} />
                       </span>
                       <span className=" w-[1px] h-[11px] bg-gray-260"></span>
                       {/* <span className=" text-sm !font-dingpro-regular"> {item.jine} USD</span> */}
@@ -156,7 +155,7 @@ export default function Apply() {
             </div>
             {/* 介绍 */}
             <div className="flex flex-col items-start justify-between gap-2.5 w-[532px] max-w-full">
-              <span className=" text-sm font-normal text-black-800">
+              <span className=" text-sm font-normal text-primary">
                 <FormattedMessage id="mt.jieshao" />
               </span>
               <TextArea
@@ -170,7 +169,7 @@ export default function Apply() {
             </div>
             {/* 合约交易证明 */}
             <div className="flex flex-col items-start justify-between gap-2.5 w-[532px] max-w-full">
-              <span className=" text-sm font-normal text-black-800">
+              <span className=" text-sm font-normal text-primary">
                 <FormattedMessage id="mt.heyuejiaoyizhengming" />
                 <FormattedMessage id="mt.kexuan" />
               </span>

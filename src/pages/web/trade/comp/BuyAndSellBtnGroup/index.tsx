@@ -25,8 +25,8 @@ export default observer(
     const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
     const [current, setCurrent] = useState(1)
     const isFooterBtnGroup = type === 'footer'
-    const buyColor = current === 1 ? 'text-white' : 'text-gray'
-    const sellColor = isFooterBtnGroup ? 'text-white' : current === 2 ? 'text-white' : 'text-gray'
+    const buyColor = current === 1 ? 'text-white' : 'text-primary'
+    const sellColor = isFooterBtnGroup ? 'text-white' : current === 2 ? 'text-white' : 'text-primary'
     const { lng } = useLang()
     const { breakPoint } = useEnv()
     const [width, setWidth] = useState<any>(0)
@@ -101,7 +101,7 @@ export default observer(
           </Sell>
         </div>
         {hasQuote && (
-          <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] !font-dingpro-medium translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-gray">
+          <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] !font-dingpro-medium translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-primary">
             {quoteInfo.spread || 0}
           </div>
         )}

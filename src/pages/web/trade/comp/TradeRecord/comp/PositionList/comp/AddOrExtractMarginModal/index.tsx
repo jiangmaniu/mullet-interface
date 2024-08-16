@@ -119,14 +119,14 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
             <div className="pt-5">
               <div className="pb-1">
                 <img src="/img/lingxing-2.png" width={8} height={8} />
-                <span className="text-xs text-gray pl-[5px] !font-dingpro-medium">
+                <span className="text-xs text-primary pl-[5px] !font-dingpro-medium">
                   {isAdd ? <FormattedMessage id="mt.zuiduokezengjia" /> : <FormattedMessage id="mt.zuiduokejianshao" />}{' '}
                   {formatNum(avaMargin)} USD
                 </span>
               </div>
               <div>
                 <img src="/img/lingxing-2.png" width={8} height={8} />
-                <span className="text-xs text-gray pl-[5px] !font-dingpro-medium">
+                <span className="text-xs text-primary pl-[5px] !font-dingpro-medium">
                   {isAdd ? (
                     <FormattedMessage id="mt.zengjiahoudeyuguqiangpingjiagewei" />
                   ) : (

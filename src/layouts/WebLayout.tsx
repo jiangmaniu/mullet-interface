@@ -10,7 +10,7 @@ export default function WebLayout() {
 
   if (isTradeLayout) {
     return (
-      <div className="dark:bg-dark-page">
+      <div className="bg-primary">
         <Header />
         <Outlet />
       </div>

@@ -74,8 +74,8 @@ export default function CopyTradingManagement() {
                       </span>
                     </div>
                     <div className="flex items-end gap-1">
-                      <span className=" text-3xl font-medium text-black-900 !font-dingpro-medium"> {order?.datas.rate1}</span>
-                      <span className=" text-sm font-normal text-black-900">{CURRENCY}</span>
+                      <span className=" text-3xl font-medium text-primary !font-dingpro-medium"> {order?.datas.rate1}</span>
+                      <span className=" text-sm font-normal text-primary">{CURRENCY}</span>
                     </div>
                   </div>
                 </div>

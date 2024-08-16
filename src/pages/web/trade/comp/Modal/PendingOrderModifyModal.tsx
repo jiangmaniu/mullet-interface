@@ -152,25 +152,25 @@ export default observer(
               <div className="flex w-full flex-col pt-3">
                 <div className="flex items-center">
                   <SymbolIcon src={item?.imgUrl} width={24} height={24} />
-                  <span className="pl-[6px] text-base font-semibold text-gray">{symbol}</span>
+                  <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
                   <span className={classNames('pl-1 text-sm text-green', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />}
                   </span>
                 </div>
                 <div className="flex w-full items-center pt-2">
                   <div className="flex items-center justify-between">
-                    <span className="pr-3 text-sm text-gray-secondary">
+                    <span className="pr-3 text-sm text-secondary">
                       <FormattedMessage id="common.type" />
                     </span>
-                    <span className="text-sm text-gray">
+                    <span className="text-sm text-primary">
                       {item.isLimitOrder ? <FormattedMessage id="mt.xianjiaguadan" /> : <FormattedMessage id="mt.tingsundan" />}
                     </span>
                   </div>
                   <div className="flex items-center justify-between pl-5">
-                    <span className="pr-3 text-sm text-gray-secondary">
+                    <span className="pr-3 text-sm text-secondary">
                       <FormattedMessage id="mt.guadanshoushu" />
                     </span>
-                    <span className="text-sm text-gray">
+                    <span className="text-sm text-primary">
                       {item.orderVolume}
                       <FormattedMessage id="mt.lot" />
                     </span>

@@ -11,6 +11,7 @@ import {
   KEY_SYMBOL_NAME_LIST,
   KEY_THEME,
   KEY_TOKEN,
+  KEY_TRADE_THEME,
   KEY_USER_CONF_INFO,
   KEY_USER_INFO
 } from '@/constants'
@@ -62,9 +63,13 @@ export const STORAGE_GET_CONF_INFO = genStorageGet(KEY_USER_CONF_INFO)
 export const STORAGE_SET_CONF_INFO = genStorageSet(KEY_USER_CONF_INFO)
 export const STORAGE_REMOVE_CONF_INFO = storageRemove(KEY_USER_CONF_INFO)
 
-// 主题色
+// 全局主题色
 export const STORAGE_GET_THEME = genStorageGet(KEY_THEME)
 export const STORAGE_SET_THEME = genStorageSet(KEY_THEME)
+
+// 交易页面主题色
+export const STORAGE_GET_TRADE_THEME = genStorageGet(KEY_TRADE_THEME)
+export const STORAGE_SET_TRADE_THEME = genStorageSet(KEY_TRADE_THEME)
 
 // =================================================
 
@@ -179,12 +184,10 @@ function storageSetting(key: string, value: any) {
   if (valuetype(result, 'string')) {
     localStorage.setItem(key, result)
   } else {
-    throw {
-      error: {
-        msg: '本地存储失败',
-        result: result
-      }
-    }
+    console.log({
+      msg: '本地存储失败',
+      result: result
+    })
   }
 }
 
@@ -298,12 +301,10 @@ function storageSessionSetting(key: string, value: any) {
   if (valuetype(result, 'string')) {
     sessionStorage.setItem(key, result)
   } else {
-    throw {
-      error: {
-        msg: '本地存储失败',
-        result: result
-      }
-    }
+    console.log({
+      msg: '本地存储失败',
+      result: result
+    })
   }
 }
 

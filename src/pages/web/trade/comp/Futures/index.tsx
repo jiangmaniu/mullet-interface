@@ -105,8 +105,8 @@ function Futures({ trigger, style }: IProps) {
               <div className="grid gap-y-4 xl:grid-cols-3 xxl:grid-cols-4">
                 {futrues.map((item, idx) => (
                   <div className="flex flex-col items-start justify-center" key={idx}>
-                    <div className="!font-dingpro-medium text-lg text-gray">{item.value}</div>
-                    <div className="pt-[10px] text-xs text-gray-weak">{item.label}</div>
+                    <div className="!font-dingpro-medium text-lg text-primary">{item.value}</div>
+                    <div className="pt-[10px] text-xs text-weak">{item.label}</div>
                   </div>
                 ))}
               </div>
@@ -141,13 +141,13 @@ function Futures({ trigger, style }: IProps) {
 
           {tradeTimeConf?.length > 0 && (
             <div className="pt-5">
-              <div className="py-4 text-xl font-pf-bold">
+              <div className="py-4 text-xl font-pf-bold text-primary">
                 <FormattedMessage id="mt.jiaoyishijian" />
                 <span className="text-base">（GMT+8）</span>
               </div>
               <div className="grid gap-y-4 grid-cols-3">
                 {tradeTimeConf.map((item: any, idx: number) => (
-                  <div className="text-sm text-gray-weak" key={idx}>
+                  <div className="text-sm text-weak" key={idx}>
                     {transferWeekDay(item.weekDay)} {`${formatTimeStr(item.trade)}`}
                   </div>
                 ))}

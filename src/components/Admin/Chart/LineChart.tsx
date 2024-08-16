@@ -2,7 +2,7 @@ import { Line } from '@ant-design/charts'
 import { getIntl } from '@umijs/max'
 
 import { useEnv } from '@/context/envProvider'
-import { colorPrimary } from '@/theme/theme.config'
+import { colorBrandPrimary } from '@/theme/theme.config'
 import { formatTime } from '@/utils'
 
 const LineChat = () => {
@@ -115,7 +115,7 @@ const LineChat = () => {
       shape: 'circle',
       style: {
         fill: 'white',
-        stroke: colorPrimary,
+        stroke: colorBrandPrimary,
         lineWidth: 1
       }
     },

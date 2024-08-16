@@ -51,7 +51,7 @@ export const TradingItem = ({
               .filter((item, idx) => idx < 1)
               .map((item, idx) => {
                 return (
-                  <div className=" text-black-800 text-sm font-pf-medium flex gap-1 items-center" key={idx}>
+                  <div className=" text-primary text-sm font-pf-medium flex gap-1 items-center" key={idx}>
                     <img
                       src={item.avatar}
                       width={24}
@@ -68,7 +68,7 @@ export const TradingItem = ({
 
             {/* {followers.length > 5 && (
               <div
-                className="rounded-full  text-black-800 bg-white flex items-center justify-center text-center text-lg font-medium  w-6 h-6 flex-shrink-0 z-10 "
+                className="rounded-full  text-primary bg-white flex items-center justify-center text-center text-lg font-medium  w-6 h-6 flex-shrink-0 z-10 "
                 style={{
                   transform: `translateX(${5 * -14}px)`
                 }}

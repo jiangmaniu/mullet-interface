@@ -21,7 +21,7 @@ export const Introduction = (props: IProps) => {
       <div className=" flex flex-col gap-1">
         {/* 名字 & 標籤 */}
         <div className=" flex items-center gap-4 ">
-          <span className=" text-xl font-medium text-black-900"> {props.name} </span>
+          <span className=" text-xl font-medium text-primary"> {props.name} </span>
           <Space direction="horizontal" size={2}>
             {props.tags?.map((tag, idx) => (
               <Tags size="small" color="green" format={{ id: `mt.${tag}` }} key={idx} />

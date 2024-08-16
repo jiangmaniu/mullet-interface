@@ -94,8 +94,8 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
       )}
       <div className="bg-white rounded-lg w-[490px] min-h-[200px] flex flex-col">
         {step !== 'FOUR' && (
-          <div className="border-b border-gray-100 py-5">
-            <div className="text-gray text-lg font-semibold px-10">
+          <div className="border-b border-gray-60 py-5">
+            <div className="text-primary text-lg font-semibold px-10">
               <FormattedMessage id="mt.chongzhimima" />
             </div>
           </div>
@@ -228,10 +228,10 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
           <Hidden show={step === 'FOUR'}>
             <div className="px-10 flex items-center justify-center flex-col">
               <img src="/img/pwd-success.png" width={232} height={232} />
-              <div className="text-gray text-[24px] mb-3 font-semibold">
+              <div className="text-primary text-[24px] mb-3 font-semibold">
                 <FormattedMessage id="mt.mimaxiugaiwancheng" />
               </div>
-              <div className="text-gray text-[15px] mb-5">
+              <div className="text-primary text-[15px] mb-5">
                 <FormattedMessage id="mt.qingjizhumimabuyaoxielu" />
               </div>
               <div className="flex items-center justify-center py-6">

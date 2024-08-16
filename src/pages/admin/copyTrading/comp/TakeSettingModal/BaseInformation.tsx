@@ -17,7 +17,7 @@ export default () => {
     <div className="flex flex-col justify-between gap-4.5 w-full max-w-full">
       {/* 带单账户 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.daidanzhanghu" />
         </span>
         <Select
@@ -43,7 +43,7 @@ export default () => {
       </div>
       {/* 名称 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.mingcheng" />
         </span>
         <Input
@@ -62,7 +62,7 @@ export default () => {
       </div>
       {/* 介绍 */}
       <div className="flex flex-col items-start justify-between gap-2.5 w-full max-w-full">
-        <span className=" text-sm font-normal text-black-800">
+        <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.jieshao" />
         </span>
         <TextArea

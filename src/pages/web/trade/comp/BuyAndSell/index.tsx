@@ -58,7 +58,7 @@ export default observer(
       return {
         '&::after': {
           content: "''",
-          background: '#EEEEEE',
+          background: 'var(--divider-line-color)',
           width: 1,
           height: '100%',
           position: 'absolute',
@@ -72,7 +72,7 @@ export default observer(
       return (
         <div
           className={classNames({
-            'h-[700px] w-[300px] bg-white relative dark:bg-dark-page': isPc,
+            'h-[700px] w-[300px] relative bg-primary': isPc,
             [className]: isPc,
             'pointer-events-none': trade.disabledTrade
           })}

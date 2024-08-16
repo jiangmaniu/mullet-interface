@@ -79,7 +79,7 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
             >
               <div className="flex justify-between w-full p-2">
                 <div className="flex justify-between w-full">
-                  <div className="flex-1 text-sm font-bold text-gray truncate">
+                  <div className="flex-1 text-sm font-bold text-primary truncate">
                     {item.name} #{hiddenCenterPartStr(item?.id, 4)}
                   </div>
                 </div>

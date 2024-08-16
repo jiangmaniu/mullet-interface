@@ -81,10 +81,10 @@ function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true }
 
   return (
     <div className="px-10 pt-5 flex-1" style={style}>
-      <div className="text-gray font-semibold text-[24px] pb-3">
+      <div className="text-primary font-semibold text-[24px] pb-3">
         {isEmail ? <FormattedMessage id="mt.chakanyouxianghuoquyanzhengma" /> : <FormattedMessage id="mt.chakanshoujihuoquyanzhengma" />}
       </div>
-      <div className="text-gray-secondary text-base pb-5">
+      <div className="text-secondary text-base pb-5">
         {isEmail ? (
           <FormattedMessage id="mt.yanzhengmafasongzhi" values={{ email: params.emailOrPhone }} />
         ) : (
@@ -92,13 +92,13 @@ function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true }
         )}
       </div>
       <CodeInput form={form} name={name} />
-      <div className="text-xs text-gray-weak pt-5">
+      <div className="text-xs text-weak pt-5">
         <FormattedMessage id="mt.weishoudaoyanzhengma" />
         {seconds ? (
           <FormattedMessage id="mt.qingzaixxmiaohouchongshi" values={{ count: seconds }} />
         ) : showReSendBtn ? (
           <span
-            className="text-primary text-xs cursor-pointer"
+            className="text-brand text-xs cursor-pointer"
             onClick={() => {
               sendCode()
             }}
@@ -106,7 +106,7 @@ function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true }
             <FormattedMessage id="mt.chongxinfasong" />
           </span>
         ) : (
-          <span className="text-gray-weak text-xs">
+          <span className="text-weak text-xs">
             <FormattedMessage id="mt.qingfasongyanzhengmahuoqu" />
           </span>
         )}

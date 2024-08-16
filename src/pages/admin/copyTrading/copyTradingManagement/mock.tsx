@@ -18,7 +18,7 @@ export const defaultDatas = {
 export const mockNotifications = [
   {
     children: (
-      <span className="flex items-center text-sm font-normal text-black-900">
+      <span className="flex items-center text-sm font-normal text-primary">
         <Iconfont name="tongzhi" width={20} height={20} />
         昨日带单分润已到账，数量 <span className=" text-green">0.02364731</span> USDT，请查收!
       </span>
@@ -26,7 +26,7 @@ export const mockNotifications = [
   },
   {
     children: (
-      <span className="flex items-center text-sm font-normal text-black-900">
+      <span className="flex items-center text-sm font-normal text-primary">
         <Iconfont name="tongzhi" width={20} height={20} />
         通知通知通知通知<span className=" text-green">通知通知</span>，请查收!
       </span>

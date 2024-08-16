@@ -1,3 +1,10 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@layer components {
+  /* 黑色主题按钮样式 */
+  .btn-dark {
+    @apply border-gray-700 bg-gray-720 text-primary;
+  }
+}

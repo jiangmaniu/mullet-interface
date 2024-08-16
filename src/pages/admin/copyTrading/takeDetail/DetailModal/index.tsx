@@ -139,7 +139,7 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
                 <SelectRounded
                   variant="filled"
                   labelRender={(item) => (
-                    <span className=" text-black-900 text-sm font-normal">
+                    <span className=" text-primary text-sm font-normal">
                       <FormattedMessage id="mt.jin" />
                       {item.label}
                     </span>

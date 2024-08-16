@@ -170,7 +170,7 @@ function FloatTradeBox() {
             <div className="text-white !font-dingpro-medium text-base select-none">{formatNum(quoteInfo.bid)}</div>
           </div>
           <div className="flex flex-col h-[56px] px-3 items-center justify-center w-[105px]">
-            <div className="text-gray text-xs select-none">
+            <div className="text-primary text-xs select-none">
               <FormattedMessage id="mt.shoushu" />
             </div>
             <InputNumber
@@ -203,7 +203,7 @@ function FloatTradeBox() {
             return (
               <span
                 key={idx}
-                className="text-gray text-xs px-[6px] py-[1px] bg-gray-50 rounded cursor-pointer"
+                className="text-primary text-xs px-[6px] py-[1px] bg-gray-50 rounded cursor-pointer"
                 onClick={() => {
                   setCount(item)
                 }}

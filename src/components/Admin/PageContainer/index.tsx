@@ -5,7 +5,6 @@ import { TabBarExtraContent } from 'rc-tabs/lib/interface'
 import { useEffect, useState } from 'react'
 
 import { useEnv } from '@/context/envProvider'
-import { bgColorBase } from '@/theme/theme.config'
 import { push } from '@/utils/navigator'
 
 import Tabs, { ITabItem } from '../Tabs'
@@ -80,7 +79,7 @@ export default function PageContainer({
     .join('/')
 
   useEffect(() => {
-    setPageBgColor(pageBgColorMode === 'white' ? '#fff' : bgColorBase)
+    setPageBgColor(pageBgColorMode === 'white' ? 'var(--color-white)' : 'var(--bg-base-gray)')
   }, [pageBgColorMode])
 
   useEffect(() => {
@@ -143,7 +142,7 @@ export default function PageContainer({
       {backTitle && backPath && (
         <div
           className={classNames('pt-7 flex items-center px-6 justify-center sticky top-[66px] z-10')}
-          style={{ background: pageBgColorMode === 'white' ? '#fff' : bgColorBase, ...backStyle }}
+          style={{ background: pageBgColorMode === 'white' ? '#fff' : 'var(--bg-base-gray)', ...backStyle }}
         >
           <div className="flex items-center relative -left-2 xl:w-1300 w-1120 mx-4">
             <div
