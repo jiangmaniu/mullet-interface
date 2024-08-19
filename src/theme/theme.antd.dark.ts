@@ -20,6 +20,7 @@ export default {
   fontSize: 14, // 默认14
   borderRadius: 7, // 圆角
   colorBgContainerDisabled: bgColorBase, // 禁用背景颜色
+  colorText: gray['95'], // 文字主色
 
   // 组件对应的token
   Tabs: {
