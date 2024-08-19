@@ -566,6 +566,7 @@ export default {
   'mt.shangchuantupianhuotuozhuaifangru': '上傳圖片或者拖拽放入',
   'mt.tijiaoshenqing': '提交申請',
   'mt.touxiangdaxiao': '注意：头像大小大于500kb，小于2m',
+  'mt.qingshangchuantouxiang': '請上傳頭像',
   'mt.yuedubingtingyu': '我已閱讀並同意跟單交易{fuwu}和{yinsi}',
   'mt.fuwutiaokuan': '服務條款',
   'mt.yinsizhengceshengming': '隐私政策声明',
@@ -626,5 +627,6 @@ export default {
   'mt.jingzichan': '淨資產',
   'mt.xiangqing': '詳情',
   'mt.chengjiaojiage': '成交價格',
-  'mt.caozuochenggong': '操作成功'
+  'mt.caozuochenggong': '操作成功',
+  'mt.qingxianzhizaishigezifuyinei': '請限制在十個字符以內'
 }

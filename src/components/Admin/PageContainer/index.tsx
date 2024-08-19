@@ -160,7 +160,7 @@ export default function PageContainer({
 
       {/* 内容区域 */}
       <div style={contentStyle} className={classNames('py-7 flex items-center justify-center', 'px-6')}>
-        <div className="w-1120 xl:w-1300 ">{children}</div>
+        <div className="w-1120 xl:w-1300 max-w-full ">{children}</div>
       </div>
     </div>
   )

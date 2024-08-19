@@ -27,7 +27,7 @@ const SegmentItem = memo(({ segment, value, label }: { segment: string; value: s
   )
 })
 
-export default function CopyTrading() {
+export default function CopyTrading({ active }: { active: boolean }) {
   const intl = useIntl()
 
   // 帶單員
@@ -39,17 +39,17 @@ export default function CopyTrading() {
     {
       label: <SegmentItem segment={segment} value="jinxingzhong" label={intl.formatMessage({ id: 'mt.jinxingzhong' })} />,
       value: 'jinxingzhong',
-      component: <InProgress />
+      component: <InProgress active={segment === 'jinxingzhong'} />
     },
     {
       label: <SegmentItem segment={segment} value="yijieshu" label={intl.formatMessage({ id: 'mt.yijieshu' })} />,
       value: 'yijieshu',
-      component: <Ended />
+      component: <Ended active={segment === 'yijieshu'} />
     },
     {
       label: <SegmentItem segment={segment} value="lishicangwei" label={intl.formatMessage({ id: 'mt.lishicangwei' })} />,
       value: 'lishicangwei',
-      component: <Historical />
+      component: <Historical active={segment === 'lishicangwei'} />
     }
   ]
 

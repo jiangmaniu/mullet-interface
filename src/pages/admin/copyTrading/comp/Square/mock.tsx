@@ -14,10 +14,12 @@ export const defaultTags = [{ value: 'dipin', label: <FormattedMessage id="mt.di
 export const defaultTimeRange = [
   {
     value: 'liangzhou',
+    count: 14,
     label: <FormattedMessage id="mt.liangzhou" />
   },
   {
     value: 'yiyue',
+    count: 30,
     label: <FormattedMessage id="mt.yiyue" />
   }
 ]

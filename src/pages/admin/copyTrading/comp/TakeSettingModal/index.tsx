@@ -28,6 +28,11 @@ export default ({ trigger, open, onOpenChange }: IProps) => {
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.daidanshezhi' })
 
+  const onAvatarChange = (p: any) => {
+    form.setFieldValue('imageUrl', p.link)
+    form.validateFields(['imageUrl'])
+  }
+
   const items: TabsProps['items'] = [
     {
       key: '1',
@@ -75,7 +80,7 @@ export default ({ trigger, open, onOpenChange }: IProps) => {
       >
         <div className="flex flex-col items-center">
           <div className=" w-[165px] h-[142px] bg-[url('/img/modal-bg.png')] bg-[length:100%_100%] flex items-center justify-center -mt-7">
-            <AvatarUpload width={81} height={81} />
+            <AvatarUpload width={81} height={81} onChange={onAvatarChange} />
           </div>
 
           <Tabs items={items} className="flex-1  w-full flex-grow" />

@@ -1,10 +1,12 @@
 import { FormattedMessage } from '@umijs/max'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
+import { useStores } from '@/context/mobxProvider'
 import { IOrder } from '@/models/takers'
+import { getTradeFollowFolloerManagementEnd } from '@/services/api/tradeFollow/follower'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { push } from '@/utils/navigator'
 
@@ -12,16 +14,40 @@ import { defaultTakers } from '../mock'
 import { TradingItem } from '../TradingItem'
 import useColumns from './useColumns'
 
-export default () => {
-  const [takers, setTakers] = useState<IOrder[]>(defaultTakers)
+export default ({ active }: { active: boolean }) => {
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
+
+  const [takers, setTakers] = useState<TradeFollowFollower.ManagementEndItem[]>(defaultTakers)
   const [state, setState] = useState({})
 
   const columns = useColumns()
 
+  useEffect(() => {
+    active &&
+      getTradeFollowFolloerManagementEnd({
+        accountGroupId: currentAccountInfo?.accountGroupId,
+        clientId: currentAccountInfo?.clientId,
+        followerTradeAccountId: currentAccountInfo?.id
+      })
+        .then((res) => {
+          if (res.success) {
+            // setTakers(res.data)
+            if (res.data?.length && res.data.length > 0) {
+              setTakers(res.data as IOrder[])
+            }
+            // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  }, [active, currentAccountInfo])
+
   return (
     <div className="flex flex-col gap-5 w-full">
       {takers.length > 0 ? (
-        takers.map((item: IOrder, idx: number) => (
+        takers.map((item: TradeFollowFollower.ManagementEndItem, idx: number) => (
           <TradingItem
             key={idx}
             item={item}

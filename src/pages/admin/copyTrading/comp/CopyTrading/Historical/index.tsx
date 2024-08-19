@@ -1,16 +1,42 @@
 import { FormattedMessage } from '@umijs/max'
+import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
+import { useStores } from '@/context/mobxProvider'
+import { getTradeFollowFolloerManagementHistory } from '@/services/api/tradeFollow/follower'
 import { colorTextPrimary } from '@/theme/theme.config'
 
 import TabTable from '../../TabsTable/Table'
-import { orders } from './mock'
+import { orders as mockOrders } from './mock'
 import useColumns from './useColumns'
 
-export default () => {
+export default ({ active }: { active: boolean }) => {
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
+
   const columns = useColumns()
+  const [orders, setOrders] = useState(mockOrders)
+
+  useEffect(() => {
+    active &&
+      getTradeFollowFolloerManagementHistory({
+        followerId: currentAccountInfo.id
+      })
+        .then((res) => {
+          if (res.success) {
+            // setTakers(res.data)
+            if (res.data?.length && res.data.length > 0) {
+              setOrders(res.data)
+            }
+            // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  }, [active, currentAccountInfo])
 
   return (
     <div className="flex flex-col gap-5 w-full">

@@ -1,11 +1,13 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
+import { useStores } from '@/context/mobxProvider'
 import { IOrder } from '@/models/takers'
+import { getTradeFollowFolloerManagementInProgress } from '@/services/api/tradeFollow/follower'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
@@ -16,8 +18,11 @@ import { defaultTakers } from '../mock'
 import { TradingItem } from '../TradingItem'
 import useColumns from './useColumns'
 
-export default () => {
-  const [takers, setTakers] = useState<IOrder[]>(defaultTakers)
+export default ({ active }: { active: boolean }) => {
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
+
+  const [takers, setTakers] = useState<TradeFollowFollower.ManagementInProgressItem[]>(defaultTakers)
   const [state, setState] = useState({})
   const intl = useIntl()
 
@@ -31,10 +36,32 @@ export default () => {
   const columns = useColumns()
 
   const loadingRef = useRef<any>()
+
+  useEffect(() => {
+    active &&
+      getTradeFollowFolloerManagementInProgress({
+        accountGroupId: currentAccountInfo?.accountGroupId,
+        clientId: currentAccountInfo?.clientId,
+        followerTradeAccountId: currentAccountInfo?.id
+      })
+        .then((res) => {
+          if (res.success) {
+            // setTakers(res.data)
+            if (res.data?.length && res.data.length > 0) {
+              setTakers(res.data as IOrder[])
+            }
+            // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  }, [active, currentAccountInfo])
+
   return (
     <div className="flex flex-col gap-5 w-full">
       {takers.length > 0 ? (
-        takers.map((item: IOrder, idx: number) => (
+        takers.map((item: TradeFollowFollower.ManagementInProgressItem, idx: number) => (
           <TradingItem
             key={idx}
             item={item}

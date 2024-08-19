@@ -48,30 +48,19 @@ export type IOrderTaker = {
 }
 
 /** 帶單任務 */
-export type IOrder = {
-  id: string
-  /** 任務名稱 */
-  title: string
-  /** 帶單賬戶 */
-  account: ITaker
-  /** 跟單人列表 */
-  followers: IAccount[]
-  /** 任務狀態 */
-  datas: Record<string, any>
-  /** 任務狀態 */
-  // datas: {
-  //   /** 任務名稱 */
-  //   title: string
-  //   /** 賬戶保證金 */
-  //   zhanghubaozhengjin: number
-  //   /** 賬戶餘額 */
-  //   zhanghuyue: number
-  //   /** 累計盈虧 */
-  //   leijiyingkui: number
-  //   /** 淨盈虧 */
-  //   jingyingkui: number
-  // }
-}
+export type IOrder = TradeFollowFollower.ManagementInProgressItem
+// {
+//   id: string
+//   /** 任務名稱 */
+//   title: string
+//   /** 帶單賬戶 */
+//   account: ITaker
+//   /** 跟單人列表 */
+//   followers: IAccount[]
+//   /** 任務狀態 */
+//   datas: Record<string, any>
+//   /** 任務狀態 */
+// }
 
 /** 帶單頁面參數 */
 export type IOrderTakerProps = {
