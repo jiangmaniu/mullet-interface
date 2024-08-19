@@ -75,7 +75,7 @@ export default observer(
     const consize = quoteInfo?.consize
     const d = quoteInfo.digits
     const step = Math.pow(10, -d) * 10
-    const stopl = item.stopLoss ? item.stopLoss * Math.pow(10, -d) * 10 : 0
+    const stopl = Number(item?.conf?.limitStopLevel || 1) * Math.pow(10, -d)
     let sl_scope: any = 0 // 止损范围
     let sp_scope: any = 0 // 止盈范围
     let slProfit: any // 止损-预计盈亏

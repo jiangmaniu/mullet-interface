@@ -116,25 +116,25 @@ export default observer(
       if (isBuy) {
         // 买入止损最大值
 
-        sl_scope = (bid - stopl).toFixed(d)
+        sl_scope = (ask - stopl).toFixed(d)
         // 买入止损最小值
 
-        sp_scope = (bid + stopl).toFixed(d)
+        sp_scope = (ask + stopl).toFixed(d)
 
-        slProfit = sl ? ((sl - bid) * count * consize).toFixed(d) : 0
+        slProfit = sl ? ((sl - ask) * count * consize).toFixed(d) : 0
 
-        spProfit = sp ? ((sp - bid) * count * consize).toFixed(d) : 0
+        spProfit = sp ? ((sp - ask) * count * consize).toFixed(d) : 0
       } else {
         // 卖出止损最小值
 
-        sl_scope = (ask + stopl).toFixed(d)
+        sl_scope = (bid + stopl).toFixed(d)
         // 卖出止损最大值
 
-        sp_scope = (ask - stopl).toFixed(d)
+        sp_scope = (bid - stopl).toFixed(d)
 
-        slProfit = sl ? ((ask - sl) * count * consize).toFixed(d) : 0
+        slProfit = sl ? ((bid - sl) * count * consize).toFixed(d) : 0
 
-        spProfit = sp ? ((ask - sp) * count * consize).toFixed(d) : 0
+        spProfit = sp ? ((bid - sp) * count * consize).toFixed(d) : 0
       }
     }
 
