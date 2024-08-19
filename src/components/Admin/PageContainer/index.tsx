@@ -113,7 +113,7 @@ export default function PageContainer({
             ...headerStyle
             // paddingInline: '9.5%'
           }}
-          className={classNames('flex items-center', {
+          className={classNames('flex items-center justify-center', {
             'sticky top-[66px] z-[99]': fixedHeader
           })}
         >

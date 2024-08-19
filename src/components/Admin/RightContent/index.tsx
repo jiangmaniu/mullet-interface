@@ -389,6 +389,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           hoverStyle={{
             background: theme === 'black' ? '#fbfbfb' : '#222222'
           }}
+          onClick={() => {
+            push('/account')
+          }}
         />
 
         <Iconfont
