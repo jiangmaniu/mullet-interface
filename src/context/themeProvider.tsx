@@ -50,6 +50,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     setTheme(darkModeMediaQuery.matches ? 'dark' : 'light')
     const listener = (event: any) => {
       const themeMode = event.matches ? 'dark' : 'light'
+
       setTheme(themeMode)
       setThemeClassName(themeMode)
     }
@@ -78,7 +79,9 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
       value={{
         theme,
         setTheme: (mode: IThemeMode) => {
-          handleSetTheme(mode)
+          if (mode) {
+            handleSetTheme(mode)
+          }
         }
       }}
     >
