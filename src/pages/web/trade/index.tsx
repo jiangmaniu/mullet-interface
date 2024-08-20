@@ -36,7 +36,7 @@ export default observer(() => {
   }
 
   useEffect(() => {
-    if (trade.currentAccountInfo?.status === 'DISABLED') {
+    if (trade.currentAccountInfo?.status === 'DISABLED' || trade.currentAccountInfo?.enableConnect === false) {
       push('/account')
     }
   }, [pathname, trade.currentAccountInfo])
