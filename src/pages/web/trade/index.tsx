@@ -8,6 +8,7 @@ import { useStores } from '@/context/mobxProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { push } from '@/utils/navigator'
+import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 
 import BuyAndSell from './comp/BuyAndSell'
 import BtnGroup from './comp/BuyAndSellBtnGroup'
@@ -41,7 +42,20 @@ export default observer(() => {
     }
   }, [pathname, trade.currentAccountInfo])
 
+  const checkPageShowTime = () => {
+    // 记录上次进入时间
+    const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
+    // 缓存时间大于30分钟、初次载入
+    if ((updateTime && Date.now() - updateTime > 30 * 60 * 1000) || !updateTime) {
+      STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
+      return true
+    }
+    return false
+  }
+
   useEffect(() => {
+    checkPageShowTime()
+
     return () => {
       // 取消订阅深度报价
       ws.subscribeDepth(true)
@@ -58,6 +72,12 @@ export default observer(() => {
   usePageVisibility(
     () => {
       console.log('Page is visible')
+
+      // 避免k线多次刷新
+      if (!checkPageShowTime()) return
+
+      console.log('======开始刷新k线======')
+
       // 用户从后台切换回前台时执行的操作
       ws.reconnect()
 
@@ -72,6 +92,10 @@ export default observer(() => {
     },
     () => {
       console.log('Page is hidden')
+
+      // 避免k线多次刷新
+      if (!checkPageShowTime()) return
+
       // 用户从前台切换到后台时执行的操作
       // @ts-ignore
       kline.tvWidget = null

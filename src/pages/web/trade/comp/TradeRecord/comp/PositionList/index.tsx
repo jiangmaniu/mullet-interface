@@ -200,7 +200,17 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       renderText(text, record, index, action) {
         const buySellInfo = getBuySellInfo(record)
-        const orderMargin = Number(record.orderMargin || 0)
+        // const orderMargin = Number(record.orderMargin || 0)
+
+        // 计算保证金汇率
+        const orderMargin = record.orderMargin
+          ? calcExchangeRate({
+              value: record.orderMargin,
+              unit: record.conf?.profitCurrency,
+              buySell: record.buySell
+            })
+          : 0
+
         return (
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
@@ -413,14 +423,6 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       } else {
         // 固定保证金 * 手数
         v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)
-      }
-      if (v.orderMargin) {
-        // 计算保证金汇率
-        v.orderMargin = calcExchangeRate({
-          value: v.orderMargin,
-          unit: v.conf?.profitCurrency,
-          buySell: v.buySell
-        })
       }
     } else {
       // 逐仓保证金

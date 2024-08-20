@@ -58,7 +58,9 @@ export class GlobalStore {
   getRegisterWay = async () => {
     const res = await getRegisterWay()
     runInAction(() => {
-      this.registerWay = res.data as API.RegisterWay
+      if (res.data) {
+        this.registerWay = res.data as API.RegisterWay
+      }
     })
   }
 
