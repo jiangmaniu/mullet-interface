@@ -24,6 +24,7 @@ export const KEY_USER_INFO = NAMESPACE + '_' + 'userInfo'
 export const KEY_PARAMS = NAMESPACE + '_' + 'params'
 export const KEY_PWD = NAMESPACE + '_' + 'pwd'
 export const KEY_NEXT_REFRESH_TOKEN_TIME = NAMESPACE + '_' + 'nextRefreshTokenTime'
+export const KEY_TRADE_PAGE_SHOW_TIME = NAMESPACE + '_' + 'trade_page_show_time' // 进入交易页面时间，用来刷新k线，避免长时间不进入行情断开
 
 // 临时缓存在sessionStorage中的语言
 export const KEY_TEMP_LNG = NAMESPACE + '_' + 'temp_lang'

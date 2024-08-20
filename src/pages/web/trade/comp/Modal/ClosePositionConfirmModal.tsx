@@ -172,7 +172,6 @@ export default observer(
               <div className="my-2 w-full">
                 <Slider
                   onChange={(value: any) => {
-                    // console.log('value', value)
                     // 可平仓手数*百分比
                     const vol = toFixed((value / 100) * orderVolume, 2)
                     // 不能小于最小手数

@@ -398,16 +398,16 @@ export function getCurrentQuote(currentSymbolName?: string) {
   let symbol = currentSymbolName || trade.activeSymbolName // 展示的名称(后台自定义的品种名称)
 
   // 如果传入的currentSymbolName是dataSourceSymbol，则使用传入的
-  const dataSourceSymbolItem = trade.symbolList.find((item) => item.dataSourceSymbol === currentSymbolName)
+  const dataSourceSymbolItem = trade.symbolListAll.find((item) => item.dataSourceSymbol === currentSymbolName)
   const isDataSourceSymbol = !!dataSourceSymbolItem
   // 重要：如果传入的currentSymbolName是dataSourceSymbol，则获取对应的symbol自定义名称
   symbol = isDataSourceSymbol ? dataSourceSymbolItem?.symbol : symbol
-  const symbolInfo = trade.symbolList.find((item) => item.symbol === symbol) || {} // 当前品种的详细信息
+  const symbolInfo = trade.symbolListAll.find((item) => item.symbol === symbol) || {} // 当前品种的详细信息
 
   // 品种配置解构方便取值
   const currentSymbol = symbolInfo as Account.TradeSymbolListItem
   const dataSourceSymbol = (isDataSourceSymbol ? currentSymbolName : currentSymbol.dataSourceSymbol) as string
-  const dataSourceCode = trade.symbolList.find((item) => item.dataSourceSymbol === dataSourceSymbol)?.dataSourceCode
+  const dataSourceCode = trade.symbolListAll.find((item) => item.dataSourceSymbol === dataSourceSymbol)?.dataSourceCode
   const dataSourceKey = `${dataSourceCode}/${dataSourceSymbol}` // 获取行情的KEY，数据源+数据源品种去获取
   const currentQuote = quotes?.[dataSourceKey] || {} // 行情信息
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
