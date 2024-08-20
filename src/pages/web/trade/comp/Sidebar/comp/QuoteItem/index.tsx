@@ -82,7 +82,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             <div className="flex flex-col pl-1">
               <span className="pl-[6px] text-sm font-pf-bold text-gray tracking-[0.5px]">{item.symbol}</span>
               {/* 币种描述  */}
-              <span className="pl-[6px] text-xs text-gray-weak truncate max-w-[120px]">{item.alias || '--'}</span>
+              <span className="pl-[6px] text-xs text-gray-weak truncate max-w-[120px]">{item.remark || '--'}</span>
             </div>
           </Col>
           <Col span={12} className="flex flex-col items-end">

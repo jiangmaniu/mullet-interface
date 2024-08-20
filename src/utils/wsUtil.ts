@@ -122,8 +122,8 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
   let profit =
     bid && ask
       ? positionItem.buySell === TRADE_BUY_SELL.BUY
-        ? (bid - openPrice) * number * consize
-        : (openPrice - ask) * number * consize
+        ? (ask - openPrice) * number * consize
+        : (openPrice - bid) * number * consize
       : 0
 
   // 转换汇率
