@@ -1,5 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { useModel } from '@umijs/max'
+import { useLocation, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
@@ -7,6 +7,7 @@ import { useEffect, useRef } from 'react'
 import { useStores } from '@/context/mobxProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
+import { push } from '@/utils/navigator'
 
 import BuyAndSell from './comp/BuyAndSell'
 import BtnGroup from './comp/BuyAndSellBtnGroup'
@@ -25,6 +26,7 @@ export default observer(() => {
   const buyAndSellRef = useRef<any>(null)
   const { ws, trade, kline } = useStores()
   const { fetchUserInfo } = useModel('user')
+  const { pathname } = useLocation()
 
   const onSubscribeExchangeRateQuote = () => {
     // 订阅当前激活的汇率品种行情
@@ -32,6 +34,12 @@ export default observer(() => {
       ws.subscribeExchangeRateQuote()
     }, 1000)
   }
+
+  useEffect(() => {
+    if (trade.currentAccountInfo?.status === 'DISABLED') {
+      push('/account')
+    }
+  }, [pathname, trade.currentAccountInfo])
 
   useEffect(() => {
     return () => {
