@@ -20,7 +20,6 @@ class DataFeedBase {
     this.setActiveSymbolInfo = props.setActiveSymbolInfo // 记录当前的symbol
     this.removeActiveSymbol = props.removeActiveSymbol // 取消订阅移除symbol
     this.getDataFeedBarCallback = props.getDataFeedBarCallback // 获取k线柱数据回调
-    this.dataSourceCode = props.dataSourceCode // 数据源
     this.isZh = props.locale === 'zh_TW'
   }
 
@@ -44,7 +43,6 @@ class DataFeedBase {
    * @param {*Function} onResolveErrorCallback   失败回调
    */
   async resolveSymbol(symbolName, onSymbolResolvedCallback, onResolveErrorCallback, extension) {
-    const dataSourceCode = this.dataSourceCode
     const res = await request(`/api/trade-core/coreApi/public/symbol/detail?symbol=${symbolName}`).catch((e) => e)
     const symbolInfo = res?.data || {}
     const currentSymbol = {
@@ -55,7 +53,7 @@ class DataFeedBase {
       session: '24x7',
       timezone: 'Europe/London',
       name: symbolInfo.symbol, // 展示的自定义名称
-      dataSourceCode // 数据源品种名称，ws订阅行情返回的名称
+      dataSourceCode: symbolInfo.dataSourceCode // 数据源品种名称，ws订阅行情返回的名称
     }
     // https://www.tradingview.com/charting-library-docs/latest/api/interfaces/Charting_Library.LibrarySymbolInfo
     const commonSymbolInfo = {

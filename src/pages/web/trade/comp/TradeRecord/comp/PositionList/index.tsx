@@ -206,7 +206,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         const orderMargin = record.orderMargin
           ? calcExchangeRate({
               value: record.orderMargin,
-              unit: record.conf?.profitCurrency,
+              unit: record.conf?.prepaymentCurrency,
               buySell: record.buySell
             })
           : 0

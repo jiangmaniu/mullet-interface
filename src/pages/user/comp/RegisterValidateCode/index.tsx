@@ -47,21 +47,25 @@ function RegisterValidateCode({ onBack, onConfirm, sendType, type, open }: IProp
   }
 
   return (
-    <div className="flex items-center flex-col flex-1 justify-center -mt-12" style={{ display: isOpen ? 'flex' : 'none' }}>
-      <div className="mb-8">
-        <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
-      </div>
-      <div className="bg-white rounded-lg w-[490px] min-h-[200px] flex flex-col">
-        <Form form={form}>
-          <ValidateCodeInput sendType={sendType} ref={validateCodeInputRef} form={form} />
-        </Form>
-        <div className="flex px-10 items-center justify-center py-6">
-          <Button type="primary" style={{ height: 48 }} block onClick={onConfirm}>
-            <FormattedMessage id="mt.wancheng" />
-          </Button>
+    <>
+      {isOpen && (
+        <div className="flex items-center flex-col flex-1 justify-center -mt-12">
+          <div className="mb-8">
+            <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
+          </div>
+          <div className="bg-white rounded-lg w-[490px] min-h-[200px] flex flex-col">
+            <Form form={form}>
+              <ValidateCodeInput sendType={sendType} ref={validateCodeInputRef} form={form} />
+            </Form>
+            <div className="flex px-10 items-center justify-center py-6">
+              <Button type="primary" style={{ height: 48 }} block onClick={onConfirm}>
+                <FormattedMessage id="mt.wancheng" />
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+    </>
   )
 }
 

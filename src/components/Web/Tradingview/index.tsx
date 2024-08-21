@@ -22,7 +22,6 @@ const Tradingview = () => {
   const { kline, trade } = useStores()
   const { isMobile, isIpad, isMobileOrIpad, isPc } = useEnv()
   const symbolInfo = trade.getActiveSymbolInfo()
-  const dataSourceCode = symbolInfo?.dataSourceCode
   const symbolName = symbolInfo?.symbol
   const previousSymbolName = usePrevious(symbolName)
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
@@ -32,8 +31,7 @@ const Tradingview = () => {
   const datafeedParams = {
     setActiveSymbolInfo: kline.setActiveSymbolInfo, // 记录当前的symbol
     removeActiveSymbol: kline.removeActiveSymbol, // 取消订阅移除symbol
-    getDataFeedBarCallback: kline.getDataFeedBarCallback, // 获取k线柱数据回调
-    dataSourceCode // 数据源
+    getDataFeedBarCallback: kline.getDataFeedBarCallback // 获取k线柱数据回调
   }
 
   const themeMode = (theme || 'light') as ThemeName

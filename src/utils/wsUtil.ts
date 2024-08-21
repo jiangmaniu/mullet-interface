@@ -351,23 +351,26 @@ export const getMaxOpenVolume = ({ buySell }: { buySell: API.TradeBuySell }) => 
   const currentPrice = buySell === 'SELL' ? quote?.bid : quote?.ask
   let volume = 0
 
-  if (mode === 'fixed_margin') {
-    // 可用/固定预付款
-    const initial_margin = Number(prepaymentConf?.fixed_margin?.initial_margin || 0)
-    volume = initial_margin ? Number(availableMargin / initial_margin) : 0
-  } else if (mode === 'fixed_leverage') {
-    // 固定杠杆：可用/（价格*合约大小*手数x/固定杠杆）
-    const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
-    if (fixed_leverage) {
-      volume = (availableMargin * fixed_leverage) / (currentPrice * consize)
-    }
-  } else if (mode === 'float_leverage') {
-    // 浮动杠杆：可用/（价格*合约大小*手数x/浮动杠杆）
-    const float_leverage = Number(trade.leverageMultiple || 1)
-    if (float_leverage) {
-      volume = (availableMargin * float_leverage) / (currentPrice * consize)
+  if (availableMargin) {
+    if (mode === 'fixed_margin') {
+      // 可用/固定预付款
+      const initial_margin = Number(prepaymentConf?.fixed_margin?.initial_margin || 0)
+      volume = initial_margin ? Number(availableMargin / initial_margin) : 0
+    } else if (mode === 'fixed_leverage') {
+      // 固定杠杆：可用/（价格*合约大小*手数x/固定杠杆）
+      const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
+      if (fixed_leverage) {
+        volume = (availableMargin * fixed_leverage) / (currentPrice * consize)
+      }
+    } else if (mode === 'float_leverage') {
+      // 浮动杠杆：可用/（价格*合约大小*手数x/浮动杠杆）
+      const float_leverage = Number(trade.leverageMultiple || 1)
+      if (float_leverage) {
+        volume = (availableMargin * float_leverage) / (currentPrice * consize)
+      }
     }
   }
+
   return Number(toFixed(volume))
 }
 

@@ -117,7 +117,7 @@ export default observer(
     if (bid && ask) {
       // 买入
       if (isBuy) {
-        priceTip = (ask + stopl).toFixed(d)
+        priceTip = (ask - stopl).toFixed(d)
         sl_scope = price ? (price - stopl).toFixed(d) : 0
         sp_scope = price ? (price + stopl).toFixed(d) : 0
 
@@ -125,7 +125,7 @@ export default observer(
 
         spProfit = price && sp ? ((sp - price) * count * consize).toFixed(d) : 0
       } else {
-        priceTip = (bid - stopl).toFixed(d)
+        priceTip = (bid + stopl).toFixed(d)
         sl_scope = price ? (price + stopl).toFixed(d) : 0
         sp_scope = price ? (price - stopl).toFixed(d) : 0
 

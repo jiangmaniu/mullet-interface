@@ -239,7 +239,7 @@ function Login() {
     return (
       <div
         className={classNames('flex items-center justify-center mt-10 flex-1 h-full', rootClassName)}
-        style={{ display: showValidateCodeInput ? 'none' : 'flex' }}
+        style={{ display: showValidateCodeInput || validateCodeType === 'RESET_PWD' ? 'none' : 'flex' }}
       >
         {!loading && (
           <LoginForm
@@ -280,7 +280,6 @@ function Login() {
                     className="text-gray-500 text-sm text-center cursor-pointer"
                     onClick={() => {
                       setValidateCodeType('RESET_PWD')
-                      setShowValidateCodeInput(true)
                     }}
                   >
                     <FormattedMessage id="mt.wangjimima" />
@@ -448,8 +447,8 @@ function Login() {
         onConfirm={handleSubmitRegister}
         onBack={() => {
           // 返回重置
-          setShowValidateCodeInput(false)
           setValidateCodeType('REGISTER')
+          setShowValidateCodeInput(false)
         }}
         // 注册验证码、重置密码
         type={validateCodeType}
