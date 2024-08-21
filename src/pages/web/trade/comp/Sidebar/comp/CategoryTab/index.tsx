@@ -1,3 +1,4 @@
+import { FormattedMessage, useIntl } from '@umijs/max'
 import { Tabs } from 'antd-mobile'
 import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
@@ -15,6 +16,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
   const [current, setCurrent] = useState('0')
   const { trade } = useStores()
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
+  const intl = useIntl()
 
   const symbolCategory = trade.symbolCategory
 
@@ -43,7 +45,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
         style={{ '--title-font-size': '14px', '--active-line-height': '0px', '--adm-color-border': '#fff', paddingLeft: 4 }}
       >
         {symbolCategory.map((v, index) => (
-          <Tabs.Tab title={v.label} key={v.key} style={{ padding: '5px 9px' }} />
+          <Tabs.Tab title={<FormattedMessage id={`${v.label}`} />} key={v.key} style={{ padding: '5px 9px' }} />
         ))}
       </Tabs>
     </div>

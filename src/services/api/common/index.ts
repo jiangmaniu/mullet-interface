@@ -1,4 +1,5 @@
-import { getDictLabelByLocale } from '@/utils/business'
+import { getIntl } from '@umijs/max'
+
 import { request } from '@/utils/request'
 
 // 上传文件
@@ -34,7 +35,10 @@ export async function getTradeSymbolCategory() {
     method: 'GET'
   }).then((res) => {
     if (res.success && res.data?.length) {
-      res.data = res.data.map((item) => ({ ...item, value: item.key, label: getDictLabelByLocale(item.value) }))
+      res.data = res.data.map((item) => {
+        // 动态翻译名称
+        return { ...item, value: item.key, label: getIntl().formatMessage({ id: `mt.${item.value.split(',').at(-1)}` }) }
+      })
     }
     return res
   })
