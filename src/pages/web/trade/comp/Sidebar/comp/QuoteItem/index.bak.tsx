@@ -7,6 +7,7 @@ import { useTransition } from 'react'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import { formatNum } from '@/utils'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
@@ -25,7 +26,6 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   const symbol = item.symbol
   const res = getCurrentQuote(symbol)
   const bid = res.bid // 卖价
-  const ask = res.ask // 买价
   const per: any = res.percent
 
   const activeClassName = useEmotionCss(({ token }) => {
@@ -59,6 +59,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           })
         }}
       >
+        {/*激活打开的项展示当前的箭头 */}
         {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
         <Row
           className={classNames('flex cursor-pointer pr-4 items-center rounded px-3 py-[10px] hover:bg-sub-hover relative', {
@@ -66,20 +67,31 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             [activeClassName]: isActive
           })}
         >
-          <Col span={7} className="!flex items-center">
+          <Col span={12} className="!flex items-center">
+            <img
+              width={24}
+              height={24}
+              alt=""
+              src={`/img/${trade.favoriteList.some((item) => item.symbol === symbol) ? 'star-active' : 'star'}.png`}
+              onClick={(e) => {
+                e.stopPropagation()
+                trade.toggleSymbolFavorite(symbol)
+              }}
+            />
             <SymbolIcon src={item?.imgUrl} width={28} height={28} />
-            {/* 品种别名 */}
-            <span className="pl-[6px] text-sm font-pf-bold text-gray tracking-[0.5px]">{item.symbol}</span>
+            <div className="flex flex-col pl-1">
+              {/* 品种别名 */}
+              <span className="pl-[6px] text-sm font-pf-bold text-gray tracking-[0.5px]">{item.symbol}</span>
+              {/* 币种描述  */}
+              <span className="pl-[6px] text-xs text-gray-weak truncate max-w-[120px]">{item.remark || '--'}</span>
+            </div>
           </Col>
-          <Col span={7}>{bid ? <div className="text-white bg-green rounded text-[13px] leading-4 px-[6px]">{bid}</div> : '--'}</Col>
-          <Col span={7}>{ask ? <div className="text-white bg-red rounded text-[13px] leading-4 px-[6px]">{ask}</div> : '--'}</Col>
-          <Col span={3} className="flex flex-col items-end">
-            {res.hasQuote ? (
+          <Col span={12} className="flex flex-col items-end">
+            <div className="!font-dingpro-medium text-sx text-gray text-right">{res.hasQuote ? formatNum(bid) : '--'}</div>
+            {res.hasQuote && (
               <div className={classNames('text-right !font-dingpro-medium text-xs', per > 0 ? 'text-green' : 'text-red')}>
                 {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
               </div>
-            ) : (
-              '--'
             )}
           </Col>
         </Row>
