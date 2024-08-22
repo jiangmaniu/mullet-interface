@@ -66,7 +66,7 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
     const mulName = (unit + 'USD').toUpperCase() // 如 NZDUSD
 
     // 使用汇率品种的dataSourceCode去获取行情
-    const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[divName] || {})?.dataSourceCode
+    const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.dataSourceCode
     const divNameKey = `${dataSourceCode}/${divName}`
     const mulNameKey = `${dataSourceCode}/${mulName}`
 
@@ -331,7 +331,7 @@ export const calcExpectedMargin = (obj: IExpectedMargin) => {
   // 转化汇率
   return calcExchangeRate({
     value: expectedMargin,
-    unit: conf?.profitCurrency,
+    unit: conf?.prepaymentCurrency,
     buySell
   })
 }

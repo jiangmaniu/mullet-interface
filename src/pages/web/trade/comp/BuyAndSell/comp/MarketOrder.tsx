@@ -12,7 +12,7 @@ import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { message } from '@/utils/message'
-import { calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
+import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { OP_BUY } from '..'
@@ -296,7 +296,16 @@ export default observer(
                       </span>
                       <span className="!font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
-                        <span className="pl-[2px]">{formatNum(spProfit)} USD</span>
+                        <span className="pl-[2px]">
+                          {formatNum(
+                            calcExchangeRate({
+                              value: spProfit,
+                              unit: symbolConf?.profitCurrency,
+                              buySell: tradeType === 1 ? 'BUY' : 'SELL'
+                            })
+                          )}{' '}
+                          USD
+                        </span>
                       </span>
                     </div>
                   }
@@ -336,7 +345,16 @@ export default observer(
                       </span>
                       <span className="!font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
-                        <span className="pl-[2px]">{formatNum(slProfit)} USD</span>
+                        <span className="pl-[2px]">
+                          {formatNum(
+                            calcExchangeRate({
+                              value: slProfit,
+                              unit: symbolConf?.profitCurrency,
+                              buySell: tradeType === 1 ? 'BUY' : 'SELL'
+                            })
+                          )}{' '}
+                          USD
+                        </span>
                       </span>
                     </div>
                   }
@@ -407,12 +425,13 @@ export default observer(
               <FormattedMessage id="mt.lot" />
             </Button>
             <div className="mt-4">
-              <div className="flex items-center justify-between pb-[6px] w-full">
+              {/* @TODO 暂时隐藏 */}
+              {/* <div className="flex items-center justify-between pb-[6px] w-full">
                 <span className="text-xs text-gray-secondary">
                   <FormattedMessage id="mt.yuguqiangpingjia" />
                 </span>
                 <span className="text-xs text-gray !font-dingpro-medium">{expectedForceClosePrice || '-'}</span>
-              </div>
+              </div> */}
               <div className="flex items-center justify-between pb-[6px] w-full">
                 <span className="text-xs text-gray-secondary">
                   <FormattedMessage id="mt.yugubaozhengjin" />

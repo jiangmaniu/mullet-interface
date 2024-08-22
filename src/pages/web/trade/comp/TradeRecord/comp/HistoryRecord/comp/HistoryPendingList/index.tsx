@@ -96,14 +96,8 @@ function HistoryPendingList({ style, showActiveSymbol, selectSymbol }: IProps) {
       },
       width: 120,
       align: 'left',
-      className: '!text-[13px] text-gray',
-      renderText(text, record, index, action) {
-        return record.type === ORDER_TYPE.LIMIT_BUY_ORDER || record.type === ORDER_TYPE.LIMIT_SELL_ORDER ? (
-          <FormattedMessage id="mt.xianjiadan" />
-        ) : (
-          <FormattedMessage id="mt.tingsundan" />
-        )
-      }
+      valueEnum: getEnum().Enum.OrderType,
+      className: '!text-[13px] text-gray'
     },
     {
       title: (

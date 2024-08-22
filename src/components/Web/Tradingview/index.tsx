@@ -10,7 +10,7 @@ import { useTheme } from '@/context/themeProvider'
 import { colorPrimary } from '@/theme/theme.config'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { usePrevious } from 'ahooks'
+import { useDebounceEffect, usePrevious } from 'ahooks'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { STORAGE_GET_CHART_PROPS, STORAGE_REMOVE_CHART_PROPS, ThemeConst } from './constant'
@@ -190,19 +190,25 @@ const Tradingview = () => {
     initChart()
   }, [params, kline.tvWidget])
 
-  // 监听切换品种
-  useEffect(() => {
-    if (!symbolName) return
-    // 实例存在
-    if (kline.tvWidget) {
-      kline.tvWidget.onChartReady(() => {
-        if (symbolName !== previousSymbolName) {
-          // 实例已经初始化，直接切换品种
-          setSymbol(symbolName, kline.tvWidget)
-        }
-      })
+  // 监听切换品种 需要防抖避免用户重复切换导致k线显示问题
+  useDebounceEffect(
+    () => {
+      if (!symbolName) return
+      // 实例存在
+      if (kline.tvWidget) {
+        kline.tvWidget.onChartReady(() => {
+          if (symbolName !== previousSymbolName) {
+            // 实例已经初始化，直接切换品种
+            setSymbol(symbolName, kline.tvWidget)
+          }
+        })
+      }
+    },
+    [symbolName],
+    {
+      wait: 300
     }
-  }, [symbolName])
+  )
 
   const className = useEmotionCss(({ token }) => {
     return {

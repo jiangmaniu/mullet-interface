@@ -66,7 +66,7 @@ function Futures({ trigger, style }: IProps) {
             label: <FormattedMessage id="mt.chushibaozhengjin" />,
             value: (
               <>
-                {(prepaymentConf?.fixed_margin?.initial_margin || 0).toFixed(2)} USD/
+                {(prepaymentConf?.fixed_margin?.initial_margin || 0).toFixed(2)} {symbolConf?.prepaymentCurrency}/
                 <FormattedMessage id="mt.lot" />
               </>
             )
@@ -75,7 +75,7 @@ function Futures({ trigger, style }: IProps) {
             label: <FormattedMessage id="mt.suocangbaozhengjin" />,
             value: (
               <>
-                {(prepaymentConf?.fixed_margin?.locked_position_margin || 0).toFixed(2)} USD/
+                {(prepaymentConf?.fixed_margin?.locked_position_margin || 0).toFixed(2)} {symbolConf?.prepaymentCurrency}/
                 <FormattedMessage id="mt.lot" />
               </>
             )

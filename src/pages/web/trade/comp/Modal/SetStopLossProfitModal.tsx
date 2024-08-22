@@ -14,7 +14,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { message } from '@/utils/message'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
 
@@ -77,7 +77,7 @@ export default observer(
     const d = item.symbolDecimal
     const step = Math.pow(10, -d) * 10
     // const stopl = symbolInfo ? symbolInfo.stopl * Math.pow(10, -d) * 10 : 0
-    const symbolConf = quote.symbolConf
+    const symbolConf = item?.conf
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
     let sl_scope: any = 0 // 止损范围
     let sp_scope: any = 0 // 止盈范围
@@ -89,14 +89,14 @@ export default observer(
       sl_scope = (price - stopl).toFixed(d)
       sp_scope = (price + stopl).toFixed(d)
 
-      slProfit = sl ? ((sl - bid) * count * consize).toFixed(d) : 0
-      spProfit = sp ? ((sp - bid) * count * consize).toFixed(d) : 0
+      slProfit = sl ? ((sl - ask) * count * consize).toFixed(d) : 0
+      spProfit = sp ? ((sp - ask) * count * consize).toFixed(d) : 0
     } else {
       sl_scope = (price + stopl).toFixed(d)
       sp_scope = (price - stopl).toFixed(d)
 
-      slProfit = sl ? ((ask - sl) * count * consize).toFixed(d) : 0
-      spProfit = sp ? ((ask - sp) * count * consize).toFixed(d) : 0
+      slProfit = sl ? ((bid - sl) * count * consize).toFixed(d) : 0
+      spProfit = sp ? ((bid - sp) * count * consize).toFixed(d) : 0
     }
 
     const onFinish = async () => {
@@ -134,7 +134,7 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = (sp && sp < sp_scope) || (sl && sl > sl_scope)
+    const disabledBtn = isBuy ? (sp && sp < sp_scope) || (sl && sl > sl_scope) : (sp && sp > sp_scope) || (sl && sl < sl_scope)
 
     const renderContent = () => {
       return (
@@ -207,7 +207,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <div className={classNames('!font-dingpro-regular', { '!text-red': sl && sl > sl_scope })}>
+                  <div className={classNames('!font-dingpro-regular', { '!text-red': isBuy ? sl && sl > sl_scope : sl && sl < sl_scope })}>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
@@ -217,7 +217,14 @@ export default observer(
                     <span className="pl-1 !font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp;
-                      {formatNum(slProfit)} USD
+                      {formatNum(
+                        calcExchangeRate({
+                          value: slProfit,
+                          unit: symbolConf?.profitCurrency,
+                          buySell: item.buySell
+                        })
+                      )}{' '}
+                      USD
                     </span>
                   </div>
                 }
@@ -250,11 +257,18 @@ export default observer(
                   }
                 }}
                 tips={
-                  <span className={classNames('!font-dingpro-regular', { '!text-red': sp && sp < sp_scope })}>
+                  <span className={classNames('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}>
                     <FormattedMessage id="mt.fanwei" />
                     &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                     &nbsp;
-                    {formatNum(spProfit)} USD
+                    {formatNum(
+                      calcExchangeRate({
+                        value: spProfit,
+                        unit: symbolConf?.profitCurrency,
+                        buySell: item.buySell
+                      })
+                    )}{' '}
+                    USD
                   </span>
                 }
               />

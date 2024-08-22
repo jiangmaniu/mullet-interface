@@ -106,7 +106,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       renderText(text, record, index, action) {
         return (
           <span className={classNames('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
-            {formatNum(record.currentPrice)}
+            {formatNum(record.currentPrice, { precision: record.symbolDecimal })}
           </span>
         )
       }
@@ -124,7 +124,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
     },
     {
@@ -142,7 +142,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{text}</span>
       }
     },
     {
@@ -171,11 +171,11 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
             }}
           >
             <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
-              {Number(record?.takeProfit) ? formatNum(record?.takeProfit) : AddDom}
+              {Number(record?.takeProfit) ? formatNum(record?.takeProfit, { precision: record.symbolDecimal }) : AddDom}
             </span>
             <span> / </span>
             <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
-              {Number(record?.stopLoss) ? formatNum(record?.stopLoss) : AddDom}
+              {Number(record?.stopLoss) ? formatNum(record?.stopLoss, { precision: record.symbolDecimal }) : AddDom}
             </span>
           </div>
         )
@@ -244,7 +244,6 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
     const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
 
     v.currentPrice = currentPrice // 现价
-    v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
     v.isLimitOrder = isLimitOrder
     v.limitPrice = toFixed(v.limitPrice, digits)
 

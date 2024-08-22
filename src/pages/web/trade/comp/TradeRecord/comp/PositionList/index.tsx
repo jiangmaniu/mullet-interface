@@ -103,7 +103,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 120,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{text}</span>
       }
     },
     {
@@ -119,7 +119,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)} </span>
+        return <span className="!text-[13px] text-gray">{formatNum(text, { precision: record.symbolDecimal })} </span>
       }
     },
     {
@@ -140,7 +140,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           <>
             {Number(record.currentPrice) ? (
               <span className={classNames('!text-[13px]', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
-                {formatNum(record.currentPrice)}
+                {formatNum(record.currentPrice, { precision: record.symbolDecimal })}
               </span>
             ) : (
               <span className="!text-[13px]">-</span>
@@ -149,22 +149,23 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         )
       }
     },
-    {
-      title: <FormattedMessage id="mt.yuguqiangpingjia" />,
-      dataIndex: 'forceClosePrice',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{text ? formatNum(text) : '-'} </span>
-      }
-    },
+    // @TODO 暂时隐藏
+    // {
+    //   title: <FormattedMessage id="mt.yuguqiangpingjia" />,
+    //   dataIndex: 'forceClosePrice',
+    //   hideInSearch: true, // 在 table的查询表单 中隐藏
+    //   ellipsis: false,
+    //   fieldProps: {
+    //     placeholder: ''
+    //   },
+    //   formItemProps: {
+    //     label: '' // 去掉form label
+    //   },
+    //   width: 150,
+    //   renderText(text, record, index, action) {
+    //     return <span className="!text-[13px] text-gray">{text ? formatNum(text) : '-'} </span>
+    //   }
+    // },
     {
       title: <FormattedMessage id="mt.baozhengjinlv" />,
       dataIndex: 'marginRate',
@@ -203,13 +204,14 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         // const orderMargin = Number(record.orderMargin || 0)
 
         // 计算保证金汇率
-        const orderMargin = record.orderMargin
-          ? calcExchangeRate({
-              value: record.orderMargin,
-              unit: record.conf?.prepaymentCurrency,
-              buySell: record.buySell
-            })
-          : 0
+        const orderMargin =
+          record.marginType === 'CROSS_MARGIN'
+            ? calcExchangeRate({
+                value: record.orderMargin,
+                unit: record.conf?.prepaymentCurrency,
+                buySell: record.buySell
+              })
+            : record.orderMargin
 
         return (
           <div className="flex items-center pl-[1px]">
@@ -261,11 +263,11 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
             }}
           >
             <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
-              {Number(record?.takeProfit) ? formatNum(record?.takeProfit) : AddDom}
+              {Number(record?.takeProfit) ? formatNum(record?.takeProfit, { precision: record.symbolDecimal }) : AddDom}
             </span>
             <span> / </span>
             <span className="!text-[13px] text-gray border-b border-dashed border-gray-weak">
-              {Number(record?.stopLoss) ? formatNum(record?.stopLoss) : AddDom}
+              {Number(record?.stopLoss) ? formatNum(record?.stopLoss, { precision: record.symbolDecimal }) : AddDom}
             </span>
           </div>
         )
@@ -289,7 +291,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
     },
     {
@@ -310,7 +312,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-gray">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-gray">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
     },
     {
@@ -433,7 +435,6 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     const profit = covertProfit(v) as number // 浮动盈亏
     v.profit = profit
     v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : v.profit || '-' // 格式化的
-    v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
     v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
     v.yieldRate = calcYieldRate(v) // 收益率
     v.forceClosePrice = calcForceClosePrice(v) // 强平价
