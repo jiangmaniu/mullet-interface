@@ -60,7 +60,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   return (
     <>
       <div
-        className="relative pl-1 border border-gray-100"
+        className="relative pl-1 border-b border-gray-100"
         onClick={() => {
           startTransition(() => {
             // 记录打开的symbol
