@@ -99,16 +99,16 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
       <>
         <div className="pt-2">
           <Row className="px-3 pb-2">
-            <Col span={7} className="!text-xs text-gray-weak">
+            <Col span={8} className="!text-xs text-gray-weak">
               <FormattedMessage id="mt.pinzhong" />
             </Col>
-            <Col span={7} className="!text-xs text-gray-weak">
+            <Col span={6} className="!text-xs text-gray-weak">
               <FormattedMessage id="mt.bid" />
             </Col>
-            <Col span={7} className="!text-xs text-gray-weak">
+            <Col span={6} className="!text-xs text-gray-weak">
               <FormattedMessage id="mt.ask" />
             </Col>
-            <Col span={3} className="text-right !text-xs text-gray-weak">
+            <Col span={4} className="text-right !text-xs text-gray-weak">
               <FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
