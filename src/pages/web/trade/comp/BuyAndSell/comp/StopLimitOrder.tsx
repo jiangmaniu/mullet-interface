@@ -84,7 +84,7 @@ export default observer(
     const symbol = quoteInfo.symbol
     const d = quoteInfo?.digits
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
-    const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 20
+    const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 0
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
     const vmax = maxOpenVolume // 当前账户保证金最大可开手数
     const vmin = symbolConf?.minTrade || 0.01
@@ -454,13 +454,12 @@ export default observer(
             <FormattedMessage id="mt.lot" />
           </Button>
           <div className="mt-4">
-            {/* @TODO 暂时隐藏 */}
-            {/* <div className="flex items-center justify-between pb-[6px] w-full">
+            <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-gray-secondary">
                 <FormattedMessage id="mt.yuguqiangpingjia" />
               </span>
               <span className="text-xs text-gray !font-dingpro-medium">{expectedForceClosePrice || '-'}</span>
-            </div> */}
+            </div>
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-gray-secondary">
                 <FormattedMessage id="mt.yugubaozhengjin" />

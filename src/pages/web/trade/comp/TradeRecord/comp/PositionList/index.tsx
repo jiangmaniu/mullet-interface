@@ -149,23 +149,22 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         )
       }
     },
-    // @TODO 暂时隐藏
-    // {
-    //   title: <FormattedMessage id="mt.yuguqiangpingjia" />,
-    //   dataIndex: 'forceClosePrice',
-    //   hideInSearch: true, // 在 table的查询表单 中隐藏
-    //   ellipsis: false,
-    //   fieldProps: {
-    //     placeholder: ''
-    //   },
-    //   formItemProps: {
-    //     label: '' // 去掉form label
-    //   },
-    //   width: 150,
-    //   renderText(text, record, index, action) {
-    //     return <span className="!text-[13px] text-gray">{text ? formatNum(text) : '-'} </span>
-    //   }
-    // },
+    {
+      title: <FormattedMessage id="mt.yuguqiangpingjia" />,
+      dataIndex: 'forceClosePrice',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      fieldProps: {
+        placeholder: ''
+      },
+      formItemProps: {
+        label: '' // 去掉form label
+      },
+      width: 150,
+      renderText(text, record, index, action) {
+        return <span className="!text-[13px] text-gray">{text ? formatNum(text) : '-'} </span>
+      }
+    },
     {
       title: <FormattedMessage id="mt.baozhengjinlv" />,
       dataIndex: 'marginRate',
@@ -407,7 +406,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     const contractSize = conf.contractSize || 0
     const quoteInfo = getCurrentQuote(symbol)
     const digits = v.symbolDecimal || 2
-    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
+    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
 
     const isCrossMargin = v.marginType === 'CROSS_MARGIN'
 

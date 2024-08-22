@@ -177,20 +177,26 @@ function Liquidation() {
               {formatNum(marginRateInfo.balance, { precision: 2 })} USD
             </span>
           </div>
-          <div className="flex flex-col w-full mt-[45px]">
+          <div className="flex flex-col w-full mt-[40px]">
             <div className="flex items-center justify-between">
               <span className="text-gray-secondary text-xs">
                 <FormattedMessage id="mt.baozhengjinlv" />：
               </span>
-              <span className="text-green font-semibold text-xs">
-                {marginRateInfo.marginRate ? `${marginRateInfo.marginRate}%` : '0.00%'}
-              </span>
+              {marginRateInfo.marginRate ? (
+                <span className="text-green font-semibold text-xs">{`${marginRateInfo.marginRate}%`}</span>
+              ) : (
+                <span className="text-gray-weak font-medium text-xs">-</span>
+              )}
             </div>
             <div className="flex items-center pt-[10px] justify-between">
               <span className="text-gray-secondary text-xs">
                 <FormattedMessage id="mt.weichibaozhengjin" />：
               </span>
-              <span className="text-green !font-dingpro-medium font-medium text-xs">{formatNum(marginRateInfo.margin)}USD</span>
+              {marginRateInfo.margin ? (
+                <span className="text-green !font-dingpro-medium font-medium text-xs">{formatNum(marginRateInfo.margin)}USD</span>
+              ) : (
+                <span className="text-gray-weak font-medium text-xs">-</span>
+              )}
             </div>
           </div>
         </div>

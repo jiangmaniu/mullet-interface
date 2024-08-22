@@ -240,8 +240,14 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
     const dataSourceSymbol = v.dataSourceSymbol as string
     const quoteInfo = getCurrentQuote(dataSourceSymbol)
     const digits = v.symbolDecimal || 2
-    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
     const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
+
+    let currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
+
+    if (v.type === 'LIMIT_BUY_ORDER' || v.type === 'LIMIT_SELL_ORDER') {
+      // 限价单价格取反
+      currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask
+    }
 
     v.currentPrice = currentPrice // 现价
     v.isLimitOrder = isLimitOrder

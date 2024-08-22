@@ -7,6 +7,7 @@ import Buy from '@/components/Base/Svg/Buy'
 import Sell from '@/components/Base/Svg/Sell'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
+import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -31,6 +32,7 @@ export default observer(
     const { breakPoint } = useEnv()
     const [width, setWidth] = useState<any>(0)
     const [loading, setLoading] = useState(true)
+    const { trade } = useStores()
 
     const quoteInfo = getCurrentQuote()
 
@@ -78,6 +80,9 @@ export default observer(
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
           onClick={() => {
             startTransition(() => {
+              // 设置全局变量
+              trade.setBuySell('SELL')
+
               if (onSell) {
                 onSell()
               } else {
@@ -109,6 +114,9 @@ export default observer(
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
           onClick={() => {
             startTransition(() => {
+              // 设置全局变量
+              trade.setBuySell('BUY')
+
               if (onBuy) {
                 onBuy()
               } else {

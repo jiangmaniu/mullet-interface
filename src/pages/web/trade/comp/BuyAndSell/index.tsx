@@ -86,6 +86,8 @@ export default observer(
             onChange={(key) => {
               startTransition(() => {
                 setOrderType(key)
+                // 切换订单类型重置
+                trade.setBuySell('BUY')
               })
             }}
             size="small"
