@@ -1,7 +1,7 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { Button, Checkbox, Form } from 'antd'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useImperativeHandle, useState, useTransition } from 'react'
+import { forwardRef, useEffect, useState, useTransition } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
@@ -10,24 +10,21 @@ import { formatNum } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
-import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
+import { ORDER_TYPE } from '@/constants/enum'
 import { message } from '@/utils/message'
 import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import classNames from 'classnames'
-import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
 type IProps = {
   popupRef?: any
-  type?: any
-  orderType?: any
 }
 
 // 市价单
 export default observer(
-  forwardRef(({ popupRef, type, orderType }: IProps, ref) => {
+  forwardRef(({ popupRef }: IProps, ref) => {
     const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
     const { isPc, isMobileOrIpad } = useEnv()
     const { trade, ws } = useStores()
@@ -37,27 +34,14 @@ export default observer(
     const [checkedSpSl, setCheckedSpSl] = useState(true) // 勾选止盈止损
     const { availableMargin } = trade.getAccountBalance()
     const [margin, setMargin] = useState(0)
-    const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
     const [loading, setLoading] = useState(false)
-    const marginType = trade.marginType
-
-    useEffect(() => {
-      setTradeType(type || OP_BUY)
-    }, [type])
-
-    // 对外暴露接口
-    useImperativeHandle(ref, () => {
-      return {
-        tradeType,
-        setTradeType
-      }
-    })
+    const { marginType, buySell, orderType } = trade
 
     const [countValue, setCount] = useState<any>(0.01) // 手数
     const [spValue, setSp] = useState<any>(0) // 止盈
     const [slValue, setSl] = useState<any>(0) // 止损
 
-    const isBuy = tradeType === OP_BUY
+    const isBuy = buySell === 'BUY'
 
     const token = STORAGE_GET_TOKEN()
     const quoteInfo = getCurrentQuote()
@@ -68,7 +52,7 @@ export default observer(
     const symbol = quoteInfo.symbol
     const d = quoteInfo?.digits
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
-    const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 0
+    const maxOpenVolume = getMaxOpenVolume({ buySell }) || 0
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
     const vmax = maxOpenVolume // 当前账户保证金最大可开手数
     const vmin = symbolConf?.minTrade || 0.01
@@ -79,12 +63,12 @@ export default observer(
       orderVolume: countValue,
       orderMargin: margin,
       orderType: 'MARKET_ORDER',
-      buySell: tradeType === 1 ? 'BUY' : 'SELL'
+      buySell
     })
 
     // 实时计算下单时预估保证金
     const expectedMargin = calcExpectedMargin({
-      buySell: tradeType === 1 ? 'BUY' : 'SELL',
+      buySell,
       orderVolume: countValue,
       orderType: 'MARKET_ORDER'
     })
@@ -94,7 +78,7 @@ export default observer(
       setSl(0)
       setSp(0)
       setCount(vmin)
-    }, [symbol, tradeType, orderType, vmin])
+    }, [symbol, buySell, orderType, vmin])
 
     useEffect(() => {
       // 取消勾选了止盈止损，重置值
@@ -140,7 +124,7 @@ export default observer(
 
     const orderParams = {
       symbol,
-      buySell: isBuy ? TRADE_BUY_SELL.BUY : TRADE_BUY_SELL.SELL, // 订单方向
+      buySell, // 订单方向
       orderVolume: count,
       stopLoss: sl ? parseFloat(sl) : undefined,
       takeProfit: sp ? parseFloat(sp) : undefined,
@@ -222,13 +206,7 @@ export default observer(
             <SelectMarginTypeOrLevelAge />
 
             <div className="relative flex items-center justify-center rounded-xl border border-primary p-[2px]">
-              <BuyAndSellBtnGroup
-                activeKey={tradeType}
-                onChange={(key) => {
-                  setTradeType(key)
-                }}
-                type="popup"
-              />
+              <BuyAndSellBtnGroup type="popup" />
             </div>
 
             <div className="flex items-center justify-between mt-3 mb-1">
@@ -301,7 +279,7 @@ export default observer(
                             calcExchangeRate({
                               value: spProfit,
                               unit: symbolConf?.profitCurrency,
-                              buySell: tradeType === 1 ? 'BUY' : 'SELL'
+                              buySell
                             })
                           )}{' '}
                           USD
@@ -350,7 +328,7 @@ export default observer(
                             calcExchangeRate({
                               value: slProfit,
                               unit: symbolConf?.profitCurrency,
-                              buySell: tradeType === 1 ? 'BUY' : 'SELL'
+                              buySell
                             })
                           )}{' '}
                           USD

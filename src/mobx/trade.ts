@@ -41,6 +41,15 @@ export type UserConfInfo = Record<
 
 export type IRecordTabKey = 'POSITION' | 'PENDING' | 'STOPLOSS_PROFIT' | 'HISTORY'
 
+// 交易区订单类型
+export type ITradeTabsOrderType =
+  /**市价单 */
+  | 'MARKET_ORDER'
+  /**限价单 */
+  | 'LIMIT_ORDER'
+  /**停损单 */
+  | 'STOP_LIMIT_ORDER'
+
 // 禁用 MobX 严格模式
 configure({ enforceActions: 'never' })
 
@@ -68,10 +77,15 @@ class TradeStore {
 
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
-  @observable marginType: API.MarginType = 'CROSS_MARGIN' // 保证金类型
-  @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖方向
+
+  //  ========= 交易区操作 =========
+  @observable marginType: API.MarginType = 'CROSS_MARGIN' // 交易区保证金类型
+  @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
+  @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
-  @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓， 右下角爆仓选择逐仓、全仓切换
+  // ============================
+
+  @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
   @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
 
   @observable allSimpleSymbolsMap = {} as { [key: string]: Symbol.AllSymbolItem } // 全部品种列表map，校验汇率品种用到
@@ -90,20 +104,30 @@ class TradeStore {
   setCurrentLiquidationSelectBgaId = (value: any) => {
     this.currentLiquidationSelectBgaId = value
   }
-  // 设置交易浮动杠杆倍数
-  setLeverageMultiple = (value: any) => {
-    this.leverageMultiple = value
-  }
 
-  // 设置保证金类型
+  // =========== 设置交易区操作 ==========
+
+  // 设置弹窗选择的保证金类型
   setMarginType = (marginType: API.MarginType) => {
     this.marginType = marginType
   }
 
-  // 设置买卖方向
+  // 设置弹窗选择的浮动杠杆倍数
+  setLeverageMultiple = (leverageMultiple: number) => {
+    this.leverageMultiple = leverageMultiple
+  }
+
+  // 设置买卖类型切换
   setBuySell = (buySell: API.TradeBuySell) => {
     this.buySell = buySell
   }
+
+  // 设置订单类型Tabs切换
+  setOrderType = (orderType: ITradeTabsOrderType) => {
+    this.orderType = orderType
+  }
+
+  // =============================
 
   // 获取创建账户页面-账户组列表
   getAccountGroupList = async () => {

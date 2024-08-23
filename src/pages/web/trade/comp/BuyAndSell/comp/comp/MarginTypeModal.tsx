@@ -14,10 +14,10 @@ type IProps = {
 function MarginTypeModal({ trigger }: IProps) {
   const { trade } = useStores()
   const modalRef = useRef<any>()
-  const [current, setCurrent] = useState('')
+  const [current, setCurrent] = useState<API.MarginType>('CROSS_MARGIN')
   const marginType = trade.marginType
 
-  const marginOptions = [
+  const marginOptions: Array<{ label: React.ReactNode; value: API.MarginType; desc: React.ReactNode }> = [
     {
       label: <FormattedMessage id="mt.quancang" />,
       value: 'CROSS_MARGIN',
@@ -94,7 +94,6 @@ function MarginTypeModal({ trigger }: IProps) {
           block
           onClick={() => {
             modalRef?.current?.close()
-            // @ts-ignore
             trade.setMarginType(current)
           }}
         >
