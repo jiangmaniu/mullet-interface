@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { ChartingLibraryWidgetOptions, DatafeedConfiguration, LibrarySymbolInfo } from '@/libs/charting_library'
+import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'
 
 // https://www.tradingview.com/charting-library-docs/latest/tutorials/implement_datafeed_tutorial/Widget-Setup
@@ -178,6 +179,12 @@ class DataFeedBase {
       onRealtimeCallback,
       subscriberUID,
       onResetCacheNeededCallback
+    })
+
+    mitt.on('symbol_change', () => {
+      // tvWidget.activeChart().resetData()
+      // 使图表重新请求 datafeed 中的数据。 通常你需要在图表数据发生变化时调用它。 在调用这个函数之前，你应该从 subscribeBars 调用 onResetCacheNeededCallback
+      onResetCacheNeededCallback()
     })
   }
 

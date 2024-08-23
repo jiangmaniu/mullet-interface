@@ -238,7 +238,7 @@ class WSStore {
     const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
     // 游客身份userId传123456789
     const userId = userInfo?.user_id || '123456789'
-    if (this.socket) {
+    if (this.socket && this.readyState === 'OPEN') {
       this.socket.send(
         JSON.stringify({
           header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now(), ...header },

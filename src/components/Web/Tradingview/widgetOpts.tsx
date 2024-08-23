@@ -219,6 +219,7 @@ export default function getWidgetOpts(
     // 可以通过api来动态设置 applyOverrides
     // https://www.tradingview.com/charting-library-docs/latest/customization/overrides/
     overrides: {
+      // 'scalesProperties.lineColor': '#f00', // 边框线条颜色
       // 'paneProperties.legendProperties.showSeriesTitle': false, // 图例标题可见性，legend最左侧的标题
       // priceScaleSelectionStrategyName: 'left', // 将价格刻度位置更改为左侧
       // 'mainSeriesProperties.visible': false, // 隐藏主图

@@ -206,7 +206,7 @@ const Tradingview = () => {
     },
     [symbolName],
     {
-      wait: 300
+      wait: 500
     }
   )
 

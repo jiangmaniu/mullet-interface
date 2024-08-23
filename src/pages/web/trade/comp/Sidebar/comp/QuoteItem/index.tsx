@@ -8,6 +8,7 @@ import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
+import mitt from '@/utils/mitt'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
@@ -22,7 +23,7 @@ type IProps = {
 function QuoteItem({ item, isActive, popupRef }: IProps) {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { isMobileOrIpad } = useEnv()
-  const { trade, ws } = useStores()
+  const { trade, ws, kline } = useStores()
   const symbol = item.symbol
   const res = getCurrentQuote(symbol)
   const bid = res.bid // 卖价
@@ -52,6 +53,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             trade.setOpenSymbolNameList(symbol)
             // 设置当前当前的symbol
             trade.setActiveSymbolName(symbol)
+
+            // 切换品种事件
+            mitt.emit('symbol_change')
 
             if (isMobileOrIpad) {
               popupRef.current?.close()
