@@ -80,6 +80,7 @@ export default function Take({ active }: { active: boolean }) {
         onConfirm={() => {
           onOpenChangeSetting(false)
         }}
+        info={{}}
       />
     </div>
   )

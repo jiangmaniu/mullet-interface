@@ -33,9 +33,9 @@ export const TradingItem = ({
         </span>
       </div>
       {/* footer */}
-      <div className="border-t  border-gray-150 px-2 py-4 grid lg:grid-cols-6 grid-cols-4  items-start gap-x-20 gap-y-4 md:flex-nowrap flex-wrap w-full">
+      <div className="border-t  border-gray-150 px-2 py-4 flex items-center justify-between gap-20 md:flex-nowrap flex-wrap w-full">
         {/* <div className=" grid grid-cols-7 gap-1 items-center "> */}
-        <div className=" flex gap-2 items-center row-start-1 lg:col-span-1 col-span-2 ">
+        <div className=" flex gap-2 items-center ">
           <div className="flex items-center gap-0.5 w-28">
             <Iconfont name="ren" width={38} color="black" height={38} />
             <div className="flex flex-col ">
@@ -83,7 +83,7 @@ export const TradingItem = ({
           </div>
         </div>
         {/* flex flex-row justify-between */}
-        <div className="flex flex-row flex-1 flex-grow gap-6 lg:row-start-1 row-start-2 col-span-4 flex-wrap items-start justify-normal lg:mr-8">
+        <div className={classNames(`flex flex-row justify-between flex-1 flex-grow gap-6  `)}>
           {columns?.map((col, idx) => (
             <div className={classNames(`flex flex-col gap-0.5 ${col.align === 'right' ? 'items-end' : 'items-start'}`)} key={idx}>
               <ListItemNumber item={datas} {...col} key={idx} />
@@ -91,7 +91,7 @@ export const TradingItem = ({
             </div>
           ))}
         </div>
-        <div className=" row-start-1 lg:col-span-1 col-span-2 ">{children}</div>
+        {children}
       </div>
     </div>
   )

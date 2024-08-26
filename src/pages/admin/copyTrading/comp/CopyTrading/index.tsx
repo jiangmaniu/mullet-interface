@@ -4,7 +4,6 @@ import { useIntl } from '@umijs/max'
 import { Segmented } from 'antd'
 import { memo, useState } from 'react'
 
-import Footer from '@/components/Admin/Footer'
 import Hidden from '@/components/Base/Hidden'
 
 import Ended from './Ended'
@@ -39,17 +38,17 @@ export default function CopyTrading({ active }: { active: boolean }) {
     {
       label: <SegmentItem segment={segment} value="jinxingzhong" label={intl.formatMessage({ id: 'mt.jinxingzhong' })} />,
       value: 'jinxingzhong',
-      component: <InProgress active={segment === 'jinxingzhong'} />
+      component: <InProgress segment={segment} />
     },
     {
       label: <SegmentItem segment={segment} value="yijieshu" label={intl.formatMessage({ id: 'mt.yijieshu' })} />,
       value: 'yijieshu',
-      component: <Ended active={segment === 'yijieshu'} />
+      component: <Ended segment={segment} />
     },
     {
       label: <SegmentItem segment={segment} value="lishicangwei" label={intl.formatMessage({ id: 'mt.lishicangwei' })} />,
       value: 'lishicangwei',
-      component: <Historical active={segment === 'lishicangwei'} />
+      component: <Historical segment={segment} />
     }
   ]
 
@@ -68,7 +67,7 @@ export default function CopyTrading({ active }: { active: boolean }) {
           {item.component}
         </Hidden>
       ))}
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }

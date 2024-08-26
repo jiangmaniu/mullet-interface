@@ -4,7 +4,9 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
+import { CURRENCY } from '@/constants'
 import { IOrderTaker, IOrderTakerState } from '@/models/takers'
+import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
 
@@ -20,6 +22,7 @@ import TabsTable from '../comp/TabsTable'
 import TradingSettingModal from '../comp/TradingSettingModal'
 import EndModal from './EndModal'
 import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
+import { useOverview } from './useOverview'
 import { useTabsConfig } from './useTabsConfig'
 
 export default function copyTradingDetail() {
@@ -28,7 +31,6 @@ export default function copyTradingDetail() {
 
   const params = useParams()
   const { id } = params
-
   const location = useLocation()
   const loadingRef = useRef<any>()
   useEffect(() => {
@@ -38,11 +40,20 @@ export default function copyTradingDetail() {
 
   const [takeState, setTakeState] = useState<IOrderTakerState>('yigendan')
 
-  const [taker, setTaker] = useState<IOrderTaker>()
+  const [taker, setTaker] = useState<IOrderTaker>(defaultTaker)
 
   useEffect(() => {
     // 得到 takeId 之后去请求后端数据
-    setTaker(defaultTaker)
+    // setTaker(defaultTaker)
+
+    getTradeFollowLeadDetail({
+      leadId: String(id)
+    }).then((res) => {
+      console.log('getTradeFollowLeadPlaza', res)
+
+      // @ts-ignore
+      if (res.success) setTakers(res.data)
+    })
   }, [])
 
   useEffect(() => {
@@ -100,6 +111,12 @@ export default function copyTradingDetail() {
     }
   }
 
+  const {
+    statistics,
+    profitStatistics: { earningRates, profitAmounts },
+    symbolStatistics
+  } = useOverview({ id })
+
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
       <div className="max-w-[1332px] px-4 mx-auto mt-6">
@@ -134,13 +151,18 @@ export default function copyTradingDetail() {
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-start gap-5">
                   {/* 介绍 */}
-                  <Introduction
-                    avatar={taker?.account.avatar}
-                    name={taker?.account.name}
-                    introduction={taker?.account.introduction}
-                    tags={taker?.tags}
+                  <Introduction avatar={taker?.imageUrl} name={taker?.projectName} introduction={taker?.desc} tags={taker?.tags} />
+                  <CopyTradingDatas
+                    datas={{
+                      followerNumber: taker?.followNumber || 0,
+                      createDayTotal: taker?.createDayTotal || 0,
+                      profitTotal: taker?.profitTotal || 0,
+                      profitSharingRatio: taker?.profitSharingRatio || 0,
+                      assetRequirement: taker?.assetRequirement || 0,
+                      remainingGuaranteedAmount: taker?.remainingGuaranteedAmount || 0
+                    }}
+                    gap="gap-18"
                   />
-                  <CopyTradingDatas datas={taker?.datas} gap="gap-18" />
                 </div>
               </div>
             </div>
@@ -229,20 +251,28 @@ export default function copyTradingDetail() {
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Performance datas={taker?.datas} />
+              <Performance datas={statistics} />
             </CardContainer>
             <CardContainer
               title={
                 <>
-                  <FormattedMessage id="mt.leijiyingkui" />
-                  (USDT)
+                  <FormattedMessage id="mt.leijiyingkui" />({CURRENCY})
                 </>
               }
               defaultValue={timeRange}
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Cumulative />
+              <Cumulative
+                earningRates={earningRates?.map((i) => ({
+                  date: i.date,
+                  value: i.earningRate
+                }))}
+                profitAmounts={profitAmounts?.map((i) => ({
+                  date: i.date,
+                  value: i.profitAmount
+                }))}
+              />
             </CardContainer>
             <CardContainer
               title={<FormattedMessage id="mt.jiaoyipianhao" />}
@@ -250,7 +280,7 @@ export default function copyTradingDetail() {
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Preferences />
+              <Preferences datas={symbolStatistics} />
             </CardContainer>
           </div>
           {/* 表格数据 */}

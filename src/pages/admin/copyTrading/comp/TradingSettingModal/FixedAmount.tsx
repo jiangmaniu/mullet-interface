@@ -1,19 +1,20 @@
 import { CaretDownOutlined } from '@ant-design/icons'
-import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { Input, Radio, Select } from 'antd'
+import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormInstance, Radio } from 'antd'
 import { useMemo, useState } from 'react'
 import { black } from 'tailwindcss/colors'
 
+import ProFormText from '@/components/Admin/Form/ProFormText'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
-
-import { AccountTag } from '../../comp/AccountTag'
+import { formatNum } from '@/utils'
 
 type IProp = {
   onConfirm?: (values: any) => void
+  form: FormInstance
+  children: React.ReactNode
 }
 
 const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
@@ -26,11 +27,8 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
   }
 }
 
-export default (props: IProp) => {
+export default ({ onConfirm, form, children }: IProp) => {
   const intl = useIntl()
-  const { initialState } = useModel('@@initialState')
-  const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
-
   const { trade } = useStores()
   const { currentAccountInfo } = trade.getAccountBalance()
 
@@ -66,13 +64,14 @@ export default (props: IProp) => {
   const [zhiying, setZhiying] = useState<number | undefined>()
   const [zhisun, setZhisun] = useState<number | undefined>()
 
-  const [read, setRead] = useState<number | undefined>(1)
+  const [read, setRead] = useState<number | undefined>(undefined)
 
   // 折叠
   const [isCollapse, setIsCollapse] = useState(false)
 
   const onClickRadio = () => {
     read === 1 ? setRead(undefined) : setRead(1)
+    form.setFieldValue('read', read === 1 ? undefined : 1)
   }
 
   // 止盈/止損输入框聚焦
@@ -89,101 +88,49 @@ export default (props: IProp) => {
 
   return (
     <div className="flex flex-col justify-between gap-4.5 w-full max-w-full">
-      {/* 跟单账户 */}
-      <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-primary">
-          <FormattedMessage id="mt.gendanzhanghu" />
-        </span>
-
-        <Select
-          suffixIcon={null}
-          size="large"
-          labelRender={(item) => (
-            <span className=" flex flex-row gap-2.5 items-center justify-center">
-              <span className="flex flex-row justify-between items-center flex-1">
-                <span className="flex flex-row justify-between items-center gap-1.5 ">
-                  <AccountTag type="meifen" />
-                  <span>{item.value}</span>
-                </span>
-                <Iconfont name="down" width={20} height={20} color={black['900']} />
-              </span>
-              <span className=" w-[1px] h-[11px] bg-gray-260"></span>
-              {/* <span className=" text-sm !font-dingpro-regular"> {item.jine} USD</span> */}
-              <span className=" text-sm !font-dingpro-medium"> {zhanghuyue} USD</span>
-            </span>
-          )}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.gendanzhanghu' })}`}
-          options={accountList.map((item) => ({
-            ...item,
-            value: item.id,
-            label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
-          }))}
-          optionRender={(option) => {
-            const item = option?.data || {}
-
-            return (
-              <span className=" flex flex-row gap-2.5 items-center justify-center">
-                <span className="flex flex-row justify-between items-center flex-1">
-                  <span className="flex flex-row justify-between items-center gap-1.5 ">
-                    <AccountTag type="meifen" />
-                    <span>{item.value}</span>
-                  </span>
-                  <span className=" w-5 h-5"></span>
-                </span>
-                <span className=" w-[1px] h-[11px] bg-gray-260"></span>
-                <span className=" text-sm !font-dingpro-medium"> {zhanghuyue} USD</span>
-              </span>
-            )
-          }}
-        />
-      </div>
+      {children}
       {/* 每笔跟单保证金 */}
       <div className="flex flex-col gap-2.5 justify-start flex-1">
         <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.meibigendanbaozhengjin" />
         </span>
-        <Input
-          size="large"
-          style={{
-            width: '100%',
-            height: '2.8125rem',
-            lineHeight: '2.8125rem'
+        <ProFormText
+          name="guaranteedAmount"
+          rules={[
+            {
+              required: true,
+              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              validator(rule, value, callback) {
+                if (!value) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                }
+                // 只能输入数字，正则匹配 value 是不是数字
+                if (!/^\d+$/.test(value)) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                }
+
+                return Promise.resolve()
+              }
+            }
+          ]}
+          fieldProps={{
+            size: 'large',
+            style: {
+              width: '100%',
+              height: '2.8125rem',
+              lineHeight: '2.8125rem'
+            },
+            value: baozhengjin,
+            onChange: (e) => checkNumber(e, setBaozhengjin),
+            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}10~999999999`,
+            count: {
+              show: false,
+              max: 10
+            },
+            suffix: <span className=" text-sm font-semibold text-primary">USD</span>
           }}
-          value={baozhengjin}
-          onChange={(e) => checkNumber(e, setBaozhengjin)}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}10~999999999`}
-          count={{
-            show: false,
-            max: 10
-          }}
-          suffix={<span className=" text-sm font-semibold text-primary">USD</span>}
         />
       </div>
-      {/* 跟单金额 */}
-      {/* <div className="flex flex-col gap-2.5 justify-start flex-1">
-        <span className=" text-sm font-normal text-primary">
-          <FormattedMessage id="mt.zuidagendanjine" />
-        </span>
-        <Input
-          size="large"
-          style={{
-            width: '100%',
-            height: '2.8125rem',
-            lineHeight: '2.8125rem'
-          }}
-          value={gendanjine}
-          onChange={(e) => checkNumber(e, setGendanjine)}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}10~1000000`}
-          suffix={
-            <span className=" flex flex-row gap-2 items-center">
-              <span className=" text-sm text-blue cursor-pointer" onClick={() => setGendanjine(231.3)}>
-                <FormattedMessage id="mt.quanbu" />
-              </span>
-              <span className=" text-sm font-semibold text-primary">USD</span>
-            </span>
-          }
-        />
-      </div> */}
       <div className=" flex flex-row justify-between items-center">
         <span
           className=" text-sm font-normal text-primary flex items-center gap-1 cursor-pointer"
@@ -221,40 +168,80 @@ export default (props: IProp) => {
           <span className=" text-sm font-normal text-primary">
             <FormattedMessage id="mt.zhiying" />
           </span>
-          <Input
-            size="large"
-            style={{
-              width: '100%',
-              height: '2.8125rem',
-              lineHeight: '2.8125rem'
+          <ProFormText
+            name="profitRatio"
+            rules={[
+              {
+                required: true,
+                // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+                validator(rule, value, callback) {
+                  if (!value) {
+                    return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                  }
+                  // 只能输入数字，正则匹配 value 是不是数字
+                  if (!/^\d+$/.test(value)) {
+                    return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                  }
+
+                  return Promise.resolve()
+                }
+              }
+            ]}
+            fieldProps={{
+              size: 'large',
+              min: 0,
+              style: {
+                width: '100%',
+                height: '2.8125rem',
+                lineHeight: '2.8125rem'
+              },
+              placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}`,
+              onFocus: () => setFocusInputKey('mt.yingli'),
+              onBlur: () => setFocusInputKey(undefined),
+              value: zhiying,
+              onChange: (e) => checkNumber(e, setZhiying),
+              suffix: <span className=" text-sm font-semibold text-primary">%</span>
             }}
-            min={0}
-            placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}`}
-            onFocus={() => setFocusInputKey('mt.yingli')}
-            onBlur={() => setFocusInputKey(undefined)}
-            value={zhiying}
-            onChange={(e) => checkNumber(e, setZhiying)}
-            suffix={<span className=" text-sm font-semibold text-primary">%</span>}
           />
         </div>
         <div className="flex flex-col gap-2.5 justify-start flex-1">
           <span className=" text-sm font-normal text-primary">
             <FormattedMessage id="mt.zhisun" />
           </span>
-          <Input
-            size="large"
-            min={0}
-            style={{
-              width: '100%',
-              height: '2.8125rem',
-              lineHeight: '2.8125rem'
+          <ProFormText
+            name="stopLossRatio"
+            rules={[
+              {
+                required: true,
+                // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+                validator(rule, value, callback) {
+                  if (!value) {
+                    return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                  }
+                  // 只能输入数字，正则匹配 value 是不是数字
+                  if (!/^\d+$/.test(value)) {
+                    return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                  }
+
+                  return Promise.resolve()
+                }
+              }
+            ]}
+            fieldProps={{
+              size: 'large',
+              min: 0,
+              style: {
+                width: '100%',
+                height: '2.8125rem',
+                lineHeight: '2.8125rem'
+              },
+              placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}`,
+              value: zhisun,
+              onFocus: () => setFocusInputKey('mt.sunshi'),
+              onBlur: () => setFocusInputKey(undefined),
+              onChange: (e) => checkNumber(e, setZhisun),
+              suffix: <span className=" text-sm font-semibold text-primary">%</span>
             }}
-            onFocus={() => setFocusInputKey('mt.sunshi')}
-            onBlur={() => setFocusInputKey(undefined)}
-            value={zhisun}
-            onChange={(e) => checkNumber(e, setZhisun)}
-            placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}`}
-            suffix={<span className=" text-sm font-semibold text-primary">%</span>}
           />
         </div>
         {focusInputKey && (
@@ -293,6 +280,9 @@ export default (props: IProp) => {
             </span>
           </Radio>
         </Radio.Group>
+        <div className="hide-form-item">
+          <ProFormText name="read" rules={[{ required: true, message: intl.formatMessage({ id: 'mt.qinggouxuan' }) }]} />
+        </div>
         <Button
           height={48}
           type="primary"
@@ -300,7 +290,7 @@ export default (props: IProp) => {
             width: '100%',
             borderRadius: 8
           }}
-          onClick={props.onConfirm}
+          onClick={onConfirm}
         >
           <div className=" flex items-center gap-1">
             <span className=" font-semibold text-base ">

@@ -192,6 +192,7 @@ export default function TakeDetail() {
                 </div>
               </Button>
               <TakeSettingModal
+                info={{}}
                 trigger={
                   <Button
                     height={42}
@@ -322,7 +323,7 @@ export default function TakeDetail() {
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Preferences />
+              <Preferences datas={[]} />
             </CardContainer>
           </div>
           {/* 表格数据 */}

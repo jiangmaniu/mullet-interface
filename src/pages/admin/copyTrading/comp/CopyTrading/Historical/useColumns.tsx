@@ -2,7 +2,6 @@ import { useIntl } from '@umijs/max'
 import { TableProps } from 'antd'
 import classNames from 'classnames'
 
-import Tags from '@/components/Admin/Tags'
 import { CURRENCY } from '@/constants'
 import { formatNum, getColorClass } from '@/utils'
 
@@ -13,24 +12,28 @@ export default () => {
   const orderColumns: TableProps['columns'] = [
     {
       title: intl.formatMessage({ id: 'mt.pinzhong' }),
-      dataIndex: 'pinzhong',
-      key: 'pinzhong',
-      render: (pz) => (
-        <span className=" flex gap-1 items-center">
-          <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
-          <span className=" flex flex-col items-start">
-            <span className="text-sm  font-pf-bold text-primary">{pz.pinzhong}</span>
-            <span className="flex items-center gap-1">
-              <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
-                {pz.zhuangtai}
-              </Tags>
-              <Tags size="tiny" color="gray">
-                {pz.desc}
-              </Tags>
-            </span>
+      dataIndex: 'symbol',
+      key: 'symbol',
+      render: (pz) => {
+        console.log(pz)
+        return (
+          <span className=" flex gap-1 items-center">
+            {pz}
+            {/* <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
+            <span className=" flex flex-col items-start">
+              <span className="text-sm  font-pf-bold text-primary">{pz.pinzhong}</span>
+              <span className="flex items-center gap-1">
+                <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
+                  {pz.zhuangtai}
+                </Tags>
+                <Tags size="tiny" color="gray">
+                  {pz.conf} {pz.leverageMultiple}
+                </Tags>
+              </span>
+            </span> */}
           </span>
-        </span>
-      )
+        )
+      }
     },
     {
       title: `${intl.formatMessage({ id: 'mt.yingkui' })}(${CURRENCY})`,

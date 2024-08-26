@@ -84,13 +84,18 @@ function Square({ active }: { active: boolean }) {
   }
 
   useEffect(() => {
-    if (active) {
+    if (active && trade.currentAccountInfo && trade.currentAccountInfo.id) {
+      console.log('state', state)
       getTradeFollowLeadPlaza({
-        tradeAccountId: Number(trade.currentAccountInfo?.id),
+        tradeAccountId: trade.currentAccountInfo.id,
         startDate: today.subtract(state.jinqi, 'day').format('YYYY-MM-DD'),
-        endDate: today.format('YYYY-MM-DD')
+        endDate: today.format('YYYY-MM-DD'),
+        groupName: state.zhanghuleixing
       }).then((res) => {
         console.log('getTradeFollowLeadPlaza', res)
+
+        // @ts-ignore
+        if (res.success) setTakers(res.data)
       })
     }
   }, [active, state, trade.currentAccountInfo])
@@ -112,9 +117,9 @@ function Square({ active }: { active: boolean }) {
   return (
     <Space direction="vertical" size={24} className="w-full">
       <Space size={12}>
-        <SelectRounded defaultValue={accountType} onChange={(i) => handleChange('zhanghuleixing', i.value)} options={accountTypes} />
-        <SelectRounded defaultValue={tag} onChange={(i) => handleChange('biaoqian', i.value)} options={tags} />
-        <SelectRounded defaultValue={rateOfReturnNear} onChange={(i) => handleChange('jinqi', i.count)} options={timeRange} />
+        <SelectRounded defaultValue={accountType} onChange={(i) => handleChange('zhanghuleixing', i)} options={accountTypes} />
+        <SelectRounded defaultValue={tag} onChange={(i) => handleChange('biaoqian', i)} options={tags} />
+        <SelectRounded defaultValue={rateOfReturnNear} onChange={(i) => handleChange('jinqi', i)} options={timeRange} />
       </Space>
       <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
         {takers.map((item, idx) => (

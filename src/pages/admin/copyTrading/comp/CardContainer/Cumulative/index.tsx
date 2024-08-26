@@ -4,42 +4,36 @@ import { useIntl } from '@umijs/max'
 import { Segmented } from 'antd'
 import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 type IProps = {
-  xAxis?: string[]
-  shouyilvs?: number[]
-  yingkuies?: number[]
-  time?: string
+  earningRates?: {
+    date: string | undefined
+    value: number | undefined
+    // earningRate: number
+  }[]
+  profitAmounts?: {
+    date: string | undefined
+    value: number | undefined
+    // profitAmount: number
+  }[]
 }
 
 /**
  * 累計盈虧
  */
-const Cumulative = ({
-  time,
-  shouyilvs = [1, 2, 3, 4, 5, 6],
-  yingkuies = [6, 5, 4, 3, 2, 1],
-  xAxis = ['5.01', '5.02', '5.03', '5.04', '5.05', '5.06']
-}: IProps) => {
+const Cumulative = (props: IProps) => {
   const intl = useIntl()
 
-  useEffect(() => {
-    console.log('Leijiyingkui time:', time)
-  }, [time])
+  const [segment, setSegment] = useState<'earningRates' | 'profitAmounts'>('earningRates')
 
-  const shouyilv = intl.formatMessage({ id: 'mt.shouyilv' })
-  const yingkuie = intl.formatMessage({ id: 'mt.yingkuie' })
+  const xAxis = useMemo(() => {
+    return props?.[segment]?.map((item) => item.date)
+  }, [props.earningRates, segment])
 
-  const [data, setData] = useState<number[]>(shouyilvs)
-
-  const onChange = (value: string) => {
-    if (value === shouyilv) {
-      setData(shouyilvs ?? [])
-    } else if (value === yingkuie) {
-      setData(yingkuies ?? [])
-    }
-  }
+  const data = useMemo(() => {
+    return props?.[segment]?.map((item) => item.value)
+  }, [props.earningRates, segment])
 
   const option = useMemo(
     () => ({
@@ -50,7 +44,7 @@ const Cumulative = ({
         trigger: 'axis'
       },
       legend: {
-        data: [shouyilv, yingkuie]
+        data: [intl.formatMessage({ id: 'mt.shouyilv' }), intl.formatMessage({ id: 'mt.yingkuie' })]
       },
 
       grid: {
@@ -112,12 +106,29 @@ const Cumulative = ({
         }
       ]
     }),
-    [data, xAxis, shouyilv, yingkuie]
+    [data, xAxis, intl]
   ) as echarts.EChartOption
 
+  console.log(option)
   return (
     <div className="leijiyingkui flex flex-col items-start gap-4">
-      <Segmented<string> options={[shouyilv, yingkuie]} onChange={onChange} />
+      <Segmented<'earningRates' | 'profitAmounts'>
+        options={[
+          {
+            value: 'earningRates',
+            label: intl.formatMessage({ id: 'mt.shouyilv' })
+          },
+          {
+            value: 'profitAmounts',
+            label: intl.formatMessage({ id: 'mt.yingkuie' })
+          }
+        ]}
+        value={segment}
+        onChange={(value) => {
+          console.log(value)
+          setSegment(value)
+        }}
+      />
       <ReactECharts option={option} style={{ height: 230, width: '100%' }} />
     </div>
   )

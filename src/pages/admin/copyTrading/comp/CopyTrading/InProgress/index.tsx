@@ -18,7 +18,7 @@ import { defaultTakers } from '../mock'
 import { TradingItem } from '../TradingItem'
 import useColumns from './useColumns'
 
-export default ({ active }: { active: boolean }) => {
+export default ({ segment }: { segment: string }) => {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
@@ -38,7 +38,8 @@ export default ({ active }: { active: boolean }) => {
   const loadingRef = useRef<any>()
 
   useEffect(() => {
-    active &&
+    console.log('segment', segment)
+    segment === 'jinxingzhong' &&
       getTradeFollowFolloerManagementInProgress({
         accountGroupId: currentAccountInfo?.accountGroupId,
         clientId: currentAccountInfo?.clientId,
@@ -56,7 +57,7 @@ export default ({ active }: { active: boolean }) => {
         .catch((err) => {
           console.log(err)
         })
-  }, [active, currentAccountInfo])
+  }, [segment, currentAccountInfo])
 
   return (
     <div className="flex flex-col gap-5 w-full">

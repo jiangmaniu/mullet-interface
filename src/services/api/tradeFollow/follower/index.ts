@@ -28,3 +28,24 @@ export async function getTradeFollowFolloerManagementHistory(params?: { follower
     params
   })
 }
+
+// /trade-follow/followApi/follower/save
+// 跟单人 - 申请跟单 （设置）
+export async function postTradeFollowFolloerSave(data: TradeFollowFollower.SaveParams) {
+  return request<API.Response>('/api/trade-follow/followApi/follower/save', {
+    method: 'POST',
+    data
+  })
+}
+
+// /trade-follow/followApi/follower/history_follower_order
+// 跟单人 - 历史跟单
+export async function getTradeFollowFolloerHistoryFollowerOrder(params?: { followerId?: string | number; leadId?: string | number }) {
+  return request<API.Response<TradeFollowFollower.HistoryFollowerOrderItem[]>>(
+    '/api/trade-follow/followApi/follower/history_follower_order',
+    {
+      method: 'GET',
+      params
+    }
+  )
+}

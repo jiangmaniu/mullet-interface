@@ -19,7 +19,7 @@ declare namespace TradeFollowLead {
     /**
      * 当前交易账户
      */
-    tradeAccountId: number
+    tradeAccountId: string | number
     [property: string]: any
   }
   /**
@@ -143,26 +143,37 @@ declare namespace TradeFollowLead {
     tradeAccountId?: number
     [property: string]: any
   }
+
   /**
-   * R«List«LeadManagementVO»»，返回信息
+   * LeadSettingsParams
+   * 带单设置参数
    */
-  export type Response = {
+  type LeadSettingsParams = {
     /**
-     * 状态码
+     * 资产要求
      */
-    code: number
+    assetRequirement?: number
     /**
-     * 承载数据
+     * 头像
      */
-    data?: LeadManagementVO[]
+    imageUrl?: string
+    leadId?: number
     /**
-     * 返回消息
+     * 最大支持人数
      */
-    msg: string
+    maxSupportCount?: number
     /**
-     * 是否成功
+     * 利润分成比例
      */
-    success: boolean
+    profitSharingRatio?: number
+    /**
+     * 项目名称
+     */
+    projectName?: string
+    /**
+     * 标签
+     */
+    tags?: string
     [property: string]: any
   }
 
@@ -215,6 +226,165 @@ declare namespace TradeFollowLead {
      * 交易账户Id
      */
     tradeAccountId?: number
+    [property: string]: any
+  }
+
+  /**
+   * getTradeFollowLeadDetail
+   * 带单人 - 详情
+   */
+  type LeadDetailItem = {
+    /**
+     * 资产要求
+     */
+    assetRequirement?: number
+    /**
+     * 资产管理规模
+     */
+    assetScaleTotal?: number
+    /**
+     * 审核状态：0待审核  1=已审核 2=审核拒绝
+     */
+    auditStatus?: number
+    /**
+     * 入住天数
+     */
+    createDayTotal?: number
+    /**
+     * 描述
+     */
+    desc?: string
+    /**
+     * 跟单人数
+     */
+    followerNumber?: number
+    /**
+     * 头像
+     */
+    imageUrl?: string
+    /**
+     * 是否开启带单：1=开启 0=关闭
+     */
+    openFlag?: number
+    /**
+     * 分润比例
+     */
+    profitSharingRatio?: number
+    /**
+     * 带单盈亏
+     */
+    profitTotal?: number
+    /**
+     * 项目名称
+     */
+    projectName?: string
+    /**
+     * 带单保证金额余额/总资产
+     */
+    remainingGuaranteedAmount?: number
+    /**
+     * 今日分润
+     */
+    shareProfitToday?: number
+    /**
+     * 分润总和
+     */
+    shareProfitTotal?: number
+    /**
+     * 昨日分润
+     */
+    shareProfitYesterday?: number
+    [property: string]: any
+  }
+  /**
+   * api: tradeFollowLeadStatistics
+   * // 带单人 - 带单表现
+   */
+  type TradeFollowLeadStatisticsItem = {
+    /**
+     * 平均每笔收益率
+     */
+    averageProfitRate?: number
+    /**
+     * 总收益率
+     */
+    earningRateTotal?: number
+    /**
+     * 跟单盈亏
+     */
+    followerProfit?: number
+    /**
+     * 带单盈亏
+     */
+    leadProfit?: number
+    /**
+     * 回撤率
+     */
+    retracementRate?: number
+    /**
+     * 胜率
+     */
+    winRate?: number
+    [property: string]: any
+  }
+
+  /**
+   * api: tradeFollowLeadProfitStatistics
+   * // 带单人 - 累计盈亏
+   */
+  type TradeFollowLeadProfitStatisticsItem = {
+    earningRates?: EarningRate[]
+    profitAmounts?: ProfitAmount[]
+    [property: string]: any
+  }
+
+  type EarningRate = {
+    /**
+     * 日期
+     */
+    date?: string
+    /**
+     * 收益率
+     */
+    earningRate?: number
+    [property: string]: any
+  }
+
+  /**
+   * ProfitAmount
+   */
+  type ProfitAmount = {
+    /**
+     * 日期
+     */
+    date?: string
+    /**
+     * 盈亏额
+     */
+    profitAmount?: number
+    [property: string]: any
+  }
+  /**
+   * api: tradeFollowSymbolStatistics
+   * 带单人 - 交易偏好
+   */
+  export type TradeFollowLeadSymbolStatisticsItem = {
+    /**
+     * 跟单盈亏
+     */
+    profit?: number
+    /**
+     * 比例
+     */
+    rate?: number
+    /**
+     * 品种名称
+     */
+    symbol?: string
+    /**
+     * 交易次数
+     */
+    tradeCount?: number
     [property: string]: any
   }
 }

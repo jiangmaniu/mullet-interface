@@ -101,7 +101,8 @@ export default function Apply() {
       desc: '',
       projectName: '',
       tradeAccountId: 0,
-      clientId
+      clientId,
+      imageUrl: 'https://img.alicdn.com/imgextra/i4/O1CN01KX0dQk1vQZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0Zz'
     }),
     [clientId]
   )
@@ -134,6 +135,7 @@ export default function Apply() {
         message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
       })
   }
+
   return (
     <div
       style={{
@@ -198,12 +200,13 @@ export default function Apply() {
                   <AvatarUpload onChange={onAvatarChange} />
                   <ProFormText
                     name="imageUrl"
-                    rules={[
-                      {
-                        required: true,
-                        message: intl.formatMessage({ id: 'mt.qingshangchuantouxiang' })
-                      }
-                    ]}
+                    // TODO: 取消注释
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: intl.formatMessage({ id: 'mt.qingshangchuantouxiang' })
+                    //   }
+                    // ]}
                   />
                 </div>
                 <div className="flex flex-col gap-2.5 justify-start">

@@ -45,7 +45,7 @@ export type IOrderTaker = {
   datas: Record<string, any>
   tags: any[]
   state: IOrderTakerState
-}
+} & TradeFollowLead.LeadDetailItem
 
 /** 帶單任務 */
 export type IOrder = TradeFollowFollower.ManagementInProgressItem
@@ -64,7 +64,8 @@ export type IOrder = TradeFollowFollower.ManagementInProgressItem
 
 /** 帶單頁面參數 */
 export type IOrderTakerProps = {
-  item: IOrderTaker
+  // item: IOrderTaker
+  item: Record<string, any>
   state: Record<string, any> // 页面状态
 }
 

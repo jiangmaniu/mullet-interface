@@ -12,7 +12,7 @@ type IProps = {
 const OrderTakerChart = ({ datas }: IProps) => {
   const intl = useIntl()
 
-  const color = datas.rate1 > 0 ? green['700'] : red['600']
+  const color = datas.winRate > 0 ? green['700'] : red['600']
   const data = datas.rate7
   const xData = datas.xData
 

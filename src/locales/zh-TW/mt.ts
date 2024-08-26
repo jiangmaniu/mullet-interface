@@ -282,6 +282,7 @@ export default {
   'mt.wancheng': '完成',
   'mt.fasongyanzhengma': '发送验证码',
   'mt.qingshuru': '請輸入',
+  'mt.qingshurushuzi': '請輸入數字',
   'mt.qingxuanze': '請選擇',
   'mt.qingxuanzequhao': '请选择区号',
   'mt.qingshuruyanzhengma': '请输入验证码',
@@ -467,7 +468,9 @@ export default {
   'mt.dipin': '低頻',
   'mt.jinqishouyilv': '近{range}收益率',
   'mt.jin': '近',
+  'mt.14': '兩週',
   'mt.liangzhou': '兩週',
+  'mt.30': '一月',
   'mt.yiyue': '一月',
   'mt.yigeyue': '一個月',
   'mt.lianggeyue': '兩個月',
@@ -593,6 +596,7 @@ export default {
   'mt.gaojipeizhi': '高級配置',
   'mt.gaojishezhi': '高級設置',
   'mt.woyiyuedubingtongyi': '我已閱讀並同意',
+  'mt.qinggouxuan': '請勾選',
   'mt.gendanyonghuxieyi': '《跟單用戶協議》',
   'mt.queren': '確認',
   'mt.zaikaolvxia': '再考慮下',
@@ -628,5 +632,6 @@ export default {
   'mt.xiangqing': '詳情',
   'mt.chengjiaojiage': '成交價格',
   'mt.caozuochenggong': '操作成功',
-  'mt.qingxianzhizaishigezifuyinei': '請限制在十個字符以內'
+  'mt.qingxianzhizaishigezifuyinei': '請限制在十個字符以內',
+  'mt.qingxianzhizailiangbaizifuyinei': '請限制在两百個字符以內'
 }

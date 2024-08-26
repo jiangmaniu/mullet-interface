@@ -12,7 +12,7 @@ import TabTable from '../../TabsTable/Table'
 import { orders as mockOrders } from './mock'
 import useColumns from './useColumns'
 
-export default ({ active }: { active: boolean }) => {
+export default ({ segment }: { segment: string }) => {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
@@ -20,7 +20,7 @@ export default ({ active }: { active: boolean }) => {
   const [orders, setOrders] = useState(mockOrders)
 
   useEffect(() => {
-    active &&
+    segment === 'lishicangwei' &&
       getTradeFollowFolloerManagementHistory({
         followerId: currentAccountInfo.id
       })
@@ -36,7 +36,7 @@ export default ({ active }: { active: boolean }) => {
         .catch((err) => {
           console.log(err)
         })
-  }, [active, currentAccountInfo])
+  }, [segment, currentAccountInfo])
 
   return (
     <div className="flex flex-col gap-5 w-full">

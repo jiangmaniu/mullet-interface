@@ -1,8 +1,13 @@
 import './style.less'
 
 import { ModalForm } from '@ant-design/pro-components'
-import { useIntl } from '@umijs/max'
-import { Form, message, Tabs, TabsProps } from 'antd'
+import { getIntl, useIntl } from '@umijs/max'
+import { Form, Tabs, TabsProps } from 'antd'
+import { useMemo } from 'react'
+
+import ProFormText from '@/components/Admin/Form/ProFormText'
+import { setTradeFollowLeadSettings } from '@/services/api/tradeFollow/lead'
+import { message } from '@/utils/message'
 
 import { AvatarUpload } from '../../apply/AvatarUpload'
 import BaseInformation from './BaseInformation'
@@ -17,13 +22,14 @@ const waitTime = (time = 100) => {
 }
 
 type IProps = {
+  info: Record<string, any>
   open?: boolean
   onOpenChange?: ((open: boolean) => void) | undefined
   trigger?: JSX.Element
   onConfirm?: (values: any) => void
 }
 
-export default ({ trigger, open, onOpenChange }: IProps) => {
+export default ({ info, trigger, open, onOpenChange }: IProps) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.daidanshezhi' })
@@ -37,14 +43,47 @@ export default ({ trigger, open, onOpenChange }: IProps) => {
     {
       key: '1',
       label: intl.formatMessage({ id: 'mt.jibenxinxi' }),
-      children: <BaseInformation />
+      children: <BaseInformation form={form} />,
+      forceRender: true
     },
     {
       key: '2',
       label: intl.formatMessage({ id: 'mt.daidancanshu' }),
-      children: <TakerParams />
+      children: <TakerParams form={form} />,
+      forceRender: true
     }
   ]
+
+  const formDefault = useMemo(
+    () => ({
+      leadId: info?.leadId || 0,
+      imageUrl: info?.imageUrl || '',
+      projectName: info?.projectName || '',
+      desc: info?.desc || '',
+      tags: info?.tags || '',
+      assetRequirement: info?.assetRequirement || 0,
+      maxSupportCount: info?.maxSupportCount || 0,
+      profitSharingRatio: info?.profitSharingRatio || 0,
+      assetSacle: info?.assetScale || 0
+    }),
+    [info]
+  )
+
+  const onFinish = async (values: any) => {
+    setTradeFollowLeadSettings({
+      ...formDefault,
+      ...values
+    })
+      .then((res) => {
+        // form.setFieldsValue(formDefault) // 重置
+        if (res.success) {
+          message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
+        }
+      })
+      .catch((error) => {
+        message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
+      })
+  }
 
   return (
     <div>
@@ -52,6 +91,7 @@ export default ({ trigger, open, onOpenChange }: IProps) => {
         name: string
         company: string
       }>
+        onFinish={onFinish}
         title={title}
         trigger={trigger}
         form={form}
@@ -66,12 +106,6 @@ export default ({ trigger, open, onOpenChange }: IProps) => {
           onCancel: () => console.log('run')
         }}
         submitTimeout={2000}
-        onFinish={async (values) => {
-          await waitTime(2000)
-          console.log(values.name)
-          message.success('提交成功')
-          return true
-        }}
         submitter={{
           render: (props, defaultDoms) => {
             return []
@@ -82,7 +116,9 @@ export default ({ trigger, open, onOpenChange }: IProps) => {
           <div className=" w-[165px] h-[142px] bg-[url('/img/modal-bg.png')] bg-[length:100%_100%] flex items-center justify-center -mt-7">
             <AvatarUpload width={81} height={81} onChange={onAvatarChange} />
           </div>
-
+          <div className="hide-form-item">
+            <ProFormText name="imageUrl" rules={[{ required: true, message: intl.formatMessage({ id: 'mt.qingshangchuantouxiang' }) }]} />
+          </div>
           <Tabs items={items} className="flex-1  w-full flex-grow" />
         </div>
       </ModalForm>

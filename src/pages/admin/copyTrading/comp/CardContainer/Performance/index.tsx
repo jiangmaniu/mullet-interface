@@ -12,9 +12,24 @@ type IProps = {
   time?: string
 }
 
-const formatter: StatisticProps['formatter'] = (value, props) => (
-  <CountUp {...props} end={value as number} decimals={2} separator="," duration={0.3} />
-)
+// const formatter: StatisticProps['formatter'] = (value, props) => (
+//   <CountUp {...props} end={value as number} decimals={2} separator="," duration={0.3} />
+// )
+const formatter: StatisticProps['formatter'] = (value, props) => {
+  /** 基础间隔 */
+  const baseDuration = 0.5
+  /** 增长基数 */
+  const power = 1.2
+
+  // 计算 value 是 n 位数
+  const n = Math.floor(Math.log10(value as number))
+  // 不同位数的 duration 值成指数增长
+  const duration = baseDuration * Math.pow(power, n)
+
+  const decimals = props?.precision || 2
+
+  return <CountUp {...props} end={value as number} decimals={decimals} separator="," duration={duration} />
+}
 
 /**
  * 帶單表現
@@ -64,9 +79,9 @@ export const Performance = ({ time, datas }: IProps) => {
         <span className=" absolute -bottom-1 left-8">
           <Statistic
             title={<></>}
-            value={datas?.rate1}
+            value={datas?.winRate}
             formatter={(val) => formatter(val, { suffix: '%' } as FormatConfig)}
-            valueRender={(val) => <span className="text-xl font-medium text-primary !font-dingpro-medium">{val}</span>}
+            valueRender={(val) => <span className="text-xl font-medium text-black !font-dingpro-medium">{val}</span>}
           />
         </span>
       </div>
@@ -81,13 +96,13 @@ export const Performance = ({ time, datas }: IProps) => {
           <div
             className="bg-green flex-shrink-0 h-3 lv rounded"
             style={{
-              width: `calc(${Math.round((datas?.rate1 / 100) * 100)}% + 2rem) `
+              width: `calc(${Math.round((datas?.winRate / 100) * 100)}% + 2rem) `
             }}
           ></div>
           <div
             className="h-3 bg-red flex-shrink-0 hon rounded"
             style={{
-              width: `calc(${100 - Math.round((datas?.rate1 / 100) * 100)}% + 2rem)`
+              width: `calc(${100 - Math.round((datas?.winRate / 100) * 100)}% + 2rem)`
             }}
           ></div>
         </div>
@@ -103,7 +118,7 @@ export const Performance = ({ time, datas }: IProps) => {
           <span>
             <Statistic
               title={<></>}
-              value={10}
+              value={datas?.earningRateTotal}
               formatter={(val) => formatter(val, { suffix: '%', delay: 1 * delay } as FormatConfig)}
               valueStyle={{
                 fontSize: '1rem',
@@ -124,7 +139,7 @@ export const Performance = ({ time, datas }: IProps) => {
           <span>
             <Statistic
               title={<></>}
-              value={12.24}
+              value={datas?.leadProfit}
               formatter={(val) => formatter(val, { prefix: '+', delay: 2 * delay } as FormatConfig)}
               valueStyle={{
                 fontSize: '1rem',
@@ -144,7 +159,7 @@ export const Performance = ({ time, datas }: IProps) => {
           <span>
             <Statistic
               title={<></>}
-              value={23}
+              value={datas?.followerProfit}
               formatter={(val) => formatter(val, { prefix: '+', delay: 3 * delay } as FormatConfig)}
               valueStyle={{
                 fontSize: '1rem',
@@ -164,7 +179,7 @@ export const Performance = ({ time, datas }: IProps) => {
           <span>
             <Statistic
               title={<></>}
-              value={2.3}
+              value={datas?.retracementRate}
               formatter={(val) => formatter(val, { suffix: '%', delay: 4 * delay } as FormatConfig)}
               valueStyle={{
                 fontSize: '1rem',
@@ -184,7 +199,7 @@ export const Performance = ({ time, datas }: IProps) => {
           <span>
             <Statistic
               title={<></>}
-              value={2.3}
+              value={datas?.averageProfitRate}
               formatter={(val) => formatter(val, { suffix: '%', delay: 5 * delay } as FormatConfig)}
               valueStyle={{
                 fontSize: '1rem',

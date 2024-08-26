@@ -6,18 +6,36 @@ import { Space } from 'antd'
 import classNames from 'classnames'
 import { MouseEventHandler } from 'react'
 
-import Tags from '@/components/Admin/Tags'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps, IOrderTakerState } from '@/models/takers'
 import { colorTextPrimary, gray } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
 
-import { AccountTag } from '../../AccountTag'
 import OrderTakerChart from './Chart'
 
 type IProps = IOrderTakerProps & { onClick: (id: string, state: string) => void; onFollow: (bo: IOrderTakerState) => void }
-export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState }, state, onClick, onFollow }: IProps) => {
+export const OrderTaker = ({
+  item: {
+    id,
+    imageUrl,
+    leadName,
+    datas,
+    tags,
+    followerNumber,
+    maxSupportCount,
+    followerTotal,
+    winRate,
+    leadProfit,
+    earningRate,
+    profitTotal,
+    tradeTotal,
+    state: takerState
+  },
+  state,
+  onClick,
+  onFollow
+}: IProps) => {
   const intl = useIntl()
 
   // xx(xx:时间区间)盈亏
@@ -40,17 +58,17 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
         {/* account */}
         <div className=" flex items-center gap-4 justify-between">
           <div className=" flex flex-row gap-4">
-            <img src={account.avatar} width={54} height={54} className=" rounded-xl border border-solid border-gray-340" />
+            <img src={imageUrl} width={54} height={54} className=" rounded-xl border border-solid border-gray-340" />
             <div className=" flex flex-col gap-1.5">
               <div className=" flex gap-2 items-center ">
-                <span className="account-name">{account.name}</span>
-                <AccountTag type={account.type} />
+                <span className="account-name">{leadName}</span>
+                {/* <AccountTag type={account.type} /> */}
               </div>
               <div className="flex items-center gap-1">
                 <Iconfont name="renshu" width={16} color="black" height={16} hoverColor={colorTextPrimary} />
                 <span>
-                  <span className=" text-sm font-pf-medium">{account.followers}</span>
-                  <span className=" text-sm text-gray-500">/{account.limitFollowers}</span>
+                  <span className=" text-sm font-pf-medium">{followerNumber}</span>
+                  <span className=" text-sm text-gray-500">/{maxSupportCount}</span>
                 </span>
               </div>
             </div>
@@ -77,36 +95,47 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
                 <FormattedMessage id="mt.jinqiyingkui" values={{ range: jinqi }} />
                 &nbsp;USD
               </span>
-              <span className={classNames('  text-2xl font-bold !font-dingpro-medium ', getColorClass(datas.rate1))}>
-                {datas.rate1 > 0 ? `+${datas.rate1}` : datas.rate1}
+              <span className={classNames('  text-2xl font-bold !font-dingpro-medium ', getColorClass(leadProfit))}>
+                {leadProfit > 0 ? `+${leadProfit}` : leadProfit}
               </span>
               <span className="tips">
                 <FormattedMessage id="mt.shouyilv" />
                 &nbsp;
-                <span className={classNames('font-medium !font-dingpro-medium', getColorClass(datas.rate2))}>
-                  {datas.rate2 > 0 ? `+${datas.rate2}` : datas.rate2}%
+                <span className={classNames('font-medium !font-dingpro-medium', getColorClass(earningRate))}>
+                  {earningRate > 0 ? `+${earningRate}` : earningRate}%
                 </span>
               </span>
             </div>
 
-            <OrderTakerChart datas={datas} />
+            <OrderTakerChart
+              datas={{
+                followerNumber,
+                maxSupportCount,
+                followerTotal,
+                winRate,
+                leadProfit,
+                earningRate,
+                profitTotal,
+                tradeTotal
+              }}
+            />
           </div>
           <div className=" grid grid-cols-3 gap-y-2">
             <div className="flex flex-col ">
-              <span className="count !font-dingpro-medium ">{formatNum(datas.rate3)}</span>
+              <span className="count !font-dingpro-medium ">{formatNum(profitTotal)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.quanbuyingkui" />
                 &nbsp;USD
               </span>
             </div>
             <div className="flex flex-col ">
-              <span className="count !font-dingpro-medium ">{formatNum(datas.rate4)}</span>
+              <span className="count !font-dingpro-medium ">{formatNum(tradeTotal)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijijiaoyibishu" />
               </span>
             </div>
             <div className="flex flex-col justify-self-end mr-2 ">
-              <span className="count !font-dingpro-medium  ">{formatNum(datas.rate5)}</span>
+              <span className="count !font-dingpro-medium  ">{formatNum(followerTotal)}</span>
               <span className="tips">
                 <FormattedMessage id="mt.leijigensuirenshu" />
               </span>
@@ -116,8 +145,8 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
               <span className="tips">
                 <FormattedMessage id="mt.jinqishenglv" values={{ range: jinqi }} />
               </span>
-              <span className={classNames('count !font-dingpro-medium ', getColorClass(datas.rate6))}>
-                {datas.rate6 > 0 ? `+${datas.rate6}` : datas.rate6}%
+              <span className={classNames('count !font-dingpro-medium ', getColorClass(winRate))}>
+                {winRate > 0 ? `+${winRate}` : winRate}%
               </span>
             </div>
           </div>
@@ -126,12 +155,9 @@ export const OrderTaker = ({ item: { id, account, datas, tags, state: takerState
       {/* footer */}
       <Space direction="vertical" size={8} className="border-t mt-4 pt-1 border-gray-150">
         <Space>
-          {tags.map((tag, idx) => (
-            // <Tag key={idx} color="green">
-            //   <FormattedMessage id={`mt.${tag}`} />
-            // </Tag>
+          {/* {tags.map((tag, idx) => (
             <Tags size="small" color="green" format={{ id: `mt.${tag}` }} key={idx} />
-          ))}
+          ))} */}
         </Space>
         <Button
           height={42}
