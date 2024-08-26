@@ -163,6 +163,7 @@ export default {
   'mt.brand': '品牌',
   'mt.zhizhanshidangqian': '只展示當前',
   'mt.tradeTime': '交易時間',
+  'mt.shouqudanbianzuida': '收取单边最大',
   'mt.xiazai': '下载',
   'mt.zaixiankefu': '在線客服',
   'mt.maichuzuokong': '賣單·開空',
