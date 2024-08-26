@@ -2,7 +2,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { forwardRef, useImperativeHandle, useRef, useState, useTransition } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useTransition } from 'react'
 
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
@@ -10,16 +10,11 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
+import { ITradeTabsOrderType } from '@/mobx/trade'
 
 import LimitOrder from './comp/LimitOrder'
 import MarketOrder from './comp/MarketOrder'
 import StopLimitOrder from './comp/StopLimitOrder'
-
-export const OP_BUY = 1 // 买
-export const OP_SELL = 2 // 卖
-const OP_MARKET_ORDER = 1 // 市价单
-const OP_LIMIT_ORDER = 2 // 限价单
-const OP_STOP_LIMIT_ORDER = 3 // 停损单
 
 export default observer(
   forwardRef((props, ref) => {
@@ -29,21 +24,19 @@ export default observer(
     const intl = useIntl()
     const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
 
-    const [orderType, setOrderType] = useState<any>(OP_MARKET_ORDER) // 订单类类型
-    const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
-
     const popupRef = useRef<any>()
+    const orderType = trade.orderType
 
-    const OrderTypeItems: any = [
-      { key: OP_MARKET_ORDER, label: intl.formatMessage({ id: 'mt.shijiadan' }) },
-      { key: OP_LIMIT_ORDER, label: intl.formatMessage({ id: 'mt.xianjiadan' }) },
-      { key: OP_STOP_LIMIT_ORDER, label: intl.formatMessage({ id: 'mt.tingsundan' }) }
+    const OrderTypeItems: Array<{ key: ITradeTabsOrderType; label: string }> = [
+      { key: 'MARKET_ORDER', label: intl.formatMessage({ id: 'mt.shijiadan' }) },
+      { key: 'LIMIT_ORDER', label: intl.formatMessage({ id: 'mt.xianjiadan' }) },
+      { key: 'STOP_LIMIT_ORDER', label: intl.formatMessage({ id: 'mt.tingsundan' }) }
     ]
 
     // 重写方法
     const show = (current: any) => {
       popupRef.current.show()
-      setTradeType(current)
+      trade.setBuySell(current)
     }
 
     // 对外暴露接口
@@ -85,23 +78,25 @@ export default observer(
             className="max-xl:pl-3"
             onChange={(key) => {
               startTransition(() => {
-                setOrderType(key)
+                trade.setOrderType(key as ITradeTabsOrderType)
+                // 重置买卖类型
+                trade.setBuySell('BUY')
               })
             }}
             size="small"
             marginBottom={0}
           />
           {/* 市价单 */}
-          <div style={{ display: orderType === OP_MARKET_ORDER ? 'block' : 'none' }}>
-            <MarketOrder popupRef={popupRef} type={tradeType} orderType={orderType} />
+          <div style={{ display: orderType === 'MARKET_ORDER' ? 'block' : 'none' }}>
+            <MarketOrder popupRef={popupRef} />
           </div>
           {/* 限价单 */}
-          <div style={{ display: orderType === OP_LIMIT_ORDER ? 'block' : 'none' }}>
-            <LimitOrder popupRef={popupRef} orderType={orderType} />
+          <div style={{ display: orderType === 'LIMIT_ORDER' ? 'block' : 'none' }}>
+            <LimitOrder popupRef={popupRef} />
           </div>
           {/* 停损单 */}
-          <div style={{ display: orderType === OP_STOP_LIMIT_ORDER ? 'block' : 'none' }}>
-            <StopLimitOrder popupRef={popupRef} orderType={orderType} />
+          <div style={{ display: orderType === 'STOP_LIMIT_ORDER' ? 'block' : 'none' }}>
+            <StopLimitOrder popupRef={popupRef} />
           </div>
         </div>
       )
@@ -117,7 +112,7 @@ export default observer(
             ref={popupRef}
             title={
               <div>
-                {tradeType === OP_BUY ? intl.formatMessage({ id: 'mt.mairuzuoduo' }) : intl.formatMessage({ id: 'mt.maichuzuokong' })}
+                {trade.buySell === 'BUY' ? intl.formatMessage({ id: 'mt.mairuzuoduo' }) : intl.formatMessage({ id: 'mt.maichuzuokong' })}
                 <span className="pl-1">{trade.activeSymbolName}</span>
               </div>
             }

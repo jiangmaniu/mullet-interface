@@ -232,6 +232,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                     }
                     trade.setCurrentAccountInfo(item)
                     trade.jumpTrade()
+
+                    // 切换账户重置
+                    trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
                   }}
                   key={item.id}
                   className={classNames(

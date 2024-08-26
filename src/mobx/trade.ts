@@ -20,7 +20,7 @@ import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
-import { covertProfit } from '@/utils/wsUtil'
+import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import klineStore from './kline'
 import ws from './ws'
@@ -40,6 +40,15 @@ export type UserConfInfo = Record<
 >
 
 export type IRecordTabKey = 'POSITION' | 'PENDING' | 'STOPLOSS_PROFIT' | 'HISTORY'
+
+// 交易区订单类型
+export type ITradeTabsOrderType =
+  /**市价单 */
+  | 'MARKET_ORDER'
+  /**限价单 */
+  | 'LIMIT_ORDER'
+  /**停损单 */
+  | 'STOP_LIMIT_ORDER'
 
 // 禁用 MobX 严格模式
 configure({ enforceActions: 'never' })
@@ -68,9 +77,15 @@ class TradeStore {
 
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
-  @observable marginType: API.MarginType = 'CROSS_MARGIN' // 保证金类型
+
+  //  ========= 交易区操作 =========
+  @observable marginType: API.MarginType = 'CROSS_MARGIN' // 交易区保证金类型
+  @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
+  @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
-  @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓， 右下角爆仓选择逐仓、全仓切换
+  // ============================
+
+  @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
   @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
 
   @observable allSimpleSymbolsMap = {} as { [key: string]: Symbol.AllSymbolItem } // 全部品种列表map，校验汇率品种用到
@@ -89,15 +104,30 @@ class TradeStore {
   setCurrentLiquidationSelectBgaId = (value: any) => {
     this.currentLiquidationSelectBgaId = value
   }
-  // 设置交易浮动杠杆倍数
-  setLeverageMultiple = (value: any) => {
-    this.leverageMultiple = value
-  }
 
-  // 设置保证金类型
+  // =========== 设置交易区操作 ==========
+
+  // 设置弹窗选择的保证金类型
   setMarginType = (marginType: API.MarginType) => {
     this.marginType = marginType
   }
+
+  // 设置弹窗选择的浮动杠杆倍数
+  setLeverageMultiple = (leverageMultiple: number) => {
+    this.leverageMultiple = leverageMultiple
+  }
+
+  // 设置买卖类型切换
+  setBuySell = (buySell: API.TradeBuySell) => {
+    this.buySell = buySell
+  }
+
+  // 设置订单类型Tabs切换
+  setOrderType = (orderType: ITradeTabsOrderType) => {
+    this.orderType = orderType
+  }
+
+  // =============================
 
   // 获取创建账户页面-账户组列表
   getAccountGroupList = async () => {
@@ -169,6 +199,9 @@ class TradeStore {
    */
   getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
     const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
+    const quote = getCurrentQuote()
+    const conf = item?.conf || quote?.symbolConf // 品种配置信息
+    const buySell = this.buySell
     const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
     // 全仓保证金率：净值/占用 = 保证金率
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
@@ -180,8 +213,12 @@ class TradeStore {
     let compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
     compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
     if (isCrossMargin) {
-      marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
-      margin = Number(toFixed(occupyMargin * compelCloseRatio))
+      // 判断是否存在全仓单
+      const hasCrossMarginOrder = this.positionList.some((item) => item.marginType === 'CROSS_MARGIN')
+      if (hasCrossMarginOrder) {
+        marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
+        margin = Number(occupyMargin * compelCloseRatio)
+      }
     } else {
       // 当前筛选的逐仓单订单信息
       const currentLiquidationSelectItem = this.positionList.find((item) => item.id === currentLiquidationSelectBgaId)
@@ -190,7 +227,7 @@ class TradeStore {
 
       let filterPositionList = []
       // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
-      if (isLockedMode) {
+      if (isLockedMode && !item?.id) {
         filterPositionList = [currentLiquidationSelectItem]
       } else {
         filterPositionList = item ? [item] : this.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
@@ -210,9 +247,10 @@ class TradeStore {
       const isolatedBalance = Number(toFixed(orderMargin - Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0)))
       marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
 
-      margin = Number(toFixed(orderMargin * compelCloseRatio))
+      margin = Number(orderMargin * compelCloseRatio)
       balance = isolatedBalance
     }
+
     return {
       marginRate,
       margin,

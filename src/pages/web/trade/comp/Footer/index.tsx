@@ -3,6 +3,7 @@ import { useNetwork } from 'ahooks'
 import { Tooltip } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
 import Marquee from 'react-fast-marquee'
 
 import SignalIcon from '@/components/Base/Svg/SignalIcon'
@@ -17,7 +18,13 @@ function Footer() {
   const networkState = useNetwork()
   const { ws, trade } = useStores()
   const readyState = ws.readyState
-  const isConnected = readyState === 'OPEN' && networkState.online
+  const isOnline = networkState.online
+  const isConnected = readyState === 'OPEN' && isOnline
+  const [openTips, setOpenTips] = useState<any>(false)
+
+  useEffect(() => {
+    setOpenTips(!isOnline)
+  }, [isOnline])
 
   const CLOSED = {
     title: <FormattedMessage id="mt.duankailianjie" />,
@@ -25,7 +32,7 @@ function Footer() {
     color: '--color-red-600',
     status: 'CLOSED'
   }
-  let connectedStatusMap = networkState.online
+  let connectedStatusMap = isOnline
     ? {
         CONNECTING: {
           title: <FormattedMessage id="mt.lianjiezhong" />,
@@ -46,7 +53,14 @@ function Footer() {
 
   return (
     <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-primary px-5 pb-2 pt-2 border-t border-gray-60 dark:border-[var(--border-primary-color)] z-40">
-      <Tooltip placement="topLeft" title={connectedStatusMap.desc}>
+      <Tooltip
+        placement="topLeft"
+        title={connectedStatusMap.desc}
+        open={openTips}
+        onOpenChange={(value) => {
+          setOpenTips(value)
+        }}
+      >
         <div className="flex items-center border-r border-r-gray-200 dark:border-r-gray-700 pr-3">
           <div className="flex items-center">
             {connectedStatusMap.status === 'CLOSED' ? (

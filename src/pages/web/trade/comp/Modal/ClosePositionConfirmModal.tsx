@@ -15,6 +15,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { message } from '@/utils/message'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
 
@@ -41,6 +42,8 @@ export default observer(
     const vmin = conf?.minTrade || 0.01
 
     const buySellInfo = getBuySellInfo(item)
+
+    const quote = getCurrentQuote(symbol)
 
     useEffect(() => {
       setCount(orderVolume)
@@ -141,7 +144,7 @@ export default observer(
                 <span className="pr-3 text-sm text-secondary">
                   <FormattedMessage id="mt.pingcangjiage" />
                 </span>
-                <span className="text-sm text-primary">
+                <span className={classNames('text-sm', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
                   {item.currentPrice}&nbsp;{unit}
                 </span>
               </div>

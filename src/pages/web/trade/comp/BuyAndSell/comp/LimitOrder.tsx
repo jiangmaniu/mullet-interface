@@ -1,7 +1,7 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { Button } from 'antd'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useImperativeHandle, useState, useTransition } from 'react'
+import { forwardRef, useEffect, useState, useTransition } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
@@ -9,26 +9,23 @@ import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
-import { calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
+import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 
 import Checkbox from '@/components/Base/Checkbox'
-import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
+import { ORDER_TYPE } from '@/constants/enum'
 import { message } from '@/utils/message'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import classNames from 'classnames'
-import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
 type IProps = {
-  type?: any
   popupRef?: any
-  orderType?: any
 }
 
 // 限价单
 export default observer(
-  forwardRef(({ popupRef, type, orderType }: IProps, ref) => {
+  forwardRef(({ popupRef }: IProps, ref) => {
     const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
     const intl = useIntl()
     const { isPc, isMobileOrIpad } = useEnv()
@@ -36,41 +33,28 @@ export default observer(
     const { fetchUserInfo } = useModel('user')
     const [checkedSpSl, setCheckedSpSl] = useState(true) // 勾选止盈止损
     const { availableMargin } = trade.getAccountBalance()
-    const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
     const [margin, setMargin] = useState(0)
     const [loading, setLoading] = useState(false)
-    const marginType = trade.marginType
-
-    useEffect(() => {
-      setTradeType(type || OP_BUY)
-    }, [type])
-
-    // 对外暴露接口
-    useImperativeHandle(ref, () => {
-      return {
-        tradeType,
-        setTradeType
-      }
-    })
+    const { marginType, buySell, orderType } = trade
 
     let [priceValue, setPrice] = useState<any>(0) // 价格
     let [countValue, setCount] = useState<any>(0.01) // 手数
     let [spValue, setSp] = useState<any>(0) // 止盈
     let [slValue, setSl] = useState<any>(0) // 止损
 
-    const isBuy = tradeType === OP_BUY
+    const isBuy = buySell === 'BUY'
 
     // 实时计算预估强平价
     const expectedForceClosePrice = calcExpectedForceClosePrice({
       orderVolume: countValue,
       orderMargin: margin,
       orderType: isBuy ? ORDER_TYPE.LIMIT_BUY_ORDER : ORDER_TYPE.LIMIT_SELL_ORDER,
-      buySell: tradeType === 1 ? 'BUY' : 'SELL'
+      buySell
     })
 
     // 实时计算下单时预估保证金
     const expectedMargin = calcExpectedMargin({
-      buySell: tradeType === 1 ? 'BUY' : 'SELL',
+      buySell,
       orderVolume: countValue,
       orderType: isBuy ? ORDER_TYPE.LIMIT_BUY_ORDER : ORDER_TYPE.LIMIT_SELL_ORDER,
       price: priceValue
@@ -85,7 +69,7 @@ export default observer(
     const symbol = quoteInfo.symbol
     const d = quoteInfo?.digits
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
-    const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 20
+    const maxOpenVolume = getMaxOpenVolume({ buySell }) || 0
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
     const vmax = maxOpenVolume // 当前账户保证金最大可开手数
     const vmin = symbolConf?.minTrade || 0.01
@@ -97,7 +81,7 @@ export default observer(
       setSp(0)
       setCount(vmin)
       setPrice(0)
-    }, [symbol, tradeType, orderType, vmin])
+    }, [symbol, buySell, orderType, vmin])
 
     useEffect(() => {
       // 取消勾选了止盈止损，重置值
@@ -138,7 +122,7 @@ export default observer(
 
     const orderParams = {
       symbol,
-      buySell: isBuy ? TRADE_BUY_SELL.BUY : TRADE_BUY_SELL.SELL, // 订单方向
+      buySell, // 订单方向
       orderVolume: count,
       stopLoss: sl ? parseFloat(sl) : undefined,
       takeProfit: sp ? parseFloat(sp) : undefined,
@@ -225,13 +209,7 @@ export default observer(
           <SelectMarginTypeOrLevelAge />
 
           <div className="relative flex items-center justify-center rounded-xl border border-primary dark:border-gray-580 p-[2px]">
-            <BuyAndSellBtnGroup
-              activeKey={tradeType}
-              onChange={(key: any) => {
-                setTradeType(key)
-              }}
-              type="popup"
-            />
+            <BuyAndSellBtnGroup type="popup" />
           </div>
           <div className="flex items-center justify-between mt-3 mb-1">
             <div className="mt-1 flex items-center justify-center pb-2">
@@ -331,7 +309,16 @@ export default observer(
                       </span>
                       <span className="!font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
-                        <span className="pl-[2px]">{formatNum(spProfit)} USD</span>
+                        <span className="pl-[2px]">
+                          {formatNum(
+                            calcExchangeRate({
+                              value: spProfit,
+                              unit: symbolConf?.profitCurrency,
+                              buySell
+                            })
+                          )}{' '}
+                          USD
+                        </span>
                       </span>
                     </div>
                   </>
@@ -372,7 +359,16 @@ export default observer(
                     </span>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
-                      <span className="pl-[2px]">{formatNum(slProfit)} USD</span>
+                      <span className="pl-[2px]">
+                        {formatNum(
+                          calcExchangeRate({
+                            value: slProfit,
+                            unit: symbolConf?.profitCurrency,
+                            buySell
+                          })
+                        )}{' '}
+                        USD
+                      </span>
                     </span>
                   </div>
                 }

@@ -11,6 +11,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
+import mitt from '@/utils/mitt'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
@@ -25,8 +26,8 @@ type IProps = {
 function QuoteItem({ item, isActive, popupRef }: IProps) {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { isMobileOrIpad } = useEnv()
-  const { trade, ws } = useStores()
   const { theme } = useTheme()
+  const { trade, ws, kline } = useStores()
   const symbol = item.symbol
   const res = getCurrentQuote(symbol)
   const bid = res.bid // 卖价
@@ -57,6 +58,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             // 设置当前当前的symbol
             trade.setActiveSymbolName(symbol)
 
+            // 切换品种事件
+            mitt.emit('symbol_change')
+
             if (isMobileOrIpad) {
               popupRef.current?.close()
             }
@@ -86,7 +90,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             <div className="flex flex-col pl-1">
               <span className="pl-[6px] text-sm font-pf-bold text-primary tracking-[0.5px]">{item.symbol}</span>
               {/* 币种描述  */}
-              <span className="pl-[6px] text-xs text-weak truncate max-w-[120px]">{item.alias || '--'}</span>
+              <span className="pl-[6px] text-xs text-weak truncate max-w-[120px]">{item.remark || '--'}</span>
             </div>
           </Col>
           <Col span={12} className="flex flex-col items-end">

@@ -171,16 +171,7 @@ export default observer(() => {
             >
               {/* 底部浮动按钮 */}
               <div className="relative flex flex-1 items-center justify-center py-2">
-                <BtnGroup
-                  onBuy={() => {
-                    buyAndSellRef.current.show(1)
-                  }}
-                  onSell={() => {
-                    buyAndSellRef.current.show(2)
-                  }}
-                  type="footer"
-                  sellBgColor="var(--color-red-600)"
-                />
+                <BtnGroup type="footer" sellBgColor="var(--color-red-600)" />
               </div>
               <TradeRecord
                 trigger={
