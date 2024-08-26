@@ -12,8 +12,8 @@ function CheckBox({ className, children, ...res }: IProps) {
   const classNameWrapper = useEmotionCss(({ token }) => {
     return {
       '.ant-checkbox-inner': {
-        background: '#222 !important',
-        borderColor: `${theme === 'dark' ? '#f4f4f4' : '#fff'} !important`
+        // background: '#222 !important',
+        // borderColor: `${theme === 'dark' ? '#f4f4f4' : '#fff'} !important`
       }
     }
   })

@@ -220,7 +220,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           <div className="max-h-[380px] overflow-y-auto">
             {currentAccountList.map((item, idx: number) => {
               const isSimulate = item.isSimulate
-              const disabledTrade = item?.status === 'DISABLED' || !item.enableTrade || !item.isTrade
+              const disabledTrade = !item?.enableConnect || item.status === 'DISABLED'
               return (
                 <div
                   onClick={() => {
@@ -232,6 +232,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                     }
                     trade.setCurrentAccountInfo(item)
                     trade.jumpTrade()
+
+                    // 切换账户重置
+                    trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
                   }}
                   key={item.id}
                   className={classNames(

@@ -238,7 +238,7 @@ class WSStore {
     const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
     // 游客身份userId传123456789
     const userId = userInfo?.user_id || '123456789'
-    if (this.socket) {
+    if (this.socket && this.readyState === 'OPEN') {
       this.socket.send(
         JSON.stringify({
           header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now(), ...header },
@@ -286,9 +286,10 @@ class WSStore {
       this.quotesCacheArr.forEach((item: IQuoteItem) => {
         const sbl = item.symbol
         const dataSourceCode = item.dataSource
-        if (quotes[sbl]) {
-          const prevBid = quotes[sbl]?.priceData?.sell || 0
-          const prevAsk = quotes[sbl]?.priceData?.buy || 0
+        const dataSourceKey = `${dataSourceCode}/${sbl}`
+        if (quotes[dataSourceKey]) {
+          const prevBid = quotes[dataSourceKey]?.priceData?.sell || 0
+          const prevAsk = quotes[dataSourceKey]?.priceData?.buy || 0
           item.bidDiff = item.priceData?.sell - prevBid
           item.askDiff = item.priceData?.buy - prevAsk
 
@@ -301,7 +302,7 @@ class WSStore {
 
         if (sbl) {
           // 数据源-品种拼接，避免被覆盖
-          quotesObj[`${dataSourceCode}/${sbl}`] = item
+          quotesObj[dataSourceKey] = item
         }
       })
 
@@ -352,6 +353,7 @@ class WSStore {
       this.depthCacheArr.forEach((item: IDepth) => {
         const sbl = item.symbol
         const dataSourceCode = item.dataSourceCode
+        const dataSourceKey = `${dataSourceCode}/${sbl}`
         if (sbl) {
           if (typeof item.asks === 'string') {
             item.asks = item.asks ? JSON.parse(item.asks) : []
@@ -360,7 +362,7 @@ class WSStore {
             item.bids = item.bids ? JSON.parse(item.bids) : []
           }
           // 数据源-品种拼接，避免被覆盖
-          depthObj[`${dataSourceCode}/${sbl}`] = item
+          depthObj[dataSourceKey] = item
         }
       })
 

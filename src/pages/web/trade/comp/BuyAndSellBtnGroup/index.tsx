@@ -7,26 +7,24 @@ import Buy from '@/components/Base/Svg/Buy'
 import Sell from '@/components/Base/Svg/Sell'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
+import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
   type?: string
-  activeKey?: any
-  onChange?: (value: any) => void
-  onBuy?: () => void
-  onSell?: () => void
   sellBgColor?: string
 }
 
 // 买卖切换按钮
 export default observer(
-  forwardRef(({ type, activeKey, onChange, sellBgColor, onBuy, onSell }: IProps, ref) => {
+  forwardRef(({ type, sellBgColor }: IProps, ref) => {
     const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
-    const [current, setCurrent] = useState(1)
+    const { trade } = useStores()
+    const buySell = trade.buySell
     const isFooterBtnGroup = type === 'footer'
-    const buyColor = current === 1 ? 'text-white' : 'text-primary'
-    const sellColor = isFooterBtnGroup ? 'text-white' : current === 2 ? 'text-white' : 'text-primary'
+    const buyColor = buySell === 'BUY' ? 'text-white' : 'text-primary'
+    const sellColor = isFooterBtnGroup ? 'text-white' : buySell === 'SELL' ? 'text-white' : 'text-primary'
     const { lng } = useLang()
     const { breakPoint } = useEnv()
     const [width, setWidth] = useState<any>(0)
@@ -66,10 +64,6 @@ export default observer(
       setWidth(w)
     }, [breakPoint, type])
 
-    useEffect(() => {
-      setCurrent(activeKey || 1)
-    }, [activeKey])
-
     const hasQuote = quoteInfo.hasQuote
 
     return (
@@ -78,16 +72,11 @@ export default observer(
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
           onClick={() => {
             startTransition(() => {
-              if (onSell) {
-                onSell()
-              } else {
-                onChange?.(2)
-                setCurrent(2)
-              }
+              trade.setBuySell('SELL')
             })
           }}
         >
-          <Sell isActive={isFooterBtnGroup || current === 2} width={width} bgColor={sellBgColor}>
+          <Sell isActive={isFooterBtnGroup || buySell === 'SELL'} width={width} bgColor={sellBgColor}>
             {!loading && (
               <div className={classNames('flex h-full flex-col items-center justify-center xl:pt-1 left-6')}>
                 <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', sellColor)}>
@@ -109,16 +98,12 @@ export default observer(
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
           onClick={() => {
             startTransition(() => {
-              if (onBuy) {
-                onBuy()
-              } else {
-                setCurrent(1)
-                onChange?.(1)
-              }
+              // 设置全局变量
+              trade.setBuySell('BUY')
             })
           }}
         >
-          <Buy isActive={isFooterBtnGroup || current === 1} width={width}>
+          <Buy isActive={isFooterBtnGroup || buySell === 'BUY'} width={width}>
             {!loading && (
               <div className={classNames('flex h-full flex-col items-center justify-center xl:pt-1 right-6')}>
                 <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', buyColor)}>

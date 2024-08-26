@@ -332,7 +332,7 @@ declare namespace User {
      */
     remark?: string
     /**
-     * 状态
+     * 状态 禁用、启用
      */
     status?: API.Status
     /**启用禁用交易账号 */

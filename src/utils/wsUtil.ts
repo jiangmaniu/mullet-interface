@@ -66,7 +66,7 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
     const mulName = (unit + 'USD').toUpperCase() // 如 NZDUSD
 
     // 使用汇率品种的dataSourceCode去获取行情
-    const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[divName] || {})?.dataSourceCode
+    const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.dataSourceCode
     const divNameKey = `${dataSourceCode}/${divName}`
     const mulNameKey = `${dataSourceCode}/${mulName}`
 
@@ -122,8 +122,8 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
   let profit =
     bid && ask
       ? positionItem.buySell === TRADE_BUY_SELL.BUY
-        ? (bid - openPrice) * number * consize
-        : (openPrice - ask) * number * consize
+        ? (ask - openPrice) * number * consize
+        : (openPrice - bid) * number * consize
       : 0
 
   // 转换汇率
@@ -331,7 +331,7 @@ export const calcExpectedMargin = (obj: IExpectedMargin) => {
   // 转化汇率
   return calcExchangeRate({
     value: expectedMargin,
-    unit: conf?.profitCurrency,
+    unit: conf?.prepaymentCurrency,
     buySell
   })
 }
@@ -351,23 +351,34 @@ export const getMaxOpenVolume = ({ buySell }: { buySell: API.TradeBuySell }) => 
   const currentPrice = buySell === 'SELL' ? quote?.bid : quote?.ask
   let volume = 0
 
-  if (mode === 'fixed_margin') {
-    // 可用/固定预付款
-    const initial_margin = Number(prepaymentConf?.fixed_margin?.initial_margin || 0)
-    volume = initial_margin ? Number(availableMargin / initial_margin) : 0
-  } else if (mode === 'fixed_leverage') {
-    // 固定杠杆：可用/（价格*合约大小*手数x/固定杠杆）
-    const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
-    if (fixed_leverage) {
-      volume = (availableMargin * fixed_leverage) / (currentPrice * consize)
-    }
-  } else if (mode === 'float_leverage') {
-    // 浮动杠杆：可用/（价格*合约大小*手数x/浮动杠杆）
-    const float_leverage = Number(trade.leverageMultiple || 1)
-    if (float_leverage) {
-      volume = (availableMargin * float_leverage) / (currentPrice * consize)
+  if (availableMargin) {
+    if (mode === 'fixed_margin') {
+      // 可用/固定预付款
+
+      // 需要换汇处理
+      const marginExchangeValue = calcExchangeRate({
+        value: prepaymentConf?.fixed_margin?.initial_margin || 0,
+        unit: quote.symbolConf.prepaymentCurrency,
+        buySell
+      })
+      const initial_margin = Number(marginExchangeValue)
+      volume = initial_margin ? Number(availableMargin / initial_margin) : 0
+    } else if (mode === 'fixed_leverage') {
+      // 固定杠杆：可用 /（价格*合约大小*手数x/固定杠杆）
+      // 手数x = 可用 * 固定杠杆 / 价格*合约大小
+      const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
+      if (fixed_leverage) {
+        volume = (availableMargin * fixed_leverage) / (currentPrice * consize)
+      }
+    } else if (mode === 'float_leverage') {
+      // 浮动杠杆：可用 /（价格*合约大小*手数x/浮动杠杆）
+      const float_leverage = Number(trade.leverageMultiple || 1)
+      if (float_leverage) {
+        volume = (availableMargin * float_leverage) / (currentPrice * consize)
+      }
     }
   }
+
   return Number(toFixed(volume))
 }
 
@@ -398,16 +409,16 @@ export function getCurrentQuote(currentSymbolName?: string) {
   let symbol = currentSymbolName || trade.activeSymbolName // 展示的名称(后台自定义的品种名称)
 
   // 如果传入的currentSymbolName是dataSourceSymbol，则使用传入的
-  const dataSourceSymbolItem = trade.symbolList.find((item) => item.dataSourceSymbol === currentSymbolName)
+  const dataSourceSymbolItem = trade.symbolListAll.find((item) => item.dataSourceSymbol === currentSymbolName)
   const isDataSourceSymbol = !!dataSourceSymbolItem
   // 重要：如果传入的currentSymbolName是dataSourceSymbol，则获取对应的symbol自定义名称
   symbol = isDataSourceSymbol ? dataSourceSymbolItem?.symbol : symbol
-  const symbolInfo = trade.symbolList.find((item) => item.symbol === symbol) || {} // 当前品种的详细信息
+  const symbolInfo = trade.symbolListAll.find((item) => item.symbol === symbol) || {} // 当前品种的详细信息
 
   // 品种配置解构方便取值
   const currentSymbol = symbolInfo as Account.TradeSymbolListItem
   const dataSourceSymbol = (isDataSourceSymbol ? currentSymbolName : currentSymbol.dataSourceSymbol) as string
-  const dataSourceCode = trade.symbolList.find((item) => item.dataSourceSymbol === dataSourceSymbol)?.dataSourceCode
+  const dataSourceCode = trade.symbolListAll.find((item) => item.dataSourceSymbol === dataSourceSymbol)?.dataSourceCode
   const dataSourceKey = `${dataSourceCode}/${dataSourceSymbol}` // 获取行情的KEY，数据源+数据源品种去获取
   const currentQuote = quotes?.[dataSourceKey] || {} // 行情信息
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置

@@ -1,6 +1,5 @@
 // @ts-nocheck
 import { ChartStyle, IChartingLibraryWidget, ThemeName, TOverrides } from '@/libs/charting_library'
-import klineStore from '@/mobx/kline'
 import { isPC } from '@/utils'
 
 import { ThemeConst } from './constant'
@@ -9,15 +8,11 @@ import { getTradingviewThemeCssVar } from './theme'
 // 动态设置品种
 export const setSymbol = (symbol, tvWidget: IChartingLibraryWidget) => {
   if (!symbol) return
-  // 使图表重新请求 datafeed 中的数据。 通常你需要在图表数据发生变化时调用它。 在调用这个函数之前，你应该从 subscribeBars 调用 onResetCacheNeededCallback
-  klineStore.activeSymbolInfo.onResetCacheNeededCallback?.()
-  setTimeout(() => {
-    tvWidget.activeChart().resetData()
-    tvWidget.activeChart().setSymbol(symbol, {
-      dataReady: () => {
-        console.log('切换品种成功')
-      }
-    })
+  tvWidget.activeChart().resetData()
+  tvWidget.activeChart().setSymbol(symbol, {
+    dataReady: () => {
+      console.log('切换品种成功')
+    }
   })
 }
 

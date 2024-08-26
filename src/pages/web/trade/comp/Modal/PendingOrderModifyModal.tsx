@@ -12,7 +12,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPendingItem } from '../TradeRecord/comp/PendingList'
 import OpenTips from './OpenTipsModal'
@@ -72,10 +72,11 @@ export default observer(
     const symbol = item.symbol
     const dataSourceSymbol = item?.dataSourceSymbol
     const quoteInfo = getCurrentQuote(dataSourceSymbol)
+    const symbolConf = item?.conf
     const consize = quoteInfo?.consize
     const d = quoteInfo.digits
     const step = Math.pow(10, -d) * 10
-    const stopl = item.stopLoss ? item.stopLoss * Math.pow(10, -d) * 10 : 0
+    const stopl = Number(item?.conf?.limitStopLevel || 1) * Math.pow(10, -d)
     let sl_scope: any = 0 // 止损范围
     let sp_scope: any = 0 // 止盈范围
     let slProfit: any // 止损-预计盈亏
@@ -142,7 +143,9 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = (sp && sp < sp_scope) || (sl && sl > sl_scope) || (price && price > priceTip)
+    const disabledBtn = isBuy
+      ? (sp && sp < sp_scope) || (sl && sl > sl_scope) || (price && price < priceTip)
+      : (sp && sp > sp_scope) || (sl && sl < sl_scope) || (price && price > priceTip)
 
     const renderContent = () => {
       return (
@@ -205,7 +208,11 @@ export default observer(
                     }
                   }}
                   tips={
-                    <div className={classNames('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
+                    <div
+                      className={classNames('!font-dingpro-regular', {
+                        '!text-red': isBuy ? price && price < priceTip : price && price > priceTip
+                      })}
+                    >
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
                       {item.type === 'LIMIT_BUY_ORDER'
@@ -248,7 +255,9 @@ export default observer(
                     }
                   }}
                   tips={
-                    <div className={classNames('!font-dingpro-regular', { '!text-red': sl && sl > sl_scope })}>
+                    <div
+                      className={classNames('!font-dingpro-regular', { '!text-red': isBuy ? sl && sl > sl_scope : sl && sl < sl_scope })}
+                    >
                       <span>
                         <FormattedMessage id="mt.fanwei" />
                         &nbsp;
@@ -258,7 +267,14 @@ export default observer(
                       <span className="pl-1 !font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
                         &nbsp;
-                        {formatNum(slProfit)} USD
+                        {formatNum(
+                          calcExchangeRate({
+                            value: slProfit,
+                            unit: symbolConf?.profitCurrency,
+                            buySell: item.buySell
+                          })
+                        )}{' '}
+                        USD
                       </span>
                     </div>
                   }
@@ -290,10 +306,20 @@ export default observer(
                     }
                   }}
                   tips={
-                    <span className={classNames('!font-dingpro-regular', { '!text-red': sp && sp < sp_scope })}>
+                    <span
+                      className={classNames('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}
+                    >
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
-                      &nbsp; {formatNum(spProfit)} USD
+                      &nbsp;{' '}
+                      {formatNum(
+                        calcExchangeRate({
+                          value: spProfit,
+                          unit: symbolConf?.profitCurrency,
+                          buySell: item.buySell
+                        })
+                      )}{' '}
+                      USD
                     </span>
                   }
                 />
