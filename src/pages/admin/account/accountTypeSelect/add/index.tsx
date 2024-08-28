@@ -151,7 +151,11 @@ function AddAccountComp() {
           </div>
         </div>
       </div>
-      <ModalLoading ref={loadingRef} />
+      <ModalLoading
+        ref={loadingRef}
+        title={intl.formatMessage({ id: 'mt.chuangjianzhanghu' })}
+        tips={intl.formatMessage({ id: 'mt.chuangjianzhanghuzhong' })}
+      />
     </PageContainer>
   )
 }

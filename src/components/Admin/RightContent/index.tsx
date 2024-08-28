@@ -230,17 +230,22 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                     if (disabledTrade) {
                       return
                     }
-                    trade.setCurrentAccountInfo(item)
-                    trade.jumpTrade()
 
-                    // 切换账户重置
-                    trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                    setAccountBoxOpen(false)
+
+                    setTimeout(() => {
+                      trade.setCurrentAccountInfo(item)
+                      trade.jumpTrade()
+
+                      // 切换账户重置
+                      trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                    }, 200)
                   }}
                   key={item.id}
                   className={classNames(
                     'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
                     {
-                      'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
+                      'bg-[var(--list-hover-light-bg)] !border-blue': item.id === currentAccountInfo.id,
                       'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade
                     }
                   )}
@@ -329,6 +334,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           onOpenChange={(open) => {
             setAccountBoxOpen(open)
           }}
+          open={accountBoxOpen}
           align={{ offset: [0, 0] }}
         >
           <div

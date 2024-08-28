@@ -263,8 +263,9 @@ export default function getWidgetOpts(
     },
     loading_screen: {
       backgroundColor: '#fff',
-      foregroundColor: ThemeConst.primary
-    } // 加载背景 加载图标背景颜色  没找到隐藏方式，这样隐藏
+      foregroundColor: '#fff'
+    }
+    // 加载背景 加载图标背景颜色  没找到隐藏方式，这样隐藏
     // charts_storage_url: "https://saveload.tradingview.com", // 点击图标保存按钮会把配置保存到服务器
     // settings_adapter: {
     // 	initialSettings: { ... },

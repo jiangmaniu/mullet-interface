@@ -1,9 +1,10 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { useLocation, useModel } from '@umijs/max'
+import { FormattedMessage, useLocation, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
@@ -187,6 +188,7 @@ export default observer(() => {
         }
       />
       <BalanceEmptyModal />
+      <ModalLoading open={trade.switchAccountLoading} tips={<FormattedMessage id="mt.qiehuanzhanghuzhong" />} />
     </>
   )
 })

@@ -174,6 +174,7 @@ export default {
   'mt.youxianggeshibuzhengque': '邮箱格式不正确',
   'mt.xiazai': '下载',
   'mt.bunengshuruhanzi': '不能输入汉字',
+  'mt.qiehuanzhanghuzhong': '切换账户中',
   'mt.zaixiankefu': '在線客服',
   'mt.maichuzuokong': '賣單·開空',
   'mt.mairuzuoduo': '買單·開多',

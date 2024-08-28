@@ -90,6 +90,8 @@ class TradeStore {
 
   @observable allSimpleSymbolsMap = {} as { [key: string]: Symbol.AllSymbolItem } // 全部品种列表map，校验汇率品种用到
 
+  @observable switchAccountLoading = false // 切换账户loading效果
+
   // 初始化加载
   init = () => {
     // 初始化打开的品种列表
@@ -103,6 +105,10 @@ class TradeStore {
   // 右下角爆仓选择逐仓、全仓切换
   setCurrentLiquidationSelectBgaId = (value: any) => {
     this.currentLiquidationSelectBgaId = value
+  }
+
+  setSwitchAccountLoading = (loading: boolean) => {
+    this.switchAccountLoading = loading
   }
 
   // =========== 设置交易区操作 ==========
@@ -161,6 +167,15 @@ class TradeStore {
     // @ts-ignore
     klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
     // }
+
+    setTimeout(() => {
+      this.setSwitchAccountLoading(true)
+    }, 150)
+
+    setTimeout(() => {
+      // 让动画播放4s 完成一帧
+      this.setSwitchAccountLoading(false)
+    }, 4000)
   }
 
   // 获取当前账户账户余额、保证金信息
