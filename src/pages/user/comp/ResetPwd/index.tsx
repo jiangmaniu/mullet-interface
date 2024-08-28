@@ -10,7 +10,7 @@ import Hidden from '@/components/Base/Hidden'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
 import { forgetPasswordEmail, forgetPasswordPhone } from '@/services/api/user'
-import { regPassword } from '@/utils'
+import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { goLogin } from '@/utils/navigator'
 
@@ -118,7 +118,8 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     rules={[
                       {
                         required: true,
-                        message: intl.formatMessage({ id: 'mt.shurudianziyouxiang' })
+                        message: intl.formatMessage({ id: 'mt.youxianggeshibuzhengque' }),
+                        pattern: regEmail
                       }
                     ]}
                   />
@@ -176,7 +177,11 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                   type="primary"
                   style={{ height: 48, width: 120 }}
                   onClick={() => {
+                    const checkSuccess = validateCodeInputRef.current.checkCodeInput()
                     if (!form.getFieldValue('validateCode')) {
+                      return message.info(intl.formatMessage({ id: 'mt.qingshuruyanzhengma' }))
+                    }
+                    if (!checkSuccess) {
                       return message.info(intl.formatMessage({ id: 'mt.qingshuruyanzhengma' }))
                     }
                     // 第三步表单
@@ -210,8 +215,15 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                 rules={[
                   {
                     required: true,
-                    message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
-                    pattern: regPassword
+                    // message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
+                    validator(rule, value, callback) {
+                      if (/[\u4E00-\u9FA5]/g.test(value)) {
+                        return Promise.reject(intl.formatMessage({ id: 'mt.bunengshuruhanzi' }))
+                      } else if (regPassword.test(value)) {
+                        return Promise.reject(intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }))
+                      }
+                      return Promise.resolve()
+                    }
                   }
                 ]}
               />

@@ -1,5 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { Col, Row } from 'antd'
+import { Col, Row, Tooltip } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useTransition } from 'react'
@@ -69,6 +69,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
       >
         {/*激活打开的项展示当前的箭头 */}
         {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
+
         <Row
           className={classNames(
             'flex cursor-pointer pr-4 items-center rounded px-3 py-[10px] hover:bg-[var(--list-hover-primary-bg)] dark:hover:bg-gray-660 relative',
@@ -87,11 +88,12 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
               }}
             />
             <SymbolIcon src={item?.imgUrl} width={28} height={28} />
-            <div className="flex flex-col pl-1">
-              <span className="pl-[6px] text-sm font-pf-bold text-primary tracking-[0.5px]">{item.symbol}</span>
-              {/* 币种描述  */}
-              <span className="pl-[6px] text-xs text-weak truncate max-w-[120px]">{item.remark || '--'}</span>
-            </div>
+            <Tooltip placement="bottom" title={item.remark}>
+              <div className="flex flex-col pl-1">
+                <span className="pl-[6px] text-sm font-pf-bold text-primary tracking-[0.5px]">{item.alias}</span>
+                <span className="pl-[6px] text-xs text-weak truncate max-w-[120px]">{item.remark || '--'}</span>
+              </div>
+            </Tooltip>
           </Col>
           <Col span={12} className="flex flex-col items-end">
             <div className="!font-dingpro-medium text-sx text-primary text-right">{res.hasQuote ? formatNum(bid) : '--'}</div>

@@ -117,10 +117,11 @@ export default function KycStepForm() {
       // 刷新用户信息
       await fetchUserInfo()
 
+      push('/setting')
+
       setTimeout(() => {
-        push('/setting')
         setStep('ONE')
-      }, 200)
+      }, 100)
     }
   }
 
@@ -215,6 +216,7 @@ export default function KycStepForm() {
                 form={form}
                 ref={validateCodeInputRef}
                 showReSendBtn={false}
+                showCountDown={false}
                 style={{ padding: 20 }}
               />
             </div>

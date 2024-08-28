@@ -138,9 +138,9 @@ function TransferAccount() {
           fieldProps={{
             size: 'large',
             style: { height: 42 },
-            maxLength: 8,
+            maxLength: 20,
             autoFocus: false,
-            precision: 2,
+            precision: trade.currentAccountInfo.currencyDecimal,
             suffix: 'USD',
             controls: false
           }}

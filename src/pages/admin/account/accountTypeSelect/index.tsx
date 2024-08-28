@@ -103,20 +103,20 @@ function AccountList() {
                   {/* 标签 */}
                   {item.synopsis?.tag && (
                     <div className="flex items-center justify-end">
-                      <div className="text-white text-sm bg-brand rounded px-3 py-[3px]">{item.synopsis?.tag}</div>
+                      <div className="text-white text-sm bg-brand rounded px-3 py-[3px] truncate max-w-[200px]">{item.synopsis?.tag}</div>
                     </div>
                   )}
                 </div>
                 <div>
                   <div className="pb-[14px] text-primary text-[24px] font-bold truncate">{item.synopsis?.name || item?.groupName}</div>
-                  <div className="text-secondary text-sm line-clamp-2">{item.synopsis?.remark}</div>
+                  <div className="text-secondary text-sm line-clamp-2 break-all">{item.synopsis?.remark}</div>
                 </div>
                 <div className="border-b border-gray-250/25 my-5"></div>
                 <div>
                   {(item.synopsis?.list || []).slice(0, 3).map((v, index) => (
                     <div className="flex items-center justify-between pb-7" key={index}>
-                      <div className="text-base text-secondary">{v.title}</div>
-                      <div className="text-base text-primary font-semibold">{v.content}</div>
+                      <div className="text-base text-secondary truncate w-[140px]">{v.title}</div>
+                      <div className="text-base text-primary font-semibold truncate w-[140px] text-end">{v.content}</div>
                     </div>
                   ))}
                 </div>

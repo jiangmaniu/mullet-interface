@@ -57,6 +57,8 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const activeSymbolName = trade.activeSymbolName
   let list = showActiveSymbol ? tradeList.filter((v) => v.symbol === activeSymbolName) : tradeList
 
+  const precision = trade.currentAccountInfo.currencyDecimal
+
   const columns: ProColumns<IPositionItem>[] = [
     {
       title: (
@@ -149,22 +151,22 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         )
       }
     },
-    {
-      title: <FormattedMessage id="mt.yuguqiangpingjia" />,
-      dataIndex: 'forceClosePrice',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{text ? formatNum(text) : '--'} </span>
-      }
-    },
+    // {
+    //   title: <FormattedMessage id="mt.yuguqiangpingjia" />,
+    //   dataIndex: 'forceClosePrice',
+    //   hideInSearch: true, // 在 table的查询表单 中隐藏
+    //   ellipsis: false,
+    //   fieldProps: {
+    //     placeholder: ''
+    //   },
+    //   formItemProps: {
+    //     label: '' // 去掉form label
+    //   },
+    //   width: 150,
+    //   renderText(text, record, index, action) {
+    //     return <span className="!text-[13px] text-primary">{text ? formatNum(text) : '--'} </span>
+    //   }
+    // },
     {
       title: <FormattedMessage id="mt.baozhengjinlv" />,
       dataIndex: 'marginRate',
@@ -215,7 +217,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
-              <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
+              <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin, { precision }) : '--'} </span>
               <span className={classNames('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
@@ -290,7 +292,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
     },
     {
@@ -311,7 +313,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
     },
     {
@@ -400,6 +402,8 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     }
   ]
 
+  const accountGroupPrecision = trade.currentAccountInfo.currencyDecimal
+
   const dataSource = toJS(list).map((v) => {
     const conf = v.conf as Symbol.SymbolConf
     const symbol = v.dataSourceSymbol as string
@@ -432,10 +436,11 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
 
     v.currentPrice = currentPrice // 现价
     const profit = covertProfit(v) as number // 浮动盈亏
+
     v.profit = profit
-    v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : v.profit || '-' // 格式化的
+    v.profitFormat = Number(v.profit) > 0 ? '+' + formatNum(v.profit, { precision: accountGroupPrecision }) : v.profit || '-' // 格式化的
     v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
-    v.yieldRate = calcYieldRate(v) // 收益率
+    v.yieldRate = calcYieldRate(v, accountGroupPrecision) // 收益率
     v.forceClosePrice = calcForceClosePrice(v) // 强平价
     v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价
     v.stopLoss = toFixed(v.stopLoss, digits) // 止损价

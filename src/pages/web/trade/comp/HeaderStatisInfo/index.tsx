@@ -38,7 +38,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
       pcComponent={
         <>
           <div className="flex items-center justify-between px-[10px] py-2">
-            <div className="flex items-center w-full">
+            <div className="flex items-center w-full gap-x-[92px]">
               <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
                 <div
                   className="flex cursor-pointer items-center relative xxl:top-1"
@@ -81,7 +81,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   )}
                 </div>
               </div>
-              <div className="flex items-center pl-12 gap-x-12 flex-1">
+              <div className="flex items-center gap-x-4 flex-1">
                 {/* @TODO 只有数字货币才展示 */}
                 {/* <div className="flex flex-col">
                   <span className="text-xs text-weak">

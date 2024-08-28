@@ -107,7 +107,9 @@ function AddAccountComp() {
                 ]}
                 fieldProps={{
                   size: 'large',
-                  style: { height: 42 }
+                  style: { height: 42 },
+                  maxLength: 20,
+                  showCount: true
                 }}
               />
               {/* @TODO 接口暂时不支持 */}

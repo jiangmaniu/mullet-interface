@@ -19,7 +19,7 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
-import { regPassword } from '@/utils'
+import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
 import RegisterValidateCode, { IValidateCodeType } from '../comp/RegisterValidateCode'
@@ -347,7 +347,8 @@ function Login() {
                 rules={[
                   {
                     required: true,
-                    message: intl.formatMessage({ id: 'mt.shurudianziyouxiang' })
+                    message: intl.formatMessage({ id: 'mt.youxianggeshibuzhengque' }),
+                    pattern: regEmail
                   }
                 ]}
               />
@@ -359,7 +360,7 @@ function Login() {
                 names={['username', 'phoneAreaCode']}
                 form={form}
                 label={<FormattedMessage id="mt.shoujihaoma" />}
-                required={false}
+                // required={false}
               />
             )}
             <ProFormText.Password

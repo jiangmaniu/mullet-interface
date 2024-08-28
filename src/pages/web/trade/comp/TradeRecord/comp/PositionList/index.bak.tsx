@@ -223,7 +223,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : toFixed(v.profit) // 格式化的
           v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
           v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
-          v.yieldRate = calcYieldRate(v) // 收益率
+          v.yieldRate = calcYieldRate(v, 2) // 收益率
           v.forceClosePrice = toFixed(calcForceClosePrice(v), digits) // 强平价
 
           const buySellInfo = getBuySellInfo(v)

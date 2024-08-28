@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { useEnv } from '@/context/envProvider'
 import { colorTextPrimary, colorTextSecondary } from '@/theme/theme.config'
-import { formatValue } from '@/utils'
+import { formatNum } from '@/utils'
 
 type Item = {
   value?: number | string | React.ReactNode
@@ -74,7 +74,7 @@ export default function ListItem({ left, center, right, renderItem, style, isRev
             ...item.style
           }}
         >
-          {item.isFormatValue ? formatValue(item.value) : item.value || '--'}
+          {item.isFormatValue ? formatNum(item.value, { precision: 2 }) : item.value || '--'}
         </span>
       </>
     )

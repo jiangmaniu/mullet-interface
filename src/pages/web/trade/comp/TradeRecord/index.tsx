@@ -7,6 +7,7 @@ import { useEffect, useRef, useState, useTransition } from 'react'
 import Checkbox from '@/components/Base/Checkbox'
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
+import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { IRecordTabKey } from '@/mobx/trade'
@@ -28,6 +29,7 @@ function TradeRecord({ trigger }: IProps) {
   const [showActiveSymbol, setShowActiveSymbol] = useState(false)
   const popupRef = useRef()
   const { ws, trade } = useStores()
+  const { isPc } = useEnv()
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
 
   const tradeList = trade.positionList
@@ -113,6 +115,9 @@ function TradeRecord({ trigger }: IProps) {
         }
         onChange={(key) => {
           startTransition(() => {
+            if (isPc) {
+              window.scrollTo(0, 0)
+            }
             trade.setTabKey(key as IRecordTabKey)
           })
         }}

@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
-import { isTruthy, toFixed } from '@/utils'
+import { formatNum, isTruthy } from '@/utils'
 
 type IProps = {
   name?: string
@@ -66,7 +66,7 @@ function InputNumber(props: IProps) {
     className,
     classNames,
     height = 38,
-    precision = 2,
+    precision = 0,
     onAdd,
     onMinus,
     showAddMinus = true,
@@ -130,7 +130,7 @@ function InputNumber(props: IProps) {
   }
 
   const onSetInputValue = (value: any) => {
-    setInputValue(value ? toFixed(value, precision) : value)
+    setInputValue(value ? formatNum(value, { precision }) : value)
   }
 
   const AddIcon = (
@@ -244,7 +244,7 @@ function InputNumber(props: IProps) {
             max,
             min,
             value: inputValue,
-            precision: hiddenPrecision ? undefined : 0,
+            precision: hiddenPrecision ? undefined : precision,
             onFocus: () => setFocus(true),
             onBlur: () => setFocus(false),
             autoComplete: 'off',

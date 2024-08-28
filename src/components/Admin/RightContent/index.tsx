@@ -268,7 +268,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   <div className="mt-1">
                     <div>
                       <span className="text-[20px] text-primary !font-dingpro-regular">
-                        {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: 2 })}
+                        {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
                       </span>{' '}
                       <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                     </div>
@@ -421,9 +421,16 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                           HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
                         </CopyComp>
                       </span>
-                      <span className="text-green text-xs pt-[6px]">
-                        <FormattedMessage id="mt.yirenzheng" />
-                      </span>
+                      {currentUser?.isKycAuth && (
+                        <span className="text-green text-xs pt-[6px]">
+                          <FormattedMessage id="mt.yirenzheng" />
+                        </span>
+                      )}
+                      {!currentUser?.isKycAuth && (
+                        <span className="text-red text-xs pt-[6px]">
+                          <FormattedMessage id="mt.weirenzheng" />
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div

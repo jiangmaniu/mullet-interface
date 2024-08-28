@@ -44,7 +44,7 @@ function Liquidation() {
             ...item,
             value: item.id, // 持仓单号
             key: item.id,
-            label: `${item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}${idx + 1}`
+            label: `${item.alias || item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}${idx + 1}`
           }))
         )
       }
@@ -54,7 +54,7 @@ function Liquidation() {
     // 合并多笔相同的逐仓单
     list = uniqueObjectArray(isolatedMarginList, 'symbol').map((item: any) => ({
       ...item,
-      label: `${item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}`,
+      label: `${item.alias || item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}`,
       value: item.id, // 持仓单号
       key: item.id
     }))
@@ -196,7 +196,9 @@ function Liquidation() {
                 <FormattedMessage id="mt.weichibaozhengjin" />：
               </span>
               {marginRateInfo.margin ? (
-                <span className="text-green !font-dingpro-medium font-medium text-xs">{formatNum(marginRateInfo.margin)}USD</span>
+                <span className="text-green !font-dingpro-medium font-medium text-xs">
+                  {formatNum(marginRateInfo.margin, { precision: 2 })}USD
+                </span>
               ) : (
                 <span className="text-gray-weak font-medium text-xs">-</span>
               )}

@@ -32,7 +32,7 @@ export default observer(
     const { fetchUserInfo } = useModel('user')
     const [form] = Form.useForm()
     const intl = useIntl()
-    const [checkedSpSl, setCheckedSpSl] = useState(true) // 勾选止盈止损
+    const [checkedSpSl, setCheckedSpSl] = useState(false) // 不勾选止盈止损
     const { availableMargin } = trade.getAccountBalance()
     const [margin, setMargin] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -355,7 +355,7 @@ export default observer(
               max={vmax}
               min={vmin}
               onChange={(value) => {
-                setCount(value || vmin)
+                setCount(value || '')
               }}
               onAdd={() => {
                 if (count && (isBuy ? count < vmax : count < 30)) {
@@ -404,12 +404,12 @@ export default observer(
               <FormattedMessage id="mt.lot" />
             </Button>
             <div className="mt-4">
-              <div className="flex items-center justify-between pb-[6px] w-full">
+              {/* <div className="flex items-center justify-between pb-[6px] w-full">
                 <span className="text-xs text-secondary">
                   <FormattedMessage id="mt.yuguqiangpingjia" />
                 </span>
                 <span className="text-xs text-primary !font-dingpro-medium">{expectedForceClosePrice || '-'}</span>
-              </div>
+              </div> */}
               <div className="flex items-center justify-between pb-[6px] w-full">
                 <span className="text-xs text-secondary">
                   <FormattedMessage id="mt.yugubaozhengjin" />

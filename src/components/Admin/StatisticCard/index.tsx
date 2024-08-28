@@ -5,7 +5,7 @@ import { isValidElement } from 'react'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { colorTextPrimary } from '@/theme/theme.config'
-import { formatValue } from '@/utils'
+import { formatNum } from '@/utils'
 
 type Item = {
   value?: string | number | React.ReactNode
@@ -63,7 +63,7 @@ export default function StatisticCard({
             lineHeight
           }}
         >
-          {needFormatValue && !item.noFormatValue ? formatValue(item.value) : item.value || 0}
+          {needFormatValue && !item.noFormatValue ? formatNum(item.value, { precision: 2 }) : item.value || 0}
         </span>
         <span className="text-sub" style={{ fontSize: labelFontSize, lineHeight, ...valueLabelStyle }}>
           {item.label}

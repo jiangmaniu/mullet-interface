@@ -222,7 +222,7 @@ export default function Setting() {
                       </div>
                     </>
                   )}
-                  {firstName && (
+                  {isKycAuth && firstName && (
                     <>
                       <div className="size-[3px] bg-gray rounded-full mx-4"></div>
                       <div className="flex items-center">
@@ -280,7 +280,11 @@ export default function Setting() {
             <span className="">
               <FormattedMessage id="mt.zhanghao" />：
             </span>
-            <span className="pl-2">{isEmailRegisterWay ? formatEmail(currentUser?.account) : formatMobile(currentUser?.account)}</span>
+            <span className="pl-2">
+              {isEmailRegisterWay
+                ? formatEmail(currentUser?.account)
+                : `${currentUser?.userInfo?.phoneAreaCode} ${formatMobile(currentUser?.account)}`}
+            </span>
           </div>
           <div className="flex items-center justify-between flex-1 pl-7">
             <span className="text-primary text-sm">
@@ -310,28 +314,41 @@ export default function Setting() {
             <span className="">
               <FormattedMessage id="mt.anquanleixing" />：
             </span>
-            <span className="pl-2">{phone ? formatMobile(phone) : formatEmail(email)}</span>
+            <span className="pl-2">{phone ? `${currentUser?.userInfo?.phoneAreaCode} ${formatMobile(phone)}` : formatEmail(email)}</span>
           </div>
-          {phone ? (
-            <ModifyPhoneModal
-              trigger={
-                <Button type="text">
-                  <span className="text-primary text-sm font-semibold cursor-pointer">
-                    <FormattedMessage id="mt.genggai" />
-                  </span>
-                </Button>
-              }
-            />
+          {isKycAuth ? (
+            <>
+              {phone ? (
+                <ModifyPhoneModal
+                  trigger={
+                    <Button type="text">
+                      <span className="text-primary text-sm font-semibold cursor-pointer">
+                        <FormattedMessage id="mt.genggai" />
+                      </span>
+                    </Button>
+                  }
+                />
+              ) : (
+                <ModifyEmailModal
+                  trigger={
+                    <Button type="text">
+                      <span className="text-primary text-sm font-semibold cursor-pointer">
+                        <FormattedMessage id="mt.genggai" />
+                      </span>
+                    </Button>
+                  }
+                />
+              )}
+            </>
           ) : (
-            <ModifyEmailModal
-              trigger={
-                <Button type="text">
-                  <span className="text-primary text-sm font-semibold cursor-pointer">
-                    <FormattedMessage id="mt.genggai" />
-                  </span>
-                </Button>
-              }
-            />
+            <Button
+              type="text"
+              onClick={() => {
+                push('/setting/kyc')
+              }}
+            >
+              <span className="text-primary text-sm font-semibold cursor-pointer">{intl.formatMessage({ id: 'mt.bind' })}</span>
+            </Button>
           )}
         </div>
       </div>

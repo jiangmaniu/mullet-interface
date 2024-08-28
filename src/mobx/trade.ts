@@ -155,11 +155,12 @@ class TradeStore {
 
   @action
   jumpTrade = () => {
-    if (location.pathname.indexOf('/trade') === -1) {
-      push('/trade')
-      // @ts-ignore
-      klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
-    }
+    // if (location.pathname.indexOf('/trade') === -1) {
+    // 需要刷新k线，否则切换不同账号加载的品种不一样
+    push('/trade')
+    // @ts-ignore
+    klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
+    // }
   }
 
   // 获取当前账户账户余额、保证金信息

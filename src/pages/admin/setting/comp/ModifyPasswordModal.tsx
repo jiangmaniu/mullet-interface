@@ -10,6 +10,7 @@ import PwdTips from '@/components/PwdTips'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
+import { onLogout, push } from '@/utils/navigator'
 
 type IProps = {
   trigger: JSX.Element
@@ -56,6 +57,11 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
 
         if (success) {
           message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+
+          setTimeout(() => {
+            push('/user/login')
+            onLogout()
+          }, 500)
         }
 
         return success
@@ -81,8 +87,16 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
           rules={[
             {
               required: true,
-              message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
-              pattern: regPassword
+              // message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
+              // pattern: regPassword
+              validator(rule, value, callback) {
+                if (/[\u4E00-\u9FA5]/g.test(value)) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.bunengshuruhanzi' }))
+                } else if (regPassword.test(value)) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }))
+                }
+                return Promise.resolve()
+              }
             }
           ]}
           formItemProps={{ style: { marginBottom: 24 } }}

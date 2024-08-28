@@ -34,7 +34,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
 
   const orderMargin = info?.orderMargin || 0 // 订单追加的保证金
   const orderBaseMargin = info?.orderBaseMargin || 0 // 订单基础保证金，减少的保证金不能低于基础保证金
-  const avaMargin = parseInt(toFixed(isAdd ? availableMargin : orderMargin - orderBaseMargin)) // 增加、减少保证金的可用额度
+  const avaMargin = parseFloat(toFixed(isAdd ? availableMargin : orderMargin - orderBaseMargin)) // 增加、减少保证金的可用额度
 
   const forceClosePrice = inputValue
     ? calcForceClosePrice({
@@ -124,7 +124,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
                   {formatNum(avaMargin)} USD
                 </span>
               </div>
-              <div>
+              {/* <div>
                 <img src="/img/lingxing-2.png" width={8} height={8} />
                 <span className="text-xs text-primary pl-[5px] !font-dingpro-medium">
                   {isAdd ? (
@@ -134,7 +134,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
                   )}{' '}
                   {forceClosePrice ? formatNum(forceClosePrice) + 'USD' : '-'}
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
           <Button type="primary" block onClick={handleSubmit}>
