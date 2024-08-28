@@ -112,12 +112,18 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     return (
       <>
         <div className="pt-2">
-          <Row className="px-5 pb-2">
-            <Col span={12} className="!text-xs text-weak">
-              <FormattedMessage id="mt.pinpai" />
+          <Row className="px-3 pb-2">
+            <Col span={8} className="!text-xs text-gray-weak">
+              <FormattedMessage id="mt.pinzhong" />
             </Col>
-            <Col span={12} className="text-right !text-xs text-weak">
-              <FormattedMessage id="mt.zuixinjiage" />/<FormattedMessage id="mt.zhangdiefu" />
+            <Col span={6} className="!text-xs text-gray-weak">
+              <FormattedMessage id="mt.bid" />
+            </Col>
+            <Col span={6} className="!text-xs text-gray-weak">
+              <FormattedMessage id="mt.ask" />
+            </Col>
+            <Col span={4} className="text-right !text-xs text-gray-weak">
+              <FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
           <div className="overflow-y-auto" style={{ height: 500 }}>
@@ -251,7 +257,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         <>
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
-            <div className={classNames('h-[700px] w-[300px] bg-primary relative', { [borderClassName]: showFixSidebar })} style={style}>
+            <div
+              className={classNames('h-[700px] w-[350px] bg-white relative dark:bg-dark-page', { [borderClassName]: showFixSidebar })}
+              style={style}
+            >
               {renderTabs()}
               {renderSearch()}
               {renderCategoryTabs()}

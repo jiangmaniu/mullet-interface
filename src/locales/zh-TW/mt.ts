@@ -166,6 +166,8 @@ export default {
   'mt.shuzihuobi': '數字貨幣',
   'mt.shangpin': '商品',
   'mt.waihui': '外匯',
+  'mt.bid': '卖价',
+  'mt.ask': '买价',
   'mt.zhishu': '指數',
   'mt.brand': '品牌',
   'mt.zhizhanshidangqian': '只展示當前',
