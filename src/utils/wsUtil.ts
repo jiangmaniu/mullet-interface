@@ -391,9 +391,9 @@ export function getCurrentDepth(currentSymbolName?: string) {
   const { ws, trade } = stores
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
-  const { dataSourceSymbol, dataSourceCode } = trade.getActiveSymbolInfo(symbol)
+  const { dataSourceCode } = trade.getActiveSymbolInfo(symbol)
 
-  const currentDepth = depth[`${dataSourceCode}/${dataSourceSymbol}`] || {}
+  const currentDepth = depth[`${dataSourceCode}/${symbol}`] || {}
 
   return currentDepth
 }
@@ -406,20 +406,14 @@ export function getCurrentDepth(currentSymbolName?: string) {
 export function getCurrentQuote(currentSymbolName?: string) {
   const { ws, trade } = stores
   const { quotes } = ws
-  let symbol = currentSymbolName || trade.activeSymbolName // 展示的名称(后台自定义的品种名称)
+  let symbol = currentSymbolName || trade.activeSymbolName // 后台自定义的品种名称，symbol是唯一的
 
-  // 如果传入的currentSymbolName是dataSourceSymbol，则使用传入的
-  const dataSourceSymbolItem = trade.symbolListAll.find((item) => item.dataSourceSymbol === currentSymbolName)
-  const isDataSourceSymbol = !!dataSourceSymbolItem
-  // 重要：如果传入的currentSymbolName是dataSourceSymbol，则获取对应的symbol自定义名称
-  symbol = isDataSourceSymbol ? dataSourceSymbolItem?.symbol : symbol
-  const symbolInfo = trade.symbolListAll.find((item) => item.symbol === symbol) || {} // 当前品种的详细信息
+  // 当前品种的详细信息
+  const currentSymbol = trade.getActiveSymbolInfo(symbol)
+  const dataSourceSymbol = currentSymbol?.dataSourceSymbol
+  const dataSourceCode = currentSymbol?.dataSourceCode
+  const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
 
-  // 品种配置解构方便取值
-  const currentSymbol = symbolInfo as Account.TradeSymbolListItem
-  const dataSourceSymbol = (isDataSourceSymbol ? currentSymbolName : currentSymbol.dataSourceSymbol) as string
-  const dataSourceCode = trade.symbolListAll.find((item) => item.dataSourceSymbol === dataSourceSymbol)?.dataSourceCode
-  const dataSourceKey = `${dataSourceCode}/${dataSourceSymbol}` // 获取行情的KEY，数据源+数据源品种去获取
   const currentQuote = quotes?.[dataSourceKey] || {} // 行情信息
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf as Symbol.PrepaymentConf // 当前品种预付款配置
