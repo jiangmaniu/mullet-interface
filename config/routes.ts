@@ -141,13 +141,13 @@ export default [
   //   component: './admin/withdrawal/add',
   //   hideInMenu: true
   // },
-  {
-    path: '/:lng/record',
-    name: 'depositAndwithdrawalRecord',
-    icon: 'icon-geren-churujinjilu',
-    access: 'canAdmin', // 权限配置
-    component: './admin/record'
-  },
+  // {
+  //   path: '/:lng/record',
+  //   name: 'depositAndwithdrawalRecord',
+  //   icon: 'icon-geren-churujinjilu',
+  //   access: 'canAdmin', // 权限配置
+  //   component: './admin/record'
+  // },
   // 跟单管理
   // {
   //   path: '/:lng/copy-trading',

@@ -273,7 +273,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
             </div>
           )}
           {/* 收起侧边栏视图 */}
-          {!openTradeSidebar && (
+          {!openTradeSidebar && showFixSidebar && (
             <div className={classNames('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
               <div
                 className="border-b border-gray-60 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"

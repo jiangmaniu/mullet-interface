@@ -117,10 +117,12 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         }
       },
       '.same': {
-        animationName: 'bgSame',
-        animationDuration: '500ms',
-        animationIterationCount: 'initial',
-        color: 'var(--color-text-primary)'
+        // animationName: 'bgSame',
+        // animationDuration: '500ms',
+        // animationIterationCount: 'initial',
+        background: 'var(--color-gray-50)',
+        color: 'var(--color-text-primary)',
+        border: '1px solid var(--color-gray-130)'
       }
     }
   })

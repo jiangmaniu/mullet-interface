@@ -1,5 +1,5 @@
 import { CaretDownOutlined, InfoCircleOutlined, MenuUnfoldOutlined, RightOutlined } from '@ant-design/icons'
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -23,6 +23,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const { ws, trade } = useStores()
   const symbol = trade.activeSymbolName
   const [showSidebar, setShowSidebar] = useState(false)
+  const { openTradeSidebar } = useModel('global')
   const symbolInfo = (trade.openSymbolNameList || []).find((item) => item?.symbol === symbol)
 
   const res: any = getCurrentQuote()
@@ -33,6 +34,8 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
     setShowSidebar(false)
   })
 
+  console.log('showSidebar', showSidebar)
+
   return (
     <SwitchPcOrWapLayout
       pcComponent={
@@ -41,28 +44,39 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
             <div className="flex items-center w-full gap-x-[92px]">
               <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
                 <div
-                  className="flex cursor-pointer items-center relative xxl:top-1"
+                  className={classNames('flex items-center relative xxl:top-1', {
+                    'cursor-pointer': !openTradeSidebar
+                  })}
                   onClick={() => {
                     setShowSidebar(true)
                   }}
                   ref={openSidebarRef}
                 >
                   <SymbolIcon width={28} height={28} src={symbolInfo?.imgUrl} className="relative xl:top-[9px] xxl:top-0" />
-                  <div className="flex items-center xl:relative xl:left-[5px] xxl:left-0">
+                  <div
+                    className="flex items-center xl:relative xl:left-[5px] xxl:left-0"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setShowSidebar(!showSidebar)
+                    }}
+                  >
                     <span className="pl-[6px] pr-[5px] text-base font-semibold text-primary">{symbol}</span>
-                    <img
-                      src="/img/down.png"
-                      height={24}
-                      width={24}
-                      style={{ transform: showSidebar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'all 0.4s ease-in-out' }}
-                    />
+                    {/* 收起侧边栏才展示箭头 */}
+                    {!openTradeSidebar && (
+                      <img
+                        src="/img/down.png"
+                        height={24}
+                        width={24}
+                        style={{ transform: showSidebar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'all 0.4s ease-in-out' }}
+                      />
+                    )}
                   </div>
 
                   <div
                     className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] dark:border-[var(--border-primary-color)] bg-white dark:!shadow-none"
                     style={{
                       boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
-                      display: showSidebar ? 'block' : 'none'
+                      display: showSidebar && !openTradeSidebar ? 'block' : 'none'
                     }}
                   >
                     <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />

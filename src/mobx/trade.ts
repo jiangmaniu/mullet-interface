@@ -173,9 +173,9 @@ class TradeStore {
     }, 150)
 
     setTimeout(() => {
-      // 让动画播放4s 完成一帧
+      // 让动画播放
       this.setSwitchAccountLoading(false)
-    }, 4000)
+    }, 2000)
   }
 
   // 获取当前账户账户余额、保证金信息

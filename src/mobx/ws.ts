@@ -288,15 +288,15 @@ class WSStore {
         const dataSourceCode = item.dataSource
         const dataSourceKey = `${dataSourceCode}/${sbl}`
         if (quotes[dataSourceKey]) {
-          const prevBid = quotes[dataSourceKey]?.priceData?.sell || 0
-          const prevAsk = quotes[dataSourceKey]?.priceData?.buy || 0
-          item.bidDiff = item.priceData?.sell - prevBid
-          item.askDiff = item.priceData?.buy - prevAsk
+          const prevSell = quotes[dataSourceKey]?.priceData?.sell || 0
+          const prevBuy = quotes[dataSourceKey]?.priceData?.buy || 0
+          item.bidDiff = item.priceData?.buy - prevBuy // bid使用买盘的
+          item.askDiff = item.priceData?.sell - prevSell // ask使用卖盘的
 
           if (item.priceData) {
             // 如果没有最新报价，获取上一口报价
-            item.priceData.buy = item.priceData.buy || prevAsk
-            item.priceData.sell = item.priceData.sell || prevBid
+            item.priceData.buy = item.priceData.buy || prevBuy
+            item.priceData.sell = item.priceData.sell || prevSell
           }
         }
 

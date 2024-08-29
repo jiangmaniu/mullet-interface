@@ -218,69 +218,71 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             </div>
           </div>
           <div className="max-h-[380px] overflow-y-auto">
-            {currentAccountList.map((item, idx: number) => {
-              const isSimulate = item.isSimulate
-              const disabledTrade = !item?.enableConnect || item.status === 'DISABLED'
-              return (
-                <div
-                  onClick={() => {
-                    // if (isMobileOrIpad) {
-                    //   hoverAccountBoxPopupRef?.current?.close()
-                    // }
-                    if (disabledTrade) {
-                      return
-                    }
+            {currentAccountList
+              .filter((item) => item.id !== currentAccountInfo.id)
+              .map((item, idx: number) => {
+                const isSimulate = item.isSimulate
+                const disabledTrade = !item?.enableConnect || item.status === 'DISABLED'
+                return (
+                  <div
+                    onClick={() => {
+                      // if (isMobileOrIpad) {
+                      //   hoverAccountBoxPopupRef?.current?.close()
+                      // }
+                      if (disabledTrade) {
+                        return
+                      }
 
-                    setAccountBoxOpen(false)
+                      setAccountBoxOpen(false)
 
-                    setTimeout(() => {
-                      trade.setCurrentAccountInfo(item)
-                      trade.jumpTrade()
+                      setTimeout(() => {
+                        trade.setCurrentAccountInfo(item)
+                        trade.jumpTrade()
 
-                      // 切换账户重置
-                      trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
-                    }, 200)
-                  }}
-                  key={item.id}
-                  className={classNames(
-                    'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
-                    {
-                      'bg-[var(--list-hover-light-bg)] !border-blue': item.id === currentAccountInfo.id,
-                      'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade
-                    }
-                  )}
-                >
-                  <div className="flex justify-between">
-                    <div className="flex">
-                      <div className="flex-1 text-sm font-bold text-primary">
-                        {item.name} / {hiddenCenterPartStr(item?.id, 4)}
-                      </div>
-                      <div className="ml-[10px] flex px-1">
-                        <div
-                          className={classNames(
-                            'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                            isSimulate ? 'bg-green' : 'bg-brand'
-                          )}
-                        >
-                          {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+                        // 切换账户重置
+                        trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                      }, 200)
+                    }}
+                    key={item.id}
+                    className={classNames(
+                      'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
+                      {
+                        'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
+                        'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade
+                      }
+                    )}
+                  >
+                    <div className="flex justify-between">
+                      <div className="flex">
+                        <div className="flex-1 text-sm font-bold text-primary">
+                          {item.name} / {hiddenCenterPartStr(item?.id, 4)}
                         </div>
-                        {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                        <div className="ml-[10px] flex px-1">
+                          <div
+                            className={classNames(
+                              'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
+                              isSimulate ? 'bg-green' : 'bg-brand'
+                            )}
+                          >
+                            {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+                          </div>
+                          {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
                         MT
                       </div> */}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-1">
+                      <div>
+                        <span className="text-[20px] text-primary !font-dingpro-regular">
+                          {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
+                        </span>{' '}
+                        <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                       </div>
                     </div>
                   </div>
-                  <div className="mt-1">
-                    <div>
-                      <span className="text-[20px] text-primary !font-dingpro-regular">
-                        {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
-                      </span>{' '}
-                      <span className="ml-1 text-sm font-normal text-secondary">USD</span>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
+                )
+              })}
             <div className="my-3">{currentAccountList.length === 0 && <Empty />}</div>
           </div>
         </div>
@@ -353,8 +355,13 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                 </span>
                 <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
-                <span className={classNames('text-xs dark:text-gray-570', iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500')}>
-                  #{hiddenCenterPartStr(currentAccountInfo?.id, 4)}
+                <span
+                  className={classNames(
+                    'text-xs dark:text-gray-570 truncate max-w-[110px]',
+                    iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500'
+                  )}
+                >
+                  {currentAccountInfo?.name}
                 </span>
               </div>
             </div>
@@ -372,7 +379,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                 width={24}
                 height={24}
                 color={iconDownColor}
-                className=" cursor-pointer rounded-lg transition-all duration-300"
+                className="cursor-pointer rounded-lg transition-all duration-300"
                 style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
               />
             </div>
