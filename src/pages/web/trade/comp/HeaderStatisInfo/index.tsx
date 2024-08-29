@@ -34,8 +34,6 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
     setShowSidebar(false)
   })
 
-  console.log('showSidebar', showSidebar)
-
   return (
     <SwitchPcOrWapLayout
       pcComponent={
@@ -60,7 +58,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                       setShowSidebar(!showSidebar)
                     }}
                   >
-                    <span className="pl-[6px] pr-[5px] text-base font-semibold text-primary">{symbol}</span>
+                    <span className="pl-[6px] pr-[5px] text-base font-semibold text-primary">{symbolInfo?.alias}</span>
                     {/* 收起侧边栏才展示箭头 */}
                     {!openTradeSidebar && (
                       <img

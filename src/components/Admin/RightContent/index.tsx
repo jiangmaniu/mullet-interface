@@ -125,6 +125,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const { pathname } = useLocation()
   const isTradePage = pathname.indexOf('/trade') !== -1
 
+  // 排除当前选择的账户
+  const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
+
   useEffect(() => {
     // 切换真实模拟账户列表
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
@@ -218,72 +221,70 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             </div>
           </div>
           <div className="max-h-[380px] overflow-y-auto">
-            {currentAccountList
-              .filter((item) => item.id !== currentAccountInfo.id)
-              .map((item, idx: number) => {
-                const isSimulate = item.isSimulate
-                const disabledTrade = !item?.enableConnect || item.status === 'DISABLED'
-                return (
-                  <div
-                    onClick={() => {
-                      // if (isMobileOrIpad) {
-                      //   hoverAccountBoxPopupRef?.current?.close()
-                      // }
-                      if (disabledTrade) {
-                        return
-                      }
+            {accountArr.map((item, idx: number) => {
+              const isSimulate = item.isSimulate
+              const disabledTrade = !item?.enableConnect || item.status === 'DISABLED'
+              return (
+                <div
+                  onClick={() => {
+                    // if (isMobileOrIpad) {
+                    //   hoverAccountBoxPopupRef?.current?.close()
+                    // }
+                    if (disabledTrade) {
+                      return
+                    }
 
-                      setAccountBoxOpen(false)
+                    setAccountBoxOpen(false)
 
-                      setTimeout(() => {
-                        trade.setCurrentAccountInfo(item)
-                        trade.jumpTrade()
+                    setTimeout(() => {
+                      trade.setCurrentAccountInfo(item)
+                      trade.jumpTrade()
 
-                        // 切换账户重置
-                        trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
-                      }, 200)
-                    }}
-                    key={item.id}
-                    className={classNames(
-                      'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
-                      {
-                        'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
-                        'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade
-                      }
-                    )}
-                  >
-                    <div className="flex justify-between">
-                      <div className="flex">
-                        <div className="flex-1 text-sm font-bold text-primary">
-                          {item.name} / {hiddenCenterPartStr(item?.id, 4)}
+                      // 切换账户重置
+                      trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                    }, 200)
+                  }}
+                  key={item.id}
+                  className={classNames(
+                    'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
+                    {
+                      'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
+                      'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade
+                    }
+                  )}
+                >
+                  <div className="flex justify-between">
+                    <div className="flex">
+                      <div className="flex-1 text-sm font-bold text-primary">
+                        {item.name} / {hiddenCenterPartStr(item?.id, 4)}
+                      </div>
+                      <div className="ml-[10px] flex px-1">
+                        <div
+                          className={classNames(
+                            'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
+                            isSimulate ? 'bg-green' : 'bg-brand'
+                          )}
+                        >
+                          {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                         </div>
-                        <div className="ml-[10px] flex px-1">
-                          <div
-                            className={classNames(
-                              'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                              isSimulate ? 'bg-green' : 'bg-brand'
-                            )}
-                          >
-                            {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
-                          </div>
-                          {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                        {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
                         MT
                       </div> */}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-1">
-                      <div>
-                        <span className="text-[20px] text-primary !font-dingpro-regular">
-                          {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
-                        </span>{' '}
-                        <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                       </div>
                     </div>
                   </div>
-                )
-              })}
-            <div className="my-3">{currentAccountList.length === 0 && <Empty />}</div>
+                  <div className="mt-1">
+                    <div>
+                      <span className="text-[20px] text-primary !font-dingpro-regular">
+                        {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
+                      </span>{' '}
+                      <span className="ml-1 text-sm font-normal text-secondary">USD</span>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+            <div className="my-3">{accountArr.length === 0 && <Empty />}</div>
           </div>
         </div>
       </div>
