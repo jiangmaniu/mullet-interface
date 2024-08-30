@@ -87,16 +87,8 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
           rules={[
             {
               required: true,
-              // message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
-              // pattern: regPassword
-              validator(rule, value, callback) {
-                if (/[\u4E00-\u9FA5]/g.test(value)) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.bunengshuruhanzi' }))
-                } else if (regPassword.test(value)) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }))
-                }
-                return Promise.resolve()
-              }
+              message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
+              pattern: regPassword
             }
           ]}
           formItemProps={{ style: { marginBottom: 24 } }}

@@ -290,8 +290,11 @@ class WSStore {
         if (quotes[dataSourceKey]) {
           const prevSell = quotes[dataSourceKey]?.priceData?.sell || 0
           const prevBuy = quotes[dataSourceKey]?.priceData?.buy || 0
-          item.bidDiff = item.priceData?.buy - prevBuy // bid使用买盘的
-          item.askDiff = item.priceData?.sell - prevSell // ask使用卖盘的
+          const buy = item.priceData?.buy
+          const sell = item.priceData?.sell
+          const flag = buy && sell // 买卖都存在，才跳动
+          item.bidDiff = flag ? buy - prevBuy : 0 // bid使用买盘的
+          item.askDiff = flag ? sell - prevSell : 0 // ask使用卖盘的
 
           if (item.priceData) {
             // 如果没有最新报价，获取上一口报价

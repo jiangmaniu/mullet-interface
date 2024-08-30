@@ -134,6 +134,11 @@ function Account() {
                       >
                         {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                       </div>
+                      {item.synopsis?.abbr && (
+                        <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                          {item.synopsis?.abbr}
+                        </div>
+                      )}
                       <div className="pl-[6px] flex items-center">
                         <div
                           className="py-[2px] px-[3px] hover:bg-gray-80 rounded-[10px]"

@@ -11,7 +11,6 @@ import {
   getBgaOrderPage,
   getOrderMargin,
   getOrderPage,
-  getTradeRecordsPage,
   modifyPendingOrder,
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
@@ -39,7 +38,20 @@ export type UserConfInfo = Record<
   }
 >
 
-export type IRecordTabKey = 'POSITION' | 'PENDING' | 'STOPLOSS_PROFIT' | 'HISTORY'
+// 底部Tabs交易记录类型
+export type IRecordTabKey =
+  /**持仓单 */
+  | 'POSITION'
+  /**挂单 */
+  | 'PENDING'
+  /**历史挂单(历史委托) */
+  | 'HISTORY_PENDING'
+  /**历史成交 */
+  | 'HISTORY_CLOSE'
+  /**历史仓位 */
+  | 'HISTORY_POSITION'
+  /**资金流水 */
+  | 'FUND_RECORD'
 
 // 交易区订单类型
 export type ITradeTabsOrderType =
@@ -62,12 +74,6 @@ class TradeStore {
   @observable symbolListLoading = true
   @observable symbolList: Account.TradeSymbolListItem[] = []
   @observable symbolListAll: Account.TradeSymbolListItem[] = [] // 首次查询的全部品种列表，不按条件查询
-  @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
-  @observable pendingList = [] as Order.OrderPageListItem[] // 挂单列表
-  @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
-  @observable historyCloseList = [] as Order.TradeRecordsPageListItem[] // 历史成交列表
-  @observable historyPendingList = [] as Order.OrderPageListItem[] // 历史挂单列表
-  @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
 
   @observable userConfInfo = {} as UserConfInfo // 记录用户设置的品种名称、打开的品种列表、自选信息，按accountId储存
   // 当前accountId的配置信息从userConfInfo展开，切换accountId时，重新设置更新
@@ -83,6 +89,14 @@ class TradeStore {
   @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
+  // ============================
+
+  // ====== 历史交易记录 ===========
+  @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
+  @observable pendingList = [] as Order.OrderPageListItem[] // 挂单列表
+  @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
+  @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
+  @observable showActiveSymbol = false // 是否展示当前，根据当前激活的品种，搜索交易历史记录
   // ============================
 
   @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
@@ -109,6 +123,10 @@ class TradeStore {
 
   setSwitchAccountLoading = (loading: boolean) => {
     this.switchAccountLoading = loading
+  }
+
+  setShowActiveSymbol = (value: boolean) => {
+    this.showActiveSymbol = value
   }
 
   // =========== 设置交易区操作 ==========
@@ -161,16 +179,14 @@ class TradeStore {
 
   @action
   jumpTrade = () => {
-    // if (location.pathname.indexOf('/trade') === -1) {
-    // 需要刷新k线，否则切换不同账号加载的品种不一样
-    push('/trade')
-    // @ts-ignore
-    klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
-    // }
+    this.setSwitchAccountLoading(true)
 
     setTimeout(() => {
-      this.setSwitchAccountLoading(true)
-    }, 150)
+      // 需要刷新k线，否则切换不同账号加载的品种不一样
+      push('/trade')
+      // @ts-ignore
+      klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
+    }, 500)
 
     setTimeout(() => {
       // 让动画播放
@@ -529,10 +545,11 @@ class TradeStore {
     } else if (tabKey === 'PENDING') {
       // 挂单
       this.getPendingList()
-    } else if (tabKey === 'STOPLOSS_PROFIT') {
-      // 止盈止损
-      // this.getStopLossProfitList()
     }
+    // else if (tabKey === 'STOPLOSS_PROFIT') {
+    // 止盈止损
+    // this.getStopLossProfitList()
+    // }
   }
 
   // 查询持仓列表
@@ -553,6 +570,7 @@ class TradeStore {
         })
       }
     }
+    return res
   }
   // 查询挂单列表
   @action
@@ -583,32 +601,6 @@ class TradeStore {
     if (res.success) {
       runInAction(() => {
         this.stopLossProfitList = (res.data?.records || []) as Order.OrderPageListItem[]
-      })
-    }
-  }
-  // 查询历史成交列表
-  @action
-  getHistoryList = async () => {
-    const res = await getTradeRecordsPage({ current: 1, size: 999, accountId: this.currentAccountInfo?.id })
-    if (res.success) {
-      runInAction(() => {
-        this.historyCloseList = (res.data?.records || []) as Order.TradeRecordsPageListItem[]
-      })
-    }
-  }
-  // 查询历史挂单列表
-  @action
-  getHistoryPendingList = async () => {
-    const res = await getOrderPage({
-      current: 1,
-      size: 999,
-      status: 'CANCEL,FAIL,FINISH',
-      type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_ORDER,TAKE_PROFIT_ORDERR',
-      accountId: this.currentAccountInfo?.id
-    })
-    if (res.success) {
-      runInAction(() => {
-        this.historyPendingList = (res.data?.records || []) as Order.OrderPageListItem[]
       })
     }
   }

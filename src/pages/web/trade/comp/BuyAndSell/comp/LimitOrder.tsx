@@ -211,19 +211,19 @@ export default observer(
           <div className="relative flex items-center justify-center rounded-xl border border-primary dark:border-gray-580 p-[2px]">
             <BuyAndSellBtnGroup type="popup" />
           </div>
-          <div className="flex items-center justify-between mt-3 mb-1">
+          {/* <div className="flex items-center justify-between mt-3 mb-1">
             <div className="mt-1 flex items-center justify-center pb-2">
               <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.keyong" />
               </span>
               <span className="pl-2 text-xs text-primary !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
             </div>
-          </div>
+          </div> */}
           <InputNumber
             // showAddMinus={false}
             placeholder={intl.formatMessage({ id: 'mt.shurujiage' })}
             // addonBefore={intl.formatMessage({ id: 'mt.jiage' })}
-            rootClassName="!z-50 mb-3"
+            rootClassName="!z-50 mb-3 mt-[14px]"
             classNames={{ input: 'text-center' }}
             value={priceValue}
             onChange={(value: any) => {
@@ -433,6 +433,12 @@ export default observer(
             <FormattedMessage id="mt.lot" />
           </Button>
           <div className="mt-4">
+            <div className="flex items-center justify-between pb-[6px] w-full">
+              <span className="text-xs text-secondary">
+                <FormattedMessage id="mt.keyong" />
+              </span>
+              <span className="pl-2 text-xs text-primary !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
+            </div>
             {/* <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.yuguqiangpingjia" />

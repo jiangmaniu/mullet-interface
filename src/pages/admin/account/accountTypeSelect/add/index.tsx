@@ -93,6 +93,7 @@ function AddAccountComp() {
               }}
               submitter={false}
               layout="vertical"
+              initialValues={{ name: currentAccount.synopsis?.name }}
             >
               <ProFormText
                 name="name"

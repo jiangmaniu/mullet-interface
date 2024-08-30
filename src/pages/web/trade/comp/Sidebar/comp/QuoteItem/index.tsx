@@ -5,6 +5,7 @@ import { observer } from 'mobx-react'
 import { useTransition } from 'react'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
+import FavoriteIcon from '@/components/Web/FavoriteIcon'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
@@ -112,9 +113,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         animationName: 'bgDown',
         animationDuration: '1000ms',
         animationIterationCount: 'initial',
-        span: {
-          color: 'var(--color-white)'
-        }
+        animationDirection: 'alternate'
       },
       '.same': {
         // animationName: 'bgSame',
@@ -149,22 +148,28 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
       >
         {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
         <Row
-          className={classNames(
-            'flex cursor-pointer items-center rounded pl-2 py-[11px] hover:bg-[var(--list-hover-primary-bg)] relative',
-            {
-              'dark:bg-gray-660 bg-[var(--list-hover-primary-bg)]': isActive,
-              [activeClassName]: isActive
-            }
-          )}
+          className={classNames('flex cursor-pointer items-center rounded pl-2 py-[5px] hover:bg-[var(--list-hover-primary-bg)] relative', {
+            'dark:bg-gray-660 bg-[var(--list-hover-primary-bg)]': isActive,
+            [activeClassName]: isActive
+          })}
         >
           <Col span={8} className="!flex items-center">
+            <FavoriteIcon
+              symbol={symbol}
+              width={28}
+              height={28}
+              onClick={(e) => {
+                e.stopPropagation()
+                trade.toggleSymbolFavorite(symbol)
+              }}
+            />
             <SymbolIcon src={item?.imgUrl} width={20} height={20} />
             {/* 品种别名 */}
             <Tooltip placement="bottom" title={item.remark}>
-              <span className="pl-[6px] text-sm font-pf-bold text-gray tracking-[0.5px]">{item.alias}</span>
+              <span className="pl-[6px] text-sm font-pf-bold text-gray tracking-[0.5px]">{(item.alias || '').slice(0, 7)}</span>
             </Tooltip>
           </Col>
-          <Col span={6} className="flex">
+          <Col className="flex pl-2" span={6}>
             {bid ? (
               <div
                 className={classNames('rounded text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center', bidColor)}
@@ -176,7 +181,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
               '--'
             )}
           </Col>
-          <Col span={6} className="flex">
+          <Col className="flex" span={6}>
             {ask ? (
               <div
                 className={classNames(
@@ -191,9 +196,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
               '--'
             )}
           </Col>
-          <Col span={4} className="flex flex-col items-end pr-2">
+          <Col span={4} className="flex flex-col items-end pr-3">
             {res.hasQuote ? (
-              <div className={classNames('text-right !font-dingpro-medium text-xs', per > 0 ? 'text-green' : 'text-red')}>
+              <div className={classNames('text-right text-xs', per > 0 ? 'text-green' : 'text-red')}>
                 {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
               </div>
             ) : (

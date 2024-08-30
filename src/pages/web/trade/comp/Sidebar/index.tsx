@@ -116,10 +116,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
             <Col span={8} className="!text-xs text-gray-weak">
               <FormattedMessage id="mt.pinzhong" />
             </Col>
-            <Col span={6} className="!text-xs text-gray-weak">
+            <Col span={6} className="!text-xs text-gray-weak pl-3">
               <FormattedMessage id="mt.bid" />
             </Col>
-            <Col span={6} className="!text-xs text-gray-weak">
+            <Col span={6} className="!text-xs text-gray-weak pl-3">
               <FormattedMessage id="mt.ask" />
             </Col>
             <Col span={4} className="text-right !text-xs text-gray-weak">
@@ -258,7 +258,9 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
             <div
-              className={classNames('h-[700px] w-[350px] bg-white relative dark:bg-dark-page', { [borderClassName]: showFixSidebar })}
+              className={classNames('h-[700px] w-[364px] flex-shrink-0 bg-white relative dark:bg-dark-page', {
+                [borderClassName]: showFixSidebar
+              })}
               style={style}
             >
               {renderTabs()}

@@ -1,55 +1,14 @@
 import { ProColumns } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage } from '@umijs/max'
 import classNames from 'classnames'
-import { observer } from 'mobx-react'
-import React, { useEffect, useState } from 'react'
 
-import StandardTable from '@/components/Admin/StandardTable'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
-import { useEnv } from '@/context/envProvider'
-import { useStores } from '@/context/mobxProvider'
-import useStyle from '@/hooks/useStyle'
-import { formatNum, toFixed } from '@/utils'
+import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 
-type Item = Order.TradeRecordsPageListItem
-
-type IProps = {
-  style?: React.CSSProperties
-  showActiveSymbol?: boolean
-  selectSymbol?: string
-}
-
-// 历史记录
-function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
-  const { isPc } = useEnv()
-  const { ws, trade } = useStores()
-  const { recordListClassName } = useStyle()
-  const [list, setList] = useState([] as Order.TradeRecordsPageListItem[])
-  const activeSymbolName = trade.activeSymbolName
-  const [loading, setLoading] = useState(false)
-  const currentUnit = 'USD'
-  const historyList = trade.historyCloseList
-  const intl = useIntl()
-
-  useEffect(() => {
-    // setList(showActiveSymbol ? historyList.filter((v) => v.symbol === activeSymbolName) : historyList)
-    setList(selectSymbol ? historyList.filter((v: any) => v.symbol === selectSymbol) : historyList)
-  }, [showActiveSymbol, activeSymbolName, historyList.length, selectSymbol])
-
-  const getList = () => {
-    setLoading(true)
-    trade.getHistoryList().finally(() => {
-      setLoading(false)
-    })
-  }
-
-  useEffect(() => {
-    getList()
-  }, [trade.currentAccountInfo?.id])
-
-  const columns: ProColumns<Order.TradeRecordsPageListItem>[] = [
+export const getColumns = (): ProColumns<Order.TradeRecordsPageListItem>[] => {
+  return [
     {
       title: (
         <span className="!pl-1">
@@ -234,7 +193,7 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 160,
+      width: 120,
       align: 'right',
       fixed: 'right',
       renderText(text, record, index, action) {
@@ -246,45 +205,4 @@ function HistoryClose({ style, showActiveSymbol, selectSymbol }: IProps) {
       }
     }
   ]
-
-  const dataSource = list.map((v) => {
-    const digits = v.symbolDecimal || 2
-    v.tradePrice = toFixed(v.tradePrice, digits)
-    v.startPrice = toFixed(v.startPrice, digits)
-    v.handlingFees = toFixed(v.handlingFees, digits)
-    v.tradingVolume = toFixed(v.tradingVolume, digits)
-    v.profit = toFixed(v.profit, digits)
-
-    return v
-  })
-
-  return (
-    <>
-      <StandardTable
-        columns={columns}
-        // ghost
-        showOptionColumn={false}
-        dataSource={dataSource}
-        stripe={false}
-        hasTableBordered
-        hideSearch
-        cardBordered={false}
-        bordered={false}
-        className={recordListClassName}
-        cardProps={{
-          bodyStyle: { padding: 0 },
-          headStyle: { borderRadius: 0 },
-          className: ''
-        }}
-        rowClassName={(record, i) => {
-          return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
-        }}
-        size="small"
-        loading={loading}
-        pageSize={10}
-      />
-    </>
-  )
 }
-
-export default observer(HistoryClose)

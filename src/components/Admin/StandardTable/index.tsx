@@ -28,11 +28,14 @@ import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { useLang } from '@/context/languageProvider'
 
 import { IThemeMode, useTheme } from '@/context/themeProvider'
+import { formatNum, isTruthy } from '@/utils'
 import Export from './Export'
 
-type Instance = {
+export type Instance = {
   /**表单实例 */
   form?: FormInstance
+  /**actionType */
+  action?: ActionType
 }
 
 interface IProps<T, U> extends ProTableProps<T, U> {
@@ -69,7 +72,7 @@ interface IProps<T, U> extends ProTableProps<T, U> {
   stripe?: boolean
   /**去掉表格底部边框 */
   hasTableBordered?: boolean
-  /**表单、表格实例 */
+  /**表单、表格等实例 */
   getInstance?: (instance: Instance) => void
   /**table cardProps body 样式 */
   bodyStyle?: React.CSSProperties
@@ -175,7 +178,8 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
 
   useEffect(() => {
     getInstance?.({
-      form: formRef.current
+      form: formRef.current,
+      action: actionRef.current as ActionType
     })
   }, [formRef.current])
 
@@ -339,6 +343,14 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
     }
 
     columns.forEach((v) => {
+      // 格式化小数位
+      // @ts-ignore
+      const precision = v.fieldProps?.precision
+      if (isTruthy(precision)) {
+        v.renderText = (text, record, index, action) => {
+          return <span className="text-primary">{formatNum(text, { precision })}</span>
+        }
+      }
       if (!v.valueType && (v.className || '')?.indexOf('!px-5') === -1) {
         v.className = classNames('!px-5', v.className) // 统一修改单元格间距
       }
@@ -421,7 +433,8 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         borderTopRightRadius: `${isDark ? 0 : 12}px !important`
       },
       '.ant-table-thead > tr > th': {
-        padding: '12px 20px !important'
+        paddingTop: '12px !important',
+        paddingBottom: '12px !important'
       },
       '.ant-table-footer': {
         background: 'transparent !important'
@@ -495,11 +508,11 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         const total = isArray ? dataList.length : res?.data?.total
 
         const result = {
-          data: dataList,
+          data: res?.data?.length ? res.data : dataList,
           success: res?.success,
-          total
+          total: res?.total ? res.total : total
         }
-        setHasProList(dataList?.length > 0)
+        setHasProList(result.data?.length > 0)
 
         setRequestResult(result)
 

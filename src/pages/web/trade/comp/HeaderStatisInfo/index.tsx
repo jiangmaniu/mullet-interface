@@ -38,7 +38,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
     <SwitchPcOrWapLayout
       pcComponent={
         <>
-          <div className="flex items-center justify-between px-[10px] py-2">
+          <div className="flex items-center justify-between px-[10px] py-2 border border-b border-gray-60">
             <div className="flex items-center w-full gap-x-[92px]">
               <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
                 <div
@@ -105,25 +105,25 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   <span className="text-xs text-weak">
                     <FormattedMessage id="mt.kaipanjiage" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.open)}</span>
+                  <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.open)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-weak">
                     <FormattedMessage id="mt.shoupanjiage" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.close)}</span>
+                  <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.close)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-weak">
                     <FormattedMessage id="mt.24xiaoshizuigao" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.high)}</span>
+                  <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.high)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-weak">
                     <FormattedMessage id="mt.24xiaoshizuidi" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.low)}</span>
+                  <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.low)}</span>
                 </div>
               </div>
             </div>

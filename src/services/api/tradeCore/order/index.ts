@@ -84,8 +84,16 @@ export async function getOrderPage(params?: Order.OrderPageListParams) {
 }
 
 // 订单-详情
-export async function getOrderDetail(params?: API.IdParam) {
-  return request<API.Response<Order.OrderDetailListItem>>('/api/trade-core/coreApi/orders/detail', {
+export async function getOrderDetail(params?: API.IdParam /**订单id */) {
+  return request<API.Response<Order.OrderDetailListItem>>('/api/trade-core/coreApi/orders/orderDetail', {
+    method: 'GET',
+    params
+  })
+}
+
+// 全部订单订单-详情(持仓单、成交记录)
+export async function getOrderAllDetail(params?: API.IdParam /**持仓单id */) {
+  return request<API.Response<Order.OrderDetailListItem>>('/api/trade-core/coreApi/orders/allDetail', {
     method: 'GET',
     params
   })

@@ -2,7 +2,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useRef, useState, useTransition } from 'react'
+import { useEffect, useRef, useTransition } from 'react'
 
 import Checkbox from '@/components/Base/Checkbox'
 import Popup from '@/components/Base/Popup'
@@ -15,10 +15,12 @@ import { formatNum, toFixed } from '@/utils'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import OpenTipsModal from '../Modal/OpenTipsModal'
-import HistoryRecord from './comp/HistoryRecord'
+import FundRecordList from './comp/FundRecordList'
+import HistoryCloseList from './comp/HistoryCloseList'
+import HistoryPendingList from './comp/HistoryPendingList'
+import HistoryPositionList from './comp/HistoryPositionList'
 import PendingList from './comp/PendingList'
 import PositionList from './comp/PositionList'
-import StopLossProfitList from './comp/StopLossProfitList'
 
 type IProps = {
   trigger?: JSX.Element
@@ -26,11 +28,11 @@ type IProps = {
 
 function TradeRecord({ trigger }: IProps) {
   const intl = useIntl()
-  const [showActiveSymbol, setShowActiveSymbol] = useState(false)
   const popupRef = useRef()
   const { ws, trade } = useStores()
   const { isPc } = useEnv()
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
+  const { showActiveSymbol, setShowActiveSymbol } = trade
 
   const tradeList = trade.positionList
   const pendingList = trade.pendingList
@@ -61,19 +63,18 @@ function TradeRecord({ trigger }: IProps) {
   const totalProfit = trade.getCurrentAccountFloatProfit(currentPositionList)
   const totalProfitShow = formatNum(toFixed(totalProfit))
 
-  const TabItems: { key: IRecordTabKey; label: any }[] = [
+  const tabItems: { key: IRecordTabKey; label: any }[] = [
     { key: 'POSITION', label: `${intl.formatMessage({ id: 'mt.chicang' })}(${tradeListLen})` },
     { key: 'PENDING', label: `${intl.formatMessage({ id: 'mt.guadan' })}(${pendingListLen})` },
+    { key: 'HISTORY_PENDING', label: intl.formatMessage({ id: 'mt.lishiweituo' }) },
+    { key: 'HISTORY_CLOSE', label: intl.formatMessage({ id: 'mt.lishichengjiao' }) },
+    { key: 'HISTORY_POSITION', label: intl.formatMessage({ id: 'mt.lishicangwei' }) },
+    { key: 'FUND_RECORD', label: intl.formatMessage({ id: 'mt.zijinliushui' }) }
+
     // { key: 'STOPLOSS_PROFIT', label: `${intl.formatMessage({ id: 'mt.zhiyingzhisun' })}(${stopLossProfitListLen})` },
-    { key: 'HISTORY', label: intl.formatMessage({ id: 'mt.lishichengjiao' }) }
   ]
 
-  const labelName = {
-    POSITION: <FormattedMessage id="mt.chicang" />,
-    PENDING: <FormattedMessage id="mt.guadan" />,
-    STOPLOSS_PROFIT: <FormattedMessage id="mt.zhiyingzhisun" />,
-    HISTORY: <FormattedMessage id="mt.lishichengjiao" />
-  }[tabKey]
+  const currentLabelName = tabItems.find((item) => item.key === tabKey)?.label
 
   const onCheckBoxChange = (e: any) => {
     setShowActiveSymbol(e.target.checked)
@@ -82,7 +83,7 @@ function TradeRecord({ trigger }: IProps) {
   const renderTabs = () => {
     return (
       <Tabs
-        items={TabItems}
+        items={tabItems}
         tabBarExtraContent={
           <div className="flex items-center mr-2">
             {showActiveSymbol && !!totalProfit && tabKey === 'POSITION' && (
@@ -94,15 +95,14 @@ function TradeRecord({ trigger }: IProps) {
                 </span>
               </span>
             )}
-            {/* 历史成交没有这个按钮 */}
-            {tabKey !== 'HISTORY' && (
+            {tabKey !== 'FUND_RECORD' && (
               <Checkbox onChange={onCheckBoxChange} className="max-xl:hidden">
                 <span className="text-primary text-sm">
                   <FormattedMessage id="mt.zhizhanshidangqian" />
                 </span>
               </Checkbox>
             )}
-            {/* @TODO 接口暂时不支持 */}
+            {/* 接口暂时不支持 */}
             {/* {tabKey === 'POSITION' && (
               <div className="flex items-center border border-gray-250 py-[6px] px-[10px] rounded-lg ml-5 cursor-pointer">
                 <img src="/img/shandian.png" width={14} height={14} />
@@ -115,9 +115,6 @@ function TradeRecord({ trigger }: IProps) {
         }
         onChange={(key) => {
           startTransition(() => {
-            if (isPc) {
-              window.scrollTo(0, 0)
-            }
             trade.setTabKey(key as IRecordTabKey)
           })
         }}
@@ -132,11 +129,13 @@ function TradeRecord({ trigger }: IProps) {
 
   const renderTabContent = () => {
     return (
-      <div className="pb-[50px] min-h-[200px]">
-        {tabKey === 'POSITION' && <PositionList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}
-        {tabKey === 'PENDING' && <PendingList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}
-        {tabKey === 'STOPLOSS_PROFIT' && <StopLossProfitList parentPopup={popupRef.current} showActiveSymbol={showActiveSymbol} />}
-        {tabKey === 'HISTORY' && <HistoryRecord showActiveSymbol={showActiveSymbol} />}
+      <div className="pb-[50px] min-h-[300px]">
+        {tabKey === 'POSITION' && <PositionList parentPopup={popupRef.current} />}
+        {tabKey === 'PENDING' && <PendingList parentPopup={popupRef.current} />}
+        {tabKey === 'HISTORY_PENDING' && <HistoryPendingList />}
+        {tabKey === 'HISTORY_CLOSE' && <HistoryCloseList />}
+        {tabKey === 'HISTORY_POSITION' && <HistoryPositionList />}
+        {tabKey === 'FUND_RECORD' && <FundRecordList />}
       </div>
     )
   }
@@ -166,7 +165,7 @@ function TradeRecord({ trigger }: IProps) {
           </div>
         }
         wapComponent={
-          <Popup title={labelName} trigger={trigger} ref={popupRef} position="bottom" height="80vh">
+          <Popup title={currentLabelName} trigger={trigger} ref={popupRef} position="bottom" height="80vh">
             {renderTabs()}
             <div className="h-[70vh] overflow-y-auto pb-10">{renderTabContent()}</div>
           </Popup>

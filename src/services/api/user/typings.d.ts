@@ -294,7 +294,7 @@ declare namespace User {
     /**
      * 主键
      */
-    id: number | string
+    id: any
     /**
      * 逐仓保证金
      */

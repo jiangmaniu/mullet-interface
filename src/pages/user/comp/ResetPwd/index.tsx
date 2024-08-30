@@ -199,7 +199,8 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
             <div className="px-10 py-6">
               <ProFormText.Password
                 name="newPassword"
-                required={false}
+                // required={false}
+                required
                 label={intl.formatMessage({ id: 'mt.shezhixinmima' })}
                 placeholder={intl.formatMessage({ id: 'mt.shurumima' })}
                 fieldProps={{
@@ -215,15 +216,8 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                 rules={[
                   {
                     required: true,
-                    // message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
-                    validator(rule, value, callback) {
-                      if (/[\u4E00-\u9FA5]/g.test(value)) {
-                        return Promise.reject(intl.formatMessage({ id: 'mt.bunengshuruhanzi' }))
-                      } else if (regPassword.test(value)) {
-                        return Promise.reject(intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }))
-                      }
-                      return Promise.resolve()
-                    }
+                    message: intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' }),
+                    pattern: regPassword
                   }
                 ]}
               />

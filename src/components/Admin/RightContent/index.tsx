@@ -146,7 +146,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-primary pb-1 xl:w-[420px] xl:pt-[18px]">
+      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-primary pb-1 xl:w-[360px] xl:pt-[18px]">
         <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
             <div className="mb-6 flex flex-wrap items-center justify-between text-weak" key={idx}>
@@ -267,9 +267,11 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                         >
                           {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                         </div>
-                        {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
-                        MT
-                      </div> */}
+                        {item.synopsis?.abbr && (
+                          <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                            {item.synopsis?.abbr}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -350,8 +352,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             }}
           >
             <div className="flex flex-col items-end group relative">
-              <span className="sm:text-xl text-base !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
-              <div className="flex items-center pt-[2px]">
+              <span className="text-lg !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
+              <div className="flex items-center">
                 <span className={classNames('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
                   {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                 </span>

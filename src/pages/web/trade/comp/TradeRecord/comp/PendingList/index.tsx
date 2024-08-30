@@ -28,16 +28,17 @@ export type IPendingItem = Order.OrderPageListItem & {
 type IProps = {
   style?: React.CSSProperties
   parentPopup?: any
-  showActiveSymbol?: boolean
 }
 
 // 挂单记录
-function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
+function PendingList({ style, parentPopup }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
   const { recordListClassName } = useStyle()
-  let list = trade.pendingList as IPendingItem[]
+  const showActiveSymbol = trade.showActiveSymbol
 
+  let pendingList = trade.pendingList as IPendingItem[]
+  let list = showActiveSymbol ? pendingList.filter((v) => v.symbol === trade.activeSymbolName) : pendingList
   const cancelPendingRef = useRef<any>(null)
   const modifyPendingRef = useRef<any>(null)
 
