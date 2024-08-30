@@ -1,8 +1,8 @@
 import { request } from '@/utils/request'
 
 // 跟单管理 - 进行中
-export async function getTradeFollowFolloerManagementInProgress(params?: TradeFollowFollower.ManagementParams) {
-  return request<API.Response<TradeFollowFollower.ManagementInProgressItem[]>>(
+export async function getTradeFollowFolloerManagementInProgress(params?: TradeFollowFollower.ManagementParams & API.PageParam) {
+  return request<API.Response<API.PageResult<TradeFollowFollower.ManagementInProgressItem>>>(
     '/api/trade-follow/followApi/follower/management/in_progress',
     {
       method: 'GET',
@@ -13,20 +13,26 @@ export async function getTradeFollowFolloerManagementInProgress(params?: TradeFo
 
 // /trade-follow/followApi/follower/management/end
 // 跟单管理 - 已结束
-export async function getTradeFollowFolloerManagementEnd(params?: TradeFollowFollower.ManagementParams) {
-  return request<API.Response<TradeFollowFollower.ManagementEndItem[]>>('/api/trade-follow/followApi/follower/management/end', {
-    method: 'GET',
-    params
-  })
+export async function getTradeFollowFolloerManagementEnd(params?: TradeFollowFollower.ManagementParams & API.PageParam) {
+  return request<API.Response<API.PageResult<TradeFollowFollower.ManagementEndItem>>>(
+    '/api/trade-follow/followApi/follower/management/end',
+    {
+      method: 'GET',
+      params
+    }
+  )
 }
 
 // /trade-follow/followApi/follower/management/history
 // 跟单管理 - 历史仓位
-export async function getTradeFollowFolloerManagementHistory(params?: { followerId?: string | number }) {
-  return request<API.Response<TradeFollowFollower.ManagementHistoryItem[]>>('/api/trade-follow/followApi/follower/management/history', {
-    method: 'GET',
-    params
-  })
+export async function getTradeFollowFolloerManagementHistory(params?: { followerId?: string | number } & API.PageParam) {
+  return request<API.Response<API.PageResult<TradeFollowFollower.ManagementHistoryItem>>>(
+    '/api/trade-follow/followApi/follower/management/history',
+    {
+      method: 'GET',
+      params
+    }
+  )
 }
 
 // /trade-follow/followApi/follower/save

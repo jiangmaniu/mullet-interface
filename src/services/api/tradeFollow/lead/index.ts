@@ -1,8 +1,8 @@
 import { request } from '@/utils/request'
 
 // 带单人-跟单广场
-export async function getTradeFollowLeadPlaza(params?: TradeFollowLead.LeadPlazaParams) {
-  return request<API.Response<TradeFollowLead.LeadPlazaItem[]>>('/api/trade-follow/followApi/lead/lead_plaza', {
+export async function getTradeFollowLeadPlaza(params?: TradeFollowLead.LeadPlazaParams & API.PageParam) {
+  return request<API.Response<API.PageResult<TradeFollowLead.LeadPlazaItem>>>('/api/trade-follow/followApi/lead/lead_plaza', {
     method: 'GET',
     params
   })
@@ -18,8 +18,8 @@ export async function addTraadeFollowLead(body: TradeFollowLead.LeadSaveParams) 
 
 // /trade-follow/followApi/lead/lead_managements
 // 带单人-带单管理
-export async function getTradeFollowLeadManagements(params: { clientId: string | number }) {
-  return request<API.Response<TradeFollowLead.LeadManagementsItem[]>>('/api/trade-follow/followApi/lead/lead_managements', {
+export async function getTradeFollowLeadManagements(params: { clientId: string | number } & API.PageParam) {
+  return request<API.Response<API.PageResult<TradeFollowLead.LeadManagementsItem>>>('/api/trade-follow/followApi/lead/lead_managements', {
     method: 'GET',
     params
   })
@@ -66,6 +66,39 @@ export async function tradeFollowProfitStatistics(params: { id: string; startDat
 export async function tradeFollowSymbolStatistics(params: { id: string; startDatetime: string; endDatetime: string }) {
   return request<API.Response<TradeFollowLead.TradeFollowLeadSymbolStatisticsItem[]>>(
     '/api/trade-follow/followApi/lead/symbol_statistics',
+    {
+      method: 'GET',
+      params
+    }
+  )
+}
+
+// /trade-follow/followApi/lead/list_leads
+// 带单人 - 其他账户
+export async function tradeFollowListLeads(params: { leadId: string }) {
+  return request<API.Response<TradeFollowLead.TradeFollowLeadListItem>>('/api/trade-follow/followApi/lead/list_leads', {
+    method: 'GET',
+    params
+  })
+}
+
+// /trade-follow/followApi/lead/lead_profit_sharing
+// 带单人 - 分润
+export async function tradeFollowLeadProfitSharing(params: { leadId: string } & API.PageParam) {
+  return request<API.Response<API.PageResult<TradeFollowLead.TradeFollowLeadProfitSharingItem>>>(
+    '/api/trade-follow/followApi/lead/lead_profit_sharing',
+    {
+      method: 'GET',
+      params
+    }
+  )
+}
+
+// /trade-follow/followApi/lead/lead_profit_sharing_detail
+// 带单人 - 分润详情
+export async function tradeFollowLeadProfitSharingDetail(params: { leadId?: string; date?: string } & API.PageParam) {
+  return request<API.Response<API.PageResult<TradeFollowLead.TradeFollowLeadProfitSharingDetailItem>>>(
+    '/api/trade-follow/followApi/lead/lead_profit_sharing_detail',
     {
       method: 'GET',
       params

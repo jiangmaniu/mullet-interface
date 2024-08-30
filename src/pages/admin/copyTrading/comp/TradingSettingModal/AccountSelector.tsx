@@ -2,6 +2,7 @@ import { ProFormSelect } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { FormInstance } from 'antd'
 
+import ProFormText from '@/components/Admin/Form/ProFormText'
 import { SOURCE_CURRENCY } from '@/constants'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 
@@ -20,6 +21,10 @@ export default ({ form, money }: { form: FormInstance; money: number }) => {
         <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.gendanzhanghu" />
         </span>
+        <div className="hide-form-item">
+          <ProFormText name="accountId" />
+          <ProFormText name="clientId" />
+        </div>
         <ProFormSelect
           name="accountGroupId"
           rules={[

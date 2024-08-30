@@ -1,9 +1,11 @@
 import { FormattedMessage } from '@umijs/max'
+import { Pagination } from 'antd'
 import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
+import { DEFAULT_PAGE_SIZE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { IOrderTaker } from '@/models/takers'
 import { getTradeFollowLeadManagements } from '@/services/api/tradeFollow/lead'
@@ -23,6 +25,11 @@ export default function Take({ active }: { active: boolean }) {
   // 帶單員
   const [takers, setTakers] = useState<IOrderTaker[]>(defaultTakers)
 
+  // 分页
+  const [total, setTotal] = useState(0)
+  const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
+  const [current, setCurrent] = useState(1)
+
   // 跟单设置弹窗
   const [openSetting, setOpenSetting] = useState(false)
   const onOpenChangeSetting = (val: boolean) => setOpenSetting(val)
@@ -33,13 +40,15 @@ export default function Take({ active }: { active: boolean }) {
   }
 
   useEffect(() => {
-    active &&
-      getTradeFollowLeadManagements({ clientId: currentAccountInfo?.id })
+    currentAccountInfo?.clientId &&
+      active &&
+      getTradeFollowLeadManagements({ clientId: String(currentAccountInfo?.clientId), current, size })
         .then((res) => {
           if (res.success) {
             // setTakers(res.data)
-            if (res.data?.length && res.data.length > 0) {
-              setTakers(res.data as IOrderTaker[])
+            if (res.data?.records?.length && res.data.records?.length > 0) {
+              setTakers(res.data.records as IOrderTaker[])
+              setTotal(res.data.total)
             }
             // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
           }
@@ -47,12 +56,33 @@ export default function Take({ active }: { active: boolean }) {
         .catch((err) => {
           console.log(err)
         })
-  }, [active, currentAccountInfo])
+  }, [active, currentAccountInfo, current, size])
+
+  const onTake = (id: string) => {
+    // trade.setCurrentAccountInfo(item)
+    // trade.jumpTrade()
+    // // 切换账户重置
+    // trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+  }
 
   return (
     <div className="flex flex-col w-full gap-6">
       {takers.length > 0 ? (
-        takers.map((item: IOrderTaker, idx: number) => <TakeItem key={idx} item={item} state={state} onClick={onClick} />)
+        <>
+          {takers.map((item: IOrderTaker, idx: number) => (
+            <TakeItem key={idx} item={item} state={state} onClick={onClick} onTake={onTake} />
+          ))}
+          <div className="self-end">
+            <Pagination
+              current={current}
+              onChange={setCurrent}
+              total={total}
+              pageSize={size}
+              onShowSizeChange={setSize}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </>
       ) : (
         <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem]">
           <Empty src="/img/empty-daidan.png" description={<FormattedMessage id="mt.zanwujilu" />} />

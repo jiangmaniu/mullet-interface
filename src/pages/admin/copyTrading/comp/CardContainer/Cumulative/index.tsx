@@ -1,4 +1,4 @@
-import './style.less'
+import './index.less'
 
 import { useIntl } from '@umijs/max'
 import { Segmented } from 'antd'

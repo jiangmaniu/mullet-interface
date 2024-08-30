@@ -387,4 +387,123 @@ declare namespace TradeFollowLead {
     tradeCount?: number
     [property: string]: any
   }
+
+  type TradeFollowLeadListItem = {
+    /**
+     * 账户组
+     */
+    groupName?: string
+    /**
+     * 带单人Id
+     */
+    leadId?: number
+    /**
+     * 项目名称
+     */
+    projectName?: string
+    /**
+     * 交易账户
+     */
+    tradeAccountId?: number
+    [property: string]: any
+  }
+
+  /**
+   * tradeFollowLeadProfitSharing
+   * 带单人 - 分润
+   */
+  type TradeFollowLeadProfitSharingItem = {
+    /**
+     * 日期
+     */
+    date?: Date
+    /**
+     * 跟单人数
+     */
+    followerNumber?: number
+    /**
+     * 分润总金额
+     */
+    profitSharingAmountTotal?: number
+    [property: string]: any
+  }
+
+  /**
+   * 分润详情
+   */
+  type TradeFollowLeadProfitSharingDetailItem = {
+    /**
+     * 别名
+     */
+    alias?: string
+    /**
+     * 订单方向
+     */
+    buySell?: string
+    /**
+     * 分类
+     */
+    classify?: string
+    /**
+     * 数据源code
+     */
+    dataSourceCode?: string
+    /**
+     * 数据源Symbol
+     */
+    dataSourceSymbol?: string
+    /**
+     * 跟单人UUID
+     */
+    followerId?: number
+    /**
+     * 图标
+     */
+    imgUrl?: string
+    /**
+     * 杠杆倍数
+     */
+    leverageMultiple?: number
+    /**
+     * 订单模式
+     */
+    mode?: string
+    /**
+     * 订单数量
+     */
+    orderVolume?: number
+    /**
+     * 分润金额
+     */
+    profitSharingAmount?: number
+    /**
+     * 分润时间
+     */
+    profitSharingTime?: Date
+    /**
+     * 交易品种
+     */
+    symbol?: string
+    /**
+     * 品种组配置ID
+     */
+    symbolConfId?: number
+    /**
+     * 品种小数位
+     */
+    symbolDecimal?: number
+    /**
+     * 品种组ID
+     */
+    symbolGroupId?: number
+    /**
+     * 交易账户Id
+     */
+    tradeAccountId?: number
+    /**
+     * 交易账户名称
+     */
+    tradeAccountName?: string
+    [property: string]: any
+  }
 }

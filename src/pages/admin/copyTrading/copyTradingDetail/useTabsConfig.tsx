@@ -1,10 +1,10 @@
 import { useIntl } from '@umijs/max'
-import { TableProps, TabsProps } from 'antd'
+import { Pagination, TableProps, TabsProps } from 'antd'
 import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 
 import Tags from '@/components/Admin/Tags'
-import { CURRENCY } from '@/constants'
+import { CURRENCY, DEFAULT_PAGE_SIZE } from '@/constants'
 import { getTradeFollowFolloerHistoryFollowerOrder } from '@/services/api/tradeFollow/follower'
 import { formatNum, getColorClass } from '@/utils'
 
@@ -216,16 +216,39 @@ export const useTabsConfig = () => {
   const [histories, setHistories] = useState(mockHistory)
   const [orders, setOrders] = useState(mockOrder)
 
+  // 分页
+  const [total, setTotal] = useState(0)
+  const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
+  const [current, setCurrent] = useState(1)
   useEffect(() => {
     getTradeFollowFolloerHistoryFollowerOrder({})
   })
+
+  const [total2, setTotal2] = useState(0)
+  const [size2, setSize2] = useState(DEFAULT_PAGE_SIZE)
+  const [current2, setCurrent2] = useState(1)
 
   const items2: TabsProps['items'] = useMemo(
     () => [
       {
         key: '2',
         label: intl.formatMessage({ id: 'mt.lishigendan' }),
-        children: <TabTable columns={historyColumns} datas={histories} />
+        children: (
+          <div className="flex flex-col gap-3.5 mb-4">
+            <TabTable columns={historyColumns} datas={histories} />
+
+            <div className="self-end">
+              <Pagination
+                current={current}
+                onChange={setCurrent}
+                total={total}
+                pageSize={size}
+                onShowSizeChange={setSize}
+                pageSizeOptions={['10', '20', '50']}
+              />
+            </div>
+          </div>
+        )
       }
     ],
     [histories]
@@ -236,12 +259,42 @@ export const useTabsConfig = () => {
       {
         key: '1',
         label: intl.formatMessage({ id: 'mt.dangqiangendan' }),
-        children: <TabTable columns={orderColumns} datas={orders} />
+        children: (
+          <div className="flex flex-col gap-3.5 mb-4">
+            <TabTable columns={orderColumns} datas={orders} />
+
+            <div className="self-end">
+              <Pagination
+                current={current2}
+                onChange={setCurrent2}
+                total={total2}
+                pageSize={size2}
+                onShowSizeChange={setSize2}
+                pageSizeOptions={['10', '20', '50']}
+              />
+            </div>
+          </div>
+        )
       },
       {
         key: '2',
         label: intl.formatMessage({ id: 'mt.lishigendan' }),
-        children: <TabTable columns={historyColumns} datas={histories} />
+        children: (
+          <div className="flex flex-col gap-3.5 mb-4">
+            <TabTable columns={historyColumns} datas={histories} />
+
+            <div className="self-end">
+              <Pagination
+                current={current}
+                onChange={setCurrent}
+                total={total}
+                pageSize={size}
+                onShowSizeChange={setSize}
+                pageSizeOptions={['10', '20', '50']}
+              />
+            </div>
+          </div>
+        )
       }
     ],
     [histories, orders]

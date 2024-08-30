@@ -639,5 +639,7 @@ export default {
   'mt.chengjiaojiage': '成交價格',
   'mt.caozuochenggong': '操作成功',
   'mt.qingxianzhizaishigezifuyinei': '請限制在十個字符以內',
-  'mt.qingxianzhizailiangbaizifuyinei': '請限制在两百個字符以內'
+  'mt.qingxianzhizailiangbaizifuyinei': '請限制在两百個字符以內',
+  'mt.daidanzhuangtai2': '已滿員',
+  'mt.daidanzhuangtai1': '可跟單'
 }

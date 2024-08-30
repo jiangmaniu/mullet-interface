@@ -35,10 +35,10 @@ export default function copyTradingDetail() {
   const loadingRef = useRef<any>()
   useEffect(() => {
     const query = new URLSearchParams(location.search)
-    query.get('state') && setTakeState(query.get('state') as IOrderTakerState)
+    query.get('state') && setTakeState(Number(query.get('state')) as IOrderTakerState)
   }, [location])
 
-  const [takeState, setTakeState] = useState<IOrderTakerState>('yigendan')
+  const [takeState, setTakeState] = useState<IOrderTakerState>(0)
 
   const [taker, setTaker] = useState<IOrderTaker>(defaultTaker)
 
@@ -87,7 +87,7 @@ export default function copyTradingDetail() {
 
   const { items: tabs, items2: tabs2, onChange } = useTabsConfig()
 
-  const tab = useMemo(() => (takeState === 'yigendan' ? tabs : tabs2), [takeState])
+  const tab = useMemo(() => (takeState === 0 ? tabs : tabs2), [takeState])
 
   // 无账号提示弹窗
   const [openTips, setOpenTips] = useState(false)
@@ -101,7 +101,7 @@ export default function copyTradingDetail() {
   const currentUser = initialState?.currentUser
   const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
   const onFollow = (takerState: IOrderTakerState) => {
-    if (takerState === 'gendan' || takerState === 'yigendan') {
+    if (takerState === 1 || takerState === 0) {
       if (ableList.length === 0) {
         setOpenTips(true)
         return
@@ -140,7 +140,7 @@ export default function copyTradingDetail() {
               </div>
             </Button>
 
-            <AccountSelectFull />
+            <AccountSelectFull leadId={String(id)} />
           </div>
         </div>
         <div className="mt-10">
@@ -168,7 +168,7 @@ export default function copyTradingDetail() {
             </div>
             {/* 操作区 */}
             <div className="flex flex-col gap-3.5">
-              {takeState === 'yigendan' ? (
+              {takeState === 0 ? (
                 <>
                   <EndModal
                     onConfirm={() => {
@@ -177,7 +177,7 @@ export default function copyTradingDetail() {
                       setTimeout(() => {
                         loadingRef.current?.close()
                         message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
-                        setTakeState('gendan')
+                        setTakeState(0)
                       }, 3000)
                     }}
                     trigger={
@@ -218,7 +218,7 @@ export default function copyTradingDetail() {
                   </Button>
                 </>
               ) : (
-                takeState === 'gendan' && (
+                takeState === 1 && (
                   <Button
                     height={42}
                     type="primary"
@@ -292,10 +292,11 @@ export default function copyTradingDetail() {
       {/* <Footer /> */}
       <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
       <TradingSettingModal
+        leadId={String(id)}
         open={openSetting}
         onOpenChange={onOpenChangeSetting}
         onConfirm={() => {
-          setTakeState('yigendan')
+          setTakeState(0)
           onOpenChangeSetting(false)
         }}
       />

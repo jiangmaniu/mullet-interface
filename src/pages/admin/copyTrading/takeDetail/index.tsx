@@ -96,7 +96,7 @@ export default function TakeDetail() {
                 </div>
               </div>
             </Button>
-            <AccountSelectFull />
+            <AccountSelectFull leadId={String(id)} />
           </div>
         </div>
         <div className="mt-10">
@@ -215,6 +215,9 @@ export default function TakeDetail() {
                 }
               />
               <DetailModal
+                info={{
+                  leadId: id
+                }}
                 trigger={
                   <Button
                     height={42}

@@ -23,6 +23,7 @@ const waitTime = (time = 100) => {
 }
 
 type IProps = {
+  leadId: string
   open?: boolean
   onOpenChange?: ((open: boolean) => void) | undefined
   trigger?: JSX.Element
@@ -39,7 +40,7 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
   }
 }
 
-export default ({ trigger, open, onOpenChange, onConfirm }: IProps) => {
+export default ({ leadId, trigger, open, onOpenChange, onConfirm }: IProps) => {
   const [form] = Form.useForm<TradeFollowFollower.SaveParams>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.gendanpeizhi' })
@@ -47,13 +48,13 @@ export default ({ trigger, open, onOpenChange, onConfirm }: IProps) => {
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
 
-  const tradeAccountId = Form.useWatch('tradeAccountId', form)
+  const accountId = Form.useWatch('accountId', form)
 
   // 選中賬戶的餘額
   const money = useMemo(() => {
-    const item = accountList.find((item) => item.id === tradeAccountId)
+    const item = accountList.find((item) => item.id === accountId)
     return item?.money || 0
-  }, [tradeAccountId])
+  }, [accountId])
 
   const [tabKey, setTabKey] = useState<string>('10')
   const items: TabsProps['items'] = [
@@ -61,44 +62,47 @@ export default ({ trigger, open, onOpenChange, onConfirm }: IProps) => {
       key: '10',
       label: intl.formatMessage({ id: 'mt.gudingjine' }),
       children: (
-        <FixedAmount
-          onConfirm={(values) => {
-            form.submit()
-            // onConfirm?.(values)
-          }}
-          form={form}
-        >
-          <AccountSelector form={form} money={money} />
-        </FixedAmount>
+        <>
+          {tabKey === '10' && (
+            <FixedAmount
+              onConfirm={(values) => {
+                form.submit()
+                // onConfirm?.(values)
+              }}
+              form={form}
+              money={money}
+            >
+              <AccountSelector form={form} money={money} />
+            </FixedAmount>
+          )}
+        </>
       )
     },
     {
       key: '20',
       label: intl.formatMessage({ id: 'mt.gudingbili' }),
       children: (
-        <FixedRatio
-          onConfirm={(values) => {
-            form.submit()
-            // onConfirm?.(values)
-          }}
-          form={form}
-        >
-          <AccountSelector form={form} money={money} />
-        </FixedRatio>
+        <>
+          {tabKey === '20' && (
+            <FixedRatio
+              onConfirm={(values) => {
+                form.submit()
+                // onConfirm?.(values)
+              }}
+              form={form}
+              money={money}
+            >
+              <AccountSelector form={form} money={money} />
+            </FixedRatio>
+          )}
+        </>
       )
     }
   ]
 
   const onFinish = async (values: any) => {
     const params = {
-      accountGroupId: '',
-      accountId: '',
-      clientId: '',
-      leadId: '',
-      guaranteedAmount: 0,
-      guaranteedAmountRatio: 0,
-      profitRatio: 0,
-      stopLossRatio: 0,
+      leadId,
       type: tabKey,
       ...values
     }

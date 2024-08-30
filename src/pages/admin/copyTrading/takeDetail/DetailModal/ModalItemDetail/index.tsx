@@ -3,16 +3,17 @@ import { FormattedMessage } from '@umijs/max'
 import Tags from '@/components/Admin/Tags'
 import { CURRENCY } from '@/constants'
 
-export default ({ item }: { item: any }) => {
+export default ({ item }: { item: TradeFollowLead.TradeFollowLeadProfitSharingDetailItem }) => {
   return (
     <div className=" rounded-xl bg-white h-16 border border-gray-150 opacity-60 pl-5 pr-4 py-3 flex flex-row justify-between gap-1 w-full items-center">
       <div className=" flex gap-1 items-center">
-        <img src={item.img} alt="" className="w-8 h-8 rounded-full" />
+        <img src={item.imgUrl} alt="" className="w-8 h-8 rounded-full" />
         <div className=" flex flex-col items-start">
-          <span className="text-sm font-semibold text-primary">{item.pinzhong}</span>
+          <span className="text-sm font-semibold text-primary">{item.symbol}</span>
           <span className="flex items-center gap-1">
-            <Tags size="tiny" color={item.zhuangtai === '空' ? 'red' : 'green'}>
-              {item.zhuangtai}
+            <Tags size="tiny" color={item.buySell === '空' ? 'red' : 'green'}>
+              {item.classify}
+              {item.leverageMultiple}
             </Tags>
             <Tags size="tiny" color="gray">
               {item.desc}

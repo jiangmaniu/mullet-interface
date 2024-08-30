@@ -12,14 +12,21 @@ import { IOrderTakerProps, IOrderTakerState } from '@/models/takers'
 import { colorTextPrimary, gray } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
 
+import { AccountTag } from '../../AccountTag'
 import OrderTakerChart from './Chart'
 
-type IProps = IOrderTakerProps & { onClick: (id: string, state: string) => void; onFollow: (bo: IOrderTakerState) => void }
-export const OrderTaker = ({
-  item: {
-    id,
+type IProps = IOrderTakerProps & {
+  onClick: (id: string, state: string) => void
+  onFollow: (bo: IOrderTakerState, info: Record<string, any>) => void
+}
+export const OrderTaker = ({ item, state, onClick, onFollow }: IProps) => {
+  const intl = useIntl()
+
+  const {
+    leadId,
     imageUrl,
     leadName,
+    accountGroupName,
     datas,
     tags,
     followerNumber,
@@ -30,13 +37,8 @@ export const OrderTaker = ({
     earningRate,
     profitTotal,
     tradeTotal,
-    state: takerState
-  },
-  state,
-  onClick,
-  onFollow
-}: IProps) => {
-  const intl = useIntl()
+    status: takerState
+  } = item
 
   // xx(xx:时间区间)盈亏
   const jinqi = intl.formatMessage({ id: `mt.${state.jinqi}` })
@@ -45,13 +47,13 @@ export const OrderTaker = ({
     e.preventDefault()
     e.stopPropagation()
 
-    onFollow(takerState)
+    onFollow(takerState, item)
   }
 
   return (
     <div
       className=" border rounded-2xl border-gray-150 flex flex-col xl:w-[25rem] max-w-full flex-1 p-5.5 cursor-pointer hover:shadow-md"
-      onClick={() => onClick(id, takerState)}
+      onClick={() => onClick(leadId, takerState)}
     >
       {/* header */}
       <div className=" flex flex-col gap-5">
@@ -60,9 +62,12 @@ export const OrderTaker = ({
           <div className=" flex flex-row gap-4">
             <img src={imageUrl} width={54} height={54} className=" rounded-xl border border-solid border-gray-340" />
             <div className=" flex flex-col gap-1.5">
-              <div className=" flex gap-2 items-center ">
+              <div className=" flex gap-2 items-center flex-wrap">
                 <span className="account-name">{leadName}</span>
                 {/* <AccountTag type={account.type} /> */}
+                <AccountTag size="auto" color={accountGroupName}>
+                  {accountGroupName}
+                </AccountTag>
               </div>
               <div className="flex items-center gap-1">
                 <Iconfont name="renshu" width={16} color="black" height={16} hoverColor={colorTextPrimary} />
@@ -163,17 +168,16 @@ export const OrderTaker = ({
           height={42}
           type="primary"
           style={{
-            // background: takerState === 'yimanyuan' ? '#f49b1e' : '',
             width: '100%',
             borderRadius: 8
           }}
-          className={takerState}
-          disabled={takerState === 'wufagendan'}
+          className={`daidanzhuangtai${takerState}`}
+          disabled={takerState === 0}
           onClick={handleOnOpen}
         >
           <div className=" flex items-center font-semibold gap-1 text-base">
-            {takerState === 'yimanyuan' && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}
-            <FormattedMessage id={`mt.${takerState}`} />
+            {takerState === 2 && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}
+            <FormattedMessage id={`mt.daidanzhuangtai${takerState}`} />
           </div>
         </Button>
       </Space>

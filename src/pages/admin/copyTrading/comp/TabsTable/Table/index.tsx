@@ -8,7 +8,7 @@ type IProps = {
   datas: any[]
 }
 const TabTable = ({ columns, datas }: IProps) => {
-  return <Table columns={columns} dataSource={datas} />
+  return <Table columns={columns} dataSource={datas} pagination={false} />
 }
 
 export default TabTable

@@ -15,6 +15,7 @@ type IProp = {
   onConfirm?: (values: any) => void
   form: FormInstance
   children: React.ReactNode
+  money: number
 }
 
 const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
@@ -27,7 +28,7 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
   }
 }
 
-export default ({ onConfirm, form, children }: IProp) => {
+export default ({ onConfirm, form, children, money }: IProp) => {
   const intl = useIntl()
   const { trade } = useStores()
   const { currentAccountInfo } = trade.getAccountBalance()
@@ -172,11 +173,11 @@ export default ({ onConfirm, form, children }: IProp) => {
             name="profitRatio"
             rules={[
               {
-                required: true,
-                // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+                // required: true,
                 validator(rule, value, callback) {
                   if (!value) {
-                    return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                    return Promise.resolve()
+                    // return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
                   }
                   // 只能输入数字，正则匹配 value 是不是数字
                   if (!/^\d+$/.test(value)) {
@@ -212,11 +213,12 @@ export default ({ onConfirm, form, children }: IProp) => {
             name="stopLossRatio"
             rules={[
               {
-                required: true,
+                // required: true,
                 // message: intl.formatMessage({ id: 'mt.qingshuru' }),
                 validator(rule, value, callback) {
                   if (!value) {
-                    return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                    return Promise.resolve()
+                    // return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
                   }
                   // 只能输入数字，正则匹配 value 是不是数字
                   if (!/^\d+$/.test(value)) {

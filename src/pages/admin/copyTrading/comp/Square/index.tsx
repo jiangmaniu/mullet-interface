@@ -1,15 +1,14 @@
 import { useIntl, useModel } from '@umijs/max'
-import { Space } from 'antd'
+import { Pagination, Space } from 'antd'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
-import QA from '@/components/Admin/QA'
 import SelectRounded from '@/components/Base/SelectRounded'
+import { DEFAULT_PAGE_SIZE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
-import { IOrderTaker, IOrderTakerState } from '@/models/takers'
+import { IOrderTakerState } from '@/models/takers'
 import { getTradeFollowLeadPlaza } from '@/services/api/tradeFollow/lead'
-import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
 import NoAccountModal from '../NoAccountModal'
@@ -69,7 +68,7 @@ function Square({ active }: { active: boolean }) {
   const today = dayjs()
 
   // 帶單員
-  const [takers, setTakers] = useState<IOrderTaker[]>(defaultTakers)
+  const [takers, setTakers] = useState<TradeFollowLead.LeadPlazaItem[]>(defaultTakers as unknown as TradeFollowLead.LeadPlazaItem[])
 
   // 无账号提示弹窗
   const [openTips, setOpenTips] = useState(false)
@@ -77,42 +76,64 @@ function Square({ active }: { active: boolean }) {
 
   // 跟单设置弹窗
   const [openSetting, setOpenSetting] = useState(false)
+  const [info, setInfo] = useState<Record<string, any>>({})
   const onOpenChangeSetting = (val: boolean) => setOpenSetting(val)
 
   const onClick = (id: string, state: string) => {
     push(`/copy-trading/detail/${id}?state=${state}`)
   }
 
+  // 分页
+  const [total, setTotal] = useState(0)
+  const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
+  const [current, setCurrent] = useState(1)
+
   useEffect(() => {
     if (active && trade.currentAccountInfo && trade.currentAccountInfo.id) {
       console.log('state', state)
+      setLoading(true)
       getTradeFollowLeadPlaza({
         tradeAccountId: trade.currentAccountInfo.id,
         startDate: today.subtract(state.jinqi, 'day').format('YYYY-MM-DD'),
         endDate: today.format('YYYY-MM-DD'),
-        groupName: state.zhanghuleixing
-      }).then((res) => {
-        console.log('getTradeFollowLeadPlaza', res)
-
-        // @ts-ignore
-        if (res.success) setTakers(res.data)
+        groupName: state.zhanghuleixing,
+        size,
+        current
       })
-    }
-  }, [active, state, trade.currentAccountInfo])
+        .then((res) => {
+          console.log('getTradeFollowLeadPlaza', res)
 
-  const onFollow = (takerState: IOrderTakerState) => {
-    if (takerState === 'gendan' || takerState === 'yigendan') {
-      if (ableList.length === 0) {
-        setOpenTips(true)
-        return
-      }
-      setOpenSetting(true)
-    } else if (takerState === 'wufagendan') {
-      message.info(intl.formatMessage({ id: 'mt.wufagendan' }))
-    } else if (takerState === 'yimanyuan') {
-      message.info(intl.formatMessage({ id: 'mt.yimanyuan' }))
+          // @ts-ignore
+          if (res.success) {
+            if (res.data?.records && res.data.records.length > 0) {
+              setTakers(res.data.records)
+              setTotal(res.data.total)
+            }
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     }
+  }, [active, state, trade.currentAccountInfo, size, current])
+
+  const onFollow = (takerState: IOrderTakerState, info: Record<string, any>) => {
+    setInfo(info)
+
+    // if (takerState === 1 || takerState === 3) {
+    if (ableList.length === 0) {
+      setOpenTips(true)
+      return
+    }
+    setOpenSetting(true)
+    //   // } else if (takerState === 'wufagendan') {
+    //   //   message.info(intl.formatMessage({ id: 'mt.wufagendan' }))
+    // } else if (takerState === 2) {
+    //   message.info(intl.formatMessage({ id: 'mt.yimanyuan' }))
+    // }
   }
+
+  const [loading, setLoading] = useState(false)
 
   return (
     <Space direction="vertical" size={24} className="w-full">
@@ -126,10 +147,22 @@ function Square({ active }: { active: boolean }) {
           <OrderTaker key={idx} item={item} state={state} onClick={onClick} onFollow={onFollow} />
         ))}
       </div>
-      <QA />
+
+      <div className="flex items-end justify-end ">
+        <Pagination
+          current={current}
+          onChange={setCurrent}
+          total={total}
+          pageSize={size}
+          onShowSizeChange={setSize}
+          pageSizeOptions={['10', '20', '50']}
+        />
+      </div>
+      {/* <QA /> */}
       <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
 
       <TradingSettingModal
+        leadId={info.leadId}
         open={openSetting}
         onOpenChange={onOpenChangeSetting}
         onConfirm={() => {
