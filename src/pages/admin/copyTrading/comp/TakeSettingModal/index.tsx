@@ -3,7 +3,6 @@ import './style.less'
 import { ModalForm } from '@ant-design/pro-components'
 import { getIntl, useIntl } from '@umijs/max'
 import { Form, Tabs, TabsProps } from 'antd'
-import { useMemo } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { setTradeFollowLeadSettings } from '@/services/api/tradeFollow/lead'
@@ -22,7 +21,7 @@ const waitTime = (time = 100) => {
 }
 
 type IProps = {
-  info: Record<string, any>
+  info?: TradeFollowLead.LeadDetailItem
   open?: boolean
   onOpenChange?: ((open: boolean) => void) | undefined
   trigger?: JSX.Element
@@ -30,7 +29,7 @@ type IProps = {
 }
 
 export default ({ info, trigger, open, onOpenChange }: IProps) => {
-  const [form] = Form.useForm<{ name: string; company: string }>()
+  const [form] = Form.useForm()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.daidanshezhi' })
 
@@ -54,24 +53,27 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
     }
   ]
 
-  const formDefault = useMemo(
-    () => ({
-      leadId: info?.leadId || 0,
-      imageUrl: info?.imageUrl || '',
-      projectName: info?.projectName || '',
-      desc: info?.desc || '',
-      tags: info?.tags || '',
-      assetRequirement: info?.assetRequirement || 0,
-      maxSupportCount: info?.maxSupportCount || 0,
-      profitSharingRatio: info?.profitSharingRatio || 0,
-      assetSacle: info?.assetScale || 0
-    }),
-    [info]
-  )
+  const handleOpenChange = (open: boolean) => {
+    console.log('info', info)
+    open &&
+      form.setFieldsValue({
+        leadId: info?.leadId || 0,
+        tradeAccountId: info?.tradeAccountId || 0,
+        imageUrl: info?.imageUrl || '',
+        projectName: info?.projectName || '',
+        desc: info?.desc || '',
+        tags: info?.tags || '',
+        assetRequirement: info?.assetRequirement || 0,
+        maxSupportCount: info?.maxSupportCount || 0,
+        profitSharingRatio: info?.profitSharingRatio || 0,
+        assetSacle: info?.assetScale || 0
+      })
+
+    onOpenChange?.(open)
+  }
 
   const onFinish = async (values: any) => {
     setTradeFollowLeadSettings({
-      ...formDefault,
       ...values
     })
       .then((res) => {
@@ -87,17 +89,14 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
 
   return (
     <div>
-      <ModalForm<{
-        name: string
-        company: string
-      }>
+      <ModalForm
         onFinish={onFinish}
         title={title}
         trigger={trigger}
         form={form}
         width={430}
         open={open}
-        onOpenChange={onOpenChange}
+        onOpenChange={handleOpenChange}
         autoFocusFirstInput
         modalProps={{
           centered: true,
@@ -114,7 +113,7 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
       >
         <div className="flex flex-col items-center">
           <div className=" w-[165px] h-[142px] bg-[url('/img/modal-bg.png')] bg-[length:100%_100%] flex items-center justify-center -mt-7">
-            <AvatarUpload width={81} height={81} onChange={onAvatarChange} />
+            <AvatarUpload defaultImageUrl={info?.imageUrl} width={81} height={81} onChange={onAvatarChange} />
           </div>
           <div className="hide-form-item">
             <ProFormText name="imageUrl" rules={[{ required: true, message: intl.formatMessage({ id: 'mt.qingshangchuantouxiang' }) }]} />

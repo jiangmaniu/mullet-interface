@@ -1,4 +1,4 @@
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, useModel } from '@umijs/max'
 import { Pagination } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -19,6 +19,11 @@ import { TakeItem } from './TakeItem'
 export default function Take({ active }: { active: boolean }) {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const accountList = currentUser?.accountList || []
+  const currentAccountList = accountList.filter((item) => !item.isSimulate)
 
   const [state, setState] = useState({})
 
@@ -59,10 +64,15 @@ export default function Take({ active }: { active: boolean }) {
   }, [active, currentAccountInfo, current, size])
 
   const onTake = (id: string) => {
-    // trade.setCurrentAccountInfo(item)
-    // trade.jumpTrade()
-    // // 切换账户重置
-    // trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+    const item = currentAccountList.find((item) => item.id === id)
+    console.log(id)
+
+    if (item) {
+      trade.setCurrentAccountInfo(item)
+      trade.jumpTrade()
+      // 切换账户重置
+      trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+    }
   }
 
   return (

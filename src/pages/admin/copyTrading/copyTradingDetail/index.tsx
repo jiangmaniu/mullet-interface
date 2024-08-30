@@ -52,7 +52,7 @@ export default function copyTradingDetail() {
       console.log('getTradeFollowLeadPlaza', res)
 
       // @ts-ignore
-      if (res.success) setTakers(res.data)
+      if (res.success) setTaker(res.data)
     })
   }, [])
 

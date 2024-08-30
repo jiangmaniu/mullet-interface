@@ -222,7 +222,7 @@ export const useTabsConfig = () => {
   const [current, setCurrent] = useState(1)
   useEffect(() => {
     getTradeFollowFolloerHistoryFollowerOrder({})
-  })
+  }, [])
 
   const [total2, setTotal2] = useState(0)
   const [size2, setSize2] = useState(DEFAULT_PAGE_SIZE)

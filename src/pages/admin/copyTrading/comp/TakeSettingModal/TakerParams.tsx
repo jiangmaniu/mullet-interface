@@ -58,12 +58,13 @@ export default ({ form }: IProps) => {
                 if (!value) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
                 }
-                // 只能输入数字，正则匹配 value 是不是数字
-                if (!/^\d+$/.test(value)) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                const _value = Number(value)
+                // 数字必须是正数
+                if (Number.isFinite(_value) && _value > 0) {
+                  return Promise.resolve()
                 }
 
-                return Promise.resolve()
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengshu' }))
               }
             }
           ]}
@@ -98,12 +99,13 @@ export default ({ form }: IProps) => {
                 if (!value) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
                 }
-                // 只能输入数字，正则匹配 value 是不是数字
-                if (!/^\d+$/.test(value)) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                const _value = Number(value)
+                // 数字必须是正数
+                if (Number.isFinite(_value) && _value > 0) {
+                  return Promise.resolve()
                 }
 
-                return Promise.resolve()
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengshu' }))
               }
             }
           ]}
@@ -138,12 +140,14 @@ export default ({ form }: IProps) => {
                 if (!value) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
                 }
-                // 只能输入数字，正则匹配 value 是不是数字
-                if (!/^\d+$/.test(value)) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+
+                const _value = Number(value)
+                // 数字必须是正数
+                if (Number.isFinite(_value) && _value > 0) {
+                  return Promise.resolve()
                 }
 
-                return Promise.resolve()
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengshu' }))
               }
             }
           ]}
@@ -178,12 +182,13 @@ export default ({ form }: IProps) => {
                 if (!value) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
                 }
-                // 只能输入数字，正则匹配 value 是不是数字
-                if (!/^\d+$/.test(value)) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                const _value = Number(value)
+                // 数字必须是正整数
+                if (Number.isInteger(_value) && _value > 0) {
+                  return Promise.resolve()
                 }
 
-                return Promise.resolve()
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengzhengshu' }))
               }
             }
           ]}

@@ -45,7 +45,7 @@ export async function getTradeFollowLeadDetail(params: { leadId: string | number
 
 // /trade-follow/followApi/lead/statistics
 // 带单人 - 带单表现
-export async function tradeFollowStatistics(params: { id: string; startDatetime: string; endDatetime: string }) {
+export async function tradeFollowStatistics(params: { leadId: string; startDatetime: string; endDatetime: string }) {
   return request<API.Response<TradeFollowLead.TradeFollowLeadStatisticsItem>>('/api/trade-follow/followApi/lead/statistics', {
     method: 'GET',
     params
@@ -54,7 +54,7 @@ export async function tradeFollowStatistics(params: { id: string; startDatetime:
 
 // /trade-follow/followApi/lead/profit_statistics
 // 带单人 - 累计盈亏
-export async function tradeFollowProfitStatistics(params: { id: string; startDatetime: string; endDatetime: string }) {
+export async function tradeFollowProfitStatistics(params: { leadId: string; startDatetime: string; endDatetime: string }) {
   return request<API.Response<TradeFollowLead.TradeFollowLeadProfitStatisticsItem>>('/api/trade-follow/followApi/lead/profit_statistics', {
     method: 'GET',
     params
@@ -104,4 +104,12 @@ export async function tradeFollowLeadProfitSharingDetail(params: { leadId?: stri
       params
     }
   )
+}
+
+// /trade-follow/followApi/lead/close
+// 带单人 - 结束带单
+export async function tradeFollowLeadClose(params: { leadId: string }) {
+  return request<API.Response>('/api/trade-follow/followApi/lead/close?leadId=' + params.leadId, {
+    method: 'POST'
+  })
 }

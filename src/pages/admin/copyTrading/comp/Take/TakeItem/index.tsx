@@ -15,11 +15,11 @@ type IProps = IOrderTakerProps & {
   onTake?: (id: string) => void
 }
 export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
-  const { id, imageUrl, projectName, groupName, tags, state: takerState } = item
+  const { leadId, tradeAccountId, imageUrl, projectName, groupName, tags, state: takerState } = item
   return (
     <div
       onClick={() => {
-        push(`/copy-trading/take-detail/${id}`)
+        push(`/copy-trading/take-detail/${leadId}`)
       }}
       className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full hover:shadow-sm"
     >
@@ -105,7 +105,7 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
             onClick={(e) => {
               e.stopPropagation()
 
-              onTake?.(id)
+              onTake?.(tradeAccountId)
             }}
             // disabled={takerState === 'wufagendan'}
           >
@@ -122,7 +122,7 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
               borderRadius: 8
             }}
             // disabled={takerState === 'wufagendan'}
-            onClick={() => onClick?.(id)}
+            onClick={() => onClick?.(leadId)}
           >
             <div className="flex items-center text-sm font-semibold gap-1 align-middle">
               <Iconfont name="shezhi" width={18} color="black" height={18} hoverColor={colorTextPrimary} />

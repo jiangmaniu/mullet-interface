@@ -21,9 +21,19 @@ const beforeUpload = (file: FileType) => {
   }
   return isJpgOrPng && isLt2M
 }
-export const AvatarUpload = ({ onChange, width = 112, height = 113 }: { onChange: (p: any) => void; width?: number; height?: number }) => {
+export const AvatarUpload = ({
+  defaultImageUrl,
+  onChange,
+  width = 112,
+  height = 113
+}: {
+  defaultImageUrl?: string
+  onChange: (p: any) => void
+  width?: number
+  height?: number
+}) => {
   const [loading, setLoading] = useState(false)
-  const [imageUrl, setImageUrl] = useState<string>()
+  const [imageUrl, setImageUrl] = useState<string>(defaultImageUrl || '')
   const handleChange: UploadProps['onChange'] = (info) => {
     if (info.file.status === 'uploading') {
       setLoading(true)

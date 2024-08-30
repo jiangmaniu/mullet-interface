@@ -289,6 +289,8 @@ export default {
   'mt.fasongyanzhengma': '发送验证码',
   'mt.qingshuru': '請輸入',
   'mt.qingshurushuzi': '請輸入數字',
+  'mt.qingshuruzhengshu': '请输入正数',
+  'mt.qingshuruzhengzhengshu': '请输入正整数',
   'mt.qingxuanze': '請選擇',
   'mt.qingxuanzequhao': '请选择区号',
   'mt.qingshuruyanzhengma': '请输入验证码',
@@ -638,8 +640,10 @@ export default {
   'mt.xiangqing': '詳情',
   'mt.chengjiaojiage': '成交價格',
   'mt.caozuochenggong': '操作成功',
+  'mt.caozuoshibai': '操作失敗',
   'mt.qingxianzhizaishigezifuyinei': '請限制在十個字符以內',
   'mt.qingxianzhizailiangbaizifuyinei': '請限制在两百個字符以內',
   'mt.daidanzhuangtai2': '已滿員',
-  'mt.daidanzhuangtai1': '可跟單'
+  'mt.daidanzhuangtai1': '可跟單',
+  'mt.xitongcuowu': '系統錯誤'
 }

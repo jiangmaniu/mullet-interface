@@ -18,30 +18,6 @@ export const useOverview = ({ id }: { id: string | undefined }) => {
     retracementRate: 0,
     winRate: 0
   })
-  useEffect(() => {
-    // 带单表现
-    tradeFollowStatistics({
-      id: String(id),
-      // startDatetime = endDatetime 日期减去 dateRange1 天
-      startDatetime: endDatetime.subtract(Number(dateRange1), 'day').format('YYYY-MM-DD 00:00:00'),
-      endDatetime: endDatetime.format('YYYY-MM-DD 23:59:59')
-    })
-      .then((res) => {
-        // form.setFieldsValue(formDefault) // 重置
-        if (res.success) {
-          if (!res.data) {
-            message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
-            return
-          }
-
-          setStatistics(res.data)
-          message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
-        }
-      })
-      .catch((error) => {
-        message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
-      })
-  }, [id, dateRange1])
 
   const [dateRange2, setDateRange2] = useState('14')
   const [profitStatistics, setProfitStatistics] = useState<TradeFollowLead.TradeFollowLeadProfitStatisticsItem>({
@@ -120,7 +96,7 @@ export const useOverview = ({ id }: { id: string | undefined }) => {
   useEffect(() => {
     // 带单表现
     tradeFollowStatistics({
-      id: String(id),
+      leadId: String(id),
       // startDatetime = endDatetime 日期减去 dateRange1 天
       startDatetime: endDatetime.subtract(Number(dateRange1), 'day').format('YYYY-MM-DD 00:00:00'),
       endDatetime: endDatetime.format('YYYY-MM-DD 23:59:59')
@@ -145,7 +121,7 @@ export const useOverview = ({ id }: { id: string | undefined }) => {
   useEffect(() => {
     // 累计盈亏
     tradeFollowProfitStatistics({
-      id: String(id),
+      leadId: String(id),
       // startDatetime = endDatetime 日期减去 dateRange2 天
       startDatetime: endDatetime.subtract(Number(dateRange2), 'day').format('YYYY-MM-DD 00:00:00'),
       endDatetime: endDatetime.format('YYYY-MM-DD 23:59:59')

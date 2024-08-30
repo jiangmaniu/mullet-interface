@@ -54,6 +54,9 @@ export default ({ form }: IProps) => {
             label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
           }))}
         /> */}
+        <div className="hide-form-item">
+          <ProFormText name="leadId" rules={[{ required: true, message: intl.formatMessage({ id: 'mt.xitongcuowu' }) }]} />
+        </div>
 
         <ProFormSelect
           name="tradeAccountId"
@@ -64,6 +67,7 @@ export default ({ form }: IProps) => {
             }
           ]}
           fieldProps={{
+            // disabled: true,
             style: {
               height: 42
             },

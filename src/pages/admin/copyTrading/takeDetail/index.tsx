@@ -1,14 +1,13 @@
 import './style.less'
 
 import { FormattedMessage, useIntl, useModel, useParams } from '@umijs/max'
-import { Select } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
 import Carousel from '@/components/Admin/Carousel'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
-import { IOrderTaker } from '@/models/takers'
+import { getTradeFollowLeadDetail, tradeFollowLeadClose } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
 
@@ -23,8 +22,9 @@ import TakeDatas from '../comp/TakeDatas'
 import TakeSettingModal from '../comp/TakeSettingModal'
 import DetailModal from './DetailModal'
 import EndModal from './EndModal'
-import { defaultTaker, defaultTimeRange, mockNotifications } from './mock'
+import { defaultTimeRange, mockNotifications } from './mock'
 import { useTabsConfig } from './useTabsConfig'
+
 export default function TakeDetail() {
   const intl = useIntl()
   const { setPageBgColor } = useModel('global')
@@ -33,12 +33,19 @@ export default function TakeDetail() {
   const params = useParams()
   const { id } = params
 
-  const [taker, setTaker] = useState<IOrderTaker>()
+  const [taker, setTaker] = useState<TradeFollowLead.LeadDetailItem>()
 
   useEffect(() => {
     // 得到 takeId 之后去请求后端数据
-    setTaker(defaultTaker)
-  }, [])
+    // setTaker(defaultTaker)
+
+    getTradeFollowLeadDetail({
+      leadId: String(id)
+    }).then((res) => {
+      // @ts-ignore
+      if (res.success) setTaker({ ...res.data, leadId: id })
+    })
+  }, [id])
 
   useEffect(() => {
     // 设置当前页背景颜色
@@ -107,19 +114,14 @@ export default function TakeDetail() {
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col items-start gap-5">
                   {/* 介绍 */}
-                  <Introduction
-                    avatar={taker?.account.avatar}
-                    name={taker?.account.name}
-                    introduction={taker?.account.introduction}
-                    tags={taker?.tags}
-                  />
+                  <Introduction avatar={taker?.imageUrl} name={taker?.projectName} introduction={taker?.desc} tags={taker?.tags} />
                   {/* 账户分润 */}
                   <div className="flex flex-col items-start gap-2">
                     <div className="flex items-center gap-2">
                       <span className=" text-sm font-normal text-gray-600">
                         <FormattedMessage id="mt.leijifenrun" />
                       </span>
-                      <Select
+                      {/* <Select
                         defaultValue={'778321'}
                         rootClassName=" bg-unset"
                         style={{ width: 132, height: 30 }}
@@ -129,10 +131,10 @@ export default function TakeDetail() {
                           { value: '778341', label: '账户#778341' },
                           { value: '778321', label: '账户#778321' }
                         ]}
-                      />
+                      /> */}
                     </div>
                     <div className="flex items-end gap-1">
-                      <span className=" text-3xl font-medium text-primary !font-dingpro-medium"> {taker?.datas.rate1}</span>
+                      <span className=" text-3xl font-medium text-primary !font-dingpro-medium"> {taker?.rate1}</span>
                       <span className=" text-sm font-normal text-primary">USDT</span>
                     </div>
                   </div>
@@ -192,7 +194,7 @@ export default function TakeDetail() {
                 </div>
               </Button>
               <TakeSettingModal
-                info={{}}
+                info={taker}
                 trigger={
                   <Button
                     height={42}
@@ -263,19 +265,35 @@ export default function TakeDetail() {
                 open={openEnd}
                 onOpenChange={setOpenEnd}
                 onConfirm={() => {
-                  if (status === 'abled') {
-                    loadingRef.current?.show()
-                    setTimeout(() => {
+                  loadingRef.current?.show()
+                  tradeFollowLeadClose({
+                    leadId: String(id)
+                  })
+                    .then((res) => {
+                      if (res.success) {
+                        message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                        setOpenEnd(false)
+                        setStatus('disabled')
+                      } else {
+                        message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+                      }
+                    })
+                    .finally(() => {
                       loadingRef.current?.close()
-                      message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
-                    }, 3000)
-                    setOpenEnd(false)
+                    })
+                  // if (status === 'abled') {
+                  //   loadingRef.current?.show()
+                  //   setTimeout(() => {
+                  //     loadingRef.current?.close()
+                  //     message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                  //   }, 3000)
+                  //   setOpenEnd(false)
 
-                    return
-                  }
+                  //   return
+                  // }
 
-                  setStatus('abled')
-                  setOpenEnd(false)
+                  // setStatus('abled')
+                  // setOpenEnd(false)
                 }}
                 status={status}
               />
