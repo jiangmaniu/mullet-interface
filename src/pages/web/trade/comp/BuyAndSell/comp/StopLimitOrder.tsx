@@ -13,9 +13,9 @@ import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getC
 
 import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
+import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import classNames from 'classnames'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
@@ -246,7 +246,7 @@ export default observer(
               }
             }}
             tips={
-              <span className={classNames('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
+              <span className={cn('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
                 {isBuy && (
                   <>
                     <FormattedMessage id="mt.mairujiafanwei" /> ≤ {formatNum(priceTip)} USD
@@ -301,7 +301,7 @@ export default observer(
                 }}
                 tips={
                   <>
-                    <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
+                    <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
@@ -351,7 +351,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
+                  <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
                     <span className="!font-dingpro-regular pb-[2px]">
                       <FormattedMessage id="mt.fanwei" />
                       <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>

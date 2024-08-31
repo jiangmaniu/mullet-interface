@@ -2,7 +2,6 @@ import { QuestionCircleOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, history, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
 import { Segmented, Tooltip } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -14,6 +13,7 @@ import SwitchLanguage from '@/components/SwitchLanguage'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { cn } from '@/utils/cn'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -245,7 +245,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                     }, 200)
                   }}
                   key={item.id}
-                  className={classNames(
+                  className={cn(
                     'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
                     {
                       'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
@@ -260,7 +260,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                       </div>
                       <div className="ml-[10px] flex px-1">
                         <div
-                          className={classNames(
+                          className={cn(
                             'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
                             isSimulate ? 'bg-green' : 'bg-brand'
                           )}
@@ -343,7 +343,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           align={{ offset: [0, 0] }}
         >
           <div
-            className={classNames('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}
+            className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}
             onMouseEnter={() => {
               // 刷新账户余额信息,使用ws最新的
               // setTimeout(() => {
@@ -354,12 +354,12 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             <div className="flex flex-col items-end group relative">
               <span className="text-lg !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
               <div className="flex items-center">
-                <span className={classNames('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
+                <span className={cn('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
                   {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                 </span>
                 <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
                 <span
-                  className={classNames(
+                  className={cn(
                     'text-xs dark:text-gray-570 truncate max-w-[110px]',
                     iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500'
                   )}

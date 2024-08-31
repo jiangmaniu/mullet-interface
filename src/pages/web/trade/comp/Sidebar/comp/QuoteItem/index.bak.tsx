@@ -1,6 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Col, Row, Tooltip } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useTransition } from 'react'
 
@@ -11,6 +10,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 import mitt from '@/utils/mitt'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -71,7 +71,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
 
         <Row
-          className={classNames(
+          className={cn(
             'flex cursor-pointer pr-4 items-center rounded px-3 py-[10px] hover:bg-[var(--list-hover-primary-bg)] dark:hover:bg-gray-660 relative',
             {
               'dark:bg-gray-660 bg-[var(--list-hover-primary-bg)]': isActive,
@@ -98,9 +98,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           <Col span={12} className="flex flex-col items-end">
             <div className="!font-dingpro-medium text-sx text-primary text-right">{res.hasQuote ? formatNum(bid) : '--'}</div>
             {res.hasQuote && (
-              <div
-                className={classNames('text-right !font-dingpro-medium text-xs', per > 0 ? 'text-green dark:text-green-600' : 'text-red')}
-              >
+              <div className={cn('text-right !font-dingpro-medium text-xs', per > 0 ? 'text-green dark:text-green-600' : 'text-red')}>
                 {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
               </div>
             )}

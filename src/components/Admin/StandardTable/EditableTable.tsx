@@ -12,11 +12,11 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { ButtonProps, Popconfirm } from 'antd'
 import { NamePath } from 'antd/es/form/interface'
 import { FormInstance } from 'antd/lib'
-import classNames from 'classnames'
 import { cloneDeep } from 'lodash-es'
 import React, { useEffect, useRef, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
+import { cn } from '@/utils/cn'
 
 // @ts-ignore
 interface IProps<T, U> extends EditableProTableProps<T, U> {
@@ -211,7 +211,7 @@ export default <T extends Record<string, any>, U extends ParamsType>({
         rowKey={'id'}
         // name="table"
         name={name}
-        className={classNames(tableClassName, { [tableBorderClassName]: showCustomBordered })}
+        className={cn(tableClassName, { [tableBorderClassName]: showCustomBordered })}
         // scroll={{
         //   x: 960,
         // }}

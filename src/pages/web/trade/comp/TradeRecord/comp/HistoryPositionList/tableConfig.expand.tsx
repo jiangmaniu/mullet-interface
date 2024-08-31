@@ -1,10 +1,10 @@
 import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 
 import { getEnum } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 
 // 点击行展开的表格配置
 export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
@@ -197,7 +197,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
         let profit: any = record.profit
         const flag = Number(profit) > 0
         return profit ? (
-          <span className={classNames('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${profit}` : profit}</span>
+          <span className={cn('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${profit}` : profit}</span>
         ) : (
           '-'
         )

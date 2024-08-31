@@ -1,10 +1,10 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { FormInstance, Modal } from 'antd'
-import classNames from 'classnames'
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import ENV from '@/env'
+import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 
 import { upload } from './upload'
@@ -279,8 +279,8 @@ export default forwardRef(
     })
 
     return (
-      <div className={classNames('image-upload-container', className, uploadClassName)}>
-        <div className={classNames('flex items-center justify-center flex-col')} style={contentStyle}>
+      <div className={cn('image-upload-container', className, uploadClassName)}>
+        <div className={cn('flex items-center justify-center flex-col')} style={contentStyle}>
           <div
             className="img-item"
             onClick={() => {

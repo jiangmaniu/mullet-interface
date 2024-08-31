@@ -1,6 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef, useTransition } from 'react'
 
@@ -12,6 +11,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { IRecordTabKey } from '@/mobx/trade'
 import { formatNum, toFixed } from '@/utils'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import OpenTipsModal from '../Modal/OpenTipsModal'
@@ -90,7 +90,7 @@ function TradeRecord({ trigger }: IProps) {
               <span className="mr-5 text-sm text-secondary">
                 <span className="pr-[5px]">{activeSymbolName}</span>
                 <FormattedMessage id="mt.fudongyingkui" />
-                <span className={classNames('pl-2 !font-dingpro-medium', totalProfit > 0 ? 'text-green' : 'text-red')}>
+                <span className={cn('pl-2 !font-dingpro-medium', totalProfit > 0 ? 'text-green' : 'text-red')}>
                   {totalProfit > 0 ? '+' + totalProfitShow : totalProfitShow} USD
                 </span>
               </span>
@@ -159,7 +159,7 @@ function TradeRecord({ trigger }: IProps) {
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className={classNames('pt-1 mb-3 bg-primary relative z-[1]', borderClassName)}>
+          <div className={cn('pt-1 mb-3 bg-primary relative z-[1]', borderClassName)}>
             {renderTabs()}
             {renderTabContent()}
           </div>

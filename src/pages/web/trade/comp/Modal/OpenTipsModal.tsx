@@ -1,7 +1,6 @@
 import { CloseOutlined } from '@ant-design/icons'
 import { FormattedMessage } from '@umijs/max'
 import { Col, Row } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 
 import Button from '@/components/Base/Button'
@@ -15,6 +14,7 @@ import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 平仓、挂单成功提示
@@ -97,7 +97,7 @@ export default observer((props, ref) => {
                 <div className="flex items-center">
                   <SymbolIcon src={data?.imgUrl} width={24} height={24} />
                   <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
-                  <span className={classNames('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
+                  <span className={cn('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
                     · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} ·{' '}
                     <FormattedMessage id="mt.zhucang" />
                   </span>
@@ -112,7 +112,7 @@ export default observer((props, ref) => {
               <div className="flex flex-col items-end">
                 {/* @TODO 没有字段 */}
                 {/* @ts-ignore */}
-                <span className={classNames('font-bol pb-2 text-lg', data?.profit > 0 ? 'text-green' : 'text-red')}>
+                <span className={cn('font-bol pb-2 text-lg', data?.profit > 0 ? 'text-green' : 'text-red')}>
                   {/* @ts-ignore */}
                   {toFixed(data?.profit)} {userUnit}
                 </span>
@@ -127,7 +127,7 @@ export default observer((props, ref) => {
             <div className="flex items-center py-3">
               <img width={24} height={24} alt="" src={`/img/coin-icon/${symbol}.png`} className="rounded-full" />
               <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
-              <span className={classNames('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
+              <span className={cn('pl-1 text-sm', isBuy ? 'text-green' : 'text-red')}>
                 · {isBuy ? <FormattedMessage id="mt.mairu" /> : <FormattedMessage id="mt.maichu" />} · <FormattedMessage id="mt.zhucang" />
                 20X
               </span>

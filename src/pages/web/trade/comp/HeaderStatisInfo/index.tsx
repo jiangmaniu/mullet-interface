@@ -1,6 +1,5 @@
 import { CaretDownOutlined, InfoCircleOutlined, MenuUnfoldOutlined, RightOutlined } from '@ant-design/icons'
 import { FormattedMessage, useModel } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
@@ -10,6 +9,7 @@ import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Futures from '../Futures'
@@ -42,7 +42,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
             <div className="flex items-center w-full gap-x-[92px]">
               <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
                 <div
-                  className={classNames('flex items-center relative xxl:top-1', {
+                  className={cn('flex items-center relative xxl:top-1', {
                     'cursor-pointer': !openTradeSidebar
                   })}
                   onClick={() => {
@@ -83,10 +83,10 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                 <div className="flex items-center xxl:pl-6 xl:pl-7 xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
                   {res.hasQuote && (
                     <>
-                      <span className={classNames('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>
+                      <span className={cn('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>
                         {formatNum(res.bid)}
                       </span>
-                      <span className={classNames('pl-2 text-base !font-dingpro-medium', color)}>
+                      <span className={cn('pl-2 text-base !font-dingpro-medium', color)}>
                         {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}
                       </span>
                     </>
@@ -172,10 +172,8 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
           <div className="flex items-end justify-between pt-3">
             <div className="flex flex-col">
               <div className="flex items-baseline">
-                <span className={classNames('text-[26px] font-bold', color)}>{res.close}</span>
-                <span className={classNames('pl-2 text-xs font-semibold', color)}>
-                  {res.percent > 0 ? '+' + res.percent : res.percent}%
-                </span>
+                <span className={cn('text-[26px] font-bold', color)}>{res.close}</span>
+                <span className={cn('pl-2 text-xs font-semibold', color)}>{res.percent > 0 ? '+' + res.percent : res.percent}%</span>
               </div>
               <div className="mt-1 flex">
                 <Futures

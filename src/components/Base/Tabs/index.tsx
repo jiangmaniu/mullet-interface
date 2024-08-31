@@ -1,6 +1,7 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Tabs as AntdTabs, TabsProps } from 'antd'
-import classNames from 'classnames'
+
+import { cn } from '@/utils/cn'
 
 export default function Tabs({
   hiddenBottomLine,
@@ -97,5 +98,5 @@ export default function Tabs({
     }
   })
 
-  return <AntdTabs rootClassName={classNames(rootClassName, className)} type={type} tabBarGutter={tabBarGutter} items={items} {...res} />
+  return <AntdTabs rootClassName={cn(rootClassName, className)} type={type} tabBarGutter={tabBarGutter} items={items} {...res} />
 }

@@ -1,6 +1,5 @@
 import { ProColumns, useIntl } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -16,6 +15,7 @@ import ClosePositionConfirmModal from '@/pages/web/trade/comp/Modal/ClosePositio
 import SetStopLossProfitModal from '@/pages/web/trade/comp/Modal/SetStopLossProfitModal'
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { calcExchangeRate, calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
@@ -85,7 +85,7 @@ function Position({ style, parentPopup }: IProps) {
             <SymbolIcon src={record.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-pf-bold text-primary">{record.symbol}</span>
-              <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
         )
@@ -142,7 +142,7 @@ function Position({ style, parentPopup }: IProps) {
         return (
           <>
             {Number(record.currentPrice) ? (
-              <span className={classNames('!text-[13px]', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+              <span className={cn('!text-[13px]', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
                 {formatNum(record.currentPrice, { precision: record.symbolDecimal })}
               </span>
             ) : (
@@ -219,7 +219,7 @@ function Position({ style, parentPopup }: IProps) {
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
               <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin, { precision }) : '--'} </span>
-              <span className={classNames('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
+              <span className={cn('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (
@@ -365,7 +365,7 @@ function Position({ style, parentPopup }: IProps) {
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
         const profitDom = profit ? (
-          <span className={classNames('font-pf-bold', color)}>{record.profitFormat}</span>
+          <span className={cn('font-pf-bold', color)}>{record.profitFormat}</span>
         ) : (
           <span className="!text-[13px]m">-</span>
         )
@@ -373,7 +373,7 @@ function Position({ style, parentPopup }: IProps) {
         return (
           <div className="flex flex-col">
             <div>{profitDom}</div>
-            {yieldRate && <div className={classNames('!text-xs font-pf-bold', color)}>({yieldRate})</div>}
+            {yieldRate && <div className={cn('!text-xs font-pf-bold', color)}>({yieldRate})</div>}
           </div>
         )
       }

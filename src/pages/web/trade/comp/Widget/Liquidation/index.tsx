@@ -1,13 +1,13 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import classNames from 'classnames'
 import { cloneDeep, groupBy } from 'lodash-es'
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, uniqueObjectArray } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Gauge from './Gauge'
@@ -160,9 +160,7 @@ function Liquidation() {
                       <span className="text-primary !text-xs pl-1">{item.label}</span>
                       {/* 逐仓-锁仓模式展示 */}
                       {isLockedPosition && (
-                        <span
-                          className={classNames('text-white px-[2px] py-[1px] text-xs rounded ml-[5px]', isBuy ? 'bg-green' : 'bg-red')}
-                        >
+                        <span className={cn('text-white px-[2px] py-[1px] text-xs rounded ml-[5px]', isBuy ? 'bg-green' : 'bg-red')}>
                           {isBuy ? <FormattedMessage id="mt.duo" /> : <FormattedMessage id="mt.kong" />}
                         </span>
                       )}

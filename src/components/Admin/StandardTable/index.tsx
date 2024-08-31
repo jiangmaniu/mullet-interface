@@ -17,7 +17,6 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { FormInstance, Popconfirm, TablePaginationConfig, message } from 'antd'
 import { type TableProps as RcTableProps } from 'antd/es/table/InternalTable'
-import classNames from 'classnames'
 import moment from 'moment'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 
@@ -29,6 +28,7 @@ import { useLang } from '@/context/languageProvider'
 
 import { IThemeMode, useTheme } from '@/context/themeProvider'
 import { formatNum, isTruthy } from '@/utils'
+import { cn } from '@/utils/cn'
 import Export from './Export'
 
 export type Instance = {
@@ -171,10 +171,18 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   const themeMode = theme || themeConfig.theme
   const isDark = themeMode === 'dark'
 
+  const [showQueryBtn, setShowQueryBtn] = useState(false) // 避免切换页面，表单项没渲染出来，先出现查询按钮，页面闪动
+
   const handleExport = async (searchConfig: Omit<BaseQueryFilterProps, 'submitter' | 'isForm'>) => {
     const values = searchConfig?.form?.getFieldsValue()
     return onExport?.(values)
   }
+
+  useEffect(() => {
+    setTimeout(() => {
+      setShowQueryBtn(true)
+    }, 100)
+  }, [])
 
   useEffect(() => {
     getInstance?.({
@@ -217,31 +225,33 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       optionRender: (searchConfig, props, dom) => {
         return [
           <div key="action" className="flex items-center">
-            <div className="flex items-center gap-3">
-              {/* {dom.reverse()} */}
-              <IconFontButton
-                type="primary"
-                icon="sousuo"
-                loading={loading}
-                onClick={() => {
-                  searchConfig?.form?.submit()
-                }}
-                style={{ paddingLeft: 10 }}
-              >
-                {intl.formatMessage({ id: 'common.search' })}
-              </IconFontButton>
-              <IconFontButton
-                icon="qingli"
-                onClick={() => {
-                  searchConfig?.form?.resetFields()
-                  searchConfig?.form?.submit()
-                }}
-                style={{ paddingLeft: 10 }}
-              >
-                {intl.formatMessage({ id: 'common.reset' })}
-              </IconFontButton>
-              {showExportWhenData && showExportBtn && getExportBtn(searchConfig)}
-            </div>
+            {showQueryBtn && (
+              <div className="flex items-center gap-3">
+                {/* {dom.reverse()} */}
+                <IconFontButton
+                  type="primary"
+                  icon="sousuo"
+                  loading={loading}
+                  onClick={() => {
+                    searchConfig?.form?.submit()
+                  }}
+                  style={{ paddingLeft: 10 }}
+                >
+                  {intl.formatMessage({ id: 'common.search' })}
+                </IconFontButton>
+                <IconFontButton
+                  icon="qingli"
+                  onClick={() => {
+                    searchConfig?.form?.resetFields()
+                    searchConfig?.form?.submit()
+                  }}
+                  style={{ paddingLeft: 10 }}
+                >
+                  {intl.formatMessage({ id: 'common.reset' })}
+                </IconFontButton>
+                {showExportWhenData && showExportBtn && getExportBtn(searchConfig)}
+              </div>
+            )}
           </div>
         ]
       },
@@ -352,7 +362,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         }
       }
       if (!v.valueType && (v.className || '')?.indexOf('!px-5') === -1) {
-        v.className = classNames('!px-5', v.className) // 统一修改单元格间距
+        v.className = cn('!px-5', v.className) // 统一修改单元格间距
       }
 
       // 多语言 统一修改单元格宽度
@@ -591,7 +601,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       //     </Form>
       //   )
       // }}
-      className={classNames(
+      className={cn(
         'standard-table',
         classNameWrapper,
         { 'no-table-bordered': !hasTableBordered, [className as string]: true },

@@ -1,6 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 
 import StandardTable from '@/components/Admin/StandardTable'
@@ -9,6 +8,7 @@ import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { getBgaOrderPage, getOrderAllDetail } from '@/services/api/tradeCore/order'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 import { removeEmptyChildren } from '@/utils/tree'
 
 import { getColumns } from './tableConfig'
@@ -51,7 +51,7 @@ function HistoryPositionList() {
         headStyle: { borderRadius: 0 },
         className: ''
       }}
-      className={classNames(recordListClassName, className)}
+      className={cn(recordListClassName, className)}
       size="middle"
       params={{ accountId: trade.currentAccountInfo.id, symbol }}
       action={{

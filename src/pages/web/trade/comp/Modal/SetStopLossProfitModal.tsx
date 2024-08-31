@@ -1,5 +1,4 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
@@ -13,6 +12,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 
@@ -145,7 +145,7 @@ export default observer(
                 <div className="flex items-center">
                   <SymbolIcon src={item?.imgUrl} width={24} height={24} />
                   <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
-                  <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
+                  <span className={cn('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
                 </div>
                 <div className="flex items-end justify-center flex-col">
                   <span className="text-sm text-primary">
@@ -207,7 +207,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <div className={classNames('!font-dingpro-regular', { '!text-red': isBuy ? sl && sl > sl_scope : sl && sl < sl_scope })}>
+                  <div className={cn('!font-dingpro-regular', { '!text-red': isBuy ? sl && sl > sl_scope : sl && sl < sl_scope })}>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
@@ -257,7 +257,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <span className={classNames('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}>
+                  <span className={cn('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}>
                     <FormattedMessage id="mt.fanwei" />
                     &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                     &nbsp;

@@ -2,7 +2,6 @@ import { ProFormDigit } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import { FormInstance } from 'antd/lib'
-import classnames from 'classnames'
 import { debounce } from 'lodash-es'
 import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
@@ -10,6 +9,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
 import { formatNum, isTruthy } from '@/utils'
+import { cn } from '@/utils/cn'
 
 type IProps = {
   name?: string
@@ -135,7 +135,7 @@ function InputNumber(props: IProps) {
 
   const AddIcon = (
     <div
-      className={classnames(
+      className={cn(
         'flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-r-lg border-l border-primary dark:bg-gray-750 text-xl text-weak',
         isColumn && '!rounded-r-[0px] border-b border-l-0',
         { '!cursor-not-allowed !text-weak/50': disabled || (max && newValue >= max) },
@@ -148,7 +148,7 @@ function InputNumber(props: IProps) {
   )
   const MinusIcon = (
     <div
-      className={classnames(
+      className={cn(
         'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-l-lg border-r border-primary dark:bg-gray-750 text-xl text-weak',
         isColumn && 'border-none',
         { '!cursor-not-allowed !text-weak/50': (min && newValue <= min) || disabled },
@@ -195,10 +195,10 @@ function InputNumber(props: IProps) {
   })
 
   return (
-    <div className={classnames('relative w-full', rootClassName, innerRootClassName)}>
-      {label && <div className={classnames('text-sm pb-[4px] text-left font-normal text-primary', classNames?.label)}>{label}</div>}
+    <div className={cn('relative w-full', rootClassName, innerRootClassName)}>
+      {label && <div className={cn('text-sm pb-[4px] text-left font-normal text-primary', classNames?.label)}>{label}</div>}
       <div
-        className={classnames(
+        className={cn(
           'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border border-primary bg-white input-wrapper',
           className
         )}
@@ -207,7 +207,7 @@ function InputNumber(props: IProps) {
         {showAddMinus && direction === 'row' && MinusIcon}
         <ProFormDigit
           placeholder={placeholder}
-          className={classnames(
+          className={cn(
             'h-full w-full flex-1 px-4 text-center text-sm font-bold text-primary placeholder:text-secondary disabled:bg-gray-50/60',
             classNames?.input,
             disabled && 'cursor-not-allowed'
@@ -270,7 +270,7 @@ function InputNumber(props: IProps) {
       </div>
       {isFocus && tips && showFloatTips && (
         <div
-          className={classnames(
+          className={cn(
             'absolute top-[35px] z-10 flex w-full items-end justify-center rounded-b-lg border border-primary bg-gray-50 px-1 py-2 text-center text-xs text-weak',
             classNames?.tips
           )}

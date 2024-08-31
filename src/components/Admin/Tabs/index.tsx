@@ -1,12 +1,12 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { TabsProps } from 'antd'
-import classNames from 'classnames'
 import { TabBarExtraContent } from 'rc-tabs/lib/interface'
 import React, { useEffect, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import TabsScroll from '@/components/Base/TabsScroll'
 import { colorTextPrimary, colorTextSecondary } from '@/theme/theme.config'
+import { cn } from '@/utils/cn'
 
 import TabsComp from '../../Base/Tabs'
 
@@ -81,7 +81,7 @@ export default function Tabs({
 
             tab = (
               <span
-                className={classNames('flex justify-center items-center', hoverClassName)}
+                className={cn('flex justify-center items-center', hoverClassName)}
                 onClick={() => {
                   if (showMobileTabs) {
                     handleChange(v.key)
@@ -126,7 +126,7 @@ export default function Tabs({
             {tabItems.map((item, idx) => (
               <div
                 key={idx}
-                className={classNames(
+                className={cn(
                   'min-w-[186px] relative hover:text-primary cursor-pointer border-gray-150 border-l border-t border-r flex items-center justify-center text-base rounded-t-2xl h-[50px] font-semibold',
                   item.key === tabKey ? 'bg-white !border-b-0 text-primary !z-[50]' : 'bg-[#F8FBFD] text-secondary'
                 )}
@@ -162,7 +162,7 @@ export default function Tabs({
                 handleChange(activeKey)
               }}
               tabBarExtraContent={tabBarExtraContent}
-              className={classNames({
+              className={cn({
                 'custom-tabbar': hiddenTabbarLine
               })}
               hiddenBottomLine={hiddenBottomLine}

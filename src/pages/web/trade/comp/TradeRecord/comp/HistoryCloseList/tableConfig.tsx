@@ -1,11 +1,11 @@
 import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 
 export const getColumns = (): ProColumns<Order.TradeRecordsPageListItem>[] => {
   return [
@@ -33,7 +33,7 @@ export const getColumns = (): ProColumns<Order.TradeRecordsPageListItem>[] => {
             <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-semibold text-primary">{record.symbol}</span>
-              <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
         )
@@ -201,7 +201,7 @@ export const getColumns = (): ProColumns<Order.TradeRecordsPageListItem>[] => {
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
         const profitFormat = formatNum(profit)
-        return <>{profit ? <span className={classNames('font-pf-bold', color)}>{flag ? '+' + profitFormat : profitFormat}</span> : '-'}</>
+        return <>{profit ? <span className={cn('font-pf-bold', color)}>{flag ? '+' + profitFormat : profitFormat}</span> : '-'}</>
       }
     }
   ]

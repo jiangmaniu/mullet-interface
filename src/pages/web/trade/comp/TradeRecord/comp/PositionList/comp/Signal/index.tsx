@@ -1,4 +1,4 @@
-import classNames from 'classnames'
+import { cn } from '@/utils/cn'
 
 /**
  * 爆仓信号
@@ -9,7 +9,7 @@ export default function Signal() {
   return (
     <div className="flex items-center">
       {list.map((item, idx) => {
-        return <div className={classNames('w-1 h-3 mr-[2px]', item.status === 1 ? 'bg-green' : 'bg-gray-360')} key={idx}></div>
+        return <div className={cn('w-1 h-3 mr-[2px]', item.status === 1 ? 'bg-green' : 'bg-gray-360')} key={idx}></div>
       })}
     </div>
   )

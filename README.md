@@ -124,3 +124,7 @@ yarn cz
   - 如果公用颜色变量，使用 css 变量来管理
 - 使用`src/theme/theme.config`中的 css 变量
 - 使用 tailwindcss `src/theme.tailwind` 自定义快捷类名，具备语义化 `text-primary`(正文) `text-secondary`(次描述文 1) `text-weak`(次描述文 2) `text-brand`（文字品牌主色） 改变文字颜色，或者结合 css 变量使用 `bg-[var(--btn-primary)]`有颜色提示，`bg-[--btn-primary]`没有颜色提示
+
+## tailwind 样式类名规范
+
+- 使用`cn`(`src/utils/cn`)方法代替`classNames`方法

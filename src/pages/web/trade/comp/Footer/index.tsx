@@ -1,7 +1,6 @@
 import { FormattedMessage } from '@umijs/max'
 import { useNetwork } from 'ahooks'
 import { Tooltip } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 import Marquee from 'react-fast-marquee'
@@ -9,6 +8,7 @@ import Marquee from 'react-fast-marquee'
 import SignalIcon from '@/components/Base/Svg/SignalIcon'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { cn } from '@/utils/cn'
 import { goToService } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -89,7 +89,7 @@ function Footer() {
                   }}
                 >
                   <div className="text-wrap text-xs font-medium text-primary">{item.alias}</div>
-                  <div className={classNames('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
+                  <div className={cn('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
                     {res.bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
                   </div>
                   <div className="px-[3px] text-xs font-medium text-weak">{bid}</div>

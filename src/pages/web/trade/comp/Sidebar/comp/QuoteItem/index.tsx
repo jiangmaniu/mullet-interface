@@ -1,6 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Col, Row, Tooltip } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useTransition } from 'react'
 
@@ -10,6 +9,7 @@ import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 import mitt from '@/utils/mitt'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -119,9 +119,18 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         // animationName: 'bgSame',
         // animationDuration: '500ms',
         // animationIterationCount: 'initial',
+        position: 'relative',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          left: 0,
+          bottom: 0,
+          top: 0,
+          right: 0,
+          border: '1px solid var(--color-gray-130)'
+        },
         background: 'var(--color-gray-50)',
-        color: 'var(--color-text-primary)',
-        border: '1px solid var(--color-gray-130)'
+        color: 'var(--color-text-primary)'
       }
     }
   })
@@ -129,7 +138,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   return (
     <>
       <div
-        className={classNames('relative pl-1 border-b border-gray-100', className)}
+        className={cn('relative pl-1 border-b border-gray-100', className)}
         onClick={() => {
           startTransition(() => {
             // 记录打开的symbol
@@ -148,7 +157,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
       >
         {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
         <Row
-          className={classNames('flex cursor-pointer items-center rounded pl-2 py-[5px] hover:bg-[var(--list-hover-primary-bg)] relative', {
+          className={cn('flex cursor-pointer items-center rounded pl-2 py-[5px] hover:bg-[var(--list-hover-primary-bg)] relative', {
             'dark:bg-gray-660 bg-[var(--list-hover-primary-bg)]': isActive,
             [activeClassName]: isActive
           })}
@@ -172,7 +181,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           <Col className="flex pl-2" span={6}>
             {bid ? (
               <div
-                className={classNames('rounded text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center', bidColor)}
+                className={cn('rounded text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center', bidColor)}
                 // style={{ background: upColor }}
               >
                 {formatNum(bid)}
@@ -184,10 +193,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           <Col className="flex" span={6}>
             {ask ? (
               <div
-                className={classNames(
-                  'text-gray rounded text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center',
-                  askColor
-                )}
+                className={cn('text-gray rounded text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center', askColor)}
                 // style={{ background: downColor }}
               >
                 {formatNum(ask)}
@@ -198,7 +204,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           </Col>
           <Col span={4} className="flex flex-col items-end pr-3">
             {res.hasQuote ? (
-              <div className={classNames('text-right text-xs', per > 0 ? 'text-green' : 'text-red')}>
+              <div className={cn('text-right text-xs', per > 0 ? 'text-green' : 'text-red')}>
                 {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
               </div>
             ) : (

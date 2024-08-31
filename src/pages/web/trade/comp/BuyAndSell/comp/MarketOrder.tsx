@@ -12,10 +12,10 @@ import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
+import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import classNames from 'classnames'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
@@ -258,7 +258,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <div className={classNames('flex items-start gap-x-2 w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
+                    <div className={cn('flex items-start gap-x-2 w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
@@ -307,7 +307,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
+                    <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>

@@ -1,12 +1,12 @@
 import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 
 export const getColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
   const { trade } = useStores()
@@ -38,7 +38,7 @@ export const getColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
             <SymbolIcon src={record.imgUrl} />
             <div className="flex items-center pl-[10px]">
               <span className="text-base font-pf-bold text-primary">{record.symbol}</span>
-              <span className={classNames('text-xs font-medium pl-2', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pl-2', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
         )
@@ -231,7 +231,7 @@ export const getColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
         let profit: any = record.profit
         const flag = Number(profit) > 0
         return profit ? (
-          <span className={classNames('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${profit}` : profit}</span>
+          <span className={cn('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${profit}` : profit}</span>
         ) : (
           '-'
         )

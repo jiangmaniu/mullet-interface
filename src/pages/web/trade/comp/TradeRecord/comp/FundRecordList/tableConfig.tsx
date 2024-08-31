@@ -1,10 +1,10 @@
 import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 
 import { getEnum } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 
 export const getColumns = (): ProColumns<Account.MoneyRecordsPageListItem>[] => {
   const { trade } = useStores()
@@ -54,7 +54,7 @@ export const getColumns = (): ProColumns<Account.MoneyRecordsPageListItem>[] => 
       renderText(text, record, index, action) {
         const num = formatNum(text, { precision: accountGroupPrecision })
         return text ? (
-          <span className={classNames('!font-dingpro-medium', text > 0 ? 'text-green' : 'text-red')}>{text > 0 ? '+' + num : num}</span>
+          <span className={cn('!font-dingpro-medium', text > 0 ? 'text-green' : 'text-red')}>{text > 0 ? '+' + num : num}</span>
         ) : (
           '-'
         )

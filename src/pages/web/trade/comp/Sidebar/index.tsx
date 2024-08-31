@@ -2,7 +2,6 @@ import { SwapRightOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Col, Input, Row, Skeleton } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
@@ -16,6 +15,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { gray } from '@/theme/theme.config'
+import { cn } from '@/utils/cn'
 
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
@@ -258,7 +258,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
             <div
-              className={classNames('h-[700px] w-[364px] flex-shrink-0 bg-white relative dark:bg-dark-page', {
+              className={cn('h-[700px] w-[364px] flex-shrink-0 bg-white relative dark:bg-dark-page', {
                 [borderClassName]: showFixSidebar
               })}
               style={style}
@@ -276,7 +276,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           )}
           {/* 收起侧边栏视图 */}
           {!openTradeSidebar && showFixSidebar && (
-            <div className={classNames('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
+            <div className={cn('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
               <div
                 className="border-b border-gray-60 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"
                 onClick={openSidebar}
@@ -307,7 +307,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                   return (
                     <div
                       key={idx}
-                      className={classNames('mb-4 cursor-pointer w-[38px] h-[38px] flex items-center justify-center', {
+                      className={cn('mb-4 cursor-pointer w-[38px] h-[38px] flex items-center justify-center', {
                         [activeClassName]: isActive
                       })}
                       onClick={() => {

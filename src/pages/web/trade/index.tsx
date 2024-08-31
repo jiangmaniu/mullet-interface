@@ -1,6 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useLocation, useModel } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
@@ -9,6 +8,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
+import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 
@@ -147,12 +147,12 @@ export default observer(() => {
               {/* 买卖交易区 */}
               <BuyAndSell />
             </div>
-            <div className={classNames('flex items-start justify-between relative bg-primary', borderTopClassName)}>
+            <div className={cn('flex items-start justify-between relative bg-primary', borderTopClassName)}>
               {/* 交易记录 */}
-              <div style={{ width: 'calc(100vw - 303px)' }} className={classNames('flex-1')}>
+              <div style={{ width: 'calc(100vw - 303px)' }} className={cn('flex-1')}>
                 <TradeRecord />
               </div>
-              <div className={classNames('w-[300px] min-h-[270px] relative')}>
+              <div className={cn('w-[300px] min-h-[270px] relative')}>
                 <Liquidation />
               </div>
             </div>

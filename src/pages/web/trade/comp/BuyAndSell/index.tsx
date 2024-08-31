@@ -1,6 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useImperativeHandle, useRef, useTransition } from 'react'
 
@@ -11,6 +10,7 @@ import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { ITradeTabsOrderType } from '@/mobx/trade'
+import { cn } from '@/utils/cn'
 
 import LimitOrder from './comp/LimitOrder'
 import MarketOrder from './comp/MarketOrder'
@@ -64,7 +64,7 @@ export default observer(
     const renderContent = () => {
       return (
         <div
-          className={classNames({
+          className={cn({
             'h-[700px] w-[300px] relative bg-primary flex-shrink-0': isPc,
             [className]: isPc,
             'pointer-events-none': trade.disabledTrade
