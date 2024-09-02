@@ -296,7 +296,7 @@ export default ({ onConfirm, form, children, money }: IProp) => {
         >
           <div className=" flex items-center gap-1">
             <span className=" font-semibold text-base ">
-              <FormattedMessage id="mt.queren" />
+              <FormattedMessage id="common.queren" />
             </span>
           </div>
         </Button>

@@ -90,7 +90,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
       <Input
         value={searchValue}
         onChange={handleSearchChange}
-        placeholder={intl.formatMessage({ id: 'mt.sousuo' })}
+        placeholder={intl.formatMessage({ id: 'common.sousuo' })}
         suffix={SearchIcon}
         allowClear
         style={{

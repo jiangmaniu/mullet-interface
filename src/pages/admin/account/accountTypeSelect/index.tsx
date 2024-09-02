@@ -167,7 +167,7 @@ function AccountList() {
             push(`/account/type/add/${current.id}?key=${accountTabActiveKey.toLowerCase()}`)
           }}
         >
-          <FormattedMessage id="mt.jixu" />
+          <FormattedMessage id="common.jixu" />
           <ArrowRightOutlined />
         </Button>
       )}

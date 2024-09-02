@@ -34,7 +34,7 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
             </div>
           )}
           <div className="text-xs text-primary pt-2">
-            <FormattedMessage id="mt.guojia" />：{countryName || '-'}
+            <FormattedMessage id="common.guojia" />：{countryName || '-'}
           </div>
         </div>
       </div>

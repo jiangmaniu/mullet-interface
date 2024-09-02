@@ -93,8 +93,8 @@ export default forwardRef(
           if (fileUrl) return ''
           if (errorTip) return errorTip
           if (!fileUrl) {
-            setErrorTip(intl.formatMessage({ id: 'mt.qingshangchuantupian' }))
-            return intl.formatMessage({ id: 'mt.qingshangchuantupian' })
+            setErrorTip(intl.formatMessage({ id: 'common.qingshangchuantupian' }))
+            return intl.formatMessage({ id: 'common.qingshangchuantupian' })
           }
         }
       }
@@ -180,7 +180,7 @@ export default forwardRef(
           form?.setFieldValue?.(name, fileName)
           onSuccess?.({ fileName, url })
         } else {
-          message.info(intl.formatMessage({ id: 'mt.shangchuanshibai' }))
+          message.info(intl.formatMessage({ id: 'common.shangchuanshibai' }))
         }
       } catch (error: any) {
         message.info(error?.message)
@@ -292,17 +292,17 @@ export default forwardRef(
             {!fileUrl && <div className="w-full h-full rounded-full" style={{ width, height }} />}
             {loading && (
               <div className="loading">
-                <FormattedMessage id="mt.shangchuanzhong" />
+                <FormattedMessage id="common.shangchuanzhong" />
                 ...
               </div>
             )}
             {showAction && !loading && (
               <div className="absolute left-0 top-0 bottom-0 right-0 items-center justify-center brounded-full z-[100] invisible flex op">
                 <span className="text-xs text-white" onClick={handlePreview}>
-                  <FormattedMessage id="mt.yulan" />
+                  <FormattedMessage id="common.yulan" />
                 </span>
                 <span className="text-xs text-white pl-3" onClick={handleDelete}>
-                  <FormattedMessage id="mt.shanchu" />
+                  <FormattedMessage id="common.shanchu" />
                 </span>
               </div>
             )}

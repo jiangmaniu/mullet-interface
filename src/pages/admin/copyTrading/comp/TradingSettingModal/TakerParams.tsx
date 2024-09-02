@@ -152,7 +152,7 @@ export default () => {
         >
           <div className=" flex items-center gap-1">
             <span className=" font-medium text-base ">
-              <FormattedMessage id="mt.baocun" />
+              <FormattedMessage id="common.baocun" />
             </span>
           </div>
         </Button>

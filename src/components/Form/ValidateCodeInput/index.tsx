@@ -110,7 +110,7 @@ function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true, 
                 sendCode()
               }}
             >
-              <FormattedMessage id="mt.chongxinfasong" />
+              <FormattedMessage id="common.chongxinfasong" />
             </span>
           ) : (
             <span className="text-weak text-xs">

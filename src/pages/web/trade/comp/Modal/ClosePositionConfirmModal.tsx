@@ -69,7 +69,7 @@ export default observer(
 
     const onFinish = async () => {
       const reg = /^\d+(\.\d{0,2})?$/
-      if (!count) return message.info(intl.formatMessage({ id: 'common.pleaseInput2' }))
+      if (!count) return message.info(intl.formatMessage({ id: 'common.qingshuru' }))
       if (!reg.test(count)) {
         message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
         return

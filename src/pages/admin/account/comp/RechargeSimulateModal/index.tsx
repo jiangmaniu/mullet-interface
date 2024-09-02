@@ -66,7 +66,7 @@ function RechargeSimulateModal({ trigger, info }: IProps) {
         </div>
       </div>
       <Button type="primary" style={{ height: 42 }} block className="!mt-7" htmlType="submit" loading={loading}>
-        <FormattedMessage id="mt.querenrujin" />
+        <FormattedMessage id="common.querenrujin" />
       </Button>
     </ModalForm>
   )

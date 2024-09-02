@@ -38,7 +38,7 @@ export default ({ form }: IProps) => {
         {/* <Select
           suffixIcon={null}
           size="large"
-          placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
+          placeholder={`${intl.formatMessage({ id: 'common.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
           labelRender={(item) => (
             <span className=" flex flex-row gap-2.5 items-center justify-between">
               <span className="flex flex-row justify-between items-center gap-1.5 ">
@@ -63,7 +63,7 @@ export default ({ form }: IProps) => {
           rules={[
             {
               required: true,
-              message: intl.formatMessage({ id: 'mt.qingxuanze' })
+              message: intl.formatMessage({ id: 'common.qingxuanze' })
             }
           ]}
           fieldProps={{
@@ -120,7 +120,7 @@ export default ({ form }: IProps) => {
               )
             }
           }}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
+          placeholder={`${intl.formatMessage({ id: 'common.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
           // options={accountList}
           options={accountList.map((item) => ({
             ...item,
@@ -202,7 +202,7 @@ export default ({ form }: IProps) => {
         >
           <div className=" flex items-center gap-1">
             <span className=" font-semibold text-base ">
-              <FormattedMessage id="mt.baocun" />
+              <FormattedMessage id="common.baocun" />
             </span>
           </div>
         </Button>

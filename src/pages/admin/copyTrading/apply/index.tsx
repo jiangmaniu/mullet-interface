@@ -260,7 +260,7 @@ export default function Apply() {
                     rules={[
                       {
                         required: true,
-                        message: intl.formatMessage({ id: 'mt.qingxuanze' })
+                        message: intl.formatMessage({ id: 'common.qingxuanze' })
                       }
                     ]}
                     fieldProps={{
@@ -322,7 +322,7 @@ export default function Apply() {
                     rules={[
                       {
                         required: true,
-                        message: intl.formatMessage({ id: 'mt.qingxuanze' })
+                        message: intl.formatMessage({ id: 'common.qingxuanze' })
                       }
                     ]}
                     fieldProps={{
@@ -378,7 +378,7 @@ export default function Apply() {
                         )
                       }
                     }}
-                    placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
+                    placeholder={`${intl.formatMessage({ id: 'common.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
                     // options={accountList}
                     options={accounts}
                   />

@@ -90,8 +90,8 @@ export const getEnum = () => {
   const Enum = {
     // 启用、禁用状态
     Status: {
-      DISABLED: { text: intl.formatMessage({ id: 'mt.jinyong' }) },
-      ENABLE: { text: intl.formatMessage({ id: 'mt.qiyong' }) }
+      DISABLED: { text: intl.formatMessage({ id: 'common.jinyong' }) },
+      ENABLE: { text: intl.formatMessage({ id: 'common.qiyong' }) }
     },
     // 认证状态
     ApproveStatus: {
@@ -155,7 +155,7 @@ export const getEnum = () => {
       PROFIT: { text: intl.formatMessage({ id: 'mt.yingkui' }) },
       GIFT: { text: intl.formatMessage({ id: 'mt.zengjin' }) },
       BALANCE: { text: intl.formatMessage({ id: 'mt.jieyu' }) },
-      TRANSFER: { text: intl.formatMessage({ id: 'mt.zhuanzhang' }) },
+      TRANSFER: { text: intl.formatMessage({ id: 'common.zhuanzhang' }) },
       ZERO: { text: intl.formatMessage({ id: 'mt.qiangping' }) }
     }
   }

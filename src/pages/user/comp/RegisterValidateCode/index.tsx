@@ -72,7 +72,7 @@ function RegisterValidateCode({ onBack, onConfirm, sendType, type, open }: IProp
                   onConfirm()
                 }}
               >
-                <FormattedMessage id="mt.wancheng" />
+                <FormattedMessage id="common.finish" />
               </Button>
             </div>
           </div>

@@ -48,11 +48,11 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
     const values = form.getFieldsValue()
     // console.log('values', values)
     if (!values.emailOrPhone) {
-      message.info(intl.formatMessage({ id: 'mt.qingshuru' }))
+      message.info(intl.formatMessage({ id: 'common.qingshuru' }))
     }
     // 手机方式
     if (!values.phoneAreaCode && !isEmailTab) {
-      message.info(intl.formatMessage({ id: 'mt.qingxuanzequhao' }))
+      message.info(intl.formatMessage({ id: 'common.qingxuanzequhao' }))
     }
     const success = await validateCodeInputRef.current?.sendCode?.({
       emailOrPhone: values.emailOrPhone?.trim(),
@@ -114,7 +114,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     }}
                     placeholder={intl.formatMessage({ id: 'mt.shurudianziyouxiang' })}
                     required={false}
-                    label={<FormattedMessage id="mt.dianziyouxiang" />}
+                    label={<FormattedMessage id="common.dianziyouxiang" />}
                     rules={[
                       {
                         required: true,
@@ -130,7 +130,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                   <PhoneSelectFormItem
                     names={['emailOrPhone', 'phoneAreaCode']}
                     form={form}
-                    label={<FormattedMessage id="mt.shoujihaoma" />}
+                    label={<FormattedMessage id="common.shoujihaoma" />}
                     required={false}
                   />
                 )}
@@ -144,7 +144,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     onBack?.()
                   }}
                 >
-                  <FormattedMessage id="mt.fanhui" />
+                  <FormattedMessage id="common.back" />
                 </Button>
                 <Button
                   type="primary"
@@ -171,7 +171,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     validateCodeInputRef.current?.stopCountDown?.()
                   }}
                 >
-                  <FormattedMessage id="mt.fanhui" />
+                  <FormattedMessage id="common.back" />
                 </Button>
                 <Button
                   type="primary"
@@ -190,7 +190,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     validateCodeInputRef.current?.stopCountDown?.()
                   }}
                 >
-                  <FormattedMessage id="mt.jixu" />
+                  <FormattedMessage id="common.jixu" />
                 </Button>
               </div>
             </>
@@ -226,7 +226,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
               </div>
               <div className="flex items-center justify-center py-6">
                 <Button type="primary" style={{ height: 48 }} block htmlType="submit">
-                  <FormattedMessage id="mt.wancheng" />
+                  <FormattedMessage id="common.finish" />
                 </Button>
               </div>
             </div>

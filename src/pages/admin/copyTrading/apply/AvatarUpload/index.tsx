@@ -64,7 +64,7 @@ export const AvatarUpload = ({
         setImageUrl(res.data.link)
         onChange?.(res.data)
       } else {
-        message.info(getIntl().formatMessage({ id: 'mt.shangchuanshibai' }))
+        message.info(getIntl().formatMessage({ id: 'common.shangchuanshibai' }))
       }
     } catch (error: any) {
       message.info(error?.message)

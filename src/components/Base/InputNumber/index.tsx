@@ -70,7 +70,7 @@ function InputNumber(props: IProps) {
     onAdd,
     onMinus,
     showAddMinus = true,
-    placeholder = intl.formatMessage({ id: 'common.pleaseInput2' }),
+    placeholder = intl.formatMessage({ id: 'common.qingshuru' }),
     addonBefore,
     width,
     autoFocus = true,

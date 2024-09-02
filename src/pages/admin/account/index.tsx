@@ -235,7 +235,7 @@ function Account() {
                   disabled={trade.disabledConect(item)}
                 >
                   <span className="font-pf-bold">
-                    <FormattedMessage id="mt.jiaoyi" />
+                    <FormattedMessage id="common.jiaoyi" />
                   </span>
                 </Button>
                 <Dropdown
@@ -258,10 +258,10 @@ function Account() {
                           <Modal
                             trigger={
                               <span className="text-sm text-secondary hover:text-primary">
-                                <FormattedMessage id="mt.zhuanzhang" />
+                                <FormattedMessage id="common.zhuanzhang" />
                               </span>
                             }
-                            title={<FormattedMessage id="mt.wenxintishi" />}
+                            title={<FormattedMessage id="common.wenxintishi" />}
                             width={380}
                             okText={<FormattedMessage id="mt.qurenzheng" />}
                             onFinish={() => {

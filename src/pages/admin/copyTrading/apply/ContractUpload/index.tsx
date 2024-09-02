@@ -83,7 +83,7 @@ export default ({ onChange, maxCount = 3 }: { onChange: (p: any) => void; maxCou
           thumbUrl: res.data.link
         }
       }
-      message.info(getIntl().formatMessage({ id: 'mt.shangchuanshibai' }))
+      message.info(getIntl().formatMessage({ id: 'common.shangchuanshibai' }))
 
       return {
         uid: String(Math.random()),
