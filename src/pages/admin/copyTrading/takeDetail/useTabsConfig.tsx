@@ -1,20 +1,24 @@
 import { useIntl } from '@umijs/max'
 import { Pagination, TableProps, TabsProps } from 'antd'
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Tags from '@/components/Admin/Tags'
 import { CURRENCY, DEFAULT_PAGE_SIZE } from '@/constants'
+import { tradeFollowCurrentLeadOrder, tradeFollowFollowUser, tradeFollowHistoryLeadOrder } from '@/services/api/tradeFollow/lead'
 import { formatNum, getColorClass } from '@/utils'
 
 import TabTable from '../comp/TabsTable/Table'
 import { mockHistory, mockUsers, orders } from './mockTabTable'
 
-export const useTabsConfig = () => {
+export const useTabsConfig = ({ id }: { id: string }) => {
   const intl = useIntl()
+
+  const [tabKey, setTabKey] = useState('1')
 
   const onChange = (key: string) => {
     console.log(key)
+    setTabKey(key)
   }
 
   // 订单表格
@@ -240,16 +244,36 @@ export const useTabsConfig = () => {
   const [total1, setTotal1] = useState(0)
   const [size1, setSize1] = useState(DEFAULT_PAGE_SIZE)
   const [current1, setCurrent1] = useState(1)
+  const [data1, setData1] = useState<any[]>(orders)
 
   // 分页
   const [total2, setTotal2] = useState(0)
   const [size2, setSize2] = useState(DEFAULT_PAGE_SIZE)
   const [current2, setCurrent2] = useState(1)
+  const [data2, setData2] = useState<any[]>(mockHistory)
 
   // 分页
   const [total3, setTotal3] = useState(0)
   const [size3, setSize3] = useState(DEFAULT_PAGE_SIZE)
   const [current3, setCurrent3] = useState(1)
+  const [data3, setData3] = useState<any[]>(mockUsers)
+
+  useEffect(() => {
+    tabKey === '1' &&
+      tradeFollowCurrentLeadOrder({ leadId: id, current: current1, size: size1 }).then((res) => {
+        if (res.success) setData1(res.data?.records || [])
+      })
+
+    tabKey === '2' &&
+      tradeFollowHistoryLeadOrder({ leadId: id, current: current2, size: size2 }).then((res) => {
+        if (res.success) setData2(res.data?.records || [])
+      })
+
+    tabKey === '3' &&
+      tradeFollowFollowUser({ leadId: id, current: current3, size: size3 }).then((res) => {
+        if (res.success) setData3(res.data?.records || [])
+      })
+  }, [tabKey])
 
   const items: TabsProps['items'] = [
     {
@@ -257,7 +281,7 @@ export const useTabsConfig = () => {
       label: intl.formatMessage({ id: 'mt.dangqiandaidan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={orderColumns} datas={orders} />
+          <TabTable columns={orderColumns} datas={data1} />
 
           <div className="self-end">
             <Pagination
@@ -277,7 +301,7 @@ export const useTabsConfig = () => {
       label: intl.formatMessage({ id: 'mt.lishidaidan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={historyColumns} datas={mockHistory} />
+          <TabTable columns={historyColumns} datas={data2} />
 
           <div className="self-end">
             <Pagination
@@ -297,7 +321,7 @@ export const useTabsConfig = () => {
       label: intl.formatMessage({ id: 'mt.gendanyonghu' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={userColumns} datas={mockUsers} />
+          <TabTable columns={userColumns} datas={data3} />
 
           <div className="self-end">
             <Pagination

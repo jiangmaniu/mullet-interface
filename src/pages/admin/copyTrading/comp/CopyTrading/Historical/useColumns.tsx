@@ -14,7 +14,7 @@ export default () => {
       title: intl.formatMessage({ id: 'mt.pinzhong' }),
       dataIndex: 'symbol',
       key: 'symbol',
-      render: (pz) => {
+      render: (pz, record, index) => {
         console.log(pz)
         return (
           <span className=" flex gap-1 items-center">

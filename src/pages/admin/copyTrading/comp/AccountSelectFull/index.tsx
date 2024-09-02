@@ -23,18 +23,25 @@ export default function AccountSelect({
   const intl = useIntl()
   // const [accountId, setAccountId] = useState<any>('')
   const [curr, setCurr] = useState<any>()
-  const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
+  // const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
   const [open, setOpen] = useState(false)
+
+  const [accountList, setAccountList] = useState<any[]>([])
+
+  useEffect(() => {
+    tradeFollowListLeads({
+      leadId
+    }).then((res) => {
+      if (res.success) {
+        setAccountList(res.data as any[])
+      }
+    })
+  }, [initialState])
 
   useEffect(() => {
     // 默认选择第一个
-    // setAccountId(accountList[0]?.id)
-    setCurr(accountList[0])
-
-    tradeFollowListLeads({
-      leadId
-    })
-  }, [initialState])
+    accountList.length > 0 && setCurr(accountList[0])
+  }, [accountList])
 
   const popupClassName = useEmotionCss(({ token }) => {
     return {
@@ -68,8 +75,8 @@ export default function AccountSelect({
   const items: MenuProps['items'] = useMemo(() => {
     return accountList.map((item) => ({
       ...item,
-      key: item.id,
-      label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
+      key: item.leadId,
+      label: `${item.projectName} #${hiddenCenterPartStr(item?.leadId, 4)}`
     }))
   }, [accountList])
 
@@ -103,7 +110,7 @@ export default function AccountSelect({
             <Iconfont name="zhanghu" width={28} height={28} color={gray['600']} />
             <div className="flex flex-col items-start justify-center">
               <span className=" text-primary font-semibold text-base !font-dingpro-medium">
-                {curr?.name}#{curr?.clientId}
+                {curr?.projectName}#{curr?.leadId}
               </span>
               <span className=" text-gray-600 text-xs ">{curr?.groupName}</span>
             </div>

@@ -1,40 +1,38 @@
 import { useIntl } from '@umijs/max'
 import { Pagination, TableProps, TabsProps } from 'antd'
 import classNames from 'classnames'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Tags from '@/components/Admin/Tags'
 import { CURRENCY, DEFAULT_PAGE_SIZE } from '@/constants'
-import { getTradeFollowFolloerHistoryFollowerOrder } from '@/services/api/tradeFollow/follower'
+import { getTradeFollowFolloerCurrentFollowerOrder, getTradeFollowFolloerHistoryFollowerOrder } from '@/services/api/tradeFollow/follower'
 import { formatNum, getColorClass } from '@/utils'
 
 import TabTable from '../comp/TabsTable/Table'
 import { mockHistory, orders as mockOrder } from './mockTabTable'
 
-export const useTabsConfig = () => {
+export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerId: string; leadId: string; defaultTabKey?: string }) => {
   const intl = useIntl()
 
-  const onChange = (key: string) => {
-    console.log(key)
-  }
-
+  const [tabKey, setTabKey] = useState<string>(defaultTabKey || '1')
   // 订单表格
   const orderColumns: TableProps['columns'] = [
     {
       title: intl.formatMessage({ id: 'mt.pinzhong' }),
       dataIndex: 'pinzhong',
       key: 'pinzhong',
-      render: (pz) => (
+      render: (pz, record, index) => (
         <span className=" flex gap-1 items-center">
-          <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
+          <img src={record.imgUrl} alt="" className="w-8 h-8 rounded-full" />
           <span className=" flex flex-col items-start">
-            <span className="text-sm  font-pf-bold text-primary">{pz.pinzhong}</span>
+            <span className="text-sm  font-pf-bold text-primary">{record.symbol}</span>
             <span className="flex items-center gap-1">
-              <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
-                {pz.zhuangtai}
+              <Tags size="tiny" color={record.buySell === '空' ? 'red' : 'green'}>
+                {record.buySell}
               </Tags>
               <Tags size="tiny" color="gray">
-                {pz.desc}
+                {record.classify}
+                {record.leverageMultiple}
               </Tags>
             </span>
           </span>
@@ -54,14 +52,14 @@ export const useTabsConfig = () => {
     },
     {
       title: intl.formatMessage({ id: 'mt.shouyilv' }),
-      dataIndex: 'shouyilv',
-      key: 'shouyilv',
+      dataIndex: 'profit',
+      key: 'profit',
       render: (text) => <span className={classNames('!font-dingpro-medium text-primary', getColorClass(text))}>{formatNum(text)}%</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.kaicangjunjia' }),
-      dataIndex: 'kaicangjunjia',
-      key: 'kaicangjunjia',
+      dataIndex: 'startPrice',
+      key: 'startPrice',
       render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
     },
     {
@@ -72,20 +70,20 @@ export const useTabsConfig = () => {
     },
     {
       title: intl.formatMessage({ id: 'mt.baozhengjin' }),
-      dataIndex: 'baozhengjin',
-      key: 'baozhengjin',
+      dataIndex: 'orderMargin',
+      key: 'orderMargin',
       render: (text) => <span className="!font-dingpro-regular text-primary">{`${formatNum(text)} ${CURRENCY}`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.chicangshuliang' }),
-      dataIndex: 'chicangshuliang',
-      key: 'chicangshuliang',
+      dataIndex: 'orderVolume',
+      key: 'orderVolume',
       render: (text) => <span className="!font-dingpro-regular text-primary">{`${formatNum(text)} ${CURRENCY}`}</span>
     },
     {
       title: intl.formatMessage({ id: 'mt.qiangpinjia' }),
-      dataIndex: 'qiangpinjia',
-      key: 'qiangpinjia',
+      dataIndex: 'closePrice',
+      key: 'closePrice',
       render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
     },
     {
@@ -101,17 +99,17 @@ export const useTabsConfig = () => {
       title: intl.formatMessage({ id: 'mt.pinzhong' }),
       dataIndex: 'pinzhong',
       key: 'pinzhong',
-      render: (pz) => (
+      render: (pz, record, index) => (
         <span className=" flex gap-1 items-center">
           <img src={pz.img} alt="" className="w-8 h-8 rounded-full" />
           <span className=" flex flex-col items-start">
-            <span className="text-sm font-pf-bold text-primary">{pz.pinzhong}</span>
+            <span className="text-sm font-pf-bold text-primary">{record.symbol}</span>
             <span className="flex items-center gap-1">
-              <Tags size="tiny" color={pz.zhuangtai === '空' ? 'red' : 'green'}>
-                {pz.zhuangtai}
+              <Tags size="tiny" color={record.buySell === '空' ? 'red' : 'green'}>
+                {record.buySell}
               </Tags>
               <Tags size="tiny" color="gray">
-                {pz.desc}
+                {record.classify} {}
               </Tags>
             </span>
           </span>
@@ -120,8 +118,8 @@ export const useTabsConfig = () => {
     },
     {
       title: `${intl.formatMessage({ id: 'mt.yingkui' })}(${CURRENCY})`,
-      dataIndex: 'yingkui',
-      key: 'yingkui',
+      dataIndex: 'profit',
+      key: 'profit',
       render: (text) => (
         <span className={classNames('!font-dingpro-medium text-primary', getColorClass(text))}>
           {text > 0 ? '+' : ''}
@@ -131,8 +129,8 @@ export const useTabsConfig = () => {
     },
     {
       title: intl.formatMessage({ id: 'mt.shouxufei' }),
-      dataIndex: 'shouxufei',
-      key: 'shouxufei',
+      dataIndex: 'handlingFees',
+      key: 'handlingFees',
       render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
     },
     {
@@ -143,8 +141,8 @@ export const useTabsConfig = () => {
     },
     {
       title: intl.formatMessage({ id: 'mt.kaicangjunjia' }),
-      dataIndex: 'kaicangjunjia',
-      key: 'kaicangjunjia',
+      dataIndex: 'closePrice',
+      key: 'closePrice',
       render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
     },
     {
@@ -220,85 +218,114 @@ export const useTabsConfig = () => {
   const [total, setTotal] = useState(0)
   const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
   const [current, setCurrent] = useState(1)
-  useEffect(() => {
-    getTradeFollowFolloerHistoryFollowerOrder({})
-  }, [])
 
   const [total2, setTotal2] = useState(0)
   const [size2, setSize2] = useState(DEFAULT_PAGE_SIZE)
   const [current2, setCurrent2] = useState(1)
 
-  const items2: TabsProps['items'] = useMemo(
-    () => [
-      {
-        key: '2',
-        label: intl.formatMessage({ id: 'mt.lishigendan' }),
-        children: (
-          <div className="flex flex-col gap-3.5 mb-4">
-            <TabTable columns={historyColumns} datas={histories} />
+  useEffect(() => {
+    tabKey === '1' &&
+      getTradeFollowFolloerCurrentFollowerOrder({
+        followerId: followerId,
+        leadId: leadId,
+        size,
+        current
+      }).then((res) => {
+        if (res.success) {
+          setOrders(res.data?.records || [])
+          setTotal(res.data?.total || 0)
+        }
+      })
+  }, [tabKey, followerId, leadId, size, current])
 
-            <div className="self-end">
-              <Pagination
-                current={current}
-                onChange={setCurrent}
-                total={total}
-                pageSize={size}
-                onShowSizeChange={setSize}
-                pageSizeOptions={['10', '20', '50']}
-              />
-            </div>
+  useEffect(() => {
+    tabKey === '2' &&
+      getTradeFollowFolloerHistoryFollowerOrder({
+        followerId: followerId,
+        leadId: leadId,
+        size: size2,
+        current: current2
+      }).then((res) => {
+        if (res.success) {
+          setHistories(res.data?.records || [])
+          setTotal2(res.data?.total || 0)
+        }
+      })
+  }, [tabKey, followerId, leadId, size2, current2])
+
+  useEffect(() => {
+    console.log(histories)
+  }, [histories])
+
+  const items2: TabsProps['items'] = [
+    {
+      key: '2',
+      label: intl.formatMessage({ id: 'mt.lishigendan' }),
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={historyColumns} datas={histories} />
+
+          <div className="self-end">
+            <Pagination
+              current={current2}
+              onChange={setCurrent2}
+              total={total2}
+              pageSize={size2}
+              onShowSizeChange={setSize2}
+              pageSizeOptions={['10', '20', '50']}
+            />
           </div>
-        )
-      }
-    ],
-    [histories]
-  )
+        </div>
+      )
+    }
+  ]
 
-  const items: TabsProps['items'] = useMemo(
-    () => [
-      {
-        key: '1',
-        label: intl.formatMessage({ id: 'mt.dangqiangendan' }),
-        children: (
-          <div className="flex flex-col gap-3.5 mb-4">
-            <TabTable columns={orderColumns} datas={orders} />
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: intl.formatMessage({ id: 'mt.dangqiangendan' }),
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={orderColumns} datas={orders} />
 
-            <div className="self-end">
-              <Pagination
-                current={current2}
-                onChange={setCurrent2}
-                total={total2}
-                pageSize={size2}
-                onShowSizeChange={setSize2}
-                pageSizeOptions={['10', '20', '50']}
-              />
-            </div>
+          <div className="self-end">
+            <Pagination
+              current={current}
+              onChange={setCurrent}
+              total={total}
+              pageSize={size}
+              onShowSizeChange={setSize}
+              pageSizeOptions={['10', '20', '50']}
+            />
           </div>
-        )
-      },
-      {
-        key: '2',
-        label: intl.formatMessage({ id: 'mt.lishigendan' }),
-        children: (
-          <div className="flex flex-col gap-3.5 mb-4">
-            <TabTable columns={historyColumns} datas={histories} />
+        </div>
+      )
+    },
+    {
+      key: '2',
+      label: intl.formatMessage({ id: 'mt.lishigendan' }),
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={historyColumns} datas={histories} />
 
-            <div className="self-end">
-              <Pagination
-                current={current}
-                onChange={setCurrent}
-                total={total}
-                pageSize={size}
-                onShowSizeChange={setSize}
-                pageSizeOptions={['10', '20', '50']}
-              />
-            </div>
+          <div className="self-end">
+            <Pagination
+              current={current2}
+              onChange={setCurrent2}
+              total={total2}
+              pageSize={size2}
+              onShowSizeChange={setSize2}
+              pageSizeOptions={['10', '20', '50']}
+            />
           </div>
-        )
-      }
-    ],
-    [histories, orders]
-  )
+        </div>
+      )
+    }
+  ]
+
+  const onChange = (key: string) => {
+    setTabKey(key)
+  }
 
   return {
     items,

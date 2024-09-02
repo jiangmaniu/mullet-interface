@@ -7,6 +7,7 @@ import Carousel from '@/components/Admin/Carousel'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
+import { CURRENCY } from '@/constants'
 import { getTradeFollowLeadDetail, tradeFollowLeadClose } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
@@ -23,6 +24,7 @@ import TakeSettingModal from '../comp/TakeSettingModal'
 import DetailModal from './DetailModal'
 import EndModal from './EndModal'
 import { defaultTimeRange, mockNotifications } from './mock'
+import { useOverview } from './useOverview'
 import { useTabsConfig } from './useTabsConfig'
 
 export default function TakeDetail() {
@@ -76,10 +78,16 @@ export default function TakeDetail() {
     if (selected) setTimeRange(selected.value)
   }
 
-  const { items: tabs, onChange } = useTabsConfig()
+  const { items: tabs, onChange } = useTabsConfig({ id: String(id) })
 
   const [status, setStatus] = useState<'abled' | 'disabled'>('disabled')
   const [openEnd, setOpenEnd] = useState(false)
+
+  const {
+    statistics,
+    profitStatistics: { earningRates, profitAmounts },
+    symbolStatistics
+  } = useOverview({ id })
 
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
@@ -134,8 +142,8 @@ export default function TakeDetail() {
                       /> */}
                     </div>
                     <div className="flex items-end gap-1">
-                      <span className=" text-3xl font-medium text-primary !font-dingpro-medium"> {taker?.rate1}</span>
-                      <span className=" text-sm font-normal text-primary">USDT</span>
+                      <span className=" text-3xl font-medium text-primary !font-dingpro-medium"> {taker?.shareProfitTotal}</span>
+                      <span className=" text-sm font-normal text-primary">{CURRENCY}</span>
                     </div>
                   </div>
                 </div>
@@ -313,7 +321,19 @@ export default function TakeDetail() {
             <span className=" text-primary text-xl font-medium">
               <FormattedMessage id="mt.daidanshuju" />
             </span>
-            <TakeDatas datas={taker?.datas} gap="gap-16" />
+            <TakeDatas
+              datas={{
+                followerNumber: taker?.followerNumber,
+                profitTotal: taker?.profitTotal,
+                profitSharingRatio: taker?.profitSharingRatio,
+                assetRequirement: taker?.assetRequirement,
+                remainingGraranteedAmount: taker?.remainingGraranteedAmount,
+                shareProfitToday: taker?.shareProfitToday,
+                createDayTotal: taker?.createDayTotal,
+                assetScaleTotal: taker?.assetScaleTotal
+              }}
+              gap="gap-16"
+            />
           </div>
           {/* 帶單表現，累計盈虧，交易偏好 */}
           <div className=" grid xl:grid-cols-3 sm:grid-cols-1 items-start gap-5  ">
@@ -323,20 +343,28 @@ export default function TakeDetail() {
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Performance datas={taker?.datas} />
+              <Performance datas={statistics} />
             </CardContainer>
             <CardContainer
               title={
                 <>
-                  <FormattedMessage id="mt.leijiyingkui" />
-                  (USDT)
+                  <FormattedMessage id="mt.leijiyingkui" />({CURRENCY})
                 </>
               }
               defaultValue={timeRange}
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Cumulative />
+              <Cumulative
+                earningRates={earningRates?.map((i) => ({
+                  date: i.date,
+                  value: i.earningRate
+                }))}
+                profitAmounts={profitAmounts?.map((i) => ({
+                  date: i.date,
+                  value: i.profitAmount
+                }))}
+              />
             </CardContainer>
             <CardContainer
               title={<FormattedMessage id="mt.jiaoyipianhao" />}
@@ -344,7 +372,7 @@ export default function TakeDetail() {
               onChange={onTimeRangeChange}
               options={timeRangeOptions}
             >
-              <Preferences datas={[]} />
+              <Preferences datas={symbolStatistics} />
             </CardContainer>
           </div>
           {/* 表格数据 */}

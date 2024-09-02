@@ -21,7 +21,7 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
       onClick={() => {
         push(`/copy-trading/take-detail/${leadId}`)
       }}
-      className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full hover:shadow-sm"
+      className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full hover:shadow"
     >
       {/* header */}
       <div className="flex gap-3 py-2.5 px-3.5 items-center">

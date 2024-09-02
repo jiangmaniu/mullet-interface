@@ -46,12 +46,36 @@ export async function postTradeFollowFolloerSave(data: TradeFollowFollower.SaveP
 
 // /trade-follow/followApi/follower/history_follower_order
 // 跟单人 - 历史跟单
-export async function getTradeFollowFolloerHistoryFollowerOrder(params?: { followerId?: string | number; leadId?: string | number }) {
-  return request<API.Response<TradeFollowFollower.HistoryFollowerOrderItem[]>>(
+export async function getTradeFollowFolloerHistoryFollowerOrder(
+  params?: { followerId?: string | number; leadId?: string | number } & API.PageParam
+) {
+  return request<API.Response<API.PageResult<TradeFollowFollower.HistoryFollowerOrderItem>>>(
     '/api/trade-follow/followApi/follower/history_follower_order',
     {
       method: 'GET',
       params
     }
   )
+}
+
+// /trade-follow/followApi/follower/current_follower_order
+// 跟单人 - 当前跟单
+export async function getTradeFollowFolloerCurrentFollowerOrder(
+  params?: { followerId?: string | number; leadId?: string | number } & API.PageParam
+) {
+  return request<API.Response<API.PageResult<TradeFollowFollower.CurrentFollowerOrderItem>>>(
+    '/api/trade-follow/followApi/follower/current_follower_order',
+    {
+      method: 'GET',
+      params
+    }
+  )
+}
+
+// /trade-follow/followApi/follower/close
+// 跟单人 - 结束跟单
+export async function postTradeFollowFolloerClose(data: { followerId: string }) {
+  return request<API.Response>('/api/trade-follow/followApi/follower/close?followerId=' + data.followerId, {
+    method: 'GET'
+  })
 }

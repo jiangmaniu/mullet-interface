@@ -52,11 +52,11 @@ export const OrderTaker = ({ item, state, onClick, onFollow }: IProps) => {
 
   return (
     <div
-      className=" border rounded-2xl border-gray-150 flex flex-col xl:w-[25rem] max-w-full flex-1 p-5.5 cursor-pointer hover:shadow-md"
+      className=" border rounded-2xl border-gray-150 flex flex-col justify-between xl:w-[25rem] max-w-full flex-1 p-5.5 cursor-pointer hover:shadow-md"
       onClick={() => onClick(leadId, takerState)}
     >
       {/* header */}
-      <div className=" flex flex-col gap-5">
+      <div className=" flex flex-col  gap-5">
         {/* account */}
         <div className=" flex items-center gap-4 justify-between">
           <div className=" flex flex-row gap-4">

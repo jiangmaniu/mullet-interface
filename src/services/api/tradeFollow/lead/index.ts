@@ -113,3 +113,30 @@ export async function tradeFollowLeadClose(params: { leadId: string }) {
     method: 'POST'
   })
 }
+
+// /trade-follow/followApi/lead/current_lead_order
+// 带单人 - 当前带单
+export async function tradeFollowCurrentLeadOrder(params: TradeFollowLead.TradeFollowLeadOrderParams) {
+  return request<API.Response<TradeFollowLead.TradeFollowCurrentLeadOrderItem>>('/api/trade-follow/followApi/lead/current_lead_order', {
+    method: 'GET',
+    params
+  })
+}
+
+// /trade-follow/followApi/lead/history_lead_order
+// 带单人 - 历史带单
+export async function tradeFollowHistoryLeadOrder(params: TradeFollowLead.TradeFollowLeadOrderParams) {
+  return request<API.Response<TradeFollowLead.TradeFollowHistoryLeadOrderItem>>('/api/trade-follow/followApi/lead/history_lead_order', {
+    method: 'GET',
+    params
+  })
+}
+
+// /trade-follow/followApi/lead/follow_user
+// 带单人 - 跟单用户
+export async function tradeFollowFollowUser(params: TradeFollowLead.TradeFollowLeadOrderParams) {
+  return request<API.Response<TradeFollowLead.TradeFollowLeadFollowUserItem>>('/api/trade-follow/followApi/lead/follow_user', {
+    method: 'GET',
+    params
+  })
+}

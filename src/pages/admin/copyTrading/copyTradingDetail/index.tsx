@@ -5,7 +5,9 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { CURRENCY } from '@/constants'
+import { useStores } from '@/context/mobxProvider'
 import { IOrderTaker, IOrderTakerState } from '@/models/takers'
+import { postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
@@ -29,6 +31,13 @@ export default function copyTradingDetail() {
   const intl = useIntl()
   const { setPageBgColor } = useModel('global')
 
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
+
+  useEffect(() => {
+    console.log('currentAccountInfo', currentAccountInfo)
+  }, [currentAccountInfo])
+
   const params = useParams()
   const { id } = params
   const location = useLocation()
@@ -38,7 +47,7 @@ export default function copyTradingDetail() {
     query.get('state') && setTakeState(Number(query.get('state')) as IOrderTakerState)
   }, [location])
 
-  const [takeState, setTakeState] = useState<IOrderTakerState>(0)
+  const [takeState, setTakeState] = useState<IOrderTakerState>(3)
 
   const [taker, setTaker] = useState<IOrderTaker>(defaultTaker)
 
@@ -85,9 +94,17 @@ export default function copyTradingDetail() {
     if (selected) setTimeRange(selected.value)
   }
 
-  const { items: tabs, items2: tabs2, onChange } = useTabsConfig()
+  const {
+    items: tabs,
+    items2: tabs2,
+    onChange
+  } = useTabsConfig({
+    leadId: String(id),
+    followerId: String(currentAccountInfo.id),
+    defaultTabKey: takeState === 3 ? '1' : '2'
+  })
 
-  const tab = useMemo(() => (takeState === 0 ? tabs : tabs2), [takeState])
+  const tab = useMemo(() => (takeState === 3 ? tabs : tabs2), [takeState])
 
   // 无账号提示弹窗
   const [openTips, setOpenTips] = useState(false)
@@ -101,7 +118,7 @@ export default function copyTradingDetail() {
   const currentUser = initialState?.currentUser
   const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
   const onFollow = (takerState: IOrderTakerState) => {
-    if (takerState === 1 || takerState === 0) {
+    if (takerState === 3) {
       if (ableList.length === 0) {
         setOpenTips(true)
         return
@@ -116,6 +133,27 @@ export default function copyTradingDetail() {
     profitStatistics: { earningRates, profitAmounts },
     symbolStatistics
   } = useOverview({ id })
+
+  const onEnd = () => {
+    // todo 跳转
+    loadingRef.current?.show()
+
+    setTimeout(() => {
+      postTradeFollowFolloerClose({
+        followerId: String(currentAccountInfo.id)
+      })
+        .then((res) => {
+          if (res.success) {
+            message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+            // 刷新页面
+            window.location.reload()
+          }
+        })
+        .finally(() => {
+          loadingRef.current?.close()
+        })
+    }, 500)
+  }
 
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
@@ -168,18 +206,10 @@ export default function copyTradingDetail() {
             </div>
             {/* 操作区 */}
             <div className="flex flex-col gap-3.5">
-              {takeState === 0 ? (
+              {takeState === 3 ? (
                 <>
                   <EndModal
-                    onConfirm={() => {
-                      // todo 跳转
-                      loadingRef.current?.show()
-                      setTimeout(() => {
-                        loadingRef.current?.close()
-                        message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
-                        setTakeState(0)
-                      }, 3000)
-                    }}
+                    onConfirm={onEnd}
                     trigger={
                       <Button
                         height={42}
