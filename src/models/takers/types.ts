@@ -1,4 +1,4 @@
-export type IOrderTakerState = 'gendan' | 'yigendan' | 'yimanyuan' | 'wufagendan'
+export type IOrderTakerState = 0 | 1 | 2 | 3 | 4 // 1. 可跟單 2. 已滿員 // 3. 已跟单
 export type IOrderAccountType = 'biaozhun' | 'luodian' | 'meifen'
 
 /** 賬戶信息 */
@@ -44,38 +44,28 @@ export type IOrderTaker = {
   account: ITaker
   datas: Record<string, any>
   tags: any[]
-  state: IOrderTakerState
-}
+  state: IOrderTakerState | string
+} & TradeFollowLead.LeadDetailItem
 
 /** 帶單任務 */
-export type IOrder = {
-  id: string
-  /** 任務名稱 */
-  title: string
-  /** 帶單賬戶 */
-  account: ITaker
-  /** 跟單人列表 */
-  followers: IAccount[]
-  /** 任務狀態 */
-  datas: Record<string, any>
-  /** 任務狀態 */
-  // datas: {
-  //   /** 任務名稱 */
-  //   title: string
-  //   /** 賬戶保證金 */
-  //   zhanghubaozhengjin: number
-  //   /** 賬戶餘額 */
-  //   zhanghuyue: number
-  //   /** 累計盈虧 */
-  //   leijiyingkui: number
-  //   /** 淨盈虧 */
-  //   jingyingkui: number
-  // }
-}
+export type IOrder = TradeFollowFollower.ManagementInProgressItem
+// {
+//   id: string
+//   /** 任務名稱 */
+//   title: string
+//   /** 帶單賬戶 */
+//   account: ITaker
+//   /** 跟單人列表 */
+//   followers: IAccount[]
+//   /** 任務狀態 */
+//   datas: Record<string, any>
+//   /** 任務狀態 */
+// }
 
 /** 帶單頁面參數 */
 export type IOrderTakerProps = {
-  item: IOrderTaker
+  // item: IOrderTaker
+  item: Record<string, any>
   state: Record<string, any> // 页面状态
 }
 

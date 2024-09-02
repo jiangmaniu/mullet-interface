@@ -2,12 +2,13 @@ import './style.less'
 
 import { LeftOutlined } from '@ant-design/icons'
 import { ModalForm } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
 import { Form, message, Radio } from 'antd'
-import { useState } from 'react'
+import { Key, useEffect, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import SelectRounded from '@/components/Base/SelectRounded'
+import { tradeFollowLeadProfitSharing, tradeFollowLeadProfitSharingDetail } from '@/services/api/tradeFollow/lead'
 
 import { orders } from './mock'
 import ModalItem from './ModalItem'
@@ -21,7 +22,7 @@ const waitTime = (time = 100) => {
   })
 }
 
-export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () => void }) => {
+export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigger: JSX.Element; onSuccess?: () => void }) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.fenrunmingxi' })
@@ -54,13 +55,54 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
     filter === 1 ? setFilter(undefined) : setFilter(1)
   }
 
-  const datas = orders
+  // const datas = orders
+  const [datas, setDatas] = useState<TradeFollowLead.TradeFollowLeadProfitSharingItem>(orders)
 
-  const [details, setDetails] = useState([])
+  // 分页
+  // const [total, setTotal] = useState(0)
+  // const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
+  // const [current, setCurrent] = useState(1)
+
+  useEffect(() => {
+    tradeFollowLeadProfitSharing({
+      leadId: info.id
+    })
+      .then((res) => {
+        if (res.success) {
+          if (res.data?.records && res.data.records.length > 0) {
+            setDatas(res.data.records)
+          }
+        }
+      })
+      .catch((error) => {
+        message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
+      })
+  }, [info])
+
+  const [details, setDetails] = useState<TradeFollowLead.TradeFollowLeadProfitSharingDetailItem>([])
   const [showDetail, setShowDetail] = useState(false)
   const toShowDetail = (item: any) => {
-    setDetails(item.details)
+    toSetDetail(item)
     setShowDetail(true)
+  }
+
+  const toSetDetail = (item: any) => {
+    tradeFollowLeadProfitSharingDetail({
+      leadId: info.id
+    })
+      .then((res) => {
+        if (res.success) {
+          if (res.data?.records && res.data.records.length > 0) {
+            setDetails(res.data.records)
+            return
+          }
+        }
+
+        setDetails(item.details)
+      })
+      .catch((error) => {
+        message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
+      })
   }
 
   return (
@@ -111,7 +153,7 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
               </div>
 
               <div className="flex flex-col items-center gap-2.5 w-full overflow-scroll no-scrollbar">
-                {details.map((item, idx) => (
+                {details.map((item: any, idx: Key | null | undefined) => (
                   <ModalItemDetail item={item} key={idx} />
                 ))}
                 <span className=" text-sx font-normal text-gray-500 mt-1.5">
@@ -119,7 +161,7 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
                 </span>
               </div>
             </div>
-            {details.map((item, idx) => (
+            {details.map((item: any, idx: Key | null | undefined) => (
               <div className=" h-16" key={idx}>
                 {/* 占位用 */}
               </div>
@@ -151,7 +193,7 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
               </div>
 
               <div className="flex flex-col items-center gap-2.5 w-full overflow-scroll no-scrollbar">
-                {datas.map((item, idx) => (
+                {datas.map((item: any, idx: Key | null | undefined) => (
                   <ModalItem onClick={toShowDetail} item={item} key={idx} />
                 ))}
                 <span className=" text-sx font-normal text-gray-500 mt-1.5">
@@ -159,7 +201,7 @@ export default ({ trigger, onSuccess }: { trigger: JSX.Element; onSuccess?: () =
                 </span>
               </div>
             </div>
-            {datas.map((item, idx) => (
+            {datas.map((item: any, idx: Key | null | undefined) => (
               <div className=" h-20" key={idx}>
                 {/* 占位用 */}
               </div>

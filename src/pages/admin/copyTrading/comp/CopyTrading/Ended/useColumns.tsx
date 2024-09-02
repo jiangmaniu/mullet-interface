@@ -10,7 +10,7 @@ export default (): Item[] => {
   return [
     {
       label: <FormattedMessage id="mt.gensuitianshu" />,
-      field: 'rate1',
+      field: 'followerDays',
       showSuffix: undefined,
       opt: {
         decimal: '0'
@@ -22,7 +22,7 @@ export default (): Item[] => {
           <FormattedMessage id="mt.jingyingkui" />({SOURCE_CURRENCY})
         </>
       ),
-      field: 'rate2',
+      field: 'netProfitAndLoss',
       color: true,
       fontWeight: 'font-dingpro-medium font-semibold',
       showSuffix: undefined
@@ -33,7 +33,7 @@ export default (): Item[] => {
           <FormattedMessage id="mt.yishixianyingkui" />({SOURCE_CURRENCY})
         </>
       ),
-      field: 'rate3',
+      field: 'profitLoss',
       showSuffix: undefined
     },
     {
@@ -42,7 +42,7 @@ export default (): Item[] => {
           <FormattedMessage id="mt.gensuikaishishijian" />
         </>
       ),
-      field: 'rate4',
+      field: 'followerStartTime',
       showSuffix: undefined
     },
     {
@@ -51,7 +51,7 @@ export default (): Item[] => {
           <FormattedMessage id="mt.gensuijieshushijian" />
         </>
       ),
-      field: 'rate4',
+      field: 'followerEndTime',
       showSuffix: undefined
     },
     {
@@ -60,7 +60,7 @@ export default (): Item[] => {
           <FormattedMessage id="mt.fenrunjine" />({SOURCE_CURRENCY})
         </>
       ),
-      field: 'rate4',
+      field: 'profitSharingAmount',
       fontWeight: 'font-dingpro-medium',
       showSuffix: undefined,
       align: 'right'

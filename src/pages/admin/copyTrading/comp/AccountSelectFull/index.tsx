@@ -6,10 +6,19 @@ import { gray } from 'tailwindcss/colors'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
+import { tradeFollowListLeads } from '@/services/api/tradeFollow/lead'
 import { hiddenCenterPartStr } from '@/utils'
 import { message } from '@/utils/message'
 
-export default function AccountSelect({ onClick, style }: { onClick?: (item: any) => void; style?: React.CSSProperties | undefined }) {
+export default function AccountSelect({
+  leadId,
+  onClick,
+  style
+}: {
+  leadId: string
+  onClick?: (item: any) => void
+  style?: React.CSSProperties | undefined
+}) {
   const { initialState } = useModel('@@initialState')
   const intl = useIntl()
   // const [accountId, setAccountId] = useState<any>('')
@@ -21,6 +30,10 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
     // 默认选择第一个
     // setAccountId(accountList[0]?.id)
     setCurr(accountList[0])
+
+    tradeFollowListLeads({
+      leadId
+    })
   }, [initialState])
 
   const popupClassName = useEmotionCss(({ token }) => {

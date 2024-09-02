@@ -8,7 +8,7 @@ import { AccountTag } from '../../AccountTag'
 import ListItemNumber, { IListItemNumber } from '../../ListItemNumber'
 
 export const TradingItem = ({
-  item: { id, title, account, followers, datas },
+  item: { id, title, account, imageUrl, projectName, datas },
   columns,
   state,
   onClick,
@@ -47,7 +47,11 @@ export const TradingItem = ({
           {/* <div className="flex gap-3 items-center max-w-28  col-span-5"> */}
           <div className="flex gap-3 items-center max-w-28 ">
             {/* 頭像列表 第一个 */}
-            {followers
+            <div className=" text-primary text-sm font-pf-medium flex gap-1 items-center">
+              <img src={imageUrl} width={24} height={24} className="rounded-full border border-solid border-gray-340" />
+              &nbsp;{projectName}
+            </div>
+            {/* {followers
               .filter((item, idx) => idx < 1)
               .map((item, idx) => {
                 return (
@@ -64,7 +68,7 @@ export const TradingItem = ({
                     &nbsp;{item.name}
                   </div>
                 )
-              })}
+              })} */}
 
             {/* {followers.length > 5 && (
               <div

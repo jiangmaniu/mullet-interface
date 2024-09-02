@@ -1,10 +1,15 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { Input } from 'antd'
+import { FormInstance } from 'antd'
 
+import ProFormText from '@/components/Admin/Form/ProFormText'
 import Tags from '@/components/Admin/Tags'
 import Button from '@/components/Base/Button'
 
-export default () => {
+type IProps = {
+  form: FormInstance
+}
+
+export default ({ form }: IProps) => {
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
@@ -43,19 +48,40 @@ export default () => {
         <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.lirunfenchengbili" />
         </span>
-        <Input
-          size="large"
-          style={{
-            width: '100%',
-            height: '2.8125rem',
-            lineHeight: '2.8125rem'
+        <ProFormText
+          name="profitSharingRatio"
+          rules={[
+            {
+              required: true,
+              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              validator(rule, value, callback) {
+                if (!value) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                }
+                const _value = Number(value)
+                // 数字必须是正数
+                if (Number.isFinite(_value) && _value > 0) {
+                  return Promise.resolve()
+                }
+
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengshu' }))
+              }
+            }
+          ]}
+          fieldProps={{
+            size: 'large',
+            style: {
+              width: '100%',
+              height: '2.8125rem',
+              lineHeight: '2.8125rem'
+            },
+            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.lirunfenchengbili' })}`,
+            count: {
+              show: false,
+              max: 10
+            },
+            suffix: <span className=" text-sm font-semibold text-primary">%</span>
           }}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.lirunfenchengbili' })}`}
-          count={{
-            show: false,
-            max: 10
-          }}
-          suffix={<span className=" text-sm font-semibold text-primary">%</span>}
         />
       </div>
       {/* 資產要求 */}
@@ -63,19 +89,40 @@ export default () => {
         <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.zichanyaoqiu" />
         </span>
-        <Input
-          size="large"
-          style={{
-            width: '100%',
-            height: '2.8125rem',
-            lineHeight: '2.8125rem'
+        <ProFormText
+          name="assetRequirement"
+          rules={[
+            {
+              required: true,
+              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              validator(rule, value, callback) {
+                if (!value) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                }
+                const _value = Number(value)
+                // 数字必须是正数
+                if (Number.isFinite(_value) && _value > 0) {
+                  return Promise.resolve()
+                }
+
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengshu' }))
+              }
+            }
+          ]}
+          fieldProps={{
+            size: 'large',
+            style: {
+              width: '100%',
+              height: '2.8125rem',
+              lineHeight: '2.8125rem'
+            },
+            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanyaoqiu' })}`,
+            count: {
+              show: false,
+              max: 10
+            },
+            suffix: <span className=" text-sm font-semibold text-primary">USD</span>
           }}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanyaoqiu' })}`}
-          count={{
-            show: false,
-            max: 10
-          }}
-          suffix={<span className=" text-sm font-semibold text-primary">USD</span>}
         />
       </div>
       {/* 資產規模 */}
@@ -83,19 +130,41 @@ export default () => {
         <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.zichanguimo" />
         </span>
-        <Input
-          size="large"
-          style={{
-            width: '100%',
-            height: '2.8125rem',
-            lineHeight: '2.8125rem'
+        <ProFormText
+          name="assetSacle"
+          rules={[
+            {
+              required: true,
+              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              validator(rule, value, callback) {
+                if (!value) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                }
+
+                const _value = Number(value)
+                // 数字必须是正数
+                if (Number.isFinite(_value) && _value > 0) {
+                  return Promise.resolve()
+                }
+
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengshu' }))
+              }
+            }
+          ]}
+          fieldProps={{
+            size: 'large',
+            style: {
+              width: '100%',
+              height: '2.8125rem',
+              lineHeight: '2.8125rem'
+            },
+            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanguimo' })}`,
+            count: {
+              show: false,
+              max: 10
+            },
+            suffix: <span className=" text-sm font-semibold text-primary">USD</span>
           }}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanguimo' })}`}
-          count={{
-            show: false,
-            max: 10
-          }}
-          suffix={<span className=" text-sm font-semibold text-primary">USD</span>}
         />
       </div>
       {/* 最大支持人數 */}
@@ -103,23 +172,44 @@ export default () => {
         <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.zuidazhichirenshu" />
         </span>
-        <Input
-          size="large"
-          style={{
-            width: '100%',
-            height: '2.8125rem',
-            lineHeight: '2.8125rem'
+        <ProFormText
+          name="maxSupportCount"
+          rules={[
+            {
+              required: true,
+              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              validator(rule, value, callback) {
+                if (!value) {
+                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                }
+                const _value = Number(value)
+                // 数字必须是正整数
+                if (Number.isInteger(_value) && _value > 0) {
+                  return Promise.resolve()
+                }
+
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengzhengshu' }))
+              }
+            }
+          ]}
+          fieldProps={{
+            size: 'large',
+            style: {
+              width: '100%',
+              height: '2.8125rem',
+              lineHeight: '2.8125rem'
+            },
+            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zuidazhichirenshu' })}`,
+            count: {
+              show: false,
+              max: 10
+            },
+            suffix: (
+              <span className=" text-sm font-semibold text-primary">
+                <FormattedMessage id="mt.ren" />
+              </span>
+            )
           }}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zuidazhichirenshu' })}`}
-          count={{
-            show: false,
-            max: 10
-          }}
-          suffix={
-            <span className=" text-sm font-semibold text-primary">
-              <FormattedMessage id="mt.ren" />
-            </span>
-          }
         />
       </div>
       {/* 帶單標籤 */}
@@ -127,7 +217,7 @@ export default () => {
         <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.daidanbiaoqian" />
         </span>
-        <div className="flex flex-row flex-wrap gap-3">
+        <div className="flex flex-row flex-wrap gap-3 hide-form-item">
           {tags.map((tag, idx) => (
             <Tags
               color={tag.color}
@@ -139,6 +229,7 @@ export default () => {
               }}
             />
           ))}
+          <ProFormText name="tags" />
         </div>
       </div>
       {/* 保存 */}
@@ -152,6 +243,7 @@ export default () => {
           }}
           onClick={() => {
             // todo 跳转
+            form.submit()
           }}
         >
           <div className=" flex items-center gap-1">

@@ -1,9 +1,10 @@
 import { useIntl } from '@umijs/max'
-import { TableProps, TabsProps } from 'antd'
+import { Pagination, TableProps, TabsProps } from 'antd'
 import classNames from 'classnames'
+import { useState } from 'react'
 
 import Tags from '@/components/Admin/Tags'
-import { CURRENCY } from '@/constants'
+import { CURRENCY, DEFAULT_PAGE_SIZE } from '@/constants'
 import { formatNum, getColorClass } from '@/utils'
 
 import TabTable from '../comp/TabsTable/Table'
@@ -235,21 +236,81 @@ export const useTabsConfig = () => {
     }
   ]
 
+  // 分页
+  const [total1, setTotal1] = useState(0)
+  const [size1, setSize1] = useState(DEFAULT_PAGE_SIZE)
+  const [current1, setCurrent1] = useState(1)
+
+  // 分页
+  const [total2, setTotal2] = useState(0)
+  const [size2, setSize2] = useState(DEFAULT_PAGE_SIZE)
+  const [current2, setCurrent2] = useState(1)
+
+  // 分页
+  const [total3, setTotal3] = useState(0)
+  const [size3, setSize3] = useState(DEFAULT_PAGE_SIZE)
+  const [current3, setCurrent3] = useState(1)
+
   const items: TabsProps['items'] = [
     {
       key: '1',
       label: intl.formatMessage({ id: 'mt.dangqiandaidan' }),
-      children: <TabTable columns={orderColumns} datas={orders} />
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={orderColumns} datas={orders} />
+
+          <div className="self-end">
+            <Pagination
+              current={current1}
+              onChange={setCurrent1}
+              total={total1}
+              pageSize={size1}
+              onShowSizeChange={setSize1}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </div>
+      )
     },
     {
       key: '2',
       label: intl.formatMessage({ id: 'mt.lishidaidan' }),
-      children: <TabTable columns={historyColumns} datas={mockHistory} />
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={historyColumns} datas={mockHistory} />
+
+          <div className="self-end">
+            <Pagination
+              current={current2}
+              onChange={setCurrent2}
+              total={total2}
+              pageSize={size2}
+              onShowSizeChange={setSize2}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </div>
+      )
     },
     {
       key: '3',
       label: intl.formatMessage({ id: 'mt.gendanyonghu' }),
-      children: <TabTable columns={userColumns} datas={mockUsers} />
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={userColumns} datas={mockUsers} />
+
+          <div className="self-end">
+            <Pagination
+              current={current3}
+              onChange={setCurrent3}
+              total={total3}
+              pageSize={size3}
+              onShowSizeChange={setSize3}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </div>
+      )
     }
   ]
 

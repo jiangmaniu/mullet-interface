@@ -55,7 +55,7 @@ export default function CopyTradingManagement() {
                 </div>
               </div>
             </Button>
-            <AccountSelectFull />
+            <AccountSelectFull leadId={String(id)} />
           </div>
         </div>
 

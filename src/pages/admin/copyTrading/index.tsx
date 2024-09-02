@@ -31,7 +31,7 @@ export default function copyTrading() {
       icon: 'gendanguangchang', // 填写iconfont的name，不要icon-前缀
       iconWidth: 22,
       iconHeight: 22,
-      component: <Square />
+      component: <Square active={tabKey === 'square'} />
     },
     {
       label: <FormattedMessage id="mt.gendanguanli" />,
@@ -39,7 +39,7 @@ export default function copyTrading() {
       icon: 'gendanguanli',
       iconWidth: 22,
       iconHeight: 22,
-      component: <CopyTrading />
+      component: <CopyTrading active={tabKey === 'copyTrading'} />
     },
     {
       label: <FormattedMessage id="mt.daidanguanli" />,
@@ -47,7 +47,7 @@ export default function copyTrading() {
       icon: 'daidanguanli',
       iconWidth: 22,
       iconHeight: 22,
-      component: <Take />
+      component: <Take active={tabKey === 'take'} />
     }
   ]
 

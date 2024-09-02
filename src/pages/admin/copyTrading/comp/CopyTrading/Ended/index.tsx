@@ -1,10 +1,14 @@
 import { FormattedMessage } from '@umijs/max'
-import { useState } from 'react'
+import { Pagination } from 'antd'
+import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
+import { DEFAULT_PAGE_SIZE } from '@/constants'
+import { useStores } from '@/context/mobxProvider'
 import { IOrder } from '@/models/takers'
+import { getTradeFollowFolloerManagementEnd } from '@/services/api/tradeFollow/follower'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { push } from '@/utils/navigator'
 
@@ -12,26 +16,73 @@ import { defaultTakers } from '../mock'
 import { TradingItem } from '../TradingItem'
 import useColumns from './useColumns'
 
-export default () => {
-  const [takers, setTakers] = useState<IOrder[]>(defaultTakers)
+export default ({ segment }: { segment: string }) => {
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
+
+  const [takers, setTakers] = useState<TradeFollowFollower.ManagementEndItem[]>(defaultTakers)
   const [state, setState] = useState({})
 
   const columns = useColumns()
 
+  // 分页
+  const [total, setTotal] = useState(0)
+  const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
+  const [current, setCurrent] = useState(1)
+
+  useEffect(() => {
+    trade.currentAccountInfo &&
+      trade.currentAccountInfo.id &&
+      segment === 'yijieshu' &&
+      getTradeFollowFolloerManagementEnd({
+        accountGroupId: currentAccountInfo?.accountGroupId,
+        clientId: currentAccountInfo?.clientId,
+        followerTradeAccountId: currentAccountInfo?.id,
+        size,
+        current
+      })
+        .then((res) => {
+          if (res.success) {
+            // setTakers(res.data)
+            if (res.data?.records?.length && res.data.records.length > 0) {
+              setTakers(res.data.records as IOrder[])
+              setTotal(res.data.total)
+            }
+            // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+  }, [segment, currentAccountInfo, current, size])
+
   return (
     <div className="flex flex-col gap-5 w-full">
       {takers.length > 0 ? (
-        takers.map((item: IOrder, idx: number) => (
-          <TradingItem
-            key={idx}
-            item={item}
-            state={state}
-            columns={columns}
-            onClick={() => {
-              push(`/copy-trading/detail/1`)
-            }}
-          />
-        ))
+        <>
+          {takers.map((item: TradeFollowFollower.ManagementEndItem, idx: number) => (
+            <TradingItem
+              key={idx}
+              item={item}
+              state={state}
+              columns={columns}
+              onClick={() => {
+                push(`/copy-trading/detail/1`)
+              }}
+            />
+          ))}
+
+          <div className="self-end">
+            <Pagination
+              current={current}
+              onChange={setCurrent}
+              total={total}
+              pageSize={size}
+              onShowSizeChange={setSize}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </>
       ) : (
         <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem]">
           <Empty src="/img/empty-gendanguanli.png" description={<FormattedMessage id="mt.zanwujilu" />} />

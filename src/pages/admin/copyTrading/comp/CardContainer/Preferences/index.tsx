@@ -1,18 +1,19 @@
 import { useIntl } from '@umijs/max'
 import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 
 import { formatNum } from '@/utils'
 
 type IProps = {
   time?: string
+  datas: TradeFollowLead.TradeFollowLeadSymbolStatisticsItem[]
 }
 
 /**
  * 交易偏好
  */
-const Preferences = ({ time }: IProps) => {
+const Preferences = ({ time, datas }: IProps) => {
   const intl = useIntl()
 
   const jiaoyidui = intl.formatMessage({ id: 'mt.jiaoyidui' })
@@ -23,10 +24,19 @@ const Preferences = ({ time }: IProps) => {
     console.log('Leijiyingkui time:', time)
   }, [time])
 
-  const [data, setData] = useState<any[]>([
-    { value: 735, name: 'BTCUSDT 永续', meta: { yingkui: 1234 }, itemStyle: { color: '#45A48A' } },
-    { value: 1548, name: 'ETHUSDT 永续', meta: { yingkui: -1234 }, itemStyle: { color: '#183EFC' } }
-  ])
+  // const [data, setData] = useState<any[]>([
+  //   { value: 735, name: 'BTCUSDT 永续', meta: { profit: 1234 }, itemStyle: { color: '#45A48A' } },
+  //   { value: 1548, name: 'ETHUSDT 永续', meta: { profit: -1234 }, itemStyle: { color: '#183EFC' } }
+  // ])
+
+  const colors = ['#45A48A', '#183EFC']
+
+  const data = datas.map((item, idx) => ({
+    value: item.tradeCount,
+    name: item.symbol,
+    meta: { profit: item.profit },
+    itemStyle: { color: colors[idx] }
+  }))
 
   const option = useMemo(
     () =>
@@ -113,9 +123,9 @@ const Preferences = ({ time }: IProps) => {
               const arr = [
                 '{name|' + name + '}',
                 '{value|' + target.value + '}',
-                target.meta.yingkui > 0
-                  ? '{amount1|+' + formatNum(target.meta.yingkui || 0) + ' USDT}'
-                  : '{amount2|' + formatNum(target.meta.yingkui || 0) + ' USDT}'
+                target.meta.profit && target.meta.profit > 0
+                  ? '{amount1|+' + formatNum(target.meta.profit || 0) + ' USDT}'
+                  : '{amount2|' + formatNum(target.meta.profit || 0) + ' USDT}'
               ]
 
               return arr.join('')

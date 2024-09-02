@@ -52,3 +52,6 @@ export const DEFAULT_LOCALE = 'en-US'
 export const SOURCE_CURRENCY = 'USD'
 export const CURRENCY = 'USDT'
 export const CURRENT_YEAR = 2024
+
+// 分页默认值
+export const DEFAULT_PAGE_SIZE = 10
