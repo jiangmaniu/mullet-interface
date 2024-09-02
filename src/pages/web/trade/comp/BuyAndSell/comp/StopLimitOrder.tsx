@@ -6,7 +6,7 @@ import { forwardRef, useEffect, useState, useTransition } from 'react'
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum } from '@/utils'
+import { formatNum, getPrecisionByNumber } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
@@ -74,6 +74,7 @@ export default observer(
     const vmax = maxOpenVolume // 当前账户保证金最大可开手数
     const vmin = symbolConf?.minTrade || 0.01
     const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
+    const countPrecision = getPrecisionByNumber(symbolConf.minTrade) // 手数精度
 
     // 切换品种、买卖重置内容
     useEffect(() => {
@@ -389,6 +390,8 @@ export default observer(
             value={countValue}
             max={vmax}
             min={vmin}
+            precision={countPrecision}
+            hiddenPrecision={false}
             onChange={(value: any) => {
               setCount(value || '')
             }}

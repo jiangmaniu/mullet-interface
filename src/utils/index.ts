@@ -440,3 +440,12 @@ export function isPC() {
   }
   return flag
 }
+
+/**
+ * 获取指定数字的精度位数
+ * @param value
+ * @returns
+ */
+export const getPrecisionByNumber = (value: any) => {
+  return value ? String(value).split('.')?.[1]?.length || 0 : 0
+}
