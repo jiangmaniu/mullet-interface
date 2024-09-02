@@ -16,15 +16,14 @@ import { push } from '@/utils/navigator'
 
 import EndModal from '../../../copyTradingDetail/EndModal'
 import TradingSettingModal from '../../TradingSettingModal'
-import { defaultTakers } from '../mock'
 import { TradingItem } from '../TradingItem'
 import useColumns from './useColumns'
 
-export default ({ segment }: { segment: string }) => {
+export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction }) => {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
-  const [takers, setTakers] = useState<TradeFollowFollower.ManagementInProgressItem[]>(defaultTakers)
+  const [takers, setTakers] = useState<TradeFollowFollower.ManagementInProgressItem[]>([])
   const [state, setState] = useState({})
   const intl = useIntl()
 
@@ -59,10 +58,11 @@ export default ({ segment }: { segment: string }) => {
       })
         .then((res) => {
           if (res.success) {
-            // setTakers(res.data)
-            if (res.data?.records?.length && res.data.records.length > 0) {
-              setTakers(res.data.records as IOrder[])
-              setTotal(res.data.total)
+            if (res.data) {
+              if (res.data.records) {
+                setTakers(res.data.records as IOrder[])
+                setTotal(res.data.total)
+              }
             }
             // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
           }
@@ -83,7 +83,7 @@ export default ({ segment }: { segment: string }) => {
               state={state}
               columns={columns}
               onClick={() => {
-                push(`/copy-trading/detail/1`)
+                push(`/copy-trading/detail/${item.leadId}`)
               }}
             >
               <div className=" flex items-center justify-end gap-2.5">
@@ -150,9 +150,7 @@ export default ({ segment }: { segment: string }) => {
               width: 197,
               borderRadius: 8
             }}
-            onClick={() => {
-              // todo 跳转
-            }}
+            onClick={toSquare}
           >
             <div className="flex items-center text-base font-semibold">
               <Iconfont name="gendanguanli" width={22} color="white" height={22} hoverColor={colorTextPrimary} />

@@ -59,7 +59,7 @@ export default function AccountSelect({
 
   const clickHandler = (key: string) => {
     setOpen(false)
-    const item = accountList.find((item) => item.id === key)
+    const item = accountList.find((item) => item.leadId === key)
 
     if (!item) {
       message.info('error')

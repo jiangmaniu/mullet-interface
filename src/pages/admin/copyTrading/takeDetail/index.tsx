@@ -8,9 +8,11 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { CURRENCY } from '@/constants'
+import { useStores } from '@/context/mobxProvider'
 import { getTradeFollowLeadDetail, tradeFollowLeadClose } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
+import { push } from '@/utils/navigator'
 
 import AccountSelectFull from '../comp/AccountSelectFull'
 import { CardContainer } from '../comp/CardContainer'
@@ -28,6 +30,13 @@ import { useOverview } from './useOverview'
 import { useTabsConfig } from './useTabsConfig'
 
 export default function TakeDetail() {
+  const { trade } = useStores()
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const accountList = currentUser?.accountList || []
+  const currentAccountList = accountList.filter((item) => !item.isSimulate)
+
   const intl = useIntl()
   const { setPageBgColor } = useModel('global')
   const loadingRef = useRef<any>()
@@ -111,7 +120,12 @@ export default function TakeDetail() {
                 </div>
               </div>
             </Button>
-            <AccountSelectFull leadId={String(id)} />
+            <AccountSelectFull
+              leadId={String(id)}
+              onClick={(item) => {
+                push(`/copy-trading/take-detail/${item.leadId}`)
+              }}
+            />
           </div>
         </div>
         <div className="mt-10">
@@ -191,7 +205,14 @@ export default function TakeDetail() {
                   borderRadius: 8
                 }}
                 onClick={() => {
-                  // todo 跳转
+                  const item = currentAccountList.find((item) => item.id === taker?.tradeAccountId)
+
+                  if (item) {
+                    trade.setCurrentAccountInfo(item)
+                    trade.jumpTrade()
+                    // 切换账户重置
+                    trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                  }
                 }}
               >
                 <div className=" flex items-center gap-1">
@@ -279,7 +300,7 @@ export default function TakeDetail() {
                   })
                     .then((res) => {
                       if (res.success) {
-                        message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                        // message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
                         setOpenEnd(false)
                         setStatus('disabled')
                       } else {

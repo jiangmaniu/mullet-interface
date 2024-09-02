@@ -6,6 +6,7 @@ import mt from './zh-TW/mt'
 import pwa from './zh-TW/pwa'
 import settingDrawer from './zh-TW/settingDrawer'
 import settings from './zh-TW/settings'
+import trade from './zh-TW/trade'
 
 export default {
   'navBar.lang': '語言',
@@ -20,5 +21,6 @@ export default {
   ...pwa,
   ...component,
   ...common,
-  ...mt
+  ...mt,
+  ...trade
 }

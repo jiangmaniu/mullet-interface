@@ -20,10 +20,6 @@ const Preferences = ({ time, datas }: IProps) => {
   const jiaoyicishu = intl.formatMessage({ id: 'mt.jiaoyicishu' })
   const jiaoyiyingkui = intl.formatMessage({ id: 'mt.jiaoyiyingkui' })
 
-  useEffect(() => {
-    console.log('Leijiyingkui time:', time)
-  }, [time])
-
   // const [data, setData] = useState<any[]>([
   //   { value: 735, name: 'BTCUSDT 永续', meta: { profit: 1234 }, itemStyle: { color: '#45A48A' } },
   //   { value: 1548, name: 'ETHUSDT 永续', meta: { profit: -1234 }, itemStyle: { color: '#183EFC' } }

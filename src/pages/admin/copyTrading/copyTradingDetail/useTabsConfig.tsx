@@ -253,10 +253,6 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
       })
   }, [tabKey, followerId, leadId, size2, current2])
 
-  useEffect(() => {
-    console.log(histories)
-  }, [histories])
-
   const items2: TabsProps['items'] = [
     {
       key: '2',

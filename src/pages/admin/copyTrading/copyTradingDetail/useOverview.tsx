@@ -20,6 +20,7 @@ export const useOverview = ({ id }: { id: string | undefined }) => {
   })
 
   const [dateRange2, setDateRange2] = useState('14')
+
   const [profitStatistics, setProfitStatistics] = useState<TradeFollowLead.TradeFollowLeadProfitStatisticsItem>({
     earningRates: [
       {
@@ -110,7 +111,7 @@ export const useOverview = ({ id }: { id: string | undefined }) => {
           }
 
           setStatistics(res.data)
-          message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
+          // message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
         }
       })
       .catch((error) => {
@@ -129,7 +130,8 @@ export const useOverview = ({ id }: { id: string | undefined }) => {
       .then((res) => {
         // form.setFieldsValue(formDefault) // 重置
         if (res.success) {
-          message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
+          setProfitStatistics(res.data as TradeFollowLead.TradeFollowLeadProfitStatisticsItem)
+          // message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
         }
       })
       .catch((error) => {
@@ -148,7 +150,8 @@ export const useOverview = ({ id }: { id: string | undefined }) => {
       .then((res) => {
         // form.setFieldsValue(formDefault) // 重置
         if (res.success) {
-          message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
+          // message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
+          setSymbolStatistics(res.data as TradeFollowLead.TradeFollowLeadSymbolStatisticsItem[])
         }
       })
       .catch((error) => {

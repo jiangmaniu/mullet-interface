@@ -8,6 +8,7 @@ import Header from '@/components/Admin/Header'
 import Button from '@/components/Base/Button'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { SOURCE_CURRENCY, SYSTEM_NAME } from '@/constants'
+import { useStores } from '@/context/mobxProvider'
 import { addTraadeFollowLead } from '@/services/api/tradeFollow/lead'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { message } from '@/utils/message'
@@ -26,6 +27,8 @@ export default function Apply() {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
+
+  const { trade } = useStores()
 
   // 账户类型/交易账户组
   const accountTypes = useMemo(() => {
@@ -67,10 +70,10 @@ export default function Apply() {
   }, [tradeAccountId])
 
   // 客戶端 ID
-  const clientId = useMemo(() => {
-    const item = accountList.find((item) => item.id === tradeAccountId)
-    return item?.clientId || 0
-  }, [tradeAccountId])
+  // const clientId = useMemo(() => {
+  //   const item = accountList.find((item) => item.id === tradeAccountId)
+  //   return item?.clientId || 0
+  // }, [tradeAccountId])
 
   // 選擇賬戶組後，可選的賬戶列表
   const accounts = useMemo(() => {
@@ -85,9 +88,14 @@ export default function Apply() {
   }, [accountGroupId])
 
   useEffect(() => {
-    // 默認選中第一個
-    // console.log('accounts', accounts.find((item) => item.clientId)?.clientId || '')
-    form.setFieldValue('clientId', accounts.find((item) => item.id)?.id || '')
+    if (trade.currentAccountInfo && accountGroupId === trade.currentAccountInfo?.accountGroupId) {
+      // 如果分组 = 当前选择账号分组，则选中当前账号
+      form.setFieldValue('clientId', trade.currentAccountInfo?.clientId)
+    } else {
+      // 默認選中第一個
+      form.setFieldValue('clientId', accounts.find((item) => item.id)?.clientId || '')
+      form.setFieldValue('tradeAccountId', accounts.find((item) => item.id)?.id || '')
+    }
   }, [accounts])
 
   // const [money, setMoney] = useState<number | undefined>()
@@ -96,15 +104,15 @@ export default function Apply() {
 
   const formDefault = useMemo(
     () => ({
-      accountGroupId: 0,
+      accountGroupId: trade.currentAccountInfo?.accountGroupId,
       contractProof: '',
       desc: '',
       projectName: '',
-      tradeAccountId: 0,
-      clientId,
+      tradeAccountId: trade.currentAccountInfo?.id,
+      clientId: trade.currentAccountInfo?.clientId,
       imageUrl: 'https://img.alicdn.com/imgextra/i4/O1CN01KX0dQk1vQZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0ZzZ0Zz'
     }),
-    [clientId]
+    [trade.currentAccountInfo]
   )
 
   const onAvatarChange = (p: any) => {
@@ -114,13 +122,11 @@ export default function Apply() {
 
   const maxCount = 3
   const onContractChange = (list: UploadFile[]) => {
-    console.log(list?.map((i) => i.url).join(','))
     form.setFieldValue('contractProof', list?.map((i) => i.url).join(','))
     form.validateFields(['contractProof'])
   }
 
   const onFinish = (values: any) => {
-    console.log('onFinish')
     addTraadeFollowLead({
       ...formDefault,
       ...values

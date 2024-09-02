@@ -55,7 +55,12 @@ export default function CopyTradingManagement() {
                 </div>
               </div>
             </Button>
-            <AccountSelectFull leadId={String(id)} />
+            <AccountSelectFull
+              leadId={String(id)}
+              // onClick={(item) => {
+              //   push(`/copy-trading/detail/${item.leadId}`)
+              // }}
+            />
           </div>
         </div>
 

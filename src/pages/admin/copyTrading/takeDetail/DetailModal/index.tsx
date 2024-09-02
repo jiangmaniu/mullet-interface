@@ -77,7 +77,7 @@ export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigg
       .catch((error) => {
         message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
       })
-  }, [info])
+  }, [info.id])
 
   const [details, setDetails] = useState<TradeFollowLead.TradeFollowLeadProfitSharingDetailItem>([])
   const [showDetail, setShowDetail] = useState(false)

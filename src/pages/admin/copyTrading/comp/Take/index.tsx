@@ -13,7 +13,6 @@ import { colorTextPrimary } from '@/theme/theme.config'
 import { push } from '@/utils/navigator'
 
 import TakeSettingModal from '../TakeSettingModal'
-import { defaultTakers } from './mock'
 import { TakeItem } from './TakeItem'
 
 export default function Take({ active }: { active: boolean }) {
@@ -28,7 +27,7 @@ export default function Take({ active }: { active: boolean }) {
   const [state, setState] = useState({})
 
   // 帶單員
-  const [takers, setTakers] = useState<IOrderTaker[]>(defaultTakers)
+  const [takers, setTakers] = useState<IOrderTaker[]>([])
 
   // 分页
   const [total, setTotal] = useState(0)
@@ -51,9 +50,12 @@ export default function Take({ active }: { active: boolean }) {
         .then((res) => {
           if (res.success) {
             // setTakers(res.data)
-            if (res.data?.records?.length && res.data.records?.length > 0) {
-              setTakers(res.data.records as IOrderTaker[])
-              setTotal(res.data.total)
+
+            if (res.data) {
+              if (res.data.records) {
+                setTakers(res.data.records as IOrderTaker[])
+                setTotal(res.data.total)
+              }
             }
             // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
           }
@@ -65,7 +67,6 @@ export default function Take({ active }: { active: boolean }) {
 
   const onTake = (id: string) => {
     const item = currentAccountList.find((item) => item.id === id)
-    console.log(id)
 
     if (item) {
       trade.setCurrentAccountInfo(item)

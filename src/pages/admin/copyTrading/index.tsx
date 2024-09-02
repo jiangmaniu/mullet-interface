@@ -24,6 +24,10 @@ export default function copyTrading() {
 
   const [tabKey, setTabKey] = useState(hash || 'square')
 
+  const toSquare = () => {
+    setTabKey('square')
+  }
+
   const tabList = [
     {
       label: <FormattedMessage id="mt.gendanguangchang" />,
@@ -39,7 +43,7 @@ export default function copyTrading() {
       icon: 'gendanguanli',
       iconWidth: 22,
       iconHeight: 22,
-      component: <CopyTrading active={tabKey === 'copyTrading'} />
+      component: <CopyTrading active={tabKey === 'copyTrading'} toSquare={toSquare} />
     },
     {
       label: <FormattedMessage id="mt.daidanguanli" />,

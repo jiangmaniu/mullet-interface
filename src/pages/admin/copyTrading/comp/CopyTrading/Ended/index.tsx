@@ -12,15 +12,14 @@ import { getTradeFollowFolloerManagementEnd } from '@/services/api/tradeFollow/f
 import { colorTextPrimary } from '@/theme/theme.config'
 import { push } from '@/utils/navigator'
 
-import { defaultTakers } from '../mock'
 import { TradingItem } from '../TradingItem'
 import useColumns from './useColumns'
 
-export default ({ segment }: { segment: string }) => {
+export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction }) => {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
-  const [takers, setTakers] = useState<TradeFollowFollower.ManagementEndItem[]>(defaultTakers)
+  const [takers, setTakers] = useState<TradeFollowFollower.ManagementEndItem[]>([])
   const [state, setState] = useState({})
 
   const columns = useColumns()
@@ -43,10 +42,11 @@ export default ({ segment }: { segment: string }) => {
       })
         .then((res) => {
           if (res.success) {
-            // setTakers(res.data)
-            if (res.data?.records?.length && res.data.records.length > 0) {
-              setTakers(res.data.records as IOrder[])
-              setTotal(res.data.total)
+            if (res.data) {
+              if (res.data.records) {
+                setTakers(res.data.records as IOrder[])
+                setTotal(res.data.total)
+              }
             }
             // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
           }
@@ -67,7 +67,7 @@ export default ({ segment }: { segment: string }) => {
               state={state}
               columns={columns}
               onClick={() => {
-                push(`/copy-trading/detail/1`)
+                push(`/copy-trading/detail/${item.leadId}`)
               }}
             />
           ))}
@@ -93,9 +93,7 @@ export default ({ segment }: { segment: string }) => {
               width: 197,
               borderRadius: 8
             }}
-            onClick={() => {
-              // todo 跳转
-            }}
+            onClick={toSquare}
           >
             <div className="flex items-center text-base font-semibold">
               <Iconfont name="gendanguanli" width={22} color="white" height={22} hoverColor={colorTextPrimary} />

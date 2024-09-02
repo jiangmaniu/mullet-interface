@@ -109,7 +109,6 @@ const Cumulative = (props: IProps) => {
     [data, xAxis, intl]
   ) as echarts.EChartOption
 
-  console.log(option)
   return (
     <div className="leijiyingkui flex flex-col items-start gap-4">
       <Segmented<'earningRates' | 'profitAmounts'>
@@ -125,7 +124,6 @@ const Cumulative = (props: IProps) => {
         ]}
         value={segment}
         onChange={(value) => {
-          console.log(value)
           setSegment(value)
         }}
       />

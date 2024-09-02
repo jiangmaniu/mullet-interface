@@ -234,6 +234,7 @@ declare namespace TradeFollowLead {
    * 带单人 - 详情
    */
   type LeadDetailItem = {
+    tradeAccountId?: string
     /**
      * 资产要求
      */

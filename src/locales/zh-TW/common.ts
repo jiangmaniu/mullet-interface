@@ -59,5 +59,7 @@ export default {
   'common.search': '搜索',
   'common.pleaseInputAddress': '请输入地址',
   'common.copy': '复制',
-  'common.next': '下一步'
+  'common.next': '下一步',
+  'common.zanwuzhanghao': '暫無賬號',
+  'common.chuangjianzhanghao': '創建賬號'
 }

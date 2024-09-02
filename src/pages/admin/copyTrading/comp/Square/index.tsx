@@ -1,19 +1,22 @@
-import { useIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Pagination, Space } from 'antd'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
+import Button from '@/components/Base/Button'
+import Empty from '@/components/Base/Empty'
+import Iconfont from '@/components/Base/Iconfont'
 import SelectRounded from '@/components/Base/SelectRounded'
-import { DEFAULT_PAGE_SIZE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { IOrderTakerState } from '@/models/takers'
 import { getTradeFollowLeadPlaza } from '@/services/api/tradeFollow/lead'
+import { colorTextPrimary } from '@/theme/theme.config'
 import { push } from '@/utils/navigator'
 
 import NoAccountModal from '../NoAccountModal'
 import TradingSettingModal from '../TradingSettingModal'
-import { defaultTags, defaultTakers, defaultTimeRange } from './mock'
+import { defaultTags, defaultTimeRange } from './mock'
 import { OrderTaker } from './OrderTaker'
 
 function Square({ active }: { active: boolean }) {
@@ -68,7 +71,8 @@ function Square({ active }: { active: boolean }) {
   const today = dayjs()
 
   // 帶單員
-  const [takers, setTakers] = useState<TradeFollowLead.LeadPlazaItem[]>(defaultTakers as unknown as TradeFollowLead.LeadPlazaItem[])
+  // const [takers, setTakers] = useState<TradeFollowLead.LeadPlazaItem[]>(defaultTakers as unknown as TradeFollowLead.LeadPlazaItem[])
+  const [takers, setTakers] = useState<TradeFollowLead.LeadPlazaItem[]>([])
 
   // 无账号提示弹窗
   const [openTips, setOpenTips] = useState(false)
@@ -85,12 +89,12 @@ function Square({ active }: { active: boolean }) {
 
   // 分页
   const [total, setTotal] = useState(0)
-  const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
+  // const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
+  const [size, setSize] = useState(9)
   const [current, setCurrent] = useState(1)
 
   useEffect(() => {
     if (active && trade.currentAccountInfo && trade.currentAccountInfo.id) {
-      console.log('state', state)
       setLoading(true)
       getTradeFollowLeadPlaza({
         tradeAccountId: trade.currentAccountInfo.id,
@@ -105,7 +109,7 @@ function Square({ active }: { active: boolean }) {
 
           // @ts-ignore
           if (res.success) {
-            if (res.data?.records && res.data.records.length > 0) {
+            if (res.data) {
               setTakers(res.data.records)
               setTotal(res.data.total)
             }
@@ -137,27 +141,51 @@ function Square({ active }: { active: boolean }) {
 
   return (
     <Space direction="vertical" size={24} className="w-full">
-      <Space size={12}>
-        <SelectRounded defaultValue={accountType} onChange={(i) => handleChange('zhanghuleixing', i)} options={accountTypes} />
-        <SelectRounded defaultValue={tag} onChange={(i) => handleChange('biaoqian', i)} options={tags} />
-        <SelectRounded defaultValue={rateOfReturnNear} onChange={(i) => handleChange('jinqi', i)} options={timeRange} />
-      </Space>
-      <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
-        {takers.map((item, idx) => (
-          <OrderTaker key={idx} item={item} state={state} onClick={onClick} onFollow={onFollow} />
-        ))}
-      </div>
+      {trade.currentAccountInfo.id ? (
+        <>
+          <Space size={12}>
+            <SelectRounded defaultValue={accountType} onChange={(i) => handleChange('zhanghuleixing', i)} options={accountTypes} />
+            <SelectRounded defaultValue={tag} onChange={(i) => handleChange('biaoqian', i)} options={tags} />
+            <SelectRounded defaultValue={rateOfReturnNear} onChange={(i) => handleChange('jinqi', i)} options={timeRange} />
+          </Space>
+          <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
+            {takers.map((item, idx) => (
+              <OrderTaker key={idx} item={item} state={state} onClick={onClick} onFollow={onFollow} />
+            ))}
+          </div>
 
-      <div className="flex items-end justify-end ">
-        <Pagination
-          current={current}
-          onChange={setCurrent}
-          total={total}
-          pageSize={size}
-          onShowSizeChange={setSize}
-          pageSizeOptions={['10', '20', '50']}
-        />
-      </div>
+          <div className="flex items-end justify-end ">
+            <Pagination
+              current={current}
+              onChange={setCurrent}
+              total={total}
+              pageSize={size}
+              onShowSizeChange={setSize}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </>
+      ) : (
+        <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem]">
+          <Empty src="/img/empty-daidan.png" description={<FormattedMessage id="common.zanwuzhanghao" />} />
+          <Button
+            height={44}
+            type="primary"
+            style={{
+              width: 197,
+              borderRadius: 8
+            }}
+            onClick={() => {
+              push('/account/type')
+            }}
+          >
+            <div className="flex items-center text-base font-pf-bold">
+              <Iconfont name="daidan" width={22} color="white" height={22} hoverColor={colorTextPrimary} />
+              <FormattedMessage id="common.chuangjianzhanghao" />
+            </div>
+          </Button>
+        </div>
+      )}
       {/* <QA /> */}
       <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
 

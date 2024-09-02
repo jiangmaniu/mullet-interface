@@ -37,10 +37,6 @@ const formatter: StatisticProps['formatter'] = (value, props) => {
 export const Performance = ({ time, datas }: IProps) => {
   const delay = 0.15
 
-  useEffect(() => {
-    console.log('Daidanbiaoxian time:', time)
-  }, [time])
-
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -50,7 +46,6 @@ export const Performance = ({ time, datas }: IProps) => {
           // 给 containerRef.current 添加类名 daidanbiaoxian
           if (containerRef.current) {
             containerRef.current.classList.add('daidanbiaoxian')
-            console.log('添加样式 daidanbiaoxian')
 
             // 停止观察元素（可选）
             containerRef.current && observer.unobserve(containerRef.current)

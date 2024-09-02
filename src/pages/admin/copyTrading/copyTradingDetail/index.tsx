@@ -11,6 +11,7 @@ import { postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
+import { push } from '@/utils/navigator'
 
 import AccountSelectFull from '../comp/AccountSelectFull'
 import { CardContainer } from '../comp/CardContainer'
@@ -34,20 +35,16 @@ export default function copyTradingDetail() {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
-  useEffect(() => {
-    console.log('currentAccountInfo', currentAccountInfo)
-  }, [currentAccountInfo])
-
   const params = useParams()
   const { id } = params
   const location = useLocation()
   const loadingRef = useRef<any>()
-  useEffect(() => {
-    const query = new URLSearchParams(location.search)
-    query.get('state') && setTakeState(Number(query.get('state')) as IOrderTakerState)
-  }, [location])
+  // useEffect(() => {
+  //   const query = new URLSearchParams(location.search)
+  //   query.get('state') && setTakeState(Number(query.get('state')) as IOrderTakerState)
+  // }, [location])
 
-  const [takeState, setTakeState] = useState<IOrderTakerState>(3)
+  const [takeState, setTakeState] = useState<IOrderTakerState>(1)
 
   const [taker, setTaker] = useState<IOrderTaker>(defaultTaker)
 
@@ -58,8 +55,6 @@ export default function copyTradingDetail() {
     getTradeFollowLeadDetail({
       leadId: String(id)
     }).then((res) => {
-      console.log('getTradeFollowLeadPlaza', res)
-
       // @ts-ignore
       if (res.success) setTaker(res.data)
     })
@@ -118,7 +113,7 @@ export default function copyTradingDetail() {
   const currentUser = initialState?.currentUser
   const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
   const onFollow = (takerState: IOrderTakerState) => {
-    if (takerState === 3) {
+    if (takerState === 1) {
       if (ableList.length === 0) {
         setOpenTips(true)
         return
@@ -178,7 +173,12 @@ export default function copyTradingDetail() {
               </div>
             </Button>
 
-            <AccountSelectFull leadId={String(id)} />
+            <AccountSelectFull
+              leadId={String(id)}
+              onClick={(item) => {
+                push(`/copy-trading/detail/${item.leadId}`)
+              }}
+            />
           </div>
         </div>
         <div className="mt-10">

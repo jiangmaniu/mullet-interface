@@ -11,15 +11,14 @@ import { getTradeFollowFolloerManagementHistory } from '@/services/api/tradeFoll
 import { colorTextPrimary } from '@/theme/theme.config'
 
 import TabTable from '../../TabsTable/Table'
-import { orders as mockOrders } from './mock'
 import useColumns from './useColumns'
 
-export default ({ segment }: { segment: string }) => {
+export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction }) => {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
   const columns = useColumns()
-  const [orders, setOrders] = useState(mockOrders)
+  const [orders, setOrders] = useState<TradeFollowFollower.ManagementHistoryItem>([])
 
   // 分页
   const [total, setTotal] = useState(0)
@@ -37,10 +36,11 @@ export default ({ segment }: { segment: string }) => {
       })
         .then((res) => {
           if (res.success) {
-            // setTakers(res.data)
-            if (res.data?.records.length && res.data.records.length > 0) {
-              setOrders(res.data.records)
-              setTotal(res.data.total)
+            if (res.data) {
+              if (res.data.records) {
+                setOrders(res.data.records)
+                setTotal(res.data.total)
+              }
             }
             // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
           }
@@ -54,7 +54,7 @@ export default ({ segment }: { segment: string }) => {
     <div className="flex flex-col gap-5 w-full">
       {orders.length > 0 ? (
         <>
-          <TabTable columns={columns} datas={orders} />
+          <TabTable columns={columns} datas={orders as any[]} />
 
           <div className="self-end">
             <Pagination
@@ -77,9 +77,7 @@ export default ({ segment }: { segment: string }) => {
               width: 197,
               borderRadius: 8
             }}
-            onClick={() => {
-              // todo 跳转
-            }}
+            onClick={toSquare}
           >
             <div className="flex items-center text-base font-semibold">
               <Iconfont name="gendanguanli" width={22} color="white" height={22} hoverColor={colorTextPrimary} />
