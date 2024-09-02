@@ -21,11 +21,13 @@ export const Provider = ({ children }: IProps): JSX.Element => {
       stores.ws.close()
     }
     if (isOnline) {
-      // 重新建立新连接
-      stores.ws.reconnect()
-      // 刷新k线历史数据
-      // @ts-ignore
-      stores.kline.tvWidget = null
+      setTimeout(() => {
+        // 重新建立新连接
+        stores.ws.connect()
+        // 刷新k线历史数据
+        // @ts-ignore
+        stores.kline.tvWidget = null
+      }, 1000)
     }
   }, [isOnline])
 
