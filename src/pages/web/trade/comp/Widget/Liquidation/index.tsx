@@ -1,13 +1,13 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import classNames from 'classnames'
 import { cloneDeep, groupBy } from 'lodash-es'
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, uniqueObjectArray } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Gauge from './Gauge'
@@ -44,7 +44,7 @@ function Liquidation() {
             ...item,
             value: item.id, // 持仓单号
             key: item.id,
-            label: `${item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}${idx + 1}`
+            label: `${item.alias || item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}${idx + 1}`
           }))
         )
       }
@@ -54,7 +54,7 @@ function Liquidation() {
     // 合并多笔相同的逐仓单
     list = uniqueObjectArray(isolatedMarginList, 'symbol').map((item: any) => ({
       ...item,
-      label: `${item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}`,
+      label: `${item.alias || item.symbol} ${intl.formatMessage({ id: 'mt.zhucang' })}`,
       value: item.id, // 持仓单号
       key: item.id
     }))
@@ -160,9 +160,7 @@ function Liquidation() {
                       <span className="text-primary !text-xs pl-1">{item.label}</span>
                       {/* 逐仓-锁仓模式展示 */}
                       {isLockedPosition && (
-                        <span
-                          className={classNames('text-white px-[2px] py-[1px] text-xs rounded ml-[5px]', isBuy ? 'bg-green' : 'bg-red')}
-                        >
+                        <span className={cn('text-white px-[2px] py-[1px] text-xs rounded ml-[5px]', isBuy ? 'bg-green' : 'bg-red')}>
                           {isBuy ? <FormattedMessage id="mt.duo" /> : <FormattedMessage id="mt.kong" />}
                         </span>
                       )}
@@ -196,7 +194,9 @@ function Liquidation() {
                 <FormattedMessage id="mt.weichibaozhengjin" />：
               </span>
               {marginRateInfo.margin ? (
-                <span className="text-green !font-dingpro-medium font-medium text-xs">{formatNum(marginRateInfo.margin)}USD</span>
+                <span className="text-green !font-dingpro-medium font-medium text-xs">
+                  {formatNum(marginRateInfo.margin, { precision: 2 })}USD
+                </span>
               ) : (
                 <span className="text-gray-weak font-medium text-xs">-</span>
               )}

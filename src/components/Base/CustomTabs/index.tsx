@@ -1,8 +1,8 @@
-import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
 import { useLang } from '@/context/languageProvider'
 import { gray } from '@/theme/theme.config'
+import { cn } from '@/utils/cn'
 
 type IProps = {
   onChange?: (key: string) => void
@@ -30,7 +30,7 @@ export default function Tabs({ onChange, items, activeKey, itemStyle, activeBg }
         const isActive = item.key === current
         return (
           <div
-            className={classNames(
+            className={cn(
               'cursor-pointer py-[5px] hover:text-primary text-sm',
               isActive ? `rounded-[26px] text-primary` : 'text-secondary',
               isZh ? 'px-[26px]' : 'px-[7px]'

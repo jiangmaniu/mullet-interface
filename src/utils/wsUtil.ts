@@ -96,7 +96,7 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
       }
     }
   }
-  return Number(toFixed(profit))
+  return Number(profit)
 }
 
 /**
@@ -138,12 +138,12 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
 }
 
 // 计算收益率
-export const calcYieldRate = (item: IPositionItem) => {
+export const calcYieldRate = (item: IPositionItem, precision: any) => {
   const conf = item.conf as Symbol.SymbolConf
   const orderMargin = Number(item.orderMargin || 0) // 开仓保证金
   // 收益率 = 浮动盈亏 / 保证金
   const profit = item.profit || 0
-  const value = toFixed((profit / orderMargin) * 100)
+  const value = toFixed((profit / orderMargin) * 100, precision)
   return profit && orderMargin ? (value > 0 ? '+' + value : value) + '%' : ''
 }
 

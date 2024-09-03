@@ -30,7 +30,7 @@ export default ({ form, money }: { form: FormInstance; money: number }) => {
           rules={[
             {
               required: true,
-              message: intl.formatMessage({ id: 'mt.qingxuanze' })
+              message: intl.formatMessage({ id: 'common.qingxuanze' })
             }
           ]}
           fieldProps={{
@@ -95,7 +95,7 @@ export default ({ form, money }: { form: FormInstance; money: number }) => {
               )
             }
           }}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.gendanzhanghu' })}`}
+          placeholder={`${intl.formatMessage({ id: 'common.qingxuanze' })}${intl.formatMessage({ id: 'mt.gendanzhanghu' })}`}
           // options={accountList}
           options={accountList.map((item) => ({
             ...item,

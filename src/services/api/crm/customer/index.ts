@@ -32,6 +32,14 @@ export async function getClientDetail(params: API.IdParam) {
     method: 'GET',
     params
   }).then((res) => {
+    if (res.data?.accountList?.length) {
+      res.data.accountList = res.data.accountList.map((item) => {
+        if (item.synopsis) {
+          item.synopsis = JSON.parse(item.synopsis as any)
+        }
+        return item
+      })
+    }
     return res?.data || {}
   })
 }

@@ -10,7 +10,7 @@ import Hidden from '@/components/Base/Hidden'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
 import { forgetPasswordEmail, forgetPasswordPhone } from '@/services/api/user'
-import { regPassword } from '@/utils'
+import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { goLogin } from '@/utils/navigator'
 
@@ -48,11 +48,11 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
     const values = form.getFieldsValue()
     // console.log('values', values)
     if (!values.emailOrPhone) {
-      message.info(intl.formatMessage({ id: 'mt.qingshuru' }))
+      message.info(intl.formatMessage({ id: 'common.qingshuru' }))
     }
     // 手机方式
     if (!values.phoneAreaCode && !isEmailTab) {
-      message.info(intl.formatMessage({ id: 'mt.qingxuanzequhao' }))
+      message.info(intl.formatMessage({ id: 'common.qingxuanzequhao' }))
     }
     const success = await validateCodeInputRef.current?.sendCode?.({
       emailOrPhone: values.emailOrPhone?.trim(),
@@ -114,11 +114,12 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     }}
                     placeholder={intl.formatMessage({ id: 'mt.shurudianziyouxiang' })}
                     required={false}
-                    label={<FormattedMessage id="mt.dianziyouxiang" />}
+                    label={<FormattedMessage id="common.dianziyouxiang" />}
                     rules={[
                       {
                         required: true,
-                        message: intl.formatMessage({ id: 'mt.shurudianziyouxiang' })
+                        message: intl.formatMessage({ id: 'mt.youxianggeshibuzhengque' }),
+                        pattern: regEmail
                       }
                     ]}
                   />
@@ -129,7 +130,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                   <PhoneSelectFormItem
                     names={['emailOrPhone', 'phoneAreaCode']}
                     form={form}
-                    label={<FormattedMessage id="mt.shoujihaoma" />}
+                    label={<FormattedMessage id="common.shoujihaoma" />}
                     required={false}
                   />
                 )}
@@ -143,7 +144,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     onBack?.()
                   }}
                 >
-                  <FormattedMessage id="mt.fanhui" />
+                  <FormattedMessage id="common.back" />
                 </Button>
                 <Button
                   type="primary"
@@ -170,13 +171,17 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     validateCodeInputRef.current?.stopCountDown?.()
                   }}
                 >
-                  <FormattedMessage id="mt.fanhui" />
+                  <FormattedMessage id="common.back" />
                 </Button>
                 <Button
                   type="primary"
                   style={{ height: 48, width: 120 }}
                   onClick={() => {
+                    const checkSuccess = validateCodeInputRef.current.checkCodeInput()
                     if (!form.getFieldValue('validateCode')) {
+                      return message.info(intl.formatMessage({ id: 'mt.qingshuruyanzhengma' }))
+                    }
+                    if (!checkSuccess) {
                       return message.info(intl.formatMessage({ id: 'mt.qingshuruyanzhengma' }))
                     }
                     // 第三步表单
@@ -185,7 +190,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                     validateCodeInputRef.current?.stopCountDown?.()
                   }}
                 >
-                  <FormattedMessage id="mt.jixu" />
+                  <FormattedMessage id="common.jixu" />
                 </Button>
               </div>
             </>
@@ -194,7 +199,8 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
             <div className="px-10 py-6">
               <ProFormText.Password
                 name="newPassword"
-                required={false}
+                // required={false}
+                required
                 label={intl.formatMessage({ id: 'mt.shezhixinmima' })}
                 placeholder={intl.formatMessage({ id: 'mt.shurumima' })}
                 fieldProps={{
@@ -220,7 +226,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
               </div>
               <div className="flex items-center justify-center py-6">
                 <Button type="primary" style={{ height: 48 }} block htmlType="submit">
-                  <FormattedMessage id="mt.wancheng" />
+                  <FormattedMessage id="common.finish" />
                 </Button>
               </div>
             </div>

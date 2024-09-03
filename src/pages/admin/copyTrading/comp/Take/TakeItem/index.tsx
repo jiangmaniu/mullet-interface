@@ -122,7 +122,10 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
               borderRadius: 8
             }}
             // disabled={takerState === 'wufagendan'}
-            onClick={() => onClick?.(leadId)}
+            onClick={(e) => {
+              e.stopPropagation()
+              onClick?.(leadId)
+            }}
           >
             <div className="flex items-center text-sm font-semibold gap-1 align-middle">
               <Iconfont name="shezhi" width={18} color="black" height={18} hoverColor={colorTextPrimary} />

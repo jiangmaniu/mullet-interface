@@ -130,7 +130,7 @@ export default function Setting() {
                   {/* 没有提交kyc申请 */}
                   {!kycStatus && (
                     <span className="text-primary text-base leading-4 font-semibold pr-2" onClick={handleJumpKycAuth}>
-                      <FormattedMessage id="mt.quwancheng" />
+                      <FormattedMessage id="common.quwancheng" />
                     </span>
                   )}
                   {/* 实名认证成功 */}
@@ -222,7 +222,7 @@ export default function Setting() {
                       </div>
                     </>
                   )}
-                  {firstName && (
+                  {isKycAuth && firstName && (
                     <>
                       <div className="size-[3px] bg-gray rounded-full mx-4"></div>
                       <div className="flex items-center">
@@ -259,7 +259,7 @@ export default function Setting() {
             <div className="flex items-center">
               {!kycStatus && (
                 <Button size="small" autoInsertSpace={false} className="mr-2 !font-semibold !rounded-lg !h-[30px] !text-sm !border-gray">
-                  <FormattedMessage id="mt.wanshan" />
+                  <FormattedMessage id="common.wanshan" />
                   <ArrowRightOutlined className="ml-1" />
                 </Button>
               )}
@@ -280,17 +280,21 @@ export default function Setting() {
             <span className="">
               <FormattedMessage id="mt.zhanghao" />：
             </span>
-            <span className="pl-2">{isEmailRegisterWay ? formatEmail(currentUser?.account) : formatMobile(currentUser?.account)}</span>
+            <span className="pl-2">
+              {isEmailRegisterWay
+                ? formatEmail(currentUser?.account)
+                : `${currentUser?.userInfo?.phoneAreaCode} ${formatMobile(currentUser?.account)}`}
+            </span>
           </div>
           <div className="flex items-center justify-between flex-1 pl-7">
             <span className="text-primary text-sm">
-              <FormattedMessage id="mt.mima" />：<span className="font-medium">﹡﹡﹡﹡﹡﹡﹡﹡﹡﹡</span>
+              <FormattedMessage id="common.mima" />：<span className="font-medium">﹡﹡﹡﹡﹡﹡﹡﹡﹡﹡</span>
             </span>
             <ModifyPasswordModal
               trigger={
                 <Button type="text">
                   <span className="text-primary text-sm font-semibold cursor-pointer">
-                    <FormattedMessage id="mt.genggai" />
+                    <FormattedMessage id="common.genggai" />
                   </span>
                 </Button>
               }
@@ -310,28 +314,41 @@ export default function Setting() {
             <span className="">
               <FormattedMessage id="mt.anquanleixing" />：
             </span>
-            <span className="pl-2">{phone ? formatMobile(phone) : formatEmail(email)}</span>
+            <span className="pl-2">{phone ? `${currentUser?.userInfo?.phoneAreaCode} ${formatMobile(phone)}` : formatEmail(email)}</span>
           </div>
-          {phone ? (
-            <ModifyPhoneModal
-              trigger={
-                <Button type="text">
-                  <span className="text-primary text-sm font-semibold cursor-pointer">
-                    <FormattedMessage id="mt.genggai" />
-                  </span>
-                </Button>
-              }
-            />
+          {isKycAuth ? (
+            <>
+              {phone ? (
+                <ModifyPhoneModal
+                  trigger={
+                    <Button type="text">
+                      <span className="text-primary text-sm font-semibold cursor-pointer">
+                        <FormattedMessage id="common.genggai" />
+                      </span>
+                    </Button>
+                  }
+                />
+              ) : (
+                <ModifyEmailModal
+                  trigger={
+                    <Button type="text">
+                      <span className="text-primary text-sm font-semibold cursor-pointer">
+                        <FormattedMessage id="common.genggai" />
+                      </span>
+                    </Button>
+                  }
+                />
+              )}
+            </>
           ) : (
-            <ModifyEmailModal
-              trigger={
-                <Button type="text">
-                  <span className="text-primary text-sm font-semibold cursor-pointer">
-                    <FormattedMessage id="mt.genggai" />
-                  </span>
-                </Button>
-              }
-            />
+            <Button
+              type="text"
+              onClick={() => {
+                push('/setting/kyc')
+              }}
+            >
+              <span className="text-primary text-sm font-semibold cursor-pointer">{intl.formatMessage({ id: 'mt.bind' })}</span>
+            </Button>
           )}
         </div>
       </div>

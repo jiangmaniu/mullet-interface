@@ -1,6 +1,5 @@
 import { ProColumns, useIntl } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -16,6 +15,7 @@ import ClosePositionConfirmModal from '@/pages/web/trade/comp/Modal/ClosePositio
 import SetStopLossProfitModal from '@/pages/web/trade/comp/Modal/SetStopLossProfitModal'
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { calcExchangeRate, calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
@@ -36,10 +36,9 @@ export type IPositionItem = Order.BgaOrderPageListItem & {
 type IProps = {
   style?: React.CSSProperties
   parentPopup?: any
-  showActiveSymbol?: boolean
 }
 
-function Position({ style, parentPopup, showActiveSymbol }: IProps) {
+function Position({ style, parentPopup }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
   const { lng } = useLang()
@@ -48,14 +47,18 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
   const intl = useIntl()
   const [modalInfo, setModalInfo] = useState({} as IPositionItem)
   const { recordListClassName } = useStyle()
+  const showActiveSymbol = trade.showActiveSymbol
 
   const closePositionRef = useRef<any>(null)
   const stopLossProfitRef = useRef<any>(null)
+  const [pageNum, setPageNum] = useState(1)
 
-  const tradeList = trade.positionList as IPositionItem[]
+  const positionList = trade.positionList as IPositionItem[]
 
   const activeSymbolName = trade.activeSymbolName
-  let list = showActiveSymbol ? tradeList.filter((v) => v.symbol === activeSymbolName) : tradeList
+  let list = showActiveSymbol ? positionList.filter((v) => v.symbol === activeSymbolName) : positionList
+
+  const precision = trade.currentAccountInfo.currencyDecimal
 
   const columns: ProColumns<IPositionItem>[] = [
     {
@@ -82,7 +85,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
             <SymbolIcon src={record.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-pf-bold text-primary">{record.symbol}</span>
-              <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
         )
@@ -139,7 +142,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <>
             {Number(record.currentPrice) ? (
-              <span className={classNames('!text-[13px]', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+              <span className={cn('!text-[13px]', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
                 {formatNum(record.currentPrice, { precision: record.symbolDecimal })}
               </span>
             ) : (
@@ -149,22 +152,22 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         )
       }
     },
-    {
-      title: <FormattedMessage id="mt.yuguqiangpingjia" />,
-      dataIndex: 'forceClosePrice',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{text ? formatNum(text) : '--'} </span>
-      }
-    },
+    // {
+    //   title: <FormattedMessage id="mt.yuguqiangpingjia" />,
+    //   dataIndex: 'forceClosePrice',
+    //   hideInSearch: true, // 在 table的查询表单 中隐藏
+    //   ellipsis: false,
+    //   fieldProps: {
+    //     placeholder: ''
+    //   },
+    //   formItemProps: {
+    //     label: '' // 去掉form label
+    //   },
+    //   width: 150,
+    //   renderText(text, record, index, action) {
+    //     return <span className="!text-[13px] text-primary">{text ? formatNum(text) : '--'} </span>
+    //   }
+    // },
     {
       title: <FormattedMessage id="mt.baozhengjinlv" />,
       dataIndex: 'marginRate',
@@ -215,8 +218,8 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex items-center pl-[1px]">
             <div className="flex flex-col">
-              <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin) : '--'} </span>
-              <span className={classNames('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
+              <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin, { precision }) : '--'} </span>
+              <span className={cn('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
             </div>
             {/* 逐仓才可以追加保证金 */}
             {record.marginType === 'ISOLATED_MARGIN' && (
@@ -290,7 +293,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
     },
     {
@@ -311,7 +314,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
     },
     {
@@ -362,7 +365,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
         const profitDom = profit ? (
-          <span className={classNames('font-pf-bold', color)}>{record.profitFormat}</span>
+          <span className={cn('font-pf-bold', color)}>{record.profitFormat}</span>
         ) : (
           <span className="!text-[13px]m">-</span>
         )
@@ -370,7 +373,7 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
         return (
           <div className="flex flex-col">
             <div>{profitDom}</div>
-            {yieldRate && <div className={classNames('!text-xs font-pf-bold', color)}>({yieldRate})</div>}
+            {yieldRate && <div className={cn('!text-xs font-pf-bold', color)}>({yieldRate})</div>}
           </div>
         )
       }
@@ -400,62 +403,69 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
     }
   ]
 
-  const dataSource = toJS(list).map((v) => {
-    const conf = v.conf as Symbol.SymbolConf
-    const symbol = v.dataSourceSymbol as string
-    const contractSize = conf.contractSize || 0
-    const quoteInfo = getCurrentQuote(symbol)
-    const digits = v.symbolDecimal || 2
-    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
+  const accountGroupPrecision = trade.currentAccountInfo.currencyDecimal
 
-    const isCrossMargin = v.marginType === 'CROSS_MARGIN'
+  const pageSize = 10
+  // 一次性获取全部持仓单然后分页处理避免ws实时计算消耗性能，ws实时推过来会覆盖接口请求的数据
+  const dataSource = toJS(list)
+    .slice((pageNum - 1) * pageSize, pageNum * pageSize)
+    .map((v) => {
+      const conf = v.conf as Symbol.SymbolConf
+      const symbol = v.dataSourceSymbol as string
+      const contractSize = conf.contractSize || 0
+      const quoteInfo = getCurrentQuote(symbol)
+      const digits = v.symbolDecimal || 2
+      const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
 
-    if (isCrossMargin) {
-      // 全仓单笔保证金 = (开盘价 * 合约大小 * 手数) / 杠杆
-      // 如果没有设置杠杆，读后台配置的杠杆
-      const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
-      const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
-      const leverageMultiple = v.leverageMultiple || leverage
-      const initialMargin = prepaymentConf?.mode === 'fixed_margin' ? prepaymentConf?.fixed_margin?.initial_margin : 0 // 读后台初始预付款的值
+      const isCrossMargin = v.marginType === 'CROSS_MARGIN'
 
-      // 存在杠杆
-      if (leverageMultiple) {
-        v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
+      if (isCrossMargin) {
+        // 全仓单笔保证金 = (开盘价 * 合约大小 * 手数) / 杠杆
+        // 如果没有设置杠杆，读后台配置的杠杆
+        const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
+        const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
+        const leverageMultiple = v.leverageMultiple || leverage
+        const initialMargin = prepaymentConf?.mode === 'fixed_margin' ? prepaymentConf?.fixed_margin?.initial_margin : 0 // 读后台初始预付款的值
+
+        // 存在杠杆
+        if (leverageMultiple) {
+          v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
+        } else {
+          // 固定保证金 * 手数
+          v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)
+        }
       } else {
-        // 固定保证金 * 手数
-        v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)
+        // 逐仓保证金
+        v.orderMargin = toFixed(v.orderMargin, digits)
       }
-    } else {
-      // 逐仓保证金
-      v.orderMargin = toFixed(v.orderMargin, digits)
-    }
 
-    v.currentPrice = currentPrice // 现价
-    const profit = covertProfit(v) as number // 浮动盈亏
-    v.profit = profit
-    v.profitFormat = Number(v.profit) > 0 ? '+' + toFixed(v.profit) : v.profit || '-' // 格式化的
-    v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
-    v.yieldRate = calcYieldRate(v) // 收益率
-    v.forceClosePrice = calcForceClosePrice(v) // 强平价
-    v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价
-    v.stopLoss = toFixed(v.stopLoss, digits) // 止损价
-    v.handlingFees = toFixed(v.handlingFees, digits)
-    v.interestFees = toFixed(v.interestFees, digits)
+      v.currentPrice = currentPrice // 现价
+      const profit = covertProfit(v) as number // 浮动盈亏
 
-    // 保证金率
-    const { marginRate } = trade.getMarginRateInfo(v)
-    v.marginRate = `${marginRate}%`
+      v.profit = profit
+      v.profitFormat = Number(v.profit) > 0 ? '+' + formatNum(v.profit, { precision: accountGroupPrecision }) : v.profit || '-' // 格式化的
+      v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
+      v.yieldRate = calcYieldRate(v, accountGroupPrecision) // 收益率
+      v.forceClosePrice = calcForceClosePrice(v) // 强平价
+      v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价
+      v.stopLoss = toFixed(v.stopLoss, digits) // 止损价
+      v.handlingFees = toFixed(v.handlingFees, digits)
+      v.interestFees = toFixed(v.interestFees, digits)
 
-    return v
-  })
+      // 保证金率
+      const { marginRate } = trade.getMarginRateInfo(v)
+      v.marginRate = `${marginRate}%`
+
+      return v
+    })
 
   return (
     <>
       <StandardTable
         columns={columns}
         // ghost
-        showOptionColumn={false}
         dataSource={dataSource}
+        showOptionColumn={false}
         stripe={false}
         hasTableBordered
         hideSearch
@@ -467,11 +477,17 @@ function Position({ style, parentPopup, showActiveSymbol }: IProps) {
           headStyle: { borderRadius: 0 },
           className: ''
         }}
+        size="small"
         rowClassName={(record, i) => {
           return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
         }}
-        size="small"
-        pageSize={10}
+        pageSize={pageSize}
+        pagination={{
+          total: trade.positionList.length,
+          onShowSizeChange(current, size) {
+            setPageNum(current)
+          }
+        }}
       />
       {/* 平仓修改确认弹窗 */}
       <ClosePositionConfirmModal ref={closePositionRef} list={dataSource} />

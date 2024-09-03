@@ -90,8 +90,8 @@ export const getEnum = () => {
   const Enum = {
     // 启用、禁用状态
     Status: {
-      DISABLED: { text: intl.formatMessage({ id: 'mt.jinyong' }) },
-      ENABLE: { text: intl.formatMessage({ id: 'mt.qiyong' }) }
+      DISABLED: { text: intl.formatMessage({ id: 'common.jinyong' }) },
+      ENABLE: { text: intl.formatMessage({ id: 'common.qiyong' }) }
     },
     // 认证状态
     ApproveStatus: {
@@ -134,9 +134,8 @@ export const getEnum = () => {
     },
     // 订单成交方向
     OrderInOut: {
-      IN: { text: 'IN' },
-      OUT: { text: 'OUT' },
-      IN_OUT: { text: 'IN_OUT' }
+      IN: { text: intl.formatMessage({ id: 'mt.jiancang' }) },
+      OUT: { text: intl.formatMessage({ id: 'mt.pingcang' }) }
     },
     // 持仓单状态
     BGAStatus: {
@@ -147,6 +146,17 @@ export const getEnum = () => {
     MarginType: {
       CROSS_MARGIN: { text: intl.formatMessage({ id: 'mt.quancang' }) },
       ISOLATED_MARGIN: { text: intl.formatMessage({ id: 'mt.zhucang' }) }
+    },
+    // 客户管理-交易账号-结余-表格-类型
+    CustomerBalanceRecordType: {
+      DEPOSIT: { text: intl.formatMessage({ id: 'mt.chongzhi' }) },
+      WITHDRAWAL: { text: intl.formatMessage({ id: 'mt.tixian' }) },
+      MARGIN: { text: intl.formatMessage({ id: 'mt.baozhengjin' }) },
+      PROFIT: { text: intl.formatMessage({ id: 'mt.yingkui' }) },
+      GIFT: { text: intl.formatMessage({ id: 'mt.zengjin' }) },
+      BALANCE: { text: intl.formatMessage({ id: 'mt.jieyu' }) },
+      TRANSFER: { text: intl.formatMessage({ id: 'common.zhuanzhang' }) },
+      ZERO: { text: intl.formatMessage({ id: 'mt.qiangping' }) }
     }
   }
 

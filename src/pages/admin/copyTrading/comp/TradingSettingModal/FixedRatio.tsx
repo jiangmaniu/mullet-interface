@@ -153,7 +153,7 @@ export default ({ onConfirm, form, children, money }: IProp) => {
           suffix={
             <span className=" flex flex-row gap-2 items-center">
               <span className=" text-sm text-blue cursor-pointer" onClick={() => setGendanjine(231.3)}>
-                <FormattedMessage id="mt.quanbu" />
+                <FormattedMessage id="common.all" />
               </span>
               <span className=" text-sm font-semibold text-primary">USD</span>
             </span>
@@ -326,7 +326,7 @@ export default ({ onConfirm, form, children, money }: IProp) => {
         >
           <div className=" flex items-center gap-1">
             <span className=" font-semibold text-base ">
-              <FormattedMessage id="mt.queren" />
+              <FormattedMessage id="common.queren" />
             </span>
           </div>
         </Button>

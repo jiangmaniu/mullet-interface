@@ -96,7 +96,7 @@ export default function Take({ active }: { active: boolean }) {
         </>
       ) : (
         <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem]">
-          <Empty src="/img/empty-daidan.png" description={<FormattedMessage id="mt.zanwujilu" />} />
+          <Empty src="/img/empty-daidan.png" description={<FormattedMessage id="common.zanwujilu" />} />
           <Button
             height={44}
             type="primary"

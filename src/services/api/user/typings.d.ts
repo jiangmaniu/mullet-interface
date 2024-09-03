@@ -276,10 +276,6 @@ declare namespace User {
      */
     createTime?: string
     /**
-     * 货币单位
-     */
-    currencyUnit?: string
-    /**
      * 启用逐仓
      */
     enableIsolated?: boolean
@@ -298,7 +294,7 @@ declare namespace User {
     /**
      * 主键
      */
-    id: number | string
+    id: any
     /**
      * 逐仓保证金
      */
@@ -345,7 +341,14 @@ declare namespace User {
     enableConnect: boolean
     /**禁用账户组交易 */
     enableTrade: boolean
+    /**账户组描述 */
+    synopsis?: AccountGroup.SynopsisConf
+    /**账户组小数位 */
+    currencyDecimal?: number
+    /**账户组货币单位 */
+    currencyUnit?: string
   }
+
   // 区域列表
   type AreaCodeItem = {
     phoneAreaCode: string

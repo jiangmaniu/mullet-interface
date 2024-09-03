@@ -1,3 +1,5 @@
+import { observer } from 'mobx-react'
+
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { gray, yellow } from '@/theme/theme.config'
@@ -9,7 +11,7 @@ type IProps = {
 } & Omit<IconProps, 'name'>
 
 // 收藏图标
-export default function FavoriteIcon({ symbol, ...res }: IProps) {
+function FavoriteIcon({ symbol, ...res }: IProps) {
   const { trade } = useStores()
   const { theme } = useTheme()
   const isDark = theme === 'dark'
@@ -17,5 +19,11 @@ export default function FavoriteIcon({ symbol, ...res }: IProps) {
   const color = isDark ? gray['670'] : gray['200']
   const activeColor = isDark ? yellow['400'] : yellow['490']
 
-  return <Iconfont name="shoucang" width={30} height={30} color={isActive ? activeColor : color} {...res} />
+  return (
+    <div className="h-[30px] w-[30px] cursor-pointer">
+      <Iconfont name="shoucang" width={30} height={30} color={isActive ? activeColor : color} {...res} />
+    </div>
+  )
 }
+
+export default observer(FavoriteIcon)

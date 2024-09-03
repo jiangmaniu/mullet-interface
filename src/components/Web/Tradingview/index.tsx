@@ -7,10 +7,10 @@ import { useStores } from '@/context/mobxProvider'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
+import { cn } from '@/utils/cn'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useDebounceEffect, usePrevious } from 'ahooks'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { STORAGE_GET_CHART_PROPS, STORAGE_REMOVE_CHART_PROPS, ThemeConst } from './constant'
 import { ColorType, applyOverrides, createWatermarkLogo, setCSSCustomProperty, setChartStyleProperties, setSymbol } from './widgetMethods'
@@ -67,7 +67,7 @@ const Tradingview = () => {
 
     setTimeout(() => {
       setLoading(false)
-    }, 800)
+    }, 300)
 
     tvWidget.onChartReady(async () => {
       setIsChartLoading(false)
@@ -186,6 +186,9 @@ const Tradingview = () => {
 
   useEffect(() => {
     if (!symbolName || kline.tvWidget) return
+    setIsChartLoading(true)
+    setLoading(true)
+
     // 初始化图表实例
     initChart()
   }, [params, kline.tvWidget])
@@ -219,7 +222,7 @@ const Tradingview = () => {
   })
 
   return (
-    <div className={classNames('h-[585px] relative', className)}>
+    <div className={cn('h-[585px] relative', className)}>
       <div id="tradingview" ref={chartContainerRef} className="relative flex flex-1 h-full" style={{ opacity: loading ? 0 : 1 }} />
       {isChartLoading && (
         <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-full z-40">

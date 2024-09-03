@@ -3,7 +3,6 @@ import { FormInstance, ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 import { Picker as AntdPicker, PickerProps } from 'antd-mobile'
 import { PickerColumn, PickerColumnItem, PickerValue } from 'antd-mobile/es/components/picker'
-import classNames from 'classnames'
 import isEqual from 'lodash/isEqual'
 import { debounce } from 'lodash-es'
 import { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react'
@@ -11,6 +10,7 @@ import { flushSync } from 'react-dom'
 
 import { useLang } from '@/context/languageProvider'
 import { colorTextSecondary } from '@/theme/theme.config'
+import { cn } from '@/utils/cn'
 
 type SelectItem = {
   items: (PickerColumnItem | null)[]
@@ -157,7 +157,7 @@ const PickerComp = forwardRef(
 
     return (
       <div
-        className={classNames('w-full flex', [className])}
+        className={cn('w-full flex', [className])}
         style={{
           flexDirection: direction,
           ...style

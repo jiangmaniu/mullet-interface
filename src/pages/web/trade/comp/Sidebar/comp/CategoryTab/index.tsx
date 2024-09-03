@@ -50,7 +50,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
           background: 'var(--tabs-active-bg)'
         },
         '.adm-tabs-tab-list': {
-          paddingLeft: '9px !important',
+          // paddingLeft: '9px !important',
           '.adm-tabs-tab-wrapper': {
             paddingRight: '0px !important',
             paddingLeft: '0px !important'

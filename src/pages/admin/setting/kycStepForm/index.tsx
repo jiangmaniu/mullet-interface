@@ -94,7 +94,7 @@ export default function KycStepForm() {
     console.log('formData', formData)
 
     if (!formData.authImgsUrl) {
-      return message.info(intl.formatMessage({ id: 'mt.qingshangchuantupian' }))
+      return message.info(intl.formatMessage({ id: 'common.qingshangchuantupian' }))
     }
 
     const params = {
@@ -117,10 +117,11 @@ export default function KycStepForm() {
       // 刷新用户信息
       await fetchUserInfo()
 
+      push('/setting')
+
       setTimeout(() => {
-        push('/setting')
         setStep('ONE')
-      }, 200)
+      }, 100)
     }
   }
 
@@ -162,7 +163,7 @@ export default function KycStepForm() {
             <PhoneSelectFormItem
               names={['phone', 'phoneAreaCode']}
               form={form}
-              label={<FormattedMessage id="mt.shoujihaoma" />}
+              label={<FormattedMessage id="common.shoujihaoma" />}
               required={false}
               height={44}
               dropdownWidth={540}
@@ -187,7 +188,7 @@ export default function KycStepForm() {
           ) : (
             <FormCaptcha
               name="email"
-              label={intl.formatMessage({ id: 'mt.dianziyouxiang' })}
+              label={intl.formatMessage({ id: 'common.dianziyouxiang' })}
               fieldProps={{ placeholder: intl.formatMessage({ id: 'mt.shuruyouxiangyanzhengma' }) }}
               formItemProps={{ style: { marginBottom: 24 } }}
               onSend={async () => {
@@ -215,6 +216,7 @@ export default function KycStepForm() {
                 form={form}
                 ref={validateCodeInputRef}
                 showReSendBtn={false}
+                showCountDown={false}
                 style={{ padding: 20 }}
               />
             </div>
@@ -234,7 +236,7 @@ export default function KycStepForm() {
             disabled={isBindPhone ? !phone || !phoneAreaCode || !validateCode : !email || !validateCode}
             onClick={handleSubmitTwoStep}
           >
-            <FormattedMessage id="mt.xiayibu" />
+            <FormattedMessage id="common.xiayibu" />
           </Button>
         </div>
       </div>
@@ -304,7 +306,7 @@ export default function KycStepForm() {
             setStep('THREE')
           }}
         >
-          <FormattedMessage id="mt.xiayibu" />
+          <FormattedMessage id="common.xiayibu" />
         </Button>
       </div>
     )
@@ -324,7 +326,7 @@ export default function KycStepForm() {
           </div>
         </div>
         <Button type="primary" style={{ height: 46, marginTop: 70 }} block onClick={handleSubmit} loading={submitLoading}>
-          <FormattedMessage id="mt.tijiao" />
+          <FormattedMessage id="common.tijiao" />
         </Button>
       </div>
     )
@@ -358,7 +360,7 @@ export default function KycStepForm() {
                 push('/setting')
               }}
             >
-              <FormattedMessage id="mt.haode" />
+              <FormattedMessage id="common.haode" />
             </Button>
           </div>
         </div>

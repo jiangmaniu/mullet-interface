@@ -1,9 +1,9 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Checkbox as AntdCheckBox, GetProps } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 
 import { useTheme } from '@/context/themeProvider'
+import { cn } from '@/utils/cn'
 
 type IProps = GetProps<typeof AntdCheckBox>
 
@@ -18,7 +18,7 @@ function CheckBox({ className, children, ...res }: IProps) {
     }
   })
   return (
-    <AntdCheckBox className={classNames(classNameWrapper, className)} {...res}>
+    <AntdCheckBox className={cn(classNameWrapper, className)} {...res}>
       {children}
     </AntdCheckBox>
   )

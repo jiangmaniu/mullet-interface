@@ -12,7 +12,7 @@ export const REGISTER_APP_CODE = '123456' // @TODO 正式部署在修改
 // 字体图标 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码
 export const ICONFONT_URL =
-  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_ti0z96qaio.js' : '/iconfont/iconfont.js'
+  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_ezahnbberao.js' : '/iconfont/iconfont.js'
 
 // 首页
 export const WEB_HOME_PAGE = '/trade'

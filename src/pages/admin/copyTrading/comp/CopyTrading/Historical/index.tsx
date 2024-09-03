@@ -69,7 +69,7 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
         </>
       ) : (
         <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem]">
-          <Empty src="/img/empty-gendanguanli.png" description={<FormattedMessage id="mt.zanwujilu" />} />
+          <Empty src="/img/empty-gendanguanli.png" description={<FormattedMessage id="common.zanwujilu" />} />
           <Button
             height={44}
             type="primary"

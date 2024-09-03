@@ -62,7 +62,7 @@ export default function ({ form }: IProps) {
                 <FormattedMessage id="mt.dianjishangchuantupian" />
               </span>
               <Button className="!h-[30px] px-5 text-sm mt-5 !rounded-[22px]" type="primary">
-                <FormattedMessage id="mt.shangchuan" />
+                <FormattedMessage id="common.shangchuan" />
               </Button>
             </div>
           </div>

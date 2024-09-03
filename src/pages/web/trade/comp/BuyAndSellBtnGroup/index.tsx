@@ -1,5 +1,4 @@
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useState, useTransition } from 'react'
 
@@ -9,6 +8,7 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
@@ -78,11 +78,11 @@ export default observer(
         >
           <Sell isActive={isFooterBtnGroup || buySell === 'SELL'} width={width} bgColor={sellBgColor}>
             {!loading && (
-              <div className={classNames('flex h-full flex-col items-center justify-center xl:pt-1 left-6')}>
-                <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', sellColor)}>
+              <div className={cn('flex h-full flex-col items-center justify-center xl:pt-1 left-6')}>
+                <div className={cn('select-none font-normal max-xl:text-base xl:text-xs', sellColor)}>
                   <FormattedMessage id="mt.maichuzuokong" />
                 </div>
-                <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', sellColor)}>
+                <div className={cn('!font-dingpro-medium text-base max-xl:hidden', sellColor)}>
                   {hasQuote ? formatNum(quoteInfo.bid) : '--'}
                 </div>
               </div>
@@ -105,11 +105,11 @@ export default observer(
         >
           <Buy isActive={isFooterBtnGroup || buySell === 'BUY'} width={width}>
             {!loading && (
-              <div className={classNames('flex h-full flex-col items-center justify-center xl:pt-1 right-6')}>
-                <div className={classNames('select-none font-normal max-xl:text-base xl:text-xs', buyColor)}>
+              <div className={cn('flex h-full flex-col items-center justify-center xl:pt-1 right-6')}>
+                <div className={cn('select-none font-normal max-xl:text-base xl:text-xs', buyColor)}>
                   <FormattedMessage id="mt.mairuzuoduo" />
                 </div>
-                <div className={classNames('!font-dingpro-medium text-base max-xl:hidden', buyColor)}>
+                <div className={cn('!font-dingpro-medium text-base max-xl:hidden', buyColor)}>
                   {hasQuote ? formatNum(quoteInfo.ask) : '--'}
                 </div>
               </div>

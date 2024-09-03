@@ -1,10 +1,10 @@
 import { PlusOutlined } from '@ant-design/icons'
 import { FormattedMessage } from '@umijs/max'
 import { Button as AntdButton, ButtonProps } from 'antd'
-import classNames from 'classnames'
 import qs from 'qs'
 
 import { useEnv } from '@/context/envProvider'
+import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
 import Iconfont, { IconProps } from '../Iconfont'
@@ -76,7 +76,7 @@ export const SaveButton = ({ children, ...res }: IProps & { icon?: string }) => 
 
 export const AddButton = ({ children, iconClass, ...res }: IProps & { iconClass?: string }) => {
   return (
-    <Button type="primary" icon={<PlusOutlined className={classNames(iconClass)} />} {...res}>
+    <Button type="primary" icon={<PlusOutlined className={cn(iconClass)} />} {...res}>
       {children || <FormattedMessage id="common.add" />}
     </Button>
   )

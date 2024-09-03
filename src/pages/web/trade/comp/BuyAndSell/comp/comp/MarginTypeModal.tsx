@@ -1,11 +1,11 @@
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Modal from '@/components/Base/Modal'
 import { useStores } from '@/context/mobxProvider'
+import { cn } from '@/utils/cn'
 
 type IProps = {
   trigger: JSX.Element
@@ -68,7 +68,7 @@ function MarginTypeModal({ trigger }: IProps) {
               return (
                 <div
                   key={idx}
-                  className={classNames(
+                  className={cn(
                     'mb-[10px] p-3 rounded-[10px] border cursor-pointer',
                     isActive ? 'border-[rgba(24,62,252,0.12)]' : 'border-gray-130'
                   )}

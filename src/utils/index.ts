@@ -30,7 +30,7 @@ export function getUid() {
   }
 }
 
-export const regPassword = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,16}$/ // 至少包含一个数字、至少包含一个大写字母、至少包含一个小写字母、至少包含一个特殊字符或下划线
+export const regPassword = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,16}$/gi // 至少包含一个数字、至少包含一个大写字母、至少包含一个小写字母、至少包含一个特殊字符或下划线
 
 export const regEmail =
   /^[a-zA-Z0-9.!#$%&amp;'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -102,20 +102,6 @@ export const formatTime = (time: any, formatType = 'YYYY-MM-DD HH:mm:ss') => {
 
 export const formatStartTime = (value: any) => formatTime(value, 'YYYY-MM-DD') + ' 00:00:00'
 export const formatEndTime = (value: any) => formatTime(value, 'YYYY-MM-DD') + ' 23:59:59'
-
-/**
- * 格式化数字，返回默认两位  currency(123);      // 123.00
- * @param value
- * @returns
- */
-export const formatValue = (value: any, opts?: any) => {
-  // 不是一个数字
-  if (isNaN(value)) {
-    return '0.00'
-  }
-  const val = value || '0.00'
-  return currency(val, opts).toString()
-}
 
 /** 獲取颜色樣式名 */
 export const getColorClass = (value: number) => {
@@ -453,4 +439,13 @@ export function isPC() {
     }
   }
   return flag
+}
+
+/**
+ * 获取指定数字的精度位数
+ * @param value
+ * @returns
+ */
+export const getPrecisionByNumber = (value: any) => {
+  return value ? String(value).split('.')?.[1]?.length || 0 : 0
 }

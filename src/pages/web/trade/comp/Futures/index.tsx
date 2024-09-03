@@ -151,7 +151,7 @@ function Futures({ trigger, style }: IProps) {
                 <FormattedMessage id="mt.jiaoyishijian" />
                 <span className="text-base">（GMT+8）</span>
               </div>
-              <div className="grid gap-y-4 grid-cols-3">
+              <div className="grid gap-y-4 grid-cols-3 max-h-[268px] overflow-y-auto">
                 {tradeTimeConf.map((item: any, idx: number) => (
                   <div className="text-sm text-weak" key={idx}>
                     {transferWeekDay(item.weekDay)} {`${formatTimeStr(item.trade)}`}

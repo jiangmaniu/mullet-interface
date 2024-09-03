@@ -248,7 +248,7 @@ export default ({ form }: IProps) => {
         >
           <div className=" flex items-center gap-1">
             <span className=" font-semibold text-base ">
-              <FormattedMessage id="mt.baocun" />
+              <FormattedMessage id="common.baocun" />
             </span>
           </div>
         </Button>

@@ -148,7 +148,7 @@ export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigg
                     setShowDetail(false)
                   }}
                 >
-                  <LeftOutlined /> <FormattedMessage id="mt.fanhui" />
+                  <LeftOutlined /> <FormattedMessage id="common.back" />
                 </div>
               </div>
 

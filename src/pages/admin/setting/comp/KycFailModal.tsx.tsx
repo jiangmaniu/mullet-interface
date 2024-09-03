@@ -20,7 +20,7 @@ export default function KycFailModal({ trigger }: IProps) {
     <Modal trigger={trigger} width={442} footer={null} ref={modalRef}>
       <div className="mb-8 flex items-center justify-center flex-col">
         <img src="/img/kyc-fail-icon.png" width={136} height={136} />
-        <div className="pt-3 text-primary text-base">{remark || <FormattedMessage id="mt.shenfenrenzhengweitongguotips" />}</div>
+        <div className="pt-3 text-primary text-base break-all">{remark || <FormattedMessage id="mt.shenfenrenzhengweitongguotips" />}</div>
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center justify-center flex-1">

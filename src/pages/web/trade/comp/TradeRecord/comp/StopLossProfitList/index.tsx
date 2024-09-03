@@ -1,6 +1,5 @@
 import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useRef } from 'react'
 
@@ -12,6 +11,7 @@ import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import PendingOrderCancelModal from '../../../Modal/PendingOrderCancelModal'
@@ -65,7 +65,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
             <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-semibold text-primary">{record.symbol}</span>
-              <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
         )
@@ -104,7 +104,7 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       renderText(text, record, index, action) {
         return (
-          <span className={classNames('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
+          <span className={cn('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
             {formatNum(record.currentPrice)} USD
           </span>
         )

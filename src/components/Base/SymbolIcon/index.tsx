@@ -1,6 +1,5 @@
-import classNames from 'classnames'
-
 import { getSymbolIcon } from '@/utils/business'
+import { cn } from '@/utils/cn'
 
 type IProps = {
   /**图片地址 */
@@ -21,7 +20,7 @@ type IProps = {
 export default function SymbolIcon({ src, width = 26, height = 26, style, className }: IProps) {
   return (
     <div
-      className={classNames('flex items-center justify-center border border-gray-90 rounded-full', className)}
+      className={cn('flex items-center justify-center border border-gray-90 rounded-full', className)}
       style={{ width, height, ...style }}
     >
       <img width={width} height={height} alt="" src={getSymbolIcon(src)} className="rounded-full" />

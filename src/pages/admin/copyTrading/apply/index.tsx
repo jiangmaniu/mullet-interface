@@ -126,7 +126,8 @@ export default function Apply() {
     form.validateFields(['contractProof'])
   }
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
+    console.log('onFinish')
     addTraadeFollowLead({
       ...formDefault,
       ...values
@@ -140,6 +141,7 @@ export default function Apply() {
       .catch((error) => {
         message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
       })
+    return false
   }
 
   return (
@@ -203,8 +205,18 @@ export default function Apply() {
               {/* 头像 & 名称 */}
               <div className=" flex flex-row items-start gap-6">
                 <div className="hide-form-item">
-                  <AvatarUpload onChange={onAvatarChange} />
-                  <ProFormText
+                  <Form.Item
+                    name="imageUrl"
+                    rules={[
+                      {
+                        required: true,
+                        message: intl.formatMessage({ id: 'mt.qingshangchuantouxiang' })
+                      }
+                    ]}
+                  >
+                    <AvatarUpload onChange={onAvatarChange} />
+                  </Form.Item>
+                  {/* <ProFormText
                     name="imageUrl"
                     // TODO: 取消注释
                     // rules={[
@@ -213,7 +225,7 @@ export default function Apply() {
                     //     message: intl.formatMessage({ id: 'mt.qingshangchuantouxiang' })
                     //   }
                     // ]}
-                  />
+                  /> */}
                 </div>
                 <div className="flex flex-col gap-2.5 justify-start">
                   <span className=" text-sm font-normal text-primary">
@@ -265,7 +277,7 @@ export default function Apply() {
                     rules={[
                       {
                         required: true,
-                        message: intl.formatMessage({ id: 'mt.qingxuanze' })
+                        message: intl.formatMessage({ id: 'common.qingxuanze' })
                       }
                     ]}
                     fieldProps={{
@@ -327,7 +339,7 @@ export default function Apply() {
                     rules={[
                       {
                         required: true,
-                        message: intl.formatMessage({ id: 'mt.qingxuanze' })
+                        message: intl.formatMessage({ id: 'common.qingxuanze' })
                       }
                     ]}
                     fieldProps={{
@@ -383,7 +395,7 @@ export default function Apply() {
                         )
                       }
                     }}
-                    placeholder={`${intl.formatMessage({ id: 'mt.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
+                    placeholder={`${intl.formatMessage({ id: 'common.qingxuanze' })}${intl.formatMessage({ id: 'mt.daidanzhanghu' })}`}
                     // options={accountList}
                     options={accounts}
                   />

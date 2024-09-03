@@ -1,12 +1,13 @@
 import { PlusCircleOutlined } from '@ant-design/icons'
-import { FormattedMessage, useModel, useSearchParams } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { useCountDown } from 'ahooks'
 import { Segmented, Tooltip } from 'antd'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { MenuInfo } from 'rc-menu/lib/interface'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
+import Modal from '@/components/Admin/Modal'
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import Dropdown from '@/components/Base/Dropdown'
@@ -28,9 +29,12 @@ function Account() {
   const { isPc } = useEnv()
   const { initialState } = useModel('@@initialState')
   const { fetchUserInfo } = useModel('user')
+  const intl = useIntl()
   const { trade } = useStores()
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL')
   const [leftTime, setLeftTime] = useState<any>(0)
+  const modalRef = useRef<any>()
+  const [modalInfo, setModalInfo] = useState({} as User.AccountItem)
 
   const [searchParams] = useSearchParams()
   const searchKey = searchParams.get('key') as any
@@ -38,6 +42,7 @@ function Account() {
   const [currentAccountList, setCurrentAccountList] = useState<IAccountItem[]>([])
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
+  const isKycAuth = currentUser?.isKycAuth
 
   const [countDown] = useCountDown({
     leftTime,
@@ -129,6 +134,11 @@ function Account() {
                       >
                         {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                       </div>
+                      {item.synopsis?.abbr && (
+                        <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                          {item.synopsis?.abbr}
+                        </div>
+                      )}
                       <div className="pl-[6px] flex items-center">
                         <div
                           className="py-[2px] px-[3px] hover:bg-gray-80 rounded-[10px]"
@@ -225,7 +235,7 @@ function Account() {
                   disabled={trade.disabledConect(item)}
                 >
                   <span className="font-pf-bold">
-                    <FormattedMessage id="mt.jiaoyi" />
+                    <FormattedMessage id="common.jiaoyi" />
                   </span>
                 </Button>
                 <Dropdown
@@ -233,8 +243,11 @@ function Account() {
                     onClick: (event: MenuInfo) => {
                       const { key } = event
                       console.log('key', key)
-                      if (key === 'transfer') {
+                      if (key === 'transfer' && isKycAuth) {
                         push(`/account/transfer?from=${item.id}`)
+                      } else if (key === 'rename') {
+                        setModalInfo(item)
+                        modalRef.current.setOpen(true)
                       }
                     },
                     items: [
@@ -242,22 +255,31 @@ function Account() {
                       !isSimulate && {
                         key: 'transfer',
                         label: (
-                          <span className="text-sm text-secondary hover:text-primary">
-                            <FormattedMessage id="mt.zhuanzhang" />
-                          </span>
+                          <Modal
+                            trigger={
+                              <span className="text-sm text-secondary hover:text-primary">
+                                <FormattedMessage id="common.zhuanzhang" />
+                              </span>
+                            }
+                            title={<FormattedMessage id="common.wenxintishi" />}
+                            width={380}
+                            okText={<FormattedMessage id="mt.qurenzheng" />}
+                            onFinish={() => {
+                              push('/setting/kyc')
+                            }}
+                          >
+                            <div className="text-base text-primary">
+                              <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
+                            </div>
+                          </Modal>
                         )
                       },
                       {
                         key: 'rename',
                         label: (
-                          <RenameAccountModal
-                            trigger={
-                              <span className="text-sm text-secondary hover:text-primary">
-                                <FormattedMessage id="mt.zhanghuchongmingming" />
-                              </span>
-                            }
-                            info={item}
-                          />
+                          <span className="text-sm text-secondary hover:text-primary">
+                            <FormattedMessage id="mt.zhanghuchongmingming" />
+                          </span>
                         )
                       }
                       // {
@@ -280,6 +302,7 @@ function Account() {
           )
         })}
       </div>
+      <RenameAccountModal ref={modalRef} info={modalInfo} />
     </PageContainer>
   )
 }

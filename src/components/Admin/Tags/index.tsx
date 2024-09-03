@@ -1,6 +1,7 @@
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { useMemo, useState } from 'react'
+
+import { cn } from '@/utils/cn'
 
 export type ITabTypes = {
   format?: Record<string, any>
@@ -35,7 +36,7 @@ export default ({ format, size = 'medium', color = 'biaozhun', children, onClick
 
   const className = useMemo(
     () =>
-      classNames(
+      cn(
         selected && ' border border-solid',
         selectable && 'cursor-pointer',
         size && sizeMap[size],

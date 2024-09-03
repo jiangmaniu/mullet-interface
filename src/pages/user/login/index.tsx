@@ -19,7 +19,7 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
-import { regPassword } from '@/utils'
+import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
 import RegisterValidateCode, { IValidateCodeType } from '../comp/RegisterValidateCode'
@@ -325,9 +325,9 @@ function Login() {
               ]}
             />
             {/* <div className="flex items-center justify-between w-full pb-2">
-          <span>{!isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}</span>
+          <span>{!isEmailTab ? <FormattedMessage id="common.shoujihaoma" /> : <FormattedMessage id="common.dianziyouxiang" />}</span>
           <span className="cursor-pointer text-blue" onClick={() => setIsEmailTab(!isEmailTab)}>
-            {isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}
+            {isEmailTab ? <FormattedMessage id="common.shoujihaoma" /> : <FormattedMessage id="common.dianziyouxiang" />}
           </span>
         </div> */}
 
@@ -343,11 +343,12 @@ function Login() {
                 }}
                 placeholder={intl.formatMessage({ id: 'mt.shurudianziyouxiang' })}
                 required={false}
-                label={<FormattedMessage id="mt.dianziyouxiang" />}
+                label={<FormattedMessage id="common.dianziyouxiang" />}
                 rules={[
                   {
                     required: true,
-                    message: intl.formatMessage({ id: 'mt.shurudianziyouxiang' })
+                    message: intl.formatMessage({ id: 'mt.youxianggeshibuzhengque' }),
+                    pattern: regEmail
                   }
                 ]}
               />
@@ -358,14 +359,14 @@ function Login() {
               <PhoneSelectFormItem
                 names={['username', 'phoneAreaCode']}
                 form={form}
-                label={<FormattedMessage id="mt.shoujihaoma" />}
-                required={false}
+                label={<FormattedMessage id="common.shoujihaoma" />}
+                // required={false}
               />
             )}
             <ProFormText.Password
               name="password"
               required={false}
-              label={intl.formatMessage({ id: 'mt.mima' })}
+              label={intl.formatMessage({ id: 'common.mima' })}
               placeholder={intl.formatMessage({ id: 'mt.shurumima' })}
               fieldProps={{
                 size: 'large',

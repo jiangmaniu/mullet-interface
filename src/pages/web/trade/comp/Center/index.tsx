@@ -19,7 +19,7 @@ const Center = () => {
   ]
 
   return (
-    <div className="flex h-[700px] flex-1 flex-col bg-primary pb-1">
+    <div className="flex h-[700px] flex-1 flex-col bg-primary pb-1 min-w-[400px]">
       <Tabs
         items={TabsItems}
         onChange={(key: any) => {

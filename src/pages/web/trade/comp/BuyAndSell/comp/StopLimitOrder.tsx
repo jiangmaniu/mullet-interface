@@ -6,16 +6,16 @@ import { forwardRef, useEffect, useState, useTransition } from 'react'
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum } from '@/utils'
+import { formatNum, getPrecisionByNumber } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 
 import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
+import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import classNames from 'classnames'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
@@ -31,7 +31,7 @@ export default observer(
     const { isPc, isMobileOrIpad } = useEnv()
     const { trade, ws } = useStores()
     const { fetchUserInfo } = useModel('user')
-    const [checkedSpSl, setCheckedSpSl] = useState(true) // 勾选止盈止损
+    const [checkedSpSl, setCheckedSpSl] = useState(false) // 不勾选止盈止损
     const { availableMargin } = trade.getAccountBalance()
     const [margin, setMargin] = useState(0)
     const [loading, setLoading] = useState(false)
@@ -74,6 +74,7 @@ export default observer(
     const vmax = maxOpenVolume // 当前账户保证金最大可开手数
     const vmin = symbolConf?.minTrade || 0.01
     const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
+    const countPrecision = getPrecisionByNumber(symbolConf.minTrade) // 手数精度
 
     // 切换品种、买卖重置内容
     useEffect(() => {
@@ -211,19 +212,19 @@ export default observer(
           <div className="relative flex items-center justify-center rounded-xl border border-primary dark:border-gray-580 p-[2px]">
             <BuyAndSellBtnGroup type="popup" />
           </div>
-          <div className="flex items-center justify-between mt-3 mb-1">
+          {/* <div className="flex items-center justify-between mt-3 mb-1">
             <div className="mt-1 flex items-center justify-center pb-2">
               <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.keyong" />
               </span>
               <span className="pl-2 text-xs text-primary !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
             </div>
-          </div>
+          </div> */}
           <InputNumber
             // showAddMinus={false}
             placeholder={intl.formatMessage({ id: 'mt.shurujiage' })}
             // addonBefore={intl.formatMessage({ id: 'mt.jiage' })}
-            rootClassName="!z-50 mb-3"
+            rootClassName="!z-50 mb-3 mt-[14px]"
             classNames={{ input: 'text-center' }}
             value={priceValue}
             onChange={(value: any) => {
@@ -246,7 +247,7 @@ export default observer(
               }
             }}
             tips={
-              <span className={classNames('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
+              <span className={cn('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
                 {isBuy && (
                   <>
                     <FormattedMessage id="mt.mairujiafanwei" /> ≤ {formatNum(priceTip)} USD
@@ -301,7 +302,7 @@ export default observer(
                 }}
                 tips={
                   <>
-                    <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
+                    <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
@@ -351,7 +352,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
+                  <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
                     <span className="!font-dingpro-regular pb-[2px]">
                       <FormattedMessage id="mt.fanwei" />
                       <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>
@@ -389,8 +390,10 @@ export default observer(
             value={countValue}
             max={vmax}
             min={vmin}
+            precision={countPrecision}
+            hiddenPrecision={false}
             onChange={(value: any) => {
-              setCount(value || vmin)
+              setCount(value || '')
             }}
             onAdd={() => {
               if (count && (isBuy ? count < vmax : count <= 5)) {
@@ -435,10 +438,16 @@ export default observer(
           <div className="mt-4">
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-secondary">
+                <FormattedMessage id="mt.keyong" />
+              </span>
+              <span className="pl-2 text-xs text-primary !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
+            </div>
+            {/* <div className="flex items-center justify-between pb-[6px] w-full">
+              <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.yuguqiangpingjia" />
               </span>
               <span className="text-xs text-primary !font-dingpro-medium">{expectedForceClosePrice || '-'}</span>
-            </div>
+            </div> */}
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.yugubaozhengjin" />

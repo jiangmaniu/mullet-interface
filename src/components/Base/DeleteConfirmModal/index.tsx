@@ -14,8 +14,8 @@ type IProps = {
 
 export default function DeleteConfirmModal({ trigger, text, onConfirm, children }: IProps) {
   return (
-    <Modal trigger={trigger} title={<FormattedMessage id="mt.shanchuqueren" />} onFinish={onConfirm} width={500}>
-      {children || <div className="text-primary text-base">{text?.() || <FormattedMessage id="mt.querenshanchugaixiang" />}</div>}
+    <Modal trigger={trigger} title={<FormattedMessage id="common.shanchuqueren" />} onFinish={onConfirm} width={500}>
+      {children || <div className="text-primary text-base">{text?.() || <FormattedMessage id="common.querenshanchugaixiang" />}</div>}
     </Modal>
   )
 }

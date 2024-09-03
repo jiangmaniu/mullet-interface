@@ -149,13 +149,13 @@ export default [
   //   component: './admin/record'
   // },
   // 跟单管理
-  {
-    path: '/:lng/copy-trading',
-    access: 'canAdmin', // 权限配置
-    name: 'copyTrading',
-    icon: 'icon-gendanguanli',
-    component: './admin/copyTrading'
-  },
+  // {
+  //   path: '/:lng/copy-trading',
+  //   access: 'canAdmin', // 权限配置
+  //   name: 'copyTrading',
+  //   icon: 'icon-gendanguanli',
+  //   component: './admin/copyTrading'
+  // },
   {
     path: '/:lng/copy-trading/management',
     access: 'canAdmin', // 权限配置

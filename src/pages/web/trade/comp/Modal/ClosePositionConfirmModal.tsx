@@ -1,5 +1,4 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
@@ -14,6 +13,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -69,7 +69,7 @@ export default observer(
 
     const onFinish = async () => {
       const reg = /^\d+(\.\d{0,2})?$/
-      if (!count) return message.info(intl.formatMessage({ id: 'common.pleaseInput2' }))
+      if (!count) return message.info(intl.formatMessage({ id: 'common.qingshuru' }))
       if (!reg.test(count)) {
         message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
         return
@@ -118,10 +118,10 @@ export default observer(
               <div className="flex items-center">
                 <SymbolIcon src={item.imgUrl} />
                 <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
-                <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
+                <span className={cn('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className={classNames('pb-2 text-lg font-bold', Number(item?.profit) > 0 ? 'text-green' : 'text-red')}>
+                <span className={cn('pb-2 text-lg font-bold', Number(item?.profit) > 0 ? 'text-green' : 'text-red')}>
                   {item.profitFormat} {unit}
                 </span>
                 <span className="text-xs text-secondary">
@@ -144,7 +144,7 @@ export default observer(
                 <span className="pr-3 text-sm text-secondary">
                   <FormattedMessage id="mt.pingcangjiage" />
                 </span>
-                <span className={classNames('text-sm', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+                <span className={cn('text-sm', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
                   {item.currentPrice}&nbsp;{unit}
                 </span>
               </div>
@@ -201,7 +201,7 @@ export default observer(
               <FormattedMessage id="common.cancel" />
             </Button>
             <Button
-              className={classNames('flex-1', { 'pointer-events-none !bg-gray-250': !count })}
+              className={cn('flex-1', { 'pointer-events-none !bg-gray-250': !count })}
               onClick={onFinish}
               type="primary"
               loading={submitLoading}

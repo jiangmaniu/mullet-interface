@@ -140,9 +140,10 @@ declare namespace Order {
   // 订单分页-列表
   type OrderPageListItem = {
     /**
-     * 持仓ID
+     * 持仓ID 深度成交有多个 逗号分隔
      */
-    bagOrderId?: number | string
+    bagOrderIds?: string
+    executeOrderId?: string
     /**
      * 订单方向
      */
@@ -160,29 +161,13 @@ declare namespace Order {
      */
     createTime?: string
     /**
-     * 数据源code
-     */
-    dataSourceCode?: string
-    /**
-     * 数据源Symbol
-     */
-    dataSourceSymbol?: string
-    /**
      * 过期时间
      */
     expirationTime?: string
     /**
-     * 手续费
-     */
-    handlingFees?: number
-    /**
      * 主键
      */
     id?: number
-    /**
-     * 图标
-     */
-    imgUrl?: string
     /**
      * 成交方向
      */
@@ -191,10 +176,6 @@ declare namespace Order {
      * 杠杆倍数
      */
     leverageMultiple?: number
-    /**
-     * 限价价格
-     */
-    limitPrice?: number
     /**
      * 保证金类型
      */
@@ -212,7 +193,7 @@ declare namespace Order {
      */
     orderMargin?: number
     /**
-     * 订单数量
+     * 订单交易量
      */
     orderVolume?: number
     /**
@@ -232,10 +213,6 @@ declare namespace Order {
      */
     symbol?: string
     /**
-     * 品种小数位
-     */
-    symbolDecimal?: number
-    /**
      * 止盈
      */
     takeProfit?: number
@@ -248,9 +225,13 @@ declare namespace Order {
      */
     tradePrice?: string
     /**
+     * 限价
+     */
+    limitPrice?: string
+    /**
      * 成交量
      */
-    tradingVolume?: number
+    tradingVolume?: any
     /**
      * 订单类型
      */
@@ -273,19 +254,57 @@ declare namespace Order {
     userAccount: string
     /**用户名称 */
     userName: string
+    /**数据源 huobi */
+    dataSourceCode: string
+    /**数据源品种 */
+    dataSourceSymbol: string
+    /**小数位 */
+    symbolDecimal?: number
+    /**追加预付款比例 */
+    addAdvanceCharge?: number
+    /**强平比例 */
+    compelCloseRatio?: number
+    imgUrl?: string
+    handlingFees?: number
+  }
+  type OrderAccountDetail = {
+    id: string
+    clientId: string
+    accountGroupId: string
+    name: string
+    money: string
+    currencyUnit: string
+    margin: string
+    isolatedMargin: string
+    status: string
+    remark: string
+    lastVisitedTime: string
+    createTime: string
+    /**组别 例如real/test2 */
+    groupCode: string
+    /**组名 */
+    groupName: string
+    fundTransfer: API.FundTransfer
+    orderMode: API.OrderMode
+    enableIsolated: false
+    /**是否是模拟账户 */
+    isSimulate: false
   }
   // 订单详情：持仓单、委托单、成交单
   type OrderDetailListItem = BgaOrderPageListItem & {
+    /**账户详情信息 */
+    accountDetail?: OrderAccountDetail
     /**
      * 订单集合
      */
-    ordersInfo: OrderPageListItem &
-      {
+    ordersInfo?: Array<
+      OrderPageListItem & {
         /**
          * 成交记录集合
          */
         tradeRecordsInfo?: TradeRecordsPageListItem[]
-      }[]
+      }
+    >
   }
 
   // 持仓单分页-参数
@@ -455,7 +474,7 @@ declare namespace Order {
   // 成交记录-分页-参数
   type TradeRecordsPageListParams = {
     /**当前账户ID */
-    accountId: string | number
+    accountId: any
     /**
      * 客户ID
      */
@@ -479,6 +498,14 @@ declare namespace Order {
   }
   // 成交记录-分页-列表
   type TradeRecordsPageListItem = {
+    /**
+     * 交易账户ID
+     */
+    accountId?: number
+    /**
+     * 交易账户名
+     */
+    accountName?: string
     /**
      * 持仓订单ID
      */
@@ -560,23 +587,17 @@ declare namespace Order {
      */
     tradingVolume?: number
     /**
-     * 账户id
+     * 用户登录账户
      */
-    accountId: string
+    userAccount?: string
     /**
-     * 交易账户001
+     * 用户名称
      */
-    accountName: string
-    /**
-     * 用户登录账号 654321@163.com
-     */
-    userAccount: string
-    /**用户名称 */
-    userName: string
+    userName?: string
     /**
      * 配置
      */
-    conf?: string | Symbol.SymbolConf
+    conf?: Symbol.SymbolConf
   }
   // 追加保证金
   type AddMarginParams = {

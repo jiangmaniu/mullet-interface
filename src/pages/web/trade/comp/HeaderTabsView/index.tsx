@@ -1,6 +1,5 @@
 import { useModel } from '@umijs/max'
 import { Tabs } from 'antd-mobile'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
@@ -8,6 +7,7 @@ import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
+import { cn } from '@/utils/cn'
 import { getPathname } from '@/utils/navigator'
 
 import Sidebar from '../Sidebar'
@@ -51,7 +51,7 @@ function HeaderTabsView() {
                 style={{ marginRight: 0, paddingBottom: 0 }}
                 title={
                   <div
-                    className={classNames(
+                    className={cn(
                       'flex cursor-pointer items-center justify-center rounded-t-[6px] border-x  bg-white p-2',
                       idx > 0 ? '!border-l-0' : '',
                       activeKey === symbol ? 'border-t-[4px] border-x-gray-60 border-t-blue-600' : 'border-t border-gray-60'

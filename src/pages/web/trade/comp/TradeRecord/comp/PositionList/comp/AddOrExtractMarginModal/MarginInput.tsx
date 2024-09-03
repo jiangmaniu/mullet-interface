@@ -39,6 +39,8 @@ function MarginInput({ onChange, initialValue, isAdd, availableMargin }: IProps,
     }
   })
 
+  const precision = trade.currentAccountInfo.currencyDecimal
+
   return (
     <div>
       <InputNumber
@@ -56,9 +58,11 @@ function MarginInput({ onChange, initialValue, isAdd, availableMargin }: IProps,
           setMargin(v)
         }}
         max={availableMargin}
-        min={1}
+        min={0.01}
         disabled={!availableMargin}
         height={40}
+        precision={precision}
+        hiddenPrecision={false}
       />
       <div className="flex flex-col pt-1 mx-3">
         <div>
@@ -66,7 +70,7 @@ function MarginInput({ onChange, initialValue, isAdd, availableMargin }: IProps,
             onChange={(value: any) => {
               // console.log('value', value)
               // 可用保证金*百分比
-              setMargin(toFixed((value / 100) * availableMargin, 2))
+              setMargin(toFixed((value / 100) * availableMargin, precision))
               setSliderValue(value)
             }}
             value={sliderValue}
