@@ -1,3 +1,4 @@
+import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 import { Pagination } from 'antd'
 import { useEffect, useState } from 'react'
@@ -25,10 +26,10 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
   const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
   const [current, setCurrent] = useState(1)
 
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
-    trade.currentAccountInfo &&
-      trade.currentAccountInfo.id &&
-      segment === 'lishicangwei' &&
+    if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'lishicangwei') {
+      setLoading(true)
       getTradeFollowFolloerManagementHistory({
         followerId: currentAccountInfo.id,
         size,
@@ -42,16 +43,24 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
                 setTotal(res.data.total)
               }
             }
-            // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
           }
         })
         .catch((err) => {
           console.log(err)
         })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
   }, [segment, currentAccountInfo, current, size])
 
   return (
     <div className="flex flex-col gap-5 w-full">
+      {loading && (
+        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
+          <PageLoading />
+        </div>
+      )}
       {orders.length > 0 ? (
         <>
           <TabTable columns={columns} datas={orders as any[]} />

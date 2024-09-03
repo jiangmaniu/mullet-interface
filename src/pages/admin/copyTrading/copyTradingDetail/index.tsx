@@ -99,7 +99,7 @@ export default function copyTradingDetail() {
     defaultTabKey: takeState === 3 ? '1' : '2'
   })
 
-  const tab = useMemo(() => (takeState === 3 ? tabs : tabs2), [takeState])
+  const tab = useMemo(() => (takeState === 3 ? tabs : tabs2), [takeState, tabs2, tabs])
 
   // 无账号提示弹窗
   const [openTips, setOpenTips] = useState(false)

@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
       title: intl.formatMessage({ id: 'mt.fuwu' }),
       value: [
         intl.formatMessage({ id: 'mt.haoyoutuijian' }),
-        intl.formatMessage({ id: 'mt.jiaoyi' }),
+        intl.formatMessage({ id: 'common.jiaoyi' }),
         intl.formatMessage({ id: 'mt.xiazai' }),
         intl.formatMessage({ id: 'mt.bangzhuzhongxin' }),
         intl.formatMessage({ id: 'mt.jiaoyifeiyong' }),

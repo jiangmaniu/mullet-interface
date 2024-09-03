@@ -1,3 +1,4 @@
+import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Pagination } from 'antd'
 import { useEffect, useRef, useState } from 'react'
@@ -39,6 +40,7 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
   const columns = useColumns()
 
   const loadingRef = useRef<any>()
+  const [loading, setLoading] = useState(false)
 
   // 分页
   const [total, setTotal] = useState(0)
@@ -46,9 +48,8 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
   const [current, setCurrent] = useState(1)
 
   useEffect(() => {
-    trade.currentAccountInfo &&
-      trade.currentAccountInfo.id &&
-      segment === 'jinxingzhong' &&
+    if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'jinxingzhong') {
+      setLoading(true)
       getTradeFollowFolloerManagementInProgress({
         accountGroupId: currentAccountInfo?.accountGroupId,
         clientId: currentAccountInfo?.clientId,
@@ -70,6 +71,10 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
         .catch((err) => {
           console.log(err)
         })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
   }, [segment, currentAccountInfo, current, size])
 
   return (
@@ -157,6 +162,12 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
               <FormattedMessage id="mt.qugendan" />
             </div>
           </Button>
+        </div>
+      )}
+
+      {loading && (
+        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
+          <PageLoading />
         </div>
       )}
 

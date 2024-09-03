@@ -11,10 +11,10 @@ type IProps = {
   onChange?: TabsProps['onChange']
 }
 
-const TabsTable = ({ items, onChange }: IProps) => {
+const TabsTable = (props: IProps) => {
   const intl = useIntl()
 
-  return <Tabs items={items} onChange={onChange} />
+  return <Tabs {...props} />
 }
 
 export default TabsTable

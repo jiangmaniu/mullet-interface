@@ -1,3 +1,4 @@
+import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Pagination, Space } from 'antd'
 import dayjs from 'dayjs'
@@ -49,17 +50,25 @@ function Square({ active }: { active: boolean }) {
   const accountTypes = useMemo(() => {
     const temp = [] as string[]
 
-    return currentUser?.accountList?.reduce((acc, item) => {
-      if (item.groupName && !temp.includes(item.groupName)) {
-        temp.push(item.groupName)
+    return currentUser?.accountList?.reduce(
+      (acc, item) => {
+        if (item.groupName && !temp.includes(item.groupName)) {
+          temp.push(item.groupName)
 
-        acc.push({
-          label: item.groupName,
-          value: item.groupName
-        })
-      }
-      return acc
-    }, [] as any[])
+          acc.push({
+            label: item.groupName,
+            value: item.groupName
+          })
+        }
+        return acc
+      },
+      [
+        {
+          label: intl.formatMessage({ id: 'common.quanbu' }),
+          value: ''
+        }
+      ] as any[]
+    )
   }, [currentUser])
 
   // 标签
@@ -144,7 +153,12 @@ function Square({ active }: { active: boolean }) {
       {trade.currentAccountInfo.id ? (
         <>
           <Space size={12}>
-            <SelectRounded defaultValue={accountType} onChange={(i) => handleChange('zhanghuleixing', i)} options={accountTypes} />
+            <SelectRounded
+              defaultValue={accountType}
+              onChange={(i) => handleChange('zhanghuleixing', i)}
+              options={accountTypes}
+              optionRender={(item) => <div className="w-full text-center">{item.label}</div>}
+            />
             <SelectRounded defaultValue={tag} onChange={(i) => handleChange('biaoqian', i)} options={tags} />
             <SelectRounded defaultValue={rateOfReturnNear} onChange={(i) => handleChange('jinqi', i)} options={timeRange} />
           </Space>
@@ -186,6 +200,13 @@ function Square({ active }: { active: boolean }) {
           </Button>
         </div>
       )}
+
+      {loading && (
+        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
+          <PageLoading />
+        </div>
+      )}
+
       {/* <QA /> */}
       <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
 

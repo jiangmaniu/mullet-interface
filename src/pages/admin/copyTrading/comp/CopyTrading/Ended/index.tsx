@@ -1,3 +1,4 @@
+import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 import { Pagination } from 'antd'
 import { useEffect, useState } from 'react'
@@ -29,10 +30,10 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
   const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
   const [current, setCurrent] = useState(1)
 
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
-    trade.currentAccountInfo &&
-      trade.currentAccountInfo.id &&
-      segment === 'yijieshu' &&
+    if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'yijieshu') {
+      setLoading(true)
       getTradeFollowFolloerManagementEnd({
         accountGroupId: currentAccountInfo?.accountGroupId,
         clientId: currentAccountInfo?.clientId,
@@ -54,10 +55,19 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
         .catch((err) => {
           console.log(err)
         })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
   }, [segment, currentAccountInfo, current, size])
 
   return (
     <div className="flex flex-col gap-5 w-full">
+      {loading && (
+        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
+          <PageLoading />
+        </div>
+      )}
       {takers.length > 0 ? (
         <>
           {takers.map((item: TradeFollowFollower.ManagementEndItem, idx: number) => (

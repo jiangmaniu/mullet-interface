@@ -139,7 +139,7 @@ export default ({ form }: IProps) => {
           rules={[
             {
               required: true,
-              message: intl.formatMessage({ id: 'mt.qingshuru' })
+              message: intl.formatMessage({ id: 'common.qingshuru' })
             }
           ]}
           fieldProps={{
@@ -153,7 +153,7 @@ export default ({ form }: IProps) => {
               show: true,
               max: 10
             },
-            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.mingcheng' })}`
+            placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}${intl.formatMessage({ id: 'mt.mingcheng' })}`
           }}
         />
       </div>
@@ -168,7 +168,7 @@ export default ({ form }: IProps) => {
             {
               required: true,
 
-              message: intl.formatMessage({ id: 'mt.qingshuru' })
+              message: intl.formatMessage({ id: 'common.qingshuru' })
             },
             {
               min: 0,
@@ -177,7 +177,7 @@ export default ({ form }: IProps) => {
             }
           ]}
           fieldProps={{
-            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.jieshao' })}`,
+            placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}${intl.formatMessage({ id: 'mt.jieshao' })}`,
             maxLength: 200,
             count: {
               show: true,

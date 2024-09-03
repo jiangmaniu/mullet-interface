@@ -258,22 +258,47 @@ export const useTabsConfig = ({ id }: { id: string }) => {
   const [current3, setCurrent3] = useState(1)
   const [data3, setData3] = useState<any[]>(mockUsers)
 
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
-    tabKey === '1' &&
-      tradeFollowCurrentLeadOrder({ leadId: id, current: current1, size: size1 }).then((res) => {
-        if (res.success) setData1(res.data?.records || [])
-      })
+    if (tabKey === '1') {
+      setLoading(true)
 
-    tabKey === '2' &&
-      tradeFollowHistoryLeadOrder({ leadId: id, current: current2, size: size2 }).then((res) => {
-        if (res.success) setData2(res.data?.records || [])
-      })
+      tradeFollowCurrentLeadOrder({ leadId: id, current: current1, size: size1 })
+        .then((res) => {
+          if (res.success) setData1(res.data?.records || [])
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [tabKey, current1, size1])
 
-    tabKey === '3' &&
-      tradeFollowFollowUser({ leadId: id, current: current3, size: size3 }).then((res) => {
-        if (res.success) setData3(res.data?.records || [])
-      })
-  }, [tabKey])
+  useEffect(() => {
+    if (tabKey === '2') {
+      setLoading(true)
+      tradeFollowHistoryLeadOrder({ leadId: id, current: current2, size: size2 })
+        .then((res) => {
+          if (res.success) setData2(res.data?.records || [])
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [tabKey, current2, size2])
+
+  useEffect(() => {
+    if (tabKey === '3') {
+      setLoading(true)
+      tradeFollowFollowUser({ leadId: id, current: current3, size: size3 })
+        .then((res) => {
+          if (res.success) setData3(res.data?.records || [])
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [tabKey, current3, size3])
 
   const items: TabsProps['items'] = [
     {
@@ -281,7 +306,7 @@ export const useTabsConfig = ({ id }: { id: string }) => {
       label: intl.formatMessage({ id: 'mt.dangqiandaidan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={orderColumns} datas={data1} />
+          <TabTable columns={orderColumns} datas={data1} loading={loading} />
 
           <div className="self-end">
             <Pagination
@@ -301,7 +326,7 @@ export const useTabsConfig = ({ id }: { id: string }) => {
       label: intl.formatMessage({ id: 'mt.lishidaidan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={historyColumns} datas={data2} />
+          <TabTable columns={historyColumns} datas={data2} loading={loading} />
 
           <div className="self-end">
             <Pagination
@@ -321,7 +346,7 @@ export const useTabsConfig = ({ id }: { id: string }) => {
       label: intl.formatMessage({ id: 'mt.gendanyonghu' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={userColumns} datas={data3} />
+          <TabTable columns={userColumns} datas={data3} loading={loading} />
 
           <div className="self-end">
             <Pagination
@@ -340,6 +365,7 @@ export const useTabsConfig = ({ id }: { id: string }) => {
 
   return {
     items,
-    onChange
+    onChange,
+    loading
   }
 }

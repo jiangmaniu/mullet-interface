@@ -101,10 +101,10 @@ export default ({ onConfirm, form, children, money }: IProp) => {
           rules={[
             {
               required: true,
-              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              // message: intl.formatMessage({ id: 'common.qingshuru' }),
               validator(rule, value, callback) {
                 if (!value) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                  return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }))
                 }
                 // 只能输入数字，正则匹配 value 是不是数字
                 if (!/^\d+$/.test(value)) {
@@ -122,7 +122,7 @@ export default ({ onConfirm, form, children, money }: IProp) => {
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             },
-            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}10~500`,
+            placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}10~500`,
             count: {
               show: false,
               max: 10
@@ -145,7 +145,7 @@ export default ({ onConfirm, form, children, money }: IProp) => {
           }}
           value={gendanjine}
           onChange={(e) => checkNumber(e, setGendanjine)}
-          placeholder={`${intl.formatMessage({ id: 'mt.qingshuru' })}10~1000000`}
+          placeholder={`${intl.formatMessage({ id: 'common.qingshuru' })}10~1000000`}
           count={{
             show: false,
             max: 10
@@ -203,11 +203,11 @@ export default ({ onConfirm, form, children, money }: IProp) => {
             rules={[
               {
                 // required: true,
-                // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+                // message: intl.formatMessage({ id: 'common.qingshuru' }),
                 validator(rule, value, callback) {
                   if (!value) {
                     return Promise.resolve()
-                    // return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                    // return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }))
                   }
                   // 只能输入数字，正则匹配 value 是不是数字
                   if (!/^\d+$/.test(value)) {
@@ -226,7 +226,7 @@ export default ({ onConfirm, form, children, money }: IProp) => {
                 height: '2.8125rem',
                 lineHeight: '2.8125rem'
               },
-              placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}`,
+              placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}`,
               onFocus: () => setFocusInputKey('mt.yingli'),
               onBlur: () => setFocusInputKey(undefined),
               value: zhiying,
@@ -244,11 +244,11 @@ export default ({ onConfirm, form, children, money }: IProp) => {
             rules={[
               {
                 // required: true,
-                // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+                // message: intl.formatMessage({ id: 'common.qingshuru' }),
                 validator(rule, value, callback) {
                   if (!value) {
                     return Promise.resolve()
-                    // return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                    // return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }))
                   }
                   // 只能输入数字，正则匹配 value 是不是数字
                   if (!/^\d+$/.test(value)) {
@@ -267,7 +267,7 @@ export default ({ onConfirm, form, children, money }: IProp) => {
                 height: '2.8125rem',
                 lineHeight: '2.8125rem'
               },
-              placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}`,
+              placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}`,
               value: zhisun,
               onFocus: () => setFocusInputKey('mt.sunshi'),
               onBlur: () => setFocusInputKey(undefined),

@@ -21,7 +21,7 @@ const waitTime = (time = 100) => {
 }
 
 type IProps = {
-  info?: TradeFollowLead.LeadDetailItem
+  info: TradeFollowLead.LeadDetailItem | null
   open?: boolean
   onOpenChange?: ((open: boolean) => void) | undefined
   trigger?: JSX.Element

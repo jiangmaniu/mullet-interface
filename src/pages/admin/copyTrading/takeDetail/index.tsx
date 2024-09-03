@@ -44,7 +44,7 @@ export default function TakeDetail() {
   const params = useParams()
   const { id } = params
 
-  const [taker, setTaker] = useState<TradeFollowLead.LeadDetailItem>()
+  const [taker, setTaker] = useState<TradeFollowLead.LeadDetailItem | null>(null)
 
   useEffect(() => {
     // 得到 takeId 之后去请求后端数据
@@ -218,7 +218,7 @@ export default function TakeDetail() {
                 <div className=" flex items-center gap-1">
                   <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
                   <span className=" font-semibold text-base ">
-                    <FormattedMessage id="mt.jiaoyi" />
+                    <FormattedMessage id="common.jiaoyi" />
                   </span>
                 </div>
               </Button>

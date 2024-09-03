@@ -249,7 +249,7 @@ export default function Apply() {
                     rules={[
                       {
                         required: true,
-                        message: intl.formatMessage({ id: 'mt.qingshuru' })
+                        message: intl.formatMessage({ id: 'common.qingshuru' })
                       },
                       {
                         pattern: /^.{1,10}$/,

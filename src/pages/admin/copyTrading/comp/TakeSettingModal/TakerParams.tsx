@@ -53,10 +53,10 @@ export default ({ form }: IProps) => {
           rules={[
             {
               required: true,
-              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              // message: intl.formatMessage({ id: 'common.qingshuru' }),
               validator(rule, value, callback) {
                 if (!value) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                  return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }))
                 }
                 const _value = Number(value)
                 // 数字必须是正数
@@ -75,7 +75,7 @@ export default ({ form }: IProps) => {
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             },
-            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.lirunfenchengbili' })}`,
+            placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}${intl.formatMessage({ id: 'mt.lirunfenchengbili' })}`,
             count: {
               show: false,
               max: 10
@@ -94,10 +94,10 @@ export default ({ form }: IProps) => {
           rules={[
             {
               required: true,
-              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              // message: intl.formatMessage({ id: 'common.qingshuru' }),
               validator(rule, value, callback) {
                 if (!value) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                  return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }))
                 }
                 const _value = Number(value)
                 // 数字必须是正数
@@ -116,7 +116,7 @@ export default ({ form }: IProps) => {
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             },
-            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanyaoqiu' })}`,
+            placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanyaoqiu' })}`,
             count: {
               show: false,
               max: 10
@@ -131,14 +131,14 @@ export default ({ form }: IProps) => {
           <FormattedMessage id="mt.zichanguimo" />
         </span>
         <ProFormText
-          name="assetSacle"
+          name="assetScale"
           rules={[
             {
               required: true,
-              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              // message: intl.formatMessage({ id: 'common.qingshuru' }),
               validator(rule, value, callback) {
                 if (!value) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                  return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }))
                 }
 
                 const _value = Number(value)
@@ -158,7 +158,7 @@ export default ({ form }: IProps) => {
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             },
-            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanguimo' })}`,
+            placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}${intl.formatMessage({ id: 'mt.zichanguimo' })}`,
             count: {
               show: false,
               max: 10
@@ -177,18 +177,20 @@ export default ({ form }: IProps) => {
           rules={[
             {
               required: true,
-              // message: intl.formatMessage({ id: 'mt.qingshuru' }),
+              // message: intl.formatMessage({ id: 'common.qingshuru' }),
               validator(rule, value, callback) {
                 if (!value) {
-                  return Promise.reject(intl.formatMessage({ id: 'mt.qingshuru' }))
+                  return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }))
                 }
                 const _value = Number(value)
-                // 数字必须是正整数
-                if (Number.isInteger(_value) && _value > 0) {
-                  return Promise.resolve()
-                }
 
-                return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengzhengshu' }))
+                return Promise.resolve()
+                // 数字必须是正整数
+                // if (Number.isInteger(_value) && _value > 0) {
+                //   return Promise.resolve()
+                // }
+
+                // return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruzhengzhengshu' }))
               }
             }
           ]}
@@ -199,7 +201,7 @@ export default ({ form }: IProps) => {
               height: '2.8125rem',
               lineHeight: '2.8125rem'
             },
-            placeholder: `${intl.formatMessage({ id: 'mt.qingshuru' })}${intl.formatMessage({ id: 'mt.zuidazhichirenshu' })}`,
+            placeholder: `${intl.formatMessage({ id: 'common.qingshuru' })}${intl.formatMessage({ id: 'mt.zuidazhichirenshu' })}`,
             count: {
               show: false,
               max: 10

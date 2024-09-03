@@ -223,34 +223,47 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
   const [size2, setSize2] = useState(DEFAULT_PAGE_SIZE)
   const [current2, setCurrent2] = useState(1)
 
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
-    tabKey === '1' &&
+    if (tabKey === '1') {
+      setLoading(true)
       getTradeFollowFolloerCurrentFollowerOrder({
         followerId: followerId,
         leadId: leadId,
         size,
         current
-      }).then((res) => {
-        if (res.success) {
-          setOrders(res.data?.records || [])
-          setTotal(res.data?.total || 0)
-        }
       })
+        .then((res) => {
+          if (res.success) {
+            setOrders(res.data?.records || [])
+            setTotal(res.data?.total || 0)
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
   }, [tabKey, followerId, leadId, size, current])
 
   useEffect(() => {
-    tabKey === '2' &&
+    if (tabKey === '2') {
+      setLoading(true)
       getTradeFollowFolloerHistoryFollowerOrder({
         followerId: followerId,
         leadId: leadId,
         size: size2,
         current: current2
-      }).then((res) => {
-        if (res.success) {
-          setHistories(res.data?.records || [])
-          setTotal2(res.data?.total || 0)
-        }
       })
+        .then((res) => {
+          if (res.success) {
+            setHistories(res.data?.records || [])
+            setTotal2(res.data?.total || 0)
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
   }, [tabKey, followerId, leadId, size2, current2])
 
   const items2: TabsProps['items'] = [
@@ -259,7 +272,7 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
       label: intl.formatMessage({ id: 'mt.lishigendan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={historyColumns} datas={histories} />
+          <TabTable columns={historyColumns} datas={histories} loading={loading} />
 
           <div className="self-end">
             <Pagination
@@ -282,7 +295,7 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
       label: intl.formatMessage({ id: 'mt.dangqiangendan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={orderColumns} datas={orders} />
+          <TabTable columns={orderColumns} datas={orders} loading={loading} />
 
           <div className="self-end">
             <Pagination
@@ -302,7 +315,7 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
       label: intl.formatMessage({ id: 'mt.lishigendan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={historyColumns} datas={histories} />
+          <TabTable columns={historyColumns} datas={histories} loading={loading} />
 
           <div className="self-end">
             <Pagination

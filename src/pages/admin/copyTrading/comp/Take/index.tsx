@@ -1,3 +1,4 @@
+import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { Pagination } from 'antd'
 import { useEffect, useState } from 'react'
@@ -8,7 +9,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { DEFAULT_PAGE_SIZE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { IOrderTaker } from '@/models/takers'
-import { getTradeFollowLeadManagements } from '@/services/api/tradeFollow/lead'
+import { getTradeFollowLeadDetail, getTradeFollowLeadManagements } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { push } from '@/utils/navigator'
 
@@ -23,6 +24,7 @@ export default function Take({ active }: { active: boolean }) {
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
   const currentAccountList = accountList.filter((item) => !item.isSimulate)
+  const [loading, setLoading] = useState(false)
 
   const [state, setState] = useState({})
 
@@ -38,14 +40,30 @@ export default function Take({ active }: { active: boolean }) {
   const [openSetting, setOpenSetting] = useState(false)
   const onOpenChangeSetting = (val: boolean) => setOpenSetting(val)
 
+  const [curr, setCurr] = useState<TradeFollowLead.LeadDetailItem | null>(null)
   const onClick = (id: string) => {
     console.log(id)
-    setOpenSetting(true)
+
+    //  读取详情
+    setLoading(true)
+    getTradeFollowLeadDetail({
+      leadId: String(id)
+    })
+      .then((res) => {
+        // @ts-ignore
+        if (res.success) {
+          setCurr({ ...res.data, leadId: id })
+          setOpenSetting(true)
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
   }
 
   useEffect(() => {
-    currentAccountInfo?.clientId &&
-      active &&
+    if (currentAccountInfo?.clientId && active) {
+      setLoading(true)
       getTradeFollowLeadManagements({ clientId: String(currentAccountInfo?.clientId), current, size })
         .then((res) => {
           if (res.success) {
@@ -63,6 +81,10 @@ export default function Take({ active }: { active: boolean }) {
         .catch((err) => {
           console.log(err)
         })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
   }, [active, currentAccountInfo, current, size])
 
   const onTake = (id: string) => {
@@ -78,6 +100,11 @@ export default function Take({ active }: { active: boolean }) {
 
   return (
     <div className="flex flex-col w-full gap-6">
+      {loading && (
+        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
+          <PageLoading />
+        </div>
+      )}
       {takers.length > 0 ? (
         <>
           {takers.map((item: IOrderTaker, idx: number) => (
@@ -115,13 +142,14 @@ export default function Take({ active }: { active: boolean }) {
           </Button>
         </div>
       )}
+
       <TakeSettingModal
         open={openSetting}
         onOpenChange={onOpenChangeSetting}
         onConfirm={() => {
           onOpenChangeSetting(false)
         }}
-        info={{}}
+        info={curr}
       />
     </div>
   )
