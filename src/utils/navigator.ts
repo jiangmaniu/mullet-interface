@@ -116,18 +116,7 @@ export const getBrowerLng = () => {
  * @param path 跳转路径
  */
 export const push = (path: string) => {
-  const PUSH_COUNT = '__push_count__'
-  const pushCount = window.sessionStorage.getItem(PUSH_COUNT)
-
-  if (pushCount === '1') return
-
-  window.sessionStorage.setItem(PUSH_COUNT, '1')
-
   history.push(formatPathname(path))
-
-  setTimeout(() => {
-    window.sessionStorage.setItem(PUSH_COUNT, '0')
-  }, 100)
 }
 
 /**
