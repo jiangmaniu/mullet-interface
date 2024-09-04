@@ -291,40 +291,38 @@ export default function TakeDetail() {
                 </div>
               </Button>
               <EndModal
+                id={String(id)}
                 open={openEnd}
                 onOpenChange={setOpenEnd}
-                onConfirm={() => {
-                  loadingRef.current?.show()
-                  tradeFollowLeadClose({
-                    leadId: String(id)
-                  })
-                    .then((res) => {
-                      if (res.success) {
-                        // message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
-                        setOpenEnd(false)
-                        setStatus('disabled')
-                      } else {
-                        message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
-                      }
-                    })
-                    .finally(() => {
-                      loadingRef.current?.close()
-                    })
-                  // if (status === 'abled') {
-                  //   loadingRef.current?.show()
-                  //   setTimeout(() => {
-                  //     loadingRef.current?.close()
-                  //     message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
-                  //   }, 3000)
-                  //   setOpenEnd(false)
+                onConfirm={(params: any) => {
+                  if (params.status === 'disabled') {
+                    const item = currentAccountList.find((item) => item.id === taker?.tradeAccountId)
 
-                  //   return
-                  // }
-
-                  // setStatus('abled')
-                  // setOpenEnd(false)
+                    if (item) {
+                      trade.setCurrentAccountInfo(item)
+                      trade.jumpTrade()
+                      // 切换账户重置
+                      trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                    }
+                  } else {
+                    loadingRef.current?.show()
+                    tradeFollowLeadClose({
+                      leadId: String(id)
+                    })
+                      .then((res) => {
+                        if (res.success) {
+                          // message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                          setOpenEnd(false)
+                          setStatus('disabled')
+                        } else {
+                          message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+                        }
+                      })
+                      .finally(() => {
+                        loadingRef.current?.close()
+                      })
+                  }
                 }}
-                status={status}
               />
               <ModalLoading
                 ref={loadingRef}

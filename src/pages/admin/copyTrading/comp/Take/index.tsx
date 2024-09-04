@@ -42,8 +42,6 @@ export default function Take({ active }: { active: boolean }) {
 
   const [curr, setCurr] = useState<TradeFollowLead.LeadDetailItem | null>(null)
   const onClick = (id: string) => {
-    console.log(id)
-
     //  读取详情
     setLoading(true)
     getTradeFollowLeadDetail({

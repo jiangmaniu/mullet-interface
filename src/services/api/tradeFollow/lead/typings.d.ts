@@ -234,11 +234,23 @@ declare namespace TradeFollowLead {
    * 带单人 - 详情
    */
   type LeadDetailItem = {
-    tradeAccountId?: string
+    remainingGuaranteedAmount?: number
     /**
      * 资产要求
      */
     assetRequirement?: number
+    /**
+     * 资产要求限制
+     */
+    assetRequirementLimit?: number
+    /**
+     * 资产规模
+     */
+    assetScale?: number
+    /**
+     * 资产规模限制
+     */
+    assetScaleLimit?: number
     /**
      * 资产管理规模
      */
@@ -264,6 +276,14 @@ declare namespace TradeFollowLead {
      */
     imageUrl?: string
     /**
+     * 最大支持人数
+     */
+    maxSupportCount?: number
+    /**
+     * 最大支持人数限制
+     */
+    maxSupportCountLimit?: number
+    /**
      * 是否开启带单：1=开启 0=关闭
      */
     openFlag?: number
@@ -271,6 +291,10 @@ declare namespace TradeFollowLead {
      * 分润比例
      */
     profitSharingRatio?: number
+    /**
+     * 利润分成比例限制
+     */
+    profitSharingRatioLimit?: number
     /**
      * 带单盈亏
      */
@@ -282,7 +306,7 @@ declare namespace TradeFollowLead {
     /**
      * 带单保证金额余额/总资产
      */
-    remainingGuaranteedAmount?: number
+    remainingGuaranteedAmount?: string
     /**
      * 今日分润
      */
@@ -295,6 +319,10 @@ declare namespace TradeFollowLead {
      * 昨日分润
      */
     shareProfitYesterday?: number
+    /**
+     * 交易账户Id
+     */
+    tradeAccountId?: number
     [property: string]: any
   }
   /**

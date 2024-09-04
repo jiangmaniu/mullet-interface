@@ -1,3 +1,4 @@
+import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useLocation, useModel, useParams } from '@umijs/max'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
@@ -7,7 +8,7 @@ import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { IOrderTaker, IOrderTakerState } from '@/models/takers'
-import { postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
+import { getTradeFollowFollowerDetail, postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
@@ -39,14 +40,43 @@ export default function copyTradingDetail() {
   const { id } = params
   const location = useLocation()
   const loadingRef = useRef<any>()
-  // useEffect(() => {
-  //   const query = new URLSearchParams(location.search)
-  //   query.get('state') && setTakeState(Number(query.get('state')) as IOrderTakerState)
-  // }, [location])
+
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const query = new URLSearchParams(location.search)
+    // query.get('state') && setTakeState(Number(query.get('state')) as IOrderTakerState)
+    const followerId = query.get('followerId')
+    followerId && setFollowerId(followerId)
+  }, [location])
 
   const [takeState, setTakeState] = useState<IOrderTakerState>(1)
-
   const [taker, setTaker] = useState<IOrderTaker>(defaultTaker)
+  const [followerId, setFollowerId] = useState<string | undefined>(undefined)
+  const [trader, setTrader] = useState<TradeFollowFollower.FollowDetailItem | null>(null)
+
+  useEffect(() => {
+    if (followerId) {
+      setLoading(true)
+      getTradeFollowFollowerDetail({
+        followerId
+      })
+        .then((res) => {
+          if (res.success) {
+            setTrader(res.data as TradeFollowFollower.FollowDetailItem)
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [followerId])
+
+  useEffect(() => {
+    if (trader && trader.endTime === null) {
+      setTakeState(3)
+    }
+  }, [trader])
 
   useEffect(() => {
     // 得到 takeId 之后去请求后端数据
@@ -113,7 +143,7 @@ export default function copyTradingDetail() {
   const currentUser = initialState?.currentUser
   const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
   const onFollow = (takerState: IOrderTakerState) => {
-    if (takerState === 1) {
+    if (takerState === 1 || takerState === 3) {
       if (ableList.length === 0) {
         setOpenTips(true)
         return
@@ -129,13 +159,18 @@ export default function copyTradingDetail() {
     symbolStatistics
   } = useOverview({ id })
 
-  const onEnd = () => {
+  const onEnd = (followerId: string | undefined) => {
     // todo 跳转
     loadingRef.current?.show()
 
+    if (!followerId) {
+      message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+      return
+    }
+
     setTimeout(() => {
       postTradeFollowFolloerClose({
-        followerId: String(currentAccountInfo.id)
+        followerId
       })
         .then((res) => {
           if (res.success) {
@@ -147,11 +182,16 @@ export default function copyTradingDetail() {
         .finally(() => {
           loadingRef.current?.close()
         })
-    }, 500)
+    }, 300)
   }
 
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
+      {loading && (
+        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
+          <PageLoading />
+        </div>
+      )}
       <div className="max-w-[1332px] px-4 mx-auto mt-6">
         <div className="flex items-center">
           <div className="flex items-center w-full gap-x-5">
@@ -206,9 +246,10 @@ export default function copyTradingDetail() {
             </div>
             {/* 操作区 */}
             <div className="flex flex-col gap-3.5">
-              {takeState === 3 ? (
+              {followerId && takeState === 3 ? (
                 <>
                   <EndModal
+                    id={followerId}
                     onConfirm={onEnd}
                     trigger={
                       <Button
@@ -323,6 +364,7 @@ export default function copyTradingDetail() {
       <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
       <TradingSettingModal
         leadId={String(id)}
+        followerId={followerId}
         open={openSetting}
         onOpenChange={onOpenChangeSetting}
         onConfirm={() => {

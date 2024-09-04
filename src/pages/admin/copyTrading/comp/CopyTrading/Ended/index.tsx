@@ -77,7 +77,9 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
               state={state}
               columns={columns}
               onClick={() => {
-                push(`/copy-trading/detail/${item.leadId}`)
+                let _url = `/copy-trading/detail/${item.leadId}`
+                if (item.followerId) _url += `?followerId=${item.followerId}`
+                push(_url)
               }}
             />
           ))}

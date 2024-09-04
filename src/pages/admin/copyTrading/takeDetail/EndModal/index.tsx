@@ -3,8 +3,10 @@ import './style.less'
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form, message } from 'antd'
+import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
+import { tradeFollowInProgressBag } from '@/services/api/tradeFollow/lead'
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -15,19 +17,27 @@ const waitTime = (time = 100) => {
 }
 
 type IProps = {
+  id: string
   trigger?: JSX.Element
   onSuccess?: () => void
   onConfirm?: (values: any) => void
-  status?: 'abled' | 'disabled'
   open?: boolean
   onOpenChange?: (open: boolean) => void
 }
 
-export default ({ trigger, onSuccess, onConfirm, status = 'disabled', open, onOpenChange }: IProps) => {
+export default ({ id, trigger, onSuccess, onConfirm, open, onOpenChange }: IProps) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
 
-  // const [status, setStatus] = useState<'abled' | 'disabled'>('disabled')
+  const [status, setStatus] = useState<'abled' | 'disabled'>('disabled')
+
+  useEffect(() => {
+    tradeFollowInProgressBag({
+      leadId: id
+    }).then((res) => {
+      if (res.success) setStatus(res.data ? 'disabled' : 'abled')
+    })
+  }, [id])
 
   const tips = {
     disabled: intl.formatMessage({ id: 'mt.dingdanweichuli' }),
@@ -107,7 +117,11 @@ export default ({ trigger, onSuccess, onConfirm, status = 'disabled', open, onOp
                 width: '100%',
                 borderRadius: 8
               }}
-              onClick={onConfirm}
+              onClick={() => {
+                onConfirm?.({
+                  status
+                })
+              }}
             >
               <div className=" flex items-center gap-1">
                 <span className=" font-semibold text-base ">{confirms[status]}</span>

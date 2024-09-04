@@ -2,7 +2,7 @@ import './style.less'
 
 import { FormattedMessage, history, useModel } from '@umijs/max'
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
@@ -58,6 +58,8 @@ export default function copyTrading() {
   const [scrollY, setScrollY] = useState(0)
   const fadeHeight = 60 // 当滚动条向下移动 fadeHeight 的时候 banner 收起
 
+  const hideBanner = useMemo(() => scrollY > fadeHeight, [scrollY])
+
   const handleScroll = () => {
     // 获取滚动条距离视口顶部的高度
     const scrollTop = window.scrollY || document.documentElement.scrollTop
@@ -84,7 +86,7 @@ export default function copyTrading() {
         <div
           className={classNames([
             'w-full mb-5.5 cursor-pointer h-[5rem] bg-no-repeat bg-contain px-[1.125rem] py-4 flex items-center ',
-            scrollY > fadeHeight && 'animate-fade-out-up'
+            hideBanner && 'animate-fade-out-up'
           ])}
           style={{
             backgroundImage: 'url(/img/gendan-banner.png)',
@@ -118,7 +120,7 @@ export default function copyTrading() {
           </div>
         </div>
       )}
-      headerWrapperStyle={{ height: scrollY > fadeHeight ? 50 : 160, transition: 'height 0.25s linear' }}
+      headerWrapperStyle={{ height: hideBanner ? 50 : 160, transition: 'height 0.25s linear' }}
       onChangeTab={(activeKey) => {
         setTabKey(activeKey)
       }}

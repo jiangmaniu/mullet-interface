@@ -15,6 +15,7 @@ const waitTime = (time = 100) => {
 }
 
 type IProps = {
+  id: string
   trigger?: JSX.Element
   onSuccess?: () => void
   onConfirm?: (values: any) => void
@@ -22,7 +23,7 @@ type IProps = {
   onOpenChange?: (open: boolean) => void
 }
 
-export default ({ trigger, onSuccess, onConfirm, open, onOpenChange }: IProps) => {
+export default ({ id, trigger, onSuccess, onConfirm, open, onOpenChange }: IProps) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.gendanpeizhi' })
@@ -97,7 +98,9 @@ export default ({ trigger, onSuccess, onConfirm, open, onOpenChange }: IProps) =
                 width: '100%',
                 borderRadius: 8
               }}
-              onClick={onConfirm}
+              onClick={() => {
+                onConfirm?.(id)
+              }}
             >
               <div className=" flex items-center gap-1">
                 <span className=" font-semibold text-base ">

@@ -140,3 +140,12 @@ export async function tradeFollowFollowUser(params: TradeFollowLead.TradeFollowL
     params
   })
 }
+
+// /trade-follow/followApi/lead/in_progress_bag
+// 带单人 - 查询是否有持仓订单
+export async function tradeFollowInProgressBag(params: { leadId: string }) {
+  return request<API.Response<boolean>>('/api/trade-follow/followApi/lead/in_progress_bag', {
+    method: 'GET',
+    params
+  })
+}

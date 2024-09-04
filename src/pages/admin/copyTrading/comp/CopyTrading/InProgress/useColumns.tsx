@@ -34,7 +34,7 @@ export default (): Item[] => {
           <FormattedMessage id="mt.weishixianyingkui" />({SOURCE_CURRENCY})
         </>
       ),
-      field: 'rate3',
+      field: 'unrealizedProfitLoss',
       fontWeight: 'font-dingpro-medium',
       showSuffix: undefined
     },

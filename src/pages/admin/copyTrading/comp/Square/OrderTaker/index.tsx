@@ -4,7 +4,7 @@ import { SwapRightOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Space } from 'antd'
 import classNames from 'classnames'
-import { MouseEventHandler } from 'react'
+import { MouseEventHandler, useMemo } from 'react'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
@@ -16,10 +16,11 @@ import { AccountTag } from '../../AccountTag'
 import OrderTakerChart from './Chart'
 
 type IProps = IOrderTakerProps & {
-  onClick: (id: string, state: string) => void
+  onClick: (id: string, state: string, followerId?: string) => void
   onFollow: (bo: IOrderTakerState, info: Record<string, any>) => void
+  accountList: User.AccountItem[]
 }
-export const OrderTaker = ({ item, state, onClick, onFollow }: IProps) => {
+export const OrderTaker = ({ item, state, onClick, onFollow, accountList }: IProps) => {
   const intl = useIntl()
 
   const {
@@ -37,8 +38,19 @@ export const OrderTaker = ({ item, state, onClick, onFollow }: IProps) => {
     earningRate,
     profitTotal,
     tradeTotal,
-    status: takerState
+    followerId,
+    tradeAccountId
   } = item
+
+  const takerState: IOrderTakerState = useMemo(() => {
+    // 如果 accountList 存在 id = item.tradeAccountId 的值，则返回 3
+    const account = accountList.find((item) => item.id === tradeAccountId)
+    if (account) {
+      return 0
+    }
+
+    return item.status
+  }, [item])
 
   // xx(xx:时间区间)盈亏
   const jinqi = intl.formatMessage({ id: `mt.${state.jinqi}` })
@@ -53,7 +65,7 @@ export const OrderTaker = ({ item, state, onClick, onFollow }: IProps) => {
   return (
     <div
       className=" border rounded-2xl border-gray-150 flex flex-col justify-between xl:w-[25rem] max-w-full flex-1 p-5.5 cursor-pointer hover:shadow-md"
-      onClick={() => onClick(leadId, takerState)}
+      onClick={() => onClick(leadId, String(takerState), followerId)}
     >
       {/* header */}
       <div className=" flex flex-col  gap-5">

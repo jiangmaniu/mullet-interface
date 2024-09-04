@@ -15,7 +15,7 @@ type IProp = {
   onConfirm?: (values: any) => void
   form: FormInstance
   children: React.ReactNode
-  money: number
+  trader: TradeFollowFollower.FollowDetailItem | null
 }
 
 const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
@@ -28,7 +28,7 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
   }
 }
 
-export default ({ onConfirm, form, children, money }: IProp) => {
+export default ({ onConfirm, form, children, trader }: IProp) => {
   const intl = useIntl()
   const { trade } = useStores()
   const { currentAccountInfo } = trade.getAccountBalance()

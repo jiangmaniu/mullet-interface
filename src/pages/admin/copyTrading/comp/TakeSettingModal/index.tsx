@@ -3,8 +3,10 @@ import './style.less'
 import { ModalForm } from '@ant-design/pro-components'
 import { getIntl, useIntl } from '@umijs/max'
 import { Form, Tabs, TabsProps } from 'antd'
+import { useRef } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { setTradeFollowLeadSettings } from '@/services/api/tradeFollow/lead'
 import { message } from '@/utils/message'
 
@@ -32,6 +34,7 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
   const [form] = Form.useForm()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.daidanshezhi' })
+  const loadingRef = useRef<any>()
 
   const onAvatarChange = (p: any) => {
     form.setFieldValue('imageUrl', p.link)
@@ -42,19 +45,18 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
     {
       key: '1',
       label: intl.formatMessage({ id: 'mt.jibenxinxi' }),
-      children: <BaseInformation form={form} />,
+      children: <BaseInformation form={form} info={info} />,
       forceRender: true
     },
     {
       key: '2',
       label: intl.formatMessage({ id: 'mt.daidancanshu' }),
-      children: <TakerParams form={form} />,
+      children: <TakerParams form={form} info={info} />,
       forceRender: true
     }
   ]
 
   const handleOpenChange = (open: boolean) => {
-    console.log('info', info)
     open &&
       form.setFieldsValue({
         leadId: info?.leadId || 0,
@@ -66,13 +68,14 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
         assetRequirement: info?.assetRequirement || 0,
         maxSupportCount: info?.maxSupportCount || 0,
         profitSharingRatio: info?.profitSharingRatio || 0,
-        assetSacle: info?.assetScale || 0
+        assetScale: info?.assetScale || 0
       })
 
     onOpenChange?.(open)
   }
 
   const onFinish = async (values: any) => {
+    loadingRef.current?.show()
     setTradeFollowLeadSettings({
       ...values
     })
@@ -82,8 +85,8 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
           message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
         }
       })
-      .catch((error) => {
-        message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
+      .finally(() => {
+        loadingRef.current?.hide()
       })
   }
 
@@ -121,6 +124,12 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
           <Tabs items={items} className="flex-1  w-full flex-grow" />
         </div>
       </ModalForm>
+
+      <ModalLoading
+        ref={loadingRef}
+        title={intl.formatMessage({ id: 'mt.jieshugendan' })}
+        tips={intl.formatMessage({ id: 'mt.jieshugendanzhong' })}
+      />
     </div>
   )
 }

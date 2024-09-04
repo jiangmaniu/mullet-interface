@@ -1,14 +1,14 @@
 import './style.less'
 
-import { ModalForm, ProForm } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { ModalForm, PageLoading, ProForm } from '@ant-design/pro-components'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form, Tabs, TabsProps } from 'antd'
-import { useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 import { CURRENCY } from '@/constants'
-import { postTradeFollowFolloerSave } from '@/services/api/tradeFollow/follower'
+import { getTradeFollowFollowerDetail, postTradeFollowFolloerSave } from '@/services/api/tradeFollow/follower'
+import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { formatNum } from '@/utils'
-import { message } from '@/utils/message'
 
 import AccountSelector from './AccountSelector'
 import FixedAmount from './FixedAmount'
@@ -28,6 +28,7 @@ type IProps = {
   onOpenChange?: ((open: boolean) => void) | undefined
   trigger?: JSX.Element
   onConfirm?: (values: any) => void
+  followerId?: string
 }
 
 const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
@@ -40,65 +41,97 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
   }
 }
 
-export default ({ leadId, trigger, open, onOpenChange, onConfirm }: IProps) => {
+export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: IProps) => {
   const [form] = Form.useForm<TradeFollowFollower.SaveParams>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.gendanpeizhi' })
 
-  const { initialState } = useModel('@@initialState')
-  const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
-
-  const accountId = Form.useWatch('accountId', form)
-
-  // 選中賬戶的餘額
-  const money = useMemo(() => {
-    const item = accountList.find((item) => item.id === accountId)
-    return item?.money || 0
-  }, [accountId])
-
   const [tabKey, setTabKey] = useState<string>('10')
-  const items: TabsProps['items'] = [
-    {
-      key: '10',
-      label: intl.formatMessage({ id: 'mt.gudingjine' }),
-      children: (
-        <>
-          {tabKey === '10' && (
-            <FixedAmount
-              onConfirm={(values) => {
-                form.submit()
-                // onConfirm?.(values)
-              }}
-              form={form}
-              money={money}
-            >
-              <AccountSelector form={form} money={money} />
-            </FixedAmount>
-          )}
-        </>
-      )
-    },
-    {
-      key: '20',
-      label: intl.formatMessage({ id: 'mt.gudingbili' }),
-      children: (
-        <>
-          {tabKey === '20' && (
-            <FixedRatio
-              onConfirm={(values) => {
-                form.submit()
-                // onConfirm?.(values)
-              }}
-              form={form}
-              money={money}
-            >
-              <AccountSelector form={form} money={money} />
-            </FixedRatio>
-          )}
-        </>
-      )
+
+  const [lead, setLead] = useState<TradeFollowLead.LeadDetailItem | null>(null)
+  const [trader, setTrader] = useState<TradeFollowFollower.FollowDetailItem | null>(null)
+
+  useLayoutEffect(() => {
+    if (leadId) {
+      setLoading(true)
+      getTradeFollowLeadDetail({
+        leadId
+      })
+        .then((res) => {
+          if (res.code === 200) {
+            setLead(res.data as TradeFollowLead.LeadDetailItem)
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
     }
-  ]
+  }, [leadId])
+
+  const [loading, setLoading] = useState(false)
+  useLayoutEffect(() => {
+    if (followerId) {
+      setLoading(true)
+      getTradeFollowFollowerDetail({
+        followerId
+      })
+        .then((res) => {
+          if (res.success) {
+            setTrader(res.data as TradeFollowFollower.FollowDetailItem)
+          }
+        })
+        .finally(() => {
+          setLoading(false)
+        })
+    }
+  }, [followerId])
+
+  const items: TabsProps['items'] = useMemo(
+    () =>
+      [
+        {
+          key: '10',
+          label: intl.formatMessage({ id: 'mt.gudingjine' }),
+          children: (
+            <>
+              {tabKey === '10' && (
+                <FixedAmount
+                  trader={trader}
+                  onConfirm={(values) => {
+                    form.submit()
+                    // onConfirm?.(values)
+                  }}
+                  form={form}
+                >
+                  <AccountSelector form={form} lead={lead} trader={trader} />
+                </FixedAmount>
+              )}
+            </>
+          )
+        },
+        {
+          key: '20',
+          label: intl.formatMessage({ id: 'mt.gudingbili' }),
+          children: (
+            <>
+              {tabKey === '20' && (
+                <FixedRatio
+                  trader={trader}
+                  onConfirm={(values) => {
+                    form.submit()
+                    // onConfirm?.(values)
+                  }}
+                  form={form}
+                >
+                  <AccountSelector form={form} lead={lead} trader={trader} />
+                </FixedRatio>
+              )}
+            </>
+          )
+        }
+      ].filter((item) => !trader || item.key === trader.type),
+    [trader, intl, lead, tabKey]
+  )
 
   const onFinish = async (values: any) => {
     const params = {
@@ -107,14 +140,27 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm }: IProps) => {
       ...values
     }
     postTradeFollowFolloerSave(params).then((res) => {
-      if (res.code === 200) {
-        message.info(intl.formatMessage({ id: 'mt.tijiaochenggong' }))
-        onConfirm && onConfirm(res.data)
-      } else {
-        message.info(res.message)
+      if (res.success) {
+        onConfirm?.(res.data)
       }
     })
   }
+
+  useEffect(() => {
+    if (trader) {
+      if (trader.guaranteedAmount) {
+        form.setFieldValue('guaranteedAmount', trader.guaranteedAmount)
+      }
+
+      if (trader.stopLossRatio) {
+        form.setFieldValue('stopLossRatio', trader.stopLossRatio)
+      }
+
+      if (trader.profitRatio) {
+        form.setFieldValue('profitRatio', trader.profitRatio)
+      }
+    }
+  }, [form, trader])
 
   return (
     <div>
@@ -140,7 +186,12 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm }: IProps) => {
         }}
       >
         <ProForm onFinish={onFinish} submitter={false} form={form}>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center relative">
+            {loading && (
+              <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
+                <PageLoading />
+              </div>
+            )}
             <div className=" w-[227px] h-[202px] bg-[url('/img/modal-bg.png')] bg-[length:100%_100%] flex items-center justify-center -mt-2">
               <div className=" flex flex-col items-center gap-1">
                 <img src="/img/follow-icon.png" width={188} height={150} className="-mt-14" />

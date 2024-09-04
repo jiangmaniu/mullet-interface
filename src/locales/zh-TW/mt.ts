@@ -640,9 +640,13 @@ export default {
   'mt.caozuoshibai': '操作失敗',
   'mt.qingxianzhizaishigezifuyinei': '請限制在十個字符以內',
   'mt.qingxianzhizailiangbaizifuyinei': '請限制在两百個字符以內',
+  'mt.daidanzhuangtai3': '已跟单',
   'mt.daidanzhuangtai2': '已滿員',
   'mt.daidanzhuangtai1': '可跟單',
+  'mt.daidanzhuangtai0': '我的带单',
   'mt.xitongcuowu': '系統錯誤',
+  'mt.dayuxianzhifanwei': '不得大於{type}限制範圍：{value}',
+  'mt.xiaoyuxianzhifanwei': '不得小於{type}限制範圍：{value}',
   //  ==========个人中心-跟单 结束 ==========
 
   //  ========== 其他组件相关 开始 ==========

@@ -13,7 +13,6 @@ import { addTraadeFollowLead } from '@/services/api/tradeFollow/lead'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { message } from '@/utils/message'
 
-import { AccountTag } from '../comp/AccountTag'
 import { AvatarUpload } from './AvatarUpload'
 import ContractUpload from './ContractUpload'
 
@@ -205,18 +204,8 @@ export default function Apply() {
               {/* 头像 & 名称 */}
               <div className=" flex flex-row items-start gap-6">
                 <div className="hide-form-item">
-                  <Form.Item
-                    name="imageUrl"
-                    rules={[
-                      {
-                        required: true,
-                        message: intl.formatMessage({ id: 'mt.qingshangchuantouxiang' })
-                      }
-                    ]}
-                  >
-                    <AvatarUpload onChange={onAvatarChange} />
-                  </Form.Item>
-                  {/* <ProFormText
+                  <AvatarUpload onChange={onAvatarChange} />
+                  <ProFormText
                     name="imageUrl"
                     // TODO: 取消注释
                     // rules={[
@@ -225,7 +214,7 @@ export default function Apply() {
                     //     message: intl.formatMessage({ id: 'mt.qingshangchuantouxiang' })
                     //   }
                     // ]}
-                  /> */}
+                  />
                 </div>
                 <div className="flex flex-col gap-2.5 justify-start">
                   <span className=" text-sm font-normal text-primary">
@@ -293,7 +282,7 @@ export default function Apply() {
                           <span className=" flex flex-row  items-center justify-between max-w-full ">
                             <span className="flex flex-row justify-between items-center flex-1">
                               <span className="flex flex-row justify-between items-center gap-1.5 ">
-                                <AccountTag type="meifen" />
+                                {/* <AccountTag type="meifen" /> */}
                                 <span className=" text-sm !font-dingpro-medium">{val.label}</span>
                               </span>
                             </span>
@@ -308,7 +297,7 @@ export default function Apply() {
                           <span className={classNames('flex flex-row  items-center justify-between max-w-full ')}>
                             <span className="flex flex-row justify-between items-center flex-1">
                               <span className="flex flex-row justify-between items-center gap-1.5 ">
-                                <AccountTag type="meifen" />
+                                {/* <AccountTag type="meifen" /> */}
                                 <span className=" text-sm !font-dingpro-medium">{item.label}</span>
                               </span>
                             </span>

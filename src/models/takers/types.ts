@@ -1,4 +1,4 @@
-export type IOrderTakerState = 0 | 1 | 2 | 3 | 4 // 1. 可跟單 2. 已滿員 // 3. 已跟单
+export type IOrderTakerState = 0 | 1 | 2 | 3 | 4 // 0. 我的 1. 可跟單 2. 已滿員 // 3. 已跟单
 export type IOrderAccountType = 'biaozhun' | 'luodian' | 'meifen'
 
 /** 賬戶信息 */

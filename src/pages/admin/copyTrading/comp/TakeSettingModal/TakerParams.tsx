@@ -7,9 +7,10 @@ import Button from '@/components/Base/Button'
 
 type IProps = {
   form: FormInstance
+  info: TradeFollowLead.LeadDetailItem | null
 }
 
-export default ({ form }: IProps) => {
+export default ({ form, info }: IProps) => {
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || [] // 真实账号列表
@@ -61,6 +62,19 @@ export default ({ form }: IProps) => {
                 const _value = Number(value)
                 // 数字必须是正数
                 if (Number.isFinite(_value) && _value > 0) {
+                  // 必须大于后台限制数
+                  if (info?.profitSharingRatioLimit && _value < info.profitSharingRatioLimit) {
+                    return Promise.reject(
+                      intl.formatMessage(
+                        { id: 'mt.dayuxianzhifanwei' },
+                        {
+                          type: intl.formatMessage({ id: 'mt.lirunfenchengbili' }),
+                          value: info.profitSharingRatioLimit
+                        }
+                      )
+                    )
+                  }
+
                   return Promise.resolve()
                 }
 
@@ -102,6 +116,19 @@ export default ({ form }: IProps) => {
                 const _value = Number(value)
                 // 数字必须是正数
                 if (Number.isFinite(_value) && _value > 0) {
+                  // 前臺不限制
+                  // if (info?.assetRequirementLimit && _value < info.assetRequirementLimit) {
+                  //   return Promise.reject(
+                  //     intl.formatMessage(
+                  //       { id: 'mt.xiaoyuxianzhifanwei' },
+                  //       {
+                  //         type: intl.formatMessage({ id: 'mt.zichanyaoqiu' }),
+                  //         value: info.assetRequirementLimit
+                  //       }
+                  //     )
+                  //   )
+                  // }
+
                   return Promise.resolve()
                 }
 
@@ -144,6 +171,19 @@ export default ({ form }: IProps) => {
                 const _value = Number(value)
                 // 数字必须是正数
                 if (Number.isFinite(_value) && _value > 0) {
+                  // 必须小于后台限制数
+                  if (info?.assetScaleLimit && _value > info.assetScaleLimit) {
+                    return Promise.reject(
+                      intl.formatMessage(
+                        { id: 'mt.dayuxianzhifanwei' },
+                        {
+                          type: intl.formatMessage({ id: 'mt.zichanguimo' }),
+                          value: info.assetScaleLimit
+                        }
+                      )
+                    )
+                  }
+
                   return Promise.resolve()
                 }
 
@@ -183,6 +223,19 @@ export default ({ form }: IProps) => {
                   return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }))
                 }
                 const _value = Number(value)
+
+                // 必须小于后台限制数
+                if (info?.maxSupportCountLimit && _value > info.maxSupportCountLimit) {
+                  return Promise.reject(
+                    intl.formatMessage(
+                      { id: 'mt.dayuxianzhifanwei' },
+                      {
+                        type: intl.formatMessage({ id: 'mt.zuidazhichirenshu' }),
+                        value: info.maxSupportCountLimit
+                      }
+                    )
+                  )
+                }
 
                 return Promise.resolve()
                 // 数字必须是正整数

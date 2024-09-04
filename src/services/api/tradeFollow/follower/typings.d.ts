@@ -30,7 +30,8 @@ declare namespace TradeFollowFollower {
     /**
      * 跟单Id
      */
-    followerId?: number
+    followerId?: string
+    leadId?: string
     /**
      * 头像
      */
@@ -78,7 +79,8 @@ declare namespace TradeFollowFollower {
     /**
      * 跟单人Id
      */
-    followerId?: number
+    followerId?: string
+    leadId?: string
     /**
      * 跟随开始时间
      */
@@ -454,6 +456,74 @@ declare namespace TradeFollowFollower {
      * 止盈
      */
     takeProfit?: number
+    [property: string]: any
+  }
+
+  type FollowDetailItem = {
+    /**
+     * 账户金额
+     */
+    accountAmount?: number
+    /**
+     * 交易分组Id
+     */
+    accountGroupId?: number
+    /**
+     * 客户端id
+     */
+    clientId?: number
+    /**
+     * 创建时间
+     */
+    createTime?: Date
+    /**
+     * 结束跟单时间
+     */
+    endTime?: Date
+    /**
+     * 跟单人Id
+     */
+    followerId?: number
+    /**
+     * 保证金额
+     */
+    guaranteedAmount?: number
+    /**
+     * 保证金比例
+     */
+    guaranteedAmountRatio?: number
+    /**
+     * 带单人Id
+     */
+    leadId?: number
+    /**
+     * 止盈比例
+     */
+    profitRatio?: number
+    /**
+     * 开始跟单时间
+     */
+    startTime?: Date
+    /**
+     * 状态：10=进行中  20=已结束
+     */
+    status?: string
+    /**
+     * 止损比例
+     */
+    stopLossRatio?: number
+    /**
+     * 跟单人账户Id
+     */
+    tradeAccountId?: number
+    /**
+     * 类型：10 表示固定金额，20 表示固定比例
+     */
+    type?: string
+    /**
+     * 更新时间
+     */
+    updateTime?: Date
     [property: string]: any
   }
 }

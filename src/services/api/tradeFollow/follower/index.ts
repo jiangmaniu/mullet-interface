@@ -79,3 +79,12 @@ export async function postTradeFollowFolloerClose(data: { followerId: string }) 
     method: 'GET'
   })
 }
+
+// /trade-follow/followApi/follower/detail
+// 带单人 - 详情
+export async function getTradeFollowFollowerDetail(params: { followerId: string | number }) {
+  return request<API.Response<TradeFollowFollower.FollowDetailItem>>('/api/trade-follow/followApi/follower/detail', {
+    method: 'GET',
+    params
+  })
+}

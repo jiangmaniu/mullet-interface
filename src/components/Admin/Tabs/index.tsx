@@ -107,7 +107,7 @@ export default function Tabs({
 
   // 外部传入的key激活
   useEffect(() => {
-    console.log('tabList')
+    console.log('tabList', activeKey, tabList)
     setTabKey(activeKey ?? tabList[0]?.key)
   }, [activeKey, tabList])
 

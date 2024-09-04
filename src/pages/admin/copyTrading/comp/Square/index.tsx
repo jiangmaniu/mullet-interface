@@ -13,6 +13,7 @@ import { useStores } from '@/context/mobxProvider'
 import { IOrderTakerState } from '@/models/takers'
 import { getTradeFollowLeadPlaza } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
+import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
 import NoAccountModal from '../NoAccountModal'
@@ -89,11 +90,17 @@ function Square({ active }: { active: boolean }) {
 
   // 跟单设置弹窗
   const [openSetting, setOpenSetting] = useState(false)
-  const [info, setInfo] = useState<Record<string, any>>({})
+  const [info, setInfo] = useState<TradeFollowLead.LeadPlazaItem | null>(null)
   const onOpenChangeSetting = (val: boolean) => setOpenSetting(val)
 
-  const onClick = (id: string, state: string) => {
-    push(`/copy-trading/detail/${id}?state=${state}`)
+  const onClick = (id: string, state: string, followerId?: string) => {
+    let _url = `/copy-trading/detail`
+    if (state === '0') {
+      _url = `/copy-trading/take-detail`
+    }
+    _url += `/${id}?state=${state}`
+    if (followerId) _url += `&followerId=${followerId}`
+    push(_url)
   }
 
   // 分页
@@ -133,16 +140,18 @@ function Square({ active }: { active: boolean }) {
   const onFollow = (takerState: IOrderTakerState, info: Record<string, any>) => {
     setInfo(info)
 
-    // if (takerState === 1 || takerState === 3) {
-    if (ableList.length === 0) {
-      setOpenTips(true)
-      return
+    if (takerState === 1) {
+      if (ableList.length === 0) {
+        setOpenTips(true)
+        return
+      }
+
+      setOpenSetting(true)
+    } else if (takerState === 3) {
+      setOpenSetting(true)
+    } else {
+      message.info(intl.formatMessage({ id: 'mt.yimanyuan' }))
     }
-    setOpenSetting(true)
-    //   // } else if (takerState === 'wufagendan') {
-    //   //   message.info(intl.formatMessage({ id: 'mt.wufagendan' }))
-    // } else if (takerState === 2) {
-    //   message.info(intl.formatMessage({ id: 'mt.yimanyuan' }))
     // }
   }
 
@@ -164,7 +173,7 @@ function Square({ active }: { active: boolean }) {
           </Space>
           <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
             {takers.map((item, idx) => (
-              <OrderTaker key={idx} item={item} state={state} onClick={onClick} onFollow={onFollow} />
+              <OrderTaker accountList={ableList} key={idx} item={item} state={state} onClick={onClick} onFollow={onFollow} />
             ))}
           </div>
 
@@ -211,7 +220,8 @@ function Square({ active }: { active: boolean }) {
       <NoAccountModal open={openTips} onOpenChange={onOpenChangeTips} />
 
       <TradingSettingModal
-        leadId={info.leadId}
+        leadId={info?.leadId}
+        followerId={info?.followerId}
         open={openSetting}
         onOpenChange={onOpenChangeSetting}
         onConfirm={() => {

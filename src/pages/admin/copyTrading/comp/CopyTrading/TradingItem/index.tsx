@@ -1,14 +1,17 @@
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, useModel } from '@umijs/max'
 import classNames from 'classnames'
+import { useEffect } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderProps } from '@/models/takers'
+import { hiddenCenterPartStr } from '@/utils'
 
 import { AccountTag } from '../../AccountTag'
 import ListItemNumber, { IListItemNumber } from '../../ListItemNumber'
 
 export const TradingItem = ({
-  item: { id, title, account, imageUrl, projectName, datas },
+  // item: { id, title, account, imageUrl, projectName, datas },
+  item,
   columns,
   state,
   onClick,
@@ -18,15 +21,27 @@ export const TradingItem = ({
   onClick?: () => void
   children?: React.ReactNode
 }) => {
+  const { followerId, tradeAccountId, name, imageUrl, projectName } = item
+
+  const { initialState } = useModel('@@initialState')
+  const accountList = initialState?.currentUser?.accountList
+
+  // 找到 accountList 中 id 等於 followerId 的 account
+  const account = accountList?.find((item) => item.id === tradeAccountId)
+
+  useEffect(() => {
+    console.log('account', account)
+  }, [account])
+
   return (
     <div className="hover:shadow-md border rounded-lg border-gray-150 flex flex-col flex-1 w-full cursor-pointer" onClick={onClick}>
       {/* header */}
       <div className="flex justify-between py-2.5 px-3.5">
         <div className="flex gap-3  items-center">
-          <span className=" text-base font-bold">
-            {title}·{id}
-          </span>
-          <AccountTag type={account.type} />
+          <span className=" text-base font-bold">{account?.name}</span>
+          <AccountTag size="auto" color={account?.groupName}>
+            {account?.groupName}
+          </AccountTag>
         </div>
         <span>
           <FormattedMessage id="mt.xiangqing" />
@@ -39,8 +54,8 @@ export const TradingItem = ({
           <div className="flex items-center gap-0.5 w-28">
             <Iconfont name="ren" width={38} color="black" height={38} />
             <div className="flex flex-col ">
-              <span className=" text-base font-normal leading-5"> {account.id} </span>
-              <span className=" text-xs text-gray-600">{account.name}</span>
+              <span className=" text-base font-normal leading-5">{hiddenCenterPartStr(tradeAccountId, 4)} </span>
+              <span className=" text-xs text-gray-600">{name}</span>
             </div>
           </div>
           <Iconfont name="zhixiang" width={22} color="black" height={22} />
@@ -86,7 +101,7 @@ export const TradingItem = ({
         <div className={classNames(`flex flex-row justify-between flex-1 flex-grow gap-6  `)}>
           {columns?.map((col, idx) => (
             <div className={classNames(`flex flex-col gap-0.5 ${col.align === 'right' ? 'items-end' : 'items-start'}`)} key={idx}>
-              <ListItemNumber item={datas} {...col} key={idx} />
+              <ListItemNumber item={item} {...col} key={idx} />
               <span className=" text-xs font-normal text-gray-600">{col.label}</span>
             </div>
           ))}

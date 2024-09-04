@@ -10,7 +10,7 @@ import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { DEFAULT_PAGE_SIZE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { IOrder } from '@/models/takers'
-import { getTradeFollowFolloerManagementInProgress } from '@/services/api/tradeFollow/follower'
+import { getTradeFollowFolloerManagementInProgress, postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
@@ -77,6 +77,38 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
     }
   }, [segment, currentAccountInfo, current, size])
 
+  // 計算未實現盈虧
+  const getUnrealizedProfitLoss = (item: TradeFollowFollower.ManagementInProgressItem) => {
+    // TODO: 待實現盈虧接口
+    return item.unrealizedProfitLoss ? item.unrealizedProfitLoss : 0
+  }
+
+  const onEnd = (followerId: string | undefined) => {
+    // todo 跳转
+    loadingRef.current?.show()
+
+    if (!followerId) {
+      message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+      return
+    }
+
+    setTimeout(() => {
+      postTradeFollowFolloerClose({
+        followerId
+      })
+        .then((res) => {
+          if (res.success) {
+            message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+            // 刷新页面
+            window.location.reload()
+          }
+        })
+        .finally(() => {
+          loadingRef.current?.close()
+        })
+    }, 300)
+  }
+
   return (
     <div className="flex flex-col gap-5 w-full">
       {takers.length > 0 ? (
@@ -84,11 +116,13 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
           {takers.map((item: TradeFollowFollower.ManagementInProgressItem, idx: number) => (
             <TradingItem
               key={idx}
-              item={item}
+              item={{ ...item, unrealizedProfitLoss: getUnrealizedProfitLoss(item) }}
               state={state}
               columns={columns}
               onClick={() => {
-                push(`/copy-trading/detail/${item.leadId}`)
+                let _url = `/copy-trading/detail/${item.leadId}`
+                if (item.followerId) _url += `?followerId=${item.followerId}`
+                push(_url)
               }}
             >
               <div className=" flex items-center justify-end gap-2.5">
@@ -102,8 +136,8 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
                   onClick={(e) => {
                     // push(`/copy-trading/management`)
                     e.stopPropagation()
-                    setOpenSetting(true)
                     setInfo(item)
+                    setOpenSetting(true)
                   }}
                 >
                   <div className="flex items-center text-sm font-semibold gap-1">
@@ -122,6 +156,7 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
                   onClick={(e) => {
                     e.stopPropagation()
                     // push(`/copy-trading/management`)
+                    setInfo(item)
                     setOpenEnd(true)
                   }}
                 >
@@ -172,20 +207,24 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
       )}
 
       <EndModal
+        id={String(info.followerId)}
         open={openEnd}
         onOpenChange={onOpenChangeEnd}
-        onConfirm={() => {
-          onOpenChangeEnd(false)
-          loadingRef.current?.show()
-          setTimeout(() => {
-            loadingRef.current?.close()
-            message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
-          }, 3000)
-        }}
+        onConfirm={onEnd}
+
+        //   () => {
+        //   onOpenChangeEnd(false)
+        //   loadingRef.current?.show()
+        //   setTimeout(() => {
+        //     loadingRef.current?.close()
+        //     message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+        //   }, 3000)
+        // }}
       />
 
       <TradingSettingModal
         leadId={info.id}
+        followerId={info?.followerId}
         open={openSetting}
         onOpenChange={onOpenChangeSetting}
         onConfirm={() => {

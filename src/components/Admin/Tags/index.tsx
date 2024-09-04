@@ -28,6 +28,7 @@ export default ({ format, size = 'medium', color = 'biaozhun', children, onClick
     '【真实+锁仓】': 'bg-yellow-490',
     luodian: 'bg-green-700 text-white',
     '【真实+杠杆】': 'bg-green-700 text-white',
+    '【真实+净额】': 'bg-orange-600 text-white',
     meifen: 'bg-black text-white',
     '【真实+锁仓+浮动杠杆】': 'bg-black text-white'
   }

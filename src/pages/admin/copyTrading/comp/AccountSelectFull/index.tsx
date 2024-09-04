@@ -76,7 +76,7 @@ export default function AccountSelect({
     return accountList.map((item) => ({
       ...item,
       key: item.leadId,
-      label: `${item.projectName} #${hiddenCenterPartStr(item?.leadId, 4)}`
+      label: `${item.projectName} #${hiddenCenterPartStr(item?.tradeAccountId, 4)}`
     }))
   }, [accountList])
 
@@ -103,14 +103,14 @@ export default function AccountSelect({
           }}
           onClick={() => {
             console.log(curr)
-            message.info('点击按钮左侧')
+            // message.info('点击按钮左侧')
           }}
         >
           <div className="flex flex-row justify-start items-center gap-3">
             <Iconfont name="zhanghu" width={28} height={28} color={gray['600']} />
             <div className="flex flex-col items-start justify-center">
               <span className=" text-primary font-semibold text-base !font-dingpro-medium">
-                {curr?.projectName}#{curr?.leadId}
+                {curr?.projectName}#{curr?.tradeAccountId}
               </span>
               <span className=" text-gray-600 text-xs ">{curr?.groupName}</span>
             </div>

@@ -12,9 +12,10 @@ import { AccountTag } from '../AccountTag'
 
 type IProps = {
   form: FormInstance
+  info: TradeFollowLead.LeadDetailItem | null
 }
 
-export default ({ form }: IProps) => {
+export default ({ form, info }: IProps) => {
   const intl = useIntl()
 
   const { initialState } = useModel('@@initialState')
@@ -67,7 +68,7 @@ export default ({ form }: IProps) => {
             }
           ]}
           fieldProps={{
-            // disabled: true,
+            disabled: true,
             style: {
               height: 42
             },
@@ -88,7 +89,9 @@ export default ({ form }: IProps) => {
                     <span className=" flex flex-row  items-center justify-between">
                       <span className="flex flex-row justify-between items-center flex-1">
                         <span className="flex flex-row justify-between items-center gap-1.5 ">
-                          <AccountTag type="meifen" />
+                          <AccountTag size="auto" color={item.groupName}>
+                            {item.groupName}
+                          </AccountTag>
                           <span>{hiddenCenterPartStr(item.id, 4)}</span>
                         </span>
                         <span className=" w-5 h-5"></span>
@@ -105,7 +108,9 @@ export default ({ form }: IProps) => {
                 <span className=" flex flex-row  items-center justify-between">
                   <span className="flex flex-row justify-between items-center flex-1">
                     <span className="flex flex-row justify-between items-center gap-1.5 ">
-                      <AccountTag type="meifen" />
+                      <AccountTag size="auto" color={item.groupName}>
+                        {item.groupName}
+                      </AccountTag>
                       <span>{hiddenCenterPartStr(item.id, 4)}</span>
                     </span>
                     <span className=" w-5 h-5"></span>
@@ -140,6 +145,10 @@ export default ({ form }: IProps) => {
             {
               required: true,
               message: intl.formatMessage({ id: 'common.qingshuru' })
+            },
+            {
+              pattern: /^.{1,10}$/,
+              message: intl.formatMessage({ id: 'mt.qingxianzhizaishigezifuyinei' })
             }
           ]}
           fieldProps={{
@@ -171,8 +180,7 @@ export default ({ form }: IProps) => {
               message: intl.formatMessage({ id: 'common.qingshuru' })
             },
             {
-              min: 0,
-              max: 200,
+              pattern: /^.{1,200}$/,
               message: intl.formatMessage({ id: 'mt.qingxianzhizailiangbaizifuyinei' })
             }
           ]}
