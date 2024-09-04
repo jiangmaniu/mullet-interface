@@ -1,13 +1,15 @@
 import './style.less'
 
 import { ModalForm, PageLoading, ProForm } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form, Tabs, TabsProps } from 'antd'
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { CURRENCY } from '@/constants'
 import { getTradeFollowFollowerDetail, postTradeFollowFolloerSave } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
+import { useUpdateFollowStatus } from '@/services/hook/useUpdateFollowStatus'
 import { formatNum } from '@/utils'
 
 import AccountSelector from './AccountSelector'
@@ -42,6 +44,10 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
 }
 
 export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: IProps) => {
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
+
   const [form] = Form.useForm<TradeFollowFollower.SaveParams>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.gendanpeizhi' })
@@ -51,8 +57,11 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
   const [lead, setLead] = useState<TradeFollowLead.LeadDetailItem | null>(null)
   const [trader, setTrader] = useState<TradeFollowFollower.FollowDetailItem | null>(null)
 
-  useLayoutEffect(() => {
-    if (leadId) {
+  const loadingRef = useRef<any>()
+
+  useEffect(() => {
+    setLead(null)
+    if (open && leadId) {
       setLoading(true)
       getTradeFollowLeadDetail({
         leadId
@@ -66,11 +75,12 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
           setLoading(false)
         })
     }
-  }, [leadId])
+  }, [leadId, open])
 
   const [loading, setLoading] = useState(false)
-  useLayoutEffect(() => {
-    if (followerId) {
+  useEffect(() => {
+    setTrader(null)
+    if (open && followerId) {
       setLoading(true)
       getTradeFollowFollowerDetail({
         followerId
@@ -78,13 +88,14 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
         .then((res) => {
           if (res.success) {
             setTrader(res.data as TradeFollowFollower.FollowDetailItem)
+            setTabKey(res.data?.type as string)
           }
         })
         .finally(() => {
           setLoading(false)
         })
     }
-  }, [followerId])
+  }, [followerId, open])
 
   const items: TabsProps['items'] = useMemo(
     () =>
@@ -134,16 +145,26 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
   )
 
   const onFinish = async (values: any) => {
+    loadingRef.current?.show()
     const params = {
       leadId,
       type: tabKey,
-      ...values
+      ...values,
+      guaranteedAmountRatio: values.guaranteedAmountRatio / 100
     }
-    postTradeFollowFolloerSave(params).then((res) => {
-      if (res.success) {
-        onConfirm?.(res.data)
-      }
-    })
+    postTradeFollowFolloerSave(params)
+      .then((res) => {
+        if (res.success) {
+          onConfirm?.(res.data)
+
+          // 更新跟单状态
+          useUpdateFollowStatus()
+        }
+      })
+      .finally(() => {
+        loadingRef.current?.close()
+        onOpenChange?.(false)
+      })
   }
 
   useEffect(() => {
@@ -197,13 +218,13 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
                 <img src="/img/follow-icon.png" width={188} height={150} className="-mt-14" />
                 <div className="flex flex-row justify-between gap-20">
                   <div className="flex flex-col gap-2 w-24 items-center">
-                    <span className=" text-lg leading-5 !font-dingpro-medium text-primary">{formatNum('15')}%</span>
+                    <span className=" text-lg leading-5 !font-dingpro-medium text-primary">{formatNum(lead?.profitSharingRatio)}%</span>
                     <span className=" text-xs text-gray-600">
                       <FormattedMessage id="mt.lirunfenchengbili" />
                     </span>
                   </div>
                   <div className="flex flex-col gap-2 w-24 items-center">
-                    <span className=" text-lg leading-5 !font-dingpro-medium text-primary">{formatNum('15')}</span>
+                    <span className=" text-lg leading-5 !font-dingpro-medium text-primary">{formatNum(lead?.assetRequirement)}</span>
                     <span className=" text-xs text-gray-600">
                       <FormattedMessage id="mt.zichanyaoqiu" />
                       {CURRENCY}
@@ -217,6 +238,11 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
           </div>
         </ProForm>
       </ModalForm>
+      <ModalLoading
+        ref={loadingRef}
+        title={intl.formatMessage({ id: 'mt.jieshugendan' })}
+        tips={intl.formatMessage({ id: 'mt.jieshugendanzhong' })}
+      />
     </div>
   )
 }

@@ -347,6 +347,9 @@ declare namespace User {
     currencyDecimal?: number
     /**账户组货币单位 */
     currencyUnit?: string
+
+    /** 跟单状态 */
+    followStatus?: number
   }
 
   // 区域列表

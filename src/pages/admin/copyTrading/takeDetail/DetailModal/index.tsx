@@ -4,8 +4,9 @@ import { LeftOutlined } from '@ant-design/icons'
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
 import { Form, message, Radio } from 'antd'
-import { Key, useEffect, useState } from 'react'
+import { Key, useEffect, useMemo, useState } from 'react'
 
+import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SelectRounded from '@/components/Base/SelectRounded'
 import { tradeFollowLeadProfitSharing, tradeFollowLeadProfitSharingDetail } from '@/services/api/tradeFollow/lead'
@@ -22,7 +23,19 @@ const waitTime = (time = 100) => {
   })
 }
 
-export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigger: JSX.Element; onSuccess?: () => void }) => {
+export default ({
+  info,
+  trigger,
+  onSuccess,
+  onOpenChange,
+  open
+}: {
+  info: Record<string, any>
+  trigger?: JSX.Element
+  onSuccess?: () => void
+  onOpenChange?: (open: boolean) => void
+  open?: boolean
+}) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.fenrunmingxi' })
@@ -63,21 +76,24 @@ export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigg
   // const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
   // const [current, setCurrent] = useState(1)
 
+  const showDatas = useMemo(() => (filter === 1 ? datas.filter((item: any) => item.profitSharingAmountTotal > 0) : datas), [filter, datas])
+
   useEffect(() => {
-    tradeFollowLeadProfitSharing({
-      leadId: info.id
-    })
-      .then((res) => {
-        if (res.success) {
-          if (res.data?.records && res.data.records.length > 0) {
-            setDatas(res.data.records)
+    open &&
+      tradeFollowLeadProfitSharing({
+        leadId: info.id
+      })
+        .then((res) => {
+          if (res.success) {
+            if (res.data) {
+              setDatas(res.data.records)
+            }
           }
-        }
-      })
-      .catch((error) => {
-        message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
-      })
-  }, [info.id])
+        })
+        .catch((error) => {
+          message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
+        })
+  }, [info.id, open])
 
   const [details, setDetails] = useState<TradeFollowLead.TradeFollowLeadProfitSharingDetailItem>([])
   const [showDetail, setShowDetail] = useState(false)
@@ -98,7 +114,9 @@ export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigg
           }
         }
 
-        setDetails(item.details)
+        setDetails([])
+
+        // setDetails(item.details)
       })
       .catch((error) => {
         message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
@@ -112,6 +130,8 @@ export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigg
     }>
       title={title}
       trigger={trigger}
+      open={open}
+      onOpenChange={onOpenChange}
       form={form}
       width={620}
       autoFocusFirstInput
@@ -153,19 +173,25 @@ export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigg
               </div>
 
               <div className="flex flex-col items-center gap-2.5 w-full overflow-scroll no-scrollbar">
-                {details.map((item: any, idx: Key | null | undefined) => (
-                  <ModalItemDetail item={item} key={idx} />
-                ))}
+                {details.length > 0 ? (
+                  details.map((item: any, idx: Key | null | undefined) => <ModalItemDetail item={item} key={idx} />)
+                ) : (
+                  <Empty description="" />
+                )}
                 <span className=" text-sx font-normal text-gray-500 mt-1.5">
                   <FormattedMessage id="mt.meiyougengduojilu" />
                 </span>
               </div>
             </div>
-            {details.map((item: any, idx: Key | null | undefined) => (
-              <div className=" h-16" key={idx}>
-                {/* 占位用 */}
-              </div>
-            ))}
+            {details.length > 0 ? (
+              details.map((item: any, idx: Key | null | undefined) => (
+                <div className=" h-16" key={idx}>
+                  {/* 占位用 */}
+                </div>
+              ))
+            ) : (
+              <div className="h-16"></div>
+            )}
           </>
         ) : (
           <>
@@ -193,19 +219,25 @@ export default ({ info, trigger, onSuccess }: { info: Record<string, any>; trigg
               </div>
 
               <div className="flex flex-col items-center gap-2.5 w-full overflow-scroll no-scrollbar">
-                {datas.map((item: any, idx: Key | null | undefined) => (
-                  <ModalItem onClick={toShowDetail} item={item} key={idx} />
-                ))}
+                {showDatas.length > 0 ? (
+                  showDatas.map((item: any, idx: Key | null | undefined) => <ModalItem onClick={toShowDetail} item={item} key={idx} />)
+                ) : (
+                  <Empty description="" />
+                )}
                 <span className=" text-sx font-normal text-gray-500 mt-1.5">
                   <FormattedMessage id="mt.meiyougengduojilu" />
                 </span>
               </div>
             </div>
-            {datas.map((item: any, idx: Key | null | undefined) => (
-              <div className=" h-20" key={idx}>
-                {/* 占位用 */}
-              </div>
-            ))}
+            {showDatas.length > 0 ? (
+              showDatas.map((item: any, idx: Key | null | undefined) => (
+                <div className=" h-20" key={idx}>
+                  {/* 占位用 */}
+                </div>
+              ))
+            ) : (
+              <div className="h-20"></div>
+            )}
           </>
         )}
       </div>

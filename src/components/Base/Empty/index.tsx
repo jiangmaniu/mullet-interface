@@ -7,5 +7,5 @@ type IProps = {
   src?: string
 }
 export default function Empty({ src, description }: IProps) {
-  return <EmptyComp image={src ?? '/img/empty-icon.png'} description={description || <FormattedMessage id="common.noData" />} />
+  return <EmptyComp image={src ?? '/img/empty-icon.png'} description={description ?? <FormattedMessage id="common.noData" />} />
 }

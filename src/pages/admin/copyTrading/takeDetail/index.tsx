@@ -98,6 +98,8 @@ export default function TakeDetail() {
     symbolStatistics
   } = useOverview({ id })
 
+  const [openDetail, setOpenDetail] = useState(false)
+
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
       <div className="max-w-[1332px] px-4 mx-auto mt-6">
@@ -245,31 +247,25 @@ export default function TakeDetail() {
                   </Button>
                 }
               />
-              <DetailModal
-                info={{
-                  leadId: id
+
+              <Button
+                height={42}
+                type="default"
+                style={{
+                  width: 158,
+                  borderRadius: 8
                 }}
-                trigger={
-                  <Button
-                    height={42}
-                    type="default"
-                    style={{
-                      width: 158,
-                      borderRadius: 8
-                    }}
-                    onClick={() => {
-                      // todo 跳转
-                    }}
-                  >
-                    <div className=" flex items-center gap-1">
-                      <Iconfont name="fenrunmingxi" width={20} height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-semibold text-base ">
-                        <FormattedMessage id="mt.fenrunmingxi" />
-                      </span>
-                    </div>
-                  </Button>
-                }
-              />
+                onClick={() => {
+                  setOpenDetail(true)
+                }}
+              >
+                <div className=" flex items-center gap-1">
+                  <Iconfont name="fenrunmingxi" width={20} height={20} hoverColor={colorTextPrimary} />
+                  <span className=" font-semibold text-base ">
+                    <FormattedMessage id="mt.fenrunmingxi" />
+                  </span>
+                </div>
+              </Button>
 
               <Button
                 height={42}
@@ -328,6 +324,14 @@ export default function TakeDetail() {
                 ref={loadingRef}
                 title={intl.formatMessage({ id: 'mt.jieshudaidan' })}
                 tips={intl.formatMessage({ id: 'mt.jieshudaidanzhong' })}
+              />
+
+              <DetailModal
+                info={{
+                  leadId: id
+                }}
+                open={openDetail}
+                onOpenChange={(open) => setOpenDetail(open)}
               />
             </div>
           </div>

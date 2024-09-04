@@ -22,13 +22,19 @@ export default ({
 
   const { initialState } = useModel('@@initialState')
 
+  useEffect(() => {
+    console.log('leadlead', lead)
+  }, [lead])
+
   // 過濾只留下相同賬戶組
   const accountList = useMemo(
     () =>
-      (initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || []).filter(
-        (item) => !lead?.accountGroupName || item.groupName === lead?.accountGroupName
-      ),
-    [initialState, lead?.accountGroupName]
+      (initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || []).filter((item) => {
+        console.log(item.groupName)
+        console.log(lead?.groupName)
+        return item.groupName === lead?.groupName
+      }),
+    [initialState, lead?.groupName]
   )
 
   const money = Form.useWatch('money', form)

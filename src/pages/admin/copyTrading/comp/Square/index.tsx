@@ -91,7 +91,10 @@ function Square({ active }: { active: boolean }) {
   // 跟单设置弹窗
   const [openSetting, setOpenSetting] = useState(false)
   const [info, setInfo] = useState<TradeFollowLead.LeadPlazaItem | null>(null)
-  const onOpenChangeSetting = (val: boolean) => setOpenSetting(val)
+  const onOpenChangeSetting = (val: boolean) => {
+    setOpenSetting(val)
+    getList()
+  }
 
   const onClick = (id: string, state: string, followerId?: string) => {
     let _url = `/copy-trading/detail`
@@ -109,7 +112,7 @@ function Square({ active }: { active: boolean }) {
   const [size, setSize] = useState(9)
   const [current, setCurrent] = useState(1)
 
-  useEffect(() => {
+  const getList = () => {
     if (active && trade.currentAccountInfo && trade.currentAccountInfo.id) {
       setLoading(true)
       getTradeFollowLeadPlaza({
@@ -135,6 +138,10 @@ function Square({ active }: { active: boolean }) {
           setLoading(false)
         })
     }
+  }
+
+  useEffect(() => {
+    getList()
   }, [active, state, trade.currentAccountInfo, size, current])
 
   const onFollow = (takerState: IOrderTakerState, info: Record<string, any>) => {

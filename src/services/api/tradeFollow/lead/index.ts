@@ -149,3 +149,12 @@ export async function tradeFollowInProgressBag(params: { leadId: string }) {
     params
   })
 }
+
+// /trade-follow/followApi/lead/account_follow_status
+// 带单人 - 查询是否已跟单
+export async function tradeFollowAccountFollowStatus(params: { tradeAccountId: string }) {
+  return request<API.Response<boolean>>('/api/trade-follow/followApi/lead/account_follow_status', {
+    method: 'GET',
+    params
+  })
+}

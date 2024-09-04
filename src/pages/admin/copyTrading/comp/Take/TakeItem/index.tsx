@@ -59,21 +59,33 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
           </div>
           {/* 當前跟隨人數 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base !font-dingpro-regular">{formatNum(item.followerNumber)}</span>
+            <span className=" text-base !font-dingpro-regular">
+              {formatNum(item.followerNumber, {
+                precision: 0 // 小数点后两位
+              })}
+            </span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.dangqiangensuirenshu" />
             </span>
           </div>
           {/* 入住天數 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base !font-dingpro-regular">{formatNum(item.createDayTotal)}</span>
+            <span className=" text-base !font-dingpro-regular">
+              {formatNum(item.createDayTotal, {
+                precision: 0 // 小数点后两位
+              })}
+            </span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.ruzhutianshu" />
             </span>
           </div>
           {/* 帶單保證金餘額 */}
           <div className=" flex flex-col items-start gap-0.5">
-            <span className=" text-base !font-dingpro-regular">{formatNum(item.remainingGuaranteedAmount)}</span>
+            <span className=" text-base !font-dingpro-regular">
+              {formatNum(item.remainingGuaranteedAmount, {
+                precision: 2 // 小数点后两位
+              })}
+            </span>
             <span className=" text-xs font-normal text-gray-500">
               <FormattedMessage id="mt.daidanbaozhengjinyue" />
             </span>

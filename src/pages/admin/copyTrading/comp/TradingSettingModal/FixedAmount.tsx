@@ -171,6 +171,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
           </span>
           <ProFormText
             name="profitRatio"
+            disabled={!!trader?.tradeAccountId}
             rules={[
               {
                 // required: true,
@@ -211,6 +212,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
           </span>
           <ProFormText
             name="stopLossRatio"
+            disabled={!!trader?.tradeAccountId}
             rules={[
               {
                 // required: true,
@@ -265,42 +267,44 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
         )}
       </div>
       {/* 确认 */}
-      <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-full max-w-full">
-        <Radio.Group value={read}>
-          <Radio onClick={onClickRadio} value={1}>
-            <span className=" text-primary font-normal text-xs">
-              <FormattedMessage id="mt.woyiyuedubingtongyi" />
-              <span
-                className="  cursor-pointer text-blue"
-                onClick={(e) => {
-                  e.preventDefault()
-                  console.log('fuwutiaokuan')
-                }}
-              >
-                <FormattedMessage id="mt.gendanyonghuxieyi" />
+      {!trader?.tradeAccountId && (
+        <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-full max-w-full">
+          <Radio.Group value={read}>
+            <Radio onClick={onClickRadio} value={1}>
+              <span className=" text-primary font-normal text-xs">
+                <FormattedMessage id="mt.woyiyuedubingtongyi" />
+                <span
+                  className="  cursor-pointer text-blue"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    console.log('fuwutiaokuan')
+                  }}
+                >
+                  <FormattedMessage id="mt.gendanyonghuxieyi" />
+                </span>
               </span>
-            </span>
-          </Radio>
-        </Radio.Group>
-        <div className="hide-form-item">
-          <ProFormText name="read" rules={[{ required: true, message: intl.formatMessage({ id: 'mt.qinggouxuan' }) }]} />
-        </div>
-        <Button
-          height={48}
-          type="primary"
-          style={{
-            width: '100%',
-            borderRadius: 8
-          }}
-          onClick={onConfirm}
-        >
-          <div className=" flex items-center gap-1">
-            <span className=" font-semibold text-base ">
-              <FormattedMessage id="common.queren" />
-            </span>
+            </Radio>
+          </Radio.Group>
+          <div className="hide-form-item">
+            <ProFormText name="read" rules={[{ required: true, message: intl.formatMessage({ id: 'mt.qinggouxuan' }) }]} />
           </div>
-        </Button>
-      </div>
+          <Button
+            height={48}
+            type="primary"
+            style={{
+              width: '100%',
+              borderRadius: 8
+            }}
+            onClick={onConfirm}
+          >
+            <div className=" flex items-center gap-1">
+              <span className=" font-semibold text-base ">
+                <FormattedMessage id="common.queren" />
+              </span>
+            </div>
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

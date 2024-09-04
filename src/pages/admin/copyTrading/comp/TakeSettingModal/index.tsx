@@ -86,7 +86,8 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
         }
       })
       .finally(() => {
-        loadingRef.current?.hide()
+        loadingRef.current?.close()
+        onOpenChange?.(false)
       })
   }
 

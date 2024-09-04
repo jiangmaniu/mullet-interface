@@ -35,9 +35,9 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
     if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'yijieshu') {
       setLoading(true)
       getTradeFollowFolloerManagementEnd({
-        accountGroupId: currentAccountInfo?.accountGroupId,
+        // accountGroupId: currentAccountInfo?.accountGroupId,
         clientId: currentAccountInfo?.clientId,
-        followerTradeAccountId: currentAccountInfo?.id,
+        // followerTradeAccountId: currentAccountInfo?.id,
         size,
         current
       })

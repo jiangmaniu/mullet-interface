@@ -51,9 +51,9 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
     if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'jinxingzhong') {
       setLoading(true)
       getTradeFollowFolloerManagementInProgress({
-        accountGroupId: currentAccountInfo?.accountGroupId,
+        // accountGroupId: currentAccountInfo?.accountGroupId,
         clientId: currentAccountInfo?.clientId,
-        followerTradeAccountId: currentAccountInfo?.id,
+        // followerTradeAccountId: currentAccountInfo?.id,
         current,
         size
       })
@@ -223,7 +223,7 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
       />
 
       <TradingSettingModal
-        leadId={info.id}
+        leadId={String(info?.leadId)}
         followerId={info?.followerId}
         open={openSetting}
         onOpenChange={onOpenChangeSetting}
