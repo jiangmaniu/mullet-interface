@@ -3,7 +3,7 @@ import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 import { stores } from '@/context/mobxProvider'
 import { getRegisterWay } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
-import { useUpdateFollowStatus } from '@/services/hook/useUpdateFollowStatus'
+import { useUpdateFollowStatus } from '@/utils/copyTrading'
 import { onLogout } from '@/utils/navigator'
 import { STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
 

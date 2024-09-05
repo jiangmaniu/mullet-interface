@@ -179,21 +179,29 @@ function Square({ active }: { active: boolean }) {
             <SelectRounded defaultValue={rateOfReturnNear} onChange={(i) => handleChange('jinqi', i)} options={timeRange} />
           </Space>
           <div className="grid xl:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-5">
-            {takers.map((item, idx) => (
-              <OrderTaker accountList={ableList} key={idx} item={item} state={state} onClick={onClick} onFollow={onFollow} />
-            ))}
+            {takers.length > 0 ? (
+              takers.map((item, idx) => (
+                <OrderTaker accountList={ableList} key={idx} item={item} state={state} onClick={onClick} onFollow={onFollow} />
+              ))
+            ) : (
+              <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem] col-span-3">
+                <Empty src="/img/empty-gendanguanli.png" description={<FormattedMessage id="common.zanwujilu" />} />
+              </div>
+            )}
           </div>
 
-          <div className="flex items-end justify-end ">
-            <Pagination
-              current={current}
-              onChange={setCurrent}
-              total={total}
-              pageSize={size}
-              onShowSizeChange={setSize}
-              pageSizeOptions={['10', '20', '50']}
-            />
-          </div>
+          {total > size && (
+            <div className="flex items-end justify-end ">
+              <Pagination
+                current={current}
+                onChange={setCurrent}
+                total={total}
+                pageSize={size}
+                onShowSizeChange={setSize}
+                pageSizeOptions={['10', '20', '50']}
+              />
+            </div>
+          )}
         </>
       ) : (
         <div className="flex items-center justify-center flex-col h-[36rem] gap-[3rem]">
