@@ -71,7 +71,7 @@ export default observer(
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
     const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 0
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
-    const vmax = maxOpenVolume // 当前账户保证金最大可开手数
+    const vmax = symbolConf?.maxTrade as number
     const vmin = symbolConf?.minTrade || 0.01
     const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
     const countPrecision = getPrecisionByNumber(symbolConf?.minTrade) // 手数精度
@@ -158,8 +158,8 @@ export default observer(
         message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
         return
       }
-      if (count < vmin || count > vmax) {
-        message.info(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
+      if (count < vmin || count > maxOpenVolume) {
+        message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
         return
       }
       const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
@@ -397,13 +397,13 @@ export default observer(
             }}
             onAdd={() => {
               if (count && (isBuy ? count < vmax : count <= 5)) {
-                const c = (((count + step) * 100) / 100).toFixed(2)
+                const c = (((count + step) * 100) / 100).toFixed(countPrecision)
                 setCount(c)
               }
             }}
             onMinus={() => {
               if (count && (isBuy ? count > vmin : count > step)) {
-                const c = (((count - step) * 100) / 100).toFixed(2)
+                const c = (((count - step) * 100) / 100).toFixed(countPrecision)
                 setCount(c)
               }
             }}

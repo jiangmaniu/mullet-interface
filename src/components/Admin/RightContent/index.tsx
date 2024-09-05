@@ -1,18 +1,17 @@
-import { QuestionCircleOutlined } from '@ant-design/icons'
+import { CopyOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, history, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
 import { Segmented, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
-import CopyComp from '@/components/Base/Copy'
 import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { copyContent, formatNum, hiddenCenterPartStr } from '@/utils'
 import { cn } from '@/utils/cn'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
@@ -433,9 +432,15 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                     <img src="/img/user-icon.png" width={40} height={40} />
                     <div className="flex flex-col pl-[14px]">
                       <span className="text-primary font-semibold">
-                        <CopyComp style={{ display: 'flex', alignItems: 'center' }}>
-                          HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
-                        </CopyComp>
+                        HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
+                        <span
+                          className="pl-1 cursor-pointer"
+                          onClick={() => {
+                            copyContent(currentUser?.userInfo?.account)
+                          }}
+                        >
+                          <CopyOutlined style={{ fontSize: 14 }} />
+                        </span>
                       </span>
                       {currentUser?.isKycAuth && (
                         <span className="text-green text-xs pt-[6px]">
