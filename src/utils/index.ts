@@ -1,9 +1,11 @@
-import { message } from 'antd'
+import { getIntl } from '@umijs/max'
 import currency from 'currency.js'
 import lodash, { cloneDeep } from 'lodash-es'
 import moment from 'moment'
 
 import { DATE } from '@/constants/date'
+
+import { message } from './message'
 
 export function isMobileDevice(): boolean {
   const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
@@ -352,7 +354,7 @@ export const waitTime = (time = 100) => {
 }
 
 // 复制功能
-export const copyContent = (cotVal: any, title = 'Replicating Success') => {
+export const copyContent = (cotVal: any, title = getIntl().formatMessage({ id: 'common.fuzhichenggong' })) => {
   const pEle = document.createElement('p')
   pEle.innerHTML = cotVal || ''
   document.body.appendChild(pEle)
@@ -363,7 +365,7 @@ export const copyContent = (cotVal: any, title = 'Replicating Success') => {
   window.getSelection()?.addRange(range) // 执行选中元素
 
   const copyStatus = document.execCommand('Copy') // 执行copy操作
-  message.success(copyStatus ? title : 'copy failed')
+  message.info(copyStatus ? title : 'copy failed')
   document.body.removeChild(pEle)
   window.getSelection()?.removeAllRanges() //清除页面中已有的selection
 }
