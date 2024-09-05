@@ -245,70 +245,91 @@ export default function copyTradingDetail() {
               </div>
             </div>
             {/* 操作区 */}
-            <div className="flex flex-col gap-3.5">
-              {followerId && takeState === 3 ? (
-                <>
-                  <EndModal
-                    id={followerId}
-                    onConfirm={onEnd}
-                    trigger={
-                      <Button
-                        height={42}
-                        type="primary"
-                        danger
-                        style={{
-                          width: 158,
-                          borderRadius: 8
-                        }}
-                      >
-                        <div className=" flex items-center gap-1">
-                          <Iconfont name="jieshudaidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                          <span className=" font-semibold text-base ">
-                            <FormattedMessage id="mt.jieshugendan" />
-                          </span>
-                        </div>
-                      </Button>
-                    }
-                  />
-                  <Button
-                    height={42}
-                    type="primary"
-                    style={{
-                      width: 158,
-                      borderRadius: 8,
-                      backgroundColor: 'black'
-                    }}
-                    onClick={() => onFollow(takeState)}
-                  >
-                    <div className=" flex items-center gap-1">
-                      <Iconfont name="gendanguanli" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-semibold text-base text-white ">
-                        <FormattedMessage id="mt.shezhi" />
-                      </span>
-                    </div>
-                  </Button>
-                </>
-              ) : (
-                takeState === 1 && (
-                  <Button
-                    height={42}
-                    type="primary"
-                    style={{
-                      width: 158,
-                      borderRadius: 8
-                    }}
-                    onClick={() => onFollow(takeState)}
-                  >
-                    <div className=" flex items-center gap-1">
-                      <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                      <span className=" font-semibold text-base ">
-                        <FormattedMessage id="mt.gendan" />
-                      </span>
-                    </div>
-                  </Button>
-                )
-              )}
-            </div>
+
+            {taker?.openFlag === 1 ? (
+              <div className="flex flex-col gap-3.5">
+                {followerId && takeState === 3 ? (
+                  <>
+                    <EndModal
+                      id={followerId}
+                      onConfirm={onEnd}
+                      trigger={
+                        <Button
+                          height={42}
+                          type="primary"
+                          danger
+                          style={{
+                            width: 158,
+                            borderRadius: 8
+                          }}
+                        >
+                          <div className=" flex items-center gap-1">
+                            <Iconfont name="jieshudaidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                            <span className=" font-semibold text-base ">
+                              <FormattedMessage id="mt.jieshugendan" />
+                            </span>
+                          </div>
+                        </Button>
+                      }
+                    />
+                    <Button
+                      height={42}
+                      type="primary"
+                      style={{
+                        width: 158,
+                        borderRadius: 8,
+                        backgroundColor: 'black'
+                      }}
+                      onClick={() => onFollow(takeState)}
+                    >
+                      <div className=" flex items-center gap-1">
+                        <Iconfont name="gendanguanli" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                        <span className=" font-semibold text-base text-white ">
+                          <FormattedMessage id="mt.shezhi" />
+                        </span>
+                      </div>
+                    </Button>
+                  </>
+                ) : (
+                  takeState === 1 && (
+                    <Button
+                      height={42}
+                      type="primary"
+                      style={{
+                        width: 158,
+                        borderRadius: 8
+                      }}
+                      onClick={() => onFollow(takeState)}
+                    >
+                      <div className=" flex items-center gap-1">
+                        <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                        <span className=" font-semibold text-base ">
+                          <FormattedMessage id="mt.gendan" />
+                        </span>
+                      </div>
+                    </Button>
+                  )
+                )}
+              </div>
+            ) : (
+              <div>
+                <Button
+                  height={42}
+                  type="primary"
+                  disabled
+                  style={{
+                    width: 158,
+                    borderRadius: 8
+                  }}
+                >
+                  <div className=" flex items-center gap-1">
+                    <span className=" font-semibold text-base ">
+                      <FormattedMessage id="mt.yijieshu" />
+                    </span>
+                  </div>
+                </Button>
+              </div>
+            )}
           </div>
           {/* 通知 */}
           {/* <div className="mt-7.5 mb-7">

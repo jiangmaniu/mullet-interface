@@ -68,8 +68,11 @@ export default function Take({ active }: { active: boolean }) {
     onSuccess(data, params) {
       if (data?.data) {
         if (data.data.records) {
-          setTakers(data.data.records as IOrderTaker[])
-          setTotal(data.data.total)
+          // const _data = data.data.records as IOrderTaker[]
+          const _data = data.data.records.filter((i) => i.openFlag === 1) as IOrderTaker[]
+
+          setTakers(_data)
+          setTotal(_data.length)
         }
       }
     },
