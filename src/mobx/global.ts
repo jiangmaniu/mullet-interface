@@ -30,7 +30,9 @@ export class GlobalStore {
       STORAGE_SET_USER_INFO(currentUser)
 
       // 更新跟单状态
-      clientInfo.accountList && useUpdateFollowStatus()
+      if (location.pathname.indexOf('/copy-trading') !== -1) {
+        clientInfo.accountList && useUpdateFollowStatus()
+      }
 
       // 刷新账户信息
       if (refreshAccount !== false) {
