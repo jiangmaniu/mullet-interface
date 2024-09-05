@@ -14,6 +14,10 @@ type IProps = {
 }
 export const CardContainer = ({ title, defaultValue, onChange, options, children }: IProps) => {
   const [value, setValue] = useState(defaultValue)
+  const handleOnChange = (value: string) => {
+    setValue(value)
+    onChange(value)
+  }
   return (
     <div className=" border border-gray-150 rounded-2xl flex flex-col xl:gap-5 gap-2 pt-5 pb-6.5 px-5 bg-white">
       {/* Header */}
@@ -22,7 +26,7 @@ export const CardContainer = ({ title, defaultValue, onChange, options, children
         <Select
           style={{ width: 68, height: 24 }}
           value={value}
-          onChange={onChange}
+          onChange={handleOnChange}
           options={options}
           variant="borderless"
           labelRender={(option) => <span className="text-sm text-gray-600">{option.label}</span>}
