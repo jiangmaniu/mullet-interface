@@ -1,5 +1,6 @@
 import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { useRequest } from 'ahooks'
 import { Pagination, Space } from 'antd'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
@@ -112,10 +113,23 @@ function Square({ active }: { active: boolean }) {
   const [size, setSize] = useState(9)
   const [current, setCurrent] = useState(1)
 
+  const { run } = useRequest(getTradeFollowLeadPlaza, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      setTakers(data?.data?.records || [])
+      setTotal(data?.data?.total || 0)
+    },
+    onFinally() {
+      setLoading(false)
+    }
+  })
+
   const getList = () => {
     if (active && trade.currentAccountInfo && trade.currentAccountInfo.id) {
-      setLoading(true)
-      getTradeFollowLeadPlaza({
+      run({
         tradeAccountId: trade.currentAccountInfo.id,
         startDate: today.subtract(state.jinqi, 'day').format('YYYY-MM-DD'),
         endDate: today.format('YYYY-MM-DD'),
@@ -123,20 +137,6 @@ function Square({ active }: { active: boolean }) {
         size,
         current
       })
-        .then((res) => {
-          console.log('getTradeFollowLeadPlaza', res)
-
-          // @ts-ignore
-          if (res.success) {
-            if (res.data) {
-              setTakers(res.data.records)
-              setTotal(res.data.total)
-            }
-          }
-        })
-        .finally(() => {
-          setLoading(false)
-        })
     }
   }
 

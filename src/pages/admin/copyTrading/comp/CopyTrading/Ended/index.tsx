@@ -1,5 +1,6 @@
 import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
+import { useRequest } from 'ahooks'
 import { Pagination } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -30,34 +31,27 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
   const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
   const [current, setCurrent] = useState(1)
 
-  const [loading, setLoading] = useState(false)
+  const { run, loading } = useRequest(getTradeFollowFolloerManagementEnd, {
+    manual: true,
+    onSuccess(data, params) {
+      if (data?.data) {
+        if (data.data.records) {
+          setTakers(data.data.records as IOrder[])
+          setTotal(data.data.total)
+        }
+      }
+    }
+  })
+
   useEffect(() => {
     if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'yijieshu') {
-      setLoading(true)
-      getTradeFollowFolloerManagementEnd({
+      run({
         // accountGroupId: currentAccountInfo?.accountGroupId,
         clientId: currentAccountInfo?.clientId,
         // followerTradeAccountId: currentAccountInfo?.id,
         size,
         current
       })
-        .then((res) => {
-          if (res.success) {
-            if (res.data) {
-              if (res.data.records) {
-                setTakers(res.data.records as IOrder[])
-                setTotal(res.data.total)
-              }
-            }
-            // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => {
-          setLoading(false)
-        })
     }
   }, [segment, currentAccountInfo, current, size])
 

@@ -1,5 +1,6 @@
 import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
+import { useRequest } from 'ahooks'
 import { Pagination } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -26,31 +27,25 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
   const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
   const [current, setCurrent] = useState(1)
 
-  const [loading, setLoading] = useState(false)
+  const { run, loading } = useRequest(getTradeFollowFolloerManagementHistory, {
+    manual: true,
+    onSuccess(data, params) {
+      if (data?.data) {
+        if (data.data.records) {
+          setOrders(data.data.records)
+          setTotal(data.data.total)
+        }
+      }
+    }
+  })
+
   useEffect(() => {
     if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'lishicangwei') {
-      setLoading(true)
-      getTradeFollowFolloerManagementHistory({
+      run({
         followerId: currentAccountInfo.id,
         size,
         current
       })
-        .then((res) => {
-          if (res.success) {
-            if (res.data) {
-              if (res.data.records) {
-                setOrders(res.data.records)
-                setTotal(res.data.total)
-              }
-            }
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => {
-          setLoading(false)
-        })
     }
   }, [segment, currentAccountInfo, current, size])
 

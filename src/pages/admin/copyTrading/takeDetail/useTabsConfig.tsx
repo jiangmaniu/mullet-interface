@@ -1,4 +1,5 @@
 import { useIntl } from '@umijs/max'
+import { useRequest } from 'ahooks'
 import { Pagination, TableProps, TabsProps } from 'antd'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
@@ -9,7 +10,6 @@ import { tradeFollowCurrentLeadOrder, tradeFollowFollowUser, tradeFollowHistoryL
 import { formatNum, getColorClass } from '@/utils'
 
 import TabTable from '../comp/TabsTable/Table'
-import { mockHistory, mockUsers, orders } from './mockTabTable'
 
 export const useTabsConfig = ({ id }: { id: string }) => {
   const intl = useIntl()
@@ -244,59 +244,79 @@ export const useTabsConfig = ({ id }: { id: string }) => {
   const [total1, setTotal1] = useState(0)
   const [size1, setSize1] = useState(DEFAULT_PAGE_SIZE)
   const [current1, setCurrent1] = useState(1)
-  const [data1, setData1] = useState<any[]>(orders)
+  const [data1, setData1] = useState<any[]>([])
 
   // 分页
   const [total2, setTotal2] = useState(0)
   const [size2, setSize2] = useState(DEFAULT_PAGE_SIZE)
   const [current2, setCurrent2] = useState(1)
-  const [data2, setData2] = useState<any[]>(mockHistory)
+  const [data2, setData2] = useState<any[]>([])
 
   // 分页
   const [total3, setTotal3] = useState(0)
   const [size3, setSize3] = useState(DEFAULT_PAGE_SIZE)
   const [current3, setCurrent3] = useState(1)
-  const [data3, setData3] = useState<any[]>(mockUsers)
+  const [data3, setData3] = useState<any[]>([])
 
   const [loading, setLoading] = useState(false)
 
+  const { run: tab1 } = useRequest(tradeFollowCurrentLeadOrder, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      setData1(data?.data?.records || [])
+      setTotal1(data?.data?.total || 0)
+    },
+    onFinally() {
+      setLoading(false)
+    }
+  })
+
   useEffect(() => {
     if (tabKey === '1') {
-      setLoading(true)
-
-      tradeFollowCurrentLeadOrder({ leadId: id, current: current1, size: size1 })
-        .then((res) => {
-          if (res.success) setData1(res.data?.records || [])
-        })
-        .finally(() => {
-          setLoading(false)
-        })
+      tab1({ leadId: id, current: current1, size: size1 })
     }
   }, [tabKey, current1, size1])
 
+  const { run: tab2 } = useRequest(tradeFollowHistoryLeadOrder, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      setData2(data?.data?.records || [])
+      setTotal2(data?.data?.total || 0)
+    },
+    onFinally() {
+      setLoading(false)
+    }
+  })
+
   useEffect(() => {
     if (tabKey === '2') {
-      setLoading(true)
-      tradeFollowHistoryLeadOrder({ leadId: id, current: current2, size: size2 })
-        .then((res) => {
-          if (res.success) setData2(res.data?.records || [])
-        })
-        .finally(() => {
-          setLoading(false)
-        })
+      tab2({ leadId: id, current: current2, size: size2 })
     }
   }, [tabKey, current2, size2])
 
+  const { run: tab3 } = useRequest(tradeFollowFollowUser, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      setData3(data?.data?.records || [])
+      setTotal3(data?.data?.total || 0)
+    },
+    onFinally() {
+      setLoading(false)
+    }
+  })
+
   useEffect(() => {
     if (tabKey === '3') {
-      setLoading(true)
-      tradeFollowFollowUser({ leadId: id, current: current3, size: size3 })
-        .then((res) => {
-          if (res.success) setData3(res.data?.records || [])
-        })
-        .finally(() => {
-          setLoading(false)
-        })
+      tab3({ leadId: id, current: current3, size: size3 })
     }
   }, [tabKey, current3, size3])
 

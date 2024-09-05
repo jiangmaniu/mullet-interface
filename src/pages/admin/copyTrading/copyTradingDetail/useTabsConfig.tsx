@@ -1,4 +1,5 @@
 import { useIntl } from '@umijs/max'
+import { useRequest } from 'ahooks'
 import { Pagination, TableProps, TabsProps } from 'antd'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
@@ -9,7 +10,6 @@ import { getTradeFollowFolloerCurrentFollowerOrder, getTradeFollowFolloerHistory
 import { formatNum, getColorClass } from '@/utils'
 
 import TabTable from '../comp/TabsTable/Table'
-import { mockHistory, orders as mockOrder } from './mockTabTable'
 
 export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerId: string; leadId: string; defaultTabKey?: string }) => {
   const intl = useIntl()
@@ -211,8 +211,8 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
     }
   ]
 
-  const [histories, setHistories] = useState(mockHistory)
-  const [orders, setOrders] = useState(mockOrder)
+  const [histories, setHistories] = useState<TradeFollowFollower.HistoryFollowerOrderItem[]>([])
+  const [orders, setOrders] = useState<TradeFollowFollower.CurrentFollowerOrderItem[]>([])
 
   // 分页
   const [total, setTotal] = useState(0)
@@ -224,45 +224,54 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
   const [current2, setCurrent2] = useState(1)
 
   const [loading, setLoading] = useState(false)
+
+  const { run: tab1 } = useRequest(getTradeFollowFolloerCurrentFollowerOrder, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      setOrders(data?.data?.records || [])
+      setTotal(data?.data?.total || 0)
+    },
+    onFinally() {
+      setLoading(false)
+    }
+  })
+
   useEffect(() => {
     if (tabKey === '1') {
-      setLoading(true)
-      getTradeFollowFolloerCurrentFollowerOrder({
+      tab1({
         followerId: followerId,
         leadId: leadId,
         size,
         current
       })
-        .then((res) => {
-          if (res.success) {
-            setOrders(res.data?.records || [])
-            setTotal(res.data?.total || 0)
-          }
-        })
-        .finally(() => {
-          setLoading(false)
-        })
     }
   }, [tabKey, followerId, leadId, size, current])
 
+  const { run: tab2 } = useRequest(getTradeFollowFolloerHistoryFollowerOrder, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      setHistories(data?.data?.records || [])
+      setTotal2(data?.data?.total || 0)
+    },
+    onFinally() {
+      setLoading(false)
+    }
+  })
+
   useEffect(() => {
     if (tabKey === '2') {
-      setLoading(true)
-      getTradeFollowFolloerHistoryFollowerOrder({
+      tab2({
         followerId: followerId,
         leadId: leadId,
         size: size2,
         current: current2
       })
-        .then((res) => {
-          if (res.success) {
-            setHistories(res.data?.records || [])
-            setTotal2(res.data?.total || 0)
-          }
-        })
-        .finally(() => {
-          setLoading(false)
-        })
     }
   }, [tabKey, followerId, leadId, size2, current2])
 

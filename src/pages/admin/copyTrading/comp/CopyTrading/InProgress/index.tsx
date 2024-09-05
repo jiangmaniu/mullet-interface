@@ -1,5 +1,6 @@
 import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
+import { useRequest } from 'ahooks'
 import { Pagination } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
@@ -40,40 +41,33 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
   const columns = useColumns()
 
   const loadingRef = useRef<any>()
-  const [loading, setLoading] = useState(false)
 
   // 分页
   const [total, setTotal] = useState(0)
   const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
   const [current, setCurrent] = useState(1)
 
+  const { run, loading } = useRequest(getTradeFollowFolloerManagementInProgress, {
+    manual: true,
+    onSuccess(data, params) {
+      if (data?.data) {
+        if (data.data.records) {
+          setTakers(data.data.records as IOrder[])
+          setTotal(data.data.total)
+        }
+      }
+    }
+  })
+
   useEffect(() => {
     if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'jinxingzhong') {
-      setLoading(true)
-      getTradeFollowFolloerManagementInProgress({
+      run({
         // accountGroupId: currentAccountInfo?.accountGroupId,
         clientId: currentAccountInfo?.clientId,
         // followerTradeAccountId: currentAccountInfo?.id,
         current,
         size
       })
-        .then((res) => {
-          if (res.success) {
-            if (res.data) {
-              if (res.data.records) {
-                setTakers(res.data.records as IOrder[])
-                setTotal(res.data.total)
-              }
-            }
-            // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => {
-          setLoading(false)
-        })
     }
   }, [segment, currentAccountInfo, current, size])
 

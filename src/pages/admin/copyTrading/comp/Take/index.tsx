@@ -1,5 +1,6 @@
 import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useModel } from '@umijs/max'
+import { useRequest } from 'ahooks'
 import { Pagination } from 'antd'
 import { useEffect, useState } from 'react'
 
@@ -59,29 +60,27 @@ export default function Take({ active }: { active: boolean }) {
       })
   }
 
+  const { run } = useRequest(getTradeFollowLeadManagements, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      if (data?.data) {
+        if (data.data.records) {
+          setTakers(data.data.records as IOrderTaker[])
+          setTotal(data.data.total)
+        }
+      }
+    },
+    onFinally: () => {
+      setLoading(false)
+    }
+  })
+
   useEffect(() => {
     if (currentAccountInfo?.clientId && active) {
-      setLoading(true)
-      getTradeFollowLeadManagements({ clientId: String(currentAccountInfo?.clientId), current, size })
-        .then((res) => {
-          if (res.success) {
-            // setTakers(res.data)
-
-            if (res.data) {
-              if (res.data.records) {
-                setTakers(res.data.records as IOrderTaker[])
-                setTotal(res.data.total)
-              }
-            }
-            // message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-        .finally(() => {
-          setLoading(false)
-        })
+      run({ clientId: String(currentAccountInfo?.clientId), current, size })
     }
   }, [active, currentAccountInfo, current, size])
 
