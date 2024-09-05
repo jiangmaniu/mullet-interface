@@ -74,7 +74,7 @@ export default observer(
     const vmax = maxOpenVolume // 当前账户保证金最大可开手数
     const vmin = symbolConf?.minTrade || 0.01
     const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
-    const countPrecision = getPrecisionByNumber(symbolConf.minTrade) // 手数精度
+    const countPrecision = getPrecisionByNumber(symbolConf?.minTrade) // 手数精度
 
     // 切换品种、买卖重置内容
     useEffect(() => {

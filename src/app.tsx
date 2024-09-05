@@ -16,7 +16,7 @@ import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { errorConfig } from './requestErrorConfig'
-import { getBrowerLng, getPathname, getPathnameLng, push, replacePathnameLng } from './utils/navigator'
+import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN } from './utils/storage'
 
 const isDev = process.env.NODE_ENV === 'development'
@@ -282,9 +282,9 @@ export function onRouteChange({ location, clientRoutes, routes, action, basename
   }
 
   // 排除以下页面，未登录需重定向到登录页
-  if (!['/user/login'].includes(pathname) && !STORAGE_GET_TOKEN()) {
-    push('/user/login')
-  }
+  // if (!['/user/login'].includes(pathname) && !STORAGE_GET_TOKEN()) {
+  //   push('/user/login')
+  // }
 }
 
 export const rootContainer = (container: JSX.Element) => {

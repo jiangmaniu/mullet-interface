@@ -1,5 +1,5 @@
 import type { ActionType, FormInstance, ProColumns } from '@ant-design/pro-components'
-import { createIntl, ProProvider, ProTable, TableDropdown } from '@ant-design/pro-components'
+import { createIntl,ProProvider, ProTable, TableDropdown } from '@ant-design/pro-components'
 import { request } from '@umijs/max'
 import { Space, Tag } from 'antd'
 import { useContext, useRef } from 'react'

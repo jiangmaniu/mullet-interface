@@ -1,3 +1,5 @@
+import { useModel } from '@umijs/max'
+
 import { WEB_HOME_PAGE } from '@/constants'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
@@ -11,6 +13,9 @@ export default function Logo({
   iconColor1?: string
   iconColor2?: string
 }) {
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+
   return (
     // <img
     //   src="/logo.svg"
@@ -22,8 +27,10 @@ export default function Logo({
     // />
     <span
       className="!h-[48px] w-[171px]"
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation()
         if (STORAGE_GET_TOKEN()) {
+          if (!currentUser?.accountList?.length) return
           push(WEB_HOME_PAGE)
         } else {
           push('/user/login')

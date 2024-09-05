@@ -1,5 +1,6 @@
 import qs from 'qs'
 
+import { push } from '@/utils/navigator'
 import { request } from '@/utils/request'
 
 // 客户用户-新增
@@ -30,8 +31,13 @@ export async function getClientList(params?: API.PageParam) {
 export async function getClientDetail(params: API.IdParam) {
   return request<API.Response<Customer.ListItem>>('/api/trade-crm/crmApi/client/detail', {
     method: 'GET',
+    skipErrorHandler: true,
     params
   }).then((res) => {
+    if (res?.code !== 200) {
+      push('/user/login')
+      return {}
+    }
     if (res.data?.accountList?.length) {
       res.data.accountList = res.data.accountList.map((item) => {
         if (item.synopsis) {

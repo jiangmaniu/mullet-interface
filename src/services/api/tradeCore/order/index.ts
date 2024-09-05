@@ -79,6 +79,7 @@ export async function updateOrder(body: Order.UpdateOrder) {
 export async function getOrderPage(params?: Order.OrderPageListParams) {
   return request<API.Response<API.PageResult<Order.OrderPageListItem>>>('/api/trade-core/coreApi/orders/orderPage', {
     method: 'GET',
+    skipErrorHandler: true,
     params
   }).then((res) => formatOrderResult(res))
 }
@@ -103,6 +104,7 @@ export async function getOrderAllDetail(params?: API.IdParam /**持仓单id */) 
 export async function getBgaOrderPage(params: Order.BgaOrderPageListParams) {
   return request<API.Response<API.PageResult<Order.BgaOrderPageListItem>>>('/api/trade-core/coreApi/orders/bgaOrderPage', {
     method: 'GET',
+    skipErrorHandler: true,
     params
   }).then((res) => formatOrderResult(res))
 }
@@ -111,6 +113,7 @@ export async function getBgaOrderPage(params: Order.BgaOrderPageListParams) {
 export async function getTradeRecordsPage(params?: Order.TradeRecordsPageListParams) {
   return request<API.Response<API.PageResult<Order.TradeRecordsPageListItem>>>('/api/trade-core/coreApi/orders/tradeRecordsPage', {
     method: 'GET',
+    skipErrorHandler: true,
     params
   }).then((res) => formatOrderResult(res))
 }
