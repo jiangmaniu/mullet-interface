@@ -4,6 +4,7 @@ import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
+import { ADMIN_HOME_PAGE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
@@ -28,9 +29,17 @@ export default observer(() => {
   const sidebarRef = useRef()
   const buyAndSellRef = useRef<any>(null)
   const { ws, trade, kline } = useStores()
+  const { initialState } = useModel('@@initialState')
   const { fetchUserInfo } = useModel('user')
   const { pathname } = useLocation()
   const { setTheme } = useTheme()
+  const currentUser = initialState?.currentUser
+
+  useEffect(() => {
+    if (!currentUser?.accountList?.length) {
+      push(ADMIN_HOME_PAGE)
+    }
+  }, [currentUser])
 
   useEffect(() => {
     // 设置交易页面主题变量为全局主题

@@ -90,6 +90,17 @@ export const formatEmail = (email: string | undefined) => {
 }
 
 /**
+ * 限制输入框输入小数点位数
+ * @param text
+ * @param precision
+ * @returns
+ */
+export function regInput(text: string, precision: number) {
+  if (precision === 0) return text
+  return text.replace(new RegExp(`^(\\-)*(\\d+)\.(\\d{0,${precision}}).*$`), '$1$2.$3')
+}
+
+/**
  * 格式化是
  * @param time 时间戳、字符串时间
  * @param formatType
