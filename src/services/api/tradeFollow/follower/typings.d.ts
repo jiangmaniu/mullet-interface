@@ -281,6 +281,10 @@ declare namespace TradeFollowFollower {
      */
     conf?: string
     /**
+     * 创建时间
+     */
+    createTime?: Date
+    /**
      * 数据源code
      */
     dataSourceCode?: string
@@ -300,6 +304,10 @@ declare namespace TradeFollowFollower {
      * 库存费
      */
     interestFees?: number
+    /**
+     * 带单人Id
+     */
+    leadId?: number
     /**
      * 杠杆倍数
      */
@@ -328,6 +336,14 @@ declare namespace TradeFollowFollower {
      * 盈亏
      */
     profit?: number
+    /**
+     * 分润金额
+     */
+    profitSharingAmount?: number
+    /**
+     * 分润时间
+     */
+    profitSharingTime?: Date
     /**
      * 开仓均价
      */

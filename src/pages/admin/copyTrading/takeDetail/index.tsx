@@ -25,7 +25,7 @@ import TakeDatas from '../comp/TakeDatas'
 import TakeSettingModal from '../comp/TakeSettingModal'
 import DetailModal from './DetailModal'
 import EndModal from './EndModal'
-import { defaultTimeRange, mockNotifications } from './mock'
+import { mockNotifications } from './mock'
 import { useOverview } from './useOverview'
 import { useTabsConfig } from './useTabsConfig'
 
@@ -70,23 +70,6 @@ export default function TakeDetail() {
   // 系統通知
   const notifications = mockNotifications
 
-  // 时间區間
-  const [timeRange, setTimeRange] = useState(defaultTimeRange)
-  const timeRangeOptions = [
-    {
-      value: 'liangzhou',
-      label: <FormattedMessage id="mt.liangzhou" />
-    },
-    {
-      value: 'yiyue',
-      label: <FormattedMessage id="mt.yiyue" />
-    }
-  ]
-  const onTimeRangeChange = (value: string) => {
-    const selected = timeRangeOptions.find((item) => item.value === value)
-    if (selected) setTimeRange(selected.value)
-  }
-
   const { items: tabs, onChange } = useTabsConfig({ id: String(id) })
 
   const [status, setStatus] = useState<'abled' | 'disabled'>('disabled')
@@ -95,7 +78,14 @@ export default function TakeDetail() {
   const {
     statistics,
     profitStatistics: { earningRates, profitAmounts },
-    symbolStatistics
+    symbolStatistics,
+    dateRange1,
+    setDateRange1,
+    dateRange2,
+    setDateRange2,
+    dateRange3,
+    setDateRange3,
+    timeRangeOptions
   } = useOverview({ id })
 
   const [openDetail, setOpenDetail] = useState(false)
@@ -383,8 +373,8 @@ export default function TakeDetail() {
           <div className=" grid xl:grid-cols-3 sm:grid-cols-1 items-start gap-5  ">
             <CardContainer
               title={<FormattedMessage id="mt.daidanbiaoxian" />}
-              defaultValue={timeRange}
-              onChange={onTimeRangeChange}
+              defaultValue={dateRange1}
+              onChange={setDateRange1}
               options={timeRangeOptions}
             >
               <Performance datas={statistics} />
@@ -395,8 +385,8 @@ export default function TakeDetail() {
                   <FormattedMessage id="mt.leijiyingkui" />({CURRENCY})
                 </>
               }
-              defaultValue={timeRange}
-              onChange={onTimeRangeChange}
+              defaultValue={dateRange2}
+              onChange={setDateRange2}
               options={timeRangeOptions}
             >
               <Cumulative
@@ -412,8 +402,8 @@ export default function TakeDetail() {
             </CardContainer>
             <CardContainer
               title={<FormattedMessage id="mt.jiaoyipianhao" />}
-              defaultValue={timeRange}
-              onChange={onTimeRangeChange}
+              defaultValue={dateRange3}
+              onChange={setDateRange3}
               options={timeRangeOptions}
             >
               <Preferences datas={symbolStatistics} />
