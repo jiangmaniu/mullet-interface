@@ -70,19 +70,31 @@ declare namespace API {
   // 启用、禁用状态
   type Status = 'DISABLED' | 'ENABLE'
   // 资金变更记录-类型
-  type MoneyRecordsType =
+  type MoneyType =
     /**充值 */
     | 'DEPOSIT'
-    /**赠金 */
-    | 'GIFT'
+    /**充值(模拟) */
+    | 'DEPOSIT_SIMULATE'
+    /**提现 */
+    | 'WITHDRAWAL'
     /**保证金 */
     | 'MARGIN'
     /**盈亏 */
     | 'PROFIT'
-    /**提现 */
-    | 'WITHDRAWAL'
-
-  type MoneyType = 'DEPOSIT' | 'DEPOSIT_SIMULATE' | 'WITHDRAWAL' | 'MARGIN' | 'PROFIT' | 'GIFT' | 'TRANSFER' | 'BALANCE'
+    /**手续费 */
+    | 'HANDLING_FEES'
+    /**库存费 */
+    | 'INTEREST_FEES'
+    /**赠金 */
+    | 'GIFT'
+    /**划转 */
+    | 'TRANSFER'
+    /**跟单分润 */
+    | 'FOLLOW_PROFIT'
+    /**归零 */
+    | 'ZERO'
+    /**结余 */
+    | 'BALANCE'
 
   // 可用预付款
   type UsableAdvanceCharge =

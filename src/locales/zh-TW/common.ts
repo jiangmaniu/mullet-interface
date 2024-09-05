@@ -99,5 +99,9 @@ export default {
   'common.qingxuanze': '請選擇',
   'common.jiaoyi': '交易',
   'common.lijichakan': '立即查看',
-  'common.zhuanzhang': '转账'
+  'common.zhuanzhang': '转账',
+  // @TODO 新加的字段
+  'common.chongzhi': '充值',
+  'common.monichongzhi': '充值(模拟)',
+  'common.gendanfenrun': '跟单分润'
 }

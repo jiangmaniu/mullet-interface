@@ -1,15 +1,22 @@
-import { ProFormDateRangePicker, ProFormSelect } from '@ant-design/pro-components'
+import { ProFormDateRangePicker } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Segmented } from 'antd'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import PageContainer from '@/components/Admin/PageContainer'
 import { useStores } from '@/context/mobxProvider'
 
 import Transfer from './comp/Transfer'
+
+export type IParams = {
+  startTime?: string
+  endTime?: string
+  accountId: any
+}
 
 export default function Record() {
   const { initialState } = useModel('@@initialState')
@@ -19,8 +26,11 @@ export default function Record() {
 
   const [tabKey, setTabKey] = useState<'deposit' | 'withdrawal' | 'transfer'>('transfer')
   const intl = useIntl()
-  const [selectAccountId, setSelectAccountId] = useState<string>('')
-  const [params, setParams] = useState<any>({})
+  const [params, setParams] = useState({} as IParams)
+
+  useEffect(() => {
+    setParams({ ...params, accountId: accountList?.[0]?.id })
+  }, [accountList])
 
   const filterClassName = useEmotionCss(({ token }) => {
     return {
@@ -29,8 +39,6 @@ export default function Record() {
       }
     }
   })
-
-  console.log('params', params)
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
@@ -57,6 +65,9 @@ export default function Record() {
             options={accountList.map((item) => ({ ...item, value: item.id, label: item.name }))}
             placeholder={intl.formatMessage({ id: 'mt.xuanzezhanghu' })}
             fieldProps={{
+              value: params.accountId,
+              allowClear: false,
+              size: 'middle',
               onChange: (value: any) => {
                 setParams({
                   ...params,
@@ -69,8 +80,8 @@ export default function Record() {
           <ProFormDateRangePicker
             fieldProps={{
               onChange: (value) => {
-                const startTime = value ? dayjs(value[0]).format('YYYY-MM-DD') : undefined
-                const endTime = value ? dayjs(value[1]).format('YYYY-MM-DD') : undefined
+                const startTime = value ? dayjs(value[0]).format('YYYY-MM-DD') + ' 00:00:00' : undefined
+                const endTime = value ? dayjs(value[1]).format('YYYY-MM-DD') + ' 23:59:59' : undefined
                 setParams({
                   ...params,
                   startTime,
