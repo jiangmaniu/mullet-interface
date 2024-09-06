@@ -124,7 +124,9 @@ class WSStore {
       // debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
     })
     this.socket.addEventListener('open', () => {
-      this.readyState = 'OPEN'
+      runInAction(() => {
+        this.readyState = 'OPEN'
+      })
 
       this.batchSubscribeSymbol()
       this.subscribeDepth()
@@ -139,10 +141,10 @@ class WSStore {
       this.message(res)
     })
     this.socket.addEventListener('close', () => {
-      this.readyState = 'CLOSED'
+      this.close()
     })
     this.socket.addEventListener('error', () => {
-      this.readyState = 'CLOSED'
+      this.close()
     })
   }
 
@@ -261,13 +263,13 @@ class WSStore {
     }
   }
   @action
-  close() {
+  close = () => {
     // 关闭socket指令
-    if (this.socket) {
-      this.socket.close()
-      this.stopHeartbeat()
+    this.socket?.close?.()
+    this.stopHeartbeat()
+    runInAction(() => {
       this.readyState = 'CLOSED'
-    }
+    })
   }
   @action
   reconnect() {
