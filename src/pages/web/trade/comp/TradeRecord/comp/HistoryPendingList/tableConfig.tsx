@@ -59,7 +59,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
     {
       title: (
         <>
-          <FormattedMessage id="mt.guadanjia" />
+          <FormattedMessage id="mt.qingqiujiage" />
         </>
       ),
       dataIndex: 'limitPrice',

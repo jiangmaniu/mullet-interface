@@ -1,6 +1,6 @@
 import { ProFormDateRangePicker } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { Segmented } from 'antd'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
@@ -18,19 +18,29 @@ export type IParams = {
   accountId: any
 }
 
+type ITabKey = 'deposit' | 'withdrawal' | 'transfer'
+
 export default function Record() {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
   const { ws, trade } = useStores()
 
-  const [tabKey, setTabKey] = useState<'deposit' | 'withdrawal' | 'transfer'>('transfer')
+  const [tabKey, setTabKey] = useState<ITabKey>('transfer')
   const intl = useIntl()
   const [params, setParams] = useState({} as IParams)
+  const [searchParams] = useSearchParams()
+  const searchKey = searchParams.get('key') as ITabKey
 
   useEffect(() => {
     setParams({ ...params, accountId: accountList?.[0]?.id })
   }, [accountList])
+
+  useEffect(() => {
+    if (searchKey) {
+      setTabKey(searchKey)
+    }
+  }, [searchKey])
 
   const filterClassName = useEmotionCss(({ token }) => {
     return {

@@ -31,6 +31,9 @@ export default function KycStepForm() {
   const currentUser = initialState?.currentUser
   const userInfo = currentUser?.userInfo
 
+  const kycAuthInfo = currentUser?.kycAuth?.[0]
+  const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
+
   const phone = Form.useWatch('phone', form)
   const phoneAreaCode = Form.useWatch('phoneAreaCode', form)
   const validateCode = Form.useWatch('validateCode', form)
@@ -82,8 +85,11 @@ export default function KycStepForm() {
 
   useEffect(() => {
     // 手机、邮箱已绑定，直接跳过
-    if (userInfo?.phone && userInfo?.email) {
+    if (userInfo?.phone && userInfo?.email && kycStatus !== 'TODO') {
       setStep('TWO')
+    }
+    if (kycStatus === 'TODO') {
+      setStep('FOUR')
     }
   }, [userInfo])
 
@@ -117,10 +123,8 @@ export default function KycStepForm() {
       // 刷新用户信息
       await fetchUserInfo()
 
-      push('/setting')
-
       setTimeout(() => {
-        setStep('ONE')
+        setStep('FOUR')
       }, 100)
     }
   }
@@ -332,6 +336,7 @@ export default function KycStepForm() {
     )
   }
 
+  // 身份认证审核中
   const renderFourStep = () => {
     return (
       <div className="mt-3">
@@ -360,7 +365,7 @@ export default function KycStepForm() {
                 push('/setting')
               }}
             >
-              <FormattedMessage id="common.haode" />
+              <FormattedMessage id="common.queren" />
             </Button>
           </div>
         </div>
@@ -456,10 +461,14 @@ export default function KycStepForm() {
             layout="vertical"
             form={form}
           >
-            {step !== 'FOUR' && renderHeader()}
-            <Hidden show={step === 'ONE'}>{renderOneStep()}</Hidden>
-            <Hidden show={step === 'TWO'}>{renderTwoStep()}</Hidden>
-            <Hidden show={step === 'THREE'}>{renderThreeStep()}</Hidden>
+            {kycStatus !== 'TODO' && (
+              <>
+                {step !== 'FOUR' && renderHeader()}
+                <Hidden show={step === 'ONE'}>{renderOneStep()}</Hidden>
+                <Hidden show={step === 'TWO'}>{renderTwoStep()}</Hidden>
+                <Hidden show={step === 'THREE'}>{renderThreeStep()}</Hidden>
+              </>
+            )}
             <Hidden show={step === 'FOUR'}>{renderFourStep()}</Hidden>
           </ProForm>
         </div>

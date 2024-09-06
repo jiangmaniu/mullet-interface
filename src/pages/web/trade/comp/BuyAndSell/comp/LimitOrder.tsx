@@ -316,7 +316,8 @@ export default observer(
                               value: spProfit,
                               unit: symbolConf?.profitCurrency,
                               buySell
-                            })
+                            }),
+                            { precision: 2 }
                           )}{' '}
                           USD
                         </span>
@@ -366,7 +367,8 @@ export default observer(
                             value: slProfit,
                             unit: symbolConf?.profitCurrency,
                             buySell
-                          })
+                          }),
+                          { precision: 2 }
                         )}{' '}
                         USD
                       </span>

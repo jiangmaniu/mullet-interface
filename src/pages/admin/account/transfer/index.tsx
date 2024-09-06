@@ -218,7 +218,7 @@ function TransferAccount() {
           style={{ height: 46, marginTop: 70 }}
           block
           onClick={() => {
-            push('/account')
+            push('/record?key=transfer')
 
             setTimeout(() => {
               setStep('ONE')

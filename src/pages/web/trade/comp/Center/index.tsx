@@ -33,8 +33,8 @@ const Center = () => {
         marginBottom={0}
       />
       <HeaderStatisInfo />
-      <TradingView style={{ display: tabKey === 1 ? 'block' : 'none' }} />
-      <Futures style={{ display: tabKey === 2 ? 'block' : 'none' }} />
+      {tabKey === 1 && <TradingView />}
+      {tabKey === 2 && <Futures />}
     </div>
   )
 }

@@ -11,6 +11,7 @@ import Modal from '@/components/Admin/Modal'
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import Dropdown from '@/components/Base/Dropdown'
+import Empty from '@/components/Base/Empty'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
@@ -301,6 +302,7 @@ function Account() {
             </div>
           )
         })}
+        {currentAccountList.length === 0 && <Empty />}
       </div>
       <RenameAccountModal ref={modalRef} info={modalInfo} />
     </PageContainer>

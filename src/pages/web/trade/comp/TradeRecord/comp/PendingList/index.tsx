@@ -246,8 +246,8 @@ function PendingList({ style, parentPopup }: IProps) {
     let currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
 
     if (v.type === 'LIMIT_BUY_ORDER' || v.type === 'LIMIT_SELL_ORDER') {
-      // 限价单价格取反
-      currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask
+      // 限价单价格不要取反
+      currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
     }
 
     v.currentPrice = currentPrice // 现价

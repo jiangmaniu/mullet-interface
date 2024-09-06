@@ -117,7 +117,7 @@ export const getEnum = () => {
     },
     // 订单类型
     OrderType: {
-      MARKET_ORDER: { text: intl.formatMessage({ id: 'mt.shijiadan' }), value: 10 },
+      MARKET_ORDER: { text: intl.formatMessage({ id: 'mt.shijia' }), value: 10 },
       STOP_LOSS_ORDER: { text: intl.formatMessage({ id: 'mt.zhisundan' }), value: 20 },
       TAKE_PROFIT_ORDERR: { text: intl.formatMessage({ id: 'mt.zhiyingdan' }), value: 30 },
       LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamairudan' }), value: 40 },

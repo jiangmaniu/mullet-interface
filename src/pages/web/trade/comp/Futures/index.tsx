@@ -55,8 +55,8 @@ function Futures({ trigger, style }: IProps) {
         </>
       )
     },
-    { label: <FormattedMessage id="mt.geyelixiduodan" />, value: `${toFixed(holdingCostConf?.buyBag)}${showPencent ? '%' : ''}` },
-    { label: <FormattedMessage id="mt.geyelixikongdan" />, value: `${toFixed(holdingCostConf?.sellBag)}${showPencent ? '%' : ''}` },
+    { label: <FormattedMessage id="mt.geyelixiduodan" />, value: `${holdingCostConf?.buyBag}${showPencent ? '%' : ''}` },
+    { label: <FormattedMessage id="mt.geyelixikongdan" />, value: `${holdingCostConf?.sellBag}${showPencent ? '%' : ''}` },
     { label: <FormattedMessage id="mt.xianjiahetingsunjuli" />, value: symbolConf?.limitStopLevel },
 
     // 保证金-固定保证金模式

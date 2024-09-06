@@ -181,6 +181,7 @@ export default observer(
             <div className="flex w-full flex-col items-center pt-5">
               <InputNumber
                 autoFocus={false}
+                showFloatTips={false}
                 label={intl.formatMessage({ id: 'mt.zhisun' })}
                 placeholder={intl.formatMessage({ id: 'mt.zhisun' })}
                 rootClassName="!z-30"
@@ -231,6 +232,7 @@ export default observer(
               />
               <InputNumber
                 autoFocus={false}
+                showFloatTips={false}
                 label={intl.formatMessage({ id: 'mt.zhiying' })}
                 placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
                 className="h-[38px]"

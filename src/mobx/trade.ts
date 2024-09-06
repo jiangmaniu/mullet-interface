@@ -198,6 +198,7 @@ class TradeStore {
   @action
   getAccountBalance = () => {
     const currentAccountInfo = this.currentAccountInfo
+
     // 账户余额
     const money = Number(toFixed(currentAccountInfo.money || 0))
     // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
@@ -211,14 +212,14 @@ class TradeStore {
     // 持仓单总的手续费
     const totalHandlingFees = this.positionList.reduce((total, next) => total + Number(next.handlingFees || 0), 0) || 0
     // 净值 = 账户余额 - 库存费 - 手续费 + 浮动盈亏
-    const balance = Number(toFixed(Number(currentAccountInfo.money || 0) - totalInterestFees - totalHandlingFees + totalProfit))
+    const balance = Number(Number(currentAccountInfo.money || 0) - totalInterestFees - totalHandlingFees + totalProfit)
 
     return {
       occupyMargin,
       availableMargin,
       balance,
       // 账户总盈亏 = 所有订单的盈亏 - 所有订单的库存费
-      totalProfit: toFixed(totalProfit - totalInterestFees, 2),
+      totalProfit: totalProfit - totalInterestFees,
       currentAccountInfo,
       money
     }

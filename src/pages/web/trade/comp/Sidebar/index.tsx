@@ -126,7 +126,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
               <FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
-          <div className="overflow-y-auto" style={{ height: 500 }}>
+          <div className="overflow-y-auto" style={{ height: !showFixSidebar ? 340 : 500 }}>
             {loading && (
               <div className="mx-5 mt-8">
                 <Skeleton loading={loading} />
@@ -147,7 +147,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                           {activeKey === 'FAVORITE' ? (
                             <div
                               className="flex justify-center gap-x-2 cursor-pointer"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation()
                                 setActiveKey('CATEGORY')
                               }}
                             >
@@ -258,9 +259,13 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
             <div
-              className={cn('h-[700px] w-[364px] flex-shrink-0 bg-white relative dark:bg-dark-page', {
-                [borderClassName]: showFixSidebar
-              })}
+              className={cn(
+                'w-[364px] flex-shrink-0 bg-white relative dark:bg-dark-page',
+                !showFixSidebar ? 'max-h-[600px]' : 'h-[700px]',
+                {
+                  [borderClassName]: showFixSidebar
+                }
+              )}
               style={style}
             >
               {renderTabs()}
