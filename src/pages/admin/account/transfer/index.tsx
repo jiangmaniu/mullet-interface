@@ -250,7 +250,7 @@ function TransferAccount() {
           </div>
         </div>
       </div>
-      <div className="mt-[70px]">
+      {/* <div className="mt-[70px]">
         <div className="text-primary text-sm pb-4 font-semibold">
           <FormattedMessage id="mt.zhuanzhangxuzhi" />
         </div>
@@ -271,7 +271,7 @@ function TransferAccount() {
             <FormattedMessage id="mt.zhuanzhangtip5" />
           </div>
         </div>
-      </div>
+      </div> */}
     </PageContainer>
   )
 }
