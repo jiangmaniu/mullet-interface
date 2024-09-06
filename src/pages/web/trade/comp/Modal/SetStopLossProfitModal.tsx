@@ -75,7 +75,10 @@ export default observer(
     const bid = quote.bid
     const ask = quote.ask
     const d = item.symbolDecimal
-    const step = Math.pow(10, -d) * 10
+    // const step = Math.pow(10, -d) * 10
+    // 根据品种小数点位数计算步长，独立于手数步长step。获取计算的小数位倒数第二位开始作为累加步长
+    // 限价、止盈止损、停损挂单，加减时，连动报价小数位倒数第二位
+    const step = Math.pow(10, -(d - 1)) || Math.pow(10, -d) * 10
     // const stopl = symbolInfo ? symbolInfo.stopl * Math.pow(10, -d) * 10 : 0
     const symbolConf = item?.conf
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
