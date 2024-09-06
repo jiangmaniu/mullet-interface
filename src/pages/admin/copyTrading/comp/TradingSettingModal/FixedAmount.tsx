@@ -16,6 +16,7 @@ type IProp = {
   form: FormInstance
   children: React.ReactNode
   trader: TradeFollowFollower.FollowDetailItem | null
+  readonly: boolean
 }
 
 const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
@@ -28,7 +29,7 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
   }
 }
 
-export default ({ onConfirm, form, children, trader }: IProp) => {
+export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
   const intl = useIntl()
   const { trade } = useStores()
   const { currentAccountInfo } = trade.getAccountBalance()
@@ -171,7 +172,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
           </span>
           <ProFormText
             name="profitRatio"
-            disabled={!!trader?.tradeAccountId}
+            disabled={readonly}
             rules={[
               {
                 // required: true,
@@ -212,7 +213,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
           </span>
           <ProFormText
             name="stopLossRatio"
-            disabled={!!trader?.tradeAccountId}
+            disabled={readonly}
             rules={[
               {
                 // required: true,
@@ -267,7 +268,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
         )}
       </div>
       {/* 确认 */}
-      {!trader?.tradeAccountId && (
+      {!readonly && (
         <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-full max-w-full">
           <Radio.Group value={read}>
             <Radio onClick={onClickRadio} value={1}>

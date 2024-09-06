@@ -377,6 +377,7 @@ export default function copyTradingDetail() {
         leadId={String(id)}
         followerId={followerId}
         open={openSetting}
+        readonly={true}
         onOpenChange={onOpenChangeSetting}
         onConfirm={() => {
           setTakeState(0)

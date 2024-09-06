@@ -26,13 +26,18 @@ export class GlobalStore {
         ...localUserInfo,
         ...clientInfo // 用户详细信息
       } as User.UserInfo
+
+      try {
+        // 更新跟单状态
+        if (clientInfo.accountList) {
+          currentUser.accountList = await useUpdateFollowStatus(clientInfo.accountList)
+        }
+      } catch (e) {
+        console.error('更新跟单状态失败', e)
+      }
+
       // 更新本地的用户信息
       STORAGE_SET_USER_INFO(currentUser)
-
-      // 更新跟单状态
-      if (location.pathname.indexOf('/copy-trading') !== -1) {
-        clientInfo.accountList && useUpdateFollowStatus()
-      }
 
       // 刷新账户信息
       if (refreshAccount !== false) {

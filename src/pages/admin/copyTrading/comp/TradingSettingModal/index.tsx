@@ -10,7 +10,6 @@ import { CURRENCY } from '@/constants'
 import { getTradeFollowFollowerDetail, postTradeFollowFolloerSave } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { formatNum } from '@/utils'
-import { useUpdateFollowStatus } from '@/utils/copyTrading'
 
 import AccountSelector from './AccountSelector'
 import FixedAmount from './FixedAmount'
@@ -31,6 +30,7 @@ type IProps = {
   trigger?: JSX.Element
   onConfirm?: (values: any) => void
   followerId?: string
+  readonly?: boolean // 如果有选中值，是否默认选中
 }
 
 const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
@@ -43,7 +43,7 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
   }
 }
 
-export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: IProps) => {
+export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, readonly = false }: IProps) => {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
@@ -107,6 +107,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
             <>
               {tabKey === '10' && (
                 <FixedAmount
+                  readonly={readonly}
                   trader={trader}
                   onConfirm={(values) => {
                     form.submit()
@@ -114,7 +115,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
                   }}
                   form={form}
                 >
-                  <AccountSelector form={form} lead={lead} trader={trader} />
+                  <AccountSelector form={form} lead={lead} trader={trader} readonly={readonly} />
                 </FixedAmount>
               )}
             </>
@@ -127,6 +128,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
             <>
               {tabKey === '20' && (
                 <FixedRatio
+                  readonly={readonly}
                   trader={trader}
                   onConfirm={(values) => {
                     form.submit()
@@ -134,7 +136,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
                   }}
                   form={form}
                 >
-                  <AccountSelector form={form} lead={lead} trader={trader} />
+                  <AccountSelector form={form} lead={lead} trader={trader} readonly={readonly} />
                 </FixedRatio>
               )}
             </>
@@ -156,9 +158,6 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
       .then((res) => {
         if (res.success) {
           onConfirm?.(res.data)
-
-          // 更新跟单状态
-          useUpdateFollowStatus()
         }
       })
       .finally(() => {
@@ -168,7 +167,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
   }
 
   useEffect(() => {
-    if (trader) {
+    if (readonly && trader) {
       if (trader.guaranteedAmount) {
         form.setFieldValue('guaranteedAmount', trader.guaranteedAmount)
       }
@@ -181,7 +180,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId }: 
         form.setFieldValue('profitRatio', trader.profitRatio)
       }
     }
-  }, [form, trader])
+  }, [form, trader, readonly])
 
   return (
     <div>
