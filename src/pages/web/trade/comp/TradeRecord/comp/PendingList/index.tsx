@@ -1,6 +1,5 @@
 import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useRef } from 'react'
@@ -13,6 +12,7 @@ import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import PendingOrderCancelModal from '../../../Modal/PendingOrderCancelModal'
@@ -28,16 +28,17 @@ export type IPendingItem = Order.OrderPageListItem & {
 type IProps = {
   style?: React.CSSProperties
   parentPopup?: any
-  showActiveSymbol?: boolean
 }
 
 // 挂单记录
-function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
+function PendingList({ style, parentPopup }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
   const { recordListClassName } = useStyle()
-  let list = trade.pendingList as IPendingItem[]
+  const showActiveSymbol = trade.showActiveSymbol
 
+  let pendingList = trade.pendingList as IPendingItem[]
+  let list = showActiveSymbol ? pendingList.filter((v) => v.symbol === trade.activeSymbolName) : pendingList
   const cancelPendingRef = useRef<any>(null)
   const modifyPendingRef = useRef<any>(null)
 
@@ -66,7 +67,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
             <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-semibold text-primary">{record.symbol}</span>
-              <span className={classNames('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
         )
@@ -105,8 +106,8 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       renderText(text, record, index, action) {
         return (
-          <span className={classNames('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
-            {formatNum(record.currentPrice)}
+          <span className={cn('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
+            {formatNum(record.currentPrice, { precision: record.symbolDecimal })}
           </span>
         )
       }
@@ -124,7 +125,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
     },
     {
@@ -142,7 +143,7 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
       width: 150,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{text}</span>
       }
     },
     {
@@ -171,11 +172,11 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
             }}
           >
             <span className="!text-[13px] text-primary border-b border-dashed border-gray-weak">
-              {Number(record?.takeProfit) ? formatNum(record?.takeProfit) : AddDom}
+              {Number(record?.takeProfit) ? formatNum(record?.takeProfit, { precision: record.symbolDecimal }) : AddDom}
             </span>
             <span> / </span>
             <span className="!text-[13px] text-primary border-b border-dashed border-gray-weak">
-              {Number(record?.stopLoss) ? formatNum(record?.stopLoss) : AddDom}
+              {Number(record?.stopLoss) ? formatNum(record?.stopLoss, { precision: record.symbolDecimal }) : AddDom}
             </span>
           </div>
         )
@@ -240,11 +241,16 @@ function PendingList({ style, parentPopup, showActiveSymbol }: IProps) {
     const dataSourceSymbol = v.dataSourceSymbol as string
     const quoteInfo = getCurrentQuote(dataSourceSymbol)
     const digits = v.symbolDecimal || 2
-    const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
     const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
 
+    let currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
+
+    if (v.type === 'LIMIT_BUY_ORDER' || v.type === 'LIMIT_SELL_ORDER') {
+      // 限价单价格不要取反
+      currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
+    }
+
     v.currentPrice = currentPrice // 现价
-    v.orderVolume = toFixed(v.orderVolume, digits) // 手数格式化
     v.isLimitOrder = isLimitOrder
     v.limitPrice = toFixed(v.limitPrice, digits)
 

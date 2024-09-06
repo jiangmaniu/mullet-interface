@@ -12,14 +12,14 @@ import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Tabs from '@/components/Base/Tabs'
 import { ADMIN_HOME_PAGE, REGISTER_APP_CODE, WEB_HOME_PAGE } from '@/constants'
 import { getCaptcha, login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
-import { push } from '@/utils/navigator'
+import { goHome, push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
 
 import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem'
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
-import { regPassword } from '@/utils'
+import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
 import RegisterValidateCode, { IValidateCodeType } from '../comp/RegisterValidateCode'
@@ -148,7 +148,8 @@ function Login() {
         const currentUser = await fetchUserInfo()
         // @ts-ignore
         const hasAccount = currentUser?.accountList?.length > 0
-        const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
+        // const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
+        const jumpPath = ADMIN_HOME_PAGE // 直接跳转到个人中心
         setTimeout(() => {
           setLoading(false)
           push(jumpPath)
@@ -238,17 +239,12 @@ function Login() {
     return (
       <div
         className={classNames('flex items-center justify-center mt-10 flex-1 h-full', rootClassName)}
-        style={{ display: showValidateCodeInput ? 'none' : 'flex' }}
+        style={{ display: showValidateCodeInput || validateCodeType === 'RESET_PWD' ? 'none' : 'flex' }}
       >
         {!loading && (
           <LoginForm
             title={
-              <div
-                className="mb-8 cursor-pointer"
-                // onClick={() => {
-                //   push(WEB_HOME_PAGE)
-                // }}
-              >
+              <div className="mb-8 cursor-pointer" onClick={goHome}>
                 <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
               </div>
             }
@@ -284,7 +280,6 @@ function Login() {
                     className="text-gray-500 text-sm text-center cursor-pointer"
                     onClick={() => {
                       setValidateCodeType('RESET_PWD')
-                      setShowValidateCodeInput(true)
                     }}
                   >
                     <FormattedMessage id="mt.wangjimima" />
@@ -330,9 +325,9 @@ function Login() {
               ]}
             />
             {/* <div className="flex items-center justify-between w-full pb-2">
-          <span>{!isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}</span>
+          <span>{!isEmailTab ? <FormattedMessage id="common.shoujihaoma" /> : <FormattedMessage id="common.dianziyouxiang" />}</span>
           <span className="cursor-pointer text-blue" onClick={() => setIsEmailTab(!isEmailTab)}>
-            {isEmailTab ? <FormattedMessage id="mt.shoujihaoma" /> : <FormattedMessage id="mt.dianziyouxiang" />}
+            {isEmailTab ? <FormattedMessage id="common.shoujihaoma" /> : <FormattedMessage id="common.dianziyouxiang" />}
           </span>
         </div> */}
 
@@ -348,11 +343,12 @@ function Login() {
                 }}
                 placeholder={intl.formatMessage({ id: 'mt.shurudianziyouxiang' })}
                 required={false}
-                label={<FormattedMessage id="mt.dianziyouxiang" />}
+                label={<FormattedMessage id="common.dianziyouxiang" />}
                 rules={[
                   {
                     required: true,
-                    message: intl.formatMessage({ id: 'mt.shurudianziyouxiang' })
+                    message: intl.formatMessage({ id: 'mt.youxianggeshibuzhengque' }),
+                    pattern: regEmail
                   }
                 ]}
               />
@@ -363,14 +359,14 @@ function Login() {
               <PhoneSelectFormItem
                 names={['username', 'phoneAreaCode']}
                 form={form}
-                label={<FormattedMessage id="mt.shoujihaoma" />}
-                required={false}
+                label={<FormattedMessage id="common.shoujihaoma" />}
+                // required={false}
               />
             )}
             <ProFormText.Password
               name="password"
               required={false}
-              label={intl.formatMessage({ id: 'mt.mima' })}
+              label={intl.formatMessage({ id: 'common.mima' })}
               placeholder={intl.formatMessage({ id: 'mt.shurumima' })}
               fieldProps={{
                 size: 'large',
@@ -452,8 +448,8 @@ function Login() {
         onConfirm={handleSubmitRegister}
         onBack={() => {
           // 返回重置
-          setShowValidateCodeInput(false)
           setValidateCodeType('REGISTER')
+          setShowValidateCodeInput(false)
         }}
         // 注册验证码、重置密码
         type={validateCodeType}

@@ -3,6 +3,8 @@ import { ProFormCaptcha, ProFormCaptchaProps } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { useRef, useState } from 'react'
 
+import { regEmail } from '@/utils'
+
 // 验证码组件
 interface IProps extends ProFormCaptchaProps {
   /**@name 参数校验完成，正式发送请求获取验证码 */
@@ -41,6 +43,13 @@ const FormCaptcha: React.FC<IProps> = ({ onSend, fieldProps, ...res }) => {
           throw error
         }
       }}
+      rules={[
+        {
+          required: false,
+          pattern: regEmail,
+          message: intl.formatMessage({ id: 'mt.youxianggeshibuzhengque' })
+        }
+      ]}
       fieldRef={captchaRef}
       {...res}
     />

@@ -79,13 +79,22 @@ export async function updateOrder(body: Order.UpdateOrder) {
 export async function getOrderPage(params?: Order.OrderPageListParams) {
   return request<API.Response<API.PageResult<Order.OrderPageListItem>>>('/api/trade-core/coreApi/orders/orderPage', {
     method: 'GET',
+    skipErrorHandler: true,
     params
   }).then((res) => formatOrderResult(res))
 }
 
 // 订单-详情
-export async function getOrderDetail(params?: API.IdParam) {
-  return request<API.Response<Order.OrderDetailListItem>>('/api/trade-core/coreApi/orders/detail', {
+export async function getOrderDetail(params?: API.IdParam /**订单id */) {
+  return request<API.Response<Order.OrderDetailListItem>>('/api/trade-core/coreApi/orders/orderDetail', {
+    method: 'GET',
+    params
+  })
+}
+
+// 全部订单订单-详情(持仓单、成交记录)
+export async function getOrderAllDetail(params?: API.IdParam /**持仓单id */) {
+  return request<API.Response<Order.OrderDetailListItem>>('/api/trade-core/coreApi/orders/allDetail', {
     method: 'GET',
     params
   })
@@ -95,6 +104,7 @@ export async function getOrderDetail(params?: API.IdParam) {
 export async function getBgaOrderPage(params: Order.BgaOrderPageListParams) {
   return request<API.Response<API.PageResult<Order.BgaOrderPageListItem>>>('/api/trade-core/coreApi/orders/bgaOrderPage', {
     method: 'GET',
+    skipErrorHandler: true,
     params
   }).then((res) => formatOrderResult(res))
 }
@@ -103,6 +113,7 @@ export async function getBgaOrderPage(params: Order.BgaOrderPageListParams) {
 export async function getTradeRecordsPage(params?: Order.TradeRecordsPageListParams) {
   return request<API.Response<API.PageResult<Order.TradeRecordsPageListItem>>>('/api/trade-core/coreApi/orders/tradeRecordsPage', {
     method: 'GET',
+    skipErrorHandler: true,
     params
   }).then((res) => formatOrderResult(res))
 }

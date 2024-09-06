@@ -28,6 +28,8 @@ interface IProps extends ModalProps {
   open?: boolean
   /**隐藏底部提交按钮 */
   hiddenSubmitter?: boolean
+  /**确认按钮文本 */
+  okText?: React.ReactNode
 }
 
 /**
@@ -55,6 +57,7 @@ function Modal(
     onFinish,
     open,
     hiddenSubmitter,
+    okText,
     ...res
   }: IProps,
   ref: any
@@ -187,13 +190,14 @@ function Modal(
                     <FormattedMessage id="common.cancel" />
                   </Button>
                   <Button type="primary" loading={loading} onClick={handleConfirm} style={{ minWidth: 100, height: 40 }}>
-                    <FormattedMessage id="common.queren" />
+                    {okText || <FormattedMessage id="common.queren" />}
                   </Button>
                 </div>
               )}
             </div>
           )
         }
+        okText={okText}
         {...res}
       >
         <div className="px-7 pb-7" style={{ paddingTop: isTabList ? 28 : 16, ...contentStyle }}>

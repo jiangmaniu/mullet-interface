@@ -84,3 +84,15 @@ export const flatTreeData = <TreeNode>(data: TreeNode[], key: keyof TreeNode, pa
     return prev
   }, [])
 }
+
+// 树状数据去除空children
+export const removeEmptyChildren = (treeData: any) => {
+  treeData.forEach((item: any) => {
+    if ('children' in item && item.children?.length === 0) {
+      delete item.children
+    } else if ('children' in item && item.children?.length) {
+      removeEmptyChildren(item.children)
+    }
+  })
+  return treeData
+}

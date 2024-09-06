@@ -93,27 +93,23 @@ export default function PhoneSelectFormItem({
       name={names[0]}
       rootClassName={className}
       required={required}
-      rules={
-        required
-          ? [
-              {
-                required: true,
-                validateTrigger: 'onBlur',
-                validator(rule, value, callback) {
-                  if (!value) {
-                    callback(intl.formatMessage({ id: 'mt.shurushoujihaoma' }))
-                  } else if (!regMobile.test(value)) {
-                    callback(intl.formatMessage({ id: 'mt.shoujihaobuzhengque' }))
-                  } else if (!form.getFieldValue('phoneAreaCode')) {
-                    callback(intl.formatMessage({ id: 'mt.xuanzequhao' }))
-                  } else {
-                    callback()
-                  }
-                }
-              }
-            ]
-          : []
-      }
+      rules={[
+        {
+          required,
+          validateTrigger: 'onChange',
+          validator(rule, value, callback) {
+            if (!value) {
+              return Promise.reject(intl.formatMessage({ id: 'mt.shurushoujihaoma' }))
+            } else if (!regMobile.test(value)) {
+              return Promise.reject(intl.formatMessage({ id: 'mt.shoujihaobuzhengque' }))
+            } else if (!form.getFieldValue('phoneAreaCode')) {
+              return Promise.reject(intl.formatMessage({ id: 'mt.xuanzequhao' }))
+            } else {
+              return Promise.resolve()
+            }
+          }
+        }
+      ]}
       className="phoneSelect"
       label={label}
     >

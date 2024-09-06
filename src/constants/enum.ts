@@ -23,8 +23,8 @@ export type ILanguage = 'en-US' | 'zh-TW'
 
 // 传给后台的值，转化一下
 export const LanuageTransformMap: Record<ILanguage, string> = {
-  'zh-TW': 'zh-Hant',
-  'en-US': 'en'
+  'zh-TW': 'zh-TW',
+  'en-US': 'en-US'
 }
 
 // 获取k线对应的语言
@@ -90,8 +90,8 @@ export const getEnum = () => {
   const Enum = {
     // 启用、禁用状态
     Status: {
-      DISABLED: { text: intl.formatMessage({ id: 'mt.jinyong' }) },
-      ENABLE: { text: intl.formatMessage({ id: 'mt.qiyong' }) }
+      DISABLED: { text: intl.formatMessage({ id: 'common.jinyong' }) },
+      ENABLE: { text: intl.formatMessage({ id: 'common.qiyong' }) }
     },
     // 认证状态
     ApproveStatus: {
@@ -117,7 +117,7 @@ export const getEnum = () => {
     },
     // 订单类型
     OrderType: {
-      MARKET_ORDER: { text: intl.formatMessage({ id: 'mt.shijiadan' }), value: 10 },
+      MARKET_ORDER: { text: intl.formatMessage({ id: 'mt.shijia' }), value: 10 },
       STOP_LOSS_ORDER: { text: intl.formatMessage({ id: 'mt.zhisundan' }), value: 20 },
       TAKE_PROFIT_ORDERR: { text: intl.formatMessage({ id: 'mt.zhiyingdan' }), value: 30 },
       LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamairudan' }), value: 40 },
@@ -134,9 +134,8 @@ export const getEnum = () => {
     },
     // 订单成交方向
     OrderInOut: {
-      IN: { text: 'IN' },
-      OUT: { text: 'OUT' },
-      IN_OUT: { text: 'IN_OUT' }
+      IN: { text: intl.formatMessage({ id: 'mt.jiancang' }) },
+      OUT: { text: intl.formatMessage({ id: 'mt.pingcang' }) }
     },
     // 持仓单状态
     BGAStatus: {
@@ -147,6 +146,21 @@ export const getEnum = () => {
     MarginType: {
       CROSS_MARGIN: { text: intl.formatMessage({ id: 'mt.quancang' }) },
       ISOLATED_MARGIN: { text: intl.formatMessage({ id: 'mt.zhucang' }) }
+    },
+    // 客户管理-交易账号-结余-表格-类型
+    CustomerBalanceRecordType: {
+      DEPOSIT: { text: intl.formatMessage({ id: 'common.chongzhi' }) },
+      DEPOSIT_SIMULATE: { text: intl.formatMessage({ id: 'common.monichongzhi' }) },
+      WITHDRAWAL: { text: intl.formatMessage({ id: 'mt.tixian' }) },
+      MARGIN: { text: intl.formatMessage({ id: 'mt.baozhengjin' }) },
+      PROFIT: { text: intl.formatMessage({ id: 'mt.yingkui' }) },
+      GIFT: { text: intl.formatMessage({ id: 'mt.zengjin' }) },
+      BALANCE: { text: intl.formatMessage({ id: 'mt.jieyu' }) },
+      TRANSFER: { text: intl.formatMessage({ id: 'common.zhuanzhang' }) },
+      ZERO: { text: intl.formatMessage({ id: 'mt.qiangping' }) },
+      FOLLOW_PROFIT: { text: intl.formatMessage({ id: 'common.gendanfenrun' }) },
+      HANDLING_FEES: { text: intl.formatMessage({ id: 'mt.shouxufei' }) },
+      INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) }
     }
   }
 

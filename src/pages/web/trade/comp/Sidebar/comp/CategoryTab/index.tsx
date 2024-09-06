@@ -1,4 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import { Tabs } from 'antd-mobile'
 import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
@@ -17,6 +18,8 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { theme } = useTheme()
   const isDark = theme === 'dark'
+  const intl = useIntl()
+
   const symbolCategory = trade.symbolCategory
 
   useEffect(() => {
@@ -47,7 +50,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
           background: 'var(--tabs-active-bg)'
         },
         '.adm-tabs-tab-list': {
-          paddingLeft: '9px !important',
+          // paddingLeft: '9px !important',
           '.adm-tabs-tab-wrapper': {
             paddingRight: '0px !important',
             paddingLeft: '0px !important'
@@ -74,7 +77,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
         style={{ '--title-font-size': '14px', '--active-line-height': '0px', '--adm-color-border': '#fff', paddingLeft: 4 }}
       >
         {symbolCategory.map((v, index) => (
-          <Tabs.Tab title={v.label} key={v.key} style={{ padding: '5px 9px' }} />
+          <Tabs.Tab title={<FormattedMessage id={`${v.label}`} />} key={v.key} style={{ padding: '5px 9px' }} />
         ))}
       </Tabs>
     </div>

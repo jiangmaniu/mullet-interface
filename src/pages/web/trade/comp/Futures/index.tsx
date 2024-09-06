@@ -55,8 +55,8 @@ function Futures({ trigger, style }: IProps) {
         </>
       )
     },
-    { label: <FormattedMessage id="mt.geyelixiduodan" />, value: `${toFixed(holdingCostConf?.buyBag)}${showPencent ? '%' : ''}` },
-    { label: <FormattedMessage id="mt.geyelixikongdan" />, value: `${toFixed(holdingCostConf?.sellBag)}${showPencent ? '%' : ''}` },
+    { label: <FormattedMessage id="mt.geyelixiduodan" />, value: `${holdingCostConf?.buyBag}${showPencent ? '%' : ''}` },
+    { label: <FormattedMessage id="mt.geyelixikongdan" />, value: `${holdingCostConf?.sellBag}${showPencent ? '%' : ''}` },
     { label: <FormattedMessage id="mt.xianjiahetingsunjuli" />, value: symbolConf?.limitStopLevel },
 
     // 保证金-固定保证金模式
@@ -66,7 +66,7 @@ function Futures({ trigger, style }: IProps) {
             label: <FormattedMessage id="mt.chushibaozhengjin" />,
             value: (
               <>
-                {(prepaymentConf?.fixed_margin?.initial_margin || 0).toFixed(2)} USD/
+                {(prepaymentConf?.fixed_margin?.initial_margin || 0).toFixed(2)} {symbolConf?.prepaymentCurrency}/
                 <FormattedMessage id="mt.lot" />
               </>
             )
@@ -75,8 +75,14 @@ function Futures({ trigger, style }: IProps) {
             label: <FormattedMessage id="mt.suocangbaozhengjin" />,
             value: (
               <>
-                {(prepaymentConf?.fixed_margin?.locked_position_margin || 0).toFixed(2)} USD/
-                <FormattedMessage id="mt.lot" />
+                {!prepaymentConf?.fixed_margin?.locked_position_margin ? (
+                  <FormattedMessage id="mt.shouqudanbianzuida" />
+                ) : (
+                  <>
+                    {(prepaymentConf?.fixed_margin?.locked_position_margin || 0).toFixed(2)} {symbolConf?.prepaymentCurrency}/
+                    <FormattedMessage id="mt.lot" />
+                  </>
+                )}
               </>
             )
           }
@@ -145,7 +151,7 @@ function Futures({ trigger, style }: IProps) {
                 <FormattedMessage id="mt.jiaoyishijian" />
                 <span className="text-base">（GMT+8）</span>
               </div>
-              <div className="grid gap-y-4 grid-cols-3">
+              <div className="grid gap-y-4 grid-cols-3 max-h-[268px] overflow-y-auto">
                 {tradeTimeConf.map((item: any, idx: number) => (
                   <div className="text-sm text-weak" key={idx}>
                     {transferWeekDay(item.weekDay)} {`${formatTimeStr(item.trade)}`}

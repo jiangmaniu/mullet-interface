@@ -103,6 +103,12 @@ declare namespace Account {
   type MoneyRecordsPageListParams = API.PageParam & {
     /**账户id 必需 */
     accountId: string
+    /**开始时间 */
+    startTime?: string
+    /**结束时间 */
+    endTime?: string
+    /**资金类型 */
+    type?: API.MoneyType
   }
   // 资金变更记录-分页-列表
   type MoneyRecordsPageListItem = {
@@ -127,13 +133,16 @@ declare namespace Account {
      */
     oldBalance?: number
     /**
-     * 备注
-     */
-    remark?: string
-    /**
      * 类型
      */
-    type?: API.MoneyRecordsType
+    type?: API.MoneyType
+    remark?: {
+      /**从 */
+      fromAccountId: string
+      /**到 */
+      toAccountId: string
+      money: string
+    }
   }
   // 交易账户-分页-参数
   type AccountPageListParams = {
@@ -246,7 +255,7 @@ declare namespace Account {
     /**
      * 类型
      */
-    type: API.MoneyRecordsType
+    type: API.MoneyType
   }
   // 交易账户-新增/修改
   type SubmitAccount = {

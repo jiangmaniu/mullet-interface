@@ -1,0 +1,310 @@
+import { useIntl } from '@umijs/max'
+import { useRequest } from 'ahooks'
+import { Pagination, TableProps, TabsProps } from 'antd'
+import classNames from 'classnames'
+import { useEffect, useState } from 'react'
+
+import Tags from '@/components/Admin/Tags'
+import { CURRENCY, DEFAULT_PAGE_SIZE } from '@/constants'
+import { getTradeFollowFolloerCurrentFollowerOrder, getTradeFollowFolloerHistoryFollowerOrder } from '@/services/api/tradeFollow/follower'
+import { formatNum, getColorClass } from '@/utils'
+
+import TabTable from '../comp/TabsTable/Table'
+
+export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerId: string; leadId: string; defaultTabKey?: string }) => {
+  const intl = useIntl()
+
+  const [tabKey, setTabKey] = useState<string>(defaultTabKey || '1')
+  // 订单表格
+  const orderColumns: TableProps<TradeFollowFollower.CurrentFollowerOrderItem>['columns'] = [
+    {
+      title: intl.formatMessage({ id: 'mt.pinzhong' }),
+      dataIndex: 'pinzhong',
+      key: 'pinzhong',
+      render: (pz, record, index) => (
+        <span className=" flex gap-1 items-center">
+          <img src={record.imgUrl} alt="" className="w-8 h-8 rounded-full" />
+          <span className=" flex flex-col items-start">
+            <span className="text-sm  font-pf-bold text-primary">{record.symbol}</span>
+            <span className="flex items-center gap-1">
+              <Tags size="tiny" color={record.buySell === '空' ? 'red' : 'green'}>
+                {record.buySell}
+              </Tags>
+              <Tags size="tiny" color="gray">
+                {record.classify}
+                {record.leverageMultiple}
+              </Tags>
+            </span>
+          </span>
+        </span>
+      )
+    },
+    {
+      title: `${intl.formatMessage({ id: 'mt.weishixianyingkui' })}(${CURRENCY})`,
+      dataIndex: 'weishixianyingkui',
+      key: 'weishixianyingkui',
+      render: (text) => (
+        <span className={classNames('!font-dingpro-medium text-primary', getColorClass(text))}>
+          {text > 0 ? '+' : ''}
+          {formatNum(text)}
+        </span>
+      )
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.shouyilv' }),
+      dataIndex: 'profit',
+      key: 'profit',
+      render: (text) => <span className={classNames('!font-dingpro-medium text-primary', getColorClass(text))}>{formatNum(text)}%</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.kaicangjunjia' }),
+      dataIndex: 'startPrice',
+      key: 'startPrice',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.biaojijia' }),
+      dataIndex: 'biaojijia',
+      key: 'biaojijia',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{`${formatNum(text)} ${CURRENCY}`}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.baozhengjin' }),
+      dataIndex: 'orderMargin',
+      key: 'orderMargin',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{`${formatNum(text)} ${CURRENCY}`}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.chicangshuliang' }),
+      dataIndex: 'orderVolume',
+      key: 'orderVolume',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{`${formatNum(text)} ${CURRENCY}`}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.qiangpinjia' }),
+      dataIndex: 'closePrice',
+      key: 'closePrice',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.gensuirenshu' }),
+      dataIndex: 'followerNumber',
+      key: 'followerNumber',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
+    }
+  ]
+
+  const historyColumns: TableProps<TradeFollowFollower.HistoryFollowerOrderItem>['columns'] = [
+    {
+      title: intl.formatMessage({ id: 'mt.pinzhong' }),
+      dataIndex: 'pinzhong',
+      key: 'pinzhong',
+      render: (pz, record, index) => (
+        <span className=" flex gap-1 items-center">
+          <img src={record.imgUrl} alt="" className="w-8 h-8 rounded-full" />
+          <span className=" flex flex-col items-start">
+            <span className="text-sm font-pf-bold text-primary">{record.symbol}</span>
+            <span className="flex items-center gap-1">
+              <Tags size="tiny" color={record.buySell === '空' ? 'red' : 'green'}>
+                {record.buySell}
+              </Tags>
+              <Tags size="tiny" color="gray">
+                {record.classify} {record.leverageMultiple}
+              </Tags>
+            </span>
+          </span>
+        </span>
+      )
+    },
+    {
+      title: `${intl.formatMessage({ id: 'mt.yingkui' })}(${CURRENCY})`,
+      dataIndex: 'profit',
+      key: 'profit',
+      render: (text) => (
+        <span className={classNames('!font-dingpro-medium text-primary', getColorClass(text))}>
+          {text > 0 ? '+' : ''}
+          {formatNum(text)}
+        </span>
+      )
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.shouxufei' }),
+      dataIndex: 'handlingFees',
+      key: 'handlingFees',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.chengjiaojiage' }),
+      dataIndex: 'closePrice',
+      key: 'closePrice',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.kaicangjunjia' }),
+      dataIndex: 'startPrice',
+      key: 'startPrice',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.shoushu' }),
+      dataIndex: 'orderVolume',
+      key: 'orderVolume',
+      render: (text) => (
+        <span className="!font-dingpro-regular text-primary">{`${formatNum(text)} ${intl.formatMessage({ id: 'mt.shou2' })}`}</span>
+      )
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.fenrunjine' }),
+      dataIndex: 'profitSharingAmount',
+      key: 'profitSharingAmount',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{formatNum(text)}</span>
+    },
+    {
+      title: intl.formatMessage({ id: 'mt.jiaoyishijian' }),
+      dataIndex: 'createTime',
+      key: 'createTime',
+      align: 'right',
+      render: (text) => <span className="!font-dingpro-regular text-primary">{text}</span>
+    }
+  ]
+
+  const [histories, setHistories] = useState<TradeFollowFollower.HistoryFollowerOrderItem[]>([])
+  const [orders, setOrders] = useState<TradeFollowFollower.CurrentFollowerOrderItem[]>([])
+
+  // 分页
+  const [total, setTotal] = useState(0)
+  const [size, setSize] = useState(DEFAULT_PAGE_SIZE)
+  const [current, setCurrent] = useState(1)
+
+  const [total2, setTotal2] = useState(0)
+  const [size2, setSize2] = useState(DEFAULT_PAGE_SIZE)
+  const [current2, setCurrent2] = useState(1)
+
+  const [loading, setLoading] = useState(false)
+
+  const { run: tab1 } = useRequest(getTradeFollowFolloerCurrentFollowerOrder, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      setOrders(data?.data?.records || [])
+      setTotal(data?.data?.total || 0)
+    },
+    onFinally() {
+      setLoading(false)
+    }
+  })
+
+  useEffect(() => {
+    if (tabKey === '1') {
+      tab1({
+        followerId: followerId,
+        leadId: leadId,
+        size,
+        current
+      })
+    }
+  }, [tabKey, followerId, leadId, size, current])
+
+  const { run: tab2 } = useRequest(getTradeFollowFolloerHistoryFollowerOrder, {
+    manual: true,
+    onBefore: () => {
+      setLoading(true)
+    },
+    onSuccess(data, params) {
+      setHistories(data?.data?.records || [])
+      setTotal2(data?.data?.total || 0)
+    },
+    onFinally() {
+      setLoading(false)
+    }
+  })
+
+  useEffect(() => {
+    if (tabKey === '2') {
+      tab2({
+        followerId: followerId,
+        leadId: leadId,
+        size: size2,
+        current: current2
+      })
+    }
+  }, [tabKey, followerId, leadId, size2, current2])
+
+  const items2: TabsProps['items'] = [
+    {
+      key: '2',
+      label: intl.formatMessage({ id: 'mt.lishigendan' }),
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={historyColumns} datas={histories} loading={loading} />
+
+          <div className="self-end">
+            <Pagination
+              current={current2}
+              onChange={setCurrent2}
+              total={total2}
+              pageSize={size2}
+              onShowSizeChange={setSize2}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </div>
+      )
+    }
+  ]
+
+  const items: TabsProps['items'] = [
+    {
+      key: '1',
+      label: intl.formatMessage({ id: 'mt.dangqiangendan' }),
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={orderColumns} datas={orders} loading={loading} />
+
+          <div className="self-end">
+            <Pagination
+              current={current}
+              onChange={setCurrent}
+              total={total}
+              pageSize={size}
+              onShowSizeChange={setSize}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </div>
+      )
+    },
+    {
+      key: '2',
+      label: intl.formatMessage({ id: 'mt.lishigendan' }),
+      children: (
+        <div className="flex flex-col gap-3.5 mb-4">
+          <TabTable columns={historyColumns} datas={histories} loading={loading} />
+
+          <div className="self-end">
+            <Pagination
+              current={current2}
+              onChange={setCurrent2}
+              total={total2}
+              pageSize={size2}
+              onShowSizeChange={setSize2}
+              pageSizeOptions={['10', '20', '50']}
+            />
+          </div>
+        </div>
+      )
+    }
+  ]
+
+  const onChange = (key: string) => {
+    setTabKey(key)
+  }
+
+  return {
+    items,
+    items2,
+    onChange
+  }
+}

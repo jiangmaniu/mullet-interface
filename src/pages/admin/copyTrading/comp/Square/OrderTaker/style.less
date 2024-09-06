@@ -1,0 +1,36 @@
+.account-name {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.tips {
+  @apply text-gray-500 text-xs;
+}
+
+.count {
+  @apply font-medium text-base;
+}
+
+.ant-btn-primary.daidanzhuangtai2:not(disabled):not(.ant-btn-dangerous) {
+  border-width: 0;
+
+  > span {
+    position: relative;
+  }
+
+  &::before {
+    position: absolute;
+    background: #f49b1e;
+    // linear-gradient(135deg, #6253e1, #04befe);
+    border-radius: inherit;
+    opacity: 1;
+    transition: all 0.3s;
+    content: '';
+    inset: 0;
+  }
+
+  &:hover::before {
+    background: #fbaa39;
+  }
+}

@@ -138,9 +138,9 @@ function TransferAccount() {
           fieldProps={{
             size: 'large',
             style: { height: 42 },
-            maxLength: 8,
+            maxLength: 20,
             autoFocus: false,
-            precision: 2,
+            precision: trade.currentAccountInfo.currencyDecimal,
             suffix: 'USD',
             controls: false
           }}
@@ -218,14 +218,14 @@ function TransferAccount() {
           style={{ height: 46, marginTop: 70 }}
           block
           onClick={() => {
-            push('/account')
+            push('/record?key=transfer')
 
             setTimeout(() => {
               setStep('ONE')
             }, 200)
           }}
         >
-          <FormattedMessage id="mt.lijichakan" />
+          <FormattedMessage id="common.lijichakan" />
         </Button>
       </div>
     )
@@ -241,7 +241,7 @@ function TransferAccount() {
         <div className="w-[552px] bg-white rounded-xl border border-gray-180">
           <div className="px-8 py-6">
             <div className="text-primary text-[22px] font-bold pb-5">
-              {['ONE', 'TWO'].includes(step) && <FormattedMessage id="mt.zhuanzhang" />}
+              {['ONE', 'TWO'].includes(step) && <FormattedMessage id="common.zhuanzhang" />}
               {['THREE'].includes(step) && <FormattedMessage id="mt.zhuanzhangjieguo" />}
             </div>
             <Hidden show={step === 'ONE'}>{renderOneStep()}</Hidden>
@@ -250,7 +250,7 @@ function TransferAccount() {
           </div>
         </div>
       </div>
-      <div className="mt-[70px]">
+      {/* <div className="mt-[70px]">
         <div className="text-primary text-sm pb-4 font-semibold">
           <FormattedMessage id="mt.zhuanzhangxuzhi" />
         </div>
@@ -271,7 +271,7 @@ function TransferAccount() {
             <FormattedMessage id="mt.zhuanzhangtip5" />
           </div>
         </div>
-      </div>
+      </div> */}
     </PageContainer>
   )
 }

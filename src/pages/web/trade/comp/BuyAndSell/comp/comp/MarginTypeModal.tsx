@@ -1,11 +1,11 @@
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Modal from '@/components/Base/Modal'
 import { useStores } from '@/context/mobxProvider'
+import { cn } from '@/utils/cn'
 
 type IProps = {
   trigger: JSX.Element
@@ -14,10 +14,10 @@ type IProps = {
 function MarginTypeModal({ trigger }: IProps) {
   const { trade } = useStores()
   const modalRef = useRef<any>()
-  const [current, setCurrent] = useState('')
+  const [current, setCurrent] = useState<API.MarginType>('CROSS_MARGIN')
   const marginType = trade.marginType
 
-  const marginOptions = [
+  const marginOptions: Array<{ label: React.ReactNode; value: API.MarginType; desc: React.ReactNode }> = [
     {
       label: <FormattedMessage id="mt.quancang" />,
       value: 'CROSS_MARGIN',
@@ -68,7 +68,7 @@ function MarginTypeModal({ trigger }: IProps) {
               return (
                 <div
                   key={idx}
-                  className={classNames(
+                  className={cn(
                     'mb-[10px] p-3 rounded-[10px] border cursor-pointer',
                     isActive ? 'border-[rgba(24,62,252,0.12)]' : 'border-gray-130'
                   )}
@@ -94,7 +94,6 @@ function MarginTypeModal({ trigger }: IProps) {
           block
           onClick={() => {
             modalRef?.current?.close()
-            // @ts-ignore
             trade.setMarginType(current)
           }}
         >

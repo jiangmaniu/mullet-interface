@@ -38,10 +38,10 @@ class KlineStore {
   updateKlineData(quotes: any) {
     const symbolInfo = this.activeSymbolInfo.symbolInfo
     if (symbolInfo && quotes) {
-      const dataSourceSymbol = symbolInfo.dataSourceSymbol
+      const symbol = symbolInfo.name
       const dataSourceCode = symbolInfo.dataSourceCode
-      const data = quotes[`${dataSourceCode}/${dataSourceSymbol}`]
-      if (data && data.symbol === dataSourceSymbol) {
+      const data = quotes[`${dataSourceCode}/${symbol}`]
+      if (data && data.symbol === symbol) {
         const resolution = this.activeSymbolInfo.resolution
         const precision = symbolInfo.precision
         // 通过ws更新k线数据

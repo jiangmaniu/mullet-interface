@@ -1,7 +1,6 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import { InputNumber } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -9,6 +8,7 @@ import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'
@@ -147,7 +147,7 @@ function FloatTradeBox() {
 
   return (
     <div
-      className={classNames('border border-gray-185 rounded-lg bg-white fixed', className)}
+      className={cn('border border-gray-185 rounded-lg bg-white fixed', className)}
       style={{
         right: widgetRight,
         top: widgetTop

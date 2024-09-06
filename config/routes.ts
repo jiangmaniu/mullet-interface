@@ -141,13 +141,51 @@ export default [
   //   component: './admin/withdrawal/add',
   //   hideInMenu: true
   // },
-  // {
-  //   path: '/:lng/record',
-  //   name: 'depositAndwithdrawalRecord',
-  //   icon: 'icon-geren-churujinjilu',
-  //   access: 'canAdmin', // 权限配置
-  //   component: './admin/record'
-  // },
+  {
+    path: '/:lng/record',
+    name: 'depositAndwithdrawalRecord',
+    icon: 'icon-geren-churujinjilu',
+    access: 'canAdmin', // 权限配置
+    component: './admin/record'
+  },
+  // 跟单管理
+  {
+    path: '/:lng/copy-trading',
+    access: 'canAdmin', // 权限配置
+    name: 'copyTrading',
+    icon: 'icon-gendanguanli',
+    component: './admin/copyTrading'
+  },
+  {
+    path: '/:lng/copy-trading/management',
+    access: 'canAdmin', // 权限配置
+    component: './admin/copyTrading/copyTradingManagement'
+    // hideInMenu: true,
+    // menuRender: false // 当前路由不展示菜单
+  },
+  {
+    path: '/:lng/copy-trading/detail/:id',
+    access: 'canAdmin', // 权限配置
+    component: './admin/copyTrading/copyTradingDetail'
+    // hideInMenu: true,
+    // menuRender: false // 当前路由不展示菜单
+  },
+  {
+    path: '/:lng/copy-trading/take-detail/:id',
+    access: 'canAdmin', // 权限配置
+    component: './admin/copyTrading/takeDetail'
+    // hideInMenu: true,
+    // menuRender: false // 当前路由不展示菜单
+  },
+  {
+    path: '/:lng/copy-trading/apply',
+    access: 'canAdmin', // 权限配置
+    component: './admin/copyTrading/apply',
+    hideInMenu: true,
+    menuRender: false, // 当前路由不展示菜单
+    headerRender: true,
+    layout: false // 关闭页面布局，使用自定义布局
+  },
   {
     path: '/:lng/setting',
     name: 'setting',

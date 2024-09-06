@@ -219,6 +219,7 @@ export default function getWidgetOpts(
     // 可以通过api来动态设置 applyOverrides
     // https://www.tradingview.com/charting-library-docs/latest/customization/overrides/
     overrides: {
+      // 'scalesProperties.lineColor': '#f00', // 边框线条颜色
       // 'paneProperties.legendProperties.showSeriesTitle': false, // 图例标题可见性，legend最左侧的标题
       // priceScaleSelectionStrategyName: 'left', // 将价格刻度位置更改为左侧
       // 'mainSeriesProperties.visible': false, // 隐藏主图
@@ -262,8 +263,9 @@ export default function getWidgetOpts(
     },
     loading_screen: {
       backgroundColor: '#fff',
-      foregroundColor: ThemeConst.primary
-    } // 加载背景 加载图标背景颜色  没找到隐藏方式，这样隐藏
+      foregroundColor: '#fff'
+    }
+    // 加载背景 加载图标背景颜色  没找到隐藏方式，这样隐藏
     // charts_storage_url: "https://saveload.tradingview.com", // 点击图标保存按钮会把配置保存到服务器
     // settings_adapter: {
     // 	initialSettings: { ... },

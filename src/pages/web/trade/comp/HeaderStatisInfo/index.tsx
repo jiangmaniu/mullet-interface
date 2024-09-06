@@ -1,6 +1,5 @@
 import { CaretDownOutlined, InfoCircleOutlined, MenuUnfoldOutlined, RightOutlined } from '@ant-design/icons'
-import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
+import { FormattedMessage, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
@@ -10,6 +9,7 @@ import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Futures from '../Futures'
@@ -23,6 +23,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const { ws, trade } = useStores()
   const symbol = trade.activeSymbolName
   const [showSidebar, setShowSidebar] = useState(false)
+  const { openTradeSidebar } = useModel('global')
   const symbolInfo = (trade.openSymbolNameList || []).find((item) => item?.symbol === symbol)
 
   const res: any = getCurrentQuote()
@@ -37,32 +38,43 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
     <SwitchPcOrWapLayout
       pcComponent={
         <>
-          <div className="flex items-center justify-between px-[10px] py-2">
-            <div className="flex items-center w-full">
+          <div className="flex items-center justify-between px-[10px] py-2 border border-b border-gray-60">
+            <div className="flex items-center w-full gap-x-[92px]">
               <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
                 <div
-                  className="flex cursor-pointer items-center relative xxl:top-1"
+                  className={cn('flex items-center relative xxl:top-1', {
+                    'cursor-pointer': !openTradeSidebar
+                  })}
                   onClick={() => {
                     setShowSidebar(true)
                   }}
                   ref={openSidebarRef}
                 >
                   <SymbolIcon width={28} height={28} src={symbolInfo?.imgUrl} className="relative xl:top-[9px] xxl:top-0" />
-                  <div className="flex items-center xl:relative xl:left-[5px] xxl:left-0">
-                    <span className="pl-[6px] pr-[5px] text-base font-semibold text-primary">{symbol}</span>
-                    <img
-                      src="/img/down.png"
-                      height={24}
-                      width={24}
-                      style={{ transform: showSidebar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'all 0.4s ease-in-out' }}
-                    />
+                  <div
+                    className="flex items-center xl:relative xl:left-[5px] xxl:left-0"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setShowSidebar(!showSidebar)
+                    }}
+                  >
+                    <span className="pl-[6px] pr-[5px] text-base font-semibold text-primary">{symbolInfo?.alias}</span>
+                    {/* 收起侧边栏才展示箭头 */}
+                    {!openTradeSidebar && (
+                      <img
+                        src="/img/down.png"
+                        height={24}
+                        width={24}
+                        style={{ transform: showSidebar ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'all 0.4s ease-in-out' }}
+                      />
+                    )}
                   </div>
 
                   <div
                     className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] dark:border-[var(--border-primary-color)] bg-white dark:!shadow-none"
                     style={{
                       boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
-                      display: showSidebar ? 'block' : 'none'
+                      display: showSidebar && !openTradeSidebar ? 'block' : 'none'
                     }}
                   >
                     <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
@@ -71,17 +83,17 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                 <div className="flex items-center xxl:pl-6 xl:pl-7 xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
                   {res.hasQuote && (
                     <>
-                      <span className={classNames('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>
+                      <span className={cn('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>
                         {formatNum(res.bid)}
                       </span>
-                      <span className={classNames('pl-2 text-base !font-dingpro-medium', color)}>
+                      <span className={cn('pl-2 text-base !font-dingpro-medium', color)}>
                         {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}
                       </span>
                     </>
                   )}
                 </div>
               </div>
-              <div className="flex items-center pl-12 gap-x-12 flex-1">
+              <div className="flex items-center gap-x-4 flex-1">
                 {/* @TODO 只有数字货币才展示 */}
                 {/* <div className="flex flex-col">
                   <span className="text-xs text-weak">
@@ -93,25 +105,25 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   <span className="text-xs text-weak">
                     <FormattedMessage id="mt.kaipanjiage" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.open)}</span>
+                  <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.open)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-weak">
                     <FormattedMessage id="mt.shoupanjiage" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.close)}</span>
+                  <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.close)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-weak">
                     <FormattedMessage id="mt.24xiaoshizuigao" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.high)}</span>
+                  <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.high)}</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-xs text-weak">
                     <FormattedMessage id="mt.24xiaoshizuidi" />
                   </span>
-                  <span className="pt-1 !font-dingpro-medium text-sm text-primary">{formatNum(res.low)}</span>
+                  <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.low)}</span>
                 </div>
               </div>
             </div>
@@ -160,10 +172,8 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
           <div className="flex items-end justify-between pt-3">
             <div className="flex flex-col">
               <div className="flex items-baseline">
-                <span className={classNames('text-[26px] font-bold', color)}>{res.close}</span>
-                <span className={classNames('pl-2 text-xs font-semibold', color)}>
-                  {res.percent > 0 ? '+' + res.percent : res.percent}%
-                </span>
+                <span className={cn('text-[26px] font-bold', color)}>{res.close}</span>
+                <span className={cn('pl-2 text-xs font-semibold', color)}>{res.percent > 0 ? '+' + res.percent : res.percent}%</span>
               </div>
               <div className="mt-1 flex">
                 <Futures

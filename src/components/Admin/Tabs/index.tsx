@@ -1,12 +1,12 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { TabsProps } from 'antd'
-import classNames from 'classnames'
 import { TabBarExtraContent } from 'rc-tabs/lib/interface'
 import React, { useEffect, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import TabsScroll from '@/components/Base/TabsScroll'
 import { colorTextPrimary, colorTextSecondary } from '@/theme/theme.config'
+import { cn } from '@/utils/cn'
 
 import TabsComp from '../../Base/Tabs'
 
@@ -81,7 +81,7 @@ export default function Tabs({
 
             tab = (
               <span
-                className={classNames('flex justify-center items-center', hoverClassName)}
+                className={cn('flex justify-center items-center', hoverClassName)}
                 onClick={() => {
                   if (showMobileTabs) {
                     handleChange(v.key)
@@ -89,7 +89,7 @@ export default function Tabs({
                 }}
               >
                 <Iconfont name={v.icon} width={v.iconWidth || 26} color={color} height={v.iconHeight || 26} hoverColor={colorTextPrimary} />
-                <span className="font-bold pl-1 text-base" style={{ color }}>
+                <span className="font-pf-bold pl-1 text-lg" style={{ color }}>
                   {v.label}
                 </span>
               </span>
@@ -107,7 +107,7 @@ export default function Tabs({
 
   // 外部传入的key激活
   useEffect(() => {
-    console.log('tabList')
+    console.log('tabList', activeKey, tabList)
     setTabKey(activeKey ?? tabList[0]?.key)
   }, [activeKey, tabList])
 
@@ -126,7 +126,7 @@ export default function Tabs({
             {tabItems.map((item, idx) => (
               <div
                 key={idx}
-                className={classNames(
+                className={cn(
                   'min-w-[186px] relative hover:text-primary cursor-pointer border-gray-150 border-l border-t border-r flex items-center justify-center text-base rounded-t-2xl h-[50px] font-semibold',
                   item.key === tabKey ? 'bg-white !border-b-0 text-primary !z-[50]' : 'bg-[#F8FBFD] text-secondary'
                 )}
@@ -162,7 +162,7 @@ export default function Tabs({
                 handleChange(activeKey)
               }}
               tabBarExtraContent={tabBarExtraContent}
-              className={classNames({
+              className={cn({
                 'custom-tabbar': hiddenTabbarLine
               })}
               hiddenBottomLine={hiddenBottomLine}

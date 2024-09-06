@@ -7,10 +7,10 @@ import { useStores } from '@/context/mobxProvider'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
+import { cn } from '@/utils/cn'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { usePrevious } from 'ahooks'
-import classNames from 'classnames'
+import { useDebounceEffect, usePrevious } from 'ahooks'
 import { observer } from 'mobx-react'
 import { STORAGE_GET_CHART_PROPS, STORAGE_REMOVE_CHART_PROPS, ThemeConst } from './constant'
 import { ColorType, applyOverrides, createWatermarkLogo, setCSSCustomProperty, setChartStyleProperties, setSymbol } from './widgetMethods'
@@ -21,18 +21,15 @@ const Tradingview = () => {
   const { kline, trade } = useStores()
   const { isMobile, isIpad, isMobileOrIpad, isPc } = useEnv()
   const symbolInfo = trade.getActiveSymbolInfo()
-  const dataSourceCode = symbolInfo?.dataSourceCode
   const symbolName = symbolInfo?.symbol
   const previousSymbolName = usePrevious(symbolName)
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
   const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
   const { theme } = useTheme()
-
   const datafeedParams = {
     setActiveSymbolInfo: kline.setActiveSymbolInfo, // 记录当前的symbol
     removeActiveSymbol: kline.removeActiveSymbol, // 取消订阅移除symbol
-    getDataFeedBarCallback: kline.getDataFeedBarCallback, // 获取k线柱数据回调
-    dataSourceCode // 数据源
+    getDataFeedBarCallback: kline.getDataFeedBarCallback // 获取k线柱数据回调
   }
 
   const themeMode = (theme || 'light') as ThemeName
@@ -69,7 +66,7 @@ const Tradingview = () => {
 
     setTimeout(() => {
       setLoading(false)
-    }, 800)
+    }, 200)
 
     tvWidget.onChartReady(async () => {
       setIsChartLoading(false)
@@ -188,23 +185,32 @@ const Tradingview = () => {
 
   useEffect(() => {
     if (!symbolName || kline.tvWidget) return
+    setIsChartLoading(true)
+    setLoading(true)
+
     // 初始化图表实例
     initChart()
   }, [params, kline.tvWidget])
 
-  // 监听切换品种
-  useEffect(() => {
-    if (!symbolName) return
-    // 实例存在
-    if (kline.tvWidget) {
-      kline.tvWidget.onChartReady(() => {
-        if (symbolName !== previousSymbolName) {
-          // 实例已经初始化，直接切换品种
-          setSymbol(symbolName, kline.tvWidget)
-        }
-      })
+  // 监听切换品种 需要防抖避免用户重复切换导致k线显示问题
+  useDebounceEffect(
+    () => {
+      if (!symbolName) return
+      // 实例存在
+      if (kline.tvWidget) {
+        kline.tvWidget.onChartReady(() => {
+          if (symbolName !== previousSymbolName) {
+            // 实例已经初始化，直接切换品种
+            setSymbol(symbolName, kline.tvWidget)
+          }
+        })
+      }
+    },
+    [symbolName],
+    {
+      wait: 500
     }
-  }, [symbolName])
+  )
 
   const className = useEmotionCss(({ token }) => {
     return {
@@ -215,7 +221,7 @@ const Tradingview = () => {
   })
 
   return (
-    <div className={classNames('h-[585px] relative', className)}>
+    <div className={cn('h-[585px] relative', className)}>
       <div id="tradingview" ref={chartContainerRef} className="relative flex flex-1 h-full" style={{ opacity: loading ? 0 : 1 }} />
       {isChartLoading && (
         <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-full z-40">

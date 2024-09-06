@@ -58,6 +58,16 @@ export async function getMoneyRecordsPageList(params: Account.MoneyRecordsPageLi
   return request<API.Response<API.PageResult<Account.MoneyRecordsPageListItem>>>('/api/trade-core/coreApi/account/moneyRecords', {
     method: 'GET',
     params
+  }).then((res) => {
+    if (res.data?.records?.length) {
+      res.data.records = res.data.records.map((item) => {
+        if (item.remark && typeof item.remark === 'string') {
+          item.remark = JSON.parse(item.remark)
+        }
+        return item
+      })
+    }
+    return res
   })
 }
 

@@ -1,13 +1,14 @@
 import { FormattedMessage } from '@umijs/max'
 import { useNetwork } from 'ahooks'
-import { Tooltip } from 'antd'
-import classNames from 'classnames'
+import { Button, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
 import Marquee from 'react-fast-marquee'
 
 import SignalIcon from '@/components/Base/Svg/SignalIcon'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { cn } from '@/utils/cn'
 import { goToService } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -15,9 +16,15 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 function Footer() {
   const { theme } = useTheme()
   const networkState = useNetwork()
-  const { ws, trade } = useStores()
+  const { ws, trade, kline } = useStores()
   const readyState = ws.readyState
-  const isConnected = readyState === 'OPEN' && networkState.online
+  const isOnline = networkState.online
+  const isConnected = readyState === 'OPEN' && isOnline
+  const [openTips, setOpenTips] = useState<any>(false)
+
+  useEffect(() => {
+    setOpenTips(!isOnline || readyState === 'CLOSED')
+  }, [isOnline, readyState])
 
   const CLOSED = {
     title: <FormattedMessage id="mt.duankailianjie" />,
@@ -25,7 +32,7 @@ function Footer() {
     color: '--color-red-600',
     status: 'CLOSED'
   }
-  let connectedStatusMap = networkState.online
+  let connectedStatusMap = isOnline
     ? {
         CONNECTING: {
           title: <FormattedMessage id="mt.lianjiezhong" />,
@@ -46,7 +53,32 @@ function Footer() {
 
   return (
     <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-primary px-5 pb-2 pt-2 border-t border-gray-60 dark:border-[var(--border-primary-color)] z-40">
-      <Tooltip placement="topLeft" title={connectedStatusMap.desc}>
+      <Tooltip
+        placement="topLeft"
+        title={
+          <span>
+            {connectedStatusMap.desc}
+            {readyState === 'CLOSED' && (
+              <Button
+                type="link"
+                onClick={() => {
+                  // 行情重新建立新的连接
+                  ws.reconnect()
+                  // @ts-ignore
+                  // 刷新k线实例
+                  kline.tvWidget = null
+                }}
+              >
+                <FormattedMessage id="common.shuaxin" />
+              </Button>
+            )}
+          </span>
+        }
+        open={openTips}
+        onOpenChange={(value) => {
+          setOpenTips(value)
+        }}
+      >
         <div className="flex items-center border-r border-r-gray-200 dark:border-r-gray-700 pr-3">
           <div className="flex items-center">
             {connectedStatusMap.status === 'CLOSED' ? (
@@ -74,8 +106,8 @@ function Footer() {
                     trade.setOpenSymbolNameList(item.symbol)
                   }}
                 >
-                  <div className="text-wrap text-xs font-medium text-primary">{item.symbol}</div>
-                  <div className={classNames('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
+                  <div className="text-wrap text-xs font-medium text-primary">{item.alias}</div>
+                  <div className={cn('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
                     {res.bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
                   </div>
                   <div className="px-[3px] text-xs font-medium text-weak">{bid}</div>

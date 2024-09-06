@@ -5,7 +5,12 @@ type IProps = {
   /**文字 */
   description?: React.ReactNode
   src?: string
+  className?: string
 }
-export default function Empty({ src, description }: IProps) {
-  return <EmptyComp image={src ?? '/img/empty-icon.png'} description={description || <FormattedMessage id="common.noData" />} />
+export default function Empty({ src, description, className }: IProps) {
+  return (
+    <div className={className}>
+      <EmptyComp image={src ?? '/img/empty-icon.png'} description={description ?? <FormattedMessage id="common.noData" />} />
+    </div>
+  )
 }

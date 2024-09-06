@@ -49,12 +49,12 @@ function LevelAgeModal({ trigger }: IProps) {
               }}
             />
             <div className="pt-5">
-              <div className="pb-[7px]">
+              {/* <div className="pb-[7px]">
                 <img src="/img/lingxing-1.png" width={8} height={8} />
                 <span className="text-xs text-secondary pl-[5px]">
                   <FormattedMessage id="mt.tiaozhengganggantip1" />
                 </span>
-              </div>
+              </div> */}
               <div className="text-xs text-secondary pb-[7px]">
                 <img src="/img/lingxing-1.png" width={8} height={8} />
                 <span className="text-xs text-secondary pl-[5px]">

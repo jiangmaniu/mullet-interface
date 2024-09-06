@@ -1,9 +1,11 @@
 import { history } from '@umijs/max'
 import { stringify } from 'qs'
 
+import { WEB_HOME_PAGE } from '@/constants'
+import { stores } from '@/context/mobxProvider'
 import { logout } from '@/services/api/user'
 
-import { STORAGE_REMOVE_TOKEN, STORAGE_REMOVE_USER_INFO } from './storage'
+import { STORAGE_GET_TOKEN, STORAGE_REMOVE_TOKEN, STORAGE_REMOVE_USER_INFO, STORAGE_SET_CONF_INFO } from './storage'
 
 /**
  * 退出登录
@@ -16,6 +18,10 @@ export const onLogout = async (noRequestLogout?: boolean) => {
 
   STORAGE_REMOVE_TOKEN()
   STORAGE_REMOVE_USER_INFO()
+  STORAGE_SET_CONF_INFO('', 'currentAccountInfo') // 重置当前选择的账户
+
+  // 关闭行情
+  stores.ws.close()
 
   // 退出登录，并且将当前的 url 保存
   const { search, pathname } = window.location
@@ -139,3 +145,12 @@ export const onBack = () => {
 
 // 跳转客服页面 @TODO
 export const goToService = () => {}
+
+// 跳转首页
+export const goHome = () => {
+  if (STORAGE_GET_TOKEN()) {
+    push(WEB_HOME_PAGE)
+  } else {
+    push('/user/login')
+  }
+}

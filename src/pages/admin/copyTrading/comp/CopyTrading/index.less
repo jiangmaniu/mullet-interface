@@ -1,0 +1,55 @@
+.dynamic.ant-segmented {
+  --duration: 15s;
+
+  // .ant-segmented-item.ant-segmented-item-selected {
+  //   transition: width var(--duration);
+  // }
+
+  // .ant-segmented-item.ant-segmented-item-selected::after {
+  //   width: 7rem;
+  //   transition: width var(--duration);
+  // }
+
+  // .ant-segmented-item::after {
+  //   transition: width var(--duration);
+  // }
+
+  .ant-segmented-thumb {
+    --thumb-start-width: 112px !important;
+    --thumb-active-width: 112px !important;
+    // transition: all var(--duration);
+
+    // .ant-segmented-item {
+    //   transition: width var(--duration);
+
+    //   // .ant-segmented-item-label div {
+    //   //   transition: width var(--duration);
+    //   // }
+    // }
+
+    // .ant-segmented-item::after {
+    //   transition: width var(--duration);
+    // }
+  }
+}
+
+// 动画展开
+@keyframes expand {
+  0% {
+    // width: 5rem;
+  }
+
+  100% {
+    width: 7rem;
+  }
+}
+
+@keyframes shrink {
+  0% {
+    // width: 7rem;
+  }
+
+  100% {
+    width: '100%';
+  }
+}

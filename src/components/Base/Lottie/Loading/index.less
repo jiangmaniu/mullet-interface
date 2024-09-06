@@ -1,0 +1,24 @@
+.dot-ani {
+  display: inline-block;
+  width: 16px;
+  &::after {
+    animation: dotAni 2s infinite;
+    content: '';
+  }
+}
+
+@keyframes dotAni {
+  0%,
+  100% {
+    content: '';
+  }
+  25% {
+    content: '.';
+  }
+  50% {
+    content: '..';
+  }
+  75% {
+    content: '...';
+  }
+}

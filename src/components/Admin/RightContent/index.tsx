@@ -1,21 +1,18 @@
-import { QuestionCircleOutlined } from '@ant-design/icons'
+import { CopyOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, history, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
-import { Tooltip } from 'antd'
-import classNames from 'classnames'
+import { Segmented, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
-import CopyComp from '@/components/Base/Copy'
-import Tabs from '@/components/Base/CustomTabs'
 import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
-import SwitchTheme from '@/components/SwitchTheme'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { copyContent, formatNum, hiddenCenterPartStr } from '@/utils'
+import { cn } from '@/utils/cn'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
@@ -126,6 +123,10 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const { balance, availableMargin, totalProfit, occupyMargin } = trade.getAccountBalance()
   const { pathname } = useLocation()
   const isTradePage = pathname.indexOf('/trade') !== -1
+  const currencyDecimal = currentAccountInfo.currencyDecimal // 账户组小数位
+
+  // 排除当前选择的账户
+  const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
 
   useEffect(() => {
     // 切换真实模拟账户列表
@@ -136,16 +137,16 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const renderAccountBoxHover = () => {
     const list = [
       {
-        label: <FormattedMessage id="mt.zongzichanjingzhi" />,
+        label: <FormattedMessage id="mt.zhanghuyue" />,
         value: balance,
-        tips: <FormattedMessage id="mt.zichanjingzhitips" />
+        tips: <FormattedMessage id="mt.zhanghuyueTips" />
       },
       { label: <FormattedMessage id="mt.fudongyingkui" />, value: totalProfit, tips: <FormattedMessage id="mt.fudongyingkuitips" /> },
       { label: <FormattedMessage id="mt.keyong" />, value: availableMargin, tips: <FormattedMessage id="mt.keyongtips" /> },
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-primary pb-1 xl:w-[420px] xl:pt-[18px]">
+      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-primary pb-1 xl:w-[360px] xl:pt-[18px]">
         <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
             <div className="mb-6 flex flex-wrap items-center justify-between text-weak" key={idx}>
@@ -157,7 +158,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
               </Tooltip>
               <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
               <span className="max-w-[240px] break-all text-right text-primary !font-dingpro-medium">
-                {formatNum(item.value, { precision: 2 })} USD
+                {formatNum(item.value, { precision: currencyDecimal })} USD
               </span>
             </div>
           ))}
@@ -196,17 +197,19 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             </Button>
           </div>
         </div> */}
-        <div className="px-[18px] py-0 xl:border-t-[2px] xl:border-[rgba(218,218,218,0.2)]">
-          <div className="my-3 flex items-center justify-between">
-            <Tabs
-              items={[
-                { label: <FormattedMessage id="mt.zhenshizhanghao" />, key: 'REAL' },
-                { label: <FormattedMessage id="mt.monizhanghu" />, key: 'DEMO' }
-              ]}
-              onChange={(key: any) => {
-                setAccountTabActiveKey(key)
+        <div className="px-[18px] py-0 xl:border-t-[2px] xl:border-[rgba(218,218,218,0.2)] flex flex-col">
+          <div className="my-3 flex items-center justify-between flex-shrink-0 flex-grow-0">
+            <Segmented
+              className="account"
+              // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
+              onChange={(value: any) => {
+                setAccountTabActiveKey(value)
               }}
-              activeKey={accountTabActiveKey}
+              value={accountTabActiveKey}
+              options={[
+                { label: <FormattedMessage id="mt.zhenshizhanghao" />, value: 'REAL' },
+                { label: <FormattedMessage id="mt.monizhanghu" />, value: 'DEMO' }
+              ]}
             />
             <div
               onClick={() => {
@@ -218,9 +221,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             </div>
           </div>
           <div className="max-h-[380px] overflow-y-auto">
-            {currentAccountList.map((item, idx: number) => {
+            {accountArr.map((item, idx: number) => {
               const isSimulate = item.isSimulate
-              const disabledTrade = item?.status === 'DISABLED' || !item.enableTrade || !item.isTrade
+              const disabledTrade = !item?.enableConnect || item.status === 'DISABLED'
               return (
                 <div
                   onClick={() => {
@@ -230,11 +233,19 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                     if (disabledTrade) {
                       return
                     }
-                    trade.setCurrentAccountInfo(item)
-                    trade.jumpTrade()
+
+                    setAccountBoxOpen(false)
+
+                    setTimeout(() => {
+                      trade.setCurrentAccountInfo(item)
+                      trade.jumpTrade()
+
+                      // 切换账户重置
+                      trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                    }, 200)
                   }}
-                  key={idx}
-                  className={classNames(
+                  key={item.id}
+                  className={cn(
                     'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
                     {
                       'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
@@ -249,23 +260,25 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                       </div>
                       <div className="ml-[10px] flex px-1">
                         <div
-                          className={classNames(
+                          className={cn(
                             'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
                             isSimulate ? 'bg-green' : 'bg-brand'
                           )}
                         >
                           {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                         </div>
-                        {/* <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
-                        MT
-                      </div> */}
+                        {item.synopsis?.abbr && (
+                          <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                            {item.synopsis?.abbr}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                   <div className="mt-1">
                     <div>
                       <span className="text-[20px] text-primary !font-dingpro-regular">
-                        {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: 2 })}
+                        {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
                       </span>{' '}
                       <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                     </div>
@@ -273,7 +286,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                 </div>
               )
             })}
-            <div className="my-3">{currentAccountList.length === 0 && <Empty />}</div>
+            <div className="my-3">{accountArr.length === 0 && <Empty />}</div>
           </div>
         </div>
       </div>
@@ -320,57 +333,63 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   return (
     <div className="flex items-center">
       <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
-        <Dropdown
-          placement="topLeft"
-          dropdownRender={(origin) => {
-            return renderAccountBoxHover()
-          }}
-          onOpenChange={(open) => {
-            setAccountBoxOpen(open)
-          }}
-          align={{ offset: [0, 0] }}
-        >
-          <div
-            className={classNames('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}
-            onMouseEnter={() => {
-              // 刷新账户余额信息,使用ws最新的
-              // setTimeout(() => {
-              //   fetchUserInfo(false)
-              // }, 300)
+        {isTradePage && (
+          <Dropdown
+            placement="topLeft"
+            dropdownRender={renderAccountBoxHover}
+            onOpenChange={(open) => {
+              setAccountBoxOpen(open)
             }}
+            open={accountBoxOpen}
+            align={{ offset: [0, 0] }}
           >
-            <div className="flex flex-col items-end group relative">
-              <span className="sm:text-xl text-base !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
-              <div className="flex items-center pt-[2px]">
-                <span className={classNames('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
-                  {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
-                </span>
-                <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
-                <span className={classNames('text-xs dark:text-gray-570', iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500')}>
-                  #{hiddenCenterPartStr(currentAccountInfo?.id, 4)}
-                </span>
+            <div
+              className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}
+              onMouseEnter={() => {
+                // 刷新账户余额信息,使用ws最新的
+                // setTimeout(() => {
+                //   fetchUserInfo(false)
+                // }, 300)
+              }}
+            >
+              <div className="flex flex-col items-end group relative">
+                <span className="text-lg !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
+                <div className="flex items-center">
+                  <span className={cn('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
+                    {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+                  </span>
+                  <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
+                  <span
+                    className={cn(
+                      'text-xs dark:text-gray-570 truncate max-w-[110px]',
+                      iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500'
+                    )}
+                  >
+                    {currentAccountInfo?.name}
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200 dark:bg-gray-570"></div>
-            <div>
-              {/* <img
+              <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200 dark:bg-gray-570"></div>
+              <div>
+                {/* <img
                 src="/img/uc/select.png"
                 width={24}
                 height={24}
                 style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
                 className="transition-all duration-300"
               /> */}
-              <Iconfont
-                name="down"
-                width={24}
-                height={24}
-                color={iconDownColor}
-                className=" cursor-pointer rounded-lg transition-all duration-300"
-                style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
-              />
+                <Iconfont
+                  name="down"
+                  width={24}
+                  height={24}
+                  color={iconDownColor}
+                  className="cursor-pointer rounded-lg transition-all duration-300"
+                  style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
+                />
+              </div>
             </div>
-          </div>
-        </Dropdown>
+          </Dropdown>
+        )}
 
         <Iconfont
           name="caidan"
@@ -390,6 +409,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           className=" cursor-pointer rounded-lg"
           hoverStyle={{
             background: theme === 'black' ? '#fbfbfb' : '#222222'
+          }}
+          onClick={() => {
+            push('/account')
           }}
         />
 
@@ -413,13 +435,26 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                     <img src="/img/user-icon.png" width={40} height={40} />
                     <div className="flex flex-col pl-[14px]">
                       <span className="text-primary font-semibold">
-                        <CopyComp style={{ display: 'flex', alignItems: 'center' }}>
-                          HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
-                        </CopyComp>
+                        HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
+                        <span
+                          className="pl-1 cursor-pointer"
+                          onClick={() => {
+                            copyContent(currentUser?.userInfo?.account)
+                          }}
+                        >
+                          <CopyOutlined style={{ fontSize: 14 }} />
+                        </span>
                       </span>
-                      <span className="text-green text-xs pt-[6px]">
-                        <FormattedMessage id="mt.yirenzheng" />
-                      </span>
+                      {currentUser?.isKycAuth && (
+                        <span className="text-green text-xs pt-[6px]">
+                          <FormattedMessage id="mt.yirenzheng" />
+                        </span>
+                      )}
+                      {!currentUser?.isKycAuth && (
+                        <span className="text-red text-xs pt-[6px]">
+                          <FormattedMessage id="mt.weirenzheng" />
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div
@@ -448,7 +483,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           />
         </Dropdown>
       </div>
-      {isTradePage && <SwitchTheme />}
+      {/* {isTradePage && <SwitchTheme />} */}
       <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />
     </div>
   )

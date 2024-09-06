@@ -11,6 +11,7 @@ import {
   KEY_SYMBOL_NAME_LIST,
   KEY_THEME,
   KEY_TOKEN,
+  KEY_TRADE_PAGE_SHOW_TIME,
   KEY_TRADE_THEME,
   KEY_USER_CONF_INFO,
   KEY_USER_INFO
@@ -63,7 +64,12 @@ export const STORAGE_GET_CONF_INFO = genStorageGet(KEY_USER_CONF_INFO)
 export const STORAGE_SET_CONF_INFO = genStorageSet(KEY_USER_CONF_INFO)
 export const STORAGE_REMOVE_CONF_INFO = storageRemove(KEY_USER_CONF_INFO)
 
-// 全局主题色
+// 进入交易页面时间，用来刷新k线，避免长时间不进入行情断开
+export const STORAGE_GET_TRADE_PAGE_SHOW_TIME = genStorageGet(KEY_TRADE_PAGE_SHOW_TIME)
+export const STORAGE_SET_TRADE_PAGE_SHOW_TIME = genStorageSet(KEY_TRADE_PAGE_SHOW_TIME)
+export const STORAGE_REMOVE_TRADE_PAGE_SHOW_TIME = storageRemove(KEY_TRADE_PAGE_SHOW_TIME)
+
+// 主题色
 export const STORAGE_GET_THEME = genStorageGet(KEY_THEME)
 export const STORAGE_SET_THEME = genStorageSet(KEY_THEME)
 

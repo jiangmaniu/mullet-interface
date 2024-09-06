@@ -1,14 +1,17 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { useLocation, useModel } from '@umijs/max'
-import classNames from 'classnames'
+import { FormattedMessage, useLocation, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
+import { ADMIN_HOME_PAGE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
+import { cn } from '@/utils/cn'
+import { push } from '@/utils/navigator'
+import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 
 import BuyAndSell from './comp/BuyAndSell'
 import BtnGroup from './comp/BuyAndSellBtnGroup'
@@ -26,9 +29,17 @@ export default observer(() => {
   const sidebarRef = useRef()
   const buyAndSellRef = useRef<any>(null)
   const { ws, trade, kline } = useStores()
+  const { initialState } = useModel('@@initialState')
   const { fetchUserInfo } = useModel('user')
   const { pathname } = useLocation()
   const { setTheme } = useTheme()
+  const currentUser = initialState?.currentUser
+
+  useEffect(() => {
+    if (!currentUser?.accountList?.length) {
+      push(ADMIN_HOME_PAGE)
+    }
+  }, [currentUser])
 
   useEffect(() => {
     // 设置交易页面主题变量为全局主题
@@ -47,6 +58,25 @@ export default observer(() => {
   }
 
   useEffect(() => {
+    if (trade.currentAccountInfo?.status === 'DISABLED' || trade.currentAccountInfo?.enableConnect === false) {
+      push('/account')
+    }
+  }, [pathname, trade.currentAccountInfo])
+
+  const checkPageShowTime = () => {
+    // 记录上次进入时间
+    const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
+    // 缓存时间大于30分钟、初次载入
+    if ((updateTime && Date.now() - updateTime > 30 * 60 * 1000) || !updateTime) {
+      STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
+      return true
+    }
+    return false
+  }
+
+  useEffect(() => {
+    checkPageShowTime()
+
     return () => {
       // 取消订阅深度报价
       ws.subscribeDepth(true)
@@ -63,6 +93,12 @@ export default observer(() => {
   usePageVisibility(
     () => {
       console.log('Page is visible')
+
+      // 避免k线多次刷新
+      if (!checkPageShowTime()) return
+
+      console.log('======开始刷新k线======')
+
       // 用户从后台切换回前台时执行的操作
       ws.reconnect()
 
@@ -77,6 +113,10 @@ export default observer(() => {
     },
     () => {
       console.log('Page is hidden')
+
+      // 避免k线多次刷新
+      if (!checkPageShowTime()) return
+
       // 用户从前台切换到后台时执行的操作
       // @ts-ignore
       kline.tvWidget = null
@@ -116,12 +156,12 @@ export default observer(() => {
               {/* 买卖交易区 */}
               <BuyAndSell />
             </div>
-            <div className={classNames('flex items-start justify-between relative bg-primary', borderTopClassName)}>
+            <div className={cn('flex items-start justify-between relative bg-primary', borderTopClassName)}>
               {/* 交易记录 */}
-              <div style={{ width: 'calc(100vw - 303px)' }} className={classNames('flex-1')}>
+              <div style={{ width: 'calc(100vw - 303px)' }} className={cn('flex-1')}>
                 <TradeRecord />
               </div>
-              <div className={classNames('w-[300px] min-h-[270px] relative')}>
+              <div className={cn('w-[300px] min-h-[270px] relative')}>
                 <Liquidation />
               </div>
             </div>
@@ -141,16 +181,7 @@ export default observer(() => {
             >
               {/* 底部浮动按钮 */}
               <div className="relative flex flex-1 items-center justify-center py-2">
-                <BtnGroup
-                  onBuy={() => {
-                    buyAndSellRef.current.show(1)
-                  }}
-                  onSell={() => {
-                    buyAndSellRef.current.show(2)
-                  }}
-                  type="footer"
-                  sellBgColor="var(--color-red-600)"
-                />
+                <BtnGroup type="footer" sellBgColor="var(--color-red-600)" />
               </div>
               <TradeRecord
                 trigger={
@@ -166,6 +197,7 @@ export default observer(() => {
         }
       />
       <BalanceEmptyModal />
+      <ModalLoading open={trade.switchAccountLoading} tips={<FormattedMessage id="mt.qiehuanzhanghuzhong" />} />
     </>
   )
 })

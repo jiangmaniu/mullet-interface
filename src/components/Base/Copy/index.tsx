@@ -17,7 +17,7 @@ export default function CopyComp({ children, style, textStyle }: IProps) {
         // icon: <img src="/img/icons/copy@2x.png" className="w-[18px] h-[18px] relative top-[3px]" />,
         icon: <CopyOutlined style={{ fontSize: 14, color: '#9E9E9E' }} />,
         onCopy: (event: any) => {
-          message.success(intl.formatMessage({ id: 'common.copySuccess' }))
+          message.success(intl.formatMessage({ id: 'common.fuzhichenggong' }))
         },
         text: children
       }}

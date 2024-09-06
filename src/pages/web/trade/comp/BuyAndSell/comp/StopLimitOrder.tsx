@@ -1,76 +1,60 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { Button } from 'antd'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useImperativeHandle, useState, useTransition } from 'react'
+import { forwardRef, useEffect, useState, useTransition } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum } from '@/utils'
+import { formatNum, getPrecisionByNumber } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
-import { calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
+import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 
 import Checkbox from '@/components/Base/Checkbox'
-import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
+import { ORDER_TYPE } from '@/constants/enum'
+import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import classNames from 'classnames'
-import { OP_BUY } from '..'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
 type IProps = {
-  type?: any
   popupRef?: any
-  orderType?: any
 }
 
 // 限价单
 export default observer(
-  forwardRef(({ popupRef, type, orderType }: IProps, ref) => {
+  forwardRef(({ popupRef }: IProps, ref) => {
     const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
     const intl = useIntl()
     const { isPc, isMobileOrIpad } = useEnv()
     const { trade, ws } = useStores()
     const { fetchUserInfo } = useModel('user')
-    const [checkedSpSl, setCheckedSpSl] = useState(true) // 勾选止盈止损
+    const [checkedSpSl, setCheckedSpSl] = useState(false) // 不勾选止盈止损
     const { availableMargin } = trade.getAccountBalance()
-    const [tradeType, setTradeType] = useState(OP_BUY) // 交易方向：1买入 2卖出
     const [margin, setMargin] = useState(0)
     const [loading, setLoading] = useState(false)
-    const marginType = trade.marginType
-
-    useEffect(() => {
-      setTradeType(type || OP_BUY)
-    }, [type])
-
-    // 对外暴露接口
-    useImperativeHandle(ref, () => {
-      return {
-        tradeType,
-        setTradeType
-      }
-    })
+    const { marginType, buySell, orderType } = trade
 
     let [priceValue, setPrice] = useState<any>(0) // 价格
     let [countValue, setCount] = useState<any>(0.01) // 手数
     let [spValue, setSp] = useState<any>(0) // 止盈
     let [slValue, setSl] = useState<any>(0) // 止损
 
-    const isBuy = tradeType === OP_BUY
+    const isBuy = buySell === 'BUY'
 
     // 实时计算预估强平价
     const expectedForceClosePrice = calcExpectedForceClosePrice({
       orderVolume: countValue,
       orderMargin: margin,
       orderType: isBuy ? ORDER_TYPE.STOP_LOSS_LIMIT_BUY_ORDER : ORDER_TYPE.STOP_LOSS_LIMIT_SELL_ORDER,
-      buySell: tradeType === 1 ? 'BUY' : 'SELL'
+      buySell
     })
 
     // 实时计算下单时预估保证金
     const expectedMargin = calcExpectedMargin({
-      buySell: tradeType === 1 ? 'BUY' : 'SELL',
+      buySell,
       orderVolume: countValue,
       orderType: isBuy ? ORDER_TYPE.STOP_LOSS_LIMIT_BUY_ORDER : ORDER_TYPE.STOP_LOSS_LIMIT_SELL_ORDER,
       price: priceValue
@@ -85,11 +69,15 @@ export default observer(
     const symbol = quoteInfo.symbol
     const d = quoteInfo?.digits
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
-    const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 20
+    const maxOpenVolume = getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 0
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
-    const vmax = maxOpenVolume // 当前账户保证金最大可开手数
+    const vmax = symbolConf?.maxTrade as number
     const vmin = symbolConf?.minTrade || 0.01
-    const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
+    const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d) // 手数步长
+    // 根据品种小数点位数计算步长，独立于手数步长step。获取计算的小数位倒数第二位开始作为累加步长
+    // 限价、止盈止损、停损挂单，加减时，连动报价小数位倒数第二位
+    const step2 = Math.pow(10, -(d - 1)) || step
+    const countPrecision = getPrecisionByNumber(symbolConf?.minTrade) // 手数精度
 
     // 切换品种、买卖重置内容
     useEffect(() => {
@@ -97,7 +85,7 @@ export default observer(
       setSp(0)
       setCount(vmin)
       setPrice(0)
-    }, [symbol, tradeType, orderType, vmin])
+    }, [symbol, buySell, orderType, vmin])
 
     useEffect(() => {
       // 取消勾选了止盈止损，重置值
@@ -118,7 +106,7 @@ export default observer(
     if (bid && ask) {
       // 买入
       if (isBuy) {
-        priceTip = (bid - stopl).toFixed(d)
+        priceTip = (ask + stopl).toFixed(d)
         sl_scope = price ? (price - stopl).toFixed(d) : 0
         sp_scope = price ? (price + stopl).toFixed(d) : 0
 
@@ -126,7 +114,7 @@ export default observer(
 
         spProfit = price && sp ? ((sp - price) * count * consize).toFixed(d) : 0
       } else {
-        priceTip = (ask + stopl).toFixed(d)
+        priceTip = (bid - stopl).toFixed(d)
         sl_scope = price ? (price + stopl).toFixed(d) : 0
         sp_scope = price ? (price - stopl).toFixed(d) : 0
 
@@ -138,7 +126,7 @@ export default observer(
 
     const orderParams = {
       symbol,
-      buySell: isBuy ? TRADE_BUY_SELL.BUY : TRADE_BUY_SELL.SELL, // 订单方向
+      buySell, // 订单方向
       orderVolume: count,
       stopLoss: sl ? parseFloat(sl) : undefined,
       takeProfit: sp ? parseFloat(sp) : undefined,
@@ -173,8 +161,8 @@ export default observer(
         message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
         return
       }
-      if (count < vmin || count > vmax) {
-        message.info(intl.formatMessage({ id: 'mt.shousushuruyouwu' }))
+      if (count < vmin || count > maxOpenVolume) {
+        message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
         return
       }
       const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
@@ -225,27 +213,21 @@ export default observer(
           <SelectMarginTypeOrLevelAge />
 
           <div className="relative flex items-center justify-center rounded-xl border border-primary dark:border-gray-580 p-[2px]">
-            <BuyAndSellBtnGroup
-              activeKey={tradeType}
-              onChange={(key: any) => {
-                setTradeType(key)
-              }}
-              type="popup"
-            />
+            <BuyAndSellBtnGroup type="popup" />
           </div>
-          <div className="flex items-center justify-between mt-3 mb-1">
+          {/* <div className="flex items-center justify-between mt-3 mb-1">
             <div className="mt-1 flex items-center justify-center pb-2">
               <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.keyong" />
               </span>
               <span className="pl-2 text-xs text-primary !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
             </div>
-          </div>
+          </div> */}
           <InputNumber
             // showAddMinus={false}
             placeholder={intl.formatMessage({ id: 'mt.shurujiage' })}
             // addonBefore={intl.formatMessage({ id: 'mt.jiage' })}
-            rootClassName="!z-50 mb-3"
+            rootClassName="!z-50 mb-3 mt-[14px]"
             classNames={{ input: 'text-center' }}
             value={priceValue}
             onChange={(value: any) => {
@@ -253,7 +235,7 @@ export default observer(
             }}
             onAdd={() => {
               if (price && price >= 0) {
-                const c = (((price + step) * 100) / 100).toFixed(d)
+                const c = (((price + step2) * 100) / 100).toFixed(d)
                 setPrice(c)
               } else {
                 setPrice(priceTip)
@@ -261,14 +243,14 @@ export default observer(
             }}
             onMinus={() => {
               if (price && price > 0) {
-                const c = (((price - step) * 100) / 100).toFixed(d)
+                const c = (((price - step2) * 100) / 100).toFixed(d)
                 setPrice(c)
               } else {
                 setPrice(priceTip)
               }
             }}
             tips={
-              <span className={classNames('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
+              <span className={cn('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
                 {isBuy && (
                   <>
                     <FormattedMessage id="mt.mairujiafanwei" /> ≤ {formatNum(priceTip)} USD
@@ -307,7 +289,7 @@ export default observer(
                 }}
                 onAdd={() => {
                   if (sp && sp > 0.01) {
-                    const c = (((sp + step) * 100) / 100).toFixed(d)
+                    const c = (((sp + step2) * 100) / 100).toFixed(d)
                     setSp(c)
                   } else {
                     setSp(sp_scope)
@@ -315,7 +297,7 @@ export default observer(
                 }}
                 onMinus={() => {
                   if (sp && sp > 0.01) {
-                    const c = (((sp - step) * 100) / 100).toFixed(d)
+                    const c = (((sp - step2) * 100) / 100).toFixed(d)
                     setSp(c)
                   } else {
                     setSp(sp_scope)
@@ -323,7 +305,7 @@ export default observer(
                 }}
                 tips={
                   <>
-                    <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
+                    <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
@@ -331,7 +313,17 @@ export default observer(
                       </span>
                       <span className="!font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
-                        <span className="pl-[2px]">{formatNum(spProfit)} USD</span>
+                        <span className="pl-[2px]">
+                          {formatNum(
+                            calcExchangeRate({
+                              value: spProfit,
+                              unit: symbolConf?.profitCurrency,
+                              buySell
+                            }),
+                            { precision: 2 }
+                          )}{' '}
+                          USD
+                        </span>
                       </span>
                     </div>
                   </>
@@ -349,7 +341,7 @@ export default observer(
                 }}
                 onAdd={() => {
                   if (sl && sl > 0.01) {
-                    const c = (((sl + step) * 100) / 100).toFixed(d)
+                    const c = (((sl + step2) * 100) / 100).toFixed(d)
                     setSl(c)
                   } else {
                     setSl(sl_scope)
@@ -357,14 +349,14 @@ export default observer(
                 }}
                 onMinus={() => {
                   if (sl && sl > 0.01) {
-                    const c = (((sl - step) * 100) / 100).toFixed(d)
+                    const c = (((sl - step2) * 100) / 100).toFixed(d)
                     setSl(c)
                   } else {
                     setSl(sl_scope)
                   }
                 }}
                 tips={
-                  <div className={classNames('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
+                  <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
                     <span className="!font-dingpro-regular pb-[2px]">
                       <FormattedMessage id="mt.fanwei" />
                       <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>
@@ -372,7 +364,17 @@ export default observer(
                     </span>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
-                      <span className="pl-[2px]">{formatNum(slProfit)} USD</span>
+                      <span className="pl-[2px]">
+                        {formatNum(
+                          calcExchangeRate({
+                            value: slProfit,
+                            unit: symbolConf?.profitCurrency,
+                            buySell
+                          }),
+                          { precision: 2 }
+                        )}{' '}
+                        USD
+                      </span>
                     </span>
                   </div>
                 }
@@ -393,18 +395,20 @@ export default observer(
             value={countValue}
             max={vmax}
             min={vmin}
+            precision={countPrecision}
+            hiddenPrecision={false}
             onChange={(value: any) => {
-              setCount(value || vmin)
+              setCount(value || '')
             }}
             onAdd={() => {
               if (count && (isBuy ? count < vmax : count <= 5)) {
-                const c = (((count + step) * 100) / 100).toFixed(2)
+                const c = (((count + step) * 100) / 100).toFixed(countPrecision)
                 setCount(c)
               }
             }}
             onMinus={() => {
               if (count && (isBuy ? count > vmin : count > step)) {
-                const c = (((count - step) * 100) / 100).toFixed(2)
+                const c = (((count - step) * 100) / 100).toFixed(countPrecision)
                 setCount(c)
               }
             }}
@@ -439,10 +443,16 @@ export default observer(
           <div className="mt-4">
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-secondary">
+                <FormattedMessage id="mt.keyong" />
+              </span>
+              <span className="pl-2 text-xs text-primary !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
+            </div>
+            {/* <div className="flex items-center justify-between pb-[6px] w-full">
+              <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.yuguqiangpingjia" />
               </span>
               <span className="text-xs text-primary !font-dingpro-medium">{expectedForceClosePrice || '-'}</span>
-            </div>
+            </div> */}
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-secondary">
                 <FormattedMessage id="mt.yugubaozhengjin" />

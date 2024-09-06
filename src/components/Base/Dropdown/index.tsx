@@ -1,8 +1,9 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Dropdown as AntdDropdown } from 'antd'
 import type { DropDownProps } from 'antd/es/dropdown'
-import classNames from 'classnames'
 import React from 'react'
+
+import { cn } from '@/utils/cn'
 
 type DropdownProps = {
   overlayClassName?: string
@@ -17,7 +18,7 @@ const Dropdown: React.FC<DropdownProps> = ({ overlayClassName: cls, ...restProps
       }
     }
   })
-  return <AntdDropdown overlayClassName={classNames(className, cls)} {...restProps} />
+  return <AntdDropdown overlayClassName={cn(className, cls)} {...restProps} />
 }
 
 export default Dropdown

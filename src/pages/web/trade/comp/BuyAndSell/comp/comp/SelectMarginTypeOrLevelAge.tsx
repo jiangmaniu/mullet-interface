@@ -1,8 +1,8 @@
 import { ProFormSelectProps } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 
 import { useStores } from '@/context/mobxProvider'
+import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import LevelAgeModal from './LevelAgeModal'
@@ -51,7 +51,7 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
       <LevelAgeModal
         trigger={
           <div
-            className={classNames(
+            className={cn(
               'mb-3 flex flex-1 items-center border border-gray-200 hover:border-gray-380 dark:border-gray-580 rounded-lg cursor-pointer p-[6.8px]',
               {
                 'pointer-events-none': !isFloatLeverage

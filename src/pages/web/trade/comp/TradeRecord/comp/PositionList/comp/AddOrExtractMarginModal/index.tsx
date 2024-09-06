@@ -1,13 +1,13 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { Button } from 'antd'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
+import Button from '@/components/Base/Button'
 import Modal from '@/components/Base/Modal'
 import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'
 import { addMargin, extractMargin } from '@/services/api/tradeCore/order'
-import { formatNum, toFixed } from '@/utils'
+import { formatNum, getPrecisionByNumber, toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import { calcForceClosePrice } from '@/utils/wsUtil'
 
@@ -34,7 +34,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
 
   const orderMargin = info?.orderMargin || 0 // 订单追加的保证金
   const orderBaseMargin = info?.orderBaseMargin || 0 // 订单基础保证金，减少的保证金不能低于基础保证金
-  const avaMargin = parseInt(toFixed(isAdd ? availableMargin : orderMargin - orderBaseMargin)) // 增加、减少保证金的可用额度
+  const avaMargin = Number(isAdd ? availableMargin : toFixed(orderMargin - orderBaseMargin, getPrecisionByNumber(orderMargin))) // 增加、减少保证金的可用额度
 
   const forceClosePrice = inputValue
     ? calcForceClosePrice({
@@ -124,7 +124,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
                   {formatNum(avaMargin)} USD
                 </span>
               </div>
-              <div>
+              {/* <div>
                 <img src="/img/lingxing-2.png" width={8} height={8} />
                 <span className="text-xs text-primary pl-[5px] !font-dingpro-medium">
                   {isAdd ? (
@@ -134,7 +134,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
                   )}{' '}
                   {forceClosePrice ? formatNum(forceClosePrice) + 'USD' : '-'}
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
           <Button type="primary" block onClick={handleSubmit}>

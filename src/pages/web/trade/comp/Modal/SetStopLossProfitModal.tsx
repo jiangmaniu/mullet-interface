@@ -1,5 +1,4 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
@@ -13,8 +12,9 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
 
@@ -75,9 +75,12 @@ export default observer(
     const bid = quote.bid
     const ask = quote.ask
     const d = item.symbolDecimal
-    const step = Math.pow(10, -d) * 10
+    // const step = Math.pow(10, -d) * 10
+    // 根据品种小数点位数计算步长，独立于手数步长step。获取计算的小数位倒数第二位开始作为累加步长
+    // 限价、止盈止损、停损挂单，加减时，连动报价小数位倒数第二位
+    const step = Math.pow(10, -(d - 1)) || Math.pow(10, -d) * 10
     // const stopl = symbolInfo ? symbolInfo.stopl * Math.pow(10, -d) * 10 : 0
-    const symbolConf = quote.symbolConf
+    const symbolConf = item?.conf
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
     let sl_scope: any = 0 // 止损范围
     let sp_scope: any = 0 // 止盈范围
@@ -89,14 +92,14 @@ export default observer(
       sl_scope = (price - stopl).toFixed(d)
       sp_scope = (price + stopl).toFixed(d)
 
-      slProfit = sl ? ((sl - bid) * count * consize).toFixed(d) : 0
-      spProfit = sp ? ((sp - bid) * count * consize).toFixed(d) : 0
+      slProfit = sl ? ((sl - ask) * count * consize).toFixed(d) : 0
+      spProfit = sp ? ((sp - ask) * count * consize).toFixed(d) : 0
     } else {
       sl_scope = (price + stopl).toFixed(d)
       sp_scope = (price - stopl).toFixed(d)
 
-      slProfit = sl ? ((ask - sl) * count * consize).toFixed(d) : 0
-      spProfit = sp ? ((ask - sp) * count * consize).toFixed(d) : 0
+      slProfit = sl ? ((bid - sl) * count * consize).toFixed(d) : 0
+      spProfit = sp ? ((bid - sp) * count * consize).toFixed(d) : 0
     }
 
     const onFinish = async () => {
@@ -134,7 +137,7 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = (sp && sp < sp_scope) || (sl && sl > sl_scope)
+    const disabledBtn = isBuy ? (sp && sp < sp_scope) || (sl && sl > sl_scope) : (sp && sp > sp_scope) || (sl && sl < sl_scope)
 
     const renderContent = () => {
       return (
@@ -145,7 +148,7 @@ export default observer(
                 <div className="flex items-center">
                   <SymbolIcon src={item?.imgUrl} width={24} height={24} />
                   <span className="pl-[6px] text-base font-semibold text-primary">{symbol}</span>
-                  <span className={classNames('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
+                  <span className={cn('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
                 </div>
                 <div className="flex items-end justify-center flex-col">
                   <span className="text-sm text-primary">
@@ -181,6 +184,7 @@ export default observer(
             <div className="flex w-full flex-col items-center pt-5">
               <InputNumber
                 autoFocus={false}
+                showFloatTips={false}
                 label={intl.formatMessage({ id: 'mt.zhisun' })}
                 placeholder={intl.formatMessage({ id: 'mt.zhisun' })}
                 rootClassName="!z-30"
@@ -207,7 +211,7 @@ export default observer(
                   }
                 }}
                 tips={
-                  <div className={classNames('!font-dingpro-regular', { '!text-red': sl && sl > sl_scope })}>
+                  <div className={cn('!font-dingpro-regular', { '!text-red': isBuy ? sl && sl > sl_scope : sl && sl < sl_scope })}>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.fanwei" />
                       &nbsp;
@@ -217,13 +221,21 @@ export default observer(
                     <span className="pl-1 !font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
                       &nbsp;
-                      {formatNum(slProfit)} USD
+                      {formatNum(
+                        calcExchangeRate({
+                          value: slProfit,
+                          unit: symbolConf?.profitCurrency,
+                          buySell: item.buySell
+                        })
+                      )}{' '}
+                      USD
                     </span>
                   </div>
                 }
               />
               <InputNumber
                 autoFocus={false}
+                showFloatTips={false}
                 label={intl.formatMessage({ id: 'mt.zhiying' })}
                 placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
                 className="h-[38px]"
@@ -250,11 +262,18 @@ export default observer(
                   }
                 }}
                 tips={
-                  <span className={classNames('!font-dingpro-regular', { '!text-red': sp && sp < sp_scope })}>
+                  <span className={cn('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}>
                     <FormattedMessage id="mt.fanwei" />
                     &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
                     &nbsp;
-                    {formatNum(spProfit)} USD
+                    {formatNum(
+                      calcExchangeRate({
+                        value: spProfit,
+                        unit: symbolConf?.profitCurrency,
+                        buySell: item.buySell
+                      })
+                    )}{' '}
+                    USD
                   </span>
                 }
               />

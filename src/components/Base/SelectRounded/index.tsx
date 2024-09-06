@@ -19,10 +19,11 @@ type IProps = {
   onChange: ((value: any, option: DefaultOptionType | DefaultOptionType[]) => void) | undefined
   options?: DefaultOptionType[] | undefined
   labelRender?: ((props: LabelInValueType) => React.ReactNode) | undefined
+  optionRender?: ((option: DefaultOptionType) => React.ReactNode) | undefined
   variant?: 'outlined' | 'borderless' | 'filled' | undefined
 }
 
-export default function SelectRounded({ defaultValue, value, onChange, options, labelRender, variant = undefined }: IProps) {
+export default function SelectRounded({ defaultValue, value, onChange, options, labelRender, optionRender, variant = undefined }: IProps) {
   const intl = useIntl()
   return (
     <Select
@@ -34,6 +35,7 @@ export default function SelectRounded({ defaultValue, value, onChange, options, 
       variant={variant}
       options={options}
       labelRender={labelRender}
+      optionRender={optionRender}
       suffixIcon={<CaretDownOutlined style={{ color: 'black' }} />}
     />
   )

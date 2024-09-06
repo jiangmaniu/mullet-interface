@@ -1,5 +1,6 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import classNames from 'classnames'
+
+import { cn } from '@/utils/cn'
 
 export type IconProps = {
   width?: number
@@ -28,7 +29,7 @@ function Iconfont({ name, width = 24, height = 24, color, hoverColor, hoverStyle
   })
   return (
     <svg
-      className={classNames(`w-[1rem] h-[1rem] overflow-hidden align-[-0.15em]`, hoverClassName, className)}
+      className={cn(`w-[1rem] h-[1rem] overflow-hidden align-[-0.15em]`, hoverClassName, className)}
       style={{ width, height, fill: color, ...style }}
       aria-hidden={true}
       {...res}

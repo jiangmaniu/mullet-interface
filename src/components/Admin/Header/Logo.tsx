@@ -1,5 +1,4 @@
-import { WEB_HOME_PAGE } from '@/constants'
-import { push } from '@/utils/navigator'
+import { useModel } from '@umijs/max'
 
 export default function Logo({
   textColor = '#231916',
@@ -10,6 +9,9 @@ export default function Logo({
   iconColor1?: string
   iconColor2?: string
 }) {
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+
   return (
     // <img
     //   src="/logo.svg"
@@ -20,9 +22,15 @@ export default function Logo({
     //   className="!h-[48px] w-[171px]"
     // />
     <span
-      className="!h-[48px] w-[171px]"
-      onClick={() => {
-        push(WEB_HOME_PAGE)
+      className="!h-[48px] w-[171px] cursor-default"
+      onClick={(e) => {
+        e.stopPropagation()
+        // if (STORAGE_GET_TOKEN()) {
+        //   if (!currentUser?.accountList?.length) return
+        //   push(WEB_HOME_PAGE)
+        // } else {
+        //   push('/user/login')
+        // }
       }}
     >
       <svg width="171px" height="48px" viewBox="0 0 171 48" version="1.1" xmlns="http://www.w3.org/2000/svg">

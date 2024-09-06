@@ -5,6 +5,7 @@ import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
 import { CLIENT_ID, CLIENT_SECRET } from './constants'
+import { getLocaleForBackend } from './constants/enum'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
 
@@ -121,7 +122,7 @@ export const errorConfig: RequestConfig = {
       const token = config.token || STORAGE_GET_TOKEN() || ''
       const headers: any = {
         'Content-Type': 'x-www-form-urlencoded',
-        // 'Accept-Language': getLocaleForBackend(),
+        Language: getLocaleForBackend(),
         'Tenant-Id': '000000', // 默认的租户ID
         ...config.headers
       }

@@ -11,7 +11,6 @@ import {
   getBgaOrderPage,
   getOrderMargin,
   getOrderPage,
-  getTradeRecordsPage,
   modifyPendingOrder,
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
@@ -20,7 +19,7 @@ import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
-import { covertProfit } from '@/utils/wsUtil'
+import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import klineStore from './kline'
 import ws from './ws'
@@ -39,7 +38,29 @@ export type UserConfInfo = Record<
   }
 >
 
-export type IRecordTabKey = 'POSITION' | 'PENDING' | 'STOPLOSS_PROFIT' | 'HISTORY'
+// 底部Tabs交易记录类型
+export type IRecordTabKey =
+  /**持仓单 */
+  | 'POSITION'
+  /**挂单 */
+  | 'PENDING'
+  /**历史挂单(历史委托) */
+  | 'HISTORY_PENDING'
+  /**历史成交 */
+  | 'HISTORY_CLOSE'
+  /**历史仓位 */
+  | 'HISTORY_POSITION'
+  /**资金流水 */
+  | 'FUND_RECORD'
+
+// 交易区订单类型
+export type ITradeTabsOrderType =
+  /**市价单 */
+  | 'MARKET_ORDER'
+  /**限价单 */
+  | 'LIMIT_ORDER'
+  /**停损单 */
+  | 'STOP_LIMIT_ORDER'
 
 // 禁用 MobX 严格模式
 configure({ enforceActions: 'never' })
@@ -53,12 +74,6 @@ class TradeStore {
   @observable symbolListLoading = true
   @observable symbolList: Account.TradeSymbolListItem[] = []
   @observable symbolListAll: Account.TradeSymbolListItem[] = [] // 首次查询的全部品种列表，不按条件查询
-  @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
-  @observable pendingList = [] as Order.OrderPageListItem[] // 挂单列表
-  @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
-  @observable historyCloseList = [] as Order.TradeRecordsPageListItem[] // 历史成交列表
-  @observable historyPendingList = [] as Order.OrderPageListItem[] // 历史挂单列表
-  @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
 
   @observable userConfInfo = {} as UserConfInfo // 记录用户设置的品种名称、打开的品种列表、自选信息，按accountId储存
   // 当前accountId的配置信息从userConfInfo展开，切换accountId时，重新设置更新
@@ -68,12 +83,28 @@ class TradeStore {
 
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
-  @observable marginType: API.MarginType = 'CROSS_MARGIN' // 保证金类型
+
+  //  ========= 交易区操作 =========
+  @observable marginType: API.MarginType = 'CROSS_MARGIN' // 交易区保证金类型
+  @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
+  @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
-  @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓， 右下角爆仓选择逐仓、全仓切换
+  // ============================
+
+  // ====== 历史交易记录 ===========
+  @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
+  @observable pendingList = [] as Order.OrderPageListItem[] // 挂单列表
+  @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
+  @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
+  @observable showActiveSymbol = false // 是否展示当前，根据当前激活的品种，搜索交易历史记录
+  // ============================
+
+  @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
   @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
 
   @observable allSimpleSymbolsMap = {} as { [key: string]: Symbol.AllSymbolItem } // 全部品种列表map，校验汇率品种用到
+
+  @observable switchAccountLoading = false // 切换账户loading效果
 
   // 初始化加载
   init = () => {
@@ -89,15 +120,38 @@ class TradeStore {
   setCurrentLiquidationSelectBgaId = (value: any) => {
     this.currentLiquidationSelectBgaId = value
   }
-  // 设置交易浮动杠杆倍数
-  setLeverageMultiple = (value: any) => {
-    this.leverageMultiple = value
+
+  setSwitchAccountLoading = (loading: boolean) => {
+    this.switchAccountLoading = loading
   }
 
-  // 设置保证金类型
+  setShowActiveSymbol = (value: boolean) => {
+    this.showActiveSymbol = value
+  }
+
+  // =========== 设置交易区操作 ==========
+
+  // 设置弹窗选择的保证金类型
   setMarginType = (marginType: API.MarginType) => {
     this.marginType = marginType
   }
+
+  // 设置弹窗选择的浮动杠杆倍数
+  setLeverageMultiple = (leverageMultiple: number) => {
+    this.leverageMultiple = leverageMultiple
+  }
+
+  // 设置买卖类型切换
+  setBuySell = (buySell: API.TradeBuySell) => {
+    this.buySell = buySell
+  }
+
+  // 设置订单类型Tabs切换
+  setOrderType = (orderType: ITradeTabsOrderType) => {
+    this.orderType = orderType
+  }
+
+  // =============================
 
   // 获取创建账户页面-账户组列表
   getAccountGroupList = async () => {
@@ -125,17 +179,26 @@ class TradeStore {
 
   @action
   jumpTrade = () => {
-    if (location.pathname.indexOf('/trade') === -1) {
+    this.setSwitchAccountLoading(true)
+
+    setTimeout(() => {
+      // 需要刷新k线，否则切换不同账号加载的品种不一样
       push('/trade')
       // @ts-ignore
       klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
-    }
+    }, 500)
+
+    setTimeout(() => {
+      // 让动画播放
+      this.setSwitchAccountLoading(false)
+    }, 2000)
   }
 
   // 获取当前账户账户余额、保证金信息
   @action
   getAccountBalance = () => {
     const currentAccountInfo = this.currentAccountInfo
+
     // 账户余额
     const money = Number(toFixed(currentAccountInfo.money || 0))
     // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
@@ -149,14 +212,14 @@ class TradeStore {
     // 持仓单总的手续费
     const totalHandlingFees = this.positionList.reduce((total, next) => total + Number(next.handlingFees || 0), 0) || 0
     // 净值 = 账户余额 - 库存费 - 手续费 + 浮动盈亏
-    const balance = Number(toFixed(Number(currentAccountInfo.money || 0) - totalInterestFees - totalHandlingFees + totalProfit))
+    const balance = Number(Number(currentAccountInfo.money || 0) - totalInterestFees - totalHandlingFees + totalProfit)
 
     return {
       occupyMargin,
       availableMargin,
       balance,
       // 账户总盈亏 = 所有订单的盈亏 - 所有订单的库存费
-      totalProfit: toFixed(totalProfit - totalInterestFees, 2),
+      totalProfit: totalProfit - totalInterestFees,
       currentAccountInfo,
       money
     }
@@ -169,6 +232,9 @@ class TradeStore {
    */
   getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
     const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
+    const quote = getCurrentQuote()
+    const conf = item?.conf || quote?.symbolConf // 品种配置信息
+    const buySell = this.buySell
     const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
     // 全仓保证金率：净值/占用 = 保证金率
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
@@ -180,8 +246,12 @@ class TradeStore {
     let compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
     compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
     if (isCrossMargin) {
-      marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
-      margin = Number(toFixed(occupyMargin * compelCloseRatio))
+      // 判断是否存在全仓单
+      const hasCrossMarginOrder = this.positionList.some((item) => item.marginType === 'CROSS_MARGIN')
+      if (hasCrossMarginOrder) {
+        marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
+        margin = Number(occupyMargin * compelCloseRatio)
+      }
     } else {
       // 当前筛选的逐仓单订单信息
       const currentLiquidationSelectItem = this.positionList.find((item) => item.id === currentLiquidationSelectBgaId)
@@ -190,7 +260,7 @@ class TradeStore {
 
       let filterPositionList = []
       // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
-      if (isLockedMode) {
+      if (isLockedMode && !item?.id) {
         filterPositionList = [currentLiquidationSelectItem]
       } else {
         filterPositionList = item ? [item] : this.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
@@ -210,9 +280,10 @@ class TradeStore {
       const isolatedBalance = Number(toFixed(orderMargin - Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0)))
       marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
 
-      margin = Number(toFixed(orderMargin * compelCloseRatio))
+      margin = Number(orderMargin * compelCloseRatio)
       balance = isolatedBalance
     }
+
     return {
       marginRate,
       margin,
@@ -447,9 +518,9 @@ class TradeStore {
         }
 
         // 切换accountId后请求的品种列表可能不一致，设置第一个默认的品种名称
-        const firstSymbolName = symbolList[0]?.symbol
+        const firstSymbolName = this.symbolListAll[0]?.symbol
         // 如果当前激活的品种名称不在返回的列表中，则重新设置第一个为激活
-        if (firstSymbolName && !symbolList.some((item) => item.symbol === this.activeSymbolName)) {
+        if (firstSymbolName && !this.symbolListAll.some((item) => item.symbol === this.activeSymbolName)) {
           this.activeSymbolName = firstSymbolName
         }
         // 设置默认的
@@ -475,10 +546,11 @@ class TradeStore {
     } else if (tabKey === 'PENDING') {
       // 挂单
       this.getPendingList()
-    } else if (tabKey === 'STOPLOSS_PROFIT') {
-      // 止盈止损
-      // this.getStopLossProfitList()
     }
+    // else if (tabKey === 'STOPLOSS_PROFIT') {
+    // 止盈止损
+    // this.getStopLossProfitList()
+    // }
   }
 
   // 查询持仓列表
@@ -499,6 +571,7 @@ class TradeStore {
         })
       }
     }
+    return res
   }
   // 查询挂单列表
   @action
@@ -529,32 +602,6 @@ class TradeStore {
     if (res.success) {
       runInAction(() => {
         this.stopLossProfitList = (res.data?.records || []) as Order.OrderPageListItem[]
-      })
-    }
-  }
-  // 查询历史成交列表
-  @action
-  getHistoryList = async () => {
-    const res = await getTradeRecordsPage({ current: 1, size: 999, accountId: this.currentAccountInfo?.id })
-    if (res.success) {
-      runInAction(() => {
-        this.historyCloseList = (res.data?.records || []) as Order.TradeRecordsPageListItem[]
-      })
-    }
-  }
-  // 查询历史挂单列表
-  @action
-  getHistoryPendingList = async () => {
-    const res = await getOrderPage({
-      current: 1,
-      size: 999,
-      status: 'CANCEL,FAIL,FINISH',
-      type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_ORDER,TAKE_PROFIT_ORDERR',
-      accountId: this.currentAccountInfo?.id
-    })
-    if (res.success) {
-      runInAction(() => {
-        this.historyPendingList = (res.data?.records || []) as Order.OrderPageListItem[]
       })
     }
   }

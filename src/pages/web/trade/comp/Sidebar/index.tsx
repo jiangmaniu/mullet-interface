@@ -2,7 +2,6 @@ import { SwapRightOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Col, Input, Row, Skeleton } from 'antd'
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
@@ -16,6 +15,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { gray } from '@/theme/theme.config'
+import { cn } from '@/utils/cn'
 
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
@@ -90,7 +90,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
       <Input
         value={searchValue}
         onChange={handleSearchChange}
-        placeholder={intl.formatMessage({ id: 'mt.sousuo' })}
+        placeholder={intl.formatMessage({ id: 'common.sousuo' })}
         suffix={SearchIcon}
         allowClear
         style={{
@@ -112,15 +112,21 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     return (
       <>
         <div className="pt-2">
-          <Row className="px-5 pb-2">
-            <Col span={12} className="!text-xs text-weak">
-              <FormattedMessage id="mt.pinpai" />
+          <Row className="px-3 pb-2">
+            <Col span={8} className="!text-xs text-gray-weak">
+              <FormattedMessage id="mt.pinzhong" />
             </Col>
-            <Col span={12} className="text-right !text-xs text-weak">
-              <FormattedMessage id="mt.zuixinjiage" />/<FormattedMessage id="mt.zhangdiefu" />
+            <Col span={6} className="!text-xs text-gray-weak pl-3">
+              <FormattedMessage id="mt.bid" />
+            </Col>
+            <Col span={6} className="!text-xs text-gray-weak pl-3">
+              <FormattedMessage id="mt.ask" />
+            </Col>
+            <Col span={4} className="text-right !text-xs text-gray-weak">
+              <FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
-          <div className="overflow-y-auto" style={{ height: 500 }}>
+          <div className="overflow-y-auto" style={{ height: !showFixSidebar ? 340 : 500 }}>
             {loading && (
               <div className="mx-5 mt-8">
                 <Skeleton loading={loading} />
@@ -141,7 +147,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                           {activeKey === 'FAVORITE' ? (
                             <div
                               className="flex justify-center gap-x-2 cursor-pointer"
-                              onClick={() => {
+                              onClick={(e) => {
+                                e.stopPropagation()
                                 setActiveKey('CATEGORY')
                               }}
                             >
@@ -251,7 +258,16 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         <>
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
-            <div className={classNames('h-[700px] w-[300px] bg-primary relative', { [borderClassName]: showFixSidebar })} style={style}>
+            <div
+              className={cn(
+                'w-[364px] flex-shrink-0 bg-white relative dark:bg-dark-page',
+                !showFixSidebar ? 'max-h-[600px]' : 'h-[700px]',
+                {
+                  [borderClassName]: showFixSidebar
+                }
+              )}
+              style={style}
+            >
               {renderTabs()}
               {renderSearch()}
               {renderCategoryTabs()}
@@ -264,8 +280,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
             </div>
           )}
           {/* 收起侧边栏视图 */}
-          {!openTradeSidebar && (
-            <div className={classNames('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
+          {!openTradeSidebar && showFixSidebar && (
+            <div className={cn('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
               <div
                 className="border-b border-gray-60 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"
                 onClick={openSidebar}
@@ -296,7 +312,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                   return (
                     <div
                       key={idx}
-                      className={classNames('mb-4 cursor-pointer w-[38px] h-[38px] flex items-center justify-center', {
+                      className={cn('mb-4 cursor-pointer w-[38px] h-[38px] flex items-center justify-center', {
                         [activeClassName]: isActive
                       })}
                       onClick={() => {

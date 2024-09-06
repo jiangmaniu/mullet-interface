@@ -3,6 +3,7 @@ import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 import { stores } from '@/context/mobxProvider'
 import { getRegisterWay } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
+import { useUpdateFollowStatus } from '@/services/hook/useUpdateFollowStatus'
 import { onLogout } from '@/utils/navigator'
 import { STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
 
@@ -27,6 +28,11 @@ export class GlobalStore {
       } as User.UserInfo
       // 更新本地的用户信息
       STORAGE_SET_USER_INFO(currentUser)
+
+      // 更新跟单状态
+      if (location.pathname.indexOf('/copy-trading') !== -1) {
+        clientInfo.accountList && useUpdateFollowStatus()
+      }
 
       // 刷新账户信息
       if (refreshAccount !== false) {
@@ -58,7 +64,9 @@ export class GlobalStore {
   getRegisterWay = async () => {
     const res = await getRegisterWay()
     runInAction(() => {
-      this.registerWay = res.data as API.RegisterWay
+      if (res.data) {
+        this.registerWay = res.data as API.RegisterWay
+      }
     })
   }
 

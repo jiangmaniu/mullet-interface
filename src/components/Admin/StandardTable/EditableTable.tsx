@@ -12,11 +12,11 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { ButtonProps, Popconfirm } from 'antd'
 import { NamePath } from 'antd/es/form/interface'
 import { FormInstance } from 'antd/lib'
-import classNames from 'classnames'
 import { cloneDeep } from 'lodash-es'
 import React, { useEffect, useRef, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
+import { cn } from '@/utils/cn'
 
 // @ts-ignore
 interface IProps<T, U> extends EditableProTableProps<T, U> {
@@ -211,7 +211,7 @@ export default <T extends Record<string, any>, U extends ParamsType>({
         rowKey={'id'}
         // name="table"
         name={name}
-        className={classNames(tableClassName, { [tableBorderClassName]: showCustomBordered })}
+        className={cn(tableClassName, { [tableBorderClassName]: showCustomBordered })}
         // scroll={{
         //   x: 960,
         // }}
@@ -243,7 +243,7 @@ export default <T extends Record<string, any>, U extends ParamsType>({
                 // 不写 key ，会使用 index 当行 id
                 record: () => ({ id: (Math.random() * 1000000).toFixed(0) }),
                 // 设置按钮文案
-                creatorButtonText: intl.formatMessage({ id: 'mt.xinzengyihang' }),
+                creatorButtonText: intl.formatMessage({ id: 'common.xinzengyihang' }),
                 ...recordCreatorProps
                 // 按钮的样式设置，可以设置按钮是否显示
                 // 这样可以做最大行限制和最小行限制之类的功能
@@ -316,9 +316,11 @@ export default <T extends Record<string, any>, U extends ParamsType>({
             }
           },
           cancelText: intl.formatMessage({ id: 'common.cancel' }), // 取消编辑一行的文字
-          deletePopconfirmMessage: intl.formatMessage({ id: 'mt.shanchucixiang' }), // 删除时弹出的确认框提示消息
-          onlyOneLineEditorAlertMessage: <span className="!text-white">{intl.formatMessage({ id: 'mt.zhinengtongshibiaojiyihang' })}</span>, // 只能编辑一行的的提示
-          onlyAddOneLineAlertMessage: <span className="!text-white">{intl.formatMessage({ id: 'mt.zhinengxinzengyihang' })}</span>, // 只能同时新增一行的提示
+          deletePopconfirmMessage: intl.formatMessage({ id: 'common.shanchucixiang' }), // 删除时弹出的确认框提示消息
+          onlyOneLineEditorAlertMessage: (
+            <span className="!text-white">{intl.formatMessage({ id: 'common.zhinengtongshibiaojiyihang' })}</span>
+          ), // 只能编辑一行的的提示
+          onlyAddOneLineAlertMessage: <span className="!text-white">{intl.formatMessage({ id: 'common.zhinengxinzengyihang' })}</span>, // 只能同时新增一行的提示
           onValuesChange: (record, recordList) => {
             console.log('onValuesChange', recordList)
           },

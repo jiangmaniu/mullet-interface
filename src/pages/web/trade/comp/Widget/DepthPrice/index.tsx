@@ -1,13 +1,13 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import { Col, Row } from 'antd'
-import classNames from 'classnames'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useState, useTransition } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
 
 type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
@@ -62,7 +62,7 @@ function DeepPrice() {
         <div>
           {/* 当前行情卖价 */}
           {quote.hasQuote ? (
-            <span className={classNames('text-lg pr-[10px] font-pf-bold', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
+            <span className={cn('text-lg pr-[10px] font-pf-bold', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
               {formatNum(quote.bid)}
             </span>
           ) : (
@@ -174,7 +174,7 @@ function DeepPrice() {
   if (!asks.length && !bids.length) return
 
   return (
-    <div className={classNames('w-[260px] h-[700px] overflow-hidden relative bg-primary', className)}>
+    <div className={cn('w-[300px] h-[700px] overflow-hidden relative bg-primary', className)}>
       <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130 dark:border-[var(--border-primary-color)]">
         <div className="flex items-center gap-x-4">
           {modeList.map((item, idx) => (
@@ -182,7 +182,7 @@ function DeepPrice() {
               name={item.icon}
               width={24}
               height={24}
-              className={classNames('cursor-pointer', item.key === mode ? 'opacity-100' : 'opacity-30')}
+              className={cn('cursor-pointer', item.key === mode ? 'opacity-100' : 'opacity-30')}
               key={idx}
               onClick={() => {
                 startTransition(() => {

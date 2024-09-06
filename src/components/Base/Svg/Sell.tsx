@@ -1,10 +1,10 @@
-import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import React from 'react'
 
 import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
+import { cn } from '@/utils/cn'
 
 type IProps = {
   children?: React.ReactNode
@@ -34,7 +34,7 @@ function Sell({ children, isActive, bgColor, width = '134px', height = '52px' }:
   return (
     <div className="relative flex items-center">
       <div
-        className={classNames('relative right-[11px] z-30 h-[52px] w-[134px] rounded-lg', {
+        className={cn('relative right-[11px] z-30 h-[52px] w-[134px] rounded-lg', {
           'rounded-br-none border-b border-l border-t border-[rgba(197,71,71,0.2)]': isMobileOrIpad && isActive
         })}
         style={{ background: isPc ? '' : isActive ? bgColor || 'var(--color-red-600)' : 'var(--bg-base-gray)', width }}

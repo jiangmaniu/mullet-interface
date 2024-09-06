@@ -1,9 +1,11 @@
-import { message } from 'antd'
+import { getIntl } from '@umijs/max'
 import currency from 'currency.js'
 import lodash, { cloneDeep } from 'lodash-es'
 import moment from 'moment'
 
 import { DATE } from '@/constants/date'
+
+import { message } from './message'
 
 export function isMobileDevice(): boolean {
   const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
@@ -30,7 +32,7 @@ export function getUid() {
   }
 }
 
-export const regPassword = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,16}$/ // 至少包含一个数字、至少包含一个大写字母、至少包含一个小写字母、至少包含一个特殊字符或下划线
+export const regPassword = /(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[\W_]).{8,16}$/gi // 至少包含一个数字、至少包含一个大写字母、至少包含一个小写字母、至少包含一个特殊字符或下划线
 
 export const regEmail =
   /^[a-zA-Z0-9.!#$%&amp;'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
@@ -90,6 +92,17 @@ export const formatEmail = (email: string | undefined) => {
 }
 
 /**
+ * 限制输入框输入小数点位数
+ * @param text
+ * @param precision
+ * @returns
+ */
+export function regInput(text: string, precision: number) {
+  if (precision === 0) return text
+  return text.replace(new RegExp(`^(\\-)*(\\d+)\.(\\d{0,${precision}}).*$`), '$1$2.$3')
+}
+
+/**
  * 格式化是
  * @param time 时间戳、字符串时间
  * @param formatType
@@ -102,20 +115,6 @@ export const formatTime = (time: any, formatType = 'YYYY-MM-DD HH:mm:ss') => {
 
 export const formatStartTime = (value: any) => formatTime(value, 'YYYY-MM-DD') + ' 00:00:00'
 export const formatEndTime = (value: any) => formatTime(value, 'YYYY-MM-DD') + ' 23:59:59'
-
-/**
- * 格式化数字，返回默认两位  currency(123);      // 123.00
- * @param value
- * @returns
- */
-export const formatValue = (value: any, opts?: any) => {
-  // 不是一个数字
-  if (isNaN(value)) {
-    return '0.00'
-  }
-  const val = value || '0.00'
-  return currency(val, opts).toString()
-}
 
 /** 獲取颜色樣式名 */
 export const getColorClass = (value: number) => {
@@ -355,7 +354,7 @@ export const waitTime = (time = 100) => {
 }
 
 // 复制功能
-export const copyContent = (cotVal: any, title = 'Replicating Success') => {
+export const copyContent = (cotVal: any, title = getIntl().formatMessage({ id: 'common.fuzhichenggong' })) => {
   const pEle = document.createElement('p')
   pEle.innerHTML = cotVal || ''
   document.body.appendChild(pEle)
@@ -366,7 +365,7 @@ export const copyContent = (cotVal: any, title = 'Replicating Success') => {
   window.getSelection()?.addRange(range) // 执行选中元素
 
   const copyStatus = document.execCommand('Copy') // 执行copy操作
-  message.success(copyStatus ? title : 'copy failed')
+  message.info(copyStatus ? title : 'copy failed')
   document.body.removeChild(pEle)
   window.getSelection()?.removeAllRanges() //清除页面中已有的selection
 }
@@ -453,4 +452,13 @@ export function isPC() {
     }
   }
   return flag
+}
+
+/**
+ * 获取指定数字的精度位数
+ * @param value
+ * @returns
+ */
+export const getPrecisionByNumber = (value: any) => {
+  return value ? String(value).split('.')?.[1]?.length || 0 : 0
 }

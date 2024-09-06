@@ -280,6 +280,11 @@ export function onRouteChange({ location, clientRoutes, routes, action, basename
   if (!hasPathnameLng && pathname !== '/') {
     history.replace(`/${lng}${location.pathname}`)
   }
+
+  // 排除以下页面，未登录需重定向到登录页
+  // if (!['/user/login'].includes(pathname) && !STORAGE_GET_TOKEN()) {
+  //   push('/user/login')
+  // }
 }
 
 export const rootContainer = (container: JSX.Element) => {

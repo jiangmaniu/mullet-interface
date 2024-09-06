@@ -23,9 +23,11 @@ type IProps = {
   name?: NamePath
   style?: React.CSSProperties
   showReSendBtn?: boolean
+  /**是否显示倒计时 */
+  showCountDown?: boolean
 }
 
-function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true }: IProps, ref: any) {
+function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true, showCountDown = true }: IProps, ref: any) {
   const [leftTime, setLeftTime] = useState<any>(0)
   const [params, setParams] = useState({} as Params)
   const isEmail = sendType === 'EMIAL'
@@ -75,7 +77,11 @@ function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true }
         setParams(params)
         return sendCode(params)
       },
-      stopCountDown
+      stopCountDown,
+      // @hack 校验验证码输入框组件是否都输入， antd Input.OTP不支持
+      checkCodeInput: () => {
+        return Array.from(document.querySelectorAll('#validateCode input')).every((item: any) => item.value)
+      }
     }
   })
 
@@ -88,29 +94,31 @@ function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true }
         {isEmail ? (
           <FormattedMessage id="mt.yanzhengmafasongzhi" values={{ email: params.emailOrPhone }} />
         ) : (
-          <FormattedMessage id="mt.yanzhengmayifasongzhixx" values={{ value: params.emailOrPhone }} />
+          <FormattedMessage id="mt.yanzhengmayifasongzhixx" values={{ value: `${params.phoneAreaCode} ${params.emailOrPhone}` }} />
         )}
       </div>
       <CodeInput form={form} name={name} />
-      <div className="text-xs text-weak pt-5">
-        <FormattedMessage id="mt.weishoudaoyanzhengma" />
-        {seconds ? (
-          <FormattedMessage id="mt.qingzaixxmiaohouchongshi" values={{ count: seconds }} />
-        ) : showReSendBtn ? (
-          <span
-            className="text-brand text-xs cursor-pointer"
-            onClick={() => {
-              sendCode()
-            }}
-          >
-            <FormattedMessage id="mt.chongxinfasong" />
-          </span>
-        ) : (
-          <span className="text-weak text-xs">
-            <FormattedMessage id="mt.qingfasongyanzhengmahuoqu" />
-          </span>
-        )}
-      </div>
+      {showCountDown && (
+        <div className="text-xs text-weak pt-5">
+          <FormattedMessage id="mt.weishoudaoyanzhengma" />
+          {seconds ? (
+            <FormattedMessage id="mt.qingzaixxmiaohouchongshi" values={{ count: seconds }} />
+          ) : showReSendBtn ? (
+            <span
+              className="text-brand text-xs cursor-pointer"
+              onClick={() => {
+                sendCode()
+              }}
+            >
+              <FormattedMessage id="common.chongxinfasong" />
+            </span>
+          ) : (
+            <span className="text-weak text-xs">
+              <FormattedMessage id="mt.qingfasongyanzhengmahuoqu" />
+            </span>
+          )}
+        </div>
+      )}
     </div>
   )
 }

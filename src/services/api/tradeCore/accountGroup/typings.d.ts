@@ -86,6 +86,8 @@ declare namespace AccountGroup {
     remark: string
     /**标签 */
     tag?: string
+    /**账户属性缩写便签 */
+    abbr?: string
     /**动态描述列表 */
     list?: Array<{ title: string; content: string }>
   }
@@ -521,5 +523,18 @@ declare namespace AccountGroup {
      * 是否默认配置
      */
     isDefault: boolean
+  }
+
+  // 这里的字段前端自己定义的，以字符串存储在synopsis字段中
+  // 账户组简介
+  type SynopsisConf = {
+    /**自定义展示的账户名称 */
+    name: string
+    /**简介 */
+    remark: string
+    /**标签 */
+    tag?: string
+    /**动态描述列表 */
+    list?: Array<{ title: string; content: string }>
   }
 }

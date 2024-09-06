@@ -31,6 +31,9 @@ export default function KycStepForm() {
   const currentUser = initialState?.currentUser
   const userInfo = currentUser?.userInfo
 
+  const kycAuthInfo = currentUser?.kycAuth?.[0]
+  const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
+
   const phone = Form.useWatch('phone', form)
   const phoneAreaCode = Form.useWatch('phoneAreaCode', form)
   const validateCode = Form.useWatch('validateCode', form)
@@ -82,8 +85,11 @@ export default function KycStepForm() {
 
   useEffect(() => {
     // 手机、邮箱已绑定，直接跳过
-    if (userInfo?.phone && userInfo?.email) {
+    if (userInfo?.phone && userInfo?.email && kycStatus !== 'TODO') {
       setStep('TWO')
+    }
+    if (kycStatus === 'TODO') {
+      setStep('FOUR')
     }
   }, [userInfo])
 
@@ -94,7 +100,7 @@ export default function KycStepForm() {
     console.log('formData', formData)
 
     if (!formData.authImgsUrl) {
-      return message.info(intl.formatMessage({ id: 'mt.qingshangchuantupian' }))
+      return message.info(intl.formatMessage({ id: 'common.qingshangchuantupian' }))
     }
 
     const params = {
@@ -118,9 +124,8 @@ export default function KycStepForm() {
       await fetchUserInfo()
 
       setTimeout(() => {
-        push('/setting')
-        setStep('ONE')
-      }, 200)
+        setStep('FOUR')
+      }, 100)
     }
   }
 
@@ -162,7 +167,7 @@ export default function KycStepForm() {
             <PhoneSelectFormItem
               names={['phone', 'phoneAreaCode']}
               form={form}
-              label={<FormattedMessage id="mt.shoujihaoma" />}
+              label={<FormattedMessage id="common.shoujihaoma" />}
               required={false}
               height={44}
               dropdownWidth={540}
@@ -187,7 +192,7 @@ export default function KycStepForm() {
           ) : (
             <FormCaptcha
               name="email"
-              label={intl.formatMessage({ id: 'mt.dianziyouxiang' })}
+              label={intl.formatMessage({ id: 'common.dianziyouxiang' })}
               fieldProps={{ placeholder: intl.formatMessage({ id: 'mt.shuruyouxiangyanzhengma' }) }}
               formItemProps={{ style: { marginBottom: 24 } }}
               onSend={async () => {
@@ -215,6 +220,7 @@ export default function KycStepForm() {
                 form={form}
                 ref={validateCodeInputRef}
                 showReSendBtn={false}
+                showCountDown={false}
                 style={{ padding: 20 }}
               />
             </div>
@@ -234,7 +240,7 @@ export default function KycStepForm() {
             disabled={isBindPhone ? !phone || !phoneAreaCode || !validateCode : !email || !validateCode}
             onClick={handleSubmitTwoStep}
           >
-            <FormattedMessage id="mt.xiayibu" />
+            <FormattedMessage id="common.xiayibu" />
           </Button>
         </div>
       </div>
@@ -304,7 +310,7 @@ export default function KycStepForm() {
             setStep('THREE')
           }}
         >
-          <FormattedMessage id="mt.xiayibu" />
+          <FormattedMessage id="common.xiayibu" />
         </Button>
       </div>
     )
@@ -324,12 +330,13 @@ export default function KycStepForm() {
           </div>
         </div>
         <Button type="primary" style={{ height: 46, marginTop: 70 }} block onClick={handleSubmit} loading={submitLoading}>
-          <FormattedMessage id="mt.tijiao" />
+          <FormattedMessage id="common.tijiao" />
         </Button>
       </div>
     )
   }
 
+  // 身份认证审核中
   const renderFourStep = () => {
     return (
       <div className="mt-3">
@@ -358,7 +365,7 @@ export default function KycStepForm() {
                 push('/setting')
               }}
             >
-              <FormattedMessage id="mt.haode" />
+              <FormattedMessage id="common.queren" />
             </Button>
           </div>
         </div>
@@ -454,10 +461,14 @@ export default function KycStepForm() {
             layout="vertical"
             form={form}
           >
-            {step !== 'FOUR' && renderHeader()}
-            <Hidden show={step === 'ONE'}>{renderOneStep()}</Hidden>
-            <Hidden show={step === 'TWO'}>{renderTwoStep()}</Hidden>
-            <Hidden show={step === 'THREE'}>{renderThreeStep()}</Hidden>
+            {kycStatus !== 'TODO' && (
+              <>
+                {step !== 'FOUR' && renderHeader()}
+                <Hidden show={step === 'ONE'}>{renderOneStep()}</Hidden>
+                <Hidden show={step === 'TWO'}>{renderTwoStep()}</Hidden>
+                <Hidden show={step === 'THREE'}>{renderThreeStep()}</Hidden>
+              </>
+            )}
             <Hidden show={step === 'FOUR'}>{renderFourStep()}</Hidden>
           </ProForm>
         </div>

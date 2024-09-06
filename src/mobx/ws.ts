@@ -22,11 +22,13 @@ export type IQuotePriceItem = {
   buySize: number
 }
 export type IQuoteItem = {
-  /**品种名称 */
+  /**品种名称（后台创建品种，自定义填写的品种名称，唯一）通过账户组订阅的品种行情才会有symbol */
   symbol: string
+  /**账户组id */
+  accountGroupId?: string
   /**价格数据 */
   priceData: IQuotePriceItem
-  /**数据源code 例如huobi */
+  /**数据源code+数据源品种 例如huobi-btcusdt */
   dataSource: string
   /**前端计算的 卖价 上一口报价和下一口报价对比 */
   bidDiff?: number
@@ -39,8 +41,10 @@ export type IDepthPriceItem = {
   price: number
 }
 export type IDepth = {
+  /**品种名称（后台创建品种，自定义填写的品种名称，唯一）通过账户组订阅的品种行情才会有symbol */
   symbol: string
-  dataSourceCode?: string
+  /**数据源code+数据源品种 例如huobi-btcusdt */
+  dataSource: string
   asks: IDepthPriceItem[]
   bids: IDepthPriceItem[]
   /**13位时间戳 */
@@ -120,7 +124,9 @@ class WSStore {
       // debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
     })
     this.socket.addEventListener('open', () => {
-      this.readyState = 'OPEN'
+      runInAction(() => {
+        this.readyState = 'OPEN'
+      })
 
       this.batchSubscribeSymbol()
       this.subscribeDepth()
@@ -135,10 +141,10 @@ class WSStore {
       this.message(res)
     })
     this.socket.addEventListener('close', () => {
-      this.readyState = 'CLOSED'
+      this.close()
     })
     this.socket.addEventListener('error', () => {
-      this.readyState = 'CLOSED'
+      this.close()
     })
   }
 
@@ -166,15 +172,17 @@ class WSStore {
   }: {
     cancel?: boolean
     needAccountGroupId?: boolean
-    list?: Array<{ accountGroupId?: string; dataSourceSymbol: string; dataSourceCode: string }>
+    list?: Array<{ accountGroupId?: any; symbol: string; dataSourceCode?: any }>
   } = {}) => {
     const symbolList = list?.length ? list : trade.symbolList
     if (!symbolList.length) return
     symbolList.forEach((item) => {
-      const topic = `/000000/${item.dataSourceCode}/symbol/${item.dataSourceSymbol}`
+      const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
+      const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
+      // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
+      const topic = item.accountGroupId ? topicAccount : topicNoAccount
       this.send({
-        // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
-        topic: item.accountGroupId ? `${topic}/${item.accountGroupId}` : topic,
+        topic,
         cancel
       })
     })
@@ -201,8 +209,8 @@ class WSStore {
     this.batchSubscribeSymbol({
       list: [
         {
-          dataSourceCode: symbolInfo.dataSourceCode,
-          dataSourceSymbol: symbolInfo.dataSourceSymbol
+          accountGroupId: trade.currentAccountInfo.accountGroupId,
+          symbol: symbolInfo.symbol
         }
       ]
     })
@@ -211,12 +219,16 @@ class WSStore {
   // 订阅当前打开的品种深度报价
   subscribeDepth = (cancel?: boolean) => {
     const symbolInfo = trade.getActiveSymbolInfo()
-    if (!symbolInfo?.dataSourceCode) return
+    if (!symbolInfo?.symbol) return
+
+    const topicNoAccount = `/000000/depth/${symbolInfo.dataSourceCode}/${symbolInfo.symbol}`
+    const topicAccount = `/000000/depth/${symbolInfo.symbol}/${symbolInfo?.accountGroupId}`
+    // 区分带账户组id和不带账户组情况
+    const topic = symbolInfo?.accountGroupId ? topicAccount : topicNoAccount
 
     setTimeout(() => {
-      // accountGroupId从交易品种列表获取
       this.send({
-        topic: `/000000/${symbolInfo.dataSourceCode}/depth/${symbolInfo.dataSourceSymbol}/${symbolInfo.accountGroupId}`,
+        topic,
         cancel
       })
     }, 300)
@@ -238,7 +250,7 @@ class WSStore {
     const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
     // 游客身份userId传123456789
     const userId = userInfo?.user_id || '123456789'
-    if (this.socket) {
+    if (this.socket && this.readyState === 'OPEN') {
       this.socket.send(
         JSON.stringify({
           header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now(), ...header },
@@ -251,13 +263,13 @@ class WSStore {
     }
   }
   @action
-  close() {
+  close = () => {
     // 关闭socket指令
-    if (this.socket) {
-      this.socket.close()
-      this.stopHeartbeat()
+    this.socket?.close?.()
+    this.stopHeartbeat()
+    runInAction(() => {
       this.readyState = 'CLOSED'
-    }
+    })
   }
   @action
   reconnect() {
@@ -284,24 +296,28 @@ class WSStore {
       const quotes = this.quotes // 之前的值
       const quotesObj: any = {} // 一次性更新，避免卡顿
       this.quotesCacheArr.forEach((item: IQuoteItem) => {
-        const sbl = item.symbol
-        const dataSourceCode = item.dataSource
-        if (quotes[sbl]) {
-          const prevBid = quotes[sbl]?.priceData?.sell || 0
-          const prevAsk = quotes[sbl]?.priceData?.buy || 0
-          item.bidDiff = item.priceData?.sell - prevBid
-          item.askDiff = item.priceData?.buy - prevAsk
+        const [dataSourceCode, dataSourceSymbol] = (item.dataSource || '').split('-').filter((v) => v)
+        const sbl = item.symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
+        const dataSourceKey = `${dataSourceCode}/${sbl}` // 数据源 + 品种名称
+        if (quotes[dataSourceKey]) {
+          const prevSell = quotes[dataSourceKey]?.priceData?.sell || 0
+          const prevBuy = quotes[dataSourceKey]?.priceData?.buy || 0
+          const buy = item.priceData?.buy
+          const sell = item.priceData?.sell
+          const flag = buy && sell // 买卖都存在，才跳动
+          item.bidDiff = flag ? buy - prevBuy : 0 // bid使用买盘的
+          item.askDiff = flag ? sell - prevSell : 0 // ask使用卖盘的
 
           if (item.priceData) {
             // 如果没有最新报价，获取上一口报价
-            item.priceData.buy = item.priceData.buy || prevAsk
-            item.priceData.sell = item.priceData.sell || prevBid
+            item.priceData.buy = item.priceData.buy || prevBuy
+            item.priceData.sell = item.priceData.sell || prevSell
           }
         }
 
         if (sbl) {
           // 数据源-品种拼接，避免被覆盖
-          quotesObj[`${dataSourceCode}/${sbl}`] = item
+          quotesObj[dataSourceKey] = item
         }
       })
 
@@ -350,8 +366,9 @@ class WSStore {
     if (this.depthCacheArr.length > 2) {
       const depthObj: any = {} // 一次性更新，避免卡顿
       this.depthCacheArr.forEach((item: IDepth) => {
-        const sbl = item.symbol
-        const dataSourceCode = item.dataSourceCode
+        const [dataSourceCode, dataSourceSymbol] = (item.dataSource || '').split('-').filter((v) => v)
+        const sbl = item.symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
+        const dataSourceKey = `${dataSourceCode}/${sbl}` // 数据源 + 品种名称
         if (sbl) {
           if (typeof item.asks === 'string') {
             item.asks = item.asks ? JSON.parse(item.asks) : []
@@ -360,7 +377,7 @@ class WSStore {
             item.bids = item.bids ? JSON.parse(item.bids) : []
           }
           // 数据源-品种拼接，避免被覆盖
-          depthObj[`${dataSourceCode}/${sbl}`] = item
+          depthObj[dataSourceKey] = item
         }
       })
 

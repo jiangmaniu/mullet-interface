@@ -19,7 +19,7 @@ const Center = () => {
   ]
 
   return (
-    <div className="flex h-[700px] flex-1 flex-col bg-primary pb-1">
+    <div className="flex h-[700px] flex-1 flex-col bg-primary pb-1 min-w-[400px]">
       <Tabs
         items={TabsItems}
         onChange={(key: any) => {
@@ -33,8 +33,8 @@ const Center = () => {
         marginBottom={0}
       />
       <HeaderStatisInfo />
-      <TradingView style={{ display: tabKey === 1 ? 'block' : 'none' }} />
-      <Futures style={{ display: tabKey === 2 ? 'block' : 'none' }} />
+      {tabKey === 1 && <TradingView />}
+      {tabKey === 2 && <Futures />}
     </div>
   )
 }

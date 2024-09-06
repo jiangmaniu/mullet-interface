@@ -1,10 +1,10 @@
 import { PageContainerProps } from '@ant-design/pro-components'
 import { history, useModel, useSelectedRoutes } from '@umijs/max'
-import classNames from 'classnames'
 import { TabBarExtraContent } from 'rc-tabs/lib/interface'
 import { useEffect, useState } from 'react'
 
 import { useEnv } from '@/context/envProvider'
+import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
 import Tabs, { ITabItem } from '../Tabs'
@@ -113,11 +113,11 @@ export default function PageContainer({
             ...headerStyle
             // paddingInline: '9.5%'
           }}
-          className={classNames('flex items-center', {
+          className={cn('flex items-center justify-center', {
             'sticky top-[66px] z-[99]': fixedHeader
           })}
         >
-          <div className={classNames('xl:w-1300 w-1120 mx-4', !fluidWidth ? 'm-auto' : '')}>
+          <div className={cn('xl:w-1300 w-1120 mx-4', !fluidWidth ? 'm-auto' : '')}>
             <div className="flex flex-col items-start">
               {renderHeader?.()}
               <Tabs
@@ -141,7 +141,7 @@ export default function PageContainer({
       {/* 返回按钮 */}
       {backTitle && backPath && (
         <div
-          className={classNames('pt-7 flex items-center px-6 justify-center sticky top-[66px] z-10')}
+          className={cn('pt-7 flex items-center px-6 justify-center sticky top-[66px] z-10')}
           style={{ background: pageBgColorMode === 'white' ? '#fff' : 'var(--bg-base-gray)', ...backStyle }}
         >
           <div className="flex items-center relative -left-2 xl:w-1300 w-1120 mx-4">
@@ -159,7 +159,7 @@ export default function PageContainer({
       )}
 
       {/* 内容区域 */}
-      <div style={contentStyle} className={classNames('py-7 flex items-center justify-center', 'px-6')}>
+      <div style={contentStyle} className={cn('py-7 flex items-center justify-center', 'px-6')}>
         <div className="w-1120 xl:w-1300 ">{children}</div>
       </div>
     </div>

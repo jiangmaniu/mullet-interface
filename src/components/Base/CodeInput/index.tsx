@@ -21,15 +21,16 @@ export default function CodeInput({ onChange, form, name = 'validateCode' }: IPr
       }
     }
   })
+
+  const handleChange = (value: any) => {
+    onChange?.(value)
+    form?.setFieldValue?.(name, value)
+  }
+
   return (
     <div className={className}>
       <Form.Item noStyle name={name}>
-        <Input.OTP
-          onChange={(value) => {
-            onChange?.(value)
-            form?.setFieldValue?.(name, value)
-          }}
-        />
+        <Input.OTP onChange={handleChange} />
       </Form.Item>
     </div>
   )

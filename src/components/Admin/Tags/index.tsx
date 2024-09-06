@@ -1,10 +1,11 @@
 import { FormattedMessage } from '@umijs/max'
-import classNames from 'classnames'
 import { useMemo, useState } from 'react'
+
+import { cn } from '@/utils/cn'
 
 export type ITabTypes = {
   format?: Record<string, any>
-  size?: 'tiny' | 'small' | 'medium'
+  size?: 'tiny' | 'small' | 'medium' | 'auto'
   color?: string // 'green' | 'biaozhun' | 'luodian' | 'meifen'
   children?: React.ReactNode
   onClick?: () => void
@@ -15,38 +16,34 @@ export default ({ format, size = 'medium', color = 'biaozhun', children, onClick
   const sizeMap = {
     tiny: 'px-1 h-4 leading-4 ',
     small: 'w-[2.25rem] h-[1.125rem] leading-[1.125rem]',
-    medium: 'w-[2.625rem] h-[1.25rem] leading-[1.25rem]'
-  }
-
-  const borderMap = {
-    gray: 'border-gray-120',
-    green: 'border-green',
-    red: 'border-red',
-    biaozhun: 'border-yellow-490',
-    luodian: 'border-green-700',
-    meifen: 'border-black'
+    medium: 'w-[2.625rem] h-[1.25rem] leading-[1.25rem]',
+    auto: 'w-auto h-[1.25rem] leading-[1.25rem] whitespace-nowrap'
   }
 
   const colorMap = {
     gray: 'bg-gray-120',
-    green: 'text-green bg-green bg-opacity-20',
-    red: 'text-red bg-red bg-opacity-20',
+    green: 'text-green bg-green-700 bg-opacity-20',
+    red: 'text-red bg-red-600 bg-opacity-20',
     biaozhun: 'bg-yellow-490',
+    '【真实+锁仓】': 'bg-yellow-490',
     luodian: 'bg-green-700 text-white',
-    meifen: 'bg-black text-white'
+    '【真实+杠杆】': 'bg-green-700 text-white',
+    '【真实+净额】': 'bg-orange-600 text-white',
+    meifen: 'bg-black text-white',
+    '【真实+锁仓+浮动杠杆】': 'bg-black text-white'
   }
 
   const [selected, setSelected] = useState(false)
 
   const className = useMemo(
     () =>
-      classNames(
+      cn(
         selected && ' border border-solid',
         selectable && 'cursor-pointer',
-        sizeMap[size],
+        size && sizeMap[size],
         // @ts-ignore
-        colorMap[color],
-        'text-xs font-normal flex-shrink px-1 rounded flex items-center justify-center'
+        colorMap?.[color],
+        'text-xs font-normal flex-shrink px-1 rounded flex items-center justify-center  '
       ),
     [selected, size, color, selectable]
   )

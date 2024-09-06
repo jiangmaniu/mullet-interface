@@ -1,0 +1,421 @@
+import './style.less'
+
+import { FormattedMessage, useIntl, useModel, useParams } from '@umijs/max'
+import { useEffect, useRef, useState } from 'react'
+
+import Carousel from '@/components/Admin/Carousel'
+import Button from '@/components/Base/Button'
+import Iconfont from '@/components/Base/Iconfont'
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
+import { CURRENCY } from '@/constants'
+import { useStores } from '@/context/mobxProvider'
+import { getTradeFollowLeadDetail, tradeFollowLeadClose } from '@/services/api/tradeFollow/lead'
+import { colorTextPrimary } from '@/theme/theme.config'
+import { message } from '@/utils/message'
+import { push } from '@/utils/navigator'
+
+import AccountSelectFull from '../comp/AccountSelectFull'
+import { CardContainer } from '../comp/CardContainer'
+import Cumulative from '../comp/CardContainer/Cumulative'
+import { Performance } from '../comp/CardContainer/Performance'
+import Preferences from '../comp/CardContainer/Preferences'
+import { Introduction } from '../comp/Introduction'
+import TabsTable from '../comp/TabsTable'
+import TakeDatas from '../comp/TakeDatas'
+import TakeSettingModal from '../comp/TakeSettingModal'
+import DetailModal from './DetailModal'
+import EndModal from './EndModal'
+import { mockNotifications } from './mock'
+import { useOverview } from './useOverview'
+import { useTabsConfig } from './useTabsConfig'
+
+export default function TakeDetail() {
+  const { trade } = useStores()
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const accountList = currentUser?.accountList || []
+  const currentAccountList = accountList.filter((item) => !item.isSimulate)
+
+  const intl = useIntl()
+  const { setPageBgColor } = useModel('global')
+  const loadingRef = useRef<any>()
+
+  const params = useParams()
+  const { id } = params
+
+  const [taker, setTaker] = useState<TradeFollowLead.LeadDetailItem | null>(null)
+
+  useEffect(() => {
+    // 得到 takeId 之后去请求后端数据
+    // setTaker(defaultTaker)
+
+    getTradeFollowLeadDetail({
+      leadId: String(id)
+    }).then((res) => {
+      // @ts-ignore
+      if (res.success) setTaker({ ...res.data, leadId: id })
+    })
+  }, [id])
+
+  useEffect(() => {
+    // 设置当前页背景颜色
+    setPageBgColor('#fff')
+  }, [])
+
+  const handleSelectAccount = (value: string) => {
+    console.log(`selected ${value}`)
+  }
+
+  // 系統通知
+  const notifications = mockNotifications
+
+  const { items: tabs, onChange } = useTabsConfig({ id: String(id) })
+
+  const [status, setStatus] = useState<'abled' | 'disabled'>('disabled')
+  const [openEnd, setOpenEnd] = useState(false)
+
+  const {
+    statistics,
+    profitStatistics: { earningRates, profitAmounts },
+    symbolStatistics,
+    dateRange1,
+    setDateRange1,
+    dateRange2,
+    setDateRange2,
+    dateRange3,
+    setDateRange3,
+    timeRangeOptions
+  } = useOverview({ id })
+
+  const [openDetail, setOpenDetail] = useState(false)
+
+  return (
+    <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
+      <div className="max-w-[1332px] px-4 mx-auto mt-6">
+        <div className="flex items-center">
+          <div className="flex items-center w-full gap-x-5">
+            <Button
+              height={56}
+              type="default"
+              style={{
+                width: 148,
+                borderRadius: 12
+              }}
+              onClick={() => history.back()}
+            >
+              <div className="flex items-center">
+                <img src="/img/uc/arrow-left.png" width={40} height={40} />
+                <Iconfont name="daidan" width={22} height={22} />
+                <div className="text-[20px] font-bold">
+                  <FormattedMessage id="mt.daidan" />
+                </div>
+              </div>
+            </Button>
+            <AccountSelectFull
+              leadId={String(id)}
+              onClick={(item) => {
+                push(`/copy-trading/take-detail/${item.leadId}`)
+              }}
+            />
+          </div>
+        </div>
+        <div className="mt-10">
+          {/* 头部 */}
+          <div className="flex items-start justify-between md:gap-4 gap-2">
+            <div className="flex flex-col gap-9">
+              {/* 帶單人信息 */}
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-start gap-5">
+                  {/* 介绍 */}
+                  <Introduction avatar={taker?.imageUrl} name={taker?.projectName} introduction={taker?.desc} tags={taker?.tags} />
+                  {/* 账户分润 */}
+                  <div className="flex flex-col items-start gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className=" text-sm font-normal text-gray-600">
+                        <FormattedMessage id="mt.leijifenrun" />
+                      </span>
+                      {/* <Select
+                        defaultValue={'778321'}
+                        rootClassName=" bg-unset"
+                        style={{ width: 132, height: 30 }}
+                        onChange={handleSelectAccount}
+                        labelRender={(option) => <span className=" text-sm">{option.label}</span>}
+                        options={[
+                          { value: '778341', label: '账户#778341' },
+                          { value: '778321', label: '账户#778321' }
+                        ]}
+                      /> */}
+                    </div>
+                    <div className="flex items-end gap-1">
+                      <span className=" text-3xl font-medium text-primary !font-dingpro-medium"> {taker?.shareProfitTotal}</span>
+                      <span className=" text-sm font-normal text-primary">{CURRENCY}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* 帶單人數據 */}
+              {/* <div className="flex items-center justify-start gap-18 flex-wrap gap-y-4">
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
+                  <span className="text-sm text-gray-600">
+                    <FormattedMessage id="mt.jinrifenrun" />
+                    (USDT)
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
+                  <span className="text-sm text-gray-600">
+                    <FormattedMessage id="mt.ruzhutianshu" />
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate1)}</span>
+                  <span className="text-sm text-gray-600">
+                    <FormattedMessage id="mt.daidanbaozhengjinyue" />
+                  </span>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-xl font-medium !font-dingpro-medium">{formatNum(taker?.datas.rate4)}</span>
+                  <span className="text-sm text-gray-600">
+                    <FormattedMessage id="mt.guanlizichanguimo" />
+                  </span>
+                </div>
+              </div> */}
+
+              <div className="">
+                <Carousel dotPosition="left" items={notifications}></Carousel>
+              </div>
+            </div>
+            {/* 操作区 */}
+            {taker?.openFlag === 1 ? (
+              <div className="flex flex-col gap-3.5">
+                <Button
+                  height={42}
+                  type="primary"
+                  style={{
+                    width: 158,
+                    borderRadius: 8
+                  }}
+                  onClick={() => {
+                    const item = currentAccountList.find((item) => item.id === taker?.tradeAccountId)
+
+                    if (item) {
+                      trade.setCurrentAccountInfo(item)
+                      trade.jumpTrade()
+                      // 切换账户重置
+                      trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                    }
+                  }}
+                >
+                  <div className=" flex items-center gap-1">
+                    <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                    <span className=" font-semibold text-base ">
+                      <FormattedMessage id="common.jiaoyi" />
+                    </span>
+                  </div>
+                </Button>
+                <TakeSettingModal
+                  info={taker}
+                  trigger={
+                    <Button
+                      height={42}
+                      type="default"
+                      style={{
+                        width: 158,
+                        borderRadius: 8
+                      }}
+                      onClick={() => {
+                        // todo 跳转
+                      }}
+                    >
+                      <div className=" flex items-center gap-1">
+                        <Iconfont name="shezhi" width={20} height={20} hoverColor={colorTextPrimary} />
+                        <span className=" font-semibold text-base ">
+                          <FormattedMessage id="mt.shezhi" />
+                        </span>
+                      </div>
+                    </Button>
+                  }
+                />
+
+                <Button
+                  height={42}
+                  type="default"
+                  style={{
+                    width: 158,
+                    borderRadius: 8
+                  }}
+                  onClick={() => {
+                    setOpenDetail(true)
+                  }}
+                >
+                  <div className=" flex items-center gap-1">
+                    <Iconfont name="fenrunmingxi" width={20} height={20} hoverColor={colorTextPrimary} />
+                    <span className=" font-semibold text-base ">
+                      <FormattedMessage id="mt.fenrunmingxi" />
+                    </span>
+                  </div>
+                </Button>
+
+                <Button
+                  height={42}
+                  type="primary"
+                  danger
+                  style={{
+                    width: 158,
+                    borderRadius: 8
+                  }}
+                  onClick={() => {
+                    setOpenEnd(true)
+                  }}
+                >
+                  <div className=" flex items-center gap-1">
+                    <Iconfont name="jiaoyi" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
+                    <span className=" font-semibold text-base ">
+                      <FormattedMessage id="mt.jieshudaidan" />
+                    </span>
+                  </div>
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  height={42}
+                  type="primary"
+                  disabled
+                  style={{
+                    width: 158,
+                    borderRadius: 8
+                  }}
+                >
+                  <div className=" flex items-center gap-1">
+                    <span className=" font-semibold text-base ">
+                      <FormattedMessage id="mt.yijieshu" />
+                    </span>
+                  </div>
+                </Button>
+              </div>
+            )}
+
+            <EndModal
+              id={String(id)}
+              open={openEnd}
+              onOpenChange={setOpenEnd}
+              onConfirm={(params: any) => {
+                if (params.status === 'disabled') {
+                  const item = currentAccountList.find((item) => item.id === taker?.tradeAccountId)
+
+                  if (item) {
+                    trade.setCurrentAccountInfo(item)
+                    trade.jumpTrade()
+                    // 切换账户重置
+                    trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+                  }
+                } else {
+                  loadingRef.current?.show()
+                  tradeFollowLeadClose({
+                    leadId: String(id)
+                  })
+                    .then((res) => {
+                      if (res.success) {
+                        // message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                        setOpenEnd(false)
+                        setStatus('disabled')
+                      } else {
+                        message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+                      }
+                    })
+                    .finally(() => {
+                      loadingRef.current?.close()
+                    })
+                }
+              }}
+            />
+            <ModalLoading
+              ref={loadingRef}
+              title={intl.formatMessage({ id: 'mt.jieshudaidan' })}
+              tips={intl.formatMessage({ id: 'mt.jieshudaidanzhong' })}
+            />
+
+            <DetailModal
+              info={{
+                leadId: id
+              }}
+              open={openDetail}
+              onOpenChange={(open) => setOpenDetail(open)}
+            />
+          </div>
+          {/* 通知 */}
+          {/* <div className="mt-7.5">
+            <Carousel dotPosition="left" items={notifications}></Carousel>
+          </div> */}
+          {/* 带单数据 */}
+          <div className="mt-2 border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
+            <span className=" text-primary text-xl font-medium">
+              <FormattedMessage id="mt.daidanshuju" />
+            </span>
+            <TakeDatas
+              datas={{
+                followerNumber: taker?.followerNumber,
+                profitTotal: taker?.profitTotal,
+                profitSharingRatio: taker?.profitSharingRatio,
+                assetRequirement: taker?.assetRequirement,
+                remainingGraranteedAmount: taker?.remainingGraranteedAmount,
+                shareProfitToday: taker?.shareProfitToday,
+                createDayTotal: taker?.createDayTotal,
+                assetScaleTotal: taker?.assetScaleTotal
+              }}
+              gap="gap-16"
+            />
+          </div>
+          {/* 帶單表現，累計盈虧，交易偏好 */}
+          <div className=" grid xl:grid-cols-3 sm:grid-cols-1 items-start gap-5  ">
+            <CardContainer
+              title={<FormattedMessage id="mt.daidanbiaoxian" />}
+              defaultValue={dateRange1}
+              onChange={setDateRange1}
+              options={timeRangeOptions}
+            >
+              <Performance datas={statistics} />
+            </CardContainer>
+            <CardContainer
+              title={
+                <>
+                  <FormattedMessage id="mt.leijiyingkui" />({CURRENCY})
+                </>
+              }
+              defaultValue={dateRange2}
+              onChange={setDateRange2}
+              options={timeRangeOptions}
+            >
+              <Cumulative
+                earningRates={earningRates?.map((i) => ({
+                  date: i.date,
+                  value: i.earningRate
+                }))}
+                profitAmounts={profitAmounts?.map((i) => ({
+                  date: i.date,
+                  value: i.profitAmount
+                }))}
+              />
+            </CardContainer>
+            <CardContainer
+              title={<FormattedMessage id="mt.jiaoyipianhao" />}
+              defaultValue={dateRange3}
+              onChange={setDateRange3}
+              options={timeRangeOptions}
+            >
+              <Preferences datas={symbolStatistics} />
+            </CardContainer>
+          </div>
+          {/* 表格数据 */}
+          <div className="mt-9 border border-gray-150 rounded-2xl px-5 bg-white">
+            <TabsTable items={tabs} onChange={onChange} />
+          </div>
+        </div>
+      </div>
+      {/* <Footer /> */}
+    </div>
+  )
+}

@@ -93,6 +93,7 @@ function AddAccountComp() {
               }}
               submitter={false}
               layout="vertical"
+              initialValues={{ name: currentAccount.synopsis?.name }}
             >
               <ProFormText
                 name="name"
@@ -107,7 +108,9 @@ function AddAccountComp() {
                 ]}
                 fieldProps={{
                   size: 'large',
-                  style: { height: 42 }
+                  style: { height: 42 },
+                  maxLength: 20,
+                  showCount: true
                 }}
               />
               {/* @TODO 接口暂时不支持 */}
@@ -149,7 +152,11 @@ function AddAccountComp() {
           </div>
         </div>
       </div>
-      <ModalLoading ref={loadingRef} />
+      <ModalLoading
+        ref={loadingRef}
+        title={intl.formatMessage({ id: 'mt.chuangjianzhanghu' })}
+        tips={intl.formatMessage({ id: 'mt.chuangjianzhanghuzhong' })}
+      />
     </PageContainer>
   )
 }

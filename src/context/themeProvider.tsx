@@ -1,5 +1,5 @@
 import { ConfigProvider, theme } from 'antd'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import themeColor from '@/theme/theme.antd'
 import themeDarkColor from '@/theme/theme.antd.dark'
@@ -9,12 +9,20 @@ import { STORAGE_GET_THEME, STORAGE_GET_TRADE_THEME, STORAGE_SET_THEME } from '@
 const { defaultAlgorithm, darkAlgorithm } = theme
 
 export type IThemeMode = 'light' | 'dark'
+type IDirection = 0 | 1
 
 interface IThemeContextProps {
   /**全局主题色 */
   theme: IThemeMode
-  /**设置全局主题色 */
+  /**0绿涨红跌 1红涨绿跌 */
+  direction: IDirection
+  /**涨 颜色 */
+  upColor: string
+  /**跌 颜色 */
+  downColor: string
   setTheme: (theme: IThemeMode) => void
+  /**设置0绿涨红跌 1红涨绿跌 */
+  setDirection: (key: IDirection) => void
 }
 
 interface IProps {
@@ -26,10 +34,20 @@ export const ThemeContext = createContext<IThemeContextProps>({} as IThemeContex
 export const ThemeProvider = ({ children }: IProps): JSX.Element => {
   const [theme, setTheme] = useState<IThemeMode>('light') // 主题色
   const [tradeTheme, setTradeTheme] = useState<IThemeMode>('light') // 主题色
-  const themeToken = {
-    light: themeColor,
-    dark: themeDarkColor // 黑色主题
-  }[theme]
+  const [direction, setDirection] = useState<any>(0) // 0绿涨红跌 1红涨绿跌 @TODO 暂时未使用
+
+  const themeConfig = useMemo(() => {
+    const themeToken = {
+      light: themeColor,
+      dark: themeDarkColor // 黑色主题
+    }[theme]
+
+    return {
+      themeToken,
+      upColor: direction === 1 ? 'var(--color-red)' : 'var(--color-green)',
+      downColor: direction === 1 ? 'var(--color-green)' : 'var(--color-red)'
+    }
+  }, [theme, direction])
 
   // 切换主题模式
   const setThemeClassName = (theme: IThemeMode) => {
@@ -78,6 +96,10 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     <ThemeContext.Provider
       value={{
         theme,
+        direction,
+        setDirection,
+        upColor: themeConfig.upColor,
+        downColor: themeConfig.downColor,
         setTheme: (mode: IThemeMode) => {
           if (mode) {
             handleSetTheme(mode)
@@ -89,7 +111,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
       <ConfigProvider
         theme={{
           token: {
-            ...themeToken
+            ...themeConfig.themeToken
           },
           cssVar: true,
           algorithm: theme === 'dark' ? darkAlgorithm : defaultAlgorithm
@@ -97,6 +119,9 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
         warning={{ strict: false }}
         wave={{
           showEffect: showInsetEffect
+        }}
+        button={{
+          autoInsertSpace: false
         }}
       >
         {children}
