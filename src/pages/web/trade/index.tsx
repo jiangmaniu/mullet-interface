@@ -100,7 +100,7 @@ export default observer(() => {
       console.log('======开始刷新k线======')
 
       // 用户从后台切换回前台时执行的操作
-      ws.reconnect()
+      ws.connect()
 
       onSubscribeExchangeRateQuote()
 

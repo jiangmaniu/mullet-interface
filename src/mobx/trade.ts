@@ -529,10 +529,8 @@ class TradeStore {
         }
       })
 
-      // 动态获取到品种列表后在连接ws，默认查询全部的时候订阅
-      if (!params?.accountId) {
-        ws.reconnect()
-      }
+      // 获取品种后，动态订阅品种
+      ws.batchSubscribeSymbol()
     }
   }
 
