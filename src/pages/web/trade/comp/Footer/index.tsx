@@ -1,5 +1,6 @@
+// @ts-nocheck
 import { FormattedMessage } from '@umijs/max'
-import { useNetwork } from 'ahooks'
+import { useNetwork, useScroll } from 'ahooks'
 import { Button, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
@@ -17,37 +18,51 @@ function Footer() {
   const { theme } = useTheme()
   const networkState = useNetwork()
   const { ws, trade, kline } = useStores()
-  const readyState = ws.readyState
+  const readyState = ws.socket?.readyState
   const isOnline = networkState.online
-  const isConnected = readyState === 'OPEN' && isOnline
+  const isQuotePushing = ws.isQuotePushing // 判断是否有行情数据推送
   const [openTips, setOpenTips] = useState<any>(false)
+  const disConnected = !isOnline || readyState === 3
+  const scroll = useScroll(document)
 
   useEffect(() => {
-    setOpenTips(!isOnline || readyState === 'CLOSED')
-  }, [isOnline, readyState])
+    setOpenTips(!isOnline || readyState === 3 || !isQuotePushing)
+  }, [isOnline, readyState, isQuotePushing])
 
-  const CLOSED = {
+  useEffect(() => {
+    if (scroll?.top > 50) {
+      setOpenTips(false)
+    }
+  }, [scroll])
+
+  const CLOSED: any = {
     title: <FormattedMessage id="mt.duankailianjie" />,
     desc: <FormattedMessage id="mt.hangqingyiduankaitips" />,
     color: '--color-red-600',
-    status: 'CLOSED'
+    status: 3
   }
+
   let connectedStatusMap = isOnline
     ? {
-        CONNECTING: {
+        0: {
           title: <FormattedMessage id="mt.lianjiezhong" />,
           desc: <FormattedMessage id="mt.hangqinglianjiezhongtips" />,
           color: '--color-yellow-500',
-          status: 'CONNECTING'
+          status: 0
         },
-        CLOSED,
-        CLOSEING: CLOSED,
-        OPEN: {
+        1: {
           title: <FormattedMessage id="mt.lianjiezhengchang" />,
           desc: <FormattedMessage id="mt.hangqinglianjiezhengchengtips" />,
           color: '--color-green-700',
-          status: 'OPEN'
-        }
+          status: 1
+        },
+        2: {
+          title: <FormattedMessage id="mt.lianjieguanbizhong" />,
+          desc: <FormattedMessage id="mt.hangqinglianjieguanbizhong" />,
+          color: '--color-red-600',
+          status: 2
+        },
+        3: CLOSED
       }[readyState]
     : CLOSED
 
@@ -57,8 +72,8 @@ function Footer() {
         placement="topLeft"
         title={
           <span>
-            {connectedStatusMap.desc}
-            {readyState === 'CLOSED' && (
+            {isQuotePushing ? connectedStatusMap?.desc : <FormattedMessage id="mt.dangqianfuwumeiyouhangqingshujutuisong" />}
+            {disConnected && (
               <Button
                 type="link"
                 onClick={() => {
@@ -80,14 +95,25 @@ function Footer() {
         }}
       >
         <div className="flex items-center border-r border-r-gray-200 dark:border-r-gray-700 pr-3">
-          <div className="flex items-center">
-            {connectedStatusMap.status === 'CLOSED' ? (
-              <img src="/img/duankailianjie.png" width={16} height={14} />
-            ) : (
-              <SignalIcon color={`var(${connectedStatusMap.color})`} />
-            )}
-            <span className="pl-1 text-xs font-normal text-weak">{connectedStatusMap.title}</span>
-          </div>
+          {isQuotePushing && (
+            <div className="flex items-center">
+              {disConnected ? (
+                <img src="/img/duankailianjie.png" width={16} height={14} />
+              ) : (
+                <SignalIcon color={`var(${connectedStatusMap?.color})`} />
+              )}
+              <span className="pl-1 text-xs font-normal text-weak">{connectedStatusMap?.title}</span>
+            </div>
+          )}
+          {/* 没有行情数据推送 */}
+          {!isQuotePushing && (
+            <div className="flex items-center">
+              <SignalIcon color={`var(--color-yellow-500)`} />
+              <span className="pl-1 text-xs font-normal text-weak">
+                <FormattedMessage id="mt.lianjiezhengchang" />
+              </span>
+            </div>
+          )}
         </div>
       </Tooltip>
       <div className="flex h-full flex-1 items-center overflow-x-auto">

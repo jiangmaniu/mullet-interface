@@ -291,6 +291,10 @@ export default {
   'mt.mairu': '买入',
   'mt.maichu': '卖出',
   'mt.zhanghuyueTips': '未计入当前未结头寸的资金数目',
+  'mt.lianjieguanbizhong': '连接关闭中',
+  'mt.hangqinglianjieguanbizhong': '行情连接正在关闭中...',
+  'mt.dangqianfuwumeiyouhangqingshujutuisong': '当前服务没有行情数据推送',
+  'mt.zanwuhangqing': '暂无行情',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
