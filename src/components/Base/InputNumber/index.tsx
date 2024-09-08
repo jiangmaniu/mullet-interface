@@ -259,7 +259,7 @@ function InputNumber(props: IProps) {
           fieldProps={{
             onBlurCapture: () => {
               // 失去焦点时候 如果用户输入的是1. 没有输入完整，去掉.
-              if (inputValue && inputValue.endsWith('.')) {
+              if (inputValue && String(inputValue).endsWith('.')) {
                 const newValue = inputValue.slice(0, -1)
                 onChange?.(newValue)
               }
