@@ -90,7 +90,7 @@ export default observer(
           </Sell>
         </div>
         {hasQuote && (
-          <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] !font-dingpro-medium translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-primary">
+          <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] !font-dingpro-medium translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-primary dark:text-black">
             {quoteInfo.spread || 0}
           </div>
         )}

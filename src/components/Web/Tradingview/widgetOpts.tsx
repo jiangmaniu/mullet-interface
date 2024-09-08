@@ -19,6 +19,7 @@ export default function getWidgetOpts(
   datafeedParams: any
 ): ChartingLibraryWidgetOptions {
   const theme = props.theme
+  const isDark = theme === 'dark'
   const bgColor = theme === 'dark' ? ThemeConst.black : ThemeConst.white // 自定义背景颜色
   // const toolbar_bg = theme === 'dark' ? ThemeConst.black : '#f4f7f9' // 侧边工具栏和底部工具栏背景颜色
   const toolbar_bg = theme === 'dark' ? ThemeConst.black : '#fff' // 侧边工具栏和底部工具栏背景颜色
@@ -219,17 +220,18 @@ export default function getWidgetOpts(
     // 可以通过api来动态设置 applyOverrides
     // https://www.tradingview.com/charting-library-docs/latest/customization/overrides/
     overrides: {
-      // 'scalesProperties.lineColor': '#f00', // 边框线条颜色
+      'scalesProperties.lineColor': isDark ? '#29292C' : '#f0f0f0', // 边框线条颜色
+      'paneProperties.separatorColor': isDark ? '#29292C' : '#E0E3EB', // 分割线颜色
       // 'paneProperties.legendProperties.showSeriesTitle': false, // 图例标题可见性，legend最左侧的标题
       // priceScaleSelectionStrategyName: 'left', // 将价格刻度位置更改为左侧
-      // 'mainSeriesProperties.visible': false, // 隐藏主图
-      'paneProperties.background': `${bgColor}` // 图表背景颜色
+      // 'mainSeriesProperties.visible': true, // 隐藏主图
+      'paneProperties.background': `${bgColor}`, // 图表背景颜色
       // 'scalesProperties.showStudyLastValue': true // 是否在右侧价格刻度上展示value值
       // 'paneProperties.backgroundType': 'solid'
       // "paneProperties.vertGridProperties.color": "#454545",
       // "paneProperties.horzGridProperties.color": "#454545",
-      // "scalesProperties.textColor" : "#AAA"
-      // 'paneProperties.topMargin': 0, // 图表距顶部距离
+      'scalesProperties.textColor': isDark ? '#57606B' : '#131722'
+      // 'paneProperties.topMargin': 0 // 图表距顶部距离
       // 'paneProperties.bottomMargin': 0,
       // 'mainSeriesProperties.priceLineColor': 'red', // 价格涨跌线样式
     },
@@ -262,8 +264,8 @@ export default function getWidgetOpts(
       return Promise.resolve([ma(PineJS)])
     },
     loading_screen: {
-      backgroundColor: '#fff',
-      foregroundColor: '#fff'
+      backgroundColor: isDark ? '#161A1E' : '#fff',
+      foregroundColor: isDark ? '#161A1E' : '#fff'
     }
     // 加载背景 加载图标背景颜色  没找到隐藏方式，这样隐藏
     // charts_storage_url: "https://saveload.tradingview.com", // 点击图标保存按钮会把配置保存到服务器

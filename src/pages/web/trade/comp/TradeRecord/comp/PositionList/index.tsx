@@ -390,7 +390,7 @@ function Position({ style, parentPopup }: IProps) {
         return (
           <div className="flex items-center max-xl:mt-3 max-xl:justify-between">
             <div
-              className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-primary text-sm"
+              className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 dark:btn-dark border px-2 py-[5px] text-center text-primary text-sm"
               onClick={() => {
                 closePositionRef.current?.show(record)
               }}

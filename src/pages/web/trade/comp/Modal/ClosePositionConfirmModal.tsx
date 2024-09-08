@@ -151,6 +151,7 @@ export default observer(
             </div>
             <div className="flex w-full flex-col items-center pt-5">
               <InputNumber
+                showFloatTips={false}
                 placeholder={intl.formatMessage({ id: 'mt.pingcangshoushu' })}
                 className="h-[38px]"
                 classNames={{ input: 'text-center' }}

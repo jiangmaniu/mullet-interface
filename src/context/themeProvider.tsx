@@ -14,6 +14,8 @@ type IDirection = 0 | 1
 interface IThemeContextProps {
   /**全局主题色 */
   theme: IThemeMode
+  /**是否是黑色主题 */
+  isDark?: boolean
   /**0绿涨红跌 1红涨绿跌 */
   direction: IDirection
   /**涨 颜色 */
@@ -96,6 +98,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     <ThemeContext.Provider
       value={{
         theme,
+        isDark: theme === 'dark',
         direction,
         setDirection,
         upColor: themeConfig.upColor,

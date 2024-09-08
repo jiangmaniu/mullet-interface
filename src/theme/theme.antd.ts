@@ -26,6 +26,8 @@ export default {
   fontFamily, // 字体
   colorText: colorTextPrimary, // 文字主色
 
+  motion: false, // 动画关闭，否则切换主题样式会闪烁
+
   // 组件对应的token
   Tabs: {
     itemHoverColor: gray900, // 标签悬浮态文本颜色
@@ -55,11 +57,13 @@ export default {
   InputNumber: {
     activeBorderColor: gray500, // 激活态边框色
     handleHoverColor: gray500, // 操作按钮悬浮颜色
-    hoverBorderColor: gray500 // 悬浮态边框色
+    hoverBorderColor: gray500, // 悬浮态边框色
+    activeShadow: 'none' // 激活态阴影
   },
   Input: {
     activeBorderColor: gray500, // 激活态边框色
-    hoverBorderColor: gray500 // 悬浮态边框色
+    hoverBorderColor: gray500, // 悬浮态边框色
+    activeShadow: 'none' // 激活态阴影
   },
   DatePicker: {
     // activeBorderColor: gray500, // 激活态边框色
@@ -95,9 +99,12 @@ export default {
     buttonColor: 'red'
   },
   Segmented: {
-    // itemSelectedBg: 'rgb(247, 247, 247)',
-    // itemSelectedColor: '#222222',
-    // boxShadowTertiary: 'none',
-    // trackBg: 'white'
+    itemSelectedBg: 'rgb(247, 247, 247)',
+    itemSelectedColor: '#222222',
+    boxShadowTertiary: 'none',
+    trackBg: 'white'
   }
+  // Pagination: {
+  //   colorBgContainer: lightTheme['--color-brand-primary']
+  // }
 }

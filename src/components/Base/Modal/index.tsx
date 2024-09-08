@@ -57,7 +57,7 @@ export default forwardRef(({ children, open, onClose, trigger, ...res }: IProps,
 
   return (
     <>
-      <AntdModal destroyOnClose open={isOpen} onCancel={close} {...res}>
+      <AntdModal destroyOnClose open={isOpen} onCancel={close} wrapClassName="custom-modal" {...res}>
         {children}
       </AntdModal>
       {triggerDom}

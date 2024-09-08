@@ -8,6 +8,7 @@ import FavoriteIcon from '@/components/Web/FavoriteIcon'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import mitt from '@/utils/mitt'
@@ -25,7 +26,7 @@ type IProps = {
 function QuoteItem({ item, isActive, popupRef }: IProps) {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { isMobileOrIpad } = useEnv()
-  const { upColor, downColor } = useTheme()
+  const { upColor, downColor, isDark } = useTheme()
   const { trade, ws } = useStores()
   const symbol = item.symbol
   const res = getCurrentQuote(symbol)
@@ -55,7 +56,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         left: 0,
         width: 4,
         height: 19,
-        background: '#000000',
+        background: isDark ? gray[95] : '#000000',
         borderRadius: '0px 4px 4px 0px',
         content: '""'
       }
@@ -127,9 +128,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           bottom: 0,
           top: 0,
           right: 0,
-          border: '1px solid var(--color-gray-130)'
+          border: `1px solid ${isDark ? gray[575] : gray[130]}`
         },
-        background: 'var(--color-gray-50)',
+        background: `${isDark ? gray[720] : gray[50]}`,
         color: 'var(--color-text-primary)'
       }
     }
@@ -138,7 +139,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   return (
     <>
       <div
-        className={cn('relative pl-1 border-b border-gray-100', className)}
+        className={cn('relative pl-1 border-b border-gray-100 dark:border-gray-700', className)}
         onClick={() => {
           startTransition(() => {
             // 记录打开的symbol
@@ -158,7 +159,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
         <Row
           className={cn('flex cursor-pointer items-center rounded pl-2 py-[5px] hover:bg-[var(--list-hover-primary-bg)] relative', {
-            'dark:bg-gray-660 bg-[var(--list-hover-primary-bg)]': isActive,
+            'bg-[var(--list-hover-primary-bg)]': isActive,
             [activeClassName]: isActive
           })}
         >
@@ -181,7 +182,10 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           <Col className="flex pl-2" span={6}>
             {bid ? (
               <div
-                className={cn('rounded text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center', bidColor)}
+                className={cn(
+                  'rounded overflow-hidden text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center',
+                  bidColor
+                )}
                 // style={{ background: upColor }}
               >
                 {formatNum(bid)}
@@ -193,7 +197,10 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           <Col className="flex" span={6}>
             {ask ? (
               <div
-                className={cn('text-gray rounded text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center', askColor)}
+                className={cn(
+                  'text-gray rounded overflow-hidden text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center',
+                  askColor
+                )}
                 // style={{ background: downColor }}
               >
                 {formatNum(ask)}

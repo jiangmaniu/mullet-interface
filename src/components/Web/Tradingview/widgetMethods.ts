@@ -18,8 +18,8 @@ export const setSymbol = (symbol, tvWidget: IChartingLibraryWidget) => {
 
 // 设置图表样式
 export type ColorType = 1 | 2 // 1绿涨红跌 2红涨绿跌
-export function setChartStyleProperties(props: { colorType: ColorType; tvWidget: IChartingLibraryWidget }) {
-  const { colorType, tvWidget } = props
+export function setChartStyleProperties(props: { colorType: ColorType; isDark: any; tvWidget: IChartingLibraryWidget }) {
+  const { colorType, tvWidget, isDark } = props
   const red = ThemeConst.red
   const green = ThemeConst.green
   let upColor = green

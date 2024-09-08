@@ -15,7 +15,7 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 底部浮动条
 function Footer() {
-  const { theme } = useTheme()
+  const { isDark } = useTheme()
   const networkState = useNetwork()
   const { ws, trade, kline } = useStores()
   const readyState = ws.socket?.readyState
@@ -117,7 +117,7 @@ function Footer() {
         </div>
       </Tooltip>
       <div className="flex h-full flex-1 items-center overflow-x-auto">
-        <Marquee pauseOnHover speed={30} gradient={theme === 'dark' ? false : true}>
+        <Marquee pauseOnHover speed={30} gradient={isDark ? false : true}>
           {trade.symbolList.map((item, idx) => {
             const res = getCurrentQuote(item.symbol)
             const per: any = res.percent

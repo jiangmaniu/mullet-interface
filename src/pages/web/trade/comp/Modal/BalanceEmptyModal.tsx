@@ -8,11 +8,13 @@ import Popup from '@/components/Base/Popup'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { message } from '@/utils/message'
 
 // 余额不足提示
 export default observer((props, ref) => {
+  const { isDark } = useTheme()
   const { trade } = useStores()
   const { isPc } = useEnv()
   const { lng } = useLang()
@@ -52,7 +54,7 @@ export default observer((props, ref) => {
   const titleDom = (
     <div
       className="flex flex-col items-center justify-center bg-no-repeat pt-3"
-      style={{ backgroundImage: 'url(/img/header-bg-mask.png)', backgroundSize: '300px auto' }}
+      style={{ backgroundImage: isDark ? 'url(/img/mask2-dark.png)' : 'url(/img/header-bg-mask.png)', backgroundSize: '300px auto' }}
     >
       <img src="/img/yuebuzu.png" width={121} height={121} alt="" />
     </div>
