@@ -69,9 +69,8 @@ export default observer(
       }
     }, [item.limitPrice, item.stopLoss, item.takeProfit])
 
-    const symbol = item.symbol
-    const dataSourceSymbol = item?.dataSourceSymbol
-    const quoteInfo = getCurrentQuote(dataSourceSymbol)
+    const symbol = item?.symbol
+    const quoteInfo = getCurrentQuote(symbol)
     const symbolConf = item?.conf
     const consize = quoteInfo?.consize
     const d = quoteInfo.digits

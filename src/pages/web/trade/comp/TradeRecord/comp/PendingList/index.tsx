@@ -238,8 +238,8 @@ function PendingList({ style, parentPopup }: IProps) {
   ]
 
   const dataSource = toJS(list).map((v) => {
-    const dataSourceSymbol = v.dataSourceSymbol as string
-    const quoteInfo = getCurrentQuote(dataSourceSymbol)
+    const symbol = v.symbol as string
+    const quoteInfo = getCurrentQuote(symbol)
     const digits = v.symbolDecimal || 2
     const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
 

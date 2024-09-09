@@ -1,3 +1,5 @@
+import { toJS } from 'mobx'
+
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { stores } from '@/context/mobxProvider'
 import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
@@ -57,12 +59,12 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
   const isBuy = buySell === TRADE_BUY_SELL.BUY // 是否买入
   const isSell = buySell === TRADE_BUY_SELL.SELL // 是否卖出
 
-  // if (isForeign && trade.currentAccountInfo?.currencyUnit !== unit) {
   // 交易品种配置的盈利货币单位和账户组配置的货币单位不一致时，需要转换
   if (trade.currentAccountInfo?.currencyUnit !== unit) {
-    // 乘法
-    const divName = ('USD' + unit).toUpperCase() // 如 USDNZD
+    // USD开头是除法，USD结尾是乘法
     // 除法
+    const divName = ('USD' + unit).toUpperCase() // 如 USDNZD
+    // 乘法
     const mulName = (unit + 'USD').toUpperCase() // 如 NZDUSD
 
     // 使用汇率品种的dataSourceCode去获取行情
@@ -70,9 +72,12 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
     const divNameKey = `${dataSourceCode}/${divName}`
     const mulNameKey = `${dataSourceCode}/${mulName}`
 
+    const divNameQuote = toJS(quotes[divNameKey])
+    const mulNameQuote = toJS(quotes[mulNameKey])
+
     // 检查是否存在 divName 对应的报价信息
-    if (quotes[divNameKey]) {
-      qb = quotes[divNameKey]
+    if (divNameQuote) {
+      qb = divNameQuote
 
       // 检查交易指令是否是买入，如果是，则获取 divName 对应的报价信息，并用其 bid 除以 profit
       if (isBuy) {
@@ -84,8 +89,8 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
       }
     }
     // 如果 divName 对应的报价信息不存在，则检查 mulName 对应的报价信息
-    else if (quotes[mulNameKey]) {
-      qb = quotes[mulNameKey]
+    else if (mulNameQuote) {
+      qb = mulNameQuote
       // 检查交易指令是否是买入，如果是，则获取 mulName 对应的报价信息，并用其 bid 乘以 profit
       if (isBuy) {
         profit = profit * Number(qb?.priceData?.buy)
@@ -96,7 +101,38 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
       }
     }
   }
+
   return Number(profit)
+}
+
+/**
+ * 计算订单中的保证金汇率
+ * @param param0
+ * @returns
+ */
+export const calcOrderMarginExchangeRate = ({
+  value,
+  exchangeSymbol,
+  exchangeRate
+}: {
+  /**需要转化的值 */
+  value: any
+  /**汇率品种 */
+  exchangeSymbol: string
+  /**汇率品种的汇率 */
+  exchangeRate: string
+}) => {
+  if (!exchangeSymbol || !exchangeRate) return value
+
+  // USD开头是除法
+  if (exchangeSymbol.startsWith('USD')) {
+    return value / Number(exchangeRate)
+  }
+  // USD结尾是乘法
+  if (exchangeSymbol.endsWith('USD')) {
+    return value * Number(exchangeRate)
+  }
+  return value
 }
 
 /**
@@ -106,9 +142,9 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
  * @returns
  */
 export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
-  const dataSourceSymbol = positionItem?.dataSourceSymbol
-  if (!dataSourceSymbol) return
-  const quoteInfo = getCurrentQuote(dataSourceSymbol)
+  const symbol = positionItem?.symbol
+  if (!symbol) return
+  const quoteInfo = getCurrentQuote(symbol)
   const symbolConf = positionItem?.conf
   const bid = Number(quoteInfo?.bid || 0)
   const ask = Number(quoteInfo?.ask || 0)
@@ -122,8 +158,8 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
   let profit =
     bid && ask
       ? positionItem.buySell === TRADE_BUY_SELL.BUY
-        ? (ask - openPrice) * number * consize
-        : (openPrice - bid) * number * consize
+        ? (bid - openPrice) * number * consize
+        : (openPrice - ask) * number * consize
       : 0
 
   // 转换汇率

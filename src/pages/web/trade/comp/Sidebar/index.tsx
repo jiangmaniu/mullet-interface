@@ -316,10 +316,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                         [activeClassName]: isActive
                       })}
                       onClick={() => {
-                        // 记录打开的symbol
-                        trade.setOpenSymbolNameList(symbol)
-                        // 设置当前当前的symbol
-                        trade.setActiveSymbolName(symbol)
+                        // 切换品种
+                        trade.switchSymbol(symbol)
                       }}
                     >
                       <SymbolIcon src={item?.imgUrl} width={28} height={28} />

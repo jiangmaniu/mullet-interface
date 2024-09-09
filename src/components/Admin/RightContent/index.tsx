@@ -138,7 +138,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
     const list = [
       {
         label: <FormattedMessage id="mt.zhanghuyue" />,
-        value: balance,
+        value: currentAccountInfo?.money,
         tips: <FormattedMessage id="mt.zhanghuyueTips" />
       },
       { label: <FormattedMessage id="mt.fudongyingkui" />, value: totalProfit, tips: <FormattedMessage id="mt.fudongyingkuitips" /> },

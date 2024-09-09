@@ -664,7 +664,7 @@ export default {
             currencyUnit: 'USD',
             margin: '1008',
             isolatedMargin: '0',
-            status: 'DISABLED',
+            status: 'ENABLE',
             remark: null,
             lastVisitedTime: '2024-06-12 16:16:48',
             createTime: '2024-06-11 15:27:21',
@@ -672,8 +672,9 @@ export default {
             groupName: '锁仓测试组',
             fundTransfer: 'ALLOWABLE',
             orderMode: 'LOCKED_POSITION',
-            enableIsolated: false,
-            isSimulate: false
+            enableIsolated: true,
+            isSimulate: false,
+            enableConnect: true
           },
           {
             id: '1800429237845442562',
@@ -684,7 +685,7 @@ export default {
             currencyUnit: 'USD',
             margin: '0',
             isolatedMargin: '0',
-            status: 'DISABLED',
+            status: 'ENABLE',
             remark: null,
             lastVisitedTime: '2024-06-12 16:16:48',
             createTime: '2024-06-11 15:25:55',
