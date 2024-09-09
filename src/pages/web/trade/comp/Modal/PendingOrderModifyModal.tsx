@@ -75,7 +75,10 @@ export default observer(
     const symbolConf = item?.conf
     const consize = quoteInfo?.consize
     const d = quoteInfo.digits
-    const step = Math.pow(10, -d) * 10
+    // const step = Math.pow(10, -d) * 10
+    // 根据品种小数点位数计算步长，独立于手数步长step。获取计算的小数位倒数第二位开始作为累加步长
+    // 限价、止盈止损、停损挂单，加减时，连动报价小数位倒数第二位
+    const step = Math.pow(10, -(d - 1)) || Math.pow(10, -d) * 10
     const stopl = Number(item?.conf?.limitStopLevel || 1) * Math.pow(10, -d)
     let sl_scope: any = 0 // 止损范围
     let sp_scope: any = 0 // 止盈范围

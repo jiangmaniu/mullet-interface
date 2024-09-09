@@ -82,14 +82,15 @@ type ITradeType =
   | 'TRADING'
 
 // WebSocket 的四个状态
+// https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
 export type IReadyState =
-  /**WebSocket 连接正在进行中 */
+  /**0 WebSocket 连接正在进行中 */
   | 'CONNECTING'
-  /**WebSocket 连接已经建立并且可以进行通信 */
+  /**1 WebSocket 连接已经建立并且可以进行通信 */
   | 'OPEN'
-  /**WebSocket 连接正在关闭过程中。此时，客户端或服务器已经开始关闭连接，但连接还没有完全关闭，双方还可以继续发送和接收消息 */
+  /**2 WebSocket 连接正在关闭过程中。此时，客户端或服务器已经开始关闭连接，但连接还没有完全关闭，双方还可以继续发送和接收消息 */
   | 'CLOSEING'
-  /**WebSocket 连接已经关闭，连接断开，无法再发送或接收消息 */
+  /**3 WebSocket 连接已经关闭，连接断开，无法再发送或接收消息 */
   | 'CLOSED'
 
 // 禁用 MobX 严格模式
@@ -104,15 +105,48 @@ class WSStore {
   heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
   quotesCacheArr: any = [] // 行情缓存区
   depthCacheArr: any = [] // 深度缓存区
-  @observable readyState: IReadyState = 'CONNECTING' // ws连接状态
   @observable socket: any = null
   @observable quotes = {} as Record<string, IQuoteItem> // 当前行情
   @observable depth = {} as Record<string, IDepth> // 当前行情
   @observable symbols = {} // 储存品种请求列表
   @observable websocketUrl = ENV.ws
 
+  @observable isQuotePushing = true // 判断行情是否一直实时在推送
+  QUOTE_PUSH_TIMEOUT = 5000 // 行情推送5秒超时
+  quotePushTimer: NodeJS.Timeout | null = null // 行情推送定时器
+  lastQuotePushTime = 0 // 行情最后推送时间
+
+  // ====================== 检查行情开始 ========================================
+  // 开始检查行情推送状态
+  startQuotePushCheck() {
+    if (this.quotePushTimer) clearInterval(this.quotePushTimer)
+    this.quotePushTimer = setInterval(() => {
+      this.checkQuotePushStatus()
+    }, 1000) // 每秒检查一次
+  }
+  // 检查行情推送状态
+  checkQuotePushStatus() {
+    const lastPushTime = this.lastQuotePushTime || 0
+    const currentTime = Date.now()
+    if (currentTime - lastPushTime > this.QUOTE_PUSH_TIMEOUT) {
+      runInAction(() => {
+        this.isQuotePushing = false
+      })
+    }
+  }
+  // 更新最后一次行情推送时间
+  updateLastQuotePushTime() {
+    this.lastQuotePushTime = Date.now()
+    runInAction(() => {
+      this.isQuotePushing = true
+    })
+  }
+  // ====================== 检查行情结束 ========================================
+
   @action
   async connect() {
+    this.startQuotePushCheck()
+
     const token = STORAGE_GET_TOKEN()
     // token不要传bear前缀
     // 游客传WebSocket:visitor
@@ -124,8 +158,6 @@ class WSStore {
       // debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
     })
     this.socket.addEventListener('open', () => {
-      this.readyState = 'OPEN'
-
       this.batchSubscribeSymbol()
       this.subscribeDepth()
       this.subscribeTrade()
@@ -138,12 +170,8 @@ class WSStore {
       const res = JSON.parse(d.data)
       this.message(res)
     })
-    this.socket.addEventListener('close', () => {
-      this.readyState = 'CLOSED'
-    })
-    this.socket.addEventListener('error', () => {
-      this.readyState = 'CLOSED'
-    })
+    this.socket.addEventListener('close', () => {})
+    this.socket.addEventListener('error', () => {})
   }
 
   // 开始心跳
@@ -248,7 +276,7 @@ class WSStore {
     const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
     // 游客身份userId传123456789
     const userId = userInfo?.user_id || '123456789'
-    if (this.socket && this.readyState === 'OPEN') {
+    if (this.socket && this.socket.readyState === 1) {
       this.socket.send(
         JSON.stringify({
           header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now(), ...header },
@@ -261,14 +289,20 @@ class WSStore {
     }
   }
   @action
-  close() {
+  close = () => {
     // 关闭socket指令
-    if (this.socket) {
-      this.socket.close()
-      this.stopHeartbeat()
-      this.readyState = 'CLOSED'
+    this.socket?.close?.()
+    this.stopHeartbeat()
+
+    if (this.quotePushTimer) {
+      clearInterval(this.quotePushTimer)
+      this.quotePushTimer = null
+      runInAction(() => {
+        this.isQuotePushing = true
+      })
     }
   }
+
   @action
   reconnect() {
     // 中断连接再重连
@@ -276,7 +310,9 @@ class WSStore {
     this.close()
     // this.resetData()
     // 重新连接
-    this.connect()
+    setTimeout(() => {
+      this.connect()
+    }, 1000)
   }
   @action
   resetData() {
@@ -402,6 +438,8 @@ class WSStore {
       // 行情
       case MessageType.symbol:
         // this.batchUpdateQuoteDataByNumber(data)
+        // 更新最后一次行情推送时间
+        this.updateLastQuotePushTime()
 
         // 推入缓冲区
         this.quotesCacheArr.push(data)

@@ -124,11 +124,11 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
         return (
           <div>
             <span className="!text-[13px] text-primary">
-              {Number(record?.takeProfit) ? formatNum(record?.takeProfit, { precision: record.symbolDecimal }) : '--'}
+              {record?.takeProfit ? formatNum(record?.takeProfit, { precision: record.symbolDecimal || 2 }) : '--'}
             </span>
             <span className="dark:text-gray-95"> / </span>
             <span className="!text-[13px] text-primary">
-              {Number(record?.stopLoss) ? formatNum(record?.stopLoss, { precision: record.symbolDecimal }) : '--'}
+              {record?.stopLoss ? formatNum(record?.stopLoss, { precision: record.symbolDecimal || 2 }) : '--'}
             </span>
           </div>
         )

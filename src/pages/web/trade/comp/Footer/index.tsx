@@ -1,6 +1,7 @@
+// @ts-nocheck
 import { FormattedMessage } from '@umijs/max'
-import { useNetwork } from 'ahooks'
-import { Tooltip } from 'antd'
+import { useNetwork, useScroll } from 'ahooks'
+import { Button, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 import Marquee from 'react-fast-marquee'
@@ -16,38 +17,52 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 function Footer() {
   const { theme } = useTheme()
   const networkState = useNetwork()
-  const { ws, trade } = useStores()
-  const readyState = ws.readyState
+  const { ws, trade, kline } = useStores()
+  const readyState = ws.socket?.readyState
   const isOnline = networkState.online
-  const isConnected = readyState === 'OPEN' && isOnline
+  const isQuotePushing = ws.isQuotePushing // 判断是否有行情数据推送
   const [openTips, setOpenTips] = useState<any>(false)
+  const disConnected = !isOnline || readyState === 3
+  const scroll = useScroll(document)
 
   useEffect(() => {
-    setOpenTips(!isOnline)
-  }, [isOnline])
+    setOpenTips(!isOnline || readyState === 3 || !isQuotePushing)
+  }, [isOnline, readyState, isQuotePushing])
 
-  const CLOSED = {
+  useEffect(() => {
+    if (scroll?.top > 50) {
+      setOpenTips(false)
+    }
+  }, [scroll])
+
+  const CLOSED: any = {
     title: <FormattedMessage id="mt.duankailianjie" />,
     desc: <FormattedMessage id="mt.hangqingyiduankaitips" />,
     color: '--color-red-600',
-    status: 'CLOSED'
+    status: 3
   }
+
   let connectedStatusMap = isOnline
     ? {
-        CONNECTING: {
+        0: {
           title: <FormattedMessage id="mt.lianjiezhong" />,
           desc: <FormattedMessage id="mt.hangqinglianjiezhongtips" />,
           color: '--color-yellow-500',
-          status: 'CONNECTING'
+          status: 0
         },
-        CLOSED,
-        CLOSEING: CLOSED,
-        OPEN: {
+        1: {
           title: <FormattedMessage id="mt.lianjiezhengchang" />,
           desc: <FormattedMessage id="mt.hangqinglianjiezhengchengtips" />,
           color: '--color-green-700',
-          status: 'OPEN'
-        }
+          status: 1
+        },
+        2: {
+          title: <FormattedMessage id="mt.lianjieguanbizhong" />,
+          desc: <FormattedMessage id="mt.hangqinglianjieguanbizhong" />,
+          color: '--color-red-600',
+          status: 2
+        },
+        3: CLOSED
       }[readyState]
     : CLOSED
 
@@ -55,21 +70,50 @@ function Footer() {
     <div className="fixed bottom-0 left-0 flex h-[26px] w-full items-center bg-primary px-5 pb-2 pt-2 border-t border-gray-60 dark:border-[var(--border-primary-color)] z-40">
       <Tooltip
         placement="topLeft"
-        title={connectedStatusMap.desc}
+        title={
+          <span>
+            {isQuotePushing ? connectedStatusMap?.desc : <FormattedMessage id="mt.dangqianfuwumeiyouhangqingshujutuisong" />}
+            {disConnected && (
+              <Button
+                type="link"
+                onClick={() => {
+                  // 行情重新建立新的连接
+                  ws.reconnect()
+                  // @ts-ignore
+                  // 刷新k线实例
+                  kline.tvWidget = null
+                }}
+              >
+                <FormattedMessage id="common.shuaxin" />
+              </Button>
+            )}
+          </span>
+        }
         open={openTips}
         onOpenChange={(value) => {
           setOpenTips(value)
         }}
       >
         <div className="flex items-center border-r border-r-gray-200 dark:border-r-gray-700 pr-3">
-          <div className="flex items-center">
-            {connectedStatusMap.status === 'CLOSED' ? (
-              <img src="/img/duankailianjie.png" width={16} height={14} />
-            ) : (
-              <SignalIcon color={`var(${connectedStatusMap.color})`} />
-            )}
-            <span className="pl-1 text-xs font-normal text-weak">{connectedStatusMap.title}</span>
-          </div>
+          {isQuotePushing && (
+            <div className="flex items-center">
+              {disConnected ? (
+                <img src="/img/duankailianjie.png" width={16} height={14} />
+              ) : (
+                <SignalIcon color={`var(${connectedStatusMap?.color})`} />
+              )}
+              <span className="pl-1 text-xs font-normal text-weak">{connectedStatusMap?.title}</span>
+            </div>
+          )}
+          {/* 没有行情数据推送 */}
+          {!isQuotePushing && (
+            <div className="flex items-center">
+              <SignalIcon color={`var(--color-yellow-500)`} />
+              <span className="pl-1 text-xs font-normal text-weak">
+                <FormattedMessage id="mt.lianjiezhengchang" />
+              </span>
+            </div>
+          )}
         </div>
       </Tooltip>
       <div className="flex h-full flex-1 items-center overflow-x-auto">

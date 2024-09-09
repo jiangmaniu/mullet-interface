@@ -73,7 +73,10 @@ export default observer(
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
     const vmax = symbolConf?.maxTrade as number
     const vmin = symbolConf?.minTrade || 0.01
-    const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d)
+    const step = Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d) // 手数步长
+    // 根据品种小数点位数计算步长，独立于手数步长step。获取计算的小数位倒数第二位开始作为累加步长
+    // 限价、止盈止损、停损挂单，加减时，连动报价小数位倒数第二位
+    const step2 = Math.pow(10, -(d - 1)) || step
     const countPrecision = getPrecisionByNumber(symbolConf?.minTrade) // 手数精度
 
     // 切换品种、买卖重置内容
@@ -232,7 +235,7 @@ export default observer(
             }}
             onAdd={() => {
               if (price && price >= 0) {
-                const c = (((price + step) * 100) / 100).toFixed(d)
+                const c = (((price + step2) * 100) / 100).toFixed(d)
                 setPrice(c)
               } else {
                 setPrice(priceTip)
@@ -240,7 +243,7 @@ export default observer(
             }}
             onMinus={() => {
               if (price && price > 0) {
-                const c = (((price - step) * 100) / 100).toFixed(d)
+                const c = (((price - step2) * 100) / 100).toFixed(d)
                 setPrice(c)
               } else {
                 setPrice(priceTip)
@@ -286,7 +289,7 @@ export default observer(
                 }}
                 onAdd={() => {
                   if (sp && sp > 0.01) {
-                    const c = (((sp + step) * 100) / 100).toFixed(d)
+                    const c = (((sp + step2) * 100) / 100).toFixed(d)
                     setSp(c)
                   } else {
                     setSp(sp_scope)
@@ -294,7 +297,7 @@ export default observer(
                 }}
                 onMinus={() => {
                   if (sp && sp > 0.01) {
-                    const c = (((sp - step) * 100) / 100).toFixed(d)
+                    const c = (((sp - step2) * 100) / 100).toFixed(d)
                     setSp(c)
                   } else {
                     setSp(sp_scope)
@@ -316,7 +319,8 @@ export default observer(
                               value: spProfit,
                               unit: symbolConf?.profitCurrency,
                               buySell
-                            })
+                            }),
+                            { precision: 2 }
                           )}{' '}
                           USD
                         </span>
@@ -337,7 +341,7 @@ export default observer(
                 }}
                 onAdd={() => {
                   if (sl && sl > 0.01) {
-                    const c = (((sl + step) * 100) / 100).toFixed(d)
+                    const c = (((sl + step2) * 100) / 100).toFixed(d)
                     setSl(c)
                   } else {
                     setSl(sl_scope)
@@ -345,7 +349,7 @@ export default observer(
                 }}
                 onMinus={() => {
                   if (sl && sl > 0.01) {
-                    const c = (((sl - step) * 100) / 100).toFixed(d)
+                    const c = (((sl - step2) * 100) / 100).toFixed(d)
                     setSl(c)
                   } else {
                     setSl(sl_scope)
@@ -366,7 +370,8 @@ export default observer(
                             value: slProfit,
                             unit: symbolConf?.profitCurrency,
                             buySell
-                          })
+                          }),
+                          { precision: 2 }
                         )}{' '}
                         USD
                       </span>

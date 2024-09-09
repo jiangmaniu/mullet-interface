@@ -169,7 +169,7 @@ function InputNumber(props: IProps) {
         height,
         // paddingLeft: 12,
         textAlign: textAlign || 'center',
-        width: width || 'auto',
+        width: width || '100%',
         background: isDark ? gray[750] : '#fff',
         border: 'none'
       },
@@ -259,7 +259,7 @@ function InputNumber(props: IProps) {
           fieldProps={{
             onBlurCapture: () => {
               // 失去焦点时候 如果用户输入的是1. 没有输入完整，去掉.
-              if (inputValue.endsWith('.')) {
+              if (inputValue && inputValue.endsWith('.')) {
                 const newValue = inputValue.slice(0, -1)
                 onChange?.(newValue)
               }

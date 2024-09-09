@@ -411,12 +411,11 @@ function Position({ style, parentPopup }: IProps) {
     .slice((pageNum - 1) * pageSize, pageNum * pageSize)
     .map((v) => {
       const conf = v.conf as Symbol.SymbolConf
-      const symbol = v.dataSourceSymbol as string
+      const symbol = v.symbol as string
       const contractSize = conf.contractSize || 0
       const quoteInfo = getCurrentQuote(symbol)
       const digits = v.symbolDecimal || 2
       const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
-
       const isCrossMargin = v.marginType === 'CROSS_MARGIN'
 
       if (isCrossMargin) {
@@ -436,7 +435,7 @@ function Position({ style, parentPopup }: IProps) {
         }
       } else {
         // 逐仓保证金
-        v.orderMargin = toFixed(v.orderMargin, digits)
+        // v.orderMargin = toFixed(v.orderMargin, digits)
       }
 
       v.currentPrice = currentPrice // 现价
@@ -444,7 +443,7 @@ function Position({ style, parentPopup }: IProps) {
 
       v.profit = profit
       v.profitFormat = Number(v.profit) > 0 ? '+' + formatNum(v.profit, { precision: accountGroupPrecision }) : v.profit || '-' // 格式化的
-      v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
+      // v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
       v.yieldRate = calcYieldRate(v, accountGroupPrecision) // 收益率
       v.forceClosePrice = calcForceClosePrice(v) // 强平价
       v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价

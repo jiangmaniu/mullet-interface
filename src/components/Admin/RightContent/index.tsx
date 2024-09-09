@@ -123,6 +123,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const { balance, availableMargin, totalProfit, occupyMargin } = trade.getAccountBalance()
   const { pathname } = useLocation()
   const isTradePage = pathname.indexOf('/trade') !== -1
+  const currencyDecimal = currentAccountInfo.currencyDecimal // 账户组小数位
 
   // 排除当前选择的账户
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
@@ -136,9 +137,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const renderAccountBoxHover = () => {
     const list = [
       {
-        label: <FormattedMessage id="mt.zongzichanjingzhi" />,
+        label: <FormattedMessage id="mt.zhanghuyue" />,
         value: balance,
-        tips: <FormattedMessage id="mt.zichanjingzhitips" />
+        tips: <FormattedMessage id="mt.zhanghuyueTips" />
       },
       { label: <FormattedMessage id="mt.fudongyingkui" />, value: totalProfit, tips: <FormattedMessage id="mt.fudongyingkuitips" /> },
       { label: <FormattedMessage id="mt.keyong" />, value: availableMargin, tips: <FormattedMessage id="mt.keyongtips" /> },
@@ -157,7 +158,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
               </Tooltip>
               <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
               <span className="max-w-[240px] break-all text-right text-primary !font-dingpro-medium">
-                {formatNum(item.value, { precision: 2 })} USD
+                {formatNum(item.value, { precision: currencyDecimal })} USD
               </span>
             </div>
           ))}
@@ -332,61 +333,63 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   return (
     <div className="flex items-center">
       <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
-        <Dropdown
-          placement="topLeft"
-          dropdownRender={renderAccountBoxHover}
-          onOpenChange={(open) => {
-            setAccountBoxOpen(open)
-          }}
-          open={accountBoxOpen}
-          align={{ offset: [0, 0] }}
-        >
-          <div
-            className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}
-            onMouseEnter={() => {
-              // 刷新账户余额信息,使用ws最新的
-              // setTimeout(() => {
-              //   fetchUserInfo(false)
-              // }, 300)
+        {isTradePage && (
+          <Dropdown
+            placement="topLeft"
+            dropdownRender={renderAccountBoxHover}
+            onOpenChange={(open) => {
+              setAccountBoxOpen(open)
             }}
+            open={accountBoxOpen}
+            align={{ offset: [0, 0] }}
           >
-            <div className="flex flex-col items-end group relative">
-              <span className="text-lg !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
-              <div className="flex items-center">
-                <span className={cn('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
-                  {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
-                </span>
-                <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
-                <span
-                  className={cn(
-                    'text-xs dark:text-gray-570 truncate max-w-[110px]',
-                    iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500'
-                  )}
-                >
-                  {currentAccountInfo?.name}
-                </span>
+            <div
+              className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}
+              onMouseEnter={() => {
+                // 刷新账户余额信息,使用ws最新的
+                // setTimeout(() => {
+                //   fetchUserInfo(false)
+                // }, 300)
+              }}
+            >
+              <div className="flex flex-col items-end group relative">
+                <span className="text-lg !font-dingpro-regular">{formatNum(balance, { precision: 2 })} USD</span>
+                <div className="flex items-center">
+                  <span className={cn('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
+                    {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+                  </span>
+                  <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
+                  <span
+                    className={cn(
+                      'text-xs dark:text-gray-570 truncate max-w-[110px]',
+                      iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500'
+                    )}
+                  >
+                    {currentAccountInfo?.name}
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200 dark:bg-gray-570"></div>
-            <div>
-              {/* <img
+              <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200 dark:bg-gray-570"></div>
+              <div>
+                {/* <img
                 src="/img/uc/select.png"
                 width={24}
                 height={24}
                 style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
                 className="transition-all duration-300"
               /> */}
-              <Iconfont
-                name="down"
-                width={24}
-                height={24}
-                color={iconDownColor}
-                className="cursor-pointer rounded-lg transition-all duration-300"
-                style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
-              />
+                <Iconfont
+                  name="down"
+                  width={24}
+                  height={24}
+                  color={iconDownColor}
+                  className="cursor-pointer rounded-lg transition-all duration-300"
+                  style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
+                />
+              </div>
             </div>
-          </div>
-        </Dropdown>
+          </Dropdown>
+        )}
 
         <Iconfont
           name="caidan"

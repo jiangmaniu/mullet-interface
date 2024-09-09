@@ -6,7 +6,6 @@ import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import { gray } from '@/theme/theme.config'
 import { formatEmail, formatMobile } from '@/utils'
-import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
 import KycApproveInfoModal from './comp/KycApproveInfoModal'
@@ -72,7 +71,8 @@ export default function Setting() {
       return
     }
     if (kycStatus === 'TODO') {
-      message.info(intl.formatMessage({ id: 'mt.shenfenrenzhengshenhezhong' }))
+      // message.info(intl.formatMessage({ id: 'mt.shenfenrenzhengshenhezhong' }))
+      push('/setting/kyc')
     } else if (kycStatus === 'SUCCESS') {
       // 认证成功弹窗
       handleKycSuccModal()
@@ -136,6 +136,12 @@ export default function Setting() {
                   {/* 实名认证成功 */}
                   {kycStatus === 'SUCCESS' && (
                     <span className="text-primary text-base leading-4 font-semibold pr-2" onClick={handleKycSuccModal}>
+                      <FormattedMessage id="common.chakan" />
+                    </span>
+                  )}
+                  {/* 认证中 */}
+                  {kycStatus === 'TODO' && (
+                    <span className="text-primary text-base leading-4 font-semibold pr-2" onClick={handleJumpKycAuth}>
                       <FormattedMessage id="common.chakan" />
                     </span>
                   )}

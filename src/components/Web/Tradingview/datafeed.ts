@@ -54,7 +54,7 @@ class DataFeedBase {
       session: '24x7',
       timezone: 'Europe/London',
       name: symbolInfo.symbol, // 展示的自定义名称
-      dataSourceCode: symbolInfo.dataSourceCode // 数据源品种名称，ws订阅行情返回的名称
+      dataSourceCode: symbolInfo.dataSourceCode // 数据源名称
     }
     // https://www.tradingview.com/charting-library-docs/latest/api/interfaces/Charting_Library.LibrarySymbolInfo
     const commonSymbolInfo = {

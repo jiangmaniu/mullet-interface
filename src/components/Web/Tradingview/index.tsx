@@ -26,7 +26,6 @@ const Tradingview = () => {
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
   const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
   const { theme } = useTheme()
-
   const datafeedParams = {
     setActiveSymbolInfo: kline.setActiveSymbolInfo, // 记录当前的symbol
     removeActiveSymbol: kline.removeActiveSymbol, // 取消订阅移除symbol
@@ -67,7 +66,7 @@ const Tradingview = () => {
 
     setTimeout(() => {
       setLoading(false)
-    }, 300)
+    }, 200)
 
     tvWidget.onChartReady(async () => {
       setIsChartLoading(false)

@@ -89,8 +89,6 @@ export default {
   'mt.zhiying': '止盈',
   'mt.heyuejiazhi': '合約價值',
   'mt.cankaobaozhengjin': '參考保證金',
-  'mt.mairu': '多',
-  'mt.maichu': '空',
   'mt.pingcangchenggong': '平倉成功',
   'mt.jiancangchenggong': '開倉成功',
   'mt.guadanchenggong': '掛單成功',
@@ -287,6 +285,16 @@ export default {
   'mt.hangqinglianjiezhongtips': '行情连接中...',
   'mt.hangqingyiduankaitips': '行情连接已断开，请检查您的网络连接是否正常',
   'mt.hangqinglianjiezhengchengtips': '行情连接正常稳定',
+
+  // @TODO 新加的翻译字段
+  'mt.qingqiujiage': '请求价格',
+  'mt.mairu': '买入',
+  'mt.maichu': '卖出',
+  'mt.zhanghuyueTips': '未计入当前未结头寸的资金数目',
+  'mt.lianjieguanbizhong': '连接关闭中',
+  'mt.hangqinglianjieguanbizhong': '行情连接正在关闭中...',
+  'mt.dangqianfuwumeiyouhangqingshujutuisong': '当前服务没有行情数据推送',
+  'mt.zanwuhangqing': '暂无行情',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
@@ -452,6 +460,10 @@ export default {
   'mt.shenhezhong': '审核中',
   'mt.shenfenrenzhengshenhezhong': '身份认证审核中',
   'mt.shenfenrenzhengshenhezhongtips': '我們會盡快完成審核，請您耐心等待如有疑問，請聯繋客服',
+
+  // 新加的字段 @TODO
+  'mt.kycUploadTips': '支持JPG/JPEG/PNG,不能超过1M',
+  'mt.kycUploadImgSizeTips': '图片大小不能超过{size}',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========
