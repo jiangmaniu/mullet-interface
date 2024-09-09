@@ -3,7 +3,6 @@ import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 import { stores } from '@/context/mobxProvider'
 import { getRegisterWay } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
-import { useUpdateFollowStatus } from '@/utils/copyTrading'
 import { onLogout } from '@/utils/navigator'
 import { STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
 
@@ -26,15 +25,6 @@ export class GlobalStore {
         ...localUserInfo,
         ...clientInfo // 用户详细信息
       } as User.UserInfo
-
-      try {
-        // 更新跟单状态
-        if (clientInfo.accountList) {
-          currentUser.accountList = await useUpdateFollowStatus(clientInfo.accountList)
-        }
-      } catch (e) {
-        console.error('更新跟单状态失败', e)
-      }
 
       // 更新本地的用户信息
       STORAGE_SET_USER_INFO(currentUser)

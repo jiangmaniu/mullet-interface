@@ -7,7 +7,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
-import { IOrderTaker, IOrderTakerState } from '@/models/takers'
+import { IOrderTakerState } from '@/models/takers'
 import { getTradeFollowFollowerDetail, postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
@@ -51,7 +51,7 @@ export default function copyTradingDetail() {
   }, [location])
 
   const [takeState, setTakeState] = useState<IOrderTakerState>(1)
-  const [taker, setTaker] = useState<IOrderTaker>(defaultTaker)
+  const [taker, setTaker] = useState<TradeFollowLead.LeadDetailItem | null>(defaultTaker)
   const [followerId, setFollowerId] = useState<string | undefined>(undefined)
   const [trader, setTrader] = useState<TradeFollowFollower.FollowDetailItem | null>(null)
 
@@ -124,8 +124,13 @@ export default function copyTradingDetail() {
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
-  const onFollow = (takerState: IOrderTakerState) => {
+  const ableList = useMemo(
+    () => currentUser?.accountList?.filter((item) => item.status === 'ENABLE').filter((item) => item.groupName === taker?.groupName) || [],
+    [currentUser, taker?.groupName]
+  )
+  const onFollow = (takerState: IOrderTakerState, readonly?: boolean) => {
+    if (readonly !== undefined) setReadonly(readonly)
+
     if (takerState === 1 || takerState === 3) {
       if (ableList.length === 0) {
         setOpenTips(true)
@@ -174,6 +179,8 @@ export default function copyTradingDetail() {
         })
     }, 300)
   }
+
+  const [readonly, setReadonly] = useState(false)
 
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
@@ -238,7 +245,7 @@ export default function copyTradingDetail() {
 
             {taker?.openFlag === 1 ? (
               <div className="flex flex-col gap-3.5">
-                {followerId && takeState === 3 ? (
+                {followerId && trader?.leadId === id ? (
                   <>
                     <EndModal
                       id={followerId}
@@ -270,7 +277,7 @@ export default function copyTradingDetail() {
                         borderRadius: 8,
                         backgroundColor: 'black'
                       }}
-                      onClick={() => onFollow(takeState)}
+                      onClick={() => onFollow(3, true)}
                     >
                       <div className=" flex items-center gap-1">
                         <Iconfont name="gendanguanli" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
@@ -281,7 +288,7 @@ export default function copyTradingDetail() {
                     </Button>
                   </>
                 ) : (
-                  takeState === 1 && (
+                  taker.openFlag === 1 && (
                     <Button
                       height={42}
                       type="primary"
@@ -289,7 +296,7 @@ export default function copyTradingDetail() {
                         width: 158,
                         borderRadius: 8
                       }}
-                      onClick={() => onFollow(takeState)}
+                      onClick={() => onFollow(1, false)}
                     >
                       <div className=" flex items-center gap-1">
                         <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
@@ -377,11 +384,11 @@ export default function copyTradingDetail() {
         leadId={String(id)}
         followerId={followerId}
         open={openSetting}
-        readonly={true}
+        readonly={readonly}
         onOpenChange={onOpenChangeSetting}
         onConfirm={() => {
-          setTakeState(0)
           onOpenChangeSetting(false)
+          // TODO: reload()
         }}
       />
 

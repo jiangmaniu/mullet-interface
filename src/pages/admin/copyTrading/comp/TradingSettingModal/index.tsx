@@ -88,7 +88,9 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
         .then((res) => {
           if (res.success) {
             setTrader(res.data as TradeFollowFollower.FollowDetailItem)
-            setTabKey(res.data?.type as string)
+            if (readonly) {
+              setTabKey(res.data?.type as string)
+            }
           }
         })
         .finally(() => {
@@ -142,7 +144,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
             </>
           )
         }
-      ].filter((item) => !trader || item.key === trader.type),
+      ].filter((item) => !readonly || !trader || item.key === trader.type),
     [trader, intl, lead, tabKey]
   )
 
@@ -157,7 +159,9 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
     postTradeFollowFolloerSave(params)
       .then((res) => {
         if (res.success) {
-          onConfirm?.(res.data)
+          onConfirm?.({
+            // TODO: 添加回調參數
+          })
         }
       })
       .finally(() => {
@@ -172,12 +176,19 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
         form.setFieldValue('guaranteedAmount', trader.guaranteedAmount)
       }
 
+      if (trader.guaranteedAmountRatio) {
+        // !!! 这里接口返回的是百分比，展示的时候要乘以 100
+        form.setFieldValue('guaranteedAmountRatio', Number(trader.guaranteedAmountRatio) * 100)
+      }
+
       if (trader.stopLossRatio) {
-        form.setFieldValue('stopLossRatio', trader.stopLossRatio)
+        // !!! 这里接口返回的是百分比，展示的时候要乘以 100
+        form.setFieldValue('stopLossRatio', Number(trader.stopLossRatio) * 100)
       }
 
       if (trader.profitRatio) {
-        form.setFieldValue('profitRatio', trader.profitRatio)
+        // !!! 这里接口返回的是百分比，展示的时候要乘以 100
+        form.setFieldValue('profitRatio', Number(trader.profitRatio) * 100)
       }
     }
   }, [form, trader, readonly])

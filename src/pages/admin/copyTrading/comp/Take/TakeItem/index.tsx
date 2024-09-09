@@ -1,4 +1,4 @@
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, getIntl } from '@umijs/max'
 import classNames from 'classnames'
 
 import Button from '@/components/Base/Button'
@@ -6,6 +6,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
 import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
+import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
 import { AccountTag } from '../../AccountTag'
@@ -19,9 +20,13 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
   return (
     <div
       onClick={() => {
+        if (item.enabledFlag === 1) {
+          message.info(getIntl().formatMessage({ id: 'mt.yibeijinyong' }))
+          return
+        }
         push(`/copy-trading/take-detail/${leadId}`)
       }}
-      className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full hover:shadow"
+      className=" border rounded-lg border-gray-150 flex flex-col flex-1 w-full hover:shadow cursor-pointer"
     >
       {/* header */}
       <div className="flex gap-3 py-2.5 px-3.5 items-center">
@@ -33,6 +38,12 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
         <AccountTag size="auto" color={groupName}>
           {groupName}
         </AccountTag>
+
+        {item.enabledFlag === 1 && (
+          <AccountTag size="auto" color="darkGray">
+            {getIntl().formatMessage({ id: 'mt.yibeijinyong' })}
+          </AccountTag>
+        )}
       </div>
       {/* footer */}
       <div className="border-t  border-gray-150 p-4 flex items-center justify-between md:gap-4 gap-2">
@@ -110,6 +121,7 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
           <Button
             height={44}
             type="primary"
+            disabled={item.enabledFlag === 1}
             style={{
               width: 124,
               borderRadius: 8
@@ -129,6 +141,7 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
           <Button
             height={44}
             type="default"
+            disabled={item.enabledFlag === 1}
             style={{
               width: 124,
               borderRadius: 8
@@ -140,7 +153,13 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
             }}
           >
             <div className="flex items-center text-sm font-semibold gap-1 align-middle">
-              <Iconfont name="shezhi" width={18} color="black" height={18} hoverColor={colorTextPrimary} />
+              <Iconfont
+                name="shezhi"
+                width={18}
+                color={item.enabledFlag === 1 ? 'gray' : 'black'}
+                height={18}
+                hoverColor={colorTextPrimary}
+              />
               <FormattedMessage id="mt.shezhi" />
             </div>
           </Button>

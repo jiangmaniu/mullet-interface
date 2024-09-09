@@ -22,6 +22,7 @@ export default ({ format, size = 'medium', color = 'biaozhun', children, onClick
 
   const colorMap = {
     gray: 'bg-gray-120',
+    darkGray: 'bg-gray-300',
     green: 'text-green bg-green-700 bg-opacity-20',
     red: 'text-red bg-red-600 bg-opacity-20',
     biaozhun: 'bg-yellow-490',

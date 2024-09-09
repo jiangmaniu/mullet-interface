@@ -1,6 +1,6 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { FormInstance, Radio } from 'antd'
+import { Form, FormInstance, Radio } from 'antd'
 import { useMemo, useState } from 'react'
 import { black } from 'tailwindcss/colors'
 
@@ -71,6 +71,8 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
   // 折叠
   const [isCollapse, setIsCollapse] = useState(false)
 
+  const money = Form.useWatch('money', form)
+
   const onClickRadio = () => {
     read === 1 ? setRead(undefined) : setRead(1)
     form.setFieldValue('read', read === 1 ? undefined : 1)
@@ -111,10 +113,23 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
                 }
 
+                if (Number(value) < 10 || Number(value) > Number(money)) {
+                  return Promise.reject(
+                    intl.formatMessage(
+                      { id: 'mt.chaochuxianzhifanwei' },
+                      {
+                        type: '',
+                        value: `10 ~ ${money || '--'}`
+                      }
+                    )
+                  )
+                }
+
                 return Promise.resolve()
               }
             }
           ]}
+          disabled={readonly}
           fieldProps={{
             size: 'large',
             style: {
@@ -186,6 +201,18 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
                     return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
                   }
 
+                  if (Number(value) < 0 || Number(value) > 500) {
+                    return Promise.reject(
+                      intl.formatMessage(
+                        { id: 'mt.chaochuxianzhifanwei' },
+                        {
+                          type: '',
+                          value: '0 ~ 500'
+                        }
+                      )
+                    )
+                  }
+
                   return Promise.resolve()
                 }
               }
@@ -226,6 +253,18 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
                   // 只能输入数字，正则匹配 value 是不是数字
                   if (!/^\d+$/.test(value)) {
                     return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                  }
+
+                  if (Number(value) < 0 || Number(value) > 95) {
+                    return Promise.reject(
+                      intl.formatMessage(
+                        { id: 'mt.chaochuxianzhifanwei' },
+                        {
+                          type: '',
+                          value: '0 ~ 95'
+                        }
+                      )
+                    )
                   }
 
                   return Promise.resolve()

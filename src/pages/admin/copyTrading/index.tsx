@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import Hidden from '@/components/Base/Hidden'
+import { useUpdateFollowStatus } from '@/hooks/useUpdateFollowStatus'
 import { shadeColor } from '@/utils/color'
 import { push } from '@/utils/navigator'
 
@@ -17,6 +18,8 @@ import Take from './comp/Take'
 // 跟单管理
 export default function copyTrading() {
   const { initialState } = useModel('@@initialState')
+  const updateFollowStatus = useUpdateFollowStatus()
+
   const currentUser = initialState?.currentUser
 
   // tab持久化
@@ -69,6 +72,9 @@ export default function copyTrading() {
   useEffect(() => {
     // 绑定滚动事件
     window.addEventListener('scroll', handleScroll)
+
+    // 更新賬號的跟單狀態
+    updateFollowStatus()
 
     // 清除滚动事件监听器
     return () => {

@@ -99,6 +99,7 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
         </span>{' '}
         <ProFormText
           name="guaranteedAmountRatio"
+          disabled={readonly}
           rules={[
             {
               required: true,
@@ -110,6 +111,18 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
                 // 只能输入数字，正则匹配 value 是不是数字
                 if (!/^\d+$/.test(value)) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                }
+
+                if (Number(value) < 10 || Number(value) > 500) {
+                  return Promise.reject(
+                    intl.formatMessage(
+                      { id: 'mt.chaochuxianzhifanwei' },
+                      {
+                        type: '',
+                        value: '10 ~ 500'
+                      }
+                    )
+                  )
                 }
 
                 return Promise.resolve()
@@ -216,6 +229,18 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
                     return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
                   }
 
+                  if (Number(value) < 0 || Number(value) > 500) {
+                    return Promise.reject(
+                      intl.formatMessage(
+                        { id: 'mt.chaochuxianzhifanwei' },
+                        {
+                          type: '',
+                          value: '0 ~ 500'
+                        }
+                      )
+                    )
+                  }
+
                   return Promise.resolve()
                 }
               }
@@ -256,6 +281,18 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
                   // 只能输入数字，正则匹配 value 是不是数字
                   if (!/^\d+$/.test(value)) {
                     return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                  }
+
+                  if (Number(value) < 0 || Number(value) > 95) {
+                    return Promise.reject(
+                      intl.formatMessage(
+                        { id: 'mt.chaochuxianzhifanwei' },
+                        {
+                          type: '',
+                          value: '0 ~ 95'
+                        }
+                      )
+                    )
                   }
 
                   return Promise.resolve()

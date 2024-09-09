@@ -6,6 +6,7 @@ import { Form, message } from 'antd'
 import { useState } from 'react'
 
 import Button from '@/components/Base/Button'
+import { push } from '@/utils/navigator'
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -21,9 +22,10 @@ type IProps = {
   onSuccess?: () => void
   onConfirm?: (values: any) => void
   onOpenChange?: (bo: boolean) => void
+  params?: Record<string, any>
 }
 
-export default ({ trigger, open, onSuccess, onConfirm, onOpenChange }: IProps) => {
+export default ({ trigger, open, onSuccess, onConfirm, onOpenChange, params }: IProps) => {
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
 
@@ -109,6 +111,15 @@ export default ({ trigger, open, onSuccess, onConfirm, onOpenChange }: IProps) =
               style={{
                 width: '100%',
                 borderRadius: 8
+              }}
+              onClick={() => {
+                // 拼接 params 參數 到路由 ‘/account/type’ 中
+                let _parmas: any[] = []
+                if (params) {
+                  _parmas = Object.keys(params).map((key) => `${key}=${params[key]}`)
+                }
+
+                push(`/account/type?${_parmas.join('&')}`)
               }}
             >
               <div className=" flex items-center gap-1 ">

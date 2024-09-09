@@ -1,7 +1,7 @@
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { PageLoading } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useModel } from '@umijs/max'
+import { FormattedMessage, useLocation, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
@@ -15,6 +15,18 @@ import { push } from '@/utils/navigator'
 
 import Header from '../comp/Header'
 
+const handler = {
+  get: (target: any, prop: string, receiver: unknown) => {
+    if (prop in target) {
+      return Reflect.get(target, prop, receiver) // 使用 Reflect.get 访问目标对象的属性
+    } else {
+      // 如果属性不存在，可以自定义返回值，例如返回 undefined 或默认值
+      console.log(`Property ${prop} does not exist`)
+      return undefined // 或者返回其他默认值
+    }
+  }
+}
+
 function AccountList() {
   const { trade } = useStores()
   const { initialState } = useModel('@@initialState')
@@ -25,6 +37,8 @@ function AccountList() {
   const [currentAccountList, setCurrentAccountList] = useState<AccountGroup.AccountGroupItem[]>([])
 
   const accountList = trade.accountGroupList
+
+  const location = useLocation()
 
   useEffect(() => {
     if (!accountList.length) {
@@ -39,14 +53,26 @@ function AccountList() {
     // 切换真实模拟账户列表
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
 
-    setCurrentAccountList(list)
+    setCurrentAccountList(list.map((i) => new Proxy(i, handler)))
   }, [accountTabActiveKey, accountList.length])
 
   useEffect(() => {
-    if (currentAccountList?.length) {
-      setCurrent(currentAccountList[0])
+    if (currentAccountList.length <= 0) return
+    const query = new URLSearchParams(location.search)
+    const groupCode = query.get('groupCode')
+    if (groupCode) {
+      // 遍歷 currentAccountList
+      currentAccountList.forEach((item) => {
+        if (item.groupCode === groupCode) {
+          setCurrent(item)
+        }
+      })
+    } else {
+      if (currentAccountList?.length) {
+        setCurrent(currentAccountList[0])
+      }
     }
-  }, [currentAccountList])
+  }, [location, currentAccountList])
 
   // @ts-ignore
   const className = useEmotionCss(({ token }) => {
