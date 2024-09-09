@@ -16,7 +16,7 @@ import SetStopLossProfitModal from '@/pages/web/trade/comp/Modal/SetStopLossProf
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { calcExchangeRate, calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import { calcForceClosePrice, calcOrderMarginExchangeRate, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 
@@ -203,15 +203,15 @@ function Position({ style, parentPopup }: IProps) {
       width: 150,
       renderText(text, record, index, action) {
         const buySellInfo = getBuySellInfo(record)
-        // const orderMargin = Number(record.orderMargin || 0)
+        const [exchangeSymbol, exchangeRate] = (record.marginExchangeRate || '').split(',')
 
-        // 计算保证金汇率
+        // 计算全仓的保证金汇率转化
         const orderMargin =
           record.marginType === 'CROSS_MARGIN'
-            ? calcExchangeRate({
+            ? calcOrderMarginExchangeRate({
                 value: record.orderMargin,
-                unit: record.conf?.prepaymentCurrency,
-                buySell: record.buySell
+                exchangeSymbol,
+                exchangeRate
               })
             : record.orderMargin
 

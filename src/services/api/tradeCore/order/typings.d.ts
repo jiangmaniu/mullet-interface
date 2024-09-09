@@ -403,6 +403,10 @@ declare namespace Order {
      */
     orderMargin?: number
     /**
+     * 订单保证金汇率
+     */
+    marginExchangeRate?: string
+    /**
      * 订单基础保证金
      */
     orderBaseMargin?: number

@@ -11,7 +11,6 @@ import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import mitt from '@/utils/mitt'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
@@ -142,13 +141,8 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         className={cn('relative pl-1 border-b border-gray-100 dark:border-gray-700', className)}
         onClick={() => {
           startTransition(() => {
-            // 记录打开的symbol
-            trade.setOpenSymbolNameList(symbol)
-            // 设置当前当前的symbol
-            trade.setActiveSymbolName(symbol)
-
-            // 切换品种事件
-            mitt.emit('symbol_change')
+            // 切换品种
+            trade.switchSymbol(symbol)
 
             if (isMobileOrIpad) {
               popupRef.current?.close()
