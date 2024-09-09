@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { cn } from '@/utils/cn'
 import { STORAGE_SET_TRADE_THEME } from '@/utils/storage'
 
 import Iconfont from '../Base/Iconfont'
@@ -22,27 +21,47 @@ function SwitchTheme() {
 
   if (loading) return
 
-  return (
-    <div
-      className={cn(
-        'py-[5px] px-[5px] w-[48px] rounded-[18px] cursor-pointer flex items-center mr-5',
-        isDark ? 'bg-gray-700 justify-end' : 'bg-gray-150 justify-start border border-gray-200'
-      )}
-      onClick={() => {
-        const themeMode = isDark ? 'light' : 'dark'
-        setTheme(themeMode)
-        // 设置交易页面主题，因为交易页面主题不是全局的，所以需要单独设置
-        STORAGE_SET_TRADE_THEME(themeMode)
+  const handleSwitchTheme = () => {
+    const themeMode = isDark ? 'light' : 'dark'
+    setTheme(themeMode)
+    // 设置交易页面主题，因为交易页面主题不是全局的，所以需要单独设置
+    STORAGE_SET_TRADE_THEME(themeMode)
 
-        // 重载k线
-        // @ts-ignore
-        kline.tvWidget = null
-      }}
-    >
-      <div className={cn('w-[17px] h-[17px] rounded-full p-1 flex items-center justify-center', isDark ? 'bg-gray-secondary' : 'bg-white')}>
-        <Iconfont name={isDark ? 'yueliang' : 'rijianmoshi-'} width={14} height={14} color={isDark ? '#fff' : '#6B6B6B'} />
-      </div>
-    </div>
+    // 重载k线
+    // @ts-ignore
+    kline.tvWidget = null
+  }
+
+  return (
+    <>
+      {isDark && (
+        <div
+          className="py-[4px] px-[5px] w-[62px] rounded-[18px] cursor-pointer flex justify-between items-center mr-5 bg-gray-700"
+          onClick={handleSwitchTheme}
+        >
+          <div className="w-5 h-5 rounded-full p-1 flex items-center justify-center bg-[#7F53FE]">
+            <Iconfont name={'yueliang'} width={14} height={14} color={'#fff'} />
+          </div>
+          <div className="size-[22px] rounded-full p-1 flex items-center justify-center bg-gray-secondary">
+            <Iconfont name={'rijianmoshi-'} width={14} height={14} color={'#6B6B6B'} />
+          </div>
+        </div>
+      )}
+
+      {!isDark && (
+        <div
+          className="py-[4px] px-[5px] w-[62px] rounded-[18px] cursor-pointer flex justify-between items-center mr-5 bg-gray-50 border border-gray-150"
+          onClick={handleSwitchTheme}
+        >
+          <div className="w-6 h-6 rounded-full p-1 flex items-center justify-center">
+            <Iconfont name={'yueliang'} width={14} height={14} color={'#E3E3E3'} />
+          </div>
+          <div className="size-[22px] rounded-full p-1 flex items-center justify-center bg-[#FEA353]">
+            <Iconfont name={'rijianmoshi-'} width={16} height={16} color={'#fff'} />
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
