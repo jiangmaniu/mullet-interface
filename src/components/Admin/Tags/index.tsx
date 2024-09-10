@@ -1,4 +1,5 @@
 import { FormattedMessage } from '@umijs/max'
+import { observer } from 'mobx-react'
 import { useLayoutEffect, useMemo, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
@@ -14,7 +15,7 @@ export type ITabTypes = {
   code?: string
 }
 
-export default ({ code, format, size = 'medium', color = 'biaozhun', children, onClick, selectable }: ITabTypes) => {
+const Tags = ({ code, format, size = 'medium', color = 'biaozhun', children, onClick, selectable }: ITabTypes) => {
   const { trade } = useStores()
   const accountGroupList = trade.accountGroupList
 
@@ -104,3 +105,5 @@ export default ({ code, format, size = 'medium', color = 'biaozhun', children, o
     </span>
   )
 }
+
+export default observer(Tags)
