@@ -142,10 +142,10 @@ export function applyOverrides(props: {
     'mainSeriesProperties.style': props.chartType, // 默认k线：蜡烛图 1
     'scalesProperties.fontSize': isPC() ? 12 : 10 // 右侧价格刻度字体大小
   }
-  if (props.bgGradientStartColor) {
-    overrides['paneProperties.backgroundGradientStartColor'] = props.bgGradientStartColor
-    overrides['paneProperties.backgroundGradientEndColor'] = props.bgGradientEndColor
-  }
+  // if (props.bgGradientStartColor) {
+  //   overrides['paneProperties.backgroundGradientStartColor'] = props.bgGradientStartColor
+  //   overrides['paneProperties.backgroundGradientEndColor'] = props.bgGradientEndColor
+  // }
   tvWidget.applyOverrides(overrides)
 }
 

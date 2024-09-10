@@ -12,6 +12,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useDebounceEffect, usePrevious } from 'ahooks'
 import { observer } from 'mobx-react'
+import { STORAGE_GET_CHART_PROPS, STORAGE_REMOVE_CHART_PROPS, ThemeConst } from './constant'
 import { ColorType, applyOverrides, createWatermarkLogo, setCSSCustomProperty, setChartStyleProperties, setSymbol } from './widgetMethods'
 import getWidgetOpts from './widgetOpts'
 
@@ -47,6 +48,12 @@ const Tradingview = () => {
     const showBottomMACD = 1 // 1 展示 2 隐藏
     const chartType = 1 as ChartStyle
     const theme = params.theme
+
+    // 切换主题删除本地缓存，避免切换主题颜色闪动
+    const defaultBgColor = theme === 'dark' ? ThemeConst.black : ThemeConst.white
+    if (theme && defaultBgColor !== STORAGE_GET_CHART_PROPS('paneProperties.background')) {
+      STORAGE_REMOVE_CHART_PROPS()
+    }
 
     // 注意：这里只初始化一次，后面不在通过params更新，需要使用对应的方法动态更新，否则需要重载页面才可以使用params
     const widgetOptions = getWidgetOpts(params, chartContainerRef.current, datafeedParams)
