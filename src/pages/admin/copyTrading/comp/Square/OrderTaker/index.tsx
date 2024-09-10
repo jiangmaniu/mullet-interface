@@ -28,6 +28,7 @@ export const OrderTaker = ({ item, state, onClick, onFollow, accountList }: IPro
     imageUrl,
     leadName,
     accountGroupName,
+    groupCode,
     datas,
     tags,
     followerNumber,
@@ -80,8 +81,8 @@ export const OrderTaker = ({ item, state, onClick, onFollow, accountList }: IPro
             <div className=" flex flex-col gap-1.5">
               <div className=" flex gap-2 items-center flex-wrap">
                 <span className="account-name">{leadName}</span>
-                <AccountTag size="auto" color={accountGroupName}>
-                  {accountGroupName}
+                <AccountTag size="auto" color={accountGroupName} code={groupCode}>
+                  {/* {accountGroupName} */}
                 </AccountTag>
               </div>
               <div className="flex items-center gap-1">

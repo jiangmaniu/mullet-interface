@@ -39,8 +39,8 @@ export const TradingItem = ({
       <div className="flex justify-between py-2.5 px-3.5">
         <div className="flex gap-3  items-center">
           <span className=" text-base font-bold">{account?.name}</span>
-          <AccountTag size="auto" color={account?.groupName}>
-            {account?.groupName}
+          <AccountTag size="auto" color={account?.groupName} code={account?.groupCode}>
+            {/* {account?.groupName} */}
           </AccountTag>
         </div>
         <span>

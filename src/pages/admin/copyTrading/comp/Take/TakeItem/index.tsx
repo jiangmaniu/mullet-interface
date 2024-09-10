@@ -16,7 +16,7 @@ type IProps = IOrderTakerProps & {
   onTake?: (id: string) => void
 }
 export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
-  const { leadId, tradeAccountId, imageUrl, projectName, groupName, tags, state: takerState } = item
+  const { leadId, tradeAccountId, imageUrl, projectName, groupName, groupCode, tags, state: takerState } = item
   return (
     <div
       onClick={() => {
@@ -35,8 +35,8 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
           {projectName}
           {/* ·{account.id} */}
         </span>
-        <AccountTag size="auto" color={groupName}>
-          {groupName}
+        <AccountTag size="auto" color={groupName} code={groupCode}>
+          {/* {groupName} */}
         </AccountTag>
 
         {item.enabledFlag === 1 && (

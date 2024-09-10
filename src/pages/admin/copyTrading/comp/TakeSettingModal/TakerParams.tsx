@@ -2,7 +2,6 @@ import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { FormInstance } from 'antd'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
-import Tags from '@/components/Admin/Tags'
 import Button from '@/components/Base/Button'
 
 type IProps = {
@@ -268,7 +267,7 @@ export default ({ form, info }: IProps) => {
         />
       </div>
       {/* 帶單標籤 */}
-      <div className="flex flex-col gap-2.5 justify-start flex-1">
+      {/* <div className="flex flex-col gap-2.5 justify-start flex-1">
         <span className=" text-sm font-normal text-primary">
           <FormattedMessage id="mt.daidanbiaoqian" />
         </span>
@@ -286,7 +285,7 @@ export default ({ form, info }: IProps) => {
           ))}
           <ProFormText name="tags" />
         </div>
-      </div>
+      </div> */}
       {/* 保存 */}
       <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-[532px] max-w-full">
         <Button

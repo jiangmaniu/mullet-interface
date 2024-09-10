@@ -4,17 +4,19 @@ export const AccountTag = ({
   type,
   children,
   size = 'medium',
-  color
+  color,
+  code
 }: {
   type?: string
   children?: React.ReactNode
   color?: string // 'green' | 'biaozhun' | 'luodian' | 'meifen'
   size?: 'tiny' | 'small' | 'medium' | 'auto'
+  code?: string
 }) => {
   const format = type ? { id: `mt.${type}` } : undefined
 
   return (
-    <Tags color={color} format={format} size={size}>
+    <Tags color={color} code={code} format={format} size={size}>
       {children}
     </Tags>
   )

@@ -98,8 +98,8 @@ export default ({
                     <span className=" flex flex-row  items-center justify-between">
                       <span className="flex flex-row justify-between items-center flex-1">
                         <span className="flex flex-row justify-between items-center gap-1.5 ">
-                          <AccountTag size="auto" color={item.groupName}>
-                            {item.groupName}
+                          <AccountTag size="auto" color={item.groupName} code={item.groupCode}>
+                            {/* {item.groupName} */}
                           </AccountTag>
                           <span>{hiddenCenterPartStr(item.id, 4)}</span>
                         </span>
@@ -116,8 +116,8 @@ export default ({
                 <span className=" flex flex-row  items-center justify-between">
                   <span className="flex flex-row justify-between items-center flex-1">
                     <span className="flex flex-row justify-between items-center gap-1.5 ">
-                      <AccountTag size="auto" color={item.groupName}>
-                        {item.groupName}
+                      <AccountTag size="auto" color={item.groupName} code={item.groupCode}>
+                        {/* {item.groupName} */}
                       </AccountTag>
                       <span>{hiddenCenterPartStr(item.id, 4)}</span>
                     </span>
