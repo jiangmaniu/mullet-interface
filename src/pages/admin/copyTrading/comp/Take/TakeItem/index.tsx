@@ -4,7 +4,6 @@ import classNames from 'classnames'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
-import { colorTextPrimary } from '@/theme/theme.config'
 import { formatNum, getColorClass } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
@@ -134,7 +133,7 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
             // disabled={takerState === 'wufagendan'}
           >
             <div className="flex items-center text-sm font-semibold gap-1">
-              <Iconfont name="daidan" width={18} color="white" height={18} hoverColor={colorTextPrimary} />
+              <Iconfont name="daidan" width={18} color="white" height={18} />
               <FormattedMessage id="mt.daidan" />
             </div>
           </Button>
@@ -153,13 +152,7 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
             }}
           >
             <div className="flex items-center text-sm font-semibold gap-1 align-middle">
-              <Iconfont
-                name="shezhi"
-                width={18}
-                color={item.enabledFlag === 1 ? 'gray' : 'black'}
-                height={18}
-                hoverColor={colorTextPrimary}
-              />
+              <Iconfont name="shezhi" width={18} color={item.enabledFlag === 1 ? 'gray' : 'black'} height={18} />
               <FormattedMessage id="mt.shezhi" />
             </div>
           </Button>

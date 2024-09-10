@@ -177,9 +177,12 @@ function Square({ active }: { active: boolean }) {
 
   const [loading, setLoading] = useState(false)
 
-  const onConfirm = () => {
+  const onConfirm = (res: Record<string, any>) => {
     onOpenChangeSetting(false)
-    updateFollowStatus()
+
+    // 刷新账号列表的跟单状态
+    updateFollowStatus(true)
+    push(`/copy-trading/detail/${res.leadId}?followerId=${res.followerId}`)
   }
 
   return (

@@ -162,6 +162,8 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
         if (res.success) {
           onConfirm?.({
             // TODO: 添加回調參數
+            leadId: leadId,
+            followerId: res.data?.followerId
           })
         } else {
           message.info(res.message || intl.formatMessage({ id: 'common.opFailed' }))

@@ -1,6 +1,7 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
+import { observer } from 'mobx-react'
 import { useEffect, useMemo } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
@@ -9,7 +10,7 @@ import { formatNum, hiddenCenterPartStr } from '@/utils'
 
 import { AccountTag } from '../AccountTag'
 
-export default ({
+const AccountSelector = ({
   form,
   lead,
   trader,
@@ -145,3 +146,5 @@ export default ({
     </>
   )
 }
+
+export default observer(AccountSelector)

@@ -2,6 +2,7 @@ import './style.less'
 
 import { FormattedMessage, history, useModel } from '@umijs/max'
 import classNames from 'classnames'
+import _ from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
@@ -59,15 +60,22 @@ export default function copyTrading() {
   ]
 
   const [scrollY, setScrollY] = useState(0)
-  const fadeHeight = 60 // 当滚动条向下移动 fadeHeight 的时候 banner 收起
+  const fadeHeight = 72 // 当滚动条向下移动 fadeHeight 的时候 banner 收起
 
-  const hideBanner = useMemo(() => scrollY > fadeHeight, [scrollY])
+  const hideBanner = useMemo(() => scrollY >= fadeHeight, [scrollY])
 
-  const handleScroll = () => {
-    // 获取滚动条距离视口顶部的高度
-    const scrollTop = window.scrollY || document.documentElement.scrollTop
-    setScrollY(scrollTop)
-  }
+  const handleScroll = _.debounce(
+    () => {
+      // 获取滚动条距离视口顶部的高度
+      const scrollTop = window.scrollY || document.documentElement.scrollTop
+      setScrollY(scrollTop)
+    },
+    50,
+    {
+      leading: true,
+      trailing: true
+    }
+  )
 
   useEffect(() => {
     // 绑定滚动事件

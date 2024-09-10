@@ -1,12 +1,13 @@
 import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useLocation, useModel, useParams } from '@umijs/max'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
+import { useUpdateFollowStatus } from '@/hooks/useUpdateFollowStatus'
 import { IOrderTakerState } from '@/models/takers'
 import { getTradeFollowFollowerDetail, postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
@@ -32,6 +33,12 @@ import { useTabsConfig } from './useTabsConfig'
 export default function copyTradingDetail() {
   const intl = useIntl()
   const { setPageBgColor } = useModel('global')
+
+  const updateFollowStatus = useUpdateFollowStatus()
+
+  useLayoutEffect(() => {
+    updateFollowStatus()
+  }, [])
 
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
@@ -182,6 +189,13 @@ export default function copyTradingDetail() {
 
   const [readonly, setReadonly] = useState(false)
 
+  const onConfirm = (res: Record<string, any>) => {
+    onOpenChangeSetting(false)
+    // 刷新账号列表的跟单状态
+    updateFollowStatus(true)
+    push(`/copy-trading/detail/${res.leadId}?followerId=${res.followerId}`)
+  }
+
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
       {loading && (
@@ -296,13 +310,13 @@ export default function copyTradingDetail() {
                         width: 158,
                         borderRadius: 8
                       }}
-                      onClick={() => onFollow(1, false)}
+                      className={`daidanzhuangtai${taker.status}`}
+                      disabled={taker.status === 0}
+                      onClick={() => onFollow(taker.status, false)}
                     >
-                      <div className=" flex items-center gap-1">
-                        <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                        <span className=" font-semibold text-base ">
-                          <FormattedMessage id="mt.gendan" />
-                        </span>
+                      <div className=" flex items-center font-semibold gap-1 text-base">
+                        {taker.status === 2 && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}
+                        <FormattedMessage id={`mt.daidanzhuangtai${taker.status}`} />
                       </div>
                     </Button>
                   )
@@ -386,10 +400,7 @@ export default function copyTradingDetail() {
         open={openSetting}
         readonly={readonly}
         onOpenChange={onOpenChangeSetting}
-        onConfirm={() => {
-          onOpenChangeSetting(false)
-          // TODO: reload()
-        }}
+        onConfirm={onConfirm}
       />
 
       <ModalLoading

@@ -101,7 +101,7 @@ const Tags = ({ code, format, size = 'medium', color = 'biaozhun', children, onC
     <span onClick={handleClick} className={className}>
       {format && <FormattedMessage id={format.id} />}
       {children}
-      {useMemo(() => (item && item.synopsis?.abbr) || 'unset', [item])}
+      {useMemo(() => (item ? item.synopsis?.abbr || 'unset' : ''), [item])}
     </span>
   )
 }

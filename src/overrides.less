@@ -276,6 +276,29 @@
   }
 }
 
+.ant-btn-primary.daidanzhuangtai2:not(disabled):not(.ant-btn-dangerous) {
+  border-width: 0;
+
+  > span {
+    position: relative;
+  }
+
+  &::before {
+    position: absolute;
+    background: #f49b1e;
+    // linear-gradient(135deg, #6253e1, #04befe);
+    border-radius: inherit;
+    opacity: 1;
+    transition: all 0.3s;
+    content: '';
+    inset: 0;
+  }
+
+  &:hover::before {
+    background: #fbaa39;
+  }
+}
+
 // 搜索栏元素设置对齐方式
 .custom-search-form-item {
   .ant-space-align-center {
