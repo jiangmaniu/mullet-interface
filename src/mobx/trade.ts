@@ -542,7 +542,11 @@ class TradeStore {
       })
 
       // 获取品种后，动态订阅品种
-      ws.batchSubscribeSymbol()
+      if (ws.socket?.readyState === 1) {
+        ws.batchSubscribeSymbol()
+      } else {
+        ws.connect()
+      }
     }
   }
 

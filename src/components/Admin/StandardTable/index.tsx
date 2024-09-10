@@ -415,11 +415,12 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         '&::-webkit-scrollbar': {
           height: isDark ? '4px !important' : `${hasProList ? 7 : 0}px !important`,
           width: 0,
-          overflowY: 'auto'
+          scrollbarColor: 'transparent'
         },
         '&::-webkit-scrollbar-thumb': {
           borderRadius: 5,
-          backgroundColor: `${isDark ? '#17171c' : '#f7f7f7'} !important`
+          backgroundColor: `${isDark ? '#17171c' : '#f7f7f7'} !important`,
+          background: 'none !important'
         },
         '&::-webkit-scrollbar-track': {
           boxShadow: 0,
@@ -431,6 +432,13 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           borderRadius: 5,
           boxShadow: 'inset 0 0 5px rgba(239, 239, 239, 1)'
         }
+      },
+      '.ant-table .ant-table-content': {
+        scrollbarWidth: 'thin',
+        scrollbarColor: '#fff #fff'
+      },
+      '.ant-table:hover .ant-table-content': {
+        scrollbarColor: 'rgba(0, 0, 0, 0.05)  #fff'
       },
       '.ant-form': {
         background: `${searchFormBgColor || 'rgb(248, 248, 248)'} !important`
