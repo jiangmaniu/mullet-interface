@@ -1,6 +1,6 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { FormInstance, Radio } from 'antd'
+import { Form, FormInstance, Radio } from 'antd'
 import { useMemo, useState } from 'react'
 import { black } from 'tailwindcss/colors'
 
@@ -61,8 +61,6 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
     }
   ]
 
-  const [zhanghuyue, setZhanghuyue] = useState<number | undefined>(231.3)
-  const [gendanjine, setGendanjine] = useState<number | undefined>()
   const [zhiying, setZhiying] = useState<number | undefined>()
   const [zhisun, setZhisun] = useState<number | undefined>()
 
@@ -70,6 +68,8 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
 
   // 折叠
   const [isCollapse, setIsCollapse] = useState(false)
+
+  const money = Form.useWatch('money', form)
 
   const onClickRadio = () => {
     read === 1 ? setRead(undefined) : setRead(1)
@@ -81,11 +81,11 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
   const calcFocusInputValue = useMemo(
     () =>
       focusInputKey === 'mt.yingli'
-        ? formatNum((Number(gendanjine || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
+        ? formatNum((Number(money || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
         : focusInputKey === 'mt.sunshi'
-        ? formatNum((Number(gendanjine || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
+        ? formatNum((Number(money || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
         : 0,
-    [gendanjine, focusInputKey, zhiying, zhisun]
+    [money, focusInputKey, zhiying, zhisun]
   )
 
   return (

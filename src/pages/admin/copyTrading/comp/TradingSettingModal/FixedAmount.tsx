@@ -61,7 +61,7 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
     }
   ]
 
-  const [zhanghuyue, setZhanghuyue] = useState<number | undefined>(231.3)
+  // const [zhanghuyue, setZhanghuyue] = useState<number | undefined>(231.3)
   const [baozhengjin, setBaozhengjin] = useState<number | undefined>()
   const [zhiying, setZhiying] = useState<number | undefined>()
   const [zhisun, setZhisun] = useState<number | undefined>()
@@ -83,11 +83,11 @@ export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
   const calcFocusInputValue = useMemo(
     () =>
       focusInputKey === 'mt.yingli'
-        ? formatNum((Number(zhanghuyue || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
+        ? formatNum((Number(money || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
         : focusInputKey === 'mt.sunshi'
-        ? formatNum((Number(zhanghuyue || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
+        ? formatNum((Number(money || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
         : 0,
-    [zhanghuyue, focusInputKey, zhiying, zhisun]
+    [money, focusInputKey, zhiying, zhisun]
   )
 
   return (

@@ -1,6 +1,7 @@
-import { FormattedMessage, useModel } from '@umijs/max'
-import { useEffect, useMemo, useState } from 'react'
+import { FormattedMessage } from '@umijs/max'
+import { useLayoutEffect, useMemo, useState } from 'react'
 
+import { useStores } from '@/context/mobxProvider'
 import { cn } from '@/utils/cn'
 
 export type ITabTypes = {
@@ -14,9 +15,14 @@ export type ITabTypes = {
 }
 
 export default ({ code, format, size = 'medium', color = 'biaozhun', children, onClick, selectable }: ITabTypes) => {
-  const { initialState } = useModel('@@initialState')
-  const currentUser = initialState?.currentUser
-  const accountList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
+  const { trade } = useStores()
+  const accountGroupList = trade.accountGroupList
+
+  useLayoutEffect(() => {
+    if (!accountGroupList.length) {
+      trade.getAccountGroupList()
+    }
+  }, [accountGroupList])
 
   const sizeMap = {
     tiny: 'px-1 h-4 leading-4 ',
@@ -42,36 +48,30 @@ export default ({ code, format, size = 'medium', color = 'biaozhun', children, o
   const [item, setItem] = useState<AccountGroup.AccountGroupItem | null>(null)
   const [index, setIndex] = useState(0)
 
-  useEffect(() => {
-    console.log(code, accountList)
-    if (code && accountList.length > 0) {
-      // accountList.((item) => item.groupCode === code)
-      accountList.forEach((item, idx) => {
+  useLayoutEffect(() => {
+    if (code && accountGroupList.length > 0) {
+      accountGroupList.forEach((item, idx) => {
         if (item.groupCode === code) {
           setItem(item)
           setIndex(idx)
         }
       })
     }
-  }, [accountList, code])
-
-  useEffect(() => {
-    console.log('item', item)
-  }, [item])
+  }, [accountGroupList, code])
 
   const colorList = [
-    'bg-purple-500',
-    'bg-red-600',
+    'bg-red-600 text-white',
     'bg-yellow-560',
     'bg-green-700 text-white',
     'bg-orange-600 text-white',
     'bg-black text-white',
+    'bg-purple-500 text-white',
     'bg-blue-400 text-white',
-    'bg-purple-600',
     'bg-red-700',
     'bg-green-600 text-white',
     'bg-orange-800 text-white',
-    'bg-blue-700 text-white'
+    'bg-blue-700 text-white',
+    'bg-purple-600'
   ]
 
   const [selected, setSelected] = useState(false)
@@ -100,7 +100,7 @@ export default ({ code, format, size = 'medium', color = 'biaozhun', children, o
     <span onClick={handleClick} className={className}>
       {format && <FormattedMessage id={format.id} />}
       {children}
-      {(item && item.synopsis?.abbr) || 'unset'}
+      {useMemo(() => (item && item.synopsis?.abbr) || 'unset', [item])}
     </span>
   )
 }

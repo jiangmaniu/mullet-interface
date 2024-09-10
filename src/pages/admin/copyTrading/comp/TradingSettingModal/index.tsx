@@ -10,6 +10,7 @@ import { CURRENCY } from '@/constants'
 import { getTradeFollowFollowerDetail, postTradeFollowFolloerSave } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { formatNum } from '@/utils'
+import { message } from '@/utils/message'
 
 import AccountSelector from './AccountSelector'
 import FixedAmount from './FixedAmount'
@@ -162,6 +163,8 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
           onConfirm?.({
             // TODO: 添加回調參數
           })
+        } else {
+          message.info(res.message || intl.formatMessage({ id: 'common.opFailed' }))
         }
       })
       .finally(() => {

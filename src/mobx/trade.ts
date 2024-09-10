@@ -102,6 +102,7 @@ class TradeStore {
 
   @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
   @observable accountGroupList = [] as AccountGroup.AccountGroupItem[] // 账户组列表
+  @observable accountGroupListLoading = false // 账户组列表loading
 
   @observable allSimpleSymbolsMap = {} as { [key: string]: Symbol.AllSymbolItem } // 全部品种列表map，校验汇率品种用到
 
@@ -156,10 +157,14 @@ class TradeStore {
 
   // 获取创建账户页面-账户组列表
   getAccountGroupList = async () => {
+    if (this.accountGroupListLoading) return
+    this.accountGroupListLoading = true
+
     const res = await getAccountGroupList()
     const accountList = (res?.data || []) as AccountGroup.AccountGroupItem[]
     runInAction(() => {
       this.accountGroupList = accountList
+      this.accountGroupListLoading = false
     })
     return res
   }

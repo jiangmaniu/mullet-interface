@@ -4,7 +4,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useLocation, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
@@ -13,19 +13,8 @@ import Empty from '@/components/Base/Empty'
 import { useStores } from '@/context/mobxProvider'
 import { push } from '@/utils/navigator'
 
+import { AccountTag } from '../../copyTrading/comp/AccountTag'
 import Header from '../comp/Header'
-
-const handler = {
-  get: (target: any, prop: string, receiver: unknown) => {
-    if (prop in target) {
-      return Reflect.get(target, prop, receiver) // 使用 Reflect.get 访问目标对象的属性
-    } else {
-      // 如果属性不存在，可以自定义返回值，例如返回 undefined 或默认值
-      console.log(`Property ${prop} does not exist`)
-      return undefined // 或者返回其他默认值
-    }
-  }
-}
 
 function AccountList() {
   const { trade } = useStores()
@@ -40,7 +29,7 @@ function AccountList() {
 
   const location = useLocation()
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!accountList.length) {
       setLoading(true)
       trade.getAccountGroupList().finally(() => {
@@ -52,8 +41,7 @@ function AccountList() {
   useEffect(() => {
     // 切换真实模拟账户列表
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
-
-    setCurrentAccountList(list.map((i) => new Proxy(i, handler)))
+    setCurrentAccountList(list)
   }, [accountTabActiveKey, accountList.length])
 
   useEffect(() => {
@@ -135,7 +123,11 @@ function AccountList() {
                 </div>
                 <div>
                   <div className="pb-[14px] text-primary text-[24px] font-bold truncate">{item.synopsis?.name || item?.groupName}</div>
-                  <div className="text-secondary text-sm line-clamp-2 break-all">{item.synopsis?.remark}</div>
+                  <div className=" flex gap-2 items-center">
+                    {' '}
+                    <div className="text-secondary text-sm line-clamp-2 break-all">{item.synopsis?.remark}</div>
+                    <AccountTag code={item.groupCode}></AccountTag>
+                  </div>
                 </div>
                 <div className="border-b border-gray-250/25 my-5"></div>
                 <div>

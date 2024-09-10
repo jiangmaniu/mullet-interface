@@ -62,7 +62,7 @@ export default ({ form, info }: IProps) => {
                 // 数字必须是正数
                 if (Number.isFinite(_value) && _value > 0) {
                   // 必须大于后台限制数
-                  if (info?.profitSharingRatioLimit && _value < info.profitSharingRatioLimit) {
+                  if (info?.profitSharingRatioLimit && _value > info.profitSharingRatioLimit) {
                     return Promise.reject(
                       intl.formatMessage(
                         { id: 'mt.dayuxianzhifanwei' },
