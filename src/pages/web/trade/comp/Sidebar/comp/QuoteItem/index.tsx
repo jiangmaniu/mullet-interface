@@ -102,17 +102,37 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           background: 'transparent'
         }
       },
+      // '.up': {
+      //   animationName: 'bgUp',
+      //   animationDuration: '1000ms',
+      //   animationIterationCount: 'initial',
+      //   animationDirection: 'alternate',
+      // },
+      // '.down': {
+      //   animationName: 'bgDown',
+      //   animationDuration: '1000ms',
+      //   animationIterationCount: 'initial',
+      //   animationDirection: 'alternate'
+      // },
       '.up': {
         animationName: 'bgUp',
         animationDuration: '1000ms',
         animationIterationCount: 'initial',
-        animationDirection: 'alternate'
+        animationDirection: 'alternate',
+        animationTimingFunction: 'ease-in-out',
+        animationFillMode: 'initial',
+        background: upColor,
+        color: 'var(--color-white)'
       },
       '.down': {
         animationName: 'bgDown',
         animationDuration: '1000ms',
         animationIterationCount: 'initial',
-        animationDirection: 'alternate'
+        animationDirection: 'alternate',
+        animationTimingFunction: 'ease-in-out',
+        animationFillMode: 'initial',
+        background: downColor,
+        color: 'var(--color-white)'
       },
       '.same': {
         // animationName: 'bgSame',
@@ -126,6 +146,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           bottom: 0,
           top: 0,
           right: 0,
+          borderRadius: 4,
           border: '1px solid var(--color-gray-130)'
         },
         background: 'var(--color-gray-50)',

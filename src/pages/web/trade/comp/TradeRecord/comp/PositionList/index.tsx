@@ -1,34 +1,34 @@
 import { ProColumns, useIntl } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
+import { Spin } from 'antd'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import StandardTable from '@/components/Admin/StandardTable'
 import SymbolIcon from '@/components/Base/SymbolIcon'
-import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import ClosePositionConfirmModal from '@/pages/web/trade/comp/Modal/ClosePositionConfirmModal'
 import SetStopLossProfitModal from '@/pages/web/trade/comp/Modal/SetStopLossProfitModal'
-import { formatNum, toFixed } from '@/utils'
-import { getBuySellInfo } from '@/utils/business'
+import { formatNum } from '@/utils'
+import { calcPositionList, getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { calcForceClosePrice, calcOrderMarginExchangeRate, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import { calcOrderMarginExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 
 export type IPositionItem = Order.BgaOrderPageListItem & {
   /**格式化浮动盈亏 */
-  profitFormat: string | number
+  profitFormat?: string | number
   /**现价 */
-  currentPrice: number | string
+  currentPrice?: number | string
   /**收益率 */
-  yieldRate: string
+  yieldRate?: string
   /**强平价 */
-  forceClosePrice: number
+  forceClosePrice?: number
   /**保证金率 */
   marginRate?: string
 }
@@ -48,6 +48,9 @@ function Position({ style, parentPopup }: IProps) {
   const [modalInfo, setModalInfo] = useState({} as IPositionItem)
   const { recordListClassName } = useStyle()
   const showActiveSymbol = trade.showActiveSymbol
+  const accountGroupPrecision = trade.currentAccountInfo.currencyDecimal
+
+  const [loading, setLoading] = useState(true)
 
   const closePositionRef = useRef<any>(null)
   const stopLossProfitRef = useRef<any>(null)
@@ -59,6 +62,12 @@ function Position({ style, parentPopup }: IProps) {
   let list = showActiveSymbol ? positionList.filter((v) => v.symbol === activeSymbolName) : positionList
 
   const precision = trade.currentAccountInfo.currencyDecimal
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 200)
+  }, [])
 
   const columns: ProColumns<IPositionItem>[] = [
     {
@@ -367,7 +376,7 @@ function Position({ style, parentPopup }: IProps) {
         const profitDom = profit ? (
           <span className={cn('font-pf-bold', color)}>{record.profitFormat}</span>
         ) : (
-          <span className="!text-[13px]m">-</span>
+          <span className="!text-[13px]">-</span>
         )
         const yieldRate = record.yieldRate
         return (
@@ -388,9 +397,9 @@ function Position({ style, parentPopup }: IProps) {
       hideInSearch: true,
       render: (text, record, _, _action) => {
         return (
-          <div className="flex items-center max-xl:mt-3 max-xl:justify-between">
+          <div className="flex justify-end">
             <div
-              className="mr-2 min-w-[70px] cursor-pointer rounded border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-primary text-sm"
+              className="min-w-[70px] cursor-pointer rounded border border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-primary text-sm"
               onClick={() => {
                 closePositionRef.current?.show(record)
               }}
@@ -403,91 +412,48 @@ function Position({ style, parentPopup }: IProps) {
     }
   ]
 
-  const accountGroupPrecision = trade.currentAccountInfo.currencyDecimal
-
   const pageSize = 10
   // 一次性获取全部持仓单然后分页处理避免ws实时计算消耗性能，ws实时推过来会覆盖接口请求的数据
-  const dataSource = toJS(list)
-    .slice((pageNum - 1) * pageSize, pageNum * pageSize)
-    .map((v) => {
-      const conf = v.conf as Symbol.SymbolConf
-      const symbol = v.symbol as string
-      const contractSize = conf.contractSize || 0
-      const quoteInfo = getCurrentQuote(symbol)
-      const digits = v.symbolDecimal || 2
-      const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
-      const isCrossMargin = v.marginType === 'CROSS_MARGIN'
-
-      if (isCrossMargin) {
-        // 全仓单笔保证金 = (开盘价 * 合约大小 * 手数) / 杠杆
-        // 如果没有设置杠杆，读后台配置的杠杆
-        const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
-        const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
-        const leverageMultiple = v.leverageMultiple || leverage
-        const initialMargin = prepaymentConf?.mode === 'fixed_margin' ? prepaymentConf?.fixed_margin?.initial_margin : 0 // 读后台初始预付款的值
-
-        // 存在杠杆
-        if (leverageMultiple) {
-          v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
-        } else {
-          // 固定保证金 * 手数
-          v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)
-        }
-      } else {
-        // 逐仓保证金
-        // v.orderMargin = toFixed(v.orderMargin, digits)
-      }
-
-      v.currentPrice = currentPrice // 现价
-      const profit = covertProfit(v) as number // 浮动盈亏
-
-      v.profit = profit
-      v.profitFormat = Number(v.profit) > 0 ? '+' + formatNum(v.profit, { precision: accountGroupPrecision }) : v.profit || '-' // 格式化的
-      // v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
-      v.yieldRate = calcYieldRate(v, accountGroupPrecision) // 收益率
-      v.forceClosePrice = calcForceClosePrice(v) // 强平价
-      v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价
-      v.stopLoss = toFixed(v.stopLoss, digits) // 止损价
-      v.handlingFees = toFixed(v.handlingFees, digits)
-      v.interestFees = toFixed(v.interestFees, digits)
-
-      // 保证金率
-      const { marginRate } = trade.getMarginRateInfo(v)
-      v.marginRate = `${marginRate}%`
-
-      return v
-    })
+  const dataSource = calcPositionList(toJS(list).slice((pageNum - 1) * pageSize, pageNum * pageSize)).map((v) => {
+    // 保证金率
+    const { marginRate } = trade.getMarginRateInfo(v)
+    v.marginRate = `${marginRate}%`
+    return v
+  })
 
   return (
     <>
-      <StandardTable
-        columns={columns}
-        // ghost
-        dataSource={dataSource}
-        showOptionColumn={false}
-        stripe={false}
-        hasTableBordered
-        hideSearch
-        cardBordered={false}
-        bordered={false}
-        className={recordListClassName}
-        cardProps={{
-          bodyStyle: { padding: 0 },
-          headStyle: { borderRadius: 0 },
-          className: ''
-        }}
-        size="small"
-        rowClassName={(record, i) => {
-          return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
-        }}
-        pageSize={pageSize}
-        pagination={{
-          total: trade.positionList.length,
-          onShowSizeChange(current, size) {
-            setPageNum(current)
-          }
-        }}
-      />
+      {/* 加上loading避免右侧闪动问题 */}
+      <Spin spinning={loading}>
+        <StandardTable
+          columns={columns}
+          // ghost
+          dataSource={loading ? [] : dataSource}
+          showOptionColumn={false}
+          stripe={false}
+          hasTableBordered
+          hideSearch
+          cardBordered={false}
+          bordered={false}
+          className={recordListClassName}
+          cardProps={{
+            bodyStyle: { padding: 0 },
+            headStyle: { borderRadius: 0 },
+            className: ''
+          }}
+          size="small"
+          rowClassName={(record, i) => {
+            return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
+          }}
+          pageSize={pageSize}
+          pagination={{
+            total: trade.positionList.length,
+            onShowSizeChange(current, size) {
+              setPageNum(current)
+            }
+          }}
+        />
+      </Spin>
       {/* 平仓修改确认弹窗 */}
       <ClosePositionConfirmModal ref={closePositionRef} list={dataSource} />
       {/* 设置止损止盈弹窗 */}

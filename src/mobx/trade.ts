@@ -2,6 +2,7 @@ import { getIntl } from '@umijs/max'
 import { keyBy } from 'lodash'
 import { action, computed, configure, makeObservable, observable, runInAction } from 'mobx'
 
+import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 import { getTradeSymbolCategory } from '@/services/api/common'
 import { getTradeSymbolList } from '@/services/api/tradeCore/account'
 import { getAccountGroupList } from '@/services/api/tradeCore/accountGroup'
@@ -16,6 +17,7 @@ import {
 } from '@/services/api/tradeCore/order'
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
 import { toFixed } from '@/utils'
+import { calcPositionList } from '@/utils/business'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
@@ -231,7 +233,7 @@ class TradeStore {
    * @param item 持仓单item
    * @returns
    */
-  getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
+  getMarginRateInfo = (item?: IPositionItem) => {
     const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
     const quote = getCurrentQuote()
     const conf = item?.conf || quote?.symbolConf // 品种配置信息
@@ -244,27 +246,28 @@ class TradeStore {
 
     let marginRate = 0
     let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
-    let compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+    const positionList = this.positionList
+    let compelCloseRatio = positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
     compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
     if (isCrossMargin) {
       // 判断是否存在全仓单
-      const hasCrossMarginOrder = this.positionList.some((item) => item.marginType === 'CROSS_MARGIN')
+      const hasCrossMarginOrder = positionList.some((item) => item.marginType === 'CROSS_MARGIN')
       if (hasCrossMarginOrder) {
         marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
         margin = Number(occupyMargin * compelCloseRatio)
       }
     } else {
       // 当前筛选的逐仓单订单信息
-      const currentLiquidationSelectItem = this.positionList.find((item) => item.id === currentLiquidationSelectBgaId)
+      const currentLiquidationSelectItem = positionList.find((item) => item.id === currentLiquidationSelectBgaId)
       const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
       const isLockedMode = currentLiquidationSelectItem?.mode === 'LOCKED_POSITION' // 当前筛选的项，是否是锁仓模式的订单
 
       let filterPositionList = []
       // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
       if (isLockedMode && !item?.id) {
-        filterPositionList = [currentLiquidationSelectItem]
+        filterPositionList = calcPositionList([currentLiquidationSelectItem])
       } else {
-        filterPositionList = item ? [item] : this.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
+        filterPositionList = item ? [item] : positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
       }
 
       let orderMargin = 0 // 订单总的保证金

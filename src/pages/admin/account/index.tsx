@@ -136,7 +136,7 @@ function Account() {
                         {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                       </div>
                       {item.synopsis?.abbr && (
-                        <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs font-normal text-white">
+                        <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
                           {item.synopsis?.abbr}
                         </div>
                       )}

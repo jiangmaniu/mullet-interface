@@ -3,9 +3,12 @@
 import { getIntl, getLocale } from '@umijs/max'
 
 import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
+import { stores } from '@/context/mobxProvider'
 import ENV from '@/env'
+import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 
-import { formatMin2Time, getUid, groupBy, isImageFile, parseJsonFields } from '.'
+import { formatMin2Time, formatNum, getUid, groupBy, isImageFile, parseJsonFields, toFixed } from '.'
+import { calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } from './wsUtil'
 
 //  =============
 
@@ -321,4 +324,57 @@ export const getBuySellInfo = (item: any) => {
 export const getDictLabelByLocale = (value: string) => {
   const [zh, en] = (value || '').split(',')
   return getLocale() === 'zh-TW' ? zh : en || zh
+}
+
+// ========= 计算持仓单信息 ============
+export const calcPositionList = (list: IPositionItem[]) => {
+  const { trade } = stores
+  if (list.length === 0) return []
+  return list.map((v) => {
+    {
+      const accountGroupPrecision = trade.currentAccountInfo.currencyDecimal
+      const conf = v.conf as Symbol.SymbolConf
+      const symbol = v.symbol as string
+      const contractSize = conf.contractSize || 0
+      const quoteInfo = getCurrentQuote(symbol)
+      const digits = v.symbolDecimal || 2
+      const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
+      const isCrossMargin = v.marginType === 'CROSS_MARGIN'
+
+      if (isCrossMargin) {
+        // 全仓单笔保证金 = (开盘价 * 合约大小 * 手数) / 杠杆
+        // 如果没有设置杠杆，读后台配置的杠杆
+        const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
+        const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
+        const leverageMultiple = v.leverageMultiple || leverage
+        const initialMargin = prepaymentConf?.mode === 'fixed_margin' ? prepaymentConf?.fixed_margin?.initial_margin : 0 // 读后台初始预付款的值
+
+        // 存在杠杆
+        if (leverageMultiple) {
+          v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
+        } else {
+          // 固定保证金 * 手数
+          v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)
+        }
+      } else {
+        // 逐仓保证金
+        // v.orderMargin = toFixed(v.orderMargin, digits)
+      }
+
+      v.currentPrice = currentPrice // 现价
+      const profit = covertProfit(v) as number // 浮动盈亏
+
+      v.profit = profit
+      v.profitFormat = Number(v.profit) > 0 ? '+' + formatNum(v.profit, { precision: accountGroupPrecision }) : v.profit || '-' // 格式化的
+      // v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
+      v.yieldRate = calcYieldRate(v, accountGroupPrecision) // 收益率
+      v.forceClosePrice = calcForceClosePrice(v) // 强平价
+      v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价
+      v.stopLoss = toFixed(v.stopLoss, digits) // 止损价
+      v.handlingFees = toFixed(v.handlingFees, digits)
+      v.interestFees = toFixed(v.interestFees, digits)
+
+      return v
+    }
+  })
 }

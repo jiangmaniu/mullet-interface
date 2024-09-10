@@ -463,7 +463,11 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           width: '0 !important'
         },
       '.ant-pagination': {
-        marginRight: '10px !important'
+        marginRight: '0 !important',
+        marginTop: '0 !important',
+        paddingTop: 16,
+        background: 'var(--bg-primary)',
+        paddingRight: '10px'
       }
     }
   })
