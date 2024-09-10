@@ -105,6 +105,7 @@ export async function getSymbolDetail(params: API.IdParam) {
 export async function getAllSymbols(params?: API.PageParam) {
   return request<API.Response<Symbol.AllSymbolItem[]>>('/api/trade-core/coreApi/symbols/list', {
     method: 'GET',
+    skipErrorHandler: true,
     params
   })
 }

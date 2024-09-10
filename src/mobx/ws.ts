@@ -100,7 +100,8 @@ class WSStore {
   constructor() {
     makeObservable(this) // 使用 makeObservable mobx6.0 才会更新视图
   }
-  batchTimer: any = null
+  batchQuoteTimer: any = null // 定时更新行情
+  batchDepthTimer: any = null // 定时更新深度
   heartbeatInterval: any = null
   heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
   quotesCacheArr: any = [] // 行情缓存区
@@ -164,7 +165,8 @@ class WSStore {
       this.startHeartbeat()
 
       // 开启定时器推送数据
-      this.batchUpdateDataByTimer()
+      this.batchUpdateQuoteDataByTimer() // 更新行情
+      this.batchUpdateDepthDataByTimer() // 更新深度
     })
     this.socket.addEventListener('message', (d: any) => {
       const res = JSON.parse(d.data)
@@ -323,7 +325,7 @@ class WSStore {
     this.depthCacheArr = []
   }
 
-  // 更新行情数据
+  // ================ 更新行情数据 开始 ================
   @action
   updateQuoteData = () => {
     if (this.quotesCacheArr.length) {
@@ -371,13 +373,13 @@ class WSStore {
     }
   }
 
-  // 定时更新数据
+  // 定时更新行情数据
   @action
-  batchUpdateDataByTimer = () => {
-    if (this.batchTimer) {
-      clearInterval(this.batchTimer)
+  batchUpdateQuoteDataByTimer = () => {
+    if (this.batchQuoteTimer) {
+      clearInterval(this.batchQuoteTimer)
     }
-    this.batchTimer = setInterval(() => {
+    this.batchQuoteTimer = setInterval(() => {
       // 更新行情
       this.updateQuoteData()
     }, 300)
@@ -393,11 +395,12 @@ class WSStore {
     }
   }
 
-  // 批量更新深度数据，通过指定数量
+  // ================ 更新行情数据 结束 ================
+
+  // ================ 更新深度 开始 ================
   @action
-  batchUpdateDepthDataByNumber = (data: any) => {
-    // 限流
-    if (this.depthCacheArr.length > 2) {
+  updateDepthData = () => {
+    if (this.depthCacheArr.length) {
       const depthObj: any = {} // 一次性更新，避免卡顿
       this.depthCacheArr.forEach((item: IDepth) => {
         const [dataSourceCode, dataSourceSymbol] = (item.dataSource || '').split('-').filter((v) => v)
@@ -415,16 +418,41 @@ class WSStore {
         }
       })
 
-      this.depth = {
-        ...this.depth,
-        ...depthObj
-      }
+      runInAction(() => {
+        this.depth = {
+          ...this.depth,
+          ...depthObj
+        }
+      })
 
       this.depthCacheArr = []
+    }
+  }
+
+  // 批量更新深度数据，通过指定数量
+  @action
+  batchUpdateDepthDataByNumber = (data: any) => {
+    // 限流
+    if (this.depthCacheArr.length > 2) {
+      this.updateDepthData()
     } else {
       this.depthCacheArr.push(data)
     }
   }
+
+  // 定时更新深度数据
+  @action
+  batchUpdateDepthDataByTimer = () => {
+    if (this.batchDepthTimer) {
+      clearInterval(this.batchDepthTimer)
+    }
+    this.batchDepthTimer = setInterval(() => {
+      // 更新深度
+      this.updateDepthData()
+    }, 100)
+  }
+
+  // ================ 更新深度 结束 ================
 
   // 处理ws消息
   @action
@@ -458,7 +486,10 @@ class WSStore {
         //   }
         // }
 
-        this.batchUpdateDepthDataByNumber(data)
+        // this.batchUpdateDepthDataByNumber(data)
+
+        // 推入缓冲区
+        this.depthCacheArr.push(data)
 
         // console.log('深度报价', toJS(this.depth))
         break

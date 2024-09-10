@@ -17,6 +17,7 @@ import {
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
 import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
+import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
 import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
@@ -336,6 +337,17 @@ class TradeStore {
     this.userConfInfo = userConfInfo
     this.openSymbolNameList = (currentAccountConf?.openSymbolNameList || []).filter((v) => v) as Account.TradeSymbolListItem[]
     this.activeSymbolName = currentAccountConf?.activeSymbolName as string
+  }
+
+  // 切换交易品种
+  switchSymbol = (symbol: string) => {
+    // 记录打开的symbol
+    trade.setOpenSymbolNameList(symbol)
+    // 设置当前当前的symbol
+    trade.setActiveSymbolName(symbol)
+
+    // 切换品种事件
+    mitt.emit('symbol_change')
   }
 
   // 获取打开的品种完整信息

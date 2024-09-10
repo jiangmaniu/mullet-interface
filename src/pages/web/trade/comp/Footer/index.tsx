@@ -30,10 +30,18 @@ function Footer() {
   }, [isOnline, readyState, isQuotePushing])
 
   useEffect(() => {
-    if (scroll?.top > 50) {
+    if (scroll?.top > 100) {
       setOpenTips(false)
     }
   }, [scroll])
+
+  useEffect(() => {
+    if (openTips) {
+      setTimeout(() => {
+        setOpenTips(false)
+      }, 5000)
+    }
+  }, [openTips])
 
   const CLOSED: any = {
     title: <FormattedMessage id="mt.duankailianjie" />,
