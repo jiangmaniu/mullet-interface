@@ -6,7 +6,7 @@ import { forwardRef, useEffect, useState, useTransition } from 'react'
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum, getPrecisionByNumber } from '@/utils'
+import { formatNum, getPrecisionByNumber, toFixed } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
@@ -79,12 +79,23 @@ export default observer(
     const step2 = Math.pow(10, -(d - 1)) || step
     const countPrecision = getPrecisionByNumber(symbolConf?.minTrade) // 手数精度
 
+    // 给价格输入框加上默认值
+    const getInitPriceValue = () => {
+      if (isBuy) {
+        // 买：输入框减少0.2
+        return ask ? toFixed(ask - 0.2, d) : 0
+      } else {
+        // 卖：输入框增加0.2
+        return bid ? toFixed(bid + 0.2, d) : 0
+      }
+    }
+
     // 切换品种、买卖重置内容
     useEffect(() => {
       setSl(0)
       setSp(0)
       setCount(vmin)
-      setPrice(0)
+      setPrice(getInitPriceValue())
     }, [symbol, buySell, orderType, vmin])
 
     useEffect(() => {
@@ -106,7 +117,7 @@ export default observer(
     if (bid && ask) {
       // 买入
       if (isBuy) {
-        priceTip = (ask + stopl).toFixed(d)
+        priceTip = (ask + stopl).toFixed(d) // 价格范围
         sl_scope = price ? (price - stopl).toFixed(d) : 0
         sp_scope = price ? (price + stopl).toFixed(d) : 0
 
@@ -253,12 +264,12 @@ export default observer(
               <span className={cn('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
                 {isBuy && (
                   <>
-                    <FormattedMessage id="mt.mairujiafanwei" /> ≤ {formatNum(priceTip)} USD
+                    <FormattedMessage id="mt.mairujiafanwei" /> ≥ {formatNum(priceTip)} USD
                   </>
                 )}
                 {!isBuy && (
                   <>
-                    <FormattedMessage id="mt.mairujiafanwei" /> ≥ {formatNum(priceTip)} USD
+                    <FormattedMessage id="mt.mairujiafanwei" /> ≤ {formatNum(priceTip)} USD
                   </>
                 )}
               </span>

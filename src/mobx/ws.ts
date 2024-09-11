@@ -113,7 +113,7 @@ class WSStore {
   @observable websocketUrl = ENV.ws
 
   @observable isQuotePushing = true // 判断行情是否一直实时在推送
-  QUOTE_PUSH_TIMEOUT = 5000 // 行情推送5秒超时
+  QUOTE_PUSH_TIMEOUT = 10000 // 行情推送10秒超时
   quotePushTimer: NodeJS.Timeout | null = null // 行情推送定时器
   lastQuotePushTime = 0 // 行情最后推送时间
 

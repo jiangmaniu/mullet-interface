@@ -364,8 +364,21 @@ export const calcPositionList = (list: IPositionItem[]) => {
       v.currentPrice = currentPrice // 现价
       const profit = covertProfit(v) as number // 浮动盈亏
 
+      const [exchangeSymbol, exchangeRate] = (v.marginExchangeRate || '').split(',')
+      // v.orderMargin =
+      //   v.marginType === 'CROSS_MARGIN'
+      //     ? calcOrderMarginExchangeRate({
+      //         value: v.orderMargin,
+      //         exchangeSymbol,
+      //         exchangeRate
+      //       })
+      //     : v.orderMargin
+      // 全仓使用基础保证金
+      v.orderMargin = v.marginType === 'CROSS_MARGIN' ? v.orderBaseMargin : v.orderMargin
+
       v.profit = profit
-      v.profitFormat = Number(v.profit) > 0 ? '+' + formatNum(v.profit, { precision: accountGroupPrecision }) : v.profit || '-' // 格式化的
+      v.profitFormat = Number(v.profit) ? formatNum(v.profit, { precision: 3 }) : v.profit || '-' // 格式化的
+      v.profitFormat = v.profit > 0 ? `+${v.profitFormat}` : v.profitFormat
       // v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
       v.yieldRate = calcYieldRate(v, accountGroupPrecision) // 收益率
       v.forceClosePrice = calcForceClosePrice(v) // 强平价

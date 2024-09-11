@@ -36,15 +36,21 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   let askColor = ''
 
   if (res.hasQuote && Object.keys(res.quotes).length) {
-    askColor = res?.askDiff > 0 ? 'up' : 'down'
-    bidColor = res?.bidDiff > 0 ? 'up' : 'down'
     // 涨跌额涨跌幅是0显示灰色
     if (res?.askDiff === 0) {
       askColor = 'same'
+    } else {
+      askColor = res?.askDiff > 0 ? 'up' : 'down'
     }
     if (res?.bidDiff === 0) {
       bidColor = 'same'
+    } else {
+      bidColor = res?.bidDiff > 0 ? 'up' : 'down'
     }
+  } else {
+    // 默认展示灰色
+    bidColor = 'same'
+    askColor = 'same'
   }
 
   const activeClassName = useEmotionCss(({ token }) => {

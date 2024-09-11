@@ -104,25 +104,19 @@ export default observer(
       // 买入
       if (isBuy) {
         // 买入止损最大值
-
-        sl_scope = (ask - stopl).toFixed(d)
+        sl_scope = (bid - stopl).toFixed(d) // 止损范围
         // 买入止损最小值
-
-        sp_scope = (ask + stopl).toFixed(d)
-
+        sp_scope = (bid + stopl).toFixed(d) // 止盈范围
+        // 预计盈亏
         slProfit = sl ? ((sl - ask) * count * consize).toFixed(d) : 0
-
         spProfit = sp ? ((sp - ask) * count * consize).toFixed(d) : 0
       } else {
         // 卖出止损最小值
-
-        sl_scope = (bid + stopl).toFixed(d)
+        sl_scope = (ask + stopl).toFixed(d) // 止损范围
         // 卖出止损最大值
-
-        sp_scope = (bid - stopl).toFixed(d)
-
+        sp_scope = (ask - stopl).toFixed(d) // 止盈范围
+        // 预计盈亏
         slProfit = sl ? ((bid - sl) * count * consize).toFixed(d) : 0
-
         spProfit = sp ? ((bid - sp) * count * consize).toFixed(d) : 0
       }
     }

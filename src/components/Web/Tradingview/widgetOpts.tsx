@@ -44,7 +44,8 @@ export default function getWidgetOpts(
     'symbol_info', // 隐藏图例中点击的商品信息
     'timeframes_toolbar', // 隐藏底部工具条 时间栏
     'scales_date_format',
-    'header_fullscreen_button' // 全屏
+    'header_fullscreen_button', // 全屏
+    'display_market_status' // 隐藏图例旁边的市场状态
     // 'use_localstorage_for_settings' // 背景色改不动，配置不生效的原因，需要禁用本地配置、背景色改不动，也跟主题色属性有关，不能存在主题色属性 theme: "dark",//"light"
     // 'main_series_scale_menu', // 隐藏右下角设置按钮
     // 'header_settings',    // 设置
@@ -71,7 +72,6 @@ export default function getWidgetOpts(
       'show_chart_property_page', // 隐藏右上角设置按钮
       'header_screenshot', // 截图
       'adaptive_logo' // 隐藏logo后面文字
-      // 'display_market_status' // 隐藏图例旁边的市场状态
       // 'popup_hints' //显示有关可能的鼠标/快捷方式/UI 操作的弹出提示
     )
     enabled_features.push(

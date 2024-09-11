@@ -625,7 +625,9 @@ class TradeStore {
   // 下单操作
   // 携带持仓订单号则为平仓单，只需要传递持仓单号、交易账户ID、订单数量、订单类型和反向订单方向，其他参数无效
   createOrder = async (params: Order.CreateOrder) => {
+    const intl = getIntl()
     const orderType = params.type
+    const isBuy = params.buySell === 'BUY'
     const res = await createOrder(params)
     if (res.success) {
       // 市价单：买入卖出单
@@ -634,9 +636,17 @@ class TradeStore {
         // this.getPositionList()
         // 携带持仓订单号则为平仓单
         if (params.executeOrderId) {
-          message.info(getIntl().formatMessage({ id: 'mt.pingcangchenggong' }))
+          message.info(intl.formatMessage({ id: 'mt.pingcangchenggong' }))
         } else {
-          message.info(getIntl().formatMessage({ id: 'mt.kaicangchenggong' }))
+          message.info(intl.formatMessage({ id: 'mt.kaicangchenggong' }))
+          // notification.success({
+          //   message: intl.formatMessage({ id: 'mt.kaicangchenggong' }),
+          //   description: `${isBuy ? intl.formatMessage({ id: 'mt.mairu' }) : intl.formatMessage({ id: 'mt.maichu' })} ${
+          //     params.orderVolume
+          //   }${intl.formatMessage({ id: 'mt.lot' })} ${intl.formatMessage({ id: 'mt.jiage' })}:${params.limitPrice}`,
+          //   placement: 'bottomLeft',
+          //   duration: 5000
+          // })
         }
         // 激活Tab
         trade.setTabKey('POSITION')

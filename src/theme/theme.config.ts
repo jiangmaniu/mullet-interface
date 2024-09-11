@@ -150,7 +150,9 @@ export const ThemeVarsConst = {
   // button
   '--btn-primary': colorBrandPrimary, // 按钮主色
   '--btn-default-border': gray['200'], // 默认按钮边框
-  '--btn-disabled-bg': gray['150'], // 禁用背景色
+  '--btn-disabled-bg': gray['50'], // 禁用背景色
+  '--btn-disabled-text-color': gray['500'], // 禁用按钮文字颜色
+  // '--btn-disabled-bg': gray['150'], // 禁用背景色
 
   // input
   '--input-bg': colorWhite, // 输入框背景色
@@ -255,6 +257,7 @@ export const ThemeDarkVarsConst = {
   '--btn-primary': blue['500'], // 按钮主色
   '--btn-default-border': gray['656'], // 默认按钮边框
   '--btn-disabled-bg': gray['651'], // 禁用背景色
+  '--btn-disabled-text-color': gray['500'], // 禁用按钮文字颜色
 
   // input
   '--input-bg': gray['750'], // 输入框背景色
