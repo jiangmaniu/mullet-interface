@@ -1,7 +1,7 @@
 import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
@@ -31,6 +31,12 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
   // 可用余额
   const availableMoney = Number(toFixed(money - occupyMargin))
 
+  const searchFrom = searchParams.get('from')
+
+  useEffect(() => {
+    form.setFieldValue('fromAccountId', searchFrom)
+  }, [searchFrom])
+
   return (
     <ProFormSelect
       label={
@@ -41,7 +47,7 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
       name="fromAccountId"
       placeholder={intl.formatMessage({ id: 'mt.xuanzezhuanchuzhanghao' })}
       allowClear={false}
-      initialValue={searchParams.get('from')}
+      initialValue={searchFrom}
       fieldProps={{
         open,
         onDropdownVisibleChange: (visible) => setOpen(visible),

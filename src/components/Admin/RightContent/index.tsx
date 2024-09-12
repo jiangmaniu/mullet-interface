@@ -1,10 +1,11 @@
 import { CopyOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, history, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
-import { Segmented, Tooltip } from 'antd'
+import { ConfigProvider, Segmented, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
+import Button from '@/components/Base/Button'
 import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
@@ -17,6 +18,7 @@ import { goKefu, onLogout, push } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import { HeaderTheme } from '../Header/types'
+import Modal from '../Modal'
 
 export type SiderTheme = 'light' | 'dark'
 
@@ -124,6 +126,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const { pathname } = useLocation()
   const isTradePage = pathname.indexOf('/trade') !== -1
   const currencyDecimal = currentAccountInfo.currencyDecimal // 账户组小数位
+  const isKycAuth = currentUser?.isKycAuth
+
+  const totalAccountMoney = accountList.reduce((total, next) => total + Number(next.money || 0), 0) // 所有账户余额
 
   // 排除当前选择的账户
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
@@ -134,7 +139,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
     setCurrentAccountList(list)
   }, [accountTabActiveKey, accountList.length])
 
-  const renderAccountBoxHover = () => {
+  // 交易页面悬浮
+  const renderTradeAccountBoxHover = () => {
     const list = [
       {
         label: <FormattedMessage id="mt.zhanghuyue" />,
@@ -330,13 +336,28 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
 
   const iconDownColor = useMemo(() => (theme === 'white' ? (accountBoxOpen ? 'black' : 'white') : 'black'), [accountBoxOpen, theme])
 
+  const renderTransferDom = (item: User.AccountItem) => (
+    <Button
+      className="!ml-0 text-sm !h-[32px] !px-[10px]"
+      icon={<img src="/img/huazhuan.png" width={20} height={20} />}
+      onClick={() => {
+        if (isKycAuth) {
+          push(`/account/transfer?from=${item.id}`)
+        }
+      }}
+    >
+      <FormattedMessage id="mt.huazhuan" />
+    </Button>
+  )
+
   return (
     <div className="flex items-center">
       <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
+        {/* 交易页面账户信息悬浮 */}
         {isTradePage && (
           <Dropdown
             placement="topLeft"
-            dropdownRender={renderAccountBoxHover}
+            dropdownRender={renderTradeAccountBoxHover}
             onOpenChange={(open) => {
               setAccountBoxOpen(open)
             }}
@@ -344,7 +365,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             align={{ offset: [0, 0] }}
           >
             <div
-              className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}
+              className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: true || accountBoxOpen })}
               onMouseEnter={() => {
                 // 刷新账户余额信息,使用ws最新的
                 // setTimeout(() => {
@@ -378,6 +399,111 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                 style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
                 className="transition-all duration-300"
               /> */}
+                <Iconfont
+                  name="down"
+                  width={24}
+                  height={24}
+                  color={iconDownColor}
+                  className="cursor-pointer rounded-lg transition-all duration-300"
+                  style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
+                />
+              </div>
+            </div>
+          </Dropdown>
+        )}
+
+        {/* 个人中心账户信息悬浮 */}
+        {!isTradePage && (
+          <Dropdown
+            placement="topLeft"
+            dropdownRender={() => {
+              return (
+                <div className="dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] rounded-b-xl rounded-tr-xl bg-primary xl:w-[360px] pt-3">
+                  <div className="max-h-[500px] overflow-y-auto px-3">
+                    {accountArr.map((item, idx: number) => {
+                      return (
+                        <div
+                          key={item.id}
+                          className={cn('border-b border-gray-150 pl-[11px] py-[11px]', {
+                            'border-none': idx === accountArr.length - 1
+                          })}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div>
+                                <span className="text-[20px] text-primary font-pf-bold">
+                                  {!Number(item.money)
+                                    ? '0.00'
+                                    : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
+                                </span>{' '}
+                                <span className="ml-1 text-sm font-normal text-secondary">USD</span>
+                              </div>
+                            </div>
+                            <div className="ml-[10px] flex px-1">
+                              <div
+                                className={cn(
+                                  'flex h-[22px] min-w-[42px] items-center bg-blue-700/10 justify-center rounded px-1 text-xs font-normal text-brand'
+                                )}
+                              >
+                                <FormattedMessage id="mt.zhenshi" />
+                              </div>
+                              {item.synopsis?.abbr && (
+                                <div className="ml-[6px] max-w-[84px] flex h-[22px] min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white">
+                                  <span className="truncate">{item.synopsis?.abbr}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                          <div className="flex-1 text-sm text-secondary leading-3">
+                            {item.name} #{hiddenCenterPartStr(item?.id, 4)}
+                          </div>
+                          <div className="flex items-center gap-x-3 mt-3">
+                            {!isKycAuth && (
+                              <Modal
+                                trigger={renderTransferDom(item)}
+                                title={<FormattedMessage id="common.wenxintishi" />}
+                                width={380}
+                                okText={<FormattedMessage id="mt.qurenzheng" />}
+                                onFinish={() => {
+                                  push('/setting/kyc')
+                                }}
+                              >
+                                <div className="text-base text-primary">
+                                  <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
+                                </div>
+                              </Modal>
+                            )}
+                            {isKycAuth && renderTransferDom(item)}
+
+                            {/* <Button
+                              className="!ml-0 text-sm !h-[32px] !px-[10px]"
+                              onClick={() => {}}
+                              icon={<img src="/img/chujin_icon.png" width={20} height={20} style={{}} />}
+                            >
+                              <FormattedMessage id="mt.rujin" />
+                            </Button> */}
+                          </div>
+                        </div>
+                      )
+                    })}
+                    <div className="my-3">{accountArr.length === 0 && <Empty />}</div>
+                  </div>
+                </div>
+              )
+            }}
+            onOpenChange={(open) => {
+              setAccountBoxOpen(open)
+            }}
+            open={accountBoxOpen}
+            align={{ offset: [0, 0] }}
+          >
+            <div className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}>
+              <div className="flex items-center group relative">
+                <Iconfont name="zhanghu" width={24} height={24} style={{ marginTop: 2 }} />
+                <span className="text-lg font-pf-bold ml-1">{formatNum(totalAccountMoney, { precision: currencyDecimal })} USD</span>
+              </div>
+              <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200 dark:bg-gray-570"></div>
+              <div className="h-[58px]">
                 <Iconfont
                   name="down"
                   width={24}
@@ -425,63 +551,107 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             background: theme === 'black' ? '#fbfbfb' : '#222222'
           }}
         />
-        <Dropdown
-          placement="topRight"
-          dropdownRender={(origin) => {
-            return (
-              <div className="flex p-5 bg-white w-[290px] z-[800] rounded-xl shadow-dropdown">
-                <div className="flex items-center justify-between w-full">
-                  <div className="flex items-center">
-                    <img src="/img/user-icon.png" width={40} height={40} />
-                    <div className="flex flex-col pl-[14px]">
-                      <span className="text-primary font-semibold">
-                        HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
-                        <span
-                          className="pl-1 cursor-pointer"
-                          onClick={() => {
-                            copyContent(currentUser?.userInfo?.account)
-                          }}
-                        >
-                          <CopyOutlined style={{ fontSize: 14 }} />
-                        </span>
-                      </span>
-                      {currentUser?.isKycAuth && (
-                        <span className="text-green text-xs pt-[6px]">
-                          <FormattedMessage id="mt.yirenzheng" />
-                        </span>
-                      )}
-                      {!currentUser?.isKycAuth && (
-                        <span className="text-red text-xs pt-[6px]">
-                          <FormattedMessage id="mt.weirenzheng" />
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div
-                    className="cursor-pointer"
-                    onClick={() => {
-                      onLogout()
-                    }}
-                  >
-                    <img width={22} height={22} src="/img/logout-icon.png" />
-                  </div>
-                </div>
-              </div>
-            )
+        <ConfigProvider
+          theme={{
+            token: {
+              boxShadowSecondary: 'none'
+            }
           }}
         >
-          {/* <img src="/img/uc/user.png" width={36} height={36} className=" cursor-pointer rounded-lg hover:bg-gray-80" /> */}
-          <Iconfont
-            name="user"
-            width={36}
-            height={36}
-            color={theme}
-            className=" cursor-pointer rounded-lg"
-            hoverStyle={{
-              background: theme === 'black' ? '#fbfbfb' : '#222222'
+          <Dropdown
+            placement="topRight"
+            dropdownRender={(origin) => {
+              return (
+                <div className="flex bg-white w-[290px] z-[800] rounded-xl shadow-dropdown flex-col">
+                  <div className="flex items-center justify-between w-full px-5 pt-5">
+                    <div className="flex items-center">
+                      <img src="/img/user-icon.png" width={40} height={40} />
+                      <div className="flex flex-col pl-[14px]">
+                        <span className="text-primary font-semibold">
+                          HI,{hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}
+                          <span
+                            className="pl-1 cursor-pointer"
+                            onClick={() => {
+                              copyContent(currentUser?.userInfo?.account)
+                            }}
+                          >
+                            <CopyOutlined style={{ fontSize: 14 }} />
+                          </span>
+                        </span>
+                        {currentUser?.isKycAuth && (
+                          <span className="text-green text-xs pt-[6px]">
+                            <FormattedMessage id="mt.yirenzheng" />
+                          </span>
+                        )}
+                        {!currentUser?.isKycAuth && (
+                          <span className="text-red text-xs pt-[6px]">
+                            <FormattedMessage id="mt.weirenzheng" />
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div
+                      className="cursor-pointer"
+                      onClick={() => {
+                        onLogout()
+                      }}
+                    >
+                      <img width={22} height={22} src="/img/logout-icon.png" />
+                    </div>
+                  </div>
+                  <div className="p-2">{origin}</div>
+                </div>
+              )
             }}
-          />
-        </Dropdown>
+            menu={{
+              onClick: (e) => {
+                const { key } = e
+                push(`/${key}`)
+              },
+              items: [
+                {
+                  label: (
+                    <div className="py-1">
+                      <FormattedMessage id="mt.zhanghu" />
+                    </div>
+                  ),
+                  icon: <Iconfont name="zhanghu" width={20} height={20} />,
+                  key: 'account'
+                },
+                {
+                  label: (
+                    <div className="py-1">
+                      <FormattedMessage id="mt.churujinjilu" />
+                    </div>
+                  ),
+                  icon: <Iconfont name="geren-churujinjilu" width={20} height={20} />,
+                  key: 'record'
+                },
+                {
+                  label: (
+                    <div className="py-1">
+                      <FormattedMessage id="mt.shezhi" />
+                    </div>
+                  ),
+                  icon: <Iconfont name="geren-shezhi" width={20} height={20} />,
+                  key: 'setting'
+                }
+              ]
+            }}
+          >
+            {/* <img src="/img/uc/user.png" width={36} height={36} className=" cursor-pointer rounded-lg hover:bg-gray-80" /> */}
+            <Iconfont
+              name="user"
+              width={36}
+              height={36}
+              color={theme}
+              className=" cursor-pointer rounded-lg"
+              hoverStyle={{
+                background: theme === 'black' ? '#fbfbfb' : '#222222'
+              }}
+            />
+          </Dropdown>
+        </ConfigProvider>
       </div>
       {/* {isTradePage && <SwitchTheme />} */}
       <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />

@@ -139,6 +139,7 @@ function InputNumber(props: IProps) {
         'flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-r-lg border-l border-primary dark:bg-gray-750 text-xl text-weak',
         isColumn && '!rounded-r-[0px] border-b border-l-0',
         { '!cursor-not-allowed !text-weak/50': disabled || (max && newValue >= max) },
+        disabled ? 'bg-[--input-disabled-bg]' : '',
         classNames?.add
       )}
       onClick={debounce(handleAdd, 100)}
@@ -152,6 +153,7 @@ function InputNumber(props: IProps) {
         'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-l-lg border-r border-primary dark:bg-gray-750 text-xl text-weak',
         isColumn && 'border-none',
         { '!cursor-not-allowed !text-weak/50': (min && newValue <= min) || disabled },
+        disabled ? 'bg-[--input-disabled-bg]' : '',
         classNames?.minus
       )}
       onClick={debounce(handleMinus, 100)}
@@ -163,7 +165,7 @@ function InputNumber(props: IProps) {
   const innerRootClassName = useEmotionCss(({ token }) => {
     return {
       '.ant-input-disabled': {
-        background: '#f8f8f8 !important'
+        background: '#f7f7f7 !important'
       },
       input: {
         height,

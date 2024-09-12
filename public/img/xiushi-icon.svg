@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="19px" height="19px" viewBox="0 0 19 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>编组 20</title>
+    <g id="交易" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="休市" transform="translate(-382.000000, -134.000000)">
+            <g id="编组-20" transform="translate(384.000000, 136.000000)">
+                <circle id="椭圆形" stroke="#FFFFFF" stroke-width="2" fill="#C54747" cx="7.5" cy="7.5" r="8.5"></circle>
+                <g id="编组-40" transform="translate(4.200000, 6.800000)" fill="#FFFFFF">
+                    <rect id="矩形" transform="translate(3.500000, 0.700000) rotate(-90.000000) translate(-3.500000, -0.700000) " x="2.8" y="-2.8" width="1.4" height="7"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -201,15 +201,18 @@ class TradeStore {
   @action
   getAccountBalance = () => {
     const currentAccountInfo = this.currentAccountInfo
+    const currencyDecimal = currentAccountInfo.currencyDecimal
 
     // 账户余额
-    const money = Number(toFixed(currentAccountInfo.money || 0))
+    const money = Number(toFixed(currentAccountInfo.money || 0, currencyDecimal))
     // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
-    const occupyMargin = Number(toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0)))
+    const occupyMargin = Number(
+      toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0), currencyDecimal)
+    )
     // 可用保证金
-    const availableMargin = Number(toFixed(money - occupyMargin))
+    const availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
     // 持仓总浮动盈亏
-    const totalProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), 2))
+    const totalProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), currencyDecimal))
     // 持仓单总的库存费
     const totalInterestFees = this.positionList.reduce((total, next) => total + Number(next.interestFees || 0), 0) || 0
     // 持仓单总的手续费
@@ -500,6 +503,38 @@ class TradeStore {
     return !item.enableConnect || item?.status === 'DISABLED'
   }
 
+  // 禁用交易区操作
+  @action
+  disabledTradeAction = () => {
+    // 账户禁用或者是休市状态
+    return this.disabledTrade || !this.isMarketOpen()
+  }
+
+  // 判断是否休市状态，根据当前时间判断是否在交易时间段内
+  @action
+  isMarketOpen = (symbol?: string) => {
+    const symbolInfo = this.getActiveSymbolInfo(symbol)
+    const tradeTimeConf = symbolInfo?.symbolConf?.tradeTimeConf || []
+
+    const now = new Date()
+    const currentDay = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][now.getDay()]
+    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    // @ts-ignore
+    const dayConfig = tradeTimeConf.find((config: any) => config.weekDay === currentDay)
+    if (!dayConfig) return false
+
+    // 每隔两个值表示一个时间段，第一个值表示开始时间，第二个值表示结束时间。时间按分钟计算
+    for (let i = 0; i < dayConfig.trade.length; i += 2) {
+      const start = dayConfig.trade[i]
+      const end = dayConfig.trade[i + 1]
+      if (currentMinutes >= start && currentMinutes <= end) {
+        return true
+      }
+    }
+
+    return false
+  }
+
   // 获取全部品种列表
   @action
   getAllSimbleSymbols = async () => {
@@ -548,7 +583,7 @@ class TradeStore {
       if (ws.socket?.readyState === 1) {
         ws.batchSubscribeSymbol()
       } else {
-        ws.connect()
+        ws.reconnect()
       }
     }
   }

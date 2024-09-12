@@ -21,6 +21,7 @@ export default observer(
   forwardRef(({ type, sellBgColor }: IProps, ref) => {
     const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
     const { trade } = useStores()
+    const disabled = trade.disabledTradeAction() // 禁用状态
     const buySell = trade.buySell
     const isFooterBtnGroup = type === 'footer'
     const buyColor = buySell === 'BUY' ? 'text-white' : 'text-primary'
@@ -76,13 +77,20 @@ export default observer(
             })
           }}
         >
-          <Sell isActive={isFooterBtnGroup || buySell === 'SELL'} width={width} bgColor={sellBgColor}>
+          <Sell isActive={disabled ? false : isFooterBtnGroup || buySell === 'SELL'} width={width} bgColor={sellBgColor}>
             {!loading && (
               <div className={cn('flex h-full flex-col items-center justify-center xl:pt-1 left-6')}>
-                <div className={cn('select-none font-normal max-xl:text-base xl:text-xs', sellColor)}>
+                <div
+                  className={cn(
+                    'select-none font-normal max-xl:text-base xl:text-xs',
+                    disabled ? 'var(--btn-disabled-text-color)' : sellColor
+                  )}
+                >
                   <FormattedMessage id="mt.maichuzuokong" />
                 </div>
-                <div className={cn('!font-dingpro-medium text-base max-xl:hidden', sellColor)}>
+                <div
+                  className={cn('!font-dingpro-medium text-base max-xl:hidden', disabled ? 'var(--btn-disabled-text-color)' : sellColor)}
+                >
                   {hasQuote ? formatNum(quoteInfo.bid) : '--'}
                 </div>
               </div>
@@ -103,13 +111,18 @@ export default observer(
             })
           }}
         >
-          <Buy isActive={isFooterBtnGroup || buySell === 'BUY'} width={width}>
+          <Buy isActive={disabled ? false : isFooterBtnGroup || buySell === 'BUY'} width={width}>
             {!loading && (
               <div className={cn('flex h-full flex-col items-center justify-center xl:pt-1 right-6')}>
-                <div className={cn('select-none font-normal max-xl:text-base xl:text-xs', buyColor)}>
+                <div
+                  className={cn(
+                    'select-none font-normal max-xl:text-base xl:text-xs',
+                    disabled ? 'var(--btn-disabled-text-color)' : buyColor
+                  )}
+                >
                   <FormattedMessage id="mt.mairuzuoduo" />
                 </div>
-                <div className={cn('!font-dingpro-medium text-base max-xl:hidden', buyColor)}>
+                <div className={cn('!font-dingpro-medium text-base max-xl:hidden', disabled ? 'var(--btn-disabled-text-color)' : buyColor)}>
                   {hasQuote ? formatNum(quoteInfo.ask) : '--'}
                 </div>
               </div>

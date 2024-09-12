@@ -193,7 +193,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
                 trade.toggleSymbolFavorite(symbol)
               }}
             />
-            <SymbolIcon src={item?.imgUrl} width={20} height={20} />
+            <SymbolIcon src={item?.imgUrl} width={20} height={20} symbol={symbol} />
             {/* 品种别名 */}
             <Tooltip placement="bottom" title={item.remark}>
               <span className="pl-[6px] text-sm font-pf-bold text-gray tracking-[0.5px]">{(item.alias || '').slice(0, 7)}</span>

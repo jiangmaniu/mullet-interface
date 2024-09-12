@@ -41,7 +41,14 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
     <div className="flex items-center justify-between gap-x-3">
       <MarginTypeModal
         trigger={
-          <div className="mb-3 flex flex-1 items-center border border-gray-200 hover:border-gray-380 dark:border-gray-580 rounded-lg cursor-pointer p-[6.8px]">
+          <div
+            className={cn(
+              'mb-3 flex flex-1 items-center border border-gray-200 hover:border-gray-380 dark:border-gray-580 rounded-lg cursor-pointer p-[6.8px]',
+              {
+                'bg-[--input-disabled-bg]': trade.disabledTradeAction()
+              }
+            )}
+          >
             <img src="/img/margin-1.png" width={24} height={24} />
             <div className="text-primary text-sm font-semibold flex-1 text-center">{marginLabel}</div>
             <img src="/img/arrow-right-icon.png" width={24} height={24} />
@@ -54,7 +61,8 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
             className={cn(
               'mb-3 flex flex-1 items-center border border-gray-200 hover:border-gray-380 dark:border-gray-580 rounded-lg cursor-pointer p-[6.8px]',
               {
-                'pointer-events-none': !isFloatLeverage
+                'pointer-events-none': !isFloatLeverage,
+                'bg-[--input-disabled-bg]': trade.disabledTradeAction()
               }
             )}
           >

@@ -156,7 +156,7 @@ export const ThemeVarsConst = {
 
   // input
   '--input-bg': colorWhite, // 输入框背景色
-  '--input-disabled-bg': gray['150'], // 输入框禁用置灰背景色
+  '--input-disabled-bg': gray['50'], // 输入框禁用置灰背景色
   '--input-disabled-border': gray['150'], // 输入框禁用置灰背景色
   '--input-border': gray['200'], // 输入边框颜色
   '--input-border-hover': gray['500'], // 输入框hover边框颜色

@@ -15,6 +15,7 @@ import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
+import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
@@ -171,6 +172,9 @@ export default observer(
       if (!count) {
         message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
         return
+      }
+      if (!Number(maxOpenVolume)) {
+        return message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
       }
       if (count < vmin || count > maxOpenVolume) {
         message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
@@ -431,7 +435,7 @@ export default observer(
                 </span>
               </>
             }
-            disabled={disabledTrade}
+            disabled={disabledTrade || trade.disabledTradeAction()}
           />
         </div>
         <div>
@@ -446,10 +450,24 @@ export default observer(
               })
             }}
             loading={loading}
-            disabled={disabledBtn}
+            disabled={disabledBtn || trade.disabledTradeAction()}
           >
-            {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmairu" />} {count}{' '}
-            <FormattedMessage id="mt.lot" />
+            {trade.isMarketOpen() ? (
+              <>
+                {!disabledTrade && (
+                  <>
+                    {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {count}{' '}
+                    <FormattedMessage id="mt.lot" />
+                  </>
+                )}
+                {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
+              </>
+            ) : (
+              <div className="flex items-center">
+                <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
+                <FormattedMessage id="mt.xiushizhong" />
+              </div>
+            )}
           </Button>
           <div className="mt-4">
             <div className="flex items-center justify-between pb-[6px] w-full">

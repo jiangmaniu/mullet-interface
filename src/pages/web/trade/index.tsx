@@ -66,8 +66,8 @@ export default observer(() => {
   const checkPageShowTime = () => {
     // 记录上次进入时间
     const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
-    // 缓存时间大于30分钟、初次载入
-    if ((updateTime && Date.now() - updateTime > 30 * 60 * 1000) || !updateTime) {
+    // 缓存时间大于10分钟、初次载入
+    if ((updateTime && Date.now() - updateTime > 10 * 60 * 1000) || !updateTime) {
       STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
       return true
     }
