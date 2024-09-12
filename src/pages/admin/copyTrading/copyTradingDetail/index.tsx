@@ -1,13 +1,14 @@
 import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useLocation, useModel, useParams } from '@umijs/max'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
-import { IOrderTaker, IOrderTakerState } from '@/models/takers'
+import { useUpdateFollowStatus } from '@/hooks/useUpdateFollowStatus'
+import { IOrderTakerState } from '@/models/takers'
 import { getTradeFollowFollowerDetail, postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
@@ -33,6 +34,12 @@ export default function copyTradingDetail() {
   const intl = useIntl()
   const { setPageBgColor } = useModel('global')
 
+  const updateFollowStatus = useUpdateFollowStatus()
+
+  useLayoutEffect(() => {
+    updateFollowStatus()
+  }, [])
+
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
@@ -51,7 +58,7 @@ export default function copyTradingDetail() {
   }, [location])
 
   const [takeState, setTakeState] = useState<IOrderTakerState>(1)
-  const [taker, setTaker] = useState<IOrderTaker>(defaultTaker)
+  const [taker, setTaker] = useState<TradeFollowLead.LeadDetailItem | null>(defaultTaker)
   const [followerId, setFollowerId] = useState<string | undefined>(undefined)
   const [trader, setTrader] = useState<TradeFollowFollower.FollowDetailItem | null>(null)
 
@@ -124,8 +131,13 @@ export default function copyTradingDetail() {
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const ableList = useMemo(() => currentUser?.accountList?.filter((item) => item.status === 'ENABLE') || [], [currentUser])
-  const onFollow = (takerState: IOrderTakerState) => {
+  const ableList = useMemo(
+    () => currentUser?.accountList?.filter((item) => item.status === 'ENABLE').filter((item) => item.groupName === taker?.groupName) || [],
+    [currentUser, taker?.groupName]
+  )
+  const onFollow = (takerState: IOrderTakerState, readonly?: boolean) => {
+    if (readonly !== undefined) setReadonly(readonly)
+
     if (takerState === 1 || takerState === 3) {
       if (ableList.length === 0) {
         setOpenTips(true)
@@ -173,6 +185,15 @@ export default function copyTradingDetail() {
           loadingRef.current?.close()
         })
     }, 300)
+  }
+
+  const [readonly, setReadonly] = useState(false)
+
+  const onConfirm = (res: Record<string, any>) => {
+    onOpenChangeSetting(false)
+    // 刷新账号列表的跟单状态
+    updateFollowStatus(true)
+    push(`/copy-trading/detail/${res.leadId}?followerId=${res.followerId}`)
   }
 
   return (
@@ -238,7 +259,7 @@ export default function copyTradingDetail() {
 
             {taker?.openFlag === 1 ? (
               <div className="flex flex-col gap-3.5">
-                {followerId && takeState === 3 ? (
+                {followerId && trader?.leadId === id ? (
                   <>
                     <EndModal
                       id={followerId}
@@ -270,7 +291,7 @@ export default function copyTradingDetail() {
                         borderRadius: 8,
                         backgroundColor: 'black'
                       }}
-                      onClick={() => onFollow(takeState)}
+                      onClick={() => onFollow(3, true)}
                     >
                       <div className=" flex items-center gap-1">
                         <Iconfont name="gendanguanli" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
@@ -281,7 +302,7 @@ export default function copyTradingDetail() {
                     </Button>
                   </>
                 ) : (
-                  takeState === 1 && (
+                  taker.openFlag === 1 && (
                     <Button
                       height={42}
                       type="primary"
@@ -289,13 +310,13 @@ export default function copyTradingDetail() {
                         width: 158,
                         borderRadius: 8
                       }}
-                      onClick={() => onFollow(takeState)}
+                      className={`daidanzhuangtai${taker.status}`}
+                      disabled={taker.status === 0}
+                      onClick={() => onFollow(taker.status, false)}
                     >
-                      <div className=" flex items-center gap-1">
-                        <Iconfont name="daidan" width={20} color="white" height={20} hoverColor={colorTextPrimary} />
-                        <span className=" font-semibold text-base ">
-                          <FormattedMessage id="mt.gendan" />
-                        </span>
+                      <div className=" flex items-center font-semibold gap-1 text-base">
+                        {taker.status === 2 && <Iconfont name="fire" width={15} color="white" height={20} hoverColor={colorTextPrimary} />}
+                        <FormattedMessage id={`mt.daidanzhuangtai${taker.status}`} />
                       </div>
                     </Button>
                   )
@@ -377,11 +398,9 @@ export default function copyTradingDetail() {
         leadId={String(id)}
         followerId={followerId}
         open={openSetting}
+        readonly={readonly}
         onOpenChange={onOpenChangeSetting}
-        onConfirm={() => {
-          setTakeState(0)
-          onOpenChangeSetting(false)
-        }}
+        onConfirm={onConfirm}
       />
 
       <ModalLoading

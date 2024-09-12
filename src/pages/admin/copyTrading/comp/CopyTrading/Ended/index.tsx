@@ -17,7 +17,7 @@ import { push } from '@/utils/navigator'
 import { TradingItem } from '../TradingItem'
 import useColumns from './useColumns'
 
-export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction }) => {
+export default ({ active, toSquare }: { active: boolean; toSquare: VoidFunction }) => {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
@@ -44,7 +44,7 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
   })
 
   useEffect(() => {
-    if (trade.currentAccountInfo && trade.currentAccountInfo.id && segment === 'yijieshu') {
+    if (trade.currentAccountInfo && trade.currentAccountInfo.id && active) {
       run({
         // accountGroupId: currentAccountInfo?.accountGroupId,
         clientId: currentAccountInfo?.clientId,
@@ -53,7 +53,7 @@ export default ({ segment, toSquare }: { segment: string; toSquare: VoidFunction
         current
       })
     }
-  }, [segment, currentAccountInfo, current, size])
+  }, [active, currentAccountInfo, current, size])
 
   return (
     <div className="flex flex-col gap-5 w-full">

@@ -30,7 +30,7 @@ type IProps = {
   onConfirm?: (values: any) => void
 }
 
-export default ({ info, trigger, open, onOpenChange }: IProps) => {
+export default ({ info, trigger, open, onOpenChange, onConfirm }: IProps) => {
   const [form] = Form.useForm()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.daidanshezhi' })
@@ -83,6 +83,7 @@ export default ({ info, trigger, open, onOpenChange }: IProps) => {
         // form.setFieldsValue(formDefault) // 重置
         if (res.success) {
           message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
+          onConfirm?.(values)
         }
       })
       .finally(() => {

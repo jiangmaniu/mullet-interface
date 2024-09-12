@@ -38,17 +38,17 @@ export default function CopyTrading({ active, toSquare }: { active: boolean; toS
     {
       label: <SegmentItem segment={segment} value="jinxingzhong" label={intl.formatMessage({ id: 'mt.jinxingzhong' })} />,
       value: 'jinxingzhong',
-      component: <InProgress segment={segment} toSquare={toSquare} />
+      component: <InProgress active={active && segment === 'jinxingzhong'} toSquare={toSquare} />
     },
     {
       label: <SegmentItem segment={segment} value="yijieshu" label={intl.formatMessage({ id: 'mt.yijieshu' })} />,
       value: 'yijieshu',
-      component: <Ended segment={segment} toSquare={toSquare} />
+      component: <Ended active={active && segment === 'yijieshu'} toSquare={toSquare} />
     },
     {
       label: <SegmentItem segment={segment} value="lishicangwei" label={intl.formatMessage({ id: 'mt.lishicangwei' })} />,
       value: 'lishicangwei',
-      component: <Historical segment={segment} toSquare={toSquare} />
+      component: <Historical active={active && segment === 'lishicangwei'} toSquare={toSquare} />
     }
   ]
 

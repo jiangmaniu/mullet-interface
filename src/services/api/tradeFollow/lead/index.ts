@@ -84,7 +84,7 @@ export async function tradeFollowListLeads(params: { leadId: string }) {
 
 // /trade-follow/followApi/lead/lead_profit_sharing
 // 带单人 - 分润
-export async function tradeFollowLeadProfitSharing(params: { leadId: string } & API.PageParam) {
+export async function tradeFollowLeadProfitSharing(params: { leadId: string; startDatetime: string; endDatetime: string } & API.PageParam) {
   return request<API.Response<API.PageResult<TradeFollowLead.TradeFollowLeadProfitSharingItem>>>(
     '/api/trade-follow/followApi/lead/lead_profit_sharing',
     {

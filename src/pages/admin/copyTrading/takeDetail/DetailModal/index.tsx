@@ -4,6 +4,7 @@ import { LeftOutlined } from '@ant-design/icons'
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
 import { Form, message, Radio } from 'antd'
+import dayjs from 'dayjs'
 import { Key, useEffect, useMemo, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
@@ -40,13 +41,16 @@ export default ({
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.fenrunmingxi' })
 
+  // 使用 dayjs 获取今天
+  const endDatetime = dayjs()
+
   const timeRange = [
     {
-      value: 'liangzhou',
+      value: '14',
       label: intl.formatMessage({ id: 'mt.liangzhou' })
     },
     {
-      value: 'yiyue',
+      value: '30',
       label: intl.formatMessage({ id: 'mt.yigeyue' })
     }
   ]
@@ -81,19 +85,21 @@ export default ({
   useEffect(() => {
     open &&
       tradeFollowLeadProfitSharing({
-        leadId: info.id
+        leadId: info.leadId,
+        startDatetime: endDatetime.subtract(Number(state.time), 'day').format('YYYY-MM-DD 00:00:00'),
+        endDatetime: endDatetime.format('YYYY-MM-DD 23:59:59')
       })
         .then((res) => {
           if (res.success) {
             if (res.data) {
-              setDatas(res.data.records)
+              // setDatas(res.data.records)
             }
           }
         })
         .catch((error) => {
           message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
         })
-  }, [info.id, open])
+  }, [info.leadId, open, endDatetime, state.time])
 
   const [details, setDetails] = useState<TradeFollowLead.TradeFollowLeadProfitSharingDetailItem>([])
   const [showDetail, setShowDetail] = useState(false)
@@ -104,7 +110,7 @@ export default ({
 
   const toSetDetail = (item: any) => {
     tradeFollowLeadProfitSharingDetail({
-      leadId: info.id
+      leadId: info.leadId
     })
       .then((res) => {
         if (res.success) {
@@ -213,7 +219,7 @@ export default ({
                     </span>
                   )}
                   value={state.time}
-                  onChange={(i) => handleChange('time', i.value)}
+                  onChange={(i) => handleChange('time', i)}
                   options={timeRange}
                 />
               </div>

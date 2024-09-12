@@ -1,6 +1,6 @@
 import { CaretDownOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { FormInstance, Radio } from 'antd'
+import { Form, FormInstance, Radio } from 'antd'
 import { useMemo, useState } from 'react'
 import { black } from 'tailwindcss/colors'
 
@@ -16,6 +16,7 @@ type IProp = {
   form: FormInstance
   children: React.ReactNode
   trader: TradeFollowFollower.FollowDetailItem | null
+  readonly: boolean
 }
 
 const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number) => void) => {
@@ -28,7 +29,7 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
   }
 }
 
-export default ({ onConfirm, form, children, trader }: IProp) => {
+export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
   const intl = useIntl()
   const { trade } = useStores()
   const { currentAccountInfo } = trade.getAccountBalance()
@@ -60,8 +61,6 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
     }
   ]
 
-  const [zhanghuyue, setZhanghuyue] = useState<number | undefined>(231.3)
-  const [gendanjine, setGendanjine] = useState<number | undefined>()
   const [zhiying, setZhiying] = useState<number | undefined>()
   const [zhisun, setZhisun] = useState<number | undefined>()
 
@@ -69,6 +68,8 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
 
   // 折叠
   const [isCollapse, setIsCollapse] = useState(false)
+
+  const money = Form.useWatch('money', form)
 
   const onClickRadio = () => {
     read === 1 ? setRead(undefined) : setRead(1)
@@ -80,11 +81,11 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
   const calcFocusInputValue = useMemo(
     () =>
       focusInputKey === 'mt.yingli'
-        ? formatNum((Number(gendanjine || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
+        ? formatNum((Number(money || 0) * Number(zhiying || 0)) / 100, { precision: 2 })
         : focusInputKey === 'mt.sunshi'
-        ? formatNum((Number(gendanjine || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
+        ? formatNum((Number(money || 0) * Number(zhisun || 0)) / 100, { precision: 2 })
         : 0,
-    [gendanjine, focusInputKey, zhiying, zhisun]
+    [money, focusInputKey, zhiying, zhisun]
   )
 
   return (
@@ -98,6 +99,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
         </span>{' '}
         <ProFormText
           name="guaranteedAmountRatio"
+          disabled={readonly}
           rules={[
             {
               required: true,
@@ -109,6 +111,18 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
                 // 只能输入数字，正则匹配 value 是不是数字
                 if (!/^\d+$/.test(value)) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                }
+
+                if (Number(value) < 10 || Number(value) > 500) {
+                  return Promise.reject(
+                    intl.formatMessage(
+                      { id: 'mt.chaochuxianzhifanwei' },
+                      {
+                        type: '',
+                        value: '10 ~ 500'
+                      }
+                    )
+                  )
                 }
 
                 return Promise.resolve()
@@ -200,7 +214,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
           </span>
           <ProFormText
             name="profitRatio"
-            disabled={!!trader?.tradeAccountId}
+            disabled={readonly}
             rules={[
               {
                 // required: true,
@@ -213,6 +227,18 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
                   // 只能输入数字，正则匹配 value 是不是数字
                   if (!/^\d+$/.test(value)) {
                     return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                  }
+
+                  if (Number(value) < 0 || Number(value) > 500) {
+                    return Promise.reject(
+                      intl.formatMessage(
+                        { id: 'mt.chaochuxianzhifanwei' },
+                        {
+                          type: '',
+                          value: '0 ~ 500'
+                        }
+                      )
+                    )
                   }
 
                   return Promise.resolve()
@@ -242,7 +268,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
           </span>
           <ProFormText
             name="stopLossRatio"
-            disabled={!!trader?.tradeAccountId}
+            disabled={readonly}
             rules={[
               {
                 // required: true,
@@ -255,6 +281,18 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
                   // 只能输入数字，正则匹配 value 是不是数字
                   if (!/^\d+$/.test(value)) {
                     return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+                  }
+
+                  if (Number(value) < 0 || Number(value) > 95) {
+                    return Promise.reject(
+                      intl.formatMessage(
+                        { id: 'mt.chaochuxianzhifanwei' },
+                        {
+                          type: '',
+                          value: '0 ~ 95'
+                        }
+                      )
+                    )
                   }
 
                   return Promise.resolve()
@@ -297,7 +335,7 @@ export default ({ onConfirm, form, children, trader }: IProp) => {
         )}
       </div>
       {/* 确认 */}
-      {!trader?.tradeAccountId && (
+      {!readonly && (
         <div className=" justify-self-end flex flex-col items-start justify-between gap-2.5 w-full max-w-full">
           <Radio.Group value={read}>
             <Radio onClick={onClickRadio} value={1}>

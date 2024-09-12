@@ -90,6 +90,10 @@ export default function TakeDetail() {
 
   const [openDetail, setOpenDetail] = useState(false)
 
+  // 跟单配置弹窗
+  const [openSetting, setOpenSetting] = useState(false)
+  const onOpenChangeSetting = (val: boolean) => setOpenSetting(val)
+
   return (
     <div style={{ background: 'linear-gradient(180deg, #F7FDFF 0%, #FFFFFF 25%, #FFFFFF 100%)' }} className="min-h-screen">
       <div className="max-w-[1332px] px-4 mx-auto mt-6">
@@ -215,29 +219,22 @@ export default function TakeDetail() {
                     </span>
                   </div>
                 </Button>
-                <TakeSettingModal
-                  info={taker}
-                  trigger={
-                    <Button
-                      height={42}
-                      type="default"
-                      style={{
-                        width: 158,
-                        borderRadius: 8
-                      }}
-                      onClick={() => {
-                        // todo 跳转
-                      }}
-                    >
-                      <div className=" flex items-center gap-1">
-                        <Iconfont name="shezhi" width={20} height={20} hoverColor={colorTextPrimary} />
-                        <span className=" font-semibold text-base ">
-                          <FormattedMessage id="mt.shezhi" />
-                        </span>
-                      </div>
-                    </Button>
-                  }
-                />
+                <Button
+                  height={42}
+                  type="default"
+                  style={{
+                    width: 158,
+                    borderRadius: 8
+                  }}
+                  onClick={() => onOpenChangeSetting(true)}
+                >
+                  <div className=" flex items-center gap-1">
+                    <Iconfont name="shezhi" width={20} height={20} hoverColor={colorTextPrimary} />
+                    <span className=" font-semibold text-base ">
+                      <FormattedMessage id="mt.shezhi" />
+                    </span>
+                  </div>
+                </Button>
 
                 <Button
                   height={42}
@@ -297,61 +294,13 @@ export default function TakeDetail() {
                 </Button>
               </div>
             )}
-
-            <EndModal
-              id={String(id)}
-              open={openEnd}
-              onOpenChange={setOpenEnd}
-              onConfirm={(params: any) => {
-                if (params.status === 'disabled') {
-                  const item = currentAccountList.find((item) => item.id === taker?.tradeAccountId)
-
-                  if (item) {
-                    trade.setCurrentAccountInfo(item)
-                    trade.jumpTrade()
-                    // 切换账户重置
-                    trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
-                  }
-                } else {
-                  loadingRef.current?.show()
-                  tradeFollowLeadClose({
-                    leadId: String(id)
-                  })
-                    .then((res) => {
-                      if (res.success) {
-                        // message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
-                        setOpenEnd(false)
-                        setStatus('disabled')
-                      } else {
-                        message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
-                      }
-                    })
-                    .finally(() => {
-                      loadingRef.current?.close()
-                    })
-                }
-              }}
-            />
-            <ModalLoading
-              ref={loadingRef}
-              title={intl.formatMessage({ id: 'mt.jieshudaidan' })}
-              tips={intl.formatMessage({ id: 'mt.jieshudaidanzhong' })}
-            />
-
-            <DetailModal
-              info={{
-                leadId: id
-              }}
-              open={openDetail}
-              onOpenChange={(open) => setOpenDetail(open)}
-            />
           </div>
           {/* 通知 */}
           {/* <div className="mt-7.5">
             <Carousel dotPosition="left" items={notifications}></Carousel>
           </div> */}
           {/* 带单数据 */}
-          <div className="mt-2 border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
+          <div className="mt-5 border border-gray-150 rounded-2xl w-full pt-3 p-5.5 flex flex-col justify-between gap-5 mb-4.5 bg-white">
             <span className=" text-primary text-xl font-medium">
               <FormattedMessage id="mt.daidanshuju" />
             </span>
@@ -369,6 +318,7 @@ export default function TakeDetail() {
               gap="gap-16"
             />
           </div>
+
           {/* 帶單表現，累計盈虧，交易偏好 */}
           <div className=" grid xl:grid-cols-3 sm:grid-cols-1 items-start gap-5  ">
             <CardContainer
@@ -415,6 +365,63 @@ export default function TakeDetail() {
           </div>
         </div>
       </div>
+      <EndModal
+        id={String(id)}
+        open={openEnd}
+        onOpenChange={setOpenEnd}
+        onConfirm={(params: any) => {
+          if (params.status === 'disabled') {
+            const item = currentAccountList.find((item) => item.id === taker?.tradeAccountId)
+
+            if (item) {
+              trade.setCurrentAccountInfo(item)
+              trade.jumpTrade()
+              // 切换账户重置
+              trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+            }
+          } else {
+            loadingRef.current?.show()
+            tradeFollowLeadClose({
+              leadId: String(id)
+            })
+              .then((res) => {
+                if (res.success) {
+                  // message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                  setOpenEnd(false)
+                  setStatus('disabled')
+                } else {
+                  message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+                }
+              })
+              .finally(() => {
+                loadingRef.current?.close()
+              })
+          }
+        }}
+      />
+      <ModalLoading
+        ref={loadingRef}
+        title={intl.formatMessage({ id: 'mt.jieshudaidan' })}
+        tips={intl.formatMessage({ id: 'mt.jieshudaidanzhong' })}
+      />
+
+      <TakeSettingModal
+        info={taker}
+        open={openSetting}
+        onOpenChange={onOpenChangeSetting}
+        onConfirm={() => {
+          onOpenChangeSetting(false)
+          // TODO: reload()
+        }}
+      />
+
+      <DetailModal
+        info={{
+          leadId: id
+        }}
+        open={openDetail}
+        onOpenChange={(open) => setOpenDetail(open)}
+      />
       {/* <Footer /> */}
     </div>
   )

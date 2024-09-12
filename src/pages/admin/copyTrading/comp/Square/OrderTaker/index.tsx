@@ -17,7 +17,7 @@ import OrderTakerChart from './Chart'
 
 type IProps = IOrderTakerProps & {
   onClick: (id: string, state: string, followerId?: string) => void
-  onFollow: (bo: IOrderTakerState, info: Record<string, any>) => void
+  onFollow: (bo: IOrderTakerState, info: Record<string, any>, ableList: User.AccountItem[]) => void
   accountList: User.AccountItem[]
 }
 export const OrderTaker = ({ item, state, onClick, onFollow, accountList }: IProps) => {
@@ -28,6 +28,7 @@ export const OrderTaker = ({ item, state, onClick, onFollow, accountList }: IPro
     imageUrl,
     leadName,
     accountGroupName,
+    groupCode,
     datas,
     tags,
     followerNumber,
@@ -42,9 +43,13 @@ export const OrderTaker = ({ item, state, onClick, onFollow, accountList }: IPro
     tradeAccountId
   } = item
 
+  const ableList = useMemo(() => {
+    return accountList.filter((item) => item.groupName === accountGroupName)
+  }, [accountList, accountGroupName])
+
   const takerState: IOrderTakerState = useMemo(() => {
-    // 如果 accountList 存在 id = item.tradeAccountId 的值，则返回 3
-    const account = accountList.find((item) => item.id === tradeAccountId)
+    // 如果 ableList 存在 id = item.tradeAccountId 的值，则返回 3
+    const account = ableList.find((item) => item.id === tradeAccountId)
     if (account) {
       return 0
     }
@@ -59,7 +64,7 @@ export const OrderTaker = ({ item, state, onClick, onFollow, accountList }: IPro
     e.preventDefault()
     e.stopPropagation()
 
-    onFollow(takerState, item)
+    onFollow(takerState, item, ableList)
   }
 
   return (
@@ -76,8 +81,8 @@ export const OrderTaker = ({ item, state, onClick, onFollow, accountList }: IPro
             <div className=" flex flex-col gap-1.5">
               <div className=" flex gap-2 items-center flex-wrap">
                 <span className="account-name">{leadName}</span>
-                <AccountTag size="auto" color={accountGroupName}>
-                  {accountGroupName}
+                <AccountTag size="auto" color={accountGroupName} code={groupCode}>
+                  {/* {accountGroupName} */}
                 </AccountTag>
               </div>
               <div className="flex items-center gap-1">

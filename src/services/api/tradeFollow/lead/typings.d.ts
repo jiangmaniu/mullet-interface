@@ -323,6 +323,8 @@ declare namespace TradeFollowLead {
      * 交易账户Id
      */
     tradeAccountId?: number
+
+    groupName?: string
     [property: string]: any
   }
   /**

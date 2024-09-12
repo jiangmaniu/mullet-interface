@@ -1,10 +1,10 @@
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { PageLoading } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useModel } from '@umijs/max'
+import { FormattedMessage, useLocation, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
@@ -13,6 +13,7 @@ import Empty from '@/components/Base/Empty'
 import { useStores } from '@/context/mobxProvider'
 import { push } from '@/utils/navigator'
 
+import { AccountTag } from '../../copyTrading/comp/AccountTag'
 import Header from '../comp/Header'
 
 function AccountList() {
@@ -26,7 +27,9 @@ function AccountList() {
 
   const accountList = trade.accountGroupList
 
-  useEffect(() => {
+  const location = useLocation()
+
+  useLayoutEffect(() => {
     if (!accountList.length) {
       setLoading(true)
       trade.getAccountGroupList().finally(() => {
@@ -38,15 +41,26 @@ function AccountList() {
   useEffect(() => {
     // 切换真实模拟账户列表
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
-
     setCurrentAccountList(list)
   }, [accountTabActiveKey, accountList.length])
 
   useEffect(() => {
-    if (currentAccountList?.length) {
-      setCurrent(currentAccountList[0])
+    if (currentAccountList.length <= 0) return
+    const query = new URLSearchParams(location.search)
+    const groupCode = query.get('groupCode')
+    if (groupCode) {
+      // 遍歷 currentAccountList
+      currentAccountList.forEach((item) => {
+        if (item.groupCode === groupCode) {
+          setCurrent(item)
+        }
+      })
+    } else {
+      if (currentAccountList?.length) {
+        setCurrent(currentAccountList[0])
+      }
     }
-  }, [currentAccountList])
+  }, [location, currentAccountList])
 
   // @ts-ignore
   const className = useEmotionCss(({ token }) => {
@@ -109,7 +123,11 @@ function AccountList() {
                 </div>
                 <div>
                   <div className="pb-[14px] text-primary text-[24px] font-bold truncate">{item.synopsis?.name || item?.groupName}</div>
-                  <div className="text-secondary text-sm line-clamp-2 break-all">{item.synopsis?.remark}</div>
+                  <div className=" flex gap-2 items-center">
+                    {' '}
+                    <div className="text-secondary text-sm line-clamp-2 break-all">{item.synopsis?.remark}</div>
+                    <AccountTag code={item.groupCode}></AccountTag>
+                  </div>
                 </div>
                 <div className="border-b border-gray-250/25 my-5"></div>
                 <div>

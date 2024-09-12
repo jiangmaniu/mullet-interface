@@ -1,6 +1,7 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
+import { observer } from 'mobx-react'
 import { useEffect, useMemo } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
@@ -9,29 +10,25 @@ import { formatNum, hiddenCenterPartStr } from '@/utils'
 
 import { AccountTag } from '../AccountTag'
 
-export default ({
+const AccountSelector = ({
   form,
   lead,
-  trader
+  trader,
+  readonly
 }: {
   form: FormInstance
   lead: TradeFollowLead.LeadDetailItem | null
   trader: TradeFollowFollower.FollowDetailItem | null
+  readonly: boolean
 }) => {
   const intl = useIntl()
 
   const { initialState } = useModel('@@initialState')
 
-  useEffect(() => {
-    console.log('leadlead', lead)
-  }, [lead])
-
   // 過濾只留下相同賬戶組
   const accountList = useMemo(
     () =>
       (initialState?.currentUser?.accountList?.filter((item) => !item.isSimulate) || []).filter((item) => {
-        console.log(item.groupName)
-        console.log(lead?.groupName)
         return item.groupName === lead?.groupName
       }),
     [initialState, lead?.groupName]
@@ -41,7 +38,7 @@ export default ({
 
   useEffect(() => {
     if (trader) {
-      if (trader.tradeAccountId) {
+      if (readonly && trader.tradeAccountId) {
         const item = accountList.find((item) => item.id === trader.tradeAccountId)
         if (item) {
           form.setFieldValue('accountGroupId', String(item.accountGroupId))
@@ -51,7 +48,7 @@ export default ({
         }
       }
     }
-  }, [form, trader])
+  }, [form, trader, accountList, readonly])
 
   return (
     <>
@@ -65,13 +62,13 @@ export default ({
         <ProFormText name="money" hidden />
         <ProFormSelect
           name="accountId"
-          disabled={!!trader?.tradeAccountId}
           rules={[
             {
               required: true,
               message: intl.formatMessage({ id: 'common.qingxuanze' })
             }
           ]}
+          disabled={readonly}
           fieldProps={{
             onChange: (val) => {
               const item = accountList.find((item) => item.id === val)
@@ -102,8 +99,8 @@ export default ({
                     <span className=" flex flex-row  items-center justify-between">
                       <span className="flex flex-row justify-between items-center flex-1">
                         <span className="flex flex-row justify-between items-center gap-1.5 ">
-                          <AccountTag size="auto" color={item.groupName}>
-                            {item.groupName}
+                          <AccountTag size="auto" color={item.groupName} code={item.groupCode}>
+                            {/* {item.groupName} */}
                           </AccountTag>
                           <span>{hiddenCenterPartStr(item.id, 4)}</span>
                         </span>
@@ -116,13 +113,12 @@ export default ({
             },
             optionRender: (option) => {
               const item = option?.data || {}
-
               return (
                 <span className=" flex flex-row  items-center justify-between">
                   <span className="flex flex-row justify-between items-center flex-1">
                     <span className="flex flex-row justify-between items-center gap-1.5 ">
-                      <AccountTag size="auto" color={item.groupName}>
-                        {item.groupName}
+                      <AccountTag size="auto" color={item.groupName} code={item.groupCode}>
+                        {/* {item.groupName} */}
                       </AccountTag>
                       <span>{hiddenCenterPartStr(item.id, 4)}</span>
                     </span>
@@ -139,14 +135,16 @@ export default ({
             }
           }}
           placeholder={`${intl.formatMessage({ id: 'common.qingxuanze' })}${intl.formatMessage({ id: 'mt.gendanzhanghu' })}`}
-          // options={accountList}
           options={accountList.map((item) => ({
             ...item,
             value: item.id,
-            label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
+            label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`,
+            disabled: item?.followStatus === 1
           }))}
         />
       </div>
     </>
   )
 }
+
+export default observer(AccountSelector)
