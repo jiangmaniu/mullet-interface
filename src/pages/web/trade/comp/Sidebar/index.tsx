@@ -320,7 +320,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                         trade.switchSymbol(symbol)
                       }}
                     >
-                      <SymbolIcon src={item?.imgUrl} width={28} height={28} symbol={symbol} />
+                      <SymbolIcon src={item?.imgUrl} width={28} height={28} symbol={symbol} showMarketCloseIcon />
                     </div>
                   )
                 })}

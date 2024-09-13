@@ -50,7 +50,13 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   }}
                   ref={openSidebarRef}
                 >
-                  <SymbolIcon width={28} height={28} src={symbolInfo?.imgUrl} className="relative xl:top-[9px] xxl:top-0" />
+                  <SymbolIcon
+                    width={28}
+                    height={28}
+                    src={symbolInfo?.imgUrl}
+                    showMarketCloseIcon
+                    className="relative xl:top-[9px] xxl:top-0"
+                  />
                   <div
                     className="flex items-center xl:relative xl:left-[5px] xxl:left-0"
                     onClick={(e) => {

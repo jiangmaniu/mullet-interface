@@ -16,8 +16,7 @@ import {
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
-import { toFixed } from '@/utils'
-import { calcPositionList } from '@/utils/business'
+import { toFixed, uniqueObjectArray } from '@/utils'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
@@ -96,6 +95,7 @@ class TradeStore {
 
   // ====== 历史交易记录 ===========
   @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
+  @observable positionListCalcCache = [] as Order.BgaOrderPageListItem[] // 持仓列表-计算处理过浮动盈亏的
   @observable pendingList = [] as Order.OrderPageListItem[] // 挂单列表
   @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
   @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
@@ -243,6 +243,11 @@ class TradeStore {
   }
 
   /**
+   *
+   * @param item
+   * @returns
+   */
+  /**
    * 计算全仓/逐仓：保证金率、维持保证金
    * @param item 持仓单item
    * @returns
@@ -260,7 +265,7 @@ class TradeStore {
 
     let marginRate = 0
     let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
-    const positionList = this.positionList
+    const positionList = this.positionList // 注意这里外部传递过来的list是处理过汇率 浮动盈亏的
     let compelCloseRatio = positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
     compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
     if (isCrossMargin) {
@@ -272,14 +277,14 @@ class TradeStore {
       }
     } else {
       // 当前筛选的逐仓单订单信息
-      const currentLiquidationSelectItem = positionList.find((item) => item.id === currentLiquidationSelectBgaId)
+      const currentLiquidationSelectItem = this.positionListCalcCache.find((item) => item.id === currentLiquidationSelectBgaId)
       const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
       const isLockedMode = currentLiquidationSelectItem?.mode === 'LOCKED_POSITION' // 当前筛选的项，是否是锁仓模式的订单
 
       let filterPositionList = []
       // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
       if (isLockedMode && !item?.id) {
-        filterPositionList = calcPositionList([currentLiquidationSelectItem])
+        filterPositionList = [currentLiquidationSelectItem]
       } else {
         filterPositionList = item ? [item] : positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
       }
@@ -636,6 +641,14 @@ class TradeStore {
     }
     return res
   }
+
+  @action
+  setPositionListCalcCache = (list: Order.BgaOrderPageListItem[]) => {
+    runInAction(() => {
+      this.positionListCalcCache = uniqueObjectArray([...this.positionListCalcCache, ...list], 'id')
+    })
+  }
+
   // 查询挂单列表
   @action
   getPendingList = async () => {

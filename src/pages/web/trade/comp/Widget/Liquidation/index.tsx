@@ -3,6 +3,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { cloneDeep, groupBy } from 'lodash-es'
 import { observer } from 'mobx-react'
+import { useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, uniqueObjectArray } from '@/utils'
@@ -17,6 +18,7 @@ function Liquidation() {
   const intl = useIntl()
   const { trade } = useStores()
   const activeSymbolName = trade.activeSymbolName
+  const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const quoteInfo = getCurrentQuote() // 保留，取值触发更新
   const marginRateInfo = trade.getMarginRateInfo()
   const currentAccountInfo = trade.currentAccountInfo
@@ -133,7 +135,9 @@ function Liquidation() {
                 className: selectClassName,
                 value: trade.currentLiquidationSelectBgaId,
                 onChange: (value: any) => {
-                  trade.setCurrentLiquidationSelectBgaId(value)
+                  startTransition(() => {
+                    trade.setCurrentLiquidationSelectBgaId(value)
+                  })
                 },
                 optionRender: (item: any) => {
                   return <>{item.label}</>

@@ -15,6 +15,8 @@ type IProps = {
   className?: string
   /**交易品种名称 */
   symbol?: string
+  /**是否展示休市图标 */
+  showMarketCloseIcon?: boolean
 }
 
 /**
@@ -22,7 +24,7 @@ type IProps = {
  * @param param0
  * @returns
  */
-function SymbolIcon({ src, width = 26, height = 26, style, className, symbol }: IProps) {
+function SymbolIcon({ src, width = 26, height = 26, style, className, symbol, showMarketCloseIcon }: IProps) {
   const { trade } = useStores()
   const isMarketOpen = trade.isMarketOpen(symbol)
 
@@ -32,7 +34,7 @@ function SymbolIcon({ src, width = 26, height = 26, style, className, symbol }: 
       style={{ width, height, ...style }}
     >
       <img width={width} height={height} alt="" src={getSymbolIcon(src)} className="rounded-full" />
-      {!isMarketOpen && (
+      {!isMarketOpen && showMarketCloseIcon && (
         <div className="absolute bottom-[-6px] right-[-3px] z-[1]">
           <img src="/img/xiushi-icon.svg" width={14} height={14} />
         </div>

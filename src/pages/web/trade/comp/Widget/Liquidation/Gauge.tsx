@@ -13,7 +13,9 @@ function Gauge() {
   const { trade } = useStores()
   const quoteInfo = getCurrentQuote() // 保留，取值触发更新
   const [options, setOptions] = useState<any>({})
-  const marginRateInfo = trade.getMarginRateInfo()
+  const positionList = trade.positionList.filter((item) => item.id === trade.currentLiquidationSelectBgaId) // 当前已选的持仓item
+
+  const marginRateInfo = trade.getMarginRateInfo() // 计算当前单的浮动盈亏等信息
   const marginRate = marginRateInfo.marginRate
 
   const colors = ['#FF2222', '#FFE322', '#45A48A', '#45A48A']

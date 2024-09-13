@@ -379,7 +379,7 @@ export const calcPositionList = (list: IPositionItem[]) => {
       v.profit = profit
       v.profitFormat = Number(v.profit) ? formatNum(v.profit, { precision: 3 }) : v.profit || '-' // 格式化的
       v.profitFormat = v.profit > 0 ? `+${v.profitFormat}` : v.profitFormat
-      // v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
+      v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
       v.yieldRate = calcYieldRate(v, accountGroupPrecision) // 收益率
       v.forceClosePrice = calcForceClosePrice(v) // 强平价
       v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价
