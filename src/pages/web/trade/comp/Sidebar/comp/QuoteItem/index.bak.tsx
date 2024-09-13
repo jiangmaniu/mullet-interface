@@ -26,7 +26,7 @@ type IProps = {
 function QuoteItem({ item, isActive, popupRef }: IProps) {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { isMobileOrIpad } = useEnv()
-  const { theme } = useTheme()
+  const { isDark } = useTheme()
   const { trade, ws, kline } = useStores()
   const symbol = item.symbol
   const res = getCurrentQuote(symbol)
@@ -40,7 +40,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
         left: 0,
         width: 4,
         height: 19,
-        background: theme === 'dark' ? gray['95'] : '#000000',
+        background: isDark ? gray['95'] : '#000000',
         borderRadius: '0px 4px 4px 0px',
         content: '""'
       }

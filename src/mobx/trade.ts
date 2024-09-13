@@ -500,18 +500,21 @@ class TradeStore {
   }
 
   // 判断本地收藏的品种是否禁用被下架的
-  @computed get disabledSymbol() {
+  @action
+  disabledSymbol = () => {
     return !this.symbolListAll.some((item) => item.symbol === this.activeSymbolName)
   }
 
   // 禁用交易
-  @computed get disabledTrade() {
+  @action
+  disabledTrade = () => {
     // enableConnect 启用禁用账户组
     // isTrade 启用禁用账户交易
-    return this.disabledSymbol || !this.currentAccountInfo.enableTrade || !this.currentAccountInfo.isTrade
+    return this.disabledSymbol() || !this.currentAccountInfo.enableTrade || !this.currentAccountInfo.isTrade
   }
 
   // 禁用切换账户
+  @action
   disabledConect = (accountItem?: User.AccountItem) => {
     // enableConnect 启用禁用账户组
     // status 启用禁用账号
@@ -523,7 +526,7 @@ class TradeStore {
   @action
   disabledTradeAction = () => {
     // 账户禁用或者是休市状态
-    return this.disabledTrade || !this.isMarketOpen()
+    return this.disabledTrade() || !this.isMarketOpen()
   }
 
   // 判断是否休市状态，根据当前时间判断是否在交易时间段内
@@ -531,6 +534,8 @@ class TradeStore {
   isMarketOpen = (symbol?: string) => {
     const symbolInfo = this.getActiveSymbolInfo(symbol)
     const tradeTimeConf = symbolInfo?.symbolConf?.tradeTimeConf || []
+
+    if (!symbolInfo.id) return false
 
     const now = new Date()
     const currentDay = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][now.getDay()]

@@ -435,10 +435,10 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       },
       '.ant-table .ant-table-content': {
         scrollbarWidth: 'thin',
-        scrollbarColor: '#fff #fff'
+        scrollbarColor: 'var(--scrollbar-color)'
       },
       '.ant-table:hover .ant-table-content': {
-        scrollbarColor: 'rgba(0, 0, 0, 0.05)  #fff'
+        scrollbarColor: 'var(--scrollbar-hover-color)'
       },
       '.ant-form': {
         background: `${searchFormBgColor || 'rgb(248, 248, 248)'} !important`
@@ -506,7 +506,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
               ...pagination
             }
       }
-      locale={{ emptyText: <Empty /> }}
+      locale={{ emptyText: !requestResult?.data?.length && !dataSource?.length ? <Empty /> : <div className="h-[200px]"></div> }}
       // 幽灵模式，是否取消表格区域的 padding
       ghost={false}
       scroll={{ x: 1200, ...scroll }}

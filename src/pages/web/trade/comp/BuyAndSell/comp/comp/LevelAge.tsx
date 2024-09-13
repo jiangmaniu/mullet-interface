@@ -25,6 +25,7 @@ function LevelAge({ onChange }: IProps) {
     <div>
       <InputNumber
         showAddMinus
+        showFloatTips={false}
         placeholder={intl.formatMessage({ id: 'mt.gangganbeishu' })}
         rootClassName="!z-50 mt-3"
         classNames={{ input: 'text-center' }}

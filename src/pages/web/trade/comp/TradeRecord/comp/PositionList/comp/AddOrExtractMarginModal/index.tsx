@@ -6,6 +6,7 @@ import Button from '@/components/Base/Button'
 import Modal from '@/components/Base/Modal'
 import Tabs from '@/components/Base/Tabs'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 import { addMargin, extractMargin } from '@/services/api/tradeCore/order'
 import { formatNum, getPrecisionByNumber, toFixed } from '@/utils'
 import { message } from '@/utils/message'
@@ -23,6 +24,7 @@ type IProps = {
 // 追加、提取保证金
 function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
   const intl = useIntl()
+  const { isDark } = useTheme()
   const { trade } = useStores()
   const { availableMargin } = trade.getAccountBalance()
   const [inputValue, setInputValue] = useState(0)
@@ -81,7 +83,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
       ref={modalRef}
       maskClosable={false}
     >
-      <img src="/img/mask2.png" className="absolute right-[67px] top-[22px] h-[252px] w-[294px] z-[3]" />
+      <img src={isDark ? '/img/mask2-dark.png' : '/img/mask2.png'} className="absolute right-[67px] top-[22px] h-[252px] w-[294px] z-[3]" />
       <div className="absolute w-full top-0 z-[2] h-[242px] rounded-[10px]" style={{ background: 'var(--card-gradient-header-bg)' }}></div>
       <div className="pb-4 relative z-10">
         <div className="flex items-center justify-center px-[18px]">

@@ -15,8 +15,7 @@ type IProps = {
 
 function Buy({ children, isActive, bgColor, width = '134px', height = '52px' }: IProps) {
   const { isPc } = useEnv()
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
+  const { isDark } = useTheme()
 
   const svgIcon = (
     <svg width={'134px'} height={'52px'} viewBox="0 0 134 52">

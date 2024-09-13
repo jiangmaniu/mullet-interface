@@ -25,13 +25,12 @@ const Tradingview = () => {
   const previousSymbolName = usePrevious(symbolName)
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
   const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
-  const { theme } = useTheme()
+  const { theme, isDark } = useTheme()
   const datafeedParams = {
     setActiveSymbolInfo: kline.setActiveSymbolInfo, // 记录当前的symbol
     removeActiveSymbol: kline.removeActiveSymbol, // 取消订阅移除symbol
     getDataFeedBarCallback: kline.getDataFeedBarCallback // 获取k线柱数据回调
   }
-
   const themeMode = (theme || 'light') as ThemeName
   const params = {
     symbol: symbolName as string, // 品种名称
@@ -54,11 +53,6 @@ const Tradingview = () => {
     if (theme && defaultBgColor !== STORAGE_GET_CHART_PROPS('paneProperties.background')) {
       STORAGE_REMOVE_CHART_PROPS()
     }
-
-    // @fix 主题切换没有生效
-    // if (bgGradientStartColor) {
-    //   localStorage.clear()
-    // }
 
     // 注意：这里只初始化一次，后面不在通过params更新，需要使用对应的方法动态更新，否则需要重载页面才可以使用params
     const widgetOptions = getWidgetOpts(params, chartContainerRef.current, datafeedParams)
@@ -110,7 +104,7 @@ const Tradingview = () => {
       // }
 
       // 设置k线柱样式
-      setChartStyleProperties({ colorType: params.colorType, tvWidget })
+      setChartStyleProperties({ colorType: params.colorType, isDark, tvWidget })
 
       // 通过api设置overview样式
       applyOverrides({
@@ -191,6 +185,13 @@ const Tradingview = () => {
     // 初始化图表实例
     initChart()
   }, [params, kline.tvWidget])
+
+  // 切换主题重载
+  useEffect(() => {
+    if (symbolName) {
+      initChart()
+    }
+  }, [theme])
 
   // 监听切换品种 需要防抖避免用户重复切换导致k线显示问题
   useDebounceEffect(

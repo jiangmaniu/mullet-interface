@@ -15,9 +15,16 @@ export const ThemeConst = {
   primary: '#183EFC',
   textPrimary: '#183EFC',
   white: '#fff',
-  black: '#1C192F', // 黑色主题背景色
+  black: '#161A1E', // 黑色主题背景色
   red: '#C54747',
   green: '#45A48A'
+}
+
+export const ThemeDark = {
+  primary: '#4775EE',
+  textPrimary: '#4775EE',
+  red: '#F95050',
+  green: '#29BE95'
 }
 
 // 默认展示的分辨率

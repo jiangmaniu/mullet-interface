@@ -56,6 +56,8 @@ function Position({ style, parentPopup }: IProps) {
   const stopLossProfitRef = useRef<any>(null)
   const [pageNum, setPageNum] = useState(1)
 
+  const [deplayLoading, setDeplayLoading] = useState(true)
+
   const positionList = trade.positionList as IPositionItem[]
 
   const activeSymbolName = trade.activeSymbolName
@@ -419,7 +421,7 @@ function Position({ style, parentPopup }: IProps) {
   return (
     <>
       {/* 加上loading避免右侧闪动问题 */}
-      <Spin spinning={loading}>
+      <Spin spinning={loading} style={{ background: 'var(--bg-primary)' }}>
         <StandardTable
           columns={columns}
           // ghost

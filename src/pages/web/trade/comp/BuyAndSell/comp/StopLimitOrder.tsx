@@ -217,9 +217,9 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = trade.disabledTrade || (sp && sp < sp_scope) || (sl && sl > sl_scope)
+    const disabledBtn = trade.disabledTrade() || (sp && sp < sp_scope) || (sl && sl > sl_scope)
     // 禁用交易
-    const disabledTrade = trade.disabledTrade
+    const disabledTrade = trade.disabledTrade()
 
     return (
       <div className="mx-[10px] mt-3 flex flex-col justify-between h-[630px]">
@@ -401,7 +401,7 @@ export default observer(
             showAddMinus
             autoFocus={false}
             direction="column"
-            classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[74px]' }}
+            classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[70px]' }}
             height={52}
             textAlign="left"
             rootClassName="mt-[14px]"

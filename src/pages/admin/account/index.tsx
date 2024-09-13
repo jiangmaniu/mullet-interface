@@ -14,6 +14,7 @@ import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { push } from '@/utils/navigator'
 
@@ -36,6 +37,7 @@ function Account() {
   const [leftTime, setLeftTime] = useState<any>(0)
   const modalRef = useRef<any>()
   const [modalInfo, setModalInfo] = useState({} as User.AccountItem)
+  const { setTheme } = useTheme()
 
   const [searchParams] = useSearchParams()
   const searchKey = searchParams.get('key') as any

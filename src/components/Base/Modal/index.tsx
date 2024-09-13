@@ -9,7 +9,7 @@ type IProps = {
 } & ModalProps
 
 export default forwardRef(({ children, open, onClose, trigger, ...res }: IProps, ref) => {
-  const [isOpen, setIsOpen] = useState<any>(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const close = () => {
     setIsOpen(false)
@@ -20,25 +20,27 @@ export default forwardRef(({ children, open, onClose, trigger, ...res }: IProps,
   }
 
   useEffect(() => {
-    setIsOpen(open)
+    setIsOpen(!!open)
   }, [open])
 
   // useEffect(() => {
   //   if (isOpen) {
-  //     document.documentElement.style.overflowY = 'hidden'
+  //     document.body.style.overflow = 'hidden'
   //   } else {
-  //     document.documentElement.style.overflowY = 'auto'
+  //     document.body.style.overflow = 'auto'
+  //   }
+
+  //   return () => {
+  //     document.body.style.overflow = 'auto'
   //   }
   // }, [isOpen])
 
   // 对外暴露接口
-  useImperativeHandle(ref, () => {
-    return {
-      close,
-      show,
-      open: isOpen
-    }
-  })
+  useImperativeHandle(ref, () => ({
+    close,
+    show,
+    open: isOpen
+  }))
 
   const triggerDom = useMemo(() => {
     if (!trigger) {
@@ -57,9 +59,11 @@ export default forwardRef(({ children, open, onClose, trigger, ...res }: IProps,
 
   return (
     <>
-      <AntdModal destroyOnClose open={isOpen} onCancel={close} {...res}>
-        {children}
-      </AntdModal>
+      {isOpen && (
+        <AntdModal destroyOnClose open={isOpen} onCancel={close} onClose={close} wrapClassName="custom-modal" maskClosable={false} {...res}>
+          {children}
+        </AntdModal>
+      )}
       {triggerDom}
     </>
   )

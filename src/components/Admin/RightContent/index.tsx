@@ -1,4 +1,4 @@
-import { CopyOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import { CopyOutlined, InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, history, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
 import { ConfigProvider, Segmented, Tooltip } from 'antd'
@@ -10,8 +10,11 @@ import Dropdown from '@/components/Base/Dropdown'
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
+import SwitchTheme from '@/components/SwitchTheme'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
+import { colorWhite } from '@/theme/theme.config'
 import { copyContent, formatNum, hiddenCenterPartStr } from '@/utils'
 import { cn } from '@/utils/cn'
 import { goKefu, onLogout, push } from '@/utils/navigator'
@@ -115,6 +118,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
   const { initialState } = useModel('@@initialState')
   const { trade } = useStores()
+  const { isDark } = useTheme()
   const [currentAccountList, setCurrentAccountList] = useState<User.AccountItem[]>([])
   const { fetchUserInfo } = useModel('user')
   const [accountBoxOpen, setAccountBoxOpen] = useState(false)
@@ -154,14 +158,14 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-primary pb-1 xl:w-[360px] xl:pt-[18px]">
+      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-[--dropdown-border-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white dark:bg-[--dropdown-bg] pb-1 xl:w-[360px] xl:pt-[18px]">
         <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
             <div className="mb-6 flex flex-wrap items-center justify-between text-weak" key={idx}>
               <span className="text-primary">{item.label}</span>
               <Tooltip overlayClassName="max-w-[300px]" placement="top" title={item.tips}>
                 <span className="ml-[5px]">
-                  <img src="/img/warring_icon.png" className="h-4 w-4 p-0" />
+                  <InfoCircleOutlined style={{ fontSize: 12 }} />
                 </span>
               </Tooltip>
               <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
@@ -205,8 +209,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             </Button>
           </div>
         </div> */}
-        <div className="px-[18px] py-0 xl:border-t-[2px] xl:border-[rgba(218,218,218,0.2)] flex flex-col">
-          <div className="my-3 flex items-center justify-between flex-shrink-0 flex-grow-0">
+        <div className="py-0 border-t-[2px] border-[rgba(218,218,218,0.2)] dark:border-gray-620/20 flex flex-col">
+          <div className="my-3 px-[18px] flex items-center justify-between flex-shrink-0 flex-grow-0">
             <Segmented
               className="account"
               // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
@@ -254,7 +258,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   }}
                   key={item.id}
                   className={cn(
-                    'mb-[14px] cursor-pointer rounded-lg border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
+                    'mb-[14px] mx-[18px] scrollba cursor-pointer rounded-lg dark:border-gray-620 border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
                     {
                       'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
                       'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade
@@ -305,22 +309,24 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
     return showUserCenterAccountDropdown
       ? {
           '&:hover': {
-            border: '1px solid #f3f3f3',
-            borderBottomColor: '#fff',
-            background: '#fff',
+            border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
+            borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
+            borderBottomWidth: isDark ? 0 : 1,
+            background: 'var(--dropdown-bg)',
             color: theme === 'white' ? 'black' : 'white',
             borderTopRightRadius: 12,
             borderTopLeftRadius: 12,
-            boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+            boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
           },
           '&.active': {
-            border: '1px solid #f3f3f3',
-            borderBottomColor: '#fff',
-            background: '#fff',
+            border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
+            borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
+            borderBottomWidth: isDark ? 0 : 1,
+            background: 'var(--dropdown-bg)',
             color: theme === 'white' ? 'black' : 'white',
             borderTopRightRadius: 12,
             borderTopLeftRadius: 12,
-            boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+            boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
           }
         }
       : {}
@@ -366,7 +372,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
               setAccountBoxOpen(open)
             }}
             open={accountBoxOpen}
-            align={{ offset: [0, 0] }}
+            align={{ offset: [-0.2, 0] }}
           >
             <div
               className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: true || accountBoxOpen })}
@@ -378,9 +384,11 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
               }}
             >
               <div className="flex flex-col items-end group relative">
-                <span className="text-lg !font-dingpro-regular">{formatNum(balance, { precision: currencyDecimal })} USD</span>
+                <span className="text-lg !font-dingpro-regular dark:text-primary">
+                  {formatNum(balance, { precision: currencyDecimal })} USD
+                </span>
                 <div className="flex items-center">
-                  <span className={cn('text-xs dark:text-blue', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
+                  <span className={cn('text-xs dark:text-primary', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
                     {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                   </span>
                   <div className="w-[1px] h-[10px] mx-[6px] bg-gray-200 dark:bg-gray-570"></div>
@@ -407,7 +415,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   name="down"
                   width={24}
                   height={24}
-                  color={iconDownColor}
+                  color={isDark ? colorWhite : iconDownColor}
                   className="cursor-pointer rounded-lg transition-all duration-300"
                   style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
                 />
@@ -575,7 +583,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             placement="topRight"
             dropdownRender={(origin) => {
               return (
-                <div className="flex bg-white w-[290px] z-[800] rounded-xl shadow-dropdown flex-col">
+                <div className="flex flex-col bg-white dark:bg-[var(--dropdown-bg)] w-[290px] z-[800] rounded-xl shadow-dropdown dark:shadow-none dark:border-[--dropdown-border-color] dark:border">
                   <div className="flex items-center justify-between w-full px-5 pt-5">
                     <div className="flex items-center">
                       <img src="/img/user-icon.png" width={40} height={40} />
@@ -628,7 +636,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                       <FormattedMessage id="mt.zhanghu" />
                     </div>
                   ),
-                  icon: <Iconfont name="zhanghu" width={20} height={20} />,
+                  icon: <Iconfont name="zhanghu" width={20} height={20} color={'var(--color-text-primary)'} />,
                   key: 'account'
                 },
                 {
@@ -637,7 +645,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                       <FormattedMessage id="mt.churujinjilu" />
                     </div>
                   ),
-                  icon: <Iconfont name="geren-churujinjilu" width={20} height={20} />,
+                  icon: <Iconfont name="geren-churujinjilu" width={20} height={20} color={'var(--color-text-primary)'} />,
                   key: 'record'
                 },
                 {
@@ -646,7 +654,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                       <FormattedMessage id="mt.shezhi" />
                     </div>
                   ),
-                  icon: <Iconfont name="geren-shezhi" width={20} height={20} />,
+                  icon: <Iconfont name="geren-shezhi" width={20} height={20} color={'var(--color-text-primary)'} />,
                   key: 'setting'
                 }
               ]
@@ -666,7 +674,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           </Dropdown>
         </ConfigProvider>
       </div>
-      {/* {isTradePage && <SwitchTheme />} */}
+      {isTradePage && <SwitchTheme />}
       <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />
     </div>
   )

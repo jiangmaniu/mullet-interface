@@ -14,13 +14,20 @@ type IDirection = 0 | 1
 interface IThemeContextProps {
   /**全局主题色 */
   theme: IThemeMode
+  /**交易页面主题色 */
+  tradeTheme: IThemeMode
+  /**是否是黑色主题 */
+  isDark?: boolean
   /**0绿涨红跌 1红涨绿跌 */
   direction: IDirection
   /**涨 颜色 */
   upColor: string
   /**跌 颜色 */
   downColor: string
+  /**设置主题色 */
   setTheme: (theme: IThemeMode) => void
+  /**切换主题色 */
+  toggleTheme: () => void
   /**设置0绿涨红跌 1红涨绿跌 */
   setDirection: (key: IDirection) => void
 }
@@ -96,10 +103,15 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     <ThemeContext.Provider
       value={{
         theme,
+        tradeTheme,
+        isDark: theme === 'dark',
         direction,
         setDirection,
         upColor: themeConfig.upColor,
         downColor: themeConfig.downColor,
+        toggleTheme: () => {
+          setTheme(theme === 'dark' ? 'light' : 'dark')
+        },
         setTheme: (mode: IThemeMode) => {
           if (mode) {
             handleSetTheme(mode)

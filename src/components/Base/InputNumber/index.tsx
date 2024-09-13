@@ -81,8 +81,7 @@ function InputNumber(props: IProps) {
   const [inputValue, setInputValue] = useState<any>('')
   const [isFocus, setFocus] = useState(false)
   const newValue = Number(inputValue || 0)
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
+  const { isDark } = useTheme()
 
   const isColumn = direction === 'column'
 
@@ -136,7 +135,7 @@ function InputNumber(props: IProps) {
   const AddIcon = (
     <div
       className={cn(
-        'flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-r-lg border-l border-primary dark:bg-gray-750 text-xl text-weak',
+        'flex h-full w-[43px] cursor-pointer select-none items-center z-[2] justify-center border-l border-primary dark:border-gray-585 dark:bg-gray-750 text-xl text-weak',
         isColumn && '!rounded-r-[0px] border-b border-l-0',
         { '!cursor-not-allowed !text-weak/50': disabled || (max && newValue >= max) },
         disabled ? 'bg-[--input-disabled-bg]' : '',
@@ -150,7 +149,7 @@ function InputNumber(props: IProps) {
   const MinusIcon = (
     <div
       className={cn(
-        'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center rounded-l-lg border-r border-primary dark:bg-gray-750 text-xl text-weak',
+        'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center border-r border-primary dark:bg-gray-750 text-xl text-weak',
         isColumn && 'border-none',
         { '!cursor-not-allowed !text-weak/50': (min && newValue <= min) || disabled },
         disabled ? 'bg-[--input-disabled-bg]' : '',
@@ -165,15 +164,16 @@ function InputNumber(props: IProps) {
   const innerRootClassName = useEmotionCss(({ token }) => {
     return {
       '.ant-input-disabled': {
-        background: '#f7f7f7 !important'
+        background: `${isDark ? 'var(--input-bg)' : '#f8f8f8'} !important`
       },
       input: {
         height,
         // paddingLeft: 12,
         textAlign: textAlign || 'center',
         width: width || '100%',
-        background: isDark ? gray[750] : '#fff',
-        border: 'none'
+        background: disabled && !isDark ? '#f8f8f8' : 'var(--input-bg)',
+        border: 'none',
+        borderRadius: 0
       },
       'input:focus': {
         border: 'none',
@@ -181,10 +181,11 @@ function InputNumber(props: IProps) {
         boxShadow: 'none'
       },
       'input::placeholder': {
-        fontSize: '14px !important'
+        fontSize: '14px !important',
+        color: 'var(--input-placeholder-text-color)'
       },
-      '.ant-input-group-addon': {
-        background: `${disabled ? '#f8f8f8' : '#fff'} !important`,
+      '.ant-input-group-addon,.ant-input-group-wrapper': {
+        background: `${disabled && !isDark ? '#f8f8f8' : 'var(--input-bg)'} !important`,
         border: 'none !important'
       },
       '.ant-input-wrap input::placeholder': {
@@ -196,9 +197,15 @@ function InputNumber(props: IProps) {
       '.ant-input': {
         background: disabled ? 'transparent' : isDark ? gray[750] : '#fff'
       },
-      '.input-wrapper:hover': {
-        border: `1px solid ${disabled ? '#E1E1E1' : '#9c9c9c'}`
-      },
+      '.input-wrapper:hover':
+        isDark && isFocus && showFloatTips
+          ? {
+              border: `1px solid ${gray[572]}`,
+              borderBottomColor: gray[750]
+            }
+          : {
+              border: disabled ? '1px solid none' : `1px solid #9c9c9c`
+            },
       '.ant-form-item-control-input-content': {
         background: disabled ? '#f8f8f8' : '#fff'
       }
@@ -208,106 +215,109 @@ function InputNumber(props: IProps) {
   return (
     <div className={cn('relative w-full', rootClassName, innerRootClassName)}>
       {label && <div className={cn('text-sm pb-[4px] text-left font-normal text-primary', classNames?.label)}>{label}</div>}
-      <div
-        className={cn(
-          'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border border-primary bg-white input-wrapper',
-          className
-        )}
-        style={{ height }}
-      >
-        {showAddMinus && direction === 'row' && MinusIcon}
-        <ProFormText
-          placeholder={placeholder}
-          className={cn(
-            'h-full w-full flex-1 px-4 text-center text-sm font-bold text-primary placeholder:text-secondary disabled:bg-gray-50/60',
-            classNames?.input,
-            disabled && 'cursor-not-allowed'
-          )}
-          onChange={(e: any) => {
-            const text = e.target.value
-            console.log('changed', text)
-            let newText = text !== '' && text.substr(0, 1) === '.' ? '' : text
-            newText = newText.replace(/^0+[0-9]+/g, '0') //不能以0开头输入
-            newText = newText.replace(/[^\d.]/g, '') //清除"数字"和"."以外的字符
-            newText = newText.replace(/\.{2,}/g, '.') //只保留第一个, 清除多余的
-            newText = newText.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.')
-            newText = regInput(newText, precision)
-
-            if (!isTruthy(newText)) {
-              setFocus(false)
-            } else {
-              setFocus(true)
-            }
-
-            if (onChange) {
-              onChange(newText)
-            } else {
-              // 不能超过最大值
-              if (max && newText > max) {
-                onSetInputValue(max)
-                return
-              }
-              onSetInputValue(newText)
-            }
-          }}
-          name={name}
-          disabled={disabled}
-          filedConfig={{
-            style: { marginBottom: 0, flex: 1, lineHeight: `${height}px` },
-            className: disabled ? 'bg-[--input-disabled-bg] cursor-not-allowed' : ''
-          }}
-          allowClear={false}
-          addonBefore={inputValue && addonBefore ? <span className="text-xs text-secondary pl-3">{addonBefore}</span> : undefined}
-          fieldProps={{
-            onBlurCapture: () => {
-              // 失去焦点时候 如果用户输入的是1. 没有输入完整，去掉.
-              if (inputValue && String(inputValue).endsWith('.')) {
-                const newValue = inputValue.slice(0, -1)
-                onChange?.(newValue)
-              }
-            },
-            ref: inputRef,
-            controls: false,
-            maxLength: 12,
-            autoFocus: false,
-            max,
-            min,
-            value: inputValue,
-            precision: hiddenPrecision ? undefined : precision,
-            onFocus: () => setFocus(true),
-            onBlur: () => setFocus(false),
-            autoComplete: 'off',
-            addonAfter: unit && <span className="text-xs font-normal text-weak">{unit}</span>,
-            // @ts-ignore
-            styles: { border: 'none', input: { height } },
-            className: `custom-inputnumber ${classNames?.input}`, // @hack处理 样式在globals.scss中添加
-            classNames: { input: classNames?.input, wrapper: 'flex items-center justify-between px-[10px]' },
-            // class: classNames?.input, // 设置input-number组件input输入框样式
-            classes: { affixWrapper: '!border-none focus:!shadow-none focus-within:!shadow-none' }
-            // classNames: { input: classNames?.input, wrapper: 'flex items-center justify-between px-[10px]' }
-          }}
-        />
-        {showAddMinus && direction === 'row' && AddIcon}
-        {isColumn && (
-          <div className="flex h-full items-center">
-            <div className="flex h-full flex-col items-center justify-center border-l border-primary">
-              {AddIcon}
-              {MinusIcon}
-            </div>
-          </div>
-        )}
-      </div>
-      {isFocus && tips && showFloatTips && (
+      <div>
         <div
           className={cn(
-            'absolute top-[35px] z-10 flex w-full items-end justify-center rounded-b-lg border border-primary bg-gray-50 px-1 py-2 text-center text-xs text-weak',
-            classNames?.tips
+            'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border border-[var(--input-border)] bg-white input-wrapper',
+            isFocus && showFloatTips && 'dark:border-gray-572 dark:border-b-gray-750',
+            className
           )}
+          style={{ height }}
         >
-          {tips}
+          {showAddMinus && direction === 'row' && MinusIcon}
+          <ProFormText
+            placeholder={placeholder}
+            className={cn(
+              'h-full w-full flex-1 px-4 text-center text-sm font-bold text-primary placeholder:text-secondary disabled:bg-gray-50/60',
+              classNames?.input,
+              disabled && 'cursor-not-allowed'
+            )}
+            onChange={(e: any) => {
+              const text = e.target.value
+              console.log('changed', text)
+              let newText = text !== '' && text.substr(0, 1) === '.' ? '' : text
+              newText = newText.replace(/^0+[0-9]+/g, '0') //不能以0开头输入
+              newText = newText.replace(/[^\d.]/g, '') //清除"数字"和"."以外的字符
+              newText = newText.replace(/\.{2,}/g, '.') //只保留第一个, 清除多余的
+              newText = newText.replace('.', '$#$').replace(/\./g, '').replace('$#$', '.')
+              newText = regInput(newText, precision)
+
+              if (!isTruthy(newText)) {
+                setFocus(false)
+              } else {
+                setFocus(true)
+              }
+
+              if (onChange) {
+                onChange(newText)
+              } else {
+                // 不能超过最大值
+                if (max && newText > max) {
+                  onSetInputValue(max)
+                  return
+                }
+                onSetInputValue(newText)
+              }
+            }}
+            name={name}
+            disabled={disabled}
+            filedConfig={{
+              style: { marginBottom: 0, flex: 1, lineHeight: `${height}px` },
+              className: disabled ? 'bg-[--input-disabled-bg] cursor-not-allowed' : ''
+            }}
+            allowClear={false}
+            addonBefore={inputValue && addonBefore ? <span className="text-xs text-secondary pl-3">{addonBefore}</span> : undefined}
+            fieldProps={{
+              onBlurCapture: () => {
+                // 失去焦点时候 如果用户输入的是1. 没有输入完整，去掉.
+                if (inputValue && String(inputValue).endsWith('.')) {
+                  const newValue = inputValue.slice(0, -1)
+                  onChange?.(newValue)
+                }
+              },
+              ref: inputRef,
+              controls: false,
+              maxLength: 12,
+              autoFocus: false,
+              max,
+              min,
+              value: inputValue,
+              precision: hiddenPrecision ? undefined : precision,
+              onFocus: () => setFocus(true),
+              onBlur: () => setFocus(false),
+              autoComplete: 'off',
+              addonAfter: unit && <span className="text-xs font-normal text-weak">{unit}</span>,
+              // @ts-ignore
+              styles: { border: 'none', input: { height } },
+              className: `custom-inputnumber ${classNames?.input}`, // @hack处理 样式在globals.scss中添加
+              classNames: { input: classNames?.input, wrapper: 'flex items-center justify-between px-[10px]' },
+              // class: classNames?.input, // 设置input-number组件input输入框样式
+              classes: { affixWrapper: '!border-none focus:!shadow-none focus-within:!shadow-none' }
+              // classNames: { input: classNames?.input, wrapper: 'flex items-center justify-between px-[10px]' }
+            }}
+          />
+          {showAddMinus && direction === 'row' && AddIcon}
+          {isColumn && (
+            <div className="flex h-full items-center">
+              <div className="flex h-full flex-col items-center justify-center border-l border-primary dark:border-gray-585 bg-[var(--input-bg)]">
+                {AddIcon}
+                {MinusIcon}
+              </div>
+            </div>
+          )}
         </div>
-      )}
-      {tips && !showFloatTips && <div className="text-xs text-secondary pt-[7px]">{tips}</div>}
+        {isFocus && tips && showFloatTips && (
+          <div
+            className={cn(
+              'absolute top-[32px] z-10 flex w-full overflow-hidden items-end justify-center rounded-b-lg border border-primary dark:bg-gray-560 bg-gray-50 dark:border-gray-572 px-1 pb-2 pt-3 text-center text-xs text-weak dark:text-gray-125',
+              classNames?.tips
+            )}
+          >
+            {tips}
+          </div>
+        )}
+        {tips && !showFloatTips && <div className="text-xs text-secondary pt-[7px]">{tips}</div>}
+      </div>
     </div>
   )
 }

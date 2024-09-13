@@ -94,11 +94,8 @@ function Futures({ trigger, style }: IProps) {
     return (
       <div style={{ ...style }} className="relative h-full px-[37px] max-xl:rounded-t-[16px] xl:py-[26px]">
         <div className="absolute left-8 flex w-[92%] justify-between">
-          <div
-            style={{ backgroundImage: 'url(/img/heyue-logo.png)' }}
-            className="relative top-0 h-[92px] w-[328px] bg-cover bg-no-repeat"
-          />
-          <div style={{ backgroundImage: 'url(/img/heyue-mask.png)' }} className="h-[180px] w-[227px] bg-cover bg-no-repeat" />
+          <div className="relative top-0 h-[92px] w-[328px] bg-cover bg-no-repeat bg-[url(/img/heyue-logo.png)] dark:opacity-[0.05]" />
+          <div className="h-[180px] w-[227px] bg-[url(/img/heyue-mask.png)] dark:bg-[url(/img/mask2-dark.png)] bg-cover bg-no-repeat" />
         </div>
         <div className="relative top-[30px] z-10">
           <div className="pb-12 text-[24px] font-pf-bold">
