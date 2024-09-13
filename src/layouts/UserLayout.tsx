@@ -1,12 +1,24 @@
-import { FormattedMessage, Outlet } from '@umijs/max'
+import { FormattedMessage, Outlet, useLocation } from '@umijs/max'
+import { useEffect } from 'react'
 
 import SwitchLanguage from '@/components/SwitchLanguage'
+import { useTheme } from '@/context/themeProvider'
 
 /**
  * 登录、注册、忘记密码页面的布局
  * @returns
  */
 export default function UserLayout() {
+  const { pathname } = useLocation()
+  const { setTheme } = useTheme()
+
+  // @TODO 临时设置切换主题，后面删除
+  useEffect(() => {
+    if (pathname !== '/trade') {
+      setTheme('light')
+    }
+  }, [pathname])
+
   const links = [
     { icon: '/img/uc/app_icon2.svg' },
     { icon: '/img/uc/app_icon3.svg' },

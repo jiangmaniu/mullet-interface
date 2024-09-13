@@ -1,7 +1,7 @@
 import { Settings as LayoutSettings } from '@ant-design/pro-components'
-import { history, Link, Navigate, RunTimeLayoutConfig, useModel } from '@umijs/max'
+import { history, Link, Navigate, RunTimeLayoutConfig, useLocation, useModel } from '@umijs/max'
 import { ClickToComponent } from 'click-to-react-component'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { Provider } from '@/context'
@@ -15,6 +15,7 @@ import { ICONFONT_URL, WEB_HOME_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
+import { useTheme } from './context/themeProvider'
 import { errorConfig } from './requestErrorConfig'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN } from './utils/storage'
@@ -67,6 +68,15 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   const { lng, count } = useLang()
   const [showMenuExtra, setShowMenuExtra] = useState(false)
   const { pageBgColor } = useModel('global')
+  const { pathname } = useLocation()
+  const { setTheme } = useTheme()
+
+  // @TODO 临时设置切换主题，后面删除
+  useEffect(() => {
+    if (pathname !== '/trade') {
+      setTheme('light')
+    }
+  }, [pathname])
 
   return {
     ...initialState?.settings,
