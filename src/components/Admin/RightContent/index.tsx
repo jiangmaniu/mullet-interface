@@ -133,6 +133,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   // 排除当前选择的账户
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
 
+  const showUserCenterAccountDropdown = accountArr.length !== 1 && !isTradePage
+
   useEffect(() => {
     // 切换真实模拟账户列表
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
@@ -300,26 +302,28 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   }
 
   const groupClassName = useEmotionCss(({ token }) => {
-    return {
-      '&:hover': {
-        border: '1px solid #f3f3f3',
-        borderBottomColor: '#fff',
-        background: '#fff',
-        color: theme === 'white' ? 'black' : 'white',
-        borderTopRightRadius: 12,
-        borderTopLeftRadius: 12,
-        boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
-      },
-      '&.active': {
-        border: '1px solid #f3f3f3',
-        borderBottomColor: '#fff',
-        background: '#fff',
-        color: theme === 'white' ? 'black' : 'white',
-        borderTopRightRadius: 12,
-        borderTopLeftRadius: 12,
-        boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
-      }
-    }
+    return showUserCenterAccountDropdown
+      ? {
+          '&:hover': {
+            border: '1px solid #f3f3f3',
+            borderBottomColor: '#fff',
+            background: '#fff',
+            color: theme === 'white' ? 'black' : 'white',
+            borderTopRightRadius: 12,
+            borderTopLeftRadius: 12,
+            boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+          },
+          '&.active': {
+            border: '1px solid #f3f3f3',
+            borderBottomColor: '#fff',
+            background: '#fff',
+            color: theme === 'white' ? 'black' : 'white',
+            borderTopRightRadius: 12,
+            borderTopLeftRadius: 12,
+            boxShadow: '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+          }
+        }
+      : {}
   })
 
   const themeClass = useEmotionCss(({ token }) => {
@@ -494,25 +498,34 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             onOpenChange={(open) => {
               setAccountBoxOpen(open)
             }}
-            open={accountBoxOpen}
+            open={showUserCenterAccountDropdown ? accountBoxOpen : false}
             align={{ offset: [0, 0] }}
           >
-            <div className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: accountBoxOpen })}>
+            <div
+              className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, {
+                active: accountBoxOpen
+              })}
+            >
               <div className="flex items-center group relative">
                 <Iconfont name="zhanghu" width={24} height={24} style={{ marginTop: 2 }} />
                 <span className="text-lg font-pf-bold ml-1">{formatNum(totalAccountMoney, { precision: currencyDecimal })} USD</span>
               </div>
-              <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200 dark:bg-gray-570"></div>
-              <div className="h-[58px]">
-                <Iconfont
-                  name="down"
-                  width={24}
-                  height={24}
-                  color={iconDownColor}
-                  className="cursor-pointer rounded-lg transition-all duration-300"
-                  style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
-                />
-              </div>
+
+              {showUserCenterAccountDropdown && (
+                <>
+                  <div className="w-[1px] h-[26px] ml-3 mr-2 bg-gray-200 dark:bg-gray-570"></div>
+                  <div className="h-[58px]">
+                    <Iconfont
+                      name="down"
+                      width={24}
+                      height={24}
+                      color={iconDownColor}
+                      className="cursor-pointer rounded-lg transition-all duration-300"
+                      style={{ transform: `rotate(${accountBoxOpen ? 180 : 0}deg)` }}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </Dropdown>
         )}
