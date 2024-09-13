@@ -1,6 +1,7 @@
 import { ProFormSelectProps } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 
+import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
@@ -51,7 +52,7 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
           >
             <img src="/img/margin-1.png" width={24} height={24} />
             <div className="text-primary text-sm font-semibold flex-1 text-center">{marginLabel}</div>
-            <img src="/img/arrow-right-icon.png" width={24} height={24} />
+            <Iconfont name="gengduo-caozuo" width={24} height={24} color="var(--color-text-primary)" />
           </div>
         }
       />
@@ -68,7 +69,7 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
           >
             <img src={isFixedMargin ? '/img/margin-3.png' : '/img/margin-2.png'} width={24} height={24} />
             <div className="text-primary text-sm flex-1 text-center font-semibold">{leverage}</div>
-            {isFloatLeverage && <img src="/img/arrow-right-icon.png" width={24} height={24} />}
+            {isFloatLeverage && <Iconfont name="gengduo-caozuo" width={24} height={24} color="var(--color-text-primary)" />}
           </div>
         }
       />

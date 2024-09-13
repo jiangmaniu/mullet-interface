@@ -12,8 +12,8 @@ export default () => {
     <div
       style={{
         background: isDark ? gray[800] : '#fff',
-        width: '100%',
-        height: '100%'
+        width: '100vw',
+        height: '100vh'
       }}
     >
       <ConfigProvider

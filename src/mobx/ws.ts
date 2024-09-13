@@ -132,7 +132,7 @@ class WSStore {
 
       // 开启定时器推送数据
       this.batchUpdateQuoteDataByTimer() // 更新行情
-      this.batchUpdateDepthDataByTimer() // 更新深度
+      // this.batchUpdateDepthDataByTimer() // 更新深度
     })
     this.socket.addEventListener('message', (d: any) => {
       const res = JSON.parse(d.data)
@@ -340,13 +340,15 @@ class WSStore {
     this.batchQuoteTimer = setInterval(() => {
       // 更新行情
       this.updateQuoteData()
-    }, 300)
+      // 更新深度
+      this.updateDepthData()
+    }, 200)
   }
 
   // 批量更新行情数据，通过指定数量
   @action
   batchUpdateQuoteDataByNumber = (data: any) => {
-    if (this.quotesCacheArr.length > 12) {
+    if (this.quotesCacheArr.length > 5) {
       this.updateQuoteData()
     } else {
       this.quotesCacheArr.push(data)
@@ -390,7 +392,6 @@ class WSStore {
   // 批量更新深度数据，通过指定数量
   @action
   batchUpdateDepthDataByNumber = (data: any) => {
-    // 限流
     if (this.depthCacheArr.length > 2) {
       this.updateDepthData()
     } else {

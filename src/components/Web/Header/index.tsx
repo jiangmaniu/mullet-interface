@@ -1,6 +1,7 @@
 import { useModel } from '@umijs/max'
 
 import { useTheme } from '@/context/themeProvider'
+import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
 import Logo from '../../Admin/Header/Logo'
@@ -20,7 +21,10 @@ export default function Header() {
   return (
     <>
       <header className="h-[66px] z-[19] bg-transparent"></header>
-      <header className="h-[66px] fixed top-0 z-[100] w-full border-b border-[rgba(5,5,5,0.06)] dark:border-[var(--divider-line-color)] bg-primary">
+      <header
+        className="h-[66px] fixed top-0 z-[100] w-full border-b border-[rgba(5,5,5,0.06)] dark:border-[var(--divider-line-color)] bg-primary"
+        style={{ background: isDark ? gray[800] : '#fff' }}
+      >
         <div className="px-4 h-[66px] relative flex items-center">
           <div className={cn('flex items-center', !openTradeSidebar ? 'w-[200px]' : 'w-[284px]')}>
             <div className="flex items-center">
