@@ -13,9 +13,10 @@ export type ITabTypes = {
   onClick?: () => void
   selectable?: boolean
   code?: string
+  className?: string
 }
 
-const Tags = ({ code, format, size = 'medium', color = 'biaozhun', children, onClick, selectable }: ITabTypes) => {
+const Tags = ({ code, format, size = 'medium', color = 'biaozhun', children, onClick, selectable, className }: ITabTypes) => {
   const { trade } = useStores()
   const accountGroupList = trade.accountGroupList
 
@@ -77,7 +78,7 @@ const Tags = ({ code, format, size = 'medium', color = 'biaozhun', children, onC
 
   const [selected, setSelected] = useState(false)
 
-  const className = useMemo(
+  const innerClassName = useMemo(
     () =>
       cn(
         selected && ' border border-solid',
@@ -86,7 +87,7 @@ const Tags = ({ code, format, size = 'medium', color = 'biaozhun', children, onC
         // @ts-ignore
         colorMap?.[color],
         item && colorList?.[index],
-        'text-xs font-normal flex-shrink px-1 rounded flex items-center justify-center  '
+        'text-xs font-normal flex-shrink-0 px-1 rounded flex items-center justify-center truncate'
       ),
     [selected, size, color, selectable, item, index]
   )
@@ -98,10 +99,10 @@ const Tags = ({ code, format, size = 'medium', color = 'biaozhun', children, onC
   }
 
   return (
-    <span onClick={handleClick} className={className}>
+    <span onClick={handleClick} className={cn(innerClassName, className)}>
       {format && <FormattedMessage id={format.id} />}
       {children}
-      {useMemo(() => (item ? item.synopsis?.abbr || 'unset' : ''), [item])}
+      <span className="truncate">{useMemo(() => (item ? item.synopsis?.abbr || 'unset' : ''), [item])}</span>
     </span>
   )
 }

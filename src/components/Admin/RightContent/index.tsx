@@ -136,6 +136,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
 
   // 排除当前选择的账户
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
+  const realAccountList = accountList.filter((item) => !item.isSimulate)
 
   const showUserCenterAccountDropdown = accountArr.length !== 1 && !isTradePage
 
@@ -143,7 +144,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
     // 切换真实模拟账户列表
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
     setCurrentAccountList(list)
-  }, [accountTabActiveKey, accountList.length])
+  }, [accountTabActiveKey, accountList])
 
   // 交易页面悬浮
   const renderTradeAccountBoxHover = () => {
@@ -432,7 +433,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
               return (
                 <div className="dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] rounded-b-xl rounded-tr-xl bg-primary xl:w-[360px] pt-3">
                   <div className="max-h-[500px] overflow-y-auto px-3">
-                    {accountArr.map((item, idx: number) => {
+                    {realAccountList.map((item, idx: number) => {
                       return (
                         <div
                           key={item.id}

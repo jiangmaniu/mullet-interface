@@ -126,7 +126,7 @@ function AccountList() {
                   <div className=" flex gap-2 items-center">
                     {' '}
                     <div className="text-secondary text-sm line-clamp-2 break-all">{item.synopsis?.remark}</div>
-                    <AccountTag code={item.groupCode}></AccountTag>
+                    <AccountTag code={item.groupCode} size="auto"></AccountTag>
                   </div>
                 </div>
                 <div className="border-b border-gray-250/25 my-5"></div>

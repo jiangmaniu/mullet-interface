@@ -46,6 +46,7 @@ function Account() {
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
   const isKycAuth = currentUser?.isKycAuth
+  const precision = trade.currentAccountInfo.currencyDecimal
 
   const [countDown] = useCountDown({
     leftTime,
@@ -184,7 +185,7 @@ function Account() {
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-[30px] !font-dingpro-medium text-primary">
-                    {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision: 2 })) : '∗∗∗∗'}
+                    {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision })) : '∗∗∗∗'}
                   </span>
                   <span className="pl-[6px] text-sm text-secondary">USD</span>
                 </div>
