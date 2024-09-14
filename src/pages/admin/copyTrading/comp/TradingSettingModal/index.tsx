@@ -155,7 +155,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
       leadId,
       type: tabKey,
       ...values,
-      guaranteedAmountRatio: values.guaranteedAmountRatio / 100
+      guaranteedAmountRatio: values.guaranteedAmountRatio
     }
     postTradeFollowFolloerSave(params)
       .then((res) => {
