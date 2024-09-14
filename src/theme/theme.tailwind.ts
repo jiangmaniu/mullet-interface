@@ -1,6 +1,6 @@
 import colors from 'tailwindcss/colors'
 
-import { blue, gray, green, red, ThemeVarsConst, yellow } from './theme.config'
+import { blue, gray, green, lightTheme, red, yellow } from './theme.config'
 
 // https://github.com/tailwindlabs/tailwindcss/issues/4690#issuecomment-1046087220
 // 对于任何将 Tailwind 的完整默认颜色传播到 theme.colors 的人，都会收到警告
@@ -24,11 +24,11 @@ function withOpacityValue(variable: any) {
     if (opacityValue === undefined) {
       // @ts-ignore
       // 加上默认值，否则没有颜色提示
-      return `rgb(var(${variable},${ThemeVarsConst[variable]}))`
+      return `rgb(var(${variable},${lightTheme[variable]}))`
     }
     // @ts-ignore
     // 加上默认值，否则没有颜色提示
-    return `rgba(var(${variable},${ThemeVarsConst[variable]}), ${opacityValue})`
+    return `rgba(var(${variable},${lightTheme[variable]}), ${opacityValue})`
   }
 }
 
@@ -50,32 +50,32 @@ const themeColor = {
   yellow: {
     ...colors.yellow,
     ...yellow,
-    DEFAULT: `var(--color-yellow,${ThemeVarsConst['--color-yellow']})` // 默认值，方便编辑器识别颜色提示 text-yellow
+    DEFAULT: `var(--color-yellow,${lightTheme['--color-yellow']})` // 默认值，方便编辑器识别颜色提示 text-yellow
   },
   // 灰色系
   gray: {
     ...colors.gray,
     ...gray,
     // 文字颜色
-    DEFAULT: `var(--color-text-primary,${ThemeVarsConst['--color-text-primary']})` // 默认值，文字主色 text-primary
+    DEFAULT: `var(--color-text-primary,${lightTheme['--color-text-primary']})` // 默认值，文字主色 text-primary
   },
   // 绿色系
   green: {
     ...colors.green,
     ...green,
-    DEFAULT: `var(--color-green,${ThemeVarsConst['--color-green']})` // 默认值 text-green
+    DEFAULT: `var(--color-green,${lightTheme['--color-green']})` // 默认值 text-green
   },
   // 红色系
   red: {
     ...colors.red,
     ...red,
-    DEFAULT: `var(--color-red,${ThemeVarsConst['--color-red']})` // 默认值 text-red
+    DEFAULT: `var(--color-red,${lightTheme['--color-red']})` // 默认值 text-red
   },
   // 蓝色系
   blue: {
     ...colors.blue,
     ...blue,
-    DEFAULT: `var(--color-blue,${ThemeVarsConst['--color-blue']})` // 默认值 text-blue
+    DEFAULT: `var(--color-blue,${lightTheme['--color-blue']})` // 默认值 text-blue
   }
 }
 
@@ -87,11 +87,11 @@ export default {
   colors: {
     // 品牌主色
     brand: {
-      DEFAULT: `var(--color-brand-primary,${ThemeVarsConst['--color-brand-primary']})`, // 默认值 text-brand
-      'text-primary': `var(--color-brand-text-primary,${ThemeVarsConst['--color-brand-text-primary']})` // 品牌主色-文字颜色
+      DEFAULT: `var(--color-brand-primary,${lightTheme['--color-brand-primary']})`, // 默认值 text-brand
+      'text-primary': `var(--color-brand-text-primary,${lightTheme['--color-brand-text-primary']})` // 品牌主色-文字颜色
       // secondary: colorBrandSecondary // 品牌色-第二色-衍生色1
-      // weak: ThemeVarsConst.colorBrandWeak // 品牌色-衍生色2
-      // light: ThemeVarsConst.colorBrandLight // 品牌色-衍生色3
+      // weak: lightTheme.colorBrandWeak // 品牌色-衍生色2
+      // light: lightTheme.colorBrandLight // 品牌色-衍生色3
     },
 
     // =========== 颜色覆盖 ==============
@@ -100,7 +100,7 @@ export default {
   // 边框样式
   borderColor: {
     ...themeColor,
-    primary: `var(--border-primary-color,${ThemeVarsConst['--border-primary-color']})`
+    primary: `var(--border-primary-color,${lightTheme['--border-primary-color']})`
   },
   // 响应式
   screens: {
@@ -126,13 +126,13 @@ export default {
     // ======== 使用css变量，方便切换主题，使用方法：text-primary ==============
     // 主题文字变量
     textColor: {
-      primary: `var(--color-text-primary,${ThemeVarsConst['--color-text-primary']})`, // 多写一个默认值，为了让编辑器识别颜色变量
-      secondary: `var(--color-text-secondary,${ThemeVarsConst['--color-text-secondary']})`,
-      weak: `var(--color-text-weak,${ThemeVarsConst['--color-text-weak']})`
+      primary: `var(--color-text-primary,${lightTheme['--color-text-primary']})`, // 多写一个默认值，为了让编辑器识别颜色变量
+      secondary: `var(--color-text-secondary,${lightTheme['--color-text-secondary']})`,
+      weak: `var(--color-text-weak,${lightTheme['--color-text-weak']})`
     },
     // 主题背景颜色变量
     backgroundColor: {
-      primary: `var(--bg-primary,${ThemeVarsConst['--bg-primary']})` // 页面背景颜色
+      primary: `var(--bg-primary,${lightTheme['--bg-primary']})` // 页面背景颜色
     },
     boxShadow: {
       custom: '0px 2px 70px 0px rgba(80,80,80,0.07)',

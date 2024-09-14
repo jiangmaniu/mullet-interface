@@ -14,13 +14,20 @@ type IDirection = 0 | 1
 interface IThemeContextProps {
   /**全局主题色 */
   theme: IThemeMode
+  /**交易页面主题色 */
+  tradeTheme: IThemeMode
+  /**是否是黑色主题 */
+  isDark?: boolean
   /**0绿涨红跌 1红涨绿跌 */
   direction: IDirection
   /**涨 颜色 */
   upColor: string
   /**跌 颜色 */
   downColor: string
+  /**设置主题色 */
   setTheme: (theme: IThemeMode) => void
+  /**切换主题色 */
+  toggleTheme: () => void
   /**设置0绿涨红跌 1红涨绿跌 */
   setDirection: (key: IDirection) => void
 }
@@ -64,13 +71,20 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
 
   // 监听系统主题模式
   useEffect(() => {
+    // 优先获取交易页面主题，如果没有获取到，则获取全局主题
+    const themeMode = STORAGE_GET_TRADE_THEME() || STORAGE_GET_THEME()
+
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    setTheme(darkModeMediaQuery.matches ? 'dark' : 'light')
+    const matchMode = darkModeMediaQuery.matches ? 'dark' : 'light'
+    const mode = themeMode ? themeMode : matchMode
+
+    handleSetTheme(mode)
+
     const listener = (event: any) => {
       const themeMode = event.matches ? 'dark' : 'light'
 
-      setTheme(themeMode)
-      setThemeClassName(themeMode)
+      // 监听系统主题切换
+      handleSetTheme(themeMode)
     }
 
     darkModeMediaQuery.addEventListener('change', listener)
@@ -85,21 +99,19 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     setThemeClassName(mode)
   }
 
-  useEffect(() => {
-    // 优先获取交易页面主题，如果没有获取到，则获取全局主题
-    const themeMode = STORAGE_GET_TRADE_THEME() || STORAGE_GET_THEME() || 'light'
-    setTheme(themeMode)
-    setTradeTheme(themeMode)
-  }, [])
-
   return (
     <ThemeContext.Provider
       value={{
         theme,
+        tradeTheme,
+        isDark: theme === 'dark',
         direction,
         setDirection,
         upColor: themeConfig.upColor,
         downColor: themeConfig.downColor,
+        toggleTheme: () => {
+          setTheme(theme === 'dark' ? 'light' : 'dark')
+        },
         setTheme: (mode: IThemeMode) => {
           if (mode) {
             handleSetTheme(mode)

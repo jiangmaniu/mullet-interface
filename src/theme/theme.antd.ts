@@ -26,6 +26,8 @@ export default {
   fontFamily, // 字体
   colorText: colorTextPrimary, // 文字主色
 
+  motion: false, // 动画关闭，否则切换主题样式会闪烁
+
   // 组件对应的token
   Tabs: {
     itemHoverColor: gray900, // 标签悬浮态文本颜色
@@ -41,6 +43,7 @@ export default {
     colorPrimaryBorderHover: shadeColor(bluePrimary, 60), // 主色梯度下的悬浮态
     colorPrimaryActive: bluePrimary, // 主色梯度下的深色激活态。
     defaultBorderColor: gray150
+    // borderColorDisabled // 禁用状态边框颜色
     // https://ant-design.antgroup.com/components/button-cn#%E4%B8%BB%E9%A2%98%E5%8F%98%E9%87%8Fdesign-token
     // defaultHoverBg: bluePrimary,
     // defaultActiveBorderColor: bluePrimary,
@@ -55,11 +58,13 @@ export default {
   InputNumber: {
     activeBorderColor: gray500, // 激活态边框色
     handleHoverColor: gray500, // 操作按钮悬浮颜色
-    hoverBorderColor: gray500 // 悬浮态边框色
+    hoverBorderColor: gray500, // 悬浮态边框色
+    activeShadow: 'none' // 激活态阴影
   },
   Input: {
     activeBorderColor: gray500, // 激活态边框色
-    hoverBorderColor: gray500 // 悬浮态边框色
+    hoverBorderColor: gray500, // 悬浮态边框色
+    activeShadow: 'none' // 激活态阴影
   },
   DatePicker: {
     // activeBorderColor: gray500, // 激活态边框色
@@ -95,9 +100,12 @@ export default {
     buttonColor: 'red'
   },
   Segmented: {
-    // itemSelectedBg: 'rgb(247, 247, 247)',
-    // itemSelectedColor: '#222222',
-    // boxShadowTertiary: 'none',
-    // trackBg: 'white'
+    itemSelectedBg: 'rgb(247, 247, 247)',
+    itemSelectedColor: '#222222',
+    boxShadowTertiary: 'none',
+    trackBg: 'white'
   }
+  // Pagination: {
+  //   colorBgContainer: lightTheme['--color-brand-primary']
+  // }
 }

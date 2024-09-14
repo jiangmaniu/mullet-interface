@@ -46,8 +46,14 @@ export const gray = {
   450: '#9E9E9E',
   500: '#9C9C9C',
   550: '#929292',
+  560: '#454A4F',
   570: '#767E8A',
+  572: '#7E7E7E',
+  575: '#2A2B2E',
+  578: '#2A2A32',
   580: '#424242',
+  585: '#2d2d2d',
+  590: '#21262A',
   600: '#6A7073',
   620: '#454548',
   650: '#514F4F',
@@ -133,7 +139,9 @@ const getColors = (colors: any, name: any) => {
   return result
 }
 
-export const ThemeVarsConst = {
+// 亮色主题变量
+// 自定义组件使用的css变量，antd组件请在theme.antd.ts中定义
+export const lightTheme = {
   // brand
   '--color-brand-primary': colorBrandPrimary, // 品牌主色
   '--color-brand-text-primary': colorBrandPrimary, // 品牌主色-文字颜色
@@ -150,11 +158,14 @@ export const ThemeVarsConst = {
   // button
   '--btn-primary': colorBrandPrimary, // 按钮主色
   '--btn-default-border': gray['200'], // 默认按钮边框
-  '--btn-disabled-bg': gray['150'], // 禁用背景色
+  '--btn-default-bg': 'hsla(0, 0%, 97%, 0.7)', // 默认按钮背景色
+  '--btn-disabled-bg': gray['50'], // 禁用背景色
+  '--btn-disabled-text-color': gray['500'], // 禁用按钮文字颜色
+  // '--btn-disabled-bg': gray['150'], // 禁用背景色
 
   // input
   '--input-bg': colorWhite, // 输入框背景色
-  '--input-disabled-bg': gray['150'], // 输入框禁用置灰背景色
+  '--input-disabled-bg': gray['50'], // 输入框禁用置灰背景色
   '--input-disabled-border': gray['150'], // 输入框禁用置灰背景色
   '--input-border': gray['200'], // 输入边框颜色
   '--input-border-hover': gray['500'], // 输入框hover边框颜色
@@ -198,6 +209,10 @@ export const ThemeVarsConst = {
   // 头部渐变颜色
   '--card-gradient-header-bg': 'linear-gradient(1deg, #FFFFFF 10%, #CDE2FF 100%)', // 卡片渐变背景颜色
 
+  // 滚动条颜色
+  '--scrollbar-color': `${colorWhite} ${colorWhite}`, // 滚动条颜色
+  '--scrollbar-hover-color': `rgba(0, 0, 0, 0.05) ${colorWhite}`, // hover颜色 第一个滚动条颜色、第二个滚动条轨道颜色
+
   // list
   '--list-item-disabled': 'rgb(246,246,246, 0.4)', // 列表项目禁用颜色
   '--list-hover-primary-bg': gray['125'], // hover主要颜色
@@ -235,9 +250,8 @@ export const ThemeVarsConst = {
 }
 
 // 黑色主色变量
-export const ThemeDarkVarsConst = {
-  ...ThemeVarsConst, // 继承
-
+// 自定义组件使用的css变量，antd组件请在theme.antd.ts中定义
+export const darkTheme = {
   // brand
   '--color-brand-primary': blue['500'], // 品牌主色
   '--color-brand-text-primary': blue['400'], // 品牌主色-文字颜色
@@ -254,7 +268,9 @@ export const ThemeDarkVarsConst = {
   // button
   '--btn-primary': blue['500'], // 按钮主色
   '--btn-default-border': gray['656'], // 默认按钮边框
+  '--btn-default-bg': gray['620'], // 默认按钮背景色
   '--btn-disabled-bg': gray['651'], // 禁用背景色
+  '--btn-disabled-text-color': gray['500'], // 禁用按钮文字颜色
 
   // input
   '--input-bg': gray['750'], // 输入框背景色
@@ -304,7 +320,7 @@ export const ThemeDarkVarsConst = {
   '--list-item-disabled': gray['651'], // 列表项目禁用颜色
   '--list-hover-bg': gray['660'], // 列表项hover背景颜色
 
-  '--list-hover-primary-bg': gray['660'], // hover主要颜色
+  '--list-hover-primary-bg': gray['590'], // hover主要颜色
   '--list-hover-light-bg': gray['655'], // hover-淡一点的颜色
 
   // 深度进度条颜色
@@ -312,7 +328,11 @@ export const ThemeDarkVarsConst = {
   '--depth-sell-bg': 'rgba(250, 46, 76, 0.2)', // 卖
 
   // 头部渐变颜色
-  '--card-gradient-header-bg': gray['730'], // 卡片渐变背景颜色
+  '--card-gradient-header-bg': 'transparent', // 卡片渐变背景颜色
+
+  // 滚动条颜色
+  '--scrollbar-color': `${gray[800]} ${gray[800]}`, // 滚动条颜色
+  '--scrollbar-hover-color': `${gray[578]} ${gray[800]}`, // hover颜色 第一个滚动条颜色、第二个滚动条轨道颜色
 
   // 默认颜色
   '--color-gray': gray['95'], // 默认全局黑
@@ -333,10 +353,14 @@ const setRootVars = (themeVars: any) => {
 // 黑色主题，修改<html class="dark" /> 切换主题
 export const cssVars = `
   :root {
-    ${setRootVars(ThemeVarsConst)}
+    ${setRootVars(lightTheme)}
   }
   :root[class=dark] {
-    ${setRootVars(ThemeDarkVarsConst)}
+    ${setRootVars(darkTheme)}
     color-scheme: dark;
+    .adm-tabs-header-mask-left,
+    .adm-tabs-header-mask-right {
+      display: none !important;
+    }
   }
 `

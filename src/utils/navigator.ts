@@ -5,7 +5,14 @@ import { WEB_HOME_PAGE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { logout } from '@/services/api/user'
 
-import { STORAGE_GET_TOKEN, STORAGE_REMOVE_TOKEN, STORAGE_REMOVE_USER_INFO, STORAGE_SET_CONF_INFO } from './storage'
+import {
+  STORAGE_GET_TOKEN,
+  STORAGE_REMOVE_TOKEN,
+  STORAGE_REMOVE_USER_INFO,
+  STORAGE_SET_CONF_INFO,
+  STORAGE_SET_THEME,
+  STORAGE_SET_TRADE_THEME
+} from './storage'
 
 /**
  * 退出登录
@@ -19,6 +26,9 @@ export const onLogout = async (noRequestLogout?: boolean) => {
   STORAGE_REMOVE_TOKEN()
   STORAGE_REMOVE_USER_INFO()
   STORAGE_SET_CONF_INFO('', 'currentAccountInfo') // 重置当前选择的账户
+  // 退出登录重置主题
+  STORAGE_SET_TRADE_THEME('light')
+  STORAGE_SET_THEME('light')
 
   // 关闭行情
   stores.ws.close()

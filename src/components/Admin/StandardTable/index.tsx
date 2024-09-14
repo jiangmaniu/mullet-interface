@@ -415,11 +415,12 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         '&::-webkit-scrollbar': {
           height: isDark ? '4px !important' : `${hasProList ? 7 : 0}px !important`,
           width: 0,
-          overflowY: 'auto'
+          scrollbarColor: 'transparent'
         },
         '&::-webkit-scrollbar-thumb': {
           borderRadius: 5,
-          backgroundColor: `${isDark ? '#17171c' : '#f7f7f7'} !important`
+          backgroundColor: `${isDark ? '#17171c' : '#f7f7f7'} !important`,
+          background: 'none !important'
         },
         '&::-webkit-scrollbar-track': {
           boxShadow: 0,
@@ -431,6 +432,13 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           borderRadius: 5,
           boxShadow: 'inset 0 0 5px rgba(239, 239, 239, 1)'
         }
+      },
+      '.ant-table .ant-table-content': {
+        scrollbarWidth: 'thin',
+        scrollbarColor: 'var(--scrollbar-color)'
+      },
+      '.ant-table:hover .ant-table-content': {
+        scrollbarColor: 'var(--scrollbar-hover-color)'
       },
       '.ant-form': {
         background: `${searchFormBgColor || 'rgb(248, 248, 248)'} !important`
@@ -455,7 +463,11 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           width: '0 !important'
         },
       '.ant-pagination': {
-        marginRight: '10px !important'
+        marginRight: '0 !important',
+        marginTop: '0 !important',
+        paddingTop: 16,
+        background: 'var(--bg-primary)',
+        paddingRight: '10px'
       }
     }
   })
@@ -494,7 +506,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
               ...pagination
             }
       }
-      locale={{ emptyText: <Empty /> }}
+      locale={{ emptyText: !requestResult?.data?.length && !dataSource?.length ? <Empty /> : <div className="h-[200px]"></div> }}
       // 幽灵模式，是否取消表格区域的 padding
       ghost={false}
       scroll={{ x: 1200, ...scroll }}

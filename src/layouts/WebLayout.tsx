@@ -18,7 +18,7 @@ export default function WebLayout() {
   }
 
   return (
-    <div className='bg-[url("/img/bg.png")] bg-[length:100%_100%] bg-no-repeat'>
+    <div className="bg-primary">
       <Header />
       <div
         className={classNames('pt-24 pb-24 max-myxl:pb-14 min-h-screen mx-auto', {

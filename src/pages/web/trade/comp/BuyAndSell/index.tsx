@@ -66,8 +66,7 @@ export default observer(
         <div
           className={cn({
             'h-[700px] w-[300px] relative bg-primary flex-shrink-0': isPc,
-            [className]: isPc,
-            'pointer-events-none': trade.disabledTrade
+            [className]: isPc
           })}
         >
           <Tabs
@@ -98,6 +97,9 @@ export default observer(
           <div style={{ display: orderType === 'STOP_LIMIT_ORDER' ? 'block' : 'none' }}>
             <StopLimitOrder popupRef={popupRef} />
           </div>
+
+          {/* 禁用交易区操作 */}
+          {trade.disabledTradeAction() && <div className="absolute top-0 left-0 w-full h-full z-[30] cursor-not-allowed"></div>}
         </div>
       )
     }

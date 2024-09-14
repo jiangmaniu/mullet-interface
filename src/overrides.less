@@ -245,9 +245,10 @@
 
 // 修改默认按钮悬停效果
 .ant-btn-default {
+  background-color: var(--btn-default-bg) !important;
   &:hover {
     color: var(--color-text-primary) !important;
-    background-color: hsla(0, 0%, 97%, 0.7) !important;
+    background-color: var(--btn-default-bg) !important;
     border-color: #d9d9d9 !important;
   }
 }
@@ -328,8 +329,10 @@
 
 // 按钮禁用样式
 .ant-btn-primary:disabled {
-  color: #fff !important;
-  background: rgba(156, 156, 156, 0.5) !important;
+  color: var(--btn-disabled-text-color) !important;
+  // background: rgba(156, 156, 156, 0.5) !important;
+  background: var(--btn-disabled-bg) !important;
+  border: none !important;
 }
 
 // textarea 覆盖， 禁用拖动，数量提示在输入框内展示
@@ -440,12 +443,11 @@ input:focus {
 
 .account.ant-segmented {
   overflow: hidden;
-  background: white;
+  // background: white;
   border: 0.5px solid rgb(218, 218, 218);
   border-radius: 26px;
 
   .ant-segmented-item-selected {
-    background: rgb(247, 247, 247);
     box-shadow: none !important;
   }
 
@@ -453,7 +455,6 @@ input:focus {
     height: 30px;
     margin: 1px;
     padding: 1px 10px;
-    background: rgb(247, 247, 247);
     border-radius: 26px;
     box-shadow: none !important;
     animation: borderRadiusChange 0.3s ease-in-out forwards;
@@ -479,4 +480,8 @@ input:focus {
     border-radius: 26px;
     box-shadow: none !important;
   }
+}
+
+.custom-modal .ant-modal-content {
+  border: 1px solid var(--modal-border-color) !important;
 }

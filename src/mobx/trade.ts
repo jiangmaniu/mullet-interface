@@ -2,6 +2,7 @@ import { getIntl } from '@umijs/max'
 import { keyBy } from 'lodash'
 import { action, computed, configure, makeObservable, observable, runInAction } from 'mobx'
 
+import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 import { getTradeSymbolCategory } from '@/services/api/common'
 import { getTradeSymbolList } from '@/services/api/tradeCore/account'
 import { getAccountGroupList } from '@/services/api/tradeCore/accountGroup'
@@ -15,7 +16,7 @@ import {
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
-import { toFixed } from '@/utils'
+import { toFixed, uniqueObjectArray } from '@/utils'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
@@ -94,6 +95,7 @@ class TradeStore {
 
   // ====== 历史交易记录 ===========
   @observable positionList = [] as Order.BgaOrderPageListItem[] // 持仓列表
+  @observable positionListCalcCache = [] as Order.BgaOrderPageListItem[] // 持仓列表-计算处理过浮动盈亏的
   @observable pendingList = [] as Order.OrderPageListItem[] // 挂单列表
   @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
   @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
@@ -193,15 +195,13 @@ class TradeStore {
   jumpTrade = () => {
     this.setSwitchAccountLoading(true)
 
-    setTimeout(() => {
-      // 需要刷新k线，否则切换不同账号加载的品种不一样
-      push('/trade')
-      // @ts-ignore
-      klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
-    }, 500)
+    // 需要刷新k线，否则切换不同账号加载的品种不一样
+    push('/trade')
+    // @ts-ignore
+    klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
 
     setTimeout(() => {
-      // 让动画播放
+      // 停止动画播放
       this.setSwitchAccountLoading(false)
     }, 2000)
   }
@@ -210,15 +210,18 @@ class TradeStore {
   @action
   getAccountBalance = () => {
     const currentAccountInfo = this.currentAccountInfo
+    const currencyDecimal = currentAccountInfo.currencyDecimal
 
     // 账户余额
-    const money = Number(toFixed(currentAccountInfo.money || 0))
+    const money = Number(toFixed(currentAccountInfo.money || 0, currencyDecimal))
     // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
-    const occupyMargin = Number(toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0)))
+    const occupyMargin = Number(
+      toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0), currencyDecimal)
+    )
     // 可用保证金
-    const availableMargin = Number(toFixed(money - occupyMargin))
+    const availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
     // 持仓总浮动盈亏
-    const totalProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), 2))
+    const totalProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), currencyDecimal))
     // 持仓单总的库存费
     const totalInterestFees = this.positionList.reduce((total, next) => total + Number(next.interestFees || 0), 0) || 0
     // 持仓单总的手续费
@@ -238,11 +241,16 @@ class TradeStore {
   }
 
   /**
+   *
+   * @param item
+   * @returns
+   */
+  /**
    * 计算全仓/逐仓：保证金率、维持保证金
    * @param item 持仓单item
    * @returns
    */
-  getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
+  getMarginRateInfo = (item?: IPositionItem) => {
     const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
     const quote = getCurrentQuote()
     const conf = item?.conf || quote?.symbolConf // 品种配置信息
@@ -255,18 +263,19 @@ class TradeStore {
 
     let marginRate = 0
     let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
-    let compelCloseRatio = this.positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+    const positionList = this.positionList // 注意这里外部传递过来的list是处理过汇率 浮动盈亏的
+    let compelCloseRatio = positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
     compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
     if (isCrossMargin) {
       // 判断是否存在全仓单
-      const hasCrossMarginOrder = this.positionList.some((item) => item.marginType === 'CROSS_MARGIN')
+      const hasCrossMarginOrder = positionList.some((item) => item.marginType === 'CROSS_MARGIN')
       if (hasCrossMarginOrder) {
         marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
         margin = Number(occupyMargin * compelCloseRatio)
       }
     } else {
       // 当前筛选的逐仓单订单信息
-      const currentLiquidationSelectItem = this.positionList.find((item) => item.id === currentLiquidationSelectBgaId)
+      const currentLiquidationSelectItem = this.positionListCalcCache.find((item) => item.id === currentLiquidationSelectBgaId)
       const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
       const isLockedMode = currentLiquidationSelectItem?.mode === 'LOCKED_POSITION' // 当前筛选的项，是否是锁仓模式的订单
 
@@ -275,7 +284,7 @@ class TradeStore {
       if (isLockedMode && !item?.id) {
         filterPositionList = [currentLiquidationSelectItem]
       } else {
-        filterPositionList = item ? [item] : this.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
+        filterPositionList = item ? [item] : positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
       }
 
       let orderMargin = 0 // 订单总的保证金
@@ -380,9 +389,6 @@ class TradeStore {
   setOpenSymbolNameList(name: string) {
     this.setActiveSymbolName(name)
     if (this.openSymbolNameList.some((item) => item.symbol === name)) return
-    const symbolItem = this.symbolList.find((item) => item.symbol === name) as Account.TradeSymbolListItem
-    this.openSymbolNameList.push(symbolItem)
-    this.updateLocalOpenSymbolNameList()
   }
 
   // 移除打开的symbol
@@ -489,23 +495,60 @@ class TradeStore {
   }
 
   // 判断本地收藏的品种是否禁用被下架的
-  @computed get disabledSymbol() {
+  @action
+  disabledSymbol = () => {
     return !this.symbolListAll.some((item) => item.symbol === this.activeSymbolName)
   }
 
   // 禁用交易
-  @computed get disabledTrade() {
+  @action
+  disabledTrade = () => {
     // enableConnect 启用禁用账户组
     // isTrade 启用禁用账户交易
-    return this.disabledSymbol || !this.currentAccountInfo.enableTrade || !this.currentAccountInfo.isTrade
+    return this.disabledSymbol() || !this.currentAccountInfo.enableTrade || !this.currentAccountInfo.isTrade
   }
 
   // 禁用切换账户
+  @action
   disabledConect = (accountItem?: User.AccountItem) => {
     // enableConnect 启用禁用账户组
     // status 启用禁用账号
     const item = accountItem || this.currentAccountInfo
     return !item.enableConnect || item?.status === 'DISABLED'
+  }
+
+  // 禁用交易区操作
+  @action
+  disabledTradeAction = () => {
+    // 账户禁用或者是休市状态
+    return this.disabledTrade() || !this.isMarketOpen()
+  }
+
+  // 判断是否休市状态，根据当前时间判断是否在交易时间段内
+  @action
+  isMarketOpen = (symbol?: string) => {
+    const symbolInfo = this.getActiveSymbolInfo(symbol)
+    const tradeTimeConf = symbolInfo?.symbolConf?.tradeTimeConf || []
+
+    if (!symbolInfo.id) return false
+
+    const now = new Date()
+    const currentDay = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'][now.getDay()]
+    const currentMinutes = now.getHours() * 60 + now.getMinutes()
+    // @ts-ignore
+    const dayConfig = tradeTimeConf.find((config: any) => config.weekDay === currentDay)
+    if (!dayConfig) return false
+
+    // 每隔两个值表示一个时间段，第一个值表示开始时间，第二个值表示结束时间。时间按分钟计算
+    for (let i = 0; i < dayConfig.trade.length; i += 2) {
+      const start = dayConfig.trade[i]
+      const end = dayConfig.trade[i + 1]
+      if (currentMinutes >= start && currentMinutes <= end) {
+        return true
+      }
+    }
+
+    return false
   }
 
   // 获取全部品种列表
@@ -553,7 +596,11 @@ class TradeStore {
       })
 
       // 获取品种后，动态订阅品种
-      ws.batchSubscribeSymbol()
+      if (ws.socket?.readyState === 1) {
+        ws.batchSubscribeSymbol()
+      } else {
+        ws.reconnect()
+      }
     }
   }
 
@@ -594,6 +641,14 @@ class TradeStore {
     }
     return res
   }
+
+  @action
+  setPositionListCalcCache = (list: Order.BgaOrderPageListItem[]) => {
+    runInAction(() => {
+      this.positionListCalcCache = uniqueObjectArray([...this.positionListCalcCache, ...list], 'id')
+    })
+  }
+
   // 查询挂单列表
   @action
   getPendingList = async () => {
@@ -629,7 +684,9 @@ class TradeStore {
   // 下单操作
   // 携带持仓订单号则为平仓单，只需要传递持仓单号、交易账户ID、订单数量、订单类型和反向订单方向，其他参数无效
   createOrder = async (params: Order.CreateOrder) => {
+    const intl = getIntl()
     const orderType = params.type
+    const isBuy = params.buySell === 'BUY'
     const res = await createOrder(params)
     if (res.success) {
       // 市价单：买入卖出单
@@ -638,9 +695,17 @@ class TradeStore {
         // this.getPositionList()
         // 携带持仓订单号则为平仓单
         if (params.executeOrderId) {
-          message.info(getIntl().formatMessage({ id: 'mt.pingcangchenggong' }))
+          message.info(intl.formatMessage({ id: 'mt.pingcangchenggong' }))
         } else {
-          message.info(getIntl().formatMessage({ id: 'mt.kaicangchenggong' }))
+          message.info(intl.formatMessage({ id: 'mt.kaicangchenggong' }))
+          // notification.success({
+          //   message: intl.formatMessage({ id: 'mt.kaicangchenggong' }),
+          //   description: `${isBuy ? intl.formatMessage({ id: 'mt.mairu' }) : intl.formatMessage({ id: 'mt.maichu' })} ${
+          //     params.orderVolume
+          //   }${intl.formatMessage({ id: 'mt.lot' })} ${intl.formatMessage({ id: 'mt.jiage' })}:${params.limitPrice}`,
+          //   placement: 'bottomLeft',
+          //   duration: 5000
+          // })
         }
         // 激活Tab
         trade.setTabKey('POSITION')

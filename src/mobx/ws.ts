@@ -112,42 +112,8 @@ class WSStore {
   @observable symbols = {} // 储存品种请求列表
   @observable websocketUrl = ENV.ws
 
-  @observable isQuotePushing = true // 判断行情是否一直实时在推送
-  QUOTE_PUSH_TIMEOUT = 5000 // 行情推送5秒超时
-  quotePushTimer: NodeJS.Timeout | null = null // 行情推送定时器
-  lastQuotePushTime = 0 // 行情最后推送时间
-
-  // ====================== 检查行情开始 ========================================
-  // 开始检查行情推送状态
-  startQuotePushCheck() {
-    if (this.quotePushTimer) clearInterval(this.quotePushTimer)
-    this.quotePushTimer = setInterval(() => {
-      this.checkQuotePushStatus()
-    }, 1000) // 每秒检查一次
-  }
-  // 检查行情推送状态
-  checkQuotePushStatus() {
-    const lastPushTime = this.lastQuotePushTime || 0
-    const currentTime = Date.now()
-    if (currentTime - lastPushTime > this.QUOTE_PUSH_TIMEOUT) {
-      runInAction(() => {
-        this.isQuotePushing = false
-      })
-    }
-  }
-  // 更新最后一次行情推送时间
-  updateLastQuotePushTime() {
-    this.lastQuotePushTime = Date.now()
-    runInAction(() => {
-      this.isQuotePushing = true
-    })
-  }
-  // ====================== 检查行情结束 ========================================
-
   @action
   async connect() {
-    this.startQuotePushCheck()
-
     const token = STORAGE_GET_TOKEN()
     // token不要传bear前缀
     // 游客传WebSocket:visitor
@@ -166,7 +132,7 @@ class WSStore {
 
       // 开启定时器推送数据
       this.batchUpdateQuoteDataByTimer() // 更新行情
-      this.batchUpdateDepthDataByTimer() // 更新深度
+      // this.batchUpdateDepthDataByTimer() // 更新深度
     })
     this.socket.addEventListener('message', (d: any) => {
       const res = JSON.parse(d.data)
@@ -295,14 +261,6 @@ class WSStore {
     // 关闭socket指令
     this.socket?.close?.()
     this.stopHeartbeat()
-
-    if (this.quotePushTimer) {
-      clearInterval(this.quotePushTimer)
-      this.quotePushTimer = null
-      runInAction(() => {
-        this.isQuotePushing = true
-      })
-    }
   }
 
   @action
@@ -382,13 +340,15 @@ class WSStore {
     this.batchQuoteTimer = setInterval(() => {
       // 更新行情
       this.updateQuoteData()
-    }, 300)
+      // 更新深度
+      this.updateDepthData()
+    }, 200)
   }
 
   // 批量更新行情数据，通过指定数量
   @action
   batchUpdateQuoteDataByNumber = (data: any) => {
-    if (this.quotesCacheArr.length > 12) {
+    if (this.quotesCacheArr.length > 5) {
       this.updateQuoteData()
     } else {
       this.quotesCacheArr.push(data)
@@ -432,7 +392,6 @@ class WSStore {
   // 批量更新深度数据，通过指定数量
   @action
   batchUpdateDepthDataByNumber = (data: any) => {
-    // 限流
     if (this.depthCacheArr.length > 2) {
       this.updateDepthData()
     } else {
@@ -466,9 +425,6 @@ class WSStore {
       // 行情
       case MessageType.symbol:
         // this.batchUpdateQuoteDataByNumber(data)
-        // 更新最后一次行情推送时间
-        this.updateLastQuotePushTime()
-
         // 推入缓冲区
         this.quotesCacheArr.push(data)
 

@@ -15,19 +15,18 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 底部浮动条
 function Footer() {
-  const { theme } = useTheme()
+  const { isDark } = useTheme()
   const networkState = useNetwork()
   const { ws, trade, kline } = useStores()
   const readyState = ws.socket?.readyState
   const isOnline = networkState.online
-  const isQuotePushing = ws.isQuotePushing // 判断是否有行情数据推送
   const [openTips, setOpenTips] = useState<any>(false)
   const disConnected = !isOnline || readyState === 3
   const scroll = useScroll(document)
 
   useEffect(() => {
-    setOpenTips(!isOnline || readyState === 3 || !isQuotePushing)
-  }, [isOnline, readyState, isQuotePushing])
+    setOpenTips(!isOnline || readyState === 3)
+  }, [isOnline, readyState])
 
   useEffect(() => {
     if (scroll?.top > 100) {
@@ -80,7 +79,7 @@ function Footer() {
         placement="topLeft"
         title={
           <span>
-            {isQuotePushing ? connectedStatusMap?.desc : <FormattedMessage id="mt.dangqianfuwumeiyouhangqingshujutuisong" />}
+            {connectedStatusMap?.desc}
             {disConnected && (
               <Button
                 type="link"
@@ -103,29 +102,27 @@ function Footer() {
         }}
       >
         <div className="flex items-center border-r border-r-gray-200 dark:border-r-gray-700 pr-3">
-          {isQuotePushing && (
-            <div className="flex items-center">
-              {disConnected ? (
-                <img src="/img/duankailianjie.png" width={16} height={14} />
-              ) : (
-                <SignalIcon color={`var(${connectedStatusMap?.color})`} />
-              )}
-              <span className="pl-1 text-xs font-normal text-weak">{connectedStatusMap?.title}</span>
-            </div>
-          )}
+          <div className="flex items-center">
+            {disConnected ? (
+              <img src="/img/duankailianjie.png" width={16} height={14} />
+            ) : (
+              <SignalIcon color={`var(${connectedStatusMap?.color})`} />
+            )}
+            <span className="pl-1 text-xs font-normal text-weak">{connectedStatusMap?.title}</span>
+          </div>
           {/* 没有行情数据推送 */}
-          {!isQuotePushing && (
+          {/* {!isQuotePushing && (
             <div className="flex items-center">
               <SignalIcon color={`var(--color-yellow-500)`} />
               <span className="pl-1 text-xs font-normal text-weak">
                 <FormattedMessage id="mt.lianjiezhengchang" />
               </span>
             </div>
-          )}
+          )} */}
         </div>
       </Tooltip>
       <div className="flex h-full flex-1 items-center overflow-x-auto">
-        <Marquee pauseOnHover speed={30} gradient={theme === 'dark' ? false : true}>
+        <Marquee pauseOnHover speed={30} gradient={isDark ? false : true}>
           {trade.symbolList.map((item, idx) => {
             const res = getCurrentQuote(item.symbol)
             const per: any = res.percent

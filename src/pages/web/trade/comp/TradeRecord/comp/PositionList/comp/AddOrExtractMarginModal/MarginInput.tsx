@@ -45,6 +45,7 @@ function MarginInput({ onChange, initialValue, isAdd, availableMargin }: IProps,
     <div>
       <InputNumber
         showAddMinus={false}
+        showFloatTips={false}
         label={
           <div className="text-primary font-semibold text-sm mb-1">
             {isAdd ? <FormattedMessage id="mt.zengjiazhengjin" /> : <FormattedMessage id="mt.jianshaobaozhengjin" />}

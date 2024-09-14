@@ -6,7 +6,7 @@ import { forwardRef, useEffect, useState, useTransition } from 'react'
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum, getPrecisionByNumber } from '@/utils'
+import { formatNum, getPrecisionByNumber, toFixed } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
@@ -15,6 +15,7 @@ import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
+import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
@@ -79,12 +80,23 @@ export default observer(
     const step2 = Math.pow(10, -(d - 1)) || step
     const countPrecision = getPrecisionByNumber(symbolConf?.minTrade) // 手数精度
 
+    // 给价格输入框加上默认值
+    const getInitPriceValue = () => {
+      if (isBuy) {
+        // 买：输入框减少0.2
+        return ask ? toFixed(ask - 0.2, d) : 0
+      } else {
+        // 卖：输入框增加0.2
+        return bid ? toFixed(bid + 0.2, d) : 0
+      }
+    }
+
     // 切换品种、买卖重置内容
     useEffect(() => {
       setSl(0)
       setSp(0)
       setCount(vmin)
-      setPrice(0)
+      setPrice(getInitPriceValue())
     }, [symbol, buySell, orderType, vmin])
 
     useEffect(() => {
@@ -161,6 +173,9 @@ export default observer(
         message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
         return
       }
+      if (!Number(maxOpenVolume)) {
+        return message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
+      }
       if (count < vmin || count > maxOpenVolume) {
         message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
         return
@@ -202,9 +217,9 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = trade.disabledTrade || (sp && sp < sp_scope) || (sl && sl > sl_scope)
+    const disabledBtn = trade.disabledTrade() || (sp && sp < sp_scope) || (sl && sl > sl_scope)
     // 禁用交易
-    const disabledTrade = trade.disabledTrade
+    const disabledTrade = trade.disabledTrade()
 
     return (
       <div className="mx-[10px] mt-3 flex flex-col justify-between h-[630px]">
@@ -386,7 +401,7 @@ export default observer(
             showAddMinus
             autoFocus={false}
             direction="column"
-            classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[74px]' }}
+            classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[70px]' }}
             height={52}
             textAlign="left"
             rootClassName="mt-[14px]"
@@ -420,7 +435,7 @@ export default observer(
                 </span>
               </>
             }
-            disabled={disabledTrade}
+            disabled={disabledTrade || trade.disabledTradeAction()}
           />
         </div>
         <div>
@@ -435,10 +450,24 @@ export default observer(
               })
             }}
             loading={loading}
-            disabled={disabledBtn}
+            disabled={disabledBtn || trade.disabledTradeAction()}
           >
-            {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmairu" />} {count}{' '}
-            <FormattedMessage id="mt.lot" />
+            {trade.isMarketOpen() ? (
+              <>
+                {!disabledTrade && (
+                  <>
+                    {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {count}{' '}
+                    <FormattedMessage id="mt.lot" />
+                  </>
+                )}
+                {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
+              </>
+            ) : (
+              <div className="flex items-center">
+                <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
+                <FormattedMessage id="mt.xiushizhong" />
+              </div>
+            )}
           </Button>
           <div className="mt-4">
             <div className="flex items-center justify-between pb-[6px] w-full">

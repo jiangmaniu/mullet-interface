@@ -1,3 +1,6 @@
+import { observer } from 'mobx-react'
+
+import { useStores } from '@/context/mobxProvider'
 import { getSymbolIcon } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
@@ -10,6 +13,10 @@ type IProps = {
   height?: number
   style?: React.CSSProperties
   className?: string
+  /**交易品种名称 */
+  symbol?: string
+  /**是否展示休市图标 */
+  showMarketCloseIcon?: boolean
 }
 
 /**
@@ -17,13 +24,23 @@ type IProps = {
  * @param param0
  * @returns
  */
-export default function SymbolIcon({ src, width = 26, height = 26, style, className }: IProps) {
+function SymbolIcon({ src, width = 26, height = 26, style, className, symbol, showMarketCloseIcon }: IProps) {
+  const { trade } = useStores()
+  const isMarketOpen = trade.isMarketOpen(symbol)
+
   return (
     <div
-      className={cn('flex items-center justify-center border border-gray-90 rounded-full', className)}
+      className={cn('flex items-center justify-center border border-gray-90 rounded-full relative', className)}
       style={{ width, height, ...style }}
     >
       <img width={width} height={height} alt="" src={getSymbolIcon(src)} className="rounded-full" />
+      {!isMarketOpen && showMarketCloseIcon && (
+        <div className="absolute bottom-[-6px] right-[-3px] z-[1]">
+          <img src="/img/xiushi-icon.svg" width={14} height={14} />
+        </div>
+      )}
     </div>
   )
 }
+
+export default observer(SymbolIcon)

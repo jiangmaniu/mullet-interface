@@ -148,7 +148,7 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
   const symbolConf = positionItem?.conf
   const bid = Number(quoteInfo?.bid || 0)
   const ask = Number(quoteInfo?.ask || 0)
-  const unit = symbolConf?.profitCurrency // 货币单位
+  const unit = symbolConf?.profitCurrency // 盈利货币单位
   const number = Number(positionItem.orderVolume || 0) // 手数
   const consize = Number(symbolConf?.contractSize || 1) // 合约量
   const openPrice = Number(positionItem.startPrice || 0) // 开仓价
@@ -387,35 +387,42 @@ export const getMaxOpenVolume = ({ buySell }: { buySell: API.TradeBuySell }) => 
   const currentPrice = buySell === 'SELL' ? quote?.bid : quote?.ask
   let volume = 0
 
+  const getExchangeValue = (value: number) => {
+    return calcExchangeRate({
+      value,
+      unit: quote?.symbolConf?.prepaymentCurrency,
+      buySell
+    })
+  }
+
+  const exchangeValue = getExchangeValue(currentPrice * consize || 0)
+
   if (availableMargin) {
     if (mode === 'fixed_margin') {
       // 可用/固定预付款
 
       // 需要换汇处理
-      const marginExchangeValue = calcExchangeRate({
-        value: prepaymentConf?.fixed_margin?.initial_margin || 0,
-        unit: quote.symbolConf.prepaymentCurrency,
-        buySell
-      })
+      const marginExchangeValue = getExchangeValue(prepaymentConf?.fixed_margin?.initial_margin || 0)
       const initial_margin = Number(marginExchangeValue)
       volume = initial_margin ? Number(availableMargin / initial_margin) : 0
     } else if (mode === 'fixed_leverage') {
       // 固定杠杆：可用 /（价格*合约大小*手数x/固定杠杆）
-      // 手数x = 可用 * 固定杠杆 / 价格*合约大小
+      // 手数x = 可用 * 固定杠杆 / (价格*合约大小)*汇率
       const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
       if (fixed_leverage) {
-        volume = (availableMargin * fixed_leverage) / (currentPrice * consize)
+        volume = (availableMargin * fixed_leverage) / exchangeValue
       }
     } else if (mode === 'float_leverage') {
       // 浮动杠杆：可用 /（价格*合约大小*手数x/浮动杠杆）
+      // 手数x = 可用 * 固定杠杆 / (价格*合约大小)*汇率
       const float_leverage = Number(trade.leverageMultiple || 1)
       if (float_leverage) {
-        volume = (availableMargin * float_leverage) / (currentPrice * consize)
+        volume = (availableMargin * float_leverage) / exchangeValue
       }
     }
   }
 
-  return Number(toFixed(volume))
+  return volume > 0 ? toFixed(volume) : '0.00'
 }
 
 /**
@@ -472,7 +479,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
 
   return {
     symbol, // 用于展示的symbol自定义名称
-    dataSourceSymbol, // 用于订阅行情
+    dataSourceSymbol, // 数据源品种
     dataSourceKey, // 获取行情源的key
     digits,
     currentQuote,

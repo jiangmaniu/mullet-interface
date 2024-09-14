@@ -15,6 +15,7 @@ import { ORDER_TYPE } from '@/constants/enum'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
+import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
@@ -104,25 +105,19 @@ export default observer(
       // 买入
       if (isBuy) {
         // 买入止损最大值
-
-        sl_scope = (ask - stopl).toFixed(d)
+        sl_scope = (bid - stopl).toFixed(d) // 止损范围
         // 买入止损最小值
-
-        sp_scope = (ask + stopl).toFixed(d)
-
+        sp_scope = (bid + stopl).toFixed(d) // 止盈范围
+        // 预计盈亏
         slProfit = sl ? ((sl - ask) * count * consize).toFixed(d) : 0
-
         spProfit = sp ? ((sp - ask) * count * consize).toFixed(d) : 0
       } else {
         // 卖出止损最小值
-
-        sl_scope = (bid + stopl).toFixed(d)
+        sl_scope = (ask + stopl).toFixed(d) // 止损范围
         // 卖出止损最大值
-
-        sp_scope = (bid - stopl).toFixed(d)
-
+        sp_scope = (ask - stopl).toFixed(d) // 止盈范围
+        // 预计盈亏
         slProfit = sl ? ((bid - sl) * count * consize).toFixed(d) : 0
-
         spProfit = sp ? ((bid - sp) * count * consize).toFixed(d) : 0
       }
     }
@@ -158,6 +153,9 @@ export default observer(
       if (!count) {
         message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
         return
+      }
+      if (!Number(maxOpenVolume)) {
+        return message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
       }
       if (count < vmin || count > maxOpenVolume) {
         message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
@@ -199,9 +197,9 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = trade.disabledTrade || (sp && sp < sp_scope) || (sl && sl > sl_scope)
+    const disabledBtn = trade.disabledTrade() || (sp && sp < sp_scope) || (sl && sl > sl_scope)
     // 禁用交易
-    const disabledTrade = trade.disabledTrade
+    const disabledTrade = trade.disabledTrade()
 
     return (
       <Form form={form}>
@@ -342,7 +340,7 @@ export default observer(
               showAddMinus
               autoFocus={false}
               direction="column"
-              classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[74px]' }}
+              classNames={{ input: '!text-lg !pl-[5px]', minus: '-top-[2px]', tips: '!top-[70px]' }}
               height={52}
               textAlign="left"
               placeholder={intl.formatMessage({ id: 'mt.shoushu' })}
@@ -382,7 +380,7 @@ export default observer(
                   </span>
                 </>
               }
-              disabled={disabledTrade}
+              disabled={disabledTrade || trade.disabledTradeAction()}
             />
           </div>
           <div>
@@ -397,10 +395,24 @@ export default observer(
                 })
               }}
               loading={loading}
-              disabled={disabledBtn}
+              disabled={disabledBtn || trade.disabledTradeAction()}
             >
-              {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {count}{' '}
-              <FormattedMessage id="mt.lot" />
+              {trade.isMarketOpen() ? (
+                <>
+                  {!disabledTrade && (
+                    <>
+                      {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {count}{' '}
+                      <FormattedMessage id="mt.lot" />
+                    </>
+                  )}
+                  {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
+                </>
+              ) : (
+                <div className="flex items-center">
+                  <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
+                  <FormattedMessage id="mt.xiushizhong" />
+                </div>
+              )}
             </Button>
             <div className="mt-4">
               <div className="flex items-center justify-between pb-[6px] w-full">

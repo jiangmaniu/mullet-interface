@@ -38,7 +38,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
     <SwitchPcOrWapLayout
       pcComponent={
         <>
-          <div className="flex items-center justify-between px-[10px] py-2 border border-b border-gray-60">
+          <div className="flex items-center justify-between px-[10px] py-2 border-b border-[var(--divider-line-color)]">
             <div className="flex items-center w-full gap-x-[92px]">
               <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
                 <div
@@ -50,7 +50,13 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   }}
                   ref={openSidebarRef}
                 >
-                  <SymbolIcon width={28} height={28} src={symbolInfo?.imgUrl} className="relative xl:top-[9px] xxl:top-0" />
+                  <SymbolIcon
+                    width={28}
+                    height={28}
+                    src={symbolInfo?.imgUrl}
+                    showMarketCloseIcon
+                    className="relative xl:top-[9px] xxl:top-0"
+                  />
                   <div
                     className="flex items-center xl:relative xl:left-[5px] xxl:left-0"
                     onClick={(e) => {
@@ -71,7 +77,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                   </div>
 
                   <div
-                    className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-tr-xl border-x border-b border-[#f3f3f3] dark:border-[var(--border-primary-color)] bg-white dark:!shadow-none"
+                    className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-br-xl border-x border-b border-[#f3f3f3] dark:border-[var(--border-primary-color)] dark:overflow-hidden bg-white dark:!shadow-none"
                     style={{
                       boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
                       display: showSidebar && !openTradeSidebar ? 'block' : 'none'
@@ -80,7 +86,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                     <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
                   </div>
                 </div>
-                <div className="flex items-center xxl:pl-6 xl:pl-7 xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
+                <div className="flex items-center xxl:pl-6 xl:pl-7 !pt-[2px] xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
                   {res.hasQuote && (
                     <>
                       <span className={cn('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>

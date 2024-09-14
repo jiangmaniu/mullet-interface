@@ -5,6 +5,7 @@ import { useRef, useState } from 'react'
 import Button from '@/components/Base/Button'
 import Modal from '@/components/Base/Modal'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 
 import LevelAge from './LevelAge'
 
@@ -13,6 +14,7 @@ type IProps = {
 }
 
 function LevelAgeModal({ trigger }: IProps) {
+  const { isDark } = useTheme()
   const { trade } = useStores()
   const modalRef = useRef<any>()
   const [current, setCurrent] = useState(0)
@@ -29,7 +31,7 @@ function LevelAgeModal({ trigger }: IProps) {
       ref={modalRef}
       maskClosable={false}
     >
-      <img src="/img/mask2.png" className="absolute right-[67px] top-[22px] h-[252px] w-[294px] z-[3]" />
+      <img src={isDark ? '/img/mask2-dark.png' : '/img/mask2.png'} className="absolute right-[67px] top-[22px] h-[252px] w-[294px] z-[3]" />
       <div className="absolute w-full top-0 z-[2] h-[242px] rounded-[10px]" style={{ background: 'var(--card-gradient-header-bg)' }}></div>
       <div className="px-[18px] pb-4 relative z-10">
         <div className="flex items-center justify-center">

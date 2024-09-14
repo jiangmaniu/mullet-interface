@@ -99,7 +99,7 @@ export const formatEmail = (email: string | undefined) => {
  */
 export function regInput(text: string, precision: number) {
   if (precision === 0) return text
-  return text.replace(new RegExp(`^(\\-)*(\\d+)\.(\\d{0,${precision}}).*$`), '$1$2.$3')
+  return text.replace(new RegExp(`^(\\-)\\*(\\d\\+)\.(\\d{0,${precision}}).*$`), '$1$2.$3')
 }
 
 /**

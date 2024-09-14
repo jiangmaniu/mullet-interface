@@ -36,8 +36,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const [categoryTabKey, setCategoryTabKey] = useState(0) // 品种分类
   const [list, setList] = useState([] as Account.TradeSymbolListItem[])
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
-  const { theme } = useTheme()
-  const isDark = theme === 'dark'
+  const { isDark } = useTheme()
   const searchInputRef = useRef<any>()
   const symbolList = trade.symbolList // 全部品种列表
   const loading = trade.symbolListLoading
@@ -259,13 +258,9 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
           {/* 展开侧边栏视图 */}
           {(openTradeSidebar || !showFixSidebar) && (
             <div
-              className={cn(
-                'w-[364px] flex-shrink-0 bg-white relative dark:bg-dark-page',
-                !showFixSidebar ? 'max-h-[600px]' : 'h-[700px]',
-                {
-                  [borderClassName]: showFixSidebar
-                }
-              )}
+              className={cn('w-[364px] flex-shrink-0 relative bg-primary', !showFixSidebar ? 'max-h-[600px]' : 'h-[700px]', {
+                [borderClassName]: showFixSidebar
+              })}
               style={style}
             >
               {renderTabs()}
@@ -320,7 +315,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                         trade.switchSymbol(symbol)
                       }}
                     >
-                      <SymbolIcon src={item?.imgUrl} width={28} height={28} />
+                      <SymbolIcon src={item?.imgUrl} width={28} height={28} symbol={symbol} showMarketCloseIcon />
                     </div>
                   )
                 })}
