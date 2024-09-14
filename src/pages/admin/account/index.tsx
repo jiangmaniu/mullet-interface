@@ -17,6 +17,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { push } from '@/utils/navigator'
+import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
 
 import Header from './comp/Header'
 import RechargeSimulateModal from './comp/RechargeSimulateModal'
@@ -233,6 +234,7 @@ function Account() {
                   type="primary"
                   style={{ height: 46, width: 108 }}
                   onClick={() => {
+                    setTheme(STORAGE_GET_TRADE_THEME() || 'light')
                     trade.setCurrentAccountInfo(item)
                     trade.jumpTrade()
                   }}

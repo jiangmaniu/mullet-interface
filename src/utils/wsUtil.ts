@@ -422,7 +422,7 @@ export const getMaxOpenVolume = ({ buySell }: { buySell: API.TradeBuySell }) => 
     }
   }
 
-  return toFixed(volume)
+  return volume > 0 ? toFixed(volume) : '0.00'
 }
 
 /**

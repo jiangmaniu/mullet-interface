@@ -314,7 +314,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
             borderBottomWidth: isDark ? 0 : 1,
             background: 'var(--dropdown-bg)',
-            color: theme === 'white' ? 'black' : 'white',
+            color: 'var(--color-text-primary)',
             borderTopRightRadius: 12,
             borderTopLeftRadius: 12,
             boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
@@ -324,7 +324,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
             borderBottomWidth: isDark ? 0 : 1,
             background: 'var(--dropdown-bg)',
-            color: theme === 'white' ? 'black' : 'white',
+            color: 'var(--color-text-primary)',
             borderTopRightRadius: 12,
             borderTopLeftRadius: 12,
             boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
@@ -426,7 +426,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
         )}
 
         {/* 个人中心账户信息悬浮 */}
-        {!isTradePage && (
+        {!isTradePage && realAccountList.length > 0 && (
           <Dropdown
             placement="topLeft"
             dropdownRender={() => {
@@ -438,7 +438,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                         <div
                           key={item.id}
                           className={cn('border-b border-gray-150 pl-[11px] py-[11px]', {
-                            'border-none': idx === accountArr.length - 1
+                            'border-none': idx === realAccountList.length - 1
                           })}
                         >
                           <div className="flex items-center justify-between">

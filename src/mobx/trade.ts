@@ -195,15 +195,13 @@ class TradeStore {
   jumpTrade = () => {
     this.setSwitchAccountLoading(true)
 
-    setTimeout(() => {
-      // 需要刷新k线，否则切换不同账号加载的品种不一样
-      push('/trade')
-      // @ts-ignore
-      klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
-    }, 500)
+    // 需要刷新k线，否则切换不同账号加载的品种不一样
+    push('/trade')
+    // @ts-ignore
+    klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
 
     setTimeout(() => {
-      // 让动画播放
+      // 停止动画播放
       this.setSwitchAccountLoading(false)
     }, 2000)
   }
@@ -391,9 +389,6 @@ class TradeStore {
   setOpenSymbolNameList(name: string) {
     this.setActiveSymbolName(name)
     if (this.openSymbolNameList.some((item) => item.symbol === name)) return
-    const symbolItem = this.symbolList.find((item) => item.symbol === name) as Account.TradeSymbolListItem
-    this.openSymbolNameList.push(symbolItem)
-    this.updateLocalOpenSymbolNameList()
   }
 
   // 移除打开的symbol
