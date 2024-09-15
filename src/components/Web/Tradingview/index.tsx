@@ -25,12 +25,15 @@ const Tradingview = () => {
   const previousSymbolName = usePrevious(symbolName)
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
   const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
+  const switchSymbolLoading = kline.switchSymbolLoading
+
   const { theme, isDark } = useTheme()
   const datafeedParams = {
     setActiveSymbolInfo: kline.setActiveSymbolInfo, // 记录当前的symbol
     removeActiveSymbol: kline.removeActiveSymbol, // 取消订阅移除symbol
     getDataFeedBarCallback: kline.getDataFeedBarCallback // 获取k线柱数据回调
   }
+
   const themeMode = (theme || 'light') as ThemeName
   const params = {
     symbol: symbolName as string, // 品种名称
@@ -196,7 +199,7 @@ const Tradingview = () => {
   // 监听切换品种 需要防抖避免用户重复切换导致k线显示问题
   useDebounceEffect(
     () => {
-      if (!symbolName) return
+      if (!symbolName || switchSymbolLoading) return
       // 实例存在
       if (kline.tvWidget) {
         kline.tvWidget.onChartReady(() => {
@@ -207,9 +210,9 @@ const Tradingview = () => {
         })
       }
     },
-    [symbolName],
+    [symbolName, switchSymbolLoading],
     {
-      wait: 500
+      wait: 700
     }
   )
 

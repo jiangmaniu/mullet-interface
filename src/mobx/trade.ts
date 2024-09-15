@@ -360,11 +360,14 @@ class TradeStore {
   }
 
   // 切换交易品种
+  @action
   switchSymbol = (symbol: string) => {
+    // 切换k线时如果处于loading状态，在切换其他则不可以点击，等切换成功后再点击，否则会出现跳空问题
+    if (klineStore.switchSymbolLoading) return
     // 记录打开的symbol
-    trade.setOpenSymbolNameList(symbol)
+    this.setOpenSymbolNameList(symbol)
     // 设置当前当前的symbol
-    trade.setActiveSymbolName(symbol)
+    this.setActiveSymbolName(symbol)
 
     // 切换品种事件
     mitt.emit('symbol_change')
@@ -389,6 +392,9 @@ class TradeStore {
   setOpenSymbolNameList(name: string) {
     this.setActiveSymbolName(name)
     if (this.openSymbolNameList.some((item) => item.symbol === name)) return
+    const symbolItem = this.symbolList.find((item) => item.symbol === name) as Account.TradeSymbolListItem
+    this.openSymbolNameList.push(symbolItem)
+    this.updateLocalOpenSymbolNameList()
   }
 
   // 移除打开的symbol

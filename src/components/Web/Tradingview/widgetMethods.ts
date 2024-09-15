@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { stores } from '@/context/mobxProvider'
 import { ChartStyle, IChartingLibraryWidget, ThemeName, TOverrides } from '@/libs/charting_library'
 import { isPC } from '@/utils'
 
@@ -8,10 +9,13 @@ import { getTradingviewThemeCssVar } from './theme'
 // 动态设置品种
 export const setSymbol = (symbol, tvWidget: IChartingLibraryWidget) => {
   if (!symbol) return
+  stores.kline.setSwitchSymbolLoading(true)
+
   tvWidget.activeChart().resetData()
   tvWidget.activeChart().setSymbol(symbol, {
     dataReady: () => {
       console.log('切换品种成功')
+      stores.kline.setSwitchSymbolLoading(false)
     }
   })
 }

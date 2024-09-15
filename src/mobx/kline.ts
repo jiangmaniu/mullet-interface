@@ -31,9 +31,15 @@ class KlineStore {
     symbolInfo: {}
   }
   @observable loading = true
+  @observable switchSymbolLoading = false // 切换品种状态
   @observable lastbar = {} // 最后一条k线数据
   @observable datafeedBarCallbackObj = {} // 记录getbars回调的参数
   @observable lastBarTime = '' // 记录最后一次时间，用于作为请求k线的截止时间
+
+  @action
+  setSwitchSymbolLoading = (flag: boolean) => {
+    this.switchSymbolLoading = flag
+  }
 
   updateKlineData(quotes: any) {
     const symbolInfo = this.activeSymbolInfo.symbolInfo
