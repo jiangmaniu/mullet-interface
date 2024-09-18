@@ -354,6 +354,7 @@ export default {
   'mt.jiaoyiyichuliwancheng': '交易已处理完成',
   'mt.shenqingchenggong': '申请成功',
   'mt.mianshouxufei': '免手续费',
+
   // ======= 个人中心-我的账户 结束 ==========
 
   // ======= 个人中心-设置 开始 ==========

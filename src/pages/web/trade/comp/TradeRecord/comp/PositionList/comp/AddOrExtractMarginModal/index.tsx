@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
@@ -30,6 +30,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
   const [inputValue, setInputValue] = useState(0)
   const modalRef = useRef<any>()
   const marginInputRef = useRef<any>()
+  const { fetchUserInfo } = useModel('user')
 
   const [activeKey, setActiveKey] = useState<'ADD' | 'MINUS'>('ADD')
   const isAdd = activeKey === 'ADD'
@@ -60,6 +61,8 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
     if (success) {
       modalRef?.current?.close()
       trade.getPositionList()
+      // 刷新账户信息
+      await fetchUserInfo(true)
       message.info(intl.formatMessage({ id: 'common.opSuccess' }))
     }
   }

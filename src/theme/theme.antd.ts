@@ -25,7 +25,6 @@ export default {
   colorBgContainerDisabled: bgColorBase, // 禁用背景颜色
   fontFamily, // 字体
   colorText: colorTextPrimary, // 文字主色
-
   motion: false, // 动画关闭，否则切换主题样式会闪烁
 
   // 组件对应的token

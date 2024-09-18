@@ -357,7 +357,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
         }
       }}
     >
-      <FormattedMessage id="mt.huazhuan" />
+      <FormattedMessage id="common.zhuanzhang" />
     </Button>
   )
 
@@ -385,9 +385,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
               }}
             >
               <div className="flex flex-col items-end group relative">
-                <span className="text-lg !font-dingpro-regular dark:text-primary">
-                  {formatNum(balance, { precision: currencyDecimal })} USD
-                </span>
+                <span className="text-base font-pf-bold  dark:text-primary">{formatNum(balance, { precision: currencyDecimal })} USD</span>
                 <div className="flex items-center">
                   <span className={cn('text-xs dark:text-primary', iconDownColor === 'white' ? 'text-zinc-100' : 'text-blue')}>
                     {currentAccountInfo?.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}

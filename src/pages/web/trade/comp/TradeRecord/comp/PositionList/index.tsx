@@ -96,7 +96,7 @@ function Position({ style, parentPopup }: IProps) {
             <SymbolIcon src={record.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-pf-bold text-primary">{record.symbol}</span>
-              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
             </div>
           </div>
         )
@@ -348,7 +348,11 @@ function Position({ style, parentPopup }: IProps) {
       className: '!text-[13px] text-primary'
     },
     {
-      title: <FormattedMessage id="mt.fudongyingkui_shouyilv" />,
+      title: (
+        <>
+          <FormattedMessage id="mt.fudongyingkui" />/<FormattedMessage id="mt.shouyilv" />
+        </>
+      ),
       dataIndex: 'profit',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -366,7 +370,7 @@ function Position({ style, parentPopup }: IProps) {
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
         const profitDom = profit ? (
-          <span className={cn('font-pf-bold', color)}>{record.profitFormat}</span>
+          <span className={cn('font-pf-bold', color)}>{record.profitFormat} USD</span>
         ) : (
           <span className="!text-[13px]">-</span>
         )
@@ -391,7 +395,7 @@ function Position({ style, parentPopup }: IProps) {
         return (
           <div className="flex justify-end">
             <div
-              className="min-w-[70px] cursor-pointer rounded border border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-primary text-sm"
+              className="min-w-[82px] cursor-pointer rounded-[6px] border border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-primary text-sm"
               onClick={() => {
                 closePositionRef.current?.show(record)
               }}

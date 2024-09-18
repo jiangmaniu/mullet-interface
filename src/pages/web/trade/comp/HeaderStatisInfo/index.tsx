@@ -25,6 +25,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const [showSidebar, setShowSidebar] = useState(false)
   const { openTradeSidebar } = useModel('global')
   const symbolInfo = (trade.openSymbolNameList || []).find((item) => item?.symbol === symbol)
+  const isMarketOpen = trade.isMarketOpen(symbol)
 
   const res: any = getCurrentQuote()
   const color = res.percent > 0 ? 'text-green' : 'text-red'
@@ -56,6 +57,10 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                     src={symbolInfo?.imgUrl}
                     showMarketCloseIcon
                     className="relative xl:top-[9px] xxl:top-0"
+                    closeIconStyle={{
+                      width: 18,
+                      height: 18
+                    }}
                   />
                   <div
                     className="flex items-center xl:relative xl:left-[5px] xxl:left-0"
@@ -86,15 +91,22 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                     <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
                   </div>
                 </div>
-                <div className="flex items-center xxl:pl-6 xl:pl-7 !pt-[2px] xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
+                <div className="flex items-center xxl:pl-3 xl:pl-7 !pt-[2px] xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
                   {res.hasQuote && (
                     <>
                       <span className={cn('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>
                         {formatNum(res.bid)}
                       </span>
-                      <span className={cn('pl-2 text-base !font-dingpro-medium', color)}>
-                        {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}
-                      </span>
+                      {isMarketOpen && (
+                        <span className={cn('pl-2 text-base !font-dingpro-medium', color)}>
+                          {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}
+                        </span>
+                      )}
+                      {!isMarketOpen && (
+                        <span className="text-sm leading-6 px-[6px] rounded-[6px] text-red-600 bg-red-600/10 dark:text-red-650 dark:bg-red-650/10 ml-2">
+                          <FormattedMessage id="mt.xiushizhong" />
+                        </span>
+                      )}
                     </>
                   )}
                 </div>

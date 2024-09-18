@@ -99,7 +99,25 @@ export const formatEmail = (email: string | undefined) => {
  */
 export function regInput(text: string, precision: number) {
   if (precision === 0) return text
-  return text.replace(new RegExp(`^(\\-)\\*(\\d\\+)\.(\\d{0,${precision}}).*$`), '$1$2.$3')
+  let newText = text
+  if (precision === 1) {
+    newText = newText.replace(/^(\-)*(\d+)\.(\d).*$/, '$1$2.$3') //只能输1两个小数
+  } else if (precision === 2) {
+    newText = newText.replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3') //只能输入2个小数
+  } else if (precision === 3) {
+    newText = newText.replace(/^(\-)*(\d+)\.(\d\d\d).*$/, '$1$2.$3') //只能输入3个小数
+  } else if (precision === 4) {
+    newText = newText.replace(/^(\-)*(\d+)\.(\d\d\d\d).*$/, '$1$2.$3') //只能输入4个小数
+  } else if (precision === 5) {
+    newText = newText.replace(/^(\-)*(\d+)\.(\d\d\d\d\d).*$/, '$1$2.$3') //只能输入5个小数
+  } else if (precision === 6) {
+    newText = newText.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d).*$/, '$1$2.$3') //只能输入6个小数
+  } else if (precision === 7) {
+    newText = newText.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d\d).*$/, '$1$2.$3') //只能输入7个小数
+  } else if (precision === 8) {
+    newText = newText.replace(/^(\-)*(\d+)\.(\d\d\d\d\d\d\d\d).*$/, '$1$2.$3') //只能输入8个小数
+  }
+  return newText
 }
 
 /**
@@ -137,7 +155,8 @@ export const formatNum = (value: any, opts = {}) => {
   }
   const val = value || '0.00'
   const precision = String(value).split('.')?.[1]?.length || 2
-  return currency(val, { symbol: '', precision, ...opts }).format()
+  const truncateValue = truncateDecimal(val, precision) // 截取小数点，不四舍五入
+  return currency(truncateValue, { symbol: '', precision, ...opts }).format()
 }
 
 /**
@@ -382,7 +401,21 @@ export function toFixed(val: any, num = 2) {
   if (isNaN(value)) {
     value = 0
   }
-  return value.toFixed(num)
+  // return value.toFixed(num)
+  return truncateDecimal(value, num)
+}
+
+/**
+ * 保留指定小数位，不做截取
+ * @param number
+ * @param digits
+ * @returns
+ */
+export function truncateDecimal(number: any, digits?: number) {
+  // 将数字乘以 10 的指定次幂，以便保留指定小数位数
+  const multiplier = Math.pow(10, digits || 2)
+  const truncatedNumber = Math.floor(number * multiplier) / multiplier
+  return truncatedNumber as any
 }
 
 /**

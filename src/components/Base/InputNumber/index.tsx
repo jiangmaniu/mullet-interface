@@ -173,7 +173,8 @@ function InputNumber(props: IProps) {
         width: width || '100%',
         background: disabled && !isDark ? '#f8f8f8' : 'var(--input-bg)',
         border: 'none',
-        borderRadius: 0
+        borderRadius: 0,
+        fontWeight: '600'
       },
       'input:focus': {
         border: 'none',
@@ -182,7 +183,8 @@ function InputNumber(props: IProps) {
       },
       'input::placeholder': {
         fontSize: '14px !important',
-        color: 'var(--input-placeholder-text-color)'
+        color: 'var(--input-placeholder-text-color)',
+        fontWeight: '300'
       },
       '.ant-input-group-addon,.ant-input-group-wrapper': {
         background: `${disabled && !isDark ? '#f8f8f8' : 'var(--input-bg)'} !important`,

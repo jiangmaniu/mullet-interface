@@ -66,7 +66,7 @@ function MarginTypeModal({ trigger }: IProps) {
         </div>
 
         <div className="relative">
-          <div>
+          <div className="py-4">
             {marginOptions.map((item, idx) => {
               const isActive = item.value === current
               return (
