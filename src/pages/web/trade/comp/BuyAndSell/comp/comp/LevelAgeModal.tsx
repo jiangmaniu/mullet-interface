@@ -35,7 +35,7 @@ function LevelAgeModal({ trigger }: IProps) {
       <div className="absolute w-full top-0 z-[2] h-[242px] rounded-[10px]" style={{ background: 'var(--card-gradient-header-bg)' }}></div>
       <div className="px-[18px] pb-4 relative z-10">
         <div className="flex items-center justify-center">
-          <img src={'/img/levelage.png'} width={121} height={121} alt="" />
+          <img src={isDark ? '/img/levelage-dark.png' : '/img/levelage.png'} width={121} height={121} alt="" />
         </div>
         <div className="relative -top-1 flex flex-col items-center justify-center px-4">
           <div className="text-base text-primary font-semibold">

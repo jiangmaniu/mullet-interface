@@ -135,10 +135,10 @@ function InputNumber(props: IProps) {
   const AddIcon = (
     <div
       className={cn(
-        'flex h-full w-[43px] cursor-pointer select-none items-center z-[2] justify-center border-l border-primary dark:border-gray-585 dark:bg-gray-750 text-xl text-weak',
+        'flex h-full w-[43px] cursor-pointer select-none active:!text-white/80 items-center z-[2] justify-center border-l border-primary dark:border-gray-585 dark:bg-gray-750 text-xl text-weak dark:text-white',
         isColumn && '!rounded-r-[0px] border-b border-l-0',
         { '!cursor-not-allowed !text-weak/50': disabled || (max && newValue >= max) },
-        disabled ? 'bg-[--input-disabled-bg]' : '',
+        disabled ? 'bg-[--input-disabled-bg] !text-weak' : '',
         classNames?.add
       )}
       onClick={debounce(handleAdd, 100)}
@@ -149,10 +149,10 @@ function InputNumber(props: IProps) {
   const MinusIcon = (
     <div
       className={cn(
-        'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center border-r border-primary dark:bg-gray-750 text-xl text-weak',
+        'relative flex h-full w-[43px] cursor-pointer select-none active:!text-white/80 items-center justify-center border-r border-primary dark:bg-gray-750 text-xl text-weak dark:text-white',
         isColumn && 'border-none',
         { '!cursor-not-allowed !text-weak/50': (min && newValue <= min) || disabled },
-        disabled ? 'bg-[--input-disabled-bg]' : '',
+        disabled ? 'bg-[--input-disabled-bg] !text-weak' : '',
         classNames?.minus
       )}
       onClick={debounce(handleMinus, 100)}
@@ -220,7 +220,7 @@ function InputNumber(props: IProps) {
       <div>
         <div
           className={cn(
-            'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border border-[var(--input-border)] bg-white input-wrapper',
+            'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border dark:border-[0.5px] border-[var(--input-border)] input-wrapper',
             isFocus && showFloatTips && 'dark:border-gray-572 dark:border-b-gray-750',
             className
           )}

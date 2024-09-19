@@ -82,10 +82,10 @@ export default {
     colorPrimary: gray['650'],
     colorPrimaryBorderHover: gray['650'],
     colorPrimaryHover: gray['650'],
-    colorBorder: gray['650']
+    colorBorder: gray['610']
   },
   Segmented: {
-    itemSelectedBg: gray[650],
+    itemSelectedBg: gray[651],
     itemSelectedColor: gray[95],
     // boxShadowTertiary: 'none',
     trackBg: gray[680]

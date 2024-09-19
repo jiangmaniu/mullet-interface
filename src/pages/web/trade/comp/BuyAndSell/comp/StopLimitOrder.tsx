@@ -227,7 +227,7 @@ export default observer(
           {/* 全仓、逐仓、杠杆选择 */}
           <SelectMarginTypeOrLevelAge />
 
-          <div className="relative flex items-center justify-center rounded-xl border border-primary dark:border-gray-580 p-[2px]">
+          <div className="relative flex items-center justify-center rounded-xl border border-primary p-[2px]">
             <BuyAndSellBtnGroup type="popup" />
           </div>
           {/* <div className="flex items-center justify-between mt-3 mb-1">
@@ -265,7 +265,7 @@ export default observer(
               }
             }}
             tips={
-              <span className={cn('!font-dingpro-regular', { '!text-red': price && price > priceTip })}>
+              <span className={cn('!font-dingpro-regular', { '!text-red': isBuy ? price && price < priceTip : price && price > priceTip })}>
                 {isBuy && (
                   <>
                     <FormattedMessage id="mt.mairujiafanwei" /> ≥ {formatNum(priceTip)} USD

@@ -475,7 +475,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
     return {
       '.ant-table-thead > tr > th': {
         background: 'var(--bg-primary) !important',
-        borderBottom: '1px solid var(--divider-line-color) !important'
+        border: '0px solid var(--divider-line-color) !important'
       },
       'tr > td': {
         background: 'var(--bg-primary) !important',

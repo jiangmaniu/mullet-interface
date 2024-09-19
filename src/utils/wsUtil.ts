@@ -496,12 +496,12 @@ export function getCurrentQuote(currentSymbolName?: string) {
     percent, //涨幅百分比
     quotes,
     consize: Number(symbolConf?.contractSize || 0),
-    ask: toFixed(ask, digits),
-    bid: toFixed(bid, digits),
-    high: toFixed(high, digits), //高
-    low: toFixed(low, digits), //低
-    open: toFixed(open, digits), //开
-    close: toFixed(close, digits), //收
+    ask: toFixed(ask, digits, false),
+    bid: toFixed(bid, digits, false),
+    high: toFixed(high, digits, false), //高
+    low: toFixed(low, digits, false), //低
+    open: toFixed(open, digits, false), //开
+    close: toFixed(close, digits, false), //收
     spread: Math.abs(parseInt(String(bid * Math.pow(10, digits) - ask * Math.pow(10, digits)))), // 买卖点差
     bidDiff: currentQuote.bidDiff || 0,
     askDiff: currentQuote.askDiff || 0,

@@ -129,7 +129,7 @@ export default observer(
                 </span>
               </div>
             </div>
-            <div className="absolute left-0 top-[130px] w-full border border-dashed border-gray-250/70"></div>
+            <div className="absolute left-0 top-[130px] w-full border border-dashed border-gray-250/70 dark:border-gray-610"></div>
             <div className="my-4"></div>
             <div className="flex w-full items-center">
               <div className="flex items-center justify-between">

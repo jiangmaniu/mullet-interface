@@ -223,7 +223,7 @@ function PendingList({ style, parentPopup }: IProps) {
         return (
           <div className="flex items-center justify-end">
             <div
-              className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-primary max-xl:w-[48%] max-xl:bg-gray-50 text-sm xl:border"
+              className="min-w-[70px] cursor-pointer rounded border-gray-250 px-2 py-[5px] text-center font-normal text-primary dark:btn-dark max-xl:w-[48%] max-xl:bg-gray-50 text-sm xl:border"
               onClick={() => {
                 parentPopup?.close()
                 cancelPendingRef.current?.show(record)

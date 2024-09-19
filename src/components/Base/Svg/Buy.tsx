@@ -19,7 +19,7 @@ function Buy({ children, isActive, bgColor, width = '134px', height = '52px' }: 
 
   const svgIcon = (
     <svg width={'134px'} height={'52px'} viewBox="0 0 134 52">
-      <g id="buy" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+      <g id="buy" stroke={isDark ? 'var(--border-primary-color)' : 'none'} strokeWidth="1" fill="none" fillRule="evenodd">
         <path
           d="M8.49174935,0 L126,0 C130.418278,-8.11624501e-16 134,3.581722 134,8 L134,44 C134,48.418278 130.418278,52 126,52 L18.3731149,52 C14.7703581,52 11.6120739,49.5917959 10.6584517,46.1175391 L0.777086155,10.1175391 C-0.392398385,5.85684824 2.11351944,1.45482134 6.37421028,0.285336802 C7.06412267,0.0959680096 7.77631966,-7.56756117e-16 8.49174935,0 Z"
           fill={isActive ? bgColor || 'var(--color-green)' : isDark ? gray['720'] : 'var(--bg-base-gray)'}

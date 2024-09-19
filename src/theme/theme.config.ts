@@ -55,7 +55,9 @@ export const gray = {
   585: '#2d2d2d',
   590: '#21262A',
   600: '#6A7073',
+  610: '#30373E',
   620: '#454548',
+  630: '#20252A',
   650: '#514F4F',
   651: '#2E3337',
   652: '#2E2E39',
@@ -65,6 +67,7 @@ export const gray = {
   660: '#1D2025',
   665: '#2B2E39',
   670: '#2E3338',
+  675: '#161A1E',
   680: '#23262A',
   690: '#262626',
   700: '#29292C',
@@ -276,13 +279,13 @@ export const darkTheme = {
   '--input-bg': gray['750'], // 输入框背景色
   '--input-disabled-bg': gray['651'], // 输入框禁用置灰背景色
   '--input-disabled-border': gray['650'], // 输入框禁用置灰背景色
-  '--input-border': gray['650'], // 输入框、选择框边框颜色
+  '--input-border': gray['610'], // 输入框、选择框边框颜色
   '--input-border-hover': gray['370'], // 输入框、选择框边框颜色
   '--input-placeholder-text-color': gray['570'], // placeholder文字颜色
 
   // tabs
   '--tabs-active-bg': gray['670'], // 激活背景
-  '--tabs-border-color': gray['700'], // tabs组件底部边框线颜色
+  '--tabs-border-color': gray['630'], // tabs组件底部边框线颜色
 
   // select
   '--select-border': gray['665'], // 边框
@@ -299,7 +302,7 @@ export const darkTheme = {
   '--modal-mask-bg': 'rgba(7,7,7,0.7)',
 
   // divider
-  '--divider-line-color': gray['700'], // 边框分割线条颜色
+  '--divider-line-color': gray['630'], // 边框分割线条颜色
 
   // dropdown
   '--dropdown-bg': gray['680'], // 背景颜色
@@ -307,14 +310,14 @@ export const darkTheme = {
   '--dropdown-item-hover-bg': gray['655'], // 选项hover背景颜色
 
   // border
-  '--border-primary-color': gray['700'], // 通用边框颜色
+  '--border-primary-color': gray['610'], // 通用边框颜色
 
   // hover
   '--hover-primary-bg': 'rgba(225, 225, 225, .2)', // hover颜色
 
   // 页面背景
-  '--bg-primary': gray['800'],
-  '--bg-base-gray': gray['800'], // 页面背景-灰色
+  '--bg-primary': gray['675'],
+  '--bg-base-gray': gray['675'], // 页面背景-灰色
 
   // list
   '--list-item-disabled': gray['651'], // 列表项目禁用颜色
@@ -331,8 +334,8 @@ export const darkTheme = {
   '--card-gradient-header-bg': 'transparent', // 卡片渐变背景颜色
 
   // 滚动条颜色
-  '--scrollbar-color': `${gray[800]} ${gray[800]}`, // 滚动条颜色
-  '--scrollbar-hover-color': `${gray[578]} ${gray[800]}`, // hover颜色 第一个滚动条颜色、第二个滚动条轨道颜色
+  '--scrollbar-color': `${gray[675]} ${gray[675]}`, // 滚动条颜色
+  '--scrollbar-hover-color': `${gray[578]} ${gray[675]}`, // hover颜色 第一个滚动条颜色、第二个滚动条轨道颜色
 
   // 默认颜色
   '--color-gray': gray['95'], // 默认全局黑

@@ -5,6 +5,6 @@
 @layer components {
   /* 黑色主题按钮样式 */
   .btn-dark {
-    @apply border-gray-700 bg-gray-720 text-primary;
+    @apply border-gray-610 bg-gray-720 text-primary;
   }
 }

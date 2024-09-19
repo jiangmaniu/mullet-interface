@@ -164,7 +164,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   return (
     <>
       <div
-        className={cn('relative pl-1 border-b border-gray-100 dark:border-gray-700', className)}
+        className={cn('relative pl-1 border-b border-gray-100 dark:border-gray-630', className)}
         onClick={() => {
           startTransition(() => {
             // 切换品种
@@ -231,7 +231,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           </Col>
           <Col span={4} className="flex flex-col items-end pr-3">
             {res.hasQuote ? (
-              <div className={cn('text-right text-xs', per > 0 ? 'text-green' : 'text-red')}>
+              <div className={cn('text-right text-xs font-pf-bold', per > 0 ? 'text-green' : 'text-red')}>
                 {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
               </div>
             ) : (

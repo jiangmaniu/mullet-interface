@@ -393,16 +393,21 @@ export const copyContent = (cotVal: any, title = getIntl().formatMessage({ id: '
  * 格式化小数位
  * @param val
  * @param num 小数位
+ * @param isTruncateDecimal 是否截取小数位
  * @returns
  */
-export function toFixed(val: any, num = 2) {
+export function toFixed(val: any, num = 2, isTruncateDecimal = true) {
   let value = val || 0
   value = parseFloat(value)
   if (isNaN(value)) {
     value = 0
   }
-  // return value.toFixed(num)
-  return truncateDecimal(value, num)
+  // 截取小数点展示
+  if (isTruncateDecimal) {
+    return truncateDecimal(value, num)
+  }
+  // 四舍五入
+  return value.toFixed(num)
 }
 
 /**

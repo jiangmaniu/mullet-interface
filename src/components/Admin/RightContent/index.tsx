@@ -169,7 +169,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   <InfoCircleOutlined style={{ fontSize: 12 }} />
                 </span>
               </Tooltip>
-              <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250"></span>
+              <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250 dark:border-gray-610"></span>
               <span className="max-w-[240px] break-all text-right text-primary !font-dingpro-medium">
                 {formatNum(item.value, { precision: currencyDecimal })} USD
               </span>
@@ -210,7 +210,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             </Button>
           </div>
         </div> */}
-        <div className="py-0 border-t-[2px] border-[rgba(218,218,218,0.2)] dark:border-gray-620/20 flex flex-col">
+        <div className="py-0 border-t-[2px] dark:border-t-[1px] border-[rgba(218,218,218,0.2)] dark:border-gray-620/20 flex flex-col">
           <div className="my-3 px-[18px] flex items-center justify-between flex-shrink-0 flex-grow-0">
             <Segmented
               className="account"
@@ -259,7 +259,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   }}
                   key={item.id}
                   className={cn(
-                    'mb-[14px] mx-[18px] scrollba cursor-pointer rounded-lg dark:border-gray-620 border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
+                    'mb-[14px] mx-[18px] scrollba cursor-pointer rounded-lg dark:border-gray-610 border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px] hover:bg-[var(--list-hover-light-bg)]',
                     {
                       'bg-[var(--list-hover-light-bg)]': item.id === currentAccountInfo.id,
                       'cursor-no-drop !bg-[var(--list-item-disabled)]': disabledTrade

@@ -72,7 +72,7 @@ export default function Record() {
         />
         <div className={classNames('flex items-center gap-x-3', filterClassName)}>
           <ProFormSelect
-            options={accountList.map((item) => ({ ...item, value: item.id, label: item.name }))}
+            options={accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))}
             placeholder={intl.formatMessage({ id: 'mt.xuanzezhanghu' })}
             fieldProps={{
               value: params.accountId,
