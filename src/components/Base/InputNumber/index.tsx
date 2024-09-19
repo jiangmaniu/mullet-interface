@@ -135,10 +135,10 @@ function InputNumber(props: IProps) {
   const AddIcon = (
     <div
       className={cn(
-        'flex h-full w-[43px] cursor-pointer select-none active:!text-white/80 items-center z-[2] justify-center border-l border-primary dark:border-gray-585 dark:bg-gray-750 text-xl text-weak dark:text-white',
+        'flex h-full w-[43px] cursor-pointer select-none items-center z-[2] justify-center border-l border-primary dark:border-gray-585 dark:bg-gray-750 text-xl text-weak dark:text-white',
         isColumn && '!rounded-r-[0px] border-b border-l-0',
         { '!cursor-not-allowed !text-weak/50': disabled || (max && newValue >= max) },
-        disabled ? 'bg-[--input-disabled-bg] !text-weak' : '',
+        disabled ? 'bg-[--input-disabled-bg] !text-weak' : 'active:!text-white/80',
         classNames?.add
       )}
       onClick={debounce(handleAdd, 100)}
@@ -149,10 +149,10 @@ function InputNumber(props: IProps) {
   const MinusIcon = (
     <div
       className={cn(
-        'relative flex h-full w-[43px] cursor-pointer select-none active:!text-white/80 items-center justify-center border-r border-primary dark:bg-gray-750 text-xl text-weak dark:text-white',
+        'relative flex h-full w-[43px] cursor-pointer select-none items-center justify-center border-r border-primary dark:bg-gray-750 text-xl text-weak dark:text-white',
         isColumn && 'border-none',
         { '!cursor-not-allowed !text-weak/50': (min && newValue <= min) || disabled },
-        disabled ? 'bg-[--input-disabled-bg] !text-weak' : '',
+        disabled ? 'bg-[--input-disabled-bg] !text-weak' : 'active:!text-white/80',
         classNames?.minus
       )}
       onClick={debounce(handleMinus, 100)}
@@ -209,7 +209,7 @@ function InputNumber(props: IProps) {
               border: disabled ? '1px solid none' : `1px solid #9c9c9c`
             },
       '.ant-form-item-control-input-content': {
-        background: disabled ? '#f8f8f8' : '#fff'
+        background: disabled ? '#f8f8f8' : 'var(--input-bg)'
       }
     }
   })

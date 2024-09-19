@@ -202,7 +202,7 @@ export default observer(
               <FormattedMessage id="common.cancel" />
             </Button>
             <Button
-              className={cn('flex-1', { 'pointer-events-none !bg-gray-250': !count })}
+              className={cn('flex-1', { 'pointer-events-none !bg-gray-250 dark:!bg-gray-651': !count })}
               onClick={onFinish}
               type="primary"
               loading={submitLoading}

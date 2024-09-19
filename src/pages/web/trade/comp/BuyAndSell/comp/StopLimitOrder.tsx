@@ -324,19 +324,21 @@ export default observer(
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
-                        {formatNum(sp_scope)} USD
+                        <span className="dark:text-primary">{formatNum(sp_scope)}</span> USD
                       </span>
                       <span className="!font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
                         <span className="pl-[2px]">
-                          {formatNum(
-                            calcExchangeRate({
-                              value: spProfit,
-                              unit: symbolConf?.profitCurrency,
-                              buySell
-                            }),
-                            { precision: 2 }
-                          )}{' '}
+                          <span className="dark:text-primary">
+                            {formatNum(
+                              calcExchangeRate({
+                                value: spProfit,
+                                unit: symbolConf?.profitCurrency,
+                                buySell
+                              }),
+                              { precision: 2 }
+                            )}{' '}
+                          </span>
                           USD
                         </span>
                       </span>
@@ -375,19 +377,21 @@ export default observer(
                     <span className="!font-dingpro-regular pb-[2px]">
                       <FormattedMessage id="mt.fanwei" />
                       <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>
-                      {formatNum(sl_scope)} USD
+                      <span className="dark:text-primary">{formatNum(sl_scope)}</span> USD
                     </span>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
                       <span className="pl-[2px]">
-                        {formatNum(
-                          calcExchangeRate({
-                            value: slProfit,
-                            unit: symbolConf?.profitCurrency,
-                            buySell
-                          }),
-                          { precision: 2 }
-                        )}{' '}
+                        <span className="dark:text-primary">
+                          {formatNum(
+                            calcExchangeRate({
+                              value: slProfit,
+                              unit: symbolConf?.profitCurrency,
+                              buySell
+                            }),
+                            { precision: 2 }
+                          )}{' '}
+                        </span>
                         USD
                       </span>
                     </span>

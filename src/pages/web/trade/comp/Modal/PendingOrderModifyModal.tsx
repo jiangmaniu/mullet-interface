@@ -212,7 +212,14 @@ export default observer(
                   tips={
                     <div
                       className={cn('!font-dingpro-regular', {
-                        '!text-red': isBuy ? price && price < priceTip : price && price > priceTip
+                        '!text-red':
+                          // 限价单、停损单 买卖方向判断
+                          isBuy && ['LIMIT_BUY_ORDER', 'LIMIT_SELL_ORDER'].includes(item.type as any)
+                            ? price && Number(price) > Number(priceTip)
+                            : (price && Number(price) < Number(priceTip)) ||
+                              (isBuy && ['STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(item.type as any))
+                            ? price && Number(price) < Number(priceTip)
+                            : price && Number(price) > Number(priceTip)
                       })}
                     >
                       <FormattedMessage id="mt.fanwei" />
@@ -328,7 +335,7 @@ export default observer(
                 block
                 onClick={onFinish}
                 className={cn({
-                  'pointer-events-none !bg-gray-250': !price
+                  'pointer-events-none !bg-gray-250 dark:!bg-gray-651': !price
                 })}
                 type="primary"
                 loading={loading}
