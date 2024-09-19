@@ -176,10 +176,10 @@ export default observer(
       if (!Number(maxOpenVolume)) {
         return message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
       }
-      if (count < vmin || count > maxOpenVolume) {
-        message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
-        return
-      }
+      // if (count < vmin || count > maxOpenVolume) {
+      //   message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
+      //   return
+      // }
       const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
       if (slFlag && sl) {
         message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
@@ -324,7 +324,7 @@ export default observer(
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
-                        <span className="dark:text-primary">{formatNum(sp_scope)}</span> USD
+                        <span className="dark:text-primary">{formatNum(sp_scope)} USD</span>
                       </span>
                       <span className="!font-dingpro-regular">
                         <FormattedMessage id="mt.yujiyingkui" />
@@ -338,8 +338,8 @@ export default observer(
                               }),
                               { precision: 2 }
                             )}{' '}
+                            USD
                           </span>
-                          USD
                         </span>
                       </span>
                     </div>
@@ -377,7 +377,7 @@ export default observer(
                     <span className="!font-dingpro-regular pb-[2px]">
                       <FormattedMessage id="mt.fanwei" />
                       <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>
-                      <span className="dark:text-primary">{formatNum(sl_scope)}</span> USD
+                      <span className="dark:text-primary">{formatNum(sl_scope)} USD</span>
                     </span>
                     <span className="!font-dingpro-regular">
                       <FormattedMessage id="mt.yujiyingkui" />
@@ -391,8 +391,8 @@ export default observer(
                             }),
                             { precision: 2 }
                           )}{' '}
+                          USD
                         </span>
-                        USD
                       </span>
                     </span>
                   </div>
