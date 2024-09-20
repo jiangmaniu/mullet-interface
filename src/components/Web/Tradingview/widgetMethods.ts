@@ -3,7 +3,7 @@ import { stores } from '@/context/mobxProvider'
 import { ChartStyle, IChartingLibraryWidget, ThemeName, TOverrides } from '@/libs/charting_library'
 import { isPC } from '@/utils'
 
-import { ThemeConst } from './constant'
+import { ThemeConst, ThemeDark } from './constant'
 import { getTradingviewThemeCssVar } from './theme'
 
 // 动态设置品种
@@ -24,8 +24,8 @@ export const setSymbol = (symbol, tvWidget: IChartingLibraryWidget) => {
 export type ColorType = 1 | 2 // 1绿涨红跌 2红涨绿跌
 export function setChartStyleProperties(props: { colorType: ColorType; isDark: any; tvWidget: IChartingLibraryWidget }) {
   const { colorType, tvWidget, isDark } = props
-  const red = ThemeConst.red
-  const green = ThemeConst.green
+  const red = isDark ? ThemeDark.red : ThemeConst.red
+  const green = isDark ? ThemeDark.green : ThemeConst.green
   let upColor = green
   let downColor = red
 
