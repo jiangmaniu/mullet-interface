@@ -478,7 +478,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         border: '0px solid var(--divider-line-color) !important'
       },
       'tr > td': {
-        background: 'var(--bg-primary) !important',
+        background: 'var(--bg-primary)',
         borderBottom: '1px solid var(--divider-line-color) !important'
       }
     }

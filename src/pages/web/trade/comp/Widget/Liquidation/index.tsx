@@ -5,7 +5,10 @@ import { cloneDeep, groupBy } from 'lodash-es'
 import { observer } from 'mobx-react'
 import { useTransition } from 'react'
 
+import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
+import { gray } from '@/theme/theme.config'
 import { formatNum, uniqueObjectArray } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
 import { cn } from '@/utils/cn'
@@ -17,6 +20,7 @@ import Gauge from './Gauge'
 function Liquidation() {
   const intl = useIntl()
   const { trade } = useStores()
+  const { isDark } = useTheme()
   const activeSymbolName = trade.activeSymbolName
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const quoteInfo = getCurrentQuote() // 保留，取值触发更新
@@ -143,7 +147,7 @@ function Liquidation() {
                   return <>{item.label}</>
                 },
                 style: { width: 282, height: 40, marginTop: 10, position: 'relative', left: -7 },
-                suffixIcon: <img src="/img/select-down.png" width={24} height={24} style={{ opacity: 0.5 }} />,
+                suffixIcon: <Iconfont name="down" width={24} height={24} color={isDark ? '#fff' : gray[400]} />,
                 // 回填到选择框的 Option 的属性值，默认是 Option 的子元素
                 optionLabelProp: 'label'
               }}

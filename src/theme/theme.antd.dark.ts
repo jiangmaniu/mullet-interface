@@ -23,7 +23,7 @@ export default {
   colorText: gray['95'], // 文字主色
   colorBorder: gray['650'], // 默认使用的边框颜色, 用于分割不同的元素，例如：表单的分割线、卡片的分割线等。
   colorTextDisabled: gray['95'], // 控制禁用状态下的字体颜色。
-  colorBgContainer: gray['750'], // 组件的容器背景色，例如：默认按钮、输入框等。务必不要将其与 `colorBgElevated` 混淆。
+  colorBgContainer: gray['675'], // gray['750'] 组件的容器背景色，例如：默认按钮、输入框等。务必不要将其与 `colorBgElevated` 混淆。
   colorBgElevated: gray[680],
   motion: false, // 动画关闭，否则切换主题样式会闪烁
 
@@ -53,6 +53,7 @@ export default {
   Select: {
     multipleItemBg: 'rgba(24, 62, 252, 0.04)',
     optionActiveBg: gray['655'],
+    selectorBg: gray[750],
     optionSelectedBg: gray['655'] // 选项选中时背景色
   },
   InputNumber: {
@@ -70,7 +71,8 @@ export default {
     itemMarginBottom: 0 // 表单项底部间距
   },
   Table: {
-    // rowHoverBg: 'rgba(24,62,252,0.05)'
+    rowHoverBg: gray[590],
+    colorBgContainer: gray[675]
   },
   Message: {
     contentBg: 'rgba(1,1,1,0.6)'
@@ -82,7 +84,8 @@ export default {
     colorPrimary: gray['650'],
     colorPrimaryBorderHover: gray['650'],
     colorPrimaryHover: gray['650'],
-    colorBorder: gray['610']
+    colorBorder: gray['610'],
+    colorBgContainer: gray[750]
   },
   Segmented: {
     itemSelectedBg: gray[651],

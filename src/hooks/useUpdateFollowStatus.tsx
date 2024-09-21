@@ -18,7 +18,7 @@ export const useUpdateFollowStatus = () => {
       const currentUser = initialState?.currentUser
       const accountList = currentUser?.accountList
 
-      if (!accountList) return
+      if (!accountList?.length) return
 
       Promise.all(
         accountList.map(async (item: User.AccountItem) => {
