@@ -127,83 +127,85 @@ function Modal(
 
   return (
     <>
-      <AntdModal
-        open={isOpen}
-        title={
-          <div>
-            <div className="flex items-center pb-3 px-7">
-              {!renderTitle && (
-                <>
-                  {title && <span className="text-lg text-primary font-semibold">{title}</span>}
-                  {subTitle && <span className="text-sm text-primary pl-[14px]">{subTitle}</span>}
-                </>
-              )}
-              {renderTitle?.()}
+      {isOpen && (
+        <AntdModal
+          open={isOpen}
+          title={
+            <div>
+              <div className="flex items-center pb-3 px-7">
+                {!renderTitle && (
+                  <>
+                    {title && <span className="text-lg text-primary font-semibold">{title}</span>}
+                    {subTitle && <span className="text-sm text-primary pl-[14px]">{subTitle}</span>}
+                  </>
+                )}
+                {renderTitle?.()}
+              </div>
+              <Tabs
+                showMobileTabs
+                tabList={tabList}
+                activeKey={tabKey}
+                tabBarGutter={56}
+                tabBarStyle={{ paddingLeft: 28 }}
+                onChangeTab={(activeKey, activeLabel) => {
+                  setTabKey(activeKey)
+                  setTabLabel(activeLabel)
+                  onChangeTab?.(activeKey, activeLabel)
+                }}
+                tabBarExtraContent={tabBarExtraContent}
+              />
             </div>
-            <Tabs
-              showMobileTabs
-              tabList={tabList}
-              activeKey={tabKey}
-              tabBarGutter={56}
-              tabBarStyle={{ paddingLeft: 28 }}
-              onChangeTab={(activeKey, activeLabel) => {
-                setTabKey(activeKey)
-                setTabLabel(activeLabel)
-                onChangeTab?.(activeKey, activeLabel)
-              }}
-              tabBarExtraContent={tabBarExtraContent}
-            />
-          </div>
-        }
-        width={870}
-        destroyOnClose={true}
-        centered
-        maskClosable={false}
-        closable={!loading}
-        onCancel={close}
-        afterClose={() => {
-          setTabKey(tabItems[0]?.key)
-          afterClose?.()
-        }}
-        wrapClassName="modal-no-padding"
-        styles={{
-          header: {
-            background: isTabList ? 'var(--modal-header-bg)' : '#fff',
-            paddingTop: 24,
-            paddingLeft: 0,
-            paddingRight: 0
-          },
-          footer: {
-            paddingTop: 5,
-            paddingLeft: 28,
-            paddingRight: 28
           }
-        }}
-        footer={
-          hiddenSubmitter ? null : (
-            <div key="footer" className="flex justify-end items-center w-full">
-              {isTabList ? (
-                <SaveButton style={{ height: 38, paddingLeft: 28, paddingRight: 28 }} onClick={handleConfirm} loading={loading} />
-              ) : (
-                <div className="flex items-center gap-[10px]">
-                  <Button onClick={close} style={{ minWidth: 100, height: 40 }}>
-                    <FormattedMessage id="common.cancel" />
-                  </Button>
-                  <Button type="primary" loading={loading} onClick={handleConfirm} style={{ minWidth: 100, height: 40 }}>
-                    {okText || <FormattedMessage id="common.queren" />}
-                  </Button>
-                </div>
-              )}
-            </div>
-          )
-        }
-        okText={okText}
-        {...res}
-      >
-        <div className="px-7 pb-7" style={{ paddingTop: isTabList ? 28 : 16, ...contentStyle }}>
-          {children}
-        </div>
-      </AntdModal>
+          width={870}
+          destroyOnClose={true}
+          centered
+          maskClosable={false}
+          closable={!loading}
+          onCancel={close}
+          afterClose={() => {
+            setTabKey(tabItems[0]?.key)
+            afterClose?.()
+          }}
+          wrapClassName="modal-no-padding"
+          styles={{
+            header: {
+              background: isTabList ? 'var(--modal-header-bg)' : '#fff',
+              paddingTop: 24,
+              paddingLeft: 0,
+              paddingRight: 0
+            },
+            footer: {
+              paddingTop: 5,
+              paddingLeft: 28,
+              paddingRight: 28
+            }
+          }}
+          footer={
+            hiddenSubmitter ? null : (
+              <div key="footer" className="flex justify-end items-center w-full">
+                {isTabList ? (
+                  <SaveButton style={{ height: 38, paddingLeft: 28, paddingRight: 28 }} onClick={handleConfirm} loading={loading} />
+                ) : (
+                  <div className="flex items-center gap-[10px]">
+                    <Button onClick={close} style={{ minWidth: 100, height: 40 }}>
+                      <FormattedMessage id="common.cancel" />
+                    </Button>
+                    <Button type="primary" loading={loading} onClick={handleConfirm} style={{ minWidth: 100, height: 40 }}>
+                      {okText || <FormattedMessage id="common.queren" />}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )
+          }
+          okText={okText}
+          {...res}
+        >
+          <div className="px-7 pb-7" style={{ paddingTop: isTabList ? 28 : 16, ...contentStyle }}>
+            {children}
+          </div>
+        </AntdModal>
+      )}
       {triggerDom}
     </>
   )

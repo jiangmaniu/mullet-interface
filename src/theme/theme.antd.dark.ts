@@ -1,4 +1,4 @@
-import { blue, darkTheme, gray } from './theme.config'
+import { blue, colorWhite, darkTheme, gray } from './theme.config'
 
 const gray500 = gray['500']
 const gray600 = gray['600']
@@ -26,6 +26,8 @@ export default {
   colorBgContainer: gray['675'], // gray['750'] 组件的容器背景色，例如：默认按钮、输入框等。务必不要将其与 `colorBgElevated` 混淆。
   colorBgElevated: gray[680],
   motion: false, // 动画关闭，否则切换主题样式会闪烁
+  colorLinkActive: colorWhite, // 控制超链接被点击时的颜色
+  colorLinkHover: colorWhite, // 控制超链接悬浮时的颜色
 
   // 组件对应的token
   Tabs: {

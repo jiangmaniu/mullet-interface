@@ -7,7 +7,6 @@ import { useEffect, useMemo, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Dropdown from '@/components/Base/Dropdown'
-import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
 import SwitchTheme from '@/components/SwitchTheme'
@@ -159,7 +158,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]
     return (
-      <div className="xl:shadow-dropdown dark:!shadow-none xl:border dark:border-[--dropdown-border-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white dark:bg-[--dropdown-bg] pb-1 xl:w-[360px] xl:pt-[18px]">
+      <div className="dark:!shadow-none xl:border dark:border-[--dropdown-border-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white dark:bg-[--dropdown-bg] pb-1 xl:w-[360px] xl:pt-[18px]">
         <div className="mb-[26px] px-[18px]">
           {list.map((item, idx) => (
             <div className="mb-6 flex flex-wrap items-center justify-between text-weak" key={idx}>
@@ -299,7 +298,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                 </div>
               )
             })}
-            <div className="my-3">{accountArr.length === 0 && <Empty />}</div>
+            {/* <div className="my-3">{accountArr.length === 0 && <Empty />}</div> */}
           </div>
         </div>
       </div>
@@ -307,30 +306,28 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   }
 
   const groupClassName = useEmotionCss(({ token }) => {
-    return showUserCenterAccountDropdown
-      ? {
-          '&:hover': {
-            border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
-            borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
-            borderBottomWidth: isDark ? 0 : 1,
-            background: 'var(--dropdown-bg)',
-            color: 'var(--color-text-primary)',
-            borderTopRightRadius: 12,
-            borderTopLeftRadius: 12,
-            boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
-          },
-          '&.active': {
-            border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
-            borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
-            borderBottomWidth: isDark ? 0 : 1,
-            background: 'var(--dropdown-bg)',
-            color: 'var(--color-text-primary)',
-            borderTopRightRadius: 12,
-            borderTopLeftRadius: 12,
-            boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
-          }
-        }
-      : {}
+    return {
+      '&:hover': {
+        border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
+        borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
+        borderBottomWidth: isDark ? 0 : 1,
+        background: 'var(--dropdown-bg)',
+        color: 'var(--color-text-primary)',
+        borderTopRightRadius: 12,
+        borderTopLeftRadius: 12,
+        boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+      },
+      '&.active': {
+        border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
+        borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
+        borderBottomWidth: isDark ? 0 : 1,
+        background: 'var(--dropdown-bg)',
+        color: 'var(--color-text-primary)',
+        borderTopRightRadius: 12,
+        borderTopLeftRadius: 12,
+        boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+      }
+    }
   })
 
   const themeClass = useEmotionCss(({ token }) => {
@@ -376,13 +373,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             align={{ offset: [-0.2, 0] }}
           >
             <div
-              className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, { active: true || accountBoxOpen })}
-              onMouseEnter={() => {
-                // 刷新账户余额信息,使用ws最新的
-                // setTimeout(() => {
-                //   fetchUserInfo(false)
-                // }, 300)
-              }}
+              className={cn('flex items-center px-2 h-[57px]', groupClassName, themeClass, {
+                active: accountBoxOpen
+              })}
             >
               <div className="flex flex-col items-end group relative">
                 <span className="text-base font-pf-bold  dark:text-primary">{formatNum(balance, { precision: currencyDecimal })} USD</span>
@@ -497,7 +490,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                         </div>
                       )
                     })}
-                    <div className="my-3">{accountArr.length === 0 && <Empty />}</div>
+                    {/* <div className="my-3">{accountArr.length === 0 && <Empty />}</div> */}
                   </div>
                 </div>
               )
