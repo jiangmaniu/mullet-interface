@@ -70,7 +70,7 @@ export const ORDER_TYPE = {
   /**止损单 */
   STOP_LOSS_ORDER: 'STOP_LOSS_ORDER',
   /**止盈单 */
-  TAKE_PROFIT_ORDERR: 'TAKE_PROFIT_ORDERR'
+  TAKE_PROFIT_ORDER: 'TAKE_PROFIT_ORDER'
 }
 
 // 买卖交易方向
@@ -119,7 +119,7 @@ export const getEnum = () => {
     OrderType: {
       MARKET_ORDER: { text: intl.formatMessage({ id: 'mt.shijia' }), value: 10 },
       STOP_LOSS_ORDER: { text: intl.formatMessage({ id: 'mt.zhisundan' }), value: 20 },
-      TAKE_PROFIT_ORDERR: { text: intl.formatMessage({ id: 'mt.zhiyingdan' }), value: 30 },
+      TAKE_PROFIT_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyingdan' }), value: 30 },
       LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamairudan' }), value: 40 },
       LIMIT_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamaichudan' }), value: 50 },
       STOP_LOSS_LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunxianjiamairudan' }), value: 60 },

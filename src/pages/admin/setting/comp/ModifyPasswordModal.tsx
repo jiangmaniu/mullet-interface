@@ -35,7 +35,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
       width={460}
       title={<FormattedMessage id="mt.xiugaimima" />}
       contentStyle={{ paddingInline: 20 }}
-      onFinish={async (values) => {
+      onFinish={async (values: any) => {
         console.log('values', values)
 
         const { newPassword, confirmNewPassword, validateCode } = values

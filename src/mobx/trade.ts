@@ -250,6 +250,7 @@ class TradeStore {
    * @param item 持仓单item
    * @returns
    */
+  @action
   getMarginRateInfo = (item?: IPositionItem) => {
     const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
     const quote = getCurrentQuote()
@@ -298,11 +299,10 @@ class TradeStore {
         profit += Number(item.profit || 0)
       })
       // 逐仓净值=账户余额（单笔或多笔交易保证金）-库存费-手续费+浮动盈亏
-      const isolatedBalance = Number(toFixed(orderMargin - Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0)))
+      const isolatedBalance = Number(orderMargin - Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0))
       marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
-
       margin = Number(orderMargin * compelCloseRatio)
-      balance = isolatedBalance
+      balance = toFixed(isolatedBalance, 2)
     }
 
     return {
@@ -678,7 +678,7 @@ class TradeStore {
       current: 1,
       size: 999,
       status: 'ENTRUST',
-      type: 'STOP_LOSS_ORDER,TAKE_PROFIT_ORDERR',
+      type: 'STOP_LOSS_ORDER,TAKE_PROFIT_ORDER',
       accountId: this.currentAccountInfo?.id
     })
     if (res.success) {

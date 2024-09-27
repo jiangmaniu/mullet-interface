@@ -67,6 +67,7 @@ const Tradingview = () => {
 
     tvWidget.onChartReady(async () => {
       setIsChartLoading(false)
+      kline.setSwitchSymbolLoading(false)
 
       // 动态设置css变量
       setCSSCustomProperty({ tvWidget, theme })
@@ -203,6 +204,7 @@ const Tradingview = () => {
       // 实例存在
       if (kline.tvWidget) {
         kline.tvWidget.onChartReady(() => {
+          kline.setSwitchSymbolLoading(false)
           if (symbolName !== previousSymbolName) {
             // 实例已经初始化，直接切换品种
             setSymbol(symbolName, kline.tvWidget)

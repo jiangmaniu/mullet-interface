@@ -26,7 +26,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { isMobileOrIpad } = useEnv()
   const { upColor, downColor, isDark } = useTheme()
-  const { trade, ws } = useStores()
+  const { trade, ws, kline } = useStores()
   const symbol = item.symbol
   const res = getCurrentQuote(symbol)
   const bid = res.bid // 卖价
@@ -176,7 +176,6 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
           })
         }}
       >
-        {/* {isActive && <CaretRightOutlined className="absolute -left-1 top-4" />} */}
         <Row
           className={cn('flex cursor-pointer items-center rounded pl-2 py-[5px] hover:bg-[var(--list-hover-primary-bg)] relative', {
             'bg-[var(--list-hover-primary-bg)]': isActive,

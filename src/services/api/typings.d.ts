@@ -135,7 +135,7 @@ declare namespace API {
     /**止损单 */
     | 'STOP_LOSS_ORDER'
     /**止盈单 */
-    | 'TAKE_PROFIT_ORDERR'
+    | 'TAKE_PROFIT_ORDER'
   // 订单成交方向
   type OrderInOut = 'IN' | 'IN_OUT' | 'OUT'
   // 订单创建原因

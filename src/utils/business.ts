@@ -158,14 +158,14 @@ export function transformTradeFeeShow(conf: Symbol.TransactionFeeConf) {
 // 转换品种-预付款配置-提交参数
 export function transformTradePrepaymentConfSubmit(conf: Symbol.PrepaymentConf) {
   // 处理浮动杠杆参数
-  if (conf?.float_leverage?.length) {
-    conf.float_leverage = conf.float_leverage
-      .filter((item: any) => item.leverage_multiple)
+  if (conf?.float_leverage?.lever_grade?.length) {
+    conf.float_leverage.lever_grade = conf.float_leverage.lever_grade
+      .filter((item: any) => item.bag_nominal_value)
       .map((item: any) => {
         return {
-          leverage_multiple: item.leverage_multiple,
-          nominal_start_value: item?.maxMinMap?.nominal_start_value,
-          nominal_end_value: item?.maxMinMap?.nominal_end_value
+          bag_nominal_value: item.bag_nominal_value,
+          lever_start_value: item?.maxMinMap?.lever_start_value,
+          lever_end_value: item?.maxMinMap?.lever_end_value
         }
       })
   }
@@ -175,17 +175,17 @@ export function transformTradePrepaymentConfSubmit(conf: Symbol.PrepaymentConf) 
 // 转换品种-预付款配置-回显
 export function transformTradePrepaymentConfShow(conf: Symbol.PrepaymentConf) {
   // 自定义杠杆表格回显
-  const float_leverage = conf?.float_leverage
-  if (float_leverage?.length) {
+  const lever_grade = conf?.float_leverage?.lever_grade
+  if (lever_grade?.length) {
     // @ts-ignore
-    conf.float_leverage = float_leverage.map((item) => {
+    conf.float_leverage.lever_grade = lever_grade.map((item) => {
       return {
         ...item,
         id: getUid(), // 需要一个唯一值id，否则编辑表格出错
         maxMinMap: {
           // 用于显示在表格上的范围值，一个输入框 对应两个值
-          nominal_start_value: item.nominal_start_value,
-          nominal_end_value: item.nominal_end_value
+          lever_start_value: item.lever_start_value,
+          lever_end_value: item.lever_end_value
         }
       }
     })

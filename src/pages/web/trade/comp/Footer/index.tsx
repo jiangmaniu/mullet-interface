@@ -3,7 +3,7 @@ import { FormattedMessage } from '@umijs/max'
 import { useNetwork, useScroll } from 'ahooks'
 import { Button, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Marquee from 'react-fast-marquee'
 
 import SignalIcon from '@/components/Base/Svg/SignalIcon'
@@ -23,6 +23,15 @@ function Footer() {
   const [openTips, setOpenTips] = useState<any>(false)
   const disConnected = !isOnline || readyState === 3
   const scroll = useScroll(document)
+  const isRefreshRef = useRef(false)
+
+  const handleRefresh = () => {
+    // 行情重新建立新的连接
+    ws.reconnect()
+    // @ts-ignore
+    // 刷新k线实例
+    kline.tvWidget = null
+  }
 
   useEffect(() => {
     setOpenTips(!isOnline || readyState === 3)
@@ -41,6 +50,14 @@ function Footer() {
       }, 5000)
     }
   }, [openTips])
+
+  useEffect(() => {
+    if (disConnected && !isRefreshRef.current) {
+      isRefreshRef.current = true
+      // 自动刷新连接状态
+      handleRefresh()
+    }
+  }, [disConnected])
 
   const CLOSED: any = {
     title: <FormattedMessage id="mt.duankailianjie" />,
@@ -81,16 +98,7 @@ function Footer() {
           <span>
             {connectedStatusMap?.desc}
             {disConnected && (
-              <Button
-                type="link"
-                onClick={() => {
-                  // 行情重新建立新的连接
-                  ws.reconnect()
-                  // @ts-ignore
-                  // 刷新k线实例
-                  kline.tvWidget = null
-                }}
-              >
+              <Button type="link" onClick={handleRefresh}>
                 <FormattedMessage id="common.shuaxin" />
               </Button>
             )}

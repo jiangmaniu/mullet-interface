@@ -22,8 +22,6 @@ import { calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } fro
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 
 export type IPositionItem = Order.BgaOrderPageListItem & {
-  /**格式化浮动盈亏 */
-  profitFormat?: string | number
   /**现价 */
   currentPrice?: number | string
   /**收益率 */
@@ -369,8 +367,10 @@ function Position({ style, parentPopup }: IProps) {
         const profit = record.profit
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
+
+        const profitFormat = Number(profit) ? formatNum(profit, { precision }) : profit || '-' // 格式化的
         const profitDom = profit ? (
-          <span className={cn('font-pf-bold', color)}>{record.profitFormat} USD</span>
+          <span className={cn('font-pf-bold', color)}>{profitFormat} USD</span>
         ) : (
           <span className="!text-[13px]">-</span>
         )
@@ -457,10 +457,7 @@ function Position({ style, parentPopup }: IProps) {
 
       v.currentPrice = currentPrice // 现价
       const profit = covertProfit(v) as number // 浮动盈亏
-
       v.profit = profit
-      v.profitFormat = Number(v.profit) ? formatNum(v.profit, { precision: 3 }) : v.profit || '-' // 格式化的
-      v.profitFormat = v.profit > 0 ? `+${v.profitFormat}` : v.profitFormat
       v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
       v.yieldRate = calcYieldRate(v, precision) // 收益率
       v.forceClosePrice = calcForceClosePrice(v) // 强平价

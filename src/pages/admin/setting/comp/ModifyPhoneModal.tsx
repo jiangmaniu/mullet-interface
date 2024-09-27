@@ -29,7 +29,7 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
       width={460}
       title={<FormattedMessage id="mt.genggaidianhuahaoma" />}
       contentStyle={{ paddingInline: 20 }}
-      onFinish={async (values) => {
+      onFinish={async (values: any) => {
         console.log('values', values)
 
         setSubmitLoading(true)

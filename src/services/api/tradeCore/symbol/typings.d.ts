@@ -264,14 +264,22 @@ declare namespace Symbol {
       is_unilateral: boolean
     }
     /**自定义杠杆 */
-    float_leverage?: Array<{
-      /**起始值 */
-      nominal_start_value: number
-      /**结束值 */
-      nominal_end_value: number
-      /**杠杆倍数 */
-      leverage_multiple: number
-    }>
+    float_leverage?: {
+      /**按持仓手数、按持仓名义 */
+      type: 'volume' | 'nominal'
+      /**最大杠杆 */
+      max_lever: string
+      /**最小杠杆 */
+      min_lever: string
+      lever_grade: Array<{
+        /**杠杆倍数-起始值 */
+        lever_start_value: number
+        /**杠杆倍数-结束值 */
+        lever_end_value: number
+        /**持仓名义价值 */
+        bag_nominal_value: number
+      }>
+    }
   }
 
   // 交易品种分页

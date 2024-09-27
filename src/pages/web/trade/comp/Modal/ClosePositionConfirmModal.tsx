@@ -11,7 +11,7 @@ import Slider from '@/components/Web/Slider'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { toFixed } from '@/utils'
+import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
@@ -40,6 +40,8 @@ export default observer(
     const orderVolume = Number(item.orderVolume || 0) // 手数
     const conf = item?.conf as Symbol.SymbolConf
     const vmin = conf?.minTrade || 0.01
+
+    const precision = trade.currentAccountInfo.currencyDecimal
 
     const buySellInfo = getBuySellInfo(item)
 
@@ -111,6 +113,7 @@ export default observer(
     }, [count])
 
     const renderContent = () => {
+      const profitFormat = Number(item.profit) ? formatNum(item.profit, { precision }) : item.profit || '-' // 格式化的
       return (
         <>
           <div className="flex flex-col items-center justify-center">
@@ -122,7 +125,7 @@ export default observer(
               </div>
               <div className="flex flex-col items-end">
                 <span className={cn('pb-2 text-lg font-bold', Number(item?.profit) > 0 ? 'text-green' : 'text-red')}>
-                  {item.profitFormat} {unit}
+                  {profitFormat} {unit}
                 </span>
                 <span className="text-xs text-secondary">
                   <FormattedMessage id="mt.fudongyingkui" />

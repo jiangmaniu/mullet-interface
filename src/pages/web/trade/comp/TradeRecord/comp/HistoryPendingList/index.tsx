@@ -22,7 +22,7 @@ function HistoryPendingList() {
       size: 10,
       ...params,
       status: 'CANCEL,FAIL,FINISH'
-      // type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_ORDER,TAKE_PROFIT_ORDERR'
+      // type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_ORDER,TAKE_PROFIT_ORDER'
     })
     if (res.success && res.data?.records?.length) {
       res.data.records = res.data.records.map((v: Order.OrderPageListItem) => {
