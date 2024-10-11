@@ -122,6 +122,9 @@ export default observer(
       }
     }
 
+    const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
+    const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
+
     const orderParams = {
       symbol,
       buySell, // 订单方向
@@ -161,12 +164,10 @@ export default observer(
       //   message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
       //   return
       // }
-      const slFlag = isBuy ? sl && sl > sl_scope : sl && sl < sl_scope
       if (slFlag && sl) {
         message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
         return
       }
-      const spFlag = isBuy ? sp && sp < sp_scope : sp && sp > sp_scope
       if (spFlag && sp) {
         message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
         return
@@ -197,7 +198,7 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = trade.disabledTrade() || (sp && sp < sp_scope) || (sl && sl > sl_scope)
+    const disabledBtn = trade.disabledTrade() || spFlag || slFlag
     // 禁用交易
     const disabledTrade = trade.disabledTrade()
 
@@ -260,7 +261,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <div className={cn('flex items-start gap-x-2 w-full pl-[2px]', { '!text-red': sp && sp < sp_scope })}>
+                    <div className={cn('flex items-start gap-x-2 w-full pl-[2px]', { '!text-red': spFlag })}>
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
@@ -312,7 +313,7 @@ export default observer(
                     }
                   }}
                   tips={
-                    <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': sl && sl > sl_scope })}>
+                    <div className={cn('flex gap-x-2 items-start w-full pl-[2px]', { '!text-red': slFlag })}>
                       <span className="!font-dingpro-regular pb-[2px]">
                         <FormattedMessage id="mt.fanwei" />
                         <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>

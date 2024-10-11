@@ -458,7 +458,7 @@ function Position({ style, parentPopup }: IProps) {
       v.currentPrice = currentPrice // 现价
       const profit = covertProfit(v) as number // 浮动盈亏
       v.profit = profit
-      v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
+      // v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
       v.yieldRate = calcYieldRate(v, precision) // 收益率
       v.forceClosePrice = calcForceClosePrice(v) // 强平价
       v.takeProfit = toFixed(v.takeProfit, digits) // 止盈价

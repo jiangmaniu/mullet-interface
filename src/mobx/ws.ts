@@ -100,6 +100,8 @@ class WSStore {
   constructor() {
     makeObservable(this) // 使用 makeObservable mobx6.0 才会更新视图
   }
+  updateLastQuoteTimer: any = null // 延迟更新最后一口报价
+  updateLastDepthTimer: any = null // 延迟更新最后一口深度
   batchQuoteTimer: any = null // 定时更新行情
   batchDepthTimer: any = null // 定时更新深度
   heartbeatInterval: any = null
@@ -131,7 +133,7 @@ class WSStore {
       this.startHeartbeat()
 
       // 开启定时器推送数据
-      this.batchUpdateQuoteDataByTimer() // 更新行情
+      // this.batchUpdateQuoteDataByTimer() // 更新行情
       // this.batchUpdateDepthDataByTimer() // 更新深度
     })
     this.socket.addEventListener('message', (d: any) => {
@@ -352,6 +354,14 @@ class WSStore {
       this.updateQuoteData()
     } else {
       this.quotesCacheArr.push(data)
+
+      // 处理最后一口报价问题，设置一个短暂的延迟，确保即使数据量不足也能更新
+      if (!this.updateLastQuoteTimer && this.quotesCacheArr.length) {
+        this.updateLastQuoteTimer = setTimeout(() => {
+          this.updateQuoteData()
+          // this.updateLastQuoteTimer = null
+        }, 200)
+      }
     }
   }
 
@@ -396,6 +406,14 @@ class WSStore {
       this.updateDepthData()
     } else {
       this.depthCacheArr.push(data)
+
+      // 设置一个短暂的延迟，确保即使数据量不足也能更新
+      if (!this.updateLastDepthTimer && this.depthCacheArr.length) {
+        this.updateLastDepthTimer = setTimeout(() => {
+          this.updateDepthData()
+          // this.updateLastDepthTimer = null
+        }, 200)
+      }
     }
   }
 
@@ -424,9 +442,9 @@ class WSStore {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        // this.batchUpdateQuoteDataByNumber(data)
+        this.batchUpdateQuoteDataByNumber(data)
         // 推入缓冲区
-        this.quotesCacheArr.push(data)
+        // this.quotesCacheArr.push(data)
 
         // console.log('行情信息', toJS(this.quotes))
         break
@@ -442,10 +460,10 @@ class WSStore {
         //   }
         // }
 
-        // this.batchUpdateDepthDataByNumber(data)
+        this.batchUpdateDepthDataByNumber(data)
 
         // 推入缓冲区
-        this.depthCacheArr.push(data)
+        // this.depthCacheArr.push(data)
 
         // console.log('深度报价', toJS(this.depth))
         break

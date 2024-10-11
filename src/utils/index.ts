@@ -148,13 +148,13 @@ export const getColorClass = (value: number) => {
  * @param value
  * @returns
  */
-export const formatNum = (value: any, opts = {}) => {
+export const formatNum = (value: any, opts: any = {}) => {
   // 不是一个数字
   if (isNaN(value) || !Number(value)) {
     return '--'
   }
   const val = value || '0.00'
-  const precision = String(value).split('.')?.[1]?.length || 2
+  const precision = opts?.precision || String(value).split('.')?.[1]?.length || 2
   const truncateValue = truncateDecimal(val, precision) // 截取小数点，不四舍五入
   return currency(truncateValue, { symbol: '', precision, ...opts }).format()
 }
@@ -417,10 +417,17 @@ export function toFixed(val: any, num = 2, isTruncateDecimal = true) {
  * @returns
  */
 export function truncateDecimal(number: any, digits?: number) {
-  // 将数字乘以 10 的指定次幂，以便保留指定小数位数
-  const multiplier = Math.pow(10, digits || 2)
-  const truncatedNumber = Math.floor(number * multiplier) / multiplier
-  return truncatedNumber as any
+  const precision = digits || 2
+  // 将数字转换为字符串
+  const numStr = number.toString()
+  // 找到小数点位置
+  const decimalIndex = numStr.indexOf('.')
+  // 如果没有小数点，直接返回
+  if (decimalIndex === -1) return number
+  // 截取指定小数位
+  const truncatedStr = numStr.substring(0, decimalIndex + precision + 1)
+  // 转换回数字
+  return parseFloat(truncatedStr)
 }
 
 /**

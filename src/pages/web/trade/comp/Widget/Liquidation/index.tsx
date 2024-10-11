@@ -194,7 +194,7 @@ function Liquidation() {
               {marginRateInfo.marginRate ? (
                 <span className="text-green font-semibold text-xs">{`${marginRateInfo.marginRate}%`}</span>
               ) : (
-                <span className="text-gray-weak font-medium text-xs">-</span>
+                <span className="text-weak font-medium text-xs">-</span>
               )}
             </div>
             <div className="flex items-center pt-[10px] justify-between">
@@ -206,7 +206,7 @@ function Liquidation() {
                   {formatNum(marginRateInfo.margin, { precision: 2 })}USD
                 </span>
               ) : (
-                <span className="text-gray-weak font-medium text-xs">-</span>
+                <span className="text-weak font-medium text-xs">-</span>
               )}
             </div>
           </div>

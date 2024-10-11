@@ -220,7 +220,7 @@ function InputNumber(props: IProps) {
       <div>
         <div
           className={cn(
-            'relative z-20 flex h-[40px] items-center justify-between overflow-hidden rounded-lg border dark:border-[0.5px] border-[var(--input-border)] input-wrapper',
+            'relative z-20 flex h-[40px] items-center bg-white dark:bg-transparent justify-between overflow-hidden rounded-lg border dark:border-[0.5px] border-[var(--input-border)] input-wrapper',
             isFocus && showFloatTips && 'dark:border-gray-572 dark:border-b-gray-750',
             className
           )}
