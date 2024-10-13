@@ -57,8 +57,11 @@ enum MessageType {
   /**深度报价 */
   depth = 'depth',
   /**行情 */
-  trade = 'trade'
+  trade = 'trade',
+  /**消息 */
+  notice = 'notice'
 }
+
 type IMessage = {
   header: {
     flowId: number
@@ -130,6 +133,7 @@ class WSStore {
       this.batchSubscribeSymbol()
       this.subscribeDepth()
       this.subscribeTrade()
+      this.subscribeMessage()
       this.startHeartbeat()
 
       // 开启定时器推送数据
@@ -236,6 +240,38 @@ class WSStore {
     if (!accountId) return
     this.send({
       topic: `/000000/trade/${accountId}`,
+      cancel
+    })
+  }
+
+  // 订阅消息
+  subscribeMessage = async (cancel?: boolean) => {
+    const userInfo = (await STORAGE_GET_USER_INFO()) as User.UserInfo
+    if (!userInfo.user_id) return
+
+    // 公共订阅：/{租户ID}/public/1
+    // 角色订阅：/{租户ID}/role/{角色ID}
+    // 机构订阅：/{租户ID}/dept/{机构ID}
+    // 岗位订阅：/{租户ID}/post/{岗位ID}
+    // 用户订阅：/{租户ID}/user/{用户ID}
+    this.send({
+      topic: `/000000/public/1`,
+      cancel
+    })
+    this.send({
+      topic: `/000000/role/${userInfo.role_id}`,
+      cancel
+    })
+    this.send({
+      topic: `/000000/dept/${userInfo.dept_id}`,
+      cancel
+    })
+    this.send({
+      topic: `/000000/post/${userInfo.post_id}`,
+      cancel
+    })
+    this.send({
+      topic: `/000000/user/${userInfo.user_id}`,
       cancel
     })
   }
@@ -491,6 +527,9 @@ class WSStore {
         // 历史成交记录,用不到
         else if (type === 'TRADING') {
         }
+        break
+      case MessageType.notice:
+        console.log('消息通知', data)
         break
     }
   }

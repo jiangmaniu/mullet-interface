@@ -25,7 +25,7 @@ const formatOrderResult = (res: any) => {
 
 // 下单
 export async function createOrder(body: Order.CreateOrder) {
-  return request<API.Response>(`/api/trade-core/coreApi/orders/createOrder`, {
+  return request<API.Response<Order.CreateOrderResponse>>(`/api/trade-core/coreApi/orders/createOrder`, {
     method: 'POST',
     data: body
   })

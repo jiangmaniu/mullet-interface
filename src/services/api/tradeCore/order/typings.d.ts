@@ -46,6 +46,42 @@ declare namespace Order {
      */
     type: API.OrderType
   }
+  // 下单成功响应内容
+  type CreateOrderResponse = {
+    bagOrderIds: string
+    buySell: API.TradeBuySell
+    conf: Symbol.SymbolConf
+    createReason: API.OrderCreateReason
+    createTime: string
+    executeOrderId: string
+    expirationTime: string
+    finishTime: string
+    /** 手续费 */
+    handlingFees: string
+    id: string
+    inOut: API.OrderInOut
+    /** 杠杆倍数 */
+    leverageMultiple: number
+    /** 限价停损单单价格 */
+    limitPrice: number
+    marginType: API.MarginType
+    mode: API.OrderMode
+    operatorId: string
+    /** 保证金 */
+    orderMargin: string
+    orderVolume: string
+    profit: string
+    remark: string
+    status: string
+    stopLoss: string
+    symbol: string
+    takeProfit: string
+    tradeAccountId: string
+    tradePrice: string
+    tradingVolume: string
+    type: API.OrderType
+    updateTime: string
+  }
   // 订单修改
   type UpdateOrder = {
     /**
@@ -84,6 +120,10 @@ declare namespace Order {
      * 限价价格
      */
     limitPrice: number
+    /**
+     * 手数
+     */
+    orderVolume: number
   }
 
   // 修改止盈止损参数

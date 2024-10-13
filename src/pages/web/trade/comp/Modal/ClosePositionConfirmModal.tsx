@@ -180,7 +180,7 @@ export default observer(
                 <Slider
                   onChange={(value: any) => {
                     // 可平仓手数*百分比
-                    const vol = toFixed((value / 100) * orderVolume, 2)
+                    const vol = toFixed((value / 100) * orderVolume, 2, false)
                     // 不能小于最小手数
                     setCount(vol < vmin ? vmin : vol)
                     setSliderValue(value)
