@@ -1,4 +1,5 @@
 export default {
+  // "======= 公共开始 ==========": "",
   'common.save': '保存',
   'common.logout': '退出',
   'common.cancel': '取消',
@@ -60,8 +61,7 @@ export default {
   'common.pleaseInputAddress': '请输入地址',
   'common.copy': '复制',
   'common.next': '下一步',
-  'common.zanwuzhanghao': '暫無賬號',
-  'common.chuangjianzhanghao': '創建賬號',
+  'common.shoujihaoma': '手机号码',
   'common.dianziyouxiang': '电子邮箱',
   'common.mima': '密码',
   'common.jixu': '继续',
@@ -79,7 +79,6 @@ export default {
   'common.qingwanshanbitianxiang': '請完善必填項',
   'common.querenshanchugaixiang': '确认删除该项?',
   'common.sousuo': '搜索',
-
   'common.baocun': '保存',
   'common.guojia': '国家',
   'common.haode': '好的',
@@ -100,10 +99,10 @@ export default {
   'common.jiaoyi': '交易',
   'common.lijichakan': '立即查看',
   'common.zhuanzhang': '转账',
-  // @TODO 新加的字段
+
   'common.chongzhi': '充值',
   'common.monichongzhi': '充值(模拟)',
   'common.gendanfenrun': '跟单分润',
-  'common.shoujihaoma': '手机号码',
   'common.shuaxin': '刷新'
+  // "======= 公共结束 ==========": "",
 }

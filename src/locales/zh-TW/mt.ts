@@ -286,7 +286,6 @@ export default {
   'mt.hangqingyiduankaitips': '行情连接已断开，请检查您的网络连接是否正常',
   'mt.hangqinglianjiezhengchengtips': '行情连接正常稳定',
 
-  // @TODO 新加的翻译字段
   'mt.qingqiujiage': '请求价格',
   'mt.mairu': '买入',
   'mt.maichu': '卖出',
@@ -298,6 +297,8 @@ export default {
   'mt.xiushizhong': '休市中',
   'mt.zhanghubeijinyong': '账户被禁用',
   'mt.dangqianzhanghuyuebuzu': '当前账户余额不足',
+
+  // @TODO 新加的翻译字段
   'mt.zonge': '总额',
   'mt.zuiduokezengjiayue': '最多可增加约',
   'mt.zuiduokejianshaoyue': '最多可减少约',
