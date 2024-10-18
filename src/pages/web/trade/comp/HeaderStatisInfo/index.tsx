@@ -27,7 +27,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const symbolInfo = (trade.openSymbolNameList || []).find((item) => item?.symbol === symbol)
   const isMarketOpen = trade.isMarketOpen(symbol)
 
-  const res: any = getCurrentQuote()
+  const res: any = getCurrentQuote(trade.activeSymbolName)
   const color = res.percent > 0 ? 'text-green' : 'text-red'
 
   const openSidebarRef = useRef<any>()

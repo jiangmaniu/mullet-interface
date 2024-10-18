@@ -58,6 +58,17 @@ function Account() {
   })
   const countDownSeconds = Math.round(countDown / 1000)
 
+  const getCurrentAccountList = (accountList: IAccountItem[]) => {
+    const list = accountList
+      .filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
+      .map((item) => ({
+        ...item,
+        isRefresh: false
+      }))
+
+    return list
+  }
+
   useEffect(() => {
     trade.getAccountGroupList()
 
@@ -73,7 +84,7 @@ function Account() {
 
   useEffect(() => {
     // 切换真实模拟账户列表
-    const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
+    const list = getCurrentAccountList(accountList)
     setCurrentAccountList(list)
   }, [accountTabActiveKey, currentUser])
 
@@ -166,8 +177,9 @@ function Account() {
                             setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: v.id === item.id })))
                             fetchUserInfo(false).then((res) => {
                               setTimeout(() => {
-                                setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: false })))
-                              }, 3000)
+                                // @ts-ignore
+                                setCurrentAccountList(getCurrentAccountList(res?.accountList || []))
+                              }, 2000)
                             })
                           }}
                         >
@@ -186,7 +198,7 @@ function Account() {
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-[30px] !font-dingpro-medium text-primary">
-                    {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal })) : '∗∗∗∗'}
+                    {!item.isEyeOpen ? (!item.money ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal })) : '∗∗∗∗'}
                   </span>
                   <span className="pl-[6px] text-sm text-secondary">USD</span>
                 </div>

@@ -173,7 +173,7 @@ export default observer(
                 </div>
                 <div className="flex items-center justify-between pl-7">
                   <span className="pr-3 text-sm text-secondary">
-                    <FormattedMessage id="mt.guadanjiage" />
+                    <FormattedMessage id="mt.kaicangjunjia" />
                   </span>
                   <span className="text-sm text-primary">
                     {item.startPrice} {unit}
@@ -185,9 +185,54 @@ export default observer(
               <InputNumber
                 autoFocus={false}
                 showFloatTips={false}
+                label={intl.formatMessage({ id: 'mt.zhiying' })}
+                placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
+                className="h-[38px]"
+                rootClassName="!z-20"
+                classNames={{ input: 'text-center', tips: '!top-[56px] pt-3' }}
+                value={sp}
+                onChange={(value) => {
+                  setSp(value)
+                }}
+                onAdd={() => {
+                  if (sp && sp > 0.01) {
+                    const c = (((parseFloat(sp) + step) * 100) / 100).toFixed(d)
+                    setSp(c)
+                  } else {
+                    setSp(sp_scope)
+                  }
+                }}
+                onMinus={() => {
+                  if (sp && sp > 0.01) {
+                    const c = (((parseFloat(sp) - step) * 100) / 100).toFixed(d)
+                    setSp(c)
+                  } else {
+                    setSp(sp_scope)
+                  }
+                }}
+                tips={
+                  <span className={cn('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}>
+                    <FormattedMessage id="mt.fanwei" />
+                    &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
+                    &nbsp;
+                    {formatNum(
+                      calcExchangeRate({
+                        value: spProfit,
+                        unit: symbolConf?.profitCurrency,
+                        buySell: item.buySell
+                      }),
+                      trade.currentAccountInfo.currencyDecimal
+                    )}{' '}
+                    USD
+                  </span>
+                }
+              />
+              <InputNumber
+                autoFocus={false}
+                showFloatTips={false}
                 label={intl.formatMessage({ id: 'mt.zhisun' })}
                 placeholder={intl.formatMessage({ id: 'mt.zhisun' })}
-                rootClassName="!z-30"
+                rootClassName="!z-30 mt-4"
                 className="h-[38px]"
                 classNames={{ input: 'text-center', tips: '!top-[56px] pt-3' }}
                 value={sl}
@@ -232,51 +277,6 @@ export default observer(
                       USD
                     </span>
                   </div>
-                }
-              />
-              <InputNumber
-                autoFocus={false}
-                showFloatTips={false}
-                label={intl.formatMessage({ id: 'mt.zhiying' })}
-                placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
-                className="h-[38px]"
-                rootClassName="!z-20 mt-4"
-                classNames={{ input: 'text-center', tips: '!top-[56px] pt-3' }}
-                value={sp}
-                onChange={(value) => {
-                  setSp(value)
-                }}
-                onAdd={() => {
-                  if (sp && sp > 0.01) {
-                    const c = (((parseFloat(sp) + step) * 100) / 100).toFixed(d)
-                    setSp(c)
-                  } else {
-                    setSp(sp_scope)
-                  }
-                }}
-                onMinus={() => {
-                  if (sp && sp > 0.01) {
-                    const c = (((parseFloat(sp) - step) * 100) / 100).toFixed(d)
-                    setSp(c)
-                  } else {
-                    setSp(sp_scope)
-                  }
-                }}
-                tips={
-                  <span className={cn('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}>
-                    <FormattedMessage id="mt.fanwei" />
-                    &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
-                    &nbsp;
-                    {formatNum(
-                      calcExchangeRate({
-                        value: spProfit,
-                        unit: symbolConf?.profitCurrency,
-                        buySell: item.buySell
-                      }),
-                      trade.currentAccountInfo.currencyDecimal
-                    )}{' '}
-                    USD
-                  </span>
                 }
               />
             </div>

@@ -1,7 +1,5 @@
 import { FormattedMessage, useModel } from '@umijs/max'
-import { useRequest } from 'ahooks'
 import { observer } from 'mobx-react'
-import { useEffect } from 'react'
 
 import ProList from '@/components/Admin/ProList'
 import Iconfont from '@/components/Base/Iconfont'
@@ -20,21 +18,13 @@ function Transfer({ params }: IProps) {
   const { trade } = useStores()
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList || []
-  const accountId = trade.currentAccountInfo.id
-  const { data, run, loading } = useRequest(getMoneyRecordsPageList, { manual: true })
-  const dataList = data?.data?.records || []
-
-  useEffect(() => {
-    if (params.accountId) {
-      run({ current: 1, size: 10, type: 'TRANSFER', ...params })
-    }
-  }, [params])
 
   const getTag = (accountId: any) => {
     return accountList.find((item) => item.id === accountId)?.synopsis?.abbr
   }
 
   const onQuery = async (params: IParams) => {
+    if (!params.accountId) return
     const data = await getMoneyRecordsPageList({ current: 1, size: 10, type: 'TRANSFER', ...params })
 
     const res = data.data

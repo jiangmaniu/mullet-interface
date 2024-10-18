@@ -5,6 +5,7 @@ import { stores } from '@/context/mobxProvider'
 import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 
 import { toFixed } from '.'
+import { subtract } from './float'
 
 /**
  * 格式化交易时间段
@@ -345,6 +346,11 @@ export const calcExpectedMargin = (obj: IExpectedMargin) => {
 
   price = Number(orderType === 'MARKET_ORDER' ? currentPrice : price) // 区分市价单和限价单价格
 
+  // 交易品种选择外汇类型，计算预付款不需要加上价格。设置价格为1
+  if (conf?.calculationType === 'FOREIGN_CURRENCY') {
+    price = 1
+  }
+
   let leverage = 1
   if (prepaymentConf?.mode === 'fixed_leverage') {
     // 固定杠杆
@@ -477,6 +483,9 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const close = Number(bid || symbolNewTicker?.close || 0) // 使用卖价作为最新的收盘价格
   const percent = bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0
 
+  // 买卖点差
+  const spread = Math.abs(Number(subtract(bid, ask)) * Math.pow(10, digits))
+
   return {
     symbol, // 用于展示的symbol自定义名称
     dataSourceSymbol, // 数据源品种
@@ -502,7 +511,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
     low: toFixed(low, digits, false), //低
     open: toFixed(open, digits, false), //开
     close: toFixed(close, digits, false), //收
-    spread: Math.abs(parseInt(String(bid * Math.pow(10, digits) - ask * Math.pow(10, digits)))), // 买卖点差
+    spread, // 买卖点差
     bidDiff: currentQuote.bidDiff || 0,
     askDiff: currentQuote.askDiff || 0,
     hasQuote: Number(bid) > 0 // 是否存在行情

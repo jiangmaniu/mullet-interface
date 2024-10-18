@@ -31,10 +31,13 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
       contentStyle={{ paddingInline: 20 }}
       onFinish={async (values: any) => {
         console.log('values', values)
+        const params = {
+          ...values
+        } as User.EditPhoneParams
 
         setSubmitLoading(true)
 
-        const res = await editPhone(values)
+        const res = await editPhone(params)
         const success = res.success
         setSubmitLoading(false)
 

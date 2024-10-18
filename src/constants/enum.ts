@@ -157,10 +157,15 @@ export const getEnum = () => {
       GIFT: { text: intl.formatMessage({ id: 'mt.zengjin' }) },
       BALANCE: { text: intl.formatMessage({ id: 'mt.jieyu' }) },
       TRANSFER: { text: intl.formatMessage({ id: 'common.zhuanzhang' }) },
-      ZERO: { text: intl.formatMessage({ id: 'mt.qiangping' }) },
+      ZERO: { text: intl.formatMessage({ id: 'mt.guiling' }) },
       FOLLOW_PROFIT: { text: intl.formatMessage({ id: 'common.gendanfenrun' }) },
       HANDLING_FEES: { text: intl.formatMessage({ id: 'mt.shouxufei' }) },
       INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) }
+    },
+    // 可用预付款
+    UsableAdvanceCharge: {
+      NOT_PROFIT_LOSS: { text: intl.formatMessage({ id: 'mt.bujisuanweishixiandyinglikuyun' }) },
+      PROFIT_LOSS: { text: intl.formatMessage({ id: 'mt.jisuanweishixiandyinglikuyun' }) }
     }
   }
 

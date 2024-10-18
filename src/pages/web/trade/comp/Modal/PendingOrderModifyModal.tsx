@@ -145,9 +145,9 @@ export default observer(
     }
 
     // 禁用交易按钮
-    const disabledBtn = isBuy
-      ? (sp && sp < sp_scope) || (sl && sl > sl_scope) || (price && price < priceTip)
-      : (sp && sp > sp_scope) || (sl && sl < sl_scope) || (price && price > priceTip)
+    // const disabledBtn = isBuy
+    //   ? (sp && sp < sp_scope) || (sl && sl > sl_scope) || (price && price < priceTip)
+    //   : (sp && sp > sp_scope) || (sl && sl < sl_scope) || (price && price > priceTip)
 
     const renderContent = () => {
       return (
@@ -237,11 +237,57 @@ export default observer(
                     </div>
                   }
                 />
+
+                <InputNumber
+                  label={intl.formatMessage({ id: 'mt.zhiying' })}
+                  placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
+                  rootClassName="!z-30 mt-4"
+                  className="h-[38px]"
+                  classNames={{ input: 'text-center', tips: '!top-[56px] pt-3' }}
+                  value={sp}
+                  onChange={(value) => {
+                    setSp(value)
+                  }}
+                  onAdd={() => {
+                    if (sp && sp > 0.01) {
+                      const c = (((parseFloat(sp) + step) * 100) / 100).toFixed(d)
+                      setSp(c)
+                    } else {
+                      setSp(sp_scope)
+                    }
+                  }}
+                  onMinus={() => {
+                    if (sp && sp > 0.01) {
+                      const c = (((parseFloat(sp) - step) * 100) / 100).toFixed(d)
+                      setSp(c)
+                    } else {
+                      setSp(sp_scope)
+                    }
+                  }}
+                  tips={
+                    <span className={cn('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}>
+                      <FormattedMessage id="mt.fanwei" />
+                      &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
+                      &nbsp;{' '}
+                      {formatNum(
+                        calcExchangeRate({
+                          value: spProfit,
+                          unit: symbolConf?.profitCurrency,
+                          buySell: item.buySell
+                        }),
+                        {
+                          precision: trade.currentAccountInfo.currencyDecimal
+                        }
+                      )}{' '}
+                      USD
+                    </span>
+                  }
+                />
                 <InputNumber
                   label={intl.formatMessage({ id: 'mt.zhisun' })}
                   placeholder={intl.formatMessage({ id: 'mt.zhisun' })}
-                  rootClassName="!z-30 mt-4"
                   className="h-[38px]"
+                  rootClassName="!z-20 mt-4"
                   classNames={{ input: 'text-center', tips: '!top-[56px] pt-3' }}
                   value={sl}
                   onChange={(value) => {
@@ -279,53 +325,14 @@ export default observer(
                             value: slProfit,
                             unit: symbolConf?.profitCurrency,
                             buySell: item.buySell
-                          })
+                          }),
+                          {
+                            precision: trade.currentAccountInfo.currencyDecimal
+                          }
                         )}{' '}
                         USD
                       </span>
                     </div>
-                  }
-                />
-                <InputNumber
-                  label={intl.formatMessage({ id: 'mt.zhiying' })}
-                  placeholder={intl.formatMessage({ id: 'mt.zhiying' })}
-                  className="h-[38px]"
-                  rootClassName="!z-20 mt-4"
-                  classNames={{ input: 'text-center', tips: '!top-[56px] pt-3' }}
-                  value={sp}
-                  onChange={(value) => {
-                    setSp(value)
-                  }}
-                  onAdd={() => {
-                    if (sp && sp > 0.01) {
-                      const c = (((parseFloat(sp) + step) * 100) / 100).toFixed(d)
-                      setSp(c)
-                    } else {
-                      setSp(sp_scope)
-                    }
-                  }}
-                  onMinus={() => {
-                    if (sp && sp > 0.01) {
-                      const c = (((parseFloat(sp) - step) * 100) / 100).toFixed(d)
-                      setSp(c)
-                    } else {
-                      setSp(sp_scope)
-                    }
-                  }}
-                  tips={
-                    <span className={cn('!font-dingpro-regular', { '!text-red': isBuy ? sp && sp < sp_scope : sp && sp > sp_scope })}>
-                      <FormattedMessage id="mt.fanwei" />
-                      &nbsp; {isBuy ? '≥' : '≤'} {formatNum(sp_scope)} USD <FormattedMessage id="mt.yujiyingkui" />
-                      &nbsp;{' '}
-                      {formatNum(
-                        calcExchangeRate({
-                          value: spProfit,
-                          unit: symbolConf?.profitCurrency,
-                          buySell: item.buySell
-                        })
-                      )}{' '}
-                      USD
-                    </span>
                   }
                 />
               </div>
@@ -339,7 +346,7 @@ export default observer(
                 })}
                 type="primary"
                 loading={loading}
-                disabled={disabledBtn}
+                // disabled={disabledBtn}
               >
                 <FormattedMessage id="common.queren" />
               </Button>

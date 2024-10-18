@@ -144,6 +144,20 @@ declare namespace User {
      */
     remark?: string
     userInfo?: ClientUserInfo
+    /**国家区号信息 */
+    countryInfo?: {
+      id: string
+      /**简称 AN */
+      abbr: 'AN'
+      /**英文名字 eg.NETHERLANDS ANTILLES */
+      nameEn: string
+      /**中文名字  eg.荷属安的列斯群岛*/
+      nameCn: string
+      /**繁体名字 eg.荷屬安地列斯 */
+      nameTw: string
+      /**区号 eg.599*/
+      areaCode: string
+    }
     /**国家-简称 */
     country?: string
   }
@@ -245,6 +259,8 @@ declare namespace User {
      * 用户平台
      */
     userType?: number
+    /**最后登录 */
+    lastLoginTime?: string
   }
   // 忘记密码
   type ForgetPasswordParams = {
@@ -347,6 +363,8 @@ declare namespace User {
     currencyDecimal?: number
     /**账户组货币单位 */
     currencyUnit?: string
+    /**账户组可用预付款配置 */
+    usableAdvanceCharge?: API.UsableAdvanceCharge
 
     /** 跟单状态 */
     followStatus?: number
@@ -434,6 +452,10 @@ declare namespace User {
      * 旧手机验证码
      */
     oldPhoneCode: number
+    /**
+     * 手机区号
+     */
+    phoneAreaCode: string
   }
   type EditEmailParams = {
     /**
@@ -459,6 +481,10 @@ declare namespace User {
      * 手机验证码
      */
     phoneCode: number
+    /**
+     * 手机区号
+     */
+    phoneAreaCode: string
   }
   // 绑定邮箱
   type BindEmailParams = {

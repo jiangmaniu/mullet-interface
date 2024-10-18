@@ -21,6 +21,7 @@ function MarginInput({ onChange, initialValue, isAdd, availableMargin }: IProps,
   const intl = useIntl()
   const [margin, setMargin] = useState<any>(0)
   const [sliderValue, setSliderValue] = useState(0)
+  const precision = trade.currentAccountInfo.currencyDecimal
 
   useEffect(() => {
     setMargin(initialValue || 0)
@@ -38,8 +39,6 @@ function MarginInput({ onChange, initialValue, isAdd, availableMargin }: IProps,
       }
     }
   })
-
-  const precision = trade.currentAccountInfo.currencyDecimal
 
   return (
     <div>

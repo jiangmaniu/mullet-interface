@@ -1,10 +1,11 @@
 import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import Slider from '@/components/Web/Slider'
 import { useStores } from '@/context/mobxProvider'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
   onChange?: (value: any) => void
@@ -17,9 +18,24 @@ function LevelAge({ onChange }: IProps) {
   const [value, setValue] = useState<any>(1)
   const leverageMultiple = trade.leverageMultiple
 
+  const quoteInfo = getCurrentQuote()
+  const symbolConf = quoteInfo?.symbolConf
+  const prepaymentConf = symbolConf?.prepaymentConf
+  const minLever = Number(prepaymentConf?.float_leverage?.min_lever || 1)
+  const maxLever = Number(prepaymentConf?.float_leverage?.max_lever || 30)
+
   useEffect(() => {
     setValue(leverageMultiple || 1)
   }, [leverageMultiple])
+
+  const marks = [minLever, 10, 20, maxLever]
+  const marksMap = useMemo(() => {
+    let retMap: any = {}
+    marks.forEach((item) => {
+      retMap[item] = `${item}x`
+    })
+    return retMap
+  }, [minLever, maxLever])
 
   return (
     <div>
@@ -45,14 +61,9 @@ function LevelAge({ onChange }: IProps) {
         <div>
           <Slider
             value={value}
-            min={1}
-            max={30}
-            marks={{
-              1: '1x',
-              10: '10x',
-              20: '20x',
-              30: '30x'
-            }}
+            min={minLever}
+            max={maxLever}
+            marks={marksMap}
             tooltip={{ placement: 'bottom', formatter: (value: any) => `${value}x` }}
             onChange={(v) => {
               setValue(v)

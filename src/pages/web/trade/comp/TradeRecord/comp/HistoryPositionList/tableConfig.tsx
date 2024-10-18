@@ -8,9 +8,9 @@ import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
-export const getColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
+export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageListItem>[] => {
   const { trade } = useStores()
-  const precision = trade.currentAccountInfo.currencyDecimal
+  const precision = currencyDecimal
 
   return [
     {
@@ -30,7 +30,7 @@ export const getColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
         label: '' // 去掉form label
       },
       fixed: 'left',
-      width: 210,
+      width: 240,
       renderText(text, record, index, action) {
         const buySellInfo = getBuySellInfo(record)
         return (
@@ -38,7 +38,7 @@ export const getColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
             <SymbolIcon src={record.imgUrl} />
             <div className="flex items-center pl-[10px]">
               <span className="text-base font-pf-bold text-primary">{record.symbol}</span>
-              <span className={cn('text-xs font-medium pl-2', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pl-2', buySellInfo.colorClassName)}>{buySellInfo.text2}</span>
             </div>
           </div>
         )
@@ -232,7 +232,7 @@ export const getColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
         const flag = Number(profit) > 0
         const formatProfit = formatNum(profit, { precision })
         return profit ? (
-          <span className={cn('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${formatProfit}` : profit}</span>
+          <span className={cn('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${formatProfit}` : formatProfit}</span>
         ) : (
           '-'
         )

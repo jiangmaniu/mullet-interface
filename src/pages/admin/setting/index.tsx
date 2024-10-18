@@ -34,6 +34,8 @@ export default function Setting() {
   const isFinished = isKycAuth && email && phone // 验证是否完成
   let finishedStep = 0 // 已完成步数
 
+  const phoneAreaCode = currentUser?.countryInfo?.areaCode ? `+${currentUser?.countryInfo?.areaCode}` : ''
+
   if (isFinished) {
     finishedStep = 2
   } else if (email && phone) {
@@ -223,7 +225,7 @@ export default function Setting() {
                       <div className="flex items-center">
                         <img src="/img/shouji.png" width={14} height={14} />
                         <span className="text-sm text-primary pl-2">
-                          {userInfo.phoneAreaCode} {formatMobile(phone)}
+                          {phoneAreaCode} {formatMobile(phone)}
                         </span>
                       </div>
                     </>
@@ -287,9 +289,7 @@ export default function Setting() {
               <FormattedMessage id="mt.zhanghao" />：
             </span>
             <span className="pl-2">
-              {isEmailRegisterWay
-                ? formatEmail(currentUser?.account)
-                : `${currentUser?.userInfo?.phoneAreaCode} ${formatMobile(currentUser?.account)}`}
+              {isEmailRegisterWay ? formatEmail(currentUser?.account) : `${phoneAreaCode} ${formatMobile(currentUser?.account)}`}
             </span>
           </div>
           <div className="flex items-center justify-between flex-1 pl-7">
@@ -320,7 +320,7 @@ export default function Setting() {
             <span className="">
               <FormattedMessage id="mt.anquanleixing" />：
             </span>
-            <span className="pl-2">{phone ? `${currentUser?.userInfo?.phoneAreaCode} ${formatMobile(phone)}` : formatEmail(email)}</span>
+            <span className="pl-2">{phone ? `${phoneAreaCode} ${formatMobile(phone)}` : formatEmail(email)}</span>
           </div>
           {isKycAuth ? (
             <>

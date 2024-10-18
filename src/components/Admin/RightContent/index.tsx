@@ -131,13 +131,15 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const currencyDecimal = currentAccountInfo.currencyDecimal // 账户组小数位
   const isKycAuth = currentUser?.isKycAuth
 
-  const totalAccountMoney = accountList.reduce((total, next) => total + Number(next.money || 0), 0) // 所有账户余额
+  const totalAccountMoney = accountList
+    .filter((item) => !item.isSimulate)
+    .reduce((total, next) => Number(total || 0) + Number(next.money || 0), 0) // 所有账户余额
 
   // 排除当前选择的账户
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
   const realAccountList = accountList.filter((item) => !item.isSimulate)
 
-  const showUserCenterAccountDropdown = accountArr.length !== 1 && !isTradePage
+  const showUserCenterAccountDropdown = realAccountList.length !== 1 && !isTradePage
 
   useEffect(() => {
     // 切换真实模拟账户列表
@@ -290,7 +292,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   <div className="mt-1">
                     <div>
                       <span className="text-[20px] text-primary !font-dingpro-regular">
-                        {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
+                        {formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
                       </span>{' '}
                       <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                     </div>
@@ -436,9 +438,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                             <div>
                               <div>
                                 <span className="text-[20px] text-primary font-pf-bold">
-                                  {!Number(item.money)
-                                    ? '0.00'
-                                    : formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
+                                  {formatNum(item.money, { precision: item.currencyDecimal })}
                                 </span>{' '}
                                 <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                               </div>
@@ -508,7 +508,9 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             >
               <div className="flex items-center group relative">
                 <Iconfont name="zhanghu" width={24} height={24} style={{ marginTop: 2 }} />
-                <span className="text-lg font-pf-bold ml-1">{formatNum(totalAccountMoney, { precision: currencyDecimal })} USD</span>
+                <span className="text-lg font-pf-bold ml-1">
+                  {totalAccountMoney ? formatNum(totalAccountMoney, { precision: currencyDecimal }) : '--'} USD
+                </span>
               </div>
 
               {showUserCenterAccountDropdown && (

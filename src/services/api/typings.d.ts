@@ -39,6 +39,12 @@ declare namespace API {
     /**列表记录 */
     records: T[]
   }
+  // 排序方式
+  type ORDER_BY =
+    /**升序 */
+    | 'ASC'
+    /**降序 */
+    | 'DESC'
 
   // =============== 公共枚举类型 ===================
   type KEYVALUE = {

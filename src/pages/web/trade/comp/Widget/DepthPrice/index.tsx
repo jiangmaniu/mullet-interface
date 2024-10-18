@@ -94,7 +94,7 @@ function DeepPrice() {
                 {formatNum(item.price, { precision: digits })}
               </Col>
               <Col span={8} className="!text-xs text-primary text-left">
-                {formatNum(item.amount, { precision: digits })}
+                {formatNum(item.amount)}
               </Col>
               <Col span={8} className="!text-xs text-primary text-right">
                 {formatNum(total, { precision: digits })}
@@ -235,7 +235,7 @@ function DeepPrice() {
             <FormattedMessage id="mt.shuliang" />
           </Col>
           <Col span={8} className="text-right text-weak !text-xs">
-            <FormattedMessage id="mt.chengjiaoe" />
+            <FormattedMessage id="mt.zonge" />
           </Col>
         </Row>
         <div style={{ height: 622 }}>

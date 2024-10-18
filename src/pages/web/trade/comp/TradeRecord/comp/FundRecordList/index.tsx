@@ -10,10 +10,12 @@ import { getColumns } from './tableConfig'
 export default observer((props, ref) => {
   const { trade } = useStores()
   const { recordListClassName } = useStyle()
+  const currencyDecimal = trade.currentAccountInfo.currencyDecimal
 
   return (
     <StandardTable
-      columns={getColumns()}
+      columns={getColumns(currencyDecimal)}
+      key={trade.currentAccountInfo.id}
       showOptionColumn={false}
       stripe={false}
       hasTableBordered

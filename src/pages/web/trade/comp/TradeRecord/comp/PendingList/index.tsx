@@ -10,7 +10,7 @@ import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
-import { formatNum, toFixed } from '@/utils'
+import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
@@ -59,15 +59,15 @@ function PendingList({ style, parentPopup }: IProps) {
         label: '' // 去掉form label
       },
       fixed: 'left',
-      width: 180,
+      width: 200,
       renderText(text, record, index, action) {
         const buySellInfo = getBuySellInfo(record)
         return (
           <div className="flex items-center">
             <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
-              <span className="text-base font-semibold text-primary">{record.symbol}</span>
-              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className="text-base font-semibold text-primary">{record.alias || record.symbol}</span>
+              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text2}</span>
             </div>
           </div>
         )
@@ -252,7 +252,6 @@ function PendingList({ style, parentPopup }: IProps) {
 
     v.currentPrice = currentPrice // 现价
     v.isLimitOrder = isLimitOrder
-    v.limitPrice = toFixed(v.limitPrice, digits)
 
     return v
   })
@@ -261,6 +260,7 @@ function PendingList({ style, parentPopup }: IProps) {
     <>
       <StandardTable
         columns={columns}
+        key={trade.currentAccountInfo.id}
         // ghost
         showOptionColumn={false}
         dataSource={dataSource}

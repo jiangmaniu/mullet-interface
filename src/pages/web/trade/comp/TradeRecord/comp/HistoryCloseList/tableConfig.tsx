@@ -7,7 +7,7 @@ import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
-export const getColumns = (): ProColumns<Order.TradeRecordsPageListItem>[] => {
+export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsPageListItem>[] => {
   return [
     {
       title: (
@@ -25,15 +25,15 @@ export const getColumns = (): ProColumns<Order.TradeRecordsPageListItem>[] => {
         label: '' // 去掉form label
       },
       fixed: 'left',
-      width: 180,
+      width: 230,
       renderText(text, record, index, action) {
-        const buySellInfo = getBuySellInfo(record)
+        const { text2, colorClassName } = getBuySellInfo(record)
         return (
           <div className="flex items-center">
             <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-semibold text-primary">{record.symbol}</span>
-              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pt-[2px]', colorClassName)}>{text2}</span>
             </div>
           </div>
         )
@@ -112,27 +112,27 @@ export const getColumns = (): ProColumns<Order.TradeRecordsPageListItem>[] => {
         return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
       }
     },
-    {
-      title: (
-        <>
-          <FormattedMessage id="mt.shouxufei" />
-          (USD)
-        </>
-      ),
-      dataIndex: 'handlingFees',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
-      }
-    },
+    // {
+    //   title: (
+    //     <>
+    //       <FormattedMessage id="mt.shouxufei" />
+    //       (USD)
+    //     </>
+    //   ),
+    //   dataIndex: 'handlingFees',
+    //   hideInSearch: true, // 在 table的查询表单 中隐藏
+    //   ellipsis: false,
+    //   fieldProps: {
+    //     placeholder: ''
+    //   },
+    //   formItemProps: {
+    //     label: '' // 去掉form label
+    //   },
+    //   width: 150,
+    //   renderText(text, record, index, action) {
+    //     return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
+    //   }
+    // },
     {
       title: <FormattedMessage id="mt.baozhengjinleix" />,
       dataIndex: 'marginType',
@@ -200,7 +200,7 @@ export const getColumns = (): ProColumns<Order.TradeRecordsPageListItem>[] => {
         const profit = record.profit
         const flag = Number(profit) > 0
         const color = flag ? 'text-green' : 'text-red'
-        const profitFormat = formatNum(profit)
+        const profitFormat = formatNum(profit, { precision: currencyDecimal })
         return <>{profit ? <span className={cn('font-pf-bold', color)}>{flag ? '+' + profitFormat : profitFormat}</span> : '-'}</>
       }
     }

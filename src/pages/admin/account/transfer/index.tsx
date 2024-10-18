@@ -140,7 +140,7 @@ function TransferAccount() {
             style: { height: 42 },
             maxLength: 20,
             autoFocus: false,
-            precision: trade.currentAccountInfo.currencyDecimal,
+            precision: fromAccountInfo?.currencyDecimal || 2,
             suffix: 'USD',
             controls: false
           }}

@@ -306,10 +306,20 @@ export const getBuySellInfo = (item: any) => {
     text += ` · ${leverageText}`
   }
 
+  let text2 = buySellText
+  if (marginTypeText) {
+    text2 += ` · ${marginTypeText}`
+  }
+  if (leverageText) {
+    text2 += ` · ${leverageText}`
+  }
+
   return {
     text,
+    text2,
     buySellText,
     marginTypeText,
+    leverageText,
     colorClassName: isBuy ? 'text-green' : 'text-red'
   }
 }

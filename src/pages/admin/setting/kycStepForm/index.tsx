@@ -135,7 +135,8 @@ export default function KycStepForm() {
     if (isBindPhone) {
       const res = await bindPhone({
         phone,
-        phoneCode: validateCode
+        phoneCode: validateCode,
+        phoneAreaCode
       })
       bindSuccess = res.success
     } else {

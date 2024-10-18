@@ -1,4 +1,4 @@
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 
@@ -6,6 +6,8 @@ import Button from '@/components/Base/Button'
 import Modal from '@/components/Base/Modal'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { formatNum } from '@/utils'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import LevelAge from './LevelAge'
 
@@ -14,10 +16,18 @@ type IProps = {
 }
 
 function LevelAgeModal({ trigger }: IProps) {
+  const intl = useIntl()
   const { isDark } = useTheme()
   const { trade } = useStores()
   const modalRef = useRef<any>()
   const [current, setCurrent] = useState(0)
+
+  const quote = getCurrentQuote()
+  const prepaymentConf = quote?.prepaymentConf
+
+  const maxOpenLeverage = Math.max.apply(Math, [
+    ...(prepaymentConf?.float_leverage?.lever_grade || []).map((item) => item?.bag_nominal_value)
+  ])
 
   return (
     <Modal
@@ -54,7 +64,8 @@ function LevelAgeModal({ trigger }: IProps) {
               <div className="pb-[7px]">
                 <img src="/img/lingxing-1.png" width={8} height={8} />
                 <span className="text-xs text-secondary pl-[5px]">
-                  <FormattedMessage id="mt.tiaozhengganggantip1" />
+                  <FormattedMessage id="mt.tiaozhengganggantip" values={{ count: formatNum(maxOpenLeverage) }} /> USD{' '}
+                  {prepaymentConf?.float_leverage?.type === 'volume' ? `(${intl.formatMessage({ id: 'mt.lot' })})` : ''}
                 </span>
               </div>
               <div className="text-xs text-secondary pb-[7px]">

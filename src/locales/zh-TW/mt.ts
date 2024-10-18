@@ -298,6 +298,13 @@ export default {
   'mt.xiushizhong': '休市中',
   'mt.zhanghubeijinyong': '账户被禁用',
   'mt.dangqianzhanghuyuebuzu': '当前账户余额不足',
+  'mt.zonge': '总额',
+  'mt.zuiduokezengjiayue': '最多可增加约',
+  'mt.zuiduokejianshaoyue': '最多可减少约',
+  'mt.tiaozhengganggantip': '当前杠杆倍数最高可开: {count}',
+  'mt.bujisuanweishixiandyinglikuyun': '不计算未实现的盈利/亏损',
+  'mt.jisuanweishixiandyinglikuyun': '计算未实现的盈利/亏损',
+  'mt.guiling': '归零',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========

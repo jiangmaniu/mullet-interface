@@ -6,9 +6,9 @@ import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
-export const getColumns = (): ProColumns<Account.MoneyRecordsPageListItem>[] => {
+export const getColumns = (currencyDecimal: any): ProColumns<Account.MoneyRecordsPageListItem>[] => {
   const { trade } = useStores()
-  const accountGroupPrecision = trade.currentAccountInfo.currencyDecimal
+  const accountGroupPrecision = currencyDecimal
 
   return [
     {
@@ -66,13 +66,15 @@ export const getColumns = (): ProColumns<Account.MoneyRecordsPageListItem>[] => 
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
       fieldProps: {
-        precision: accountGroupPrecision,
         placeholder: ''
       },
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150
+      width: 150,
+      renderText(text, record, index, action) {
+        return text ? formatNum(text, { precision: accountGroupPrecision }) : '--'
+      }
     },
     {
       title: <FormattedMessage id="mt.biandongqian" />,
@@ -80,7 +82,6 @@ export const getColumns = (): ProColumns<Account.MoneyRecordsPageListItem>[] => 
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
       fieldProps: {
-        precision: accountGroupPrecision,
         placeholder: ''
       },
       formItemProps: {
@@ -88,7 +89,10 @@ export const getColumns = (): ProColumns<Account.MoneyRecordsPageListItem>[] => 
       },
       width: 150,
       align: 'right',
-      fixed: 'right'
+      fixed: 'right',
+      renderText(text, record, index, action) {
+        return text ? formatNum(text, { precision: accountGroupPrecision }) : '--'
+      }
     }
   ]
 }

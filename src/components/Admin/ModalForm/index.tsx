@@ -60,7 +60,6 @@ function ModalForm<T = Record<string, any>, U = Record<string, any>>(
   const [tabKey, setTabKey] = useState(tabItems[0]?.key || '')
   const [tabLabel, setTabLabel] = useState(tabItems[0]?.label || '')
   const [form] = Form.useForm<T>()
-  const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState<undefined | boolean>(false)
 
   const isLastTab = tabKey === tabItems[tabItems.length - 1]?.key
@@ -200,7 +199,6 @@ function ModalForm<T = Record<string, any>, U = Record<string, any>>(
                           onClick={() => {
                             form?.submit?.()
                           }}
-                          loading={loading}
                         />
                       ) : (
                         <div className="flex items-center gap-[10px]">{dom}</div>
@@ -216,16 +214,12 @@ function ModalForm<T = Record<string, any>, U = Record<string, any>>(
           layout="vertical"
           onFinish={async (values) => {
             // console.log('values', values)
-            setLoading(true)
             let success: any = false
             try {
               success = await onFinish?.(values)
             } catch (e) {
               console.log('onFinish error', e)
-            } finally {
-              setLoading(false)
             }
-            setIsOpen(false)
             return success
           }}
           {...res}

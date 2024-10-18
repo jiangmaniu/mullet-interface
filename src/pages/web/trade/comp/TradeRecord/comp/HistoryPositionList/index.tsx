@@ -18,6 +18,7 @@ function HistoryPositionList() {
   const { trade, ws } = useStores()
   const { recordListClassName } = useStyle()
   const symbol = trade.showActiveSymbol ? trade.activeSymbolName : undefined
+  const currencyDecimal = trade.currentAccountInfo.currencyDecimal
 
   const className = useEmotionCss(({ token }) => {
     return {
@@ -38,7 +39,7 @@ function HistoryPositionList() {
 
   return (
     <StandardTable
-      columns={getColumns()}
+      columns={getColumns(currencyDecimal)}
       // ghost
       showOptionColumn={false}
       stripe={false}
@@ -56,7 +57,7 @@ function HistoryPositionList() {
       params={{ accountId: trade.currentAccountInfo.id, symbol }}
       action={{
         // @ts-ignore
-        query: (params) => getBgaOrderPage({ ...params, status: 'FINISH' })
+        query: (params) => getBgaOrderPage({ ...params, status: 'FINISH', orderByField: 'finishTime', orderBy: 'DESC' })
       }}
       expandable={{
         columnWidth: 30,
@@ -64,6 +65,7 @@ function HistoryPositionList() {
           <>
             <StandardTable
               columns={getExpandColumns()}
+              key={trade.currentAccountInfo.id}
               ghost
               showOptionColumn={false}
               stripe={false}

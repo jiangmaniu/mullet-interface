@@ -253,6 +253,10 @@ declare namespace Order {
      */
     symbol?: string
     /**
+     * 交易品种别名
+     */
+    alias?: string
+    /**
      * 止盈
      */
     takeProfit?: number
@@ -350,7 +354,7 @@ declare namespace Order {
   // 持仓单分页-参数
   type BgaOrderPageListParams = {
     /**当前账户id */
-    accountId: string | number
+    accountId: any
     /**
      * 订单方向
      */
@@ -383,6 +387,10 @@ declare namespace Order {
      * 交易品种
      */
     symbol?: string
+    /**排序字段 */
+    orderByField?: string
+    /**排序方式 */
+    orderBy?: API.ORDER_BY
   }
   // 持仓单分页-列表
   type BgaOrderPageListItem = {
@@ -478,6 +486,10 @@ declare namespace Order {
      * 交易品种
      */
     symbol?: string
+    /**
+     * 品种别名
+     */
+    alias?: string
     /**
      * 品种小数位
      */

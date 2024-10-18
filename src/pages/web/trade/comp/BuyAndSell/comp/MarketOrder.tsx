@@ -17,6 +17,7 @@ import { message } from '@/utils/message'
 import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
 import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { debounce } from 'lodash'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
@@ -394,11 +395,11 @@ export default observer(
               style={{ background: isBuy ? 'var(--color-green-700)' : 'var(--color-red-600)' }}
               className="!h-[44px] !rounded-lg !text-[13px]"
               block
-              onClick={() => {
+              onClick={debounce(() => {
                 startTransition(() => {
                   onFinish()
                 })
-              }}
+              }, 500)}
               loading={loading}
               disabled={disabledBtn || trade.disabledTradeAction()}
             >
@@ -424,7 +425,9 @@ export default observer(
                 <span className="text-xs text-secondary">
                   <FormattedMessage id="mt.keyong" />
                 </span>
-                <span className="pl-2 text-xs text-primary !font-dingpro-medium">{formatNum(availableMargin)} USD</span>
+                <span className="pl-2 text-xs text-primary !font-dingpro-medium">
+                  {Number(availableMargin) < 0 ? '--' : formatNum(availableMargin, { precision: 2 })} USD
+                </span>
               </div>
               {/* <div className="flex items-center justify-between pb-[6px] w-full">
                 <span className="text-xs text-secondary">
@@ -445,7 +448,7 @@ export default observer(
                   <FormattedMessage id="mt.kekai" />
                 </span>
                 <span className="text-xs text-primary !font-dingpro-medium">
-                  {maxOpenVolume} <FormattedMessage id="mt.lot" />
+                  {Number(maxOpenVolume) < 0 ? '--' : maxOpenVolume} <FormattedMessage id="mt.lot" />
                 </span>
               </div>
             </div>

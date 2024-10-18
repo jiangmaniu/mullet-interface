@@ -516,8 +516,16 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         sort,
         filter
       ) => {
-        const queryParams = {
+        const queryParams: any = {
           ...params
+        }
+        if (Object.keys(sort).length) {
+          Object.keys(sort).forEach((key) => {
+            // 排序方式
+            queryParams.orderBy = sort[key] === 'ascend' ? 'ASC' : 'DESC'
+            // 排序字段
+            queryParams.orderByField = key
+          })
         }
         console.log(sort, filter)
 

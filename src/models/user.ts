@@ -18,6 +18,7 @@ export default function User() {
         }))
       })
     }
+    return userInfo
   }
 
   // 该账号是否是邮箱注册方式，注册的时候已经确定，不能再次修改

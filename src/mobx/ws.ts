@@ -247,7 +247,7 @@ class WSStore {
   // 订阅消息
   subscribeMessage = async (cancel?: boolean) => {
     const userInfo = (await STORAGE_GET_USER_INFO()) as User.UserInfo
-    if (!userInfo.user_id) return
+    if (!userInfo?.user_id) return
 
     // 公共订阅：/{租户ID}/public/1
     // 角色订阅：/{租户ID}/role/{角色ID}
@@ -271,7 +271,7 @@ class WSStore {
       cancel
     })
     this.send({
-      topic: `/000000/user/${userInfo.user_id}`,
+      topic: `/000000/user/${userInfo?.user_id}`,
       cancel
     })
   }

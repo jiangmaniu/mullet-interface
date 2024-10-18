@@ -25,7 +25,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
         label: '' // 去掉form label
       },
       fixed: 'left',
-      width: 180,
+      width: 230,
       renderText(text, record, index, action) {
         const buySellInfo = getBuySellInfo(record)
         return (
@@ -33,7 +33,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
             <SymbolIcon src={record?.imgUrl} />
             <div className="flex flex-col pl-4">
               <span className="text-base font-semibold text-primary">{record.symbol}</span>
-              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+              <span className={cn('text-xs font-medium pt-[2px]', buySellInfo.colorClassName)}>{buySellInfo.text2}</span>
             </div>
           </div>
         )
@@ -73,7 +73,26 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
+        let price: any = ''
+        if (record.type === 'MARKET_ORDER') {
+          price = ''
+        } else {
+          price = record.limitPrice
+        }
+        // if (
+        //   record.type === 'LIMIT_BUY_ORDER' ||
+        //   record.type === 'LIMIT_SELL_ORDER' ||
+        //   record.type === 'STOP_LOSS_LIMIT_BUY_ORDER' ||
+        //   record.type === 'STOP_LOSS_LIMIT_SELL_ORDER'
+        // ) {
+        //   // 停损单/限价单  显示挂单输入价格
+        //   price = record.limitPrice
+        // }
+        // else {
+        //   // 止盈止损  显示输入的价格
+        //   price = record.limitPrice
+        // }
+        return <span className="!text-[13px] text-primary">{formatNum(price)}</span>
       }
     },
     {

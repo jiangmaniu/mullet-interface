@@ -5,7 +5,6 @@ import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { getOrderPage } from '@/services/api/tradeCore/order'
-import { toFixed } from '@/utils'
 
 import { getColumns } from './tableConfig'
 
@@ -24,16 +23,6 @@ function HistoryPendingList() {
       status: 'CANCEL,FAIL,FINISH'
       // type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_ORDER,TAKE_PROFIT_ORDER'
     })
-    if (res.success && res.data?.records?.length) {
-      res.data.records = res.data.records.map((v: Order.OrderPageListItem) => {
-        const digits = v.symbolDecimal || 2
-        v.tradePrice = toFixed(v.tradePrice, digits)
-        v.handlingFees = toFixed(v.handlingFees, digits)
-        v.orderVolume = toFixed(v.orderVolume, digits)
-
-        return v
-      })
-    }
     return res
   }
 
@@ -41,6 +30,7 @@ function HistoryPendingList() {
     <>
       <StandardTable
         columns={getColumns()}
+        key={trade.currentAccountInfo.id}
         // ghost
         showOptionColumn={false}
         stripe={false}
