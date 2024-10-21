@@ -14,7 +14,7 @@ import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { colorWhite } from '@/theme/theme.config'
-import { copyContent, formatNum, hiddenCenterPartStr } from '@/utils'
+import { copyContent, formatNum, hiddenCenterPartStr, toFixed } from '@/utils'
 import { cn } from '@/utils/cn'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
@@ -133,7 +133,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
 
   const totalAccountMoney = accountList
     .filter((item) => !item.isSimulate)
-    .reduce((total, next) => Number(total || 0) + Number(next.money || 0), 0) // 所有账户余额
+    .reduce((total, next) => Number(total || 0) + toFixed(Number(next.money || 0), next.currencyDecimal), 0) // 所有账户余额
 
   // 排除当前选择的账户
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)

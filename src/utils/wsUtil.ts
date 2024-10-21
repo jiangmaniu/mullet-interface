@@ -5,7 +5,7 @@ import { stores } from '@/context/mobxProvider'
 import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 
 import { toFixed } from '.'
-import { subtract } from './float'
+import { multiply, subtract } from './float'
 
 /**
  * 格式化交易时间段
@@ -484,7 +484,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const percent = bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0
 
   // 买卖点差
-  const spread = Math.abs(Number(subtract(bid, ask)) * Math.pow(10, digits))
+  const spread = Math.abs(multiply(Math.abs(Number(subtract(bid, ask))), Math.pow(10, digits)) as number)
 
   return {
     symbol, // 用于展示的symbol自定义名称

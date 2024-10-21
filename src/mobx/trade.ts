@@ -234,7 +234,7 @@ class TradeStore {
 
     // 账户组设置“可用计算未实现盈亏”时
     // 新可用预付款=原来的可用预付款+账户的持仓盈亏
-    if (currentAccountInfo?.usableAdvanceCharge === 'NOT_PROFIT_LOSS') {
+    if (currentAccountInfo?.usableAdvanceCharge === 'PROFIT_LOSS') {
       availableMargin = availableMargin + totalProfit
     }
 

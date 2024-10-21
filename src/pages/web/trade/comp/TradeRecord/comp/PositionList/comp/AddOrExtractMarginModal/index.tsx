@@ -126,7 +126,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
                 <img src="/img/lingxing-2.png" width={8} height={8} />
                 <span className="text-xs text-primary pl-[5px] !font-dingpro-medium">
                   {isAdd ? <FormattedMessage id="mt.zuiduokezengjiayue" /> : <FormattedMessage id="mt.zuiduokejianshaoyue" />}{' '}
-                  {formatNum(avaMargin)} USD
+                  {formatNum(avaMargin, { precision: trade.currentAccountInfo.currencyDecimal })} USD
                 </span>
               </div>
               {/* <div>
