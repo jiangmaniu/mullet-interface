@@ -386,7 +386,7 @@ class WSStore {
   // 批量更新行情数据，通过指定数量
   @action
   batchUpdateQuoteDataByNumber = (data: any) => {
-    if (this.quotesCacheArr.length > 5) {
+    if (this.quotesCacheArr.length > 30) {
       this.updateQuoteData()
     } else {
       this.quotesCacheArr.push(data)

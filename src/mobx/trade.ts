@@ -1,5 +1,5 @@
 import { getIntl } from '@umijs/max'
-import { keyBy } from 'lodash'
+import { cloneDeep, keyBy } from 'lodash'
 import { action, computed, configure, makeObservable, observable, runInAction } from 'mobx'
 
 import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
@@ -325,13 +325,13 @@ class TradeStore {
   // 计算当前账户总的浮动盈亏
   @action
   getCurrentAccountFloatProfit = (list: Order.BgaOrderPageListItem[]) => {
-    const data = JSON.parse(JSON.stringify(list))
+    const data = cloneDeep(list)
     // 持仓总浮动盈亏
     let totalProfit = 0
     if (data.length) {
       data.forEach((item: Order.BgaOrderPageListItem) => {
         const profit = covertProfit(item) // 浮动盈亏
-        item.profit = profit || item.profit
+        item.profit = profit
         totalProfit += Number(item.profit || 0)
       })
     }
