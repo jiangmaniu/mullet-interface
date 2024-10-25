@@ -155,7 +155,11 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
         value: currentAccountInfo?.money,
         tips: <FormattedMessage id="mt.zhanghuyueTips" />
       },
-      { label: <FormattedMessage id="mt.fudongyingkui" />, value: totalProfit, tips: <FormattedMessage id="mt.fudongyingkuitips" /> },
+      {
+        label: <FormattedMessage id="mt.fudongyingkui" />,
+        value: totalProfit,
+        tips: <FormattedMessage id="mt.accountfudongyingkuitips" />
+      },
       { label: <FormattedMessage id="mt.keyong" />, value: availableMargin, tips: <FormattedMessage id="mt.keyongtips" /> },
       { label: <FormattedMessage id="mt.zhanyong" />, value: occupyMargin, tips: <FormattedMessage id="mt.zhanyongtips" /> }
     ]

@@ -4,19 +4,17 @@ import { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'umi'
 
 import { useStores } from '@/context/mobxProvider'
-import { getCurrentQuote } from '@/utils/wsUtil'
+
+type IProps = {
+  marginRate: number
+}
 
 // https://git.hust.cc/echarts-for-react/
-function Gauge() {
+function Gauge({ marginRate }: IProps) {
   const intl = useIntl()
   const instance = useRef<any>(null)
   const { trade } = useStores()
-  const quoteInfo = getCurrentQuote() // 保留，取值触发更新
   const [options, setOptions] = useState<any>({})
-  const positionList = trade.positionList.filter((item) => item.id === trade.currentLiquidationSelectBgaId) // 当前已选的持仓item
-
-  const marginRateInfo = trade.getMarginRateInfo() // 计算当前单的浮动盈亏等信息
-  const marginRate = marginRateInfo.marginRate
 
   const colors = ['#FF2222', '#FFE322', '#45A48A', '#45A48A']
 

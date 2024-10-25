@@ -357,6 +357,8 @@ export default {
   'mt.jiaoyiyichuliwancheng': 'Transaction Processed Successful',
   'mt.shenqingchenggong': 'Application Successful',
   'mt.mianshouxufei': 'No Fees',
+  'mt.accountfudongyingkuitips':
+    'The floating profit and loss of the current position includes the corresponding handling fee and inventory fee',
   // ======= 个人中心-我的账户 结束 ==========
 
   // ======= 个人中心-设置 开始 ==========

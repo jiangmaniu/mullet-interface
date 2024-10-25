@@ -55,7 +55,9 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
           <>
             <SelectSuffixIcon opacity={0.5} />
             <div className="bg-gray-250 h-3 w-[1px] mr-3"></div>
-            <div className="text-primary text-sm py-3 !font-dingpro-medium">{formatNum(availableMoney, { precision: 2 })} USD</div>
+            <div className="text-primary text-sm py-3 !font-dingpro-medium">
+              {formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal })} USD
+            </div>
           </>
         ),
         showSearch: false,

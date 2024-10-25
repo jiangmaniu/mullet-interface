@@ -28,7 +28,8 @@ function LevelAge({ onChange }: IProps) {
     setValue(leverageMultiple || 1)
   }, [leverageMultiple])
 
-  const marks = [minLever, 10, 20, maxLever]
+  // 只展示最小和最大范围即可，不展示梯度
+  const marks = [minLever, maxLever]
   const marksMap = useMemo(() => {
     let retMap: any = {}
     marks.forEach((item) => {
@@ -50,8 +51,8 @@ function LevelAge({ onChange }: IProps) {
           setValue(v)
           onChange?.(v)
         }}
-        max={30}
-        min={1}
+        max={maxLever}
+        min={minLever}
         hiddenPrecision={false}
         step={1}
         disabled={false}

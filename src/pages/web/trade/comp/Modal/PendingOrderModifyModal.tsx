@@ -149,6 +149,14 @@ export default observer(
     //   ? (sp && sp < sp_scope) || (sl && sl > sl_scope) || (price && price < priceTip)
     //   : (sp && sp > sp_scope) || (sl && sl < sl_scope) || (price && price > priceTip)
 
+    let priceColor = ''
+    // 限价单、停损单 买卖方向判断
+    if (['LIMIT_BUY_ORDER', 'LIMIT_SELL_ORDER'].includes(item.type as any)) {
+      priceColor = isBuy ? price && Number(price) > Number(priceTip) : price && Number(price) < Number(priceTip)
+    } else if (['STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(item.type as any)) {
+      priceColor = isBuy ? price && Number(price) < Number(priceTip) : price && Number(price) > Number(priceTip)
+    }
+
     const renderContent = () => {
       return (
         <>
@@ -212,14 +220,7 @@ export default observer(
                   tips={
                     <div
                       className={cn('!font-dingpro-regular', {
-                        '!text-red':
-                          // 限价单、停损单 买卖方向判断
-                          isBuy && ['LIMIT_BUY_ORDER', 'LIMIT_SELL_ORDER'].includes(item.type as any)
-                            ? price && Number(price) > Number(priceTip)
-                            : (price && Number(price) < Number(priceTip)) ||
-                              (isBuy && ['STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(item.type as any))
-                            ? price && Number(price) < Number(priceTip)
-                            : price && Number(price) > Number(priceTip)
+                        '!text-red': priceColor
                       })}
                     >
                       <FormattedMessage id="mt.fanwei" />

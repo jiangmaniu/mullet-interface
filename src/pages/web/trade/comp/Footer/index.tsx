@@ -145,7 +145,7 @@ function Footer() {
                     trade.setOpenSymbolNameList(item.symbol)
                   }}
                 >
-                  <div className="text-wrap text-xs font-medium text-primary">{item.alias}</div>
+                  <div className="text-wrap text-xs font-medium text-primary py-1">{item.alias}</div>
                   <div className={cn('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
                     {res.bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
                   </div>

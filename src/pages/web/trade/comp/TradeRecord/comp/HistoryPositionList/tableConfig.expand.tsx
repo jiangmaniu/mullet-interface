@@ -198,7 +198,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
         const flag = Number(profit) > 0
         const formatProfit = formatNum(profit, { precision })
         return profit ? (
-          <span className={cn('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${formatProfit}` : profit}</span>
+          <span className={cn('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${formatProfit}` : formatProfit}</span>
         ) : (
           '-'
         )

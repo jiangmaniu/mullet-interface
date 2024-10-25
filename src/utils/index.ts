@@ -148,14 +148,21 @@ export const getColorClass = (value: number) => {
  * @param value
  * @returns
  */
-export const formatNum = (value: any, opts: any = {}) => {
+type IOpt = {
+  /** 是否截取小数位 */
+  isTruncateDecimal?: boolean
+  /** 小数点精度 */
+  precision?: number
+}
+export const formatNum = (value: any, opts?: IOpt) => {
+  const { isTruncateDecimal = true } = opts || {}
   // 不是一个数字
   if (isNaN(value) || !Number(value)) {
     return '--'
   }
   const val = value || '0.00'
   const precision = opts?.precision || String(value).split('.')?.[1]?.length || 2
-  const truncateValue = truncateDecimal(val, precision) // 截取小数点，不四舍五入
+  const truncateValue = isTruncateDecimal ? truncateDecimal(val, precision) : val // 截取小数点，不四舍五入
   return currency(truncateValue, { symbol: '', precision, ...opts }).format()
 }
 

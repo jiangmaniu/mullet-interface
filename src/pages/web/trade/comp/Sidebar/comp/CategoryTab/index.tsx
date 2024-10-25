@@ -29,6 +29,11 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
     trade.getSymbolCategory()
   }, [])
 
+  useEffect(() => {
+    // 切换账户时，重置当前tab
+    setCurrent('0')
+  }, [trade.currentAccountInfo.id])
+
   const className = useEmotionCss(({ token }) => {
     return {
       '&': {

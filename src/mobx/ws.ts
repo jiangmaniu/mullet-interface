@@ -438,7 +438,7 @@ class WSStore {
   // 批量更新深度数据，通过指定数量
   @action
   batchUpdateDepthDataByNumber = (data: any) => {
-    if (this.depthCacheArr.length > 2) {
+    if (this.depthCacheArr.length > 5) {
       this.updateDepthData()
     } else {
       this.depthCacheArr.push(data)

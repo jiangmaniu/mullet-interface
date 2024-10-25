@@ -163,7 +163,7 @@ export default observer(
               <div className="absolute left-0 top-[130px] w-full border border-dashed border-gray-250/70 dark:border-gray-610 xl:hidden"></div>
               <div className="my-3 xl:hidden"></div>
               <div className="flex w-full items-center pt-2">
-                <div className="flex items-center max-xl:pt-2 xl:pl-4">
+                <div className="flex items-center max-xl:pt-2">
                   <span className="pr-3 text-sm text-secondary">
                     <FormattedMessage id="mt.dangqianjiage" />
                   </span>
@@ -221,7 +221,9 @@ export default observer(
                         unit: symbolConf?.profitCurrency,
                         buySell: item.buySell
                       }),
-                      trade.currentAccountInfo.currencyDecimal
+                      {
+                        precision: trade.currentAccountInfo.currencyDecimal
+                      }
                     )}{' '}
                     USD
                   </span>
@@ -272,7 +274,7 @@ export default observer(
                           unit: symbolConf?.profitCurrency,
                           buySell: item.buySell
                         }),
-                        trade.currentAccountInfo.currencyDecimal
+                        { precision: trade.currentAccountInfo.currencyDecimal }
                       )}{' '}
                       USD
                     </span>
@@ -298,7 +300,7 @@ export default observer(
     return (
       <SwitchPcOrWapLayout
         pcComponent={
-          <Modal open={open} onClose={close} title={titleDom} footer={null} width={460} centered>
+          <Modal open={open} onClose={close} title={titleDom} footer={null} width={500} centered>
             {renderContent()}
           </Modal>
         }

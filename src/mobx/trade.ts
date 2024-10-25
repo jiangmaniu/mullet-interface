@@ -2,7 +2,6 @@ import { getIntl } from '@umijs/max'
 import { cloneDeep, keyBy } from 'lodash'
 import { action, computed, configure, makeObservable, observable, runInAction } from 'mobx'
 
-import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 import { getTradeSymbolCategory } from '@/services/api/common'
 import { getTradeSymbolList } from '@/services/api/tradeCore/account'
 import { getAccountGroupList } from '@/services/api/tradeCore/accountGroup'
@@ -16,7 +15,7 @@ import {
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
-import { toFixed, uniqueObjectArray } from '@/utils'
+import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
@@ -223,21 +222,29 @@ class TradeStore {
     // 持仓总浮动盈亏
     const totalOrderProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), currencyDecimal))
     // 持仓单总的库存费
-    const totalInterestFees = this.positionList.reduce((total, next) => total + Number(next.interestFees || 0), 0) || 0
+    const totalInterestFees = Number(
+      toFixed(this.positionList.reduce((total, next) => Number(total) + Number(next.interestFees || 0), 0) || 0, currencyDecimal)
+    )
     // 持仓单总的手续费
-    const totalHandlingFees = this.positionList.reduce((total, next) => total + Number(next.handlingFees || 0), 0) || 0
+    const totalHandlingFees = Number(
+      toFixed(this.positionList.reduce((total, next) => Number(total) + Number(next.handlingFees || 0), 0) || 0, currencyDecimal)
+    )
     // 净值 = 账户余额 + 库存费 - 手续费 + 浮动盈亏
     const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees - totalHandlingFees + totalOrderProfit)
 
     // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 - 所有订单的手续费
     const totalProfit = totalOrderProfit + totalInterestFees - totalHandlingFees
 
+    // console.log('totalInterestFees', totalInterestFees)
+    // console.log('totalHandlingFees', totalHandlingFees)
+    // console.log('totalOrderProfit', totalOrderProfit)
+    // console.log('totalProfit', totalProfit)
+
     // 账户组设置“可用计算未实现盈亏”时
     // 新可用预付款=原来的可用预付款+账户的持仓盈亏
     if (currentAccountInfo?.usableAdvanceCharge === 'PROFIT_LOSS') {
       availableMargin = availableMargin + totalProfit
     }
-
     return {
       occupyMargin,
       availableMargin,
@@ -245,6 +252,34 @@ class TradeStore {
       totalProfit,
       currentAccountInfo,
       money
+    }
+  }
+
+  // 计算逐仓保证金信息
+  @action
+  calcIsolatedMarginRateInfo = (filterPositionList: Order.BgaOrderPageListItem[]) => {
+    let compelCloseRatio = this.currentAccountInfo.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+    let orderMargin = 0 // 订单总的保证金
+    let handlingFees = 0 // 订单总的手续费
+    let interestFees = 0 // 订单总的库存费
+    let profit = 0 // 订单总的浮动盈亏
+    filterPositionList.map((item) => {
+      orderMargin += Number(item.orderMargin || 0)
+      handlingFees += Number(item.handlingFees || 0)
+      interestFees += Number(item.interestFees || 0)
+      profit += Number(item.profit || 0)
+    })
+    // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费-手续费+浮动盈亏
+    const isolatedBalance = Number(orderMargin + Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0))
+    // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
+    const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
+    const margin = Number(orderMargin * compelCloseRatio)
+    const balance = toFixed(isolatedBalance, 2)
+
+    return {
+      marginRate,
+      margin,
+      balance
     }
   }
 
@@ -259,7 +294,7 @@ class TradeStore {
    * @returns
    */
   @action
-  getMarginRateInfo = (item?: IPositionItem) => {
+  getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
     const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
     const quote = getCurrentQuote()
     const conf = item?.conf || quote?.symbolConf // 品种配置信息
@@ -285,34 +320,10 @@ class TradeStore {
         margin = Number(occupyMargin * compelCloseRatio)
       }
     } else {
-      // 当前筛选的逐仓单订单信息
-      const currentLiquidationSelectItem = this.positionListCalcCache.find((item) => item.id === currentLiquidationSelectBgaId)
-      const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
-      const isLockedMode = currentLiquidationSelectItem?.mode === 'LOCKED_POSITION' // 当前筛选的项，是否是锁仓模式的订单
-
-      let filterPositionList = []
-      // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
-      if (isLockedMode && !item?.id) {
-        filterPositionList = [currentLiquidationSelectItem]
-      } else {
-        filterPositionList = item ? [item] : positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
-      }
-
-      let orderMargin = 0 // 订单总的保证金
-      let handlingFees = 0 // 订单总的手续费
-      let interestFees = 0 // 订单总的库存费
-      let profit = 0 // 订单总的浮动盈亏
-      filterPositionList.map((item) => {
-        orderMargin += Number(item.orderMargin || 0)
-        handlingFees += Number(item.handlingFees || 0)
-        interestFees += Number(item.interestFees || 0)
-        profit += Number(item.profit || 0)
-      })
-      // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费-手续费+浮动盈亏
-      const isolatedBalance = Number(orderMargin + Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0))
-      marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
-      margin = Number(orderMargin * compelCloseRatio)
-      balance = toFixed(isolatedBalance, 2)
+      let filterPositionList = [item] as Order.BgaOrderPageListItem[]
+      // 逐仓模式保证金
+      const marginInfo = this.calcIsolatedMarginRateInfo(filterPositionList)
+      return marginInfo
     }
 
     return {
@@ -661,7 +672,8 @@ class TradeStore {
   @action
   setPositionListCalcCache = (list: Order.BgaOrderPageListItem[]) => {
     runInAction(() => {
-      this.positionListCalcCache = uniqueObjectArray([...this.positionListCalcCache, ...list], 'id')
+      // this.positionListCalcCache = uniqueObjectArray([...this.positionListCalcCache, ...list], 'id')
+      this.positionListCalcCache = list
     })
   }
 

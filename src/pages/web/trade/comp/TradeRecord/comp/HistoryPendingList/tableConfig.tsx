@@ -3,11 +3,15 @@ import { FormattedMessage } from '@umijs/max'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
+import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
 export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
+  const { trade } = useStores()
+  const currencyDecimal = trade.currentAccountInfo.currencyDecimal
+
   return [
     {
       title: (
@@ -151,7 +155,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text, { precision: currencyDecimal })}</span>
       }
     },
     {

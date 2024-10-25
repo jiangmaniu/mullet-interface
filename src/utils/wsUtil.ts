@@ -479,7 +479,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   let bid = Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0) // bid是卖价
   const open = Number(symbolNewTicker?.open || 0) // 开盘价
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.high || 0), bid]) // 拿当前价格跟首次返回的比
-  const low = Math.max.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
+  const low = Math.min.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
   const close = Number(bid || symbolNewTicker?.close || 0) // 使用卖价作为最新的收盘价格
   const percent = bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0
 

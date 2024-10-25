@@ -14,7 +14,7 @@ import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import ClosePositionConfirmModal from '@/pages/web/trade/comp/Modal/ClosePositionConfirmModal'
 import SetStopLossProfitModal from '@/pages/web/trade/comp/Modal/SetStopLossProfitModal'
-import { formatNum } from '@/utils'
+import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 import { calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
@@ -458,8 +458,9 @@ function Position({ style, parentPopup }: IProps) {
       v.currentPrice = currentPrice // 现价
       const profit = covertProfit(v) as number // 浮动盈亏
       // 订单盈亏 = 盈亏 - 手续费 + 库存费
-      v.profit = profit - Number(v.handlingFees || 0) + Number(v.interestFees || 0)
-      // v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
+      // v.profit = profit - Number(v.handlingFees || 0) + Number(v.interestFees || 0)
+      v.profit = profit
+      v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
       v.yieldRate = calcYieldRate(v, precision) // 收益率
       v.forceClosePrice = calcForceClosePrice(v) // 强平价
 
@@ -469,10 +470,10 @@ function Position({ style, parentPopup }: IProps) {
       return v
     })
 
-  useEffect(() => {
-    // 保存格式化过的持仓列表，避免多次计算
-    trade.setPositionListCalcCache(dataSource)
-  }, [JSON.stringify(dataSource), pageNum])
+  // useEffect(() => {
+  //   // 保存格式化过的持仓列表，避免多次计算
+  //   trade.setPositionListCalcCache(dataSource)
+  // }, [JSON.stringify(dataSource), pageNum])
 
   return (
     <>

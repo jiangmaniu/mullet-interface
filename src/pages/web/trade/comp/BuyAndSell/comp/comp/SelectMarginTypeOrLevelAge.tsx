@@ -38,6 +38,9 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
   } else if (isFloatLeverage) {
     leverage = `${trade.leverageMultiple || 1}X`
   }
+
+  const disabledMarginBtn = !trade.currentAccountInfo.enableIsolated || trade.disabledTradeAction()
+
   return (
     <div className="flex items-center justify-between gap-x-3">
       <MarginTypeModal
@@ -46,7 +49,7 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
             className={cn(
               'mb-3 flex flex-1 items-center border border-gray-200 hover:border-gray-380 dark:border-gray-580 rounded-lg cursor-pointer p-[6.8px]',
               {
-                'bg-[--input-disabled-bg]': trade.disabledTradeAction()
+                'bg-[--input-disabled-bg] pointer-events-none': disabledMarginBtn
               }
             )}
           >

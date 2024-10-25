@@ -18,7 +18,7 @@ function Header() {
         <span className="text-primary text-xl font-bold">
           <FormattedMessage id="mt.myAccount" />
         </span>
-        <span className="text-primary text-sm font-bold pl-6">Hi, {hiddenCenterPartStr(currentAccountInfo.id, 4)}</span>
+        <span className="text-primary text-sm font-bold pl-6">Hi, {hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}</span>
         {isKycAuth && (
           <span className="text-green text-sm ml-3 px-[7px] py-1 rounded bg-green-700 bg-opacity-[0.04]">
             <FormattedMessage id="mt.yirenzheng" />
