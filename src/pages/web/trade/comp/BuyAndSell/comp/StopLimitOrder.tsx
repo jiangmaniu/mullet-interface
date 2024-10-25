@@ -50,7 +50,7 @@ export default observer(
     const expectedForceClosePrice = calcExpectedForceClosePrice({
       orderVolume: countValue,
       orderMargin: margin,
-      orderType: isBuy ? ORDER_TYPE.STOP_LOSS_LIMIT_BUY_ORDER : ORDER_TYPE.STOP_LOSS_LIMIT_SELL_ORDER,
+      orderType: isBuy ? ORDER_TYPE.STOP_LOSS_MARKET_BUY_ORDER : ORDER_TYPE.STOP_LOSS_MARKET_SELL_ORDER,
       buySell
     })
 
@@ -58,7 +58,7 @@ export default observer(
     const expectedMargin = calcExpectedMargin({
       buySell,
       orderVolume: countValue,
-      orderType: isBuy ? ORDER_TYPE.STOP_LOSS_LIMIT_BUY_ORDER : ORDER_TYPE.STOP_LOSS_LIMIT_SELL_ORDER,
+      orderType: isBuy ? ORDER_TYPE.STOP_LOSS_MARKET_BUY_ORDER : ORDER_TYPE.STOP_LOSS_MARKET_SELL_ORDER,
       price: priceValue
     })
 
@@ -151,7 +151,7 @@ export default observer(
       tradeAccountId: trade.currentAccountInfo?.id,
       marginType,
       limitPrice: priceValue,
-      type: isBuy ? ORDER_TYPE.STOP_LOSS_LIMIT_BUY_ORDER : ORDER_TYPE.STOP_LOSS_LIMIT_SELL_ORDER // 订单类型
+      type: isBuy ? ORDER_TYPE.STOP_LOSS_MARKET_BUY_ORDER : ORDER_TYPE.STOP_LOSS_MARKET_SELL_ORDER // 订单类型
     } as Order.CreateOrder
 
     // useEffect(() => {
