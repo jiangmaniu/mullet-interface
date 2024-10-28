@@ -299,6 +299,10 @@ export default {
   'mt.xiushizhong': 'Closed for Trading',
   'mt.zhanghubeijinyong': 'Account Disabled',
   'mt.dangqianzhanghuyuebuzu': 'Insufficient current account balance',
+
+  'mt.tiaozhengganggantips': 'The highest leverage for position is: {count}',
+  'mt.zhiyunshijiamairudan': 'Stop Loss Market Buy Order',
+  'mt.zhiyunshijiamaichudan': 'Stop Loss Market Sell Order',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========

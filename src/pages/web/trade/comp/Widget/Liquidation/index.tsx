@@ -34,22 +34,27 @@ function Liquidation() {
   const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
   const isLockedMode = currentAccountInfo.orderMode === 'LOCKED_POSITION' // 锁仓模式
 
-  let filterPositionList: any = []
-  // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
-  if (isLockedMode) {
-    filterPositionList = [currentLiquidationSelectItem]
+  let marginRateInfo
+  if (trade.currentLiquidationSelectBgaId === 'CROSS_MARGIN') {
+    marginRateInfo = trade.getMarginRateInfo()
   } else {
-    // 合并同名品种展示
-    filterPositionList = trade.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
-  }
-  if (filterPositionList.length) {
-    filterPositionList.forEach((item: any) => {
-      const profit = covertProfit(item) as number // 浮动盈亏
-      item.profit = profit
-    })
-  }
+    let filterPositionList: any = []
+    // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
+    if (isLockedMode && currentLiquidationSelectItem) {
+      filterPositionList = [currentLiquidationSelectItem]
+    } else {
+      // 合并同名品种展示
+      filterPositionList = trade.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
+    }
+    if (filterPositionList.length) {
+      filterPositionList.forEach((item: any) => {
+        const profit = covertProfit(item) as number // 浮动盈亏
+        item.profit = profit
+      })
+    }
 
-  const marginRateInfo = trade.calcIsolatedMarginRateInfo(filterPositionList)
+    marginRateInfo = trade.calcIsolatedMarginRateInfo(filterPositionList)
+  }
 
   const options = useMemo(() => {
     let list = []

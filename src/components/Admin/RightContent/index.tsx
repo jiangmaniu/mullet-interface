@@ -128,7 +128,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const { balance, availableMargin, totalProfit, occupyMargin } = trade.getAccountBalance()
   const { pathname } = useLocation()
   const isTradePage = pathname.indexOf('/trade') !== -1
-  const currencyDecimal = currentAccountInfo.currencyDecimal // 账户组小数位
+  const currencyDecimal = currentAccountInfo.currencyDecimal || 2 // 账户组小数位
   const isKycAuth = currentUser?.isKycAuth
 
   const totalAccountMoney = accountList

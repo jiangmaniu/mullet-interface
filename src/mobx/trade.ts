@@ -90,6 +90,7 @@ class TradeStore {
   @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
+  @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
   // ============================
 
   // ====== 历史交易记录 ===========
@@ -143,6 +144,11 @@ class TradeStore {
   // 设置弹窗选择的浮动杠杆倍数
   setLeverageMultiple = (leverageMultiple: number) => {
     this.leverageMultiple = leverageMultiple
+  }
+
+  // 浮动杠杆模式最大可开手数
+  setLeverageMultipleMaxOpenVolume = (maxOpenVolume: number) => {
+    this.leverageMultipleMaxOpenVolume = maxOpenVolume
   }
 
   // 设置买卖类型切换
@@ -264,10 +270,13 @@ class TradeStore {
     let interestFees = 0 // 订单总的库存费
     let profit = 0 // 订单总的浮动盈亏
     filterPositionList.map((item) => {
+      const orderProfit = covertProfit(item) as any
       orderMargin += Number(item.orderMargin || 0)
       handlingFees += Number(item.handlingFees || 0)
       interestFees += Number(item.interestFees || 0)
-      profit += Number(item.profit || 0)
+      if (orderProfit) {
+        profit += orderProfit
+      }
     })
     // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费-手续费+浮动盈亏
     const isolatedBalance = Number(orderMargin + Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0))
@@ -300,7 +309,8 @@ class TradeStore {
     const conf = item?.conf || quote?.symbolConf // 品种配置信息
     const buySell = this.buySell
     const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
-    // 全仓保证金率：净值/占用 = 保证金率
+    // 全仓保证金率：全仓净值/占用 = 保证金率
+    // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
     // 净值=账户余额+库存费-手续费+浮动盈亏
     let { balance, currentAccountInfo } = this.getAccountBalance()
@@ -312,12 +322,22 @@ class TradeStore {
     compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
     if (isCrossMargin) {
       // 全仓占用的保证金
-      const occupyMargin = Number(currentAccountInfo.margin || 0)
+      const occupyMargin = Number(toFixed(Number(currentAccountInfo.margin || 0), 2))
       // 判断是否存在全仓单
       const hasCrossMarginOrder = positionList.some((item) => item.marginType === 'CROSS_MARGIN')
       if (hasCrossMarginOrder) {
+        // 逐仓保证金信息
+        const marginInfo = this.calcIsolatedMarginRateInfo(this.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN'))
+        // 全仓净值：全仓净值 - 逐仓净值
+        const crossBalance = Number(toFixed(balance - marginInfo.balance, 2))
+        balance = crossBalance
         marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
         margin = Number(occupyMargin * compelCloseRatio)
+
+        // console.log('逐仓净值', marginInfo.balance)
+        // console.log('计算后的全仓净值', balance)
+        // console.log('全仓occupyMargin', occupyMargin)
+        // console.log('marginRate', marginRate)
       }
     } else {
       let filterPositionList = [item] as Order.BgaOrderPageListItem[]
@@ -684,7 +704,7 @@ class TradeStore {
       current: 1,
       size: 999,
       status: 'ENTRUST',
-      type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER',
+      type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_MARKET_BUY_ORDER,STOP_LOSS_MARKET_SELL_ORDER',
       accountId: this.currentAccountInfo?.id
     })
     if (res.success) {

@@ -55,7 +55,7 @@ export default observer(
     const symbol = quoteInfo.symbol
     const d = quoteInfo?.digits
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
-    const maxOpenVolume = getMaxOpenVolume({ buySell }) || 0
+    const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || getMaxOpenVolume({ buySell }) || 0
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
     const vmax = symbolConf?.maxTrade as number
     const vmin = symbolConf?.minTrade || 0.01

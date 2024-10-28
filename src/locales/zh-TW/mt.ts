@@ -306,6 +306,10 @@ export default {
   'mt.bujisuanweishixiandyinglikuyun': '不计算未实现的盈利/亏损',
   'mt.jisuanweishixiandyinglikuyun': '计算未实现的盈利/亏损',
   'mt.guiling': '归零',
+
+  'mt.tiaozhengganggantips': '当前杠杆倍数最高可开仓位: {count}',
+  'mt.zhiyunshijiamairudan': '止损市价买入单',
+  'mt.zhiyunshijiamaichudan': '止损市价卖出单',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========

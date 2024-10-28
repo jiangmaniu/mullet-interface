@@ -25,9 +25,14 @@ function LevelAgeModal({ trigger }: IProps) {
   const quote = getCurrentQuote()
   const prepaymentConf = quote?.prepaymentConf
 
-  const maxOpenLeverage = Math.max.apply(Math, [
-    ...(prepaymentConf?.float_leverage?.lever_grade || []).map((item) => item?.bag_nominal_value)
-  ])
+  // const maxOpenLeverage = Math.max.apply(Math, [
+  //   ...(prepaymentConf?.float_leverage?.lever_grade || []).map((item) => item?.bag_nominal_value)
+  // ])
+
+  // 根据当前的杠杆倍数，获取对应的杠杆倍数区间(eg.1x - 10x)，对应的持仓名义价值
+  const maxOpenLeverage =
+    prepaymentConf?.float_leverage?.lever_grade.find((grade) => grade.lever_start_value <= current && current <= grade.lever_end_value)
+      ?.bag_nominal_value || 0
 
   return (
     <Modal
@@ -64,8 +69,8 @@ function LevelAgeModal({ trigger }: IProps) {
               <div className="pb-[7px]">
                 <img src="/img/lingxing-1.png" width={8} height={8} />
                 <span className="text-xs text-secondary pl-[5px]">
-                  <FormattedMessage id="mt.tiaozhengganggantip" values={{ count: formatNum(maxOpenLeverage) }} /> USD{' '}
-                  {prepaymentConf?.float_leverage?.type === 'volume' ? `(${intl.formatMessage({ id: 'mt.lot' })})` : ''}
+                  <FormattedMessage id="mt.tiaozhengganggantips" values={{ count: formatNum(maxOpenLeverage) }} />
+                  {prepaymentConf?.float_leverage?.type === 'volume' ? `(${intl.formatMessage({ id: 'mt.lot' })})` : 'USD'}
                 </span>
               </div>
               <div className="text-xs text-secondary pb-[7px]">
@@ -90,6 +95,7 @@ function LevelAgeModal({ trigger }: IProps) {
             modalRef?.current?.close()
             // @ts-ignore
             trade.setLeverageMultiple(current)
+            trade.setLeverageMultipleMaxOpenVolume(maxOpenLeverage)
           }}
         >
           <FormattedMessage id="common.queren" />

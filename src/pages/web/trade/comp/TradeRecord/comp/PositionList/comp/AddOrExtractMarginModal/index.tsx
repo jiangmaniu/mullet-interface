@@ -1,6 +1,6 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Modal from '@/components/Base/Modal'
@@ -67,6 +67,27 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
     }
   }
 
+  const renderTabs = useMemo(() => {
+    return (
+      <Tabs
+        items={[
+          { key: 'ADD', label: <FormattedMessage id="mt.zengjiazhengjin" /> },
+          { key: 'MINUS', label: <FormattedMessage id="mt.jianshaobaozhengjin" /> }
+        ]}
+        onChange={(key: any) => {
+          setActiveKey(key)
+          marginInputRef?.current?.reset?.()
+        }}
+        tabBarGutter={40}
+        tabBarStyle={{ paddingLeft: 20 }}
+        size="small"
+        activeKey={activeKey}
+        marginBottom={0}
+        indicator={{ size: 40 }}
+      />
+    )
+  }, [activeKey])
+
   return (
     <Modal
       trigger={trigger}
@@ -92,24 +113,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
         <div className="flex items-center justify-center px-[18px]">
           <img src={'/img/margintype.png'} width={121} height={121} alt="" />
         </div>
-        <div className="w-full">
-          <Tabs
-            items={[
-              { key: 'ADD', label: <FormattedMessage id="mt.zengjiazhengjin" /> },
-              { key: 'MINUS', label: <FormattedMessage id="mt.jianshaobaozhengjin" /> }
-            ]}
-            onChange={(key: any) => {
-              setActiveKey(key)
-              marginInputRef?.current?.reset?.()
-            }}
-            tabBarGutter={40}
-            tabBarStyle={{ paddingLeft: 20 }}
-            size="small"
-            activeKey={activeKey}
-            marginBottom={0}
-            indicator={{ size: 40 }}
-          />
-        </div>
+        <div className="w-full">{renderTabs}</div>
 
         <div className="relative px-[18px]">
           <div className="py-4">

@@ -67,9 +67,9 @@ export const ORDER_TYPE = {
   STOP_LOSS_LIMIT_BUY_ORDER: 'STOP_LOSS_LIMIT_BUY_ORDER',
   /**止损限价卖出单 */
   STOP_LOSS_LIMIT_SELL_ORDER: 'STOP_LOSS_LIMIT_SELL_ORDER',
-  /**止损限价买入单 */
+  /**止损市价买入单 */
   STOP_LOSS_MARKET_BUY_ORDER: 'STOP_LOSS_MARKET_BUY_ORDER',
-  /**止损限价卖出单 */
+  /**止损市价卖出单 */
   STOP_LOSS_MARKET_SELL_ORDER: 'STOP_LOSS_MARKET_SELL_ORDER',
   /**止损单 */
   STOP_LOSS_ORDER: 'STOP_LOSS_ORDER',
@@ -127,7 +127,9 @@ export const getEnum = () => {
       LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamairudan' }), value: 40 },
       LIMIT_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamaichudan' }), value: 50 },
       STOP_LOSS_LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunxianjiamairudan' }), value: 60 },
-      STOP_LOSS_LIMIT_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunxianjiamaichudan' }), value: 70 }
+      STOP_LOSS_LIMIT_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunxianjiamaichudan' }), value: 70 },
+      STOP_LOSS_MARKET_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunshijiamairudan' }), value: 80 },
+      STOP_LOSS_MARKET_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunshijiamaichudan' }), value: 90 }
     },
     // 订单状态
     OrderStatus: {
