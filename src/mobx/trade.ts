@@ -278,12 +278,17 @@ class TradeStore {
         profit += orderProfit
       }
     })
+
     // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费 + 手续费 + 浮动盈亏
     const isolatedBalance = Number(orderMargin + Number(interestFees || 0) + Number(handlingFees || 0) + Number(profit || 0))
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
     const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
-    const margin = Number(orderMargin * compelCloseRatio)
+    const margin = Number(orderMargin * (compelCloseRatio / 100))
     const balance = toFixed(isolatedBalance, 2)
+
+    console.log('orderMargin', orderMargin)
+    console.log('compelCloseRatio', compelCloseRatio)
+    console.log('维持保证金margin', margin)
 
     return {
       marginRate,
