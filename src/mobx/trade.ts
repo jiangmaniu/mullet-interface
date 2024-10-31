@@ -245,8 +245,7 @@ class TradeStore {
     const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
 
     // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 + 所有订单的手续费
-    // const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
-    const totalProfit = totalOrderProfit
+    const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
 
     // console.log('totalInterestFees', totalInterestFees)
     // console.log('totalHandlingFees', totalHandlingFees)
