@@ -1,5 +1,5 @@
 import { getIntl } from '@umijs/max'
-import { cloneDeep, keyBy } from 'lodash'
+import { keyBy } from 'lodash'
 import { action, computed, configure, makeObservable, observable, runInAction } from 'mobx'
 
 import { getTradeSymbolCategory } from '@/services/api/common'
@@ -245,7 +245,8 @@ class TradeStore {
     const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
 
     // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 + 所有订单的手续费
-    const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
+    // const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
+    const totalProfit = totalOrderProfit
 
     // console.log('totalInterestFees', totalInterestFees)
     // console.log('totalHandlingFees', totalHandlingFees)
@@ -367,14 +368,16 @@ class TradeStore {
   // 计算当前账户总的浮动盈亏
   @action
   getCurrentAccountFloatProfit = (list: Order.BgaOrderPageListItem[]) => {
-    const data = cloneDeep(list)
+    const currencyDecimal = this.currentAccountInfo.currencyDecimal
+    const data = list
     // 持仓总浮动盈亏
     let totalProfit = 0
     if (data.length) {
       data.forEach((item: Order.BgaOrderPageListItem) => {
         const profit = covertProfit(item) // 浮动盈亏
         item.profit = profit
-        totalProfit += Number(item.profit || 0)
+        // 先截取在计算，否则跟页面上截取后的值累加对不上
+        totalProfit += Number(toFixed(Number(item.profit || 0), currencyDecimal))
       })
     }
     return totalProfit

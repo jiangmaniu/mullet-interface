@@ -470,11 +470,6 @@ function Position({ style, parentPopup }: IProps) {
       return v
     })
 
-  // useEffect(() => {
-  //   // 保存格式化过的持仓列表，避免多次计算
-  //   trade.setPositionListCalcCache(dataSource)
-  // }, [JSON.stringify(dataSource), pageNum])
-
   return (
     <>
       {/* 加上loading避免右侧闪动问题 */}
