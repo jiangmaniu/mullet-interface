@@ -241,8 +241,8 @@ export const calcForceClosePrice = (item: Partial<IPositionItem>) => {
     buyForceClosePrice = toFixed(startPrice - value)
     sellForceClosePrice = toFixed(startPrice + value)
   } else {
-    // 逐仓的净值 = 账户余额(单笔订单的保证金) - 库存费 - 手续费 + 浮动盈亏
-    balance = orderMargin - Number(item.interestFees || 0) - Number(item.handlingFees || 0) + Number(item.profit || 0)
+    // 逐仓的净值 = 账户余额(单笔订单的保证金) + 库存费 + 手续费 + 浮动盈亏
+    balance = orderMargin + Number(item.interestFees || 0) + Number(item.handlingFees || 0) + Number(item.profit || 0)
     // 单笔订单的占用保证金
     occupyMargin = orderMargin
     const value = (balance - profit - occupyMargin * compelCloseRatio) / exchangeRateValue
