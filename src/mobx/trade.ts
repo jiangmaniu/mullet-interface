@@ -235,11 +235,11 @@ class TradeStore {
     const totalHandlingFees = Number(
       toFixed(this.positionList.reduce((total, next) => Number(total) + Number(next.handlingFees || 0), 0) || 0, currencyDecimal)
     )
-    // 净值 = 账户余额 + 库存费 - 手续费 + 浮动盈亏
-    const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees - totalHandlingFees + totalOrderProfit)
+    // 净值 = 账户余额 + 库存费 + 手续费 + 浮动盈亏
+    const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
 
-    // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 - 所有订单的手续费
-    const totalProfit = totalOrderProfit + totalInterestFees - totalHandlingFees
+    // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 + 所有订单的手续费
+    const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
 
     // console.log('totalInterestFees', totalInterestFees)
     // console.log('totalHandlingFees', totalHandlingFees)
@@ -278,8 +278,8 @@ class TradeStore {
         profit += orderProfit
       }
     })
-    // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费-手续费+浮动盈亏
-    const isolatedBalance = Number(orderMargin + Number(interestFees || 0) - Number(handlingFees || 0) + Number(profit || 0))
+    // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费 + 手续费 + 浮动盈亏
+    const isolatedBalance = Number(orderMargin + Number(interestFees || 0) + Number(handlingFees || 0) + Number(profit || 0))
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
     const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
     const margin = Number(orderMargin * compelCloseRatio)
@@ -312,7 +312,7 @@ class TradeStore {
     // 全仓保证金率：全仓净值/占用 = 保证金率
     // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
-    // 净值=账户余额+库存费-手续费+浮动盈亏
+    // 净值=账户余额+库存费+手续费+浮动盈亏
     let { balance, currentAccountInfo } = this.getAccountBalance()
 
     let marginRate = 0
