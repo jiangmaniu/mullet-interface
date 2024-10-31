@@ -52,17 +52,19 @@ export default function AreaCodeSelect({
     run?.()
   }, [])
 
-  const options = list?.map((v: AreaCodeItem) => {
-    const areaNameZh = v.nameTw
-    const areaName = v.nameEn
-    const label = lng === 'zh-TW' ? areaNameZh : areaName || areaNameZh
-    return {
-      ...v,
-      label,
-      value: v.id,
-      areaCode: `+${v.areaCode}`
-    }
-  })
+  const options = list
+    ?.filter((item) => item.areaCode !== '0')
+    ?.map((v: AreaCodeItem) => {
+      const areaNameZh = v.nameTw
+      const areaName = v.nameEn
+      const label = lng === 'zh-TW' ? areaNameZh : areaName || areaNameZh
+      return {
+        ...v,
+        label,
+        value: v.id,
+        areaCode: `+${v.areaCode}`
+      }
+    })
 
   let fieldOptions = {}
 

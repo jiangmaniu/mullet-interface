@@ -85,7 +85,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: 100,
       align: 'left',
       className: '!text-[13px] text-primary',
       renderText(text, record, index, action) {
@@ -103,7 +103,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       renderText(text, record, index, action) {
         return (
           <span className={cn('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
@@ -123,7 +123,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
@@ -140,7 +140,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       align: 'left',
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{text}</span>

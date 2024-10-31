@@ -1,9 +1,10 @@
+/* eslint-disable simple-import-sort/imports */
 import { CopyOutlined, InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, history, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
+import { FormattedMessage, SelectLang as UmiSelectLang, history, useLocation, useModel } from '@umijs/max'
 import { ConfigProvider, Segmented, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Dropdown from '@/components/Base/Dropdown'
@@ -130,6 +131,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const isTradePage = pathname.indexOf('/trade') !== -1
   const currencyDecimal = currentAccountInfo.currencyDecimal || 2 // 账户组小数位
   const isKycAuth = currentUser?.isKycAuth
+  const authModalRef = useRef<any>(null)
 
   const totalAccountMoney = accountList
     .filter((item) => !item.isSimulate)
@@ -296,7 +298,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                   <div className="mt-1">
                     <div>
                       <span className="text-[20px] text-primary !font-dingpro-regular">
-                        {formatNum(item.money, { precision: trade.currentAccountInfo.currencyDecimal })}
+                        {formatNum(item.money, { precision: item.currencyDecimal || 2 })}
                       </span>{' '}
                       <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                     </div>
@@ -355,7 +357,10 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       className="!ml-0 text-sm !h-[32px] !px-[10px]"
       icon={<img src="/img/huazhuan.png" width={20} height={20} />}
       onClick={() => {
+        // 关闭弹窗
+        setAccountBoxOpen(false)
         if (isKycAuth) {
+          authModalRef.current?.close?.()
           push(`/account/transfer?from=${item.id}`)
         }
       }}
@@ -473,8 +478,13 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
                                 width={380}
                                 okText={<FormattedMessage id="mt.qurenzheng" />}
                                 onFinish={() => {
+                                  // 关闭弹窗
+                                  setAccountBoxOpen(false)
                                   push('/setting/kyc')
+
+                                  return true
                                 }}
+                                ref={authModalRef}
                               >
                                 <div className="text-base text-primary">
                                   <FormattedMessage id="mt.qingxianwanshankycrenzheng" />

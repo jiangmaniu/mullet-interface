@@ -129,7 +129,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })} </span>
       }
@@ -145,7 +145,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       renderText(text, record, index, action) {
         const quote = getCurrentQuote(record.symbol)
         return (
@@ -188,7 +188,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{text || '-'}</span>
       }
@@ -209,7 +209,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 130,
       renderText(text, record, index, action) {
         const buySellInfo = getBuySellInfo(record)
         const orderMargin = record.orderMargin
@@ -290,7 +290,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
@@ -311,7 +311,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 120,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
