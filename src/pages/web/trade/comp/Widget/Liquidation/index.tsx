@@ -3,7 +3,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { cloneDeep, groupBy } from 'lodash-es'
 import { observer } from 'mobx-react'
-import { useMemo, useTransition } from 'react'
+import { useEffect, useMemo, useTransition } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
@@ -25,6 +25,7 @@ function Liquidation() {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const quoteInfo = getCurrentQuote() // 保留，取值触发更新
   const currentAccountInfo = trade.currentAccountInfo
+  const positionList = trade.positionList
 
   // 筛选逐仓列表
   const isolatedMarginList = cloneDeep(trade.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN'))
@@ -112,6 +113,11 @@ function Liquidation() {
       }
     }
   })
+
+  useEffect(() => {
+    // 仓位列表变化，重置选择到全仓
+    trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+  }, [positionList.length])
 
   const renderSelect = useMemo(() => {
     return (
