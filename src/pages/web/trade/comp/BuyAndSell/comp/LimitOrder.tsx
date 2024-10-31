@@ -458,21 +458,22 @@ export default observer(
             loading={loading}
             disabled={disabledBtn || trade.disabledTradeAction()}
           >
-            {trade.isMarketOpen() ? (
+            {quoteInfo.hasQuote && (
               <>
-                {!disabledTrade && (
+                {!disabledTrade && trade.isMarketOpen() && (
                   <>
                     {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {count}{' '}
                     <FormattedMessage id="mt.lot" />
                   </>
                 )}
                 {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
+                {!trade.isMarketOpen() && (
+                  <div className="flex items-center">
+                    <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
+                    <FormattedMessage id="mt.xiushizhong" />
+                  </div>
+                )}
               </>
-            ) : (
-              <div className="flex items-center">
-                <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
-                <FormattedMessage id="mt.xiushizhong" />
-              </div>
             )}
           </Button>
           <div className="mt-4">

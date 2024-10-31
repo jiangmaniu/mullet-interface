@@ -1,8 +1,10 @@
 import { observer } from 'mobx-react'
+import { useMemo } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import { getSymbolIcon } from '@/utils/business'
 import { cn } from '@/utils/cn'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 type IProps = {
   /**图片地址 */
@@ -29,20 +31,26 @@ type IProps = {
 function SymbolIcon({ src, width = 26, height = 26, style, className, symbol, showMarketCloseIcon, closeIconStyle }: IProps) {
   const { trade } = useStores()
   const isMarketOpen = trade.isMarketOpen(symbol)
+  const quote = getCurrentQuote()
+  const hasQuote = quote.hasQuote
 
-  return (
-    <div
-      className={cn('flex items-center justify-center border border-gray-90 rounded-full relative', className)}
-      style={{ width, height, ...style }}
-    >
-      <img width={width} height={height} alt="" src={getSymbolIcon(src)} className="rounded-full" />
-      {!isMarketOpen && showMarketCloseIcon && (
-        <div className="absolute bottom-[-6px] right-[-3px] z-[1]">
-          <img src="/img/xiushi-icon.svg" width={14} height={14} style={closeIconStyle} />
-        </div>
-      )}
-    </div>
-  )
+  const renderIcon = useMemo(() => {
+    return (
+      <div
+        className={cn('flex items-center justify-center border border-gray-90 rounded-full relative', className)}
+        style={{ width, height, ...style }}
+      >
+        <img width={width} height={height} alt="" src={getSymbolIcon(src)} className="rounded-full" />
+        {hasQuote && !isMarketOpen && showMarketCloseIcon && (
+          <div className="absolute bottom-[-6px] right-[-3px] z-[1]">
+            <img src="/img/xiushi-icon.svg" width={14} height={14} style={closeIconStyle} />
+          </div>
+        )}
+      </div>
+    )
+  }, [hasQuote, isMarketOpen, showMarketCloseIcon, src])
+
+  return <>{renderIcon}</>
 }
 
 export default observer(SymbolIcon)

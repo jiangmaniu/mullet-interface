@@ -125,7 +125,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
               <FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
-          <div className="overflow-y-auto" style={{ height: !showFixSidebar ? 340 : 500 }}>
+          <div
+            className="overflow-y-auto"
+            style={{ height: !showFixSidebar ? 340 : 500, scrollbarWidth: 'thin', scrollbarColor: 'var(--scrollbar-hover-color)' }}
+          >
             {loading && (
               <div className="mx-5 mt-8">
                 <Skeleton loading={loading} />

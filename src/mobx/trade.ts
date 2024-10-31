@@ -229,11 +229,17 @@ class TradeStore {
     const totalOrderProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), currencyDecimal))
     // 持仓单总的库存费
     const totalInterestFees = Number(
-      toFixed(this.positionList.reduce((total, next) => Number(total) + Number(next.interestFees || 0), 0) || 0, currencyDecimal)
+      toFixed(
+        this.positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.interestFees), currencyDecimal)), 0) || 0,
+        currencyDecimal
+      )
     )
     // 持仓单总的手续费
     const totalHandlingFees = Number(
-      toFixed(this.positionList.reduce((total, next) => Number(total) + Number(next.handlingFees || 0), 0) || 0, currencyDecimal)
+      toFixed(
+        this.positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.handlingFees), currencyDecimal)), 0) || 0,
+        currencyDecimal
+      )
     )
     // 净值 = 账户余额 + 库存费 + 手续费 + 浮动盈亏
     const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
@@ -286,9 +292,9 @@ class TradeStore {
     const margin = Number(orderMargin * (compelCloseRatio / 100))
     const balance = toFixed(isolatedBalance, 2)
 
-    console.log('orderMargin', orderMargin)
-    console.log('compelCloseRatio', compelCloseRatio)
-    console.log('维持保证金margin', margin)
+    // console.log('orderMargin', orderMargin)
+    // console.log('compelCloseRatio', compelCloseRatio)
+    // console.log('维持保证金margin', margin)
 
     return {
       marginRate,

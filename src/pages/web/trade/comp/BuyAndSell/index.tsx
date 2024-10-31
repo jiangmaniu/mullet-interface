@@ -1,7 +1,7 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { forwardRef, useImperativeHandle, useRef, useTransition } from 'react'
+import { forwardRef, useImperativeHandle, useMemo, useRef, useTransition } from 'react'
 
 import Popup from '@/components/Base/Popup'
 import Tabs from '@/components/Base/Tabs'
@@ -11,10 +11,17 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { ITradeTabsOrderType } from '@/mobx/trade'
 import { cn } from '@/utils/cn'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import LimitOrder from './comp/LimitOrder'
 import MarketOrder from './comp/MarketOrder'
 import StopLimitOrder from './comp/StopLimitOrder'
+
+const DisabledTradeView = observer(() => {
+  const { trade } = useStores()
+  const quote = getCurrentQuote()
+  return <>{trade.disabledTradeAction() && <div className="absolute top-0 left-0 w-full h-full z-[30] cursor-not-allowed"></div>}</>
+})
 
 export default observer(
   forwardRef((props, ref) => {
@@ -61,7 +68,7 @@ export default observer(
       }
     })
 
-    const renderContent = () => {
+    const renderContent = useMemo(() => {
       return (
         <div
           className={cn({
@@ -73,7 +80,7 @@ export default observer(
             items={OrderTypeItems}
             centered
             activeKey={orderType}
-            tabBarGutter={lng === 'zh-TW' ? 50 : 70}
+            tabBarGutter={lng === 'zh-TW' ? 50 : 45}
             className="max-xl:pl-3"
             onChange={(key) => {
               startTransition(() => {
@@ -99,14 +106,14 @@ export default observer(
           </div>
 
           {/* 禁用交易区操作 */}
-          {trade.disabledTradeAction() && <div className="absolute top-0 left-0 w-full h-full z-[30] cursor-not-allowed"></div>}
+          <DisabledTradeView />
         </div>
       )
-    }
+    }, [orderType, isPc])
 
     return (
       <SwitchPcOrWapLayout
-        pcComponent={<>{renderContent()}</>}
+        pcComponent={<>{renderContent}</>}
         wapComponent={
           <Popup
             headerStyle={{ padding: 0 }}
@@ -120,7 +127,7 @@ export default observer(
             }
             position="bottom"
           >
-            {renderContent()}
+            {renderContent}
           </Popup>
         }
       />
