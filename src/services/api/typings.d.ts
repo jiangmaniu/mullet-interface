@@ -138,6 +138,10 @@ declare namespace API {
     | 'STOP_LOSS_LIMIT_BUY_ORDER'
     /**止损限价卖出单 */
     | 'STOP_LOSS_LIMIT_SELL_ORDER'
+    /**止损市价买入单 */
+    | 'STOP_LOSS_MARKET_BUY_ORDER'
+    /**止损市价卖出单 */
+    | 'STOP_LOSS_MARKET_SELL_ORDER'
     /**止损单 */
     | 'STOP_LOSS_ORDER'
     /**止盈单 */

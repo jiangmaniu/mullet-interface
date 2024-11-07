@@ -1,0 +1,848 @@
+import ReconnectingWebSocket from 'reconnecting-websocket'
+
+import { IDepth, IMessage, IPositionListSymbolCalcInfo, IQuoteItem, MarginReteInfo, MessageType, WorkerType } from './ws.types'
+
+// 从主线程同步过来的公共基础数据
+let userInfo = {} as User.UserInfo // 用户信息
+let currentAccountInfo = {} as User.AccountItem // 当前选择的账户信息
+let positionList = [] as Order.BgaOrderPageListItem[] // 持仓单列表
+let allSimpleSymbolsMap = {} as { [key: string]: Symbol.AllSymbolItem } // 全部品种列表map，校验汇率品种用到
+let activeSymbolName = '' // 当前激活的品种名称
+let symbolListAll = [] as Account.TradeSymbolListItem[] // 当前账户所有品种列表
+let currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
+
+// websocket数据
+let socket: any = null
+let heartbeatInterval: any = null
+let heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
+let quotesCache = new Map<string, IQuoteItem>() // 行情缓存区
+let depthCache = new Map<string, IDepth>() // 深度缓存区
+let quotes = new Map<string, IQuoteItem>() // 当前行情
+let depth = new Map<string, IDepth>() // 当前深度
+
+let subscribeDepthTimer: any = null
+let lastQuoteUpdateTime = 0
+let lastDepthUpdateTime = 0
+const THROTTLE_QUOTE_INTERVAL = 2200
+const THROTTLE_DEPTH_INTERVAL = 600
+const MAX_CACHE_SIZE = 400 // 设置最大缓存限制
+
+// ============ 接收主线程消息 start ==============
+self.addEventListener('message', (event) => {
+  const { data } = event.data
+  const type = event.data?.type as WorkerType
+
+  // console.log('接收主线程发送的消息', type, data)
+
+  switch (type) {
+    // 初始化连接
+    case 'INIT_CONNECT':
+      userInfo = data?.userInfo
+      connect(data)
+      break
+    // 订阅行情
+    case 'SUBSCRIBE_QUOTE':
+      batchSubscribeSymbol(data)
+      break
+    // 订阅深度
+    case 'SUBSCRIBE_DEPTH':
+      subscribeDepth(data)
+      break
+    // 订阅交易
+    case 'SUBSCRIBE_TRADE':
+      subscribeTrade(data)
+      break
+    // 订阅系统消息
+    case 'SUBSCRIBE_MESSAGE':
+      subscribeMessage(data)
+      break
+    // ========== 处理同步数据 =========
+    // 当前激活品种名称
+    case 'SYNC_ACTIVE_SYMBOL_NAME':
+      activeSymbolName = data?.activeSymbolName || ''
+      break
+    // 当前选择的账户信息
+    case 'SYNC_CURRENT_ACCOUNT_INFO':
+      currentAccountInfo = data?.currentAccountInfo || {}
+      break
+    // 持仓单列表
+    case 'SYNC_POSITION_LIST':
+      positionList = data?.positionList || []
+      break
+    // 全部品种列表map，校验汇率品种用到
+    case 'SYNC_ALL_SYMBOL_MAP':
+      allSimpleSymbolsMap = data?.allSimpleSymbolsMap || {}
+      break
+    // 当前账户所有品种列表
+    case 'SYNC_ALL_SYMBOL_LIST':
+      symbolListAll = data?.symbolListAll || []
+      break
+    // 默认全仓，右下角爆仓选择逐仓、全仓切换
+    case 'SYNC_CURRENT_LIQUIDATION_SELECT_BGA_ID':
+      currentLiquidationSelectBgaId = data?.currentLiquidationSelectBgaId || ''
+      syncCalcData()
+      break
+    // 关闭连接
+    case 'CLOSE':
+      close()
+      break
+  }
+})
+
+// ============ 接收主线程消息 end ==============
+
+// 向主线程发送消息
+type ISendParam = { type: WorkerType; data?: any }
+function sendMessage({ type, data }: ISendParam) {
+  self.postMessage({
+    type,
+    data
+  })
+}
+
+// 连接socket
+function connect({ websocketUrl, token }: any) {
+  socket = new ReconnectingWebSocket(websocketUrl, ['WebSocket', token ? token : 'visitor'], {
+    minReconnectionDelay: 1,
+    connectionTimeout: 3000, // 重连时间
+    maxEnqueuedMessages: 0, // 不缓存发送失败的指令
+    maxRetries: 10000000 // 最大重连次数
+    // debug: process.env.NODE_ENV === 'development' // 测试环境打开调试
+  })
+  socket.addEventListener('open', handleOpenCallback)
+  socket.addEventListener('message', handleMessageCallback)
+  socket.addEventListener('close', () => {
+    sendMessage({ type: 'CLOSE' })
+  })
+  socket.addEventListener('error', () => {
+    sendMessage({ type: 'CLOSE' })
+  })
+}
+
+// 发送socket消息
+function send(cmd = {}, header = {}) {
+  // 游客身份userId传123456789
+  const userId = userInfo?.user_id || '123456789'
+  if (socket && socket.readyState === 1) {
+    socket.send(
+      JSON.stringify({
+        header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now(), ...header },
+        body: {
+          cancel: false,
+          ...cmd
+        }
+      })
+    )
+  }
+}
+
+// 关闭连接
+function close() {
+  stopHeartbeat()
+  if (socket) {
+    // 关闭socket指令
+    socket.close?.()
+    socket = null
+  }
+  if (heartbeatInterval) clearInterval(heartbeatInterval)
+  if (subscribeDepthTimer) clearTimeout(subscribeDepthTimer)
+  heartbeatInterval = null
+  subscribeDepthTimer = null
+}
+
+// 连接成功回调
+function handleOpenCallback() {
+  sendMessage({
+    type: 'CONNECT_SUCCESS',
+    data: {
+      readyState: socket.readyState
+    }
+  })
+  startHeartbeat()
+}
+
+// 接收消息回调
+function handleMessageCallback(d: any) {
+  try {
+    const res = JSON.parse(d.data) as IMessage
+
+    if (!res || !res.header) {
+      return
+    }
+
+    const header = res?.header || {}
+    const messageId = header.msgId
+    const data = res?.body || {}
+
+    switch (messageId) {
+      // 行情
+      case MessageType.symbol:
+        batchUpdateQuoteDataByNumber(data)
+        break
+      // 深度报价
+      case MessageType.depth:
+        batchUpdateDepthDataByNumber(data)
+        break
+      // 交易信息：账户余额变动、持仓列表、挂单列表
+      case MessageType.trade:
+        // console.log('交易信息变动', data)
+        sendMessage({
+          type: 'TRADE_RES',
+          data
+        })
+        break
+      case MessageType.notice:
+        // console.log('消息通知', data)
+        sendMessage({
+          type: 'MESSAGE_RES',
+          data
+        })
+        break
+    }
+  } catch (e) {
+    console.error('Handle message error:', e)
+  }
+}
+
+// 开始心跳
+function startHeartbeat() {
+  stopHeartbeat()
+  heartbeatInterval = setInterval(startHeartbeatCallback, heartbeatTimeout)
+}
+function startHeartbeatCallback() {
+  send({}, { msgId: 'heartbeat' })
+}
+
+// 停止心跳
+function stopHeartbeat() {
+  if (heartbeatInterval) {
+    clearInterval(heartbeatInterval)
+    heartbeatInterval = null
+  }
+}
+
+// =========== 订阅消息 start ===========
+
+// 订阅品种
+function batchSubscribeSymbol({
+  cancel = false,
+  list = []
+}: {
+  cancel?: boolean
+  needAccountGroupId?: boolean
+  list?: Array<{ accountGroupId?: any; symbol: string; dataSourceCode?: any }>
+} = {}) {
+  const symbolList = list
+  if (!symbolList.length) return
+  symbolList.forEach((item) => {
+    const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
+    const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
+    // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
+    const topic = item.accountGroupId ? topicAccount : topicNoAccount
+    send({
+      topic,
+      cancel
+    })
+  })
+}
+
+// 订阅当前打开的品种深度报价
+function subscribeDepth({ cancel, symbolInfo }: { cancel?: boolean; symbolInfo: Account.TradeSymbolListItem }) {
+  if (!symbolInfo?.symbol) return
+
+  const topicNoAccount = `/000000/depth/${symbolInfo.dataSourceCode}/${symbolInfo.symbol}`
+  const topicAccount = `/000000/depth/${symbolInfo.symbol}/${symbolInfo?.accountGroupId}`
+  // 区分带账户组id和不带账户组情况
+  const topic = symbolInfo?.accountGroupId ? topicAccount : topicNoAccount
+
+  if (subscribeDepthTimer) clearTimeout(subscribeDepthTimer)
+  subscribeDepthTimer = setTimeout(() => {
+    send({
+      topic,
+      cancel
+    })
+  }, 300)
+}
+
+// 订阅持仓记录、挂单记录、账户余额信息
+function subscribeTrade({ cancel, topic }: { cancel?: boolean; topic: string }) {
+  send({
+    topic,
+    cancel
+  })
+}
+
+// 订阅消息
+function subscribeMessage(cancel?: boolean) {
+  if (!userInfo?.user_id) return
+
+  // 公共订阅：/{租户ID}/public/1
+  // 角色订阅：/{租户ID}/role/{角色ID}
+  // 机构订阅：/{租户ID}/dept/{机构ID}
+  // 岗位订阅：/{租户ID}/post/{岗位ID}
+  // 用户订阅：/{租户ID}/user/{用户ID}
+  send({
+    topic: `/000000/public/1`,
+    cancel
+  })
+  send({
+    topic: `/000000/role/${userInfo.role_id}`,
+    cancel
+  })
+  send({
+    topic: `/000000/dept/${userInfo.dept_id}`,
+    cancel
+  })
+  send({
+    topic: `/000000/post/${userInfo.post_id}`,
+    cancel
+  })
+  send({
+    topic: `/000000/user/${userInfo?.user_id}`,
+    cancel
+  })
+}
+
+// =========== 订阅消息 end ===========
+
+// ================ 更新深度 start ================
+function updateDepthData() {
+  if (depthCache.size) {
+    depthCache.forEach((item: IDepth, dataSourceKey) => {
+      if (dataSourceKey) {
+        if (typeof item.asks === 'string') {
+          item.asks = item.asks ? JSON.parse(item.asks) : []
+        }
+        if (typeof item.bids === 'string') {
+          item.bids = item.bids ? JSON.parse(item.bids) : []
+        }
+        depth.set(dataSourceKey, item)
+      }
+    })
+
+    // 发送深度数据
+    sendMessage({
+      type: 'DEPTH_RES',
+      data: depth
+    })
+
+    depthCache.clear()
+    lastDepthUpdateTime = performance.now()
+  }
+}
+
+function batchUpdateDepthDataByNumber(data: any) {
+  const [dataSourceCode, dataSourceSymbol] = (data.dataSource || '').split('-').filter((v: any) => v)
+  const sbl = data.symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
+  const dataSourceKey = `${dataSourceCode}/${sbl}` // 数据源 + 品种名称
+  depthCache.set(dataSourceKey, data)
+
+  // 如果缓存太大，强制发送
+  if (depthCache.size >= MAX_CACHE_SIZE) {
+    updateDepthData()
+    return
+  }
+
+  const now = performance.now()
+  if (now - lastDepthUpdateTime >= THROTTLE_DEPTH_INTERVAL) {
+    if (depthCache.size > 0) {
+      updateDepthData()
+    }
+  }
+}
+
+// ================ 更新深度 end ================
+
+// ================ 更新行情数据 开始 ================
+function updateQuoteData() {
+  if (quotesCache.size) {
+    quotesCache.forEach((item: IQuoteItem, dataSourceKey) => {
+      const quoteData = quotes.get(dataSourceKey)
+      if (quoteData) {
+        const prevSell = quoteData?.priceData?.sell || 0
+        const prevBuy = quoteData?.priceData?.buy || 0
+        const buy = item.priceData?.buy
+        const sell = item.priceData?.sell
+        const flag = buy && sell // 买卖都存在，才跳动
+        item.bidDiff = flag ? buy - prevBuy : 0 // bid使用买盘的
+        item.askDiff = flag ? sell - prevSell : 0 // ask使用卖盘的
+
+        if (item.priceData) {
+          // 如果没有最新报价，获取上一口报价
+          item.priceData.buy = item.priceData.buy || prevBuy
+          item.priceData.sell = item.priceData.sell || prevSell
+        }
+      }
+
+      if (dataSourceKey) {
+        quotes.set(dataSourceKey, item)
+      }
+    })
+
+    // 发送品种行情数据
+    sendMessage({
+      type: 'SYMBOL_RES',
+      data: quotes
+    })
+
+    // 同步计算结果到主线程
+    syncCalcData()
+
+    quotesCache.clear()
+    lastQuoteUpdateTime = performance.now()
+  }
+}
+
+function batchUpdateQuoteDataByNumber(data: any) {
+  const [dataSourceCode, dataSourceSymbol] = (data.dataSource || '').split('-').filter((v: any) => v)
+  const sbl = data.symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
+  const dataSourceKey = `${dataSourceCode}/${sbl}` // 数据源 + 品种名称
+  quotesCache.set(dataSourceKey, data)
+
+  // 如果缓存太大，强制发送
+  if (quotesCache.size >= MAX_CACHE_SIZE) {
+    updateQuoteData()
+    return
+  }
+
+  const now = performance.now()
+  if (now - lastQuoteUpdateTime >= THROTTLE_QUOTE_INTERVAL) {
+    if (quotesCache.size > 0) {
+      updateQuoteData()
+    }
+  }
+}
+
+// =========  计算相关 start ============
+
+// 计算账户余额信息
+function getAccountBalance(data?: any) {
+  const currencyDecimal = currentAccountInfo.currencyDecimal
+
+  // 账户余额
+  const money = Number(toFixed(currentAccountInfo.money || 0, currencyDecimal))
+  // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
+  const occupyMargin = Number(
+    toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0), currencyDecimal)
+  )
+  // 可用保证金
+  let availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
+  // 持仓总浮动盈亏
+  const totalOrderProfit = Number(toFixed(getCurrentAccountFloatProfit(positionList), currencyDecimal))
+  // 持仓单总的库存费
+  const totalInterestFees = Number(
+    toFixed(
+      positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.interestFees), currencyDecimal)), 0) || 0,
+      currencyDecimal
+    )
+  )
+  // 持仓单总的手续费
+  const totalHandlingFees = Number(
+    toFixed(
+      positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.handlingFees), currencyDecimal)), 0) || 0,
+      currencyDecimal
+    )
+  )
+  // 净值 = 账户余额 + 库存费 + 手续费 + 浮动盈亏
+  const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
+
+  // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 + 所有订单的手续费
+  const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
+
+  // console.log('totalInterestFees', totalInterestFees)
+  // console.log('totalHandlingFees', totalHandlingFees)
+  // console.log('totalOrderProfit', totalOrderProfit)
+  // console.log('totalProfit', totalProfit)
+
+  // 账户组设置“可用计算未实现盈亏”时
+  // 新可用预付款=原来的可用预付款+账户的持仓盈亏
+  if (currentAccountInfo?.usableAdvanceCharge === 'PROFIT_LOSS') {
+    availableMargin = availableMargin + totalProfit
+  }
+
+  return {
+    occupyMargin,
+    availableMargin,
+    balance,
+    totalProfit,
+    money
+  }
+}
+
+// 计算当前账户总的浮动盈亏
+function getCurrentAccountFloatProfit(data: any) {
+  const currencyDecimal = currentAccountInfo?.currencyDecimal || 2
+
+  // 持仓总浮动盈亏
+  let totalProfit = 0
+  if (positionList.length) {
+    positionList.forEach((item: Order.BgaOrderPageListItem) => {
+      const profit = covertProfit(item) // 浮动盈亏
+      // item.profit = profit
+      // 先截取在计算，否则跟页面上截取后的值累加对不上
+      totalProfit += Number(toFixed(Number(profit || 0), currencyDecimal))
+    })
+  }
+  return totalProfit
+}
+
+/**
+ * 计算汇率
+ * @param value 转换的值
+ * @param unit 盈利货币单位
+ * @param buySell 买卖方向
+ * @returns
+ */
+type IExchangeRateParams = {
+  /**需要转化的值 */
+  value: any
+  /**盈利货币单位 */
+  unit: any
+  /**买卖方向 */
+  buySell: API.TradeBuySell | undefined
+}
+function calcExchangeRate({ value, unit, buySell }: IExchangeRateParams) {
+  // 检查货币是否是外汇/指数，并且不是以 USD 为单位，比如AUDNZD => 这里单位是NZD，找到NZDUSD或者USDNZD的指数取值即可
+  // 数字货币、商品黄金石油这些以美元结算的，单位都是USD不需要参与转化直接返回
+  // 非USD单位的产品都要转化为美元
+  let qb: any = {}
+  let profit = value || 0
+  const isBuy = buySell === 'BUY' // 是否买入
+  const isSell = buySell === 'SELL' // 是否卖出
+
+  // 交易品种配置的盈利货币单位和账户组配置的货币单位不一致时，需要转换
+  if (currentAccountInfo?.currencyUnit !== unit) {
+    // USD开头是除法，USD结尾是乘法
+    // 除法
+    const divName = ('USD' + unit).toUpperCase() // 如 USDNZD
+    // 乘法
+    const mulName = (unit + 'USD').toUpperCase() // 如 NZDUSD
+
+    // 使用汇率品种的dataSourceCode去获取行情
+    const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.dataSourceCode
+    const divNameKey = `${dataSourceCode}/${divName}`
+    const mulNameKey = `${dataSourceCode}/${mulName}`
+
+    const divNameQuote = quotes.get(divNameKey)
+    const mulNameQuote = quotes.get(mulNameKey)
+
+    // 检查是否存在 divName 对应的报价信息
+    if (divNameQuote) {
+      qb = divNameQuote
+
+      // 检查交易指令是否是买入，如果是，则获取 divName 对应的报价信息，并用其 bid 除以 profit
+      if (isBuy) {
+        profit = profit / Number(qb?.priceData?.buy)
+      }
+      // 检查交易指令是否是卖出，如果是，则获取 divName 对应的报价信息，并用其 ask 除以 profit
+      else if (isSell) {
+        profit = profit / Number(qb?.priceData?.sell)
+      }
+    }
+    // 如果 divName 对应的报价信息不存在，则检查 mulName 对应的报价信息
+    else if (mulNameQuote) {
+      qb = mulNameQuote
+      // 检查交易指令是否是买入，如果是，则获取 mulName 对应的报价信息，并用其 bid 乘以 profit
+      if (isBuy) {
+        profit = profit * Number(qb?.priceData?.buy)
+      }
+      // 检查交易指令是否是卖出，如果是，则获取 mulName 对应的报价信息，并用其 ask 乘以 profit
+      else if (isSell) {
+        profit = profit * Number(qb?.priceData?.sell)
+      }
+    }
+  }
+
+  return Number(profit)
+}
+
+/**
+ * 将计算的浮动盈亏转化为美元单位
+ * @param dataSourceSymbol 数据源品种名称
+ * @param positionItem 持仓item
+ * @returns
+ */
+function covertProfit(positionItem: Order.BgaOrderPageListItem) {
+  const symbol = positionItem?.symbol
+  if (!symbol) return
+  const quoteInfo = getCurrentQuote(symbol)
+  const symbolConf = positionItem?.conf
+  const bid = Number(quoteInfo?.bid || 0)
+  const ask = Number(quoteInfo?.ask || 0)
+  const unit = symbolConf?.profitCurrency // 盈利货币单位
+  const number = Number(positionItem.orderVolume || 0) // 手数
+  const consize = Number(symbolConf?.contractSize || 1) // 合约量
+  const openPrice = Number(positionItem.startPrice || 0) // 开仓价
+
+  // 浮动盈亏  (买入价-卖出价) x 合约单位 x 交易手数
+  let profit =
+    bid && ask ? (positionItem.buySell === 'BUY' ? (bid - openPrice) * number * consize : (openPrice - ask) * number * consize) : 0
+
+  // 转换汇率
+  profit = calcExchangeRate({
+    value: profit,
+    unit,
+    buySell: positionItem.buySell
+  })
+
+  // 返回转化后的 profit
+  return Number(toFixed(profit))
+}
+
+// 计算收益率
+function calcYieldRate(item: Order.BgaOrderPageListItem, precision: any, profitValue?: number) {
+  const conf = item.conf as Symbol.SymbolConf
+  const orderMargin = Number(item.orderMargin || 0) // 开仓保证金
+  // 收益率 = 浮动盈亏 / 保证金
+  const profit = profitValue || item.profit || 0
+  const value = toFixed((profit / orderMargin) * 100, precision)
+  return profit && orderMargin ? (value > 0 ? '+' + value : value) + '%' : ''
+}
+
+// 计算逐仓保证金信息
+function calcIsolatedMarginRateInfo(filterPositionList: Order.BgaOrderPageListItem[]) {
+  let compelCloseRatio = currentAccountInfo.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+  let orderMargin = 0 // 订单总的保证金
+  let handlingFees = 0 // 订单总的手续费
+  let interestFees = 0 // 订单总的库存费
+  let profit = 0 // 订单总的浮动盈亏
+  filterPositionList.map((item) => {
+    const orderProfit = covertProfit(item) as any
+    orderMargin += Number(item.orderMargin || 0)
+    handlingFees += Number(item.handlingFees || 0)
+    interestFees += Number(item.interestFees || 0)
+    if (orderProfit) {
+      profit += orderProfit
+    }
+  })
+
+  // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费 + 手续费 + 浮动盈亏
+  const isolatedBalance = Number(orderMargin + Number(interestFees || 0) + Number(handlingFees || 0) + Number(profit || 0))
+  // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
+  const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
+  const margin = Number(orderMargin * (compelCloseRatio / 100))
+  const balance = toFixed(isolatedBalance, 2)
+
+  // console.log('orderMargin', orderMargin)
+  // console.log('compelCloseRatio', compelCloseRatio)
+  // console.log('维持保证金margin', margin)
+
+  return {
+    marginRate,
+    margin,
+    balance
+  }
+}
+
+/**
+ *
+ * @param item
+ * @returns
+ */
+/**
+ * 计算全仓/逐仓：保证金率、维持保证金
+ * @param item 持仓单item
+ * @returns
+ */
+function getMarginRateInfo(item?: Order.BgaOrderPageListItem) {
+  const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
+  // 全仓保证金率：全仓净值/占用 = 保证金率
+  // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
+  // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
+  // 净值=账户余额+库存费+手续费+浮动盈亏
+  let { balance } = getAccountBalance()
+
+  let marginRate = 0
+  let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
+  let compelCloseRatio = positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+  compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
+  if (isCrossMargin) {
+    // 全仓占用的保证金
+    const occupyMargin = Number(toFixed(Number(currentAccountInfo.margin || 0), 2))
+    // 判断是否存在全仓单
+    const hasCrossMarginOrder = positionList.some((item) => item.marginType === 'CROSS_MARGIN')
+    if (hasCrossMarginOrder) {
+      // 逐仓保证金信息
+      const marginInfo = calcIsolatedMarginRateInfo(positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN'))
+      // 全仓净值：全仓净值 - 逐仓净值
+      const crossBalance = Number(toFixed(balance - marginInfo.balance, 2))
+      balance = crossBalance
+      marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
+      margin = Number(occupyMargin * compelCloseRatio)
+
+      // console.log('逐仓净值', marginInfo.balance)
+      // console.log('计算后的全仓净值', balance)
+      // console.log('全仓occupyMargin', occupyMargin)
+      // console.log('marginRate', marginRate)
+    }
+  } else {
+    let filterPositionList = [item] as Order.BgaOrderPageListItem[]
+    // 逐仓模式保证金
+    const marginInfo = calcIsolatedMarginRateInfo(filterPositionList)
+    return marginInfo
+  }
+
+  return {
+    marginRate,
+    margin,
+    balance
+  }
+}
+
+// 右下角选择的保证金信息
+function calcRightWidgetSelectMarginInfo() {
+  // 当前筛选的逐仓单订单信息
+  const currentLiquidationSelectItem = positionList.find((item) => item.id === currentLiquidationSelectBgaId)
+  const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
+  const isLockedMode = currentAccountInfo.orderMode === 'LOCKED_POSITION' // 锁仓模式
+
+  let marginRateInfo = {} as MarginReteInfo
+  if (currentLiquidationSelectBgaId === 'CROSS_MARGIN') {
+    marginRateInfo = getMarginRateInfo()
+  } else {
+    let filterPositionList: any = []
+    // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
+    if (isLockedMode && currentLiquidationSelectItem) {
+      filterPositionList = [currentLiquidationSelectItem]
+    } else {
+      // 合并同名品种展示
+      filterPositionList = positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
+    }
+    if (filterPositionList.length) {
+      filterPositionList.forEach((item: any) => {
+        const profit = covertProfit(item) as number // 浮动盈亏
+        item.profit = profit
+      })
+    }
+
+    marginRateInfo = calcIsolatedMarginRateInfo(filterPositionList)
+  }
+  return marginRateInfo
+}
+
+function calcPositionListSymbol() {
+  const positionListSymbolCalcInfo = new Map<string, IPositionListSymbolCalcInfo>()
+  const precision = currentAccountInfo.currencyDecimal || 2
+
+  for (let item of positionList) {
+    const isCrossMargin = item.marginType === 'CROSS_MARGIN'
+
+    // 全仓使用基础保证金
+    if (isCrossMargin) {
+      item.orderMargin = item.orderBaseMargin
+    }
+
+    const profit = covertProfit(item) as number // 浮动盈亏
+    const yieldRate = calcYieldRate(item, precision, profit) // 收益率
+    const marginRateInfo = getMarginRateInfo(item)
+    // 缓存全部的计算结果返回主线程在持仓单使用
+    positionListSymbolCalcInfo.set(item.id, {
+      profit,
+      yieldRate,
+      marginRateInfo
+    })
+  }
+  return positionListSymbolCalcInfo
+}
+
+// =========  计算相关 end ============
+
+// ========  向主线程定时同步计算的数据 start ============
+function syncCalcData() {
+  if (!quotes.size) return
+  const accountBalanceInfo = getAccountBalance()
+  const positionListSymbolCalcInfo = calcPositionListSymbol() // 持仓单计算缓存
+  const rightWidgetSelectMarginInfo = calcRightWidgetSelectMarginInfo() // 右下角选择的保证金信息
+
+  sendMessage({
+    type: 'SYNC_CALCA_RES',
+    data: {
+      accountBalanceInfo,
+      positionListSymbolCalcInfo,
+      rightWidgetSelectMarginInfo
+    }
+  })
+}
+// ========  向主线程定时同步计算的数据 end ============
+
+// =========  公共方法 start ============
+/**
+ * 获取当前激活打开的品种行情简化版
+ * @param {*} currentSymbol 当前传入的symbolName
+ * @returns
+ */
+export function getCurrentQuote(currentSymbolName?: string) {
+  let symbol = currentSymbolName || activeSymbolName // 后台自定义的品种名称，symbol是唯一的
+
+  // 当前品种的详细信息
+  const currentSymbol = getActiveSymbolInfo(symbol)
+  const dataSourceSymbol = currentSymbol?.dataSourceSymbol
+  const dataSourceCode = currentSymbol?.dataSourceCode
+  const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
+
+  const currentQuote = quotes.get(dataSourceKey) // 行情信息
+  const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
+  let ask = Number(currentQuote?.priceData?.sell || 0) // ask是买价，切记ask买价一般都比bid卖价高
+  let bid = Number(currentQuote?.priceData?.buy || 0) // bid是卖价
+
+  return {
+    symbol, // 用于展示的symbol自定义名称
+    dataSourceSymbol, // 数据源品种
+    dataSourceKey, // 获取行情源的key
+    digits,
+    currentQuote,
+    currentSymbol, // 当前品种信息
+    quotes,
+    ask: toFixed(ask, digits, false),
+    bid: toFixed(bid, digits, false)
+  }
+}
+
+// 获取打开的品种完整信息
+function getActiveSymbolInfo(currentSymbolName?: string) {
+  const symbol = currentSymbolName || activeSymbolName
+  const info = symbolListAll.find((item) => item.symbol === symbol) || {}
+  return info as Account.TradeSymbolListItem
+}
+
+/**
+ * 格式化小数位
+ * @param val
+ * @param num 小数位
+ * @param isTruncateDecimal 是否截取小数位
+ * @returns
+ */
+function toFixed(val: any, num = 2, isTruncateDecimal = true) {
+  let value = val || 0
+  value = parseFloat(value)
+  if (isNaN(value)) {
+    value = 0
+  }
+  // 截取小数点展示
+  if (isTruncateDecimal) {
+    return truncateDecimal(value, num)
+  }
+  // 四舍五入
+  return value.toFixed(num)
+}
+
+/**
+ * 保留指定小数位，不做截取
+ * @param number
+ * @param digits
+ * @returns
+ */
+function truncateDecimal(number: any, digits?: number) {
+  const precision = digits || 2
+  // 将数字转换为字符串
+  const numStr = number.toString()
+  // 找到小数点位置
+  const decimalIndex = numStr.indexOf('.')
+  // 如果没有小数点，直接返回
+  if (decimalIndex === -1) return number
+  // 截取指定小数位
+  const truncatedStr = numStr.substring(0, decimalIndex + precision + 1)
+  // 转换回数字
+  return parseFloat(truncatedStr)
+}
+// =========  公共方法 end ============

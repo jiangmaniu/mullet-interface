@@ -8,6 +8,7 @@ import { ADMIN_HOME_PAGE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
+import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
@@ -34,6 +35,9 @@ export default observer(() => {
   const { pathname } = useLocation()
   const { setTheme } = useTheme()
   const currentUser = initialState?.currentUser
+
+  // 同步数据到worker线程
+  const syncData = useSyncDataToWorker()
 
   useEffect(() => {
     if (!currentUser?.accountList?.length) {
@@ -66,8 +70,8 @@ export default observer(() => {
   const checkPageShowTime = () => {
     // 记录上次进入时间
     const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
-    // 缓存时间大于10分钟、初次载入
-    if ((updateTime && Date.now() - updateTime > 10 * 60 * 1000) || !updateTime) {
+    // 缓存时间大于5分钟、初次载入
+    if ((updateTime && Date.now() - updateTime > 5 * 60 * 1000) || !updateTime) {
       STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
       return true
     }
@@ -77,12 +81,21 @@ export default observer(() => {
   useEffect(() => {
     checkPageShowTime()
 
+    // 连接ws
+    ws.connect()
+
     return () => {
       // 取消订阅深度报价
       ws.subscribeDepth(true)
 
-      // 重置tradingview实例，否则报错
-      kline.tvWidget = null as any
+      // 关闭worker
+      ws.closeWorker?.()
+
+      // 关闭ws连接
+      ws.close()
+
+      // 重置tradingview实例
+      kline.destroyed()
     }
   }, [])
 
@@ -92,37 +105,37 @@ export default observer(() => {
 
   usePageVisibility(
     () => {
-      console.log('Page is visible')
-
-      // 避免k线多次刷新
-      if (!checkPageShowTime()) return
-
-      console.log('======开始刷新k线======')
-
       // 用户从后台切换回前台时执行的操作
       ws.connect()
 
+      trade.setTradePageActive(true)
+
       onSubscribeExchangeRateQuote()
+
+      // 避免k线多次刷新
+      if (!checkPageShowTime()) return
 
       // ws没有返回token失效状态，需要查询一次用户信息，看当前登录态是否失效，避免长时间没有操作情况
       fetchUserInfo(true)
 
-      // 重置k线实例
-      // @ts-ignore
-      kline.tvWidget = null
+      // 重置tradingview实例
+      kline.destroyed()
     },
     () => {
-      console.log('Page is hidden')
+      // 用户从前台切换到后台时执行的操作
+
+      trade.setTradePageActive(false)
+
+      // 关闭ws
+      ws.close()
+      // 关闭worker
+      ws.closeWorker?.()
 
       // 避免k线多次刷新
       if (!checkPageShowTime()) return
 
-      // 用户从前台切换到后台时执行的操作
-      // @ts-ignore
-      kline.tvWidget = null
-
-      // 关闭ws行情跳动
-      ws.close()
+      // 重置tradingview实例
+      kline.destroyed()
     }
   )
 

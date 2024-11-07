@@ -1,10 +1,10 @@
 import { ProFormSelectProps } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
+import { observer } from 'mobx-react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
 
 import LevelAgeModal from './LevelAgeModal'
 import MarginTypeModal from './MarginTypeModal'
@@ -12,9 +12,10 @@ import MarginTypeModal from './MarginTypeModal'
 type IProps = ProFormSelectProps
 
 // 全仓、逐仓、杠杆选择
-export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...res }: IProps) {
+function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...res }: IProps) {
   const { trade } = useStores()
-  const { prepaymentConf } = getCurrentQuote()
+  const currentSymbol = trade.getActiveSymbolInfo()
+  const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf
   const mode = prepaymentConf?.mode
   const isFixedMargin = mode === 'fixed_margin' // 固定预付款
   const isFixedLeverage = mode === 'fixed_leverage' // 固定杠杆
@@ -79,3 +80,5 @@ export default function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...re
     </div>
   )
 }
+
+export default observer(SelectMarginTypeOrLevelAge)

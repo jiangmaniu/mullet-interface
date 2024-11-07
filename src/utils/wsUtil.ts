@@ -73,8 +73,8 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
     const divNameKey = `${dataSourceCode}/${divName}`
     const mulNameKey = `${dataSourceCode}/${mulName}`
 
-    const divNameQuote = toJS(quotes[divNameKey])
-    const mulNameQuote = toJS(quotes[mulNameKey])
+    const divNameQuote = toJS(quotes.get(divNameKey))
+    const mulNameQuote = toJS(quotes.get(mulNameKey))
 
     // 检查是否存在 divName 对应的报价信息
     if (divNameQuote) {
@@ -175,11 +175,11 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
 }
 
 // 计算收益率
-export const calcYieldRate = (item: IPositionItem, precision: any) => {
+export const calcYieldRate = (item: IPositionItem, precision: any, profitValue?: number) => {
   const conf = item.conf as Symbol.SymbolConf
   const orderMargin = Number(item.orderMargin || 0) // 开仓保证金
   // 收益率 = 浮动盈亏 / 保证金
-  const profit = item.profit || 0
+  const profit = profitValue || item.profit || 0
   const value = toFixed((profit / orderMargin) * 100, precision)
   return profit && orderMargin ? (value > 0 ? '+' + value : value) + '%' : ''
 }
@@ -441,8 +441,9 @@ export function getCurrentDepth(currentSymbolName?: string) {
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
   const { dataSourceCode } = trade.getActiveSymbolInfo(symbol)
+  const dataSourceKey = `${dataSourceCode}/${symbol}`
 
-  const currentDepth = depth[`${dataSourceCode}/${symbol}`] || {}
+  const currentDepth = depth.get(dataSourceKey)
 
   return currentDepth
 }
@@ -463,7 +464,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const dataSourceCode = currentSymbol?.dataSourceCode
   const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
 
-  const currentQuote = quotes?.[dataSourceKey] || {} // 行情信息
+  const currentQuote = quotes.get(dataSourceKey) // 行情信息
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf as Symbol.PrepaymentConf // 当前品种预付款配置
   const transactionFeeConf = currentSymbol?.symbolConf?.transactionFeeConf as Symbol.TransactionFeeConf // 当前品种手续费配置
@@ -512,8 +513,8 @@ export function getCurrentQuote(currentSymbolName?: string) {
     open: toFixed(open, digits, false), //开
     close: toFixed(close, digits, false), //收
     spread, // 买卖点差
-    bidDiff: currentQuote.bidDiff || 0,
-    askDiff: currentQuote.askDiff || 0,
+    bidDiff: currentQuote?.bidDiff || 0,
+    askDiff: currentQuote?.askDiff || 0,
     hasQuote: Number(bid) > 0 // 是否存在行情
   }
 }

@@ -46,7 +46,6 @@ function Position({ style, parentPopup }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
   const { lng } = useLang()
-  const { quotes } = ws
   const isZh = lng === 'zh-TW'
   const intl = useIntl()
   const [modalInfo, setModalInfo] = useState({} as IPositionItem)

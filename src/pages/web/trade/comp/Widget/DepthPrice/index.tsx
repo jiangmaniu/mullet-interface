@@ -3,9 +3,10 @@ import { FormattedMessage } from '@umijs/max'
 import { Col, Row } from 'antd'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
-import { useState, useTransition } from 'react'
+import { useMemo, useState, useTransition } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
+import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
@@ -14,16 +15,15 @@ type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 
 // 盘口深度报价
 function DeepPrice() {
+  const { trade } = useStores()
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
-  const depth = getCurrentDepth()
+  const depth = getCurrentDepth(trade.activeSymbolName)
   const quote = getCurrentQuote()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
   const asks = toJS(depth?.asks || []).reverse()
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
   const bids = toJS(depth?.bids || [])
-
-  // console.log(`${quote.symbol}---asks---bids`, toJS(depth?.asks), toJS(depth?.bids))
 
   const modeList: Array<{ key: ModeType; icon: string }> = [
     {
@@ -171,27 +171,33 @@ function DeepPrice() {
     )
   }
 
+  const renderMode = useMemo(() => {
+    return (
+      <div className="flex items-center gap-x-4">
+        {modeList.map((item, idx) => (
+          <Iconfont
+            name={item.icon}
+            width={24}
+            height={24}
+            className={cn('cursor-pointer', item.key === mode ? 'opacity-100' : 'opacity-30')}
+            key={idx}
+            onClick={() => {
+              startTransition(() => {
+                setMode(item.key)
+              })
+            }}
+          />
+        ))}
+      </div>
+    )
+  }, [mode])
+
   if (!asks.length && !bids.length) return
 
   return (
     <div className={cn('w-[300px] h-[700px] overflow-hidden relative bg-primary', className)}>
       <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130 dark:border-[var(--border-primary-color)]">
-        <div className="flex items-center gap-x-4">
-          {modeList.map((item, idx) => (
-            <Iconfont
-              name={item.icon}
-              width={24}
-              height={24}
-              className={cn('cursor-pointer', item.key === mode ? 'opacity-100' : 'opacity-30')}
-              key={idx}
-              onClick={() => {
-                startTransition(() => {
-                  setMode(item.key)
-                })
-              }}
-            />
-          ))}
-        </div>
+        {renderMode}
         {/* <div>
           <ProFormSelect
             fieldProps={{

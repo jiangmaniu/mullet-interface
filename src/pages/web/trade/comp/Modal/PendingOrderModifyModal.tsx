@@ -153,7 +153,7 @@ export default observer(
     // 限价单、停损单 买卖方向判断
     if (['LIMIT_BUY_ORDER', 'LIMIT_SELL_ORDER'].includes(item.type as any)) {
       priceColor = isBuy ? price && Number(price) > Number(priceTip) : price && Number(price) < Number(priceTip)
-    } else if (['STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(item.type as any)) {
+    } else if (['STOP_LOSS_MARKET_BUY_ORDER', 'STOP_LOSS_MARKET_SELL_ORDER'].includes(item.type as any)) {
       priceColor = isBuy ? price && Number(price) < Number(priceTip) : price && Number(price) > Number(priceTip)
     }
 

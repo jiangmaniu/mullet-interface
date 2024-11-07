@@ -1,5 +1,5 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { useIntl } from '@umijs/max'
 import { Tabs } from 'antd-mobile'
 import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
@@ -81,7 +81,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
         style={{ '--title-font-size': '14px', '--active-line-height': '0px', '--adm-color-border': '#fff', paddingLeft: 4 }}
       >
         {symbolCategory.map((v, index) => (
-          <Tabs.Tab title={<FormattedMessage id={`${v.label}`} />} key={v.key} style={{ padding: '5px 9px' }} />
+          <Tabs.Tab title={v.label} key={v.key} style={{ padding: '5px 9px' }} />
         ))}
       </Tabs>
     </div>

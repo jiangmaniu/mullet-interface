@@ -24,6 +24,7 @@ import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import klineStore from './kline'
 import ws from './ws'
+import { IPositionListSymbolCalcInfo, MarginReteInfo } from './ws.types'
 
 export type UserConfInfo = Record<
   string,
@@ -66,6 +67,20 @@ export type ITradeTabsOrderType =
 // 禁用 MobX 严格模式
 configure({ enforceActions: 'never' })
 
+type AccountBalanceInfo = {
+  /**占用保证金 */
+  occupyMargin: any
+  /**可用保证金 */
+  availableMargin: any
+  /**账户净值 */
+  balance: any
+  /**账户总浮动盈亏 */
+  totalProfit: any
+  /** */
+  currentAccountInfo: any
+  money: any
+}
+
 class TradeStore {
   constructor() {
     makeObservable(this) // 使用 makeObservable mobx6.0 才会更新视图
@@ -84,6 +99,7 @@ class TradeStore {
 
   @observable currentAccountInfo = {} as User.AccountItem // 当前切换的账户信息
   @observable showBalanceEmptyModal = false // 余额为空弹窗
+  @observable accountBalanceInfo = {} as AccountBalanceInfo // 账户余额信息
 
   //  ========= 交易区操作 =========
   @observable marginType: API.MarginType = 'CROSS_MARGIN' // 交易区保证金类型
@@ -111,6 +127,10 @@ class TradeStore {
 
   @observable switchAccountLoading = false // 切换账户loading效果
 
+  @observable tradePageActive = false // 交易页窗口是否激活
+  @observable positionListSymbolCalcInfo = new Map<string, IPositionListSymbolCalcInfo>() // 持仓单计算信息
+  @observable rightWidgetSelectMarginInfo = {} as MarginReteInfo // 右下角选择的保证金信息
+
   // 初始化加载
   init = () => {
     // 初始化打开的品种列表
@@ -132,6 +152,10 @@ class TradeStore {
 
   setShowActiveSymbol = (value: boolean) => {
     this.showActiveSymbol = value
+  }
+
+  setTradePageActive = (value: boolean) => {
+    this.tradePageActive = value
   }
 
   // =========== 设置交易区操作 ==========
@@ -202,8 +226,7 @@ class TradeStore {
 
     // 需要刷新k线，否则切换不同账号加载的品种不一样
     push('/trade')
-    // @ts-ignore
-    klineStore.tvWidget = null // 非交易页面跳转需要重置trandview实例，否则报错
+    klineStore.destroyed() // 非交易页面跳转需要重置trandview实例，否则报错
 
     setTimeout(() => {
       // 停止动画播放
@@ -212,59 +235,65 @@ class TradeStore {
   }
 
   // 获取当前账户账户余额、保证金信息
+  // @action
+  // getAccountBalance = () => {
+  //   const currentAccountInfo = this.currentAccountInfo
+  //   const currencyDecimal = currentAccountInfo.currencyDecimal
+
+  //   // 账户余额
+  //   const money = Number(toFixed(currentAccountInfo.money || 0, currencyDecimal))
+  //   // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
+  //   const occupyMargin = Number(
+  //     toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0), currencyDecimal)
+  //   )
+  //   // 可用保证金
+  //   let availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
+  //   // 持仓总浮动盈亏
+  //   const totalOrderProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), currencyDecimal))
+  //   // 持仓单总的库存费
+  //   const totalInterestFees = Number(
+  //     toFixed(
+  //       this.positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.interestFees), currencyDecimal)), 0) || 0,
+  //       currencyDecimal
+  //     )
+  //   )
+  //   // 持仓单总的手续费
+  //   const totalHandlingFees = Number(
+  //     toFixed(
+  //       this.positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.handlingFees), currencyDecimal)), 0) || 0,
+  //       currencyDecimal
+  //     )
+  //   )
+  //   // 净值 = 账户余额 + 库存费 + 手续费 + 浮动盈亏
+  //   const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
+
+  //   // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 + 所有订单的手续费
+  //   const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
+
+  //   // console.log('totalInterestFees', totalInterestFees)
+  //   // console.log('totalHandlingFees', totalHandlingFees)
+  //   // console.log('totalOrderProfit', totalOrderProfit)
+  //   // console.log('totalProfit', totalProfit)
+
+  //   // 账户组设置“可用计算未实现盈亏”时
+  //   // 新可用预付款=原来的可用预付款+账户的持仓盈亏
+  //   if (currentAccountInfo?.usableAdvanceCharge === 'PROFIT_LOSS') {
+  //     availableMargin = availableMargin + totalProfit
+  //   }
+  //   return {
+  //     occupyMargin,
+  //     availableMargin,
+  //     balance,
+  //     totalProfit,
+  //     currentAccountInfo,
+  //     money
+  //   }
+  // }
+
+  // 使用从worker计算同步的数据
   @action
   getAccountBalance = () => {
-    const currentAccountInfo = this.currentAccountInfo
-    const currencyDecimal = currentAccountInfo.currencyDecimal
-
-    // 账户余额
-    const money = Number(toFixed(currentAccountInfo.money || 0, currencyDecimal))
-    // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
-    const occupyMargin = Number(
-      toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0), currencyDecimal)
-    )
-    // 可用保证金
-    let availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
-    // 持仓总浮动盈亏
-    const totalOrderProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), currencyDecimal))
-    // 持仓单总的库存费
-    const totalInterestFees = Number(
-      toFixed(
-        this.positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.interestFees), currencyDecimal)), 0) || 0,
-        currencyDecimal
-      )
-    )
-    // 持仓单总的手续费
-    const totalHandlingFees = Number(
-      toFixed(
-        this.positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.handlingFees), currencyDecimal)), 0) || 0,
-        currencyDecimal
-      )
-    )
-    // 净值 = 账户余额 + 库存费 + 手续费 + 浮动盈亏
-    const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
-
-    // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 + 所有订单的手续费
-    const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
-
-    // console.log('totalInterestFees', totalInterestFees)
-    // console.log('totalHandlingFees', totalHandlingFees)
-    // console.log('totalOrderProfit', totalOrderProfit)
-    // console.log('totalProfit', totalProfit)
-
-    // 账户组设置“可用计算未实现盈亏”时
-    // 新可用预付款=原来的可用预付款+账户的持仓盈亏
-    if (currentAccountInfo?.usableAdvanceCharge === 'PROFIT_LOSS') {
-      availableMargin = availableMargin + totalProfit
-    }
-    return {
-      occupyMargin,
-      availableMargin,
-      balance,
-      totalProfit,
-      currentAccountInfo,
-      money
-    }
+    return this.accountBalanceInfo
   }
 
   // 计算逐仓保证金信息
@@ -324,7 +353,8 @@ class TradeStore {
     // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
     // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
     // 净值=账户余额+库存费+手续费+浮动盈亏
-    let { balance, currentAccountInfo } = this.getAccountBalance()
+    const currentAccountInfo = this.currentAccountInfo
+    let { balance } = this.getAccountBalance()
 
     let marginRate = 0
     let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
@@ -368,15 +398,16 @@ class TradeStore {
   @action
   getCurrentAccountFloatProfit = (list: Order.BgaOrderPageListItem[]) => {
     const currencyDecimal = this.currentAccountInfo.currencyDecimal
+    // const data = cloneDeep(list)
     const data = list
     // 持仓总浮动盈亏
     let totalProfit = 0
     if (data.length) {
       data.forEach((item: Order.BgaOrderPageListItem) => {
         const profit = covertProfit(item) // 浮动盈亏
-        item.profit = profit
+        // item.profit = profit
         // 先截取在计算，否则跟页面上截取后的值累加对不上
-        totalProfit += Number(toFixed(Number(item.profit || 0), currencyDecimal))
+        totalProfit += Number(toFixed(Number(profit || 0), currencyDecimal))
       })
     }
     return totalProfit
@@ -403,14 +434,16 @@ class TradeStore {
     // this.openSymbolNameList = STORAGE_GET_SYMBOL_NAME_LIST() || []
     // this.activeSymbolName = STORAGE_GET_ACTIVE_SYMBOL_NAME()
 
-    const userConfInfo = (STORAGE_GET_CONF_INFO() || {}) as UserConfInfo
-    this.currentAccountInfo = (userConfInfo?.currentAccountInfo || {}) as User.AccountItem
-    const accountId = this.currentAccountInfo?.id
-    const currentAccountConf = accountId ? userConfInfo?.[accountId] : {}
+    runInAction(() => {
+      const userConfInfo = (STORAGE_GET_CONF_INFO() || {}) as UserConfInfo
+      this.currentAccountInfo = (userConfInfo?.currentAccountInfo || {}) as User.AccountItem
+      const accountId = this.currentAccountInfo?.id
+      const currentAccountConf = accountId ? userConfInfo?.[accountId] : {}
 
-    this.userConfInfo = userConfInfo
-    this.openSymbolNameList = (currentAccountConf?.openSymbolNameList || []).filter((v) => v) as Account.TradeSymbolListItem[]
-    this.activeSymbolName = currentAccountConf?.activeSymbolName as string
+      this.userConfInfo = userConfInfo
+      this.openSymbolNameList = (currentAccountConf?.openSymbolNameList || []).filter((v) => v) as Account.TradeSymbolListItem[]
+      this.activeSymbolName = currentAccountConf?.activeSymbolName as string
+    })
   }
 
   // 切换交易品种
@@ -470,12 +503,16 @@ class TradeStore {
   // 切换当前打开的symbol
   @action
   setActiveSymbolName(key: string) {
-    this.activeSymbolName = key
-    // STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
-    STORAGE_SET_CONF_INFO(key, `${this.currentAccountInfo?.id}.activeSymbolName`)
+    // 取消订阅上一个的深度报价
+    ws.subscribeDepth(true)
 
-    // 重新订阅深度
-    ws.subscribeDepth()
+    setTimeout(() => {
+      this.activeSymbolName = key
+      // STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
+      STORAGE_SET_CONF_INFO(key, `${this.currentAccountInfo?.id}.activeSymbolName`)
+      // 重新订阅深度
+      ws.subscribeDepth()
+    }, 300)
   }
 
   // 更新本地缓存的symbol列表
@@ -656,10 +693,11 @@ class TradeStore {
       })
 
       // 获取品种后，动态订阅品种
-      if (ws.socket?.readyState === 1) {
+      if (ws.socket?.readyState === 1 || ws.readyState === 1) {
         ws.batchSubscribeSymbol()
       } else {
-        ws.reconnect()
+        // 按需连接
+        // ws.reconnect()
       }
     }
   }

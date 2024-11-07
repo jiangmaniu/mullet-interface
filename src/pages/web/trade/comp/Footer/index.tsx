@@ -18,7 +18,7 @@ function Footer() {
   const { isDark } = useTheme()
   const networkState = useNetwork()
   const { ws, trade, kline } = useStores()
-  const readyState = ws.socket?.readyState
+  const readyState = ws.socket?.readyState || ws.readyState || 0
   const isOnline = networkState.online
   const [openTips, setOpenTips] = useState<any>(false)
   const disConnected = !isOnline || readyState === 3
@@ -28,9 +28,8 @@ function Footer() {
   const handleRefresh = () => {
     // 行情重新建立新的连接
     ws.reconnect()
-    // @ts-ignore
-    // 刷新k线实例
-    kline.tvWidget = null
+    // 重置tradingview实例
+    kline.destroyed()
   }
 
   useEffect(() => {

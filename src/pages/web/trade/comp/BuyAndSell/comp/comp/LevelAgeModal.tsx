@@ -7,7 +7,6 @@ import Modal from '@/components/Base/Modal'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { formatNum } from '@/utils'
-import { getCurrentQuote } from '@/utils/wsUtil'
 
 import LevelAge from './LevelAge'
 
@@ -22,8 +21,8 @@ function LevelAgeModal({ trigger }: IProps) {
   const modalRef = useRef<any>()
   const [current, setCurrent] = useState(0)
 
-  const quote = getCurrentQuote()
-  const prepaymentConf = quote?.prepaymentConf
+  const currentSymbol = trade.getActiveSymbolInfo()
+  const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf
 
   // const maxOpenLeverage = Math.max.apply(Math, [
   //   ...(prepaymentConf?.float_leverage?.lever_grade || []).map((item) => item?.bag_nominal_value)

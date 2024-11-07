@@ -3,7 +3,8 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Col, Input, Row, Skeleton } from 'antd'
 import { observer } from 'mobx-react'
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import VirtualList from 'rc-virtual-list'
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
@@ -43,12 +44,18 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
 
   useEffect(() => {
     // 1200px-1600px收起侧边栏
-    if (screenSize.width > 1200 && screenSize.width < 1600) {
+    if (screenSize?.width > 1200 && screenSize?.width < 1600) {
       setOpenTradeSidebar(false)
     } else {
       setOpenTradeSidebar(true)
     }
   }, [screenSize])
+
+  useEffect(() => {
+    if (activeKey === 'CATEGORY') {
+      trade.getSymbolList({ classify: '0' })
+    }
+  }, [activeKey])
 
   // 对外暴露接口
   useImperativeHandle(ref, () => {
@@ -108,6 +115,16 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
 
   const renderContent = () => {
     const list: any = getList()
+    const ContainerHeight = !showFixSidebar ? 340 : 531
+
+    const onScroll = (e: React.UIEvent<HTMLElement, UIEvent>) => {
+      // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
+      if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
+        // appendData();
+        console.log('onScroll')
+      }
+    }
+
     return (
       <>
         <div className="pt-2">
@@ -125,49 +142,59 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
               <FormattedMessage id="mt.zhangdiefu" />
             </Col>
           </Row>
-          <div
-            className="overflow-y-auto"
-            style={{ height: !showFixSidebar ? 340 : 500, scrollbarWidth: 'thin', scrollbarColor: 'var(--scrollbar-hover-color)' }}
-          >
+          <div>
             {loading && (
               <div className="mx-5 mt-8">
                 <Skeleton loading={loading} />
               </div>
             )}
-            {!loading && (
-              <>
-                {list.length > 0 &&
-                  list.map((item: Account.TradeSymbolListItem, idx: number) => {
-                    const isActive = trade.activeSymbolName === item.symbol
-                    return <QuoteItem item={item} isActive={isActive} popupRef={popupRef} key={idx} />
-                  })}
-                {!list.length && (
-                  <div className="pt-10 flex items-center flex-col">
-                    <Empty
-                      description={
-                        <>
-                          {activeKey === 'FAVORITE' ? (
-                            <div
-                              className="flex justify-center gap-x-2 cursor-pointer"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setActiveKey('CATEGORY')
-                              }}
-                            >
-                              <div className="text-xs text-secondary hover:text-primary">
-                                <FormattedMessage id="mt.tianjiazixuan" />
-                              </div>
-                              <SwapRightOutlined />
-                            </div>
-                          ) : (
-                            <FormattedMessage id="common.noData" />
-                          )}
-                        </>
-                      }
-                    />
-                  </div>
-                )}
-              </>
+            {!list.length && !loading && (
+              <div className="pt-10 flex items-center flex-col">
+                <Empty
+                  description={
+                    <>
+                      {activeKey === 'FAVORITE' ? (
+                        <div
+                          className="flex justify-center gap-x-2 cursor-pointer"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setActiveKey('CATEGORY')
+                          }}
+                        >
+                          <div className="text-xs text-secondary hover:text-primary">
+                            <FormattedMessage id="mt.tianjiazixuan" />
+                          </div>
+                          <SwapRightOutlined />
+                        </div>
+                      ) : (
+                        <FormattedMessage id="common.noData" />
+                      )}
+                    </>
+                  }
+                />
+              </div>
+            )}
+
+            {!loading && list.length > 0 && (
+              <VirtualList
+                data={list}
+                height={ContainerHeight}
+                styles={{
+                  verticalScrollBarThumb: {
+                    width: 6,
+                    borderRadius: 4,
+                    background: isDark ? gray[578] : 'rgba(0, 0, 0, 0.05)'
+                  },
+                  verticalScrollBar: {
+                    background: `${isDark ? gray[675] : '#fff'}`
+                  }
+                }}
+                itemHeight={41}
+                itemKey="id"
+                onScroll={onScroll}
+              >
+                {(item: Account.TradeSymbolListItem) => <QuoteItem item={item} />}
+              </VirtualList>
             )}
           </div>
         </div>
@@ -179,7 +206,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     setOpenTradeSidebar(!openTradeSidebar)
   }
 
-  const renderTabs = () => {
+  const renderTabs = useMemo(() => {
     return (
       <Tabs
         items={TabItems}
@@ -200,7 +227,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         }
       />
     )
-  }
+  }, [openSidebar, showFixSidebar, isDark])
 
   const renderCategoryTabs = () => {
     // 搜索时隐藏分类
@@ -266,15 +293,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
               })}
               style={style}
             >
-              {renderTabs()}
+              {renderTabs}
               {renderSearch()}
               {renderCategoryTabs()}
-              <div className="flex justify-between flex-col">
-                {renderContent()}
-                {/* 爆仓仓位展示 @TODO 只有开了杠杆才展示 */}
-                {/* 这里判断数字货币类型才展示 @TODO */}
-                {/* {openTradeSidebar && <Liquidation />} */}
-              </div>
+              <div className="flex justify-between flex-col">{renderContent()}</div>
             </div>
           )}
           {/* 收起侧边栏视图 */}
@@ -336,7 +358,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         >
           <div>
             {renderSearch()}
-            {!searchValue && <div className="pt-2">{renderTabs()}</div>}
+            {!searchValue && <div className="pt-2">{renderTabs}</div>}
             {activeKey === 'CATEGORY' && renderCategoryTabs()}
             {renderContent()}
           </div>

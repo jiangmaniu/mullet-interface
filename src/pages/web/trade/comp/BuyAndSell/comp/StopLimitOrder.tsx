@@ -1,7 +1,7 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { Button } from 'antd'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useState, useTransition } from 'react'
+import { forwardRef, useEffect, useMemo, useState, useTransition } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import { useEnv } from '@/context/envProvider'
@@ -17,7 +17,6 @@ import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { debounce } from 'lodash'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
 import SelectMarginTypeOrLevelAge from './comp/SelectMarginTypeOrLevelAge'
 
@@ -222,6 +221,44 @@ export default observer(
     const disabledBtn = trade.disabledTrade() || spFlag || slFlag
     // 禁用交易
     const disabledTrade = trade.disabledTrade()
+    const disabledSubmitBtn = disabledBtn || trade.disabledTradeAction()
+    const isMarketOpen = trade.isMarketOpen()
+
+    const renderSubmitButton = useMemo(() => {
+      return (
+        <Button
+          type="primary"
+          style={{ background: isBuy ? 'var(--color-green-700)' : 'var(--color-red-600)' }}
+          className="!h-[44px] !rounded-lg !text-[13px]"
+          block
+          onClick={() => {
+            startTransition(() => {
+              onFinish()
+            })
+          }}
+          loading={loading}
+          disabled={disabledSubmitBtn}
+        >
+          {quoteInfo.hasQuote && (
+            <>
+              {!disabledTrade && isMarketOpen && (
+                <>
+                  {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {count}{' '}
+                  <FormattedMessage id="mt.lot" />
+                </>
+              )}
+              {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
+              {!isMarketOpen && (
+                <div className="flex items-center">
+                  <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
+                  <FormattedMessage id="mt.xiushizhong" />
+                </div>
+              )}
+            </>
+          )}
+        </Button>
+      )
+    }, [quoteInfo.hasQuote, disabledSubmitBtn, disabledTrade, isMarketOpen, isBuy, count])
 
     return (
       <div className="mx-[10px] mt-3 flex flex-col justify-between h-[630px]">
@@ -445,37 +482,7 @@ export default observer(
           />
         </div>
         <div>
-          <Button
-            type="primary"
-            style={{ background: isBuy ? 'var(--color-green-700)' : 'var(--color-red-600)' }}
-            className="!h-[44px] !rounded-lg !text-[13px]"
-            block
-            onClick={debounce(() => {
-              startTransition(() => {
-                onFinish()
-              })
-            }, 500)}
-            loading={loading}
-            disabled={disabledBtn || trade.disabledTradeAction()}
-          >
-            {quoteInfo.hasQuote && (
-              <>
-                {!disabledTrade && trade.isMarketOpen() && (
-                  <>
-                    {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {count}{' '}
-                    <FormattedMessage id="mt.lot" />
-                  </>
-                )}
-                {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
-                {!trade.isMarketOpen() && (
-                  <div className="flex items-center">
-                    <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
-                    <FormattedMessage id="mt.xiushizhong" />
-                  </div>
-                )}
-              </>
-            )}
-          </Button>
+          {renderSubmitButton}
           <div className="mt-4">
             <div className="flex items-center justify-between pb-[6px] w-full">
               <span className="text-xs text-secondary">

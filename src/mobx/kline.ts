@@ -4,7 +4,10 @@ import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 import NP from 'number-precision'
 
 import { IChartingLibraryWidget } from '@/libs/charting_library'
+import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'
+
+import { IQuoteItem } from './ws.types'
 
 NP.enableBoundaryChecking(false)
 
@@ -21,11 +24,7 @@ class KlineStore {
   constructor() {
     makeAutoObservable(this)
   }
-  heartbeatInterval: any = null
-  heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
-  socket: any = null
   tvWidget = null as IChartingLibraryWidget
-  @observable socketState = 0
   @observable bars = []
   @observable activeSymbolInfo = {
     symbolInfo: {}
@@ -41,12 +40,12 @@ class KlineStore {
     this.switchSymbolLoading = flag
   }
 
-  updateKlineData(quotes: any) {
+  updateKlineData(quotes: Map<string, IQuoteItem>) {
     const symbolInfo = this.activeSymbolInfo.symbolInfo
-    if (symbolInfo && quotes) {
+    if (symbolInfo && quotes.size) {
       const symbol = symbolInfo.name
       const dataSourceCode = symbolInfo.dataSourceCode
-      const data = quotes[`${dataSourceCode}/${symbol}`]
+      const data = quotes.get(`${dataSourceCode}/${symbol}`)
       if (data && data.symbol === symbol) {
         const resolution = this.activeSymbolInfo.resolution
         const precision = symbolInfo.precision
@@ -267,6 +266,25 @@ class KlineStore {
   removeActiveSymbol = (subscriberUID) => {
     if (this.activeSymbolInfo.subscriberUID === subscriberUID) {
     }
+  }
+
+  // 重置实例
+  destroyed = () => {
+    if (this.tvWidget) {
+      this.tvWidget.remove?.()
+      // 重置tradingview实例，否则报错
+      this.tvWidget = null as any
+    }
+
+    // 重置变量，避免重置了k线，内存还占用
+    this.bars = []
+    this.activeSymbolInfo = {}
+    this.lastbar = {}
+    this.datafeedBarCallbackObj = {}
+    this.lastBarTime = ''
+
+    // 取消事件订阅
+    mitt.off('symbol_change')
   }
 }
 

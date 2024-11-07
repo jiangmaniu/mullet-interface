@@ -7,7 +7,6 @@ import { useEffect, useRef, useState } from 'react'
 
 import StandardTable from '@/components/Admin/StandardTable'
 import SymbolIcon from '@/components/Base/SymbolIcon'
-import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
@@ -17,20 +16,13 @@ import SetStopLossProfitModal from '@/pages/web/trade/comp/Modal/SetStopLossProf
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { calcForceClosePrice, calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
+import CurrentPrice from './Widget/CurrentPrice'
+import MarginRate from './Widget/MarginRate'
+import ProfitYieldRate from './Widget/ProfitYieldRate'
 
-export type IPositionItem = Order.BgaOrderPageListItem & {
-  /**现价 */
-  currentPrice?: number | string
-  /**收益率 */
-  yieldRate?: string
-  /**强平价 */
-  forceClosePrice?: number
-  /**保证金率 */
-  marginRate?: string
-}
+export type IPositionItem = Order.BgaOrderPageListItem
 
 type IProps = {
   style?: React.CSSProperties
@@ -41,7 +33,6 @@ function Position({ style, parentPopup }: IProps) {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
   const { lng } = useLang()
-  const { quotes } = ws
   const isZh = lng === 'zh-TW'
   const intl = useIntl()
   const [modalInfo, setModalInfo] = useState({} as IPositionItem)
@@ -147,18 +138,7 @@ function Position({ style, parentPopup }: IProps) {
       },
       width: 120,
       renderText(text, record, index, action) {
-        const quote = getCurrentQuote(record.symbol)
-        return (
-          <>
-            {Number(record.currentPrice) ? (
-              <span className={cn('!text-[13px]', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
-                {formatNum(record.currentPrice, { precision: record.symbolDecimal })}
-              </span>
-            ) : (
-              <span className="!text-[13px]">-</span>
-            )}
-          </>
-        )
+        return <CurrentPrice item={record} />
       }
     },
     // {
@@ -190,7 +170,11 @@ function Position({ style, parentPopup }: IProps) {
       },
       width: 120,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{text || '-'}</span>
+        return (
+          <span className="!text-[13px] text-primary">
+            <MarginRate item={record} />
+          </span>
+        )
       }
     },
     {
@@ -364,23 +348,7 @@ function Position({ style, parentPopup }: IProps) {
       align: 'center',
       fixed: 'right',
       renderText(text, record, index, action) {
-        const profit = record.profit
-        const flag = Number(profit) > 0
-        const color = flag ? 'text-green' : 'text-red'
-
-        const profitFormat = Number(profit) ? formatNum(profit, { precision }) : profit || '-' // 格式化的
-        const profitDom = profit ? (
-          <span className={cn('font-pf-bold', color)}>{profitFormat} USD</span>
-        ) : (
-          <span className="!text-[13px]">-</span>
-        )
-        const yieldRate = record.yieldRate
-        return (
-          <div className="flex flex-col">
-            <div>{profitDom}</div>
-            {yieldRate && <div className={cn('!text-xs font-pf-bold', color)}>({yieldRate})</div>}
-          </div>
-        )
+        return <ProfitYieldRate item={record} />
       }
     },
     {
@@ -416,57 +384,23 @@ function Position({ style, parentPopup }: IProps) {
       const conf = v.conf as Symbol.SymbolConf
       const symbol = v.symbol as string
       const contractSize = conf.contractSize || 0
-      const quoteInfo = getCurrentQuote(symbol)
       const digits = v.symbolDecimal || 2
-      const currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
       const isCrossMargin = v.marginType === 'CROSS_MARGIN'
 
-      // if (isCrossMargin) {
-      //   // 全仓单笔保证金 = (开盘价 * 合约大小 * 手数) / 杠杆
-      //   // 如果没有设置杠杆，读后台配置的杠杆
-      //   const prepaymentConf = conf?.prepaymentConf as Symbol.PrepaymentConf
-      //   const leverage = prepaymentConf?.mode === 'fixed_leverage' ? prepaymentConf?.fixed_leverage?.leverage_multiple : 0
-      //   const leverageMultiple = v.leverageMultiple || leverage
-      //   const initialMargin = prepaymentConf?.mode === 'fixed_margin' ? prepaymentConf?.fixed_margin?.initial_margin : 0 // 读后台初始预付款的值
-
-      //   // 存在杠杆
-      //   if (leverageMultiple) {
-      //     v.orderMargin = toFixed((Number(v.startPrice) * contractSize * Number(v.orderVolume)) / leverageMultiple, digits)
-      //   } else {
-      //     // 固定保证金 * 手数
-      //     v.orderMargin = toFixed(Number(initialMargin) * Number(v.orderVolume || 0), digits)
-      //   }
-      // } else {
-      //   // 逐仓保证金
-      //   // v.orderMargin = toFixed(v.orderMargin, digits)
-      // }
-
-      // const [exchangeSymbol, exchangeRate] = (v.marginExchangeRate || '').split(',')
-      // v.orderMargin =
-      //   v.marginType === 'CROSS_MARGIN'
-      //     ? calcOrderMarginExchangeRate({
-      //         value: v.orderMargin,
-      //         exchangeSymbol,
-      //         exchangeRate
-      //       })
-      //     : v.orderMargin
       // 全仓使用基础保证金
       if (isCrossMargin) {
         v.orderMargin = v.orderBaseMargin
       }
 
-      v.currentPrice = currentPrice // 现价
-      const profit = covertProfit(v) as number // 浮动盈亏
-      // 订单盈亏 = 盈亏 - 手续费 + 库存费
-      // v.profit = profit - Number(v.handlingFees || 0) + Number(v.interestFees || 0)
-      v.profit = profit
+      // const profit = covertProfit(v) as number // 浮动盈亏
+      // v.profit = profit
       v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
-      v.yieldRate = calcYieldRate(v, precision) // 收益率
-      v.forceClosePrice = calcForceClosePrice(v) // 强平价
+      // v.yieldRate = calcYieldRate(v, precision) // 收益率
+      // v.forceClosePrice = calcForceClosePrice(v) // 强平价
 
       // 保证金率
-      const { marginRate } = trade.getMarginRateInfo(v)
-      v.marginRate = `${marginRate}%`
+      // const { marginRate } = trade.getMarginRateInfo(v)
+      // v.marginRate = `${marginRate}%`
       return v
     })
 

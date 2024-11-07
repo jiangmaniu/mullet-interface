@@ -24,9 +24,8 @@ export const Provider = ({ children }: IProps): JSX.Element => {
       setTimeout(() => {
         // 重新建立新连接
         stores.ws.connect()
-        // 刷新k线历史数据
-        // @ts-ignore
-        stores.kline.tvWidget = null
+        // 重置tradingview实例
+        stores.kline.destroyed()
       }, 1000)
     }
   }, [isOnline])

@@ -1,7 +1,7 @@
 import { ProFormSelect } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { cloneDeep, groupBy } from 'lodash-es'
+import { groupBy } from 'lodash-es'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useTransition } from 'react'
 
@@ -12,7 +12,7 @@ import { gray } from '@/theme/theme.config'
 import { formatNum, uniqueObjectArray } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Gauge from './Gauge'
 
@@ -28,34 +28,37 @@ function Liquidation() {
   const positionList = trade.positionList
 
   // 筛选逐仓列表
-  const isolatedMarginList = cloneDeep(trade.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN'))
+  const isolatedMarginList = trade.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN')
 
   // 当前筛选的逐仓单订单信息
-  const currentLiquidationSelectItem = trade.positionList.find((item) => item.id === trade.currentLiquidationSelectBgaId)
-  const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
+  // const currentLiquidationSelectItem = trade.positionList.find((item) => item.id === trade.currentLiquidationSelectBgaId)
+  // const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
   const isLockedMode = currentAccountInfo.orderMode === 'LOCKED_POSITION' // 锁仓模式
 
-  let marginRateInfo
-  if (trade.currentLiquidationSelectBgaId === 'CROSS_MARGIN') {
-    marginRateInfo = trade.getMarginRateInfo()
-  } else {
-    let filterPositionList: any = []
-    // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
-    if (isLockedMode && currentLiquidationSelectItem) {
-      filterPositionList = [currentLiquidationSelectItem]
-    } else {
-      // 合并同名品种展示
-      filterPositionList = trade.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
-    }
-    if (filterPositionList.length) {
-      filterPositionList.forEach((item: any) => {
-        const profit = covertProfit(item) as number // 浮动盈亏
-        item.profit = profit
-      })
-    }
+  // let marginRateInfo
+  // if (trade.currentLiquidationSelectBgaId === 'CROSS_MARGIN') {
+  //   marginRateInfo = trade.getMarginRateInfo()
+  // } else {
+  //   let filterPositionList: any = []
+  //   // 逐仓单，订单是锁仓模式下，有多个相同品种，单独筛选展示，不需要合并同名品种
+  //   if (isLockedMode && currentLiquidationSelectItem) {
+  //     filterPositionList = [currentLiquidationSelectItem]
+  //   } else {
+  //     // 合并同名品种展示
+  //     filterPositionList = trade.positionList.filter((item) => item.symbol === currentLiquidationSelectSymbol)
+  //   }
+  //   if (filterPositionList.length) {
+  //     filterPositionList.forEach((item: any) => {
+  //       const profit = covertProfit(item) as number // 浮动盈亏
+  //       item.profit = profit
+  //     })
+  //   }
 
-    marginRateInfo = trade.calcIsolatedMarginRateInfo(filterPositionList)
-  }
+  //   marginRateInfo = trade.calcIsolatedMarginRateInfo(filterPositionList)
+  // }
+
+  // 使用worker计算的结果
+  const marginRateInfo = trade.rightWidgetSelectMarginInfo
 
   const options = useMemo(() => {
     let list = []

@@ -1,6 +1,6 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
@@ -11,13 +11,14 @@ import Slider from '@/components/Web/Slider'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { formatNum, toFixed } from '@/utils'
+import { toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
-import { getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
+import CurrentPrice from '../TradeRecord/comp/PositionList/Widget/CurrentPrice'
+import ProfitYieldRate from '../TradeRecord/comp/PositionList/Widget/ProfitYieldRate'
 
 type IProps = {
   list: IPositionItem[]
@@ -44,8 +45,6 @@ export default observer(
     const precision = trade.currentAccountInfo.currencyDecimal
 
     const buySellInfo = getBuySellInfo(item)
-
-    const quote = getCurrentQuote(symbol)
 
     useEffect(() => {
       setCount(orderVolume)
@@ -112,8 +111,59 @@ export default observer(
       setSliderValue((count / orderVolume) * 100)
     }, [count])
 
+    const renderForm = useMemo(() => {
+      return (
+        <div className="flex w-full flex-col items-center pt-5">
+          <InputNumber
+            showFloatTips={false}
+            placeholder={intl.formatMessage({ id: 'mt.pingcangshoushu' })}
+            className="h-[38px]"
+            classNames={{ input: 'text-center' }}
+            value={count}
+            onChange={(value) => {
+              if (value > orderVolume) return
+              setCount(value)
+            }}
+            onAdd={() => {
+              if (count >= orderVolume) return
+              const c = (Number(count) + 0.01).toFixed(2)
+              setCount(c)
+            }}
+            onMinus={() => {
+              if (count <= 0.01) return
+              const c = (Number(count) - 0.01).toFixed(2)
+              setCount(c)
+            }}
+            max={orderVolume}
+            min={0.01}
+          />
+          <div className="my-2 w-full">
+            <Slider
+              onChange={(value: any) => {
+                // 可平仓手数*百分比
+                const vol = Number(toFixed((value / 100) * orderVolume, 2, false))
+                // 不能小于最小手数
+                setCount(vol < Number(vmin) ? vmin : vol)
+                setSliderValue(value)
+              }}
+              // value={Number((count / orderVolume) * 100)}
+              value={sliderValue}
+            />
+          </div>
+          <div className="flex items-center pt-2">
+            <span className="text-xs text-secondary">
+              <FormattedMessage id="mt.kepingcangshoushu" />
+            </span>
+            <span className="pl-3 text-xs text-primary">
+              {orderVolume}
+              <FormattedMessage id="mt.lot" />
+            </span>
+          </div>
+        </div>
+      )
+    }, [count, orderVolume, vmin, sliderValue])
+
     const renderContent = () => {
-      const profitFormat = Number(item.profit) ? formatNum(item.profit, { precision }) : item.profit || '-' // 格式化的
       return (
         <>
           <div className="flex flex-col items-center justify-center">
@@ -124,8 +174,8 @@ export default observer(
                 <span className={cn('pl-1 text-sm', buySellInfo.colorClassName)}>· {buySellInfo.text}</span>
               </div>
               <div className="flex flex-col items-end">
-                <span className={cn('pb-2 text-lg font-bold', Number(item?.profit) > 0 ? 'text-green' : 'text-red')}>
-                  {profitFormat} {unit}
+                <span className={cn('pb-1 text-lg')}>
+                  <ProfitYieldRate showYieldRate={false} item={item} />
                 </span>
                 <span className="text-xs text-secondary">
                   <FormattedMessage id="mt.fudongyingkui" />
@@ -147,58 +197,13 @@ export default observer(
                 <span className="pr-3 text-sm text-secondary">
                   <FormattedMessage id="mt.pingcangjiage" />
                 </span>
-                <span className={cn('text-sm', quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
-                  {item.currentPrice}&nbsp;{unit}
+                <span className={cn('text-sm')}>
+                  <CurrentPrice item={item} />
+                  &nbsp;{unit}
                 </span>
               </div>
             </div>
-            <div className="flex w-full flex-col items-center pt-5">
-              <InputNumber
-                showFloatTips={false}
-                placeholder={intl.formatMessage({ id: 'mt.pingcangshoushu' })}
-                className="h-[38px]"
-                classNames={{ input: 'text-center' }}
-                value={count}
-                onChange={(value) => {
-                  if (value > orderVolume) return
-                  setCount(value)
-                }}
-                onAdd={() => {
-                  if (count >= orderVolume) return
-                  const c = (Number(count) + 0.01).toFixed(2)
-                  setCount(c)
-                }}
-                onMinus={() => {
-                  if (count <= 0.01) return
-                  const c = (Number(count) - 0.01).toFixed(2)
-                  setCount(c)
-                }}
-                max={orderVolume}
-                min={0.01}
-              />
-              <div className="my-2 w-full">
-                <Slider
-                  onChange={(value: any) => {
-                    // 可平仓手数*百分比
-                    const vol = Number(toFixed((value / 100) * orderVolume, 2, false))
-                    // 不能小于最小手数
-                    setCount(vol < Number(vmin) ? vmin : vol)
-                    setSliderValue(value)
-                  }}
-                  // value={Number((count / orderVolume) * 100)}
-                  value={sliderValue}
-                />
-              </div>
-              <div className="flex items-center pt-2">
-                <span className="text-xs text-secondary">
-                  <FormattedMessage id="mt.kepingcangshoushu" />
-                </span>
-                <span className="pl-3 text-xs text-primary">
-                  {orderVolume}
-                  <FormattedMessage id="mt.lot" />
-                </span>
-              </div>
-            </div>
+            {renderForm}
           </div>
           <div className="flex items-center justify-between gap-4 pt-4 max-xl:pt-8">
             <Button className="!w-[45%]" onClick={close}>

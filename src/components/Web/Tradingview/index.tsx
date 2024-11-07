@@ -161,24 +161,15 @@ const Tradingview = () => {
 
     // 记录k线实例
     kline.setTvWidget(tvWidget)
-    // @ts-ignore
-    window.tvWidget = tvWidget
-  }
-
-  // 切换语言函数
-  const switchToLanguage = () => {
-    // 销毁当前实例
-    if (kline.tvWidget) {
-      kline.tvWidget.remove()
-    }
-
-    // 初始化新实例
-    initChart()
   }
 
   useEffect(() => {
-    // 重置tradingview实例，否则报错
-    kline.tvWidget = null as any
+    kline.destroyed()
+
+    return () => {
+      // 退出时销毁实例
+      kline.destroyed()
+    }
   }, [isMobileOrIpad, isPc])
 
   useEffect(() => {

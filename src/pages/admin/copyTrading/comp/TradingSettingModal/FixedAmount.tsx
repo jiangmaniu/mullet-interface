@@ -32,7 +32,7 @@ const checkNumber = (e: React.ChangeEvent<HTMLInputElement>, cb: (value: number)
 export default ({ onConfirm, form, children, trader, readonly }: IProp) => {
   const intl = useIntl()
   const { trade } = useStores()
-  const { currentAccountInfo } = trade.getAccountBalance()
+  const { currentAccountInfo } = trade
 
   const tags = [
     {

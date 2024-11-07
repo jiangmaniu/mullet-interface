@@ -17,6 +17,7 @@ import { message } from '@/utils/message'
 import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
+import CurrentPrice from '../TradeRecord/comp/PositionList/Widget/CurrentPrice'
 
 type IProps = {
   list: IPositionItem[]
@@ -28,7 +29,7 @@ export default observer(
     const intl = useIntl()
     const [tempItem, setTempItem] = useState({} as IPositionItem)
     const { ws, trade } = useStores()
-    const { symbols, quotes } = ws as any
+    const { symbols } = ws as any
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
@@ -69,6 +70,7 @@ export default observer(
       }
     })
 
+    const currencyDecimal = trade.currentAccountInfo.currencyDecimal
     const symbol = item.symbol
     const quote = getCurrentQuote(symbol)
     const consize = quote.consize
@@ -87,7 +89,8 @@ export default observer(
     let slProfit: any // 止损-预计盈亏
     let spProfit: any // 止盈-预计盈亏
     const count: any = item.orderVolume
-    const price: any = Number(item.currentPrice || 0)
+    const currentPrice = item.buySell === TRADE_BUY_SELL.BUY ? quote?.bid : quote?.ask // 价格需要取反方向的
+    const price: any = Number(currentPrice || 0)
     if (isBuy) {
       sl_scope = (price - stopl).toFixed(d)
       sp_scope = (price + stopl).toFixed(d)
@@ -168,16 +171,14 @@ export default observer(
                     <FormattedMessage id="mt.dangqianjiage" />
                   </span>
                   <span className="text-sm text-primary">
-                    {item.currentPrice} {unit}
+                    <CurrentPrice item={item} />
                   </span>
                 </div>
                 <div className="flex items-center justify-between pl-7">
                   <span className="pr-3 text-sm text-secondary">
                     <FormattedMessage id="mt.kaicangjunjia" />
                   </span>
-                  <span className="text-sm text-primary">
-                    {item.startPrice} {unit}
-                  </span>
+                  <span className="text-sm text-primary">{item.startPrice}</span>
                 </div>
               </div>
             </div>
@@ -222,7 +223,7 @@ export default observer(
                         buySell: item.buySell
                       }),
                       {
-                        precision: trade.currentAccountInfo.currencyDecimal
+                        precision: currencyDecimal
                       }
                     )}{' '}
                     USD
@@ -274,7 +275,7 @@ export default observer(
                           unit: symbolConf?.profitCurrency,
                           buySell: item.buySell
                         }),
-                        { precision: trade.currentAccountInfo.currencyDecimal }
+                        { precision: currencyDecimal }
                       )}{' '}
                       USD
                     </span>

@@ -1,4 +1,5 @@
 import { useBreakpoint } from '@ant-design/pro-components'
+import { debounce } from 'lodash'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 type SizeInfo = {
@@ -56,12 +57,12 @@ interface IProps {
 const Context = createContext<ProviderType>({} as ProviderType)
 
 export const EnvProvider = ({ children }: IProps) => {
-  const [screenSize, setScreenSize] = useState<SizeInfo>()
+  const [screenSize, setScreenSize] = useState({} as SizeInfo)
   const breakPoint = useBreakpoint() || ''
 
   // 根据不同分辨率缩放屏幕大小
   function adjustScale(size: SizeInfo) {
-    const width = size.width
+    const width = size?.width
     let scale = 1
 
     if (width >= 1540) {
@@ -75,14 +76,17 @@ export const EnvProvider = ({ children }: IProps) => {
     document.body.style.zoom = scale
   }
 
-  const onResize = useCallback(() => {
-    const size: SizeInfo = {
-      width: document.documentElement.clientWidth,
-      height: document.documentElement.clientHeight
-    }
-    setScreenSize(size)
-    adjustScale(size)
-  }, [])
+  const onResize = useCallback(
+    debounce(() => {
+      const size: SizeInfo = {
+        width: document.documentElement.clientWidth,
+        height: document.documentElement.clientHeight
+      }
+      setScreenSize(size)
+      adjustScale(size)
+    }, 100),
+    []
+  ) // 100ms 的防抖时间
 
   useEffect(() => {
     onResize()
