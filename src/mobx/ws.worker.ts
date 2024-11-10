@@ -1,15 +1,40 @@
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
-import { IDepth, IMessage, IPositionListSymbolCalcInfo, IQuoteItem, MarginReteInfo, MessageType, WorkerType } from './ws.types'
+import {
+  IDepth,
+  IExpectedMargin,
+  IMessage,
+  IPositionListSymbolCalcInfo,
+  IQuoteItem,
+  MarginReteInfo,
+  MessageType,
+  WorkerType
+} from './ws.types'
+
+type TradeAction = {
+  leverageMultiple: number
+  currentLiquidationSelectBgaId: string
+  marginType: API.MarginType
+} & IExpectedMargin
+
+type UserConf = {
+  /**连接地址 */
+  websocketUrl: string
+  token: string
+  userInfo: User.UserInfo
+}
 
 // 从主线程同步过来的公共基础数据
+let userConf = {} as UserConf // 用户配置
 let userInfo = {} as User.UserInfo // 用户信息
 let currentAccountInfo = {} as User.AccountItem // 当前选择的账户信息
 let positionList = [] as Order.BgaOrderPageListItem[] // 持仓单列表
 let allSimpleSymbolsMap = {} as { [key: string]: Symbol.AllSymbolItem } // 全部品种列表map，校验汇率品种用到
 let activeSymbolName = '' // 当前激活的品种名称
 let symbolListAll = [] as Account.TradeSymbolListItem[] // 当前账户所有品种列表
-let currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
+let tradeActions = {
+  currentLiquidationSelectBgaId: 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
+} as TradeAction // 交易相关操作
 
 // websocket数据
 let socket: any = null
@@ -38,7 +63,8 @@ self.addEventListener('message', (event) => {
     // 初始化连接
     case 'INIT_CONNECT':
       userInfo = data?.userInfo
-      connect(data)
+      userConf = data
+      connect()
       break
     // 订阅行情
     case 'SUBSCRIBE_QUOTE':
@@ -77,9 +103,12 @@ self.addEventListener('message', (event) => {
     case 'SYNC_ALL_SYMBOL_LIST':
       symbolListAll = data?.symbolListAll || []
       break
-    // 默认全仓，右下角爆仓选择逐仓、全仓切换
-    case 'SYNC_CURRENT_LIQUIDATION_SELECT_BGA_ID':
-      currentLiquidationSelectBgaId = data?.currentLiquidationSelectBgaId || ''
+    // 交易区操作数据
+    case 'SYNC_TRADE_ACTIONS':
+      tradeActions = {
+        ...tradeActions,
+        ...(data || {})
+      }
       syncCalcData()
       break
     // 关闭连接
@@ -101,7 +130,8 @@ function sendMessage({ type, data }: ISendParam) {
 }
 
 // 连接socket
-function connect({ websocketUrl, token }: any) {
+function connect() {
+  const { websocketUrl, token } = userConf
   socket = new ReconnectingWebSocket(websocketUrl, ['WebSocket', token ? token : 'visitor'], {
     minReconnectionDelay: 1,
     connectionTimeout: 3000, // 重连时间
@@ -645,7 +675,7 @@ function calcIsolatedMarginRateInfo(filterPositionList: Order.BgaOrderPageListIt
  * @returns
  */
 function getMarginRateInfo(item?: Order.BgaOrderPageListItem) {
-  const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
+  const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && tradeActions?.currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
   // 全仓保证金率：全仓净值/占用 = 保证金率
   // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
   // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
@@ -692,12 +722,12 @@ function getMarginRateInfo(item?: Order.BgaOrderPageListItem) {
 // 右下角选择的保证金信息
 function calcRightWidgetSelectMarginInfo() {
   // 当前筛选的逐仓单订单信息
-  const currentLiquidationSelectItem = positionList.find((item) => item.id === currentLiquidationSelectBgaId)
+  const currentLiquidationSelectItem = positionList.find((item) => item.id === tradeActions?.currentLiquidationSelectBgaId)
   const currentLiquidationSelectSymbol = currentLiquidationSelectItem?.symbol // 当前选择的品种
   const isLockedMode = currentAccountInfo.orderMode === 'LOCKED_POSITION' // 锁仓模式
 
   let marginRateInfo = {} as MarginReteInfo
-  if (currentLiquidationSelectBgaId === 'CROSS_MARGIN') {
+  if (tradeActions?.currentLiquidationSelectBgaId === 'CROSS_MARGIN') {
     marginRateInfo = getMarginRateInfo()
   } else {
     let filterPositionList: any = []
@@ -745,6 +775,112 @@ function calcPositionListSymbol() {
   return positionListSymbolCalcInfo
 }
 
+/**
+ * 实时计算下单时预估保证金
+ * @param param0
+ * @returns
+ */
+function calcExpectedMargin() {
+  let { buySell, orderType, orderVolume, price, leverageMultiple } = tradeActions
+  const quote = getCurrentQuote()
+
+  orderVolume = Number(orderVolume || 0) // 手数
+
+  const conf = quote?.symbolConf
+  const prepaymentConf = quote?.prepaymentConf
+  const contractSize = Number(conf?.contractSize || 0) // 合约大小
+  const currentPrice = buySell === 'BUY' ? quote?.ask : quote?.bid // 现价
+
+  let compelCloseRatio = currentAccountInfo?.compelCloseRatio || 0 // 强平比例
+  compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
+
+  price = Number(orderType === 'MARKET_ORDER' ? currentPrice : price) // 区分市价单和限价单价格
+
+  // 交易品种选择外汇类型，计算预付款不需要加上价格。设置价格为1
+  if (conf?.calculationType === 'FOREIGN_CURRENCY') {
+    price = 1
+  }
+
+  let leverage = 1
+  if (prepaymentConf?.mode === 'fixed_leverage') {
+    // 固定杠杆
+    leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple)
+  } else if (prepaymentConf?.mode === 'float_leverage') {
+    // 浮动杠杆，获取用户设置的值
+    leverage = leverageMultiple
+  }
+
+  let expectedMargin = 0 // 预估保证金
+
+  // 固定预付款模式：占用保证金 = 固定预付款 * 手数
+  if (prepaymentConf?.mode === 'fixed_margin') {
+    expectedMargin = (prepaymentConf.fixed_margin?.initial_margin || 0) * orderVolume
+  } else {
+    // 杠杆模式：占用保证金 = 合约大小 * 手数 * 价格(买或卖) / 杠杆
+    expectedMargin = (contractSize * orderVolume * price) / leverage
+  }
+
+  // 转化汇率
+  return calcExchangeRate({
+    value: expectedMargin,
+    unit: conf?.prepaymentCurrency,
+    buySell
+  })
+}
+
+/**
+ * 计算可开仓手数
+ * @param param0
+ * @returns
+ */
+function getMaxOpenVolume() {
+  const { availableMargin } = getAccountBalance()
+  const quote = getCurrentQuote()
+  const prepaymentConf = quote?.prepaymentConf
+  const consize = quote.consize
+  const mode = prepaymentConf?.mode
+  const buySell = tradeActions.buySell
+  const currentPrice = buySell === 'SELL' ? quote?.bid : quote?.ask
+  let volume = 0
+
+  const getExchangeValue = (value: number) => {
+    return calcExchangeRate({
+      value,
+      unit: quote?.symbolConf?.prepaymentCurrency,
+      buySell
+    })
+  }
+
+  const exchangeValue = getExchangeValue(currentPrice * consize || 0)
+
+  if (availableMargin) {
+    if (mode === 'fixed_margin') {
+      // 可用/固定预付款
+
+      // 需要换汇处理
+      const marginExchangeValue = getExchangeValue(prepaymentConf?.fixed_margin?.initial_margin || 0)
+      const initial_margin = Number(marginExchangeValue)
+      volume = initial_margin ? Number(availableMargin / initial_margin) : 0
+    } else if (mode === 'fixed_leverage') {
+      // 固定杠杆：可用 /（价格*合约大小*手数x/固定杠杆）
+      // 手数x = 可用 * 固定杠杆 / (价格*合约大小)*汇率
+      const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
+      if (fixed_leverage) {
+        volume = (availableMargin * fixed_leverage) / exchangeValue
+      }
+    } else if (mode === 'float_leverage') {
+      // 浮动杠杆：可用 /（价格*合约大小*手数x/浮动杠杆）
+      // 手数x = 可用 * 固定杠杆 / (价格*合约大小)*汇率
+      const float_leverage = Number(tradeActions.leverageMultiple || 1)
+      if (float_leverage) {
+        volume = (availableMargin * float_leverage) / exchangeValue
+      }
+    }
+  }
+
+  return volume > 0 ? toFixed(volume) : '0.00'
+}
+
 // =========  计算相关 end ============
 
 // ========  向主线程定时同步计算的数据 start ============
@@ -753,13 +889,17 @@ function syncCalcData() {
   const accountBalanceInfo = getAccountBalance()
   const positionListSymbolCalcInfo = calcPositionListSymbol() // 持仓单计算缓存
   const rightWidgetSelectMarginInfo = calcRightWidgetSelectMarginInfo() // 右下角选择的保证金信息
+  const expectedMargin = calcExpectedMargin() // 预估保证金
+  const maxOpenVolume = getMaxOpenVolume() // 最大可开仓手数
 
   sendMessage({
     type: 'SYNC_CALCA_RES',
     data: {
       accountBalanceInfo,
       positionListSymbolCalcInfo,
-      rightWidgetSelectMarginInfo
+      rightWidgetSelectMarginInfo,
+      expectedMargin,
+      maxOpenVolume
     }
   })
 }
@@ -781,6 +921,10 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
 
   const currentQuote = quotes.get(dataSourceKey) // 行情信息
+  const symbolConf = currentSymbol.symbolConf // 当前品种配置
+  const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf // 当前品种预付款配置
+  const consize = symbolConf?.contractSize || 1 // 合约单位
+
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
   let ask = Number(currentQuote?.priceData?.sell || 0) // ask是买价，切记ask买价一般都比bid卖价高
   let bid = Number(currentQuote?.priceData?.buy || 0) // bid是卖价
@@ -794,7 +938,10 @@ export function getCurrentQuote(currentSymbolName?: string) {
     currentSymbol, // 当前品种信息
     quotes,
     ask: toFixed(ask, digits, false),
-    bid: toFixed(bid, digits, false)
+    bid: toFixed(bid, digits, false),
+    symbolConf,
+    prepaymentConf,
+    consize
   }
 }
 

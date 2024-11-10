@@ -694,9 +694,9 @@ function Position({ style, parentPopup }: IProps) {
         />
       </Spin>
       {/* 平仓修改确认弹窗 */}
-      <ClosePositionConfirmModal ref={closePositionRef} list={dataSource} />
+      <ClosePositionConfirmModal ref={closePositionRef} />
       {/* 设置止损止盈弹窗 */}
-      <SetStopLossProfitModal ref={stopLossProfitRef} list={dataSource} />
+      <SetStopLossProfitModal ref={stopLossProfitRef} />
     </>
   )
 }

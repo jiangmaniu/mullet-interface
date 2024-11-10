@@ -81,6 +81,10 @@ type AccountBalanceInfo = {
   money: any
 }
 
+export type IPriceOrAmountType = 'PRICE' | 'AMOUNT'
+
+export type RecordModalItem = Order.BgaOrderPageListItem | Order.OrderPageListItem
+
 class TradeStore {
   constructor() {
     makeObservable(this) // 使用 makeObservable mobx6.0 才会更新视图
@@ -107,6 +111,15 @@ class TradeStore {
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
   @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
+  @observable orderVolume = '0.01' // 交易区下单数量
+  @observable orderSpslChecked = false // 是否选中止盈止损
+  @observable orderPrice = '' // 交易区下单价格
+  @observable spValue = '' // 止盈输入框-按价格
+  @observable slValue = '' // 止损输入框-按价格
+  @observable spAmount = '' // 止盈输入框-按金额
+  @observable slAmount = '' // 止损输入框-按金额
+  @observable spPriceOrAmountType: IPriceOrAmountType = 'PRICE' // 止盈，下单时，按价格还是按金额计算
+  @observable slPriceOrAmountType: IPriceOrAmountType = 'PRICE' // 止损，下单时，按价格还是按金额计算
   // ============================
 
   // ====== 历史交易记录 ===========
@@ -116,6 +129,7 @@ class TradeStore {
   @observable stopLossProfitList = [] as Order.OrderPageListItem[] // 止盈止损列表
   @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
   @observable showActiveSymbol = false // 是否展示当前，根据当前激活的品种，搜索交易历史记录
+  @observable recordModalItem = {} as RecordModalItem // 持仓单、挂单弹窗item赋值
   // ============================
 
   @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
@@ -130,6 +144,8 @@ class TradeStore {
   @observable tradePageActive = false // 交易页窗口是否激活
   @observable positionListSymbolCalcInfo = new Map<string, IPositionListSymbolCalcInfo>() // 持仓单计算信息
   @observable rightWidgetSelectMarginInfo = {} as MarginReteInfo // 右下角选择的保证金信息
+  @observable expectedMargin = 0 // 预估保证金
+  @observable maxOpenVolume = 0 // 最大可开手数
 
   // 初始化加载
   init = () => {
@@ -183,6 +199,81 @@ class TradeStore {
   // 设置订单类型Tabs切换
   setOrderType = (orderType: ITradeTabsOrderType) => {
     this.orderType = orderType
+  }
+
+  // 下单手数
+  setOrderVolume = (orderVolume: any) => {
+    this.orderVolume = orderVolume
+  }
+
+  // 设置订单止盈止损
+  setOrderSpslChecked = (flag: boolean) => {
+    this.orderSpslChecked = flag
+  }
+
+  // 限价单下单价格
+  setOrderPrice = (orderPrice: any) => {
+    this.orderPrice = orderPrice
+  }
+
+  // 止盈价格输入框
+  @action
+  setSp = (value: any) => {
+    this.spValue = value
+  }
+  // 止损价格输入框
+  @action
+  setSl = (value: any) => {
+    this.slValue = value
+  }
+
+  // 止盈金额输入框
+  @action
+  setSpAmount = (value: any) => {
+    this.spAmount = value
+  }
+  // 止损价格输入框
+  @action
+  setSlAmount = (value: any) => {
+    this.slAmount = value
+  }
+
+  // 止盈 --- 按价格止盈、金额止盈
+  @action
+  setSpPriceOrAmountType = (type: IPriceOrAmountType) => {
+    this.spPriceOrAmountType = type
+  }
+  @action
+  // 止损 --- 按价格止盈、金额止盈
+  setSlPriceOrAmountType = (type: IPriceOrAmountType) => {
+    this.slPriceOrAmountType = type
+  }
+
+  // 设置交易记录持仓单、挂单弹窗数据
+  setRecordModalItem = (item: RecordModalItem) => {
+    this.recordModalItem = item
+  }
+
+  // 重置止盈止损
+  resetSpSl = () => {
+    this.spValue = ''
+    this.slValue = ''
+    this.spAmount = ''
+    this.slAmount = ''
+  }
+
+  // 重置交易操作
+  @action
+  resetTradeAction = () => {
+    this.orderVolume = '0.01'
+    this.orderPrice = ''
+    this.spValue = ''
+    this.slValue = ''
+    this.spAmount = ''
+    this.slAmount = ''
+    this.spPriceOrAmountType = 'PRICE'
+    this.slPriceOrAmountType = 'PRICE'
+    this.recordModalItem = {} as RecordModalItem
   }
 
   // =============================
@@ -810,7 +901,16 @@ class TradeStore {
         trade.setTabKey('POSITION')
       }
       // 限价买入卖出单、停损买入卖出单
-      else if (['LIMIT_BUY_ORDER', 'LIMIT_SELL_ORDER', 'STOP_LOSS_LIMIT_BUY_ORDER', 'STOP_LOSS_LIMIT_SELL_ORDER'].includes(orderType)) {
+      else if (
+        [
+          'LIMIT_BUY_ORDER',
+          'LIMIT_SELL_ORDER',
+          'STOP_LOSS_LIMIT_BUY_ORDER',
+          'STOP_LOSS_LIMIT_SELL_ORDER',
+          'STOP_LOSS_MARKET_BUY_ORDER',
+          'STOP_LOSS_MARKET_SELL_ORDER'
+        ].includes(orderType)
+      ) {
         // 更新挂单列表,通过ws推送更新
         // this.getPendingList()
         message.info(getIntl().formatMessage({ id: 'mt.guadanchenggong' }))

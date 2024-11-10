@@ -18,9 +18,9 @@ import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
-import CurrentPrice from './Widget/CurrentPrice'
-import MarginRate from './Widget/MarginRate'
-import ProfitYieldRate from './Widget/ProfitYieldRate'
+import CurrentPrice from './comp/CurrentPrice'
+import MarginRate from './comp/MarginRate'
+import ProfitYieldRate from './comp/ProfitYieldRate'
 
 export type IPositionItem = Order.BgaOrderPageListItem
 
@@ -439,9 +439,9 @@ function Position({ style, parentPopup }: IProps) {
         />
       </Spin>
       {/* 平仓修改确认弹窗 */}
-      <ClosePositionConfirmModal ref={closePositionRef} list={dataSource} />
+      <ClosePositionConfirmModal ref={closePositionRef} />
       {/* 设置止损止盈弹窗 */}
-      <SetStopLossProfitModal ref={stopLossProfitRef} list={dataSource} />
+      <SetStopLossProfitModal ref={stopLossProfitRef} />
     </>
   )
 }

@@ -16,7 +16,7 @@ declare namespace Order {
     /**
      * 限价价格
      */
-    limitPrice?: number
+    limitPrice?: any
     /**
      * 保证金类型
      */

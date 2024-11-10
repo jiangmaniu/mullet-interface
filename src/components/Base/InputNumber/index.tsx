@@ -44,6 +44,21 @@ type IProps = {
   /**提示是否浮动在输入框展示 */
   showFloatTips?: boolean
   hiddenPrecision?: boolean
+  onFocus?: () => void
+  onBlur?: () => void
+}
+
+export const FloatTips = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  return (
+    <div
+      className={cn(
+        'absolute top-[32px] z-10 flex w-full overflow-hidden items-end justify-center rounded-b-lg border border-primary dark:bg-gray-560 bg-gray-50 dark:border-gray-572 px-1 pb-2 pt-3 text-center text-xs text-weak dark:text-gray-125',
+        className
+      )}
+    >
+      {children}
+    </div>
+  )
 }
 
 function InputNumber(props: IProps) {
@@ -75,7 +90,9 @@ function InputNumber(props: IProps) {
     width,
     autoFocus = true,
     showFloatTips = true,
-    hiddenPrecision = true
+    hiddenPrecision = true,
+    onFocus,
+    onBlur
   } = props
   const inputRef = useRef<any>()
   const [inputValue, setInputValue] = useState<any>('')
@@ -285,8 +302,14 @@ function InputNumber(props: IProps) {
               min,
               value: inputValue,
               precision: hiddenPrecision ? undefined : precision,
-              onFocus: () => setFocus(true),
-              onBlur: () => setFocus(false),
+              onFocus: () => {
+                setFocus(true)
+                onFocus?.()
+              },
+              onBlur: () => {
+                setFocus(false)
+                onBlur?.()
+              },
               autoComplete: 'off',
               addonAfter: unit && <span className="text-xs font-normal text-weak">{unit}</span>,
               // @ts-ignore
@@ -308,16 +331,7 @@ function InputNumber(props: IProps) {
             </div>
           )}
         </div>
-        {isFocus && tips && showFloatTips && (
-          <div
-            className={cn(
-              'absolute top-[32px] z-10 flex w-full overflow-hidden items-end justify-center rounded-b-lg border border-primary dark:bg-gray-560 bg-gray-50 dark:border-gray-572 px-1 pb-2 pt-3 text-center text-xs text-weak dark:text-gray-125',
-              classNames?.tips
-            )}
-          >
-            {tips}
-          </div>
-        )}
+        {isFocus && tips && showFloatTips && <FloatTips className={classNames?.tips}>{tips}</FloatTips>}
         {tips && !showFloatTips && <div className="text-xs text-secondary pt-[7px]">{tips}</div>}
       </div>
     </div>

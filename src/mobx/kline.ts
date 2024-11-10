@@ -282,6 +282,7 @@ class KlineStore {
     this.lastbar = {}
     this.datafeedBarCallbackObj = {}
     this.lastBarTime = ''
+    window.tvWidget = null
 
     // 取消事件订阅
     mitt.off('symbol_change')

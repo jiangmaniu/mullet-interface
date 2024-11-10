@@ -1,0 +1,818 @@
+import { useIntl, useModel } from '@umijs/max'
+import { throttle } from 'lodash'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+
+import { ORDER_TYPE } from '@/constants/enum'
+import { useStores } from '@/context/mobxProvider'
+import { ITradeTabsOrderType, RecordModalItem } from '@/mobx/trade'
+import { formatNum, getPrecisionByNumber, toFixed, toNegativeOrEmpty } from '@/utils'
+import { message } from '@/utils/message'
+import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
+
+type IProps = {
+  /** 市价订单 */
+  marketItem?: Order.BgaOrderPageListItem
+  /** 限价止损订单 */
+  limitStopItem?: Order.OrderPageListItem
+}
+
+export default function useTrade(props?: IProps) {
+  const { marketItem, limitStopItem } = props || {}
+  const { trade } = useStores()
+  const { fetchUserInfo } = useModel('user')
+  const intl = useIntl()
+
+  const [inputing, setInputing] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  const {
+    setOrderSpslChecked,
+    orderSpslChecked,
+    activeSymbolName,
+    setOrderPrice: _setOrderPrice,
+    orderPrice,
+    setOrderVolume,
+    orderVolume,
+    setSp: _setSp,
+    setSl: _setSl,
+    setSpAmount: _setSpAmount,
+    setSlAmount: _setSlAmount,
+    spValue, // 止盈价格, 只参与计算，不提交到后端，也不直接展示在 UI 层
+    slValue, // 止损价格, 只参与计算，不提交到后端，也不直接展示在 UI 层
+    spAmount, // 止盈金额, 只参与计算，不提交到后端，也不直接展示在 UI 层
+    slAmount, // 止损金额, 只参与计算，不提交到后端，也不直接展示在 UI 层
+    marginType,
+    buySell,
+    spPriceOrAmountType,
+    slPriceOrAmountType,
+    resetSpSl,
+    setOrderType,
+    setBuySell,
+    setSpPriceOrAmountType,
+    setSlPriceOrAmountType,
+    setRecordModalItem,
+    recordModalItem
+  } = trade
+
+  // 优先设置赋值的symbolName
+  const symbol = useMemo(() => recordModalItem.symbol || activeSymbolName, [activeSymbolName, recordModalItem])
+  const conf = recordModalItem.conf
+  const digits = recordModalItem.symbolDecimal
+
+  const setItem = (item: RecordModalItem) => {
+    if (item && item.symbol) {
+      // 关闭止盈止损，避免赋值的时候污染了右侧下单全局的值展示
+      setOrderSpslChecked(false)
+
+      let _orderType = 'MARKET_ORDER' as ITradeTabsOrderType
+      // @ts-ignore
+      if (item?.type) {
+        // @ts-ignore
+        _orderType = item.type === 'LIMIT_BUY_ORDER' || item.type === 'LIMIT_SELL_ORDER' ? 'LIMIT_ORDER' : 'STOP_LIMIT_ORDER'
+
+        // 设置价格：限价单 或 停损单
+        // @ts-ignore
+        trade.setOrderPrice(item.limitPrice)
+      } else {
+        // 设置价格：市价持仓单
+        // @ts-ignore
+        trade.setOrderPrice(item.startPrice)
+      }
+
+      trade.setOrderType(_orderType)
+      trade.setBuySell(item.buySell as API.TradeBuySell)
+
+      if (_orderType === 'MARKET_ORDER') {
+        trade.setOrderVolume(item.orderVolume || 0)
+      }
+
+      setSl(item.stopLoss)
+      setSp(item.takeProfit)
+
+      // 设置弹窗数据到全局
+      setRecordModalItem(item)
+    }
+  }
+
+  // ================= 实时计算交易 ================
+  const orderType = useMemo(() => trade.orderType, [trade.orderType])
+  const isMarketOrder = useMemo(() => orderType === 'MARKET_ORDER', [orderType])
+  const isBuy = useMemo(() => buySell === 'BUY', [buySell])
+  // let [spValue, setSp] = useState<any>(0) // 止盈
+  // let [slValue, setSl] = useState<any>(0) // 止损
+
+  // 使用stores的值全局组件共享
+  const { availableMargin } = trade.getAccountBalance()
+
+  const prevQuoteInfo = useRef<any>() // 缓存上一次的行情信息
+
+  const quote = getCurrentQuote(symbol)
+
+  const quoteInfo = useMemo(() => {
+    if (!inputing) {
+      prevQuoteInfo.current = quote
+    }
+    return quote
+  }, [quote, inputing, symbol])
+
+  // 输入时取最后一次行情缓存计算
+  const symbolConf = useMemo(() => {
+    if (inputing) {
+      return conf || prevQuoteInfo.current?.symbolConf
+    }
+    return conf || quoteInfo.symbolConf
+  }, [conf, quoteInfo, inputing, prevQuoteInfo])
+
+  // 输入时取最后一次行情缓存计算
+  const d = useMemo(() => {
+    if (inputing) {
+      return digits || prevQuoteInfo.current?.digits
+    }
+    return digits || quoteInfo?.digits
+  }, [digits, quoteInfo, inputing, prevQuoteInfo]) // 小数位
+
+  // 输入时取最后一次行情缓存计算
+  const bid = useMemo(() => {
+    if (inputing) {
+      return Number(prevQuoteInfo.current?.bid || 0)
+    }
+    return Number(quoteInfo?.bid || 0)
+  }, [quoteInfo, inputing, prevQuoteInfo]) // 卖价
+
+  // 输入时取最后一次行情缓存计算
+  const ask = useMemo(() => {
+    if (inputing) {
+      return Number(prevQuoteInfo.current?.ask || 0)
+    }
+    return Number(quoteInfo?.ask || 0)
+  }, [quoteInfo, inputing, prevQuoteInfo]) // 买价
+
+  // 输入时取最后一次行情缓存计算
+  const consize = useMemo(() => {
+    if (inputing) {
+      return prevQuoteInfo.current?.consize
+    }
+    return quoteInfo?.consize
+  }, [quoteInfo, inputing, prevQuoteInfo])
+
+  // 输入时取最后一次行情缓存计算
+  const hasQuote = useMemo(() => {
+    if (inputing) {
+      return prevQuoteInfo.current?.hasQuote
+    }
+    return quoteInfo?.hasQuote
+  }, [quoteInfo, inputing, prevQuoteInfo])
+
+  // 输入时取最后一次行情缓存计算
+  const leverageMultiple = useMemo(() => {
+    if (inputing) {
+      return prevQuoteInfo.current?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined
+    }
+    return quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined
+  }, [quoteInfo, trade.leverageMultiple, inputing, prevQuoteInfo])
+
+  const stopl = useMemo(() => Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d), [symbolConf, d]) // 交易-限价和停损级别
+  const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || trade.maxOpenVolume // 最大可开手数
+  const vmaxShow = useMemo(() => symbolConf?.maxTrade || 20, [symbolConf]) // 配置最大可开手数，展示值
+  const vmax = useMemo(() => symbolConf?.maxTrade as number, [symbolConf])
+  const vmin = useMemo(() => symbolConf?.minTrade || 0.01, [symbolConf])
+  const step = useMemo(() => Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d), [symbolConf, d]) // 手数步长
+  // 根据品种小数点位数计算步长，独立于手数步长step。获取计算的小数位倒数第二位开始作为累加步长
+  // 限价、止盈止损、停损挂单，加减时，连动报价小数位倒数第二位
+  const step2 = useMemo(() => Math.pow(10, -(d - 1)) || step, [d, step])
+  const countPrecision = useMemo(() => getPrecisionByNumber(symbolConf?.minTrade), [symbolConf]) // 手数精度
+  const accountGroupPrecision = useMemo(() => trade.currentAccountInfo.currencyDecimal || 2, [trade.currentAccountInfo.currencyDecimal])
+
+  // 实时计算下单时预估保证金
+  const expectedMargin = trade.expectedMargin
+
+  // 格式化数据
+  const sl = useMemo(() => Number(slValue), [slValue])
+  const sp = useMemo(() => Number(spValue), [spValue])
+  const count = useMemo(() => Number(orderVolume), [orderVolume])
+  const price = useMemo(() => Number(orderPrice), [orderPrice])
+  let rangeSymbol = ['≥', '≤']
+
+  let currentPrice = useMemo(() => (isBuy ? ask : bid), [isBuy, ask, bid]) // 当前市价
+  let reversePrice = useMemo(() => (isBuy ? bid : ask), [isBuy, ask, bid])
+  const stopll = useMemo(() => (isBuy ? stopl : -stopl), [isBuy, stopl]) // 停损级别
+  const reverseStopll = useMemo(() => (isBuy ? -stopl : stopl), [isBuy, stopl])
+
+  /**
+   * 止损范围，参与计算，不提交到后端，也不直接展示在 UI 层
+   */
+  const sl_scope = useMemo(() => {
+    if (orderType === 'MARKET_ORDER') {
+      // 市价单： 买入：止损范围 = 卖价 - 停损级别，卖出：止损范围 = 买价 + 停损级别
+      return Number((reversePrice + reverseStopll).toFixed(d))
+    }
+    if (orderType === 'LIMIT_ORDER' || orderType === 'STOP_LIMIT_ORDER') {
+      // 限价单 & 停损单： 买入：止损范围 = 限价 - 停损级别，卖出：止损范围 = 限价 + 停损级别
+      return price ? Number((price + reverseStopll).toFixed(d)) : 0
+    }
+    return 0
+  }, [currentPrice, stopll, d, orderType, price])
+
+  /**
+   * 止盈范围，参与计算，不提交到后端，也不直接展示在 UI 层
+   */
+  const sp_scope = useMemo(() => {
+    if (orderType === 'MARKET_ORDER') {
+      // 市价单： 买入：止盈范围 = 卖价 + 停损级别，卖出：止盈范围 = 买价 - 停损级别
+      return Number((reversePrice + stopll).toFixed(d))
+    } else if (orderType === 'LIMIT_ORDER' || orderType === 'STOP_LIMIT_ORDER') {
+      // 限价单 & 停损单： 买入：止盈范围 = 限价 + 停损级别，卖出：止盈范围 = 限价 - 停损级别
+      return price ? Number((price + stopll).toFixed(d)) : 0
+    }
+    return 0
+  }, [currentPrice, stopll, d, orderType, price])
+
+  /**
+   * 预估亏损， 参与计算，不提交到后端，也不直接展示在 UI 层
+   */
+  const slProfit = useMemo(() => {
+    let profit: any = 0
+    // Math.abs 价格和行情的差值，取正数
+    if (orderType === 'LIMIT_ORDER' || orderType === 'STOP_LIMIT_ORDER') {
+      profit = price && sl ? Number((Math.abs(sl - price) * count * consize).toFixed(d)) : 0
+    } else if (orderType === 'MARKET_ORDER') {
+      profit = sl ? Number((Math.abs(sl - currentPrice) * count * consize).toFixed(d)) : 0
+    }
+    // 转换汇率
+    profit = calcExchangeRate({
+      value: profit,
+      unit: symbolConf?.profitCurrency,
+      buySell
+    })
+    return profit
+  }, [sl, currentPrice, count, consize, orderType, price, symbolConf])
+
+  /**
+   * 预估盈利， 参与计算，不提交到后端，也不直接展示在 UI 层
+   */
+  const spProfit = useMemo(() => {
+    let profit: any = 0
+    // Math.abs 价格和行情的差值，取正数
+    if (orderType === 'LIMIT_ORDER' || orderType === 'STOP_LIMIT_ORDER') {
+      profit = price && sp ? Number((Math.abs(sp - price) * count * consize).toFixed(d)) : 0
+    } else if (orderType === 'MARKET_ORDER') {
+      profit = sp ? Number((Math.abs(sp - currentPrice) * count * consize).toFixed(d)) : 0
+    }
+    // 转换汇率
+    profit = calcExchangeRate({
+      value: profit,
+      unit: symbolConf?.profitCurrency,
+      buySell
+    })
+
+    return profit
+  }, [sp, currentPrice, count, consize, orderType, price, symbolConf, buySell])
+
+  // 价格范围
+  const priceTip = useMemo(() => {
+    if (orderType === 'STOP_LIMIT_ORDER') {
+      return Number((isBuy ? currentPrice + stopll : currentPrice + stopll).toFixed(d))
+    } else if (orderType === 'LIMIT_ORDER') {
+      return Number((isBuy ? currentPrice - stopll : currentPrice - stopll).toFixed(d))
+    }
+    return 0
+  }, [orderType, isBuy, stopll, d, currentPrice])
+
+  // 价格范围 大于或者小于符号
+  const priceRangeSymbol = useMemo(() => {
+    if (orderType === 'LIMIT_ORDER') {
+      return isBuy ? rangeSymbol[1] : rangeSymbol[0]
+    } else if (orderType === 'STOP_LIMIT_ORDER') {
+      return isBuy ? rangeSymbol[0] : rangeSymbol[1]
+    }
+    return ''
+  }, [orderType, isBuy])
+
+  // 价格范围提示文字红色
+  const showPriceTipRedColor = useMemo(
+    throttle(
+      () => {
+        if (orderType === 'STOP_LIMIT_ORDER') {
+          return price && !Number.isNaN(price) && (isBuy ? Number(price) < Number(priceTip) : Number(price) > Number(priceTip))
+        } else if (orderType === 'LIMIT_ORDER') {
+          return price && !Number.isNaN(price) && (isBuy ? Number(price) > Number(priceTip) : Number(price) < Number(priceTip))
+        }
+        return false
+      },
+      100,
+      {
+        // 立即执行
+        leading: true
+      }
+    ),
+    [orderType, isBuy, price, priceTip]
+  )
+
+  // 给价格输入框加上默认值
+  const getInitPriceValue = useCallback(() => {
+    if (isBuy) {
+      // 买：输入框减少0.2
+      return ask ? toFixed(ask - stopl, d, false) : 0
+    } else {
+      // 卖：输入框增加0.2
+      return bid ? toFixed(bid + stopl, d, false) : 0
+    }
+  }, [isBuy, ask, bid, stopl, d])
+
+  // ============== hooks start ==============
+  useEffect(() => {
+    // 重置右侧交易信息
+    if (!recordModalItem.id) {
+      resetSpSl()
+    }
+  }, [buySell, orderType, symbol, recordModalItem])
+
+  useEffect(() => {
+    // 初始化下单交易价格
+    if (!recordModalItem.id) {
+      setOrderPrice(getInitPriceValue())
+    }
+  }, [symbol, buySell, orderType])
+
+  useEffect(() => {
+    marketItem && setItem(marketItem)
+  }, [marketItem])
+
+  useEffect(() => {
+    limitStopItem && setItem(limitStopItem)
+  }, [limitStopItem])
+
+  // 使用ref保存止盈止损的值，避免组件重复渲染
+  const sp_scopeRef = useRef<any>(null)
+  const sl_scopeRef = useRef<any>(null)
+  const priceTipRef = useRef<any>(null)
+
+  useEffect(() => {
+    sp_scopeRef.current = sp_scope
+  }, [sp_scope])
+
+  useEffect(() => {
+    sl_scopeRef.current = sl_scope
+  }, [sl_scope])
+
+  useEffect(() => {
+    priceTipRef.current = priceTip
+  }, [priceTip])
+
+  // ============== hooks end ==============
+
+  // 手数加
+  const onAdd = useCallback(() => {
+    // 取最大可开手数和最大可开手数展示值的最小值
+    const maxValue = Math.min(vmax, maxOpenVolume)
+    if (orderType === 'MARKET_ORDER') {
+      // 市价单
+      if (count && (isBuy ? count < maxValue : count < 30)) {
+        const c = (((count + step) * 100) / 100).toFixed(countPrecision)
+        setOrderVolume(Math.min(Number(c), maxValue))
+      } else {
+        setOrderVolume(maxValue)
+      }
+    } else if (orderType === 'LIMIT_ORDER') {
+      // 限价单
+      if (count && (isBuy ? count < maxValue : count <= 5)) {
+        const c = (((count + step) * 100) / 100).toFixed(countPrecision)
+        setOrderVolume(Math.min(Number(c), maxValue))
+      }
+    } else if (orderType === 'STOP_LIMIT_ORDER') {
+      // 停损单
+      if (count && (isBuy ? count < maxValue : count <= 5)) {
+        const c = (((count + step) * 100) / 100).toFixed(countPrecision)
+        setOrderVolume(Math.min(Number(c), maxValue))
+      }
+    }
+  }, [orderType, count, step, countPrecision, isBuy, maxOpenVolume, vmax])
+
+  // 手数减
+  const onMinus = useCallback(() => {
+    if (orderType === 'MARKET_ORDER') {
+      if (count && count > step) {
+        // 市价单
+        const c = (((count - step) * 100) / 100).toFixed(countPrecision)
+        setOrderVolume(c)
+      } else {
+        setOrderVolume(step)
+      }
+    } else if (orderType === 'LIMIT_ORDER') {
+      // 限价单
+      if (count && (isBuy ? count > vmin : count > step)) {
+        const c = (((count - step) * 100) / 100).toFixed(countPrecision)
+        setOrderVolume(c)
+      }
+    } else if (orderType === 'STOP_LIMIT_ORDER') {
+      // 停损单
+      if (count && (isBuy ? count > vmin : count > step)) {
+        const c = (((count - step) * 100) / 100).toFixed(countPrecision)
+        setOrderVolume(c)
+      }
+    }
+  }, [orderType, count, step, countPrecision, vmin, isBuy])
+
+  // ========= 止盈止损加减 ============
+
+  // 止盈加
+  const onSpAdd = useCallback(() => {
+    if (sp && sp > 0.01) {
+      const c = (((sp + step2) * 100) / 100).toFixed(d)
+      setSp(c)
+    } else {
+      setSp(sp_scopeRef.current)
+    }
+  }, [sp, step2, d])
+
+  // 止盈减
+  const onSpMinus = useCallback(() => {
+    if (sp && sp > 0.01) {
+      const c = (((sp - step2) * 100) / 100).toFixed(d)
+      setSp(c)
+    } else {
+      setSp(sp_scopeRef.current)
+    }
+  }, [sp, step2, d])
+
+  // 止损加
+  const onSlAdd = useCallback(() => {
+    if (sl && sl > 0.01) {
+      const c = (((sl + step2) * 100) / 100).toFixed(d)
+      setSl(c)
+    } else {
+      setSl(sl_scopeRef.current)
+    }
+  }, [sl, step2, d])
+
+  // 止损减
+  const onSlMinus = useCallback(() => {
+    if (sl && sl > 0.01) {
+      const c = (((sl - step2) * 100) / 100).toFixed(d)
+      setSl(c)
+    } else {
+      setSl(sl_scopeRef.current)
+    }
+  }, [sl, step2, d])
+
+  // 价格加
+  const onPriceAdd = useCallback(() => {
+    if (price && price >= 0) {
+      const c = (((price + step2) * 100) / 100).toFixed(d)
+      setOrderPrice(c)
+    } else {
+      setOrderPrice(priceTipRef.current)
+    }
+  }, [price, step2, d])
+
+  // 价格减
+  const onPriceMinus = useCallback(() => {
+    if (price && price > 0) {
+      const c = (((price - step2) * 100) / 100).toFixed(d)
+      setOrderPrice(c)
+    } else {
+      setOrderPrice(priceTipRef.current)
+    }
+  }, [price, step2, d])
+
+  // 计算止盈价格
+  // 止盈价格=（止盈金额/手数/合约大小）+市价/限价
+  const spValuePrice = useMemo(
+    throttle(
+      () => {
+        if (spPriceOrAmountType === 'AMOUNT') {
+          const _price = orderType === 'MARKET_ORDER' ? currentPrice : price
+          if (isBuy) {
+            //  * 止盈价 = 买单市价 + (预计盈利/手数/合约大小)
+            return (_price + Number(spAmount || 0) / count / consize).toFixed(d)
+          } else {
+            // * 止盈价 = 卖单市价 - (预计盈利/手数/合约大小)
+            return (_price - Number(spAmount || 0) / count / consize).toFixed(d)
+          }
+        }
+        return spValue
+      },
+      100,
+      {
+        // 立即执行
+        leading: true
+      }
+    ),
+    [spPriceOrAmountType, spValue, spAmount, isBuy, currentPrice, price, orderType, count, consize]
+  )
+
+  // 计算止损价格
+  // 止损价格=（止损金额/手数/合约大小）+市价/限价
+  const slValuePrice = useMemo(
+    throttle(
+      () => {
+        if (slPriceOrAmountType === 'AMOUNT') {
+          const _price = orderType === 'MARKET_ORDER' ? currentPrice : price
+          if (isBuy) {
+            // * 止损价 = 买单市价 - (预估亏损/手数/合约大小)
+            return (_price - Number(slAmount || 0) / count / consize).toFixed(d)
+          } else {
+            // * 止损价 = 卖单市价 + (预估亏损/手数/合约大小)
+            return (_price + Number(slAmount || 0) / count / consize).toFixed(d)
+          }
+        }
+        return slValue
+      },
+      100,
+      {
+        // 立即执行
+        leading: true
+      }
+    ),
+    [slPriceOrAmountType, slValue, slAmount, isBuy, currentPrice, price, orderType, count, consize]
+  )
+
+  // 计算止盈预估盈亏
+  // 止盈预估盈亏=（止盈价-市价/限价）*合约单位*手数/*汇率
+  const spValueEstimate = formatNum(
+    useMemo(
+      throttle(() => (spPriceOrAmountType === 'AMOUNT' ? String(spAmount) : String(spProfit)), 100, {
+        // 立即执行
+        leading: true
+      }),
+      [spPriceOrAmountType, spProfit, spAmount]
+    ),
+    { precision: accountGroupPrecision }
+  )
+
+  // 计算止损预估盈亏
+  // 止损预估盈亏=（市价/限价-止损价）*合约单位*手数/*汇率
+  const slValueEstimate = formatNum(
+    useMemo(
+      throttle(() => (slPriceOrAmountType === 'AMOUNT' ? toNegativeOrEmpty(slAmount) : toNegativeOrEmpty(slProfit)), 100, {
+        // 立即执行
+        leading: true
+      }),
+      [slPriceOrAmountType, slProfit, slAmount]
+    ),
+    { precision: accountGroupPrecision }
+  )
+
+  // 止盈止损范围大小判断
+  const spFlag = useMemo(
+    () =>
+      !spValuePrice || Number(spValuePrice) === 0 || Number.isNaN(spValuePrice)
+        ? false
+        : isBuy
+        ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
+        : Number(spValuePrice) > sp_scope,
+    [isBuy, spValuePrice, sp_scope]
+  )
+  const slFlag = useMemo(
+    () =>
+      !slValuePrice || Number(slValuePrice) === 0 || Number.isNaN(slValuePrice)
+        ? false
+        : isBuy
+        ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
+        : Number(slValuePrice) < sl_scope,
+    [isBuy, slValuePrice, sl_scope]
+  )
+
+  const disabledBtnByCondition = spFlag || slFlag
+
+  const disabledInfo = useMemo(() => {
+    const disabledBtn = trade.disabledTrade() || trade.disabledTradeAction()
+    const disabledTrade = trade.disabledTrade()
+    const disabledInput = trade.disabledTradeAction()
+    return {
+      disabledBtn,
+      disabledTrade,
+      disabledInput
+    }
+  }, [trade.currentAccountInfo, symbol, trade.symbolListAll.length])
+
+  // 禁用交易按钮
+  const disabledBtn = disabledInfo.disabledBtn || disabledBtnByCondition
+  // 禁用交易
+  const disabledTrade = disabledInfo.disabledTrade
+  // 禁用交易输入框
+  const disabledInput = disabledInfo.disabledInput
+
+  const stopLoss = useMemo(() => (Number.isNaN(slValuePrice) || Number(slValuePrice) === 0 ? undefined : slValuePrice), [slValuePrice])
+  const takeProfit = useMemo(() => (Number.isNaN(spValuePrice) || Number(spValuePrice) === 0 ? undefined : spValuePrice), [spValuePrice])
+
+  const onSubmitEnd = useCallback(() => {
+    setInputing(false)
+  }, [])
+
+  // 使用ref来保存spFlag和slFlag的值，避免触发submit函数更新
+  const spFlagRef = useRef<any>(false)
+  const slFlagRef = useRef<any>(false)
+  const maxOpenVolumeRef = useRef<any>(0)
+
+  useEffect(() => {
+    spFlagRef.current = spFlag
+  }, [spFlag])
+
+  useEffect(() => {
+    slFlagRef.current = slFlag
+  }, [slFlag])
+
+  useEffect(() => {
+    maxOpenVolumeRef.current = maxOpenVolume
+  }, [maxOpenVolume])
+
+  // 提交订单
+  const onSubmitOrder = useCallback(async () => {
+    setInputing(true)
+    const orderParams = {
+      symbol,
+      buySell, // 订单方向
+      orderVolume: count,
+      stopLoss,
+      takeProfit,
+      // 浮动杠杆默认1
+      leverageMultiple,
+      tradeAccountId: trade.currentAccountInfo?.id,
+      marginType
+    } as Order.CreateOrder
+
+    if (orderType === 'LIMIT_ORDER' || orderType === 'STOP_LIMIT_ORDER') {
+      // @ts-ignore
+      orderParams.limitPrice = orderPrice
+    }
+    // @ts-ignore
+    const type = {
+      MARKET_ORDER: ORDER_TYPE.MARKET_ORDER,
+      LIMIT_ORDER: isBuy ? ORDER_TYPE.LIMIT_BUY_ORDER : ORDER_TYPE.LIMIT_SELL_ORDER,
+      STOP_LIMIT_ORDER: isBuy ? ORDER_TYPE.STOP_LOSS_MARKET_BUY_ORDER : ORDER_TYPE.STOP_LOSS_MARKET_SELL_ORDER
+    }[orderType]
+
+    // 订单类型
+    // @ts-ignore
+    orderParams.type = type
+
+    if (!count) {
+      message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
+      onSubmitEnd()
+      return
+    }
+    if (!maxOpenVolumeRef.current) {
+      onSubmitEnd()
+      return message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
+    }
+    // 限价、停损单
+    if (['LIMIT_ORDER', 'STOP_LIMIT_ORDER'].includes(orderType) && !orderPrice) {
+      onSubmitEnd()
+      message.info(intl.formatMessage({ id: 'mt.qingshurujiage' }))
+      return
+    }
+
+    const spSlErrorMsg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
+
+    if (slFlagRef.current && sl) {
+      onSubmitEnd()
+      message.info(spSlErrorMsg)
+      return
+    }
+    if (spFlagRef.current && sp) {
+      onSubmitEnd()
+      message.info(spSlErrorMsg)
+      return
+    }
+
+    try {
+      setLoading(true)
+      const res = await trade.createOrder(orderParams)
+
+      if (res.success) {
+        resetSpSl()
+        setOrderVolume(vmin)
+        setOrderPrice('')
+
+        // 更新账户余额信息
+        await fetchUserInfo(true)
+      }
+    } catch (error) {
+      console.log('onSubmitOrder error', error)
+      setLoading(false)
+    } finally {
+      onSubmitEnd()
+      setLoading(false)
+    }
+  }, [symbol, buySell, count, stopLoss, takeProfit, leverageMultiple, trade.currentAccountInfo, marginType, orderType, orderPrice, sp, sl])
+
+  // 封装设置止盈价格, 输入时取最后一次行情缓存计算
+  const setSp = useCallback((value: any) => {
+    setSpPriceOrAmountType('PRICE')
+    _setSp(value)
+    setInputing(false)
+  }, [])
+
+  // 封装设置止损价格, 输入时取最后一次行情缓存计算
+  const setSl = useCallback((value: any) => {
+    setSlPriceOrAmountType('PRICE')
+    _setSl(value)
+    setInputing(false)
+  }, [])
+
+  // 封装设置止盈金额, 输入时取最后一次行情缓存计算
+  const setSpAmount = useCallback((value: any) => {
+    setSpPriceOrAmountType('AMOUNT')
+    _setSpAmount(value)
+    setInputing(false)
+  }, [])
+
+  // 封装设置止损金额, 输入时取最后一次行情缓存计算
+  const setSlAmount = useCallback((value: any) => {
+    setSlPriceOrAmountType('AMOUNT')
+    _setSlAmount(value)
+    setInputing(false)
+  }, [])
+
+  // 挂单价格要取实时
+  const setOrderPrice = useCallback((value: any) => {
+    _setOrderPrice(value)
+    // setInputing(false)
+  }, [])
+
+  return {
+    expectedMargin: formatNum(expectedMargin, { precision: accountGroupPrecision }),
+
+    // 止盈止损范围
+    sp_scope,
+    sl_scope,
+    sp,
+    sl,
+    slValue: slValuePrice,
+    spValue: spValuePrice,
+    slAmount: slValueEstimate,
+    spAmount: spValueEstimate,
+    // 止盈止损预计盈亏
+    slValueEstimate,
+    spValueEstimate,
+
+    // 按价格或者金额 止盈、止损
+    spValuePrice,
+    slValuePrice,
+
+    orderType,
+    countPrecision,
+    step2,
+    step,
+    maxOpenVolume,
+    vmaxShow,
+    vmax,
+    vmin,
+    isMarketOrder,
+    isBuy,
+    ask,
+    bid,
+    d,
+    symbol,
+    orderVolume,
+    priceTip,
+    priceRangeSymbol,
+    rangeSymbol,
+    orderPrice,
+    price,
+    showPriceTipRedColor,
+    showSpScopeRedColor: spFlag,
+    showSlScopeRedColor: slFlag,
+    disabledBtn: hasQuote && disabledBtn,
+    disabledTrade: hasQuote && disabledTrade,
+    disabledInput: hasQuote && disabledInput,
+    disabledBtnByCondition,
+    slFlag,
+    spFlag,
+    spByAmountScopeFlag: spFlag,
+    slByAmountScopeFlag: slFlag,
+    loading,
+    hasQuote,
+    buySell,
+    availableMargin,
+
+    // 方法
+    setSl,
+    setSp,
+    setSpAmount,
+    setSlAmount,
+    setOrderVolume,
+    setOrderPrice,
+    setOrderType,
+    onAdd,
+    onMinus,
+    onSubmitOrder,
+    getInitPriceValue,
+    resetSpSl,
+    setOrderSpslChecked,
+    orderSpslChecked,
+    onSpAdd,
+    onSpMinus,
+    onSlAdd,
+    onSlMinus,
+    onPriceAdd,
+    onPriceMinus,
+
+    // 设置监听依赖对象
+    setItem,
+    stopLoss,
+    takeProfit,
+    setInputing
+  }
+}

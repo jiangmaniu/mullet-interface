@@ -6,21 +6,19 @@ import { useRef } from 'react'
 
 import StandardTable from '@/components/Admin/StandardTable'
 import SymbolIcon from '@/components/Base/SymbolIcon'
-import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
+import { ORDER_TYPE } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
 
 import PendingOrderCancelModal from '../../../Modal/PendingOrderCancelModal'
 import ModifyPendingOrderModal from '../../../Modal/PendingOrderModifyModal'
+import CurrentPrice from '../PositionList/comp/CurrentPrice'
 
 export type IPendingItem = Order.OrderPageListItem & {
-  /**现价 */
-  currentPrice: number
   /**是否是限价单 */
   isLimitOrder: boolean
 }
@@ -105,11 +103,7 @@ function PendingList({ style, parentPopup }: IProps) {
       },
       width: 120,
       renderText(text, record, index, action) {
-        return (
-          <span className={cn('!text-[13px]', record.buySell === 'BUY' ? 'text-green' : 'text-red')}>
-            {formatNum(record.currentPrice, { precision: record.symbolDecimal })}
-          </span>
-        )
+        return <CurrentPrice item={record} />
       }
     },
     {
@@ -238,19 +232,7 @@ function PendingList({ style, parentPopup }: IProps) {
   ]
 
   const dataSource = toJS(list).map((v) => {
-    const symbol = v.symbol as string
-    const quoteInfo = getCurrentQuote(symbol)
-    const digits = v.symbolDecimal || 2
     const isLimitOrder = v.type === ORDER_TYPE.LIMIT_BUY_ORDER || v.type === ORDER_TYPE.LIMIT_SELL_ORDER // 限价单
-
-    let currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
-
-    if (v.type === 'LIMIT_BUY_ORDER' || v.type === 'LIMIT_SELL_ORDER') {
-      // 限价单价格不要取反
-      currentPrice = v.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.ask : quoteInfo?.bid
-    }
-
-    v.currentPrice = currentPrice // 现价
     v.isLimitOrder = isLimitOrder
 
     return v
@@ -284,7 +266,7 @@ function PendingList({ style, parentPopup }: IProps) {
       {/* 取消挂单弹窗 */}
       <PendingOrderCancelModal ref={cancelPendingRef} />
       {/* 修改挂单弹窗 */}
-      <ModifyPendingOrderModal ref={modifyPendingRef} list={dataSource} />
+      <ModifyPendingOrderModal ref={modifyPendingRef} />
     </>
   )
 }

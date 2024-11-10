@@ -64,7 +64,7 @@ class WSStore {
   depthCache = new Map<string, IDepth>() // 深度缓存区
   @observable socket: any = null
   @observable quotes = new Map<string, IQuoteItem>() // 当前行情
-  @observable depth = new Map<string, IDepth>() // 当前行情
+  @observable depth = new Map<string, IDepth>() // 当前深度
   @observable symbols = {} // 储存品种请求列表
   @observable websocketUrl = ENV.ws
   lastQuoteUpdateTime = 0

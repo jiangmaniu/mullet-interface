@@ -14,7 +14,13 @@ export default function useSyncDataToWorker() {
     positionList,
     allSimpleSymbolsMap,
     symbolListAll,
-    currentLiquidationSelectBgaId
+    currentLiquidationSelectBgaId,
+    buySell,
+    orderType,
+    orderVolume,
+    orderPrice,
+    leverageMultiple,
+    marginType
   } = trade
 
   const syncData = (type: WorkerType, data?: any) => {
@@ -79,12 +85,20 @@ export default function useSyncDataToWorker() {
     }
   )
 
-  // 6、默认全仓，右下角爆仓选择逐仓、全仓切换
+  // 6、同步交易区操作类型
   useDebounceEffect(
     () => {
-      syncData('SYNC_CURRENT_LIQUIDATION_SELECT_BGA_ID', { currentLiquidationSelectBgaId })
+      syncData('SYNC_TRADE_ACTIONS', {
+        buySell,
+        orderType,
+        orderVolume,
+        price: orderPrice,
+        leverageMultiple,
+        marginType,
+        currentLiquidationSelectBgaId
+      })
     },
-    [currentLiquidationSelectBgaId, tradePageActive],
+    [buySell, orderType, orderVolume, orderPrice, leverageMultiple, marginType, currentLiquidationSelectBgaId, tradePageActive],
     {
       wait: 300
     }

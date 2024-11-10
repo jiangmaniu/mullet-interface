@@ -13,9 +13,7 @@ import { ITradeTabsOrderType } from '@/mobx/trade'
 import { cn } from '@/utils/cn'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
-import LimitOrder from './comp/LimitOrder'
-import MarketOrder from './comp/MarketOrder'
-import StopLimitOrder from './comp/StopLimitOrder'
+import OrderItem from './comp/OrderItem'
 
 const DisabledTradeView = observer(() => {
   const { trade } = useStores()
@@ -92,18 +90,17 @@ export default observer(
             size="small"
             marginBottom={0}
           />
-          {/* 市价单 */}
-          <div style={{ display: orderType === 'MARKET_ORDER' ? 'block' : 'none' }}>
+          {/* 市价单/限价单/停损单 */}
+          {/* <div style={{ display: orderType === 'MARKET_ORDER' ? 'block' : 'none' }}>
             <MarketOrder popupRef={popupRef} />
           </div>
-          {/* 限价单 */}
           <div style={{ display: orderType === 'LIMIT_ORDER' ? 'block' : 'none' }}>
             <LimitOrder popupRef={popupRef} />
           </div>
-          {/* 停损单 */}
           <div style={{ display: orderType === 'STOP_LIMIT_ORDER' ? 'block' : 'none' }}>
             <StopLimitOrder popupRef={popupRef} />
-          </div>
+          </div> */}
+          <OrderItem />
 
           {/* 禁用交易区操作 */}
           <DisabledTradeView />

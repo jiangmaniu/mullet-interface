@@ -514,3 +514,14 @@ export function isPC() {
 export const getPrecisionByNumber = (value: any) => {
   return value ? String(value).split('.')?.[1]?.length || 0 : 0
 }
+
+/**
+ * 传入数值，判断如果是数字返回负数，如果是 0 返回 0，否则返回空值
+ * @param value
+ * @returns
+ */
+export const toNegativeOrEmpty = (value: any) => {
+  const val = Number(value)
+  if (Number.isNaN(val)) return ''
+  return val === 0 ? '0' : -Math.abs(val).toString()
+}

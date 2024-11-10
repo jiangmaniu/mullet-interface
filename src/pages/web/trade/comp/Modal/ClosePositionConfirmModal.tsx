@@ -1,6 +1,6 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
@@ -17,26 +17,21 @@ import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
-import CurrentPrice from '../TradeRecord/comp/PositionList/Widget/CurrentPrice'
-import ProfitYieldRate from '../TradeRecord/comp/PositionList/Widget/ProfitYieldRate'
-
-type IProps = {
-  list: IPositionItem[]
-}
+import CurrentPrice from '../TradeRecord/comp/PositionList/comp/CurrentPrice'
+import ProfitYieldRate from '../TradeRecord/comp/PositionList/comp/ProfitYieldRate'
 
 // 平仓操作弹窗
 export default observer(
-  forwardRef(({ list = [] }: IProps, ref) => {
+  forwardRef((props, ref) => {
     const intl = useIntl()
     const { ws, global, trade } = useStores()
     const { fetchUserInfo } = useModel('user')
     const [count, setCount] = useState<any>('')
     const [open, setOpen] = useState(false)
-    const [tempItem, setTempItem] = useState({} as IPositionItem)
+    const [item, setItem] = useState({} as IPositionItem)
     const [sliderValue, setSliderValue] = useState(0)
     const [submitLoading, setSubmitLoading] = useState(false)
     const unit = 'USD'
-    const item = (list.find((v) => v.id === tempItem.id) || {}) as IPositionItem // 获取的是最新实时变化的
     const symbol = item.symbol
     const orderVolume = Number(item.orderVolume || 0) // 手数
     const conf = item?.conf as Symbol.SymbolConf
@@ -50,15 +45,15 @@ export default observer(
       setCount(orderVolume)
     }, [orderVolume])
 
-    const close = () => {
+    const close = useCallback(() => {
       setOpen(false)
-      setTempItem({} as IPositionItem)
-    }
+      setItem({} as IPositionItem)
+    }, [])
 
-    const show = (item: any) => {
+    const show = useCallback((item: any) => {
       setOpen(true)
-      setTempItem(item)
-    }
+      setItem(item)
+    }, [])
 
     // 对外暴露接口
     useImperativeHandle(ref, () => {
@@ -68,7 +63,7 @@ export default observer(
       }
     })
 
-    const onFinish = async () => {
+    const onFinish = useCallback(async () => {
       const reg = /^\d+(\.\d{0,2})?$/
       if (!count) return message.info(intl.formatMessage({ id: 'common.qingshuru' }))
       if (!reg.test(count)) {
@@ -105,7 +100,7 @@ export default observer(
         // 更新账户余额信息
         fetchUserInfo()
       }
-    }
+    }, [count, orderVolume, item, symbol, close])
 
     useEffect(() => {
       setSliderValue((count / orderVolume) * 100)

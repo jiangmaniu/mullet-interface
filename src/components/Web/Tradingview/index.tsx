@@ -161,6 +161,7 @@ const Tradingview = () => {
 
     // 记录k线实例
     kline.setTvWidget(tvWidget)
+    window.tvWidget = tvWidget
   }
 
   useEffect(() => {

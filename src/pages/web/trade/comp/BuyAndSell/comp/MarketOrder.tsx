@@ -14,7 +14,7 @@ import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
-import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
+import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
@@ -39,7 +39,9 @@ export default observer(
     const [loading, setLoading] = useState(false)
     const { marginType, buySell, orderType } = trade
 
-    const [countValue, setCount] = useState<any>(0.01) // 手数
+    // const [countValue, setCount] = useState<any>(0.01) // 手数
+    const setCount = trade.setOrderVolume
+    const countValue = trade.orderVolume
     const [spValue, setSp] = useState<any>(0) // 止盈
     const [slValue, setSl] = useState<any>(0) // 止损
 
@@ -54,7 +56,8 @@ export default observer(
     const symbol = quoteInfo.symbol
     const d = quoteInfo?.digits
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
-    const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || getMaxOpenVolume({ buySell }) || 0
+    // const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || getMaxOpenVolume({ buySell }) || 0
+    const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || trade.maxOpenVolume || 0
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
     const vmax = symbolConf?.maxTrade as number
     const vmin = symbolConf?.minTrade || 0.01
@@ -65,19 +68,21 @@ export default observer(
     const countPrecision = getPrecisionByNumber(symbolConf?.minTrade) // 手数精度
 
     // 实时计算预估强平价
-    const expectedForceClosePrice = calcExpectedForceClosePrice({
-      orderVolume: countValue,
-      orderMargin: margin,
-      orderType: 'MARKET_ORDER',
-      buySell
-    })
+    // const expectedForceClosePrice = calcExpectedForceClosePrice({
+    //   orderVolume: countValue,
+    //   orderMargin: margin,
+    //   orderType: 'MARKET_ORDER',
+    //   buySell
+    // })
 
     // 实时计算下单时预估保证金
-    const expectedMargin = calcExpectedMargin({
-      buySell,
-      orderVolume: countValue,
-      orderType: 'MARKET_ORDER'
-    })
+    // const expectedMargin = calcExpectedMargin({
+    //   buySell,
+    //   orderVolume: countValue,
+    //   orderType: 'MARKET_ORDER'
+    // })
+    // 使用worker的计算
+    const expectedMargin = trade.expectedMargin
 
     // 切换品种、买卖重置内容
     useEffect(() => {
@@ -238,7 +243,7 @@ export default observer(
           )}
         </Button>
       )
-    }, [quoteInfo.hasQuote, disabledSubmitBtn, disabledTrade, isMarketOpen, isBuy, count])
+    }, [quoteInfo.hasQuote, disabledSubmitBtn, disabledTrade, isMarketOpen, isBuy, count, onFinish])
 
     const renderSpsl = useMemo(() => {
       return (

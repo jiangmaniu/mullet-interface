@@ -9,7 +9,7 @@ import { useStores } from '@/context/mobxProvider'
 import { formatNum, getPrecisionByNumber, toFixed } from '@/utils'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
-import { calcExchangeRate, calcExpectedForceClosePrice, calcExpectedMargin, getCurrentQuote, getMaxOpenVolume } from '@/utils/wsUtil'
+import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 
 import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
@@ -38,28 +38,34 @@ export default observer(
     const [loading, setLoading] = useState(false)
     const { marginType, buySell, orderType } = trade
 
-    let [priceValue, setPrice] = useState<any>(0) // 价格
-    let [countValue, setCount] = useState<any>(0.01) // 手数
+    // let [priceValue, setPrice] = useState<any>(0) // 价格
+    // let [countValue, setCount] = useState<any>(0.01) // 手数
+    const setCount = trade.setOrderVolume
+    const countValue = trade.orderVolume
+    const priceValue = trade.orderPrice
+    const setPrice = trade.setOrderPrice
     let [spValue, setSp] = useState<any>(0) // 止盈
     let [slValue, setSl] = useState<any>(0) // 止损
 
     const isBuy = buySell === 'BUY'
 
     // 实时计算预估强平价
-    const expectedForceClosePrice = calcExpectedForceClosePrice({
-      orderVolume: countValue,
-      orderMargin: margin,
-      orderType: isBuy ? ORDER_TYPE.STOP_LOSS_MARKET_BUY_ORDER : ORDER_TYPE.STOP_LOSS_MARKET_SELL_ORDER,
-      buySell
-    })
+    // const expectedForceClosePrice = calcExpectedForceClosePrice({
+    //   orderVolume: countValue,
+    //   orderMargin: margin,
+    //   orderType: isBuy ? ORDER_TYPE.STOP_LOSS_MARKET_BUY_ORDER : ORDER_TYPE.STOP_LOSS_MARKET_SELL_ORDER,
+    //   buySell
+    // })
 
     // 实时计算下单时预估保证金
-    const expectedMargin = calcExpectedMargin({
-      buySell,
-      orderVolume: countValue,
-      orderType: isBuy ? ORDER_TYPE.STOP_LOSS_MARKET_BUY_ORDER : ORDER_TYPE.STOP_LOSS_MARKET_SELL_ORDER,
-      price: priceValue
-    })
+    // const expectedMargin = calcExpectedMargin({
+    //   buySell,
+    //   orderVolume: countValue,
+    //   orderType: isBuy ? ORDER_TYPE.STOP_LOSS_MARKET_BUY_ORDER : ORDER_TYPE.STOP_LOSS_MARKET_SELL_ORDER,
+    //   price: priceValue
+    // })
+    // 使用worker的计算
+    const expectedMargin = trade.expectedMargin
 
     const token = STORAGE_GET_TOKEN()
     const quoteInfo = getCurrentQuote()
@@ -70,7 +76,8 @@ export default observer(
     const symbol = quoteInfo.symbol
     const d = quoteInfo?.digits
     const stopl = Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d)
-    const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 0
+    // const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || getMaxOpenVolume({ buySell: isBuy ? 'BUY' : 'SELL' }) || 0
+    const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || trade.maxOpenVolume || 0
     const vmaxShow = symbolConf?.maxTrade || 20 // 配置最大可开手数，展示值
     const vmax = symbolConf?.maxTrade as number
     const vmin = symbolConf?.minTrade || 0.01
@@ -258,7 +265,7 @@ export default observer(
           )}
         </Button>
       )
-    }, [quoteInfo.hasQuote, disabledSubmitBtn, disabledTrade, isMarketOpen, isBuy, count])
+    }, [quoteInfo.hasQuote, disabledSubmitBtn, disabledTrade, isMarketOpen, isBuy, count, onFinish])
 
     return (
       <div className="mx-[10px] mt-3 flex flex-col justify-between h-[630px]">

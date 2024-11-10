@@ -35,8 +35,8 @@ export type WorkerType =
   | 'SYNC_ALL_SYMBOL_MAP'
   /**当前账户所有品种列表 */
   | 'SYNC_ALL_SYMBOL_LIST'
-  /**默认全仓，右下角爆仓选择逐仓、全仓切换 */
-  | 'SYNC_CURRENT_LIQUIDATION_SELECT_BGA_ID'
+  /**同步交易区操作类型 */
+  | 'SYNC_TRADE_ACTIONS'
 
 // 消息类型
 export enum MessageType {
@@ -136,4 +136,15 @@ export type IPositionListSymbolCalcInfo = {
   marginRateInfo: MarginReteInfo
   /**收益率 */
   yieldRate: any
+}
+
+export type IExpectedMargin = {
+  /**手数 */
+  orderVolume: number
+  /**买卖方向 */
+  buySell: API.TradeBuySell
+  /**订单类型 */
+  orderType: API.OrderType | string
+  /**限价单 用户输入的价格 */
+  price?: number
 }
