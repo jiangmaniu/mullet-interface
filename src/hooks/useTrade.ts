@@ -98,15 +98,13 @@ export default function useTrade(props?: IProps) {
   const orderType = useMemo(() => trade.orderType, [trade.orderType])
   const isMarketOrder = useMemo(() => orderType === 'MARKET_ORDER', [orderType])
   const isBuy = useMemo(() => buySell === 'BUY', [buySell])
-  // let [spValue, setSp] = useState<any>(0) // 止盈
-  // let [slValue, setSl] = useState<any>(0) // 止损
 
   // 使用stores的值全局组件共享
   const { availableMargin } = trade.getAccountBalance()
 
   const prevQuoteInfo = useRef<any>() // 缓存上一次的行情信息
 
-  const quote = getCurrentQuote(symbol)
+  const quote = useMemo(() => getCurrentQuote(symbol), [symbol])
 
   const quoteInfo = useMemo(() => {
     if (!inputing) {
@@ -179,7 +177,9 @@ export default function useTrade(props?: IProps) {
   const step = useMemo(() => Number(symbolConf?.tradeStep || 0) || Math.pow(10, -d), [symbolConf, d]) // 手数步长
   // 根据品种小数点位数计算步长，独立于手数步长step。获取计算的小数位倒数第二位开始作为累加步长
   // 限价、止盈止损、停损挂单，加减时，连动报价小数位倒数第二位
-  const step2 = useMemo(() => Math.pow(10, -(d - 1)) || step, [d, step])
+  // const step2 = useMemo(() => Math.pow(10, -(d - 1)) || step, [d, step])
+  // 报价大小 * Math.pow(10, -d)
+  const step2 = useMemo(() => Number(symbolConf?.quotationSize || 0) * Math.pow(10, -d) || step, [d, symbolConf, step])
   const countPrecision = useMemo(() => getPrecisionByNumber(symbolConf?.minTrade), [symbolConf]) // 手数精度
   const accountGroupPrecision = useMemo(() => trade.currentAccountInfo.currencyDecimal || 2, [trade.currentAccountInfo.currencyDecimal])
 

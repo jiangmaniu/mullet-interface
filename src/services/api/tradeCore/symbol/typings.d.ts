@@ -446,6 +446,8 @@ declare namespace Symbol {
      * 手续费配置（JSON）
      */
     transactionFeeConf?: Symbol.TransactionFeeConf
+    /**报价大小 */
+    quotationSize?: string
   }
   // 全部品种Item列表
   type AllSymbolItem = {
