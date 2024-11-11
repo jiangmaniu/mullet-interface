@@ -120,6 +120,7 @@ class TradeStore {
   @observable slAmount = '' // 止损输入框-按金额
   @observable spPriceOrAmountType: IPriceOrAmountType = 'PRICE' // 止盈，下单时，按价格还是按金额计算
   @observable slPriceOrAmountType: IPriceOrAmountType = 'PRICE' // 止损，下单时，按价格还是按金额计算
+  @observable isPosition = false // 是否是持仓单/挂单
   // ============================
 
   // ====== 历史交易记录 ===========
@@ -254,6 +255,10 @@ class TradeStore {
     this.recordModalItem = item
   }
 
+  setIsPosition = (value: boolean) => {
+    this.isPosition = value
+  }
+
   // 重置止盈止损
   resetSpSl = () => {
     this.spValue = ''
@@ -274,6 +279,7 @@ class TradeStore {
     this.spPriceOrAmountType = 'PRICE'
     this.slPriceOrAmountType = 'PRICE'
     this.recordModalItem = {} as RecordModalItem
+    this.isPosition = false
   }
 
   // =============================

@@ -51,7 +51,8 @@ export default function useTrade(props?: IProps) {
     setSpPriceOrAmountType,
     setSlPriceOrAmountType,
     setRecordModalItem,
-    recordModalItem
+    recordModalItem,
+    isPosition // 是否是持仓单
   } = trade
 
   // 优先设置赋值的symbolName
@@ -253,7 +254,7 @@ export default function useTrade(props?: IProps) {
   const spProfit = useMemo(() => {
     let profit: any = 0
     // Math.abs 价格和行情的差值，取正数
-    if (orderType === 'LIMIT_ORDER' || orderType === 'STOP_LIMIT_ORDER') {
+    if (isPosition || orderType === 'LIMIT_ORDER' || orderType === 'STOP_LIMIT_ORDER') {
       profit = price && sp ? Number((Math.abs(sp - price) * count * consize).toFixed(d)) : 0
     } else if (orderType === 'MARKET_ORDER') {
       profit = sp ? Number((Math.abs(sp - currentPrice) * count * consize).toFixed(d)) : 0
@@ -266,13 +267,13 @@ export default function useTrade(props?: IProps) {
     })
 
     return profit
-  }, [sp, currentPrice, count, consize, orderType, price, symbolConf, buySell])
+  }, [sp, currentPrice, count, consize, orderType, price, symbolConf, buySell, isPosition])
 
   // 价格范围
   const priceTip = useMemo(() => {
     if (orderType === 'STOP_LIMIT_ORDER') {
       return Number((isBuy ? currentPrice + stopll : currentPrice + stopll).toFixed(d))
-    } else if (orderType === 'LIMIT_ORDER') {
+    } else if (isPosition || orderType === 'LIMIT_ORDER') {
       return Number((isBuy ? currentPrice - stopll : currentPrice - stopll).toFixed(d))
     }
     return 0
@@ -294,7 +295,7 @@ export default function useTrade(props?: IProps) {
       () => {
         if (orderType === 'STOP_LIMIT_ORDER') {
           return price && !Number.isNaN(price) && (isBuy ? Number(price) < Number(priceTip) : Number(price) > Number(priceTip))
-        } else if (orderType === 'LIMIT_ORDER') {
+        } else if (isPosition || orderType === 'LIMIT_ORDER') {
           return price && !Number.isNaN(price) && (isBuy ? Number(price) > Number(priceTip) : Number(price) < Number(priceTip))
         }
         return false
@@ -305,7 +306,7 @@ export default function useTrade(props?: IProps) {
         leading: true
       }
     ),
-    [orderType, isBuy, price, priceTip]
+    [orderType, isBuy, price, priceTip, isPosition]
   )
 
   // 给价格输入框加上默认值
@@ -481,7 +482,7 @@ export default function useTrade(props?: IProps) {
     throttle(
       () => {
         if (spPriceOrAmountType === 'AMOUNT') {
-          const _price = orderType === 'MARKET_ORDER' ? currentPrice : price
+          const _price = orderType === 'MARKET_ORDER' && !isPosition ? currentPrice : price
           if (isBuy) {
             //  * 止盈价 = 买单市价 + (预计盈利/手数/合约大小)
             return (_price + Number(spAmount || 0) / count / consize).toFixed(d)
@@ -498,7 +499,7 @@ export default function useTrade(props?: IProps) {
         leading: true
       }
     ),
-    [spPriceOrAmountType, spValue, spAmount, isBuy, currentPrice, price, orderType, count, consize]
+    [spPriceOrAmountType, spValue, spAmount, isBuy, currentPrice, price, orderType, count, consize, isPosition]
   )
 
   // 计算止损价格
@@ -507,7 +508,7 @@ export default function useTrade(props?: IProps) {
     throttle(
       () => {
         if (slPriceOrAmountType === 'AMOUNT') {
-          const _price = orderType === 'MARKET_ORDER' ? currentPrice : price
+          const _price = orderType === 'MARKET_ORDER' && !isPosition ? currentPrice : price
           if (isBuy) {
             // * 止损价 = 买单市价 - (预估亏损/手数/合约大小)
             return (_price - Number(slAmount || 0) / count / consize).toFixed(d)
@@ -524,33 +525,41 @@ export default function useTrade(props?: IProps) {
         leading: true
       }
     ),
-    [slPriceOrAmountType, slValue, slAmount, isBuy, currentPrice, price, orderType, count, consize]
+    [slPriceOrAmountType, slValue, slAmount, isBuy, currentPrice, price, orderType, count, consize, isPosition]
   )
 
   // 计算止盈预估盈亏
   // 止盈预估盈亏=（止盈价-市价/限价）*合约单位*手数/*汇率
-  const spValueEstimate = formatNum(
-    useMemo(
-      throttle(() => (spPriceOrAmountType === 'AMOUNT' ? String(spAmount) : String(spProfit)), 100, {
+  const spValueEstimate = useMemo(
+    throttle(
+      () => {
+        return formatNum(spPriceOrAmountType === 'AMOUNT' ? String(spAmount) : String(spProfit), { precision: accountGroupPrecision })
+      },
+      100,
+      {
         // 立即执行
         leading: true
-      }),
-      [spPriceOrAmountType, spProfit, spAmount]
+      }
     ),
-    { precision: accountGroupPrecision }
+    [spPriceOrAmountType, spProfit, spAmount]
   )
 
   // 计算止损预估盈亏
   // 止损预估盈亏=（市价/限价-止损价）*合约单位*手数/*汇率
-  const slValueEstimate = formatNum(
-    useMemo(
-      throttle(() => (slPriceOrAmountType === 'AMOUNT' ? toNegativeOrEmpty(slAmount) : toNegativeOrEmpty(slProfit)), 100, {
+  const slValueEstimate = useMemo(
+    throttle(
+      () => {
+        return formatNum(slPriceOrAmountType === 'AMOUNT' ? toNegativeOrEmpty(slAmount) : toNegativeOrEmpty(slProfit), {
+          precision: accountGroupPrecision
+        })
+      },
+      100,
+      {
         // 立即执行
         leading: true
-      }),
-      [slPriceOrAmountType, slProfit, slAmount]
+      }
     ),
-    { precision: accountGroupPrecision }
+    [slPriceOrAmountType, slProfit, slAmount]
   )
 
   // 止盈止损范围大小判断
