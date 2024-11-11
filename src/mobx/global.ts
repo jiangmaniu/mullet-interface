@@ -1,4 +1,4 @@
-import { makeAutoObservable, observable, runInAction } from 'mobx'
+import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
 import { getRegisterWay } from '@/services/api/common'
@@ -13,7 +13,8 @@ export class GlobalStore {
   }
   @observable registerWay: API.RegisterWay = 'EMAIL' // 注册方式: EMAIL | PHONE
   @observable messageList = [] as Message.MessageItem[] // 消息列表
-  @observable messageListPage = 1 // 消息列表页码
+  @observable messageCurrent = 1 // 消息列表页码
+  @observable messageTotalCount = 1 // 总页码
   @observable unReadCount = 0 // 未读消息数量
 
   fetchUserInfo = async (refreshAccount?: boolean) => {
@@ -70,17 +71,23 @@ export class GlobalStore {
   }
 
   // 获取消息列表
+  @action
   getMessageList = async (isRefresh = false) => {
-    const res = await getMyMessageList({ size: 10, current: isRefresh ? 1 : this.messageListPage })
+    const hasMore = !isRefresh && this.messageCurrent <= this.messageTotalCount
+    if (hasMore) {
+      this.messageCurrent += 1
+    } else {
+      this.messageCurrent = 1
+    }
+
+    const res = await getMyMessageList({ size: 10, current: this.messageCurrent })
     const list = (res.data?.records || []) as Message.MessageItem[]
-    const totalPages = res?.data?.pages as number
 
     runInAction(() => {
-      if (!isRefresh && this.messageListPage <= totalPages) {
-        this.messageListPage += 1
+      this.messageTotalCount = Number(res?.data?.pages)
+      if (hasMore) {
         this.messageList = this.messageList.concat(list)
       } else {
-        this.messageListPage = 1
         this.messageList = list
       }
     })
