@@ -103,6 +103,7 @@ export default {
   'common.chongzhi': '充值',
   'common.monichongzhi': '充值(模拟)',
   'common.gendanfenrun': '跟单分润',
-  'common.shuaxin': '刷新'
+  'common.shuaxin': '刷新',
+  'common.qingchu': '清除'
   // "======= 公共结束 ==========": "",
 }

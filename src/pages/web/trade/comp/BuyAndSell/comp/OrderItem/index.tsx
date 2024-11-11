@@ -32,39 +32,33 @@ const SubmitButton = observer(() => {
   const disabledSubmitBtn = recordModalItem.id ? false : disabledBtn
   const isMarketOpen = trade.isMarketOpen()
 
-  const renderButton = useMemo(() => {
-    return (
-      <Button
-        type="primary"
-        style={{ background: isBuy ? 'var(--color-green-700)' : 'var(--color-red-600)' }}
-        className="!h-[44px] !rounded-lg !text-[13px]"
-        block
-        onClick={onSubmitOrder}
-        loading={loading}
-        disabled={disabledSubmitBtn}
-      >
-        {hasQuote && (
+  return (
+    <Button
+      type="primary"
+      style={{ background: isBuy ? 'var(--color-green-700)' : 'var(--color-red-600)' }}
+      className="!h-[44px] !rounded-lg !text-[13px]"
+      block
+      onClick={onSubmitOrder}
+      loading={loading}
+      disabled={disabledSubmitBtn}
+    >
+      <>
+        {!disabledTrade && isMarketOpen && (
           <>
-            {!disabledTrade && isMarketOpen && (
-              <>
-                {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {orderVolume}{' '}
-                <FormattedMessage id="mt.lot" />
-              </>
-            )}
-            {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
-            {!isMarketOpen && (
-              <div className="flex items-center">
-                <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
-                <FormattedMessage id="mt.xiushizhong" />
-              </div>
-            )}
+            {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {orderVolume}{' '}
+            <FormattedMessage id="mt.lot" />
           </>
         )}
-      </Button>
-    )
-  }, [isMarketOpen, disabledSubmitBtn, isBuy, disabledTrade, loading, orderVolume, hasQuote, onSubmitOrder])
-
-  return <>{renderButton}</>
+        {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
+        {!isMarketOpen && (
+          <div className="flex items-center">
+            <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
+            <FormattedMessage id="mt.xiushizhong" />
+          </div>
+        )}
+      </>
+    </Button>
+  )
 })
 
 // 订单Item

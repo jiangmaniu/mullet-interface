@@ -1,16 +1,20 @@
-import { action, makeAutoObservable, observable, runInAction } from 'mobx'
+import { makeAutoObservable, observable, runInAction } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
 import { getRegisterWay } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
+import { getMyMessageList, getUnReadMessageCount } from '@/services/api/message'
 import { onLogout } from '@/utils/navigator'
-import { STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
+import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
 
 export class GlobalStore {
   constructor() {
     makeAutoObservable(this)
   }
   @observable registerWay: API.RegisterWay = 'EMAIL' // 注册方式: EMAIL | PHONE
+  @observable messageList = [] as Message.MessageItem[] // 消息列表
+  @observable messageListPage = 1 // 消息列表页码
+  @observable unReadCount = 0 // 未读消息数量
 
   fetchUserInfo = async (refreshAccount?: boolean) => {
     try {
@@ -65,10 +69,42 @@ export class GlobalStore {
     })
   }
 
+  // 获取消息列表
+  getMessageList = async (isRefresh = false) => {
+    const res = await getMyMessageList({ size: 10, current: isRefresh ? 1 : this.messageListPage })
+    const list = (res.data?.records || []) as Message.MessageItem[]
+    const totalPages = res?.data?.pages as number
+
+    runInAction(() => {
+      if (!isRefresh && this.messageListPage <= totalPages) {
+        this.messageListPage += 1
+        this.messageList = this.messageList.concat(list)
+      } else {
+        this.messageListPage = 1
+        this.messageList = list
+      }
+    })
+  }
+
+  // 获取未读消息数量
+  getUnreadMessageCount = async () => {
+    const res = await getUnReadMessageCount()
+    const count = res.data || 0
+
+    runInAction(() => {
+      this.unReadCount = count
+    })
+  }
+
   // ========== 全局页面初始化执行 ================
-  @action
+
   init = () => {
     this.getRegisterWay()
+
+    if (STORAGE_GET_TOKEN()) {
+      this.getUnreadMessageCount()
+      this.getMessageList()
+    }
   }
 }
 

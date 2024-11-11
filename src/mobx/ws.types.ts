@@ -96,6 +96,21 @@ export type IDepth = {
   ts?: number
 }
 
+// 消息推送模版
+export type MessagePopupInfo = {
+  messageLogId: number
+  /**消息级别 eg. WARN */
+  grade: string
+  isAll: string
+  /**标题 */
+  title: string
+  type: string
+  /**用户id */
+  userId: number
+  /**内容 */
+  content: string
+}
+
 export type ITradeType =
   /** 限价单下单 */
   | 'LIMIT_ORDER'

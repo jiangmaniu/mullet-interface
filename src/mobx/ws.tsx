@@ -1,3 +1,4 @@
+import { notification } from 'antd'
 import { action, configure, makeObservable, observable, toJS } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
@@ -8,7 +9,7 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 
 import klineStore from './kline'
 import trade from './trade'
-import { IDepth, IQuoteItem, ITradeType, WorkerType } from './ws.types'
+import { IDepth, IQuoteItem, ITradeType, MessagePopupInfo, WorkerType } from './ws.types'
 
 // WebSocket 的四个状态
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/readyState
@@ -38,7 +39,6 @@ class WSStore {
   @observable depth = new Map<string, IDepth>() // 当前行情
   @observable symbols = {} // 储存品种请求列表
   @observable websocketUrl = ENV.ws
-  @observable popupMessageInfo = {} as any // 弹窗消息
 
   // ========== 连接相关 start ==========
   @action
@@ -122,7 +122,18 @@ class WSStore {
         break
       case 'MESSAGE_RES':
         // 更新消息通知
-        this.popupMessageInfo = data
+        const info = data as MessagePopupInfo
+        notification.info({
+          message: <span className="text-primary font-medium">{info?.title}</span>,
+          description: <span className="text-secondary">{info?.content}</span>,
+          placement: 'bottomLeft',
+          style: {
+            background: 'var(--dropdown-bg)'
+          }
+        })
+        // 刷新消息列表
+        stores.global.getUnreadMessageCount()
+        console.log('消息通知', data)
         break
       // 同步计算的结果返回
       case 'SYNC_CALCA_RES':

@@ -1,6 +1,6 @@
 /* eslint-disable simple-import-sort/imports */
 import { QuestionCircleOutlined } from '@ant-design/icons'
-import { FormattedMessage, SelectLang as UmiSelectLang, history, useLocation, useModel } from '@umijs/max'
+import { FormattedMessage, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
 import { Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useState } from 'react'
@@ -14,6 +14,7 @@ import { goKefu, push } from '@/utils/navigator'
 
 import { HeaderTheme } from '../Header/types'
 import AccountDropdown from './AccountDropdown'
+import Message from './Message'
 import TradeAccountDropdown from './TradeAccountDropdown'
 import UserCenterAccountDropdown from './UserCenterAccountDropdown'
 
@@ -43,34 +44,6 @@ export const Question = () => {
     >
       <QuestionCircleOutlined />
     </div>
-  )
-}
-
-export const Message = () => {
-  const { isMobileOrIpad } = useEnv()
-  const messageDom = (
-    <div
-      style={{
-        display: 'flex',
-        marginRight: 12
-      }}
-      onClick={() => {
-        history.push('/message')
-      }}
-    >
-      {/* <Badge dot>
-        <img src="/img/icons/message.png" className="w-[20px] h-[20px]" />
-      </Badge> */}
-      <Iconfont name="xiaoxi" />
-    </div>
-  )
-  if (isMobileOrIpad) {
-    return messageDom
-  }
-  return (
-    <Tooltip placement="bottomRight" title={<FormattedMessage id="mt.myMessage" />}>
-      {messageDom}
-    </Tooltip>
   )
 }
 
@@ -127,7 +100,10 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
         {/* 个人中心账户信息下拉dropdown */}
         {!isTradePage && realAccountList.length > 0 && <UserCenterAccountDropdown theme={theme} />}
 
-        <Iconfont
+        {/* 消息管理 */}
+        <Message theme={theme} />
+
+        {/* <Iconfont
           name="caidan"
           width={36}
           height={36}
@@ -136,7 +112,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           hoverStyle={{
             background: theme === 'black' ? '#fbfbfb' : '#222222'
           }}
-        />
+        /> */}
         <Iconfont
           name="quan"
           width={36}
@@ -150,8 +126,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             push('/account')
           }}
         />
-
-        <Iconfont
+        {/* <Iconfont
           name="kefu"
           width={36}
           height={36}
@@ -160,7 +135,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           hoverStyle={{
             background: theme === 'black' ? '#fbfbfb' : '#222222'
           }}
-        />
+        /> */}
         {/* 账户信息下拉 */}
         <AccountDropdown theme={theme} />
       </div>

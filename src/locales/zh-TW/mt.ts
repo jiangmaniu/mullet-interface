@@ -675,10 +675,10 @@ export default {
   'mt.dayuxianzhifanwei': '不得大於{type}限制範圍：{value}',
   'mt.xiaoyuxianzhifanwei': '不得小於{type}限制範圍：{value}',
 
-  // @TODO new 2024-09-09
   'mt.daidanzhuangtai3': '可跟單',
   'mt.chaochuxianzhifanwei': '超出{type}限制範圍：{value}',
   'mt.yibeijinyong': '已被禁用',
+  'mt.zhanneixin': '站内信',
   //  ==========个人中心-跟单 结束 ==========
 
   //  ========== 其他组件相关 开始 ==========

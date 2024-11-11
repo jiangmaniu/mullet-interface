@@ -685,6 +685,7 @@ export default {
   'mt.daidanzhuangtai3': 'Available',
   'mt.chaochuxianzhifanwei': 'Exceeds {type} limit range: {value}',
   'mt.yibeijinyong': 'Disabled',
+  'mt.zhanneixin': 'Internal Message',
   //  ==========个人中心-跟单 结束 ==========
 
   //  ========== 其他组件相关 开始 ==========

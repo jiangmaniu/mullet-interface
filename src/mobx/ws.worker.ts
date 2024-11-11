@@ -303,7 +303,7 @@ function subscribeTrade({ cancel, topic }: { cancel?: boolean; topic: string }) 
 }
 
 // 订阅消息
-function subscribeMessage(cancel?: boolean) {
+function subscribeMessage({ cancel }: { cancel?: boolean }) {
   if (!userInfo?.user_id) return
 
   // 公共订阅：/{租户ID}/public/1
