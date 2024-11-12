@@ -261,6 +261,8 @@ declare namespace User {
     userType?: number
     /**最后登录 */
     lastLoginTime?: string
+    /**用户设置的语言 */
+    language: string
   }
   // 忘记密码
   type ForgetPasswordParams = {

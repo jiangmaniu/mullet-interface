@@ -18,8 +18,7 @@ export default defineConfig({
   hash: true,
 
   // 只设置 dev 阶段的 sourcemap
-  devtool: false,
-  // devtool: process.env.NODE_ENV === 'development' ? 'eval' : false,
+  devtool: process.env.NODE_ENV === 'development' ? 'eval' : false,
 
   /**
    * @name 兼容性设置

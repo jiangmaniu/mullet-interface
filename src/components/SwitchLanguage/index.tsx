@@ -4,6 +4,7 @@ import { Dropdown } from 'antd'
 
 import { LanguageMap } from '@/constants/enum'
 import { useLang } from '@/context/languageProvider'
+import { setUserLanguage } from '@/services/api/user'
 import { cn } from '@/utils/cn'
 
 import { HeaderTheme } from '../Admin/Header/types'
@@ -34,7 +35,11 @@ export default function SwitchLanguage({ isAdmin = true, isTrade = false, theme 
 
   const langMenu = {
     selectedKeys: [lng],
-    onClick: ({ key }: any) => setLng(key),
+    onClick: async ({ key }: any) => {
+      // 调用接口设置语言保存到后台同步到不同终端
+      await setUserLanguage({ language: key })
+      setLng(key)
+    },
     items: languages.map((key: any) => {
       const localeObj = LanguageMap[key]
       return {
