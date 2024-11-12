@@ -893,15 +893,7 @@ class TradeStore {
         if (params.executeOrderId) {
           message.info(intl.formatMessage({ id: 'mt.pingcangchenggong' }))
         } else {
-          message.info(intl.formatMessage({ id: 'mt.kaicangchenggong' }))
-          // notification.success({
-          //   message: intl.formatMessage({ id: 'mt.kaicangchenggong' }),
-          //   description: `${isBuy ? intl.formatMessage({ id: 'mt.mairu' }) : intl.formatMessage({ id: 'mt.maichu' })} ${
-          //     params.orderVolume
-          //   }${intl.formatMessage({ id: 'mt.lot' })} ${intl.formatMessage({ id: 'mt.jiage' })}:${params.limitPrice}`,
-          //   placement: 'bottomLeft',
-          //   duration: 5000
-          // })
+          // message.info(intl.formatMessage({ id: 'mt.kaicangchenggong' }))
         }
         // 激活Tab
         trade.setTabKey('POSITION')

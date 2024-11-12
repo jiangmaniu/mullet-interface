@@ -58,7 +58,7 @@ function Message({ theme }: IProps) {
     }
   }
 
-  const ContainerHeight = 300
+  const ContainerHeight = messageList.length > 5 ? 300 : 200
 
   const onScroll = (e: React.UIEvent<HTMLElement, UIEvent>) => {
     // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
@@ -155,6 +155,7 @@ function Message({ theme }: IProps) {
           global.getMessageList(true)
         }
       }}
+      align={{ offset: [0, -15] }}
     >
       <div className="mr-2 cursor-pointer relative">
         <Badge count={unReadCount} color="var(--color-red)">
