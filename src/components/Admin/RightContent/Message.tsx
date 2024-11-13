@@ -123,7 +123,7 @@ function Message({ theme }: IProps) {
                               {item.title}
                             </span>
                           </div>
-                          <div className="pt-2 text-sm text-secondary">{item.content}</div>
+                          <div className="pt-2 text-sm text-secondary line-clamp-3">{item.content}</div>
                           <div className="flex items-center justify-between">
                             <div className="text-xs text-gray-450 pt-2">{item.createTime}</div>
                             {/* <div className="border rounded-lg w-[46px] h-[22px] text-center border-gray-180 group-hover:border-gray-300 hover:bg-gray-150 cursor-pointer">
