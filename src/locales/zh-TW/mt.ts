@@ -679,6 +679,7 @@ export default {
   'mt.chaochuxianzhifanwei': '超出{type}限制範圍：{value}',
   'mt.yibeijinyong': '已被禁用',
   'mt.zhanneixin': '站内信',
+  'mt.quanbuyidu': '全部已读',
   //  ==========个人中心-跟单 结束 ==========
 
   //  ========== 其他组件相关 开始 ==========

@@ -138,7 +138,7 @@ function Message({ theme }: IProps) {
                 <div className={cn('flex items-center justify-center cursor-pointer py-3', className)} onClick={handleReadAll}>
                   <Iconfont name="qingli" width={28} height={28} color={isDark ? '#fff' : gray['450']} />
                   <span className="text-sm text-gray-450">
-                    <FormattedMessage id="common.qingchu" />
+                    <FormattedMessage id="mt.quanbuyidu" />
                   </span>
                 </div>
               </>
@@ -155,7 +155,7 @@ function Message({ theme }: IProps) {
           global.getMessageList(true)
         }
       }}
-      align={{ offset: [0, -15] }}
+      // align={{ offset: [0, -15] }}
     >
       <div className="mr-2 cursor-pointer relative">
         <Badge count={unReadCount} color="var(--color-red)">
