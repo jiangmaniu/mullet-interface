@@ -704,7 +704,20 @@ export default function useTrade(props?: IProps) {
       onSubmitEnd()
       setLoading(false)
     }
-  }, [symbol, buySell, count, stopLoss, takeProfit, leverageMultiple, trade.currentAccountInfo, marginType, orderType, orderPrice, sp, sl])
+  }, [
+    symbol,
+    buySell,
+    count,
+    stopLoss,
+    takeProfit,
+    trade.leverageMultiple,
+    trade.currentAccountInfo,
+    marginType,
+    orderType,
+    orderPrice,
+    sp,
+    sl
+  ])
 
   // 封装设置止盈价格, 输入时取最后一次行情缓存计算
   const setSp = useCallback((value: any) => {

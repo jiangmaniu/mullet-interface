@@ -25,7 +25,7 @@ type IProps = {
 
 const SubmitButton = observer(() => {
   const { trade } = useStores()
-  const { orderVolume, isBuy, loading, onSubmitOrder, hasQuote, disabledBtn, disabledTrade } = useTrade()
+  const { orderVolume, isBuy, loading, onSubmitOrder, hasQuote, disabledBtn, disabledTrade, symbol } = useTrade()
   const recordModalItem = trade.recordModalItem
 
   // 禁用交易
@@ -42,21 +42,25 @@ const SubmitButton = observer(() => {
       loading={loading}
       disabled={disabledSubmitBtn}
     >
-      <>
-        {!disabledTrade && isMarketOpen && (
-          <>
-            {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {orderVolume}{' '}
-            <FormattedMessage id="mt.lot" />
-          </>
-        )}
-        {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
-        {!isMarketOpen && (
-          <div className="flex items-center">
-            <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
-            <FormattedMessage id="mt.xiushizhong" />
-          </div>
-        )}
-      </>
+      {hasQuote ? (
+        <>
+          {!disabledTrade && isMarketOpen && (
+            <>
+              {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {orderVolume}{' '}
+              <FormattedMessage id="mt.lot" />
+            </>
+          )}
+          {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
+          {!isMarketOpen && (
+            <div className="flex items-center">
+              <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
+              <FormattedMessage id="mt.xiushizhong" />
+            </div>
+          )}
+        </>
+      ) : (
+        '...'
+      )}
     </Button>
   )
 })
