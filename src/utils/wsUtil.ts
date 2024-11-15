@@ -476,8 +476,8 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
-  let ask = Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0) // ask是买价，切记ask买价一般都比bid卖价高
-  let bid = Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0) // bid是卖价
+  let ask = toFixed(Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0), digits, false) // ask是买价，切记ask买价一般都比bid卖价高
+  let bid = toFixed(Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0), digits, false) // bid是卖价
   const open = Number(symbolNewTicker?.open || 0) // 开盘价
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.high || 0), bid]) // 拿当前价格跟首次返回的比
   const low = Math.min.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
@@ -506,8 +506,8 @@ export function getCurrentQuote(currentSymbolName?: string) {
     percent, //涨幅百分比
     quotes,
     consize: Number(symbolConf?.contractSize || 0),
-    ask: toFixed(ask, digits, false),
-    bid: toFixed(bid, digits, false),
+    ask,
+    bid,
     high: toFixed(high, digits, false), //高
     low: toFixed(low, digits, false), //低
     open: toFixed(open, digits, false), //开
