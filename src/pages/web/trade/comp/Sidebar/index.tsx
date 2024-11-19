@@ -325,7 +325,13 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
               >
                 {SearchIcon}
               </div>
-              <div className="flex flex-col items-center w-full relative overflow-y-auto">
+              <div
+                className="flex flex-col items-center w-full relative overflow-y-auto pt-3"
+                style={{
+                  scrollbarColor: 'var(--scrollbar-hover-color)',
+                  scrollbarWidth: 'thin'
+                }}
+              >
                 {symbolList.map((item, idx) => {
                   const symbol = item.symbol
                   const isActive = trade.activeSymbolName === symbol

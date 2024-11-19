@@ -57,7 +57,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
     <>
       <div className="flex items-center justify-between px-[10px] py-2 border-b border-[var(--divider-line-color)]">
         <div className="flex items-center w-full gap-x-[6px]">
-          <div className="flex items-end xxl:w-[300px] xxl:flex-row xl:w-[180px] xl:items-start xl:flex-col">
+          <div className="flex items-end xxl:w-[380px] xxl:flex-row xl:w-[300px] xl:items-start xl:flex-col">
             <div
               className={cn('flex items-center relative xxl:top-1', {
                 'cursor-pointer': !openTradeSidebar
@@ -127,7 +127,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
               )}
             </div>
           </div>
-          <div className="flex items-center gap-x-4 flex-1">
+          <div className="flex items-center gap-x-4 xxl:gap-x-10 flex-1">
             <div className="flex flex-col">
               <span className="text-xs text-weak">
                 <FormattedMessage id="mt.kaipanjiage" />

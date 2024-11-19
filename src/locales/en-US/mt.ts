@@ -296,7 +296,7 @@ export default {
   'mt.hangqinglianjieguanbizhong': 'Market connection is closing...',
   'mt.dangqianfuwumeiyouhangqingshujutuisong': 'No Market Data Pushed by Current Service',
   'mt.zanwuhangqing': 'No market data',
-  'mt.xiushizhong': 'Closed for Trading',
+  'mt.xiushizhong': 'Trading Closed',
   'mt.zhanghubeijinyong': 'Account Disabled',
   'mt.dangqianzhanghuyuebuzu': 'Insufficient current account balance',
 
