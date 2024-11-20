@@ -713,28 +713,28 @@ export default function useTrade(props?: IProps) {
 
   // 封装设置止盈价格, 输入时取最后一次行情缓存计算
   const setSp = useCallback((value: any) => {
-    setSpPriceOrAmountType('PRICE')
+    value && setSpPriceOrAmountType('PRICE')
     _setSp(value)
     setInputing(false)
   }, [])
 
   // 封装设置止损价格, 输入时取最后一次行情缓存计算
   const setSl = useCallback((value: any) => {
-    setSlPriceOrAmountType('PRICE')
+    value && setSlPriceOrAmountType('PRICE')
     _setSl(value)
     setInputing(false)
   }, [])
 
   // 封装设置止盈金额, 输入时取最后一次行情缓存计算
   const setSpAmount = useCallback((value: any) => {
-    setSpPriceOrAmountType('AMOUNT')
+    value && setSpPriceOrAmountType('AMOUNT')
     _setSpAmount(value)
     setInputing(false)
   }, [])
 
   // 封装设置止损金额, 输入时取最后一次行情缓存计算
   const setSlAmount = useCallback((value: any) => {
-    setSlPriceOrAmountType('AMOUNT')
+    value && setSlPriceOrAmountType('AMOUNT')
     _setSlAmount(value)
     setInputing(false)
   }, [])
