@@ -71,7 +71,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
+        return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
     },
     {

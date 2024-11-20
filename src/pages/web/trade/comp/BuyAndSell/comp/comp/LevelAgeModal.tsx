@@ -94,7 +94,7 @@ function LevelAgeModal({ trigger }: IProps) {
             modalRef?.current?.close()
             // @ts-ignore
             trade.setLeverageMultiple(current)
-            trade.setLeverageMultipleMaxOpenVolume(maxOpenLeverage)
+            // trade.setLeverageMultipleMaxOpenVolume(maxOpenLeverage)
           }}
         >
           <FormattedMessage id="common.queren" />

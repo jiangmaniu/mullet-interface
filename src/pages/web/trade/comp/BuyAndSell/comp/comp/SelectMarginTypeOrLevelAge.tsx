@@ -14,7 +14,7 @@ type IProps = ProFormSelectProps
 // 全仓、逐仓、杠杆选择
 function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...res }: IProps) {
   const { trade } = useStores()
-  const currentSymbol = trade.getActiveSymbolInfo()
+  const currentSymbol = trade.symbolListAll.find((item) => item.symbol === trade.activeSymbolName)
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf
   const mode = prepaymentConf?.mode
   const isFixedMargin = mode === 'fixed_margin' // 固定预付款

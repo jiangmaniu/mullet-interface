@@ -57,6 +57,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     }
   }, [activeKey])
 
+  useEffect(() => {
+    setSearchValue('')
+  }, [trade.currentAccountInfo])
+
   // 对外暴露接口
   useImperativeHandle(ref, () => {
     return popupRef.current

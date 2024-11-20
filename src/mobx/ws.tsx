@@ -181,7 +181,7 @@ class WSStore {
     needAccountGroupId?: boolean
     list?: Array<{ accountGroupId?: any; symbol: string; dataSourceCode?: any }>
   } = {}) => {
-    const symbolList = toJS(list?.length ? list : trade.symbolList)
+    const symbolList = toJS(list?.length ? list : trade.symbolListAll)
     if (!symbolList.length) return
     this.sendWorkerMessage({
       type: 'SUBSCRIBE_QUOTE',

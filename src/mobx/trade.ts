@@ -558,6 +558,7 @@ class TradeStore {
   }
 
   // 获取打开的品种完整信息
+  @action
   getActiveSymbolInfo = (currentSymbolName?: string) => {
     const symbol = currentSymbolName || this.activeSymbolName
     const symbolList = this.symbolListAll
@@ -791,7 +792,9 @@ class TradeStore {
 
       // 获取品种后，动态订阅品种
       if (ws.socket?.readyState === 1 || ws.readyState === 1) {
-        ws.batchSubscribeSymbol()
+        setTimeout(() => {
+          ws.batchSubscribeSymbol()
+        }, 400)
       } else {
         // 按需连接
         // ws.reconnect()

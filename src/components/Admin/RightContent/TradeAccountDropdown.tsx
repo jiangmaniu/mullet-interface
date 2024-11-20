@@ -25,7 +25,7 @@ type IProps = {
 
 // 交易页面账户信息下拉
 function TradeAccountDropdown({ theme }: IProps) {
-  const { trade } = useStores()
+  const { trade, ws } = useStores()
   const { currentAccountInfo } = trade
   const { occupyMargin } = trade.getAccountBalance()
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
@@ -177,6 +177,11 @@ function TradeAccountDropdown({ theme }: IProps) {
                       }
 
                       setAccountBoxOpen(false)
+
+                      // 取消之前账户组品种行情订阅
+                      ws.batchSubscribeSymbol({
+                        cancel: true
+                      })
 
                       setTimeout(() => {
                         trade.setCurrentAccountInfo(item)

@@ -23,6 +23,8 @@ export default function useSyncDataToWorker() {
     marginType
   } = trade
 
+  const positionsList = toJS(positionList)
+
   const syncData = (type: WorkerType, data?: any) => {
     ws.sendWorkerMessage({
       type,
@@ -55,9 +57,9 @@ export default function useSyncDataToWorker() {
   // 3、当前持仓列表
   useDebounceEffect(
     () => {
-      syncData('SYNC_POSITION_LIST', { positionList: toJS(positionList) })
+      syncData('SYNC_POSITION_LIST', { positionList: positionsList })
     },
-    [positionList.length, tradePageActive],
+    [JSON.stringify(positionsList), tradePageActive],
     {
       wait: 300
     }

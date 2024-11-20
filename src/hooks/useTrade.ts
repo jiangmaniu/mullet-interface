@@ -6,6 +6,7 @@ import { ORDER_TYPE } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { ITradeTabsOrderType, RecordModalItem } from '@/mobx/trade'
 import { formatNum, getPrecisionByNumber, toFixed, toNegativeOrEmpty } from '@/utils'
+import { add } from '@/utils/float'
 import { message } from '@/utils/message'
 import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 
@@ -99,20 +100,22 @@ export default function useTrade(props?: IProps) {
   const orderType = useMemo(() => trade.orderType, [trade.orderType])
   const isMarketOrder = useMemo(() => orderType === 'MARKET_ORDER', [orderType])
   const isBuy = useMemo(() => buySell === 'BUY', [buySell])
+  const currentAccountInfo = trade.currentAccountInfo
 
   // 使用stores的值全局组件共享
   const { availableMargin } = trade.getAccountBalance()
 
   const prevQuoteInfo = useRef<any>() // 缓存上一次的行情信息
 
-  const quote = useMemo(() => getCurrentQuote(symbol), [symbol])
+  const quote = getCurrentQuote(symbol)
 
-  const quoteInfo = useMemo(() => {
+  useEffect(() => {
     if (!inputing) {
       prevQuoteInfo.current = quote
     }
-    return quote
-  }, [quote, inputing, symbol])
+  }, [quote, inputing])
+
+  const quoteInfo = quote
 
   // 输入时取最后一次行情缓存计算
   const symbolConf = useMemo(() => {
@@ -163,12 +166,7 @@ export default function useTrade(props?: IProps) {
   }, [quoteInfo, inputing, prevQuoteInfo])
 
   // 输入时取最后一次行情缓存计算
-  const leverageMultiple = useMemo(() => {
-    if (inputing) {
-      return prevQuoteInfo.current?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined
-    }
-    return quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined
-  }, [quoteInfo, trade.leverageMultiple, inputing, prevQuoteInfo])
+  const leverageMultiple = quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined
 
   const stopl = useMemo(() => Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d), [symbolConf, d]) // 交易-限价和停损级别
   const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || trade.maxOpenVolume // 最大可开手数
@@ -310,7 +308,7 @@ export default function useTrade(props?: IProps) {
   )
 
   // 给价格输入框加上默认值
-  const getInitPriceValue = useCallback(() => {
+  const getInitPriceValue = () => {
     if (isBuy) {
       // 买：输入框减少0.2
       return ask ? toFixed(ask - stopl, d, false) : 0
@@ -318,7 +316,7 @@ export default function useTrade(props?: IProps) {
       // 卖：输入框增加0.2
       return bid ? toFixed(bid + stopl, d, false) : 0
     }
-  }, [isBuy, ask, bid, stopl, d])
+  }
 
   // ============== hooks start ==============
   useEffect(() => {
@@ -333,7 +331,7 @@ export default function useTrade(props?: IProps) {
     if (!recordModalItem.id) {
       setOrderPrice(getInitPriceValue())
     }
-  }, [symbol, buySell, orderType])
+  }, [symbol, buySell, orderType, vmin])
 
   useEffect(() => {
     marketItem && setItem(marketItem)
@@ -418,9 +416,11 @@ export default function useTrade(props?: IProps) {
 
   // 止盈加
   const onSpAdd = useCallback(() => {
-    if (sp && sp > 0.01) {
-      const c = (((sp + step2) * 100) / 100).toFixed(d)
-      setSp(c)
+    if (sp && Number(sp) > 0.01) {
+      // const c = (((Number(sp) + step2) * 100) / 100).toFixed(d)
+      const c = add(sp, step2)?.toFixed(d)
+
+      setSp(String(c))
     } else {
       setSp(sp_scopeRef.current)
     }
@@ -428,7 +428,7 @@ export default function useTrade(props?: IProps) {
 
   // 止盈减
   const onSpMinus = useCallback(() => {
-    if (sp && sp > 0.01) {
+    if (sp && Number(sp) > 0.01) {
       const c = (((sp - step2) * 100) / 100).toFixed(d)
       setSp(c)
     } else {
@@ -438,7 +438,7 @@ export default function useTrade(props?: IProps) {
 
   // 止损加
   const onSlAdd = useCallback(() => {
-    if (sl && sl > 0.01) {
+    if (sl && Number(sl) > 0.01) {
       const c = (((sl + step2) * 100) / 100).toFixed(d)
       setSl(c)
     } else {
@@ -448,7 +448,7 @@ export default function useTrade(props?: IProps) {
 
   // 止损减
   const onSlMinus = useCallback(() => {
-    if (sl && sl > 0.01) {
+    if (sl && Number(sl) > 0.01) {
       const c = (((sl - step2) * 100) / 100).toFixed(d)
       setSl(c)
     } else {
@@ -626,8 +626,13 @@ export default function useTrade(props?: IProps) {
     maxOpenVolumeRef.current = maxOpenVolume
   }, [maxOpenVolume])
 
+  useEffect(() => {
+    // 后台设置的最小手数
+    setOrderVolume(vmin)
+  }, [vmin])
+
   // 提交订单
-  const onSubmitOrder = useCallback(async () => {
+  const onSubmitOrder = async () => {
     setInputing(true)
     const orderParams = {
       symbol,
@@ -704,20 +709,7 @@ export default function useTrade(props?: IProps) {
       onSubmitEnd()
       setLoading(false)
     }
-  }, [
-    symbol,
-    buySell,
-    count,
-    stopLoss,
-    takeProfit,
-    trade.leverageMultiple,
-    trade.currentAccountInfo,
-    marginType,
-    orderType,
-    orderPrice,
-    sp,
-    sl
-  ])
+  }
 
   // 封装设置止盈价格, 输入时取最后一次行情缓存计算
   const setSp = useCallback((value: any) => {

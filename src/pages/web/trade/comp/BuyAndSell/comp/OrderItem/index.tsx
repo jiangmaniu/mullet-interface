@@ -51,7 +51,7 @@ const SubmitButton = observer(() => {
             </>
           )}
           {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
-          {!isMarketOpen && (
+          {!isMarketOpen && !disabledTrade && (
             <div className="flex items-center">
               <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
               <FormattedMessage id="mt.xiushizhong" />
