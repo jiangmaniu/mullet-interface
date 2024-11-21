@@ -2,6 +2,7 @@ import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 
 import { getEnum } from '@/constants/enum'
+import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
@@ -9,6 +10,8 @@ import { cn } from '@/utils/cn'
 // 点击行展开的表格配置
 export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
   const { trade } = useStores()
+  const { lng } = useLang()
+  const isZh = lng === 'zh-TW'
   const precision = trade.currentAccountInfo.currencyDecimal
 
   return [
@@ -24,7 +27,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 240,
+      width: 262,
       fixed: 'left'
     },
     {
@@ -38,7 +41,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120
+      width: 100
     },
     {
       title: <FormattedMessage id="mt.fangxiang" />,
@@ -64,7 +67,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 100
+      width: 80
     },
     {
       title: <FormattedMessage id="mt.jiage" />,
@@ -77,7 +80,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120
+      width: 110
     },
     {
       title: <FormattedMessage id="mt.shijian" />,
@@ -105,7 +108,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 140
+      width: isZh ? 120 : 170
     },
     {
       title: <FormattedMessage id="mt.zhiyingzhisun2" />,
@@ -119,7 +122,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 200,
+      width: 170,
       renderText(text, record, index, action) {
         return (
           <div>
@@ -150,7 +153,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: isZh ? 110 : 150,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
@@ -171,7 +174,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 110,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
@@ -192,7 +195,7 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 120 : 140,
       renderText(text, record, index, action) {
         let profit: any = record.profit
         const flag = Number(profit) > 0

@@ -3,6 +3,7 @@ import { FormattedMessage } from '@umijs/max'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
+import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
@@ -11,6 +12,8 @@ import { cn } from '@/utils/cn'
 export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageListItem>[] => {
   const { trade } = useStores()
   const precision = currencyDecimal
+  const { lng } = useLang()
+  const isZh = lng === 'zh-TW'
 
   return [
     {
@@ -69,7 +72,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120
+      width: 100
     },
     {
       title: <FormattedMessage id="mt.kaicangjiage" />,
@@ -226,7 +229,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 120 : 140,
       renderText(text, record, index, action) {
         let profit: any = record.profit
         const flag = Number(profit) > 0

@@ -140,8 +140,8 @@ function Footer() {
                 <div
                   className="flex cursor-pointer items-center"
                   onClick={() => {
-                    // 记录打开的symbol
-                    trade.setOpenSymbolNameList(item.symbol)
+                    // 切换品种
+                    trade.switchSymbol(item.symbol)
                   }}
                 >
                   <div className="text-wrap text-xs font-medium text-primary py-1">{item.alias}</div>

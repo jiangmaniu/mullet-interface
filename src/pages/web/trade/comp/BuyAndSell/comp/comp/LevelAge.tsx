@@ -25,7 +25,7 @@ function LevelAge({ onChange }: IProps) {
   const maxLever = Number(prepaymentConf?.float_leverage?.max_lever || 30)
 
   useEffect(() => {
-    setValue(leverageMultiple || 1)
+    setValue(leverageMultiple || 2)
   }, [leverageMultiple])
 
   // 只展示最小和最大范围即可，不展示梯度

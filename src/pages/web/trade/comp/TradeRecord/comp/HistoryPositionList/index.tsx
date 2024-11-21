@@ -59,6 +59,7 @@ function HistoryPositionList() {
         // @ts-ignore
         query: (params) => getBgaOrderPage({ ...params, status: 'FINISH', orderByField: 'finishTime', orderBy: 'DESC' })
       }}
+      pageSize={6}
       expandable={{
         columnWidth: 30,
         expandedRowRender: (record) => (

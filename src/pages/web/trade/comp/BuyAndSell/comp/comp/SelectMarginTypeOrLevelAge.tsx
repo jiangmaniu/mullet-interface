@@ -37,7 +37,7 @@ function SelectMarginTypeOrLevelAge({ fieldProps, onChange, ...res }: IProps) {
   } else if (isFixedLeverage) {
     leverage = `${prepaymentConf?.fixed_leverage?.leverage_multiple}X`
   } else if (isFloatLeverage) {
-    leverage = `${trade.leverageMultiple || 1}X`
+    leverage = `${trade.leverageMultiple || 2}X`
   }
 
   const disabledMarginBtn = !trade.currentAccountInfo.enableIsolated || trade.disabledTradeAction()

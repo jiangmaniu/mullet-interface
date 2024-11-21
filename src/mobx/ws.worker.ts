@@ -871,7 +871,7 @@ function getMaxOpenVolume() {
     } else if (mode === 'float_leverage') {
       // 浮动杠杆：可用 /（价格*合约大小*手数x/浮动杠杆）
       // 手数x = 可用 * 固定杠杆 / (价格*合约大小)*汇率
-      const float_leverage = Number(tradeActions.leverageMultiple || 1)
+      const float_leverage = Number(tradeActions.leverageMultiple || 2)
       if (float_leverage) {
         volume = (availableMargin * float_leverage) / exchangeValue
       }

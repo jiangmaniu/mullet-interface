@@ -109,7 +109,7 @@ class TradeStore {
   @observable marginType: API.MarginType = 'CROSS_MARGIN' // 交易区保证金类型
   @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
-  @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
+  @observable leverageMultiple = 2 // 浮动杠杆倍数，默认1
   @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
   @observable orderVolume = '0.01' // 交易区下单数量
   @observable orderSpslChecked = false // 是否选中止盈止损

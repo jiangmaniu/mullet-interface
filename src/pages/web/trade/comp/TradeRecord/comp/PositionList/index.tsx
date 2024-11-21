@@ -103,7 +103,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: 100,
       align: 'left',
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{text}</span>
@@ -120,7 +120,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: 110,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })} </span>
       }
@@ -136,7 +136,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: 110,
       renderText(text, record, index, action) {
         return <CurrentPrice item={record} />
       }
@@ -168,7 +168,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 110 : 120,
       renderText(text, record, index, action) {
         return (
           <span className="!text-[13px] text-primary">
@@ -193,7 +193,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 130,
+      width: 120,
       renderText(text, record, index, action) {
         const buySellInfo = getBuySellInfo(record)
         const orderMargin = record.orderMargin
@@ -274,7 +274,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 110 : 150,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
@@ -295,7 +295,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: 110,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
       }
@@ -344,7 +344,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 170,
+      width: 140,
       align: 'center',
       fixed: 'right',
       renderText(text, record, index, action) {
@@ -376,7 +376,7 @@ function Position({ style, parentPopup }: IProps) {
     }
   ]
 
-  const pageSize = 10
+  const pageSize = 6
   // 一次性获取全部持仓单然后分页处理避免ws实时计算消耗性能，ws实时推过来会覆盖接口请求的数据
   const dataSource = toJS(list)
     .slice((pageNum - 1) * pageSize, pageNum * pageSize)

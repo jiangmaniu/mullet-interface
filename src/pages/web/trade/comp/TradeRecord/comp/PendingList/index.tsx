@@ -8,6 +8,7 @@ import StandardTable from '@/components/Admin/StandardTable'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { ORDER_TYPE } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
+import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { formatNum } from '@/utils'
@@ -34,6 +35,8 @@ function PendingList({ style, parentPopup }: IProps) {
   const { ws, trade } = useStores()
   const { recordListClassName } = useStyle()
   const showActiveSymbol = trade.showActiveSymbol
+  const { lng } = useLang()
+  const isZh = lng === 'zh-TW'
 
   let pendingList = trade.pendingList as IPendingItem[]
   let list = showActiveSymbol ? pendingList.filter((v) => v.symbol === trade.activeSymbolName) : pendingList
@@ -83,7 +86,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 100,
+      width: isZh ? 100 : 120,
       align: 'left',
       className: '!text-[13px] text-primary',
       renderText(text, record, index, action) {
@@ -117,7 +120,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 120 : 150,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
@@ -261,7 +264,7 @@ function PendingList({ style, parentPopup }: IProps) {
           return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
         }}
         size="small"
-        pageSize={10}
+        pageSize={6}
       />
       {/* 取消挂单弹窗 */}
       <PendingOrderCancelModal ref={cancelPendingRef} />

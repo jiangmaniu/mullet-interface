@@ -515,6 +515,6 @@ export function getCurrentQuote(currentSymbolName?: string) {
     spread, // 买卖点差
     bidDiff: currentQuote?.bidDiff || 0,
     askDiff: currentQuote?.askDiff || 0,
-    hasQuote: !!bid // 是否存在行情
+    hasQuote: !!currentQuote?.priceData?.buy // 是否存在行情
   }
 }

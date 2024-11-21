@@ -198,7 +198,7 @@ function Account() {
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-[30px] !font-dingpro-medium text-primary">
-                    {!item.isEyeOpen ? (!item.money ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal })) : '∗∗∗∗'}
+                    {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal })) : '∗∗∗∗'}
                   </span>
                   <span className="pl-[6px] text-sm text-secondary">USD</span>
                 </div>

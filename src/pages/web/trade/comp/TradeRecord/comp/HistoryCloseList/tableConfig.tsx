@@ -3,11 +3,15 @@ import { FormattedMessage } from '@umijs/max'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
+import { useLang } from '@/context/languageProvider'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
 export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsPageListItem>[] => {
+  const { lng } = useLang()
+  const isZh = lng === 'zh-TW'
+
   return [
     {
       title: (
@@ -51,7 +55,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 120 : 140,
       align: 'left',
       className: '!text-[13px] text-primary',
       renderText(text, record, index, action) {
@@ -69,7 +73,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: isZh ? 150 : 140,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
@@ -106,7 +110,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 100,
       align: 'left',
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
@@ -145,7 +149,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 160,
+      width: isZh ? 160 : 140,
       className: '!text-[13px] text-primary'
     },
     {
@@ -193,7 +197,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 120 : 140,
       align: 'right',
       fixed: 'right',
       renderText(text, record, index, action) {

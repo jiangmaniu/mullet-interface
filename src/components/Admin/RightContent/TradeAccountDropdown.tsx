@@ -88,7 +88,12 @@ function TradeAccountDropdown({ theme }: IProps) {
     <Dropdown
       placement="topLeft"
       dropdownRender={() => (
-        <div className="dark:!shadow-none xl:border dark:border-[--dropdown-border-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white dark:bg-[--dropdown-bg] pb-1 xl:w-[360px] xl:pt-[18px]">
+        <div
+          style={{
+            boxShadow: !isDark ? '0px 2px 10px 10px rgba(227,227,227,0.1)' : 'none'
+          }}
+          className="dark:!shadow-none xl:border dark:border-[--dropdown-border-color] xl:border-[#f3f3f3] min-h-[338px] rounded-b-xl rounded-tr-xl bg-white dark:bg-[--dropdown-bg] pb-1 xl:w-[360px] xl:pt-[18px]"
+        >
           <div className="mb-[26px] px-[18px]">
             <AccountListItem
               value={currentAccountInfo?.money}
@@ -225,7 +230,7 @@ function TradeAccountDropdown({ theme }: IProps) {
                     <div className="mt-1">
                       <div>
                         <span className="text-[20px] text-primary !font-dingpro-regular">
-                          {formatNum(item.money, { precision: item.currencyDecimal || 2 })}
+                          {Number(item.money) ? formatNum(item.money, { precision: item.currencyDecimal || 2 }) : '0.00'}
                         </span>{' '}
                         <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                       </div>

@@ -45,7 +45,7 @@ function HistoryClose() {
           return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
         }}
         size="small"
-        pageSize={10}
+        pageSize={6}
         params={{ accountId: trade.currentAccountInfo?.id, symbol }}
         action={{
           query: (params: Order.TradeRecordsPageListParams) => onQuery(params)

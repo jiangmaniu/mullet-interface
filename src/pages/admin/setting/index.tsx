@@ -288,9 +288,7 @@ export default function Setting() {
             <span className="">
               <FormattedMessage id="mt.zhanghao" />：
             </span>
-            <span className="pl-2">
-              {isEmailRegisterWay ? formatEmail(currentUser?.account) : `${phoneAreaCode} ${formatMobile(currentUser?.account)}`}
-            </span>
+            <span className="pl-2">{formatMobile(currentUser?.account)}</span>
           </div>
           <div className="flex items-center justify-between flex-1 pl-7">
             <span className="text-primary text-sm">

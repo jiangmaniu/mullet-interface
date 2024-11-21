@@ -3,6 +3,7 @@ import { FormattedMessage } from '@umijs/max'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
+import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
@@ -11,6 +12,8 @@ import { cn } from '@/utils/cn'
 export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
   const { trade } = useStores()
   const currencyDecimal = trade.currentAccountInfo.currencyDecimal
+  const { lng } = useLang()
+  const isZh = lng === 'zh-TW'
 
   return [
     {
@@ -55,7 +58,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 120 : 160,
       align: 'left',
       valueEnum: getEnum().Enum.OrderType,
       className: '!text-[13px] text-primary'
@@ -75,7 +78,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 140,
       renderText(text, record, index, action) {
         let price: any = ''
         if (record.type === 'MARKET_ORDER') {
@@ -114,7 +117,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: 140,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })}</span>
       }
@@ -131,7 +134,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: isZh ? 140 : 100,
       align: 'left',
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
@@ -153,7 +156,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 150,
+      width: isZh ? 140 : 150,
       renderText(text, record, index, action) {
         return <span className="!text-[13px] text-primary">{formatNum(text, { precision: currencyDecimal })}</span>
       }

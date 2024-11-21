@@ -20,8 +20,7 @@ const Tradingview = () => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
   const { kline, trade } = useStores()
   const { isMobile, isIpad, isMobileOrIpad, isPc } = useEnv()
-  const symbolInfo = trade.getActiveSymbolInfo()
-  const symbolName = symbolInfo?.symbol
+  const symbolName = trade.activeSymbolName
   const previousSymbolName = usePrevious(symbolName)
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
   const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成

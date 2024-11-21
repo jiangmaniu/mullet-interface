@@ -58,28 +58,30 @@ function UserCenterAccountDropdown({ theme }: IProps) {
   const iconDownColor = useMemo(() => (theme === 'white' ? (accountBoxOpen ? 'black' : 'white') : 'black'), [accountBoxOpen, theme])
 
   const groupClassName = useEmotionCss(({ token }) => {
-    return {
-      '&:hover': {
-        border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
-        borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
-        borderBottomWidth: isDark ? 0 : 1,
-        background: 'var(--dropdown-bg)',
-        color: 'var(--color-text-primary)',
-        borderTopRightRadius: 12,
-        borderTopLeftRadius: 12,
-        boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
-      },
-      '&.active': {
-        border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
-        borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
-        borderBottomWidth: isDark ? 0 : 1,
-        background: 'var(--dropdown-bg)',
-        color: 'var(--color-text-primary)',
-        borderTopRightRadius: 12,
-        borderTopLeftRadius: 12,
-        boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
-      }
-    }
+    return showUserCenterAccountDropdown
+      ? {
+          '&:hover': {
+            border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
+            borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
+            borderBottomWidth: isDark ? 0 : 1,
+            background: 'var(--dropdown-bg)',
+            color: 'var(--color-text-primary)',
+            borderTopRightRadius: 12,
+            borderTopLeftRadius: 12,
+            boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+          },
+          '&.active': {
+            border: `1px solid ${isDark ? 'var(--dropdown-border-color)' : '#f3f3f3'}`,
+            borderBottomColor: isDark ? 'var(--dropdown-border-color)' : '#fff',
+            borderBottomWidth: isDark ? 0 : 1,
+            background: 'var(--dropdown-bg)',
+            color: 'var(--color-text-primary)',
+            borderTopRightRadius: 12,
+            borderTopLeftRadius: 12,
+            boxShadow: isDark ? 'none' : '0 2px 10px 10px hsla(0, 0%, 89%, .1)'
+          }
+        }
+      : {}
   })
 
   const themeClass = useEmotionCss(({ token }) => {
@@ -99,7 +101,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
       placement="topLeft"
       dropdownRender={() => {
         return (
-          <div className="dark:!shadow-none xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] rounded-b-xl rounded-tr-xl bg-primary xl:w-[360px] pt-3">
+          <div className="dark:!shadow-none shadow-sm xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] rounded-b-xl rounded-tr-xl bg-primary xl:w-[360px] pt-3">
             <div className="max-h-[500px] overflow-y-auto px-3">
               {realAccountList.map((item, idx: number) => {
                 return (
@@ -189,7 +191,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
         <div className="flex items-center group relative">
           <Iconfont name="zhanghu" width={24} height={24} style={{ marginTop: 2 }} />
           <span className="text-lg font-pf-bold ml-1">
-            {totalAccountMoney ? formatNum(totalAccountMoney, { precision: currencyDecimal }) : '--'} USD
+            {totalAccountMoney ? formatNum(totalAccountMoney, { precision: currencyDecimal }) : '0.00'} USD
           </span>
         </div>
 

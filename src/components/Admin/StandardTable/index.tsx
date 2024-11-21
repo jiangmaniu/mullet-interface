@@ -366,9 +366,9 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       }
 
       // 多语言 统一修改单元格宽度
-      if (!isZh) {
-        v.width = v.width ? Number(v.width) + 40 : v.width
-      }
+      // if (!isZh) {
+      //   v.width = v.width ? Number(v.width) + 10 : v.width
+      // }
 
       if (v.valueType === 'select') {
         v.fieldProps = {

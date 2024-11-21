@@ -194,14 +194,14 @@ function Liquidation() {
           </div>
           {renderSelect}
         </div>
-        <div className="flex items-center flex-col">
+        <div className="flex items-center flex-col pt-2">
           <div className="flex items-center justify-center flex-col relative w-full">
             <Gauge marginRate={marginRateInfo.marginRate} />
             <span className="text-base !font-dingpro-medium text-primary absolute -bottom-8">
               {formatNum(marginRateInfo.balance, { precision: 2 })} USD
             </span>
           </div>
-          <div className="flex flex-col w-full mt-[40px]">
+          <div className="flex flex-col w-full mt-[50px]">
             <div className="flex items-center justify-between">
               <span className="text-secondary text-xs">
                 <FormattedMessage id="mt.baozhengjinlv" />：

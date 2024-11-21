@@ -28,6 +28,7 @@ export default observer((props, ref) => {
         headStyle: { borderRadius: 0 },
         className: ''
       }}
+      pageSize={6}
       size="middle"
       searchFormBgColor="#fff"
       params={{ accountId: trade.currentAccountInfo.id }}

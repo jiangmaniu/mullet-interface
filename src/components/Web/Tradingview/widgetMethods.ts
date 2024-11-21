@@ -14,7 +14,7 @@ export const setSymbol = (symbol, tvWidget: IChartingLibraryWidget) => {
   tvWidget.activeChart().resetData()
   tvWidget.activeChart().setSymbol(symbol, {
     dataReady: () => {
-      console.log('切换品种成功')
+      // console.log('切换品种成功')
       stores.kline.setSwitchSymbolLoading(false)
     }
   })
