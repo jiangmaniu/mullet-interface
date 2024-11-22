@@ -48,9 +48,9 @@ let depth = new Map<string, IDepth>() // 当前深度
 let subscribeDepthTimer: any = null
 let lastQuoteUpdateTime = 0
 let lastDepthUpdateTime = 0
-const THROTTLE_QUOTE_INTERVAL = 2200
-const THROTTLE_DEPTH_INTERVAL = 600
-const MAX_CACHE_SIZE = 400 // 设置最大缓存限制
+const THROTTLE_QUOTE_INTERVAL = 400
+const THROTTLE_DEPTH_INTERVAL = 200
+const MAX_CACHE_SIZE = 80 // 设置最大缓存限制
 
 // ============ 接收主线程消息 start ==============
 self.addEventListener('message', (event) => {
@@ -431,7 +431,9 @@ function batchUpdateQuoteDataByNumber(data: any) {
 
   // 如果缓存太大，强制发送
   if (quotesCache.size >= MAX_CACHE_SIZE) {
+    console.log('强制发送')
     updateQuoteData()
+
     return
   }
 

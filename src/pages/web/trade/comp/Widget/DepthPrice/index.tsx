@@ -88,7 +88,7 @@ function DeepPrice() {
         const pencent = (item.amount / maxAmount) * 100
         const digits = quote.digits
         return (
-          <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
+          <div key={idx} className="relative overflow-hidden" style={{ animation: '0.2s ease-out 0s 1 normal none running none' }}>
             <Row className="flex items-center h-6 px-3 relative z-[2]">
               <Col span={8} className="!text-xs text-green text-left">
                 {formatNum(item.price, { precision: digits })}
@@ -105,7 +105,7 @@ function DeepPrice() {
               className="absolute r-0 z-[1] w-full bg-[var(--depth-buy-bg)] h-6 opacity-50 left-[100%] right-0 top-0"
               style={{
                 transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`,
-                transition: 'transform .3s ease-in-out'
+                transition: 'transform .2s ease-in-out'
               }}
             ></div>
           </div>
@@ -144,7 +144,7 @@ function DeepPrice() {
             const pencent = (item.amount / maxAmount) * 100
             const digits = quote.digits
             return (
-              <div key={idx} className="relative overflow-hidden" style={{ animation: '0.3s ease-out 0s 1 normal none running none' }}>
+              <div key={idx} className="relative overflow-hidden" style={{ animation: '0.2s ease-out 0s 1 normal none running none' }}>
                 <Row className="flex items-center h-6 px-3 relative z-[2]">
                   <Col span={8} className="!text-xs text-red text-left">
                     {formatNum(item.price, { precision: digits })}
@@ -161,7 +161,7 @@ function DeepPrice() {
                   className="absolute r-0 z-[1] w-full bg-[var(--depth-sell-bg)] h-6 opacity-50 left-[100%] right-0 top-0"
                   style={{
                     transform: `translateX(-${pencent >= 100 ? 100 : pencent}%)`,
-                    transition: 'transform .3s ease-in-out'
+                    transition: 'transform .2s ease-in-out'
                   }}
                 ></div>
               </div>
