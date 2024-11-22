@@ -462,7 +462,7 @@ function batchUpdateQuoteDataByNumber(data: any) {
 // =========  计算相关 start ============
 
 // 计算账户余额信息
-function getAccountBalance(data?: any) {
+function getAccountBalance() {
   const currencyDecimal = currentAccountInfo.currencyDecimal
 
   // 账户余额

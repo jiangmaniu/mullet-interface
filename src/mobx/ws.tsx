@@ -150,7 +150,6 @@ class WSStore {
         stores.trade.rightWidgetSelectMarginInfo = data?.rightWidgetSelectMarginInfo
         stores.trade.expectedMargin = data?.expectedMargin
         stores.trade.maxOpenVolume = data?.maxOpenVolume
-        // console.log('同步计算的结果返回', data)
         break
       case 'CLOSE':
         break
