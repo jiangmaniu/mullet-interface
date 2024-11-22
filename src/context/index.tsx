@@ -1,9 +1,6 @@
-import { useNetwork } from 'ahooks'
-import { useEffect } from 'react'
-
 import { EnvProvider } from './envProvider'
 import { LanguageProvider } from './languageProvider'
-import { stores, StoresProvider } from './mobxProvider'
+import { StoresProvider } from './mobxProvider'
 import { NotificationProvider } from './notification'
 import { ThemeProvider } from './themeProvider'
 
@@ -12,24 +9,6 @@ interface IProps {
 }
 
 export const Provider = ({ children }: IProps): JSX.Element => {
-  const networkState = useNetwork()
-  const isOnline = networkState.online
-
-  useEffect(() => {
-    // 如果网络断开，在连接需要重新重新建立新的连接
-    if (!isOnline) {
-      stores.ws.close()
-    }
-    if (isOnline) {
-      setTimeout(() => {
-        // 重新建立新连接
-        stores.ws.connect()
-        // 重置tradingview实例
-        stores.kline.destroyed()
-      }, 1000)
-    }
-  }, [isOnline])
-
   return (
     <NotificationProvider>
       <StoresProvider>

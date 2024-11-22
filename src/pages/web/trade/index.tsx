@@ -1,5 +1,6 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useLocation, useModel } from '@umijs/max'
+import { useNetwork } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
@@ -35,6 +36,9 @@ export default observer(() => {
   const { pathname } = useLocation()
   const { setTheme } = useTheme()
   const currentUser = initialState?.currentUser
+
+  const networkState = useNetwork()
+  const isOnline = networkState.online
 
   // 同步数据到worker线程
   const syncData = useSyncDataToWorker()
@@ -81,8 +85,18 @@ export default observer(() => {
   useEffect(() => {
     checkPageShowTime()
 
-    // 连接ws
-    ws.connect()
+    // 如果网络断开，在连接需要重新重新建立新的连接
+    if (!isOnline) {
+      ws.close()
+    }
+    if (isOnline) {
+      setTimeout(() => {
+        // 重新建立新连接
+        ws.connect()
+        // 重置tradingview实例
+        kline.destroyed()
+      }, 300)
+    }
 
     return () => {
       // 取消订阅深度报价
@@ -97,7 +111,7 @@ export default observer(() => {
       // 重置tradingview实例
       kline.destroyed()
     }
-  }, [])
+  }, [isOnline])
 
   useEffect(() => {
     onSubscribeExchangeRateQuote()
