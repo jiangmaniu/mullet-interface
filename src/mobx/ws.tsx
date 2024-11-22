@@ -117,7 +117,7 @@ class WSStore {
         }
         break
       case 'DEPTH_RES':
-        // 增量更新深度
+        // 更新深度
         if (data && data.size) {
           data.forEach((item: IDepth, dataSourceKey: string) => {
             this.depth.set(dataSourceKey, item)

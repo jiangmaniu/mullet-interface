@@ -350,11 +350,21 @@ function updateDepthData() {
       }
     })
 
-    // 发送深度数据
-    sendMessage({
-      type: 'DEPTH_RES',
-      data: depth
-    })
+    const dataSourceKey = getDatasourceKey()
+    const currentDepth = depth.get(dataSourceKey) as any
+    const currentDepthMap = new Map()
+
+    if (currentDepth) {
+      currentDepthMap.set(dataSourceKey, currentDepth)
+    }
+
+    // 只发送当前激活品种的深度数据
+    if (currentDepthMap.size) {
+      sendMessage({
+        type: 'DEPTH_RES',
+        data: currentDepthMap
+      })
+    }
 
     depthCache.clear()
     lastDepthUpdateTime = performance.now()
@@ -966,6 +976,12 @@ function getActiveSymbolInfo(currentSymbolName?: string) {
   const symbol = currentSymbolName || activeSymbolName
   const info = symbolListAll.find((item) => item.symbol === symbol) || {}
   return info as Account.TradeSymbolListItem
+}
+
+// 获取深度的key
+function getDatasourceKey() {
+  const info = getActiveSymbolInfo()
+  return `${info.dataSourceCode}/${info.symbol}`
 }
 
 /**
