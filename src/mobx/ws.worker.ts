@@ -48,7 +48,7 @@ let depth = new Map<string, IDepth>() // 当前深度
 let subscribeDepthTimer: any = null
 let lastQuoteUpdateTime = 0
 let lastDepthUpdateTime = 0
-const THROTTLE_QUOTE_INTERVAL = 400
+const THROTTLE_QUOTE_INTERVAL = 500
 const THROTTLE_DEPTH_INTERVAL = 200
 const MAX_CACHE_SIZE = 80 // 设置最大缓存限制
 
