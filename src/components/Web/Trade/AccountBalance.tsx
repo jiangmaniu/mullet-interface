@@ -2,13 +2,11 @@ import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
-import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 账户净值
 function AccountBalance() {
   const { trade } = useStores()
-  const quote = getCurrentQuote()
-  const { balance } = trade.getAccountBalance()
+  const balance = trade.accountBalanceInfo.balance
   const currencyDecimal = trade.currentAccountInfo.currencyDecimal
 
   return (
