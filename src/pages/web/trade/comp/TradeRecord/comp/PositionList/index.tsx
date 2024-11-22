@@ -168,7 +168,7 @@ function Position({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: isZh ? 110 : 120,
+      width: isZh ? 115 : 120,
       renderText(text, record, index, action) {
         return (
           <span className="!text-[13px] text-primary">

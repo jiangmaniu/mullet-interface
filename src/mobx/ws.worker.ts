@@ -386,8 +386,13 @@ function batchUpdateDepthDataByNumber(data: any) {
 // ================ 更新行情数据 开始 ================
 function updateQuoteData() {
   if (quotesCache.size) {
+    // 存储有变化的行情数据
+    const changedQuotes = new Map<string, IQuoteItem>()
+
     quotesCache.forEach((item: IQuoteItem, dataSourceKey) => {
+      if (!dataSourceKey) return
       const quoteData = quotes.get(dataSourceKey)
+      // 如果之前的行情存在，则对比增量更新
       if (quoteData) {
         const prevSell = quoteData?.priceData?.sell || 0
         const prevBuy = quoteData?.priceData?.buy || 0
@@ -402,23 +407,33 @@ function updateQuoteData() {
           item.priceData.buy = item.priceData.buy || prevBuy
           item.priceData.sell = item.priceData.sell || prevSell
         }
-      }
 
-      if (dataSourceKey) {
+        // 增量更新有变化的数据
+        if (flag && (buy !== prevBuy || sell !== prevSell)) {
+          changedQuotes.set(dataSourceKey, item)
+          quotes.set(dataSourceKey, item)
+        }
+      } else {
+        // 新增行情
         quotes.set(dataSourceKey, item)
+        changedQuotes.set(dataSourceKey, item)
       }
     })
 
-    // 发送品种行情数据
-    sendMessage({
-      type: 'SYMBOL_RES',
-      data: quotes
-    })
+    // 只有存在变化的行情才发送到主线程
+    if (changedQuotes.size > 0) {
+      // 发送变化的品种行情数据
+      sendMessage({
+        type: 'SYMBOL_RES',
+        data: changedQuotes
+      })
 
-    // 同步计算结果到主线程
-    syncCalcData()
+      // 同步计算结果到主线程
+      syncCalcData()
+    }
 
     quotesCache.clear()
+    changedQuotes.clear()
     lastQuoteUpdateTime = performance.now()
   }
 }
@@ -431,7 +446,6 @@ function batchUpdateQuoteDataByNumber(data: any) {
 
   // 如果缓存太大，强制发送
   if (quotesCache.size >= MAX_CACHE_SIZE) {
-    console.log('强制发送')
     updateQuoteData()
 
     return

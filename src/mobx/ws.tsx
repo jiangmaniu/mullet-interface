@@ -107,14 +107,22 @@ class WSStore {
         this.readyState = data?.readyState
         break
       case 'SYMBOL_RES':
-        // 更新行情
-        this.quotes = data
-        // 更新k线数据
-        klineStore.updateKlineData(this.quotes)
+        // 增量更新行情
+        if (data && data.size) {
+          data.forEach((item: IQuoteItem, dataSourceKey: string) => {
+            this.quotes.set(dataSourceKey, item)
+          })
+          // 更新k线数据
+          klineStore.updateKlineData(this.quotes)
+        }
         break
       case 'DEPTH_RES':
-        // 更新深度
-        this.depth = data
+        // 增量更新深度
+        if (data && data.size) {
+          data.forEach((item: IDepth, dataSourceKey: string) => {
+            this.depth.set(dataSourceKey, item)
+          })
+        }
         break
       case 'TRADE_RES':
         // 更新交易信息
@@ -133,7 +141,7 @@ class WSStore {
         })
         // 刷新消息列表
         stores.global.getUnreadMessageCount()
-        console.log('消息通知', data)
+        // console.log('消息通知', data)
         break
       // 同步计算的结果返回
       case 'SYNC_CALCA_RES':
