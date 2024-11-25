@@ -10,7 +10,7 @@ import AvailableMargin from '@/components/Web/Trade/AvailableMargin'
 import TotalProfit from '@/components/Web/Trade/TotalProfit'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { colorWhite } from '@/theme/theme.config'
+import { colorWhite, gray } from '@/theme/theme.config'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
@@ -167,7 +167,17 @@ function TradeAccountDropdown({ theme }: IProps) {
                 <FormattedMessage id="mt.guanlizhanghu" />
               </div>
             </div>
-            <div className="max-h-[380px] overflow-y-auto">
+            <div
+              className="max-h-[380px] overflow-y-auto"
+              style={
+                isDark
+                  ? {
+                      scrollbarColor: `${gray[578]} ${gray[680]}`,
+                      scrollbarWidth: 'thin'
+                    }
+                  : {}
+              }
+            >
               {accountArr.map((item, idx: number) => {
                 const isSimulate = item.isSimulate
                 const disabledTrade = !item?.enableConnect || item.status === 'DISABLED'

@@ -33,14 +33,18 @@ function ProfitYieldRate({ item, showYieldRate = true }: IProps) {
   const flag = Number(profit) > 0
   const color = flag ? 'text-green' : 'text-red'
 
-  const profitFormat = Number(profit) ? formatNum(profit, { precision }) : profit || '-' // 格式化的
-  const profitDom = profit ? <span className={cn('font-pf-bold', color)}>{profitFormat} USD</span> : <span className="!text-[13px]">-</span>
+  const profitFormat = Number(profit) ? formatNum(profit, { precision }) : profit || '--' // 格式化的
+  const profitDom = profit ? (
+    <span className={cn('font-pf-bold', color)}>{profitFormat} USD</span>
+  ) : (
+    <span className="!text-[13px]">--</span>
+  )
   yieldRate = showYieldRate ? yieldRate : undefined // 收益率
 
   return (
     <div className="flex flex-col">
       <div>{profitDom}</div>
-      {showYieldRate && yieldRate && <div className={cn('!text-xs font-pf-bold', color)}>({yieldRate})</div>}
+      {showYieldRate && !!yieldRate && <div className={cn('!text-xs font-pf-bold', color)}>({yieldRate})</div>}
     </div>
   )
 }
