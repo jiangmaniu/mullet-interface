@@ -453,10 +453,20 @@ export function getCurrentDepth(currentSymbolName?: string) {
  * @param {*} currentSymbol 当前传入的symbolName
  * @returns
  */
+
+// 定义缓存的数据类型
+const quoteCache = new Map()
 export function getCurrentQuote(currentSymbolName?: string) {
   const { ws, trade } = stores
   const { quotes } = ws
   let symbol = currentSymbolName || trade.activeSymbolName // 后台自定义的品种名称，symbol是唯一的
+
+  const cacheKey = `${symbol}`
+  const cachedData = quoteCache.get(cacheKey)
+  // 检查缓存是否需要更新
+  if (cachedData && !hasQuoteChanged(cachedData)) {
+    return cachedData
+  }
 
   // 当前品种的详细信息
   const currentSymbol = trade.getActiveSymbolInfo(symbol)
@@ -487,7 +497,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   // 买卖点差
   const spread = Math.abs(multiply(Math.abs(Number(subtract(bid, ask))), Math.pow(10, digits)) as number)
 
-  return {
+  const result = {
     symbol, // 用于展示的symbol自定义名称
     dataSourceSymbol, // 数据源品种
     dataSourceKey, // 获取行情源的key
@@ -517,4 +527,33 @@ export function getCurrentQuote(currentSymbolName?: string) {
     askDiff: currentQuote?.askDiff || 0,
     hasQuote: !!currentQuote?.priceData?.buy // 是否存在行情
   }
+
+  quoteCache.set(cacheKey, result)
+
+  return result
+}
+
+function hasQuoteChanged(cachedData: any): boolean {
+  const { ws, trade } = stores
+  const { quotes } = ws
+
+  // 获取最新数据源key
+  const dataSourceKey = cachedData.dataSourceKey
+  const currentQuote = quotes.get(dataSourceKey)
+
+  // 如果没有最新行情，认为数据已变化
+  if (!currentQuote?.priceData) {
+    return true
+  }
+
+  // 比较关键价格数据
+  const newBuy = currentQuote?.priceData?.buy
+  const newSell = currentQuote?.priceData?.sell
+
+  return (
+    // 比较买卖价
+    newBuy !== cachedData.currentQuote?.priceData?.buy ||
+    newSell !== cachedData.currentQuote?.priceData?.sell ||
+    cachedData.symbol !== trade.activeSymbolName
+  )
 }

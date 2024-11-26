@@ -71,6 +71,11 @@ function Position({ style, parentPopup }: IProps) {
     }, 200)
   }, [])
 
+  useEffect(() => {
+    const posIds = positionList.map((item) => item.id)
+    expandedRowKeysRef.current = (expandedRowKeysRef.current || []).filter((id: string) => posIds.includes(id)) // 过滤掉不存在的id
+  }, [positionList.length])
+
   const isExpandCurrentRow = (id: string) => expandedRowKeysRef.current.includes(id)
 
   const getColumns = (key?: 'expand' | 'oneLevel'): ProColumns<IPositionItem>[] => {
@@ -109,7 +114,9 @@ function Position({ style, parentPopup }: IProps) {
                     {childrenListLen}
                   </div>
                   <span className="flex items-center">
-                    <span className={cn('text-sm font-pf-bold', colorClassName)}>{record.leverageMultiple}X</span>
+                    {!!record.leverageMultiple && (
+                      <span className={cn('text-sm font-pf-bold', colorClassName)}>{record.leverageMultiple}X</span>
+                    )}
                     <LockIcon color={record.buySell === 'BUY' ? 'var(--color-green)' : 'var(--color-red)'} />
                   </span>
                   <span className="flex">
@@ -306,24 +313,6 @@ function Position({ style, parentPopup }: IProps) {
         }
       },
       {
-        title: <FormattedMessage id="mt.jiaoyishijian" />,
-        dataIndex: 'createTime',
-        hideInSearch: true, // 在 table的查询表单 中隐藏
-        ellipsis: false,
-        fieldProps: {
-          placeholder: ''
-        },
-        formItemProps: {
-          label: '' // 去掉form label
-        },
-        width: 180,
-        className: '!text-[13px] text-primary',
-        renderText(text, record, index, action) {
-          if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
-          return <span className="!text-[13px] text-primary">{record.createTime}</span>
-        }
-      },
-      {
         title: <FormattedMessage id="mt.chicangdanhao" />,
         dataIndex: 'id',
         hideInSearch: true, // 在 table的查询表单 中隐藏
@@ -340,6 +329,23 @@ function Position({ style, parentPopup }: IProps) {
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
           return <span className="!text-[13px] text-primary">{record.id}</span>
+        }
+      },
+      {
+        title: <FormattedMessage id="mt.jiaoyishijian" />,
+        dataIndex: 'createTime',
+        hideInSearch: true, // 在 table的查询表单 中隐藏
+        ellipsis: false,
+        fieldProps: {
+          placeholder: ''
+        },
+        formItemProps: {
+          label: '' // 去掉form label
+        },
+        width: 180,
+        className: '!text-[13px] text-primary',
+        renderText(text, record, index, action) {
+          return <span className="!text-[13px] text-primary">{record.createTime}</span>
         }
       },
       {
@@ -475,32 +481,29 @@ function Position({ style, parentPopup }: IProps) {
   }
 
   const pageSize = 6
-  // 一次性获取全部持仓单然后分页处理避免ws实时计算消耗性能，ws实时推过来会覆盖接口请求的数据
-  const dataSource = getSymbolGroup(toJS(list))
-    .slice((pageNum - 1) * pageSize, pageNum * pageSize)
-    .map((v) => {
-      const conf = v.conf as Symbol.SymbolConf
-      const symbol = v.symbol as string
-      const contractSize = conf.contractSize || 0
-      const digits = v.symbolDecimal || 2
-      const isCrossMargin = v.marginType === 'CROSS_MARGIN'
+  const dataSource = getSymbolGroup(toJS(list)).map((v) => {
+    const conf = v.conf as Symbol.SymbolConf
+    const symbol = v.symbol as string
+    const contractSize = conf.contractSize || 0
+    const digits = v.symbolDecimal || 2
+    const isCrossMargin = v.marginType === 'CROSS_MARGIN'
 
-      // 全仓使用基础保证金
-      if (isCrossMargin) {
-        v.orderMargin = v.orderBaseMargin
-      }
+    // 全仓使用基础保证金
+    if (isCrossMargin) {
+      v.orderMargin = v.orderBaseMargin
+    }
 
-      // const profit = covertProfit(v) as number // 浮动盈亏
-      // v.profit = profit
-      v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
-      // v.yieldRate = calcYieldRate(v, precision) // 收益率
-      // v.forceClosePrice = calcForceClosePrice(v) // 强平价
+    // const profit = covertProfit(v) as number // 浮动盈亏
+    // v.profit = profit
+    v.startPrice = toFixed(v.startPrice, digits) // 开仓价格格式化
+    // v.yieldRate = calcYieldRate(v, precision) // 收益率
+    // v.forceClosePrice = calcForceClosePrice(v) // 强平价
 
-      // 保证金率
-      // const { marginRate } = trade.getMarginRateInfo(v)
-      // v.marginRate = `${marginRate}%`
-      return v
-    })
+    // 保证金率
+    // const { marginRate } = trade.getMarginRateInfo(v)
+    // v.marginRate = `${marginRate}%`
+    return v
+  })
 
   const className = useEmotionCss(({ token }) => {
     return {
@@ -560,7 +563,7 @@ function Position({ style, parentPopup }: IProps) {
           }}
           pageSize={pageSize}
           pagination={{
-            total: showActiveSymbol ? positionList.filter((v) => v.symbol === activeSymbolName).length : trade.positionList.length,
+            total: showActiveSymbol ? dataSource.filter((v) => v.symbol === activeSymbolName).length : dataSource.length,
             onShowSizeChange(current, size) {
               setPageNum(current)
             }

@@ -129,7 +129,7 @@ function TradeRecord({ trigger }: IProps) {
 
   const renderTabContent = () => {
     return (
-      <div className="pb-[50px] min-h-[300px]">
+      <div className="pb-[50px] min-h-[479px]">
         {tabKey === 'POSITION' && <PositionList parentPopup={popupRef.current} />}
         {tabKey === 'PENDING' && <PendingList parentPopup={popupRef.current} />}
         {tabKey === 'HISTORY_PENDING' && <HistoryPendingList />}

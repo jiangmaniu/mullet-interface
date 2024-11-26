@@ -53,6 +53,7 @@ export default function useTrade(props?: IProps) {
     setSlPriceOrAmountType,
     setRecordModalItem,
     recordModalItem,
+    setIsPosition, // 是否是持仓单
     isPosition // 是否是持仓单
   } = trade
 
@@ -65,6 +66,7 @@ export default function useTrade(props?: IProps) {
     if (item && item.symbol) {
       // 关闭止盈止损，避免赋值的时候污染了右侧下单全局的值展示
       setOrderSpslChecked(false)
+      setIsPosition(true)
 
       let _orderType = 'MARKET_ORDER' as ITradeTabsOrderType
       // @ts-ignore

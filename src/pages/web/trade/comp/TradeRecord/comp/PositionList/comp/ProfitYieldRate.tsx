@@ -35,7 +35,10 @@ function ProfitYieldRate({ item, showYieldRate = true }: IProps) {
 
   const profitFormat = Number(profit) ? formatNum(profit, { precision }) : profit || '--' // 格式化的
   const profitDom = profit ? (
-    <span className={cn('font-pf-bold', color)}>{profitFormat} USD</span>
+    <span className={cn('font-pf-bold', color)}>
+      {flag ? '+' : ''}
+      {profitFormat} USD
+    </span>
   ) : (
     <span className="!text-[13px]">--</span>
   )
