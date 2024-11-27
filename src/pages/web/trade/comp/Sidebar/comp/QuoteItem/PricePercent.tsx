@@ -141,7 +141,10 @@ function PricePercent({ symbol }: IProps) {
       <Col className={cn('flex pl-2', className)} span={6}>
         {bid ? (
           <div
-            className={cn('rounded overflow-hidden text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center', bidColor)}
+            className={cn(
+              'rounded overflow-hidden text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center font-dingpro-medium',
+              bidColor
+            )}
             // style={{ background: upColor }}
           >
             {formatNum(bid)}
@@ -154,7 +157,7 @@ function PricePercent({ symbol }: IProps) {
         {ask ? (
           <div
             className={cn(
-              'text-gray rounded overflow-hidden text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center',
+              'text-gray rounded overflow-hidden text-[13px] leading-4 px-[6px] py-[2px] w-[74px] h-[22px] flex items-center font-dingpro-medium',
               askColor
             )}
             // style={{ background: downColor }}
@@ -167,7 +170,7 @@ function PricePercent({ symbol }: IProps) {
       </Col>
       <Col span={4} className="flex flex-col items-end pr-2">
         {res.bid ? (
-          <div className={cn('text-right text-xs font-pf-bold', per > 0 ? 'text-green' : 'text-red')}>
+          <div className={cn('text-right text-xs font-pf-bold font-dingpro-medium', per > 0 ? 'text-green' : 'text-red')}>
             {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
           </div>
         ) : (

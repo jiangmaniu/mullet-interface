@@ -11,7 +11,7 @@ import TotalProfit from '@/components/Web/Trade/TotalProfit'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { colorWhite, gray } from '@/theme/theme.config'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
@@ -218,7 +218,8 @@ function TradeAccountDropdown({ theme }: IProps) {
                     <div className="flex justify-between">
                       <div className="flex">
                         <div className="flex-1 text-sm font-bold text-primary">
-                          {item.name} / {hiddenCenterPartStr(item?.id, 4)}
+                          {item.name}
+                          {/* / {hiddenCenterPartStr(item?.id, 4)} */}
                         </div>
                         <div className="ml-[10px] flex px-1">
                           <div

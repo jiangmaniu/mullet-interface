@@ -90,13 +90,13 @@ function DeepPrice() {
         return (
           <div key={idx} className="relative overflow-hidden" style={{ animation: '0.2s ease-out 0s 1 normal none running none' }}>
             <Row className="flex items-center h-6 px-3 relative z-[2]">
-              <Col span={8} className="!text-xs text-green text-left">
+              <Col span={8} className="!text-xs text-green text-left font-dingpro-medium">
                 {formatNum(item.price, { precision: digits })}
               </Col>
-              <Col span={8} className="!text-xs text-primary text-left">
+              <Col span={8} className="!text-xs text-primary text-left font-dingpro-medium">
                 {formatNum(item.amount)}
               </Col>
-              <Col span={8} className="!text-xs text-primary text-right">
+              <Col span={8} className="!text-xs text-primary text-right font-dingpro-medium">
                 {formatNum(total, { precision: digits })}
               </Col>
             </Row>
@@ -146,13 +146,13 @@ function DeepPrice() {
             return (
               <div key={idx} className="relative overflow-hidden" style={{ animation: '0.2s ease-out 0s 1 normal none running none' }}>
                 <Row className="flex items-center h-6 px-3 relative z-[2]">
-                  <Col span={8} className="!text-xs text-red text-left">
+                  <Col span={8} className="!text-xs text-red text-left font-dingpro-medium">
                     {formatNum(item.price, { precision: digits })}
                   </Col>
-                  <Col span={8} className="!text-xs text-primary text-left">
+                  <Col span={8} className="!text-xs text-primary text-left font-dingpro-medium">
                     {formatNum(item.amount)}
                   </Col>
-                  <Col span={8} className="!text-xs text-primary text-right">
+                  <Col span={8} className="!text-xs text-primary text-right font-dingpro-medium">
                     {formatNum(total, { precision: digits })}
                   </Col>
                 </Row>
@@ -195,7 +195,7 @@ function DeepPrice() {
   if (!asks.length && !bids.length) return
 
   return (
-    <div className={cn('w-[300px] h-[700px] overflow-hidden relative bg-primary', className)}>
+    <div className={cn('w-[260px] h-[700px] overflow-hidden relative bg-primary', className)}>
       <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130 dark:border-[var(--border-primary-color)]">
         {renderMode}
         {/* <div>

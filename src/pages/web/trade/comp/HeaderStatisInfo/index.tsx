@@ -4,11 +4,12 @@ import { useMemo, useRef, useState } from 'react'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import FavoriteIcon from '@/components/Web/FavoriteIcon'
+import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
 
 import Sidebar from '../Sidebar'
 
@@ -21,8 +22,12 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const symbol = trade.activeSymbolName
   const [showSidebar, setShowSidebar] = useState(false)
   const { openTradeSidebar } = useModel('global')
+  const { screenSize } = useEnv()
   const symbolInfo = (trade.openSymbolNameList || []).find((item) => item?.symbol === symbol)
   const isMarketOpen = trade.isMarketOpen(symbol)
+
+  const depth = getCurrentDepth(trade.activeSymbolName)
+  const hasDepth = Number(depth?.asks?.length) > 0 && Number(depth?.bids?.length) > 0
 
   const res: any = getCurrentQuote()
   const color = res.percent > 0 ? 'text-green' : 'text-red'
@@ -56,8 +61,12 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   return (
     <>
       <div className="flex items-center justify-between px-[10px] py-2 border-b border-[var(--divider-line-color)]">
-        <div className="flex items-center w-full gap-x-[6px]">
-          <div className="flex items-end xxl:w-[380px] xxl:flex-row xl:w-[300px] xl:items-start xl:flex-col">
+        <div className="flex items-center w-full gap-x-10">
+          <div
+            className={cn('flex items-end xxl:flex-row  xl:items-start xl:flex-col', {
+              '!flex-col': openTradeSidebar && hasDepth && screenSize.width < 1700
+            })}
+          >
             <div
               className={cn('flex items-center relative xxl:top-1', {
                 'cursor-pointer': !openTradeSidebar

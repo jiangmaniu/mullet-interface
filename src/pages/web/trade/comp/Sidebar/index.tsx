@@ -153,7 +153,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
               </div>
             )}
             {!list.length && !loading && (
-              <div className="pt-10 flex items-center flex-col">
+              <div className="pt-10 pb-5 flex items-center flex-col">
                 <Empty
                   description={
                     <>

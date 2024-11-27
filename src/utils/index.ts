@@ -446,7 +446,7 @@ export function truncateDecimal(number: any, digits?: number) {
 export function hiddenCenterPartStr(str: any, num = 6) {
   if (!str) return ''
   const reg = new RegExp(`^(.{${num}}).*(.{${num}})$`)
-  return `${str}`.replace(reg, '$1****$2')
+  return `${str}`.replace(reg, '$1...$2')
 }
 
 // 格式化银行卡号 为1111-2222-3333-444

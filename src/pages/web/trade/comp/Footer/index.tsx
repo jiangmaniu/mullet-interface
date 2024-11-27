@@ -129,8 +129,8 @@ function Footer() {
         </div>
       </Tooltip>
       <div className="flex h-full flex-1 items-center overflow-x-auto">
-        <Marquee pauseOnHover speed={30} gradient={isDark ? false : true}>
-          {trade.symbolList.map((item, idx) => {
+        <Marquee pauseOnHover speed={20} gradient={isDark ? false : true}>
+          {trade.symbolListAll.map((item, idx) => {
             const res = getCurrentQuote(item.symbol)
             const per: any = res.percent
             const bid = res.bid

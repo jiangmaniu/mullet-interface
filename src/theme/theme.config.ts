@@ -285,7 +285,7 @@ export const darkTheme = {
 
   // tabs
   '--tabs-active-bg': gray['670'], // 激活背景
-  '--tabs-border-color': gray['630'], // tabs组件底部边框线颜色
+  '--tabs-border-color': '#282b2e', // tabs组件底部边框线颜色
 
   // select
   '--select-border': gray['665'], // 边框
@@ -302,7 +302,7 @@ export const darkTheme = {
   '--modal-mask-bg': 'rgba(7,7,7,0.7)',
 
   // divider
-  '--divider-line-color': gray['630'], // 边框分割线条颜色
+  '--divider-line-color': '#282b2e', // 边框分割线条颜色
 
   // dropdown
   '--dropdown-bg': gray['680'], // 背景颜色

@@ -68,9 +68,9 @@ export const EnvProvider = ({ children }: IProps) => {
     if (width >= 1540) {
       scale = 1 // 100%
     } else if (width < 1540 && width >= 1470) {
-      scale = 0.94 // 94%
+      scale = 0.9 // 94%
     } else if (width < 1470 && width >= 1200) {
-      scale = 0.88 // 88%
+      scale = 0.85 // 85%
     }
     // @ts-ignore
     document.body.style.zoom = scale
