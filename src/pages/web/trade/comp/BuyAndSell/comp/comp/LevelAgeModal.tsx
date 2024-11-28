@@ -30,8 +30,9 @@ function LevelAgeModal({ trigger }: IProps) {
 
   // 根据当前的杠杆倍数，获取对应的杠杆倍数区间(eg.1x - 10x)，对应的持仓名义价值
   const maxOpenLeverage =
-    prepaymentConf?.float_leverage?.lever_grade.find((grade) => grade.lever_start_value <= current && current <= grade.lever_end_value)
-      ?.bag_nominal_value || 0
+    (prepaymentConf?.float_leverage?.lever_grade || []).find(
+      (grade) => grade.lever_start_value <= current && current <= grade.lever_end_value
+    )?.bag_nominal_value || 0
 
   return (
     <Modal

@@ -461,12 +461,12 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const { quotes } = ws
   let symbol = currentSymbolName || trade.activeSymbolName // 后台自定义的品种名称，symbol是唯一的
 
-  const cacheKey = `${symbol}`
-  const cachedData = quoteCache.get(cacheKey)
-  // 检查缓存是否需要更新
-  if (cachedData && !hasQuoteChanged(cachedData)) {
-    return cachedData
-  }
+  // const cacheKey = `${symbol}`
+  // const cachedData = quoteCache.get(cacheKey)
+  // // 检查缓存是否需要更新
+  // if (cachedData && !hasQuoteChanged(cachedData)) {
+  //   return cachedData
+  // }
 
   // 当前品种的详细信息
   const currentSymbol = trade.getActiveSymbolInfo(symbol)
@@ -528,7 +528,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
     hasQuote: !!currentQuote?.priceData?.buy // 是否存在行情
   }
 
-  quoteCache.set(cacheKey, result)
+  // quoteCache.set(cacheKey, result)
 
   return result
 }

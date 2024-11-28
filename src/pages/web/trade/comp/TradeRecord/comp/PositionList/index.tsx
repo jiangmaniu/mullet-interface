@@ -411,7 +411,7 @@ function Position({ style, parentPopup }: IProps) {
         align: 'center',
         fixed: 'right',
         renderText(text, record, index, action) {
-          if (isOneLevel) return <RowTotalProfitYieldRate childrenList={record.childrenList} />
+          if (isOneLevel && record.childrenList?.length) return <RowTotalProfitYieldRate childrenList={record.childrenList} />
           return <ProfitYieldRate item={record} />
         }
       },

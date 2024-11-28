@@ -28,7 +28,7 @@ function CurrentPrice({ item }: IProps) {
 
   return (
     <>
-      {Number(currentPrice) ? (
+      {currentPrice ? (
         <span className={cn('!text-[13px]', quoteInfo?.bidDiff > 0 ? 'text-green' : 'text-red')}>
           {formatNum(currentPrice, { precision: item.symbolDecimal })}
         </span>
