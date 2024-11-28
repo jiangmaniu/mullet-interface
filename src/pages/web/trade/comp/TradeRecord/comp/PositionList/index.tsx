@@ -98,7 +98,7 @@ function Position({ style, parentPopup }: IProps) {
           label: '' // 去掉form label
         },
         fixed: 'left',
-        width: 200,
+        width: 240,
         renderText(_text, record, index, action) {
           const { colorClassName, text } = getBuySellInfo(record)
           const childrenListLen = Number(record?.childrenList?.length)
@@ -599,7 +599,7 @@ function Position({ style, parentPopup }: IProps) {
                         label: '' // 去掉form label
                       },
                       fixed: 'left',
-                      width: 200,
+                      width: 240,
                       renderText(text, record, index, action) {
                         const buySellInfo = getBuySellInfo(record)
                         return (

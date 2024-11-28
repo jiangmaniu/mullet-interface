@@ -196,6 +196,10 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                 itemHeight={41}
                 itemKey="id"
                 onScroll={onScroll}
+                onVisibleChange={(info) => {
+                  // @TODO 订阅可视区域内的行情
+                  // console.log(info)
+                }}
               >
                 {(item: Account.TradeSymbolListItem) => <QuoteItem item={item} />}
               </VirtualList>

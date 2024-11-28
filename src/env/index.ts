@@ -15,7 +15,7 @@ const env = {
 
 // 公共环境变量
 const URLS = {
-  offical: 'www.stellux.com',
+  offical: 'www.stellux.io',
   ...env
 }
 
