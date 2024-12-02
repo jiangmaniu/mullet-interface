@@ -6,13 +6,15 @@ import { useState } from 'react'
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
+import { IDepositMethod } from '@/mobx/deposit/types'
 
 type IProps = {
   form: FormInstance
+  methodInfo?: IDepositMethod
 }
 
 /**转入表单项 */
-export default function TransferMethodSelectItem({ form }: IProps) {
+export default function TransferMethodSelectItem({ form, methodInfo }: IProps) {
   const [open, setOpen] = useState(false)
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')
@@ -22,7 +24,7 @@ export default function TransferMethodSelectItem({ form }: IProps) {
 
   // const fromAccountId = Form.useWatch('fromAccountId', form) // 转出
   const methodId = Form.useWatch('methodId', form) // 转入
-  const methodInfo = stores.deposit.methods.find((item) => item.title === methodId) // 转入账号信息
+  // const methodInfo = stores.deposit.methods.find((item) => item.title === methodId) // 转入账号信息
 
   return (
     <div>

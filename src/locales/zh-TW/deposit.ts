@@ -10,5 +10,11 @@ export default {
   'mt.chongbidizhierweima': '充值币地址二维码',
   'mt.chongbidizhi': '充值币地址',
   'mt.qingzhuanzhangzhixiafangqukuailiandizhi': '如需入金，请转账至下方区块链地址，您可以复制地址或使用手机相机扫描二维码',
-  'mt.jixu': '继续'
+  'mt.jixu': '继续',
+  'mt.fuzhi': '复制',
+  'mt.fuzhichenggong': '复制成功',
+  'mt.zanwuneirong': '暂无内容',
+  'mt.dairujinjine': '待入金金额',
+  'mt.xiazaierweima': '下载二维码',
+  'mt.chujinfangshi': '出金方式'
 }

@@ -5,7 +5,6 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { stores } from '@/context/mobxProvider'
 import { IDepositMethod } from '@/mobx/deposit/types'
-import { push } from '@/utils/navigator'
 
 import DepositMethod from './comp'
 
@@ -29,9 +28,7 @@ export default function Deposit() {
               <div className=" text-base font-semibold text-gray-900">{intl.formatMessage({ id: 'mt.wanshanzhanghuziliao' })}</div>
             </div>
 
-            <Button type="primary" onClick={() => push('/')}>
-              {intl.formatMessage({ id: 'mt.wanshangerenziliao' })}
-            </Button>
+            <Button type="primary">{intl.formatMessage({ id: 'mt.wanshangerenziliao' })}</Button>
           </div>
         )}
 
