@@ -7,7 +7,7 @@ import { formatNum } from '@/utils'
 function AccountAvailableMargin() {
   const { availableMargin } = useTrade()
 
-  return Number(availableMargin) < 0 ? '--' : formatNum(availableMargin, { precision: 2 })
+  return Number(availableMargin) < 0 ? '--' : formatNum(availableMargin, { precision: 2 }) + ' USD'
 }
 
 export default observer(AccountAvailableMargin)

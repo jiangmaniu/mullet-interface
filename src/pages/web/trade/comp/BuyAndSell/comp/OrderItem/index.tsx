@@ -71,7 +71,7 @@ export default observer(
     const { trade, ws } = useStores()
     const [form] = Form.useForm()
     const intl = useIntl()
-    const { setOrderSpslChecked, orderSpslChecked, orderType } = trade
+    const { setOrderSpslChecked, orderSpslChecked, orderType, currentAccountInfo } = trade
 
     const renderSpslCheckBox = useMemo(() => {
       return (
@@ -143,7 +143,7 @@ export default observer(
                   <FormattedMessage id="mt.keyong" />
                 </span>
                 <span className="pl-2 text-xs text-primary !font-dingpro-medium">
-                  <AccountAvailableMargin /> USD
+                  <AccountAvailableMargin />
                 </span>
               </div>
               {/* <div className="flex items-center justify-between pb-[6px] w-full">
@@ -157,7 +157,7 @@ export default observer(
                   <FormattedMessage id="mt.yugubaozhengjin" />
                 </span>
                 <span className="text-xs text-primary !font-dingpro-medium">
-                  <ExpectedMargin />
+                  {currentAccountInfo.orderMode === 'LOCKED_POSITION' ? '--' : <ExpectedMargin />}
                 </span>
               </div>
               <div className="flex items-center justify-between pb-[6px] w-full">
