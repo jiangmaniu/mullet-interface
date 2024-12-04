@@ -3,13 +3,17 @@ declare namespace Wallet {
   type IMethodType = 'crypto' | 'bank' // 支付类型： 加密货币 / 银行
 
   type IMethodOption = {
+    // 图标
     icon?: string
-    title?: string
+    // 标签
+    label?: string
+    // 值
     value?: string
+    // 描述
     desc?: string
   }
 
-  // 配置详情，到账时间 / 限制 / 费用 / 地址 / 货币类型 / 链名称 / 银行名称 等等
+  // 配置详情，到账时间 / 金额限制 / 资费 / 货币类型 / 链名称 / 入金链上地址 / 银行名称 等等
   type IMethodOptions = Record<string, IMethodOption>
 
   /**
@@ -17,17 +21,19 @@ declare namespace Wallet {
    */
   type DepositMethod = {
     id: string
+    // 图标
     icon?: string
+    // 标题
     title: string
     // 是否可用（解锁）状态
     status?: IMethodStatus
-    // 配置详情，到账时间 / 限制 / 费用等等
+    // 配置详情，到账时间 / 金额限制 / 资费 / 货币类型 / 链名称 / 入金链上地址 / 银行名称 等等
     options?: IMethodOptions
     // 支付类型
     type?: IMethodType
-    // 充值提示
+    // 充值提示 （根据语言类型返回；或前端预设）
     tips?: string
-    // 入金须知
+    // 入金须知（html，根据语言类型返回；或前端预设）
     notice?: string
 
     // [key: string]: any
@@ -38,17 +44,19 @@ declare namespace Wallet {
    */
   type WithdrawMethod = {
     id: string
+    // 图标
     icon?: string
+    // 标题
     title: string
     // 是否可用（解锁）状态
     status?: IMethodStatus
-    // 配置详情，到账时间 / 限制 / 费用等等
+    // 配置详情，到账时间 / 金额限制 / 资费 / 货币类型 / 链名称 / 银行名称 等等
     options?: IMethodOptions
     // 支付类型
     type?: IMethodType
-    // 充值提示
+    // 充值提示 （根据语言类型返回；或前端预设）
     tips?: string
-    // 出金须知
+    // 出金须知（html，根据语言类型返回；或前端预设）
     notice?: string
 
     // [key: string]: any

@@ -9,15 +9,15 @@ export const methods: Wallet.DepositMethod[] = [
     type: 'crypto',
     options: {
       waiting: {
-        title: '到账时间',
+        label: '到账时间',
         desc: '即时 - 30分钟'
       },
       limit: {
-        title: '限制',
+        label: '限制',
         desc: '20 - 10,000 USDT'
       },
       fee: {
-        title: '手续费',
+        label: '手续费',
         desc: '0.00%'
       }
     },
@@ -34,15 +34,15 @@ export const methods: Wallet.DepositMethod[] = [
     type: 'crypto',
     options: {
       waiting: {
-        title: '到账时间',
+        label: '到账时间',
         desc: '即时 - 30分钟'
       },
       limit: {
-        title: '限制',
+        label: '限制',
         desc: '20 - 10,000 USDT'
       },
       fee: {
-        title: '手续费',
+        label: '手续费',
         desc: '0.00%'
       }
     }
@@ -55,15 +55,15 @@ export const methods: Wallet.DepositMethod[] = [
     type: 'crypto',
     options: {
       waiting: {
-        title: '到账时间',
+        label: '到账时间',
         desc: '即时 - 30分钟'
       },
       limit: {
-        title: '限制',
+        label: '限制',
         desc: '20 - 10,000 USDT'
       },
       fee: {
-        title: '手续费',
+        label: '手续费',
         desc: '0.00%'
       }
     }
@@ -76,15 +76,15 @@ export const methods: Wallet.DepositMethod[] = [
     type: 'bank',
     options: {
       waiting: {
-        title: '到账时间',
+        label: '到账时间',
         desc: '即时 - 30分钟'
       },
       limit: {
-        title: '限制',
+        label: '限制',
         desc: '20 - 10,000 USDT'
       },
       fee: {
-        title: '手续费',
+        label: '手续费',
         desc: '0.00%'
       }
     }
@@ -100,25 +100,25 @@ export const outMethods: Wallet.WithdrawMethod[] = [
     type: 'crypto',
     options: {
       crypto: {
-        title: '币种',
+        label: '币种',
         desc: 'USDT',
         value: 'USDT'
       },
       chain: {
-        title: '链',
+        label: '链',
         desc: 'ERC-20',
         value: 'ERC-20'
       },
       waiting: {
-        title: '到账时间',
+        label: '到账时间',
         desc: '即时 - 30分钟'
       },
       limit: {
-        title: '限制',
+        label: '限制',
         desc: '20 - 10,000 USDT'
       },
       fee: {
-        title: '手续费',
+        label: '手续费',
         desc: '0.00%'
       }
     },
@@ -135,20 +135,20 @@ export const outMethods: Wallet.WithdrawMethod[] = [
     type: 'bank',
     options: {
       bankName: {
-        title: '银行名称',
+        label: '银行名称',
         desc: 'Bank Name',
         value: 'Bank Name'
       },
       waiting: {
-        title: '到账时间',
+        label: '到账时间',
         desc: '即时 - 30分钟'
       },
       limit: {
-        title: '限制',
+        label: '限制',
         desc: '20 - 10,000 USDT'
       },
       fee: {
-        title: '手续费',
+        label: '手续费',
         desc: '0.00%'
       }
     },

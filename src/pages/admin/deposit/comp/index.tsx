@@ -25,7 +25,7 @@ export default function DepositMethod({ item }: { item: Wallet.DepositMethod }) 
         {item.options &&
           Object.entries(item.options).map(([key, value]) => (
             <div className="flex flex-row items-center justify-start gap-[18px]" key={key}>
-              <div className=" text-sm text-secondary  min-w-20 ">{value.title}</div>
+              <div className=" text-sm text-secondary  min-w-20 ">{value.label}</div>
               <div className="text-sm font-semibold text-gray-900">{value.desc}</div>
             </div>
           ))}
