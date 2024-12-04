@@ -6,11 +6,10 @@ import { useState } from 'react'
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
-import { IDepositMethod } from '@/mobx/deposit/types'
 
 type IProps = {
   form: FormInstance
-  methodInfo?: IDepositMethod
+  methodInfo?: Wallet.WithdrawMethod
 }
 
 /**转入表单项 */
@@ -140,9 +139,9 @@ export default function TransferMethodSelectItem({ form, methodInfo }: IProps) {
           />
         )}
       </div>
-      {methodInfo?.depositTips && (
+      {methodInfo?.tips && (
         <div className="text-xs bg-gray-120 rounded-lg py-2 px-2.5 mt-2.5">
-          <div dangerouslySetInnerHTML={{ __html: methodInfo?.depositTips || '' }} />
+          <div dangerouslySetInnerHTML={{ __html: methodInfo?.tips || '' }} />
         </div>
       )}
     </div>

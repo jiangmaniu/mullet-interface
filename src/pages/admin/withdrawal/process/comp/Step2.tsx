@@ -15,14 +15,14 @@ import { transferCurr } from '..'
 export const Step2 = ({
   form,
   values,
-  toAccountInfo,
+  fromAccountInfo,
   loading,
   setStep,
   handleSubmit
 }: {
   form: FormInstance<any>
   values?: Record<string, any>
-  toAccountInfo?: User.AccountItem
+  fromAccountInfo?: User.AccountItem
   loading?: boolean
   setStep: (step: number) => void
   handleSubmit: () => void
@@ -31,16 +31,20 @@ export const Step2 = ({
     return [
       {
         label: getIntl().formatMessage({ id: 'mt.bizhong' }),
-        value: values?.crypto
+        value: values?.currency
       },
       {
         label: getIntl().formatMessage({ id: 'mt.lianmingcheng' }),
         value: values?.chain
       },
-      {
-        label: getIntl().formatMessage({ id: 'mt.tibidizhi' }),
-        value: values?.toCryptoAccountId
-      },
+      ...(values?.type === 'crypto'
+        ? [
+            {
+              label: getIntl().formatMessage({ id: 'mt.tibidizhi' }),
+              value: values?.toAccountId
+            }
+          ]
+        : []),
       {
         label: getIntl().formatMessage({ id: 'mt.xingming' }),
         value: values?.name
@@ -49,35 +53,41 @@ export const Step2 = ({
         label: getIntl().formatMessage({ id: 'mt.yinghangmingcheng' }),
         value: values?.bankName
       },
-      {
-        label: getIntl().formatMessage({ id: 'mt.yinghangzhanghu' }),
-        value: values?.toBankAccountId
-      },
+      ...(values?.type === 'bank'
+        ? [
+            {
+              label: getIntl().formatMessage({ id: 'mt.yinghangzhanghu' }),
+              value: values?.toAccountId
+            }
+          ]
+        : []),
       {
         label: getIntl().formatMessage({ id: 'mt.tixianjine' }),
-        value: `${formatNum(values?.amount, { precision: toAccountInfo?.currencyDecimal })} ${values?.currency}`
+        value: `${formatNum(values?.amount, { precision: fromAccountInfo?.currencyDecimal })} ${values?.currency}`
       },
       {
         label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
-        value: `${formatNum(values?.handlingFee, { precision: toAccountInfo?.currencyDecimal })} ${values?.currency}`
+        value: `${formatNum(values?.handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${values?.currency}`
       },
       ...(values?.type === 'crypto'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.shijidaozhang' }),
-              value: `${formatNum(transferCurr(values?.amount - values?.handlingFee), { precision: toAccountInfo?.currencyDecimal })} ${
-                values?.crypto
+              value: `${formatNum(transferCurr(values?.amount - values?.handlingFee), { precision: fromAccountInfo?.currencyDecimal })} ${
+                values?.currency
               }`
             }
           ]
         : [
             {
               label: getIntl().formatMessage({ id: 'mt.daozhangusd' }),
-              value: `${formatNum(values?.amount - values?.handlingFee, { precision: toAccountInfo?.currencyDecimal })} ${values?.currency}`
+              value: `${formatNum(values?.amount - values?.handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${
+                values?.currency
+              }`
             },
             {
               label: getIntl().formatMessage({ id: 'mt.daozhanghuansuan' }, { value: values?.currency }),
-              value: `${formatNum(transferCurr(values?.amount - values?.handlingFee), { precision: toAccountInfo?.currencyDecimal })} ${
+              value: `${formatNum(transferCurr(values?.amount - values?.handlingFee), { precision: fromAccountInfo?.currencyDecimal })} ${
                 values?.currency
               }`
             }
@@ -140,7 +150,6 @@ export const Step2 = ({
               placeholder={getIntl().formatMessage({ id: 'mt.qingshuruzhanghaomima' })}
             />
             <ProForm.Item
-              // name="verificationCode"
               label={getIntl().formatMessage(
                 {
                   id: 'mt.qingshurushoudaodeyanzhengma'
@@ -149,7 +158,7 @@ export const Step2 = ({
               )}
             >
               <div className="flex items-center flex-wrap gap-6">
-                <CodeInput form={form} name="verificationCode" />
+                <CodeInput form={form} name="code" />
                 <span
                   className={cn('text-primary ', sendTime > 0 ? 'cursor-pointer hover:underline' : '')}
                   onClick={handleGetVerificationCode}

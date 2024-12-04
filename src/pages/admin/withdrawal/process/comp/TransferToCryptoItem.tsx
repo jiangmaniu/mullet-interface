@@ -43,7 +43,7 @@ export default function TransferToCryptoItem({ form }: IProps) {
             <FormattedMessage id="mt.tibidizhi" />
           </span>
         }
-        name="toCryptoAccountId"
+        name="toAccountId"
         rules={[
           {
             required: true,
@@ -60,8 +60,7 @@ export default function TransferToCryptoItem({ form }: IProps) {
         <AutoComplete
           size="large"
           onChange={(value) => {
-            console.log(value)
-            form.setFieldValue('toCryptoAccountId', value)
+            form.setFieldValue('toAccountId', value)
           }}
           options={searchList} // 设置自动完成的选项
           onSearch={handleSearch} // 监听搜索事件

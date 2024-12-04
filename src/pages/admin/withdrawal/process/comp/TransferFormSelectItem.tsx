@@ -13,7 +13,7 @@ type IProps = {
 }
 
 /**转入表单项 */
-export default function TransferToFormSelectItem({ form }: IProps) {
+export default function TransferFormSelectItem({ form }: IProps) {
   const [open, setOpen] = useState(false)
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')
@@ -22,13 +22,13 @@ export default function TransferToFormSelectItem({ form }: IProps) {
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
 
   // const fromAccountId = Form.useWatch('fromAccountId', form) // 转出
-  const toAccountId = Form.useWatch('toAccountId', form) // 转入
+  const fromAccountId = Form.useWatch('fromAccountId', form) // 转入
   // const fromAccountInfo = accountList.find((item) => item.id === fromAccountId) // 转出账号信息
-  const toAccountInfo = accountList.find((item) => item.id === toAccountId) // 转入账号信息
+  const fromAccountInfo = accountList.find((item) => item.id === fromAccountId) // 转入账号信息
 
   // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
-  const occupyMargin = Number(toFixed(Number(toAccountInfo?.margin || 0) + Number(toAccountInfo?.isolatedMargin || 0)))
-  const money = toAccountInfo?.money || 0
+  const occupyMargin = Number(toFixed(Number(fromAccountInfo?.margin || 0) + Number(fromAccountInfo?.isolatedMargin || 0)))
+  const money = fromAccountInfo?.money || 0
   // 可用余额
   const availableMoney = Number(toFixed(money - occupyMargin))
 
@@ -40,7 +40,7 @@ export default function TransferToFormSelectItem({ form }: IProps) {
             <FormattedMessage id="mt.zhuanchuzhanghu" />
           </span>
         }
-        name="toAccountId"
+        name="fromAccountId"
         placeholder={intl.formatMessage({ id: 'mt.xuanzezhuanchuzhanghu' })}
         allowClear={false}
         fieldProps={{
@@ -51,7 +51,7 @@ export default function TransferToFormSelectItem({ form }: IProps) {
               <SelectSuffixIcon opacity={0.5} />
               <div className="bg-gray-250 h-3 w-[1px] mr-3"></div>
               <div className="text-primary text-sm py-3 !font-dingpro-medium">
-                {formatNum(availableMoney, { precision: toAccountInfo?.currencyDecimal })} USD
+                {formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal })} USD
               </div>
             </>
           ),
@@ -66,7 +66,7 @@ export default function TransferToFormSelectItem({ form }: IProps) {
                   setOpen(false)
                 }}
                 className={classNames('cursor-pointer rounded-lg border border-gray-250 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
-                  'bg-[#f5f5f5]': item.id === toAccountId
+                  'bg-[#f5f5f5]': item.id === fromAccountInfo
                 })}
               >
                 <div className="flex w-full py-2 ml-[10px]">{item.label}</div>
@@ -80,15 +80,9 @@ export default function TransferToFormSelectItem({ form }: IProps) {
           {
             required: true,
             validator(rule, value, callback) {
-              // setTimeout(() => {
-              //   form.validateFields(['fromAccountId'])
-              // }, 300)
-              if (!toAccountId) {
+              if (!fromAccountInfo) {
                 return Promise.reject(intl.formatMessage({ id: 'mt.xuanzezhuanruzhanghao' }))
               }
-              // if (toAccountId === fromAccountId) {
-              //   return Promise.reject(intl.formatMessage({ id: 'mt.zhuanruzhanchuzhanghaobunengxiangtong' }))
-              // }
               return Promise.resolve()
             }
           }

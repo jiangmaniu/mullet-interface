@@ -4,7 +4,6 @@ import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { stores } from '@/context/mobxProvider'
-import { IDepositMethod } from '@/mobx/deposit/types'
 
 import DepositMethod from './comp'
 
@@ -40,7 +39,7 @@ export default function Withdrawal() {
             )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:gap-[38px] md:gap-[24px] gap-[16px]">
-            {methods.map((item: IDepositMethod) => (
+            {methods.map((item: Wallet.WithdrawMethod) => (
               <DepositMethod item={item} key={item.title} />
             ))}
           </div>

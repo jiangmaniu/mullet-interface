@@ -4,15 +4,13 @@ import { Form, FormInstance, Space } from 'antd'
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import Dropdown from '@/components/Base/Dropdown'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
-import { IDepositMethod } from '@/mobx/deposit/types'
-
 type IProps = {
   form: FormInstance
   currentUser?: User.UserInfo
-  methodInfo?: IDepositMethod
+  methodInfo?: Wallet.DepositMethod
 }
 
-export default function TransferBank({ form, currentUser, methodInfo }: IProps) {
+export default function TransferAmount({ form, currentUser, methodInfo }: IProps) {
   const intl = useIntl()
 
   const currency = Form.useWatch('currency', form)

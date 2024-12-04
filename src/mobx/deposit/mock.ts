@@ -1,8 +1,6 @@
 /** 数据 mock */
 
-import { IDepositMethod, IWithdrawalMethod } from './types'
-
-export const methods: IDepositMethod[] = [
+export const methods: Wallet.DepositMethod[] = [
   {
     id: 'USDT',
     icon: 'zhanghu',
@@ -23,8 +21,8 @@ export const methods: IDepositMethod[] = [
         desc: '0.00%'
       }
     },
-    depositTips: `我们只接受 Ethereum 网络的 ERC-20 地址入金。`,
-    depositNotice: `<p>这是 UDST-TRC20 地址，请不要将 USDT 转入其他地址。否则将无法到账。</p>
+    tips: `我们只接受 Ethereum 网络的 ERC-20 地址入金。`,
+    notice: `<p>这是 UDST-TRC20 地址，请不要将 USDT 转入其他地址。否则将无法到账。</p>
     <p>最小充值金额为 20 USDT，最大充值金额为 10,000 USDT。</p>
     <p>充值到该地址后，需要网络节点确认，到账速度取决于网络节点确认速度，请耐心等待。</p>`
   },
@@ -93,16 +91,24 @@ export const methods: IDepositMethod[] = [
   }
 ]
 
-export const outMethods: IWithdrawalMethod[] = [
+export const outMethods: Wallet.WithdrawMethod[] = [
   {
     id: 'USDT',
     icon: 'zhanghu',
     title: 'USDT',
     status: 'unlocked',
     type: 'crypto',
-    chain: 'ERC-20',
-    crypto: 'USDT',
     options: {
+      crypto: {
+        title: '币种',
+        desc: 'USDT',
+        value: 'USDT'
+      },
+      chain: {
+        title: '链',
+        desc: 'ERC-20',
+        value: 'ERC-20'
+      },
       waiting: {
         title: '到账时间',
         desc: '即时 - 30分钟'
@@ -116,8 +122,8 @@ export const outMethods: IWithdrawalMethod[] = [
         desc: '0.00%'
       }
     },
-    depositTips: `请确保出金地址为 Ethereum 网络的 ERC-20 地址。`,
-    depositNotice: `<p>这是 UDST-TRC20 地址，请不要将 USDT 转入其他地址。否则将无法到账。</p>
+    tips: `请确保出金地址为 Ethereum 网络的 ERC-20 地址。`,
+    notice: `<p>这是 UDST-TRC20 地址，请不要将 USDT 转入其他地址。否则将无法到账。</p>
     <p>最小充值金额为 20 USDT，最大充值金额为 10,000 USDT。</p>
     <p>充值到该地址后，需要网络节点确认，到账速度取决于网络节点确认速度，请耐心等待。</p>`
   },
@@ -127,8 +133,12 @@ export const outMethods: IWithdrawalMethod[] = [
     title: 'IDR Qris/VA',
     status: 'unlocked',
     type: 'bank',
-    bankName: 'Bank Name',
     options: {
+      bankName: {
+        title: '银行名称',
+        desc: 'Bank Name',
+        value: 'Bank Name'
+      },
       waiting: {
         title: '到账时间',
         desc: '即时 - 30分钟'
@@ -142,7 +152,7 @@ export const outMethods: IWithdrawalMethod[] = [
         desc: '0.00%'
       }
     },
-    depositNotice: `<p>1. 出金金额少于 50 USD 将收取 3 USD 手续费。</p>
+    notice: `<p>1. 出金金额少于 50 USD 将收取 3 USD 手续费。</p>
     <p>2. 用户交易量少于出金金额 50% 将收取 5% 手续费。</p>
     <p>3. 当前有处理中的订单时，无法出金。</p>
     <p>4. 出金时间（GMT+8）：10:00-18:00, 不在出金时间内将顺延至下一出金时间。</p>

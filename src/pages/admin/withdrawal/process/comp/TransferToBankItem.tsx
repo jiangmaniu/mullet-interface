@@ -29,12 +29,12 @@ export default function TransferToBankItem({ form }: IProps) {
     }
   ]
 
-  const toBankAccountId = Form.useWatch('toBankAccountId', form) // 转出
+  const toAccountId = Form.useWatch('toAccountId', form) // 转出
 
   return (
     <div className="relative">
       <ProFormSelect
-        name="toBankAccountId"
+        name="toAccountId"
         label={
           <span className="text-sm text-primary font-medium">
             <FormattedMessage id="mt.yinghangzhanghu" />
@@ -48,30 +48,13 @@ export default function TransferToBankItem({ form }: IProps) {
           suffixIcon: <></>,
           showSearch: false,
           listHeight: 300,
-          // optionRender: (option) => {
-          //   const item = option?.data || {}
-
-          //   return (
-          //     <div
-          //       onClick={() => {
-          //         setOpen(false)
-          //       }}
-          //       className={classNames('cursor-pointer rounded-lg border border-gray-250 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
-          //         'bg-[#f5f5f5]': item.id === toBankAccountId
-          //       })}
-          //     >
-          //       <div className="flex w-full py-2 ml-[10px]">{item.label}</div>
-          //     </div>
-          //   )
-          // },
-          // 回填到选择框的 Option 的属性值，默认是 Option 的子元素
           optionLabelProp: 'label'
         }}
         rules={[
           {
             required: true,
             validator(rule, value, callback) {
-              if (!toBankAccountId) {
+              if (!toAccountId) {
                 return Promise.reject(intl.formatMessage({ id: 'mt.xuanzezhuanruzhanghao' }))
               }
               return Promise.resolve()

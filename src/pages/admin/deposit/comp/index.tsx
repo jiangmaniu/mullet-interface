@@ -1,8 +1,7 @@
-import { IDepositMethod } from '@/mobx/deposit/types'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
-export default function DepositMethod({ item }: { item: IDepositMethod }) {
+export default function DepositMethod({ item }: { item: Wallet.DepositMethod }) {
   return (
     <div
       className={cn(
@@ -26,7 +25,7 @@ export default function DepositMethod({ item }: { item: IDepositMethod }) {
         {item.options &&
           Object.entries(item.options).map(([key, value]) => (
             <div className="flex flex-row items-center justify-start gap-[18px]" key={key}>
-              <div className=" text-sm text-secondary ">{value.title}</div>
+              <div className=" text-sm text-secondary  min-w-20 ">{value.title}</div>
               <div className="text-sm font-semibold text-gray-900">{value.desc}</div>
             </div>
           ))}

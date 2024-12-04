@@ -4,29 +4,28 @@ import { Button, Form } from 'antd'
 import { FormInstance } from 'antd/lib'
 
 import Iconfont from '@/components/Base/Iconfont'
-import { IWithdrawalMethod } from '@/mobx/deposit/types'
 import { formatNum } from '@/utils'
 
 import { transferCurr } from '..'
 import TransferAmount from './TransferAmount'
+import TransferFormSelectItem from './TransferFormSelectItem'
 import TransferMethodSelectItem from './TransferMethodSelectItem'
 import TransferToBankItem from './TransferToBankItem'
 import TransferToCryptoItem from './TransferToCryptoItem'
-import TransferToFormSelectItem from './TransferToFormSelectItem'
 
 export const Step1 = ({
   form,
   loading,
   methodInfo,
   currentUser,
-  toAccountInfo,
+  fromAccountInfo,
   handleSubmit
 }: {
   form: FormInstance<any>
   loading: boolean
-  methodInfo?: IWithdrawalMethod
+  methodInfo?: Wallet.WithdrawMethod
   currentUser?: User.UserInfo
-  toAccountInfo?: User.AccountItem
+  fromAccountInfo?: User.AccountItem
   handleSubmit: () => void
 }) => {
   const amount = Form.useWatch('amount', form)
@@ -45,6 +44,8 @@ export const Step1 = ({
           form={form}
           className="flex flex-col gap-6"
         >
+          <ProFormText name="orderId" hidden />
+          <ProFormText name="methodId" hidden />
           <ProFormText name="handlingFee" hidden />
           <ProFormText name="currency" hidden />
           <ProFormText name="type" hidden />
@@ -54,7 +55,7 @@ export const Step1 = ({
           <ProFormText name="bankName" hidden />
 
           <TransferMethodSelectItem form={form} methodInfo={methodInfo} />
-          <TransferToFormSelectItem form={form} />
+          <TransferFormSelectItem form={form} />
 
           {methodInfo?.type === 'crypto' ? <TransferToCryptoItem form={form} /> : <TransferToBankItem form={form} />}
 
@@ -81,7 +82,7 @@ export const Step1 = ({
             </span>
             <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
             <span className="flex-shrink-0">
-              {formatNum(transferCurr(amount), { precision: toAccountInfo?.currencyDecimal })} {currency}
+              {formatNum(transferCurr(amount), { precision: fromAccountInfo?.currencyDecimal })} {currency}
             </span>
           </div>
         </ProForm>
@@ -91,8 +92,8 @@ export const Step1 = ({
           <FormattedMessage id="mt.rujinxuzhi" />
         </div>
         <div className="text-secondary text-xs">
-          {methodInfo?.depositNotice ? (
-            <div dangerouslySetInnerHTML={{ __html: methodInfo?.depositNotice }} />
+          {methodInfo?.notice ? (
+            <div dangerouslySetInnerHTML={{ __html: methodInfo?.notice }} />
           ) : (
             <div className="text-xs text-gray-400">
               <FormattedMessage id="mt.zanwuneirong" />
