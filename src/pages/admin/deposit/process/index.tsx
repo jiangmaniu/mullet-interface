@@ -23,7 +23,7 @@ export default function DepositProcess() {
   const methodId = Form.useWatch('methodId', form)
 
   const methodInfo = useMemo(() => {
-    return stores.deposit.methods.find((item) => item.title === methodId)
+    return stores.deposit.depositMethods.find((item) => item.id === methodId)
   }, [methodId])
 
   useEffect(() => {
@@ -77,72 +77,77 @@ export default function DepositProcess() {
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth backUrl="/deposit" backTitle={<FormattedMessage id="mt.quanbuzhifufangshi" />}>
-      <div className="text-primary font-bold text-[24px] mb-9">
-        <FormattedMessage id="mt.rujin" />
-      </div>
-      {loading && (
-        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
-          <PageLoading />
-        </div>
-      )}
-      <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
-        <div className="flex-1 form-item-divider-left flex-shrink  min-w-[400px] max-w-[700px]">
-          <ProForm
-            onFinish={async (values: Account.TransferAccountParams) => {
-              return
-            }}
-            disabled={loading}
-            submitter={false}
-            layout="vertical"
-            form={form}
-            className="flex flex-col gap-6"
-          >
-            <TransferMethodSelectItem form={form} methodInfo={methodInfo} />
-            <TransferToFormSelectItem form={form} />
-            {methodInfo?.type === 'crypto' ? (
-              <TransferCrypto form={form} />
-            ) : (
-              <TransferBank form={form} currentUser={currentUser} methodInfo={methodInfo} />
-            )}
-
-            {step.current === 0 && (
-              <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit0} disabled={loading}>
-                <div className="flex flex-row items-center gap-2">
-                  <FormattedMessage id="mt.jixu" />
-                  <Iconfont name="zhixiang" color="white" width={18} height={18} />
-                </div>
-              </Button>
-            )}
-            {step.current === 1 && (
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                className="mt-2"
-                onClick={() => {
-                  step.current = 1
-                }}
-              >
-                <div className="flex flex-row items-center gap-2">
-                  <Iconfont name="zhixiang" color="white" width={18} height={18} />
-                  <FormattedMessage id="mt.xiazaierweima" />
-                </div>
-              </Button>
-            )}
-          </ProForm>
-        </div>
-        <div className="flex flex-col justify-start items-start gap-4">
-          <div className="text-primary text-sm font-semibold">
-            <FormattedMessage id="mt.rujinxuzhi" />
+      <div className="flex max-w-screen">
+        <div className="flex-shrink">
+          {' '}
+          <div className="text-primary font-bold text-[24px] mb-9">
+            <FormattedMessage id="mt.rujin" />
           </div>
-          <div className="text-secondary text-xs">
-            {methodInfo?.depositNotice ? (
-              <div dangerouslySetInnerHTML={{ __html: methodInfo?.depositNotice }} />
-            ) : (
-              <div className="text-xs text-gray-400">
-                <FormattedMessage id="mt.zanwuneirong" />
+          {loading && (
+            <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
+              <PageLoading />
+            </div>
+          )}
+          <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
+            <div className="flex-1 form-item-divider-left flex-shrink  min-w-[340px] max-w-[700px]">
+              <ProForm
+                onFinish={async (values: Account.TransferAccountParams) => {
+                  return
+                }}
+                disabled={loading}
+                submitter={false}
+                layout="vertical"
+                form={form}
+                className="flex flex-col gap-6"
+              >
+                <TransferMethodSelectItem form={form} methodInfo={methodInfo} />
+                <TransferToFormSelectItem form={form} />
+                {methodInfo?.type === 'crypto' ? (
+                  <TransferCrypto form={form} />
+                ) : (
+                  <TransferBank form={form} currentUser={currentUser} methodInfo={methodInfo} />
+                )}
+
+                {step.current === 0 && (
+                  <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit0} disabled={loading}>
+                    <div className="flex flex-row items-center gap-2">
+                      <FormattedMessage id="mt.jixu" />
+                      <Iconfont name="zhixiang" color="white" width={18} height={18} />
+                    </div>
+                  </Button>
+                )}
+                {step.current === 1 && (
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    size="large"
+                    className="mt-2"
+                    onClick={() => {
+                      step.current = 1
+                    }}
+                  >
+                    <div className="flex flex-row items-center gap-2">
+                      <Iconfont name="zhixiang" color="white" width={18} height={18} />
+                      <FormattedMessage id="mt.xiazaierweima" />
+                    </div>
+                  </Button>
+                )}
+              </ProForm>
+            </div>
+            <div className="flex flex-col justify-start items-start gap-4">
+              <div className="text-primary text-sm font-semibold">
+                <FormattedMessage id="mt.rujinxuzhi" />
               </div>
-            )}
+              <div className="text-secondary text-xs">
+                {methodInfo?.depositNotice ? (
+                  <div dangerouslySetInnerHTML={{ __html: methodInfo?.depositNotice }} />
+                ) : (
+                  <div className="text-xs text-gray-400">
+                    <FormattedMessage id="mt.zanwuneirong" />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

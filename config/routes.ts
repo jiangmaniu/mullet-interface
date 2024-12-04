@@ -144,11 +144,18 @@ export default [
     component: './admin/withdrawal'
   },
   {
-    path: '/:lng/withdrawal/add',
+    path: '/:lng/withdrawal/process/:method',
+    name: 'withdrawalProcess',
     access: 'canAdmin', // 权限配置
-    component: './admin/withdrawal/add',
+    component: './admin/withdrawal/process',
     hideInMenu: true
   },
+  // {
+  //   path: '/:lng/withdrawal/add',
+  //   access: 'canAdmin', // 权限配置
+  //   component: './admin/withdrawal/add',
+  //   hideInMenu: true
+  // },
   {
     path: '/:lng/record',
     name: 'depositAndwithdrawalRecord',

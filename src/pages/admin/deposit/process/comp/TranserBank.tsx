@@ -42,7 +42,7 @@ export default function TransferBank({ form, currentUser, methodInfo }: IProps) 
         <FormattedMessage id="mt.jine" />
       </div>
       <ProFormText name="currency" hidden />
-      <div className=" border border-[rgb(217,217,217)] py-1 px-[7px] rounded-[9px] flex-shrink flex flex-row items-center gap-2">
+      <div className=" border h-[38px]  border-[rgb(217,217,217)] hover:border-gray-500 py-1 px-[7px] rounded-[9px] flex-shrink flex flex-row items-center gap-2">
         <div className="flex-1">
           <ProFormText
             name="amount"
@@ -50,8 +50,7 @@ export default function TransferBank({ form, currentUser, methodInfo }: IProps) 
             fieldProps={{
               size: 'small',
               style: {
-                border: 'none',
-                height: '28px'
+                border: 'none'
               }
             }}
           />

@@ -13,7 +13,7 @@ export default function Deposit() {
 
   const userStatus = 0
 
-  const methods = stores.deposit.methods
+  const methods = stores.deposit.depositMethods
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>

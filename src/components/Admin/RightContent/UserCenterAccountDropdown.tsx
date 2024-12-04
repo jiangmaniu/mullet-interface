@@ -190,7 +190,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
       >
         <div className="flex items-center group relative">
           <Iconfont name="zhanghu" width={24} height={24} style={{ marginTop: 2 }} />
-          <span className="text-lg font-pf-bold ml-1">
+          <span className="text-sm md:text-lg font-pf-bold ml-1 text-left">
             {totalAccountMoney ? formatNum(totalAccountMoney, { precision: currencyDecimal }) : '0.00'} USD
           </span>
         </div>

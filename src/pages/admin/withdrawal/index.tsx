@@ -13,7 +13,7 @@ export default function Withdrawal() {
 
   const userStatus = 0
 
-  const methods = stores.deposit.methods
+  const methods = stores.deposit.withdrawalMethods
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>

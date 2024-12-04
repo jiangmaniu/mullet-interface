@@ -81,9 +81,9 @@ export default function TransferMethodSelectItem({ form, methodInfo }: IProps) {
             }
           }
         ]}
-        options={stores.deposit.methods.map((item) => ({
+        options={stores.deposit.depositMethods.map((item) => ({
           // ...item,
-          value: item.title,
+          value: item.id,
           label: (
             <div className="flex justify-between w-full gap-2">
               <img src={item.icon} alt="" className="w-5 h-5 rounded-full bg-gray" />

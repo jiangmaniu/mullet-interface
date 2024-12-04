@@ -153,9 +153,12 @@ type IOpt = {
   isTruncateDecimal?: boolean
   /** 小数点精度 */
   precision?: number
+
+  /** 是否返回原始值 */
+  raw?: boolean
 }
 export const formatNum = (value: any, opts?: IOpt) => {
-  const { isTruncateDecimal = true } = opts || {}
+  const { isTruncateDecimal = true, raw = false } = opts || {}
   // 不是一个数字
   if (isNaN(value) || !Number(value)) {
     return '--'
@@ -163,6 +166,11 @@ export const formatNum = (value: any, opts?: IOpt) => {
   const val = value || '0.00'
   const precision = opts?.precision || String(value).split('.')?.[1]?.length || 2
   const truncateValue = isTruncateDecimal ? truncateDecimal(val, precision) : val // 截取小数点，不四舍五入
+
+  if (raw) {
+    return currency(truncateValue, { symbol: '', precision, ...opts }).value
+  }
+
   return currency(truncateValue, { symbol: '', precision, ...opts }).format()
 }
 

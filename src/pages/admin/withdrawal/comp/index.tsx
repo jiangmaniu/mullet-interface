@@ -11,7 +11,7 @@ export default function DepositMethod({ item }: { item: IDepositMethod }) {
       )}
       onClick={() => {
         if (item.status === 'unlocked') {
-          push(`/deposit/process/${item.title}`)
+          push(`/withdrawal/process/${item.id}`)
         }
       }}
     >

@@ -48,7 +48,7 @@ export default function TransferCrypto({ form }: IProps) {
       <div className="text-sm text-primary font-medium mt-9 mb-3">
         <FormattedMessage id="mt.chongbidizhi" />
       </div>
-      <div className=" bg-gray-50 py-1 px-[7px] rounded-[9px] flex-shrink flex flex-row items-center gap-2">
+      <div className=" h-[38px] bg-gray-50 py-1 px-[7px] rounded-[9px] flex-shrink flex flex-row items-center gap-2">
         <div className="flex-1">
           <ProFormText
             name="address"
