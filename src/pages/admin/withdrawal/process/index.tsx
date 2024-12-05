@@ -77,27 +77,6 @@ export default function WithdrawalProcess() {
 
   const [step, setStep] = useState(0)
 
-  const generateAddress = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      code: 200,
-      success: true,
-      data: {
-        address: '0x1234567890abcdef'
-      }
-    }
-  }
-
-  const generateOrder = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      code: 200,
-      success: true
-    }
-  }
-
   const [values, setValues] = useState<Record<string, any> | undefined>(undefined)
   const handleSubmit0 = async () => {
     form

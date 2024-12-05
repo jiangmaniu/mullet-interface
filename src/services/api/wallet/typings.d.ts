@@ -107,4 +107,18 @@ declare namespace Wallet {
     // 验证码
     code: string
   }
+
+  /**
+   * 获取入金记录
+   */
+  type DepositRecord = {
+    [key: string]: any
+  }
+
+  /**
+   * 获取提现记录
+   */
+  type WithdrawRecord = {
+    [key: string]: any
+  }
 }

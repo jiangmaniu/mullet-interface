@@ -45,7 +45,7 @@ function Transfer({ params }: IProps) {
           align: 'end'
         }}
         params={params}
-        className="px-4 home-custom-commision-list"
+        className="px-4 home-custom-commision-list "
         ghost
         split={false}
         renderItem={(item: Account.MoneyRecordsPageListItem, index) => {
