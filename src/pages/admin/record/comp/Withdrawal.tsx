@@ -135,7 +135,7 @@ function Withdrawal({ params, onSelectItem }: IProps) {
                 )}
               </div>
             </div>
-            <div className="text-start min-w-[100px] flex flex-row gap-2">
+            <div className="text-start min-w-[100px] flex flex-row gap-2" onClick={(e) => e.stopPropagation()}>
               {/* @ts-ignore */}
               <div className="text-sm flex items-center" style={{ color: statusMap[item.status].color }}>
                 <span
