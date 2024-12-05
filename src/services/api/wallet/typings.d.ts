@@ -1,6 +1,7 @@
 declare namespace Wallet {
   type IMethodStatus = 'locked' | 'unlocked' // 是否可用（解锁）状态
   type IMethodType = 'crypto' | 'bank' // 支付类型： 加密货币 / 银行
+  type IOrderStatus = 'beginning' | 'pending' | 'finished' | 'failed' // 订单状态: 开始 / 等待 / 完成 / 失败
 
   type IMethodOption = {
     // 图标

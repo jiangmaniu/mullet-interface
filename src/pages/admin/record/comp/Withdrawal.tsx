@@ -1,17 +1,25 @@
-import { FormattedMessage, useModel } from '@umijs/max'
+import './index.less'
+
+import { FormattedMessage, getIntl, useModel } from '@umijs/max'
+import { Button, Popconfirm } from 'antd'
 import { observer } from 'mobx-react'
 
 import ProList from '@/components/Admin/ProList'
+import Iconfont from '@/components/Base/Iconfont'
 import { getDepositMethodList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
+import { cn } from '@/utils/cn'
 
 import { IParams } from '..'
+import { statusMap } from '../index'
 
 type IProps = {
   params: IParams
+  onSelectItem?: (item: Wallet.WithdrawRecord) => void
 }
+
 // 入金记录
-function Withdrawal({ params }: IProps) {
+function Withdrawal({ params, onSelectItem }: IProps) {
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList || []
 
@@ -36,6 +44,28 @@ function Withdrawal({ params }: IProps) {
       currency: 'USD',
       bank: 'Bank of America',
       status: 'finished',
+      toAccountId: '1826513486237188098'
+    },
+    {
+      icon: '',
+      orderId: '2042197400473',
+      createTime: '2024-12-04 14:59:59',
+      amount: 1000,
+      type: 'bank',
+      currency: 'USD',
+      bank: 'Bank of America',
+      status: 'failed',
+      toAccountId: '1826513486237188098'
+    },
+    {
+      icon: '',
+      orderId: '2042197400474',
+      createTime: '2024-12-04 14:59:59',
+      amount: 1000,
+      type: 'bank',
+      currency: 'USD',
+      bank: 'Bank of America',
+      status: 'beginning',
       toAccountId: '1826513486237188098'
     }
   ]
@@ -68,7 +98,7 @@ function Withdrawal({ params }: IProps) {
       ghost
       split={false}
       renderItem={(item: Wallet.DepositRecord, index) => (
-        <div className="flex flex-col gap-2 mb-5">
+        <div className="flex flex-col gap-2 mb-5 hover:shadow-sm cursor-pointer" onClick={() => onSelectItem?.(item)}>
           <div className="text-16 font-medium text-gray-900">{item.createTime} </div>
           <div className="flex items-center flex-wrap gap-y-4 justify-between border border-gray-150 py-5 px-4 rounded-lg">
             <div className="flex flew-row items-center gap-4 text-start min-w-[180px]">
@@ -82,8 +112,19 @@ function Withdrawal({ params }: IProps) {
                 </div>
               </div>
             </div>
-            <div className=" flex flex-row gap-2 md:gap-4 items-center  justify-center flex-grow">
-              <div className="text-end">
+            <div className=" flex flex-row gap-2 md:gap-3 items-center  justify-center flex-grow">
+              <div className="flex flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden flex-shrink ">
+                <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
+                  {accountList.find((v) => v.id === item.toAccountId)?.synopsis?.abbr}
+                </div>
+                <span className=" text-nowrap text-ellipsis overflow-hidden">
+                  {accountList.find((v) => v.id === item.toAccountId)?.synopsis?.name}
+                </span>
+              </div>
+              <div>
+                <Iconfont name="zhixiang" width={14} color="black" height={14} />
+              </div>
+              <div className="text-end ">
                 {item.type === 'crypto' ? (
                   <span>
                     {item.currency}
@@ -93,18 +134,36 @@ function Withdrawal({ params }: IProps) {
                   <span>{item.bank}</span>
                 )}
               </div>
-              <div> -- </div>
-              <div className="flex flex-row items-center gap-1 w-[172px] md:w-[196px] overflow-hidden  ">
-                <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-                  {accountList.find((v) => v.id === item.toAccountId)?.synopsis?.abbr}
-                </div>
-                <span className=" text-nowrap text-ellipsis overflow-hidden">
-                  {accountList.find((v) => v.id === item.toAccountId)?.synopsis?.name}
-                </span>
-              </div>
             </div>
-            <div className="text-start min-w-[100px]">{item.status}</div>
-            <div className="text-end min-w-[150px]">
+            <div className="text-start min-w-[100px] flex flex-row gap-2">
+              {/* @ts-ignore */}
+              <div className="text-sm flex items-center" style={{ color: statusMap[item.status].color }}>
+                <span
+                  className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'pending' && 'animate-pulse')}
+                  // @ts-ignore
+                  style={{ backgroundColor: statusMap[item.status].color }}
+                >
+                  {/*  */}
+                </span>
+                {/* @ts-ignore */}
+                {statusMap[item.status].text}
+              </div>
+              {item.status === 'beginning' && (
+                <Popconfirm
+                  title=""
+                  description={getIntl().formatMessage({ id: 'mt.ningquedingchexiaochujinshenqing' })}
+                  onConfirm={() => {}}
+                  onCancel={() => {}}
+                  okText={getIntl().formatMessage({ id: 'mt.queding' })}
+                  cancelText={getIntl().formatMessage({ id: 'mt.quxiao' })}
+                >
+                  <Button size="small" type="primary">
+                    {getIntl().formatMessage({ id: 'mt.chexiao' })}
+                  </Button>
+                </Popconfirm>
+              )}
+            </div>
+            <div className="text-end min-w-[150px] text-base  md:text-xl font-bold">
               {formatNum(item.amount)} {item.currency}
             </div>
           </div>

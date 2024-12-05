@@ -2,6 +2,7 @@ import { FormattedMessage, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import ProList from '@/components/Admin/ProList'
+import Iconfont from '@/components/Base/Iconfont'
 import { getDepositMethodList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 
@@ -83,8 +84,8 @@ function Deposit({ params }: IProps) {
                 </div>
               </div>
             </div>
-            <div className=" flex flex-row gap-2 md:gap-4 items-center  justify-center flex-grow">
-              <div className="text-end">
+            <div className=" flex flex-row gap-2 md:gap-3 items-center  justify-center flex-grow">
+              <div className="text-end text-sm font-medium flex-1">
                 {item.type === 'crypto' ? (
                   <span>
                     {item.currency}
@@ -94,8 +95,10 @@ function Deposit({ params }: IProps) {
                   <span>{item.bank}</span>
                 )}
               </div>
-              <div> -- </div>
-              <div className="flex flex-row items-center gap-1 w-[172px] md:w-[196px] overflow-hidden  ">
+              <div>
+                <Iconfont name="zhixiang" width={14} color="black" height={14} />
+              </div>
+              <div className="flex text-sm font-bold flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden  ">
                 <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
                   {accountList.find((v) => v.id === item.toAccountId)?.synopsis?.abbr}
                 </div>
@@ -104,8 +107,8 @@ function Deposit({ params }: IProps) {
                 </span>
               </div>
             </div>
-            <div className="text-start min-w-[100px]">{item.status}</div>
-            <div className="text-end min-w-[150px]">
+            <div className="text-start min-w-[100px]">{/* {item.status} */}</div>
+            <div className="text-end min-w-[150px] text-base  md:text-xl font-bold">
               {formatNum(item.amount)} {item.currency}
             </div>
           </div>

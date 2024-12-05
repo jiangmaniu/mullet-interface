@@ -45,5 +45,12 @@ export default {
   'mt.chakanlishi': 'View history',
   'mt.chujinxuzhi': 'Withdrawal notice',
   'mt.bizhong': 'Currency',
-  'mt.lianmingcheng': 'Chain name'
+  'mt.lianmingcheng': 'Chain name',
+  'mt.tongguo': 'Pass',
+  'mt.daishenghe': 'Pending review',
+  'mt.ningquedingchexiaochujinshenqing': 'Are you sure you want to cancel the withdrawal application?',
+  'mt.chexiao': 'Cancel',
+  'mt.queding': 'Confirm',
+  'mt.chujinzhanghu': 'Withdrawal account',
+  'mt.shoukuanzhanghu': 'Receiving account'
 }
