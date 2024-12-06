@@ -135,7 +135,9 @@
     "typescript": "^5.0.4",
     "typescript-plugin-css-modules": "^5.0.2",
     "umi-presets-pro": "^2.0.2",
-    "vconsole": "^3.15.1"
+    "vconsole": "^3.15.1",
+    "webpack": "^5.97.0",
+    "workbox-webpack-plugin": "^7.3.0"
   },
   "engines": {
     "node": ">=12.0.0"
