@@ -10,6 +10,7 @@ import routes from './routes'
 const { REACT_APP_ENV = 'dev' } = process.env
 
 export default defineConfig({
+  links: [{ rel: 'manifest', href: '/manifest.json' }],
   base: '/',
   /**
    * @name 开启 hash 模式
@@ -225,7 +226,7 @@ export default defineConfig({
     // workbox 配置
     config.plugin('workbox').use(GenerateSW, [
       {
-        cacheId: 'webpack-pwa', // 设置前缀
+        cacheId: 'stellux', // 设置前缀
         skipWaiting: true, // 强制等待中的 Service Worker 被激活
         clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
         cleanupOutdatedCaches: true, //删除过时、老版本的缓存
@@ -234,6 +235,40 @@ export default defineConfig({
         exclude: ['service-wroker.js', 'scripts/sw.js', 'manifest.json', 'umi.js'], // 忽略的文件
         disableDevLogs: true,
         runtimeCaching: [
+          // {
+          //   urlPattern: /^https:\/\/client-stellux\.io\/.*\.(js|css)$/,
+          //   handler: 'StaleWhileRevalidate',
+          //   options: {
+          //     cacheName: 'cdn-assets',
+          //     expiration: {
+          //       maxEntries: 30
+          //     }
+          //   }
+          // },
+          // {
+          //   urlPattern: /^https:\/\/client-stellux\.io\/.*\.(png|jpg|jpeg|gif|svg)$/,
+          //   handler: 'CacheFirst',
+          //   options: {
+          //     cacheName: 'cdn-images',
+          //     expiration: {
+          //       maxEntries: 30,
+          //       maxAgeSeconds: 60 * 60 * 12
+          //     },
+          //     cacheableResponse: {
+          //       statuses: [0, 200]
+          //     }
+          //   }
+          // },
+          // {
+          //   urlPattern: ({ url }) => url.pathname === '/',
+          //   handler: 'NetworkFirst',
+          //   options: {
+          //     cacheName: 'html-cache',
+          //     expiration: {
+          //       maxEntries: 20
+          //     }
+          //   }
+          // }
           {
             urlPattern: /.*\.js.*/i,
             handler: 'CacheFirst',
