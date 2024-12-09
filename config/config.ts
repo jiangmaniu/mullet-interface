@@ -161,7 +161,6 @@ export default defineConfig({
     { src: '/scripts/sw.js', async: true }
   ],
 
-  styles: ['/manifest.json'],
   metas: [
     { name: 'application-name', content: 'Stellux' },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -170,10 +169,10 @@ export default defineConfig({
     { name: 'description', content: 'Stellux Trading Platform' },
     { name: 'format-detection', content: 'telephone=no' },
     { name: 'mobile-web-app-capable', content: 'yes' },
-    { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
-    { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
-    { name: 'msapplication-tap-highlight', content: 'no' },
-    { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
+    // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
+    // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
+    { name: 'msapplication-tap-highlight', content: 'no' }
+    // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
   ],
 
   //================ pro 插件配置 =================
