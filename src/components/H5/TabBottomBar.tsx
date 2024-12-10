@@ -6,7 +6,9 @@ import { FC, useEffect } from 'react'
 import Hidden from '@/components/Base/Hidden'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 import { TabbarActiveKey } from '@/mobx/global'
+import { STORAGE_SET_TRADE_THEME } from '@/utils/storage'
 
 import Position from './Position'
 import Quote from './Quote'
@@ -20,10 +22,11 @@ type IProps = {
 
 /**H5 tabbar底部导航 */
 const TabBottomBar: FC<IProps> = ({ activeKey }) => {
-  const { global } = useStores()
+  const { global, kline } = useStores()
   const { tabBarActiveKey, setTabBarActiveKey } = global
   const intl = useIntl()
   const { pathname } = useLocation()
+  const { setTheme, isDark } = useTheme()
 
   const renderTabIcon = (name: string, active: boolean) => {
     return <Iconfont name={name} width={28} height={28} color={active ? 'var(--color-text-primary)' : '#BFBFBF'} key={name} />
@@ -62,6 +65,16 @@ const TabBottomBar: FC<IProps> = ({ activeKey }) => {
     }
   }, [activeKey])
 
+  const handleSwitchTheme = () => {
+    const themeMode = isDark ? 'light' : 'dark'
+    setTheme(themeMode)
+    // 设置交易页面主题，因为交易页面主题不是全局的，所以需要单独设置
+    STORAGE_SET_TRADE_THEME(themeMode)
+
+    // 重置tradingview实例
+    kline.destroyed()
+  }
+
   const UserCenterPaths = ['/account', '/record', '/setting']
 
   useEffect(() => {
@@ -70,12 +83,24 @@ const TabBottomBar: FC<IProps> = ({ activeKey }) => {
       setTabBarActiveKey('UserCenter')
     }
 
+    // 行情页面响应式定位到行情Tab
+    if (pathname.indexOf('/trade') !== -1) {
+      setTabBarActiveKey('Quote')
+    }
+
     // 回显地址栏参数
     const activeTabKey = location.hash.replace('#', '') as TabbarActiveKey
     if (activeTabKey) {
       setTabBarActiveKey(activeTabKey)
     }
   }, [pathname])
+
+  // @TODO 移动端 切换为亮色主题及时pc设置了黑色，暂时不考虑移动端黑色主题
+  useEffect(() => {
+    if (isDark) {
+      handleSwitchTheme()
+    }
+  }, [isDark])
 
   return (
     <div>
