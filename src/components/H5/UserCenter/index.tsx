@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react'
 import { useRef } from 'react'
 
-import SheetModal from '@/components/Base/BottomSheet'
 import Button from '@/components/Base/Button'
+import SheetModal from '@/components/Base/Modal/SheetModal'
 import NavBar from '@/components/Base/NavBar'
 
 function UserCenter() {

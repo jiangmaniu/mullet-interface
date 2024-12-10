@@ -17,6 +17,14 @@ export type ModalRef = {
   close: () => void
 }
 
+export interface SheetRef {
+  sheet: {
+    present: (afterOpen?: () => void) => void
+    dismiss: (beforeClose?: () => void) => void
+  }
+  visible: boolean
+}
+
 type IProps = Partial<Props> & {
   children?: React.ReactNode
   /** 底部footer */
@@ -58,7 +66,7 @@ type IProps = Partial<Props> & {
   confirmButtonProps?: ButtonProps
 }
 
-const BottomSheetModal = (
+const SheetModal = (
   {
     buttonBlock = true,
     footerStyle,
@@ -83,7 +91,7 @@ const BottomSheetModal = (
     confirmButtonProps,
     ...res
   }: IProps,
-  ref: ForwardedRef<ModalRef>
+  ref: ForwardedRef<SheetRef>
 ) => {
   const [submitLoading, setSubmitLoading] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -112,8 +120,11 @@ const BottomSheetModal = (
 
   // 将属性暴露给父元素
   useImperativeHandle(ref, () => ({
-    show,
-    close
+    sheet: {
+      present: show,
+      dismiss: close
+    },
+    visible
   }))
 
   const triggerDom = useMemo(() => {
@@ -253,4 +264,4 @@ const BottomSheetModal = (
   )
 }
 
-export default forwardRef(BottomSheetModal)
+export default forwardRef(SheetModal)
