@@ -7,6 +7,8 @@ import { getMyMessageList, getUnReadMessageCount } from '@/services/api/message'
 import { onLogout } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
 
+export type TabbarActiveKey = 'Quote' | 'Trade' | 'Position' | 'UserCenter'
+
 export class GlobalStore {
   constructor() {
     makeAutoObservable(this)
@@ -16,6 +18,15 @@ export class GlobalStore {
   @observable messageCurrent = 1 // 消息列表页码
   @observable messageTotalCount = 1 // 总页码
   @observable unReadCount = 0 // 未读消息数量
+  @observable tabBarActiveKey: TabbarActiveKey = 'Quote'
+
+  // 设置H5底部tabbar激活项
+  setTabBarActiveKey = (tabBarActiveKey: TabbarActiveKey) => {
+    this.tabBarActiveKey = tabBarActiveKey
+
+    // 同步参数到地址栏
+    window.history.replaceState('', '', `${location.pathname}#${tabBarActiveKey}`)
+  }
 
   fetchUserInfo = async (refreshAccount?: boolean) => {
     try {

@@ -19,7 +19,16 @@ import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
-import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
+import {
+  STORAGE_GET_CONF_INFO,
+  STORAGE_GET_ORDER_CONFIRM_CHECKED,
+  STORAGE_GET_POSITION_CONFIRM_CHECKED,
+  STORAGE_GET_QUICK_PLACE_ORDER_CHECKED,
+  STORAGE_SET_CONF_INFO,
+  STORAGE_SET_ORDER_CONFIRM_CHECKED,
+  STORAGE_SET_POSITION_CONFIRM_CHECKED,
+  STORAGE_SET_QUICK_PLACE_ORDER_CHECKED
+} from '@/utils/storage'
 import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import klineStore from './kline'
@@ -111,6 +120,9 @@ class TradeStore {
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 2 // 浮动杠杆倍数，默认1
   @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
+  @observable orderQuickPlaceOrderChecked = true // 快速下单默认选择
+  @observable orderConfirmChecked = true // 下单二次确认弹窗
+  @observable positionConfirmChecked = false // 平仓二次确认弹窗
   @observable orderVolume = '0.01' // 交易区下单数量
   @observable orderSpslChecked = false // 是否选中止盈止损
   @observable orderPrice = '' // 交易区下单价格
@@ -149,13 +161,17 @@ class TradeStore {
   @observable maxOpenVolume = 0 // 最大可开手数
 
   // 初始化加载
-  init = () => {
+  init = async () => {
     // 初始化打开的品种列表
     this.initOpenSymbolNameList()
     // 初始化自选列表
     this.initFavoriteList()
     // 获取全部品种列表作为汇率校验
     this.getAllSimbleSymbols()
+
+    this.orderQuickPlaceOrderChecked = (await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()) || true
+    this.orderConfirmChecked = (await STORAGE_GET_ORDER_CONFIRM_CHECKED()) || false
+    this.positionConfirmChecked = (await STORAGE_GET_POSITION_CONFIRM_CHECKED()) || false
   }
 
   // 右下角爆仓选择逐仓、全仓切换
@@ -257,6 +273,27 @@ class TradeStore {
 
   setIsPosition = (value: boolean) => {
     this.isPosition = value
+  }
+
+  // 设置订单-快速下单
+  setOrderQuickPlaceOrderChecked = (flag: boolean) => {
+    this.orderQuickPlaceOrderChecked = flag
+
+    STORAGE_SET_QUICK_PLACE_ORDER_CHECKED(flag)
+  }
+
+  // 下单二次确认弹窗-不在提醒
+  setOrderConfirmChecked = (flag: boolean) => {
+    this.orderConfirmChecked = flag
+
+    STORAGE_SET_ORDER_CONFIRM_CHECKED(flag)
+  }
+
+  // 平仓二次确认弹窗-不在提醒
+  setPositionConfirmChecked = (flag: boolean) => {
+    this.positionConfirmChecked = flag
+
+    STORAGE_SET_POSITION_CONFIRM_CHECKED(flag)
   }
 
   // 重置止盈止损

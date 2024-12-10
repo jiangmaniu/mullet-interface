@@ -10,6 +10,7 @@ import { cssVars } from '@/theme/theme.config'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
+import TabBottomBar from './components/H5/TabBottomBar'
 import SwitchLanguage from './components/SwitchLanguage'
 import { ICONFONT_URL, WEB_HOME_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
@@ -96,6 +97,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       paddingRight: 0,
       paddingTop: 0
     },
+    pure: isMobileOrIpad ? true : false, // 是否删除掉所有的自带界面
     // actionsRender: () => [],
     actionsRender: () => [<HeaderRightContent key="content" isAdmin />],
     // avatarProps: {
@@ -156,7 +158,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
-      return <>{children}</>
+      // 渲染移动端入口
+      return <>{isMobileOrIpad ? <TabBottomBar /> : children}</>
     },
     menuHeaderRender: () => {
       return <div></div>

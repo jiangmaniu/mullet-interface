@@ -12,7 +12,7 @@ export const REGISTER_APP_CODE = '123456' // @TODO 正式部署在修改
 // 字体图标 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码
 export const ICONFONT_URL =
-  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_nnk3epogynh.js' : '/iconfont/iconfont.js'
+  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_lpk2h04u4cm.js' : '/iconfont/iconfont.js'
 
 // 首页
 export const WEB_HOME_PAGE = '/trade'
@@ -55,3 +55,12 @@ export const CURRENT_YEAR = 2024
 
 // 分页默认值
 export const DEFAULT_PAGE_SIZE = 10
+
+// 快速下单选择状态
+export const KEY_QUICK_PLACE_ORDER_CHECKED = NAMESPACE + '_' + 'quick_place_order_checked'
+
+// 订单二次确认弹窗
+export const KEY_ORDER_CONFIRM_CHECKED = NAMESPACE + '_' + 'order_confirm_checked'
+
+// 平仓二次确认弹窗
+export const KEY_POSITION_CONFIRM_CHECKED = NAMESPACE + '_' + 'position_confirm_checked'

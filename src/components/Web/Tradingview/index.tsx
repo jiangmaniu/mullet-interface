@@ -218,7 +218,7 @@ const Tradingview = () => {
   })
 
   return (
-    <div className={cn('h-[585px] relative', className)}>
+    <div className={cn('relative', className)} style={{ height: isPc ? 585 : 'calc(-260px + 100vh)' }}>
       <div id="tradingview" ref={chartContainerRef} className="relative flex flex-1 h-full" style={{ opacity: loading ? 0 : 1 }} />
       {isChartLoading && (
         <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-full z-40">

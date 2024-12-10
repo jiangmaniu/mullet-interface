@@ -356,7 +356,13 @@ const setRootVars = (themeVars: any) => {
 // 黑色主题，修改<html class="dark" /> 切换主题
 export const cssVars = `
   :root {
-    ${setRootVars(lightTheme)}
+    ${setRootVars(lightTheme)};
+    --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6);
+    --rsbs-bg: #fff;
+    --rsbs-handle-bg: #ddd;
+    --rsbs-max-w: auto;
+    --rsbs-ml: env(safe-area-inset-left);
+    --rsbs-mr: env(safe-area-inset-right);
   }
   :root[class=dark] {
     ${setRootVars(darkTheme)}
