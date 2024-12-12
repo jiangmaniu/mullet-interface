@@ -8,3 +8,4 @@
 ## 响应式切换 PC 和移动端适配入口地址
 
 - 处理逻辑在 `src/hooks/useSwitchPcOrMobile.ts`
+- `src/webapp/navigator`中`handleJumpMobile`
