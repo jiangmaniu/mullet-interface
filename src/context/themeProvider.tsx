@@ -86,7 +86,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
       if (isMobileOrIpad) {
         document.documentElement.setAttribute('data-mode', mode === 'light' ? 'h5-light' : 'h5-dark')
       }
-    }, 20)
+    }, 100)
     if (isPc) {
       document.documentElement.removeAttribute('data-mode')
     }

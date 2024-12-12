@@ -1,5 +1,8 @@
 import { Outlet, useLocation } from '@umijs/max'
+import { observer } from 'mobx-react'
 
+import { useEnv } from '@/context/envProvider'
+import { useStores } from '@/context/mobxProvider'
 import useSwitchPcOrMobile from '@/hooks/useSwitchPcOrMobile'
 import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
 import { isMainTabbar } from '@/pages/webapp/utils/navigator'
@@ -8,8 +11,10 @@ import { isMainTabbar } from '@/pages/webapp/utils/navigator'
  * webapp页面的布局
  * @returns
  */
-export default function WebAppLayout() {
+function WebAppLayout() {
   const { pathname } = useLocation()
+  const { global } = useStores()
+  const { isPc } = useEnv()
 
   useSwitchPcOrMobile() // 切换 pc 和移动端布局
 
@@ -34,3 +39,4 @@ export default function WebAppLayout() {
     </div>
   )
 }
+export default observer(WebAppLayout)

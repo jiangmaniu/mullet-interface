@@ -15,8 +15,9 @@ export const ICONFONT_URL =
   process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_lpk2h04u4cm.js' : '/iconfont/iconfont.js'
 
 // 首页
-export const WEB_HOME_PAGE = '/trade'
+export const WEB_HOME_PAGE = '/trade' // pc端首页
 export const ADMIN_HOME_PAGE = '/account'
+export const MOBILE_HOME_PAGE = '/app/quote' // 移动端首页
 
 // 本地存储-用户信息-键
 export const KEY_TOKEN = NAMESPACE + '_' + 'token'

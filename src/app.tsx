@@ -11,14 +11,16 @@ import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
 import SwitchLanguage from './components/SwitchLanguage'
-import { ICONFONT_URL, WEB_HOME_PAGE } from './constants'
+import { ICONFONT_URL, MOBILE_HOME_PAGE, WEB_HOME_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { useTheme } from './context/themeProvider'
 import useSwitchPcOrMobile from './hooks/useSwitchPcOrMobile'
 import { mobileCssVars } from './pages/webapp/theme/colors'
+import { handleJumpMobile } from './pages/webapp/utils/navigator'
 import { errorConfig } from './requestErrorConfig'
+import { isPC } from './utils'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN } from './utils/storage'
 
@@ -270,7 +272,8 @@ export const patchClientRoutes = ({ routes }: any) => {
   const lng = localStorage.getItem('umi_locale') || locationLng
   const token = STORAGE_GET_TOKEN()
   // const HOME_PAGE = token ? ADMIN_HOME_PAGE : WEB_HOME_PAGE
-  const HOME_PAGE = token ? WEB_HOME_PAGE : loginPath
+  const jumpUrl = isPC() ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
+  const HOME_PAGE = token ? jumpUrl : loginPath
 
   // 首次默认重定向到en-US
   routes.unshift(
@@ -302,6 +305,8 @@ export function onRouteChange({ location, clientRoutes, routes, action, basename
   // if (!['/user/login'].includes(pathname) && !STORAGE_GET_TOKEN()) {
   //   push('/user/login')
   // }
+
+  handleJumpMobile()
 }
 
 export const rootContainer = (container: JSX.Element) => {
