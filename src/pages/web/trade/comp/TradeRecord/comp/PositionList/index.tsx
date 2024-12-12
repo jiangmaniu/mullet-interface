@@ -7,7 +7,6 @@ import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
 import StandardTable from '@/components/Admin/StandardTable'
-import LockIcon from '@/components/Base/Svg/LockIcon'
 import SelectIcon from '@/components/Base/Svg/SelectIcon'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useEnv } from '@/context/envProvider'
@@ -117,7 +116,7 @@ function Position({ style, parentPopup }: IProps) {
                     {!!record.leverageMultiple && (
                       <span className={cn('text-sm font-pf-bold', colorClassName)}>{record.leverageMultiple}X</span>
                     )}
-                    <LockIcon color={record.buySell === 'BUY' ? 'var(--color-green)' : 'var(--color-red)'} />
+                    {/**<LockIcon color={record.buySell === 'BUY' ? 'var(--color-green)' : 'var(--color-red)'} /> */}
                   </span>
                   <span className="flex">
                     <SelectIcon style={{ transform: isExpandCurrentRow(record.id) ? 'rotate(180deg)' : 'rotate(0deg)' }} />
