@@ -31,7 +31,8 @@ function TradeAccountDropdown({ theme }: IProps) {
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
   const [currentAccountList, setCurrentAccountList] = useState<User.AccountItem[]>([])
   const { initialState } = useModel('@@initialState')
-  const { isDark } = useTheme()
+  const themeConfig = useTheme()
+  const isDark = themeConfig.theme.isDark
   const [accountBoxOpen, setAccountBoxOpen] = useState(false)
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
@@ -144,7 +145,7 @@ function TradeAccountDropdown({ theme }: IProps) {
         </Button>
       </div>
     </div> */}
-          <div className="py-0 border-t-[2px] dark:border-t-[1px] border-[rgba(218,218,218,0.2)] dark:border-gray-620/20 flex flex-col">
+          <div className="py-0 border-t-[2px] dark:border-t-[1px] border-[rgba(218,218,218,0.2)] dark:border-[#45454833] flex flex-col">
             <div className="my-3 px-[18px] flex items-center justify-between flex-shrink-0 flex-grow-0">
               <Segmented
                 className="account"

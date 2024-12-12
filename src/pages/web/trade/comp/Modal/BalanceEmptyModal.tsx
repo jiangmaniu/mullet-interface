@@ -14,7 +14,8 @@ import { message } from '@/utils/message'
 
 // 余额不足提示
 export default observer((props, ref) => {
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const { trade } = useStores()
   const { isPc } = useEnv()
   const { lng } = useLang()

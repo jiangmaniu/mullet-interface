@@ -12,7 +12,8 @@ type IProps = {
   className?: string
 }
 export default function Empty({ src, description, className }: IProps) {
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const innerClassName = useEmotionCss(({ token }) => {
     return {
       '.ant-empty-image img': {

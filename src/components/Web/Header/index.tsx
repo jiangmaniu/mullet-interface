@@ -9,7 +9,8 @@ import { HeaderRightContent } from '../../Admin/RightContent'
 
 export default function Header() {
   const { openTradeSidebar } = useModel('global')
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const logoProps = isDark
     ? {
         textColor: 'white',

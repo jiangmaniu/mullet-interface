@@ -38,7 +38,7 @@ function Account() {
   const [leftTime, setLeftTime] = useState<any>(0)
   const modalRef = useRef<any>()
   const [modalInfo, setModalInfo] = useState({} as User.AccountItem)
-  const { setTheme } = useTheme()
+  const { setMode } = useTheme()
 
   const [searchParams] = useSearchParams()
   const searchKey = searchParams.get('key') as any
@@ -246,7 +246,7 @@ function Account() {
                   type="primary"
                   style={{ height: 46, width: 108 }}
                   onClick={() => {
-                    setTheme(STORAGE_GET_TRADE_THEME() || 'light')
+                    setMode(STORAGE_GET_TRADE_THEME() || 'light')
                     trade.setCurrentAccountInfo(item)
                     trade.jumpTrade()
                   }}

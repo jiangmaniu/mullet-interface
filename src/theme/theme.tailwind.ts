@@ -1,6 +1,8 @@
+import { cloneDeep, merge } from 'lodash'
 import colors from 'tailwindcss/colors'
 
-import { blue, gray, green, lightTheme, red, yellow } from './theme.config'
+import { extendColors, themeColorsMobile } from '../pages/webapp/theme/colors'
+import { blue, getTailwindCssVarColor, gray, green, lightTheme, red, yellow } from './theme.config'
 
 // https://github.com/tailwindlabs/tailwindcss/issues/4690#issuecomment-1046087220
 // 对于任何将 Tailwind 的完整默认颜色传播到 theme.colors 的人，都会收到警告
@@ -49,21 +51,23 @@ const themeColor = {
   // 黄色系
   yellow: {
     ...colors.yellow,
-    ...yellow,
-    DEFAULT: `var(--color-yellow,${lightTheme['--color-yellow']})` // 默认值，方便编辑器识别颜色提示 text-yellow
+    // 使用css变量覆盖pc和h5的同名变量
+    ...getTailwindCssVarColor(yellow, 'yellow'),
+    DEFAULT: 'var(--color-yellow)'
   },
   // 灰色系
   gray: {
     ...colors.gray,
-    ...gray,
-    // 文字颜色
-    DEFAULT: `var(--color-text-primary,${lightTheme['--color-text-primary']})` // 默认值，文字主色 text-primary
+    // 使用css变量覆盖pc和h5的同名变量
+    ...getTailwindCssVarColor(gray, 'gray'),
+    DEFAULT: 'var(--color-gray)'
   },
   // 绿色系
   green: {
     ...colors.green,
-    ...green,
-    DEFAULT: `var(--color-green,${lightTheme['--color-green']})` // 默认值 text-green
+    // 使用css变量覆盖pc和h5的同名变量
+    ...getTailwindCssVarColor(green, 'green'),
+    DEFAULT: 'var(--color-green)'
   },
   // 红色系
   red: {
@@ -74,8 +78,9 @@ const themeColor = {
   // 蓝色系
   blue: {
     ...colors.blue,
-    ...blue,
-    DEFAULT: `var(--color-blue,${lightTheme['--color-blue']})` // 默认值 text-blue
+    // 使用css变量覆盖pc和h5的同名变量
+    ...getTailwindCssVarColor(blue, 'blue'),
+    DEFAULT: 'var(--color-blue)'
   }
 }
 
@@ -85,22 +90,22 @@ export default {
     center: true
   },
   colors: {
-    // 品牌主色
-    brand: {
-      DEFAULT: `var(--color-brand-primary,${lightTheme['--color-brand-primary']})`, // 默认值 text-brand
-      'text-primary': `var(--color-brand-text-primary,${lightTheme['--color-brand-text-primary']})` // 品牌主色-文字颜色
-      // secondary: colorBrandSecondary // 品牌色-第二色-衍生色1
-      // weak: lightTheme.colorBrandWeak // 品牌色-衍生色2
-      // light: lightTheme.colorBrandLight // 品牌色-衍生色3
-    },
-
     // =========== 颜色覆盖 ==============
-    ...themeColor
-  },
-  // 边框样式
-  borderColor: {
-    ...themeColor,
-    primary: `var(--border-primary-color,${lightTheme['--border-primary-color']})`
+    ...merge(
+      // pc主题变量
+      cloneDeep({
+        // 品牌主色
+        brand: {
+          DEFAULT: `var(--color-brand-primary,${lightTheme['--color-brand-primary']})`, // 默认值 text-brand
+          'text-primary': `var(--color-brand-text-primary,${lightTheme['--color-brand-text-primary']})` // 品牌主色-文字颜色
+          // secondary: colorBrandSecondary // 品牌色-第二色-衍生色1
+          // weak: lightTheme.colorBrandWeak // 品牌色-衍生色2
+          // light: lightTheme.colorBrandLight // 品牌色-衍生色3
+        },
+        ...themeColor
+      }),
+      cloneDeep(themeColorsMobile) //优先使用h5的去覆盖pc的
+    )
   },
   // 响应式
   screens: {
@@ -123,20 +128,21 @@ export default {
     'hms-thin': ['hms-thin']
   },
   extend: {
-    // ======== 使用css变量，方便切换主题，使用方法：text-primary ==============
-    // 主题文字变量
-    textColor: {
-      primary: `var(--color-text-primary,${lightTheme['--color-text-primary']})`, // 多写一个默认值，为了让编辑器识别颜色变量
-      secondary: `var(--color-text-secondary,${lightTheme['--color-text-secondary']})`,
-      weak: `var(--color-text-weak,${lightTheme['--color-text-weak']})`
-    },
-    // 主题背景颜色变量
-    backgroundColor: {
-      primary: `var(--bg-primary,${lightTheme['--bg-primary']})` // 页面背景颜色
-    },
     boxShadow: {
       custom: '0px 2px 70px 0px rgba(80,80,80,0.07)',
       dropdown: '0px 2px 50px 8px rgba(200,200,200,0.3)'
+    },
+    // 使用css变量，可以切换多套主题变量
+    // ======== 使用css变量，方便切换主题，使用方法：text-primary ==============
+    // 主题文字变量
+    textColor: extendColors.textColor, //包含了pc和h5的同名css变量，通过切换class变化变量
+    // 主题背景颜色变量
+    backgroundColor: extendColors.backgroundColor, //包含了pc和h5的同名css变量，通过切换class变化变量
+    borderColor: {
+      // pc主题变量
+      ...themeColor,
+      // h5主题变量
+      ...extendColors.borderColor
     },
     margin: {
       '7.5': '1.875rem',

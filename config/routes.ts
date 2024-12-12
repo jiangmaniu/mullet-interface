@@ -199,6 +199,112 @@ export default [
     component: './admin/setting/kycStepForm',
     hideInMenu: true
   },
+
+  // ======================== 移动端页面路由 start ======================
+  {
+    path: '/:lng/app',
+    layout: false,
+    component: '@/layouts/WebAppLayout',
+    access: 'canAdmin', // 权限配置
+    routes: [
+      /* ------------------------------- 主tabbar ------------------------------- */
+      // 行情
+      {
+        path: '/:lng/app/quote',
+        component: './webapp/pages/Quote'
+      },
+      // 交易
+      {
+        path: '/:lng/app/trade',
+        component: './webapp/pages/Trade'
+      },
+      // 仓位
+      {
+        path: '/:lng/app/position',
+        component: './webapp/pages/Position'
+      },
+      // 个人中心
+      {
+        path: '/:lng/app/user-center',
+        component: './webapp/pages/UserCenter'
+      },
+      /* ------------------------------- 登录/注册/忘记密码 ------------------------------- */
+      {
+        path: '/:lng/app/login',
+        component: './webapp/pages/User/Login'
+      },
+      {
+        path: '/:lng/app/forget-pwd',
+        component: './webapp/pages/User/ForgetPwd'
+      },
+      /* ------------------------------- 行情 ------------------------------- */
+      // 行情-k线
+      {
+        path: '/:lng/app/quote/kline',
+        component: './webapp/pages/Quote/KLine'
+      },
+      // 行情-品种搜索
+      {
+        path: '/:lng/app/quote/search',
+        component: './webapp/pages/Quote/SymbolSearch'
+      },
+      /* ------------------------------- 仓位 ------------------------------- */
+      // 仓位-历史记录
+      {
+        path: '/:lng/app/position/record',
+        component: './webapp/pages/Position/HistoryRecord'
+      },
+      // 仓位-历史记录-详情
+      {
+        path: '/:lng/app/position/record/:id',
+        component: './webapp/pages/Position/HistoryRecord/HistoryOrderDetail'
+      },
+      /* ------------------------------- 账号相关 ------------------------------- */
+      // 账号选择
+      {
+        path: '/:lng/app/account/select',
+        component: './webapp/pages/Account/AccountSelect'
+      },
+      // 创建账号
+      {
+        path: '/:lng/app/account/create',
+        component: './webapp/pages/Account/AccountNew'
+      },
+      // 账号详情
+      {
+        path: '/:lng/app/account/view/:id',
+        component: './webapp/pages/Account/AccountDetail'
+      },
+      // 转账-划转页面
+      {
+        path: '/:lng/app/account/transfer',
+        component: './webapp/pages/Account/Transfer'
+      },
+      // 转账-划转详情
+      {
+        path: '/:lng/app/account/transfer/:id',
+        component: './webapp/pages/Account/Transfer/TransferDetail'
+      },
+      /* ------------------------------- 个人中心 ------------------------------- */
+      // 个人中心-语言选择
+      {
+        path: '/:lng/app/user-center/language',
+        component: './webapp/pages/UserCenter/Language'
+      },
+      // 个人中心-消息列表
+      {
+        path: '/:lng/app/user-center/message',
+        component: './webapp/pages/UserCenter/Message'
+      },
+      // 个人中心-消息列表-详情
+      {
+        path: '/:lng/app/user-center/message/:id',
+        component: './webapp/pages/UserCenter/Message/Detail'
+      }
+    ]
+  },
+  // ======================== 移动端页面路由 end ======================
+
   {
     path: '*',
     layout: false,

@@ -14,9 +14,8 @@ type IProps = {
 }
 
 const TabTable = ({ columns, datas, loading }: IProps) => {
-  const themeConfig = useTheme()
-  const themeMode = themeConfig.theme
-  const isDark = themeMode === 'dark'
+  const { theme } = useTheme()
+  const { isDark } = theme
 
   const classNameWrapper = useEmotionCss(
     // @ts-ignore

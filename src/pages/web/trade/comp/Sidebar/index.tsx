@@ -37,7 +37,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const [categoryTabKey, setCategoryTabKey] = useState(0) // 品种分类
   const [list, setList] = useState([] as Account.TradeSymbolListItem[])
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const searchInputRef = useRef<any>()
   const symbolList = trade.symbolList // 全部品种列表
   const loading = trade.symbolListLoading

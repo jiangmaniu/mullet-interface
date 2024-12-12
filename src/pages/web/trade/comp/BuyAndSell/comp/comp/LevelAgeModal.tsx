@@ -16,7 +16,8 @@ type IProps = {
 
 function LevelAgeModal({ trigger }: IProps) {
   const intl = useIntl()
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const { trade } = useStores()
   const modalRef = useRef<any>()
   const [current, setCurrent] = useState(0)

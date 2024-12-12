@@ -1,20 +1,17 @@
 import { Outlet, useLocation } from '@umijs/max'
 import classNames from 'classnames'
 
-import TabBottomBar from '@/components/H5/TabBottomBar'
 // import Footer from '@/components/Web/Footer'
 import Header from '@/components/Web/Header'
 import { useEnv } from '@/context/envProvider'
+import useSwitchPcOrMobile from '@/hooks/useSwitchPcOrMobile'
 
 export default function WebLayout() {
   const { isPc, isMobileOrIpad } = useEnv()
   const { pathname } = useLocation()
   const isTradeLayout = pathname.indexOf('/trade') !== -1
 
-  if (isMobileOrIpad) {
-    // 渲染移动端入口
-    return <TabBottomBar />
-  }
+  useSwitchPcOrMobile() // 切换 pc 和移动端布局
 
   if (isTradeLayout) {
     return (

@@ -5,18 +5,19 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { Provider } from '@/context'
-import { cssVars } from '@/theme/theme.config'
+import { pcCssVars } from '@/theme/theme.config'
 
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
-import TabBottomBar from './components/H5/TabBottomBar'
 import SwitchLanguage from './components/SwitchLanguage'
 import { ICONFONT_URL, WEB_HOME_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { useTheme } from './context/themeProvider'
+import useSwitchPcOrMobile from './hooks/useSwitchPcOrMobile'
+import { mobileCssVars } from './pages/webapp/theme/colors'
 import { errorConfig } from './requestErrorConfig'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN } from './utils/storage'
@@ -70,12 +71,14 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   const [showMenuExtra, setShowMenuExtra] = useState(false)
   const { pageBgColor } = useModel('global')
   const { pathname } = useLocation()
-  const { setTheme } = useTheme()
+  const { setMode } = useTheme()
+
+  useSwitchPcOrMobile() // 切换 pc 和移动端布局
 
   // @TODO 临时设置切换主题，后面删除
   useEffect(() => {
     if (pathname !== '/trade') {
-      setTheme('light')
+      setMode('light')
     }
   }, [pathname])
 
@@ -97,7 +100,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       paddingRight: 0,
       paddingTop: 0
     },
-    pure: isMobileOrIpad ? true : false, // 是否删除掉所有的自带界面
+    // pure: isMobileOrIpad ? true : false, // 是否删除掉所有的自带界面
     // actionsRender: () => [],
     actionsRender: () => [<HeaderRightContent key="content" isAdmin />],
     // avatarProps: {
@@ -159,7 +162,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
       // 渲染移动端入口
-      return <>{isMobileOrIpad ? <TabBottomBar /> : children}</>
+      // return <>{isMobileOrIpad ? <TabBottomBar /> : children}</>
+      return <>{children}</>
     },
     menuHeaderRender: () => {
       return <div></div>
@@ -306,7 +310,8 @@ export const rootContainer = (container: JSX.Element) => {
       <>
         <Helmet>
           {/* 注入css变量 */}
-          <style>{cssVars}</style>
+          <style>{pcCssVars}</style>
+          <style>{mobileCssVars}</style>
           {/* 需要设置一次地址，否则不使用Layout的情况下，iconfont图标使用不显示 */}
           <script async={true} src={ICONFONT_URL}></script>
         </Helmet>

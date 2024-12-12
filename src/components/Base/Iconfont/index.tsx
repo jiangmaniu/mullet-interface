@@ -5,10 +5,12 @@ import { cn } from '@/utils/cn'
 export type IconProps = {
   width?: number
   height?: number
+  /**宽高 */
+  size?: number
   /**字体图标的名字 */
   name: string
   /**图标颜色 */
-  color?: string
+  color?: any
   /**鼠标hover的颜色 */
   hoverColor?: string
   hoverStyle?: React.CSSProperties
@@ -16,7 +18,7 @@ export type IconProps = {
   className?: string
   style?: React.CSSProperties
 }
-function Iconfont({ name, width = 24, height = 24, color, hoverColor, hoverStyle, className, style, ...res }: IconProps) {
+function Iconfont({ name, width = 24, height = 24, size, color, hoverColor, hoverStyle, className, style, ...res }: IconProps) {
   const hoverClassName = useEmotionCss(({ token }) => {
     if (!hoverColor || !color) {
       return {
@@ -30,7 +32,7 @@ function Iconfont({ name, width = 24, height = 24, color, hoverColor, hoverStyle
   return (
     <svg
       className={cn(`w-[1rem] h-[1rem] overflow-hidden align-[-0.15em]`, hoverClassName, className)}
-      style={{ width, height, fill: color, ...style }}
+      style={{ width: size ? size : width, height: size ? size : height, fill: color, ...style }}
       aria-hidden={true}
       {...res}
     >

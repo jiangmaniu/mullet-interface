@@ -10,12 +10,12 @@ import { useTheme } from '@/context/themeProvider'
  */
 export default function UserLayout() {
   const { pathname } = useLocation()
-  const { setTheme } = useTheme()
+  const { setMode } = useTheme()
 
   // @TODO 临时设置切换主题，后面删除
   useEffect(() => {
     if (pathname !== '/trade') {
-      setTheme('light')
+      setMode('light')
     }
   }, [pathname])
 

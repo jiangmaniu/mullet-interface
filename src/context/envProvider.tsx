@@ -2,6 +2,8 @@ import { useBreakpoint } from '@ant-design/pro-components'
 import { debounce } from 'lodash'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
+import { stores } from './mobxProvider'
+
 type SizeInfo = {
   width: number
   height: number
@@ -104,6 +106,11 @@ export const EnvProvider = ({ children }: IProps) => {
     isMobileOrIpad: ['xs', 'sm', 'md', 'lg'].includes(breakPoint), // 手机端，包含ipad
     isPc: ['xl', 'xxl'].includes(breakPoint) // pc端 >= 1200px
   } as ProviderType
+
+  // 初始化设备类型。不要监听，只执行一次即可
+  useEffect(() => {
+    stores.global.setLastDeviceType(exposed.isPc ? 'PC' : 'MOBILE')
+  }, [])
 
   return <Context.Provider value={exposed}>{children}</Context.Provider>
 }

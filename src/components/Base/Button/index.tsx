@@ -3,7 +3,6 @@ import { FormattedMessage } from '@umijs/max'
 import { Button as AntdButton, ButtonProps } from 'antd'
 import qs from 'qs'
 
-import { useEnv } from '@/context/envProvider'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
@@ -22,9 +21,6 @@ type IProps = ButtonProps & {
 }
 
 export default function Button({ children, href, params, onClick, height = 38, style, ...res }: IProps) {
-  const { isMobileOrIpad } = useEnv()
-  const btnHeight = isMobileOrIpad ? 44 : height
-
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
       onClick(e)
@@ -34,7 +30,7 @@ export default function Button({ children, href, params, onClick, height = 38, s
   }
 
   return (
-    <AntdButton onClick={handleClick} style={{ height: btnHeight, ...style }} {...res}>
+    <AntdButton onClick={handleClick} style={{ height, ...style }} {...res}>
       <span>{children}</span>
     </AntdButton>
   )

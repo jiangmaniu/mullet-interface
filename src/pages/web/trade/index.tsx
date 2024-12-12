@@ -31,7 +31,7 @@ export default observer(() => {
   const { initialState } = useModel('@@initialState')
   const { fetchUserInfo } = useModel('user')
   const { pathname } = useLocation()
-  const { setTheme } = useTheme()
+  const { setMode } = useTheme()
   const currentUser = initialState?.currentUser
 
   const networkState = useNetwork()
@@ -48,10 +48,10 @@ export default observer(() => {
 
   useEffect(() => {
     // 设置交易页面主题变量为全局主题
-    setTheme(STORAGE_GET_TRADE_THEME())
+    setMode(STORAGE_GET_TRADE_THEME())
     return () => {
       // 重置全局主题
-      setTheme('light')
+      setMode('light')
     }
   }, [pathname])
 

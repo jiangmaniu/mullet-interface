@@ -23,7 +23,8 @@ type IProps = {
 function Message({ theme }: IProps) {
   const { global } = useStores()
   const { isMobileOrIpad } = useEnv()
-  const { isDark } = useTheme()
+  const themeConfig = useTheme()
+  const isDark = themeConfig.theme.isDark
   const { unReadCount, messageList } = global
 
   const className = useEmotionCss(({ token }) => {

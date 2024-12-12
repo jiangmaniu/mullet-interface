@@ -55,5 +55,8 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "commentTranslate.multiLineMerge": true,
-  "commentTranslate.source": "Google"
+  "commentTranslate.source": "Google",
+  // className智能感知
+  "tailwindCSS.experimental.classRegex": ["cn`([^`]*)", ["'([^']*)'"]],
+  "tailwindCSS.classAttributes": ["className"]
 }

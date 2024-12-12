@@ -11,13 +11,13 @@ interface IProps {
 export const Provider = ({ children }: IProps): JSX.Element => {
   return (
     <NotificationProvider>
-      <StoresProvider>
-        <ThemeProvider>
-          <LanguageProvider>
-            <EnvProvider>{children}</EnvProvider>
-          </LanguageProvider>
-        </ThemeProvider>
-      </StoresProvider>
+      <EnvProvider>
+        <StoresProvider>
+          <ThemeProvider>
+            <LanguageProvider>{children}</LanguageProvider>
+          </ThemeProvider>
+        </StoresProvider>
+      </EnvProvider>
     </NotificationProvider>
   )
 }

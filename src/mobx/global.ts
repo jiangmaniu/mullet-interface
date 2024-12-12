@@ -7,7 +7,9 @@ import { getMyMessageList, getUnReadMessageCount } from '@/services/api/message'
 import { onLogout } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
 
-export type TabbarActiveKey = 'Quote' | 'Trade' | 'Position' | 'UserCenter'
+export type TabbarActiveKey = '/app/quote' | '/app/trade' | '/app/position' | '/app/user-center'
+
+export type DeviceType = 'PC' | 'MOBILE'
 
 export class GlobalStore {
   constructor() {
@@ -18,14 +20,33 @@ export class GlobalStore {
   @observable messageCurrent = 1 // 消息列表页码
   @observable messageTotalCount = 1 // 总页码
   @observable unReadCount = 0 // 未读消息数量
-  @observable tabBarActiveKey: TabbarActiveKey = 'Quote'
+  @observable tabBarActiveKey: TabbarActiveKey = '/app/quote'
+  @observable lastDeviceType: DeviceType = 'PC' // 设置最后一次切换pc、mobile端设备类型
+  @observable lastPcJumpPathname = '' // 记录最后一次PC端跳转的路径-方便响应式变化恢复到之前的地址
+  @observable lastMobileJumpPathname = '' // 记录最后一次Mobile端跳转的路径-方便响应式变化恢复到之前的地址
 
   // 设置H5底部tabbar激活项
+  @action
   setTabBarActiveKey = (tabBarActiveKey: TabbarActiveKey) => {
     this.tabBarActiveKey = tabBarActiveKey
+  }
 
-    // 同步参数到地址栏
-    window.history.replaceState('', '', `${location.pathname}#${tabBarActiveKey}`)
+  // 设置最后一次PC端跳转的路径
+  @action
+  setLastPcJumpPathname = (pathname: string) => {
+    this.lastPcJumpPathname = pathname
+  }
+
+  // 设置最后一次Mobile端跳转的路径
+  @action
+  setLastMobileJumpPathname = (pathname: string) => {
+    this.lastMobileJumpPathname = pathname
+  }
+
+  // 设置最后一次切换pc、mobile端设备类型
+  @action
+  setLastDeviceType = (lastDeviceType: DeviceType) => {
+    this.lastDeviceType = lastDeviceType
   }
 
   fetchUserInfo = async (refreshAccount?: boolean) => {

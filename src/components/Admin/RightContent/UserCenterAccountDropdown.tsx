@@ -24,7 +24,8 @@ function UserCenterAccountDropdown({ theme }: IProps) {
   const { trade } = useStores()
   const { currentAccountInfo } = trade
   const { initialState } = useModel('@@initialState')
-  const { isDark } = useTheme()
+  const themeConfig = useTheme()
+  const isDark = themeConfig.theme.isDark
   const [accountBoxOpen, setAccountBoxOpen] = useState(false)
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
