@@ -506,6 +506,13 @@ export function isPC() {
   return flag
 }
 
+export function isPCByWidth() {
+  if (document.documentElement.clientWidth >= 1200) {
+    return true
+  }
+  return false
+}
+
 /**
  * 获取指定数字的精度位数
  * @param value

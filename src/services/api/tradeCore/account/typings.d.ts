@@ -73,6 +73,8 @@ declare namespace Account {
     symbolNewPrice?: SymbolNewPrice
     /**账户组ID */
     accountGroupId?: string
+    /**分类 */
+    classify?: string
   }
   type SymbolNewPrice = {
     /**卖交易量 */

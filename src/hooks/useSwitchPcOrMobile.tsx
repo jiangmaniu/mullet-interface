@@ -35,6 +35,9 @@ function useSwitchPcOrMobile() {
       }
       // 记录最后一次设备类型
       setLastDeviceType(currentDeviceType)
+    } else if (isMobileOrIpad && !getPathname(pathname).startsWith('/app/')) {
+      // 如果是移动端，并且当前路径不是以/app/开头，则跳转到行情页面
+      navigateTo('/app/quote')
     } else {
       // 记录最后跳转的路径
       if (isPc) {

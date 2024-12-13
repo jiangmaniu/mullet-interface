@@ -1,19 +1,23 @@
 import { observer } from 'mobx-react'
+import { useEffect } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 
-import QuoteItem from '../../components/Quote/QuoteItem'
+import Basiclayout from '../../components/Base/BasicLayout'
+import QuoteTopTabbar from '../../components/Quote/QuoteTopTabbar'
 
 function Quote() {
   const { trade } = useStores()
-  const symbolList = trade.symbolListAll
+
+  useEffect(() => {
+    // 隐藏页面滚动条，否则和FlashList冲突
+    document.documentElement.style.overflowY = 'hidden'
+  }, [])
 
   return (
-    <div className="mx-3">
-      {symbolList.map((item, idx) => {
-        return <QuoteItem item={item} key={idx} />
-      })}
-    </div>
+    <Basiclayout bgColor="secondary">
+      <QuoteTopTabbar />
+    </Basiclayout>
   )
 }
 

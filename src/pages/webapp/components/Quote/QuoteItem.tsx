@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
-import { useMemo } from 'react'
+import { forwardRef, useMemo } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
@@ -17,10 +17,10 @@ type Item = Account.TradeSymbolListItem
 type IProps = {
   item: Item
   /** 点击item */
-  onClick?: (item?: Item) => void
+  onItem?: (item?: Item) => void
 }
 
-function QuoteItem({ item, onClick }: IProps) {
+function QuoteItem({ item, onItem }: IProps, ref: any) {
   const { cn, theme } = useTheme()
   const { up: upColor, down: downColor, isDark } = theme
   const { trade } = useStores()
@@ -44,15 +44,19 @@ function QuoteItem({ item, onClick }: IProps) {
     // 切换品种
     trade.switchSymbol(symbol)
 
-    if (onClick) {
-      onClick(item)
+    if (onItem) {
+      onItem(item)
     } else {
       // @TODO调整到k线页面
     }
   }
 
   return (
-    <View className={cn('flex items-center flex-row justify-between py-2 px-2 rounded-xl')} bgColor="primary" onClick={handleJump}>
+    <View
+      className={cn('mb-[10px] flex items-center flex-row justify-between py-2 px-2 rounded-xl')}
+      bgColor="primary"
+      onClick={handleJump}
+    >
       <View className={cn('flex flex-col')}>
         <View className={cn('flex flex-row items-center pb-1')}>
           <SymbolIcon src={item.imgUrl} />
@@ -132,4 +136,4 @@ function QuoteItem({ item, onClick }: IProps) {
   )
 }
 
-export default observer(QuoteItem)
+export default observer(forwardRef(QuoteItem))
