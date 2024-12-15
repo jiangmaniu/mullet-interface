@@ -46,7 +46,7 @@ type IProps = Partial<Props> & {
   /** 取消事件 */
   onCancel?: () => void
   /** 弹窗高度 */
-  height?: number
+  height?: number | string
   /** 隐藏footer按钮 */
   hiddenFooter?: boolean
   /** 控制打开弹窗的按钮 优先使用trigger方式打开弹窗，避免多写一些状态控制 */
@@ -64,6 +64,8 @@ type IProps = Partial<Props> & {
   /** 是否开启内容拖拽 */
   dragOnContent?: boolean
   confirmButtonProps?: ButtonProps
+  /**隐藏内容器滚动条 */
+  hiddenContentScroll?: boolean
 }
 
 const SheetModal = (
@@ -89,6 +91,7 @@ const SheetModal = (
     draggable = true,
     dragOnContent = true,
     confirmButtonProps,
+    hiddenContentScroll,
     ...res
   }: IProps,
   ref: ForwardedRef<SheetRef>
@@ -222,10 +225,12 @@ const SheetModal = (
   const className = useEmotionCss((token) => {
     return {
       'div[data-rsbs-header]': {
-        boxShadow: 'none !important'
+        boxShadow: 'none !important',
+        paddingInline: '0 !important'
       },
       'div[data-rsbs-footer]': {
-        boxShadow: 'none !important'
+        boxShadow: 'none !important',
+        display: hiddenFooter ? 'none' : 'block'
       },
       'div[data-rsbs-header]:before': {
         width: '57px !important'
@@ -233,7 +238,12 @@ const SheetModal = (
       'div[data-rsbs-overlay]': {
         borderTopLeftRadius: '20px !important',
         borderTopRightRadius: '20px !important'
-      }
+      },
+      'div[data-rsbs-scroll]': hiddenContentScroll
+        ? {
+            overflow: 'hidden !important'
+          }
+        : undefined
     }
   })
 
@@ -248,7 +258,14 @@ const SheetModal = (
         // @ts-ignore
         open={visible}
         // @ts-ignore
-        snapPoints={({ minHeight, headerHeight, footerHeight, maxHeight }) => (height ? [height] : [maxHeight / 4, maxHeight * 0.9])}
+        snapPoints={({ minHeight, headerHeight, footerHeight, maxHeight }) => {
+          return height
+            ? // 如果传入的高度是百分比形式，则最大高度*百分比
+              typeof height === 'string' && height.endsWith('%')
+              ? [maxHeight * (parseInt(height) / 100)]
+              : [height]
+            : [maxHeight / 4, maxHeight * 0.9] // 最小高度, 最大高度
+        }}
         defaultSnap={({ lastSnap, snapPoints }) => lastSnap ?? Math.max(...snapPoints)}
         footer={renderFooter()}
         header={<>{title && <div className={cn('leading-7 text-center')}>{title}</div>}</>}
@@ -257,7 +274,7 @@ const SheetModal = (
         className={className}
         {...res}
       >
-        <div className="mx-3">{children}</div>
+        {children}
       </BottomSheet>
       {triggerDom}
     </>

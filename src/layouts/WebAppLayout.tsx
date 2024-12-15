@@ -1,9 +1,11 @@
 import { Outlet, useLocation } from '@umijs/max'
 import { observer } from 'mobx-react'
+import { useEffect } from 'react'
 
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import useSwitchPcOrMobile from '@/hooks/useSwitchPcOrMobile'
+import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
 import { isMainTabbar } from '@/pages/webapp/utils/navigator'
 
@@ -13,10 +15,21 @@ import { isMainTabbar } from '@/pages/webapp/utils/navigator'
  */
 function WebAppLayout() {
   const { pathname } = useLocation()
-  const { global } = useStores()
+  const { ws } = useStores()
   const { isPc } = useEnv()
 
+  // 同步数据到worker线程
+  useSyncDataToWorker()
+
   useSwitchPcOrMobile() // 切换 pc 和移动端布局
+
+  useEffect(() => {
+    return () => {
+      // 取消行情订阅
+      ws.close()
+      ws.closeWorker()
+    }
+  }, [])
 
   // 主Tabbar页面使用该布局
   if (isMainTabbar(pathname)) {

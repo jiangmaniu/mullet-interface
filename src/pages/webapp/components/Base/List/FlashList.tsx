@@ -22,7 +22,6 @@ type IProps<T = any> = Omit<ListProps<T>, 'children' | 'itemKey'> & {
   onViewableItemsChanged?: (visibleList: T[], fullList: T[]) => void
   ListHeaderComponent?: React.ReactNode
   hasMore?: boolean
-  showEmpty?: boolean
   showMoreText?: boolean
   refreshing?: boolean
   /**结合showEmpty使用 */
@@ -45,7 +44,6 @@ function FlashList<T>({
   onScroll,
   refreshing,
   emptyConfig,
-  showEmpty,
   ListEmptyComponent,
   ListFooterComponent,
   showMoreText,
@@ -55,6 +53,15 @@ function FlashList<T>({
   const { cn, theme } = useTheme()
   const { isDark } = theme
   const intl = useIntl()
+  const showEmpty = res?.data?.length === 0
+
+  const renderListFooterComponent = useMemo(() => {
+    if (!showMoreText) return null
+    if (res?.data?.length) {
+      return hasMore ? <More /> : res?.data?.length > 3 ? <End /> : null
+    }
+    return null
+  }, [res?.data?.length, showMoreText, hasMore])
 
   const _onScroll = (e: React.UIEvent<HTMLElement, UIEvent>) => {
     if (onScroll) {
@@ -63,7 +70,7 @@ function FlashList<T>({
       // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
       if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - height) <= 1) {
         // appendData();
-        console.log('onScroll')
+        console.log('_onScroll')
       }
     }
   }
@@ -85,14 +92,6 @@ function FlashList<T>({
   }
 
   if (ListEmptyComponent) return ListEmptyComponent
-
-  const renderListFooterComponent = useMemo(() => {
-    if (!showMoreText) return null
-    if (res?.data?.length) {
-      return hasMore ? <More /> : res?.data?.length > 3 ? <End /> : null
-    }
-    return null
-  }, [res?.data?.length, showMoreText, hasMore])
 
   return (
     <div>

@@ -1,4 +1,5 @@
 import { useIntl } from '@umijs/max'
+import { debounce } from 'lodash'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
@@ -7,24 +8,30 @@ import { useLoading } from '@/context/loadingProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 
+import useSymbolQuoteSubscribe from '../../hooks/useSymbolQuoteSubscribe'
 import FlashList from '../Base/List/FlashList'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
 import QuoteItem from './QuoteItem'
+import { TabKey } from './QuoteTopTabbar'
 
 type IProps = {
   /** 搜索框输入值 */
   searchValue?: string
   onItem?: (item?: Account.TradeSymbolListItem) => void
-  tabKey?: string
+  tabKey?: TabKey
   tabValue?: string
+  /**列表高度 */
+  height?: number
 }
 
-function QuoteFlashList({ searchValue, onItem, tabKey, tabValue }: IProps) {
+function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue }: IProps) {
   const { cn, theme } = useTheme()
   const { trade, ws } = useStores()
   const intl = useIntl()
   const symbolList = trade.symbolListAll
+  const [visibleItems, setVisibleItems] = useState<string[]>([])
+  const [refreshing, setRefreshing] = useState(false)
 
   const { showLoading, hideLoading } = useLoading()
 
@@ -36,6 +43,11 @@ function QuoteFlashList({ searchValue, onItem, tabKey, tabValue }: IProps) {
       hideLoading()
     }
   }, [symbolListLoading])
+
+  const onViewableItemsChanged = debounce((visibleList) => {
+    const newVisibleItems = visibleList?.map((item: Account.TradeSymbolListItem) => item.id) || []
+    setVisibleItems(newVisibleItems)
+  }, 100)
 
   const symbolDataList = useMemo(() => {
     // 自选列表
@@ -49,7 +61,6 @@ function QuoteFlashList({ searchValue, onItem, tabKey, tabValue }: IProps) {
     return toJS(list)
   }, [tabValue, trade.favoriteList, symbolList, tabKey])
 
-  const [refreshing, setRefreshing] = useState(false)
   const onRefresh = async () => {
     if (refreshing) return
 
@@ -60,13 +71,20 @@ function QuoteFlashList({ searchValue, onItem, tabKey, tabValue }: IProps) {
 
   const list = useMemo(() => {
     let list = symbolDataList.map((d) => ({
-      ...d
+      ...d,
+      // visible: visibleItems.includes(d.id as never)
+      visible: true
     }))
 
     if (!searchValue) return list
 
     return list.filter((v) => v.symbol.toLowerCase().indexOf(String(searchValue).toLowerCase()) !== -1)
-  }, [symbolDataList, tabKey, trade.favoriteList.length, searchValue])
+  }, [symbolDataList, trade.favoriteList.length, searchValue])
+
+  // 订阅品种列表数据
+  useSymbolQuoteSubscribe({
+    list
+  })
 
   const renderItem = (item: Account.TradeSymbolListItem) => {
     return (
@@ -79,14 +97,13 @@ function QuoteFlashList({ searchValue, onItem, tabKey, tabValue }: IProps) {
   return (
     <div className={cn('flex-1')}>
       <FlashList
-        // @TODO
-        // data={list}
-        data={symbolList}
+        data={list}
         renderItem={renderItem}
         showMoreText
         // hasMore
         estimatedItemSize={76} // 估算的 item 高度
-        height={document.body.clientHeight}
+        height={height || document.body.clientHeight - 180}
+        onViewableItemsChanged={onViewableItemsChanged}
         ListHeaderComponent={
           <View className={cn('flex flex-row justify-between pb-2 px-3')}>
             <View className={cn('flex-1')}>

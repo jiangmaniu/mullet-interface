@@ -237,7 +237,7 @@ export const darkThemeVarsMobile = {
 export const mobileCssVars = `
   :root[data-mode=h5-light] {
     ${setRootVars(lightThemeVarsMobile, true)};
-    --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6)
+    --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6) !important
     --rsbs-bg: #fff;
     --rsbs-handle-bg: #ddd;
     --rsbs-max-w: auto;
@@ -246,7 +246,7 @@ export const mobileCssVars = `
   }
   :root[class=h5-dark] {
     ${setRootVars(darkThemeVarsMobile, true)}
-    --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6)
+    --rsbs-backdrop-bg: rgba(0, 0, 0, 0.6) !important
     --rsbs-bg: #fff;
     --rsbs-handle-bg: #ddd;
     --rsbs-max-w: auto;

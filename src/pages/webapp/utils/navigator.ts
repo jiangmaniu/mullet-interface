@@ -1,12 +1,26 @@
+import { history } from '@umijs/max'
+import qs from 'qs'
+
 import { MOBILE_HOME_PAGE } from '@/constants'
 import { isPCByWidth } from '@/utils'
 import { getPathname, push } from '@/utils/navigator'
 
 export const MAIN_PAGES = ['/app/quote', '/app/trade', '/app/position', '/app/user-center']
 
-export const navigateTo = (path: string) => {
-  push(path)
+/**
+ *移动端跳转
+ * @param path 要跳转的页面
+ * @param query 页面参数
+ */
+export const navigateTo = (path: string, query?: any) => {
+  const hasQuery = query && Object.keys(query).length > 0
+  push(hasQuery ? `${path}?${qs.stringify(query)}` : path)
 }
+
+// 跳转首页
+export const goHome = () => navigateTo('/app/quote')
+
+export const goBack = () => history.back()
 
 // 是否是主页面
 export const isMainTabbar = (pathname: string) => MAIN_PAGES.includes(getPathname(pathname))

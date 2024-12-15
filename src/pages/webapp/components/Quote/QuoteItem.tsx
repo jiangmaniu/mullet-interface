@@ -1,3 +1,4 @@
+import { SpinLoading } from 'antd-mobile'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
 import { forwardRef, useMemo } from 'react'
@@ -9,6 +10,7 @@ import { formatNum } from '@/utils'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import useQuoteColor from '../../hooks/useQuoteColor'
+import { navigateTo } from '../../utils/navigator'
 import SymbolIcon from '../Base/SymbolIcon'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
@@ -47,7 +49,8 @@ function QuoteItem({ item, onItem }: IProps, ref: any) {
     if (onItem) {
       onItem(item)
     } else {
-      // @TODO调整到k线页面
+      //  跳转到k线页面
+      navigateTo('/app/quote/kline')
     }
   }
 
@@ -69,7 +72,7 @@ function QuoteItem({ item, onItem }: IProps, ref: any) {
         <View className={cn('flex flex-row items-center')}>
           <View className={cn('max-w-[54px]')}>
             <Text color="primary" size="xs">
-              {dayjs(res.quoteTimeStamp).format('HH:mm:ss')}
+              {item.visible ? dayjs(res.quoteTimeStamp).format('HH:mm:ss') : '--:--:--'}
             </Text>
           </View>
           <View className={cn('h-2 w-[1px] mx-1', { backgroundColor: theme.colors.Divider.primary })} />
@@ -82,54 +85,64 @@ function QuoteItem({ item, onItem }: IProps, ref: any) {
           </View>
           <View className={cn('h-2 w-[1px] mx-1', { backgroundColor: theme.colors.Divider.heavy })} />
           <Text color={(per as number) > 0 ? 'green' : 'red'} size="xs" className={cn('font-medium')}>
-            {(per as number) > 0 ? `+${per}%` : `${per}%`}
+            {item.visible && bid ? ((per as number) > 0 ? `+${per}%` : `${per}%`) : '--'}
           </Text>
         </View>
       </View>
       <View className={cn('flex items-center flex-row gap-x-[6px]')}>
         <View className={cn('relative w-[84px] overflow-hidden rounded-md')}>
-          <>
-            <View
-              onClick={handleJump}
-              className={cn('rounded-md text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden z-2 text-sm font-dingpro-medium')}
-              style={bidColorStyle}
-            >
-              {bid ? formatNum(bid) : '--'}
-            </View>
-            <View
-              className={cn(
-                'bg-gray-50 relative -top-[3px] pt-[3px] items-center justify-center border-l border-b border-r rounded-bl-md rounded-br-md h-[20px] -z-1'
-              )}
-              borderColor="weak"
-            >
-              <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
-                L:
-                {formatNum(res.low)}
-              </Text>
-            </View>
-          </>
+          {item.visible ? (
+            <>
+              <View
+                onClick={handleJump}
+                className={cn(
+                  'rounded-md text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden z-2 text-sm font-dingpro-medium'
+                )}
+                style={bidColorStyle}
+              >
+                {bid ? formatNum(bid) : '--'}
+              </View>
+              <View
+                className={cn(
+                  'bg-gray-50 relative -top-[3px] pt-[3px] items-center justify-center border-l border-b border-r rounded-bl-md rounded-br-md h-[20px] -z-1'
+                )}
+                borderColor="weak"
+              >
+                <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
+                  L:
+                  {formatNum(res.low)}
+                </Text>
+              </View>
+            </>
+          ) : (
+            <SpinLoading style={{ '--size': '18px' }} />
+          )}
         </View>
         <View className={cn('relative w-[84px] overflow-hidden rounded-md')}>
-          <>
-            <View
-              onClick={handleJump}
-              className={cn('rounded-[6px] text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden text-sm font-dingpro-medium')}
-              style={askColorStyle}
-            >
-              {ask ? formatNum(ask) : '--'}
-            </View>
-            <View
-              className={cn(
-                'bg-gray-50 relative -top-[3px] pt-[3px] items-center justify-center border-l border-b border-r rounded-bl-md rounded-br-md h-[20px] -z-1'
-              )}
-              borderColor="weak"
-            >
-              <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
-                H:
-                {formatNum(res.high)}
-              </Text>
-            </View>
-          </>
+          {item.visible ? (
+            <>
+              <View
+                onClick={handleJump}
+                className={cn('rounded-[6px] text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden text-sm font-dingpro-medium')}
+                style={askColorStyle}
+              >
+                {ask ? formatNum(ask) : '--'}
+              </View>
+              <View
+                className={cn(
+                  'bg-gray-50 relative -top-[3px] pt-[3px] items-center justify-center border-l border-b border-r rounded-bl-md rounded-br-md h-[20px] -z-1'
+                )}
+                borderColor="weak"
+              >
+                <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
+                  H:
+                  {formatNum(res.high)}
+                </Text>
+              </View>
+            </>
+          ) : (
+            <SpinLoading style={{ '--size': '18px' }} />
+          )}
         </View>
       </View>
     </View>

@@ -43,7 +43,7 @@ export const View = (props: IProps) => {
       style={{
         ...bgColorStyle,
         ...borderColorStyle,
-        ...(style || {})
+        ...(typeof style === 'object' ? style : {})
       }}
       {...res}
     >

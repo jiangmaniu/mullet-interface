@@ -18,6 +18,10 @@ declare namespace Account {
   }
   // 账号交易品种及配置-集合-列表
   type TradeSymbolListItem = {
+    /*
+     * 该字段渲染列表用
+     */
+    visible?: boolean
     /**
      * 别名
      */

@@ -2,8 +2,8 @@ import { observer } from 'mobx-react'
 import { useRef } from 'react'
 
 import Button from '@/components/Base/Button'
-import NavBar from '@/components/Base/NavBar'
 
+import Header from '../../components/Base/Header'
 import SheetModal from '../../components/Base/SheetModal'
 
 function Trade() {
@@ -11,7 +11,7 @@ function Trade() {
 
   return (
     <div>
-      <NavBar title="测试" right="右边" />
+      <Header title="测试" right="右边" />
       <Button onClick={() => popupRef.current.show()}>交易页面</Button>
       <div className="text-primary">测试122</div>
 

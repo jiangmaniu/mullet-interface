@@ -32,6 +32,7 @@ module.exports = {
     'no-useless-escape': 'off',
     'no-case-declarations': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',
-    '@typescript-eslint/no-loop-func': 'off'
+    '@typescript-eslint/no-loop-func': 'off',
+    'react/no-children-prop': 'off'
   }
 }

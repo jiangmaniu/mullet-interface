@@ -171,7 +171,7 @@ export const Text = (props: IProps) => {
       className={cn(hasFlexClassName(className) && 'flex', fontSizeClassName, className, styleClassName)}
       style={{
         ...colorStyle,
-        ...(style || {})
+        ...(typeof style === 'object' ? style : {})
       }}
       {...res}
     >

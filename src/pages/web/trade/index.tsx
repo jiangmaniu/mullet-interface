@@ -38,7 +38,7 @@ export default observer(() => {
   const isOnline = networkState.online
 
   // 同步数据到worker线程
-  const syncData = useSyncDataToWorker()
+  useSyncDataToWorker()
 
   useEffect(() => {
     if (!currentUser?.accountList?.length) {

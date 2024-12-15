@@ -26,7 +26,7 @@ export default function Loading({ width = 400, height = 400 }: IProps) {
 }
 
 export const ModalLoading = forwardRef(
-  ({ title, tips, open }: { title?: React.ReactNode; tips?: React.ReactNode; open?: boolean }, ref: any) => {
+  ({ title, tips, open, width }: { width?: number; title?: React.ReactNode; tips?: React.ReactNode; open?: boolean }, ref: any) => {
     const [isOpen, setIsOpen] = useState<any>(false)
     const intl = useIntl()
 
@@ -49,7 +49,7 @@ export const ModalLoading = forwardRef(
     return (
       <Modal
         open={isOpen}
-        width={400}
+        width={width || 400}
         closable={false}
         maskClosable={false}
         footer={null}
@@ -58,7 +58,7 @@ export const ModalLoading = forwardRef(
         styles={{ content: { padding: 0 }, header: { paddingInline: 20, paddingTop: 20 } }}
       >
         <div className="relative -top-8">
-          <Loading height={300} />
+          <Loading width={width} height={300} />
         </div>
         <div className="flex items-center justify-center text-secondary text-base relative -top-12 ">
           {tips}
