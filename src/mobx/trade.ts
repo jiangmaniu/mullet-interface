@@ -124,6 +124,7 @@ class TradeStore {
   @observable orderConfirmChecked = true // 下单二次确认弹窗
   @observable positionConfirmChecked = false // 平仓二次确认弹窗
   @observable orderVolume = '0.01' // 交易区下单数量
+  @observable orderVolumeTag = '' // 手数标签快速选择
   @observable orderSpslChecked = false // 是否选中止盈止损
   @observable orderPrice = '' // 交易区下单价格
   @observable spValue = '' // 止盈输入框-按价格
@@ -233,6 +234,11 @@ class TradeStore {
     this.orderPrice = orderPrice
   }
 
+  // 设置手数标签快速选择
+  setOrderVolumeTag = (tag: string) => {
+    this.orderVolumeTag = tag
+  }
+
   // 止盈价格输入框
   @action
   setSp = (value: any) => {
@@ -309,6 +315,7 @@ class TradeStore {
   resetTradeAction = () => {
     this.orderVolume = '0.01'
     this.orderPrice = ''
+    this.orderVolumeTag = ''
     this.spValue = ''
     this.slValue = ''
     this.spAmount = ''

@@ -165,7 +165,7 @@ export const mobileDarkTheme = {
 
   // ===== 深度进度条颜色 =====
   /** 买 */
-  depthBuyBg: ['rgba(0,179,138,0)', 'rgba(0,179,138,0.16)'],
+  depthBuyBg: 'linear-gradient( 90deg, rgba(0,179,138,0) 0%, rgba(0,179,138,0.16) 100%)',
   /** 卖 */
-  depthSellBg: ['rgba(230,52,79,0)', 'rgba(255,107,130,0.16)']
+  depthSellBg: 'linear-gradient( 90deg, rgba(230,52,79,0) 0%, rgba(255,107,130,0.16) 100%)'
 }

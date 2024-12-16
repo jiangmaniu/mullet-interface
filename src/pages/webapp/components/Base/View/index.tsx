@@ -16,6 +16,8 @@ type IProps = DOMAttributes<any> & {
   className?: string
   style?: React.CSSProperties
   children?: React.ReactNode
+  disabled?: boolean
+  /**兼容app事件 */
   onPress?: () => void
 }
 
@@ -30,7 +32,7 @@ export const hasFlexClassName = (className: any) => {
 }
 
 export const View = (props: IProps) => {
-  const { style, className, children, bgColor, borderColor, onPress, ...res } = props
+  const { onPress, onClick, disabled, style, className, children, bgColor, borderColor, ...res } = props
   const { cn, theme } = useTheme()
   // 如果外部传入style是style={cn('')}形式，则将style内容传入到className合并
   const styleClassName = typeof style === 'string' ? style : undefined
@@ -40,13 +42,13 @@ export const View = (props: IProps) => {
 
   return (
     <div
-      className={cn(hasFlexClassName(className) && 'flex', className, styleClassName)}
+      className={cn(hasFlexClassName(className) && 'flex', disabled && 'pointer-events-none', className, styleClassName)}
       style={{
         ...bgColorStyle,
         ...borderColorStyle,
         ...(typeof style === 'object' ? style : {})
       }}
-      onClick={onPress}
+      onClick={onClick || onPress}
       {...res}
     >
       {children}

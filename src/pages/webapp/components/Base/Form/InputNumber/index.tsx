@@ -201,7 +201,7 @@ const InputNumber = forwardRef(
                 />
                 <View
                   // disabled={disabledAdd}
-                  onPress={() => {
+                  onClick={() => {
                     onFocus?.(null as any)
                     if (disabledAdd) return
                     if (onAdd) {

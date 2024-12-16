@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
-import { View } from '../View'
+import { View } from '../components/Base/View'
 
 type BgColorType = 'primary' | 'secondary' | 'transparent'
 
@@ -12,10 +12,11 @@ interface Iprops {
   children: React.ReactNode
   /** 页面背景颜色 */
   bgColor?: BgColorType
+  className?: string
 }
 
 // 页面布局基础组件
-const Basiclayout: React.FC<Iprops> = ({ style, children, bgColor = 'primary' }) => {
+const Basiclayout: React.FC<Iprops> = ({ className, style, children, bgColor = 'primary' }) => {
   const { theme, cn } = useTheme()
   const { pathname } = useLocation()
 
@@ -28,7 +29,7 @@ const Basiclayout: React.FC<Iprops> = ({ style, children, bgColor = 'primary' })
   }, [pathname])
 
   return (
-    <View className={cn('flex-1 flex flex-col')} bgColor={bgColor} style={style}>
+    <View className={cn('flex-1 flex flex-col', className)} bgColor={bgColor} style={style}>
       {children}
     </View>
   )

@@ -127,7 +127,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     <View
       // activeOpacity={1}
       className={cn({ height }, 'mb-[22px]', ...($containerStyleOverride ?? []))}
-      onPress={focusInput}
+      onClick={focusInput}
       // accessibilityState={{ disabled: innerDisabled }}
     >
       {!!label && (

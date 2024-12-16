@@ -49,8 +49,8 @@ export default function useTrade(props?: IProps) {
     resetSpSl,
     setOrderType,
     setBuySell,
-    setSpPriceOrAmountType,
-    setSlPriceOrAmountType,
+    setSpPriceOrAmountType: _setSpPriceOrAmountType,
+    setSlPriceOrAmountType: _setSlPriceOrAmountType,
     setRecordModalItem,
     recordModalItem,
     setIsPosition, // 是否是持仓单
@@ -532,10 +532,16 @@ export default function useTrade(props?: IProps) {
 
   // 计算止盈预估盈亏
   // 止盈预估盈亏=（止盈价-市价/限价）*合约单位*手数/*汇率
+  const spValueEstimateRaw = useMemo(() => {
+    const retValue = spPriceOrAmountType === 'AMOUNT' ? String(spAmount) : String(spProfit)
+    return Number(retValue)
+  }, [spPriceOrAmountType, spProfit, spAmount])
+
+  // 格式化后的字符串，展示用
   const spValueEstimate = useMemo(
     throttle(
       () => {
-        return formatNum(spPriceOrAmountType === 'AMOUNT' ? String(spAmount) : String(spProfit), { precision: accountGroupPrecision })
+        return spValueEstimateRaw ? formatNum(spValueEstimateRaw, { precision: accountGroupPrecision }) : ''
       },
       100,
       {
@@ -543,17 +549,25 @@ export default function useTrade(props?: IProps) {
         leading: true
       }
     ),
-    [spPriceOrAmountType, spProfit, spAmount]
+    [spValueEstimateRaw]
   )
 
   // 计算止损预估盈亏
   // 止损预估盈亏=（市价/限价-止损价）*合约单位*手数/*汇率
+  const slValueEstimateRaw = useMemo(() => {
+    let retValue = slPriceOrAmountType === 'AMOUNT' ? slAmount : slProfit
+    return Number(retValue)
+  }, [slPriceOrAmountType, slProfit, slAmount])
+
   const slValueEstimate = useMemo(
     throttle(
       () => {
-        return formatNum(slPriceOrAmountType === 'AMOUNT' ? toNegativeOrEmpty(slAmount) : toNegativeOrEmpty(slProfit), {
-          precision: accountGroupPrecision
-        })
+        let retValue = slValueEstimateRaw === 0 ? '' : toNegativeOrEmpty(slValueEstimateRaw)
+        return retValue
+          ? formatNum(retValue, {
+              precision: accountGroupPrecision
+            })
+          : retValue
       },
       100,
       {
@@ -561,7 +575,7 @@ export default function useTrade(props?: IProps) {
         leading: true
       }
     ),
-    [slPriceOrAmountType, slProfit, slAmount]
+    [slValueEstimateRaw]
   )
 
   // 止盈止损范围大小判断
@@ -633,6 +647,41 @@ export default function useTrade(props?: IProps) {
     setOrderVolume(vmin)
   }, [vmin])
 
+  // 提交订单之前校验
+  const onCheckSubmit = () => {
+    if (!count) {
+      message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
+      onSubmitEnd()
+      return false
+    }
+    if (!maxOpenVolumeRef.current) {
+      onSubmitEnd()
+      message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
+      return false
+    }
+    // 限价、停损单
+    if (['LIMIT_ORDER', 'STOP_LIMIT_ORDER'].includes(orderType) && !orderPrice) {
+      onSubmitEnd()
+      message.info(intl.formatMessage({ id: 'mt.qingshurujiage' }))
+      return false
+    }
+
+    const spSlErrorMsg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
+
+    if (slFlagRef.current && sl) {
+      onSubmitEnd()
+      message.info(spSlErrorMsg)
+      return false
+    }
+    if (spFlagRef.current && sp) {
+      onSubmitEnd()
+      message.info(spSlErrorMsg)
+      return false
+    }
+
+    return true
+  }
+
   // 提交订单
   const onSubmitOrder = async () => {
     setInputing(true)
@@ -663,32 +712,7 @@ export default function useTrade(props?: IProps) {
     // @ts-ignore
     orderParams.type = type
 
-    if (!count) {
-      message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
-      onSubmitEnd()
-      return
-    }
-    if (!maxOpenVolumeRef.current) {
-      onSubmitEnd()
-      return message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
-    }
-    // 限价、停损单
-    if (['LIMIT_ORDER', 'STOP_LIMIT_ORDER'].includes(orderType) && !orderPrice) {
-      onSubmitEnd()
-      message.info(intl.formatMessage({ id: 'mt.qingshurujiage' }))
-      return
-    }
-
-    const spSlErrorMsg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
-
-    if (slFlagRef.current && sl) {
-      onSubmitEnd()
-      message.info(spSlErrorMsg)
-      return
-    }
-    if (spFlagRef.current && sp) {
-      onSubmitEnd()
-      message.info(spSlErrorMsg)
+    if (!onCheckSubmit()) {
       return
     }
 
@@ -710,6 +734,25 @@ export default function useTrade(props?: IProps) {
     } finally {
       onSubmitEnd()
       setLoading(false)
+    }
+  }
+
+  // 设置止盈按价格还是金额, 切换后填入最后计算的值
+  const setSpPriceOrAmountType = (value: 'PRICE' | 'AMOUNT') => {
+    _setSpPriceOrAmountType(value)
+    if (value === 'AMOUNT') {
+      _setSpAmount(spValueEstimateRaw)
+    } else {
+      _setSp(spValuePrice)
+    }
+  }
+
+  const setSlPriceOrAmountType = (value: 'PRICE' | 'AMOUNT') => {
+    _setSlPriceOrAmountType(value)
+    if (value === 'AMOUNT') {
+      _setSlAmount(slValueEstimateRaw)
+    } else {
+      _setSl(slValuePrice)
     }
   }
 
@@ -759,6 +802,8 @@ export default function useTrade(props?: IProps) {
     spValue: spValuePrice,
     slAmount: slValueEstimate,
     spAmount: spValueEstimate,
+    spValueEstimateRaw,
+    slValueEstimateRaw,
     // 止盈止损预计盈亏
     slValueEstimate,
     spValueEstimate,
@@ -814,8 +859,11 @@ export default function useTrade(props?: IProps) {
     onAdd,
     onMinus,
     onSubmitOrder,
+    onCheckSubmit,
     getInitPriceValue,
     resetSpSl,
+    setSpPriceOrAmountType,
+    setSlPriceOrAmountType,
     setOrderSpslChecked,
     orderSpslChecked,
     onSpAdd,
@@ -824,6 +872,8 @@ export default function useTrade(props?: IProps) {
     onSlMinus,
     onPriceAdd,
     onPriceMinus,
+    spPriceOrAmountType,
+    slPriceOrAmountType,
 
     // 设置监听依赖对象
     setItem,

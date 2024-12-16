@@ -3,11 +3,11 @@ import { useMemo, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
-import Basiclayout from '../../components/Base/BasicLayout'
 import Header from '../../components/Base/Header'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
 import { useI18n } from '../../hooks/useI18n'
+import Basiclayout from '../../layouts/BasicLayout'
 import { LoginSection } from './LoginSection'
 
 export const FOOTER_BOTTOM = 100

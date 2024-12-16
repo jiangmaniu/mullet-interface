@@ -8,7 +8,7 @@ type TabItem = TabProps & { key: React.Key; value?: any }
 
 type IProps = TabsProps & {
   /**列表项 */
-  tabList: TabItem[]
+  items: TabItem[]
   /**标签直接的间距 */
   tabBarGutter?: number
   tabPaddingBottom?: number
@@ -23,7 +23,7 @@ type IProps = TabsProps & {
  * 可滚动的标签页
  */
 export default function Tabs({
-  tabList,
+  items,
   tabBarGutter = 4,
   style,
   hiddenBottomLine = false,
@@ -84,7 +84,7 @@ export default function Tabs({
       activeLineMode="fixed"
       {...res}
     >
-      {tabList.map((item, idx: number) => {
+      {items.map((item, idx: number) => {
         return <TabsAntd.Tab key={item.key} style={{ marginRight: tabBarGutter, paddingBottom: 0, ...item.style }} title={item.title} />
       })}
     </TabsAntd>

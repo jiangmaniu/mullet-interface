@@ -11,9 +11,9 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 
 import useQuoteColor from '../../hooks/useQuoteColor'
 import { navigateTo } from '../../utils/navigator'
-import SymbolIcon from '../Base/SymbolIcon'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
+import SymbolIcon from './SymbolIcon'
 
 type Item = Account.TradeSymbolListItem
 type IProps = {

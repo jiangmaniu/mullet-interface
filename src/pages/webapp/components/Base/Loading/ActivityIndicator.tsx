@@ -2,6 +2,7 @@ import { SpinLoading } from 'antd-mobile'
 
 type IProps = {
   size?: number
+  color?: string
 }
 
 /**
@@ -9,8 +10,8 @@ type IProps = {
  * @param param0
  * @returns
  */
-function ActivityIndicator({ size = 20 }: IProps) {
-  return <SpinLoading style={{ '--size': `${size}px` }} />
+function ActivityIndicator({ size = 20, color }: IProps) {
+  return <SpinLoading style={{ '--size': `${size}px`, color }} />
 }
 
 export default ActivityIndicator

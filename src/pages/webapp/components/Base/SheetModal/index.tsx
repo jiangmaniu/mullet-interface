@@ -2,14 +2,14 @@ import 'react-spring-bottom-sheet/dist/style.css'
 
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
-import { ButtonProps } from 'antd'
 import type { ForwardedRef } from 'react'
 import { cloneElement, forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { BottomSheet, BottomSheetRef } from 'react-spring-bottom-sheet'
 import { Props } from 'react-spring-bottom-sheet/dist/types'
 
-import Button from '@/components/Base/Button'
 import { cn } from '@/utils/cn'
+
+import Button, { ButtonProps, ButtonType } from '../Button'
 
 export type ModalRef = {
   show: () => void
@@ -33,9 +33,9 @@ type IProps = Partial<Props> & {
   /** 取消按钮文字 */
   cancelText?: React.ReactNode
   /** 确认按钮类型 */
-  confirmButtonType?: ButtonProps['type']
+  confirmButtonType?: ButtonType['type']
   /** 取消按钮类型 */
-  cancelButtonType?: ButtonProps['type']
+  cancelButtonType?: ButtonType['type']
   /** 底部区域样式 */
   footerStyle?: React.CSSProperties
   /** 单个按钮 */
@@ -44,7 +44,7 @@ type IProps = Partial<Props> & {
   onConfirm?: () => Promise<any>
   /** 取消事件 */
   onCancel?: () => void
-  /** 弹窗高度 */
+  /** 弹窗最大高度 百分比或者指定数值 */
   height?: number | string
   /** 隐藏footer按钮 */
   hiddenFooter?: boolean
@@ -161,14 +161,7 @@ const SheetModal = (
       <>
         {!hiddenFooter && (
           <>
-            <div
-              className={cn(
-                {
-                  backgroundColor: '#fff'
-                },
-                footerStyle
-              )}
-            >
+            <div style={footerStyle}>
               {footer ? (
                 footer
               ) : (
@@ -180,7 +173,6 @@ const SheetModal = (
                       loading={submitLoading}
                       onClick={handleConfirm}
                       type={confirmButtonType || 'primary'}
-                      block
                       {...confirmButtonProps}
                     >
                       {confirmText || intl.formatMessage({ id: 'common.operate.Confirm' })}
@@ -195,7 +187,7 @@ const SheetModal = (
                           handleClose()
                         }}
                         type={cancelButtonType || 'default'}
-                        className="flex-1"
+                        containerClassName={cn('flex-1')}
                       >
                         {cancelText || intl.formatMessage({ id: 'common.operate.Cancel' })}
                       </Button>
@@ -204,8 +196,8 @@ const SheetModal = (
                         loading={submitLoading}
                         onClick={handleConfirm}
                         type={confirmButtonType || 'primary'}
+                        containerClassName={cn('flex-1')}
                         disabled={disabled}
-                        className="flex-1"
                         {...confirmButtonProps}
                       >
                         {confirmText || intl.formatMessage({ id: 'common.operate.Confirm' })}

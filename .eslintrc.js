@@ -33,6 +33,7 @@ module.exports = {
     'no-case-declarations': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',
     '@typescript-eslint/no-loop-func': 'off',
-    'react/no-children-prop': 'off'
+    'react/no-children-prop': 'off',
+    '@typescript-eslint/ban-types': 'off'
   }
 }

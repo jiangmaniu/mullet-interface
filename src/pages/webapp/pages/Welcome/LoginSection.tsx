@@ -8,7 +8,7 @@ import { z } from 'zod'
 import Icon from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 import { getCaptcha, login } from '@/services/api/user'
-import { setLocalUserInfo, STORAGE_REMOVE_ACCOUNT_PASSWORD, STORAGE_SET_ACCOUNT_PASSWORD } from '@/utils/storage'
+import { STORAGE_REMOVE_ACCOUNT_PASSWORD, STORAGE_SET_ACCOUNT_PASSWORD, setLocalUserInfo } from '@/utils/storage'
 
 import Button from '@/components/Base/Button'
 import { ADMIN_HOME_PAGE } from '@/constants'
@@ -245,7 +245,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
         >
           {t('common.operate.Login')}
         </Button>
-        <View onPress={() => setSection('forgotPassword')}>
+        <View onClick={() => setSection('forgotPassword')}>
           <Text className={cn('text-sm text-weak self-center')}>{t('pages.login.Forgot password')}</Text>
         </View>
       </View>

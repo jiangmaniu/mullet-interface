@@ -38,14 +38,16 @@ type IProps = {
 type ITabbarProps = {
   tabKey?: TabKey
   onChange: ({ tabKey, tabValue }: { tabKey: TabKey; tabValue: any }) => void
+  position?: 'PAGE' | 'MODAL'
 }
 
-export const SymbolTabbar = observer(({ tabKey, onChange }: ITabbarProps) => {
+export const SymbolTabbar = observer(({ tabKey, onChange, position }: ITabbarProps) => {
   const intl = useIntl()
   const { pathname } = useLocation()
   const [activeKey, setActiveKey] = useState<TabKey>('ALL')
   const { trade } = useStores()
   const favoriteList = trade.favoriteList
+  const isPageMode = position === 'PAGE'
 
   const tabList = [
     { key: 'FAVORITE', value: 'FAVORITE', title: intl.formatMessage({ id: 'common.operate.Favorite' }) },
@@ -62,10 +64,10 @@ export const SymbolTabbar = observer(({ tabKey, onChange }: ITabbarProps) => {
   useEffect(() => {
     // 根据路由参数设置activeKey
     const tabKey = location.hash.replace('#', '') as TabKey
-    if (tabKey) {
+    if (tabKey && isPageMode) {
       setActiveKey(tabKey)
     }
-  }, [pathname])
+  }, [pathname, isPageMode])
 
   useEffect(() => {
     setTimeout(() => {
@@ -84,12 +86,12 @@ export const SymbolTabbar = observer(({ tabKey, onChange }: ITabbarProps) => {
   return (
     <div className="mb-3">
       <Tabs
-        tabList={tabList}
+        items={tabList}
         activeKey={activeKey}
         onChange={(key: any) => {
           setActiveKey(key)
           // 同步参数到地址栏
-          window.history.replaceState('', '', `${location.pathname}#${key}`)
+          isPageMode && window.history.replaceState('', '', `${location.pathname}#${key}`)
         }}
       />
     </div>
@@ -122,6 +124,7 @@ function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey
             setActiveKey(tabKey)
             setActiveTabValue(tabValue)
           }}
+          position="PAGE"
         />
       )}
       <QuoteFlashList height={height} onItem={onItem} tabKey={activeKey} tabValue={activeTabValue} searchValue={searchValue} />

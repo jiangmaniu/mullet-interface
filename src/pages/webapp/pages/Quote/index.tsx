@@ -5,10 +5,10 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 
 import SwitchAccount from '../../components/Account/SwitchAccount'
-import Basiclayout from '../../components/Base/BasicLayout'
 import { View } from '../../components/Base/View'
 import QuoteTopTabbar from '../../components/Quote/QuoteTopTabbar'
 import SelectSymbolModal, { SelectSymbolModalRef } from '../../components/Quote/SelectSymbolModal'
+import Basiclayout from '../../layouts/BasicLayout'
 
 function Quote() {
   const { cn, theme } = useTheme()
