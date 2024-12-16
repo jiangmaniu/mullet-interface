@@ -20,6 +20,7 @@ export const ADMIN_HOME_PAGE = '/account'
 export const MOBILE_HOME_PAGE = '/app/quote' // 移动端首页
 
 // 本地存储-用户信息-键
+export const KEY_ACCOUNT_PASSWORD = NAMESPACE + '_' + 'account_password'
 export const KEY_TOKEN = NAMESPACE + '_' + 'token'
 export const KEY_USER_INFO = NAMESPACE + '_' + 'userInfo'
 export const KEY_PARAMS = NAMESPACE + '_' + 'params'
@@ -66,5 +67,3 @@ export const KEY_ORDER_CONFIRM_CHECKED = NAMESPACE + '_' + 'order_confirm_checke
 
 // 平仓二次确认弹窗
 export const KEY_POSITION_CONFIRM_CHECKED = NAMESPACE + '_' + 'position_confirm_checked'
-
-export * from './wapp'
