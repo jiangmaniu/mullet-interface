@@ -10,7 +10,6 @@ import routes from './routes'
 const { REACT_APP_ENV = 'dev' } = process.env
 
 export default defineConfig({
-  links: [{ rel: 'manifest', href: '/manifest.json' }],
   base: '/',
   /**
    * @name 开启 hash 模式
@@ -161,7 +160,8 @@ export default defineConfig({
     { src: '/scripts/sw.js', async: true }
   ],
 
-  styles: ['/manifest.json'],
+  links: [{ rel: 'manifest', href: '/manifest.json' }],
+
   metas: [
     { name: 'application-name', content: 'Stellux' },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
@@ -170,10 +170,10 @@ export default defineConfig({
     { name: 'description', content: 'Stellux Trading Platform' },
     { name: 'format-detection', content: 'telephone=no' },
     { name: 'mobile-web-app-capable', content: 'yes' },
-    { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
-    { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
-    { name: 'msapplication-tap-highlight', content: 'no' },
-    { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
+    // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
+    // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
+    { name: 'msapplication-tap-highlight', content: 'no' }
+    // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
   ],
 
   //================ pro 插件配置 =================
@@ -224,86 +224,54 @@ export default defineConfig({
       }))
 
     // workbox 配置
-    config.plugin('workbox').use(GenerateSW, [
-      {
-        cacheId: 'stellux', // 设置前缀
-        skipWaiting: true, // 强制等待中的 Service Worker 被激活
-        clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
-        cleanupOutdatedCaches: true, //删除过时、老版本的缓存
-        swDest: 'service-wroker.js', // 输出 Service worker 文件
-        include: ['**/*.{html,js,css,png.jpg}'], // 匹配的文件
-        exclude: ['service-wroker.js', 'scripts/sw.js', 'manifest.json', 'umi.js'], // 忽略的文件
-        disableDevLogs: true,
-        runtimeCaching: [
-          // {
-          //   urlPattern: /^https:\/\/client-stellux\.io\/.*\.(js|css)$/,
-          //   handler: 'StaleWhileRevalidate',
-          //   options: {
-          //     cacheName: 'cdn-assets',
-          //     expiration: {
-          //       maxEntries: 30
-          //     }
-          //   }
-          // },
-          // {
-          //   urlPattern: /^https:\/\/client-stellux\.io\/.*\.(png|jpg|jpeg|gif|svg)$/,
-          //   handler: 'CacheFirst',
-          //   options: {
-          //     cacheName: 'cdn-images',
-          //     expiration: {
-          //       maxEntries: 30,
-          //       maxAgeSeconds: 60 * 60 * 12
-          //     },
-          //     cacheableResponse: {
-          //       statuses: [0, 200]
-          //     }
-          //   }
-          // },
-          // {
-          //   urlPattern: ({ url }) => url.pathname === '/',
-          //   handler: 'NetworkFirst',
-          //   options: {
-          //     cacheName: 'html-cache',
-          //     expiration: {
-          //       maxEntries: 20
-          //     }
-          //   }
-          // }
-          {
-            urlPattern: /.*\.js.*/i,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'seed-js',
-              expiration: {
-                maxEntries: 20, //最多缓存20个，超过的按照LRU原则删除
-                maxAgeSeconds: 5 * 60 // 5 min
+    if (process.env.NODE_ENV === 'production') {
+      config.plugin('workbox').use(GenerateSW, [
+        {
+          cacheId: 'stellux', // 设置前缀
+          skipWaiting: true, // 强制等待中的 Service Worker 被激活
+          clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
+          cleanupOutdatedCaches: true, //删除过时、老版本的缓存
+          swDest: 'service-wroker.js', // 输出 Service worker 文件
+          include: ['**/*.{html,js,css,png.jpg}'], // 匹配的文件
+          exclude: ['service-wroker.js', 'scripts/sw.js', 'manifest.json', 'umi.js', 'umi.css'], // 忽略的文件
+          disableDevLogs: true,
+          runtimeCaching: [
+            {
+              urlPattern: /.*\.js.*/i,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'seed-js',
+                expiration: {
+                  maxEntries: 20, //最多缓存20个，超过的按照LRU原则删除
+                  maxAgeSeconds: 5 * 60 // 5 min
+                }
+              }
+            },
+            {
+              urlPattern: /.*css.*/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'seed-css',
+                expiration: {
+                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
+                  maxAgeSeconds: 5 * 60 // 5 min
+                }
+              }
+            },
+            {
+              urlPattern: /.*(png|svga).*/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'seed-image',
+                expiration: {
+                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
+                  maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
+                }
               }
             }
-          },
-          {
-            urlPattern: /.*css.*/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'seed-css',
-              expiration: {
-                maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
-                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
-              }
-            }
-          },
-          {
-            urlPattern: /.*(png|svga).*/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'seed-image',
-              expiration: {
-                maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
-                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
-              }
-            }
-          }
-        ]
-      }
-    ])
+          ]
+        }
+      ])
+    }
   }
 })
