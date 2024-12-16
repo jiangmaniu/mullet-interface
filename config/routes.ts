@@ -300,6 +300,12 @@ export default [
       {
         path: '/:lng/app/user-center/message/:id',
         component: './webapp/pages/UserCenter/Message/Detail'
+      },
+      /* ------------------------------- 登錄註冊 ------------------------------- */
+      // 登錄
+      {
+        path: '/:lng/app/welcome',
+        component: './webapp/pages/Welcome'
       }
     ]
   },

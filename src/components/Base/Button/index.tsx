@@ -18,12 +18,15 @@ type IProps = ButtonProps & {
   /**按钮高度 */
   height?: number
   style?: React.CSSProperties
+  onPress?: (event?: React.MouseEvent<HTMLElement, MouseEvent>) => void
 }
 
-export default function Button({ children, href, params, onClick, height = 38, style, ...res }: IProps) {
+export default function Button({ children, href, params, onClick, height = 38, style, onPress, ...res }: IProps) {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     if (onClick) {
       onClick(e)
+    } else if (onPress) {
+      onPress(e)
     } else if (href) {
       push(`${href}${qs.stringify(params, { addQueryPrefix: true })}`)
     }

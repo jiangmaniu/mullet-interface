@@ -2,6 +2,7 @@ import lodashGet from 'lodash/get'
 import lodashSet from 'lodash/set'
 
 import {
+  KEY_ACCOUNT_PASSWORD,
   KEY_ACTIVE_SYMBOL_NAME,
   KEY_FAVORITE,
   KEY_LOCATION_INFO,
@@ -23,6 +24,12 @@ import {
 import { valuetype } from './type'
 
 // ============================================================
+
+// 本地存储-账号密码
+export const STORAGE_GET_ACCOUNT_PASSWORD = genStorageGet(KEY_ACCOUNT_PASSWORD)
+export const STORAGE_SET_ACCOUNT_PASSWORD = genStorageSet(KEY_ACCOUNT_PASSWORD)
+export const STORAGE_REMOVE_ACCOUNT_PASSWORD = storageRemove(KEY_ACCOUNT_PASSWORD)
+
 // 本地存储-令牌
 export const STORAGE_GET_TOKEN = genStorageGet(KEY_TOKEN)
 export const STORAGE_SET_TOKEN = genStorageSet(KEY_TOKEN)

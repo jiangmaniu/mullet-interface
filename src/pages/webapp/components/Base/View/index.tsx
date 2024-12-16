@@ -16,6 +16,7 @@ type IProps = DOMAttributes<any> & {
   className?: string
   style?: React.CSSProperties
   children?: React.ReactNode
+  onPress?: () => void
 }
 
 // 检测样式中是否包含flex相关的信息，兼容rn复制过来的代码没有写flex属性
@@ -29,7 +30,7 @@ export const hasFlexClassName = (className: any) => {
 }
 
 export const View = (props: IProps) => {
-  const { style, className, children, bgColor, borderColor, ...res } = props
+  const { style, className, children, bgColor, borderColor, onPress, ...res } = props
   const { cn, theme } = useTheme()
   // 如果外部传入style是style={cn('')}形式，则将style内容传入到className合并
   const styleClassName = typeof style === 'string' ? style : undefined
@@ -45,6 +46,7 @@ export const View = (props: IProps) => {
         ...borderColorStyle,
         ...(typeof style === 'object' ? style : {})
       }}
+      onClick={onPress}
       {...res}
     >
       {children}

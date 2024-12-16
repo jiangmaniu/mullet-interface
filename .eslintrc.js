@@ -10,7 +10,7 @@ module.exports = {
     semi: 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     'trailing-comma': 'off', // 末尾不需要逗号
-    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/imports': 'off',
     'simple-import-sort/exports': 'warn',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',

@@ -5,7 +5,6 @@ import { useIntl } from '@umijs/max'
 import { ButtonProps } from 'antd'
 import type { ForwardedRef } from 'react'
 import { cloneElement, forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import type { ViewStyle } from 'react-native'
 import { BottomSheet, BottomSheetRef } from 'react-spring-bottom-sheet'
 import { Props } from 'react-spring-bottom-sheet/dist/types'
 
@@ -59,7 +58,7 @@ type IProps = Partial<Props> & {
   onOpenChange?: (open: boolean) => void
   onDismiss?: () => void
   /** 背景颜色 */
-  backgroundStyle?: ViewStyle
+  backgroundStyle?: React.CSSProperties
   draggable?: boolean
   /** 是否开启内容拖拽 */
   dragOnContent?: boolean
