@@ -19,7 +19,7 @@ function Header() {
     <View className={cn('px-4')}>
       <SelectSymbolBtn />
       <View className={cn('mt-1 items-center justify-between flex-row gap-2 flex overflow-hidden')}>
-        <View className={cn('')}>
+        <View>
           <Text color="primary" className={cn('text-[28px] font-dingpro-medium leading-9')}>
             {res.bid ? formatNum(res.bid) : '--'}
           </Text>
@@ -39,9 +39,9 @@ function Header() {
             </Text>
           </View>
         </View>
-        <View className={cn('overflow-hidden gap-1 flex-1 flex  items-end')}>
+        <View className={cn('overflow-hidden gap-1 flex-1 flex  items-center justify-end')}>
           <View className={cn('flex flex-row gap-x-4 justify-start ')}>
-            <View className={cn('items-start flex-shrink')}>
+            <View className={cn('items-start flex-shrink flex flex-col')}>
               <View className={cn('items-start')}>
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.Open Price' })}
@@ -59,7 +59,7 @@ function Header() {
                 </Text>
               </View>
             </View>
-            <View className={cn('items-start flex-shrink')}>
+            <View className={cn('items-start flex-shrink flex flex-col')}>
               <View className={cn('items-start')}>
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.Close Price' })}

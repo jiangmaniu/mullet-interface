@@ -21,7 +21,8 @@ function WebAppLayout() {
   // 同步数据到worker线程
   useSyncDataToWorker()
 
-  useSwitchPcOrMobile() // 切换 pc 和移动端布局
+  // 切换 pc 和移动端布局
+  useSwitchPcOrMobile()
 
   useEffect(() => {
     return () => {

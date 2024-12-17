@@ -204,102 +204,119 @@ export default [
   {
     path: '/:lng/app',
     layout: false,
-    component: '@/layouts/WebAppLayout',
-    access: 'canAdmin', // 权限配置
+    component: './webapp/layouts/WebAppLayout',
     routes: [
       /* ------------------------------- 主tabbar ------------------------------- */
       // 行情
       {
         path: '/:lng/app/quote',
-        component: './webapp/pages/Quote'
+        component: './webapp/pages/Quote',
+        access: 'canAdmin' // 权限配置
       },
       // 交易
       {
         path: '/:lng/app/trade',
-        component: './webapp/pages/Trade'
+        component: './webapp/pages/Trade',
+        access: 'canAdmin' // 权限配置
       },
       // 仓位
       {
         path: '/:lng/app/position',
-        component: './webapp/pages/Position'
+        component: './webapp/pages/Position',
+        access: 'canAdmin' // 权限配置
       },
       // 个人中心
       {
         path: '/:lng/app/user-center',
-        component: './webapp/pages/UserCenter'
+        component: './webapp/pages/UserCenter',
+        access: 'canAdmin' // 权限配置
       },
       /* ------------------------------- 登录/注册/忘记密码 ------------------------------- */
       {
         path: '/:lng/app/login',
-        component: './webapp/pages/User/Login'
+        component: './webapp/pages/User/Login',
+        access: 'canAdmin' // 权限配置
       },
       {
         path: '/:lng/app/forget-pwd',
-        component: './webapp/pages/User/ForgetPwd'
+        component: './webapp/pages/User/ForgetPwd',
+        access: 'canAdmin' // 权限配置
       },
       /* ------------------------------- 行情 ------------------------------- */
       // 行情-k线
       {
         path: '/:lng/app/quote/kline',
-        component: './webapp/pages/Quote/KLine'
+        component: './webapp/pages/Quote/KLine',
+        access: 'canAdmin' // 权限配置
       },
       // 行情-品种搜索
       {
         path: '/:lng/app/quote/search',
-        component: './webapp/pages/Quote/SymbolSearch'
+        component: './webapp/pages/Quote/SymbolSearch',
+        access: 'canAdmin' // 权限配置
       },
       /* ------------------------------- 仓位 ------------------------------- */
       // 仓位-历史记录
       {
         path: '/:lng/app/position/record',
-        component: './webapp/pages/Position/HistoryRecord'
+        component: './webapp/pages/Position/HistoryRecord',
+        access: 'canAdmin' // 权限配置
       },
       // 仓位-历史记录-详情
       {
         path: '/:lng/app/position/record/:id',
-        component: './webapp/pages/Position/HistoryRecord/HistoryOrderDetail'
+        component: './webapp/pages/Position/HistoryRecord/HistoryOrderDetail',
+        access: 'canAdmin' // 权限配置
       },
       /* ------------------------------- 账号相关 ------------------------------- */
       // 账号选择
       {
         path: '/:lng/app/account/select',
-        component: './webapp/pages/Account/AccountSelect'
+        component: './webapp/pages/Account/AccountSelect',
+        access: 'canAdmin' // 权限配置
       },
       // 创建账号
       {
         path: '/:lng/app/account/create',
-        component: './webapp/pages/Account/AccountNew'
+        component: './webapp/pages/Account/AccountNew',
+        access: 'canAdmin' // 权限配置
       },
       // 账号详情
       {
         path: '/:lng/app/account/view/:id',
-        component: './webapp/pages/Account/AccountDetail'
+        component: './webapp/pages/Account/AccountDetail',
+        access: 'canAdmin' // 权限配置
       },
       // 转账-划转页面
       {
         path: '/:lng/app/account/transfer',
-        component: './webapp/pages/Account/Transfer'
+        component: './webapp/pages/Account/Transfer',
+        access: 'canAdmin' // 权限配置
       },
       // 转账-划转详情
       {
         path: '/:lng/app/account/transfer/:id',
-        component: './webapp/pages/Account/Transfer/TransferDetail'
+        component: './webapp/pages/Account/Transfer/TransferDetail',
+        access: 'canAdmin' // 权限配置
       },
       /* ------------------------------- 个人中心 ------------------------------- */
       // 个人中心-语言选择
       {
         path: '/:lng/app/user-center/language',
-        component: './webapp/pages/UserCenter/Language'
+        component: './webapp/pages/UserCenter/Language',
+        access: 'canAdmin' // 权限配置
       },
       // 个人中心-消息列表
       {
         path: '/:lng/app/user-center/message',
-        component: './webapp/pages/UserCenter/Message'
+        component: './webapp/pages/UserCenter/Message',
+        access: 'canAdmin' // 权限配置
       },
       // 个人中心-消息列表-详情
       {
         path: '/:lng/app/user-center/message/:id',
-        component: './webapp/pages/UserCenter/Message/Detail'
+        component: './webapp/pages/UserCenter/Message/Detail',
+        access: 'canAdmin' // 权限配置
       },
       /* ------------------------------- 登錄註冊 ------------------------------- */
       // 登錄

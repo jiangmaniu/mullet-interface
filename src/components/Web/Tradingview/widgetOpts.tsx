@@ -1,9 +1,10 @@
-import { ChartingLibraryFeatureset, ChartingLibraryWidgetOptions, LanguageCode } from '@/libs/charting_library'
+import { ChartingLibraryFeatureset, ChartingLibraryWidgetOptions, LanguageCode, ResolutionString } from '@/libs/charting_library'
 
 import ma from './customIndicators/ma'
 
 const fullZero = (value: number | string) => String(value).padStart(2, '0')
 
+import { isPCByWidth } from '@/utils'
 import { defaultInterval, ThemeConst } from './constant'
 import DataFeedBase from './datafeed'
 
@@ -69,10 +70,13 @@ export default function getWidgetOpts(
 
   if (props.isMobile) {
     disabled_features.push(
+      // 在标题面板上显示符号搜索按钮，展示在顶部的最左侧，移动端展示品种名称
+      'header_symbol_search',
       'context_menus', // 隐藏鼠标右键按钮
       'show_chart_property_page', // 隐藏右上角设置按钮
       'header_screenshot', // 截图
-      'adaptive_logo' // 隐藏logo后面文字
+      'adaptive_logo', // 隐藏logo后面文字
+      'left_toolbar' // 隐藏侧边工具栏
       // 'popup_hints' //显示有关可能的鼠标/快捷方式/UI 操作的弹出提示
     )
     enabled_features.push(
@@ -80,11 +84,11 @@ export default function getWidgetOpts(
       'hide_left_toolbar_by_default' // 当用第一次进入隐藏左部工具栏
     )
   } else {
-    disabled_features.push(
-      // 在标题面板上显示符号搜索按钮，展示在顶部的最左侧，移动端展示品种名称
-      'header_symbol_search'
-    )
+    // disabled_features.push(
+    // )
   }
+
+  const interval = isPCByWidth() ? defaultInterval : '1'
 
   const widgetOptions: ChartingLibraryWidgetOptions = {
     // debug: process.env.NODE_ENV === 'development', // 调试模式
@@ -114,7 +118,7 @@ export default function getWidgetOpts(
     client_id: 'stellux.io"', // 设置高级保存/加载图表 API 的客户端 ID
     user_id: 'public_user_id', // 设置高级保存/加载图表 API 的用户 ID。
     locale: props.locale as LanguageCode, // 设置语言
-    interval: defaultInterval, // 分辨率，时间间隔，例如1W代表每个条形1周的 默认周期  1/5/15/30/60/240-> 1/5/15/30/60/240分钟  D->一天   W->一周   M->一月
+    interval: interval as ResolutionString, // 分辨率，时间间隔，例如1W代表每个条形1周的 默认周期  1/5/15/30/60/240-> 1/5/15/30/60/240分钟  D->一天   W->一周   M->一月
     theme, // 设置主题颜色
     toolbar_bg, // 侧边工具栏和底部工具栏背景颜色
     container: containerRef, // dom的引用

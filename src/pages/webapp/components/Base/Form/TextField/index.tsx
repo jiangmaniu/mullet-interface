@@ -5,19 +5,20 @@ import { useTheme } from '@/context/themeProvider'
 
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { mergeCss } from '@/pages/webapp/utils'
+import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Input, InputProps, InputRef } from 'antd-mobile'
-import clsx from 'clsx'
 import { Text } from '../../Text'
 import { View } from '../../View'
 
 export interface TextFieldAccessoryProps {
-  // style: clsx.ClassValue[]
   style: React.CSSProperties
   className: string
   status: TextFieldProps['status']
   multiline: boolean
   editable: boolean
 }
+
+export type InputTextAlign = 'center' | 'left' | 'right' | undefined
 
 export interface TextFieldProps extends Omit<InputProps, 'ref' | 'style' | 'onEndEditing'> {
   /**
@@ -36,7 +37,7 @@ export interface TextFieldProps extends Omit<InputProps, 'ref' | 'style' | 'onEn
    * Optional input style override.
    * 輸入框內文字樣式
    */
-  style?: clsx.ClassValue[]
+  style?: React.CSSProperties
   /**
    * 输入框高度
    */
@@ -45,12 +46,13 @@ export interface TextFieldProps extends Omit<InputProps, 'ref' | 'style' | 'onEn
    * Style overrides for the container
    * 整個容器的樣式
    */
-  containerStyle?: clsx.ClassValue[]
+  containerStyle?: React.CSSProperties
+  containerClassName?: string
   /**
    * Style overrides for the input wrapper
    * 輸入框的樣式
    */
-  inputWrapperStyle?: React.CSSProperties[]
+  inputWrapperStyle?: React.CSSProperties
   /**
    * An optional component to render on the right side of the input.
    * Example: `RightAccessory={(props) => <Icon icon="ladybug" containerStyle={props.style} color={props.editable ? colors.textDim : colors.text} />}`
@@ -74,6 +76,16 @@ export interface TextFieldProps extends Omit<InputProps, 'ref' | 'style' | 'onEn
    * 右側的標籤
    */
   RightLabel?: ComponentType<any>
+  /**输入框文本对齐方式 */
+  textAlign?: InputTextAlign
+  /**输入框文字大小 */
+  fontSize?: number
+  /**输入框文字颜色 */
+  textColor?: string
+  /**输入框占位符文字颜色 */
+  pleacholderTextColor?: string
+  /**输入框占位符文字大小 */
+  placeholderTextSize?: number
 }
 
 /**
@@ -83,6 +95,7 @@ export interface TextFieldProps extends Omit<InputProps, 'ref' | 'style' | 'onEn
  */
 export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | null>) => {
   const { t } = useI18n()
+  const { cn, theme } = useTheme()
   const {
     label,
     RightLabel,
@@ -92,20 +105,26 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     RightAccessory,
     LeftAccessory,
     style: $textStyleOverride,
+    className: $inputClassName,
     containerStyle: $containerStyleOverride,
+    containerClassName,
     inputWrapperStyle: $inputWrapperStyleOverride,
     height = 42,
     onFocus,
     onBlur,
     value,
-    onChange: onChangeText,
-    onChange, // 将 onChagne 分离出来，不对 onChagne 响应，统一使用 onChagneText
+    onChange,
     onEndEditing, // 单独处理输入完成响应
     autoSelectAll = false,
+    textAlign = 'left',
+    fontSize = 14,
+    textColor,
+    pleacholderTextColor = theme.colors.Input.placeholderTextColor,
+    placeholderTextSize = 14,
     ...TextInputProps
   } = props
   const input = useRef<InputRef>(null)
-  const { cn, theme } = useTheme()
+
   const [isFocus, setFocus] = useState(false)
   const innerDisabled = disabled || status === 'disabled'
 
@@ -121,15 +140,40 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     }
   }
 
+  // 添加防抖定时器引用
+  const debounceTimer = useRef<NodeJS.Timeout>()
+  const handleChange = (value: string) => {
+    onChange?.(value)
+
+    // 设置新的定时器，500ms 后触发 onEndEditing
+    if (onEndEditing) {
+      // 清除之前的定时器
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current)
+      }
+      debounceTimer.current = setTimeout(() => {
+        onEndEditing(value)
+      }, 500)
+    }
+  }
+
   useImperativeHandle(ref, () => input.current)
 
+  const innerInputClassName = useEmotionCss(({ token }) => {
+    return {
+      '&': {
+        input: {
+          height,
+          '&::placeholder': {
+            fontSize: `${placeholderTextSize}px`
+          }
+        }
+      }
+    }
+  })
+
   return (
-    <View
-      // activeOpacity={1}
-      className={cn({ height }, 'mb-[22px]', ...($containerStyleOverride ?? []))}
-      onClick={focusInput}
-      // accessibilityState={{ disabled: innerDisabled }}
-    >
+    <View className={cn('mb-[22px]', containerClassName)} style={{ height, ...$containerStyleOverride }}>
       {!!label && (
         <View className={cn('flex flex-row items-center justify-between')}>
           <Text className={cn('mb-1')}>{label} </Text>
@@ -148,42 +192,44 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
           { paddingInlineStart: LeftAccessory ? 0 : 20 },
           { paddingInlineEnd: RightAccessory ? 0 : 20 },
           { backgroundColor: innerDisabled ? theme.colors.Input.disabledBg : theme.colors.Input.bgColor },
-          innerDisabled ? { border: 0 } : {},
-          ...($inputWrapperStyleOverride ?? [])
+          innerDisabled ? { borderWidth: 0 } : {},
+          { ...($inputWrapperStyleOverride || {}) }
         )}
       >
         {!!LeftAccessory && <LeftAccessory className={cn('h-10 justify-center items-center ')} status={status} editable={!readOnly} />}
 
         <Input
           ref={input}
-          // underlineColorAndroid="transparent"
-          // textAlignVertical="top"
           placeholder={placeholder}
-          // onFocus={(e) => {
-          //   setFocus(true)
-          //   onFocus?.(e)
-          // }}
-          // onBlur={(e) => {
-          //   setFocus(false)
-          //   onBlur?.(e)
-          // }}
+          onFocus={(e) => {
+            setFocus(true)
+            onFocus?.(e)
+          }}
+          onBlur={(e) => {
+            setFocus(false)
+            onBlur?.(e)
+          }}
           clearable
           value={value}
           {...TextInputProps}
           readOnly={readOnly}
-          onChange={onChange}
-          onFocus={onFocus}
-          onBlur={onBlur}
-          className={cn('flex-1 text-sm px-3 flex align-middle', ...($textStyleOverride ?? []))}
-          style={mergeCss(
-            { color: theme.colors.textColor.primary },
-            innerDisabled ? { color: theme.colors.Input.placeholderTextColor } : {},
-            status === 'error' ? { color: theme.colors.red.DEFAULT } : {},
-            // TextInputProps.multiline && { height: 'auto' },
-            {
-              height
-            }
-          )}
+          onChange={handleChange}
+          className={cn('flex-1 text-sm px-3 flex align-middle', innerInputClassName, $inputClassName)}
+          style={{
+            '--text-align': textAlign, // 输入框文字对齐方式
+            '--placeholder-color': theme.colors.Input.placeholderTextColor,
+            '--font-size': `${fontSize}px`, // 输入框字体大小
+            '--color': textColor || theme.colors.textColor.primary,
+            ...mergeCss(
+              { color: theme.colors.textColor.primary },
+              innerDisabled ? { color: theme.colors.Input.placeholderTextColor } : {},
+              status === 'error' ? { color: theme.colors.red.DEFAULT } : {},
+              {
+                height,
+                ...($textStyleOverride || {})
+              }
+            )
+          }}
         />
 
         {!!RightAccessory && (

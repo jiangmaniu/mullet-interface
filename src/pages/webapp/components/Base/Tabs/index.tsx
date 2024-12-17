@@ -17,6 +17,18 @@ type IProps = TabsProps & {
   hiddenTabbarLine?: boolean
   /**@name 隐藏tabbar底部分割长线  */
   hiddenBottomLine?: boolean
+  /**当前激活 tab 下划线的宽度，仅在 activeLineMode 为 'fixed' 时有效 */
+  fixedActiveLineWidth?: number
+  /**选项卡头文字的大小 */
+  titleFontSize?: number
+  /**当前激活 tab 下划线的高度 */
+  activeLineHeight?: number
+  /**当前激活 tab 下划线的圆角 */
+  activeLineBorderRadius?: string
+  /**当前激活 tab 下划线的颜色 */
+  activeLineColor?: string
+  /**当前激活 tab 选项文字颜色 */
+  activeTitleColor?: string
 }
 
 /**
@@ -29,6 +41,12 @@ export default function Tabs({
   hiddenBottomLine = false,
   hiddenTabbarLine = false,
   tabPaddingBottom = 10,
+  fixedActiveLineWidth = 30,
+  titleFontSize = 16,
+  activeLineHeight = 4,
+  activeLineBorderRadius = `100px 100px 0px 0px`,
+  activeLineColor,
+  activeTitleColor,
   ...res
 }: IProps) {
   const { theme } = useTheme()
@@ -52,13 +70,14 @@ export default function Tabs({
         paddingBottom: tabPaddingBottom,
         margin: 0,
         color: theme.colors.textColor.secondary,
-        fontWeight: '400 !important'
+        fontWeight: '400 !important',
+        width: '100%',
+        textAlign: 'center'
       },
       '.adm-tabs-header': {
         borderBottom: 0
       },
       '.adm-tabs-tab-line': {
-        borderRadius: '100px 100px 0px 0px',
         display: hiddenTabbarLine ? 'none' : 'block',
         zIndex: 2
       },
@@ -78,7 +97,15 @@ export default function Tabs({
   return (
     <TabsAntd
       // @ts-ignore
-      style={{ '--title-font-size': '16px', '--active-line-height': '4px', ...style }}
+      style={{
+        '--active-title-color': activeTitleColor || theme.colors.textColor.primary,
+        '--title-font-size': `${titleFontSize}px`,
+        '--active-line-height': `${activeLineHeight}px`,
+        '--fixed-active-line-width': `${fixedActiveLineWidth}px`,
+        '--active-line-border-radius': activeLineBorderRadius,
+        '--active-line-color': activeLineColor || theme.colors.textColor.primary,
+        ...style
+      }}
       stretch={false}
       className={className}
       activeLineMode="fixed"

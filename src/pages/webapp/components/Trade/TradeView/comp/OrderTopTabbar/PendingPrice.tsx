@@ -1,6 +1,5 @@
 import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useEffect } from 'react'
 
 import { SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
@@ -67,10 +66,6 @@ function PendingPrice({ ...res }: IProps) {
 
   const disabled = disabledInput
 
-  useEffect(() => {
-    console.log('useEffect', price)
-  }, [price])
-
   return (
     <View className={cn('w-full')}>
       <View className={cn('flex-row items-center justify-between mb-2')}>
@@ -87,7 +82,6 @@ function PendingPrice({ ...res }: IProps) {
         </View>
       </View>
       <InputNumber
-        // @ts-ignore @TODO 待替换
         placeholder={intl.formatMessage({ id: 'pages.trade.Price' })}
         height={46}
         onEndEditing={onChange}
@@ -98,7 +92,7 @@ function PendingPrice({ ...res }: IProps) {
         // priceRange={priceRange}
         // showPriceTipRedColor={showPriceTipRedColor}
         disabled={disabled}
-        style={[{ fontSize: 16 }]}
+        className="text-base"
         {...res}
       />
     </View>

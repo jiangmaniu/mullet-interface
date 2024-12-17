@@ -166,7 +166,6 @@ function NonFullModeSpSl() {
             <View className={cn('items-center pt-2 flex-row justify-between gap-x-2')}>
               <View className={cn('flex-1')}>
                 <InputNumber
-                  // @ts-ignore @TODO 待替换
                   RightAccessory={() => (
                     <View onClick={() => showPriceAmountModal('SP')} style={{ paddingRight: 8 }} disabled={disabled}>
                       <View className={cn('flex-row items-center')}>
@@ -195,7 +194,6 @@ function NonFullModeSpSl() {
                   precision={d}
                   textAlign="left"
                   // status={spFlag ? 'error' : undefined}
-                  // @ts-ignore @TODO 待替换
                   onEndEditing={(value: any) => {
                     console.log('onChange', value)
                     if (Number.isNaN(Number(value))) {
@@ -205,7 +203,7 @@ function NonFullModeSpSl() {
                     const val = Number(value) > 0 ? value : ''
                     onSpChange(val)
                   }}
-                  containerStyle={[{ marginBottom: 6 }]}
+                  containerStyle={{ marginBottom: 6 }}
                 />
               </View>
             </View>
@@ -237,7 +235,6 @@ function NonFullModeSpSl() {
             <View className={cn('items-center pt-2 flex-row justify-between gap-x-2')}>
               <View className={cn('flex-1')}>
                 <InputNumber
-                  // @ts-ignore @TODO 待替换
                   RightAccessory={() => (
                     <View onClick={() => showPriceAmountModal('SL')} style={{ paddingRight: 8 }} disabled={disabled}>
                       <View className={cn('flex-row items-center')}>
@@ -270,8 +267,7 @@ function NonFullModeSpSl() {
                   precision={d}
                   // status={slFlag ? 'error' : undefined}
                   min={-999999999999}
-                  // @ts-ignore @TODO 待替换
-                  onChangeText={(value: any) => {
+                  onChange={(value: any) => {
                     if (Number.isNaN(Number(value))) {
                       return
                     }
@@ -279,7 +275,7 @@ function NonFullModeSpSl() {
                     const val = Number(value) > 0 ? value : ''
                     onSlChange(val)
                   }}
-                  containerStyle={[{ marginBottom: 6 }]}
+                  containerStyle={{ marginBottom: 6 }}
                 />
               </View>
             </View>

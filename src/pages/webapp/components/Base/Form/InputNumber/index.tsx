@@ -1,9 +1,10 @@
+import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 import { add } from '@/utils/float'
-import clsx from 'clsx'
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { Text } from '../../Text'
 import { View } from '../../View'
-import type { TextFieldProps } from '../TextField'
+import type { InputTextAlign, TextFieldProps } from '../TextField'
 import { TextField } from '../TextField'
 
 export type InputNumberProps = TextFieldProps & {
@@ -13,7 +14,7 @@ export type InputNumberProps = TextFieldProps & {
   /** 右侧文字 */
   rightText?: React.ReactNode
   onPressRightText?: () => void
-  textAlign?: 'center' | 'left' | 'right' | undefined
+  textAlign?: InputTextAlign
   /** 高度 */
   height?: number
   value?: any
@@ -35,7 +36,7 @@ export type InputNumberProps = TextFieldProps & {
   precision?: number
   /** 隐藏精度，只能输入整数 */
   hiddenPrecision?: boolean
-  style?: clsx.ClassValue[]
+  style?: React.CSSProperties
   status?: 'error' | 'disabled'
   /** 自动全选 */
   autoSelectAll?: boolean
@@ -64,6 +65,7 @@ const InputNumber = forwardRef(
       autoSelectAll = false,
       onChange,
       onEndEditing,
+      className,
       ...res
     }: InputNumberProps,
     ref
@@ -113,43 +115,38 @@ const InputNumber = forwardRef(
           <>
             {controls && (
               <>
-                {/* <LinkPressable
+                <View
                   disabled={disabledMinus}
-                  onPress={() => {
+                  onClick={() => {
                     onFocus?.(null as any)
                     if (disabledMinus) return
                     if (onMinus) {
                       onMinus()
                     } else {
                       const retValue = String(newValue - step)
-                      onChangeText?.(retValue)
+                      onChange?.(retValue)
                       onEndEditing?.(retValue)
                     }
                   }}
                   style={{ paddingLeft: 4 }}
-                  isDebounce
                 >
-                  <Icon
+                  <Iconfont
                     name="shurukuang-jian"
                     color={disabledMinus ? theme.colors.gray['100'] : theme.colors.textColor.primary}
                     size={34}
                   />
-                </LinkPressable> */}
-                <View
-                  borderColor="weak"
-                  style={cn('h-[40%]', {
-                    // borderWidth: StyleSheet.hairlineWidth
-                  })}
-                />
+                </View>
+                <View borderColor="weak" className={cn('h-[40%] border')} />
               </>
             )}
           </>
         )}
         height={height}
         placeholder={placeholder}
-        // textAlign={textAlign || 'center'}
+        textAlign={textAlign || 'center'}
         disabled={disabled}
         value={inputValue}
+        clearable={false}
         onBlur={() => {
           let newValue = Number(inputValue)
 
@@ -169,38 +166,30 @@ const InputNumber = forwardRef(
         onChange={handleChangeText}
         onEndEditing={onEndEditing}
         onFocus={onFocus}
-        // keyboardType="numbers-and-punctuation" // 最基础的数字键盘
-        // returnKeyType="done"
-        containerStyle={[{ marginBottom: 10 }]}
+        containerStyle={{ marginBottom: 10 }}
         RightAccessory={() => (
           <>
             {controls && (
               <>
-                {/* {rightText && !disabled && (
-                  <LinkPressable
+                {rightText && !disabled && (
+                  <View
                     disabled={disabled}
-                    onPress={() => {
+                    onClick={() => {
                       onFocus?.(null as any)
                       onPressRightText?.()
-                      onChangeText?.(String(max))
+                      onChange?.(String(max))
                       onEndEditing?.(String(max))
                     }}
-                    style={cn('mr-2')}
-                    isDebounce
+                    className={cn('mr-2')}
                   >
                     <Text size="sm" weight="medium" color="primary">
                       {rightText}
                     </Text>
-                  </LinkPressable>
-                )} */}
+                  </View>
+                )}
+                <View borderColor="weak" className={cn('h-[40%] border')} />
                 <View
-                  borderColor="weak"
-                  style={cn('h-[40%]', {
-                    // borderWidth: StyleSheet.hairlineWidth
-                  })}
-                />
-                <View
-                  // disabled={disabledAdd}
+                  disabled={disabledAdd}
                   onClick={() => {
                     onFocus?.(null as any)
                     if (disabledAdd) return
@@ -217,13 +206,17 @@ const InputNumber = forwardRef(
                   }}
                   style={{ paddingRight: 4 }}
                 >
-                  {/* <Icon name="shurukuang-jia" color={disabledAdd ? theme.colors.gray['100'] : theme.colors.textColor.primary} size={34} /> */}
+                  <Iconfont
+                    name="shurukuang-jia"
+                    color={disabledAdd ? theme.colors.gray['100'] : theme.colors.textColor.primary}
+                    size={34}
+                  />
                 </View>
               </>
             )}
           </>
         )}
-        className={cn(inputValue ? 'font-dingpro-medium' : 'font-normal')}
+        className={cn(inputValue ? 'font-dingpro-medium' : 'font-normal', className)}
         style={style}
         {...res}
       />

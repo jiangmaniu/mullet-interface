@@ -24,6 +24,7 @@ const Basiclayout: React.FC<Iprops> = ({ className, style, children, bgColor = '
   useEffect(() => {
     document.body.style.backgroundColor = theme.colors.backgroundColor[bgColor]
     return () => {
+      // 离开APP布局设置成pc的背景颜色
       document.body.style.backgroundColor = 'var(--bg-primary)'
     }
   }, [pathname])

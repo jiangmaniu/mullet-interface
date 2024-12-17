@@ -74,7 +74,6 @@ function OrderVolume({ isFull }: IProps) {
     <View>
       <InputNumber
         // rightText={intl.formatMessage({id:"pages.trade.Max"})}
-        // @ts-ignore @TODO 待替换
         placeholder={intl.formatMessage({ id: 'pages.trade.OrderVolume' })}
         height={50}
         onEndEditing={onEndEditing}
@@ -88,9 +87,9 @@ function OrderVolume({ isFull }: IProps) {
         onFocus={() => {
           setInputing(true)
         }}
-        style={[{ fontSize, lineHeight: 22 }]}
+        style={{ fontSize, lineHeight: 22 }}
       />
-      <View style={cn('items-center gap-x-2  justify-between flex-row')}>
+      <View className={cn('items-center gap-x-2  justify-between flex-row')}>
         {['0.01', '0.02', '0.05', '0.1'].map((item) => {
           const isActive = item === orderVolumeTag
           return (

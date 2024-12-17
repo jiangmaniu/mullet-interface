@@ -469,7 +469,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   // }
 
   // 当前品种的详细信息
-  const currentSymbol = trade.getActiveSymbolInfo(symbol)
+  const currentSymbol = (trade.symbolListAll.find((item) => item.symbol === symbol) || {}) as Account.TradeSymbolListItem
   const dataSourceSymbol = currentSymbol?.dataSourceSymbol
   const dataSourceCode = currentSymbol?.dataSourceCode
   const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取

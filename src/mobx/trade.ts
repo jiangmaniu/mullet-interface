@@ -603,9 +603,9 @@ class TradeStore {
 
   // 获取打开的品种完整信息
   @action
-  getActiveSymbolInfo = (currentSymbolName?: string) => {
+  getActiveSymbolInfo = (currentSymbolName?: string, list?: Account.TradeSymbolListItem[]) => {
     const symbol = currentSymbolName || this.activeSymbolName
-    const symbolList = this.symbolListAll
+    const symbolList = list || this.symbolListAll
     const info = symbolList.find((item) => item.symbol === symbol) || {}
     return info as Account.TradeSymbolListItem
   }

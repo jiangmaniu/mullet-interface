@@ -23,7 +23,7 @@ type IProps = DOMAttributes<any> & {
 
 // 检测样式中是否包含flex相关的信息，兼容rn复制过来的代码没有写flex属性
 export const hasFlexClassName = (className: any) => {
-  const flexProps = ['items-', 'justify-', 'align-', 'content-']
+  const flexProps = ['items-', 'justify-', 'align-', 'content-', 'flex-row']
 
   // 检查className中是否包含flex相关类名
   const hasFlexClass = className?.split(' ').some((cls: any) => flexProps.some((prop) => cls.startsWith(prop)))

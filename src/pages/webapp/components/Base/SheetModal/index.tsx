@@ -230,6 +230,7 @@ const SheetModal = (
         borderTopLeftRadius: '20px !important',
         borderTopRightRadius: '20px !important'
       },
+      'div[data-rsbs-backdrop]': {},
       'div[data-rsbs-scroll]': hiddenContentScroll
         ? {
             overflow: 'hidden !important'

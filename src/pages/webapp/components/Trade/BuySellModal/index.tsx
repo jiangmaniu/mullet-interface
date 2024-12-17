@@ -22,21 +22,58 @@ export type BuySellModalRef = {
   close: () => void
 }
 
-const Children = observer(({ close }: { close: () => void }) => {
+const Content = observer(({ close }: { close: () => void }) => {
   const { theme, cn } = useTheme()
   const intl = useIntl()
 
   const { trade } = useStores()
-  const { buySell } = trade
-  const isBuy = buySell === 'BUY'
   const symbolInfo = trade.getActiveSymbolInfo()
   const symbol = symbolInfo.symbol
   const quoteInfo = getCurrentQuote(symbol)
   const bid = quoteInfo.bid // 卖价
   const ask = quoteInfo.ask // 买价
   const per: any = quoteInfo.percent
+
+  return (
+    <>
+      <View className={cn('w-full flex-1')}>
+        <View>
+          <View className={cn('flex-row mx-3 mb-[14px]')}>
+            <View className={cn('flex-row items-center flex-1 justify-between')}>
+              <View className={cn('flex-row gap-x-2 items-center')}>
+                <SymbolIcon src={symbolInfo.imgUrl} />
+                <Text size="lg" color="primary" weight="medium">
+                  {symbol}
+                </Text>
+                <Text size="base" color={per > 0 ? 'green' : 'red'} weight="medium">
+                  {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
+                </Text>
+              </View>
+              {/* 保证金类型选择、杠杆选择 */}
+              <MarginTypeAndLeverageBtn />
+            </View>
+          </View>
+          <View className={cn('flex-row mx-3 border mb-2 p-[5px] rounded-[9px]')} borderColor="weak">
+            <BuySellButton position="modal" />
+          </View>
+        </View>
+        <View className={cn('flex-1 overflow-y-auto')}>
+          <OrderTopTabbar position="MODAL" />
+        </View>
+      </View>
+    </>
+  )
+})
+
+const Footer = observer(() => {
+  const { theme, cn } = useTheme()
+  const intl = useIntl()
   const { disabledBtn, disabledTrade, onSubmitOrder, onCheckSubmit } = useTrade()
+  const { trade } = useStores()
+  const { buySell } = trade
+  const isBuy = buySell === 'BUY'
   const [submitLoading, setSubmitLoading] = useState(false)
+
   const orderConfirmModal = useRef<OrderConfirmModalRef>(null)
 
   // 提交订单
@@ -62,38 +99,11 @@ const Children = observer(({ close }: { close: () => void }) => {
       orderConfirmModal.current?.show()
     }
   }
+
   return (
     <>
-      <View className={cn('w-full flex-1')}>
-        <View>
-          <View className={cn('flex-row mx-3 mb-[14px]')}>
-            <View className={cn('flex-row items-center flex-1 justify-between')}>
-              <View className={cn('flex-row gap-x-2 items-center')}>
-                <SymbolIcon src={symbolInfo.imgUrl} />
-                <Text size="lg" color="primary" weight="medium">
-                  {symbol}
-                </Text>
-                <Text size="base" color={per > 0 ? 'green' : 'red'} weight="medium">
-                  {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
-                </Text>
-              </View>
-              {/* 保证金类型选择、杠杆选择 */}
-              <MarginTypeAndLeverageBtn />
-            </View>
-          </View>
-          <View className={cn('flex-row mx-3 border mb-2 p-[5px] rounded-[9px]')} borderColor="weak">
-            <BuySellButton position="modal" />
-          </View>
-        </View>
-        <View className={cn('flex-1 mx-3 overflow-y-auto')}>
-          <OrderTopTabbar position="MODAL" />
-        </View>
-      </View>
-
       <View
-        className={cn('mx-3 ')}
         style={{
-          paddingBottom: 20, // 底部安全区域
           backgroundColor: theme.colors.backgroundColor.primary
         }}
       >
@@ -138,9 +148,9 @@ function BuySellModal(props: any, ref: ForwardedRef<BuySellModalRef>) {
         ref={bottomSheetModalRef}
         // snapPoints={['25%', modalHeight]}
         height={'94%'}
-        children={<Children close={close} />}
-        hiddenFooter
+        children={<Content close={close} />}
         dragOnContent={false}
+        footer={<Footer />}
       />
     </>
   )

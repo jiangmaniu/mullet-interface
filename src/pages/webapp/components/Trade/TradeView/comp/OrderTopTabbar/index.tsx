@@ -41,6 +41,8 @@ export function OrderTopTabbar({ position = 'PAGE' }: IProps) {
             // 重置交易数据
             handleReset()
           }}
+          stretch
+          fixedActiveLineWidth={100}
         />
         <OrderTabItem position={position} />
       </>

@@ -6,13 +6,13 @@ import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import SwitchAccount from '@/pages/webapp/components/Account/SwitchAccount'
-import Header from '@/pages/webapp/components/Base/Header'
 import { View } from '@/pages/webapp/components/Base/View'
 import BuySellModal, { BuySellModalRef } from '@/pages/webapp/components/Trade/BuySellModal'
 import BuySellButton from '@/pages/webapp/components/Trade/BuySellModal/BuySellButton'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { goBack } from '@/pages/webapp/utils/navigator'
 
+import Header from './Header'
 import Tradingview from './Tradingview'
 
 function KLine() {
@@ -44,17 +44,17 @@ function KLine() {
     <Basiclayout bgColor="secondary" className={cn('mt-2')}>
       <>
         <View className={cn('flex-row items-center')}>
-          <View className={cn('bg-gray-80 rounded-full p-1 ml-3')} onClick={goBack}>
+          <View className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')} onClick={goBack}>
             <Iconfont name="huazhuan-xuanze" size={24} style={{ transform: 'rotate(180deg)' }} />
           </View>
           <View className={cn('flex-1')}>
             <SwitchAccount />
           </View>
         </View>
-        <View className={cn('rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 mb-3 pt-[10px]')} bgColor="primary">
+        <View className={cn('rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-[10px]')} bgColor="primary">
           <Header />
           <Tradingview />
-          <View className={cn('mx-3 mb-6')}>
+          <View className={cn('mx-3')}>
             <BuySellButton
               onShow={() => {
                 buySellRef.current?.show()

@@ -73,20 +73,19 @@ function OrderTabItem({ position }: IProps) {
   }, [orderSpslChecked])
 
   return (
-    <View className={cn('flex-1', position === 'PAGE' && 'px-3', !!hasDepth && 'pr-0')}>
+    <View className={cn('flex-1 px-3', position === 'PAGE' && 'px-3', !!hasDepth && 'pr-0')}>
       {/* <ScrollView showsVerticalScrollIndicator={false} className={cn('flex-1')} contentContainerStyle={{ paddingBottom: 20 }} bounces={false}> */}
       <View className={cn('mt-2')}>
         {isMarketOrder && (
           <TextField
-            // @ts-ignore @TODO 待替换
-            value={intl.formatMessage({ id: 'pages.trade.OrderType MarketOrder' })}
+            // value={}
             disabled
-            // @ts-ignore @TODO 待替换
-            editable={false}
-            style={['text-sm font-medium', { color: theme.colors.textColor.primary }]}
+            readOnly
+            className={'text-sm font-medium text-primary'}
             height={40}
             textAlign="center"
-            containerStyle={['mb-3']}
+            containerClassName={'mb-3'}
+            placeholder={intl.formatMessage({ id: 'pages.trade.OrderType MarketOrder' })}
           />
         )}
         {!isMarketOrder && <PendingPrice />}

@@ -125,7 +125,6 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
         <View className={cn('items-center pt-2 flex-row justify-between gap-x-2')}>
           <View className={cn('flex-1')}>
             <InputNumber
-              // @ts-ignore @TODO 待替换
               textAlign="center"
               onFocus={() => {
                 setInputing(true)
@@ -136,7 +135,6 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               disabled={disabled}
               value={String(spValuePrice || '')}
               precision={d}
-              // @ts-ignore @TODO 待替换
               onEndEditing={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
@@ -145,12 +143,12 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
                 const val = Number(value) > 0 ? value : ''
                 setSp(val)
               }}
-              style={['text-[13px] leading-5']}
+              className={'text-[13px] leading-5'}
             />
           </View>
-          <View className={cn('flex-1')}>
+          {/* @TODO 暂时隐藏 等PC支持在同步打开 */}
+          {/* <View className={cn('flex-1')}>
             <InputNumber
-              // @ts-ignore @TODO 待替换
               textAlign="center"
               onFocus={() => {
                 setInputing(true)
@@ -161,7 +159,6 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               precision={d}
               // value={!spLeftFocus && !spRightFocus ? spValueEstimate : spRightFocus ? spAmount : spLeftFocus ? spValueEstimate : spPrice}
               value={String(spValueEstimate)}
-              // @ts-ignore @TODO 待替换
               onEndEditing={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
@@ -169,9 +166,9 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
                 const val = Number(value) > 0 ? value : ''
                 setSpAmount(val)
               }}
-              style={['text-[13px] leading-5']}
+              className={'text-[13px] leading-5'}
             />
-          </View>
+          </View> */}
         </View>
       </View>
       <View>
@@ -179,7 +176,6 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
         <View className={cn('items-center pt-2 flex-row justify-between gap-x-2')}>
           <View className={cn('flex-1')}>
             <InputNumber
-              // @ts-ignore @TODO 待替换
               textAlign="center"
               onFocus={() => {
                 setInputing(true)
@@ -190,7 +186,6 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               disabled={disabled}
               precision={d}
               value={String(slValuePrice || '')}
-              // @ts-ignore @TODO 待替换
               onEndEditing={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
@@ -199,12 +194,12 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
                 const val = Number(value) > 0 ? value : ''
                 setSl(val)
               }}
-              style={['text-[13px] leading-5']}
+              className={'text-[13px] leading-5'}
             />
           </View>
-          <View className={cn('flex-1')}>
+          {/* @TODO 暂时隐藏 等PC支持在同步打开 */}
+          {/* <View className={cn('flex-1')}>
             <InputNumber
-              // @ts-ignore @TODO 待替换
               textAlign="center"
               onFocus={() => {
                 setInputing(true)
@@ -215,7 +210,6 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               precision={d}
               min={-999999999999}
               value={String(slValueEstimate || '')}
-              // @ts-ignore @TODO 待替换
               onEndEditing={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
@@ -223,9 +217,9 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
                 const val = Math.abs(Number(value)) // value 可能为负数, 这里取绝对值
                 setSlAmount(val)
               }}
-              style={['text-[13px] leading-5']}
+              className="text-[13px] leading-5"
             />
-          </View>
+          </View> */}
         </View>
       </View>
     </View>

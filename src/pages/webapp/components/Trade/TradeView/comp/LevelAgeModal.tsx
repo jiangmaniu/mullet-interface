@@ -88,7 +88,6 @@ function LevelAgeModal(props: any, ref: ForwardedRef<LevelAgeModalRef>) {
         </View>
         <View className={cn('mx-3')}>
           <InputNumber
-            // @ts-ignore @TODO 待替换
             value={value}
             placeholder={intl.formatMessage({ id: 'pages.trade.Leverage Multiplier' })}
             height={50}
@@ -96,10 +95,9 @@ function LevelAgeModal(props: any, ref: ForwardedRef<LevelAgeModalRef>) {
             onPressRightText={() => {
               setValue(String(maxLever))
             }}
-            // @ts-ignore @TODO 待替换
-            onChangeText={setValue}
-            min={minLever}
-            max={maxLever}
+            onChange={setValue}
+            min={Number(minLever)}
+            max={Number(maxLever)}
             hiddenPrecision
           />
           {renderSlider}

@@ -29,12 +29,12 @@ export default function Switch({
   activeThumbColor
 }: IProps) {
   const { cn, theme } = useTheme()
-  const [isChecked, setIsChecked] = useState(checked ? 1 : 0)
+  const [isChecked, setIsChecked] = useState(checked)
 
   const handleToggle = () => {
     if (!disabled && !loading) {
       const newChecked = !isChecked
-      setIsChecked(newChecked ? 1 : 0)
+      setIsChecked(newChecked)
       onChange && onChange(newChecked)
     }
   }
@@ -48,9 +48,11 @@ export default function Switch({
         ...style
       }}
     >
-      {isChecked && <>{checkedChildren ? checkedChildren : <img src="/img/icons/checkSwitch.png" style={{ width: 18, height: 18 }} />}</>}
+      {isChecked && (
+        <>{checkedChildren ? checkedChildren : <img src="/images/icons/checkSwitch.png" style={{ width: 18, height: 18 }} />}</>
+      )}
       {!isChecked && (
-        <>{unCheckedChildren ? unCheckedChildren : <img src="/img/icons/unCheckSwitch.png" style={{ width: 18, height: 18 }} />}</>
+        <>{unCheckedChildren ? unCheckedChildren : <img src="/images/icons/unCheckSwitch.png" style={{ width: 18, height: 18 }} />}</>
       )}
     </View>
   )

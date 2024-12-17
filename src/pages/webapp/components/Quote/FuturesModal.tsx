@@ -64,13 +64,13 @@ function FuturesModal({ trigger }: IProps, ref: ForwardedRef<FuturesModalRef>) {
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height="100%"
+      height="90%"
       hiddenFooter
       trigger={trigger}
       dragOnContent={false}
       title={intl.formatMessage({ id: 'pages.trade.Fetures Title' })}
       children={
-        <View className={cn('flex-1 px-5 pb-[50px]')}>
+        <View className={cn('flex-1 px-5')}>
           <View className={cn('mt-2 mb-4 flex-row')}>
             <Text size="base" weight="medium" className={cn('w-full')}>
               {intl.formatMessage({ id: 'pages.trade.Fetures Info Title' })}
