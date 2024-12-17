@@ -34,12 +34,14 @@ const TradingViewComp = ({ style }: IProps) => {
   useEffect(() => {
     setLoading(true)
     const token = STORAGE_GET_TOKEN()
-    // 接口服务地址传递到h5里面去请求相应行情数据
+    // hideWatermarkLogo: 0隐藏
+    // watermarkLogoUrl 水印图片地址 网络图片地址
+    const watermarkLogoUrl = '' // 水印图片尺寸大小 522 × 146
     const url = `${
       ENV.tradingViewUrl
     }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${
       theme.direction + 1
-    }&accountGroupId=${accountGroupId}&token=${token}`
+    }&accountGroupId=${accountGroupId}&token=${token}&hideWatermarkLogo=1&watermarkLogoUrl=${watermarkLogoUrl}`
     // console.log('url', url)
     setUrl(url)
   }, [symbol, intl.locale, symbolInfo])
