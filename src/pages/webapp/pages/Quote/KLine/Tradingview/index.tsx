@@ -69,7 +69,7 @@ const TradingViewComp = ({ style }: IProps) => {
     <div style={style} className="relative mb-3">
       {iframeDom}
       {loading && (
-        <div className={cn('absolute top-28 left-0 right-0 flex justify-center items-center z-10')}>
+        <div className={cn('absolute top-28 left-0 right-0 flex justify-center items-center z-0')}>
           <Loading />
         </div>
       )}
