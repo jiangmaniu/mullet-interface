@@ -1,4 +1,3 @@
-import { useIntl } from '@umijs/max'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { debounce } from 'lodash'
 import React, { DOMAttributes, isValidElement } from 'react'
@@ -103,7 +102,6 @@ const ButtonWrapper: React.FC<ButtonProps> = (
   },
   ref
 ) => {
-  const intl = useIntl()
   const { cn, theme } = useTheme()
   const buttonClassName = buttonVariants({ type, size })
   const isIconLeft = iconDirection === 'left' // 图标在文字左边

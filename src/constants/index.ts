@@ -69,3 +69,20 @@ export const KEY_ORDER_CONFIRM_CHECKED = NAMESPACE + '_' + 'order_confirm_checke
 
 // 平仓二次确认弹窗
 export const KEY_POSITION_CONFIRM_CHECKED = NAMESPACE + '_' + 'position_confirm_checked'
+
+// APP 弹窗宽度
+export const APP_MODAL_WIDTH = 320
+
+// 品牌图片
+export const Logo: any = {
+  stellux: {
+    small: '/images/stellux/logo-small.png',
+    text: '/images/stellux/logo-text.png',
+    gray: '/images/stellux/logo-gray.png'
+  },
+  lynfoo: {
+    small: '/images/lynfoo/logo-small.png',
+    text: '/images/lynfoo/logo-text.png',
+    gray: '/images/lynfoo/logo-gray.png'
+  }
+}

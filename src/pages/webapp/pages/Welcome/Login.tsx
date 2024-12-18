@@ -10,7 +10,6 @@ import { View } from '../../components/Base/View'
 import { useI18n } from '../../hooks/useI18n'
 import Basiclayout from '../../layouts/BasicLayout'
 import { LoginSection } from './LoginSection'
-import { RegisterSection } from './RegisterSection'
 
 export const FOOTER_BOTTOM = 100
 
@@ -72,56 +71,37 @@ export default function WelcomeScreen({}) {
 
   const sectionRef = useRef<TypeSection | null>(null)
 
-  // TODO: 版本更新的方法， 不允许打包进发布版本中
-
-  // //  背景动画
-  // const [scrollY, setScrollY] = useState(new Value(0))
-
-  // // 定义动画函数
-  // const startAnimation = (toValue: number) => {
-  //   timing(scrollY, {
-  //     toValue, // 动画结束时的值
-  //     duration: 180, // 动画持续时间，单位为毫秒
-  //     easing: Easing.out(Easing.quad), // 先快后慢的缓动效果
-  //     useNativeDriver: false // 如果动画作用于非样式属性，比如数值，useNativeDriver必须为false
-  //   }).start()
-  // }
-
-  // const coverMov = scrollY.interpolate({
-  //   inputRange: [0, 100],
-  //   outputRange: [0, -100]
-  // })
-
-  // const opacity = scrollY.interpolate({
-  //   inputRange: [0, 10, 100],
-  //   outputRange: [1, 1, 0]
-  // })
-
-  // const opacityReverse = scrollY.interpolate({
-  //   inputRange: [0, 10, 100],
-  //   outputRange: [0, 1, 1]
-  // })
-
   const actions = [
     { key: 'en-US', text: t('common.language.en-US') },
     { key: 'zh-TW', text: t('common.language.zh-TW') }
   ]
 
   const sections = {
-    login: <LoginSection ref={sectionRef} setSection={setSection} />,
-    register: (
-      <RegisterSection
-        ref={sectionRef}
-        setSection={setSection}
-        email={email}
-        setEmail={setEmail}
-        phone={phone}
-        setPhone={setPhone}
-        areaCodeItem={areaCodeItem}
-        setAreaCodeItem={setAreaCodeItem}
-        setPassword={setPassword}
-      />
-    )
+    login: <LoginSection ref={sectionRef} setSection={setSection} />
+    // server: (
+    //   <ServerSection
+    //     tenanId={tenanId}
+    //     setTenanId={setTenanId}
+    //     tenanName={tenanName}
+    //     setTenanName={setTenanName}
+    //     setSection={setSection}
+    //     startAnimation={startAnimation}
+    //   />
+    // ),
+    // register: (
+    //   <RegisterSection
+    //     ref={sectionRef}
+    //     setSection={setSection}
+    //     startAnimation={startAnimation}
+    //     email={email}
+    //     setEmail={setEmail}
+    //     phone={phone}
+    //     setPhone={setPhone}
+    //     areaCodeItem={areaCodeItem}
+    //     setAreaCodeItem={setAreaCodeItem}
+    //     setPassword={setPassword}
+    //   />
+    // ),
     // verify: (
     //   <VerifySection
     //     ref={sectionRef}
@@ -173,7 +153,7 @@ export default function WelcomeScreen({}) {
   const { screenSize } = useEnv()
 
   return (
-    <Basiclayout scrollY={true}>
+    <Basiclayout>
       <Header
         back={false}
         // wrapperStyle={{

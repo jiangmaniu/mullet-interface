@@ -20,10 +20,11 @@ export const useDeviceChange = () => {
     stores.global.setLastDeviceType(type)
   }
 
+  const jumpUrl = exposed.isPc ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
+  const loginUrl = exposed.isPc ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
+
   const getHomePage = async () => {
     const token = await STORAGE_GET_TOKEN()
-    const jumpUrl = exposed.isPc ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
-    const loginUrl = exposed.isPc ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
     return token ? jumpUrl : loginUrl
   }
 
@@ -57,6 +58,8 @@ export const useDeviceChange = () => {
     checkDeviceType,
     changeDeviceType,
     breakPoint,
-    exposed
+    exposed,
+    jumpUrl,
+    loginUrl
   }
 }

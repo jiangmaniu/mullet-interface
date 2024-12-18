@@ -1,10 +1,11 @@
 import { history } from '@umijs/max'
 import { stringify } from 'qs'
 
-import { WEB_HOME_PAGE } from '@/constants'
+import { MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { logout } from '@/services/api/user'
 
+import { isPCByWidth } from '.'
 import {
   STORAGE_GET_TOKEN,
   STORAGE_REMOVE_TOKEN,
@@ -33,15 +34,18 @@ export const onLogout = async (noRequestLogout?: boolean) => {
   // 关闭行情
   stores.ws.close()
 
+  const isPc = isPCByWidth()
+  const loginUrl = isPc ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
+
   // 退出登录，并且将当前的 url 保存
   const { search, pathname } = window.location
   const urlParams = new URL(window.location.href).searchParams
   /** 此方法会跳转到 redirect 参数所在的位置 */
   const redirect = urlParams.get('redirect')
   // Note: There may be security issues, please note
-  if (window.location.pathname !== '/user/login' && !redirect) {
+  if (window.location.pathname !== loginUrl && !redirect) {
     history.replace({
-      pathname: '/user/login',
+      pathname: loginUrl,
       search: stringify({
         redirect: pathname + search
       })

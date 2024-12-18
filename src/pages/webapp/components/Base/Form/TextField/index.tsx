@@ -189,8 +189,8 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
             backgroundColor: theme.colors.Input.bgColor
           },
           status === 'error' ? { borderColor: theme.colors.red.DEFAULT } : {},
-          { paddingInlineStart: LeftAccessory ? 0 : 20 },
-          { paddingInlineEnd: RightAccessory ? 0 : 20 },
+          // { paddingInlineStart: LeftAccessory ? 0 : 20 },
+          // { paddingInlineEnd: RightAccessory ? 0 : 20 },
           { backgroundColor: innerDisabled ? theme.colors.Input.disabledBg : theme.colors.Input.bgColor },
           innerDisabled ? { borderWidth: 0 } : {},
           { ...($inputWrapperStyleOverride || {}) }

@@ -11,7 +11,8 @@ import { getCaptcha, login } from '@/services/api/user'
 import { STORAGE_REMOVE_ACCOUNT_PASSWORD, STORAGE_SET_ACCOUNT_PASSWORD, setLocalUserInfo } from '@/utils/storage'
 
 import Button from '@/components/Base/Button'
-import { ADMIN_HOME_PAGE } from '@/constants'
+import { ModalLoading } from '@/components/Base/Lottie/Loading'
+import { ADMIN_HOME_PAGE, APP_MODAL_WIDTH } from '@/constants'
 import { push } from '@/utils/navigator'
 import { Checkbox } from 'antd-mobile'
 import type { TypeSection, WELCOME_STEP_TYPES } from '.'
@@ -62,9 +63,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
     // return userInfo
   }
 
+  const loadingRef = useRef<any>(null)
+
   // 登录
   const onSubmit = async (values: User.LoginParams) => {
     // const loging = dialog(<LottieLoading tips={t('pages.login.Logining')} />)
+    loadingRef.current?.show()
 
     try {
       const result = await login({
@@ -88,17 +92,18 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
         // const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
         const jumpPath = ADMIN_HOME_PAGE // 直接跳转到个人中心
         setTimeout(() => {
+          loadingRef.current?.close()
           push(jumpPath)
         }, 6000)
 
         return
       } else {
+        loadingRef.current?.close()
         // 刷新验证码
         handleCaptcha()
       }
     } catch (error: any) {
-    } finally {
-      // Portal.remove(loging)
+      loadingRef.current?.close()
     }
   }
 
@@ -271,6 +276,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
         </Button>
         <Text>{t('pages.login.Register new account')}</Text>
       </View>
+
+      <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={t('pages.login.Logining')} />
     </View>
   )
 }

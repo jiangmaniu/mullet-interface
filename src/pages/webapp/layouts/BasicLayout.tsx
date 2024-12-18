@@ -13,10 +13,11 @@ interface Iprops {
   /** 页面背景颜色 */
   bgColor?: BgColorType
   className?: string
+  scrollY?: boolean
 }
 
 // 页面布局基础组件
-const Basiclayout: React.FC<Iprops> = ({ className, style, children, bgColor = 'primary' }) => {
+const Basiclayout: React.FC<Iprops> = ({ className, style, children, bgColor = 'primary', scrollY = false }) => {
   const { theme, cn } = useTheme()
   const { pathname } = useLocation()
 
@@ -30,7 +31,7 @@ const Basiclayout: React.FC<Iprops> = ({ className, style, children, bgColor = '
   }, [pathname])
 
   return (
-    <View className={cn('flex-1 flex flex-col', className)} bgColor={bgColor} style={style}>
+    <View className={cn('flex-1 flex flex-col h-[100vh]', scrollY ? 'overflow-y-scroll' : '', className)} bgColor={bgColor} style={style}>
       {children}
     </View>
   )
