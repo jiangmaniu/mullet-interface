@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
+import { useEnv } from '@/context/envProvider'
 import Header from '../../components/Base/Header'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
@@ -179,30 +180,33 @@ export default function WelcomeScreen({}) {
     // )
   }
 
+  const { screenSize } = useEnv()
+
   return (
     <Basiclayout>
       <Header
-      // wrapperStyle={{
-      //   zIndex: 100,
-      //   paddingHorizontal: 14,
-      //   backgroundColor: 'transparent'
-      // }}
-      // left={
-      //   <>
-      //     {section !== 'server' && section !== 'verify' ? (
-      //       <TouchableOpacity onPress={gobackHandler}>
-      //         <Icon name="fanhui" size={36} />
-      //       </TouchableOpacity>
-      //     ) : null}
-      //   </>
-      // }
-      // right={
-      //   <Tooltip.Menu key={locale} actions={actions} placement="bottom-start" onAction={(node) => loadLocale(node.key as string)}>
-      //     <Text>
-      //       <Icon name="geren-yuyan" size={30} />
-      //     </Text>
-      //   </Tooltip.Menu>
-      // }
+        back={false}
+        // wrapperStyle={{
+        //   zIndex: 100,
+        //   paddingHorizontal: 14,
+        //   backgroundColor: 'transparent'
+        // }}
+        // left={
+        //   <>
+        //     {section !== 'server' && section !== 'verify' ? (
+        //       <TouchableOpacity onPress={gobackHandler}>
+        //         <Icon name="fanhui" size={36} />
+        //       </TouchableOpacity>
+        //     ) : null}
+        //   </>
+        // }
+        // right={
+        //   <Tooltip.Menu key={locale} actions={actions} placement="bottom-start" onAction={(node) => loadLocale(node.key as string)}>
+        //     <Text>
+        //       <Icon name="geren-yuyan" size={30} />
+        //     </Text>
+        //   </Tooltip.Menu>
+        // }
       />
 
       <View
@@ -215,9 +219,8 @@ export default function WelcomeScreen({}) {
           // transform: [{ translateY: coverMov }]
         }}
       >
-        {/* <Image
-          source={require('public/images/login-bg.png')}
-          resizeMode="cover"
+        <img
+          src="/images/login-bg.png"
           style={{
             width: '100%',
             height: 188,
@@ -225,17 +228,18 @@ export default function WelcomeScreen({}) {
             borderTopLeftRadius: 6,
             overflow: 'hidden'
           }}
-        /> */}
+        />
       </View>
       {section && (
         <View
-        // style={{
-        //   flex: 1,
-        //   height: SCREEN_HEIGHT,
-        //   paddingHorizontal: 14,
-        //   marginTop: 10,
-        //   position: 'relative'
-        // }}
+          style={{
+            flex: 1,
+            height: screenSize.height,
+            paddingLeft: 14,
+            paddingRight: 14,
+            marginTop: 10,
+            position: 'relative'
+          }}
         >
           <View className={cn('mt-6 px-2 flex flex-col items-start gap-2 bg-transparent')}>
             <img
@@ -244,7 +248,7 @@ export default function WelcomeScreen({}) {
                 height: 54,
                 left: -12
               }}
-              // source={require('public/images/stellux-logo.png')}
+              src="/images/stellux-logo.png"
             />
             <View className={cn(section === 'server' ? 'flex' : 'none')}>
               <Text size="xl" color="primary" style={cn('font-bold')}>

@@ -12,6 +12,8 @@ export default function UserLayout() {
   const { pathname } = useLocation()
   const { setMode } = useTheme()
 
+  // useSwitchPcOrMobile() // 切换 pc 和移动端布局
+
   // @TODO 临时设置切换主题，后面删除
   useEffect(() => {
     if (pathname !== '/trade') {

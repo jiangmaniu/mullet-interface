@@ -234,7 +234,7 @@ export default [
       /* ------------------------------- 登录/注册/忘记密码 ------------------------------- */
       {
         path: '/:lng/app/login',
-        component: './webapp/pages/User/Login',
+        component: './webapp/pages/Welcome',
         access: 'canAdmin' // 权限配置
       },
       {
@@ -317,12 +317,6 @@ export default [
         path: '/:lng/app/user-center/message/:id',
         component: './webapp/pages/UserCenter/Message/Detail',
         access: 'canAdmin' // 权限配置
-      },
-      /* ------------------------------- 登錄註冊 ------------------------------- */
-      // 登錄
-      {
-        path: '/:lng/app/welcome',
-        component: './webapp/pages/Welcome'
       }
     ]
   },

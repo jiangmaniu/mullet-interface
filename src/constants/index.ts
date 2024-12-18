@@ -18,6 +18,8 @@ export const ICONFONT_URL =
 export const WEB_HOME_PAGE = '/trade' // pc端首页
 export const ADMIN_HOME_PAGE = '/account'
 export const MOBILE_HOME_PAGE = '/app/quote' // 移动端首页
+export const WEB_LOGIN_PAGE = '/user/login' // 移动端登录页
+export const MOBILE_LOGIN_PAGE = '/app/login' // 移动端行情页
 
 // 本地存储-用户信息-键
 export const KEY_ACCOUNT_PASSWORD = NAMESPACE + '_' + 'account_password'

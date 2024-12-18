@@ -5,6 +5,7 @@ import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { getPathname, push } from '@/utils/navigator'
+import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 // 切换pc和mobile布局时，跳转页面
 function useSwitchPcOrMobile() {
@@ -20,6 +21,9 @@ function useSwitchPcOrMobile() {
     lastMobileJumpPathname
   } = global
 
+  const token = STORAGE_GET_TOKEN()
+  const mPath = token ? '/app/quote' : '/app/login'
+
   useEffect(() => {
     const currentDeviceType = isPc ? 'PC' : 'MOBILE'
     const purePath = getPathname(pathname) // 当前地址 没有多语言 => /app/trade
@@ -31,13 +35,13 @@ function useSwitchPcOrMobile() {
         push(lastPcJumpPathname || '/trade')
       } else if (isMobileOrIpad) {
         // 跳转到移动端上次记录的路径或默认路径
-        navigateTo(lastMobileJumpPathname || '/app/quote')
+        navigateTo(lastMobileJumpPathname || mPath)
       }
       // 记录最后一次设备类型
       setLastDeviceType(currentDeviceType)
     } else if (isMobileOrIpad && !getPathname(pathname).startsWith('/app/')) {
       // 如果是移动端，并且当前路径不是以/app/开头，则跳转到行情页面
-      navigateTo('/app/quote')
+      navigateTo(mPath)
     } else {
       // 记录最后跳转的路径
       if (isPc) {

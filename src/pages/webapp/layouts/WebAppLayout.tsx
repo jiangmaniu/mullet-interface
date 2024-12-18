@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useSwitchPcOrMobile from '@/hooks/useSwitchPcOrMobile'
 import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
 import { isMainTabbar } from '@/pages/webapp/utils/navigator'
@@ -22,7 +21,7 @@ function WebAppLayout() {
   useSyncDataToWorker()
 
   // 切换 pc 和移动端布局
-  useSwitchPcOrMobile()
+  // useSwitchPcOrMobile()
 
   useEffect(() => {
     return () => {

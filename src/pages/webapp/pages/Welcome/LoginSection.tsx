@@ -189,41 +189,45 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
   return (
     <View className={cn('flex-1 flex flex-col justify-between mb-1')}>
       <View className={cn('flex flex-col gap-6 mb-5')}>
-        <TextField
-          value={username}
-          onChange={(val) => {
-            setValue('username', val?.trim())
-            trigger('username')
-          }}
-          // status={errors.username ? 'error' : undefined}
-          label={t('pages.login.Customer NO')}
-          placeholder={t('LoginSection.Customer NO placeholder')}
-          height={50}
-          // LeftAccessory={() => <Icon icon="input-email" size={20} containerStyle={{ marginLeft: spacing.small }} />}
-          autoCapitalize="none"
-          autoComplete="email"
-          // onSubmitEditing={() => authPasswordInput.current?.focus()}
-        />
-        {errors.username && <Text color="red">{errors.username.message}</Text>}
-        <TextField
-          ref={authPasswordInput}
-          value={password}
-          onChange={(val) => {
-            setValue('password', val?.trim())
-            trigger('password')
-          }}
-          label={t('pages.login.Password')}
-          placeholder={t('pages.login.Password placeholder')}
-          height={50}
-          // status={errors.password ? 'error' : undefined}
-          // style={[$textFieldStyle]}
-          // LeftAccessory={() => <Icon icon="input-password" size={20} containerStyle={{ marginLeft: spacing.small }} />}
-          autoCapitalize="none"
-          autoComplete="password"
-          type={isAuthPasswordHidden}
-          RightAccessory={PasswordRightAccessory}
-        />
-        {errors.password && <Text color="red">{errors.password.message}</Text>}
+        <View>
+          <TextField
+            value={username}
+            onChange={(val) => {
+              setValue('username', val?.trim())
+              trigger('username')
+            }}
+            // status={errors.username ? 'error' : undefined}
+            label={t('pages.login.Customer NO')}
+            placeholder={t('LoginSection.Customer NO placeholder')}
+            height={50}
+            // LeftAccessory={() => <Icon icon="input-email" size={20} containerStyle={{ marginLeft: spacing.small }} />}
+            autoCapitalize="none"
+            autoComplete="email"
+            // onSubmitEditing={() => authPasswordInput.current?.focus()}
+          />
+          {errors.username && <Text color="red">{errors.username.message}</Text>}
+        </View>
+        <View>
+          <TextField
+            ref={authPasswordInput}
+            value={password}
+            onChange={(val) => {
+              setValue('password', val?.trim())
+              trigger('password')
+            }}
+            label={t('pages.login.Password')}
+            placeholder={t('pages.login.Password placeholder')}
+            height={50}
+            // status={errors.password ? 'error' : undefined}
+            // style={[$textFieldStyle]}
+            // LeftAccessory={() => <Icon icon="input-password" size={20} containerStyle={{ marginLeft: spacing.small }} />}
+            autoCapitalize="none"
+            autoComplete="password"
+            type={isAuthPasswordHidden}
+            RightAccessory={PasswordRightAccessory}
+          />
+          {errors.password && <Text color="red">{errors.password.message}</Text>}
+        </View>
         <Checkbox
           checked={remember}
           onChange={(event) => {

@@ -6,7 +6,6 @@ import { observer } from 'mobx-react-lite'
 import Header from '@/components/Web/Header'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
-import useSwitchPcOrMobile from '@/hooks/useSwitchPcOrMobile'
 
 function WebLayout() {
   const { isPc, isMobileOrIpad } = useEnv()
@@ -14,7 +13,7 @@ function WebLayout() {
   const { global } = useStores()
   const isTradeLayout = pathname.indexOf('/trade') !== -1
 
-  useSwitchPcOrMobile() // 切换 pc 和移动端布局
+  // useSwitchPcOrMobile() // 切换 pc 和移动端布局
 
   if (isTradeLayout) {
     return (
