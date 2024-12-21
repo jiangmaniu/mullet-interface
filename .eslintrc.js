@@ -34,6 +34,7 @@ module.exports = {
     '@typescript-eslint/no-unused-expressions': 'off',
     '@typescript-eslint/no-loop-func': 'off',
     'react/no-children-prop': 'off',
-    '@typescript-eslint/ban-types': 'off'
+    '@typescript-eslint/ban-types': 'off',
+    'prefer-rest-params': 'off'
   }
 }

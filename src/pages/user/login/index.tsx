@@ -10,7 +10,7 @@ import { flushSync } from 'react-dom'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Tabs from '@/components/Base/Tabs'
-import { ADMIN_HOME_PAGE, REGISTER_APP_CODE, WEB_HOME_PAGE } from '@/constants'
+import { ADMIN_HOME_PAGE, WEB_HOME_PAGE } from '@/constants'
 import { getCaptcha, login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
 import { goHome, push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
@@ -19,6 +19,7 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
+import ENV from '@/env'
 import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
@@ -195,7 +196,7 @@ function Login() {
       validateCode: values.validateCode,
       password: values.password,
       country: values.country,
-      code: REGISTER_APP_CODE,
+      code: ENV.REGISTER_APP_CODE,
       phoneAreaCode: values.phoneAreaCode
     } as User.RegisterParams
 

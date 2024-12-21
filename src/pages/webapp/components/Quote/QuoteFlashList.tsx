@@ -23,9 +23,10 @@ type IProps = {
   tabValue?: string
   /**列表高度 */
   height?: number
+  visible?: boolean
 }
 
-function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue }: IProps) {
+function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible }: IProps) {
   const { cn, theme } = useTheme()
   const { trade, ws } = useStores()
   const intl = useIntl()
@@ -79,7 +80,7 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue }: IProp
     if (!searchValue) return list
 
     return list.filter((v) => v.symbol.toLowerCase().indexOf(String(searchValue).toLowerCase()) !== -1)
-  }, [symbolDataList, trade.favoriteList.length, searchValue])
+  }, [symbolDataList, trade.favoriteList.length, searchValue, visible])
 
   // 订阅品种列表数据
   useSymbolQuoteSubscribe({
@@ -89,7 +90,7 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue }: IProp
   const renderItem = (item: Account.TradeSymbolListItem) => {
     return (
       <div className="px-3">
-        <QuoteItem item={item} onItem={onItem} key={item.id} />
+        <QuoteItem item={item} tabKey={tabKey} onItem={onItem} key={item.id} />
       </div>
     )
   }

@@ -31,6 +31,8 @@ type IProps<T = any> = Omit<ListProps<T>, 'children' | 'itemKey'> & {
   /**底部组件 */
   ListFooterComponent?: React.ReactNode
   itemKey?: string
+  /**容器外层样式 同 style */
+  contentContainerStyle?: React.CSSProperties
 }
 
 // 虚拟滚动列表
@@ -48,6 +50,8 @@ function FlashList<T>({
   ListFooterComponent,
   showMoreText,
   hasMore,
+  style,
+  contentContainerStyle,
   ...res
 }: IProps<T>) {
   const { cn, theme } = useTheme()
@@ -83,15 +87,17 @@ function FlashList<T>({
     )
   }
 
-  if (showEmpty && !ListEmptyComponent) {
-    return (
-      <div style={{ flex: 1, height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Empty text={intl.formatMessage({ id: 'common.NO Data' })} {...emptyConfig} />
-      </div>
-    )
-  }
+  if (!res?.data?.length) {
+    if (showEmpty && !ListEmptyComponent) {
+      return (
+        <div style={{ flex: 1, height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Empty text={intl.formatMessage({ id: 'common.NO Data' })} {...emptyConfig} />
+        </div>
+      )
+    }
 
-  if (ListEmptyComponent) return ListEmptyComponent
+    if (ListEmptyComponent) return ListEmptyComponent
+  }
 
   return (
     <div>
@@ -113,6 +119,7 @@ function FlashList<T>({
         height={height}
         onVisibleChange={onViewableItemsChanged}
         extraRender={(info) => <>{ListFooterComponent ? ListFooterComponent : renderListFooterComponent}</>}
+        style={{ ...contentContainerStyle, ...style }}
         {...res}
       >
         {(item: T) => renderItem(item)}

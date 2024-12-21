@@ -1,6 +1,7 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
-import { add } from '@/utils/float'
+import { regInput } from '@/utils'
+import { add, subtract } from '@/utils/float'
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { Text } from '../../Text'
 import { View } from '../../View'
@@ -107,6 +108,40 @@ const InputNumber = forwardRef(
     //   onFocus?.(null as any)
     // }
 
+    const handleEndEditing = (text: string | undefined) => {
+      if (!text) {
+        setTimeout(() => {
+          setInputValue('')
+          onEndEditing?.(text)
+        }, 10)
+        return
+      }
+
+      let newText = String(text)
+      // 处理输入整数
+      if (hiddenPrecision) {
+        newText = newText.replace(/[^\d]/g, '') // 只允许输入数字
+        newText = newText.replace(/^0+(\d)/, '$1') // 如果以0开头，去掉前导0
+      } else {
+        // 处理输入小数
+        newText = newText.replace(/[^-\d.]/g, '') // 允许负号、数字和小数点
+        newText = newText.replace(/^(-?)0+([1-9])/, '$1$2') // 处理前导零，保留可能的负号
+        newText = newText.replace(/^(-?)\./, '$10.') // 如果以小数点开始，在小数点前加0
+        newText = newText.replace(/\.{2,}/g, '.') // 只保留第一个小数点
+        newText = newText.replace(/^(-?[^.]*\.[^.]*)(\..*)?$/, '$1') // 只保留第一个小数点之后的部分
+        newText = regInput(newText, precision)
+      }
+
+      // 处理输入的最大值
+      if (newText && newText > max) {
+        newText = max
+      }
+      setTimeout(() => {
+        setInputValue(newText)
+        onEndEditing?.(newText)
+      }, 10)
+    }
+
     return (
       <TextField
         ref={inputRef}
@@ -123,9 +158,9 @@ const InputNumber = forwardRef(
                     if (onMinus) {
                       onMinus()
                     } else {
-                      const retValue = String(newValue - step)
+                      const retValue = String(subtract(newValue, step))
                       onChange?.(retValue)
-                      onEndEditing?.(retValue)
+                      handleEndEditing?.(retValue)
                     }
                   }}
                   style={{ paddingLeft: 4 }}
@@ -153,18 +188,18 @@ const InputNumber = forwardRef(
           // 处理输入的最小值
           if (newValue && newValue < min) {
             newValue = min
-            onEndEditing?.(String(newValue))
+            handleEndEditing?.(String(newValue))
             return
           }
 
           // 处理输入的最大值
           if (newValue && newValue > max) {
             newValue = max
-            onEndEditing?.(String(newValue))
+            handleEndEditing?.(String(newValue))
           }
         }}
         onChange={handleChangeText}
-        onEndEditing={onEndEditing}
+        onEndEditing={() => handleEndEditing?.(String(inputValue))}
         onFocus={onFocus}
         containerStyle={{ marginBottom: 10 }}
         RightAccessory={() => (
@@ -178,7 +213,7 @@ const InputNumber = forwardRef(
                       onFocus?.(null as any)
                       onPressRightText?.()
                       onChange?.(String(max))
-                      onEndEditing?.(String(max))
+                      handleEndEditing?.(String(max))
                     }}
                     className={cn('mr-2')}
                   >
@@ -201,7 +236,7 @@ const InputNumber = forwardRef(
                       // 最大值限制
                       const val = Math.min(Number(retValue), max)
                       onChange?.(String(val))
-                      onEndEditing?.(String(val))
+                      handleEndEditing?.(String(val))
                     }
                   }}
                   style={{ paddingRight: 4 }}

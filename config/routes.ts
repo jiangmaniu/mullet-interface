@@ -283,7 +283,7 @@ export default [
       },
       // 账号详情
       {
-        path: '/:lng/app/account/view/:id',
+        path: '/:lng/app/account/info',
         component: './webapp/pages/Account/AccountDetail',
         access: 'canAdmin' // 权限配置
       },

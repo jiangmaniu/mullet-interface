@@ -29,9 +29,11 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
   const intl = useIntl()
   const [tabKey, setTabKey] = useState<TabKey>('ALL')
   const [tabValue, setTabValue] = useState('')
+  const [tabIndex, setTabIndex] = useState<number>(0)
   const [searchValue, setSearchValue] = useState('')
 
   const bottomSheetModalRef = useRef<SheetRef>(null)
+  const topTabbarRef = useRef<any>(null)
 
   const [visible, setVisible] = useState(false)
 
@@ -97,21 +99,22 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
         <View>
           <View className="mx-3">
             <Search
-              style={{
-                marginBottom: 10,
+              inputWrapperStyle={{
                 backgroundColor: theme.colors.backgroundColor.secondary
               }}
-              onChange={(e) => {
-                setSearchValue(e.target.value)
+              onChange={(value) => {
+                setSearchValue(value)
               }}
               value={searchValue}
             />
           </View>
           <SymbolTabbar
             tabKey={tabKey}
-            onChange={({ tabValue, tabKey }) => {
+            onChange={({ tabValue, tabKey, index }) => {
               setTabKey(tabKey)
               setTabValue(tabValue)
+              // setTabIndex(index as number)
+              topTabbarRef.current.swiper?.swipeTo?.(index)
             }}
           />
         </View>
@@ -130,8 +133,15 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
             }}
             tabKey={tabKey}
             tabValue={tabValue}
+            // tabIndex={tabIndex}
             position="MODAL"
             height={document.body.clientHeight - 220}
+            onSwiperChange={({ activeKey, index }) => {
+              setTabKey(activeKey)
+              // setTabIndex(index)
+              // console.log('activeKey', activeKey, index)
+            }}
+            ref={topTabbarRef}
           />
         </View>
       }

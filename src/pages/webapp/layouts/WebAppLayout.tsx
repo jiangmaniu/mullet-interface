@@ -8,6 +8,7 @@ import useSwitchPcOrMobile from '@/hooks/useSwitchPcOrMobile'
 import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
 import { isMainTabbar } from '@/pages/webapp/utils/navigator'
+import AddPwaAppModal from '../components/Base/AddPwaAppModal'
 
 /**
  * webapp页面的布局
@@ -32,12 +33,19 @@ function WebAppLayout() {
     }
   }, [])
 
+  const Content = (
+    <>
+      <Outlet />
+      <AddPwaAppModal />
+    </>
+  )
+
   // 主Tabbar页面使用该布局
   if (isMainTabbar(pathname)) {
     return (
       <div className="h-screen flex flex-col">
-        <div style={{ flex: '1 1' }}>
-          <Outlet />
+        <div className="flex flex-col" style={{ flex: '1 1' }}>
+          {Content}
         </div>
         <div style={{ flex: '0 1' }}>
           <TabBottomBar />
@@ -47,10 +55,6 @@ function WebAppLayout() {
   }
 
   // 其他子页面使用的布局
-  return (
-    <div className="h-screen flex flex-col">
-      <Outlet />
-    </div>
-  )
+  return <div className="h-screen flex flex-col">{Content}</div>
 }
 export default observer(WebAppLayout)

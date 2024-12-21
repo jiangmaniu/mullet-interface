@@ -404,7 +404,7 @@ export default {
   'mt.zanweiwancheng': '暂未完成',
   'mt.yanzhengbuzhou': '验证步骤',
   'mt.zhanghuguanli': '账户管理',
-  'mt.zhanghuguanlitips': '用于登录Stellux的信息。如您认为密码可能已经泄露，请随时更改密码',
+  'mt.zhanghuguanlitips': '用于登录{name}的信息。如您认为密码可能已经泄露，请随时更改密码',
   'mt.anquanrenzhengfangshi': '安全验证方式',
   'mt.anquanrenzhengfangshitips': '安全验证可以确保所有敏感交易均已得到您的授权我们建议您输入验证码确认相关交易',
   'mt.anquanleixing': '安全类型',
@@ -598,7 +598,7 @@ export default {
   'mt.jieshao': '介紹',
   'mt.heyuejiaoyizhengming': '合約交易證明',
   'mt.heyuejiaoyizhengmingtishi':
-    '请上传您>30 日的合约收益曲线、交易数請上傳您>30日的合約收益曲線、交易數據統計等截圖;若不上傳，我們將默認審核您StelluX合約交易記錄。 可上傳1~3張国片，單張国片大小不超過10 MB',
+    '请上传您>30 日的合约收益曲线、交易数請上傳您>30日的合約收益曲線、交易數據統計等截圖;若不上傳，我們將默認審核您{name}合約交易記錄。 可上傳1~3張国片，單張国片大小不超過10 MB',
   'mt.kexuan': '(可選)',
   'mt.shangchuantupianhuotuozhuaifangru': '上傳圖片或者拖拽放入',
   'mt.tijiaoshenqing': '提交申請',

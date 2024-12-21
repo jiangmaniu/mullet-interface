@@ -25,11 +25,17 @@ export class GlobalStore {
   @observable lastPcJumpPathname = '' // 记录最后一次PC端跳转的路径-方便响应式变化恢复到之前的地址
   @observable lastMobileJumpPathname = '' // 记录最后一次Mobile端跳转的路径-方便响应式变化恢复到之前的地址
   @observable pageIsFocused = true // 页面是否处于激活状态，进入页面默认是true，离开页面变为false
+  @observable sheetModalOpen = true // 记录SheetModal是否打开
 
   // 设置页面是否处于激活状态
   @action
   setPageIsFocused = (isFocused: boolean) => {
     this.pageIsFocused = isFocused
+  }
+
+  @action
+  setSheetModalOpen = (open: boolean) => {
+    this.sheetModalOpen = open
   }
 
   // 设置H5底部tabbar激活项

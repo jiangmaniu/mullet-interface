@@ -7,7 +7,6 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { mergeCss } from '@/pages/webapp/utils'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Input, InputProps, InputRef } from 'antd-mobile'
-import { Text } from '../../Text'
 import { View } from '../../View'
 
 export interface TextFieldAccessoryProps {
@@ -176,7 +175,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     <View className={cn('mb-[22px]', containerClassName)} style={{ height, ...$containerStyleOverride }}>
       {!!label && (
         <View className={cn('flex flex-row items-center justify-between')}>
-          <Text className={cn('mb-1')}>{label} </Text>
+          <View className={cn('mb-1 w-full')}>{label}</View>
           {!!RightLabel && <RightLabel />}
         </View>
       )}

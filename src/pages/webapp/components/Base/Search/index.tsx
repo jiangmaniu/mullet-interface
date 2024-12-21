@@ -1,46 +1,37 @@
-import { useIntl } from '@umijs/max'
-import { Input } from 'antd'
-import { ChangeEventHandler, forwardRef, useImperativeHandle, useRef } from 'react'
-
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
-import { gray } from '@/theme/theme.config'
+import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { TextField, TextFieldProps } from '../Form/TextField'
+import { View } from '../View'
 
-type IProps = {
-  value: string
-  onChange: ChangeEventHandler<any> | undefined
-  style?: React.CSSProperties
+type IProps = TextFieldProps & {
+  /** 搜索图标位置 */
+  iconPosition?: 'left' | 'right'
 }
 
-function Search({ onChange, value, style }: IProps, ref: any) {
-  const searchInputRef = useRef(null)
-  const intl = useIntl()
-  const { theme } = useTheme()
-  const { isDark } = theme
+export default function Search({ iconPosition = 'right', ...res }: IProps) {
+  const { cn, theme } = useTheme()
+  const { t } = useI18n()
+  const isRight = iconPosition === 'right'
 
-  useImperativeHandle(ref, () => {
-    return searchInputRef.current
-  })
+  const SearchIcon = (
+    <View style={cn(isRight ? 'mr-2' : 'ml-2')}>
+      <Iconfont name="hangqing-sousuo" size={24} />
+    </View>
+  )
 
   return (
-    <Input
-      value={value}
-      onChange={onChange}
-      placeholder={intl.formatMessage({ id: 'common.operate.Input Keyword' })}
-      suffix={<Iconfont name="hangqing-sousuo" width={24} height={24} color={isDark ? '#fff' : gray['600']} />}
-      allowClear
-      style={{
-        background: theme.colors.backgroundColor.primary,
-        height: 36,
-        transition: 'background 0s ease-in-out',
-        color: 'var(--color-text-primary)',
-        ...style
-      }}
-      styles={{ input: { background: 'transparent' } }}
-      ref={searchInputRef}
-      classNames={{ input: 'dark:placeholder:!text-gray-570' }}
+    <TextField
+      height={40}
+      placeholder={t('common.operate.Input Keyword')}
+      RightAccessory={() => <>{isRight && SearchIcon}</>}
+      LeftAccessory={() => (
+        <>
+          <>{!isRight && SearchIcon}</>
+        </>
+      )}
+      containerClassName={'mb-1'}
+      {...res}
     />
   )
 }
-
-export default forwardRef(Search)

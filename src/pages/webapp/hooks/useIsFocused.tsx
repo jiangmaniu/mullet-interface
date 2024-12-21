@@ -1,22 +1,21 @@
-import { useEffect } from 'react'
+import { useDebugValue, useEffect, useState } from 'react'
+import { history, useLocation } from 'umi'
 
-import { useStores } from '@/context/mobxProvider'
-
-// 监听页面的可见性变化
-// 检测用户是否切换到后台，以及何时返回到前台
-const useIsFocused = (onVisible?: () => void, onHidden?: () => void) => {
-  const { global } = useStores()
-  const { setPageIsFocused: setIsFocused, pageIsFocused: isFocused } = global
+/**
+ * Hook to get the current focus state of the page. Returns `true` if the current route is focused, otherwise `false`.
+ * This can be used if a component needs to render something based on the focus state.
+ */
+export default function useIsFocused() {
+  const location = useLocation()
+  const [isFocused, setIsFocused] = useState(true)
 
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         // 用户从后台切换回前台时执行的操作
-        onVisible?.()
         setIsFocused(true)
       } else {
         // 用户从前台切换到后台时执行的操作
-        onHidden?.()
         setIsFocused(false)
       }
     }
@@ -27,9 +26,22 @@ const useIsFocused = (onVisible?: () => void, onHidden?: () => void) => {
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
-  }, [onVisible, onHidden])
+  }, [])
+
+  useEffect(() => {
+    // 监听路由变化
+    const unsubscribe = history.listen(() => {
+      // 比较新的路径和当前组件的路径
+      const isCurrentRouteFocused = location.pathname === window.location.pathname
+      setIsFocused(isCurrentRouteFocused)
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [location])
+
+  useDebugValue(isFocused)
 
   return isFocused
 }
-
-export default useIsFocused

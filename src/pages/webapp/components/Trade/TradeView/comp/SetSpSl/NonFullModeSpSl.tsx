@@ -2,7 +2,6 @@ import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
 
-import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import useTrade from '@/hooks/useTrade'
@@ -166,22 +165,23 @@ function NonFullModeSpSl() {
             <View className={cn('items-center pt-2 flex-row justify-between gap-x-2')}>
               <View className={cn('flex-1')}>
                 <InputNumber
-                  RightAccessory={() => (
-                    <View onClick={() => showPriceAmountModal('SP')} style={{ paddingRight: 8 }} disabled={disabled}>
-                      <View className={cn('flex-row items-center')}>
-                        <Text size="sm" weight="medium" color={disabled ? 'weak' : 'primary'}>
-                          {spPriceOrAmountType === 'PRICE'
-                            ? intl.formatMessage({ id: 'pages.trade.Price' })
-                            : intl.formatMessage({ id: 'pages.trade.Amount' })}
-                        </Text>
-                        <Iconfont
-                          name="qiehuanzhanghu-xiala"
-                          color={disabled ? theme.colors.textColor.weak : theme.colors.textColor.primary}
-                          size={20}
-                        />
-                      </View>
-                    </View>
-                  )}
+                  // @TODO 暂时隐藏 PC端支持后在打开
+                  // RightAccessory={() => (
+                  //   <View onClick={() => showPriceAmountModal('SP')} style={{ paddingRight: 8 }} disabled={disabled}>
+                  //     <View className={cn('flex-row items-center')}>
+                  //       <Text size="sm" weight="medium" color={disabled ? 'weak' : 'primary'}>
+                  //         {spPriceOrAmountType === 'PRICE'
+                  //           ? intl.formatMessage({ id: 'pages.trade.Price' })
+                  //           : intl.formatMessage({ id: 'pages.trade.Amount' })}
+                  //       </Text>
+                  //       <Iconfont
+                  //         name="qiehuanzhanghu-xiala"
+                  //         color={disabled ? theme.colors.textColor.weak : theme.colors.textColor.primary}
+                  //         size={20}
+                  //       />
+                  //     </View>
+                  //   </View>
+                  // )}
                   controls={false}
                   onFocus={() => {
                     console.log('onFocus')
@@ -235,22 +235,23 @@ function NonFullModeSpSl() {
             <View className={cn('items-center pt-2 flex-row justify-between gap-x-2')}>
               <View className={cn('flex-1')}>
                 <InputNumber
-                  RightAccessory={() => (
-                    <View onClick={() => showPriceAmountModal('SL')} style={{ paddingRight: 8 }} disabled={disabled}>
-                      <View className={cn('flex-row items-center')}>
-                        <Text size="sm" weight="medium" color={disabled ? 'weak' : 'primary'}>
-                          {slPriceOrAmountType === 'PRICE'
-                            ? intl.formatMessage({ id: 'pages.trade.Price' })
-                            : intl.formatMessage({ id: 'pages.trade.Amount' })}
-                        </Text>
-                        <Iconfont
-                          name="qiehuanzhanghu-xiala"
-                          color={disabled ? theme.colors.textColor.weak : theme.colors.textColor.primary}
-                          size={20}
-                        />
-                      </View>
-                    </View>
-                  )}
+                  // @TODO 暂时隐藏 PC端支持后在打开
+                  // RightAccessory={() => (
+                  //   <View onClick={() => showPriceAmountModal('SL')} style={{ paddingRight: 8 }} disabled={disabled}>
+                  //     <View className={cn('flex-row items-center')}>
+                  //       <Text size="sm" weight="medium" color={disabled ? 'weak' : 'primary'}>
+                  //         {slPriceOrAmountType === 'PRICE'
+                  //           ? intl.formatMessage({ id: 'pages.trade.Price' })
+                  //           : intl.formatMessage({ id: 'pages.trade.Amount' })}
+                  //       </Text>
+                  //       <Iconfont
+                  //         name="qiehuanzhanghu-xiala"
+                  //         color={disabled ? theme.colors.textColor.weak : theme.colors.textColor.primary}
+                  //         size={20}
+                  //       />
+                  //     </View>
+                  //   </View>
+                  // )}
                   controls={false}
                   onFocus={() => {
                     setInputing(true)

@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 
 import SwitchLanguage from '@/components/SwitchLanguage'
 import { useTheme } from '@/context/themeProvider'
+import ENV from '@/env'
 
 /**
  * 登录、注册、忘记密码页面的布局
@@ -52,7 +53,7 @@ export default function UserLayout() {
             <FormattedMessage id="mt.fengxianjinggao" />
             :Digital asset trading is an emerging industry with bright prospects, but it also co
             <br />
-            <span>StelluX © 2023Cookie Preferences</span>
+            <span>{ENV.name} © 2023Cookie Preferences</span>
           </div>
         </div>
       </div>

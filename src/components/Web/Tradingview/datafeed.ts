@@ -1,4 +1,5 @@
 // @ts-nocheck
+import ENV from '@/env'
 import { ChartingLibraryWidgetOptions, DatafeedConfiguration, LibrarySymbolInfo } from '@/libs/charting_library'
 import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'
@@ -50,7 +51,7 @@ class DataFeedBase {
       ...symbolInfo,
       precision: symbolInfo?.symbolDecimal || 2,
       description: symbolInfo?.remark || '',
-      exchange: 'Stellux', // 交易所名称
+      exchange: ENV.name, // 交易所名称
       session: '24x7',
       timezone: 'Europe/London',
       name: symbolInfo.symbol, // 展示的自定义名称

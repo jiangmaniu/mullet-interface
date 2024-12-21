@@ -3,6 +3,7 @@ import { useMemo, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
+import ENV from '@/env'
 import Header from '../../components/Base/Header'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
@@ -102,6 +103,7 @@ export default function WelcomeScreen({}) {
 
   const actions = [
     { key: 'en-US', text: t('common.language.en-US') },
+    { key: 'vi-VN', text: t('common.language.vi-VN') },
     { key: 'zh-TW', text: t('common.language.zh-TW') }
   ]
 
@@ -244,7 +246,7 @@ export default function WelcomeScreen({}) {
                 height: 54,
                 left: -12
               }}
-              // source={require('public/images/stellux-logo.png')}
+              // src={ENV.webapp.smallLogo}
             />
             <View className={cn(section === 'server' ? 'flex' : 'none')}>
               <Text size="xl" color="primary" style={cn('font-bold')}>
@@ -269,7 +271,7 @@ export default function WelcomeScreen({}) {
       )}
       <View className={cn('w-full items-center mb-1')}>
         <Text color="weak" size="sm">
-          Stellux Ⓒ 2024Cookie Preferences
+          {ENV.name} Ⓒ 2024Cookie Preferences
         </Text>
       </View>
       {isLoading ? (

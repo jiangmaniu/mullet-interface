@@ -1,24 +1,23 @@
-// 环境入口
+// 环境变量入口
 
-import dev from './env.dev'
-import prod from './env.prod'
-import test from './env.test'
+import lynfooProd from './lynfoo/env.prod'
+import stelluxDev from './stellux/env.dev'
+import stelluxProd from './stellux/env.prod'
+import stelluxTest from './stellux/env.test'
 
 const APP_ENV = process.env.APP_ENV as string
 
+type IENV = typeof stelluxProd
+
 // 切换环境
 const env = {
-  test,
-  dev,
-  prod
-}[APP_ENV]
+  // stellux默认平台
+  test: stelluxTest,
+  dev: stelluxDev,
+  prod: stelluxProd,
 
-// 公共环境变量
-const URLS = {
-  offical: 'www.stellux.io',
-  ...env
-}
+  // 其他客户平台
+  'lynfoo-prod': lynfooProd
+}[APP_ENV] as IENV
 
-const ENV = URLS as typeof env & typeof URLS
-
-export default ENV
+export default env

@@ -1,9 +1,10 @@
 import { useIntl } from '@umijs/max'
-import { useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import Tabs from '@/pages/webapp/components/Base/Tabs'
 
+import { getCurrentDepth } from '@/utils/wsUtil'
 import OrderTabItem from './OrderTabItem'
 
 type Params = {
@@ -20,11 +21,19 @@ type IProps = {
 export function OrderTopTabbar({ position = 'PAGE' }: IProps) {
   const intl = useIntl()
   const { trade } = useStores()
+  const hasDepthRef = useRef(false)
 
-  const handleReset = () => {
+  const depth = getCurrentDepth()
+  const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
+
+  const handleReset = useCallback(() => {
     // 重置交易数据
     trade.resetTradeAction()
-  }
+  }, [])
+
+  useEffect(() => {
+    hasDepthRef.current = !!hasDepth
+  }, [hasDepth])
 
   const renderTabs = useMemo(() => {
     return (
@@ -42,12 +51,20 @@ export function OrderTopTabbar({ position = 'PAGE' }: IProps) {
             handleReset()
           }}
           stretch
-          fixedActiveLineWidth={100}
+          fixedActiveLineWidth={hasDepthRef.current ? 30 : 100}
         />
-        <OrderTabItem position={position} />
       </>
     )
+  }, [hasDepthRef.current])
+
+  const renderTabItem = useMemo(() => {
+    return <OrderTabItem position={position} />
   }, [position])
 
-  return <>{renderTabs}</>
+  return (
+    <>
+      {renderTabs}
+      {renderTabItem}
+    </>
+  )
 }

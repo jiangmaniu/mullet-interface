@@ -85,11 +85,11 @@ function Header() {
   // const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
 
   return (
-    <View style={cn('mt-3 px-3')}>
+    <View className={cn('mt-3 px-3')}>
       <BuySellPrice />
 
-      <View style={cn('flex-row justify-between items-center')}>
-        <View style={cn('flex-1 flex-row mr-3')}>
+      <View className={cn('flex-row justify-between items-center')}>
+        <View className={cn('flex-1 flex-row mr-3')}>
           <CustomArrowButton
             leftText={intl.formatMessage({ id: 'pages.trade.Sell Make Short' })}
             rightText={intl.formatMessage({ id: 'pages.trade.Buy Make Long' })}

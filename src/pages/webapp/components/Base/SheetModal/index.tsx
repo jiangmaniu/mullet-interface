@@ -9,6 +9,7 @@ import { Props } from 'react-spring-bottom-sheet/dist/types'
 
 import { cn } from '@/utils/cn'
 
+import { stores } from '@/context/mobxProvider'
 import Button, { ButtonProps, ButtonType } from '../Button'
 
 export type ModalRef = {
@@ -65,6 +66,8 @@ type IProps = Partial<Props> & {
   confirmButtonProps?: ButtonProps
   /**隐藏内容器滚动条 */
   hiddenContentScroll?: boolean
+  /**控制弹窗是否打开 */
+  open?: boolean
 }
 
 const SheetModal = (
@@ -91,6 +94,7 @@ const SheetModal = (
     dragOnContent = true,
     confirmButtonProps,
     hiddenContentScroll,
+    open,
     ...res
   }: IProps,
   ref: ForwardedRef<SheetRef>
@@ -107,7 +111,12 @@ const SheetModal = (
 
   useEffect(() => {
     onOpenChange?.(visible)
+    stores.global.setSheetModalOpen(visible)
   }, [visible])
+
+  useEffect(() => {
+    setVisible(!!open)
+  }, [open])
 
   const show = (afterOpen?: () => void) => {
     setVisible(true)
@@ -213,6 +222,7 @@ const SheetModal = (
     )
   }
 
+  // @ts-ignore
   const className = useEmotionCss((token) => {
     return {
       'div[data-rsbs-header]': {
@@ -229,6 +239,10 @@ const SheetModal = (
       'div[data-rsbs-overlay]': {
         borderTopLeftRadius: '20px !important',
         borderTopRightRadius: '20px !important'
+      },
+      'div[aria-modal]': {
+        background: backgroundStyle,
+        zIndex: 99
       },
       'div[data-rsbs-backdrop]': {},
       'div[data-rsbs-scroll]': hiddenContentScroll
@@ -260,7 +274,7 @@ const SheetModal = (
         }}
         defaultSnap={({ lastSnap, snapPoints }) => lastSnap ?? Math.max(...snapPoints)}
         footer={renderFooter()}
-        header={<>{title && <div className={cn('leading-7 text-center')}>{title}</div>}</>}
+        header={<>{title && <div className={cn('leading-7 text-center font-pf-medium text-base text-primary')}>{title}</div>}</>}
         scrollLocking
         expandOnContentDrag={dragOnContent}
         className={className}

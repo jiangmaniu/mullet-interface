@@ -9,6 +9,7 @@ import { View } from '../../components/Base/View'
 import QuoteTopTabbar from '../../components/Quote/QuoteTopTabbar'
 import SelectSymbolModal, { SelectSymbolModalRef } from '../../components/Quote/SelectSymbolModal'
 import Basiclayout from '../../layouts/BasicLayout'
+import { navigateTo } from '../../utils/navigator'
 
 function Quote() {
   const { cn, theme } = useTheme()
@@ -19,6 +20,10 @@ function Quote() {
   useEffect(() => {
     // 隐藏页面滚动条，否则和FlashList冲突
     document.documentElement.style.overflowY = 'hidden'
+
+    return () => {
+      document.documentElement.style.overflowY = 'auto'
+    }
   }, [])
 
   return (
@@ -27,9 +32,8 @@ function Quote() {
         <SwitchAccount
           showRightSearchIcon
           onSearch={() => {
-            selectSymbolModalRef.current?.show('ALL')
-            // @TODO 待开发
-            // navigateTo("/app/quote/search")
+            // selectSymbolModalRef.current?.show('ALL')
+            navigateTo('/app/quote/search')
           }}
         />
       </View>

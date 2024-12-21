@@ -1,4 +1,4 @@
-import { DOMAttributes } from 'react'
+import { DOMAttributes, useRef } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
@@ -31,9 +31,10 @@ export const hasFlexClassName = (className: any) => {
   return hasFlexClass
 }
 
-export const View = (props: IProps) => {
+export const View = (props: IProps, ref: any) => {
   const { onPress, onClick, disabled, style, className, children, bgColor, borderColor, ...res } = props
   const { cn, theme } = useTheme()
+  const domRef = useRef<any>(null)
   // 如果外部传入style是style={cn('')}形式，则将style内容传入到className合并
   const styleClassName = typeof style === 'string' ? style : undefined
 
@@ -42,13 +43,19 @@ export const View = (props: IProps) => {
 
   return (
     <div
-      className={cn(hasFlexClassName(className) && 'flex', disabled && 'pointer-events-none', className, styleClassName)}
+      className={cn(
+        hasFlexClassName(cn(className, styleClassName)) && 'flex',
+        disabled && 'pointer-events-none',
+        className,
+        styleClassName
+      )}
       style={{
         ...bgColorStyle,
         ...borderColorStyle,
         ...(typeof style === 'object' ? style : {})
       }}
       onClick={onClick || onPress}
+      ref={domRef}
       {...res}
     >
       {children}

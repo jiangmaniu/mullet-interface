@@ -1,5 +1,6 @@
 import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
+import qs from 'qs'
 import { useEffect, useRef } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
@@ -10,7 +11,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import BuySellModal, { BuySellModalRef } from '@/pages/webapp/components/Trade/BuySellModal'
 import BuySellButton from '@/pages/webapp/components/Trade/BuySellModal/BuySellButton'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
-import { goBack } from '@/pages/webapp/utils/navigator'
+import { navigateTo } from '@/pages/webapp/utils/navigator'
 
 import Header from './Header'
 import Tradingview from './Tradingview'
@@ -40,11 +41,18 @@ function KLine() {
     }
   }, [symbolInfo])
 
+  const params = qs.parse(location.search, { ignoreQueryPrefix: true })
+
   return (
     <Basiclayout bgColor="secondary" className={cn('mt-2')}>
       <>
         <View className={cn('flex-row items-center')}>
-          <View className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')} onClick={goBack}>
+          <View
+            className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')}
+            onClick={() => {
+              navigateTo(`/app/quote`, params)
+            }}
+          >
             <Iconfont name="huazhuan-xuanze" size={24} style={{ transform: 'rotate(180deg)' }} />
           </View>
           <View className={cn('flex-1')}>

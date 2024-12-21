@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
@@ -29,7 +29,11 @@ export default function Switch({
   activeThumbColor
 }: IProps) {
   const { cn, theme } = useTheme()
-  const [isChecked, setIsChecked] = useState(checked)
+  const [isChecked, setIsChecked] = useState(false)
+
+  useEffect(() => {
+    setIsChecked(checked as boolean)
+  }, [checked])
 
   const handleToggle = () => {
     if (!disabled && !loading) {

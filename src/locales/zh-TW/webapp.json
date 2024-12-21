@@ -49,13 +49,14 @@
     "Red": "紅",
     "language": {
       "zh-TW": "繁體中文",
-      "en-US": "英文"
+      "en-US": "英文",
+      "vi-VN": "越南语"
     },
     "Loading": "加載中",
     "Push Settings": "推送設置",
     "Version update": "版本更新",
     "WIFI environment automatically downloads the latest version installation package": "WIFI環境自動下載最新版本安裝包",
-    "StelluX Protect your information privacy and security": "StelluX 保護您的信息隱私安全",
+    "StelluX Protect your information privacy and security": "{name} 保護您的信息隱私安全",
     "All": "全部",
     "NO Data": "暂无数据",
     "NO More Data": "没有更多数据了",
@@ -554,5 +555,14 @@
   "Common": {
     "From": "從",
     "To": "至"
+  },
+  "addScreen": {
+    "headerTitle": "建議添加到桌面",
+    "install": "安裝",
+    "iphoneChromeTips1": "點擊右上角的分享按鈕.",
+    "iphoneChromeTips2": "在彈出菜單中滾動並點擊「添加到主屏幕」",
+    "iphoneSafariTips1": "點擊屏幕底部中間的分享按鈕。",
+    "androidChromeTips1": "點擊瀏覽器右上角「更多」",
+    "androidChromeTips2": "在選項中找到「添加到主屏幕」"
   }
 }

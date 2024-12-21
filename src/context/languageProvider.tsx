@@ -33,7 +33,8 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
   const getAntdMobileLocale = (lng: ILanguage) => {
     return {
       'zh-TW': zhTW,
-      'en-US': enUS
+      'en-US': enUS,
+      'vi-VN': enUS
     }[lng]
   }
 

@@ -4,7 +4,7 @@ import { Base64 } from 'js-base64'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
-import { CLIENT_ID, CLIENT_SECRET } from './constants'
+import ENV from '@/env'
 import { getLocaleForBackend } from './constants/enum'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
@@ -129,7 +129,7 @@ export const errorConfig: RequestConfig = {
 
       if (config.authorization !== false) {
         // 客户端认证
-        headers['Authorization'] = `Basic ${Base64.encode(`${CLIENT_ID}:${CLIENT_SECRET}`)}`
+        headers['Authorization'] = `Basic ${Base64.encode(`${ENV.CLIENT_ID}:${ENV.CLIENT_SECRET}`)}`
       }
 
       if (token) {

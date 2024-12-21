@@ -44,7 +44,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
           const pencent = (item.amount / maxAmount) * 100
           const digits = quote.digits
           return (
-            <View key={idx} onClick={() => setOrderPrice(item.price)}>
+            <View key={idx} onClick={() => setOrderPrice(item.price)} className="relative">
               <View style={cn('mb-[3px] flex-row items-center py-[3px] pr-1 justify-between h-5')} key={idx}>
                 <Text color="green" font="dingpro-medium" size="xs" weight="medium" style={cn('leading-[15px]')}>
                   {formatNum(item.price, { precision: digits })}
@@ -99,7 +99,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
           const pencent = (item.amount / maxAmount) * 100
           const digits = quote.digits
           return (
-            <View key={idx} onClick={() => setOrderPrice(item.price)}>
+            <View key={idx} onClick={() => setOrderPrice(item.price)} className="relative">
               <View style={cn('mb-[3px] flex-row items-center py-[3px] pr-1 justify-between h-5')} key={idx}>
                 <Text color="red" size="xs" font="dingpro-medium" style={cn('leading-[15px]')}>
                   {formatNum(item.price, { precision: digits })}
@@ -138,17 +138,17 @@ function Depth() {
   const modeList: Array<{ key: ModeType; icon: string; colors: any[] }> = [
     {
       key: 'BUY_SELL',
-      icon: 'a-jiaoyi-pankoumaimai',
+      icon: 'pankou-maimai',
       colors: [theme.colors.red.DEFAULT, theme.colors.green.DEFAULT]
     },
     {
       key: 'BUY',
-      icon: 'a-jiaoyi-pankoumai1',
+      icon: 'pankou-mai',
       colors: [theme.colors.green.DEFAULT]
     },
     {
       key: 'SELL',
-      icon: 'a-jiaoyi-pankoumai',
+      icon: 'pankou-mai1',
       colors: [theme.colors.red.DEFAULT]
     }
   ]
@@ -162,7 +162,7 @@ function Depth() {
   return (
     <>
       {hasDepth && (
-        <View className={cn('w-[160px] pl-5 pr-3')}>
+        <View className={cn('w-[150px] pl-5 pr-3')}>
           <View className={cn('flex-row pt-4 pb-1 items-center justify-between')}>
             <Text color="weak" size="xs" className={cn('leading-4')}>
               {intl.formatMessage({ id: 'pages.trade.Price' })}

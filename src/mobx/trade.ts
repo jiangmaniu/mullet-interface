@@ -21,10 +21,13 @@ import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
 import {
   STORAGE_GET_CONF_INFO,
+  STORAGE_GET_HISTORY_SEARCH,
   STORAGE_GET_ORDER_CONFIRM_CHECKED,
   STORAGE_GET_POSITION_CONFIRM_CHECKED,
   STORAGE_GET_QUICK_PLACE_ORDER_CHECKED,
+  STORAGE_REMOVE_HISTORY_SEARCH,
   STORAGE_SET_CONF_INFO,
+  STORAGE_SET_HISTORY_SEARCH,
   STORAGE_SET_ORDER_CONFIRM_CHECKED,
   STORAGE_SET_POSITION_CONFIRM_CHECKED,
   STORAGE_SET_QUICK_PLACE_ORDER_CHECKED
@@ -144,6 +147,8 @@ class TradeStore {
   @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
   @observable showActiveSymbol = false // 是否展示当前，根据当前激活的品种，搜索交易历史记录
   @observable recordModalItem = {} as RecordModalItem // 持仓单、挂单弹窗item赋值
+  @observable pendingListLoading = true // 挂单列表loading
+  @observable positionListLoading = true // 持仓列表loading
   // ============================
 
   @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
@@ -161,6 +166,8 @@ class TradeStore {
   @observable expectedMargin = 0 // 预估保证金
   @observable maxOpenVolume = 0 // 最大可开手数
 
+  @observable historySearchList = [] as string[] // APP历史搜索记录
+
   // 初始化加载
   init = async () => {
     // 初始化打开的品种列表
@@ -173,6 +180,7 @@ class TradeStore {
     this.orderQuickPlaceOrderChecked = (await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()) || true
     this.orderConfirmChecked = (await STORAGE_GET_ORDER_CONFIRM_CHECKED()) || false
     this.positionConfirmChecked = (await STORAGE_GET_POSITION_CONFIRM_CHECKED()) || false
+    this.historySearchList = (await STORAGE_GET_HISTORY_SEARCH()) || []
   }
 
   // 右下角爆仓选择逐仓、全仓切换
@@ -190,6 +198,23 @@ class TradeStore {
 
   setTradePageActive = (value: boolean) => {
     this.tradePageActive = value
+  }
+
+  // =========== APP品种历史搜索记录 ==========
+
+  // 设置历史搜索记录
+  setHistorySearch = (value: string) => {
+    this.historySearchList.unshift(value)
+    // 只保留最新15条
+    if (this.historySearchList.length > 15) {
+      this.historySearchList = this.historySearchList.slice(0, 15)
+    }
+    STORAGE_SET_HISTORY_SEARCH(this.historySearchList)
+  }
+  // 清空搜索记录
+  removeHistorySearch = () => {
+    this.historySearchList = []
+    STORAGE_REMOVE_HISTORY_SEARCH()
   }
 
   // =========== 设置交易区操作 ==========
@@ -868,6 +893,13 @@ class TradeStore {
   getPositionList = async () => {
     // 查询进行中的订单
     const res = await getBgaOrderPage({ current: 1, size: 999, status: 'BAG', accountId: this.currentAccountInfo?.id })
+
+    runInAction(() => {
+      setTimeout(() => {
+        this.positionListLoading = false
+      }, 300)
+    })
+
     if (res.success) {
       const data = (res.data?.records || []) as Order.BgaOrderPageListItem[]
       runInAction(() => {
@@ -902,6 +934,13 @@ class TradeStore {
       type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_MARKET_BUY_ORDER,STOP_LOSS_MARKET_SELL_ORDER',
       accountId: this.currentAccountInfo?.id
     })
+
+    runInAction(() => {
+      setTimeout(() => {
+        this.pendingListLoading = false
+      }, 300)
+    })
+
     if (res.success) {
       runInAction(() => {
         this.pendingList = (res.data?.records || []) as Order.OrderPageListItem[]

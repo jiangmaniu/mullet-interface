@@ -94,8 +94,13 @@ function TradeView() {
   }, [symbolInfo])
 
   return (
-    <View className={cn('flex-1')}>
-      <div className={cn('flex-1 pb-0')}>
+    <View
+      className={cn('overflow-y-auto')}
+      style={{
+        height: 'calc(100vh - 200px)'
+      }}
+    >
+      <div className={cn('flex-1 pb-0 overflow-y-auto')}>
         <Header />
         <View className={cn('flex-1 flex-row')}>
           <View className={cn('flex-1')}>
@@ -104,7 +109,7 @@ function TradeView() {
           <Depth />
         </View>
       </div>
-      <View className={cn('pb-3 pt-[5px] px-3')}>
+      <View className={cn('px-3 fixed bottom-[60px] w-full')}>
         <View className={cn('mt-2')}>
           <BottomButton />
         </View>
