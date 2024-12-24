@@ -178,6 +178,13 @@ export default defineConfig({
     { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
   ],
+  favicons: [
+    // 完整地址
+    // 'https://domain.com/favicon.ico'
+    // 此时将指向 `/favicon.png` ，确保你的项目含有 `public/favicon.png`
+    // '/favicon.png'
+    ENV.favicon || ''
+  ],
 
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],
@@ -211,7 +218,8 @@ export default defineConfig({
   // 将 node 的环境变量注入 define 配置中，可以在浏览器window.xx获取
   define: {
     BASE_URL: process.env.BASE_URL,
-    'process.env.APP_ENV': process.env.APP_ENV
+    'process.env.APP_ENV': process.env.APP_ENV,
+    'process.env.PLATFORM': process.env.PLATFORM
   },
   // 使用本地字体
   chainWebpack(config) {

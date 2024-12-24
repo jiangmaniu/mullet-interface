@@ -81,7 +81,7 @@ const TabBottomBar: FC<IProps> = ({ activeKey }) => {
   }, [pathname])
 
   return (
-    <div className="bottom-0 z-50 bg-primary fixed w-full border-t border-[var(--tabs-border-color)]">
+    <div className="bottom-0 z-[3] bg-primary fixed w-full border-t border-[var(--tabs-border-color)]">
       <TabBar
         activeKey={tabBarActiveKey}
         safeArea

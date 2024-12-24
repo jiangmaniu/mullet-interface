@@ -14,8 +14,10 @@ import SelectAccountModal, { SelectAccountModalRef } from './SelectAccountModal'
 type IProps = {
   showRightSearchIcon?: boolean
   onSearch?: () => void
+  isRemainAtCurrentPage?: boolean
 }
-function SwitchAccount({ onSearch, showRightSearchIcon }: IProps) {
+
+function SwitchAccount({ onSearch, showRightSearchIcon, isRemainAtCurrentPage }: IProps) {
   const { cn, theme } = useTheme()
   const intl = useIntl()
   const selectAccountModalRef = useRef<SelectAccountModalRef>(null)
@@ -52,7 +54,7 @@ function SwitchAccount({ onSearch, showRightSearchIcon }: IProps) {
           </Text>
         )}
       </View>
-      <SelectAccountModal ref={selectAccountModalRef} />
+      <SelectAccountModal ref={selectAccountModalRef} isRemainAtCurrentPage={isRemainAtCurrentPage} />
     </>
   )
 }

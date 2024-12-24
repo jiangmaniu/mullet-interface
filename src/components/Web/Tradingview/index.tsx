@@ -119,7 +119,7 @@ const Tradingview = () => {
       })
 
       // 添加水印LOGO
-      createWatermarkLogo()
+      createWatermarkLogo(isDark)
 
       // tvWidget.headerReady().then(() => {
       // 	const button = tvWidget.createButton();

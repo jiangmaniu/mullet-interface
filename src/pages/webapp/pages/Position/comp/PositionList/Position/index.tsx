@@ -250,7 +250,7 @@ function PositionList() {
       />
       <SheetModal
         ref={modalRef}
-        height={'80%'}
+        height={'72%'}
         backgroundStyle={{ backgroundColor: theme.colors.backgroundColor.primary }}
         onConfirm={onConfirm}
         confirmText={t('common.operate.Confirm')}

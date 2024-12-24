@@ -107,7 +107,11 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
     spValuePrice,
     slValuePrice,
     setInputing,
-    disabledInput: disabled
+    disabledInput: disabled,
+    onSpAdd,
+    onSpMinus,
+    onSlAdd,
+    onSlMinus
   } = useTrade({
     marketItem
   })
@@ -143,6 +147,8 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
                 const val = Number(value) > 0 ? value : ''
                 setSp(val)
               }}
+              onAdd={onSpAdd}
+              onMinus={onSpMinus}
               className={'text-[13px] leading-5'}
             />
           </View>
@@ -195,6 +201,8 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
                 setSl(val)
               }}
               className={'text-[13px] leading-5'}
+              onAdd={onSlAdd}
+              onMinus={onSlMinus}
             />
           </View>
           {/* @TODO 暂时隐藏 等PC支持在同步打开 */}

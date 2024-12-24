@@ -5,7 +5,8 @@ import Lottie from 'lottie-react'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import Modal from '../../Modal'
-import animationData from './loading.json'
+import lynfooData from './json/lynfoo.json'
+import stelluxData from './json/stellux.json'
 
 type IProps = {
   width?: number
@@ -13,6 +14,7 @@ type IProps = {
 }
 
 export default function Loading({ width = 400, height = 400 }: IProps) {
+  const animationData = process.env.PLATFORM === 'lynfoo' ? lynfooData : stelluxData
   return (
     <Lottie
       animationData={animationData}

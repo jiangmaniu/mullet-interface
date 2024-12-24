@@ -56,6 +56,7 @@ export default function Slider({
       }}
       onChange={onChange}
       tooltip={{ placement: 'bottom', formatter: (value) => `${value}${unit}` }}
+      disabled={disabled}
       {...res}
     />
   )

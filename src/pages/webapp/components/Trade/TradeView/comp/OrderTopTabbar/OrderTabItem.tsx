@@ -73,7 +73,7 @@ function OrderTabItem({ position }: IProps) {
   }, [orderSpslChecked])
 
   return (
-    <View className={cn('flex-1 px-3', position === 'PAGE' && 'px-3', !!hasDepth && 'pr-0')}>
+    <View className={cn('flex-1 px-3', position === 'PAGE' && 'px-3', !!hasDepth && position === 'PAGE' && 'pr-0')}>
       {/* <ScrollView showsVerticalScrollIndicator={false} className={cn('flex-1')} contentContainerStyle={{ paddingBottom: 20 }} bounces={false}> */}
       <View className={cn('mt-2')}>
         {isMarketOrder && (
