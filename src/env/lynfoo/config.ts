@@ -12,6 +12,7 @@ export default {
   webapp: {
     smallLogo: '/img/platform/lynfoo/logo-small.png',
     textLogo: '/img/platform/lynfoo/logo-text.png',
-    grayLogo: '/img/platform/lynfoo/logo-gray.png'
+    grayLogo: '/img/platform/lynfoo/logo-gray.png',
+    logo: '/img/platform/lynfoo/logo.png'
   }
 }

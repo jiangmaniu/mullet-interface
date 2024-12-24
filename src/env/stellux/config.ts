@@ -12,6 +12,7 @@ export default {
   webapp: {
     smallLogo: '/img/platform/stellux/logo-small.png',
     textLogo: '/img/platform/stellux/logo-text.png',
-    grayLogo: '/img/platform/stellux/logo-gray.png'
+    grayLogo: '/img/platform/stellux/logo-gray.png',
+    logo: '/img/platform/stellux/logo.png'
   }
 }

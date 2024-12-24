@@ -36,7 +36,8 @@ const TradingViewComp = ({ style }: IProps) => {
     const token = STORAGE_GET_TOKEN()
     // hideWatermarkLogo: 0隐藏
     // watermarkLogoUrl 水印图片地址 网络图片地址
-    const watermarkLogoUrl = ENV.klineWatermarkLogo ? `${location.origin}/${ENV.klineWatermarkLogo}` : '' // 网络图片地址 水印图片尺寸大小 522 × 146
+    const watermarkLogoUrl =
+      ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production' ? `${location.origin}/${ENV.klineWatermarkLogo}` : '' // 网络图片地址 水印图片尺寸大小 522 × 146
     const url = `${
       ENV.tradingViewUrl
     }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${

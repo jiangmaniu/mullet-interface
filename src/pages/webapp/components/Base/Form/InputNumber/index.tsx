@@ -136,6 +136,9 @@ const InputNumber = forwardRef(
       if (newText && newText > max) {
         newText = max
       }
+
+      onChange?.(newText)
+
       setTimeout(() => {
         setInputValue(newText)
         onEndEditing?.(newText)
@@ -198,7 +201,10 @@ const InputNumber = forwardRef(
             handleEndEditing?.(String(newValue))
           }
         }}
-        onChange={handleChangeText}
+        onChange={(value) => {
+          setInputValue(value)
+          handleEndEditing?.(String(value))
+        }}
         onEndEditing={() => handleEndEditing?.(String(inputValue))}
         onFocus={onFocus}
         containerStyle={{ marginBottom: 10 }}

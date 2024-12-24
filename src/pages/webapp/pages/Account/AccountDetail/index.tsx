@@ -1,6 +1,7 @@
 import { DEFAULT_CURRENCY_DECIMAL, SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import usePageVisibility from '@/hooks/usePageVisibility'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -8,6 +9,7 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum, formatStringWithEllipsis } from '@/utils'
+import { useNetwork } from 'ahooks'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
@@ -16,6 +18,8 @@ import SimpleTooltip from './Tooltip'
 function AccountDetail() {
   const { cn, theme } = useTheme()
   const { t } = useI18n()
+  const networkState = useNetwork()
+  const isOnline = networkState.online
 
   const { trade, ws } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
@@ -26,7 +30,7 @@ function AccountDetail() {
   const positionList = toJS(trade.positionList)
   const symbolList = positionList.map((item) => item.symbol) as string[]
 
-  useEffect(() => {
+  const handleSubscribe = () => {
     setTimeout(() => {
       //  检查socket是否连接，如果未连接，则重新连接
       ws.checkSocketReady(() => {
@@ -37,12 +41,35 @@ function AccountDetail() {
         )
       })
     })
+  }
+
+  useEffect(() => {
+    // 如果网络断开，在连接需要重新重新建立新的连接
+    if (!isOnline) {
+      ws.close()
+    }
+
+    if (isOnline) {
+      setTimeout(() => {
+        handleSubscribe()
+      }, 200)
+    }
 
     return () => {
       // 离开当前 tab 的时候，取消行情订阅
       ws.closePosition(ws.makeWsSymbol(symbolList))
     }
-  }, [symbolList])
+  }, [symbolList.length, isOnline])
+
+  usePageVisibility(
+    () => {
+      // 用户从后台切换回前台时执行的操作
+      handleSubscribe()
+    },
+    () => {
+      // 用户从前台切换到后台时执行的操作
+    }
+  )
 
   const items = [
     {

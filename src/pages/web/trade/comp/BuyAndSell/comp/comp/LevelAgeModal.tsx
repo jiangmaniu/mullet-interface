@@ -22,7 +22,7 @@ function LevelAgeModal({ trigger }: IProps) {
   const modalRef = useRef<any>()
   const [current, setCurrent] = useState(0)
 
-  const currentSymbol = trade.getActiveSymbolInfo()
+  const currentSymbol = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf
 
   // const maxOpenLeverage = Math.max.apply(Math, [

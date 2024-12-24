@@ -24,32 +24,6 @@ type IProps = {
 
 type MarginType = 'ADD' | 'MINUS'
 
-const SSlider = ({
-  marginSliderValue,
-  avaMargin,
-  precision,
-  setMargin
-}: {
-  marginSliderValue: number
-  avaMargin: number
-  precision?: number
-  setMargin: (value: number) => void
-}) => (
-  <Slider
-    unit="%"
-    marks={['0', '25', '50', '75', '100']}
-    step={1}
-    min={0}
-    max={100}
-    onSlidingComplete={(value: any) => {
-      // 可用保证金*百分比
-      setMargin(toFixed((value / 100) * avaMargin, precision))
-    }}
-    value={[marginSliderValue]}
-    disabled={!avaMargin}
-  />
-)
-
 const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRef>) => {
   const { rawItem, close, setTabKey } = props
   const { cn, theme } = useTheme()
@@ -140,13 +114,13 @@ const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRe
   )
 
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [sliderValue, setSliderValue] = useState(0)
+
   // 增加、减少保证金
-  const RenderMarginTab = () => {
+  const renderMarginTab = useMemo(() => {
     const orderMargin = item?.orderMargin || 0 // 订单追加的保证金
     const orderBaseMargin = item?.orderBaseMargin || 0 // 订单基础保证金，减少的保证金不能低于基础保证金
     const avaMargin = Number(isAddMargin ? availableMargin : toFixed(orderMargin - orderBaseMargin, getPrecisionByNumber(orderMargin))) // 增加、减少保证金的可用额度
-    const marginSliderValue = useMemo(() => (margin / avaMargin) * 100, [margin, avaMargin])
-    const [activeKey, setActiveKey] = useState<API.MarginType>('CROSS_MARGIN')
 
     return (
       <>
@@ -156,22 +130,19 @@ const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRe
               className="account"
               // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
               onChange={(value: any) => {
-                setActiveKey(value)
+                setMarginTypeActiveKey(value)
               }}
-              value={activeKey}
-              options={marginOptions.map((item) => item.label)}
+              value={marginTypeActiveKey}
+              options={marginOptions}
             />
             <View className={cn('mt-3')}>
               <InputNumber
                 placeholder={t('pages.position.Input Margin')}
                 height={42}
-                className="mb-1"
                 value={String(margin || '')}
-                onEndEditing={(v) => {
+                onChange={(v: any) => {
                   setMargin(v)
-                  // if (v) {
-                  //   setMarginSliderValue((v / avaMargin) * 100)
-                  // }
+                  setSliderValue(v ? (v / avaMargin) * 100 : 0) // 计算滑块值
                 }}
                 max={avaMargin}
                 min={0.01}
@@ -179,12 +150,26 @@ const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRe
                 precision={precision}
               />
               <View className={cn('mb-3 p-2')}>
-                <SSlider marginSliderValue={marginSliderValue} avaMargin={avaMargin} precision={precision} setMargin={setMargin} />
+                <Slider
+                  unit="%"
+                  marks={['0', '25', '50', '75', '100']}
+                  step={1}
+                  min={0}
+                  max={100}
+                  onSlidingComplete={(value: any) => {
+                    // 可用保证金*百分比
+                    setMargin(toFixed((value / 100) * avaMargin, precision))
+                  }}
+                  onChange={(value: any) => {
+                    setSliderValue(value)
+                  }}
+                  value={sliderValue}
+                  disabled={!avaMargin}
+                />
               </View>
               <View>
                 <Text size="xs" color="secondary" className={cn('mb-1')}>
-                  {marginTypeActiveKey === 'ADD' ? t('pages.position.Max Add Margin') : t('pages.position.Max Minus Margin')}{' '}
-                  {formatNum(avaMargin)} USD
+                  {isAddMargin ? t('pages.position.Max Add Margin') : t('pages.position.Max Minus Margin')} {formatNum(avaMargin)} USD
                 </Text>
                 {/* <Text size="xs" color="secondary">
                     {t('pages.position.Add Margin ForcePrice')} 486,302.00 USD
@@ -195,9 +180,9 @@ const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRe
         }
       </>
     )
-  }
+  }, [marginTypeActiveKey, isAddMargin, precision, availableMargin, item, margin, marginOptions, sliderValue])
 
-  return <RenderMarginTab />
+  return <>{renderMarginTab}</>
 })
 
 export default RenderMarginTab

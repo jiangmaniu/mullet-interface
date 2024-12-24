@@ -49,7 +49,12 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
       return rawItem
     }
 
-    rawItem.profit = covertProfit(rawItem) as number // 浮动盈亏
+    // rawItem.profit = covertProfit(rawItem) as number // 浮动盈亏
+
+    // 使用worker计算的值
+    const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
+    const calcInfo = positionListSymbolCalcInfo.get(rawItem.id)
+    rawItem.profit = calcInfo?.profit || 0
 
     // 全仓使用基础保证金
     if (rawItem.marginType === 'CROSS_MARGIN') {
@@ -71,7 +76,7 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
     [item?.orderMargin, precision]
   )
 
-  const symbolInfo = trade.getActiveSymbolInfo()
+  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
 
   const bottomSheetModalRef = useRef<SheetRef>(null)
 

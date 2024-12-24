@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useStores } from '@/context/mobxProvider'
 import ws from '@/mobx/ws'
 
+import usePageVisibility from '@/hooks/usePageVisibility'
 import useIsFocused from './useIsFocused'
 
 // 交易区订阅行情
@@ -22,7 +23,7 @@ export default function useTradeViewQuoteSubscribe() {
     }, 1000)
   }
 
-  const symbolInfo = trade.getActiveSymbolInfo()
+  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
 
   const handleSubscribeTrade = () => {
     // 重置交易状态
@@ -44,34 +45,31 @@ export default function useTradeViewQuoteSubscribe() {
     })
   }
 
-  const handleCLose = () => {
-    ws.closeTrade()
-    ws.close()
-  }
-
-  const closeWs = () => {
-    ws.close()
-    ws.closeWorker()
-  }
-
   useEffect(() => {
     // 如果网络断开，在连接需要重新重新建立新的连接
     if (!isOnline) {
-      closeWs()
+      ws.close()
     }
 
-    setTimeout(() => {
-      handleSubscribeTrade()
-    }, 300)
-
-    // 页面不可见时候，关闭行情连接、worker线程
-    if (!isFocused) {
-      closeWs()
+    if (isOnline) {
+      setTimeout(() => {
+        handleSubscribeTrade()
+      }, 200)
     }
 
     return () => {
       // 离开当前页面的时候，取消行情订阅
-      handleCLose()
+      ws.closeTrade()
     }
   }, [symbolInfo, isOnline, isFocused])
+
+  usePageVisibility(
+    () => {
+      // 用户从后台切换回前台时执行的操作
+      handleSubscribeTrade()
+    },
+    () => {
+      // 用户从前台切换到后台时执行的操作
+    }
+  )
 }

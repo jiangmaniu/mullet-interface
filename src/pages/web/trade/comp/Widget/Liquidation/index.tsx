@@ -96,7 +96,7 @@ function Liquidation() {
         label: intl.formatMessage({ id: 'mt.quancang' }),
         value: 'CROSS_MARGIN',
         key: 'CROSS_MARGIN',
-        imgUrl: trade.getActiveSymbolInfo().imgUrl
+        imgUrl: trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll).imgUrl
       },
       ...list
     ]

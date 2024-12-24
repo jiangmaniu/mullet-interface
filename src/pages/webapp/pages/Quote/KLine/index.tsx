@@ -13,6 +13,8 @@ import BuySellButton from '@/pages/webapp/components/Trade/BuySellModal/BuySellB
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 
+import usePageVisibility from '@/hooks/usePageVisibility'
+import { useNetwork } from 'ahooks'
 import Header from './Header'
 import Tradingview from './Tradingview'
 
@@ -20,10 +22,13 @@ function KLine() {
   const intl = useIntl()
   const { cn, theme } = useTheme()
   const buySellRef = useRef<BuySellModalRef>(null)
+  const networkState = useNetwork()
+  const isOnline = networkState.online
 
   const { trade, ws } = useStores()
-  const symbolInfo = trade.getActiveSymbolInfo()
-  useEffect(() => {
+  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
+
+  const handleSubscribe = () => {
     // socket
     setTimeout(() => {
       ws.checkSocketReady(() => {
@@ -34,12 +39,35 @@ function KLine() {
         )
       })
     })
+  }
+
+  useEffect(() => {
+    // 如果网络断开，在连接需要重新重新建立新的连接
+    if (!isOnline) {
+      ws.close()
+    }
+
+    if (isOnline) {
+      setTimeout(() => {
+        handleSubscribe()
+      }, 200)
+    }
 
     return () => {
-      // 离开当前 tab 的时候，取消行情订阅
+      // 离开当前页面的时候，取消行情订阅
       ws.closeTrade()
     }
-  }, [symbolInfo])
+  }, [symbolInfo, isOnline])
+
+  usePageVisibility(
+    () => {
+      // 用户从后台切换回前台时执行的操作
+      handleSubscribe()
+    },
+    () => {
+      // 用户从前台切换到后台时执行的操作
+    }
+  )
 
   const params = qs.parse(location.search, { ignoreQueryPrefix: true })
 

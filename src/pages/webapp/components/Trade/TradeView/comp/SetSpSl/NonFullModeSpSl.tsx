@@ -195,7 +195,7 @@ function NonFullModeSpSl() {
                   textAlign="left"
                   // status={spFlag ? 'error' : undefined}
                   onEndEditing={(value: any) => {
-                    console.log('onChange', value)
+                    // console.log('onChange', value)
                     if (Number.isNaN(Number(value))) {
                       return
                     }

@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { useStores } from '@/context/mobxProvider'
 import ws from '@/mobx/ws'
 
+import usePageVisibility from '@/hooks/usePageVisibility'
 import useIsFocused from './useIsFocused'
 
 type IProps = {
@@ -37,33 +38,31 @@ export default function useSymbolQuoteSubscribe({ list }: IProps) {
     }
   }
 
-  const handleCLose = () => {
-    // 当前 tab 下所有品种取消订阅
-    ws.debounceBatchSubscribeSymbol()
-  }
-  const closeWs = () => {
-    ws.close()
-    ws.closeWorker()
-  }
-
   useEffect(() => {
     // 如果网络断开，在连接需要重新重新建立新的连接
     if (!isOnline) {
-      closeWs()
+      ws.close()
     }
 
-    setTimeout(() => {
-      handleSubscribeQuote()
-    }, 300)
-
-    // 页面不可见时候，关闭行情连接、worker线程
-    if (!isFocused) {
-      closeWs()
+    if (isOnline) {
+      setTimeout(() => {
+        handleSubscribeQuote()
+      }, 200)
     }
 
     return () => {
-      // 离开当前 tab 的时候，取消行情订阅
-      handleCLose()
+      // 当前 tab 下所有品种取消订阅
+      ws.debounceBatchSubscribeSymbol()
     }
   }, [isOnline, isFocused, list?.length])
+
+  usePageVisibility(
+    () => {
+      // 用户从后台切换回前台时执行的操作
+      handleSubscribeQuote()
+    },
+    () => {
+      // 用户从前台切换到后台时执行的操作
+    }
+  )
 }

@@ -15,7 +15,7 @@ export default function Search({ iconPosition = 'right', ...res }: IProps) {
   const isRight = iconPosition === 'right'
 
   const SearchIcon = (
-    <View style={cn(isRight ? 'mr-2' : 'ml-2')}>
+    <View className={cn('flex items-center justify-center', isRight ? 'mr-2' : 'ml-2')}>
       <Iconfont name="hangqing-sousuo" size={24} />
     </View>
   )

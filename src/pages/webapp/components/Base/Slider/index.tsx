@@ -54,6 +54,7 @@ export default function Slider({
       onChangeComplete={(value) => {
         onSlidingComplete?.(value)
       }}
+      onChange={onChange}
       tooltip={{ placement: 'bottom', formatter: (value) => `${value}${unit}` }}
       {...res}
     />

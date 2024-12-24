@@ -101,7 +101,12 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
       return rawItem
     }
 
-    rawItem.profit = covertProfit(rawItem) as number // 浮动盈亏
+    // rawItem.profit = covertProfit(rawItem) as number // 浮动盈亏
+
+    // 使用worker计算的值
+    const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
+    const calcInfo = positionListSymbolCalcInfo.get(rawItem.id)
+    rawItem.profit = calcInfo?.profit || 0
 
     // 全仓使用基础保证金
     if (rawItem.marginType === 'CROSS_MARGIN') {

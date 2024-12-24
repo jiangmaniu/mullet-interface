@@ -10,7 +10,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
-import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import { getCurrentQuote } from '@/utils/wsUtil'
 import { useInViewport } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -25,7 +25,13 @@ type IProps = {
 // Profit 组件用于隔离利润渲染
 const Profit = observer(({ precision, item }: { precision?: number; item: Order.BgaOrderPageListItem }) => {
   // item 根据  covertProfit 变化
-  const profit = covertProfit(item) as number // 浮动盈亏
+  // const profit = covertProfit(item) as number // 浮动盈亏
+
+  // 使用worker计算的值
+  const { trade } = useStores()
+  const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
+  const calcInfo = positionListSymbolCalcInfo.get(item.id)
+  const profit = calcInfo?.profit || 0
 
   const profitFormat = Number(profit) ? formatNum(profit, { precision }) : profit || '-'
 
@@ -111,7 +117,7 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
       ref={itemRef}
       data-id={item.id}
       // data-visible={isVisible}
-      data-inViewport={inViewport}
+      data-inviewport={inViewport}
     >
       <View className={cn('flex-row items-center justify-between')}>
         <View className={cn('items-center flex-row flex-1')}>

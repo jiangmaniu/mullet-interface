@@ -10,7 +10,7 @@ const APP_ENV = process.env.APP_ENV as string
 type IENV = typeof stelluxProd
 
 // 切换环境
-const env = {
+const ENV = {
   // stellux默认平台
   test: stelluxTest,
   dev: stelluxDev,
@@ -20,4 +20,4 @@ const env = {
   'lynfoo-prod': lynfooProd
 }[APP_ENV] as IENV
 
-export default env
+export default ENV

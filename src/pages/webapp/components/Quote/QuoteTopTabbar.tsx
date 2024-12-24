@@ -149,8 +149,6 @@ function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey
     }
   })
 
-  console.log('activeIndex', activeIndex)
-
   return (
     <div className="pb-[50px]">
       {position === 'PAGE' && (

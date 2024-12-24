@@ -440,7 +440,7 @@ export function getCurrentDepth(currentSymbolName?: string) {
   const { ws, trade } = stores
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
-  const { dataSourceCode } = trade.getActiveSymbolInfo(symbol)
+  const { dataSourceCode } = trade.getActiveSymbolInfo(symbol, trade.symbolListAll)
   const dataSourceKey = `${dataSourceCode}/${symbol}`
 
   const currentDepth = depth.get(dataSourceKey)

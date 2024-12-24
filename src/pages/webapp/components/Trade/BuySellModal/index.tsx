@@ -14,7 +14,7 @@ import { View } from '../../Base/View'
 import SymbolIcon from '../../Quote/SymbolIcon'
 import MarginTypeAndLeverageBtn from '../TradeView/comp/MarginTypeAndLeverageBtn'
 import OrderConfirmModal, { OrderConfirmModalRef } from '../TradeView/comp/OrderConfirmModal'
-import { OrderTopTabbar } from '../TradeView/comp/OrderTopTabbar'
+import OrderTopTabbar from '../TradeView/comp/OrderTopTabbar'
 import BuySellButton from './BuySellButton'
 
 export type BuySellModalRef = {
@@ -27,7 +27,7 @@ const Content = observer(({ close }: { close: () => void }) => {
   const intl = useIntl()
 
   const { trade } = useStores()
-  const symbolInfo = trade.getActiveSymbolInfo()
+  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
   const symbol = symbolInfo.symbol
   const quoteInfo = getCurrentQuote(symbol)
   const bid = quoteInfo.bid // 卖价

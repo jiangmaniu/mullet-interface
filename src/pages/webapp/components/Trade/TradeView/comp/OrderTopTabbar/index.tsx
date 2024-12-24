@@ -1,10 +1,11 @@
 import { useIntl } from '@umijs/max'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import Tabs from '@/pages/webapp/components/Base/Tabs'
 
 import { getCurrentDepth } from '@/utils/wsUtil'
+import { observer } from 'mobx-react'
 import OrderTabItem from './OrderTabItem'
 
 type Params = {
@@ -18,22 +19,17 @@ type IProps = {
 }
 
 // 行情Tabs
-export function OrderTopTabbar({ position = 'PAGE' }: IProps) {
+function OrderTopTabbar({ position = 'PAGE' }: IProps) {
   const intl = useIntl()
   const { trade } = useStores()
-  const hasDepthRef = useRef(false)
 
   const depth = getCurrentDepth()
-  const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
+  const hasDepth = depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0
 
   const handleReset = useCallback(() => {
     // 重置交易数据
     trade.resetTradeAction()
   }, [])
-
-  useEffect(() => {
-    hasDepthRef.current = !!hasDepth
-  }, [hasDepth])
 
   const renderTabs = useMemo(() => {
     return (
@@ -51,11 +47,11 @@ export function OrderTopTabbar({ position = 'PAGE' }: IProps) {
             handleReset()
           }}
           stretch
-          fixedActiveLineWidth={hasDepthRef.current ? 30 : 100}
+          fixedActiveLineWidth={hasDepth ? 30 : 100}
         />
       </>
     )
-  }, [hasDepthRef.current])
+  }, [hasDepth])
 
   const renderTabItem = useMemo(() => {
     return <OrderTabItem position={position} />
@@ -68,3 +64,5 @@ export function OrderTopTabbar({ position = 'PAGE' }: IProps) {
     </>
   )
 }
+
+export default observer(OrderTopTabbar)

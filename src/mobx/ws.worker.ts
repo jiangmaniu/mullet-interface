@@ -86,6 +86,7 @@ self.addEventListener('message', (event) => {
     // 当前激活品种名称
     case 'SYNC_ACTIVE_SYMBOL_NAME':
       activeSymbolName = data?.activeSymbolName || ''
+      console.log('当前激活品种名称', activeSymbolName)
       break
     // 当前选择的账户信息
     case 'SYNC_CURRENT_ACCOUNT_INFO':

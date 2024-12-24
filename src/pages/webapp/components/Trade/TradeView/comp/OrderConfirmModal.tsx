@@ -50,7 +50,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
     return ''
   }, [isFixedMargin, isFixedLeverage, isFloatLeverage, trade.leverageMultiple])
 
-  const symbolInfo = trade.getActiveSymbolInfo()
+  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
   const { expectedMargin } = useTrade()
 
   const bottomSheetModalRef = useRef<SheetRef>(null)
@@ -67,7 +67,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height={480}
+      height={'40%'}
       trigger={trigger}
       title={intl.formatMessage({ id: 'pages.trade.Confirm Order Title' })}
       confirmText={isBuy ? intl.formatMessage({ id: 'pages.trade.Confirm buy' }) : intl.formatMessage({ id: 'pages.trade.Confirm sell' })}
@@ -98,7 +98,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
             </View>
           </View>
           <View className={cn('items-center flex-row mt-6 mb-3 justify-between')}>
-            <View className={cn('items-center')}>
+            <View className={cn('items-center flex flex-col')}>
               <Text size="base" weight="medium" color={isBuy ? 'green' : 'red'}>
                 {leverage}
               </Text>
@@ -106,7 +106,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
                 {intl.formatMessage({ id: 'pages.trade.Leverage' })}
               </Text>
             </View>
-            <View className={cn('items-center')}>
+            <View className={cn('items-center flex flex-col')}>
               <Text size="base" weight="medium">
                 {orderVolume}
               </Text>
@@ -123,7 +123,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
                 {intl.formatMessage({id:'pages.trade.Fee'})}USD
               </Text>
             </View> */}
-            <View className={cn('items-center')}>
+            <View className={cn('items-center flex flex-col')}>
               <Text size="base" weight="medium">
                 {expectedMargin} USD
               </Text>
