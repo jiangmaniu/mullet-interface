@@ -24,6 +24,7 @@ const TradingViewComp = ({ style }: IProps) => {
   const [loading, setLoading] = useState(false)
   const [url, setUrl] = useState('')
   const intl = useIntl()
+  const isDark = theme.isDark
 
   const symbol = trade.activeSymbolName
   const symbolInfo = trade.symbolListAll.find((item) => item.symbol === symbol)
@@ -37,7 +38,9 @@ const TradingViewComp = ({ style }: IProps) => {
     // hideWatermarkLogo: 0隐藏
     // watermarkLogoUrl 水印图片地址 网络图片地址
     const watermarkLogoUrl =
-      ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production' ? `${location.origin}/${ENV.klineWatermarkLogo}` : '' // 网络图片地址 水印图片尺寸大小 522 × 146
+      ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production'
+        ? `${location.origin}/${isDark ? ENV.klineWatermarkLogoDark : ENV.klineWatermarkLogo}`
+        : '' // 网络图片地址 水印图片尺寸大小 522 × 146
     const url = `${
       ENV.tradingViewUrl
     }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${
@@ -45,7 +48,7 @@ const TradingViewComp = ({ style }: IProps) => {
     }&accountGroupId=${accountGroupId}&token=${token}&hideWatermarkLogo=1&watermarkLogoUrl=${watermarkLogoUrl}`
     // console.log('url', url)
     setUrl(url)
-  }, [symbol, intl.locale, symbolInfo])
+  }, [symbol, intl.locale, symbolInfo, isDark])
 
   const iframeDom = useMemo(() => {
     return (

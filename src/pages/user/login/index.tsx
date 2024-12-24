@@ -246,7 +246,7 @@ function Login() {
           <LoginForm
             title={
               <div className="mb-8 cursor-pointer" onClick={goHome}>
-                <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
+                <img src={ENV.logo} alt="logo" className="h-[68px] w-[242px]" />
               </div>
             }
             rootClassName={className}

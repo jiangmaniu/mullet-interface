@@ -1,8 +1,13 @@
 export default {
   name: 'Lynfoo', // 系统名称
   offical: 'www.lynfoo.io',
-  logo: '', // @TODO 待提供和替换
-  klineWatermarkLogo: '/img/platform/lynfoo/kline-water-logo.png', // K线水印 @TODO 待提供和替换
+  logo: '/img/platform/lynfoo/pc-logo.svg',
+  logoDark: '/img/platform/lynfoo/pc-logo-dark.svg',
+  favicon: '/img/platform/lynfoo/favicon.ico',
+  klineWatermarkLogo: '/img/platform/lynfoo/kline-water-logo.svg', // K线水印
+  klineWatermarkLogoDark: '/img/platform/lynfoo/kline-water-logo-dark.svg', // K线水印
+  featureWatermarkLogo: '/img/platform/lynfoo/feature-water-logo.svg', // 合约属性水印LOGO
+  featureWatermarkLogoDark: '/img/platform/lynfoo/feature-water-logo-dark.png', // 合约属性水印LOGO
   // 秘钥
   CLIENT_ID: 'StelluxTrader-client', // 客户端id
   CLIENT_SECRET: 'stellux_trader_client_secret', // 客户端密钥
@@ -13,6 +18,6 @@ export default {
     smallLogo: '/img/platform/lynfoo/logo-small.png',
     textLogo: '/img/platform/lynfoo/logo-text.png',
     grayLogo: '/img/platform/lynfoo/logo-gray.png',
-    logo: '/img/platform/lynfoo/logo.png'
+    logo: '/img/platform/lynfoo/webapp-logo.png'
   }
 }

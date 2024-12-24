@@ -84,7 +84,7 @@ function KLine() {
             <Iconfont name="huazhuan-xuanze" size={24} style={{ transform: 'rotate(180deg)' }} />
           </View>
           <View className={cn('flex-1')}>
-            <SwitchAccount />
+            <SwitchAccount isRemainAtCurrentPage />
           </View>
         </View>
         <View className={cn('rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-[10px]')} bgColor="primary">

@@ -93,7 +93,11 @@ function NonFullModeSpSl() {
     slValueEstimateRaw,
     disabledInput: disabled,
     spPriceOrAmountType,
-    slPriceOrAmountType
+    slPriceOrAmountType,
+    onSpAdd,
+    onSpMinus,
+    onSlAdd,
+    onSlMinus
   } = useTrade()
 
   const spVal = useMemo(() => {
@@ -182,7 +186,9 @@ function NonFullModeSpSl() {
                   //     </View>
                   //   </View>
                   // )}
-                  controls={false}
+                  // controls={false}
+                  // textAlign="left"
+                  textAlign="center"
                   onFocus={() => {
                     console.log('onFocus')
                     setInputing(true)
@@ -192,7 +198,6 @@ function NonFullModeSpSl() {
                   disabled={disabled}
                   value={String(spVal || '')}
                   precision={d}
-                  textAlign="left"
                   // status={spFlag ? 'error' : undefined}
                   onEndEditing={(value: any) => {
                     // console.log('onChange', value)
@@ -204,6 +209,8 @@ function NonFullModeSpSl() {
                     onSpChange(val)
                   }}
                   containerStyle={{ marginBottom: 6 }}
+                  onAdd={onSpAdd}
+                  onMinus={onSpMinus}
                 />
               </View>
             </View>
@@ -252,11 +259,12 @@ function NonFullModeSpSl() {
                   //     </View>
                   //   </View>
                   // )}
-                  controls={false}
+                  // controls={false}
+                  // textAlign="left"
+                  textAlign="center"
                   onFocus={() => {
                     setInputing(true)
                   }}
-                  textAlign="left"
                   step={step}
                   placeholder={
                     slPriceOrAmountType === 'PRICE'
@@ -277,6 +285,8 @@ function NonFullModeSpSl() {
                     onSlChange(val)
                   }}
                   containerStyle={{ marginBottom: 6 }}
+                  onAdd={onSlAdd}
+                  onMinus={onSlMinus}
                 />
               </View>
             </View>

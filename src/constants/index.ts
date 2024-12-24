@@ -1,7 +1,7 @@
 import ENV from '../env'
 
 // 系统名称
-const NAMESPACE = `${ENV.name}_client_${process.env.APP_ENV}` // 命名空间
+const NAMESPACE = `${ENV.name}_client_${process.env.APP_ENV as APP_ENV}` // 命名空间
 
 // 字体图标 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码

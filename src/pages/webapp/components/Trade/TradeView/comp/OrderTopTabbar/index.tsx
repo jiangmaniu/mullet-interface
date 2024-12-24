@@ -47,11 +47,11 @@ function OrderTopTabbar({ position = 'PAGE' }: IProps) {
             handleReset()
           }}
           stretch
-          fixedActiveLineWidth={hasDepth ? 30 : 100}
+          fixedActiveLineWidth={hasDepth && position === 'PAGE' ? 30 : 100}
         />
       </>
     )
-  }, [hasDepth])
+  }, [hasDepth, position])
 
   const renderTabItem = useMemo(() => {
     return <OrderTabItem position={position} />

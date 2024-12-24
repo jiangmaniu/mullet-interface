@@ -148,6 +148,7 @@ const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRe
                 min={0.01}
                 disabled={!avaMargin}
                 precision={precision}
+                containerClassName="!mb-0"
               />
               <View className={cn('mb-3 p-2')}>
                 <Slider
@@ -169,7 +170,8 @@ const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRe
               </View>
               <View>
                 <Text size="xs" color="secondary" className={cn('mb-1')}>
-                  {isAddMargin ? t('pages.position.Max Add Margin') : t('pages.position.Max Minus Margin')} {formatNum(avaMargin)} USD
+                  {isAddMargin ? t('pages.position.Max Add Margin') : t('pages.position.Max Minus Margin')}{' '}
+                  {formatNum(avaMargin, { precision })} USD
                 </Text>
                 {/* <Text size="xs" color="secondary">
                     {t('pages.position.Add Margin ForcePrice')} 486,302.00 USD
