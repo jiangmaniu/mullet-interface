@@ -21,7 +21,7 @@ const TradingViewComp = ({ style }: IProps) => {
   const [loading, setLoading] = useState(false)
 
   const activeSymbolName = trade.activeSymbolName
-  const symbolInfo = trade.getActiveSymbolInfo()
+  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
   const dataSourceCode = symbolInfo?.dataSourceCode
   const dataSourceSymbol = symbolInfo?.dataSourceSymbol
 

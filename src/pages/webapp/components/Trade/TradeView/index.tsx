@@ -6,13 +6,14 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import useTrade from '@/hooks/useTrade'
 
+import usePageVisibility from '@/hooks/usePageVisibility'
 import Button from '../../Base/Button'
 import { Text } from '../../Base/Text'
 import { View } from '../../Base/View'
 import Depth from '../../Quote/Depth'
 import Header from './comp/Header'
 import OrderConfirmModal, { OrderConfirmModalRef } from './comp/OrderConfirmModal'
-import { OrderTopTabbar } from './comp/OrderTopTabbar'
+import OrderTopTabbar from './comp/OrderTopTabbar'
 
 const BottomButton = observer(() => {
   const intl = useIntl()
@@ -67,7 +68,7 @@ function TradeView() {
     return symbolListAll.find((item) => item.symbol === activeSymbolName)
   }, [activeSymbolName, symbolListAll.length])
 
-  useEffect(() => {
+  const handleSubscribe = () => {
     // 重置交易状态
     trade.resetTradeAction()
     trade.setOrderType('MARKET_ORDER')
@@ -86,16 +87,35 @@ function TradeView() {
         ws.subscribeExchangeRateQuote()
       })
     })
+  }
+
+  useEffect(() => {
+    handleSubscribe()
 
     return () => {
-      // 离开当前 tab 的时候，取消行情订阅
+      // 离开当前页面的时候，取消行情订阅
       ws.closeTrade()
     }
   }, [symbolInfo])
 
+  usePageVisibility(
+    () => {
+      // 用户从后台切换回前台时执行的操作
+      handleSubscribe()
+    },
+    () => {
+      // 用户从前台切换到后台时执行的操作
+    }
+  )
+
   return (
-    <View className={cn('flex-1')}>
-      <div className={cn('flex-1 pb-0')}>
+    <View
+      className={cn('overflow-y-auto')}
+      style={{
+        height: 'calc(100vh - 200px)'
+      }}
+    >
+      <div className={cn('flex-1 pb-0 overflow-y-auto')}>
         <Header />
         <View className={cn('flex-1 flex-row')}>
           <View className={cn('flex-1')}>
@@ -104,7 +124,7 @@ function TradeView() {
           <Depth />
         </View>
       </div>
-      <View className={cn('pb-3 pt-[5px] px-3')}>
+      <View className={cn('px-3 fixed bottom-[60px] w-full')}>
         <View className={cn('mt-2')}>
           <BottomButton />
         </View>

@@ -56,7 +56,7 @@
     "Push Settings": "Notification settings Settings",
     "Version update": "Version Update",
     "WIFI environment automatically downloads the latest version installation package": "WIFI environment automatically downloads the latest version installation package",
-    "StelluX Protect your information privacy and security": "StelluX protects your information privacy and security",
+    "StelluX Protect your information privacy and security": "{name} protects your information privacy and security",
     "All": "All",
     "NO Data": "No Data",
     "NO More Data": "No More Data",
@@ -662,5 +662,14 @@
   "Common": {
     "From": "From",
     "To": "To"
+  },
+  "addScreen": {
+    "headerTitle": "Add to Home Screen",
+    "install": "Instal",
+    "iphoneChromeTips1": "Click share button on the right corner",
+    "iphoneChromeTips2": "Click 'Add to Home Screen' in the drop-down list",
+    "iphoneSafariTips1": "Click share button on the middle bottom",
+    "androidChromeTips1": "Click 'More' on the right corner ",
+    "androidChromeTips2": "Click 'Add to Home Screen' in the drop-down list"
   }
 }

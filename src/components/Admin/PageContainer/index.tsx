@@ -71,7 +71,7 @@ export default function PageContainer({
     .at(-1)
     ?.pathname?.split('/')
     .filter((v) => v)
-    .filter((item) => !['zh-TW', 'en-US'].includes(item))
+    .filter((item) => !['zh-TW', 'en-US', 'vi-VN'].includes(item))
 
   const backPath = lastRoute
     ?.filter((v) => v)

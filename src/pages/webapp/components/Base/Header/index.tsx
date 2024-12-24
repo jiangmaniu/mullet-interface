@@ -1,4 +1,3 @@
-import { history } from '@umijs/max'
 import { NavBar, NavBarProps } from 'antd-mobile'
 
 import Iconfont from '@/components/Base/Iconfont'

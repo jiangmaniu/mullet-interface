@@ -3,13 +3,19 @@ import { getIntl, getLocale as getMaxLocale } from '@umijs/max'
 
 export enum Language {
   'en-US' = 'en-US', // 英语
-  'zh-TW' = 'zh-TW' // 台湾繁体
+  'zh-TW' = 'zh-TW', // 台湾繁体
+  'vi-VN' = 'vi-VN' // 越南语
 }
 export const LanguageMap: Record<string, any> = {
   'en-US': {
     key: 'en-US',
     label: 'EN',
     icon: '🇺🇸'
+  },
+  'vi-VN': {
+    key: 'vi-VN',
+    label: 'VN',
+    icon: '🇻🇳'
   },
   'zh-TW': {
     key: 'zh-TW',
@@ -18,19 +24,23 @@ export const LanguageMap: Record<string, any> = {
   }
 }
 
-export type ILanguage = 'en-US' | 'zh-TW'
+export type ILanguage = 'en-US' | 'zh-TW' | 'vi-VN'
+
+export const SUPPORTED_LANGUAGES = ['zh-TW', 'en-US', 'vi-VN']
 
 // 传给后台的值，转化一下
 export const LanuageTransformMap: Record<ILanguage, string> = {
   'zh-TW': 'zh-TW',
-  'en-US': 'en-US'
+  'en-US': 'en-US',
+  'vi-VN': 'vi-VN'
 }
 
 // 获取k线对应的语言
 export const getTradingViewLng = () => {
   const langMap = {
     'zh-TW': 'zh_TW', // 中文繁体
-    'en-US': 'en' // 英文
+    'en-US': 'en', // 英文
+    'vi-VN': 'vi' // 越南语
   }
 
   return langMap[getMaxLocale() as ILanguage] || 'en'

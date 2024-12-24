@@ -7,12 +7,13 @@ import { useEffect, useMemo, useState } from 'react'
 import Header from '@/components/Admin/Header'
 import Button from '@/components/Base/Button'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
-import { SOURCE_CURRENCY, SYSTEM_NAME } from '@/constants'
+import { SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { addTraadeFollowLead } from '@/services/api/tradeFollow/lead'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 import { message } from '@/utils/message'
 
+import ENV from '@/env'
 import { AvatarUpload } from './AvatarUpload'
 import ContractUpload from './ContractUpload'
 
@@ -417,7 +418,7 @@ export default function Apply() {
                 <ContractUpload onChange={(p) => onContractChange(p)} maxCount={maxCount} />
                 <ProFormText name="contractProof" />
                 <span className="text-xs font-normal text-gray-500 mt-1">
-                  <FormattedMessage id="mt.heyuejiaoyizhengmingtishi" />
+                  <FormattedMessage id="mt.heyuejiaoyizhengmingtishi" values={{ name: ENV.name }} />
                 </span>
               </div>
             </div>
@@ -450,7 +451,7 @@ export default function Apply() {
                             console.log('zhengceshengming')
                           }}
                         >
-                          {SYSTEM_NAME}
+                          {ENV.name}
                           <FormattedMessage id="mt.yinsizhengceshengming" />
                         </span>
                       )

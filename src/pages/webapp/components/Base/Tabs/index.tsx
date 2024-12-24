@@ -4,7 +4,7 @@ import React, { CSSProperties } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
-type TabItem = TabProps & { key: React.Key; value?: any }
+type TabItem = TabProps & { key: React.Key; value?: any; render?: any }
 
 type IProps = TabsProps & {
   /**列表项 */
@@ -29,6 +29,7 @@ type IProps = TabsProps & {
   activeLineColor?: string
   /**当前激活 tab 选项文字颜色 */
   activeTitleColor?: string
+  contentPadding?: number
 }
 
 /**
@@ -44,6 +45,7 @@ export default function Tabs({
   fixedActiveLineWidth = 30,
   titleFontSize = 16,
   activeLineHeight = 4,
+  contentPadding = 0,
   activeLineBorderRadius = `100px 100px 0px 0px`,
   activeLineColor,
   activeTitleColor,
@@ -69,6 +71,7 @@ export default function Tabs({
       '.adm-tabs-tab': {
         paddingBottom: tabPaddingBottom,
         margin: 0,
+        paddingInline: contentPadding,
         color: theme.colors.textColor.secondary,
         fontWeight: '400 !important',
         width: '100%',

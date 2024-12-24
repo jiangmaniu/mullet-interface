@@ -8,6 +8,8 @@ import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
+import { isPCByWidth } from '@/utils'
+import { Toast } from 'antd-mobile'
 import klineStore from './kline'
 import trade from './trade'
 import { IDepth, IQuoteItem, ITradeType, MessagePopupInfo, WorkerType } from './ws.types'
@@ -72,6 +74,7 @@ class WSStore {
 
   @action
   close = () => {
+    this.readyState = 0
     this.sendWorkerMessage({
       type: 'CLOSE'
     })
@@ -142,14 +145,26 @@ class WSStore {
       case 'MESSAGE_RES':
         // 更新消息通知
         const info = data as MessagePopupInfo
-        notification.info({
-          message: <span className="text-primary font-medium">{info?.title}</span>,
-          description: <span className="text-secondary">{info?.content}</span>,
-          placement: 'bottomLeft',
-          style: {
-            background: 'var(--dropdown-bg)'
-          }
-        })
+        if (isPCByWidth()) {
+          notification.info({
+            message: <span className="text-primary font-medium">{info?.title}</span>,
+            description: <span className="text-secondary">{info?.content}</span>,
+            placement: 'bottomLeft',
+            style: {
+              background: 'var(--dropdown-bg)'
+            }
+          })
+        } else {
+          Toast.show({
+            content: (
+              <div className="toast-container">
+                {info?.title}：{info?.content}
+              </div>
+            ),
+            position: 'top',
+            duration: 3000
+          })
+        }
         // 刷新消息列表
         stores.global.getUnreadMessageCount()
         // console.log('消息通知', data)
@@ -240,7 +255,8 @@ class WSStore {
 
   // 订阅当前打开的品种深度报价
   subscribeDepth = (cancel?: boolean) => {
-    const symbolInfo = trade.getActiveSymbolInfo()
+    const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
+
     if (!symbolInfo?.symbol) return
 
     this.sendWorkerMessage({

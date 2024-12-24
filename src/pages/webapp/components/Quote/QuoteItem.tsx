@@ -1,4 +1,3 @@
-import { SpinLoading } from 'antd-mobile'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
 import { forwardRef, useMemo } from 'react'
@@ -13,16 +12,18 @@ import useQuoteColor from '../../hooks/useQuoteColor'
 import { navigateTo } from '../../utils/navigator'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
+import { TabKey } from './QuoteTopTabbar'
 import SymbolIcon from './SymbolIcon'
 
 type Item = Account.TradeSymbolListItem
 type IProps = {
   item: Item
+  tabKey?: TabKey
   /** 点击item */
   onItem?: (item?: Item) => void
 }
 
-function QuoteItem({ item, onItem }: IProps, ref: any) {
+function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
   const { cn, theme } = useTheme()
   const { up: upColor, down: downColor, isDark } = theme
   const { trade } = useStores()
@@ -50,7 +51,9 @@ function QuoteItem({ item, onItem }: IProps, ref: any) {
       onItem(item)
     } else {
       //  跳转到k线页面
-      navigateTo('/app/quote/kline')
+      navigateTo('/app/quote/kline', {
+        tabKey
+      })
     }
   }
 
@@ -115,7 +118,8 @@ function QuoteItem({ item, onItem }: IProps, ref: any) {
               </View>
             </>
           ) : (
-            <SpinLoading style={{ '--size': '18px' }} />
+            // <SpinLoading style={{ '--size': '18px' }} />
+            <></>
           )}
         </View>
         <View className={cn('relative w-[84px] overflow-hidden rounded-md')}>
@@ -141,7 +145,8 @@ function QuoteItem({ item, onItem }: IProps, ref: any) {
               </View>
             </>
           ) : (
-            <SpinLoading style={{ '--size': '18px' }} />
+            // <SpinLoading style={{ '--size': '18px' }} />
+            <></>
           )}
         </View>
       </View>

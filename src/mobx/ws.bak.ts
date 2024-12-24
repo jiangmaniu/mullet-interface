@@ -173,7 +173,7 @@ class WSStore {
 
   // 订阅当前打开的品种深度报价
   subscribeDepth = (cancel?: boolean) => {
-    const symbolInfo = trade.getActiveSymbolInfo()
+    const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
     if (!symbolInfo?.symbol) return
 
     const topicNoAccount = `/000000/depth/${symbolInfo.dataSourceCode}/${symbolInfo.symbol}`

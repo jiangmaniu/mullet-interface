@@ -168,7 +168,7 @@ export const Text = (props: IProps) => {
 
   return (
     <span
-      className={cn(hasFlexClassName(className) && 'flex', fontSizeClassName, className, styleClassName)}
+      className={cn(hasFlexClassName(cn(className, styleClassName)) && 'flex', fontSizeClassName, className, styleClassName)}
       style={{
         ...colorStyle,
         ...(typeof style === 'object' ? style : {})

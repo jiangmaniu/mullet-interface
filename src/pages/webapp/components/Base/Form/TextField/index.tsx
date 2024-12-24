@@ -1,5 +1,5 @@
 import type { ComponentType, Ref } from 'react'
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
@@ -7,7 +7,6 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { mergeCss } from '@/pages/webapp/utils'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Input, InputProps, InputRef } from 'antd-mobile'
-import { Text } from '../../Text'
 import { View } from '../../View'
 
 export interface TextFieldAccessoryProps {
@@ -124,27 +123,21 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     ...TextInputProps
   } = props
   const input = useRef<InputRef>(null)
+  const [inputValue, setInputValue] = useState<any>('')
 
   const [isFocus, setFocus] = useState(false)
   const innerDisabled = disabled || status === 'disabled'
 
   const readOnly = TextInputProps.readOnly || innerDisabled
 
-  function focusInput() {
-    if (innerDisabled) return
-
-    if (isFocus) {
-      input.current?.blur()
-    } else {
-      input.current?.focus()
-    }
-  }
-
   // 添加防抖定时器引用
   const debounceTimer = useRef<NodeJS.Timeout>()
-  const handleChange = (value: string) => {
-    onChange?.(value)
 
+  useEffect(() => {
+    setInputValue(value)
+  }, [value])
+
+  useEffect(() => {
     // 设置新的定时器，500ms 后触发 onEndEditing
     if (onEndEditing) {
       // 清除之前的定时器
@@ -152,9 +145,15 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
         clearTimeout(debounceTimer.current)
       }
       debounceTimer.current = setTimeout(() => {
-        onEndEditing(value)
-      }, 500)
+        onEndEditing(inputValue)
+      }, 300)
     }
+  }, [inputValue])
+
+  const handleChange = (value: string) => {
+    onChange?.(value)
+
+    setInputValue(value)
   }
 
   useImperativeHandle(ref, () => input.current)
@@ -176,7 +175,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     <View className={cn('mb-[22px]', containerClassName)} style={{ height, ...$containerStyleOverride }}>
       {!!label && (
         <View className={cn('flex flex-row items-center justify-between')}>
-          <Text className={cn('mb-1')}>{label} </Text>
+          <View className={cn('mb-1 w-full')}>{label}</View>
           {!!RightLabel && <RightLabel />}
         </View>
       )}

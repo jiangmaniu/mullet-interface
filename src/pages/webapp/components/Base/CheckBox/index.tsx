@@ -31,16 +31,18 @@ export default function CheckBox({ labelStyle, label, onChange, size = 17, check
       }}
     >
       <View
-        className={cn('rounded p-1 border flex-row items-center justify-center', {
+        className={cn('rounded p-1 border flex-row items-center justify-center')}
+        style={{
           width: size,
           height: size,
           borderColor: isChecked ? theme.colors.CheckBox.activeBorderColor : theme.colors.CheckBox.inactiveBorderColor
-        })}
+        }}
       >
         <View
-          className={cn('h-2 w-2 rounded-sm', {
+          className={cn('h-2 w-2 rounded-sm')}
+          style={{
             backgroundColor: isChecked ? theme.colors.CheckBox.activeBlockBg : theme.colors.CheckBox.inactiveBlockBg
-          })}
+          }}
         />
       </View>
       {label && (

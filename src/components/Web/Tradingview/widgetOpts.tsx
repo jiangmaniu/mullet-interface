@@ -4,6 +4,7 @@ import ma from './customIndicators/ma'
 
 const fullZero = (value: number | string) => String(value).padStart(2, '0')
 
+import ENV from '@/env'
 import { isPCByWidth } from '@/utils'
 import { defaultInterval, ThemeConst } from './constant'
 import DataFeedBase from './datafeed'
@@ -115,7 +116,7 @@ export default function getWidgetOpts(
     // ),
 
     symbol: props.symbol, // 品种
-    client_id: 'stellux.io"', // 设置高级保存/加载图表 API 的客户端 ID
+    client_id: ENV.name, // 设置高级保存/加载图表 API 的客户端 ID
     user_id: 'public_user_id', // 设置高级保存/加载图表 API 的用户 ID。
     locale: props.locale as LanguageCode, // 设置语言
     interval: interval as ResolutionString, // 分辨率，时间间隔，例如1W代表每个条形1周的 默认周期  1/5/15/30/60/240-> 1/5/15/30/60/240分钟  D->一天   W->一周   M->一月

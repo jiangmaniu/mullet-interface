@@ -38,7 +38,7 @@ function CustomArrowButton({ leftText, rightText }: IProps) {
     >
       <View className={cn('flex-1')}>
         <View
-          className={cn('rounded items-center justify-center flex-row')}
+          className={cn('rounded items-center justify-center flex-row relative')}
           onClick={handlePressLeft}
           style={{
             backgroundColor: isSelectLeft ? colorRed : grayBg,
@@ -50,9 +50,9 @@ function CustomArrowButton({ leftText, rightText }: IProps) {
           </Text>
 
           {/* 箭头 */}
-          {isSelectLeft && (
-            <View className={cn('absolute -right-[15px]')}>
-              <Iconfont name="jiaoyi-kaiduo" size={30} color={colorRed} />
+          {!isSelectLeft && (
+            <View className={cn('absolute -right-[23px] top-0')}>
+              <Iconfont name="jiaoyi-kaiduo" size={30} color={colorGreen} style={{ transform: 'rotate(180deg)' }} />
             </View>
           )}
         </View>
@@ -60,7 +60,7 @@ function CustomArrowButton({ leftText, rightText }: IProps) {
 
       <View className={cn('flex-1')}>
         <View
-          className={cn('rounded items-center justify-center flex-row')}
+          className={cn('rounded items-center justify-center flex-row relative')}
           onClick={handlePressRight}
           style={{
             backgroundColor: isSelectLeft ? grayBg : colorGreen,
@@ -71,9 +71,10 @@ function CustomArrowButton({ leftText, rightText }: IProps) {
             {rightText}
           </Text>
           {/* 箭头 */}
-          {!isSelectLeft && (
-            <View className={cn('absolute -left-[17px]')}>
-              <Iconfont name="jiaoyi-kaikong" size={30} color={colorGreen} />
+
+          {isSelectLeft && (
+            <View className={cn('absolute -left-[23px] top-0')}>
+              <Iconfont name="jiaoyi-kaikong" size={30} color={colorRed} style={{ transform: 'rotate(180deg)' }} />
             </View>
           )}
         </View>

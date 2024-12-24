@@ -14,6 +14,14 @@ export const MAIN_PAGES = ['/app/quote', '/app/trade', '/app/position', '/app/us
  */
 export const navigateTo = (path: string, query?: any) => {
   const hasQuery = query && Object.keys(query).length > 0
+  const { redirect, ...searchParams } = qs.parse(location.search, { ignoreQueryPrefix: true })
+
+  // 如果存在redirect参数，则跳转到redirect参数指定的页面
+  if (redirect) {
+    push(`${redirect}?${qs.stringify(searchParams)}`)
+    return
+  }
+
   push(hasQuery ? `${path}?${qs.stringify(query)}` : path)
 }
 

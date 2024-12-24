@@ -332,3 +332,31 @@ export const getDictLabelByLocale = (value: string) => {
   const [zh, en] = (value || '').split(',')
   return getLocale() === 'zh-TW' ? zh : en || zh
 }
+
+// 格式化品种数据为字母列表分类
+export function formatSymbolList(symbolList: any) {
+  // 1. 首先提取所有symbol并按字母排序
+  const symbols = symbolList.map((item: any) => item.symbol).sort()
+
+  // 2. 创建一个对象来存储按首字母分组的数据
+  const groupedData: any = {}
+
+  // 3. 遍历排序后的symbols，按首字母分组
+  symbols.forEach((symbol: string) => {
+    const firstLetter = symbol.charAt(0).toUpperCase()
+    if (!groupedData[firstLetter]) {
+      groupedData[firstLetter] = []
+    }
+    groupedData[firstLetter].push(symbol)
+  })
+
+  // 4. 转换成最终需要的格式
+  const result = Object.keys(groupedData)
+    .sort() // 确保A-Z顺序
+    .map((letter) => ({
+      title: letter,
+      data: groupedData[letter]
+    }))
+
+  return result
+}

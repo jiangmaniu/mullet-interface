@@ -5,6 +5,7 @@ import { MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { logout } from '@/services/api/user'
 
+import { SUPPORTED_LANGUAGES } from '@/constants/enum'
 import { isPCByWidth } from '.'
 import {
   STORAGE_GET_TOKEN,
@@ -73,7 +74,7 @@ export const getPathnameLng = () => {
   return {
     pathname,
     pathnameLng,
-    hasPathnameLng: pathnameLng && ['zh-TW', 'en-US'].includes(pathnameLng)
+    hasPathnameLng: pathnameLng && SUPPORTED_LANGUAGES.includes(pathnameLng)
   }
 }
 
@@ -94,7 +95,7 @@ export const formatPathname = (pathname: string) => {
 export const getPathname = (path?: string) => {
   const pathname = path || location.pathname
 
-  return pathname.replace('/zh-TW', '').replace('/en-US', '')
+  return pathname.replace(new RegExp(`^/(${SUPPORTED_LANGUAGES.join('|')})`), '').replace(/\/$/, '')
 }
 
 /**

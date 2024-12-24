@@ -27,7 +27,7 @@ function SymbolFavoriteIcon({ symbol }: IProps) {
         trade.toggleSymbolFavorite(symbolName)
       }}
     >
-      <Iconfont name="jiaoyi-shoucang" size={28} color={isActive ? activeColor : color} />
+      <Iconfont name="shoucang" size={28} color={isActive ? activeColor : color} />
     </div>
   )
 }

@@ -13,7 +13,7 @@ declare namespace API {
   }
   // 根据id查询详情
   type IdParam = {
-    id: number | string
+    id: any
   }
   // 响应结果
   type Response<T = any> = {

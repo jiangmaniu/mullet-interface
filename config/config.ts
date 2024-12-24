@@ -3,6 +3,7 @@ import { defineConfig } from '@umijs/max'
 import { join } from 'path'
 import { GenerateSW } from 'workbox-webpack-plugin'
 import { DEFAULT_LOCALE } from '../src/constants/index'
+import ENV from '../src/env'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 import routes from './routes'
@@ -71,7 +72,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Stellux',
+  title: ENV.name,
   layout: {
     locale: true,
     ...defaultSettings
@@ -163,16 +164,18 @@ export default defineConfig({
   links: [{ rel: 'manifest', href: '/manifest.json' }],
 
   metas: [
-    { name: 'application-name', content: 'Stellux' },
+    { name: 'application-name', content: ENV.name },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
     { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
-    { name: 'apple-mobile-web-app-title', content: 'Stellux' },
-    { name: 'description', content: 'Stellux Trading Platform' },
+    { name: 'apple-mobile-web-app-title', content: ENV.name },
+    { name: 'description', content: `${ENV.name} Trading Platform` },
     { name: 'format-detection', content: 'telephone=no' },
     { name: 'mobile-web-app-capable', content: 'yes' },
     // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
     // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
-    { name: 'msapplication-tap-highlight', content: 'no' }
+    { name: 'msapplication-tap-highlight', content: 'no' },
+    // <meta name="viewport" content="width=device-width, initial-scale=1">
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
   ],
 
@@ -227,7 +230,7 @@ export default defineConfig({
     if (process.env.NODE_ENV === 'production') {
       config.plugin('workbox').use(GenerateSW, [
         {
-          cacheId: 'stellux', // 设置前缀
+          cacheId: ENV.name, // 设置前缀
           skipWaiting: true, // 强制等待中的 Service Worker 被激活
           clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
           cleanupOutdatedCaches: true, //删除过时、老版本的缓存
@@ -242,7 +245,7 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-js',
                 expiration: {
-                  maxEntries: 20, //最多缓存20个，超过的按照LRU原则删除
+                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
                   maxAgeSeconds: 5 * 60 // 5 min
                 }
               }
@@ -253,7 +256,7 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-css',
                 expiration: {
-                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
+                  maxEntries: 100, //最多缓存100个，超过的按照LRU原则删除
                   maxAgeSeconds: 5 * 60 // 5 min
                 }
               }
@@ -264,8 +267,19 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-image',
                 expiration: {
+                  maxEntries: 300, //最多缓存300个，超过的按照LRU原则删除
+                  maxAgeSeconds: 1 * 24 * 60 * 60 // 3 days
+                }
+              }
+            },
+            {
+              urlPattern: /.*(otf|ttf|woff|woff2).*/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'seed-font',
+                expiration: {
                   maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
-                  maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
+                  maxAgeSeconds: 3 * 24 * 60 * 60 // 3 days
                 }
               }
             }

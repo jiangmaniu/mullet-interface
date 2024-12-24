@@ -1,25 +1,53 @@
 import { observer } from 'mobx-react'
-import { useRef } from 'react'
+import { useCallback, useState } from 'react'
 
-import Button from '@/components/Base/Button'
-
-import Header from '../../components/Base/Header'
-import SheetModal from '../../components/Base/SheetModal'
+import { useTheme } from '@/context/themeProvider'
+import SwitchAccount from '../../components/Account/SwitchAccount'
+import { View } from '../../components/Base/View'
+import SelectSymbolBtn from '../../components/Quote/SelectSymbolBtn'
+import TradeView from '../../components/Trade/TradeView'
+import useFocusEffect from '../../hooks/useFocusEffect'
+import useIsFocused from '../../hooks/useIsFocused'
+import Basiclayout from '../../layouts/BasicLayout'
 
 function Trade() {
-  const popupRef = useRef<any>(null)
+  const { cn, theme } = useTheme()
+
+  const [visible, setVisible] = useState(false)
+  const isFocused = useIsFocused()
+
+  useFocusEffect(
+    useCallback(() => {
+      // 使用 useFocusEffect 來確保頁面聚焦時顯示, 離開頁面時隱藏,
+      // 优化卡顿问题
+      setTimeout(() => {
+        setVisible(true)
+      }, 150)
+      return () => {
+        setVisible(false)
+      }
+    }, [])
+  )
 
   return (
-    <div>
-      <Header title="测试" right="右边" />
-      <Button onClick={() => popupRef.current.show()}>交易页面</Button>
-      <div className="text-primary">测试122</div>
-
-      <SheetModal buttonBlock={false} trigger={<Button>sheetModal</Button>} header={<div className="text-left font-bold">1233</div>}>
-        <div>测试sheetModal</div>
-      </SheetModal>
-    </div>
+    <Basiclayout bgColor="secondary" className={cn('mt-2')}>
+      {/* 账号选择弹窗 */}
+      <SwitchAccount />
+      <View className={cn('flex flex-col rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-2')} bgColor="primary">
+        <View className={cn('px-3')}>
+          {/* 选择交易品种 */}
+          <SelectSymbolBtn showQuotePercent />
+        </View>
+        {/* 交易视图 */}
+        {visible ? (
+          <TradeView />
+        ) : (
+          <View className={cn('flex-1 justify-center items-center')}>
+            <img style={{ width: 160, height: 186 }} src={'/images/logo-gray.png'} />
+          </View>
+        )}
+      </View>
+    </Basiclayout>
   )
 }
-
 export default observer(Trade)

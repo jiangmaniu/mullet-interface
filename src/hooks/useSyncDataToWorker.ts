@@ -1,4 +1,4 @@
-import { useDebounceEffect } from 'ahooks'
+import { useDebounceEffect, useNetwork } from 'ahooks'
 import { toJS } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
@@ -6,6 +6,8 @@ import { WorkerType } from '@/mobx/ws.types'
 
 // 同步主线程数据到worker线程中作为基础计算数据
 export default function useSyncDataToWorker() {
+  const networkState = useNetwork()
+  const isOnline = networkState.online
   const { trade, ws } = stores
   const {
     tradePageActive,
@@ -22,6 +24,7 @@ export default function useSyncDataToWorker() {
     leverageMultiple,
     marginType
   } = trade
+  const readyState = ws.readyState
 
   const positionsList = toJS(positionList)
 
@@ -37,7 +40,7 @@ export default function useSyncDataToWorker() {
     () => {
       syncData('SYNC_ACTIVE_SYMBOL_NAME', { activeSymbolName })
     },
-    [activeSymbolName, tradePageActive],
+    [activeSymbolName, tradePageActive, readyState, isOnline],
     {
       wait: 300
     }
@@ -48,7 +51,7 @@ export default function useSyncDataToWorker() {
     () => {
       syncData('SYNC_CURRENT_ACCOUNT_INFO', { currentAccountInfo: toJS(currentAccountInfo) })
     },
-    [currentAccountInfo, tradePageActive],
+    [currentAccountInfo, tradePageActive, readyState, isOnline],
     {
       wait: 300
     }
@@ -59,7 +62,7 @@ export default function useSyncDataToWorker() {
     () => {
       syncData('SYNC_POSITION_LIST', { positionList: positionsList })
     },
-    [JSON.stringify(positionsList), tradePageActive],
+    [JSON.stringify(positionsList), tradePageActive, readyState, isOnline],
     {
       wait: 300
     }
@@ -70,7 +73,7 @@ export default function useSyncDataToWorker() {
     () => {
       syncData('SYNC_ALL_SYMBOL_MAP', { allSimpleSymbolsMap: toJS(allSimpleSymbolsMap) })
     },
-    [allSimpleSymbolsMap, tradePageActive],
+    [allSimpleSymbolsMap, tradePageActive, readyState, isOnline],
     {
       wait: 300
     }
@@ -81,7 +84,7 @@ export default function useSyncDataToWorker() {
     () => {
       syncData('SYNC_ALL_SYMBOL_LIST', { symbolListAll: toJS(symbolListAll) })
     },
-    [symbolListAll.length, tradePageActive],
+    [symbolListAll.length, tradePageActive, readyState, isOnline],
     {
       wait: 300
     }
@@ -100,7 +103,18 @@ export default function useSyncDataToWorker() {
         currentLiquidationSelectBgaId
       })
     },
-    [buySell, orderType, orderVolume, orderPrice, leverageMultiple, marginType, currentLiquidationSelectBgaId, tradePageActive],
+    [
+      buySell,
+      orderType,
+      orderVolume,
+      orderPrice,
+      leverageMultiple,
+      marginType,
+      currentLiquidationSelectBgaId,
+      tradePageActive,
+      readyState,
+      isOnline
+    ],
     {
       wait: 300
     }
