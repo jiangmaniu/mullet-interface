@@ -26,9 +26,6 @@ function WebAppLayout() {
   // 同步数据到worker线程
   useSyncDataToWorker()
 
-  // 切换 pc 和移动端布局
-  // useSwitchPcOrMobile()
-
   useEffect(() => {
     if (!isOnline) {
       // 网络断开

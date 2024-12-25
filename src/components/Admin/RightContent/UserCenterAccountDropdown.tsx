@@ -116,7 +116,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
                       <div>
                         <div>
                           <span className="text-[20px] text-primary font-pf-bold">
-                            {formatNum(item.money, { precision: item.currencyDecimal })}
+                            {Number(item.money) ? formatNum(item.money, { precision: item.currencyDecimal }) : '0.00'}
                           </span>{' '}
                           <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                         </div>

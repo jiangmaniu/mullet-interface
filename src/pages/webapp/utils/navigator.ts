@@ -4,6 +4,7 @@ import qs from 'qs'
 import { MOBILE_HOME_PAGE } from '@/constants'
 import { isPCByWidth } from '@/utils'
 import { getPathname, push } from '@/utils/navigator'
+import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 export const MAIN_PAGES = ['/app/quote', '/app/trade', '/app/position', '/app/user-center']
 
@@ -46,6 +47,11 @@ export const handleJumpMobile = () => {
     } else if (['/account', '/record', '/setting', '/copy-trading'].some((path) => purePathname.startsWith(path))) {
       // 移动端存在PC端个人中心页面的路由，则跳转到移动端个人中心页面激活Tabbar
       activeTabbarPath = '/app/user-center'
+    }
+
+    // 已经登录过，进入登录页面跳转到首页
+    if (STORAGE_GET_TOKEN() && purePathname.startsWith('/app/login')) {
+      activeTabbarPath = MOBILE_HOME_PAGE
     }
   }
   if (activeTabbarPath) {

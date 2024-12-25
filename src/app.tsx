@@ -11,15 +11,15 @@ import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
 import SwitchLanguage from './components/SwitchLanguage'
-import { ICONFONT_URL } from './constants'
+import { ICONFONT_URL, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { useTheme } from './context/themeProvider'
-import { useDeviceChange } from './hooks/useDeviceChange'
 import { mobileCssVars } from './pages/webapp/theme/colors'
 import { handleJumpMobile } from './pages/webapp/utils/navigator'
 import { errorConfig } from './requestErrorConfig'
+import { isPC } from './utils'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN } from './utils/storage'
 
@@ -73,8 +73,6 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   const { pageBgColor } = useModel('global')
   const { pathname } = useLocation()
   const { setMode } = useTheme()
-
-  // useSwitchPcOrMobile() // 切换 pc 和移动端布局
 
   // @TODO 临时设置切换主题，后面删除
   useEffect(() => {
@@ -265,13 +263,15 @@ export const request = {
 
 // 修改被 react-router 渲染前的树状路由表
 // https://umijs.org/docs/api/runtime-config
-export const patchClientRoutes = async ({ routes }: any) => {
+export const patchClientRoutes = ({ routes }: any) => {
   const { locationLng } = getBrowerLng()
-  const { getHomePage } = useDeviceChange()
   // 获取本地缓存的语言
   const lng = localStorage.getItem('umi_locale') || locationLng
 
-  const HOME_PAGE = await getHomePage()
+  const token = STORAGE_GET_TOKEN()
+  const jumpUrl = isPC() ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
+  const loginUrl = isPC() ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
+  const HOME_PAGE = token ? jumpUrl : loginUrl
 
   // 首次默认重定向到en-US
   routes.unshift(

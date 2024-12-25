@@ -112,12 +112,12 @@ function Position({ style, parentPopup }: IProps) {
                   <div className="bg-gray-200 dark:bg-gray-700 flex items-center font-pf-bold text-primary text-xs flex-shrink justify-center rounded w-[18px] h-[18px] mx-2 p-1">
                     {childrenListLen}
                   </div>
-                  <span className="flex items-center">
+                  {/* <span className="flex items-center">
                     {!!record.leverageMultiple && (
                       <span className={cn('text-sm font-pf-bold', colorClassName)}>{record.leverageMultiple}X</span>
-                    )}
-                    {/**<LockIcon color={record.buySell === 'BUY' ? 'var(--color-green)' : 'var(--color-red)'} /> */}
-                  </span>
+                    )} */}
+                  {/**<LockIcon color={record.buySell === 'BUY' ? 'var(--color-green)' : 'var(--color-red)'} /> */}
+                  {/* </span> */}
                   <span className="flex">
                     <SelectIcon style={{ transform: isExpandCurrentRow(record.id) ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                   </span>
