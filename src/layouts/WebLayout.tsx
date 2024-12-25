@@ -14,6 +14,7 @@ function WebLayout() {
   const isTradeLayout = pathname.indexOf('/trade') !== -1
 
   // useSwitchPcOrMobile() // 切换 pc 和移动端布局
+  console.log('WebLayout pathname', pathname)
 
   if (isTradeLayout) {
     return (

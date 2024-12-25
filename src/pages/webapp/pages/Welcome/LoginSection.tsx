@@ -8,12 +8,17 @@ import { z } from 'zod'
 import Icon from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 import { getCaptcha, login } from '@/services/api/user'
-import { STORAGE_REMOVE_ACCOUNT_PASSWORD, STORAGE_SET_ACCOUNT_PASSWORD, setLocalUserInfo } from '@/utils/storage'
+import {
+  STORAGE_GET_ACCOUNT_PASSWORD,
+  STORAGE_REMOVE_ACCOUNT_PASSWORD,
+  STORAGE_SET_ACCOUNT_PASSWORD,
+  setLocalUserInfo
+} from '@/utils/storage'
 
 import Button from '@/components/Base/Button'
-import { ModalLoading } from '@/components/Base/Lottie/Loading'
-import { ADMIN_HOME_PAGE, APP_MODAL_WIDTH } from '@/constants'
-import { push } from '@/utils/navigator'
+import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
+import { APP_MODAL_WIDTH } from '@/constants'
+import { useModel } from '@umijs/max'
 import { Checkbox } from 'antd-mobile'
 import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 import { TextField } from '../../components/Base/Form/TextField'
@@ -35,6 +40,7 @@ interface Props {
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, startAnimation }: Props, ref) => {
   const { t } = useI18n()
   const { cn, theme } = useTheme()
+  const user = useModel('user')
 
   useLayoutEffect(() => {
     startAnimation?.(24)
@@ -63,7 +69,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
     // return userInfo
   }
 
-  const loadingRef = useRef<any>(null)
+  const loadingRef = useRef<ModalLoadingRef | null>(null)
 
   // 登录
   const onSubmit = async (values: User.LoginParams) => {
@@ -90,11 +96,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
         // @ts-ignore
         const hasAccount = currentUser?.accountList?.length > 0
         // const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
-        const jumpPath = ADMIN_HOME_PAGE // 直接跳转到个人中心
-        setTimeout(() => {
-          loadingRef.current?.close()
-          push(jumpPath)
-        }, 6000)
+        // const jumpPath = ADMIN_HOME_PAGE // 直接跳转到个人中心
+
+        // 重新获取用户信息
+        await user.handleLoginSuccess(result as User.UserInfo)
+
+        loadingRef.current?.close()
 
         return
       } else {
@@ -148,11 +155,11 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
     trigger,
     formState: { errors }
   } = useForm<FormData>({
-    // defaultValues: async () => ({
-    //   username: (await STORAGE_GET_ACCOUNT_PASSWORD('username')) || '',
-    //   password: (await STORAGE_GET_ACCOUNT_PASSWORD('password')) || '',
-    //   remember: (await STORAGE_GET_ACCOUNT_PASSWORD('remember')) || false
-    // }),
+    defaultValues: async () => ({
+      username: (await STORAGE_GET_ACCOUNT_PASSWORD('username')) || '',
+      password: (await STORAGE_GET_ACCOUNT_PASSWORD('password')) || '',
+      remember: (await STORAGE_GET_ACCOUNT_PASSWORD('remember')) || false
+    }),
     mode: 'all',
     resolver: zodResolver(schema)
   })
@@ -254,7 +261,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
         >
           {t('common.operate.Login')}
         </Button>
-        <View onClick={() => setSection('forgotPassword')}>
+        <View className="text-center" onClick={() => setSection('forgotPassword')}>
           <Text className={cn('text-sm text-weak self-center')}>{t('pages.login.Forgot password')}</Text>
         </View>
       </View>

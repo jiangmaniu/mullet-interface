@@ -233,7 +233,7 @@ export default function WelcomeScreen({}) {
             position: 'relative'
           }}
         >
-          <View className={cn('mt-6 px-2 flex flex-col items-start gap-2 bg-transparent')}>
+          <View className={cn('mt-6 flex flex-col items-start gap-2 bg-transparent')}>
             <img
               style={{
                 width: 192,
@@ -244,7 +244,7 @@ export default function WelcomeScreen({}) {
             />
             <View className={cn(section === 'server' ? 'flex' : 'none')}>
               <Text size="xl" color="primary" style={cn('font-bold')}>
-                {t('pages.login.Server Title')}
+                {t('pages.login.Login')}
               </Text>
             </View>
           </View>
@@ -263,7 +263,7 @@ export default function WelcomeScreen({}) {
           </View>
         </View>
       )}
-      <View className={cn('w-full items-center mb-1')}>
+      <View className={cn('w-full justify-center text-center items-center mb-1')}>
         <Text color="weak" size="sm">
           {ENV.name} Ⓒ 2024Cookie Preferences
         </Text>

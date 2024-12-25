@@ -65,6 +65,7 @@ export const goKefu = () => {}
  * 获取多语言路径信息
  */
 export const getPathnameLng = () => {
+  console.log('location', location)
   const pathname = location.pathname
   const pathnameLng = pathname
     .split('/')

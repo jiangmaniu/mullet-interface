@@ -57,6 +57,8 @@ export async function getInitialState(): Promise<{
       settings: defaultSettings as Partial<LayoutSettings>
     }
   }
+
+  console.log('getInitialState', defaultSettings)
   return {
     fetchUserInfo,
     settings: defaultSettings as Partial<LayoutSettings>
@@ -74,6 +76,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   const { pathname } = useLocation()
   const { setMode } = useTheme()
 
+  console.log('layout', pathname)
   // useSwitchPcOrMobile() // 切换 pc 和移动端布局
 
   // @TODO 临时设置切换主题，后面删除
@@ -263,6 +266,10 @@ export const request = {
   ...errorConfig
 }
 
+export const patchRoutes = async ({ routes }: any) => {
+  console.log('patchRoutes', routes)
+}
+
 // 修改被 react-router 渲染前的树状路由表
 // https://umijs.org/docs/api/runtime-config
 export const patchClientRoutes = async ({ routes }: any) => {
@@ -272,6 +279,8 @@ export const patchClientRoutes = async ({ routes }: any) => {
   const lng = localStorage.getItem('umi_locale') || locationLng
 
   const HOME_PAGE = await getHomePage()
+
+  console.log('patchClientRoutes', HOME_PAGE)
 
   // 首次默认重定向到en-US
   routes.unshift(

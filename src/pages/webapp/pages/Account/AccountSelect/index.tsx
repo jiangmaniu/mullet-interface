@@ -1,7 +1,89 @@
+import Button from '@/components/Base/Button'
+import Iconfont from '@/components/Base/Iconfont'
+import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
+import ENV from '@/env'
+import { AccoutList } from '@/pages/webapp/components/Account/AccoutList'
+import Header from '@/pages/webapp/components/Base/Header'
+import { Text } from '@/pages/webapp/components/Base/Text'
+import { View } from '@/pages/webapp/components/Base/View'
+import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
+import { navigateTo } from '@/pages/webapp/utils/navigator'
+import { useModel, useParams } from '@umijs/max'
 import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
 
 function AccountSelect() {
-  return <div>AccountSelect</div>
+  const { cn, theme } = useTheme()
+  const { t } = useI18n()
+  const { global } = useStores()
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+
+  const params = useParams()
+  const back = params?.back ?? true
+  const key = params?.key ?? 'REAL'
+  const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>(key as 'REAL' | 'DEMO') //  真实账户、模拟账户
+
+  useEffect(() => {
+    const key = params?.key ?? 'REAL'
+    setAccountTabActiveKey(key as 'REAL' | 'DEMO')
+  }, [params])
+
+  return (
+    <Basiclayout style={{ paddingLeft: 14, paddingRight: 14 }}>
+      <Header
+      // wrapperStyle={{
+      //   zIndex: 100,
+      //   backgroundColor: 'transparent'
+      // }}
+      // back={back}
+      />
+      <View style={cn('mb-4 mt-5')}>
+        <Text size="22" weight="medium">
+          {t('pages.account.Select Account')}
+        </Text>
+      </View>
+      <View style={cn('flex flex-row items-center gap-1 mb-7')}>
+        <img
+          src={ENV.webapp.smallLogo}
+          style={{ width: 32, height: 32, backgroundColor: theme.colors.backgroundColor.secondary, borderRadius: 100 }}
+        />
+        <View style={cn('flex flex-col')}>
+          <Text size="lg" weight="medium">
+            {ENV.name}
+          </Text>
+        </View>
+      </View>
+      <AccoutList
+        // back={back}
+        accountTabActiveKey={accountTabActiveKey}
+        setAccountTabActiveKey={setAccountTabActiveKey}
+      />
+      <Button
+        style={{
+          width: 46,
+          height: 46,
+          borderRadius: 46,
+          alignSelf: 'center',
+          marginBottom: 30,
+          backgroundColor: theme.colors.backgroundColor.primary
+        }}
+        onPress={() => {
+          navigateTo('/app/account/create?key=' + accountTabActiveKey + '&back=' + back)
+
+          // navigate('AccountNew', {
+          //   key: accountTabActiveKey,
+          //   back
+          // })
+        }}
+      >
+        <Iconfont name="xinjianzhanghu" size={30} />
+      </Button>
+    </Basiclayout>
+  )
 }
 
 export default observer(AccountSelect)

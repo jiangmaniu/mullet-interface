@@ -27,19 +27,29 @@ export default function Loading({ width = 400, height = 400 }: IProps) {
   )
 }
 
+export type ModalLoadingRef = {
+  show: (before?: () => void) => void
+  close: (after?: () => void) => void
+}
+
 export const ModalLoading = forwardRef(
-  ({ title, tips, open, width }: { width?: number; title?: React.ReactNode; tips?: React.ReactNode; open?: boolean }, ref: any) => {
+  (
+    { title, tips, open, width }: { width?: number; title?: React.ReactNode; tips?: React.ReactNode; open?: boolean },
+    ref: React.Ref<ModalLoadingRef>
+  ) => {
     const [isOpen, setIsOpen] = useState<any>(false)
     const intl = useIntl()
 
     // 暴露给父组件的方法
     useImperativeHandle(ref, () => {
       return {
-        show: () => {
+        show: (before?: () => void) => {
+          before?.()
           setIsOpen(true)
         },
-        close: () => {
+        close: (after?: () => void) => {
           setIsOpen(false)
+          after?.()
         }
       }
     })

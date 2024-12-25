@@ -72,7 +72,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: ENV.name,
+  title: ENV?.name,
   layout: {
     locale: true,
     ...defaultSettings
@@ -164,11 +164,11 @@ export default defineConfig({
   links: [{ rel: 'manifest', href: '/manifest.json' }],
 
   metas: [
-    { name: 'application-name', content: ENV.name },
+    { name: 'application-name', content: ENV?.name },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
     { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
-    { name: 'apple-mobile-web-app-title', content: ENV.name },
-    { name: 'description', content: `${ENV.name} Trading Platform` },
+    { name: 'apple-mobile-web-app-title', content: ENV?.name },
+    { name: 'description', content: `${ENV?.name} Trading Platform` },
     { name: 'format-detection', content: 'telephone=no' },
     { name: 'mobile-web-app-capable', content: 'yes' },
     // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
@@ -183,7 +183,7 @@ export default defineConfig({
     // 'https://domain.com/favicon.ico'
     // 此时将指向 `/favicon.png` ，确保你的项目含有 `public/favicon.png`
     // '/favicon.png'
-    ENV.favicon || ''
+    ENV?.favicon || ''
   ],
 
   //================ pro 插件配置 =================
@@ -238,7 +238,7 @@ export default defineConfig({
     if (process.env.NODE_ENV === 'production') {
       config.plugin('workbox').use(GenerateSW, [
         {
-          cacheId: ENV.name, // 设置前缀
+          cacheId: ENV?.name, // 设置前缀
           skipWaiting: true, // 强制等待中的 Service Worker 被激活
           clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
           cleanupOutdatedCaches: true, //删除过时、老版本的缓存
