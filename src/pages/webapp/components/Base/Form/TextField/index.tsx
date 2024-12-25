@@ -165,6 +165,9 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
           height,
           '&::placeholder': {
             fontSize: `${placeholderTextSize}px`
+          },
+          '&::selection': {
+            backgroundColor: 'transparent'
           }
         }
       }

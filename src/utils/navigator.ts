@@ -1,7 +1,7 @@
 import { history } from '@umijs/max'
 import { stringify } from 'qs'
 
-import { MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
+import { MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { logout } from '@/services/api/user'
 
@@ -56,7 +56,8 @@ export const onLogout = async (noRequestLogout?: boolean) => {
 
 // 跳转登页
 export const goLogin = () => {
-  push('/user/login')
+  const loginUrl = isPCByWidth() ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
+  push(loginUrl)
 }
 
 export const goKefu = () => {}
@@ -164,9 +165,10 @@ export const goToService = () => {}
 
 // 跳转首页
 export const goHome = () => {
+  const homeUrl = isPCByWidth() ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
   if (STORAGE_GET_TOKEN()) {
-    push(WEB_HOME_PAGE)
+    push(homeUrl)
   } else {
-    push('/user/login')
+    goLogin()
   }
 }

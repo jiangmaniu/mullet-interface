@@ -46,7 +46,7 @@ type ITabbarProps = {
   position?: 'PAGE' | 'MODAL'
 }
 
-const tabList = [
+const getTabList = () => [
   { key: 'FAVORITE', value: 'FAVORITE', title: getIntl().formatMessage({ id: 'common.operate.Favorite' }) },
   { key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) },
   { key: 'CRYPTO', value: '10', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Crypto' }) },
@@ -65,6 +65,7 @@ export const SymbolTabbar = observer(
     const favoriteList = trade.favoriteList
     const isPageMode = position === 'PAGE'
 
+    const tabList = getTabList()
     const tabValue = tabList.find((item) => item.key === activeKey)?.value
 
     useEffect(() => {
@@ -126,6 +127,8 @@ function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey
   const [activeTabValue, setActiveTabValue] = useState<string>('')
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const swiperRef = useRef<SwiperRef>(null)
+
+  const tabList = getTabList()
 
   useEffect(() => {
     if (tabKey) {

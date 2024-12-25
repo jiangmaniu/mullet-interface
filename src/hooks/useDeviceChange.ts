@@ -27,6 +27,7 @@ export const useDeviceChange = () => {
     return token ? jumpUrl : loginUrl
   }
 
+  // 设备切换
   const changeDeviceType = async (currentDeviceType: 'PC' | 'MOBILE') => {
     const page = await getHomePage()
     setDeviceType(currentDeviceType)

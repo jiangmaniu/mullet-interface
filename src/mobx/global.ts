@@ -63,12 +63,15 @@ export class GlobalStore {
   }
 
   fetchUserInfo = async (refreshAccount?: boolean) => {
+    if (!STORAGE_GET_TOKEN()) {
+      return undefined
+    }
+
     try {
       // 查询客户信息
       const clientInfo = await getClientDetail({
         id: STORAGE_GET_USER_INFO('user_id')
       })
-
       const localUserInfo = STORAGE_GET_USER_INFO() || {}
 
       const currentUser = {

@@ -78,15 +78,15 @@ function LevelAgeModal(props: any, ref: ForwardedRef<LevelAgeModalRef>) {
         }, 100)
       }}
       ref={bottomSheetModalRef}
-      height="65%"
+      height="50%"
     >
-      <View className={cn('mt-3 w-full')}>
+      <View className={cn('w-full')}>
         <View className={cn('mx-7 mb-6 items-center justify-center')}>
           <Text size="xl" color="primary" weight="medium">
             {intl.formatMessage({ id: 'pages.trade.Adjust leverage title' })}
           </Text>
         </View>
-        <View className={cn('mx-3')}>
+        <View className={cn('mx-6')}>
           <InputNumber
             value={value}
             placeholder={intl.formatMessage({ id: 'pages.trade.Leverage Multiplier' })}
