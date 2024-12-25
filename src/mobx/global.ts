@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable, runInAction } from 'mobx'
+import { action, makeAutoObservable, observable, reaction, runInAction } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
 import { getRegisterWay } from '@/services/api/common'
@@ -14,6 +14,20 @@ export type DeviceType = 'PC' | 'MOBILE'
 export class GlobalStore {
   constructor() {
     makeAutoObservable(this)
+
+    reaction(
+      () => this.verifyCodeDown,
+      (down) => {
+        if (down >= 0) {
+          const time = setTimeout(() => {
+            this.countDownVerifyCode(down)
+          }, 1000)
+          return () => {
+            clearTimeout(time)
+          }
+        }
+      }
+    )
   }
   @observable registerWay: API.RegisterWay = 'EMAIL' // 注册方式: EMAIL | PHONE
   @observable messageList = [] as Message.MessageItem[] // 消息列表
@@ -26,6 +40,11 @@ export class GlobalStore {
   @observable lastMobileJumpPathname = '' // 记录最后一次Mobile端跳转的路径-方便响应式变化恢复到之前的地址
   @observable pageIsFocused = true // 页面是否处于激活状态，进入页面默认是true，离开页面变为false
   @observable sheetModalOpen = true // 记录SheetModal是否打开
+  @observable verifyCodeDown = -1 // 验证码倒计时
+
+  @action countDownVerifyCode = async (down: number) => {
+    this.verifyCodeDown = down - 1
+  }
 
   // 设置页面是否处于激活状态
   @action

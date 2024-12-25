@@ -84,6 +84,7 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
   }, [])
 
   const changeLanguages = (currentLanguage: ILanguage) => {
+    console.log('changeLanguages', currentLanguage)
     // 临时缓存，根据ip定位切换语言使用
     sessionStorage.setItem(KEY_TEMP_LNG, currentLanguage)
 
@@ -97,6 +98,8 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
     // 切换时不刷新页面
     // setLocale(currentLanguage, false)
     setLocale(currentLanguage, true) // 刷新页面，避免很多兼容问题
+
+    console.log('replacePathnameLng', replacePathnameLng(location.pathname, currentLanguage))
 
     // 重新刷新路由
     setTimeout(() => {

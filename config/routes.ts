@@ -317,6 +317,36 @@ export default [
         path: '/:lng/app/user-center/message/:id',
         component: './webapp/pages/UserCenter/Message/Detail',
         access: 'canAdmin' // 权限配置
+      },
+      // 个人中心-实名认证状态
+      {
+        path: '/:lng/app/user-center/verify-status',
+        component: './webapp/pages/UserCenter/Kyc/VerifyStatus',
+        access: 'canAdmin' // 权限配置
+      },
+      // 个人中心-绑定邮箱
+      {
+        path: '/:lng/app/user-center/bind-email',
+        component: './webapp/pages/UserCenter/Kyc/BindEmail',
+        access: 'canAdmin' // 权限配置
+      },
+      // 个人中心-绑定手机
+      {
+        path: '/:lng/app/user-center/bind-phone',
+        component: './webapp/pages/UserCenter/Kyc/BindPhone',
+        access: 'canAdmin' // 权限配置
+      },
+      // 个人中心-验证消息
+      {
+        path: '/:lng/app/user-center/verify-msg',
+        component: './webapp/pages/UserCenter/Kyc/VerifyMsg',
+        access: 'canAdmin' // 权限配置
+      },
+      // 个人中心-验证证件照
+      {
+        path: '/:lng/app/user-center/verify-document',
+        component: './webapp/pages/UserCenter/Kyc/VerifyDoc',
+        access: 'canAdmin' // 权限配置
       }
     ]
   },

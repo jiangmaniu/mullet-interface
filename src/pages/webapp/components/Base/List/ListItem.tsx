@@ -3,12 +3,13 @@ import React, { isValidElement } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 
+import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { Text } from '../Text'
 import { View } from '../View'
 
 export interface IlistItemProps {
   /** 列表图标 */
-  icon?: string
+  icon?: string | React.ReactNode
   /** 列表图标颜色 */
   iconColor?: string
   /** 标题 */
@@ -45,13 +46,22 @@ const ListItem: React.FC<IlistItemProps> = ({
   renderExtraElement,
   styles,
   first,
-  rightIcon
+  rightIcon,
+  href,
+  params,
+  onPress
 }) => {
   const { cn, theme } = useTheme()
 
   const _iconColor = iconColor ?? theme.colors.textColor.secondary
   return (
     <View
+      onClick={() => {
+        onPress?.()
+        if (href) {
+          navigateTo(href, params)
+        }
+      }}
       bgColor="primary"
       borderColor="weak"
       className={cn('h-[60px] px-3 flex flex-row items-center rounded-lg')}

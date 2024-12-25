@@ -85,7 +85,7 @@ const Kyc = observer(() => {
             style={{ minWidth: 60 }}
             size="small"
             onClick={() => {
-              navigateTo('VerifyStatus')
+              navigateTo('/app/user-center/verify-status')
             }}
           >
             <Text color="reverse">{t('pages.userCenter.shenhezhong')}</Text>
@@ -97,11 +97,11 @@ const Kyc = observer(() => {
             size="small"
             onClick={() => {
               if (userInfo?.phone && userInfo?.email) {
-                navigateTo('VerifyMsg')
+                navigateTo('/app/user-center/verify-msg')
               } else if (userInfo?.phone && !userInfo?.email) {
-                navigateTo('BindEmail')
+                navigateTo('/app/user-center/bind-email')
               } else if (!userInfo?.phone && userInfo?.email) {
-                navigateTo('BindPhone')
+                navigateTo('/app/user-center/bind-phone')
               }
             }}
           >
@@ -147,7 +147,7 @@ function UserCenter() {
                 container: { borderRadius: 12, marginBottom: 12, height: 62 },
                 titleStyle: {
                   fontSize: 15,
-                  maxWidth: 230
+                  maxWidth: 250
                 },
                 subTextStyle: {
                   fontSize: 14
@@ -196,7 +196,7 @@ function UserCenter() {
       icon: 'geren-yuyan',
       title: t('common.Language'),
       subText: t(`common.language.${locale}`),
-      href: 'Language'
+      href: '/app/user-center/language'
     }
   ]
 
@@ -218,22 +218,7 @@ function UserCenter() {
 
   return (
     <BasicLayout bgColor="secondary" scrollY style={{ paddingLeft: 14, paddingRight: 14 }}>
-      <Header
-      // sideMinWidth={130}
-      // left={
-      //   <Text size="xl" weight="medium" color="primary">
-      //     {i18n.t('app.pageTitle.Personal Center')}
-      //   </Text>
-      // }
-      // right={
-      //   <LinkPressable href="Message">
-      //     <View>
-      //       <Icon name="gerenzhongxin-xiaoxi" size={30} />
-      //       {messageStore.unReadCount > 0 && <View style={cn('absolute right-0 top-0 bg-red size-2 rounded-full')} />}
-      //     </View>
-      //   </LinkPressable>
-      // }
-      />
+      <Header back={false} />
 
       <View style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: 60 }}>
         <Account />

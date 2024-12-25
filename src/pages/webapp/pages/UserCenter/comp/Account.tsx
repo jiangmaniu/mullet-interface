@@ -15,7 +15,7 @@ const Account = () => {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   return (
-    <View onPress={() => navigateTo('AccountSelect')}>
+    <View onPress={() => navigateTo('/app/account/select')}>
       <View style={cn('flex flex-row justify-between items-center w-full mt-6 mb-5')}>
         {/* 展示 currentUser.userInfo 的 avatar & account & role_name */}
         <View style={cn('flex flex-row items-center gap-[10px]')}>

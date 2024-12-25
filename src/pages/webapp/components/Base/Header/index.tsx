@@ -12,7 +12,8 @@ type IProps = NavBarProps & {
 function Header({ title, onBack, back = true, ...res }: IProps) {
   return (
     <NavBar
-      backArrow={
+      backIcon={false}
+      back={
         <>
           {back && (
             <Iconfont
