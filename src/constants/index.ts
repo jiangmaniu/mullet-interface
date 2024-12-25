@@ -69,6 +69,10 @@ export const KEY_SHOW_PWD_ADD_MODAL = NAMESPACE + '_' + 'pwa_added'
 
 // 历史搜索记录
 export const KEY_HISTORY_SEARCH = NAMESPACE + '_' + 'history_search'
+
+// 记录的设备类型
+export const KEY_DEVICE_TYPE = NAMESPACE + '_' + 'device_type'
+
 // APP 弹窗宽度
 export const APP_MODAL_WIDTH = 320
 

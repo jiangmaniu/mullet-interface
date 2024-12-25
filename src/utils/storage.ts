@@ -4,6 +4,7 @@ import lodashSet from 'lodash/set'
 import {
   KEY_ACCOUNT_PASSWORD,
   KEY_ACTIVE_SYMBOL_NAME,
+  KEY_DEVICE_TYPE,
   KEY_FAVORITE,
   KEY_HISTORY_SEARCH,
   KEY_LOCATION_INFO,
@@ -109,6 +110,11 @@ export const STORAGE_SET_SHOW_PWA_ADD_MODAL = genStorageSet(KEY_SHOW_PWD_ADD_MOD
 export const STORAGE_GET_HISTORY_SEARCH = genStorageGet(KEY_HISTORY_SEARCH)
 export const STORAGE_SET_HISTORY_SEARCH = genStorageSet(KEY_HISTORY_SEARCH)
 export const STORAGE_REMOVE_HISTORY_SEARCH = storageRemove(KEY_HISTORY_SEARCH)
+
+// 存储记录的设备类型
+export const STORAGE_GET_DEVICE_TYPE = genStorageGet(KEY_DEVICE_TYPE)
+export const STORAGE_SET_DEVICE_TYPE = genStorageSet(KEY_DEVICE_TYPE)
+export const STORAGE_REMOVE_DEVICE_TYPE = storageRemove(KEY_DEVICE_TYPE)
 
 // =================================================
 
