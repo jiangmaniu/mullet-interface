@@ -20,7 +20,7 @@ const Settings: ProLayoutProps & {
   colorWeak: false,
   title: '',
   pwa: true, // umi3开始去掉了 不在生效
-  logo: ENV.logo,
+  logo: ENV?.logo,
   iconfontUrl: ICONFONT_URL,
   // iconfontUrl: '//at.alicdn.com/t/c/font_4182179_75iciez7rhj.js', // 字体图标 @TODO 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
   // 参见ts声明，demo 见文档，通过token 修改样式

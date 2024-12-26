@@ -1,6 +1,6 @@
 import Iconfont from '@/components/Base/Iconfont'
-import { Logo } from '@/constants'
 import { useTheme } from '@/context/themeProvider'
+import ENV from '@/env'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
@@ -26,7 +26,7 @@ const Account = () => {
             />
           ) : (
             <img
-              src={Logo.stellux.small}
+              src={ENV.webapp.smallLogo}
               style={{ width: 54, height: 54, backgroundColor: theme.colors.backgroundColor.primary, borderRadius: 100 }}
             />
           )}

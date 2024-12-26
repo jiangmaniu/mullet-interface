@@ -1,7 +1,7 @@
 import ENV from '../env'
 
 // 系统名称
-const NAMESPACE = `${ENV.name}_client_${process.env.APP_ENV as APP_ENV}` // 命名空间
+const NAMESPACE = `${ENV?.name}_client_${process.env.APP_ENV as APP_ENV}` // 命名空间
 
 // 字体图标 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码
@@ -75,17 +75,3 @@ export const KEY_DEVICE_TYPE = NAMESPACE + '_' + 'device_type'
 
 // APP 弹窗宽度
 export const APP_MODAL_WIDTH = 320
-
-// 品牌图片
-export const Logo: any = {
-  stellux: {
-    small: '/images/stellux/logo-small.png',
-    text: '/images/stellux/logo-text.png',
-    gray: '/images/stellux/logo-gray.png'
-  },
-  lynfoo: {
-    small: '/images/lynfoo/logo-small.png',
-    text: '/images/lynfoo/logo-text.png',
-    gray: '/images/lynfoo/logo-gray.png'
-  }
-}
