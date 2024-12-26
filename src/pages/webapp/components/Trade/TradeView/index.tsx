@@ -110,7 +110,7 @@ function TradeView() {
 
   return (
     <View
-      className={cn('overflow-y-auto')}
+      className={cn('overflow-y-auto pb-[80px]')}
       style={{
         height: 'calc(100vh - 200px)'
       }}

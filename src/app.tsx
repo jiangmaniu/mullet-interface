@@ -265,7 +265,7 @@ export const request = {
 }
 
 export const patchRoutes = async ({ routes }: any) => {
-  console.log('patchRoutes', routes)
+  // console.log('patchRoutes', routes)
 }
 
 // 修改被 react-router 渲染前的树状路由表

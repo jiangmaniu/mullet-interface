@@ -1,17 +1,26 @@
+export type BrowserDeviceType =
+  | 'Chrome'
+  | 'Safari'
+  | 'Mozilla Firefox'
+  | 'Microsoft Internet Explorer'
+  | 'Microsoft Edge'
+  | 'Opera'
+  | 'Unknown Browser'
+
 //获取浏览器分类
-export const getBrowser = () => {
+export const getBrowser = (): BrowserDeviceType => {
   let userAgent = navigator.userAgent
-  if (userAgent.indexOf('Chrome') > -1) {
+  if (userAgent.indexOf('Chrome') !== -1 || userAgent.indexOf('CriOS') !== -1) {
     return 'Chrome'
-  } else if (userAgent.indexOf('Safari') > -1) {
+  } else if (userAgent.indexOf('Safari') !== -1) {
     return 'Safari'
-  } else if (userAgent.indexOf('Firefox') > -1) {
+  } else if (userAgent.indexOf('Firefox') !== -1) {
     return 'Mozilla Firefox'
-  } else if (userAgent.indexOf('MSIE') > -1 || userAgent.indexOf('Trident/') > -1) {
+  } else if (userAgent.indexOf('MSIE') !== -1 || userAgent.indexOf('Trident/') !== -1) {
     return 'Microsoft Internet Explorer'
-  } else if (userAgent.indexOf('Edge') > -1) {
+  } else if (userAgent.indexOf('Edge') !== -1) {
     return 'Microsoft Edge'
-  } else if (userAgent.indexOf('OPR') > -1) {
+  } else if (userAgent.indexOf('OPR') !== -1) {
     return 'Opera'
   } else {
     return 'Unknown Browser'

@@ -142,7 +142,7 @@ function AccountDetail() {
   }
 
   return (
-    <Basiclayout bgColor="secondary" className="px-[14px]">
+    <Basiclayout bgColor="secondary" className="px-[14px]" headerColor={theme.colors.backgroundColor.secondary}>
       <Header
         title={t('app.pageTitle.Account Detail')}
         onBack={() => {

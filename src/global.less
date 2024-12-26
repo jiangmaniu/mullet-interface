@@ -89,17 +89,14 @@ body,
   padding: 0;
 }
 
-// 只在移动端（小于 768px）应用这些样式
+// 只在移动端（小于 1200px）应用这些样式
 @media screen and (max-width: 1200px) {
-  body {
-    overflow-x: hidden;
+  body,
+  html {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-  }
-  body,
-  html {
     touch-action: manipulation; /* 禁止缩放手势 */
     overscroll-behavior: none; /* 防止滚动导致缩放 */
   }

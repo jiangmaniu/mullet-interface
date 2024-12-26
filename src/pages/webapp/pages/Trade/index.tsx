@@ -30,7 +30,7 @@ function Trade() {
   )
 
   return (
-    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} className={cn('mt-2')}>
+    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} className={cn('pt-2')}>
       {/* 账号选择弹窗 */}
       <SwitchAccount isRemainAtCurrentPage />
       <View className={cn('flex flex-col rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-2')} bgColor="primary">

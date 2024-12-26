@@ -87,55 +87,15 @@ function WebAppLayout() {
     }
   }, [])
 
-  // useEffect(() => {
-  //   // 注意：iOS10以后版本不接受meta标签，可以通过js监听手势控制来实现禁止页面缩放
-  //   // 添加事件监听
-  //   document.body.addEventListener(
-  //     'touchmove',
-  //     (e) => {
-  //       e.preventDefault()
-  //     },
-  //     { passive: false }
-  //   ) // passive: false 是必须的，否则 preventDefault 不会生效
-
-  //   // 禁用右键菜单、拖拽、选择和复制等功能
-  //   document.body.addEventListener('contextmenu', (e) => e.preventDefault())
-  //   document.body.addEventListener('dragstart', (e) => e.preventDefault())
-  //   document.body.addEventListener('selectstart', (e) => e.preventDefault())
-  //   document.body.addEventListener('select', () => {
-  //     document.getSelection()?.empty()
-  //   })
-  //   document.body.addEventListener('copy', () => {
-  //     document.getSelection()?.empty()
-  //   })
-  //   document.body.addEventListener('beforecopy', (e) => e.preventDefault())
-
-  //   return () => {
-  //     // 清理触摸事件
-  //     document.body.removeEventListener('touchmove', (e) => {
-  //       e.preventDefault()
-  //     })
-
-  //     // 清理其他事件
-  //     document.body.removeEventListener('contextmenu', (e) => e.preventDefault())
-  //     document.body.removeEventListener('dragstart', (e) => e.preventDefault())
-  //     document.body.removeEventListener('selectstart', (e) => e.preventDefault())
-  //     document.body.removeEventListener('select', () => {
-  //       document.getSelection()?.empty()
-  //     })
-  //     document.body.removeEventListener('copy', () => {
-  //       document.getSelection()?.empty()
-  //     })
-  //     document.body.removeEventListener('beforecopy', (e) => e.preventDefault())
-  //   }
-  // }, [])
-
   const Content = (
     <>
       <Outlet />
       <AddPwaAppModal />
       <Helmet>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+        />
       </Helmet>
     </>
   )

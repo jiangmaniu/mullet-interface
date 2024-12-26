@@ -1,5 +1,6 @@
 import { MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
+import { getBrowser } from '@/utils/device'
 import { STORAGE_GET_DEVICE_TYPE, STORAGE_GET_TOKEN, STORAGE_SET_DEVICE_TYPE } from '@/utils/storage'
 import { useBreakpoint } from '@ant-design/pro-components'
 import { useEffect } from 'react'
@@ -8,6 +9,7 @@ export const useDeviceChange = () => {
   const breakPoint = useBreakpoint() || ''
 
   const exposed = {
+    browserDeviceType: getBrowser(),
     breakPoint,
     isMobile: ['xs', 'sm'].includes(breakPoint), // 手机端，不包含ipad
     isIpad: ['md', 'lg'].includes(breakPoint), // 是否是ipad端

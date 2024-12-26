@@ -76,25 +76,26 @@ function KLine() {
       hFull={false}
       bgColor="secondary"
       headerColor={theme.colors.backgroundColor.secondary}
-      className={cn('mt-2')}
+      className={cn('pt-2')}
       headerClassName="bg-secondary"
-      header={
-        <View className={cn('flex-row items-center px-3 py-[5px]')}>
-          <View
-            className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')}
-            onClick={() => {
-              navigateTo(`/app/quote`, params)
-            }}
-          >
-            <Iconfont name="huazhuan-xuanze" size={24} style={{ transform: 'rotate(180deg)' }} />
-          </View>
-          <View className={cn('flex-1')}>
-            <SwitchAccount isRemainAtCurrentPage />
-          </View>
-        </View>
-      }
+      // header={
+      //   <View className={cn('flex-row items-center px-3 py-[5px]')}>
+      //     <View
+      //       className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')}
+      //       onClick={() => {
+      //         navigateTo(`/app/quote`, params)
+      //       }}
+      //     >
+      //       <Iconfont name="huazhuan-xuanze" size={24} style={{ transform: 'rotate(180deg)' }} />
+      //     </View>
+      //     <View className={cn('flex-1')}>
+      //       <SwitchAccount isRemainAtCurrentPage />
+      //     </View>
+      //   </View>
+      // }
+      // headerHeight={30}
       footer={
-        <View className={cn('mx-3')}>
+        <View>
           <BuySellButton
             onShow={() => {
               buySellRef.current?.show()
@@ -104,7 +105,7 @@ function KLine() {
       }
     >
       <>
-        {/* <View className={cn('flex-row items-center')}>
+        <View className={cn('flex-row items-center')}>
           <View
             className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')}
             onClick={() => {
@@ -116,8 +117,8 @@ function KLine() {
           <View className={cn('flex-1')}>
             <SwitchAccount isRemainAtCurrentPage />
           </View>
-        </View> */}
-        <View className={cn('rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-[10px]')} bgColor="primary">
+        </View>
+        <View className={cn('flex flex-col justify-between rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-[10px]')} bgColor="primary">
           <Header />
           <Tradingview />
           {/* <View className={cn('mx-3')}>

@@ -33,7 +33,7 @@ function Header({ title, onBack, back = true, left, ...res }: IProps) {
 
   return (
     <NavBar
-      backIcon={false}
+      backArrow={<></>}
       back={
         <>
           {left ? (

@@ -18,7 +18,7 @@ const Position = () => {
   const isFocused = useIsFocused()
 
   return (
-    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
+    <Basiclayout bgColor="secondary" headerColor={currentAccountInfo.isSimulate ? '#FFDDD4' : theme.colors.backgroundColor.secondary}>
       {currentAccountInfo.isSimulate && (
         <View
           style={{
@@ -31,7 +31,7 @@ const Position = () => {
           }}
         />
       )}
-      <View className={cn('flex-1 relative z-[1]')}>
+      <View className={cn('relative z-[1]')}>
         <View className="mx-4 my-[9px]">
           <Text size="xl" weight="medium" color="primary">
             {t('app.pageTitle.Position')}

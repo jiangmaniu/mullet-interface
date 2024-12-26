@@ -228,7 +228,7 @@ function UserCenter() {
   }
 
   return (
-    <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} scrollY>
+    <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       <Header
         // sideMinWidth={130}
         left={

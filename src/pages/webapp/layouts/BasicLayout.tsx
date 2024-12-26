@@ -15,7 +15,7 @@ interface Iprops {
   bgColor?: BgColorType
   className?: string
   scrollY?: boolean
-  /** 头部颜色 */
+  /** 头部状态栏颜色 */
   headerColor?: string
   /** 是否全屏 */
   hFull?: boolean
@@ -45,7 +45,7 @@ const Basiclayout: React.FC<Iprops> = ({
   footerClassName,
   footerStyle,
   header,
-  headerHeight = 30,
+  headerHeight = 0,
   headerClassName,
   headerStyle
 }) => {
@@ -62,6 +62,10 @@ const Basiclayout: React.FC<Iprops> = ({
   }, [pathname])
 
   const statusBarBgColor = headerColor || theme.colors.backgroundColor.primary
+
+  useEffect(() => {
+    document.body.style.overflowY = scrollY ? 'auto' : 'hidden'
+  }, [scrollY])
 
   return (
     <>
