@@ -1,8 +1,8 @@
 import { NavBar, NavBarProps } from 'antd-mobile'
 
 import Iconfont from '@/components/Base/Iconfont'
-import { onBack as handleBack } from '@/utils/navigator'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
+import { history } from '@umijs/max'
 
 type IProps = NavBarProps & {
   title?: React.ReactNode
@@ -22,12 +22,18 @@ function Header({ title, onBack, back = true, left, ...res }: IProps) {
       },
       '.adm-nav-bar-back': {
         display: back ? 'flex' : 'none'
+      },
+      '.adm-nav-bar-back span': {
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center'
       }
     }
   })
 
   return (
     <NavBar
+      backIcon={false}
       back={
         <>
           {left ? (
@@ -41,7 +47,7 @@ function Header({ title, onBack, back = true, left, ...res }: IProps) {
                 if (onBack) {
                   onBack()
                 } else {
-                  handleBack()
+                  history.back()
                 }
               }}
             />

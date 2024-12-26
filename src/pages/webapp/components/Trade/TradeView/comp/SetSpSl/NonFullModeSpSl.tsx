@@ -193,7 +193,7 @@ function NonFullModeSpSl() {
                     console.log('onFocus')
                     setInputing(true)
                   }}
-                  fixedOn="change"
+                  fixedTrigger="onChange"
                   step={step}
                   placeholder={intl.formatMessage({ id: 'pages.trade.Sp' })}
                   disabled={disabled}
@@ -267,7 +267,7 @@ function NonFullModeSpSl() {
                     setInputing(true)
                   }}
                   step={step}
-                  fixedOn="change"
+                  fixedTrigger="onChange"
                   placeholder={
                     slPriceOrAmountType === 'PRICE'
                       ? intl.formatMessage({ id: 'pages.trade.Sl' })

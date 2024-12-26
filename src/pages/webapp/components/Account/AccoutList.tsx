@@ -112,7 +112,6 @@ export const DefaultAccountTabbar = observer(({ accountTabActiveKey, setAccountT
   return (
     <Segmented
       className="account"
-      // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
       onChange={(value: any) => {
         setAccountTabActiveKey(value)
       }}

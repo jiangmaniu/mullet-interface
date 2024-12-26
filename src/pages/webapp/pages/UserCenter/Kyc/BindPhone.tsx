@@ -20,6 +20,7 @@ import { getAreaCode } from '@/services/api/common'
 import { bindPhone, sendCustomPhoneCode } from '@/services/api/user'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useModel } from '@umijs/max'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import type { ModalRef } from './comp/SelectCountryModal'
@@ -60,6 +61,8 @@ function BindPhone() {
   const { cn, theme } = useTheme()
   const { t } = useI18n()
   const { global } = useStores()
+
+  const user = useModel('user')
 
   const { screenSize } = useEnv()
 
@@ -111,7 +114,9 @@ function BindPhone() {
       if (res?.success) {
         message.info(t('pages.userCenter.bingdingchenggong'), 2)
 
-        navigateTo('app/user-center/verify-msg')
+        await user.fetchUserInfo(true)
+
+        navigateTo('/app/user-center/verify-msg')
       }
     } catch (error: any) {
     } finally {

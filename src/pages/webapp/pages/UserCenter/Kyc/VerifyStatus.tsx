@@ -6,8 +6,10 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
+import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { onBack } from '@/utils/navigator'
-import { useParams } from '@umijs/max'
+import { useLocation } from '@umijs/max'
+import { useEffect } from 'react'
 
 export default function VerifyStatus() {
   const { cn, theme } = useTheme()
@@ -15,12 +17,14 @@ export default function VerifyStatus() {
 
   const { screenSize } = useEnv()
 
-  const params = useParams()
-  const back = params?.back
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const back = params?.get('back')
 
   /** 拦截系统返回操作 */
-  const goback = () => {
+  const gobackHandler = () => {
     if (back === 'UserCenter') {
+      navigateTo('/app/user-center')
       // navigateTo('Main', { screen: 'UserCenter' })
     } else {
       onBack()
@@ -28,13 +32,18 @@ export default function VerifyStatus() {
     return true
   }
 
+  useEffect(() => {
+    window.addEventListener('popstate', gobackHandler)
+    return () => window.removeEventListener('popstate', gobackHandler)
+  }, [])
+
   return (
     <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
       <Header
         title={i18n.t('pages.userCenter.shenhezhong')}
         back={false}
         left={
-          <View onPress={goback}>
+          <View onPress={gobackHandler}>
             <Iconfont name="fanhui" size={36} />
           </View>
         }

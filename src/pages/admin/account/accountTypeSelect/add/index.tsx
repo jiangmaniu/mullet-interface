@@ -1,6 +1,6 @@
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { ProForm, ProFormText } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl, useModel, useParams, useSearchParams } from '@umijs/max'
+import { FormattedMessage, useIntl, useLocation, useModel, useSearchParams } from '@umijs/max'
 import { Button, Form } from 'antd'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
@@ -24,8 +24,9 @@ function AddAccountComp() {
   const currentUser = initialState?.currentUser
 
   const accountList = trade.accountGroupList
-  const params = useParams()
-  const accountGroupId = params?.accountId as string
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const accountGroupId = params?.get('accountId') as string
   const currentAccount = (accountList.find((item) => item?.id === accountGroupId) || {}) as AccountGroup.AccountGroupItem
   const password = Form.useWatch('password', form)
 

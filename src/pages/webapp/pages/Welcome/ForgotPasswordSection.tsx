@@ -110,15 +110,13 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   }
 
   /** 拦截系统返回操作 */
-  const goback = () => {
+  const gobackHandler = () => {
+    console.log('gobackHandler forgotPassword')
     setSection('login')
     return true
   }
   // 将属性暴露给父元素
-  useImperativeHandle(ref, () => ({ goback }))
-
-  // 拦截平台/系统返回操作
-  // useGoBackHandler(goback, [])
+  useImperativeHandle(ref, () => ({ goback: gobackHandler }))
 
   /** 表单控制 */
   const schema = z.object({

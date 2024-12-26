@@ -90,6 +90,11 @@ export default function VerifyMsg() {
       setValue('country', item.abbr)
       setValue('areaCodeItem', item)
       trigger('areaCode')
+    } else {
+      setValue('areaCode', '')
+      setValue('country', '')
+      setValue('areaCodeItem', undefined)
+      trigger('areaCode')
     }
   }
 
@@ -135,7 +140,13 @@ export default function VerifyMsg() {
             <TextField
               value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
               onFocus={() => {
-                selectCountryModalRef.current?.show()
+                if (!areaCodeItem) {
+                  selectCountryModalRef.current?.show()
+                }
+              }}
+              onChange={(val) => {
+                if (val) selectCountryModalRef.current?.show()
+                else handleSelectCountry()
               }}
               // onPressIn={() => {
               //   selectCountryModalRef.current?.show()
@@ -195,6 +206,7 @@ export default function VerifyMsg() {
               }}
               value={identificationType}
               style={{
+                display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'space-around',
                 gap: 8

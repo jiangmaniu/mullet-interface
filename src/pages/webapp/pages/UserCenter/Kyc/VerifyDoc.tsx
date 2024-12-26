@@ -11,7 +11,7 @@ import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { submitKycAuth } from '@/services/api/crm/kycAuth'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useModel, useParams } from '@umijs/max'
+import { useLocation, useModel } from '@umijs/max'
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -23,12 +23,16 @@ export default function VerifyDoc() {
 
   const { screenSize } = useEnv()
 
-  const params = useParams()
-  const country = params?.country
-  const firstName = params?.firstName || ''
-  const lastName = params?.lastName || ''
-  const identificationCode = params?.identificationCode || ''
-  const identificationType = params?.identificationType as API.IdentificationType
+  const location = useLocation()
+  // 获取 URL 中的查询参数（searchParams）
+  const params = new URLSearchParams(location.search)
+  const country = params?.get('country') || ''
+  const firstName = params?.get('firstName') || ''
+  const lastName = params?.get('lastName') || ''
+  const identificationCode = params?.get('identificationCode') || ''
+  const identificationType = params?.get('identificationType') as API.IdentificationType
+
+  console.log('params', params)
 
   const [file, setFile] = useState<any>({})
 
@@ -90,7 +94,7 @@ export default function VerifyDoc() {
       <Header title={i18n.t('pages.userCenter.pinzhengrenzheng')} />
       <StepBox step={step} />
       <View
-        className={cn('mt-9 px-2')}
+        className={cn('mt-9 px-2 flex flex-col gap-2')}
         style={{
           height: screenSize.height
         }}
@@ -113,15 +117,17 @@ export default function VerifyDoc() {
               onPress={async () => {
                 uploadSheetModalRef.current?.show()
               }}
-              className={cn(' border border-dashed border-[#6A7073] rounded-lg overflow-hidden px-[27px] py-[37px]')}
+              className={cn(' border border-dashed border-[#6A7073] bg-gray-50 rounded-lg overflow-hidden px-[27px] py-[37px]')}
             >
               <View
                 style={{
                   width: '100%',
                   height: 114,
+                  display: 'flex',
                   justifyContent: 'center',
                   alignItems: 'center',
-                  backgroundImage: `url('public/images/uploadImg.png')`
+                  backgroundSize: 'cover',
+                  backgroundImage: `url('/images/uploadImg.png')`
                 }}
               >
                 <Text style={{ fontWeight: '500', color: theme.colors.textColor.primary }}>
@@ -132,11 +138,12 @@ export default function VerifyDoc() {
           )}
         </View>
 
-        <Button type="primary" loading={false} height={48} style={cn('mt-30')} onPress={handleSubmit(onSubmit)} disabled={!file?.link}>
-          {i18n.t('common.operate.Submit')}
-        </Button>
         <UploadSheetModal ref={uploadSheetModalRef} onChange={onChange} />
       </View>
+
+      <Button type="primary" loading={false} height={48} className={cn('mb-10')} onPress={handleSubmit(onSubmit)} disabled={!file?.link}>
+        {i18n.t('common.operate.Submit')}
+      </Button>
     </BasicLayout>
   )
 }

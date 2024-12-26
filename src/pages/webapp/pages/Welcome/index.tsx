@@ -7,7 +7,7 @@ import { default as Icon, default as Iconfont } from '@/components/Base/Iconfont
 import { useEnv } from '@/context/envProvider'
 import ENV from '@/env'
 import { capitalizeFirstLetter } from '@/utils/str'
-import { useParams } from '@umijs/max'
+import { useLocation } from '@umijs/max'
 import Header from '../../components/Base/Header'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
@@ -60,8 +60,9 @@ export interface SectionProps {
 export default function WelcomeScreen() {
   const { cn, theme } = useTheme()
   const { t, loadLocale, locale } = useI18n()
-  const params = useParams()
-  const _section = params?.section as WELCOME_STEP_TYPES
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const _section = params?.get('section') as WELCOME_STEP_TYPES
 
   const { screenSize } = useEnv()
 
@@ -80,7 +81,9 @@ export default function WelcomeScreen() {
   const [validateCode, setValidateCode] = useState<string>()
 
   const sectionRef = useRef<TypeSection | null>(null)
-  const gobackHandler = () => {
+  const gobackHandler = (e: any) => {
+    e.preventDefault()
+    console.log('gobackHandler', e)
     sectionRef.current?.goback()
     return true
   }
@@ -211,7 +214,7 @@ export default function WelcomeScreen() {
   }
 
   return (
-    <Basiclayout style={{ paddingTop: 20 }}>
+    <Basiclayout scrollY style={{ paddingTop: 20 }}>
       <Header
         style={{
           zIndex: 100,
@@ -223,7 +226,7 @@ export default function WelcomeScreen() {
         left={
           <>
             {section !== 'verify' && section !== 'login' ? (
-              <View onPress={gobackHandler}>
+              <View onPress={() => gobackHandler(null)}>
                 <Icon name="fanhui" size={36} />
               </View>
             ) : null}

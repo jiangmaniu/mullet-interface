@@ -10,9 +10,9 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
-import { useModel, useParams } from '@umijs/max'
+import { useLocation, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 function AccountSelect() {
   const { cn, theme } = useTheme()
@@ -22,24 +22,21 @@ function AccountSelect() {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
 
-  const params = useParams()
-  const back = params?.back ?? true
-  const key = params?.key ?? 'REAL'
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const back = params?.get('back') === 'true' ? true : false
+  const key = params?.get('key') ?? 'REAL'
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>(key as 'REAL' | 'DEMO') //  真实账户、模拟账户
-
-  useEffect(() => {
-    const key = params?.key ?? 'REAL'
-    setAccountTabActiveKey(key as 'REAL' | 'DEMO')
-  }, [params])
 
   return (
     <Basiclayout style={{ paddingLeft: 14, paddingRight: 14 }}>
       <Header
-      // wrapperStyle={{
-      //   zIndex: 100,
-      //   backgroundColor: 'transparent'
-      // }}
-      // back={back}
+        back={back}
+        // wrapperStyle={{
+        //   zIndex: 100,
+        //   backgroundColor: 'transparent'
+        // }}
+        // back={back}
       />
       <View style={cn('mb-4 mt-5')}>
         <Text size="22" weight="medium">
@@ -68,7 +65,9 @@ function AccountSelect() {
           height: 46,
           borderRadius: 46,
           alignSelf: 'center',
-          marginBottom: 30,
+          // marginBottom: 30,
+          position: 'absolute',
+          bottom: 40,
           backgroundColor: theme.colors.backgroundColor.primary
         }}
         onPress={() => {

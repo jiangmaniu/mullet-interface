@@ -4,6 +4,7 @@ import { APP_MODAL_WIDTH } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import ENV from '@/env'
+import { DefaultAccountTabbar } from '@/pages/webapp/components/Account/AccoutList'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
 import Header from '@/pages/webapp/components/Base/Header'
 import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
@@ -15,8 +16,7 @@ import { AddAccount } from '@/services/api/tradeCore/account'
 import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useModel, useParams } from '@umijs/max'
-import { Segmented } from 'antd'
+import { useLocation, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -53,9 +53,10 @@ function AccountNew() {
   const currentUser = initialState?.currentUser
   const user = useModel('user')
 
-  const parmas = useParams()
-  const back = parmas?.back ?? true
-  const key = parmas?.key ?? 'REAL'
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const back = params?.get('back') ?? true
+  const key = params?.get('key') ?? 'REAL'
 
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>(key as 'REAL' | 'DEMO') //  真实账户、模拟账户
 
@@ -195,15 +196,16 @@ function AccountNew() {
       <CurrentServer />
 
       <View className={cn('mx-3 mb-3')}>
-        <Segmented
+        <DefaultAccountTabbar accountTabActiveKey={accountTabActiveKey} setAccountTabActiveKey={setAccountTabActiveKey} />
+        {/* <Segmented
           className="account"
-          // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
           onChange={(value: any) => {
             setAccountTabActiveKey(value)
           }}
           value={accountTabActiveKey}
           options={accountOptions}
-        />
+          block
+        /> */}
       </View>
 
       <AccountCarousel key={accountTabActiveKey} accountTabActiveKey={accountTabActiveKey} setSelectedItem={setSelectedItem} />

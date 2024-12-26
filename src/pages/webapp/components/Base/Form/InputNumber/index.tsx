@@ -42,7 +42,7 @@ export type InputNumberProps = TextFieldProps & {
   /** 自动全选 */
   autoSelectAll?: boolean
   /** 在 onChange / onEndEditing 时修正数值 */
-  fixedOn?: 'change' | 'endEditing' | 'always'
+  fixedTrigger?: 'onChange' | 'onEndEditing' | 'always'
 }
 
 const InputNumber = forwardRef(
@@ -69,7 +69,7 @@ const InputNumber = forwardRef(
       onChange,
       onEndEditing,
       className,
-      fixedOn = 'endEditing',
+      fixedTrigger = 'onEndEditing',
       ...res
     }: InputNumberProps,
     ref
@@ -134,14 +134,12 @@ const InputNumber = forwardRef(
       let newText = text
 
       // 在 onChange 时修正数值
-      if (fixedOn === 'change' || fixedOn === 'always') {
+      if (fixedTrigger === 'onChange' || fixedTrigger === 'always') {
         newText = fix(text)
       }
 
-      // setTimeout(() => {
       setInputValue(newText)
       onChange?.(newText)
-      // }, 10)
     }
 
     const handleEndEditing = (text: string | undefined) => {
@@ -154,7 +152,7 @@ const InputNumber = forwardRef(
       }
 
       // 在 onEndEditing 时修正数值
-      if (fixedOn === 'endEditing' || fixedOn === 'always') {
+      if (fixedTrigger === 'onEndEditing' || fixedTrigger === 'always') {
         const newText = fix(text)
         setTimeout(() => {
           setInputValue(newText)
@@ -278,6 +276,7 @@ const InputNumber = forwardRef(
         )}
         className={cn(inputValue ? 'font-dingpro-medium' : 'font-normal', className)}
         style={style}
+        type="number"
         {...res}
       />
     )
