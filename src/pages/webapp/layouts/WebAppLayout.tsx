@@ -6,9 +6,11 @@ import usePageVisibility from '@/hooks/usePageVisibility'
 import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
 import { isMainTabbar } from '@/pages/webapp/utils/navigator'
+import { checkPageShowTime } from '@/utils/business'
 import { message } from '@/utils/message'
 import { useNetwork } from 'ahooks'
 import { useEffect } from 'react'
+import { Helmet } from 'react-helmet'
 import AddPwaAppModal from '../components/Base/AddPwaAppModal'
 
 /**
@@ -27,6 +29,8 @@ function WebAppLayout() {
   useSyncDataToWorker()
 
   useEffect(() => {
+    checkPageShowTime()
+
     if (!isOnline) {
       // 网络断开
       message.info(intl.formatMessage({ id: 'mt.duankailianjie' }))
@@ -40,6 +44,9 @@ function WebAppLayout() {
       trade.setTradePageActive(true)
 
       // ws没有返回token失效状态，需要查询一次用户信息，看当前登录态是否失效，避免长时间没有操作情况
+
+      // 避免多次刷新
+      if (!checkPageShowTime()) return
       fetchUserInfo(true)
     },
     () => {
@@ -53,10 +60,62 @@ function WebAppLayout() {
     }
   )
 
+  useEffect(() => {
+    // 注意：iOS10以后版本不接受meta标签，可以通过js监听手势控制来实现禁止页面缩放
+    // 添加事件监听
+    document.body.addEventListener(
+      'touchmove',
+      (e) => {
+        e.preventDefault()
+      },
+      { passive: false }
+    ) // passive: false 是必须的，否则 preventDefault 不会生效
+
+    // 禁用右键菜单、拖拽、选择和复制等功能
+    document.body.addEventListener('contextmenu', (e) => e.preventDefault())
+    document.body.addEventListener('dragstart', (e) => e.preventDefault())
+    document.body.addEventListener('selectstart', (e) => e.preventDefault())
+    document.body.addEventListener('select', () => {
+      document.getSelection()?.empty()
+    })
+    document.body.addEventListener('copy', () => {
+      document.getSelection()?.empty()
+    })
+    document.body.addEventListener('beforecopy', (e) => e.preventDefault())
+    document.body.addEventListener('mouseup', () => {
+      document.getSelection()?.empty()
+    })
+
+    return () => {
+      // 清理触摸事件
+      document.body.removeEventListener('touchmove', (e) => {
+        e.preventDefault()
+      })
+
+      // 清理其他事件
+      document.body.removeEventListener('contextmenu', (e) => e.preventDefault())
+      document.body.removeEventListener('dragstart', (e) => e.preventDefault())
+      document.body.removeEventListener('selectstart', (e) => e.preventDefault())
+      document.body.removeEventListener('select', () => {
+        document.getSelection()?.empty()
+      })
+      document.body.removeEventListener('copy', () => {
+        document.getSelection()?.empty()
+      })
+      document.body.removeEventListener('beforecopy', (e) => e.preventDefault())
+      document.body.removeEventListener('mouseup', () => {
+        document.getSelection()?.empty()
+      })
+    }
+  }, [])
+
   const Content = (
     <>
       <Outlet />
       <AddPwaAppModal />
+      <Helmet>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+      </Helmet>
     </>
   )
 

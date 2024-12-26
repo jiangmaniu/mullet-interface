@@ -18,7 +18,7 @@ function Quote() {
   const [quoteVisible, setQuoteVisible] = useState(true)
 
   useEffect(() => {
-    // 隐藏页面滚动条，否则和FlashList冲突
+    // 隐藏页面滚动条，否则和FlashList的虚拟滚动条冲突
     document.documentElement.style.overflowY = 'hidden'
 
     return () => {
@@ -27,7 +27,7 @@ function Quote() {
   }, [])
 
   return (
-    <Basiclayout bgColor="secondary">
+    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       <View style={cn('my-2')}>
         <SwitchAccount
           showRightSearchIcon

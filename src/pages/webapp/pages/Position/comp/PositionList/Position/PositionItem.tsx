@@ -197,7 +197,7 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
         {item.marginType === 'ISOLATED_MARGIN' && (
           <Button
             size="xs"
-            containerClassName={cn('flex-1 flex-nowrap  h-full')}
+            containerClassName={cn('flex-1 flex-nowrap h-full')}
             className={cn('flex-1 px-1')}
             onClick={() => {
               onPress(item, 'MARGIN')
@@ -234,6 +234,10 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
             onPress(item, 'CLOSE_MARKET_POSITION', () => {
               if (trade.positionConfirmChecked) {
                 setLoading4(true)
+
+                setTimeout(() => {
+                  setLoading4(false)
+                }, 2000)
               }
             })
           }}

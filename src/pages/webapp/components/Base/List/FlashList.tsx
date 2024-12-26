@@ -18,7 +18,7 @@ type IProps<T = any> = Omit<ListProps<T>, 'children' | 'itemKey'> & {
   renderItem: (item: T) => React.ReactNode
   /**估算的 item 高度 */
   estimatedItemSize?: number
-  /** Trigger when render list item changed */
+  /** Trigger when render list item changed 需要设置height才会生效*/
   onViewableItemsChanged?: (visibleList: T[], fullList: T[]) => void
   ListHeaderComponent?: React.ReactNode
   hasMore?: boolean
@@ -81,7 +81,7 @@ function FlashList<T>({
 
   if (refreshing) {
     return (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center my-[100px]">
         <SpinLoading />
       </div>
     )

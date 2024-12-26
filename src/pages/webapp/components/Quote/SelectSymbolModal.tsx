@@ -80,7 +80,7 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height="90%"
+      height="95%"
       hiddenFooter
       trigger={trigger}
       onOpenChange={(v) => {

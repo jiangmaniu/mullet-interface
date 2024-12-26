@@ -98,7 +98,8 @@ function OrderTabItem({ position }: IProps) {
               {intl.formatMessage({ id: 'pages.trade.Max Open Volume' })}
             </Text>
             <Text color="primary" size="xs" font="dingpro-medium" weight="medium">
-              {Number(maxOpenVolume) < 0 ? '--' : maxOpenVolume} {intl.formatMessage({ id: 'pages.trade.Lot' })}
+              {Number(maxOpenVolume) < 0 || maxOpenVolume === Infinity ? '--' : maxOpenVolume}{' '}
+              {intl.formatMessage({ id: 'pages.trade.Lot' })}
             </Text>
           </View>
         </View>
@@ -151,7 +152,7 @@ function OrderTabItem({ position }: IProps) {
       {/* k线页面 快速下单-弹窗展示 */}
       {position === 'MODAL' && (
         <View className={cn('flex-row items-center justify-between', !orderSpslChecked && 'mt-5')}>
-          <View className={cn('flex-row items-center gap-x-2')}>
+          <View className={cn('flex-col items-start gap-x-2 flex')}>
             <Text color="primary" size="base" weight="medium">
               {intl.formatMessage({ id: 'pages.trade.Quick place order' })}
             </Text>

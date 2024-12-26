@@ -147,7 +147,7 @@ function BuySellModal(props: any, ref: ForwardedRef<BuySellModalRef>) {
         }}
         ref={bottomSheetModalRef}
         // snapPoints={['25%', modalHeight]}
-        height={'94%'}
+        height={'98%'}
         children={<Content close={close} />}
         dragOnContent={false}
         footer={<Footer />}

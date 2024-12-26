@@ -64,7 +64,7 @@ function FuturesModal({ trigger }: IProps, ref: ForwardedRef<FuturesModalRef>) {
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height="90%"
+      height="95%"
       hiddenFooter
       trigger={trigger}
       dragOnContent={false}

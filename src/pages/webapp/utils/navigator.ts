@@ -1,7 +1,7 @@
 import { history } from '@umijs/max'
 import qs from 'qs'
 
-import { MOBILE_HOME_PAGE } from '@/constants'
+import { MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE } from '@/constants'
 import { isPCByWidth } from '@/utils'
 import { getPathname, push } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
@@ -36,22 +36,29 @@ export const isMainTabbar = (pathname: string) => MAIN_PAGES.includes(getPathnam
 
 // 如果在移动端模式下 地址栏输入的是pc端路由，则跳转到移动端页面
 export const handleJumpMobile = () => {
+  const token = STORAGE_GET_TOKEN()
   const ispc = isPCByWidth()
   // 在移动端存在pc的路由，则跳转到移动端对应路由激活Tabbar
   const purePathname = getPathname(location.pathname)
   let activeTabbarPath = ''
   if (!ispc) {
-    if (purePathname.startsWith('/trade')) {
-      // 移动端存在PC端交易页面的路由，则跳转到移动端交易页面激活Tabbar
-      activeTabbarPath = MOBILE_HOME_PAGE
-    } else if (['/account', '/record', '/setting', '/copy-trading'].some((path) => purePathname.startsWith(path))) {
-      // 移动端存在PC端个人中心页面的路由，则跳转到移动端个人中心页面激活Tabbar
-      activeTabbarPath = '/app/user-center'
-    }
+    if (token) {
+      if (purePathname.startsWith('/trade')) {
+        // 移动端存在PC端交易页面的路由，则跳转到移动端交易页面激活Tabbar
+        activeTabbarPath = MOBILE_HOME_PAGE
+      } else if (['/account', '/record', '/setting', '/copy-trading'].some((path) => purePathname.startsWith(path))) {
+        // 移动端存在PC端个人中心页面的路由，则跳转到移动端个人中心页面激活Tabbar
+        activeTabbarPath = '/app/user-center'
+      }
 
-    // 已经登录过，进入登录页面跳转到首页
-    if (STORAGE_GET_TOKEN() && purePathname.startsWith('/app/login')) {
-      activeTabbarPath = MOBILE_HOME_PAGE
+      // 已经登录过，进入登录页面跳转到首页
+      if (['/app/login', '/user/login'].some((path) => purePathname.startsWith(path))) {
+        activeTabbarPath = MOBILE_HOME_PAGE
+      }
+    } else {
+      if (purePathname.startsWith('/user/login')) {
+        activeTabbarPath = MOBILE_LOGIN_PAGE
+      }
     }
   }
   if (activeTabbarPath) {

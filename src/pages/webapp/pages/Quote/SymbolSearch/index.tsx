@@ -195,7 +195,7 @@ function SymbolSearch() {
   }, 500)
 
   return (
-    <Basiclayout bgColor="primary">
+    <Basiclayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary}>
       <View className={cn('flex-row items-center gap-x-4 px-4 sticky top-0 bg-white z-10')}>
         <View className={cn('flex-1 py-[10px]')}>
           <Search

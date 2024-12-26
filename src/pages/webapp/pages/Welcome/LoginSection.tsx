@@ -14,6 +14,7 @@ import Button from '@/components/Base/Button'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { ADMIN_HOME_PAGE, APP_MODAL_WIDTH } from '@/constants'
 import { push } from '@/utils/navigator'
+import { useModel } from '@umijs/max'
 import { Checkbox } from 'antd-mobile'
 import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 import { TextField } from '../../components/Base/Form/TextField'
@@ -35,6 +36,7 @@ interface Props {
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, startAnimation }: Props, ref) => {
   const { t } = useI18n()
   const { cn, theme } = useTheme()
+  const { fetchUserInfo } = useModel('user')
 
   useLayoutEffect(() => {
     startAnimation?.(24)
@@ -57,11 +59,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
       },
     [isAuthPasswordHidden]
   )
-
-  const fetchUserInfo = async () => {
-    // const userInfo = await stores.user.fetchUserInfo()
-    // return userInfo
-  }
 
   const loadingRef = useRef<any>(null)
 
@@ -86,7 +83,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
         setLocalUserInfo(result as User.UserInfo)
 
         // 重新获取用户信息
-        const currentUser = await fetchUserInfo()
+        const currentUser = await fetchUserInfo(true)
         // @ts-ignore
         const hasAccount = currentUser?.accountList?.length > 0
         // const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
@@ -100,7 +97,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
       } else {
         loadingRef.current?.close()
         // 刷新验证码
-        handleCaptcha()
+        // handleCaptcha()
       }
     } catch (error: any) {
       loadingRef.current?.close()
