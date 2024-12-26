@@ -96,6 +96,11 @@ function WebAppLayout() {
           name="viewport"
           content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
         />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        {/* QQ强制全屏 */}
+        <meta name="fullscreen" content="yes" />
+        {/* UC强制全屏 */}
+        <meta name="x5-fullscreen" content="true" />
       </Helmet>
     </>
   )
