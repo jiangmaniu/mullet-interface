@@ -1,4 +1,3 @@
-import { history } from '@umijs/max'
 import qs from 'qs'
 
 import { MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE } from '@/constants'
@@ -28,8 +27,6 @@ export const navigateTo = (path: string, query?: any) => {
 
 // 跳转首页
 export const goHome = () => navigateTo('/app/quote')
-
-export const goBack = () => history.back()
 
 // 是否是主页面
 export const isMainTabbar = (pathname: string) => MAIN_PAGES.includes(getPathname(pathname))
