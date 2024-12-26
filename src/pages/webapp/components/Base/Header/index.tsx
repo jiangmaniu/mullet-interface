@@ -7,6 +7,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 type IProps = NavBarProps & {
   title?: React.ReactNode
   onBack?: () => void
+  /**是否展示返回箭头 */
   back?: boolean
 }
 
@@ -17,6 +18,9 @@ function Header({ title, onBack, back = true, ...res }: IProps) {
       '.adm-nav-bar-back-arrow': {
         display: 'flex',
         alignItems: 'center'
+      },
+      '.adm-nav-bar-back': {
+        display: back ? 'flex' : 'none'
       }
     }
   })

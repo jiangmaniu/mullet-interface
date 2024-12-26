@@ -82,9 +82,6 @@ function WebAppLayout() {
       document.getSelection()?.empty()
     })
     document.body.addEventListener('beforecopy', (e) => e.preventDefault())
-    document.body.addEventListener('mouseup', () => {
-      document.getSelection()?.empty()
-    })
 
     return () => {
       // 清理触摸事件
@@ -103,9 +100,6 @@ function WebAppLayout() {
         document.getSelection()?.empty()
       })
       document.body.removeEventListener('beforecopy', (e) => e.preventDefault())
-      document.body.removeEventListener('mouseup', () => {
-        document.getSelection()?.empty()
-      })
     }
   }, [])
 

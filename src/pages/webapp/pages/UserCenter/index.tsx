@@ -1,5 +1,5 @@
-import { observer } from 'mobx-react'
-import { useRef } from 'react'
+import { observer, useLocalObservable } from 'mobx-react'
+import { useCallback, useRef } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
@@ -14,9 +14,11 @@ import { SheetRef } from '../../components/Base/SheetModal'
 import Switch from '../../components/Base/Switch'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
+import useFocusEffect from '../../hooks/useFocusEffect'
 import { useI18n } from '../../hooks/useI18n'
 import BasicLayout from '../../layouts/BasicLayout'
 import { navigateTo } from '../../utils/navigator'
+import MessageStore from './Message/MessageStore'
 import Account from './comp/Account'
 import { ModalConfirm } from './comp/ModalConfirm'
 
@@ -124,9 +126,16 @@ function UserCenter() {
   const popupRef = useRef<SheetRef>(null)
   const { t, locale } = useI18n()
   const { cn, theme } = useTheme()
-
+  const messageStore = useLocalObservable(() => MessageStore)
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
+
+  useFocusEffect(
+    useCallback(() => {
+      // 获取未读消息数量
+      MessageStore.getUnreadMessageCount()
+    }, [])
+  )
 
   const renderList = (listData: IlistItemProps[], title?: string, margin = true) => {
     return (
@@ -217,25 +226,29 @@ function UserCenter() {
   }
 
   return (
-    <BasicLayout bgColor="secondary" scrollY style={{ paddingLeft: 14, paddingRight: 14 }}>
+    <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} scrollY>
       <Header
-      // sideMinWidth={130}
-      // left={
-      //   <Text size="xl" weight="medium" color="primary">
-      //     {i18n.t('app.pageTitle.Personal Center')}
-      //   </Text>
-      // }
-      // right={
-      //   <LinkPressable href="Message">
-      //     <View>
-      //       <Icon name="gerenzhongxin-xiaoxi" size={30} />
-      //       {messageStore.unReadCount > 0 && <View style={cn('absolute right-0 top-0 bg-red size-2 rounded-full')} />}
-      //     </View>
-      //   </LinkPressable>
-      // }
+        // sideMinWidth={130}
+        left={
+          <Text size="xl" weight="medium" color="primary">
+            {t('app.pageTitle.Personal Center')}
+          </Text>
+        }
+        back={false}
+        right={
+          <View
+            className="relative"
+            onClick={() => {
+              navigateTo('/app/user-center/message')
+            }}
+          >
+            <Iconfont name="gerenzhongxin-xiaoxi" size={30} />
+            {messageStore.unReadCount > 0 && <View className={cn('absolute right-0 top-0 bg-red size-2 rounded-full')} />}
+          </View>
+        }
       />
 
-      <View style={{ flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: 60 }}>
+      <View style={{ paddingInline: 14, flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: 60 }}>
         <Account />
 
         {!currentUser?.isKycAuth && <Kyc />}
