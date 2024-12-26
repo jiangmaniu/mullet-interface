@@ -242,6 +242,11 @@ export default [
         component: './webapp/pages/User/ForgetPwd',
         access: 'canAdmin' // 权限配置
       },
+      {
+        path: '/:lng/app/reset-success',
+        component: './webapp/pages/Welcome/ResetSuccess',
+        access: 'canAdmin' // 权限配置
+      },
       /* ------------------------------- 行情 ------------------------------- */
       // 行情-k线
       {

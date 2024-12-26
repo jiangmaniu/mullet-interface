@@ -78,14 +78,16 @@ const ListItem: React.FC<IlistItemProps> = ({
           <Text className={cn({ fontSize: 16 })} style={styles?.titleStyle}>
             {title}
           </Text>
-          {!!subTitle && <Text style={{ fontSize: 10, lineHeight: 12, color: theme.colors.textColor.weak }}>{subTitle}</Text>}
+          {!!subTitle && <Text style={{ fontSize: '10px', lineHeight: '12px', color: theme.colors.textColor.weak }}>{subTitle}</Text>}
         </View>
         {isValidElement(renderExtraElement?.()) ? (
           renderExtraElement?.()
         ) : (
           <View style={{ flexDirection: 'row', alignItems: 'center', ...styles?.subTextStyle }}>
             {!!subText && (
-              <Text style={{ fontSize: 14, color: theme.colors.textColor.weak, marginRight: 11, ...styles?.subTextStyle }}>{subText}</Text>
+              <Text style={{ fontSize: '14px', color: theme.colors.textColor.weak, marginRight: 11, ...styles?.subTextStyle }}>
+                {subText}
+              </Text>
             )}
             <Iconfont name="quancangxiala" size={16} color={theme.colors.textColor.secondary} />
           </View>

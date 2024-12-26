@@ -1,32 +1,34 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { md5 } from 'js-md5'
 import type { ForwardRefRenderFunction } from 'react'
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import Icon from '@/components/Base/Iconfont'
+import Button from '@/components/Base/Button'
 import { useTheme } from '@/context/themeProvider'
-import { getCaptcha, login } from '@/services/api/user'
+
+import Icon from '@/components/Base/Iconfont'
 import {
+  setLocalUserInfo,
   STORAGE_GET_ACCOUNT_PASSWORD,
   STORAGE_REMOVE_ACCOUNT_PASSWORD,
-  STORAGE_SET_ACCOUNT_PASSWORD,
-  setLocalUserInfo
+  STORAGE_SET_ACCOUNT_PASSWORD
 } from '@/utils/storage'
+import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 
-import Button from '@/components/Base/Button'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
+import { login } from '@/services/api/user'
 import { useModel } from '@umijs/max'
-import { Checkbox } from 'antd-mobile'
-import type { TypeSection, WELCOME_STEP_TYPES } from '.'
+import { Checkbox } from 'antd'
 import { TextField } from '../../components/Base/Form/TextField'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
 import { useI18n } from '../../hooks/useI18n'
-
 interface FormData {
+  tenanId: string
+  tenanName: string
   username: string
   password: string
   remember: boolean
@@ -34,10 +36,17 @@ interface FormData {
 
 interface Props {
   setSection: (section: WELCOME_STEP_TYPES) => void
+  tenanId?: string
+  setTenanId: (tenanId: string) => void
+  tenanName?: string
+  setTenanName: (tenanName: string) => void
   startAnimation?: (toValue: number) => void
 }
 
-const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, startAnimation }: Props, ref) => {
+const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
+  { setSection, tenanId: tenanIdProps, setTenanId, tenanName: tenanNameProps, setTenanName, startAnimation }: Props,
+  ref
+) => {
   const { t } = useI18n()
   const { cn, theme } = useTheme()
   const user = useModel('user')
@@ -46,7 +55,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
     startAnimation?.(24)
   }, [])
 
-  const authPasswordInput = useRef(null)
+  const authPasswordInput = useRef<any>(null)
 
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState('password')
   const PasswordRightAccessory = useMemo(
@@ -64,12 +73,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
     [isAuthPasswordHidden]
   )
 
-  const fetchUserInfo = async () => {
-    // const userInfo = await stores.user.fetchUserInfo()
-    // return userInfo
-  }
-
-  const loadingRef = useRef<ModalLoadingRef | null>(null)
+  const loadingRef = useRef<ModalLoadingRef>(null)
 
   // 登录
   const onSubmit = async (values: User.LoginParams) => {
@@ -88,54 +92,46 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
       })
 
       if (result?.success) {
+        // message.info(t('msg.success.Login'))
         // 缓存用户信息
-        setLocalUserInfo(result as User.UserInfo)
-
-        // 重新获取用户信息
-        const currentUser = await fetchUserInfo()
-        // @ts-ignore
-        const hasAccount = currentUser?.accountList?.length > 0
-        // const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
-        // const jumpPath = ADMIN_HOME_PAGE // 直接跳转到个人中心
-
+        await setLocalUserInfo(result as User.UserInfo)
         // 重新获取用户信息
         await user.handleLoginSuccess(result as User.UserInfo)
 
-        loadingRef.current?.close()
-
-        return
+        await new Promise((resolve) => setTimeout(resolve, 2000))
       } else {
-        loadingRef.current?.close()
-        // 刷新验证码
-        handleCaptcha()
+        // console.log('result', result)
+        // // 刷新验证码
+        // handleCaptcha()
+        // setLoading(false)
       }
     } catch (error: any) {
+    } finally {
       loadingRef.current?.close()
     }
   }
 
-  const [captchaInfo, setCaptchaInfo] = useState({} as User.Captcha)
-  const handleCaptcha = async () => {
-    const res = await getCaptcha()
-    setCaptchaInfo(res)
-  }
-
   /** 拦截系统返回操作 */
-  // const goback = () => {
-  //   // confirm(t('msg.confirm.Cancel login?'), t('msg.title.Cancel login'), () => {
-  //   //   setSection('server')
-  //   // })
-  //   setSection('server')
-  //   return true
-  // }
+  const goback = () => {
+    // confirm(t('msg.confirm.Cancel login?'), t('msg.title.Cancel login'), () => {
+    //   setSection('server')
+    // })
+    // setSection('server')
+
+    return true
+  }
   // 将属性暴露给父元素
-  // useImperativeHandle(ref, () => ({ goback }))
+  useImperativeHandle(ref, () => ({ goback }))
 
   // 拦截平台/系统返回操作
   // useGoBackHandler(goback, [])
 
   /** 表单控制 */
   const schema = z.object({
+    // tenanId: z.string().min(1, { message: t('pages.login.Server placeholder') }),
+    // 非必需
+    // tenanId: z.string().optional(),
+    // tenanName: z.string().min(1, { message: t('pages.login.Server placeholder') }),
     // username: z.string().email({ message: t('pages.login.Customer NO placeholder') }),
     username: z.string().min(1, { message: t('LoginSection.Customer NO Tips') }),
     password: z
@@ -156,6 +152,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: async () => ({
+      tenanId: tenanIdProps || (await STORAGE_GET_ACCOUNT_PASSWORD('tenanId')),
+      tenanName: tenanNameProps || (await STORAGE_GET_ACCOUNT_PASSWORD('tenanName')),
       username: (await STORAGE_GET_ACCOUNT_PASSWORD('username')) || '',
       password: (await STORAGE_GET_ACCOUNT_PASSWORD('password')) || '',
       remember: (await STORAGE_GET_ACCOUNT_PASSWORD('remember')) || false
@@ -163,6 +161,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  const tenanId = watch('tenanId')
+  const tenanName = watch('tenanName')
   const username = watch('username')
   const password = watch('password')
   const remember = watch('remember')
@@ -170,21 +171,31 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
   const prevRemember = useRef<boolean | undefined>(undefined)
 
   useEffect(() => {
+    /** 更新服务器选项 */
+    if (tenanNameProps) setValue('tenanName', tenanNameProps)
+    if (tenanIdProps) setValue('tenanId', tenanIdProps)
+  }, [tenanNameProps, tenanIdProps])
+
+  useEffect(() => {
     /** 如果 remember 为 true，则账号密码变更时，将账号密码存储到本地 */
     if (remember) {
       STORAGE_SET_ACCOUNT_PASSWORD({
+        tenanId,
+        tenanName,
         username,
         password,
         remember
       })
     }
-  }, [username, password])
+  }, [tenanId, tenanName, username, password])
 
   useEffect(() => {
     const _prevRemembr = prevRemember.current
 
     if (remember) {
       STORAGE_SET_ACCOUNT_PASSWORD({
+        tenanId,
+        tenanName,
         username,
         password,
         remember
@@ -200,8 +211,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
 
   return (
     <View className={cn('flex-1 flex flex-col justify-between mb-1')}>
-      <View className={cn('flex flex-col gap-6 mb-5')}>
-        <View>
+      <View>
+        <View className={cn('flex flex-col gap-5 mb-5')}>
           <TextField
             value={username}
             onChange={(val) => {
@@ -212,14 +223,13 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
             label={t('pages.login.Customer NO')}
             placeholder={t('LoginSection.Customer NO placeholder')}
             height={50}
-            // LeftAccessory={() => <Icon icon="input-email" size={20} containerStyle={{ marginLeft: spacing.small }} />}
             autoCapitalize="none"
             autoComplete="email"
+            // autoCorrect={false}
+            // keyboardType="email-address"
             // onSubmitEditing={() => authPasswordInput.current?.focus()}
           />
           {errors.username && <Text color="red">{errors.username.message}</Text>}
-        </View>
-        <View>
           <TextField
             ref={authPasswordInput}
             value={password}
@@ -235,55 +245,60 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = ({ setSection, st
             // LeftAccessory={() => <Icon icon="input-password" size={20} containerStyle={{ marginLeft: spacing.small }} />}
             autoCapitalize="none"
             autoComplete="password"
+            // autoCorrect={false}
+            // secureTextEntry={isAuthPasswordHidden}
+            // label="Password"
+            // helper={errors?.userPassword}
+            // status={errors?.userPassword ? "error" : undefined}
+            // onSubmitEditing={() => {
+            //   // todo
+            // }}
             type={isAuthPasswordHidden}
             RightAccessory={PasswordRightAccessory}
           />
           {errors.password && <Text color="red">{errors.password.message}</Text>}
+          <Checkbox
+            checked={remember}
+            onChange={(event) => {
+              setValue('remember', event.target.checked)
+            }}
+          >
+            <Text className={cn('-left-[15px]')}>{t('pages.login.Remember me')}</Text>
+          </Checkbox>
         </View>
-        <Checkbox
-          checked={remember}
-          onChange={(event) => {
-            // setValue('remember', event.target.checked)
-            setValue('remember', event)
-          }}
-        >
-          <Text className={cn('-left-[15px]')}>{t('pages.login.Remember me')}</Text>
-        </Checkbox>
-      </View>
-      <View className={cn('flex flex-col gap-[18px]')}>
-        <Button
-          type="primary"
-          loading={false}
-          height={48}
-          // containerStyle={cn('mt-4')}
-          onPress={handleSubmit(onSubmit)}
-          disabled={!!errors.username || !!errors.password}
-        >
-          {t('common.operate.Login')}
-        </Button>
-        <View className="text-center" onClick={() => setSection('forgotPassword')}>
-          <Text className={cn('text-sm text-weak self-center')}>{t('pages.login.Forgot password')}</Text>
+        <View className={cn('flex flex-col gap-[15px] text-center')}>
+          <Button
+            type="primary"
+            loading={false}
+            height={48}
+            className={cn('mt-4')}
+            onPress={handleSubmit(onSubmit)}
+            disabled={!!errors.username || !!errors.password}
+          >
+            {t('common.operate.Login')}
+          </Button>
+          <View onPress={() => setSection('forgotPassword')}>
+            <Text className={cn('text-sm text-weak self-center')}>{t('pages.login.Forgot password')}</Text>
+          </View>
+          <View className={cn('flex flex-col justify-center items-center gap-2.5 mt-4')}>
+            <Button
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 46,
+                alignSelf: 'center',
+                backgroundColor: theme.colors.backgroundColor.primary
+              }}
+              onPress={() => {
+                setSection('register')
+              }}
+            >
+              <Icon name="xinjianzhanghu" size={30} />
+            </Button>
+            <Text>{t('pages.login.Register new account')}</Text>
+          </View>
         </View>
       </View>
-
-      <View className={cn('flex flex-col justify-center items-center gap-2.5 mt-20')}>
-        <Button
-          style={{
-            width: 46,
-            height: 46,
-            borderRadius: 46,
-            alignSelf: 'center',
-            backgroundColor: theme.colors.backgroundColor.primary
-          }}
-          onPress={() => {
-            setSection('register')
-          }}
-        >
-          <Icon name="xinjianzhanghu" size={30} />
-        </Button>
-        <Text>{t('pages.login.Register new account')}</Text>
-      </View>
-
       <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={t('pages.login.Logining')} />
     </View>
   )

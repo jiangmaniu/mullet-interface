@@ -146,7 +146,9 @@ function UserCenter() {
               styles={{
                 container: { borderRadius: 12, marginBottom: 12, height: 62 },
                 titleStyle: {
-                  fontSize: 15,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  fontSize: '15px',
                   maxWidth: 250
                 },
                 subTextStyle: {

@@ -61,10 +61,12 @@ const StepBox = (props: IProps) => {
   return (
     <View
       style={{
+        display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: '0 48px',
-        marginTop: 16
+        width: 260,
+        margin: '16px auto 0'
       }}
     >
       {stepData.map((item, idx: number) => {

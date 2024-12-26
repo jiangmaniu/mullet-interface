@@ -182,7 +182,7 @@ function BindPhone() {
         // }
       />
       <View
-        className={cn('mt-6 px-2')}
+        className={cn('mt-6 px-2 flex-col flex')}
         style={{
           height: screenSize.height
         }}
@@ -236,13 +236,20 @@ function BindPhone() {
         </View>
         <CountDown phone={phone} onSendCode={onSendCode} />
         {!!errors.code && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.code.message}</Text>}
-
-        <View className={cn('absolute bottom-50 left-0 right-0 flex flex-col gap-5')}>
-          <Button type="primary" loading={false} height={48} onPress={handleSubmit(onSubmit)} disabled={disabled}>
-            {t('common.operate.Continue')}
-          </Button>
-        </View>
       </View>
+
+      <Button
+        style={{
+          marginBottom: 10
+        }}
+        type="primary"
+        loading={false}
+        height={48}
+        onPress={handleSubmit(onSubmit)}
+        disabled={disabled}
+      >
+        {t('common.operate.Continue')}
+      </Button>
 
       <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} list={countryList} />
       <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={loadingTips} />

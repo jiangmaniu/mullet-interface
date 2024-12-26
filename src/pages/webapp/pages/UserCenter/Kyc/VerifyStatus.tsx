@@ -45,7 +45,7 @@ export default function VerifyStatus() {
           height: screenSize.height
         }}
       >
-        <View className={cn('flex items-center justify-center flex-col gap-2.5 w-[300px] -mt-20')}>
+        <View className={cn('flex items-center justify-center flex-col gap-2.5 w-[300px] ')}>
           <View className={cn('bg-yellow-500 w-[120px] h-[120px] flex items-center justify-center rounded-[30px]')}>
             <Iconfont name="gaizhang" size={100} color={theme.colors.textColor.reverse} />
           </View>

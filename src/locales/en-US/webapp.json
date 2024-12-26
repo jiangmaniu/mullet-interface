@@ -296,7 +296,8 @@
       "Email or Phone is required": "Email or Phone cannot be empty",
       "Verification code is required": "Verification code cannot be empty",
       "Verification code is not number": "Verification code must be a number",
-      "Register success": "Register Success"
+      "Register success": "Register Success",
+      "Registering": "Registering"
     },
     "============== Login Related End ==============": "",
 

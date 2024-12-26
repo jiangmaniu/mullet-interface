@@ -99,7 +99,7 @@ function SelectCountryModal({ isSimulate, list, onPress, isRemainAtCurrentPage }
     <SheetModal
       ref={bottomSheetModalRef}
       // useKeyboardShift={false}
-      height="100%"
+      height={500}
       hiddenFooter
       dragOnContent={false}
       children={

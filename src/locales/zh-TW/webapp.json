@@ -300,7 +300,8 @@
       "Verification code is required": "驗證碼不能為空",
       "Verification code is not number": "驗證碼必須是數字",
       "To Login": "立即登錄",
-      "Register success": "註冊成功"
+      "Register success": "註冊成功",
+      "Registering": "註冊中"
     },
     "============== 登录相关 结束 ==============": "",
 

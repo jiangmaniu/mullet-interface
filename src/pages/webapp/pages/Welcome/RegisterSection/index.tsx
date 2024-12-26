@@ -1,9 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { ForwardRefRenderFunction } from 'react'
-import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import Button from '@/components/Base/Button'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 
@@ -11,20 +12,18 @@ import Icon from '@/components/Base/Iconfont'
 import { STORAGE_GET_ACCOUNT_PASSWORD, STORAGE_SET_ACCOUNT_PASSWORD } from '@/utils/storage'
 import type { TypeSection, WELCOME_STEP_TYPES } from '..'
 
-import { ModalLoading } from '@/components/Base/Lottie/Loading'
+import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
-import { View } from '@/pages/webapp/components/Base/View'
-import PasswordTips from './PasswordTips'
-import { PrivacyPolicyService } from './PrivacyPolicyService'
-// import type { ModalRef } from './SelectCountryModal'
-// import SelectCountryModal from './SelectCountryModal'
-
-import Iconfont from '@/components/Base/Iconfont'
-import Button from '@/pages/webapp/components/Base/Button'
 import { Text } from '@/pages/webapp/components/Base/Text'
+import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
+import { useModel } from '@umijs/max'
+import PasswordTips from './PasswordTips'
+import { PrivacyPolicyService } from './PrivacyPolicyService'
+import type { ModalRef } from './SelectCountryModal'
+import SelectCountryModal from './SelectCountryModal'
 
 export interface FormData {
   email?: string
@@ -62,29 +61,36 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const { t, locale } = useI18n()
   const { cn, theme } = useTheme()
 
+  const user = useModel('user')
+
   useLayoutEffect(() => {
     startAnimation?.(24)
   }, [])
 
-  const authPasswordInput = useRef(null)
+  const authPasswordInput = useRef<any>(null)
 
-  const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState(true)
+  const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState('password')
   const PasswordRightAccessory = useMemo(
     () =>
       function PasswordRightAccessory(props: any) {
         return (
-          <Iconfont
-            name={isAuthPasswordHidden ? 'biyan' : 'chakanmima'}
+          <Icon
+            name={isAuthPasswordHidden === 'password' ? 'biyan' : 'chakanmima'}
             size={32}
             {...props}
-            onClick={() => setIsAuthPasswordHidden(!isAuthPasswordHidden)}
+            onClick={() => setIsAuthPasswordHidden(isAuthPasswordHidden === 'text' ? 'password' : 'text')}
           />
         )
       },
     [isAuthPasswordHidden]
   )
 
-  const loadingRef = useRef<any>(null)
+  const fetchUserInfo = async () => {
+    const userInfo = await user.fetchUserInfo()
+    return userInfo
+  }
+
+  const loadingRef = useRef<ModalLoadingRef>(null)
 
   // 登录
   const onSubmit = async (values: FormData) => {
@@ -108,26 +114,21 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       }
     } catch (error: any) {
     } finally {
+      // Portal.remove(loging)
       loadingRef.current?.close()
     }
   }
 
   /** 拦截系统返回操作 */
-  const goback = (event: any) => {
-    event.preventDefault() // 阻止返回操作
-
+  const goback = () => {
     setSection('login')
+    return true
   }
+  // 将属性暴露给父元素
+  useImperativeHandle(ref, () => ({ goback }))
 
-  // 在组件的生命周期或者在合适的地方添加监听器
-  useEffect(() => {
-    // 拦截平台/系统返回操作
-    window.addEventListener('popstate', goback)
-    // 清理副作用
-    return () => {
-      window.removeEventListener('popstate', goback)
-    }
-  }, [])
+  // 拦截平台/系统返回操作
+  // useGoBackHandler(goback, [])
 
   const registerWay = stores.global.registerWay
 
@@ -199,8 +200,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     if (phoneProps) setValue('phone', phoneProps)
   }, [areaCodeItemProps, emailProps, phoneProps])
 
-  // const selectCountryModalRef = useRef<ModalRef>(null)
-  const selectCountryModalRef = useRef<any>(null)
+  const selectCountryModalRef = useRef<ModalRef>(null)
   const handleSelectCountry = (item?: Common.AreaCodeItem) => {
     if (item) {
       setValue('areaCodeItem', item)
@@ -211,104 +211,103 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   }
 
   return (
-    <View style={cn('flex-1 flex flex-col justify-between ')}>
-      <View>
-        <View style={cn('flex flex-col gap-5 mb-5')}>
+    <View className={cn('flex-1 flex flex-col justify-between ')}>
+      <View className={cn('flex flex-col gap-5 mb-5')}>
+        <TextField
+          value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
+          label={t('pages.login.Residence Country')}
+          height={50}
+          autoCapitalize="none"
+          // autoCorrect={false}
+          // keyboardType="email-address"
+          onClick={() => {
+            selectCountryModalRef.current?.show()
+          }}
+          // onSubmitEditing={() => authPasswordInput.current?.focus()}
+          RightAccessory={() => <Icon name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} />}
+        />
+        {errors.areaCodeItem && <Text color="red">{errors.areaCodeItem.message}</Text>}
+        {registerWay === 'EMAIL' && (
           <TextField
-            value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
-            label={t('pages.login.Residence Country')}
+            value={email}
+            onChange={(val) => {
+              setValue('email', val?.trim())
+              setEmail?.(val?.trim())
+            }}
+            onEndEditing={(val) => {
+              trigger('email')
+            }}
+            label={t('pages.login.Email Address')}
+            placeholder={t('pages.login.Email placeholder')}
             height={50}
             autoCapitalize="none"
-            onClick={() => {
-              selectCountryModalRef.current?.show()
-            }}
+            autoComplete="email"
+            // autoCorrect={false}
+            // keyboardType="email-address"
             // onSubmitEditing={() => authPasswordInput.current?.focus()}
-            RightAccessory={() => <Icon name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} />}
           />
-          {errors.areaCodeItem && <Text color="red">{errors.areaCodeItem.message}</Text>}
-          {registerWay === 'EMAIL' && (
-            <TextField
-              value={email}
-              onChange={(val: string) => {
-                setValue('email', val?.trim())
-                setEmail?.(val?.trim())
-              }}
-              onEndEditing={(val) => {
-                trigger('email')
-              }}
-              label={t('pages.login.Email Address')}
-              placeholder={t('pages.login.Email placeholder')}
-              height={50}
-              autoCapitalize="none"
-              autoComplete="email"
-              // autoCorrect={false}
-              // keyboardType="email-address"
-              // onSubmitEditing={() => authPasswordInput.current?.focus()}
-            />
-          )}
-          {errors.email && <Text color="red">{errors.email.message}</Text>}
-          {registerWay === 'PHONE' && (
-            <TextField
-              value={phone}
-              onChange={(val) => {
-                setValue('phone', val?.trim())
-                setPhone?.(val?.trim())
-              }}
-              onEndEditing={(val) => {
-                trigger('phone')
-              }}
-              label={t('pages.login.Phone')}
-              placeholder={t('pages.login.Phone placeholder')}
-              height={50}
-              autoCapitalize="none"
-              // autoCorrect={false}
-              // keyboardType="phone-pad"
-              // onSubmitEditing={() => authPasswordInput.current?.focus()}
-            />
-          )}
-          {errors.phone && <Text color="red">{errors.phone.message}</Text>}
-          <View>
-            <TextField
-              ref={authPasswordInput}
-              value={password}
-              onChange={(val) => {
-                setValue('password', val?.trim())
-              }}
-              onEndEditing={(val) => {
-                trigger('password')
-              }}
-              label={t('pages.login.Password')}
-              placeholder={t('pages.login.Password placeholder')}
-              height={50}
-              autoCapitalize="none"
-              autoComplete="password"
-              // autoCorrect={false}
-              // secureTextEntry={isAuthPasswordHidden}
-              // onSubmitEditing={() => {}}
-              RightAccessory={PasswordRightAccessory}
-            />
-            <PasswordTips
-              pwd={password}
-              setDisabledCallBack={(flag: boolean) => {
-                setDisabled(flag)
-              }}
-            />
-          </View>
-        </View>
-        <Button
-          type="primary"
-          loading={false}
-          height={48}
-          className={cn('mt-4')}
-          onClick={handleSubmit(onSubmit)}
-          disabled={!!errors.email || !!errors.password || !!errors.areaCodeItem || disabled}
-        >
-          {t('pages.login.Continue')}
-        </Button>
-        <PrivacyPolicyService />
-      </View>
+        )}
+        {errors.email && <Text color="red">{errors.email.message}</Text>}
+        {registerWay === 'PHONE' && (
+          <TextField
+            value={phone}
+            onChange={(val) => {
+              setValue('phone', val?.trim())
+              setPhone?.(val?.trim())
+            }}
+            onEndEditing={(val) => {
+              trigger('phone')
+            }}
+            label={t('pages.login.Phone')}
+            placeholder={t('pages.login.Phone placeholder')}
+            height={50}
+            autoCapitalize="none"
+            // autoCorrect={false}
+            // keyboardType="phone-pad"
+            // onSubmitEditing={() => authPasswordInput.current?.focus()}
+          />
+        )}
+        {errors.phone && <Text color="red">{errors.phone.message}</Text>}
 
-      {/* <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} /> */}
+        <TextField
+          ref={authPasswordInput}
+          value={password}
+          onChange={(val) => {
+            setValue('password', val?.trim())
+          }}
+          onEndEditing={(val) => {
+            trigger('password')
+          }}
+          label={t('pages.login.Password')}
+          placeholder={t('pages.login.Password placeholder')}
+          height={50}
+          autoCapitalize="none"
+          autoComplete="password"
+          // autoCorrect={false}
+          type={isAuthPasswordHidden}
+          // onSubmitEditing={() => {}}
+          RightAccessory={PasswordRightAccessory}
+        />
+        <PasswordTips
+          pwd={password}
+          setDisabledCallBack={(flag: boolean) => {
+            setDisabled(flag)
+          }}
+        />
+      </View>
+      <Button
+        type="primary"
+        loading={false}
+        height={48}
+        className={cn('mt-4')}
+        onPress={handleSubmit(onSubmit)}
+        disabled={!!errors.email || !!errors.password || !!errors.areaCodeItem || disabled}
+      >
+        {t('pages.login.Continue')}
+      </Button>
+      <PrivacyPolicyService />
+
+      <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} />
       <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={t('pages.login.Sending')} />
     </View>
   )

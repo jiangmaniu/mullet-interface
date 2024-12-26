@@ -122,116 +122,114 @@ export default function VerifyMsg() {
     <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
       <Header title={i18n.t('pages.userCenter.shenfenrenzheng')} />
       <StepBox step={step} />
-      <View className={cn('mt-5 px-2')}>
+      <View className={cn('mt-5 px-2 flex-1')}>
         <View
           className={cn('flex flex-col gap-6')}
           style={{
             maxHeight: screenSize.height
           }}
         >
-          <View>
-            <Text className={cn('text-xl font-bold text-primary')}>{i18n.t('pages.userCenter.shenfenrenzheng')}</Text>
-            <Text className={cn('text-xs text-weak')}>{i18n.t('pages.userCenter.qingquebaozixunzuixinyouxiao')}</Text>
-            <View className={cn('flex flex-col mt-3 gap-[11px]')}>
-              <TextField
-                value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
-                onFocus={() => {
-                  selectCountryModalRef.current?.show()
-                }}
-                // onPressIn={() => {
-                //   selectCountryModalRef.current?.show()
-                // }}
-                label={`1.${t('pages.userCenter.xuanzeguojia')}`}
-                placeholder={t('pages.userCenter.qingxuanzeguojia')}
-                height={50}
-                containerClassName={'mt-4'}
-                className={'leading-[18px]'}
-                autoCapitalize="none"
-                autoComplete="password"
-                // autoCorrect={false}
-                // onSubmitEditing={() => lastNameInput.current?.focus()}
-                LeftAccessory={() => <Iconfont name="earth" size={18} color={theme.colors.textColor.weak} style={{ marginLeft: 16 }} />}
-                RightAccessory={() => <Iconfont name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} />}
-              />
-              {errors.country && <Text color="red">{errors.country.message}</Text>}
-              <TextField
-                value={lastName}
-                ref={lastNameInput}
-                onChange={(val) => {
-                  setValue('lastName', val?.trim())
-                  trigger('lastName')
-                }}
-                label={t('pages.userCenter.xing')}
-                placeholder={t('pages.userCenter.qingshuruxingshi')}
-                height={50}
-                autoCapitalize="none"
-                autoComplete="email"
-                // autoCorrect={false}
-                // keyboardType="email-address"
-                // onSubmitEditing={() => firstNameInput.current?.focus()}
-              />
-              {errors.lastName && <Text color="red">{errors.lastName.message}</Text>}
-              <TextField
-                value={firstName}
-                ref={firstNameInput}
-                onChange={(val) => {
-                  setValue('firstName', val?.trim())
-                  trigger('firstName')
-                }}
-                label={t('pages.userCenter.ming')}
-                placeholder={t('pages.userCenter.qingshurumingzi')}
-                height={50}
-                autoCapitalize="none"
-                autoComplete="email"
-                // autoCorrect={false}
-                // keyboardType="email-address"
-                // onSubmitEditing={() => identificationCodeInput.current?.focus()}
-              />
-              {errors.firstName && <Text color="red">{errors.firstName.message}</Text>}
-              <Text className={cn('mb-1')}>{t('pages.userCenter.xuanzezhengjianleixing')}</Text>
-              <Radio.Group
-                onChange={(e) => {
-                  // @ts-ignore
-                  handleSelectCodeType(e.target.value)
-                }}
-                value={identificationType}
-                style={{
-                  flexDirection: 'column',
-                  justifyContent: 'space-around',
-                  gap: 8
-                }}
-              >
-                <Radio value="ID_CARD">
-                  <Text className={cn('text-sm text-primary')}>{t('pages.userCenter.shenfenzheng')}</Text>
-                </Radio>
-                <Radio value="PASSPORT">
-                  <Text className={cn('text-sm text-primary')}>{t('pages.userCenter.hukoubenjuzhuzheng')}</Text>
-                </Radio>
-              </Radio.Group>
-              <TextField
-                value={identificationCode}
-                ref={identificationCodeInput}
-                onChange={(val) => {
-                  setValue('identificationCode', val?.trim())
-                  trigger('identificationCode')
-                }}
-                label={t('pages.userCenter.zhengjianhao')}
-                placeholder={t('pages.userCenter.qingshuruzhengjianhaoma')}
-                height={50}
-                autoCapitalize="none"
-                autoComplete="email"
-                // autoCorrect={false}
-                // keyboardType="email-address"
-                // onSubmitEditing={() => {}}
-              />
-              {errors.identificationCode && <Text color="red">{errors.identificationCode.message}</Text>}
-            </View>
+          <Text className={cn('text-xl font-bold text-primary')}>{i18n.t('pages.userCenter.shenfenrenzheng')}</Text>
+          <Text className={cn('text-xs text-weak')}>{i18n.t('pages.userCenter.qingquebaozixunzuixinyouxiao')}</Text>
+          <View className={cn('flex flex-col mt-3 gap-[11px]')}>
+            <TextField
+              value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
+              onFocus={() => {
+                selectCountryModalRef.current?.show()
+              }}
+              // onPressIn={() => {
+              //   selectCountryModalRef.current?.show()
+              // }}
+              label={`1.${t('pages.userCenter.xuanzeguojia')}`}
+              placeholder={t('pages.userCenter.qingxuanzeguojia')}
+              height={50}
+              containerClassName={'mt-4'}
+              className={'leading-[18px]'}
+              autoCapitalize="none"
+              autoComplete="password"
+              // autoCorrect={false}
+              // onSubmitEditing={() => lastNameInput.current?.focus()}
+              LeftAccessory={() => <Iconfont name="earth" size={18} color={theme.colors.textColor.weak} style={{ marginLeft: 16 }} />}
+              RightAccessory={() => <Iconfont name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} />}
+            />
+            {errors.country && <Text color="red">{errors.country.message}</Text>}
+            <TextField
+              value={lastName}
+              ref={lastNameInput}
+              onChange={(val) => {
+                setValue('lastName', val?.trim())
+                trigger('lastName')
+              }}
+              label={t('pages.userCenter.xing')}
+              placeholder={t('pages.userCenter.qingshuruxingshi')}
+              height={50}
+              autoCapitalize="none"
+              autoComplete="email"
+              // autoCorrect={false}
+              // keyboardType="email-address"
+              // onSubmitEditing={() => firstNameInput.current?.focus()}
+            />
+            {errors.lastName && <Text color="red">{errors.lastName.message}</Text>}
+            <TextField
+              value={firstName}
+              ref={firstNameInput}
+              onChange={(val) => {
+                setValue('firstName', val?.trim())
+                trigger('firstName')
+              }}
+              label={t('pages.userCenter.ming')}
+              placeholder={t('pages.userCenter.qingshurumingzi')}
+              height={50}
+              autoCapitalize="none"
+              autoComplete="email"
+              // autoCorrect={false}
+              // keyboardType="email-address"
+              // onSubmitEditing={() => identificationCodeInput.current?.focus()}
+            />
+            {errors.firstName && <Text color="red">{errors.firstName.message}</Text>}
+            <Text className={cn('mb-1')}>{t('pages.userCenter.xuanzezhengjianleixing')}</Text>
+            <Radio.Group
+              onChange={(e) => {
+                // @ts-ignore
+                handleSelectCodeType(e.target.value)
+              }}
+              value={identificationType}
+              style={{
+                flexDirection: 'column',
+                justifyContent: 'space-around',
+                gap: 8
+              }}
+            >
+              <Radio value="ID_CARD">
+                <Text className={cn('text-sm text-primary')}>{t('pages.userCenter.shenfenzheng')}</Text>
+              </Radio>
+              <Radio value="PASSPORT">
+                <Text className={cn('text-sm text-primary')}>{t('pages.userCenter.hukoubenjuzhuzheng')}</Text>
+              </Radio>
+            </Radio.Group>
+            <TextField
+              value={identificationCode}
+              ref={identificationCodeInput}
+              onChange={(val) => {
+                setValue('identificationCode', val?.trim())
+                trigger('identificationCode')
+              }}
+              label={t('pages.userCenter.zhengjianhao')}
+              placeholder={t('pages.userCenter.qingshuruzhengjianhaoma')}
+              height={50}
+              autoCapitalize="none"
+              autoComplete="email"
+              // autoCorrect={false}
+              // keyboardType="email-address"
+              // onSubmitEditing={() => {}}
+            />
+            {errors.identificationCode && <Text color="red">{errors.identificationCode.message}</Text>}
           </View>
-          <Button type="primary" loading={false} height={48} onPress={handleSubmit(onSubmit)} disabled={disabled}>
-            {t('common.operate.Continue')}
-          </Button>
         </View>
       </View>
+      <Button type="primary" className="mb-2.5" loading={false} height={48} onPress={handleSubmit(onSubmit)} disabled={disabled}>
+        {t('common.operate.Continue')}
+      </Button>
       <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} list={countryList} />
     </BasicLayout>
   )

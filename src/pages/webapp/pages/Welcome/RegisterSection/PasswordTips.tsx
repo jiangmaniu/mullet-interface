@@ -5,20 +5,6 @@ import { useTheme } from '@/context/themeProvider'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { mergeCss } from '@/pages/webapp/utils'
-
-const styles = {
-  tipsItem: {
-    flex: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 10
-  },
-  tipsItemText: {
-    lineHeight: 16,
-    fontSize: 12
-  }
-}
 
 const PasswordTips = (props: any) => {
   const { pwd } = props
@@ -46,35 +32,67 @@ const PasswordTips = (props: any) => {
     <View style={{ paddingLeft: 6, marginTop: 11 }}>
       <Text>{i18n.t('pages.login.yourPasswordMustContain')}</Text>
       <View style={{ marginTop: 14 }}>
-        <View style={styles.tipsItem}>
-          <View style={cn(' w-4 h-4 rounded-full  flex items-center justify-center', flag1 ? 'bg-green' : 'bg-gray-200')}>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            marginBottom: 10
+          }}
+        >
+          <View className={cn(' w-4 h-4 rounded-full  flex items-center justify-center', flag1 ? 'bg-green' : 'bg-gray-200')}>
             <Iconfont name="danchuang-xuanzhong" size={14} color={flag1 ? theme.colors.textColor.reverse : theme.colors.textColor.weak} />
           </View>
-          <Text style={mergeCss(styles.tipsItemText, { color: flag1 ? theme.colors.textColor.primary : theme.colors.textColor.weak })}>
+          <Text style={{ color: flag1 ? theme.colors.textColor.primary : theme.colors.textColor.weak, ...styles.tipsItemText }}>
             {i18n.t('pages.login.ContainsAtLeastOneNumber')}
           </Text>
         </View>
-        <View style={styles.tipsItem}>
-          <View style={cn(' w-4 h-4 rounded-full  flex items-center justify-center', flag2 ? 'bg-green' : 'bg-gray-200')}>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            marginBottom: 10
+          }}
+        >
+          <View className={cn(' w-4 h-4 rounded-full  flex items-center justify-center', flag2 ? 'bg-green' : 'bg-gray-200')}>
             <Iconfont name="danchuang-xuanzhong" size={14} color={flag2 ? theme.colors.textColor.reverse : theme.colors.textColor.weak} />
           </View>
-          <Text style={mergeCss(styles.tipsItemText, { color: flag2 ? theme.colors.textColor.primary : theme.colors.textColor.weak })}>
+          <Text style={{ color: flag2 ? theme.colors.textColor.primary : theme.colors.textColor.weak, ...styles.tipsItemText }}>
             {i18n.t('pages.login.passwordLengthIs')}
           </Text>
         </View>
-        <View style={styles.tipsItem}>
-          <View style={cn(' w-4 h-4 rounded-full  flex items-center justify-center', flag3 ? 'bg-green' : 'bg-gray-200')}>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            marginBottom: 10
+          }}
+        >
+          <View className={cn(' w-4 h-4 rounded-full  flex items-center justify-center', flag3 ? 'bg-green' : 'bg-gray-200')}>
             <Iconfont name="danchuang-xuanzhong" size={14} color={flag3 ? theme.colors.textColor.reverse : theme.colors.textColor.weak} />
           </View>
-          <Text style={mergeCss(styles.tipsItemText, { color: flag3 ? theme.colors.textColor.primary : theme.colors.textColor.weak })}>
+          <Text style={{ color: flag3 ? theme.colors.textColor.primary : theme.colors.textColor.weak, ...styles.tipsItemText }}>
             {i18n.t('pages.login.containsUppercase')}
           </Text>
         </View>
-        <View style={styles.tipsItem}>
-          <View style={cn(' w-4 h-4 rounded-full  flex items-center justify-center', flag4 ? 'bg-green' : 'bg-gray-200')}>
+        <View
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            marginBottom: 10
+          }}
+        >
+          <View className={cn(' w-4 h-4 rounded-full  flex items-center justify-center', flag4 ? 'bg-green' : 'bg-gray-200')}>
             <Iconfont name="danchuang-xuanzhong" size={14} color={flag4 ? theme.colors.textColor.reverse : theme.colors.textColor.weak} />
           </View>
-          <Text style={mergeCss(styles.tipsItemText, { color: flag4 ? theme.colors.textColor.primary : theme.colors.textColor.weak })}>
+          <Text style={{ color: flag4 ? theme.colors.textColor.primary : theme.colors.textColor.weak, ...styles.tipsItemText }}>
             {i18n.t('pages.login.containsAtLeast')}
           </Text>
         </View>
@@ -84,3 +102,10 @@ const PasswordTips = (props: any) => {
 }
 
 export default PasswordTips
+
+const styles = {
+  tipsItemText: {
+    lineHeight: '16px',
+    fontSize: '12px'
+  }
+}
