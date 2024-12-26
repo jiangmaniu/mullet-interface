@@ -18,7 +18,7 @@ type IProps<T = any> = Omit<ListProps<T>, 'children' | 'itemKey'> & {
   renderItem: (item: T) => React.ReactNode
   /**估算的 item 高度 */
   estimatedItemSize?: number
-  /** Trigger when render list item changed */
+  /** Trigger when render list item changed 需要设置height才会生效*/
   onViewableItemsChanged?: (visibleList: T[], fullList: T[]) => void
   ListHeaderComponent?: React.ReactNode
   hasMore?: boolean
@@ -33,6 +33,8 @@ type IProps<T = any> = Omit<ListProps<T>, 'children' | 'itemKey'> & {
   itemKey?: string
   /**容器外层样式 同 style */
   contentContainerStyle?: React.CSSProperties
+  /**触底加载更多 需要配合height容器高度使用 */
+  onEndReached?: (e?: React.UIEvent<HTMLElement, UIEvent>) => void
 }
 
 // 虚拟滚动列表
@@ -52,6 +54,7 @@ function FlashList<T>({
   hasMore,
   style,
   contentContainerStyle,
+  onEndReached,
   ...res
 }: IProps<T>) {
   const { cn, theme } = useTheme()
@@ -68,20 +71,15 @@ function FlashList<T>({
   }, [res?.data?.length, showMoreText, hasMore])
 
   const _onScroll = (e: React.UIEvent<HTMLElement, UIEvent>) => {
-    if (onScroll) {
-      onScroll(e)
-    } else {
-      // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
-      if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - height) <= 1) {
-        // appendData();
-        console.log('_onScroll')
-      }
+    // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
+    if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - height) <= 1) {
+      onEndReached?.(e)
     }
   }
 
   if (refreshing) {
     return (
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center my-[100px]">
         <SpinLoading />
       </div>
     )
@@ -90,7 +88,7 @@ function FlashList<T>({
   if (!res?.data?.length) {
     if (showEmpty && !ListEmptyComponent) {
       return (
-        <div style={{ flex: 1, height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Empty text={intl.formatMessage({ id: 'common.NO Data' })} {...emptyConfig} />
         </div>
       )

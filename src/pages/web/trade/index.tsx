@@ -13,8 +13,9 @@ import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
-import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
+import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
 
+import { checkPageShowTime } from '@/utils/business'
 import BuyAndSell from './comp/BuyAndSell'
 import Center from './comp/Center'
 import Footer from './comp/Footer'
@@ -67,17 +68,6 @@ export default observer(() => {
       push('/account')
     }
   }, [pathname, trade.currentAccountInfo])
-
-  const checkPageShowTime = () => {
-    // 记录上次进入时间
-    const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
-    // 缓存时间大于5分钟、初次载入
-    if ((updateTime && Date.now() - updateTime > 5 * 60 * 1000) || !updateTime) {
-      STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
-      return true
-    }
-    return false
-  }
 
   useEffect(() => {
     checkPageShowTime()

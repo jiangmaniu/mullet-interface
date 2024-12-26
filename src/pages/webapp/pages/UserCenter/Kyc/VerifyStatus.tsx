@@ -6,7 +6,7 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
-import { goBack } from '@/pages/webapp/utils/navigator'
+import { onBack } from '@/utils/navigator'
 import { useParams } from '@umijs/max'
 
 export default function VerifyStatus() {
@@ -23,7 +23,7 @@ export default function VerifyStatus() {
     if (back === 'UserCenter') {
       // navigateTo('Main', { screen: 'UserCenter' })
     } else {
-      goBack()
+      onBack()
     }
     return true
   }

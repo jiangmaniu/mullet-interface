@@ -13,7 +13,7 @@ const Empty: React.FC<Iprops> = ({ image, text, style = {}, imageStyle = {} }: I
   const { theme } = useTheme()
   return (
     <div className="flex items-center justify-center flex-col" style={{ paddingTop: 30, ...style }}>
-      <img src={image || '/img/icon-zanwucangwei.png'} style={{ width: 80, height: 80, ...imageStyle }} />
+      <img src={image || '/img/icon-zanwucangwei.png'} style={{ width: 120, height: 120, ...imageStyle }} />
       {isValidElement(text) ? text : <div style={{ color: theme.colors.textColor.weak, fontSize: 12 }}>{text || 'No Data'}</div>}
     </div>
   )

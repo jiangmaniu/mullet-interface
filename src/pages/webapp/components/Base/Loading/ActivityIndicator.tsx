@@ -11,7 +11,7 @@ type IProps = {
  * @returns
  */
 function ActivityIndicator({ size = 20, color }: IProps) {
-  return <SpinLoading style={{ '--size': `${size}px`, color }} />
+  return <SpinLoading style={{ '--size': `${size}px`, '--color': color }} />
 }
 
 export default ActivityIndicator

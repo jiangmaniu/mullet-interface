@@ -18,7 +18,7 @@ const Position = () => {
   const isFocused = useIsFocused()
 
   return (
-    <Basiclayout bgColor="secondary">
+    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       {currentAccountInfo.isSimulate && (
         <View
           style={{

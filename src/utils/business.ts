@@ -6,6 +6,7 @@ import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
 import ENV from '@/env'
 
 import { formatMin2Time, getUid, groupBy, isImageFile, parseJsonFields } from '.'
+import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from './storage'
 
 //  =============
 
@@ -359,4 +360,15 @@ export function formatSymbolList(symbolList: any) {
     }))
 
   return result
+}
+
+export const checkPageShowTime = () => {
+  // 记录上次进入时间
+  const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
+  // 缓存时间大于5分钟、初次载入
+  if ((updateTime && Date.now() - updateTime > 5 * 60 * 1000) || !updateTime) {
+    STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
+    return true
+  }
+  return false
 }

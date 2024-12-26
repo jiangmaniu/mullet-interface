@@ -2,7 +2,7 @@ import { useIntl } from '@umijs/max'
 import { debounce } from 'lodash'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import { useLoading } from '@/context/loadingProvider'
 import { useStores } from '@/context/mobxProvider'
@@ -38,12 +38,13 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible
 
   const symbolListLoading = trade.symbolListLoading
 
-  useEffect(() => {
-    showLoading({ backgroundColor: 'transparent', color: theme.colors.textColor.weak })
-    if (!symbolListLoading) {
-      hideLoading()
-    }
-  }, [symbolListLoading])
+  // 不使用全屏遮罩的loading，否则无法切换到其他页面
+  // useEffect(() => {
+  //   showLoading({ backgroundColor: 'transparent', color: theme.colors.textColor.weak })
+  //   if (!symbolListLoading) {
+  //     hideLoading()
+  //   }
+  // }, [symbolListLoading])
 
   const onViewableItemsChanged = debounce((visibleList) => {
     const newVisibleItems = visibleList?.map((item: Account.TradeSymbolListItem) => item.id) || []
@@ -101,6 +102,7 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible
         data={list}
         renderItem={renderItem}
         showMoreText
+        refreshing={symbolListLoading}
         // hasMore
         estimatedItemSize={76} // 估算的 item 高度
         height={height || document.body.clientHeight - 180}

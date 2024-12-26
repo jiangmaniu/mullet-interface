@@ -6,8 +6,9 @@ import ENV from '@/env'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { cn } from '@/utils/cn'
 import { getBrowser, getDeviceType } from '@/utils/device'
-import { STORAGE_GET_SHOW_PWA_ADD_MODAL, STORAGE_SET_SHOW_PWA_ADD_MODAL } from '@/utils/storage'
-import { FormattedMessage } from '@umijs/max'
+import { getPathname } from '@/utils/navigator'
+import { STORAGE_GET_SHOW_PWA_ADD_MODAL, STORAGE_GET_TOKEN, STORAGE_SET_SHOW_PWA_ADD_MODAL } from '@/utils/storage'
+import { FormattedMessage, useLocation } from '@umijs/max'
 import SheetModal from '../SheetModal'
 
 const AddPwaAppModal = () => {
@@ -15,14 +16,7 @@ const AddPwaAppModal = () => {
   const deviceType = getDeviceType()
   const [isAddSreenModal, setIsAddSreenModal] = useState(false)
   const { isPc } = useEnv()
-
-  const [addSreenData, setAddSreenData] = useState({
-    key: 1,
-    type: 'iphoneSafari',
-    img: '/img/addScreen/iphoneSafari.png',
-    stepText1: t('addScreen.iphoneChromeTips1'),
-    stepText2: t('addScreen.iphoneChromeTips2')
-  })
+  const { pathname } = useLocation()
 
   const addScreenList = [
     {
@@ -30,23 +24,28 @@ const AddPwaAppModal = () => {
       img: '/img/addScreen/iphoneSafari.png',
       stepText1: t('addScreen.iphoneSafariTips1'),
       stepText2: t('addScreen.iphoneChromeTips2'),
-      type: 'iphoneSafari'
+      type: 'iphoneSafari',
+      imgHeight: 240
     },
     {
       key: 2,
       img: '/img/addScreen/iphoneChrome.png',
       stepText1: t('addScreen.iphoneChromeTips1'),
       stepText2: t('addScreen.iphoneChromeTips2'),
-      type: 'iphoneChrome'
+      type: 'iphoneChrome',
+      imgHeight: 200
     },
     {
       key: 3,
       img: '/img/addScreen/androidChrome.png',
       stepText1: t('addScreen.androidChromeTips1'),
       stepText2: t('addScreen.androidChromeTips2'),
-      type: 'androidChrome'
+      type: 'androidChrome',
+      imgHeight: 170
     }
   ]
+
+  const [addSreenData, setAddSreenData] = useState(addScreenList[0])
 
   const init = async () => {
     let showModal = STORAGE_GET_SHOW_PWA_ADD_MODAL() === true ? false : true
@@ -92,20 +91,26 @@ const AddPwaAppModal = () => {
     init()
   }, [])
 
+  const purePathname = getPathname(location.pathname)
+  const token = STORAGE_GET_TOKEN()
+  const showModal = purePathname.startsWith('/app/') && !!token
+
+  // console.log('addSreenData', addSreenData)
+
   return (
     <SheetModal
-      open={!!isAddSreenModal}
+      open={!!isAddSreenModal && showModal}
       onDismiss={() => {
         setIsAddSreenModal(false)
       }}
       hiddenFooter
-      height={'52%'}
+      height={'62%'}
       header={<div className="text-center text-base font-bold">{t('addScreen.headerTitle')}</div>}
       children={
         <div className="px-4">
           <div className="mb-10 mt-5">
             <div className="relative">
-              <img src={addSreenData.img} className="w-full max-w-[720px]" />
+              <img src={addSreenData.img} className="w-full" style={{ height: addSreenData.imgHeight }} />
               <div
                 className={cn('absolute -top-[2px] left-4 border border-gray-50 rounded-xl w-[58px] h-[58px] overflow-hidden', {
                   '!-top-5': addSreenData.type === 'androidChrome'
@@ -121,8 +126,9 @@ const AddPwaAppModal = () => {
                 <FormattedMessage id="addScreen.install" /> {ENV.name}
               </span>
               <span
-                className={cn('absolute left-[110px] top-[80px] text-primary text-sm', {
-                  '!top-[58px] left-[80px]': addSreenData.type === 'androidChrome'
+                className={cn('absolute left-[110px] top-[90px] text-primary text-sm', {
+                  '!top-[65px] left-[80px]': addSreenData.type === 'androidChrome',
+                  '!top-[90px]': addSreenData.type === 'iphoneChrome'
                 })}
               >
                 https://{ENV.offical}

@@ -7,6 +7,7 @@ import { Helmet } from 'react-helmet'
 import { Provider } from '@/context'
 import { pcCssVars } from '@/theme/theme.config'
 
+import VConsole from 'vconsole'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
@@ -28,7 +29,7 @@ const loginPath = '/user/login'
 
 if (process.env.NODE_ENV === 'development') {
   // https://github.com/Tencent/vConsole
-  // const vConsole = new VConsole()
+  const vConsole = new VConsole()
 }
 
 /**

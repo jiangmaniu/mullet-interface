@@ -11,7 +11,6 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
-import { goBack } from '@/pages/webapp/utils/navigator'
 import { AddAccount } from '@/services/api/tradeCore/account'
 import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
@@ -101,10 +100,6 @@ function AccountNew() {
   })
 
   const name = watch('name')
-
-  const goBackHandler = () => {
-    goBack()
-  }
 
   const loadingRef = useRef<ModalLoadingRef | null>(null)
   const [loadingTips, setLoadingTips] = useState('')

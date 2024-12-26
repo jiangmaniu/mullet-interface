@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
+import { Helmet } from 'react-helmet'
 import { View } from '../components/Base/View'
 
 type BgColorType = 'primary' | 'secondary' | 'transparent'
@@ -14,10 +15,12 @@ interface Iprops {
   bgColor?: BgColorType
   className?: string
   scrollY?: boolean
+  /** 头部颜色 */
+  headerColor?: string
 }
 
 // 页面布局基础组件
-const Basiclayout: React.FC<Iprops> = ({ className, style, children, bgColor = 'primary', scrollY = false }) => {
+const Basiclayout: React.FC<Iprops> = ({ headerColor, className, style, children, bgColor = 'primary', scrollY = false }) => {
   const { theme, cn } = useTheme()
   const { pathname } = useLocation()
 
@@ -30,10 +33,18 @@ const Basiclayout: React.FC<Iprops> = ({ className, style, children, bgColor = '
     }
   }, [pathname])
 
+  const statusBarBgColor = headerColor || theme.colors.backgroundColor.primary
+
   return (
-    <View className={cn('flex-1 flex flex-col h-[100vh]', scrollY ? 'overflow-y-scroll' : '', className)} bgColor={bgColor} style={style}>
-      {children}
-    </View>
+    <>
+      <Helmet>
+        {/* 设置手机顶部状态栏颜色 */}
+        <meta name="theme-color" content={statusBarBgColor} />
+      </Helmet>
+      <View className={cn('flex-1 flex flex-col h-[100vh]', scrollY ? 'overflow-y-scroll' : '', className)} bgColor={bgColor} style={style}>
+        {children}
+      </View>
+    </>
   )
 }
 

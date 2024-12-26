@@ -89,6 +89,17 @@ body,
   padding: 0;
 }
 
+// 只在移动端（小于 768px）应用这些样式
+@media screen and (max-width: 1200px) {
+  body {
+    overflow-x: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+}
+
 .colorWeak {
   filter: invert(80%);
 }

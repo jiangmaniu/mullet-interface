@@ -72,7 +72,7 @@ function KLine() {
   const params = qs.parse(location.search, { ignoreQueryPrefix: true })
 
   return (
-    <Basiclayout bgColor="secondary" className={cn('mt-2')}>
+    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} className={cn('mt-2')}>
       <>
         <View className={cn('flex-row items-center')}>
           <View

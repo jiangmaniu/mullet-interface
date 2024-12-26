@@ -75,6 +75,10 @@ export type ButtonProps = DOMAttributes<any> &
     debounceTime?: number
     /** 是否防抖 */
     isDebounce?: boolean
+    /**laoding颜色 */
+    loadingColor?: string
+    /**laoding大小 */
+    loadingSize?: number
   }
 
 const ButtonWrapper: React.FC<ButtonProps> = (
@@ -98,7 +102,9 @@ const ButtonWrapper: React.FC<ButtonProps> = (
     loading,
     height,
     debounceTime = 300,
-    isDebounce = true
+    isDebounce = true,
+    loadingColor,
+    loadingSize
   },
   ref
 ) => {
@@ -148,6 +154,8 @@ const ButtonWrapper: React.FC<ButtonProps> = (
     <Iconfont name={icon} size={22} color={type === 'primary' && !disabled ? '#fff' : theme.colors.textColor.primary} {...iconProps} />
   ) : null
 
+  const _loadingSize = size === 'xs' ? 16 : 20
+
   return (
     <View
       onClick={handlePress}
@@ -188,7 +196,14 @@ const ButtonWrapper: React.FC<ButtonProps> = (
             )}
           </>
         )}
-        {loading && <ActivityIndicator size={20} color={type === 'primary' ? '#fff' : theme.colors.textColor.primary} />}
+        {loading && (
+          <ActivityIndicator
+            size={loadingSize || _loadingSize}
+            color={
+              loadingColor || ['primary', 'warnning', 'danger', 'success'].includes(type as any) ? '#fff' : theme.colors.textColor.primary
+            }
+          />
+        )}
       </View>
     </View>
   )

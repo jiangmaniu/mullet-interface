@@ -9,8 +9,8 @@ import ListItem, { IlistItemProps } from '@/pages/webapp/components/Base/List/Li
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
-import { goBack } from '@/pages/webapp/utils/navigator'
 import { setUserLanguage } from '@/services/api/user'
+import { onBack } from '@/utils/navigator'
 import { observer } from 'mobx-react'
 import { useMemo, useState } from 'react'
 
@@ -30,7 +30,7 @@ function Language() {
   //   切换语言
   const handleChangeLanguage = async (item: IlistItemProps) => {
     if (item.value === i18n.locale) {
-      goBack()
+      onBack()
       return
     }
     // 调用接口设置语言保存到后台同步到不同终端

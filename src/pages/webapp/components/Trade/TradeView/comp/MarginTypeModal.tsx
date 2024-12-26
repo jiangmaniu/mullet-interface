@@ -60,9 +60,9 @@ function MarginTypeModal(props: IProps, ref: ForwardedRef<MarginTypeModalRef>) {
   }, [enableIsolated])
 
   return (
-    <SheetModal ref={bottomSheetModalRef} height={enableIsolated ? 500 : 390} hiddenFooter>
-      <View className={cn('mt-3 w-full')}>
-        <View className={cn('mx-7 mb-6')}>
+    <SheetModal ref={bottomSheetModalRef} height={enableIsolated ? '45%' : '30%'} hiddenFooter>
+      <View className={cn('w-full')}>
+        <View className={cn('mx-7 mb-6 flex flex-col items-center')}>
           <Text size="xl" color="primary" weight="medium">
             {intl.formatMessage({ id: 'pages.trade.Margin Mode Title' })}
           </Text>

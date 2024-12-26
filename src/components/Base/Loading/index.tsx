@@ -12,9 +12,10 @@ interface IProps {
   cardProps?: ProCardProps
   skeleton?: boolean
   skeletonProps?: SkeletonProps
+  className?: string
 }
 
-export default function Loading({ loading, children, isEmpty, style, cardProps, skeleton, skeletonProps }: IProps) {
+export default function Loading({ className, loading, children, isEmpty, style, cardProps, skeleton, skeletonProps }: IProps) {
   if (isEmpty && !loading) {
     return (
       <ProCard bordered={false} layout="center" style={style} {...cardProps}>
@@ -28,5 +29,9 @@ export default function Loading({ loading, children, isEmpty, style, cardProps, 
     }
     return <>{children}</>
   }
-  return <Spin spinning={loading}>{children}</Spin>
+  return (
+    <Spin spinning={loading} className={className}>
+      {children}
+    </Spin>
+  )
 }

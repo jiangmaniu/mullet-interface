@@ -9,7 +9,8 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { formatNum, hiddenCenterPartStr } from '@/utils'
 
-import { goBack, goHome } from '../../utils/navigator'
+import { onBack } from '@/utils/navigator'
+import { goHome } from '../../utils/navigator'
 import ActivityIndicator from '../Base/Loading/ActivityIndicator'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
@@ -146,7 +147,7 @@ const _AccoutList = ({
         if (!back) {
           goHome()
         } else {
-          goBack()
+          onBack()
         }
       }
     }, 1000)
