@@ -10,7 +10,7 @@ import { navigateTo } from '../../utils/navigator'
 import SheetModal, { SheetRef } from '../Base/SheetModal'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
-import { AccoutList } from './AccoutList'
+import { AccoutList, DefaultAccountTabbar } from './AccoutList'
 
 type IProps = {
   isSimulate?: boolean
@@ -83,6 +83,9 @@ function SelectAccountModal({ isSimulate, header, onItem, isRemainAtCurrentPage 
                   </Text>
                 </View>
               </View>
+              <View>
+                <DefaultAccountTabbar accountTabActiveKey={accountTabActiveKey} setAccountTabActiveKey={setAccountTabActiveKey} />
+              </View>
             </View>
           )}
         </>
@@ -99,6 +102,7 @@ function SelectAccountModal({ isSimulate, header, onItem, isRemainAtCurrentPage 
               }}
               onItem={onItem}
               isRemainAtCurrentPage={isRemainAtCurrentPage}
+              showDefaultAccountTabbar={false}
             />
           </View>
         </View>

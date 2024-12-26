@@ -135,7 +135,7 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
             tabValue={tabValue}
             // tabIndex={tabIndex}
             position="MODAL"
-            height={document.body.clientHeight - 220}
+            height={document.body.clientHeight - 185}
             onSwiperChange={({ activeKey, index }) => {
               setTabKey(activeKey)
               // setTabIndex(index)

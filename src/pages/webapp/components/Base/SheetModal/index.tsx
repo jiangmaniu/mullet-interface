@@ -240,9 +240,7 @@ const SheetModal = (
         borderTopLeftRadius: '20px !important',
         borderTopRightRadius: '20px !important'
       },
-      'div[aria-modal]': {
-        background: backgroundStyle
-      },
+      'div[aria-modal]': backgroundStyle,
       'div[data-rsbs-backdrop]': {},
       'div[data-rsbs-scroll]': hiddenContentScroll
         ? {

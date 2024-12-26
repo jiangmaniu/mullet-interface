@@ -86,25 +86,17 @@ type IProps = {
   isRemainAtCurrentPage?: boolean
   accountTabActiveKey: 'REAL' | 'DEMO'
   setAccountTabActiveKey: (key: 'REAL' | 'DEMO') => void
+  /**是否展示账户Tabs */
+  showDefaultAccountTabbar?: boolean
 }
 
-const _AccoutList = ({
-  onChange,
-  onItem,
-  isRemainAtCurrentPage,
-  isSimulate,
-  back,
-  accountTabActiveKey,
-  setAccountTabActiveKey
-}: IProps) => {
-  const intl = useIntl()
-  const { theme, cn } = useTheme()
-  const { trade } = useStores()
-  const { initialState } = useModel('@@initialState')
-  const { fetchUserInfo } = useModel('user')
-  const currentUser = initialState?.currentUser
+type IAccountTabbarProps = {
+  accountTabActiveKey: 'REAL' | 'DEMO'
+  setAccountTabActiveKey: (key: 'REAL' | 'DEMO') => void
+}
 
-  const currentAccountInfo = trade.currentAccountInfo
+export const DefaultAccountTabbar = observer(({ accountTabActiveKey, setAccountTabActiveKey }: IAccountTabbarProps) => {
+  const intl = useIntl()
 
   const accountOptions = [
     {
@@ -116,6 +108,39 @@ const _AccoutList = ({
       value: 'DEMO'
     }
   ]
+
+  return (
+    <Segmented
+      className="account"
+      // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
+      onChange={(value: any) => {
+        setAccountTabActiveKey(value)
+      }}
+      value={accountTabActiveKey}
+      options={accountOptions}
+      block
+    />
+  )
+})
+
+const _AccoutList = ({
+  onChange,
+  onItem,
+  isRemainAtCurrentPage,
+  isSimulate,
+  back,
+  accountTabActiveKey,
+  setAccountTabActiveKey,
+  showDefaultAccountTabbar = true
+}: IProps) => {
+  const intl = useIntl()
+  const { theme, cn } = useTheme()
+  const { trade } = useStores()
+  const { initialState } = useModel('@@initialState')
+  const { fetchUserInfo } = useModel('user')
+  const currentUser = initialState?.currentUser
+
+  const currentAccountInfo = trade.currentAccountInfo
 
   const handlePress = (item: User.AccountItem) => {
     if (onItem) {
@@ -183,21 +208,13 @@ const _AccoutList = ({
 
   return (
     <>
-      <View className={cn('flex-1')}>
-        <View className={cn('mx-3')}>
-          {isSimulate === undefined && (
-            <Segmented
-              className="account"
-              // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
-              onChange={(value: any) => {
-                setAccountTabActiveKey(value)
-              }}
-              value={accountTabActiveKey}
-              options={accountOptions}
-            />
-          )}
-        </View>
-        <View className={cn('flex-1 mb-2 pt-[18px]')}>
+      <View>
+        {isSimulate === undefined && showDefaultAccountTabbar && (
+          <View className={cn('mx-3')}>
+            <DefaultAccountTabbar accountTabActiveKey={accountTabActiveKey} setAccountTabActiveKey={setAccountTabActiveKey} />
+          </View>
+        )}
+        <View className={cn('flex-1 mb-2', showDefaultAccountTabbar && 'pt-[18px]')}>
           <View>
             {loading ? (
               <View className={cn('flex-1 items-center justify-center h-[300px]')}>
