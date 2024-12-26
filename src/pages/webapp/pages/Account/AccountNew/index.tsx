@@ -1,10 +1,10 @@
-import Button from '@/components/Base/Button'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import ENV from '@/env'
 import { DefaultAccountTabbar } from '@/pages/webapp/components/Account/AccoutList'
+import Button from '@/pages/webapp/components/Base/Button'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
 import Header from '@/pages/webapp/components/Base/Header'
 import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
@@ -176,7 +176,21 @@ function AccountNew() {
   }, [accountList])
 
   return (
-    <Basiclayout style={{ paddingLeft: 14, paddingRight: 14 }}>
+    <Basiclayout
+      hFull={false}
+      style={{ paddingLeft: 14, paddingRight: 14 }}
+      footer={
+        <Button
+          style={{ flex: 1, width: '100%', flexGrow: 1 }}
+          size="large"
+          type="primary"
+          onClick={handlePresentModalPress}
+          disabled={disabled}
+        >
+          {t('pages.account.Create Account')}
+        </Button>
+      }
+    >
       <Header
       // wrapperStyle={{
       //   zIndex: 100,
@@ -209,9 +223,6 @@ function AccountNew() {
       </View>
 
       <AccountCarousel key={accountTabActiveKey} accountTabActiveKey={accountTabActiveKey} setSelectedItem={setSelectedItem} />
-      <Button style={{ marginBottom: 10 }} size="large" type="primary" onPress={handlePresentModalPress} disabled={disabled}>
-        {t('pages.account.Create Account')}
-      </Button>
 
       <SheetModal
         height={400}

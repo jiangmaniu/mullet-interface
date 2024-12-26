@@ -17,10 +17,38 @@ interface Iprops {
   scrollY?: boolean
   /** 头部颜色 */
   headerColor?: string
+  /** 是否全屏 */
+  hFull?: boolean
+  /** 底部 */
+  footer?: React.ReactNode
+  footerClassName?: string
+  footerStyle?: React.CSSProperties
+  /** 头部 */
+  header?: React.ReactNode
+  /** 头部高度 */
+  headerHeight?: number
+  headerClassName?: string
+  headerStyle?: React.CSSProperties
 }
 
 // 页面布局基础组件
-const Basiclayout: React.FC<Iprops> = ({ headerColor, className, style, children, bgColor = 'primary', scrollY = false }) => {
+// 页面布局基础组件
+const Basiclayout: React.FC<Iprops> = ({
+  headerColor,
+  className,
+  style,
+  children,
+  bgColor = 'primary',
+  scrollY = false,
+  hFull = true,
+  footer,
+  footerClassName,
+  footerStyle,
+  header,
+  headerHeight = 30,
+  headerClassName,
+  headerStyle
+}) => {
   const { theme, cn } = useTheme()
   const { pathname } = useLocation()
 
@@ -41,9 +69,61 @@ const Basiclayout: React.FC<Iprops> = ({ headerColor, className, style, children
         {/* 设置手机顶部状态栏颜色 */}
         <meta name="theme-color" content={statusBarBgColor} />
       </Helmet>
-      <View className={cn('flex-1 flex flex-col h-[100vh]', scrollY ? 'overflow-y-scroll' : '', className)} bgColor={bgColor} style={style}>
+
+      {header && (
+        <div
+          className={cn(headerClassName)}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1,
+            minHeight: headerHeight,
+            ...headerStyle
+          }}
+        >
+          {header}
+        </div>
+      )}
+
+      <View
+        className={cn(
+          'flex-1 flex flex-col ',
+          hFull ? 'h-[100vh]' : '',
+          scrollY ? 'overflow-y-scroll' : '',
+          // `pt-[${headerHeight}px]`,
+          className
+        )}
+        bgColor={bgColor}
+        style={{
+          // paddingTop: headerHeight,
+          marginTop: headerHeight,
+          ...style
+        }}
+      >
         {children}
       </View>
+      {footer && (
+        <div
+          className={cn(footerClassName)}
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: '10px 14px',
+            // backgroundColor: 'linear-gradient(-90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%)'
+            backgroundColor: 'white',
+            // display: 'flex',
+            // justifyContent: 'center',
+            // alignItems: 'center',
+            ...footerStyle
+          }}
+        >
+          {footer}
+        </div>
+      )}
     </>
   )
 }

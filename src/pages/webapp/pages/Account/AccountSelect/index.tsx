@@ -29,7 +29,31 @@ function AccountSelect() {
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>(key as 'REAL' | 'DEMO') //  真实账户、模拟账户
 
   return (
-    <Basiclayout style={{ paddingLeft: 14, paddingRight: 14 }}>
+    <Basiclayout
+      hFull={false}
+      style={{ paddingLeft: 14, paddingRight: 14, paddingBottom: 80 }}
+      footerClassName="flex items-center justify-center"
+      footer={
+        <Button
+          style={{
+            width: 46,
+            height: 46,
+            borderRadius: 46,
+            backgroundColor: theme.colors.backgroundColor.primary
+          }}
+          onPress={() => {
+            navigateTo('/app/account/create?key=' + accountTabActiveKey + '&back=' + back)
+
+            // navigate('AccountNew', {
+            //   key: accountTabActiveKey,
+            //   back
+            // })
+          }}
+        >
+          <Iconfont name="xinjianzhanghu" size={30} />
+        </Button>
+      }
+    >
       <Header
         back={back}
         // wrapperStyle={{
@@ -59,28 +83,6 @@ function AccountSelect() {
         accountTabActiveKey={accountTabActiveKey}
         setAccountTabActiveKey={setAccountTabActiveKey}
       />
-      <Button
-        style={{
-          width: 46,
-          height: 46,
-          borderRadius: 46,
-          alignSelf: 'center',
-          // marginBottom: 30,
-          position: 'absolute',
-          bottom: 40,
-          backgroundColor: theme.colors.backgroundColor.primary
-        }}
-        onPress={() => {
-          navigateTo('/app/account/create?key=' + accountTabActiveKey + '&back=' + back)
-
-          // navigate('AccountNew', {
-          //   key: accountTabActiveKey,
-          //   back
-          // })
-        }}
-      >
-        <Iconfont name="xinjianzhanghu" size={30} />
-      </Button>
     </Basiclayout>
   )
 }

@@ -155,6 +155,7 @@ function WebAppLayout() {
   }
 
   // 其他子页面使用的布局
-  return <div className="h-screen flex flex-col">{Content}</div>
+  // return <div className="h-screen flex flex-col">{Content}</div>
+  return <>{Content}</>
 }
 export default observer(WebAppLayout)

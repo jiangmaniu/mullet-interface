@@ -72,9 +72,14 @@ function KLine() {
   const params = qs.parse(location.search, { ignoreQueryPrefix: true })
 
   return (
-    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} className={cn('mt-2')}>
-      <>
-        <View className={cn('flex-row items-center')}>
+    <Basiclayout
+      hFull={false}
+      bgColor="secondary"
+      headerColor={theme.colors.backgroundColor.secondary}
+      className={cn('mt-2')}
+      headerClassName="bg-secondary"
+      header={
+        <View className={cn('flex-row items-center px-3 py-[5px]')}>
           <View
             className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')}
             onClick={() => {
@@ -87,16 +92,41 @@ function KLine() {
             <SwitchAccount isRemainAtCurrentPage />
           </View>
         </View>
+      }
+      footer={
+        <View className={cn('mx-3')}>
+          <BuySellButton
+            onShow={() => {
+              buySellRef.current?.show()
+            }}
+          />
+        </View>
+      }
+    >
+      <>
+        {/* <View className={cn('flex-row items-center')}>
+          <View
+            className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')}
+            onClick={() => {
+              navigateTo(`/app/quote`, params)
+            }}
+          >
+            <Iconfont name="huazhuan-xuanze" size={24} style={{ transform: 'rotate(180deg)' }} />
+          </View>
+          <View className={cn('flex-1')}>
+            <SwitchAccount isRemainAtCurrentPage />
+          </View>
+        </View> */}
         <View className={cn('rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-[10px]')} bgColor="primary">
           <Header />
           <Tradingview />
-          <View className={cn('mx-3')}>
+          {/* <View className={cn('mx-3')}>
             <BuySellButton
               onShow={() => {
                 buySellRef.current?.show()
               }}
             />
-          </View>
+          </View> */}
         </View>
         <BuySellModal ref={buySellRef} />
       </>
