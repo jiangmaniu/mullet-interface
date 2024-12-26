@@ -41,6 +41,8 @@ export type InputNumberProps = TextFieldProps & {
   status?: 'error' | 'disabled'
   /** 自动全选 */
   autoSelectAll?: boolean
+  /** 在 onChange / onEndEditing 时修正数值 */
+  fixedOn?: 'change' | 'endEditing' | 'always'
 }
 
 const InputNumber = forwardRef(
@@ -67,6 +69,7 @@ const InputNumber = forwardRef(
       onChange,
       onEndEditing,
       className,
+      fixedOn = 'endEditing',
       ...res
     }: InputNumberProps,
     ref
@@ -96,11 +99,6 @@ const InputNumber = forwardRef(
       }
     }))
 
-    const handleChangeText = (text: string) => {
-      setInputValue(text)
-      onChange?.(text)
-    }
-
     // const handleFocus = () => {
     //   if (autoSelectAll) {
     //     inputRef.current?.setSelection(0, String(newValue)?.length || 0)
@@ -108,15 +106,7 @@ const InputNumber = forwardRef(
     //   onFocus?.(null as any)
     // }
 
-    const handleEndEditing = (text: string | undefined) => {
-      if (!text) {
-        setTimeout(() => {
-          setInputValue('')
-          onEndEditing?.(text)
-        }, 10)
-        return
-      }
-
+    const fix = (text: string) => {
       let newText = String(text)
       // 处理输入整数
       if (hiddenPrecision) {
@@ -137,12 +127,40 @@ const InputNumber = forwardRef(
         newText = max
       }
 
-      onChange?.(newText)
+      return newText
+    }
 
-      setTimeout(() => {
-        setInputValue(newText)
-        onEndEditing?.(newText)
-      }, 10)
+    const handleChangeText = (text: string) => {
+      let newText = text
+
+      // 在 onChange 时修正数值
+      if (fixedOn === 'change' || fixedOn === 'always') {
+        newText = fix(text)
+      }
+
+      // setTimeout(() => {
+      setInputValue(newText)
+      onChange?.(newText)
+      // }, 10)
+    }
+
+    const handleEndEditing = (text: string | undefined) => {
+      if (!text) {
+        setTimeout(() => {
+          setInputValue('')
+          onEndEditing?.(text)
+        }, 10)
+        return
+      }
+
+      // 在 onEndEditing 时修正数值
+      if (fixedOn === 'endEditing' || fixedOn === 'always') {
+        const newText = fix(text)
+        setTimeout(() => {
+          setInputValue(newText)
+          onEndEditing?.(newText)
+        }, 10)
+      }
     }
 
     return (
@@ -201,10 +219,11 @@ const InputNumber = forwardRef(
             handleEndEditing?.(String(newValue))
           }
         }}
-        onChange={(value) => {
-          setInputValue(value)
-          handleEndEditing?.(String(value))
-        }}
+        onChange={handleChangeText}
+        // onChange={(value) => {
+        //   setInputValue(value)
+        //   handleEndEditing?.(String(value))
+        // }}
         onEndEditing={() => handleEndEditing?.(String(inputValue))}
         onFocus={onFocus}
         containerStyle={{ marginBottom: 10 }}

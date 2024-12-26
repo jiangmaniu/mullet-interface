@@ -198,7 +198,19 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
           { ...($inputWrapperStyleOverride || {}) }
         )}
       >
-        {!!LeftAccessory && <LeftAccessory className={cn('h-10 justify-center items-center ')} status={status} editable={!readOnly} />}
+        {!!LeftAccessory && (
+          <LeftAccessory
+            className={cn('h-10 justify-center items-center flex')}
+            style={{
+              display: 'flex',
+              height: '40px',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            status={status}
+            editable={!readOnly}
+          />
+        )}
 
         <Input
           ref={input}
@@ -235,7 +247,18 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
         />
 
         {!!RightAccessory && (
-          <RightAccessory className={cn('mr-4 h-10 justify-center items-center')} status={status} editable={!readOnly} />
+          <RightAccessory
+            className={cn('mr-4 h-10 justify-center items-center flex')}
+            style={{
+              display: 'flex',
+              marginRight: '20px',
+              height: '40px',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+            status={status}
+            editable={!readOnly}
+          />
         )}
       </View>
     </View>

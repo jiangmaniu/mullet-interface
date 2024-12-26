@@ -139,6 +139,7 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               disabled={disabled}
               value={String(spValuePrice || '')}
               precision={d}
+              fixedOn="change"
               onEndEditing={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
@@ -191,6 +192,7 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               placeholder={intl.formatMessage({ id: 'pages.trade.Price' })}
               disabled={disabled}
               precision={d}
+              fixedOn="change"
               value={String(slValuePrice || '')}
               onEndEditing={(value) => {
                 if (Number.isNaN(Number(value))) {
