@@ -6,26 +6,29 @@ type IProps = NavBarProps & {
   title?: React.ReactNode
   onBack?: () => void
   back?: boolean
+  left?: React.ReactNode
 }
 
 // 移动端公共导航组件
-function Header({ title, onBack, back = true, ...res }: IProps) {
+function Header({ title, onBack, back = true, left, ...res }: IProps) {
   return (
     <NavBar
       backIcon={false}
       back={
         <>
-          {back && (
+          {left ? (
+            left
+          ) : back ? (
             <Iconfont
               name="fanhui"
-              width={30}
-              height={30}
+              width={36}
+              height={36}
               onClick={() => {
                 onBack?.()
                 history.back()
               }}
             />
-          )}
+          ) : null}
         </>
       }
       {...res}
