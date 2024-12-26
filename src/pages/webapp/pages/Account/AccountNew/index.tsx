@@ -110,37 +110,34 @@ function AccountNew() {
   const [loadingTips, setLoadingTips] = useState('')
 
   // 选中新建的账号
-  const selectNewAccount = useCallback(
-    (params: { name: string }) => {
-      const item = currentUser?.accountList?.find((item) => item.name === params.name)
+  const selectNewAccount = async (accountList: User.AccountItem[], params: { name: string }) => {
+    const item = accountList.find((item) => item.name === params.name)
 
-      if (!item) {
-        return
-      }
-      loadingRef.current?.show(() => {
-        setLoadingTips(t('common.operate.Switching Account'))
-      })
+    if (!item) {
+      return
+    }
+    loadingRef.current?.show(() => {
+      setLoadingTips(t('common.operate.Switching Account'))
+    })
 
-      // 切换账户 重新更新查询品种列表
-      stores.trade.getSymbolList({ accountId: item.id })
+    // 切换账户 重新更新查询品种列表
+    await stores.trade.getSymbolList({ accountId: item.id })
 
-      // setAccountBoxOpen(false)
+    // setAccountBoxOpen(false)
 
-      setTimeout(async () => {
-        stores.trade.setCurrentAccountInfo(item)
+    setTimeout(async () => {
+      stores.trade.setCurrentAccountInfo(item)
 
-        // 切换账户重置
-        stores.trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
+      // 切换账户重置
+      stores.trade.setCurrentLiquidationSelectBgaId('CROSS_MARGIN')
 
-        // 等待 2000 毫秒
-        await new Promise((resolve) => setTimeout(resolve, 2000))
-        replace('/app/quote')
-        // Portal.remove(PortalKey)
-        loadingRef.current?.close()
-      }, 1000)
-    },
-    [currentUser?.accountList]
-  )
+      // 等待 2000 毫秒
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+      replace('/app/quote')
+      // Portal.remove(PortalKey)
+      loadingRef.current?.close()
+    }, 1000)
+  }
 
   const onSubmit = async (values: any) => {
     if (!selectedItem) {
@@ -163,8 +160,8 @@ function AccountNew() {
           message.info(t('msg.success.Create Account'), 2)
 
           // 刷新用户信息
-          user.fetchUserInfo(false).then(() => {
-            selectNewAccount({ name: values.name })
+          user.fetchUserInfo(true).then((res) => {
+            selectNewAccount(res?.accountList ?? [], { name: values.name })
           })
         })
       }
@@ -202,7 +199,7 @@ function AccountNew() {
       </View>
       <CurrentServer />
 
-      <View className={cn('mx-3')}>
+      <View className={cn('mx-3 mb-3')}>
         <Segmented
           className="account"
           // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
@@ -233,7 +230,7 @@ function AccountNew() {
         // }
         confirmText={t('pages.account.Create Account')}
         confirmButtonType="primary"
-        disabled={!selectedItem || !name}
+        disabled={!selectedItem || !name || !!errors.name}
         onConfirm={handleSubmit(onSubmit)}
         confirmButtonProps={{ icon: 'anniu-gengduo', iconDirection: 'right', iconProps: { color: theme.colors.textColor.reverse } }}
       >
