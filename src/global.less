@@ -98,6 +98,11 @@ body,
     -ms-user-select: none;
     user-select: none;
   }
+  body,
+  html {
+    touch-action: manipulation; /* 禁止缩放手势 */
+    overscroll-behavior: none; /* 防止滚动导致缩放 */
+  }
 }
 
 .colorWeak {
