@@ -82,7 +82,7 @@ function Message() {
   }
 
   return (
-    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
+    <Basiclayout bgColor="secondary" scrollY headerColor={theme.colors.backgroundColor.secondary}>
       <Header
         title={i18n.t('app.pageTitle.Message')}
         right={

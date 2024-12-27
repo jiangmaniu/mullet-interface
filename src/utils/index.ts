@@ -1,6 +1,6 @@
 import { getIntl } from '@umijs/max'
 import currency from 'currency.js'
-import lodash, { cloneDeep } from 'lodash-es'
+import lodash, { cloneDeep } from 'lodash'
 import moment from 'moment'
 
 import { DATE } from '@/constants/date'

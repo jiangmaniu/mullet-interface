@@ -67,7 +67,7 @@ const AccountItem = ({
 
           {/* 右下角放图片 account-selected */}
           <img
-            src={require('/public/images/account-selected.png')}
+            src={'/images/account-selected.png'}
             className={cn(
               {
                 display: active ? 'flex' : 'none'

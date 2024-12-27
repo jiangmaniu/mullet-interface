@@ -63,9 +63,9 @@ const Basiclayout: React.FC<Iprops> = ({
 
   const statusBarBgColor = headerColor || theme.colors.backgroundColor.primary
 
-  useEffect(() => {
-    document.body.style.overflowY = scrollY ? 'auto' : 'hidden'
-  }, [scrollY])
+  // useEffect(() => {
+  //   document.body.style.overflowY = scrollY ? 'auto' : 'hidden'
+  // }, [scrollY])
 
   return (
     <>
@@ -93,7 +93,6 @@ const Basiclayout: React.FC<Iprops> = ({
 
       <View
         className={cn(
-          'flex-1 flex flex-col ',
           hFull ? 'h-[100vh]' : '',
           scrollY ? 'overflow-y-scroll' : '',
           // `pt-[${headerHeight}px]`,

@@ -212,6 +212,7 @@ export default defineConfig({
   //   strategy: 'normal'
   // },
   mfsu: false, // 不使用mfsu，否则引入tradingview组件会有兼容问题
+  esbuildMinifyIIFE: true, // 解决打包 esbuild helpers 冲突
   requestRecord: {},
   tailwindcss: {},
   extraPostCSSPlugins: [require('tailwindcss'), require('autoprefixer')],
