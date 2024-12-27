@@ -24,9 +24,11 @@ export const LngList = ({ list }: { list: IlistItemProps[] }) => {
     if (item.value === i18n.locale) {
       return
     }
+    setLng(item.value as ILanguage)
+
     // 调用接口设置语言保存到后台同步到不同终端
     await setUserLanguage({ language: item.value as ILanguage })
-    setLng(item.value as ILanguage)
+    // console.log(window.location)
   }
 
   const renderList = (listData: IlistItemProps[]) => {

@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { md5 } from 'js-md5'
 import type { ForwardRefRenderFunction } from 'react'
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -22,6 +21,7 @@ import { APP_MODAL_WIDTH } from '@/constants'
 import { login } from '@/services/api/user'
 import { useModel } from '@umijs/max'
 import { Checkbox } from 'antd'
+import { md5 } from 'js-md5'
 import { TextField } from '../../components/Base/Form/TextField'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
@@ -77,7 +77,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   // 登录
   const onSubmit = async (values: User.LoginParams) => {
-    // const loging = dialog(<LottieLoading tips={t('pages.login.Logining')} />)
     loadingRef.current?.show()
 
     try {
@@ -304,7 +303,9 @@ export const Footer = ({ setSection }: { setSection: (section: WELCOME_STEP_TYPE
           setSection('register')
         }}
       >
-        <Icon name="xinjianzhanghu" size={30} />
+        <div className="flex items-center justify-center">
+          <Icon name="xinjianzhanghu" size={30} />
+        </div>
       </Button>
       <Text className=" text-sm">{t('pages.login.Register new account')}</Text>
     </View>

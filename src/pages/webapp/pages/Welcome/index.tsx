@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useTheme } from '@/context/themeProvider'
 
 import { default as Icon, default as Iconfont } from '@/components/Base/Iconfont'
-import { useEnv } from '@/context/envProvider'
 import ENV from '@/env'
+import { replace } from '@/utils/navigator'
 import { capitalizeFirstLetter } from '@/utils/str'
 import { useLocation } from '@umijs/max'
 import { MenuProps } from 'antd'
@@ -66,15 +66,20 @@ export default function WelcomeScreen() {
   const { cn, theme } = useTheme()
   const { t, loadLocale, locale } = useI18n()
   const location = useLocation()
-  const params = new URLSearchParams(location.search)
-  const _section = params?.get('section') as WELCOME_STEP_TYPES
+  const hash = location.hash.replace('#', '')
 
-  const { screenSize } = useEnv()
+  const _section = ['login', 'register', 'verify', 'forgotPassword', 'forgotVerify', 'resetPassword'].includes(hash) ? hash : 'login'
 
   // TODO: 缓存
   // const current = useCurrentAccount()
 
-  const [section, setSection] = useState<WELCOME_STEP_TYPES>(_section ?? 'login')
+  const [section, _setSection] = useState<WELCOME_STEP_TYPES>(_section as WELCOME_STEP_TYPES)
+
+  const setSection = (section: WELCOME_STEP_TYPES) => {
+    replace('/app/login#' + section)
+    _setSection(section)
+  }
+
   const [isLoading, setIsLoading] = useState(false)
 
   const [tenanId, setTenanId] = useState<string>()
@@ -318,7 +323,6 @@ export default function WelcomeScreen() {
         <View
           style={{
             // flex: 1,
-            height: screenSize.height,
             paddingLeft: 14,
             paddingRight: 14,
             marginTop: 10,

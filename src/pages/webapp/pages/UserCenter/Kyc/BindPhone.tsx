@@ -177,7 +177,28 @@ function BindPhone() {
   }, [])
 
   return (
-    <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
+    <BasicLayout
+      bgColor="secondary"
+      style={{ paddingLeft: 14, paddingRight: 14 }}
+      footerStyle={{
+        backgroundColor: 'transparent'
+      }}
+      footer={
+        <Button
+          style={{
+            marginBottom: 10,
+            width: '100%'
+          }}
+          type="primary"
+          loading={false}
+          height={48}
+          onPress={handleSubmit(onSubmit)}
+          disabled={disabled}
+        >
+          {t('common.operate.Continue')}
+        </Button>
+      }
+    >
       <Header
         title={i18n.t('pages.userCenter.bangdingshouji')}
         // left={
@@ -186,12 +207,7 @@ function BindPhone() {
         //   </TouchableOpacity>
         // }
       />
-      <View
-        className={cn('mt-6 px-2 flex-col flex')}
-        style={{
-          height: screenSize.height
-        }}
-      >
+      <View className={cn('mt-6 px-2 flex-col flex')}>
         <Text className={cn(' text-xl text-primary font-bold')}>{i18n.t('pages.userCenter.qingshurushoujihaoma')}</Text>
         <Text className={cn(' text-sm text-gray-500 mt-1')}>{i18n.t('pages.userCenter.yongyuweilaicaozuo')}</Text>
         <TextField
@@ -242,19 +258,6 @@ function BindPhone() {
         <CountDown phone={phone} onSendCode={onSendCode} />
         {!!errors.code && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.code.message}</Text>}
       </View>
-
-      <Button
-        style={{
-          marginBottom: 10
-        }}
-        type="primary"
-        loading={false}
-        height={48}
-        onPress={handleSubmit(onSubmit)}
-        disabled={disabled}
-      >
-        {t('common.operate.Continue')}
-      </Button>
 
       <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} list={countryList} />
       <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={loadingTips} />

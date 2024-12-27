@@ -69,10 +69,10 @@ export const ModalLoading = forwardRef(
         title={title}
         styles={{ content: { padding: 0 }, header: { paddingInline: 20, paddingTop: 20 } }}
       >
-        <div className="relative -top-8">
+        <div className="relative -top-4">
           <Loading width={width} height={300} />
         </div>
-        <div className="flex items-center justify-center text-secondary text-base relative -top-12 ">
+        <div className="flex items-center justify-center text-secondary text-base relative -top-10 ">
           {tips}
           <span className="dot-ani" />
         </div>

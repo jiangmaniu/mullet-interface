@@ -71,12 +71,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (_, ref) => {
       bgColor="secondary"
       style={{ paddingLeft: 14, paddingRight: 14 }}
     >
-      <View
-        className={cn('px-2 flex items-center justify-center')}
-        style={{
-          height: screenSize.height
-        }}
-      >
+      <View className={cn('px-2 flex items-center justify-center')}>
         <View className={cn('flex items-center justify-center flex-col gap-2.5 w-[300px] ')}>
           <View
             className={cn('bg-green w-[120px] h-[120px] flex items-center justify-center rounded-[30px]')}

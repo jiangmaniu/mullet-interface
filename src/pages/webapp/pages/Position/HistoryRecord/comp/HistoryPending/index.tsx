@@ -270,7 +270,7 @@ function HistoryPending() {
   }
 
   return (
-    <View bgColor="primary" className={cn('flex-1 rounded-t-3xl')}>
+    <View bgColor="primary" className={cn('flex-1 rounded-t-3xl bg-white')}>
       <View className={cn('flex flex-row justify-between items-center px-3 pt-[14px]')}>
         <View className={cn('flex flex-row items-center gap-2')}>
           <View onPress={() => filterModalRef.current?.show()}>

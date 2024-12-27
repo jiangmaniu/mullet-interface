@@ -123,25 +123,24 @@ export default function VerifyMsg() {
     })
   }, [])
 
+  const areacodeRef = useRef<any>(null)
+
   return (
     <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
       <Header title={i18n.t('pages.userCenter.shenfenrenzheng')} />
       <StepBox step={step} />
       <View className={cn('mt-5 px-2 flex-1')}>
-        <View
-          className={cn('flex flex-col gap-6')}
-          style={{
-            maxHeight: screenSize.height
-          }}
-        >
+        <View className={cn('flex flex-col gap-6')}>
           <Text className={cn('text-xl font-bold text-primary')}>{i18n.t('pages.userCenter.shenfenrenzheng')}</Text>
           <Text className={cn('text-xs text-weak')}>{i18n.t('pages.userCenter.qingquebaozixunzuixinyouxiao')}</Text>
           <View className={cn('flex flex-col mt-3 gap-[11px]')}>
             <TextField
+              ref={areacodeRef}
               value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
               onFocus={() => {
                 if (!areaCodeItem) {
                   selectCountryModalRef.current?.show()
+                  areacodeRef.current?.blur()
                 }
               }}
               onChange={(val) => {
@@ -159,7 +158,7 @@ export default function VerifyMsg() {
               autoCapitalize="none"
               autoComplete="password"
               // autoCorrect={false}
-              // onSubmitEditing={() => lastNameInput.current?.focus()}
+              onEndEditing={() => lastNameInput.current?.focus()}
               LeftAccessory={() => <Iconfont name="earth" size={18} color={theme.colors.textColor.weak} style={{ marginLeft: 16 }} />}
               RightAccessory={() => <Iconfont name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} />}
             />
@@ -178,7 +177,7 @@ export default function VerifyMsg() {
               autoComplete="email"
               // autoCorrect={false}
               // keyboardType="email-address"
-              // onSubmitEditing={() => firstNameInput.current?.focus()}
+              onEndEditing={() => firstNameInput.current?.focus()}
             />
             {errors.lastName && <Text color="red">{errors.lastName.message}</Text>}
             <TextField
@@ -195,7 +194,7 @@ export default function VerifyMsg() {
               autoComplete="email"
               // autoCorrect={false}
               // keyboardType="email-address"
-              // onSubmitEditing={() => identificationCodeInput.current?.focus()}
+              onEndEditing={() => identificationCodeInput.current?.focus()}
             />
             {errors.firstName && <Text color="red">{errors.firstName.message}</Text>}
             <Text className={cn('mb-1')}>{t('pages.userCenter.xuanzezhengjianleixing')}</Text>
@@ -238,10 +237,17 @@ export default function VerifyMsg() {
             {errors.identificationCode && <Text color="red">{errors.identificationCode.message}</Text>}
           </View>
         </View>
+        <Button
+          type="primary"
+          className="mb-2.5 my-5 w-full"
+          loading={false}
+          height={48}
+          onPress={handleSubmit(onSubmit)}
+          disabled={disabled}
+        >
+          {t('common.operate.Continue')}
+        </Button>
       </View>
-      <Button type="primary" className="mb-2.5" loading={false} height={48} onPress={handleSubmit(onSubmit)} disabled={disabled}>
-        {t('common.operate.Continue')}
-      </Button>
       <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} list={countryList} />
     </BasicLayout>
   )

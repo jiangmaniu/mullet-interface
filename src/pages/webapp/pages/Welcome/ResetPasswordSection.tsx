@@ -240,12 +240,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   return (
     <View className={cn('flex-1 flex flex-col justify-between mb-12')}>
-      <View
-        className={cn('flex flex-col gap-6 mb-5')}
-        style={{
-          height: screenSize.height - 500
-        }}
-      >
+      <View className={cn('flex flex-col gap-6 mb-5')}>
         <TextField
           ref={authPasswordInput}
           value={newPassword}

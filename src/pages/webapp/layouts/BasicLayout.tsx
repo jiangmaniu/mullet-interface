@@ -17,8 +17,8 @@ interface Iprops {
   scrollY?: boolean
   /** 头部状态栏颜色 */
   headerColor?: string
-  /** 是否全屏 */
-  hFull?: boolean
+  /** 是否固定高度 */
+  fixedHeight?: boolean
   /** 底部 */
   footer?: React.ReactNode
   footerClassName?: string
@@ -38,7 +38,7 @@ const Basiclayout: React.FC<Iprops> = ({
   children,
   bgColor = 'primary',
   scrollY = false,
-  hFull = true,
+  fixedHeight = true,
   footer,
   footerClassName,
   footerStyle,
@@ -89,6 +89,7 @@ const Basiclayout: React.FC<Iprops> = ({
 
       {header && (
         <div
+          id="body-header"
           className={cn(headerClassName)}
           style={{
             position: 'fixed',
@@ -107,7 +108,6 @@ const Basiclayout: React.FC<Iprops> = ({
       <View
         className={cn(
           // 不使用100vh safari浏览器出现滚动条
-          // hFull ? 'h-[100vh]' : '',
           scrollY ? 'overflow-y-scroll' : 'auto',
           // `pt-[${headerHeight}px]`,
           className
@@ -116,7 +116,7 @@ const Basiclayout: React.FC<Iprops> = ({
         style={{
           paddingTop: headerHeight,
           // paddingBottom: footerHeight,
-          height: `calc(100% - ${headerHeight}px - ${footerHeight}px)`,
+          height: fixedHeight ? `calc(100% - ${headerHeight}px - ${footerHeight}px)` : undefined,
           ...style
         }}
       >

@@ -160,21 +160,23 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     }
   }
 
-  const sendDisabled = global.verifyCodeDown !== -1
+  // const sendDisabled = global.verifyCodeDown !== -1
 
-  const RightLabel = useMemo(() => {
-    return (
-      <View onPress={() => setInputType(inputType === 'EMAIL' ? 'PHONE' : 'EMAIL')}>
-        {inputType === 'EMAIL' ? (
-          <Text style={cn('text-brand')}>{t('pages.login.Use Phone')}</Text>
-        ) : (
-          <Text style={cn('text-brand')}>{t('pages.login.Use Email')}</Text>
-        )}
-      </View>
-    )
-  }, [inputType])
+  // const RightLabel = useMemo(() => {
+  //   return (
+  //     <View onPress={() => setInputType(inputType === 'EMAIL' ? 'PHONE' : 'EMAIL')}>
+  //       {inputType === 'EMAIL' ? (
+  //         <Text style={cn('text-brand')}>{t('pages.login.Use Phone')}</Text>
+  //       ) : (
+  //         <Text style={cn('text-brand')}>{t('pages.login.Use Email')}</Text>
+  //       )}
+  //     </View>
+  //   )
+  // }, [inputType])
 
-  const disabled = inputType === 'PHONE' ? !!errors.phone || !!errors.areaCode : !!errors.email
+  const disabled = useMemo(() => {
+    return inputType === 'PHONE' ? !!errors.phone || !!errors.areaCode : !!errors.email
+  }, [inputType, errors.phone, errors.areaCode, errors.email])
 
   // 将属性暴露给父元素
   useImperativeHandle(ref, () => ({ goback, submit: handleSubmit(onSubmit), disabled }))

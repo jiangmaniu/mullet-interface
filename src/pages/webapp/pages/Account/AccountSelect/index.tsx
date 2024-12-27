@@ -30,7 +30,6 @@ function AccountSelect() {
 
   return (
     <Basiclayout
-      hFull={false}
       style={{ paddingLeft: 14, paddingRight: 14, paddingBottom: 80 }}
       footerClassName="flex items-center justify-center"
       footer={
@@ -50,7 +49,9 @@ function AccountSelect() {
             // })
           }}
         >
-          <Iconfont name="xinjianzhanghu" size={30} />
+          <div className="flex items-center justify-center">
+            <Iconfont name="xinjianzhanghu" size={30} />
+          </div>
         </Button>
       }
     >

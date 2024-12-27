@@ -188,7 +188,7 @@ function FundRecord() {
   }
 
   return (
-    <View bgColor="primary" className={cn(' flex-1 rounded-t-3xl px-3')}>
+    <View bgColor="primary" className={cn(' flex-1 rounded-t-3xl px-3 bg-white')}>
       <View className={cn('flex flex-row justify-between items-center pt-[14px] pb-2')}>
         <View className={cn('flex flex-row items-center gap-2')}>
           <View onPress={() => filterModalRef2.current?.show()}>
