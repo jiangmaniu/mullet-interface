@@ -177,7 +177,7 @@ function AccountDetail() {
         {items.map((i, idx) => (
           <View key={idx} className={cn('flex flex-row justify-between items-center w-full gap-2 h-5')}>
             <SimpleTooltip content={i.tips} setVisible={setVisible} index={idx} visible={visible === idx}>
-              <View style={cn('flex flex-row items-center gap-1 h-full flex-shrink-0 flex-grow')}>
+              <View className={cn('flex flex-row items-center gap-1 h-full flex-shrink-0 flex-grow')}>
                 <Text color="primary" size="sm" weight="light">
                   {i.label}
                 </Text>

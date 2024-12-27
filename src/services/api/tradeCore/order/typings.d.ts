@@ -554,6 +554,10 @@ declare namespace Order {
      * 交易品种
      */
     symbol?: string
+    /**
+     * 订单ID
+     */
+    orderId?: string
   }
   // 成交记录-分页-列表
   type TradeRecordsPageListItem = {

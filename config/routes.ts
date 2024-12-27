@@ -269,7 +269,7 @@ export default [
       },
       // 仓位-历史记录-详情
       {
-        path: '/:lng/app/position/record/:id',
+        path: '/:lng/app/position/record/detail',
         component: './webapp/pages/Position/HistoryRecord/HistoryOrderDetail',
         access: 'canAdmin' // 权限配置
       },
@@ -300,8 +300,8 @@ export default [
       },
       // 转账-划转详情
       {
-        path: '/:lng/app/account/transfer/:id',
-        component: './webapp/pages/Account/Transfer/TransferDetail',
+        path: '/:lng/app/account/transfer/detail',
+        component: './webapp/pages/Account/Transfer/TransferDetailScreen',
         access: 'canAdmin' // 权限配置
       },
       /* ------------------------------- 个人中心 ------------------------------- */

@@ -68,6 +68,8 @@ type IProps = Partial<Props> & {
   hiddenContentScroll?: boolean
   /**控制弹窗是否打开 */
   open?: boolean
+  /** 确认后是否关闭弹窗 */
+  closeOnConfirm?: boolean
 }
 
 const SheetModal = (
@@ -95,6 +97,7 @@ const SheetModal = (
     confirmButtonProps,
     hiddenContentScroll,
     open,
+    closeOnConfirm = true,
     ...res
   }: IProps,
   ref: ForwardedRef<SheetRef>
@@ -157,7 +160,9 @@ const SheetModal = (
     try {
       setSubmitLoading(true)
       await onConfirm?.()
-      close()
+      if (closeOnConfirm) {
+        close()
+      }
     } catch (e) {
       console.log('handleConfirm error', e)
     } finally {

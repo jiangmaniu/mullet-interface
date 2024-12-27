@@ -1,3 +1,4 @@
+import { Enums } from '@/constants/enum'
 import { useTheme } from '@/context/themeProvider'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -50,7 +51,7 @@ export default function CoinHeader<T extends ISymbolItem>({ item }: IProps<T>) {
                 <View className={cn('h-2 w-[1px] mx-[6px]')} style={{ backgroundColor: theme.colors.Divider.heavy }} />
                 <Text size="xs" weight="medium">
                   {/* @ts-ignore */}
-                  {t(`${Enums.OrderType?.[item.type!]?.key}`) || '-'}
+                  {t(`${Enums.OrderType?.[item.type as keyof typeof Enums.OrderType]?.key}`) || '-'}
                 </Text>
               </>
             )
