@@ -108,19 +108,14 @@ function WebAppLayout() {
   // 主Tabbar页面使用该布局
   if (isMainTabbar(pathname)) {
     return (
-      <div className="h-screen flex flex-col">
-        <div className="flex flex-col" style={{ flex: '1 1' }}>
-          {Content}
-        </div>
-        <div style={{ flex: '0 1' }}>
-          <TabBottomBar />
-        </div>
+      <div>
+        <div>{Content}</div>
+        <TabBottomBar />
       </div>
     )
   }
 
   // 其他子页面使用的布局
-  // return <div className="h-screen flex flex-col">{Content}</div>
   return <>{Content}</>
 }
 export default observer(WebAppLayout)

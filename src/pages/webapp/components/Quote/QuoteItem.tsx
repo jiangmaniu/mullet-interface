@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
-import { forwardRef, useMemo } from 'react'
+import { forwardRef, useMemo, useRef } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
@@ -8,6 +8,7 @@ import { useTheme } from '@/context/themeProvider'
 import { formatNum } from '@/utils'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
+import { useInViewport } from 'ahooks'
 import useQuoteColor from '../../hooks/useQuoteColor'
 import { navigateTo } from '../../utils/navigator'
 import { Text } from '../Base/Text'
@@ -28,10 +29,9 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
   const { up: upColor, down: downColor, isDark } = theme
   const { trade } = useStores()
   const symbol = item?.symbol
-
-  if (!symbol) return null
-
-  const res = getCurrentQuote(symbol)
+  const itemRef = useRef<HTMLDivElement>(null)
+  const [inViewport] = useInViewport(itemRef)
+  const res = (inViewport ? getCurrentQuote(symbol) : {}) as any
   // const bid = res.bid // 卖价
   // const ask = res.ask // 买价
   // const per: any = res.percent
@@ -39,7 +39,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
 
   const { bid, ask, percent: per, hasQuote, quotes, askDiff, bidDiff } = useMemo(() => res, [res])
 
-  const isMarketOpen = trade.isMarketOpen(symbol)
+  const isMarketOpen = inViewport ? trade.isMarketOpen(symbol) : false
 
   const { bidColorStyle, askColorStyle } = useQuoteColor({ item })
 
@@ -57,11 +57,14 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
     }
   }
 
+  if (!symbol) return null
+
   return (
-    <View
-      className={cn('mb-[10px] flex items-center flex-row justify-between py-2 px-2 rounded-xl')}
-      bgColor="primary"
+    <div
+      className={cn('mb-[10px] flex items-center flex-row justify-between py-2 px-2 rounded-xl bg-primary')}
       onClick={handleJump}
+      ref={itemRef}
+      data-inviewport={inViewport}
     >
       <View className={cn('flex flex-col')}>
         <View className={cn('flex flex-row items-center pb-1')}>
@@ -75,7 +78,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
         <View className={cn('flex flex-row items-center')}>
           <View className={cn('max-w-[54px]')}>
             <Text color="primary" size="xs">
-              {item.visible ? dayjs(res.quoteTimeStamp).format('HH:mm:ss') : '--:--:--'}
+              {inViewport ? dayjs(res.quoteTimeStamp).format('HH:mm:ss') : '--:--:--'}
             </Text>
           </View>
           <View className={cn('h-2 w-[1px] mx-1', { backgroundColor: theme.colors.Divider.primary })} />
@@ -88,13 +91,13 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
           </View>
           <View className={cn('h-2 w-[1px] mx-1', { backgroundColor: theme.colors.Divider.heavy })} />
           <Text color={(per as number) > 0 ? 'green' : 'red'} size="xs" className={cn('font-medium')}>
-            {item.visible && bid ? ((per as number) > 0 ? `+${per}%` : `${per}%`) : '--'}
+            {inViewport && bid ? ((per as number) > 0 ? `+${per}%` : `${per}%`) : '--'}
           </Text>
         </View>
       </View>
       <View className={cn('flex items-center flex-row gap-x-[6px]')}>
         <View className={cn('relative w-[84px] overflow-hidden rounded-md')}>
-          {item.visible ? (
+          {inViewport ? (
             <>
               <View
                 onClick={handleJump}
@@ -123,7 +126,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
           )}
         </View>
         <View className={cn('relative w-[84px] overflow-hidden rounded-md')}>
-          {item.visible ? (
+          {inViewport ? (
             <>
               <View
                 onClick={handleJump}
@@ -150,7 +153,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
           )}
         </View>
       </View>
-    </View>
+    </div>
   )
 }
 

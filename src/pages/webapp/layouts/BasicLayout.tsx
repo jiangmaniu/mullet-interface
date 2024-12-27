@@ -93,7 +93,8 @@ const Basiclayout: React.FC<Iprops> = ({
 
       <View
         className={cn(
-          hFull ? 'h-[100vh]' : '',
+          // 不使用100vh safari浏览器出现滚动条
+          // hFull ? 'h-[100vh]' : '',
           scrollY ? 'overflow-y-scroll' : '',
           // `pt-[${headerHeight}px]`,
           className
@@ -112,7 +113,7 @@ const Basiclayout: React.FC<Iprops> = ({
           className={cn(footerClassName)}
           style={{
             position: 'fixed',
-            bottom: 0,
+            bottom: 10,
             left: 0,
             right: 0,
             padding: '10px 14px',

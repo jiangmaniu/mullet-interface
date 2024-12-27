@@ -1,6 +1,7 @@
 import { NavBar, NavBarProps } from 'antd-mobile'
 
 import Iconfont from '@/components/Base/Iconfont'
+import { cn } from '@/utils/cn'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { history } from '@umijs/max'
 
@@ -54,7 +55,7 @@ function Header({ title, onBack, back = true, left, ...res }: IProps) {
           ) : null}
         </>
       }
-      className={className}
+      className={cn(className)}
       {...res}
     >
       {title}

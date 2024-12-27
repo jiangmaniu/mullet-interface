@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 
 import { useStores } from '@/context/mobxProvider'
 
+import { cn } from '@/utils/cn'
 import { Swiper, SwiperRef } from 'antd-mobile'
 import Tabs from '../Base/Tabs'
 import QuoteFlashList from './QuoteFlashList'
@@ -44,6 +45,7 @@ type ITabbarProps = {
   onChange: ({ tabKey, tabValue }: { tabKey: TabKey; tabValue: any; index?: number }) => void
   onChangeIndex?: (index: number) => void
   position?: 'PAGE' | 'MODAL'
+  className?: string
 }
 
 const getTabList = () => [
@@ -57,7 +59,7 @@ const getTabList = () => [
 ]
 
 export const SymbolTabbar = observer(
-  forwardRef(({ tabKey, onChange, onChangeIndex, position }: ITabbarProps, ref: any) => {
+  forwardRef(({ tabKey, onChange, onChangeIndex, position, className }: ITabbarProps, ref: any) => {
     const intl = useIntl()
     const { pathname } = useLocation()
     const [activeKey, setActiveKey] = useState<TabKey>('ALL')
@@ -103,7 +105,7 @@ export const SymbolTabbar = observer(
     })
 
     return (
-      <div className="mb-3">
+      <div className={cn('mb-3', className)}>
         <Tabs
           items={tabList}
           activeKey={activeKey}
@@ -164,6 +166,7 @@ function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey
             swiperRef.current?.swipeTo(index as number)
           }}
           position="PAGE"
+          className="sticky top-[32.15px] z-[1] bg-secondary"
         />
       )}
       {/* <QuoteFlashList height={height} onItem={onItem} tabKey={activeKey} tabValue={activeTabValue} searchValue={searchValue} /> */}
@@ -187,7 +190,14 @@ function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey
           <Swiper.Item key={idx}>
             {/* 只渲染当前激活的 */}
             {item.key === activeKey ? (
-              <QuoteFlashList height={height} onItem={onItem} tabKey={activeKey} tabValue={activeTabValue} searchValue={searchValue} />
+              <QuoteFlashList
+                position={position}
+                height={height}
+                onItem={onItem}
+                tabKey={activeKey}
+                tabValue={activeTabValue}
+                searchValue={searchValue}
+              />
             ) : (
               <></>
             )}

@@ -24,9 +24,10 @@ type IProps = {
   /**列表高度 */
   height?: number
   visible?: boolean
+  position?: 'PAGE' | 'MODAL'
 }
 
-function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible }: IProps) {
+function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible, position }: IProps) {
   const { cn, theme } = useTheme()
   const { trade, ws } = useStores()
   const intl = useIntl()
@@ -105,7 +106,8 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible
         refreshing={symbolListLoading}
         // hasMore
         estimatedItemSize={76} // 估算的 item 高度
-        height={height || document.body.clientHeight - 180}
+        // 页面不使用虚拟滚动，否则safari浏览器不能隐藏底部搜索栏，交互体验不佳
+        height={position === 'MODAL' ? height || document.body.clientHeight - 180 : 0}
         onViewableItemsChanged={onViewableItemsChanged}
         ListHeaderComponent={
           <View className={cn('flex flex-row justify-between pb-2 px-3')}>

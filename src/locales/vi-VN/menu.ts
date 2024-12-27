@@ -1,8 +1,8 @@
 export default {
-  'menu.myAccount': 'My Account',
-  'menu.deposit': 'Deposit',
-  'menu.withdrawal': 'Withdrawal',
-  'menu.depositAndwithdrawalRecord': 'Deposit and Withdrawal Record',
-  'menu.copyTrading': 'Copy Trading',
-  'menu.setting': 'Settings'
+  'menu.myAccount': 'Tài khoản của tôi',
+  'menu.deposit': 'Nạp tiền',
+  'menu.withdrawal': 'Rút tiền',
+  'menu.depositAndwithdrawalRecord': 'Lịch sử Nạp và Rút tiền',
+  'menu.copyTrading': 'Sao chép giao dịch',
+  'menu.setting': 'Cài đặt'
 }

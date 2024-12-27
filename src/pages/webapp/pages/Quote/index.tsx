@@ -28,7 +28,7 @@ function Quote() {
 
   return (
     <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
-      <View style={cn('my-2')}>
+      <View style={cn('my-2 sticky top-[0px] z-[1] bg-secondary')}>
         <SwitchAccount
           showRightSearchIcon
           onSearch={() => {

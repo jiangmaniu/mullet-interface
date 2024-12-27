@@ -57,7 +57,7 @@ function Message() {
   }
 
   // 滚动容器高度
-  const ContainerHeight = document.body.clientHeight - 10
+  const ContainerHeight = document.body.clientHeight - 70
 
   const renderItem = (item: Message.MessageItem) => {
     const isUnRead = item.isRead === 'UNREAD'
@@ -82,7 +82,7 @@ function Message() {
   }
 
   return (
-    <Basiclayout bgColor="secondary" scrollY headerColor={theme.colors.backgroundColor.secondary}>
+    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       <Header
         title={i18n.t('app.pageTitle.Message')}
         right={
