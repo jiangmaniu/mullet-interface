@@ -1,6 +1,6 @@
 export default {
-  'app.pwa.offline': 'Currently offline',
-  'app.pwa.serviceworker.updated': 'New content available',
-  'app.pwa.serviceworker.updated.hint': 'Please click "Refresh" or manually refresh the page',
-  'app.pwa.serviceworker.updated.ok': 'Refresh'
+  'app.pwa.offline': 'Hiện đang ngoại tuyến',
+  'app.pwa.serviceworker.updated': 'Có nội dung mới',
+  'app.pwa.serviceworker.updated.hint': 'Vui lòng nhấp vào "Làm mới" hoặc làm mới trang theo cách thủ công',
+  'app.pwa.serviceworker.updated.ok': 'Làm mới'
 }

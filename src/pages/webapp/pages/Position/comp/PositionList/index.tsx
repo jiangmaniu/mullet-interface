@@ -31,7 +31,7 @@ function PositionListTopTabbar() {
 
   return (
     <View>
-      <View className="flex items-center justify-between px-3 sticky top-0 z-10 w-full" bgColor="secondary">
+      <View className="flex items-center justify-between pl-3 sticky top-0 z-[1] w-[98%]" bgColor="secondary">
         <Tabs items={tabs} activeKey={activeKey} onChange={(key) => setActiveKey(key as TabType)} hiddenBottomLine hiddenTabbarLine />
         <View onClick={() => navigateTo('/app/position/record')}>
           <Iconfont name="zhanghu-jilu" size={24} color={theme.colors.textColor.weak} />

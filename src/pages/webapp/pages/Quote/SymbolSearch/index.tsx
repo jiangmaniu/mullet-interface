@@ -104,7 +104,7 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
   }, [list.length]) // 依赖list长度变化重新添加监听
 
   return (
-    <div ref={containerRef} className={cn('flex-1 relative')}>
+    <div ref={containerRef} className={cn('flex-1 relative mt-[70px]')}>
       {/* <View style={cn('my-3 ml-2')}>
         <Text size="base" color="primary" weight="medium">
           {t('pages.quote.Symbol List')}
@@ -196,7 +196,7 @@ function SymbolSearch() {
 
   return (
     <Basiclayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary} scrollY>
-      <View className={cn('flex-row items-center gap-x-4 px-4 sticky top-0 bg-white z-10')}>
+      <View className={cn('flex-row items-center gap-x-4 px-4 fixed top-0 w-full bg-white z-10')}>
         <View className={cn('flex-1 py-[10px]')}>
           <Search
             iconPosition="left"

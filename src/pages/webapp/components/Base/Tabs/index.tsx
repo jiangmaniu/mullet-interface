@@ -93,6 +93,9 @@ export default function Tabs({
           paddingRight: '12px !important',
           paddingLeft: '12px !important'
         }
+      },
+      '.adm-tabs-header-mask-left,.adm-tabs-header-mask-right': {
+        display: 'none !important'
       }
     }
   })
