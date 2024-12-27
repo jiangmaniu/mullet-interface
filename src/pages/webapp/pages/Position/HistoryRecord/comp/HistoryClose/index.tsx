@@ -4,6 +4,7 @@ import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import { IlistItemProps } from '@/pages/webapp/components/Base/List/ListItem'
+import More from '@/pages/webapp/components/Base/List/More'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -11,6 +12,7 @@ import FilterModal, { FilterModalRef } from '@/pages/webapp/components/settings/
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { getTradeRecordsPage } from '@/services/api/tradeCore/order'
 import { formatNum } from '@/utils'
+import { PullToRefresh } from 'antd-mobile'
 import dayjs from 'dayjs'
 import VirtualList from 'rc-virtual-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -255,19 +257,11 @@ function HistoryClose() {
           )}
         </View>
       </View>
-      <VirtualList
-        itemKey="item"
-        data={datas}
-        // ItemSeparatorComponent={() => <View style={{ marginBottom: 10 }} />}
-        // contentContainerStyle={{ padding: 0, paddingTop: 8 }}
-        // showMoreText={true}
-        // onEndReached={onEndReached}
-        // onRefresh={onRefresh}
-        // refreshing={refreshing}
-        // hasMore={data.length < total}
-      >
-        {renderItem}
-      </VirtualList>
+      <PullToRefresh onRefresh={onRefresh}>
+        <VirtualList itemKey="item" data={datas} extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}>
+          {renderItem}
+        </VirtualList>
+      </PullToRefresh>
       <FilterModal key="symbol" ref={filterModalRef} data={symbolFilters} />
       <DateRangePickerSheetModal ref={dateRangePickerRef} onConfirm={onDateRangeConfirm} />
     </View>

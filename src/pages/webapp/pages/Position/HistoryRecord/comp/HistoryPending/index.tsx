@@ -16,6 +16,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import CoinHeader, { ISymbolItem } from '../../../comp/CoinHeader'
 
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
+import More from '@/pages/webapp/components/Base/List/More'
+import { PullToRefresh } from '@/pages/webapp/components/Base/List/PullToRefresh'
 import VirtualList from 'rc-virtual-list'
 
 /**
@@ -306,9 +308,11 @@ function HistoryPending() {
           )}
         </View>
       </View>
-      <VirtualList itemKey="item" data={datas}>
-        {({ item }) => renderItem({ item })}
-      </VirtualList>
+      <PullToRefresh onRefresh={onRefresh}>
+        <VirtualList itemKey="item" data={datas} extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}>
+          {({ item }) => renderItem({ item })}
+        </VirtualList>
+      </PullToRefresh>
 
       <FilterModal key="symbol" ref={filterModalRef} data={symbolFilters} />
       <FilterModal key="type" ref={filterModalRef2} data={typeFilters} />
