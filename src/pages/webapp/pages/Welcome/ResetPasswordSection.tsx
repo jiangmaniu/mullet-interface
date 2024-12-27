@@ -15,6 +15,7 @@ import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
 import { useEnv } from '@/context/envProvider'
 import { forgetPasswordEmail, forgetPasswordPhone } from '@/services/api/user'
+import { cn } from '@/utils/cn'
 import { useModel } from '@umijs/max'
 import { TextField } from '../../components/Base/Form/TextField'
 import { View } from '../../components/Base/View'
@@ -127,8 +128,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     setSection('forgotVerify')
     return true
   }
-  // 将属性暴露给父元素
-  useImperativeHandle(ref, () => ({ goback }))
 
   // 拦截平台/系统返回操作
   // useGoBackHandler(goback, [])
@@ -224,6 +223,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   const disabled = propsDisabled || pwdisabled
 
+  // 将属性暴露给父元素
+  useImperativeHandle(ref, () => ({ goback, submit: handleSubmit(onSubmit), disabled }))
+
   useEffect(() => {
     console.log('values', getValues())
     console.log(errors)
@@ -271,12 +273,21 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           }}
         />
       </View>
-      <Button type="primary" loading={false} height={48} className={cn('mt-4')} onPress={handleSubmit(onSubmit)} disabled={disabled}>
+      {/* <Button type="primary" loading={false} height={48} className={cn('mt-4')} onPress={handleSubmit(onSubmit)} disabled={disabled}>
         {t('common.operate.Confirm')}
-      </Button>
+      </Button> */}
 
       <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={t('pages.login.Logining')} />
     </View>
+  )
+}
+
+export const FooterResetPassword = ({ handleSubmit, disabled }: { handleSubmit: () => void; disabled: boolean }) => {
+  const { t } = useI18n()
+  return (
+    <Button type="primary" loading={false} height={48} className={cn('my-4 w-full')} onPress={handleSubmit} disabled={disabled}>
+      {t('common.operate.Confirm')}
+    </Button>
   )
 }
 

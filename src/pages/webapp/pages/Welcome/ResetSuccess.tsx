@@ -51,7 +51,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (_, ref) => {
       },
       '&::before': {
         position: 'absolute',
-        background: `linear-gradient(135deg,  ${theme.colors.green[500]},${theme.colors.success})`,
+        background: `linear-gradient(135deg,  ${theme.colors.brand.DEFAULT},${theme.colors.blue[500]})`,
         'border-radius': 'inherit',
         opacity: 1,
         transition: 'all 0.3s',
@@ -66,10 +66,13 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (_, ref) => {
   })
 
   return (
-    <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
-      <Header title={t('pages.login.Password Reset Success')} back={false} />
+    <BasicLayout
+      header={<Header title={t('pages.login.Password Reset Success')} back={false} />}
+      bgColor="secondary"
+      style={{ paddingLeft: 14, paddingRight: 14 }}
+    >
       <View
-        className={cn('mt-6 px-2 flex items-center justify-center')}
+        className={cn('px-2 flex items-center justify-center')}
         style={{
           height: screenSize.height
         }}
@@ -78,7 +81,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (_, ref) => {
           <View
             className={cn('bg-green w-[120px] h-[120px] flex items-center justify-center rounded-[30px]')}
             style={{
-              background: `linear-gradient(135deg,  ${theme.colors.green[500]},${theme.colors.success})`
+              background: `linear-gradient(135deg,  ${theme.colors.brand.DEFAULT},${theme.colors.blue[500]})`
             }}
           >
             <Icon
@@ -86,7 +89,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (_, ref) => {
               size={100}
               color={theme.colors.textColor.reverse}
               style={{
-                background: `linear-gradient(135deg,  ${theme.colors.green[500]},${theme.colors.success})`
+                background: `linear-gradient(135deg,  ${theme.colors.brand.DEFAULT},${theme.colors.blue[500]})`
               }}
             />
           </View>

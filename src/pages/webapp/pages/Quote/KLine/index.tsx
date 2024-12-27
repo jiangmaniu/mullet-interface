@@ -93,7 +93,6 @@ function KLine() {
       //     </View>
       //   </View>
       // }
-      // headerHeight={30}
       footer={
         <View>
           <BuySellButton

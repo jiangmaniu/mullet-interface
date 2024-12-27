@@ -1,5 +1,5 @@
 import { useLocation } from '@umijs/max'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
@@ -25,8 +25,6 @@ interface Iprops {
   footerStyle?: React.CSSProperties
   /** 头部 */
   header?: React.ReactNode
-  /** 头部高度 */
-  headerHeight?: number
   headerClassName?: string
   headerStyle?: React.CSSProperties
 }
@@ -45,7 +43,6 @@ const Basiclayout: React.FC<Iprops> = ({
   footerClassName,
   footerStyle,
   header,
-  headerHeight = 0,
   headerClassName,
   headerStyle
 }) => {
@@ -63,9 +60,25 @@ const Basiclayout: React.FC<Iprops> = ({
 
   const statusBarBgColor = headerColor || theme.colors.backgroundColor.primary
 
-  // useEffect(() => {
-  //   document.body.style.overflowY = scrollY ? 'auto' : 'hidden'
-  // }, [scrollY])
+  const [headerHeight, setHeaderHeight] = useState(0)
+  useEffect(() => {
+    const headerElement = document.getElementById('body-header')
+    if (headerElement) {
+      setHeaderHeight(headerElement.offsetHeight)
+    } else {
+      setHeaderHeight(0)
+    }
+  }, [header])
+
+  const [footerHeight, setFooterHeight] = useState(0)
+  useEffect(() => {
+    const footerElement = document.getElementById('body-footer')
+    if (footerElement) {
+      setFooterHeight(footerElement.offsetHeight)
+    } else {
+      setFooterHeight(0)
+    }
+  }, [footer])
 
   return (
     <>
@@ -95,14 +108,15 @@ const Basiclayout: React.FC<Iprops> = ({
         className={cn(
           // 不使用100vh safari浏览器出现滚动条
           // hFull ? 'h-[100vh]' : '',
-          scrollY ? 'overflow-y-scroll' : '',
+          scrollY ? 'overflow-y-scroll' : 'auto',
           // `pt-[${headerHeight}px]`,
           className
         )}
         bgColor={bgColor}
         style={{
-          // paddingTop: headerHeight,
-          marginTop: headerHeight,
+          paddingTop: headerHeight,
+          // paddingBottom: footerHeight,
+          height: `calc(100% - ${headerHeight}px - ${footerHeight}px)`,
           ...style
         }}
       >
@@ -110,10 +124,11 @@ const Basiclayout: React.FC<Iprops> = ({
       </View>
       {footer && (
         <div
+          id="body-footer"
           className={cn(footerClassName)}
           style={{
             position: 'fixed',
-            bottom: 10,
+            bottom: 0,
             left: 0,
             right: 0,
             padding: '10px 14px',

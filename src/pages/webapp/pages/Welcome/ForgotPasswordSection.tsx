@@ -15,6 +15,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
+import { cn } from '@/utils/cn'
 import { useModel } from '@umijs/max'
 import { TextField } from '../../components/Base/Form/TextField'
 import { Text } from '../../components/Base/Text'
@@ -110,13 +111,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   }
 
   /** 拦截系统返回操作 */
-  const gobackHandler = () => {
-    console.log('gobackHandler forgotPassword')
+  const goback = () => {
     setSection('login')
     return true
   }
-  // 将属性暴露给父元素
-  useImperativeHandle(ref, () => ({ goback: gobackHandler }))
 
   /** 表单控制 */
   const schema = z.object({
@@ -178,6 +176,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   const disabled = inputType === 'PHONE' ? !!errors.phone || !!errors.areaCode : !!errors.email
 
+  // 将属性暴露给父元素
+  useImperativeHandle(ref, () => ({ goback, submit: handleSubmit(onSubmit), disabled }))
   return (
     <View className={cn('flex-1 flex flex-col justify-between mb-12')}>
       <View className={cn('flex flex-col mb-5')}>
@@ -235,13 +235,22 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           </>
         )}
       </View>
-      <Button type="primary" loading={false} height={48} className={cn('mt-4')} onPress={handleSubmit(onSubmit)} disabled={disabled}>
+      {/* <Button type="primary" loading={false} height={48} className={cn('mt-4')} onPress={handleSubmit(onSubmit)} disabled={disabled}>
         {t('pages.login.Get Verification Code')}
-      </Button>
+      </Button> */}
 
       <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} />
       <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={t('pages.login.Sending')} />
     </View>
+  )
+}
+
+export const FooterForgotPassword = ({ handleSubmit, disabled }: { handleSubmit: () => void; disabled: boolean }) => {
+  const { t } = useI18n()
+  return (
+    <Button type="primary" loading={false} height={48} className={cn('my-4 w-full')} onPress={handleSubmit} disabled={disabled}>
+      {t('pages.login.Get Verification Code')}
+    </Button>
   )
 }
 

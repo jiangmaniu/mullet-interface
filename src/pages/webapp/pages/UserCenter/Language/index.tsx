@@ -10,33 +10,25 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { setUserLanguage } from '@/services/api/user'
-import { onBack } from '@/utils/navigator'
 import { observer } from 'mobx-react'
 import { useMemo, useState } from 'react'
 
-function Language() {
+export const LngList = ({ list }: { list: IlistItemProps[] }) => {
   const i18n = useI18n()
   const { global } = useStores()
   const { theme } = useTheme()
   const { setLng } = useLang()
 
-  const currentList = Object.keys(LanuageTransformMap).map((item) => {
-    return {
-      title: i18n.t(`common.language.${item}`),
-      value: item
-    }
-  })
-
   //   切换语言
   const handleChangeLanguage = async (item: IlistItemProps) => {
     if (item.value === i18n.locale) {
-      onBack()
       return
     }
     // 调用接口设置语言保存到后台同步到不同终端
     await setUserLanguage({ language: item.value as ILanguage })
     setLng(item.value as ILanguage)
   }
+
   const renderList = (listData: IlistItemProps[]) => {
     return (
       <View style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
@@ -80,6 +72,18 @@ function Language() {
       </View>
     )
   }
+  return <View>{renderList(list)}</View>
+}
+
+function Language() {
+  const i18n = useI18n()
+
+  const currentList = Object.keys(LanuageTransformMap).map((item) => {
+    return {
+      title: i18n.t(`common.language.${item}`),
+      value: item
+    }
+  })
 
   const [searchValue, setSearchValue] = useState('')
   const filteredList = useMemo<IlistItemProps[]>(() => {
@@ -115,7 +119,7 @@ function Language() {
           containerStyle={{ marginBottom: 14 }}
         />
       </View>
-      <View>{renderList(filteredList)}</View>
+      <LngList list={filteredList} />
     </BasicLayout>
   )
 }

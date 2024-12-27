@@ -95,7 +95,6 @@ export default function HistoryRecordTopTabbar() {
           <Tabs style={{ backgroundColor: theme.colors.backgroundColor.secondary }} items={items} onChange={onChange} />
         </div>
       }
-      headerHeight={100}
     >
       {items.find((item) => item.key === tabKey)?.component && items.find((item) => item.key === tabKey)?.component()}
     </Basiclayout>
