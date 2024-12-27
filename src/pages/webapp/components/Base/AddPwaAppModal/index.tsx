@@ -131,7 +131,7 @@ const AddPwaAppModal = () => {
                   '!top-[90px]': addSreenData.type === 'iphoneChrome'
                 })}
               >
-                https://{ENV.offical}
+                {location.origin}
               </span>
             </div>
             <p className="mt-5">
