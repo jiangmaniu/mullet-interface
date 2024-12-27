@@ -1,4 +1,5 @@
 export type BrowserDeviceType =
+  | 'PWA'
   | 'Chrome'
   | 'Safari'
   | 'Mozilla Firefox'
@@ -10,7 +11,11 @@ export type BrowserDeviceType =
 //获取浏览器分类
 export const getBrowser = (): BrowserDeviceType => {
   let userAgent = navigator.userAgent
-  if (userAgent.indexOf('Chrome') !== -1 || userAgent.indexOf('CriOS') !== -1) {
+
+  if (window.matchMedia('(display-mode: standalone)').matches) {
+    // 在PWA应用内
+    return 'PWA'
+  } else if (userAgent.indexOf('Chrome') !== -1 || userAgent.indexOf('CriOS') !== -1) {
     return 'Chrome'
   } else if (userAgent.indexOf('Safari') !== -1) {
     return 'Safari'
