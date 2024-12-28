@@ -158,6 +158,8 @@ export default function WelcomeScreen() {
         setTenanName={setTenanName}
         setSection={setSection}
         startAnimation={startAnimation}
+        email={email}
+        setEmail={setEmail}
       />
     ),
     // server: (
