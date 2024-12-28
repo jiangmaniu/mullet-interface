@@ -166,7 +166,7 @@ function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey
             swiperRef.current?.swipeTo(index as number)
           }}
           position="PAGE"
-          className="sticky top-[32.15px] z-[1] bg-secondary"
+          className="sticky top-[48px] z-[1] bg-secondary border-t border-weak"
         />
       )}
       {/* <QuoteFlashList height={height} onItem={onItem} tabKey={activeKey} tabValue={activeTabValue} searchValue={searchValue} /> */}

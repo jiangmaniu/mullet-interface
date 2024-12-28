@@ -204,7 +204,7 @@ function Depth() {
                 }}
               >
                 <View
-                  className={cn('rounded-[2px] px-[2px]')}
+                  className={cn('rounded-[2px] flex items-center justify-center size-6')}
                   style={{
                     backgroundColor: item.key === mode ? theme.colors.gray[50] : 'transparent'
                   }}
