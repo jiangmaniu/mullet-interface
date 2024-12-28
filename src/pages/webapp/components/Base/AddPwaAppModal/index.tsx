@@ -17,6 +17,7 @@ const AddPwaAppModal = () => {
   const [isAddSreenModal, setIsAddSreenModal] = useState(false)
   const { isPc } = useEnv()
   const { pathname } = useLocation()
+  const { isPwaApp } = useEnv()
 
   const addScreenList = [
     {
@@ -67,7 +68,7 @@ const AddPwaAppModal = () => {
     }
 
     // 判断是否为pwa独立应用，PWA独立应用内不要弹窗
-    if (browser === 'PWA') {
+    if (isPwaApp) {
       showModal = false
     } else {
       STORAGE_SET_SHOW_PWA_ADD_MODAL(true)
@@ -89,7 +90,7 @@ const AddPwaAppModal = () => {
 
   useEffect(() => {
     init()
-  }, [])
+  }, [isPwaApp])
 
   const purePathname = getPathname(location.pathname)
   const token = STORAGE_GET_TOKEN()

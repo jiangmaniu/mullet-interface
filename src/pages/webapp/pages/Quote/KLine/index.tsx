@@ -73,9 +73,8 @@ function KLine() {
 
   return (
     <Basiclayout
-      bgColor="secondary"
+      bgColor="primary"
       headerColor={theme.colors.backgroundColor.secondary}
-      className={cn('pt-2')}
       headerClassName="bg-secondary"
       // header={
       //   <View className={cn('flex-row items-center px-3 py-[5px]')}>
@@ -103,7 +102,7 @@ function KLine() {
       }
     >
       <>
-        <View className={cn('flex-row items-center')}>
+        <View className={cn('flex-row items-center pt-2 pb-5 bg-secondary')}>
           <View
             className={cn('bg-gray-80 rounded-full w-[30px] h-[30px] flex items-center justify-center ml-3')}
             onClick={() => {
@@ -116,7 +115,10 @@ function KLine() {
             <SwitchAccount isRemainAtCurrentPage />
           </View>
         </View>
-        <View className={cn('flex flex-col justify-between rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-[10px]')} bgColor="primary">
+        <View
+          className={cn('flex flex-col relative -top-5 justify-between rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-[10px]')}
+          bgColor="primary"
+        >
           <Header />
           <Tradingview />
           {/* <View className={cn('mx-3')}>

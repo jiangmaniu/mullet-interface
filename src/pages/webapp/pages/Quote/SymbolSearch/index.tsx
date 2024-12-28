@@ -59,6 +59,7 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
       const sectionEl = sections[index] as HTMLElement
       const elementPosition = sectionEl.offsetTop
       const offsetPosition = elementPosition
+
       window.scrollTo({
         top: offsetPosition,
         behavior: 'smooth'
@@ -122,7 +123,7 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
               {item.data.map((child: any) => (
                 <View key={child} className="py-2">
                   <View
-                    className={cn('flex-row gap-x-3 items-center pl-4 pr-[60px]')}
+                    className={cn('flex-row gap-x-3 items-center pl-4 pr-[100px]')}
                     onClick={() =>
                       navigateTo('/app/quote/kline', {
                         redirect: '/app/quote/search'
@@ -140,7 +141,7 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
           </View>
         )
       })}
-      <View className={cn('fixed right-3 top-[100px] overflow-y-auto')}>
+      <View className={cn('fixed right-0 pr-3 top-[100px] overflow-y-auto')}>
         {letterData.map((item, idx) => {
           const isActive = currentLetterIndex === idx
           return (
@@ -256,14 +257,6 @@ function SymbolSearch() {
       </View> */}
       {/* 搜索列表 */}
       <SearchList keyword={keyword} />
-      <div
-        onClick={() => {
-          navigateTo('/app/test')
-        }}
-        className="my-10"
-      >
-        test
-      </div>
     </Basiclayout>
   )
 }

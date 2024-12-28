@@ -62,7 +62,7 @@ export const BottomButton = observer(() => {
 
 function TradeView() {
   const { cn, theme } = useTheme()
-  const { browserDeviceType } = useEnv()
+  const { isPwaApp, browserDeviceType } = useEnv()
 
   const { trade, ws } = useStores()
   const { activeSymbolName, symbolListAll } = trade
@@ -126,11 +126,16 @@ function TradeView() {
           <Depth />
         </View>
       </div>
-      <View className={cn('px-3 fixed w-full', browserDeviceType === 'PWA' ? 'bottom-[80px]' : 'bottom-[60px]')}>
+      {/* <View
+        className={cn(
+          'px-3 fixed w-full',
+          isPwaApp ? (browserDeviceType === 'Safari' ? 'bottom-[100px]' : 'bottom-[80px]') : 'bottom-[60px]'
+        )}
+      >
         <View className={cn('mt-2')}>
           <BottomButton />
         </View>
-      </View>
+      </View> */}
     </View>
   )
 }

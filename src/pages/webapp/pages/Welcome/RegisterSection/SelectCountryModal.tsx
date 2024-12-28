@@ -102,7 +102,7 @@ function SelectCountryModal({ isSimulate, onPress, isRemainAtCurrentPage }: IPro
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height={500}
+      height={'90%'}
       hiddenFooter
       // useKeyboardShift={false}
       dragOnContent={false}

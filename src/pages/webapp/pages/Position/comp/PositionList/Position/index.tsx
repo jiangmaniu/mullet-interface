@@ -228,7 +228,7 @@ function PositionList() {
         renderItem={(item) => {
           return <RenderItem item={item} onPress={onPress} />
         }}
-        style={{ marginInline: 14, paddingTop: 4, paddingBottom: 60 }}
+        style={{ marginInline: 14, paddingTop: 4, paddingBottom: 90 }}
         // showMoreText={false}
         onViewableItemsChanged={onViewableItemsChanged}
         ListEmptyComponent={

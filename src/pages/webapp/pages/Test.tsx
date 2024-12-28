@@ -15,7 +15,6 @@ export default function Test() {
     // @ts-ignore
     console.log('====window.navigator?.standalone====', window.navigator?.standalone)
     console.log('====document?.referrer?.includes?.(android-app://)====', document?.referrer?.includes?.('android-app://'))
-    console.log('====env(safe-area-inset-bottom)====', 'env(safe-area-inset-bottom)')
   }, [browserDeviceType])
 
   return <div>Test browserDeviceType: {browserDeviceType}</div>

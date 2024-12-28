@@ -11,6 +11,8 @@ type SizeInfo = {
 type ProviderType = {
   /**浏览器设备类型 */
   browserDeviceType: BrowserDeviceType
+  /**是否是pwa应用 */
+  isPwaApp: boolean
   /** 屏幕宽高信息 */
   screenSize: SizeInfo
   /**手机模式，不包含ipad */

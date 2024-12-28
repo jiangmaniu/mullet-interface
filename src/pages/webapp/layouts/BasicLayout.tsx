@@ -8,6 +8,8 @@ import { View } from '../components/Base/View'
 
 type BgColorType = 'primary' | 'secondary' | 'transparent'
 
+type Edge = 'top' | 'bottom' | 'left' | 'right'
+
 interface Iprops {
   style?: React.CSSProperties
   children: React.ReactNode
@@ -27,6 +29,8 @@ interface Iprops {
   header?: React.ReactNode
   headerClassName?: string
   headerStyle?: React.CSSProperties
+  /**安全区域边界 */
+  edges?: Edge[]
 }
 
 // 页面布局基础组件
@@ -38,13 +42,14 @@ const Basiclayout: React.FC<Iprops> = ({
   children,
   bgColor = 'primary',
   scrollY = false,
-  fixedHeight = true,
+  fixedHeight = false,
   footer,
   footerClassName,
   footerStyle,
   header,
   headerClassName,
-  headerStyle
+  headerStyle,
+  edges = []
 }) => {
   const { theme, cn } = useTheme()
   const { pathname } = useLocation()
@@ -80,6 +85,11 @@ const Basiclayout: React.FC<Iprops> = ({
     }
   }, [footer])
 
+  const safeAreaInsetBottom = edges.includes('bottom')
+  const safeAreaInsetTop = edges.includes('top')
+  const safeAreaInsetLeft = edges.includes('left')
+  const safeAreaInsetRight = edges.includes('right')
+
   return (
     <>
       <Helmet>
@@ -110,6 +120,10 @@ const Basiclayout: React.FC<Iprops> = ({
           // 不使用100vh safari浏览器出现滚动条
           scrollY ? 'overflow-y-scroll' : 'auto',
           // `pt-[${headerHeight}px]`,
+          safeAreaInsetBottom && `pb-[env(safe-area-inset-bottom)]`,
+          safeAreaInsetTop && `pb-[env(safe-area-inset-top)]`,
+          safeAreaInsetLeft && `pb-[env(safe-area-inset-left)]`,
+          safeAreaInsetRight && `pb-[env(safe-area-inset-right)]`,
           className
         )}
         bgColor={bgColor}
@@ -129,15 +143,13 @@ const Basiclayout: React.FC<Iprops> = ({
           className={cn(footerClassName)}
           style={{
             position: 'fixed',
-            bottom: 0,
+            // 当 viewport-fit=contain 时 env() 是不起作用的，必须要配合 viewport-fit=cover 使用。对于不支持env() 的浏览器，浏览器将会忽略它
+            bottom: 'env(safe-area-inset-bottom)',
             left: 0,
             right: 0,
-            padding: '10px 14px',
-            // backgroundColor: 'linear-gradient(-90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%)'
+            paddingInline: 14,
+            paddingTop: 10,
             backgroundColor: 'white',
-            // display: 'flex',
-            // justifyContent: 'center',
-            // alignItems: 'center',
             ...footerStyle
           }}
         >
