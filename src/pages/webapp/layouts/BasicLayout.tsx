@@ -32,6 +32,8 @@ interface Iprops {
   headerStyle?: React.CSSProperties
   /**安全区域边界 */
   edges?: Edge[]
+  /**是否隐藏页面滚动条 */
+  hiddenScrollBar?: boolean
 }
 
 // 页面布局基础组件
@@ -50,7 +52,8 @@ const Basiclayout: React.FC<Iprops> = ({
   header,
   headerClassName,
   headerStyle,
-  edges = []
+  edges = [],
+  hiddenScrollBar
 }) => {
   const { theme } = useTheme()
   const { pathname } = useLocation()
@@ -85,6 +88,17 @@ const Basiclayout: React.FC<Iprops> = ({
       setFooterHeight(0)
     }
   }, [footer])
+
+  useEffect(() => {
+    // 隐藏页面滚动条
+    if (hiddenScrollBar) {
+      document.documentElement.style.overflowY = 'hidden'
+    }
+
+    return () => {
+      document.documentElement.style.overflowY = 'auto'
+    }
+  }, [hiddenScrollBar])
 
   const safeAreaInsetBottom = edges.includes('bottom')
   const safeAreaInsetTop = edges.includes('top')

@@ -8,12 +8,8 @@ export type BrowserDeviceType =
   | 'Unknown Browser'
 
 export const isInStandaloneMode = () =>
-  // fullscreen：全屏显示，会尽可能将所有的显示区域都占满
-  window.matchMedia('(display-mode: fullscreen)').matches ||
   // standalone：独立应用模式，这种模式下打开的应用有自己的启动图标，并且不会有浏览器的地址栏。因此看起来更像一个Native App
   window.matchMedia('(display-mode: standalone)').matches ||
-  // 与standalone相比，该模式会多出地址栏
-  window.matchMedia('(display-mode: minimal-ui)').matches ||
   // @ts-ignore Safari 判断
   window.navigator?.standalone ||
   document?.referrer?.includes?.('android-app://')
