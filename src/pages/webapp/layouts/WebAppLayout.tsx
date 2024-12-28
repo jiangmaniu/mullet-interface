@@ -101,6 +101,15 @@ function WebAppLayout() {
         <meta name="fullscreen" content="yes" />
         {/* UC强制全屏 */}
         <meta name="x5-fullscreen" content="true" />
+        {/* ios适配 */}
+        {/* <link rel="apple-touch-icon" href="/custom_icon.png" /> */}
+        {/* 不同分辨率的适配： */}
+        {/* <link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+        <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png" />
+        <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png" /> */}
+        {/* apple-touch-startup-image：启动画面 */}
+        {/* <link rel="apple-touch-startup-image" href="/launch.png" /> */}
       </Helmet>
     </>
   )

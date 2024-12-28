@@ -1,4 +1,5 @@
 import { useTheme } from '@/context/themeProvider'
+import ENV from '@/env'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
@@ -20,7 +21,7 @@ export const PrivacyPolicyService = () => {
         <Text
           style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            window.open('/assets/docs/lynfoo服务条款.rtf', '_self')
+            window.open(ENV.ServiceTerm, '_self')
           }}
         >
           {i18n.t('pages.login.termsService')}
@@ -36,7 +37,7 @@ export const PrivacyPolicyService = () => {
         <Text
           style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            window.open('/assets/docs/lynfoo隐私协议.rtf', '_self')
+            window.open(ENV.PrivacyAgreement, '_self')
           }}
         >
           {i18n.t('pages.login.privacyPolicy')}

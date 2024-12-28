@@ -256,6 +256,14 @@ function SymbolSearch() {
       </View> */}
       {/* 搜索列表 */}
       <SearchList keyword={keyword} />
+      <div
+        onClick={() => {
+          navigateTo('/app/test')
+        }}
+        className="my-10"
+      >
+        test
+      </div>
     </Basiclayout>
   )
 }

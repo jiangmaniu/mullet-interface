@@ -46,12 +46,13 @@ function OrderTopTabbar({ position = 'PAGE' }: IProps) {
             // 重置交易数据
             handleReset()
           }}
+          activeKey={trade.orderType}
           stretch
           fixedActiveLineWidth={hasDepth && position === 'PAGE' ? 30 : 100}
         />
       </>
     )
-  }, [hasDepth, position])
+  }, [hasDepth, position, trade.orderType])
 
   const renderTabItem = useMemo(() => {
     return <OrderTabItem position={position} />

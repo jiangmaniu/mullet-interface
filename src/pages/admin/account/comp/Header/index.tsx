@@ -26,7 +26,7 @@ function Header() {
         )}
         {!isKycAuth && (
           <span
-            className="text-red text-sm ml-3 px-[7px] py-1 rounded  cursor-pointer bg-red-600 bg-opacity-[0.04]"
+            className="text-red text-sm ml-3 px-[7px] py-1 rounded  cursor-pointer bg-[#c5474712]"
             onClick={() => {
               push('/setting/kyc')
             }}

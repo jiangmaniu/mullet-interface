@@ -352,6 +352,11 @@ export default [
         path: '/:lng/app/user-center/verify-document',
         component: './webapp/pages/UserCenter/Kyc/VerifyDoc',
         access: 'canAdmin' // 权限配置
+      },
+      {
+        path: '/:lng/app/test',
+        component: './webapp/pages/Test',
+        access: 'canAdmin' // 权限配置
       }
     ]
   },

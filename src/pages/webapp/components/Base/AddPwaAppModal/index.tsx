@@ -67,7 +67,7 @@ const AddPwaAppModal = () => {
     }
 
     // 判断是否为pwa独立应用，PWA独立应用内不要弹窗
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (browser === 'PWA') {
       showModal = false
     } else {
       STORAGE_SET_SHOW_PWA_ADD_MODAL(true)
@@ -131,7 +131,7 @@ const AddPwaAppModal = () => {
                   '!top-[90px]': addSreenData.type === 'iphoneChrome'
                 })}
               >
-                https://{ENV.offical}
+                {location.origin}
               </span>
             </div>
             <p className="mt-5">
