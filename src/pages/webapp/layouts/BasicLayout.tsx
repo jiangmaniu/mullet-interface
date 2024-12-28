@@ -9,8 +9,6 @@ import { View } from '../components/Base/View'
 
 type BgColorType = 'primary' | 'secondary' | 'transparent'
 
-type Edge = 'top' | 'bottom' | 'left' | 'right'
-
 interface Iprops {
   style?: React.CSSProperties
   children: React.ReactNode
@@ -30,8 +28,6 @@ interface Iprops {
   header?: React.ReactNode
   headerClassName?: string
   headerStyle?: React.CSSProperties
-  /**安全区域边界 */
-  edges?: Edge[]
   /**是否隐藏页面滚动条 */
   hiddenScrollBar?: boolean
 }
@@ -52,7 +48,6 @@ const Basiclayout: React.FC<Iprops> = ({
   header,
   headerClassName,
   headerStyle,
-  edges = [],
   hiddenScrollBar
 }) => {
   const { theme } = useTheme()
@@ -100,11 +95,6 @@ const Basiclayout: React.FC<Iprops> = ({
     }
   }, [hiddenScrollBar])
 
-  const safeAreaInsetBottom = edges.includes('bottom')
-  const safeAreaInsetTop = edges.includes('top')
-  const safeAreaInsetLeft = edges.includes('left')
-  const safeAreaInsetRight = edges.includes('right')
-
   return (
     <>
       <Helmet>
@@ -134,10 +124,6 @@ const Basiclayout: React.FC<Iprops> = ({
         className={cn(
           // 不使用100vh safari浏览器出现滚动条
           scrollY ? 'overflow-y-scroll' : 'auto',
-          safeAreaInsetBottom && `pb-[env(safe-area-inset-bottom)]`,
-          safeAreaInsetTop && `pb-[env(safe-area-inset-top)]`,
-          safeAreaInsetLeft && `pb-[env(safe-area-inset-left)]`,
-          safeAreaInsetRight && `pb-[env(safe-area-inset-right)]`,
           className
         )}
         bgColor={bgColor}
