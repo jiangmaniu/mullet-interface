@@ -57,7 +57,7 @@ export default function VerifyStatus() {
           <Text className={cn('text-xl text-primary font-medium text-center')}>
             {i18n.t('pages.userCenter.shenfenrenzhengshenhezhong')}
           </Text>
-          <Text className={cn('text-sm text-gray-500 text-center')}>
+          <Text className={cn('text-sm !text-gray-500 text-center')}>
             {i18n.t('pages.userCenter.shenfenrenzhengshenhezhongnaixindengdai')}
             {i18n.t('pages.userCenter.fangxinguanbi')}
           </Text>

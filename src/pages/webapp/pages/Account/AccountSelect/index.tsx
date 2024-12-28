@@ -54,15 +54,18 @@ function AccountSelect() {
           </div>
         </Button>
       }
+      fixedHeight
+      header={
+        <Header
+          back={back}
+          // wrapperStyle={{
+          //   zIndex: 100,
+          //   backgroundColor: 'transparent'
+          // }}
+          // back={back}
+        />
+      }
     >
-      <Header
-        back={back}
-        // wrapperStyle={{
-        //   zIndex: 100,
-        //   backgroundColor: 'transparent'
-        // }}
-        // back={back}
-      />
       <View style={cn('mb-4 mt-5')}>
         <Text size="22" weight="medium">
           {t('pages.account.Select Account')}

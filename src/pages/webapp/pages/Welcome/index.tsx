@@ -256,6 +256,7 @@ export default function WelcomeScreen() {
   return (
     <Basiclayout
       // scrollY
+      fixedHeight
       scrollY={section === 'register'}
       style={{ paddingTop: 20 }}
       header={

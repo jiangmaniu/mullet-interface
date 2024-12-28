@@ -179,7 +179,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     /** 更新服务器选项 */
     if (tenanNameProps) setValue('tenanName', tenanNameProps)
     if (tenanIdProps) setValue('tenanId', tenanIdProps)
-  }, [tenanNameProps, tenanIdProps])
+    if (emailProps) setValue('email', emailProps)
+  }, [tenanNameProps, tenanIdProps, emailProps])
 
   useEffect(() => {
     /** 如果 remember 为 true，则账号密码变更时，将账号密码存储到本地 */
@@ -236,7 +237,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             //   // todo
             // }}
           />
-          {!!errors.email && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.email.message}</Text>}
+          {!!errors.email && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.email.message}</Text>}
           <TextField
             ref={authPasswordInput}
             value={password}

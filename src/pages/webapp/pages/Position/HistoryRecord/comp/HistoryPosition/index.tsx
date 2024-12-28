@@ -257,7 +257,7 @@ function HistoryPosition() {
         const symbolMatch = filterSymbol ? item.symbol === filterSymbol : true
         return symbolMatch
       })
-      .map((item) => ({ item }))
+      .map((item, index) => ({ item, index }))
   }, [data, filterSymbol])
 
   const dateRangePickerRef = useRef<ModalRef>(null)
@@ -267,52 +267,61 @@ function HistoryPosition() {
   }
 
   return (
-    <View bgColor="primary" className={cn(' flex-1 rounded-t-3xl bg-white')}>
-      <View className={cn('flex flex-row justify-between items-center px-3 pt-[14px]')}>
-        <View className={cn('flex flex-row items-center gap-2')}>
-          <View onPress={() => filterModalRef.current?.show()}>
-            <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px]')}>
-              <Text size="sm">{i18n.t('pages.position.Filter Symbol')}</Text>
-              <Iconfont name="zhanghu-gengduo" size={20} />
+    <PullToRefresh onRefresh={onRefresh}>
+      <View bgColor="primary" className={cn(' flex-1 rounded-t-3xl bg-white min-h-[90vh]')}>
+        <View className={cn('flex flex-row justify-between items-center px-3 pt-[14px]')}>
+          <View className={cn('flex flex-row items-center gap-2')}>
+            <View onPress={() => filterModalRef.current?.show()}>
+              <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px]')}>
+                <Text size="sm">{i18n.t('pages.position.Filter Symbol')}</Text>
+                <Iconfont name="zhanghu-gengduo" size={20} />
+              </View>
             </View>
           </View>
-        </View>
 
-        <View onPress={() => dateRangePickerRef.current?.show()}>
-          {startTime && endTime ? (
-            <View
-              onPress={() => {
-                // 清空日期
-                setStartTime(undefined)
-                setEndTime(undefined)
-              }}
-              className={cn('flex flex-col items-center w-[105px]')}
-            >
-              <Text size="sm" color="weak">
-                {i18n.t('Common.From')}:&nbsp;{startTime ? dayjs(startTime).format('YYYY/MM/DD') : i18n.t('pages.position.Start Date')}
-              </Text>
-              <Text size="sm" color="weak">
-                {i18n.t('Common.To')}:&nbsp;{endTime ? dayjs(endTime).format('YYYY/MM/DD') : i18n.t('pages.position.End Date')}
-              </Text>
-            </View>
-          ) : (
-            <Iconfont name="dingdan-shaixuan" size={28} />
-          )}
+          <View onPress={() => dateRangePickerRef.current?.show()}>
+            {startTime && endTime ? (
+              <View
+                onPress={() => {
+                  // 清空日期
+                  setStartTime(undefined)
+                  setEndTime(undefined)
+                }}
+                className={cn('flex flex-col items-center w-[105px]')}
+              >
+                <Text size="sm" color="weak">
+                  {i18n.t('Common.From')}:&nbsp;{startTime ? dayjs(startTime).format('YYYY/MM/DD') : i18n.t('pages.position.Start Date')}
+                </Text>
+                <Text size="sm" color="weak">
+                  {i18n.t('Common.To')}:&nbsp;{endTime ? dayjs(endTime).format('YYYY/MM/DD') : i18n.t('pages.position.End Date')}
+                </Text>
+              </View>
+            ) : (
+              <Iconfont name="dingdan-shaixuan" size={28} />
+            )}
+          </View>
         </View>
+        {datas.length > 0 ? (
+          <VirtualList
+            itemKey="index"
+            data={datas}
+            style={{ padding: 0, paddingTop: 8 }}
+            extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}
+          >
+            {renderItem}
+          </VirtualList>
+        ) : (
+          <View className={cn('flex flex-col items-center justify-center h-80')}>
+            <img src={'/images/icon-zanwucangwei.png'} style={{ width: 120, height: 120 }} />
+            <Text size="sm" color="weak">
+              {i18n.t('common.NO Data')}
+            </Text>
+          </View>
+        )}
+        <FilterModal key="symbol" ref={filterModalRef} data={symbolFilters} />
+        <DateRangePickerSheetModal ref={dateRangePickerRef} onConfirm={onDateRangeConfirm} />
       </View>
-      <PullToRefresh onRefresh={onRefresh}>
-        <VirtualList
-          itemKey="item"
-          data={datas}
-          style={{ padding: 0, paddingTop: 8 }}
-          extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}
-        >
-          {renderItem}
-        </VirtualList>
-      </PullToRefresh>
-      <FilterModal key="symbol" ref={filterModalRef} data={symbolFilters} />
-      <DateRangePickerSheetModal ref={dateRangePickerRef} onConfirm={onDateRangeConfirm} />
-    </View>
+    </PullToRefresh>
   )
 }
 

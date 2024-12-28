@@ -21,7 +21,7 @@ export const PrivacyPolicyService = () => {
         <Text
           style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            window.open(ENV.ServiceTerm, '_blank')
+            window.open(ENV.ServiceTerm, '_self')
           }}
         >
           {i18n.t('pages.login.termsService')}
@@ -37,7 +37,7 @@ export const PrivacyPolicyService = () => {
         <Text
           style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            window.open(ENV.PrivacyAgreement, '_blank')
+            window.open(ENV.PrivacyAgreement, '_self')
           }}
         >
           {i18n.t('pages.login.privacyPolicy')}

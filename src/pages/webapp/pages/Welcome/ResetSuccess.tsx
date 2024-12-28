@@ -89,7 +89,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (_, ref) => {
             />
           </View>
           <Text className={cn('text-xl text-primary font-medium text-center')}>{t('pages.login.Password Reset Success')}</Text>
-          <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.login.qingjizhumima')}</Text>
+          <Text className={cn('text-sm !text-gray-500 text-center')}>{t('pages.login.qingjizhumima')}</Text>
 
           <Button
             type="primary"

@@ -62,7 +62,7 @@ const CountDown = observer(
           <>
             <Text className={cn('text-start text-sm text-weak')}>{t('pages.login.click to')}</Text>
             <View onPress={onSendCode}>
-              <Text className={cn('text-start text-sm text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
+              <Text className={cn('text-start text-sm !text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
             </View>
           </>
         ) : (
@@ -199,7 +199,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           <Text className={cn('text-start font-medium text-xl text-primary')}>
             {t('pages.login.Please enter the sixdigit verification code')}
           </Text>
-          <Text className={cn('text-start text-sm text-secondary mt-1.5')}>
+          <Text className={cn('text-start text-sm !text-secondary mt-1.5')}>
             {t('pages.login.Verification code sent to', { email: phone ? `+${areaCodeItem?.areaCode}${phone}` : email })}
           </Text>
           <View className={cn('flex flex-col  mt-[18px]')}>

@@ -90,6 +90,10 @@ export default function VerifyMsg() {
       setValue('country', item.abbr)
       setValue('areaCodeItem', item)
       trigger('areaCode')
+      areacodeRef.current?.blur()
+      setTimeout(() => {
+        lastNameInput.current?.focus()
+      }, 100)
     } else {
       setValue('areaCode', '')
       setValue('country', '')
@@ -125,6 +129,13 @@ export default function VerifyMsg() {
 
   const areacodeRef = useRef<any>(null)
 
+  const handlerAreaCodeFocus = () => {
+    if (!areaCodeItem) {
+      selectCountryModalRef.current?.show()
+      areacodeRef.current?.blur()
+    }
+  }
+
   return (
     <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
       <Header title={i18n.t('pages.userCenter.shenfenrenzheng')} />
@@ -137,12 +148,7 @@ export default function VerifyMsg() {
             <TextField
               ref={areacodeRef}
               value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
-              onFocus={() => {
-                if (!areaCodeItem) {
-                  selectCountryModalRef.current?.show()
-                  areacodeRef.current?.blur()
-                }
-              }}
+              onFocus={handlerAreaCodeFocus}
               onChange={(val) => {
                 if (val) selectCountryModalRef.current?.show()
                 else handleSelectCountry()
@@ -157,10 +163,23 @@ export default function VerifyMsg() {
               className={'leading-[18px]'}
               autoCapitalize="none"
               autoComplete="password"
-              // autoCorrect={false}
-              onEndEditing={() => lastNameInput.current?.focus()}
-              LeftAccessory={() => <Iconfont name="earth" size={18} color={theme.colors.textColor.weak} style={{ marginLeft: 16 }} />}
-              RightAccessory={() => <Iconfont name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} />}
+              onEnterPress={() => {
+                if (areaCodeItem) {
+                  lastNameInput.current?.focus()
+                }
+              }}
+              LeftAccessory={() => (
+                <Iconfont
+                  name="earth"
+                  size={18}
+                  color={theme.colors.textColor.weak}
+                  style={{ marginLeft: 16 }}
+                  onClick={handlerAreaCodeFocus}
+                />
+              )}
+              RightAccessory={() => (
+                <Iconfont name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} onClick={handlerAreaCodeFocus} />
+              )}
             />
             {errors.country && <Text color="red">{errors.country.message}</Text>}
             <TextField
@@ -177,7 +196,11 @@ export default function VerifyMsg() {
               autoComplete="email"
               // autoCorrect={false}
               // keyboardType="email-address"
-              onEndEditing={() => firstNameInput.current?.focus()}
+              onEnterPress={() => {
+                if (lastName) {
+                  firstNameInput.current?.focus()
+                }
+              }}
             />
             {errors.lastName && <Text color="red">{errors.lastName.message}</Text>}
             <TextField
@@ -194,7 +217,11 @@ export default function VerifyMsg() {
               autoComplete="email"
               // autoCorrect={false}
               // keyboardType="email-address"
-              onEndEditing={() => identificationCodeInput.current?.focus()}
+              onEnterPress={() => {
+                if (firstName) {
+                  identificationCodeInput.current?.focus()
+                }
+              }}
             />
             {errors.firstName && <Text color="red">{errors.firstName.message}</Text>}
             <Text className={cn('mb-1')}>{t('pages.userCenter.xuanzezhengjianleixing')}</Text>

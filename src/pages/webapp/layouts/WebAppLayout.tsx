@@ -118,7 +118,7 @@ function WebAppLayout() {
   if (isMainTabbar(pathname)) {
     return (
       <div>
-        <div>{Content}</div>
+        <div style={{ position: 'relative' }}>{Content}</div>
         <TabBottomBar />
       </div>
     )

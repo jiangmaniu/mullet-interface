@@ -61,7 +61,7 @@ const CountDown = observer(
           <>
             <Text className={cn('text-start text-sm text-weak')}>{t('pages.login.click to')}</Text>
             <View onPress={onSendCode}>
-              <Text className={cn('text-start text-sm text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
+              <Text className={cn('text-start text-sm !text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
             </View>
           </>
         ) : (
@@ -156,7 +156,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           <Text className={cn('text-start font-medium text-xl text-primary')}>
             {t('pages.login.Please enter the sixdigit verification code')}
           </Text>
-          <Text className={cn('text-start text-sm text-secondary mt-1.5')}>
+          <Text className={cn('text-start text-sm !text-secondary mt-1.5')}>
             {t('pages.login.Verification code sent to', { email: phone ? `+${areaCodeItem?.areaCode}${phone}` : email })}
           </Text>
           <View className={cn('flex flex-col gap-6 mt-[18px]')}>
@@ -169,7 +169,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             />
           </View>
           <CountDown email={email} phone={phone} areaCodeItem={areaCodeItem} onSendCode={onSendCode} defaultSeconds={defaultSeconds} />
-          {error && <Text style={cn('text-start text-sm text-red-500')}>{error}</Text>}
+          {error && <Text style={cn('text-start text-sm !text-red-500')}>{error}</Text>}
           <View style={cn('flex flex-row justify-end items-center gap-4 self-end')}>
             <Button type="default" loading={false} height={42} className={cn('mt-4 w-[128px] ')} onPress={goback}>
               {t('common.operate.Back')}

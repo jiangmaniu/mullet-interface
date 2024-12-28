@@ -68,10 +68,10 @@ export const ModalConfirm = forwardRef(
         </div>
         <div className="flex flex-row w-full border-t border-gray-180 ">
           <View onClick={onCancel} className="flex-1 border-r border-gray-180 text-center py-2">
-            <span className="text-brand text-xs">{cancelText}</span>
+            <span className="!text-brand text-xs">{cancelText}</span>
           </View>
           <View onClick={onConfirm} className="flex-1 text-center py-2">
-            <span className="text-brand text-xs">{confirmText}</span>
+            <span className="!text-brand text-xs">{confirmText}</span>
           </View>
         </div>
       </Modal>

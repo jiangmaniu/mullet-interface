@@ -82,6 +82,7 @@ export default function HistoryRecordTopTabbar() {
   return (
     <Basiclayout
       // edges={['top']}
+      fixedHeight
       bgColor="secondary"
       headerColor={theme.colors.backgroundColor.secondary}
       header={
