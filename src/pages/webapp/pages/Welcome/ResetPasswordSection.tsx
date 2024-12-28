@@ -38,6 +38,7 @@ interface Props {
   phone?: string
   validateCode?: string
   areaCodeItem?: Common.AreaCodeItem
+  setDisabled: (disabled: boolean) => void
 }
 
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
@@ -47,7 +48,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     email: emailProps,
     phone: phoneProps,
     validateCode: validateCodeProps,
-    areaCodeItem: areaCodeItemProps
+    areaCodeItem: areaCodeItemProps,
+    setDisabled
   }: Props,
   ref
 ) => {
@@ -112,7 +114,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
         updatePassword()
         navigateTo('/app/reset-success')
-        setSection('login')
+        // setSection('login')
       }
       console.log('result', result)
     } catch (error: any) {
@@ -223,8 +225,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   const disabled = propsDisabled || pwdisabled
 
+  useEffect(() => {
+    setDisabled(disabled)
+  }, [disabled])
+
   // 将属性暴露给父元素
-  useImperativeHandle(ref, () => ({ goback, submit: handleSubmit(onSubmit), disabled }))
+  useImperativeHandle(ref, () => ({ goback, submit: handleSubmit(onSubmit) }))
 
   useEffect(() => {
     console.log('values', getValues())

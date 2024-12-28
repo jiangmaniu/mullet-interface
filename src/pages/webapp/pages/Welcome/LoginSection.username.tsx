@@ -29,7 +29,7 @@ import { useI18n } from '../../hooks/useI18n'
 interface FormData {
   tenanId: string
   tenanName: string
-  email: string
+  username: string
   password: string
   remember: boolean
 }
@@ -41,21 +41,10 @@ interface Props {
   tenanName?: string
   setTenanName: (tenanName: string) => void
   startAnimation?: (toValue: number) => void
-  email?: string
-  setEmail: (email: string) => void
 }
 
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
-  {
-    setSection,
-    tenanId: tenanIdProps,
-    setTenanId,
-    tenanName: tenanNameProps,
-    setTenanName,
-    startAnimation,
-    email: emailProps,
-    setEmail
-  }: Props,
+  { setSection, tenanId: tenanIdProps, setTenanId, tenanName: tenanNameProps, setTenanName, startAnimation }: Props,
   ref
 ) => {
   const { t } = useI18n()
@@ -87,12 +76,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const loadingRef = useRef<ModalLoadingRef>(null)
 
   // 登录
-  const onSubmit = async (values: User.LoginParams & { email: string }) => {
+  const onSubmit = async (values: User.LoginParams) => {
     loadingRef.current?.show()
 
     try {
       const result = await login({
-        username: values.email?.trim(),
+        username: values.username?.trim(),
         password: md5(values.password as string),
         tenanId: '000000',
         type: 'account',
@@ -138,7 +127,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   /** 表单控制 */
   const schema = z.object({
-    email: z.string().email({ message: t('pages.login.Email placeholder') }),
+    // tenanId: z.string().min(1, { message: t('pages.login.Server placeholder') }),
+    // 非必需
+    // tenanId: z.string().optional(),
+    // tenanName: z.string().min(1, { message: t('pages.login.Server placeholder') }),
+    // username: z.string().email({ message: t('pages.login.Customer NO placeholder') }),
+    username: z.string().min(1, { message: t('LoginSection.Customer NO Tips') }),
     password: z
       .string()
       .min(6, { message: t('pages.login.Password min', { count: 6 }) })
@@ -159,7 +153,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     defaultValues: async () => ({
       tenanId: tenanIdProps || (await STORAGE_GET_ACCOUNT_PASSWORD('tenanId')),
       tenanName: tenanNameProps || (await STORAGE_GET_ACCOUNT_PASSWORD('tenanName')),
-      email: emailProps || (await STORAGE_GET_ACCOUNT_PASSWORD('email')) || '',
+      username: (await STORAGE_GET_ACCOUNT_PASSWORD('username')) || '',
       password: (await STORAGE_GET_ACCOUNT_PASSWORD('password')) || '',
       remember: (await STORAGE_GET_ACCOUNT_PASSWORD('remember')) || false
     }),
@@ -169,7 +163,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   const tenanId = watch('tenanId')
   const tenanName = watch('tenanName')
-  const email = watch('email')
+  const username = watch('username')
   const password = watch('password')
   const remember = watch('remember')
   // 用 useRef 来存储旧的状态
@@ -187,12 +181,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       STORAGE_SET_ACCOUNT_PASSWORD({
         tenanId,
         tenanName,
-        email,
+        username,
         password,
         remember
       })
     }
-  }, [tenanId, tenanName, email, password])
+  }, [tenanId, tenanName, username, password])
 
   useEffect(() => {
     const _prevRemembr = prevRemember.current
@@ -201,12 +195,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       STORAGE_SET_ACCOUNT_PASSWORD({
         tenanId,
         tenanName,
-        email,
+        username,
         password,
         remember
       })
       // 触发表单验证
-      trigger('email')
+      trigger('username')
       trigger('password')
     } else if (_prevRemembr) {
       STORAGE_REMOVE_ACCOUNT_PASSWORD()
@@ -219,24 +213,22 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       <View>
         <View className={cn('flex flex-col gap-5 mb-5')}>
           <TextField
-            value={email}
+            value={username}
             onChange={(val) => {
-              setValue('email', val?.trim())
-              setEmail?.(val?.trim())
-              trigger('email')
+              setValue('username', val?.trim())
+              trigger('username')
             }}
-            label={t('pages.login.Email placeholder')}
-            // RightLabel={() => RightLabel}
-            placeholder={t('pages.login.Email placeholder')}
+            // status={errors.username ? 'error' : undefined}
+            label={t('pages.login.Customer NO')}
+            placeholder={t('LoginSection.Customer NO placeholder')}
             height={50}
             autoCapitalize="none"
-            autoComplete="password"
+            autoComplete="email"
             // autoCorrect={false}
-            // onSubmitEditing={() => {
-            //   // todo
-            // }}
+            // keyboardType="email-address"
+            // onSubmitEditing={() => authPasswordInput.current?.focus()}
           />
-          {!!errors.email && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.email.message}</Text>}
+          {errors.username && <Text color="red">{errors.username.message}</Text>}
           <TextField
             ref={authPasswordInput}
             value={password}
@@ -280,7 +272,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             height={48}
             className={cn('mt-4')}
             onPress={handleSubmit(onSubmit)}
-            disabled={!!errors.email || !!errors.password}
+            disabled={!!errors.username || !!errors.password}
           >
             {t('common.operate.Login')}
           </Button>
