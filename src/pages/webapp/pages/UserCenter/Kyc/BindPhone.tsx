@@ -44,7 +44,7 @@ const CountDown = observer(({ phone, onSendCode }: { phone?: string; onSendCode:
         <>
           <Text style={cn('text-start text-sm text-weak')}>{t('pages.login.click to')}</Text>
           <View onPress={onSendCode}>
-            <Text style={cn('text-start text-sm text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
+            <Text style={cn('text-start text-sm !text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
           </View>
         </>
       ) : (
@@ -179,6 +179,7 @@ function BindPhone() {
   return (
     <BasicLayout
       bgColor="secondary"
+      headerColor={theme.colors.backgroundColor.secondary}
       style={{ paddingLeft: 14, paddingRight: 14 }}
       footerStyle={{
         backgroundColor: 'transparent'
@@ -209,7 +210,7 @@ function BindPhone() {
       />
       <View className={cn('mt-6 px-2 flex-col flex')}>
         <Text className={cn(' text-xl text-primary font-bold')}>{i18n.t('pages.userCenter.qingshurushoujihaoma')}</Text>
-        <Text className={cn(' text-sm text-gray-500 mt-1')}>{i18n.t('pages.userCenter.yongyuweilaicaozuo')}</Text>
+        <Text className={cn(' text-sm !text-gray-500 mt-1')}>{i18n.t('pages.userCenter.yongyuweilaicaozuo')}</Text>
         <TextField
           value={phone}
           onChange={(val) => {
@@ -239,8 +240,8 @@ function BindPhone() {
             </View>
           )}
         />
-        {!!errors.phone && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.phone.message}</Text>}
-        {!!errors.areaCode && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.areaCode.message}</Text>}
+        {!!errors.phone && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.phone.message}</Text>}
+        {!!errors.areaCode && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.areaCode.message}</Text>}
         <Text className={cn('text-sm text-primary mt-5 max-w-[280px]')}>
           {t('pages.userCenter.chakanduanxinhuoquyanzhengma', {
             phone: phone ? `+${areaCode}${phone}` : t('pages.userCenter.shoujihaoma')
@@ -256,7 +257,7 @@ function BindPhone() {
           />
         </View>
         <CountDown phone={phone} onSendCode={onSendCode} />
-        {!!errors.code && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.code.message}</Text>}
+        {!!errors.code && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.code.message}</Text>}
       </View>
 
       <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} list={countryList} />

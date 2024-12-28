@@ -113,7 +113,7 @@ const Kyc = observer(() => {
       </View>
       {kycStatus === 'DISALLOW' && (
         <View style={cn(' border border-gray-300 rounded-lg px-3 py-1 gap-10 mt-2')}>
-          <Text style={cn('text-sm text-red')}>
+          <Text style={cn('text-sm !text-red')}>
             {t('pages.userCenter.shenhebutongguo')}: {remark}
           </Text>
         </View>
@@ -266,7 +266,7 @@ function UserCenter() {
         >
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <Iconfont name="geren-tuichuzhanghu" size={20} color={theme.colors.gray[500]} />
-            <Text style={cn('text-gray-500')}> {t('common.operate.Logout')}</Text>
+            <Text style={cn('!text-gray-500')}> {t('common.operate.Logout')}</Text>
           </View>
         </Button>
       </View>

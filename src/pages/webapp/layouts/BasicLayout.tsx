@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
+import { cn } from '@/utils/cn'
 import { Helmet } from 'react-helmet'
 import { View } from '../components/Base/View'
 
@@ -38,7 +39,7 @@ const Basiclayout: React.FC<Iprops> = ({
   children,
   bgColor = 'primary',
   scrollY = false,
-  fixedHeight = true,
+  fixedHeight = false,
   footer,
   footerClassName,
   footerStyle,
@@ -46,7 +47,7 @@ const Basiclayout: React.FC<Iprops> = ({
   headerClassName,
   headerStyle
 }) => {
-  const { theme, cn } = useTheme()
+  const { theme } = useTheme()
   const { pathname } = useLocation()
 
   // 动态设置页面body背景颜色
@@ -109,14 +110,13 @@ const Basiclayout: React.FC<Iprops> = ({
         className={cn(
           // 不使用100vh safari浏览器出现滚动条
           scrollY ? 'overflow-y-scroll' : 'auto',
-          // `pt-[${headerHeight}px]`,
           className
         )}
         bgColor={bgColor}
         style={{
           // @TODO paddingTop会覆盖className
-          // paddingTop: headerHeight,
-          // paddingBottom: footerHeight,
+          paddingTop: fixedHeight ? headerHeight : undefined,
+          paddingBottom: fixedHeight ? footerHeight : undefined,
           height: fixedHeight ? `calc(100% - ${headerHeight}px - ${footerHeight}px)` : undefined,
           ...style
         }}

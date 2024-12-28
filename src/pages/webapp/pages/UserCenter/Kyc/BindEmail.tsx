@@ -38,7 +38,7 @@ const CountDown = observer(({ email, onSendCode }: { email?: string; onSendCode:
         <>
           <Text style={cn('text-start text-sm text-weak')}>{t('pages.login.click to')}</Text>
           <View onPress={onSendCode}>
-            <Text style={cn('text-start text-sm text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
+            <Text style={cn('text-start text-sm !text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
           </View>
         </>
       ) : (
@@ -145,6 +145,7 @@ function BindEmail() {
   return (
     <BasicLayout
       bgColor="secondary"
+      headerColor={theme.colors.backgroundColor.secondary}
       style={{ paddingLeft: 14, paddingRight: 14 }}
       footerStyle={{
         backgroundColor: 'transparent'
@@ -168,7 +169,7 @@ function BindEmail() {
       <Header title={i18n.t('pages.userCenter.bangdingyouxiang')} />
       <View className={cn('mt-6 px-2')}>
         <Text className={cn(' text-xl text-primary font-bold')}>{i18n.t('pages.login.Email placeholder')}</Text>
-        <Text className={cn(' text-sm text-gray-500 mt-1')}>{i18n.t('pages.userCenter.yongyuweilaicaozuo')}</Text>
+        <Text className={cn(' text-sm !text-gray-500 mt-1')}>{i18n.t('pages.userCenter.yongyuweilaicaozuo')}</Text>
         <TextField
           value={email}
           onChange={(val) => {
@@ -189,7 +190,7 @@ function BindEmail() {
             </View>
           )}
         />
-        {!!errors.email && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.email.message}</Text>}
+        {!!errors.email && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.email.message}</Text>}
         <Text className={cn('text-sm text-primary mt-5 max-w-[280px]')}>
           {t('pages.userCenter.chakanduanxinhuoquyanzhengma', {
             phone: email ? email : t('pages.login.Email Address')
@@ -205,7 +206,7 @@ function BindEmail() {
           />
         </View>
         <CountDown email={email} onSendCode={onSendCode} />
-        {!!errors.code && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.code.message}</Text>}
+        {!!errors.code && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.code.message}</Text>}
       </View>
     </BasicLayout>
   )

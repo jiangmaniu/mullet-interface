@@ -18,7 +18,7 @@ import { replace } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import AccountCarousel from './AccountCarousel'
@@ -74,9 +74,11 @@ function AccountNew() {
   // ref
   const bottomSheetModalRef = useRef<SheetRef | null>(null)
   // callbacks
-  const handlePresentModalPress = useCallback(() => {
+  const handlePresentModalPress = () => {
+    setValue('name', selectedItem?.groupName ?? '')
+    trigger('name')
     bottomSheetModalRef.current?.sheet?.present()
-  }, [])
+  }
 
   const [selectedItem, setSelectedItem] = useState<AccountGroup.AccountGroupItem | null>(null)
 
@@ -177,6 +179,7 @@ function AccountNew() {
 
   return (
     <Basiclayout
+      fixedHeight
       style={{ paddingLeft: 14, paddingRight: 14 }}
       header={<Header />}
       footer={

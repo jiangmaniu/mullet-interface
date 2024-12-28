@@ -168,9 +168,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   //   return (
   //     <View onPress={() => setInputType(inputType === 'EMAIL' ? 'PHONE' : 'EMAIL')}>
   //       {inputType === 'EMAIL' ? (
-  //         <Text style={cn('text-brand')}>{t('pages.login.Use Phone')}</Text>
+  //         <Text style={cn('!text-brand')}>{t('pages.login.Use Phone')}</Text>
   //       ) : (
-  //         <Text style={cn('text-brand')}>{t('pages.login.Use Email')}</Text>
+  //         <Text style={cn('!text-brand')}>{t('pages.login.Use Email')}</Text>
   //       )}
   //     </View>
   //   )
@@ -217,7 +217,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
                 </View>
               )}
             />
-            {!!errors.phone && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.phone.message}</Text>}
+            {!!errors.phone && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.phone.message}</Text>}
           </>
         ) : (
           <>
@@ -239,7 +239,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
               //   // todo
               // }}
             />
-            {!!errors.email && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.email.message}</Text>}
+            {!!errors.email && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.email.message}</Text>}
           </>
         )}
       </View>
