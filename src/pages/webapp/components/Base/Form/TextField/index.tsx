@@ -1,5 +1,5 @@
 import type { ComponentType, Ref } from 'react'
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
@@ -120,6 +120,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     textColor,
     pleacholderTextColor = theme.colors.Input.placeholderTextColor,
     placeholderTextSize = 14,
+    maxLength,
     ...TextInputProps
   } = props
   const input = useRef<InputRef>(null)
@@ -133,8 +134,19 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
   // 添加防抖定时器引用
   const debounceTimer = useRef<NodeJS.Timeout>()
 
+  // Web 端需要特殊处理：限制输入框最大长度
+  const checkMaxLength = useCallback(
+    (value?: string) => {
+      if (maxLength && value?.length && value.length > maxLength) {
+        return value.slice(0, maxLength)
+      }
+      return value
+    },
+    [maxLength]
+  )
+
   useEffect(() => {
-    setInputValue(value)
+    setInputValue(checkMaxLength(value))
   }, [value])
 
   useEffect(() => {
@@ -151,9 +163,11 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
   }, [inputValue])
 
   const handleChange = (value: string) => {
-    onChange?.(value)
+    const val = checkMaxLength(value)
 
-    setInputValue(value)
+    onChange?.(val || '')
+
+    setInputValue(val)
   }
 
   useImperativeHandle(ref, () => input.current)
@@ -225,6 +239,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
           }}
           clearable
           value={value}
+          maxLength={maxLength}
           {...TextInputProps}
           readOnly={readOnly}
           onChange={handleChange}

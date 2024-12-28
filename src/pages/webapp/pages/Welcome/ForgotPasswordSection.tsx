@@ -38,6 +38,7 @@ interface Props {
   setPhone?: (phone: string) => void
   areaCodeItem?: Common.AreaCodeItem
   setAreaCodeItem: (areaCodeItem: Common.AreaCodeItem | undefined) => void
+  setDisabled: (disabled: boolean) => void
 }
 
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
@@ -49,7 +50,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     phone: phoneProps,
     setPhone,
     areaCodeItem: areaCodeItemProps,
-    setAreaCodeItem
+    setAreaCodeItem,
+    setDisabled
   }: Props,
   ref
 ) => {
@@ -178,8 +180,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     return inputType === 'PHONE' ? !!errors.phone || !!errors.areaCode : !!errors.email
   }, [inputType, errors.phone, errors.areaCode, errors.email])
 
+  useEffect(() => {
+    setDisabled(disabled)
+  }, [disabled])
+
   // 将属性暴露给父元素
-  useImperativeHandle(ref, () => ({ goback, submit: handleSubmit(onSubmit), disabled }))
+  useImperativeHandle(ref, () => ({ goback, submit: handleSubmit(onSubmit) }))
   return (
     <View className={cn('flex-1 flex flex-col justify-between mb-12')}>
       <View className={cn('flex flex-col mb-5')}>

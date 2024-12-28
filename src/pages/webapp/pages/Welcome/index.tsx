@@ -46,7 +46,6 @@ type RecordType = {
 export interface TypeSection {
   goback: () => void
   submit?: () => void
-  disabled?: boolean
 }
 
 export interface SectionProps {
@@ -141,7 +140,7 @@ export default function WelcomeScreen() {
     sectionRef.current?.submit?.()
   }
 
-  const disabled = !!sectionRef.current?.disabled
+  const [disabled, setDisabled] = useState(false)
 
   const footers = {
     login: <Footer setSection={setSection} />,
@@ -207,6 +206,7 @@ export default function WelcomeScreen() {
         setPhone={setPhone}
         areaCodeItem={areaCodeItem}
         setAreaCodeItem={setAreaCodeItem}
+        setDisabled={setDisabled}
       />
     ),
     forgotVerify: (
@@ -229,6 +229,7 @@ export default function WelcomeScreen() {
         phone={phone}
         areaCodeItem={areaCodeItem}
         validateCode={validateCode}
+        setDisabled={setDisabled}
       />
     )
   }
