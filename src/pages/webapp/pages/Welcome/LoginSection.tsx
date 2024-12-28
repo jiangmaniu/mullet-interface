@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { md5 } from 'js-md5'
 import type { ForwardRefRenderFunction } from 'react'
 import React, { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -22,6 +21,7 @@ import { APP_MODAL_WIDTH } from '@/constants'
 import { login } from '@/services/api/user'
 import { useModel } from '@umijs/max'
 import { Checkbox } from 'antd'
+import { md5 } from 'js-md5'
 import { TextField } from '../../components/Base/Form/TextField'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
@@ -77,7 +77,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   // 登录
   const onSubmit = async (values: User.LoginParams) => {
-    // const loging = dialog(<LottieLoading tips={t('pages.login.Logining')} />)
     loadingRef.current?.show()
 
     try {
@@ -280,26 +279,35 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           <View onPress={() => setSection('forgotPassword')}>
             <Text className={cn('text-sm text-weak self-center')}>{t('pages.login.Forgot password')}</Text>
           </View>
-          <View className={cn('flex flex-col justify-center items-center gap-2.5 mt-4')}>
-            <Button
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 46,
-                alignSelf: 'center',
-                backgroundColor: theme.colors.backgroundColor.primary
-              }}
-              onPress={() => {
-                setSection('register')
-              }}
-            >
-              <Icon name="xinjianzhanghu" size={30} />
-            </Button>
-            <Text>{t('pages.login.Register new account')}</Text>
-          </View>
         </View>
       </View>
       <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={t('pages.login.Logining')} />
+    </View>
+  )
+}
+
+export const Footer = ({ setSection }: { setSection: (section: WELCOME_STEP_TYPES) => void }) => {
+  const { cn, theme } = useTheme()
+  const { t } = useI18n()
+  return (
+    <View className={cn('flex flex-col justify-center items-center gap-1.5 mb-10')}>
+      <Button
+        style={{
+          width: 46,
+          height: 46,
+          borderRadius: 46,
+          alignSelf: 'center',
+          backgroundColor: theme.colors.backgroundColor.primary
+        }}
+        onPress={() => {
+          setSection('register')
+        }}
+      >
+        <div className="flex items-center justify-center">
+          <Icon name="xinjianzhanghu" size={30} />
+        </div>
+      </Button>
+      <Text className=" text-sm">{t('pages.login.Register new account')}</Text>
     </View>
   )
 }

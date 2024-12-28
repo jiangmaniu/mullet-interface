@@ -143,14 +143,30 @@ function BindEmail() {
   const disabled = !!errors.email || !!errors.code
 
   return (
-    <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
+    <BasicLayout
+      bgColor="secondary"
+      style={{ paddingLeft: 14, paddingRight: 14 }}
+      footerStyle={{
+        backgroundColor: 'transparent'
+      }}
+      footer={
+        <Button
+          style={{
+            marginBottom: 10,
+            width: '100%'
+          }}
+          type="primary"
+          loading={false}
+          height={48}
+          onPress={handleSubmit(onSubmit)}
+          disabled={disabled}
+        >
+          {t('common.operate.Continue')}
+        </Button>
+      }
+    >
       <Header title={i18n.t('pages.userCenter.bangdingyouxiang')} />
-      <View
-        className={cn('mt-6 px-2')}
-        style={{
-          height: screenSize.height
-        }}
-      >
+      <View className={cn('mt-6 px-2')}>
         <Text className={cn(' text-xl text-primary font-bold')}>{i18n.t('pages.login.Email placeholder')}</Text>
         <Text className={cn(' text-sm text-gray-500 mt-1')}>{i18n.t('pages.userCenter.yongyuweilaicaozuo')}</Text>
         <TextField
@@ -190,12 +206,6 @@ function BindEmail() {
         </View>
         <CountDown email={email} onSendCode={onSendCode} />
         {!!errors.code && <Text className={cn('text-sm text-red-500 mt-1')}>{errors.code.message}</Text>}
-
-        <View className={cn(' absolute bottom-50 left-0 right-0 flex flex-col gap-5')}>
-          <Button type="primary" loading={false} height={48} onPress={handleSubmit(onSubmit)} disabled={disabled}>
-            {t('common.operate.Continue')}
-          </Button>
-        </View>
       </View>
     </BasicLayout>
   )

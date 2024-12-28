@@ -7,9 +7,9 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
-import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { submitKycAuth } from '@/services/api/crm/kycAuth'
 import { message } from '@/utils/message'
+import { replace } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useModel } from '@umijs/max'
 import { useRef, useState } from 'react'
@@ -39,8 +39,10 @@ export default function VerifyDoc() {
   const step = 2
 
   const uploadSheetModalRef = useRef<UploadSheetModalRef>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   const onSubmit = () => {
+    setSubmitting(true)
     submitKycAuth({
       country,
       firstName,
@@ -54,14 +56,15 @@ export default function VerifyDoc() {
           message.info(i18n.t('common.operate.Op Success'))
           // 更新账户余额信息
           await user.fetchUserInfo(true)
-          navigateTo('/app/user-center/verify-status', {
-            back: '/app/user-center'
-          })
+          replace('/app/user-center/verify-status')
           return
         }
       })
       .catch((err) => {
         message.info(err.message)
+      })
+      .finally(() => {
+        setSubmitting(false)
       })
   }
 
@@ -90,15 +93,28 @@ export default function VerifyDoc() {
   }
 
   return (
-    <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
+    <BasicLayout
+      bgColor="secondary"
+      style={{ paddingLeft: 14, paddingRight: 14 }}
+      footerStyle={{
+        backgroundColor: 'transparent'
+      }}
+      footer={
+        <Button
+          type="primary"
+          loading={submitting}
+          height={48}
+          className={cn('mb-2.5 w-full')}
+          onPress={handleSubmit(onSubmit)}
+          disabled={!file?.link}
+        >
+          {i18n.t('common.operate.Submit')}
+        </Button>
+      }
+    >
       <Header title={i18n.t('pages.userCenter.pinzhengrenzheng')} />
       <StepBox step={step} />
-      <View
-        className={cn('mt-9 px-2 flex flex-col gap-2')}
-        style={{
-          height: screenSize.height
-        }}
-      >
+      <View className={cn('mt-9 px-2 flex flex-col gap-2')}>
         <Text className={cn('text-xl font-bold text-primary')}>{i18n.t('pages.userCenter.pinzhengrenzheng')}</Text>
         <Text className={cn('text-xs text-weak')}>{i18n.t('pages.userCenter.shagnchuanzhaopianbixuqingxi')}</Text>
         <View className={cn('flex flex-col mt-8 gap-[11px]')}>
@@ -140,10 +156,6 @@ export default function VerifyDoc() {
 
         <UploadSheetModal ref={uploadSheetModalRef} onChange={onChange} />
       </View>
-
-      <Button type="primary" loading={false} height={48} className={cn('mb-10')} onPress={handleSubmit(onSubmit)} disabled={!file?.link}>
-        {i18n.t('common.operate.Submit')}
-      </Button>
     </BasicLayout>
   )
 }

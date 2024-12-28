@@ -104,5 +104,10 @@ export default {
   'common.monichongzhi': 'Nạp tiền (Mô phỏng)',
   'common.gendanfenrun': 'Chia sẻ lợi nhuận giao dịch sao chép',
   'common.shuaxin': 'Tải lại',
-  'common.qingchu': 'Xóa'
+  'common.qingchu': 'Xóa',
+  'common.Pulling': 'Kéo',
+  'common.CanRelease': 'Thả',
+  'common.Refreshing': 'Đang làm mới...',
+  'common.Complete': 'Hoàn thành'
+  // "======= 公共结束 ==========": "",
 }

@@ -73,7 +73,6 @@ function KLine() {
 
   return (
     <Basiclayout
-      hFull={false}
       bgColor="secondary"
       headerColor={theme.colors.backgroundColor.secondary}
       className={cn('pt-2')}
@@ -93,9 +92,8 @@ function KLine() {
       //     </View>
       //   </View>
       // }
-      // headerHeight={30}
       footer={
-        <View>
+        <View className="pb-3">
           <BuySellButton
             onShow={() => {
               buySellRef.current?.show()

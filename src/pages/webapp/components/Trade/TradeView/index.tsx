@@ -15,7 +15,7 @@ import Header from './comp/Header'
 import OrderConfirmModal, { OrderConfirmModalRef } from './comp/OrderConfirmModal'
 import OrderTopTabbar from './comp/OrderTopTabbar'
 
-const BottomButton = observer(() => {
+export const BottomButton = observer(() => {
   const intl = useIntl()
   const { trade } = useStores()
   const isBuy = trade.buySell === 'BUY'
@@ -124,11 +124,11 @@ function TradeView() {
           <Depth />
         </View>
       </div>
-      <View className={cn('px-3 fixed bottom-[60px] w-full')}>
+      {/* <View className={cn('px-3 fixed bottom-[60px] w-full')}>
         <View className={cn('mt-2')}>
           <BottomButton />
         </View>
-      </View>
+      </View> */}
     </View>
   )
 }

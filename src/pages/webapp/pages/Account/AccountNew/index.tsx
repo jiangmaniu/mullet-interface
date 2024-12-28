@@ -177,8 +177,8 @@ function AccountNew() {
 
   return (
     <Basiclayout
-      hFull={false}
       style={{ paddingLeft: 14, paddingRight: 14 }}
+      header={<Header />}
       footer={
         <Button
           style={{ flex: 1, width: '100%', flexGrow: 1 }}
@@ -191,17 +191,6 @@ function AccountNew() {
         </Button>
       }
     >
-      <Header
-      // wrapperStyle={{
-      //   zIndex: 100,
-      //   backgroundColor: 'transparent'
-      // }}
-      // left={
-      //   <View onPress={goBackHandler}>
-      //     <Iconfont name="fanhui" size={36} />
-      //   </View>
-      // }
-      />
       <View className={cn('mb-3 mt-5')}>
         <Text size="22" weight="medium">
           {t("pages.account.No Account? Let's create one!")}
@@ -209,7 +198,7 @@ function AccountNew() {
       </View>
       <CurrentServer />
 
-      <View className={cn('mx-3 mb-3')}>
+      <View className={cn(' mb-3')}>
         <DefaultAccountTabbar accountTabActiveKey={accountTabActiveKey} setAccountTabActiveKey={setAccountTabActiveKey} />
         {/* <Segmented
           className="account"

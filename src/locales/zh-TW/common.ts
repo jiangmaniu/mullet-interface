@@ -104,6 +104,11 @@ export default {
   'common.monichongzhi': '充值(模拟)',
   'common.gendanfenrun': '跟单分润',
   'common.shuaxin': '刷新',
-  'common.qingchu': '清除'
+  'common.qingchu': '清除',
+  'common.Pulling': '拉',
+  'common.CanRelease': '松开',
+  'common.Refreshing': '加载中...',
+  'common.Complete': '完成'
+
   // "======= 公共结束 ==========": "",
 }

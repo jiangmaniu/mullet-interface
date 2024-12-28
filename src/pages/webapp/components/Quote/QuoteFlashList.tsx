@@ -130,7 +130,7 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible
             </View>
           </View>
         }
-        extraRender={() => <></>}
+        extraRender={() => <View className="h-[30px]"></View>}
       />
     </div>
   )

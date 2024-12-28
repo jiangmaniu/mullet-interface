@@ -5,7 +5,7 @@ import { useTheme } from '@/context/themeProvider'
 import SwitchAccount from '../../components/Account/SwitchAccount'
 import { View } from '../../components/Base/View'
 import SelectSymbolBtn from '../../components/Quote/SelectSymbolBtn'
-import TradeView from '../../components/Trade/TradeView'
+import TradeView, { BottomButton } from '../../components/Trade/TradeView'
 import useFocusEffect from '../../hooks/useFocusEffect'
 import useIsFocused from '../../hooks/useIsFocused'
 import Basiclayout from '../../layouts/BasicLayout'
@@ -30,7 +30,16 @@ function Trade() {
   )
 
   return (
-    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} className={cn('pt-2')}>
+    <Basiclayout
+      bgColor="secondary"
+      headerColor={theme.colors.backgroundColor.secondary}
+      className={cn('pt-2')}
+      footer={
+        <div className="pb-12">
+          <BottomButton />
+        </div>
+      }
+    >
       {/* 账号选择弹窗 */}
       <SwitchAccount isRemainAtCurrentPage />
       <View className={cn('flex flex-col rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-2')} bgColor="primary">

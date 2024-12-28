@@ -4,20 +4,23 @@ import { useEffect, useRef, useState } from 'react'
 import { useTheme } from '@/context/themeProvider'
 
 import { default as Icon, default as Iconfont } from '@/components/Base/Iconfont'
-import { useEnv } from '@/context/envProvider'
 import ENV from '@/env'
+import { replace } from '@/utils/navigator'
 import { capitalizeFirstLetter } from '@/utils/str'
 import { useLocation } from '@umijs/max'
+import { MenuProps } from 'antd'
 import Header from '../../components/Base/Header'
+import { ModalRef } from '../../components/Base/SheetModal'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
 import { useI18n } from '../../hooks/useI18n'
 import Basiclayout from '../../layouts/BasicLayout'
-import { ForgotPasswordSection } from './ForgotPasswordSection'
+import { FooterForgotPassword, ForgotPasswordSection } from './ForgotPasswordSection'
 import { ForgotVerifySection } from './ForgotVerifySection'
-import { LoginSection } from './LoginSection'
+import LngSelectModal from './LngSelectModal'
+import { Footer, LoginSection } from './LoginSection'
 import { RegisterSection } from './RegisterSection'
-import { ResetPasswordSection } from './ResetPasswordSection'
+import { FooterResetPassword, ResetPasswordSection } from './ResetPasswordSection'
 import { VerifySection } from './VerifySection'
 
 export const FOOTER_BOTTOM = 100
@@ -42,6 +45,8 @@ type RecordType = {
 
 export interface TypeSection {
   goback: () => void
+  submit?: () => void
+  disabled?: boolean
 }
 
 export interface SectionProps {
@@ -61,15 +66,20 @@ export default function WelcomeScreen() {
   const { cn, theme } = useTheme()
   const { t, loadLocale, locale } = useI18n()
   const location = useLocation()
-  const params = new URLSearchParams(location.search)
-  const _section = params?.get('section') as WELCOME_STEP_TYPES
+  const hash = location.hash.replace('#', '')
 
-  const { screenSize } = useEnv()
+  const _section = ['login', 'register', 'verify', 'forgotPassword', 'forgotVerify', 'resetPassword'].includes(hash) ? hash : 'login'
 
   // TODO: 缓存
   // const current = useCurrentAccount()
 
-  const [section, setSection] = useState<WELCOME_STEP_TYPES>(_section ?? 'login')
+  const [section, _setSection] = useState<WELCOME_STEP_TYPES>(_section as WELCOME_STEP_TYPES)
+
+  const setSection = (section: WELCOME_STEP_TYPES) => {
+    replace('/app/login#' + section)
+    _setSection(section)
+  }
+
   const [isLoading, setIsLoading] = useState(false)
 
   const [tenanId, setTenanId] = useState<string>()
@@ -82,8 +92,6 @@ export default function WelcomeScreen() {
 
   const sectionRef = useRef<TypeSection | null>(null)
   const gobackHandler = (e: any) => {
-    e.preventDefault()
-    console.log('gobackHandler', e)
     sectionRef.current?.goback()
     return true
   }
@@ -128,6 +136,18 @@ export default function WelcomeScreen() {
     { key: 'zh-TW', text: t('common.language.zh-TW') },
     { key: 'vi-VN', text: t('common.language.vi-VN') }
   ]
+
+  const handleSubmit = () => {
+    sectionRef.current?.submit?.()
+  }
+
+  const disabled = !!sectionRef.current?.disabled
+
+  const footers = {
+    login: <Footer setSection={setSection} />,
+    forgotPassword: <FooterForgotPassword handleSubmit={handleSubmit} disabled={disabled} />,
+    resetPassword: <FooterResetPassword handleSubmit={handleSubmit} disabled={disabled} />
+  }
 
   const sections: Record<WELCOME_STEP_TYPES, ReactElement> = {
     login: (
@@ -213,39 +233,82 @@ export default function WelcomeScreen() {
     )
   }
 
-  return (
-    <Basiclayout scrollY style={{ paddingTop: 20 }}>
-      <Header
-        style={{
-          zIndex: 100,
-          paddingLeft: 14,
-          paddingRight: 14,
-          backgroundColor: 'transparent'
-        }}
-        back={false}
-        left={
-          <>
-            {section !== 'verify' && section !== 'login' ? (
-              <View onPress={() => gobackHandler(null)}>
-                <Icon name="fanhui" size={36} />
-              </View>
-            ) : null}
-          </>
-        }
-        right={<Iconfont name="geren-yuyan" size={30} />}
-      />
+  const items: MenuProps['items'] = [
+    {
+      key: 'en-US',
+      label: t('common.language.en-US')
+    },
+    {
+      key: 'zh-TW',
+      label: t('common.language.zh-TW')
+    },
+    {
+      key: 'vi-VN',
+      label: t('common.language.vi-VN')
+    }
+  ]
 
+  const lngSelectModalRef = useRef<ModalRef>(null)
+
+  return (
+    <Basiclayout
+      // scrollY
+      scrollY={section === 'register'}
+      style={{ paddingTop: 20 }}
+      header={
+        <Header
+          style={{
+            zIndex: 100,
+            paddingLeft: 14,
+            paddingRight: 14,
+            backgroundColor: 'transparent'
+          }}
+          left={
+            <>
+              {section !== 'verify' && section !== 'login' ? (
+                <View onPress={() => gobackHandler(null)}>
+                  <Icon name="fanhui" size={36} />
+                </View>
+              ) : null}
+            </>
+          }
+          right={
+            <div onClick={() => lngSelectModalRef.current?.show()}>
+              <Iconfont name="geren-yuyan" size={30} />
+            </div>
+          }
+        />
+      }
+      footer={
+        <>
+          {
+            // @ts-ignore
+            footers?.[section] ?? null
+          }
+          <View className={cn('w-full items-center mb-1 text-center flex justify-center')}>
+            <Text color="weak" size="sm">
+              {capitalizeFirstLetter(ENV.name)} Ⓒ 2024Cookie Preferences
+            </Text>
+          </View>
+        </>
+      }
+    >
       <View
         style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
-          width: '100%'
+          height: 188,
+          width: '100%',
+          backgroundImage: 'url(/images/login-bg.png)',
+          backgroundSize: '100% 100%',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center'
           // transform: [{ translateY: coverMov }]
         }}
       >
-        <img
+        {/* <img
           src="/images/login-bg.png"
           style={{
             width: '100%',
@@ -254,13 +317,12 @@ export default function WelcomeScreen() {
             borderTopLeftRadius: 6,
             overflow: 'hidden'
           }}
-        />
+        /> */}
       </View>
       {section && (
         <View
           style={{
             // flex: 1,
-            height: screenSize.height,
             paddingLeft: 14,
             paddingRight: 14,
             marginTop: 10,
@@ -335,11 +397,6 @@ export default function WelcomeScreen() {
           </View>
         </View>
       )}
-      <View className={cn('w-full items-center mb-1 text-center flex justify-center')}>
-        <Text color="weak" size="sm">
-          {capitalizeFirstLetter(ENV.name)} Ⓒ 2024Cookie Preferences
-        </Text>
-      </View>
       {isLoading ? (
         <View
           style={{
@@ -354,6 +411,7 @@ export default function WelcomeScreen() {
           </View>
         </View>
       ) : null}
+      <LngSelectModal ref={lngSelectModalRef} />
     </Basiclayout>
   )
 }

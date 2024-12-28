@@ -17,7 +17,14 @@ export const PrivacyPolicyService = () => {
           // props.navigation.navigate('ForgotPasswordStep1')
         }}
       >
-        <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}>{i18n.t('pages.login.termsService')}</Text>
+        <Text
+          style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}
+          onClick={() => {
+            window.open('/assets/docs/lynfoo服务条款.rtf', '_blank')
+          }}
+        >
+          {i18n.t('pages.login.termsService')}
+        </Text>
       </View>
       <Text style={{ fontSize: 12, color: theme.colors.textColor.secondary }}>{i18n.t('pages.login.and')}</Text>
       <View
@@ -26,7 +33,12 @@ export const PrivacyPolicyService = () => {
           // props.navigation.navigate('ForgotPasswordStep1')
         }}
       >
-        <Text style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}>
+        <Text
+          style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}
+          onClick={() => {
+            window.open('/assets/docs/lynfoo隐私协议.rtf', '_blank')
+          }}
+        >
           {i18n.t('pages.login.privacyPolicy')}
         </Text>
       </View>
