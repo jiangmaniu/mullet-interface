@@ -161,7 +161,7 @@ export default defineConfig({
     { src: '/scripts/sw.js', async: true }
   ],
 
-  links: [{ rel: 'manifest', href: '/manifest.json' }],
+  links: [{ rel: 'manifest', href: ENV?.manifest }],
 
   metas: [
     { name: 'application-name', content: ENV?.name },

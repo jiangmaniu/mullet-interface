@@ -114,7 +114,8 @@ const Basiclayout: React.FC<Iprops> = ({
         )}
         bgColor={bgColor}
         style={{
-          paddingTop: headerHeight,
+          // @TODO paddingTop会覆盖className
+          // paddingTop: headerHeight,
           // paddingBottom: footerHeight,
           height: fixedHeight ? `calc(100% - ${headerHeight}px - ${footerHeight}px)` : undefined,
           ...style
