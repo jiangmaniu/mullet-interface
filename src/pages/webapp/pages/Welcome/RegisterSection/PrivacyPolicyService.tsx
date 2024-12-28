@@ -20,7 +20,7 @@ export const PrivacyPolicyService = () => {
         <Text
           style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            window.open('/assets/docs/lynfoo服务条款.rtf', '_blank')
+            window.open('/assets/docs/lynfoo服务条款.rtf', '_self')
           }}
         >
           {i18n.t('pages.login.termsService')}
@@ -36,7 +36,7 @@ export const PrivacyPolicyService = () => {
         <Text
           style={{ fontSize: 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            window.open('/assets/docs/lynfoo隐私协议.rtf', '_blank')
+            window.open('/assets/docs/lynfoo隐私协议.rtf', '_self')
           }}
         >
           {i18n.t('pages.login.privacyPolicy')}

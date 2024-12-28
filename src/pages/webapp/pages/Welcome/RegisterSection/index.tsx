@@ -35,26 +35,26 @@ export interface FormData {
 interface Props {
   setSection: (section: WELCOME_STEP_TYPES) => void
   startAnimation?: (toValue: number) => void
-  email?: string
   phone?: string
-  setEmail?: (email: string) => void
   setPhone?: (phone: string) => void
   areaCodeItem?: Common.AreaCodeItem
   setAreaCodeItem: (areaCodeItem: Common.AreaCodeItem | undefined) => void
   setPassword: (password: string) => void
+  email?: string
+  setEmail?: (email: string) => void
 }
 
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   {
     setSection,
     startAnimation,
-    email: emailProps,
-    setEmail,
     phone: phoneProps,
     setPhone,
     areaCodeItem: areaCodeItemProps,
     setAreaCodeItem,
-    setPassword
+    setPassword,
+    email: emailProps,
+    setEmail
   }: Props,
   ref
 ) => {
@@ -160,7 +160,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: async () => ({
-      email: emailProps || '',
+      email: emailProps || (await STORAGE_GET_ACCOUNT_PASSWORD('email')) || '',
       phone: phoneProps || '',
       password: (await STORAGE_GET_ACCOUNT_PASSWORD('password')) || '',
       areaCodeItem: areaCodeItemProps || undefined
@@ -184,21 +184,40 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           tenanName: stores.tenanName,
           username: stores.username,
           remember: stores.remember,
+          email: stores.email,
           password
         })
       }
     }
+
     updatePassword()
   }, [password])
+
+  useEffect(() => {
+    const updateEmail = async () => {
+      setEmail?.(email || '')
+      const stores = await STORAGE_GET_ACCOUNT_PASSWORD()
+      if (stores.remember) {
+        STORAGE_SET_ACCOUNT_PASSWORD({
+          tenanId: stores.tenanId,
+          tenanName: stores.tenanName,
+          username: stores.username,
+          remember: stores.remember,
+          password: stores.password,
+          email: email || ''
+        })
+      }
+    }
+    updateEmail()
+  }, [email])
 
   const [disabled, setDisabled] = useState(false)
 
   useEffect(() => {
     /** 更新 */
     if (areaCodeItemProps) setValue('areaCodeItem', areaCodeItemProps)
-    if (emailProps) setValue('email', emailProps)
     if (phoneProps) setValue('phone', phoneProps)
-  }, [areaCodeItemProps, emailProps, phoneProps])
+  }, [areaCodeItemProps, phoneProps])
 
   const selectCountryModalRef = useRef<ModalRef>(null)
   const handleSelectCountry = (item?: Common.AreaCodeItem) => {
@@ -232,7 +251,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             value={email}
             onChange={(val) => {
               setValue('email', val?.trim())
-              setEmail?.(val?.trim())
             }}
             onEndEditing={(val) => {
               trigger('email')
