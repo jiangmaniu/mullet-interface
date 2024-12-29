@@ -30,6 +30,8 @@ function AccountSelect() {
 
   return (
     <Basiclayout
+      fixedHeight
+      scrollY
       style={{ paddingLeft: 14, paddingRight: 14, paddingBottom: 80 }}
       footerClassName="flex items-center justify-center"
       footer={
@@ -54,7 +56,6 @@ function AccountSelect() {
           </div>
         </Button>
       }
-      fixedHeight
       header={
         <Header
           back={back}

@@ -165,8 +165,8 @@ function TransferPreviewModal({ from, to, amount }: IProps, ref: ForwardedRef<Mo
   }, [from, to, amount, items, state])
 
   const handleOnPress = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
     if (state === 'pending') {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       // TODO: 提交轉賬
       setSubmitLoading(true)
       const res = await transferAccount({
@@ -198,7 +198,7 @@ function TransferPreviewModal({ from, to, amount }: IProps, ref: ForwardedRef<Mo
     <SheetModal
       ref={bottomSheetModalRef}
       title={state === 'success' ? t('pages.position.Transfer Successful') : t('pages.position.Transfer Preview')}
-      height={state === 'success' ? 400 : 600}
+      height={state === 'success' ? 480 : 600}
       // snapPoints={['80%', '100%']} // 增加這個功能後 dismiss 會出現按鈕點擊異常問題
       onConfirm={handleOnPress}
       closeOnConfirm={false}

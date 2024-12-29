@@ -11,6 +11,7 @@ import { formatNum, hiddenCenterPartStr } from '@/utils'
 
 import { onBack } from '@/utils/navigator'
 import { goHome } from '../../utils/navigator'
+import Empty from '../Base/List/Empty'
 import ActivityIndicator from '../Base/Loading/ActivityIndicator'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
@@ -219,12 +220,16 @@ const _AccoutList = ({
               <View className={cn('flex-1 items-center justify-center h-[300px]')}>
                 <ActivityIndicator />
               </View>
-            ) : (
+            ) : showAccountList.length > 0 ? (
               <View className={cn('flex flex-col gap-3')}>
                 {showAccountList.map((item: User.AccountItem) => (
                   <Item key={item.id} item={item} currentAccountInfo={currentAccountInfo} onClick={() => handlePress(item)} />
                 ))}
               </View>
+            ) : (
+              <div className="h-[376px] flex items-center justify-center">
+                <Empty />
+              </div>
             )}
           </View>
         </View>

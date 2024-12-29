@@ -3,6 +3,7 @@ import 'swiper/css'
 
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import Empty from '@/pages/webapp/components/Base/List/Empty'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
@@ -49,39 +50,48 @@ function AccountCarousel({ accountTabActiveKey, setSelectedItem }: IProps) {
   }, [data, activeIndex])
 
   const swiperRef = useRef<SwiperType | null>(null)
+
   return (
     <div className=" flex items-center flex-col gap-5 flex-1">
-      <Swiper
-        onSwiper={(swiper) => (swiperRef.current = swiper)}
-        // slidesPerView={'auto'}
-        className="account-select w-full overflow-hidden"
-        spaceBetween={16}
-        slidesPerView={1}
-        width={300}
-        loop={true}
-        initialSlide={0}
-        onActiveIndexChange={(swiper) => {
-          setActiveIndex(Number.isNaN(swiper.activeIndex) ? 0 : swiper.activeIndex)
-        }}
-      >
-        {data.map((item, index) => (
-          <SwiperSlide key={index}>
-            <AccountItem item={item} width={233} height={320} active={index === activeIndex} onPress={handleOnPress} />
-          </SwiperSlide>
-        ))}
-      </Swiper>
-
-      <div className="flex flex-row gap-[10px]">
-        {data?.map((item, index) => (
-          <View
-            onClick={() => {
-              swiperRef.current?.slideTo(index, 300)
+      {data.length > 0 ? (
+        <>
+          <Swiper
+            onSwiper={(swiper) => (swiperRef.current = swiper)}
+            // slidesPerView={'auto'}
+            className="account-select w-full overflow-hidden"
+            spaceBetween={16}
+            slidesPerView={1}
+            width={300}
+            loop={true}
+            initialSlide={0}
+            onActiveIndexChange={(swiper) => {
+              setActiveIndex(Number.isNaN(swiper.activeIndex) ? 0 : swiper.activeIndex)
             }}
-            key={index}
-            className={cn('h-[6px] w-[14px] bg-gray-250 rounded-[3px]', { 'bg-black w-10': index === activeIndex })}
-          ></View>
-        ))}
-      </div>
+          >
+            {data.map((item, index) => (
+              <SwiperSlide key={index}>
+                <AccountItem item={item} width={233} height={320} active={index === activeIndex} onPress={handleOnPress} />
+              </SwiperSlide>
+            ))}
+          </Swiper>
+
+          <div className="flex flex-row gap-[10px]">
+            {data?.map((item, index) => (
+              <View
+                onClick={() => {
+                  swiperRef.current?.slideTo(index, 300)
+                }}
+                key={index}
+                className={cn('h-[6px] w-[14px] bg-gray-250 rounded-[3px]', { 'bg-black w-10': index === activeIndex })}
+              ></View>
+            ))}
+          </div>
+        </>
+      ) : (
+        <div className="h-[376px] flex items-center justify-center">
+          <Empty />
+        </div>
+      )}
     </div>
   )
 }

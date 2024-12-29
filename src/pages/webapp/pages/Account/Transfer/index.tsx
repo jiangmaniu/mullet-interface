@@ -159,20 +159,38 @@ function TransferScreen() {
   }, [currentUser])
 
   return (
-    <Basiclayout style={{ paddingLeft: 14, paddingRight: 14 }} bgColor="primary" headerColor={theme.colors.backgroundColor.primary}>
-      <Header
-        right={
-          <View
-            className={cn('flex justify-end items-center')}
-            onPress={() => {
-              navigateTo('/app/account/transfer/detail')
-            }}
-          >
-            <Iconfont name="a-bianzu15" size={36} />
-          </View>
-        }
-        back={true}
-      />
+    <Basiclayout
+      fixedHeight
+      header={
+        <Header
+          right={
+            <View
+              className={cn('flex justify-end items-center')}
+              onPress={() => {
+                navigateTo('/app/account/transfer/detail')
+              }}
+            >
+              <Iconfont name="a-bianzu15" size={36} />
+            </View>
+          }
+          back={true}
+        />
+      }
+      footer={
+        <Button
+          type="primary"
+          size="large"
+          loading={false}
+          onClick={handleSubmit(onSubmit)}
+          disabled={!amount || !from || !to || !!errors.amount}
+        >
+          {t('pages.position.Transfer2')}
+        </Button>
+      }
+      style={{ paddingLeft: 14, paddingRight: 14 }}
+      bgColor="primary"
+      headerColor={theme.colors.backgroundColor.primary}
+    >
       <View className={cn('flex-1 flex flex-col justify-between mb-12')}>
         <Text size="xl" weight="bold" color="primary" className={cn('ml-2 mb-3 mt-5')}>
           {t('pages.position.Transfer')}
@@ -280,16 +298,6 @@ function TransferScreen() {
             {errors.amount.message}
           </Text>
         )}
-
-        <Button
-          type="primary"
-          size="large"
-          loading={false}
-          onClick={handleSubmit(onSubmit)}
-          disabled={!amount || !from || !to || !!errors.amount}
-        >
-          {t('pages.position.Transfer2')}
-        </Button>
       </View>
 
       <SelectAccountModal

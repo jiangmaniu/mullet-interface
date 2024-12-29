@@ -16,6 +16,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import CoinHeader, { ISymbolItem } from '../../../comp/CoinHeader'
 
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
+import Empty from '@/pages/webapp/components/Base/List/Empty'
 import More from '@/pages/webapp/components/Base/List/More'
 import { PullToRefresh } from '@/pages/webapp/components/Base/List/PullToRefresh'
 import VirtualList from 'rc-virtual-list'
@@ -316,10 +317,7 @@ function HistoryPending() {
           </VirtualList>
         ) : (
           <View className={cn('flex flex-col items-center justify-center h-80')}>
-            <img src={'/img/webapp/icon-zanwucangwei.png'} style={{ width: 120, height: 120 }} />
-            <Text size="sm" color="weak">
-              {i18n.t('common.NO Data')}
-            </Text>
+            <Empty />
           </View>
         )}
 

@@ -3,6 +3,7 @@ import { SOURCE_CURRENCY } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
+import Empty from '@/pages/webapp/components/Base/List/Empty'
 import { IlistItemProps } from '@/pages/webapp/components/Base/List/ListItem'
 import More from '@/pages/webapp/components/Base/List/More'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
@@ -264,10 +265,7 @@ function HistoryClose() {
           </VirtualList>
         ) : (
           <View className={cn('flex flex-col items-center justify-center h-80')}>
-            <img src={'/img/webapp/icon-zanwucangwei.png'} style={{ width: 120, height: 120 }} />
-            <Text size="sm" color="weak">
-              {i18n.t('common.NO Data')}
-            </Text>
+            <Empty />
           </View>
         )}
         <FilterModal key="symbol" ref={filterModalRef} data={symbolFilters} />

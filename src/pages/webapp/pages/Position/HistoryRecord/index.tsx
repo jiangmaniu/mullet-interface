@@ -92,7 +92,7 @@ export default function HistoryRecordTopTabbar() {
             title={i18n.t('app.pageTitle.HistoryRecord')}
             back={true}
           />
-          <Tabs style={{ backgroundColor: theme.colors.backgroundColor.secondary }} items={items} onChange={onChange} />
+          <Tabs stretch style={{ backgroundColor: theme.colors.backgroundColor.secondary }} items={items} onChange={onChange} />
         </div>
       }
     >

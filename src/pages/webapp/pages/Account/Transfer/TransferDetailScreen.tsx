@@ -16,6 +16,7 @@ import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Tooltip from '../AccountDetail/Tooltip'
 
+import Empty from '@/pages/webapp/components/Base/List/Empty'
 import VirtualList from 'rc-virtual-list'
 
 const TransferDetailScreen = () => {
@@ -173,7 +174,12 @@ const TransferDetailScreen = () => {
   }, [data])
 
   return (
-    <Basiclayout style={{ paddingLeft: 14, paddingRight: 14 }} bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
+    <Basiclayout
+      scrollY
+      style={{ paddingLeft: 14, paddingRight: 14 }}
+      bgColor="secondary"
+      headerColor={theme.colors.backgroundColor.secondary}
+    >
       <Header title={t('app.pageTitle.Transfer Records')} back />
 
       <View className={cn('flex flex-row justify-between items-center pt-3 ')}>
@@ -213,9 +219,15 @@ const TransferDetailScreen = () => {
         hasMore={data.length < total}
       /> */}
 
-      <VirtualList itemKey="item" data={datas}>
-        {renderItem}
-      </VirtualList>
+      {datas.length > 0 ? (
+        <VirtualList itemKey="item" data={datas}>
+          {renderItem}
+        </VirtualList>
+      ) : (
+        <div className="h-[376px] flex items-center justify-center">
+          <Empty />
+        </div>
+      )}
       <DateRangePickerSheetModal ref={datePickerRef} onConfirm={onDateRangeConfirm} />
     </Basiclayout>
   )

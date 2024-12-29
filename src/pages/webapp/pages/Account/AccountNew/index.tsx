@@ -182,6 +182,9 @@ function AccountNew() {
       fixedHeight
       style={{ paddingLeft: 14, paddingRight: 14 }}
       header={<Header />}
+      footerStyle={{
+        background: 'none'
+      }}
       footer={
         <Button
           style={{ flex: 1, width: '100%', flexGrow: 1 }}
@@ -276,8 +279,8 @@ function AccountNew() {
             placeholder={t('pages.account.Account Name Tips')}
             height={50}
             // LeftAccessory={() => <Icon icon="input-email" size={20} containerStyle={{ marginLeft: spacing.small }} />}
-            autoCapitalize="none"
-            autoComplete="email"
+            // autoCapitalize="none"
+            // autoComplete="email"
             // autoCorrect={false}
             // keyboardType="email-address"
           />
