@@ -100,6 +100,8 @@ const Basiclayout: React.FC<Iprops> = ({
       <Helmet>
         {/* 设置手机顶部状态栏颜色 */}
         <meta name="theme-color" content={statusBarBgColor} />
+        {/* IE/Edge浏览器 */}
+        <meta name="msapplication-TileColor" content={statusBarBgColor} />
       </Helmet>
 
       {header && (

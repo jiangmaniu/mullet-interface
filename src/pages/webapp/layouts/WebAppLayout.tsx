@@ -101,6 +101,10 @@ function WebAppLayout() {
         <meta name="fullscreen" content="yes" />
         {/* UC强制全屏 */}
         <meta name="x5-fullscreen" content="true" />
+        {/* IE/Edge浏览器 */}
+        {/* <meta name="msapplication-square70x70logo" content="img/icons/book-72.png" />
+        <meta name="msapplication-square150x150logo" content="img/icons/book-144.png" />
+        <meta name="msapplication-square310x310logo" content="img/icons/book-256.png" /> */}
         {/* ios适配 */}
         {/* <link rel="apple-touch-icon" href="/custom_icon.png" /> */}
         {/* 不同分辨率的适配： */}

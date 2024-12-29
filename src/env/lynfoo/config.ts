@@ -9,8 +9,8 @@ export default {
   klineWatermarkLogoDark: '/platform/lynfoo/img/kline-water-logo-dark.svg', // K线水印
   featureWatermarkLogo: '/platform/lynfoo/img/feature-water-logo.svg', // 合约属性水印LOGO
   featureWatermarkLogoDark: '/platform/lynfoo/img/feature-water-logo-dark.png', // 合约属性水印LOGO
-  ServiceTerm: '/platform/lynfoo/lynfoo服务条款.rtf', // 服务条款
-  PrivacyAgreement: '/platform/lynfoo/lynfoo隐私协议.rtf', // 隐私协议
+  ServiceTerm: '/platform/lynfoo/serviceTerm.rtf', // 服务条款
+  PrivacyAgreement: '/platform/lynfoo/privacyAgreement.rtf', // 隐私协议
   // 秘钥
   CLIENT_ID: 'StelluxTrader-client', // 客户端id
   CLIENT_SECRET: 'stellux_trader_client_secret', // 客户端密钥
