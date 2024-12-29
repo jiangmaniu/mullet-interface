@@ -53,10 +53,10 @@ export default function Switch({
       }}
     >
       {isChecked && (
-        <>{checkedChildren ? checkedChildren : <img src="/images/icons/checkSwitch.png" style={{ width: 18, height: 18 }} />}</>
+        <>{checkedChildren ? checkedChildren : <img src="/img/webapp/icons/checkSwitch.png" style={{ width: 18, height: 18 }} />}</>
       )}
       {!isChecked && (
-        <>{unCheckedChildren ? unCheckedChildren : <img src="/images/icons/unCheckSwitch.png" style={{ width: 18, height: 18 }} />}</>
+        <>{unCheckedChildren ? unCheckedChildren : <img src="/img/webapp/icons/unCheckSwitch.png" style={{ width: 18, height: 18 }} />}</>
       )}
     </View>
   )

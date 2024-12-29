@@ -143,7 +143,7 @@ export default function VerifyDoc() {
                   justifyContent: 'center',
                   alignItems: 'center',
                   backgroundSize: 'cover',
-                  backgroundImage: `url('/images/uploadImg.png')`
+                  backgroundImage: `url('/img/webapp/uploadImg.png')`
                 }}
               >
                 <Text style={{ fontWeight: '500', color: theme.colors.textColor.primary }}>

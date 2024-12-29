@@ -64,7 +64,10 @@ function Message() {
     return (
       <View onClick={() => handleClickItem(item.id)} className={cn('flex-row items-start gap-x-2 py-2 border-b')} borderColor="weak">
         <View>
-          <img src={isUnRead ? '/images/message-email-active.png' : '/images/message-email.png'} style={{ width: 26, height: 26 }} />
+          <img
+            src={isUnRead ? '/img/webapp/message-email-active.png' : '/img/webapp/message-email.png'}
+            style={{ width: 26, height: 26 }}
+          />
         </View>
         <View className={cn('flex-1')}>
           <Text color={isUnRead ? 'primary' : 'weak'} size="sm" weight="medium" className={cn('pb-1 line-clamp-2')}>
@@ -89,7 +92,7 @@ function Message() {
           <>
             {unReadCount > 0 && (
               <View onClick={handleReadAll}>
-                <img src="/images/clear-icon.png" style={{ width: 36, height: 36 }} />
+                <img src="/img/webapp/clear-icon.png" style={{ width: 36, height: 36 }} />
               </View>
             )}
           </>
@@ -106,7 +109,7 @@ function Message() {
         refreshing={refreshing}
         contentContainerStyle={{ padding: 12 }}
         emptyConfig={{
-          image: '/images/message-empty.png',
+          image: '/img/webapp/message-empty.png',
           imageStyle: { width: 134, height: 134 }
         }}
         onEndReached={onEndReached}

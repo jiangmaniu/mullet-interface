@@ -233,7 +233,7 @@ function PositionList() {
         onViewableItemsChanged={onViewableItemsChanged}
         ListEmptyComponent={
           <View className={cn('w-full flex items-center flex-col justify-center h-80')}>
-            <img src={'/images/icon-zanwucangwei.png'} style={{ width: 120, height: 120 }} />
+            <img src={'/img/webapp/icon-zanwucangwei.png'} style={{ width: 120, height: 120 }} />
             <Text size="sm" color="weak">
               {t('pages.position.No Position')}
             </Text>

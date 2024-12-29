@@ -230,7 +230,7 @@ function FundRecord() {
           </View>
         ) : (
           <View className={cn('flex flex-col items-center justify-center h-80')}>
-            <img src={'/images/icon-zanwucangwei.png'} style={{ width: 120, height: 120 }} />
+            <img src={'/img/webapp/icon-zanwucangwei.png'} style={{ width: 120, height: 120 }} />
             <Text size="sm" color="weak">
               {i18n.t('common.NO Data')}
             </Text>

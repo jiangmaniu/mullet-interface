@@ -44,14 +44,14 @@ export const LngList = ({ list }: { list: IlistItemProps[] }) => {
           }
 
           // const icon = {
-          //   'en-US': require('@/assets/images/en_icon.png'),
-          //   'zh-TW': require('@/assets/images/ft_icon.png'),
-          //   'vi-VN': require('@/assets/images/vn_icon.png')
+          //   'en-US': require('@/img/webapp/en_icon.png'),
+          //   'zh-TW': require('@/img/webapp/ft_icon.png'),
+          //   'vi-VN': require('@/img/webapp/vn_icon.png')
           // }[item.value as string]
           const icon = {
-            'en-US': '/images/en_icon.png',
-            'zh-TW': '/images/ft_icon.png',
-            'vi-VN': '/images/vn_icon.png'
+            'en-US': '/img/webapp/en_icon.png',
+            'zh-TW': '/img/webapp/ft_icon.png',
+            'vi-VN': '/img/webapp/vn_icon.png'
           }[item.value as string]
 
           return (

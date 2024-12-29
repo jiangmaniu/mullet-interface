@@ -43,7 +43,7 @@ function TransferPreviewModal({ from, to, amount }: IProps, ref: ForwardedRef<Mo
         label: t('pages.position.Payment Method'),
         value: (
           <View className={cn('flex flex-row items-center gap-1')}>
-            <img src={'/images/icons/zhuanzhang.png'} width={18} height={18} style={{ width: 20, height: 20 }} />
+            <img src={'/img/webapp/icons/zhuanzhang.png'} width={18} height={18} style={{ width: 20, height: 20 }} />
             <Text size="sm" color="primary" weight="medium">
               {t('pages.position.Transfer Between Own Accounts')}
             </Text>

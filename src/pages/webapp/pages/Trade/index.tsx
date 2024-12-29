@@ -52,7 +52,7 @@ function Trade() {
           <TradeView />
         ) : (
           <View className={cn('flex-1 justify-center items-center')}>
-            <img style={{ width: 160, height: 186 }} src={'/images/logo-gray.png'} />
+            <img style={{ width: 160, height: 186 }} src={'/img/webapp/logo-gray.png'} />
           </View>
         )}
       </View>

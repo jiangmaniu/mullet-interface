@@ -228,7 +228,7 @@ function SymbolSearch() {
                 {t('pages.quote.History Search')}
               </Text>
               <LinkPressable onPress={removeHistorySearch}>
-                <img src={'/images/clear-search-history.png'} style={{ width: 20, height: 20 }} />
+                <img src={'/img/webapp/clear-search-history.png'} style={{ width: 20, height: 20 }} />
               </LinkPressable>
             </View>
             <View className={cn('mb-7 mt-5 items-start flex-row gap-3 flex-wrap')}>

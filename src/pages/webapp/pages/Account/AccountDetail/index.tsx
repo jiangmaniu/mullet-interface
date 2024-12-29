@@ -182,7 +182,7 @@ function AccountDetail() {
                   {i.label}
                 </Text>
                 <img
-                  src={'/images/icons/tips.png'}
+                  src={'/img/webapp/icons/tips.png'}
                   width={16}
                   height={16}
                   style={{

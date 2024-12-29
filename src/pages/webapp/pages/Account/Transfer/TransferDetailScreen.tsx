@@ -180,7 +180,7 @@ const TransferDetailScreen = () => {
         <View className={cn('flex flex-row items-center gap-2')}>
           <View onPress={() => datePickerRef.current?.show()}>
             <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px]')}>
-              <img src={'/images/rili.png'} style={{ width: 16, height: 16 }} />
+              <img src={'/img/webapp/rili.png'} style={{ width: 16, height: 16 }} />
               <Text size="sm" color="weak" className={cn('ml-2')}>
                 {startTime ? dayjs(startTime).format('YYYY-MM-DD') : t('pages.position.Start Date')}&nbsp;-&nbsp;
                 {endTime ? dayjs(endTime).format('YYYY-MM-DD') : t('pages.position.End Date')}

@@ -22,7 +22,7 @@ const Item = (item: IlistItemProps) => {
   const { theme } = useTheme()
 
   const renderItem = {
-    renderExtraElement: () => (item.active ? <img style={{ width: 22, height: 22 }} src={'/images/icon/radio_b.png'} /> : <View />),
+    renderExtraElement: () => (item.active ? <img style={{ width: 22, height: 22 }} src={'/img/webapp/icon/radio_b.png'} /> : <View />),
     ...item
   }
 

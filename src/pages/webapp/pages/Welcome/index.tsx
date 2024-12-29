@@ -305,7 +305,7 @@ export default function WelcomeScreen() {
           right: 0,
           height: 188,
           width: '100%',
-          backgroundImage: 'url(/images/login-bg.png)',
+          backgroundImage: 'url(/img/webapp/login-bg.png)',
           backgroundSize: '100% 100%',
           backgroundRepeat: 'no-repeat',
           backgroundPosition: 'center'
@@ -313,7 +313,7 @@ export default function WelcomeScreen() {
         }}
       >
         {/* <img
-          src="/images/login-bg.png"
+          src="/img/webapp/login-bg.png"
           style={{
             width: '100%',
             height: 188,
