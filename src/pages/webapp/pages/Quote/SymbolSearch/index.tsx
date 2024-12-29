@@ -120,19 +120,22 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
             </View>
             {/* 内容 */}
             <View>
-              {item.data.map((child: any) => (
-                <View key={child} className="py-2">
+              {item.data.map((symbol: any) => (
+                <View key={symbol} className="py-2">
                   <View
                     className={cn('flex-row gap-x-3 items-center pl-4 pr-[100px]')}
-                    onClick={() =>
+                    onClick={() => {
+                      // 切换品种
+                      trade.switchSymbol(symbol)
+                      // 跳转到k线页面
                       navigateTo('/app/quote/kline', {
                         redirect: '/app/quote/search'
                       })
-                    }
+                    }}
                   >
-                    <SymbolIcon src={getSymbolIcon(child)} />
+                    <SymbolIcon src={getSymbolIcon(symbol)} />
                     <Text size="sm" weight="medium" leading="xl">
-                      {child}
+                      {symbol}
                     </Text>
                   </View>
                 </View>

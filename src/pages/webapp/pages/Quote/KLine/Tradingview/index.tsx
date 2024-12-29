@@ -17,11 +17,11 @@ type IProps = {
 }
 
 const TradingViewComp = ({ style }: IProps) => {
-  const { isPc, browserDeviceType, isPwaApp } = useEnv()
+  const { isPc } = useEnv()
   const { lng } = useLang()
   const { theme, cn } = useTheme()
   const { trade } = useStores()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [url, setUrl] = useState('')
   const intl = useIntl()
   const isDark = theme.isDark
@@ -67,7 +67,7 @@ const TradingViewComp = ({ style }: IProps) => {
         }}
       />
     )
-  }, [url, loading, isPwaApp])
+  }, [url, loading])
 
   return (
     <div style={style} className="relative mb-3">

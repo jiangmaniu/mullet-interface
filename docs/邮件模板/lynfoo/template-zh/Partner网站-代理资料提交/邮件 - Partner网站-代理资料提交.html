@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+     <title>Lynfoo</title>
+    <style>
+      body {
+          background-color: #fff;
+      }
+      .container {
+          display: flex;
+          /* margin-top: -120px; */
+      }
+      .container-wrapper {
+        width: 375px;
+        margin: 0 auto;
+        border-radius: 16px;
+        border: 1px solid #EDEDED;
+        /* padding-bottom: 18px; */
+		overflow: hidden;
+      }
+      /* 兼容pc */
+      @media (min-width: 1200px) {
+          .container {
+            width: 1300px;
+            margin-top: 0;
+          }
+          .container-wrapper {
+            width: 500px !important;
+          }
+          .container-wrapper .header-img{
+            width: 500px !important;
+            height: 183px !important;
+            background-image: url(https://client.stellux.io/platform/lynfoo/img/email-template/temp-notice-pc.png);
+          }
+      }
+	  .container-wrapper .header-img-bg {
+		  position: relative;
+		  height: 162px;
+		  background: linear-gradient(180deg, #FFECC1 -4%, #FFFFFF 90%);
+	  }
+	  .container-wrapper .header-img-bg .img-logo {
+		  position: absolute;
+		  left: 29px;
+		  top: 23px;
+	  }
+	  .container-wrapper .header-img-bg .img-email {
+		  position: absolute;
+		  right: 32px;
+		  bottom: -20px;
+	  }
+	  
+      .container-wrapper .header-img {
+        width: 375px;
+        height: 136px;
+        /* background: linear-gradient(180deg, #FFECC1 -4%, #FFFFFF 90%); */
+        background-image: url(https://uc.cd-ex.com/img/temp-notice-h5.png);
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+      .container-wrapper .content {
+          padding-left: 23px;
+          padding-right: 15px;
+		  color: #222222;
+		  font-variation-settings: "opsz" auto;
+		  font-feature-settings: "kern" on;
+		  font-family: Adamina;
+		  font-size: 16px;
+		  padding-bottom: 5px;
+      }
+      .container-wrapper .content .line {
+          width: 30px;
+          height: 4px;
+          margin-top: 12px;
+          margin-bottom: 14px;
+          background: #c49002;
+      }
+      .container-wrapper .content .title1 {
+          width: 310px;
+          color: #222222;
+          font-size: 22px;
+          font-weight: 600;
+      }
+      .container-wrapper .content .title2 {
+          padding-bottom: 3px;
+          color: #222222;
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 24px;
+      }
+	  .container-wrapper .content .btn {
+		  width: 100%;
+		  height: 48px;
+		  display: flex;
+		  justify-content: center;
+		  align-items: center;
+		  background-color: #FCD535;
+		  border-radius: 8px;
+		  font-size: 18px;
+		  font-family: PingFangSC, PingFang SC;
+		  font-weight: 500;
+		  margin-top: 24px;
+		  cursor: pointer;
+	  }
+	  .container-wrapper .content .btn:hover{
+		  transition: all 0.3s ease;
+		  background: #f3d146;
+	  }
+	  .container-wrapper .content a {
+		  color: #222222;
+	  }
+	  .container-wrapper .tips {
+		  font-size: 12px;
+		  color: #B1B1B1;
+		  text-align: center;
+		  margin-top: 16px;
+		  padding: 20px 20px 26px;;
+		  background-color: #F6F6F6;
+	  }
+	  .container-wrapper .tips p {
+		  
+		  line-height: 16px;
+		  margin: 0;
+	  }
+	  .container-wrapper .tips .mt6 {
+		  margin-top: 6px;
+	  }
+	  .container-wrapper .tips .go-back {
+		  margin-top: 10px;
+	  }
+	  .container-wrapper .tips .go-back a {
+		  display: inline-block;
+	  }
+	  .container-wrapper .tips .go-back img{
+		  padding: 0 3px;
+		  cursor: pointer;
+	  }
+      .container-wrapper .content .end-text {
+          color: #222222;
+          font-weight: 500;
+          font-size: 14px;
+          margin-top: 28px;
+      }
+	  .container-wrapper .tips .link-menu {
+		  margin-top: 10px;
+	  }
+	  .container-wrapper .tips .link-menu a{
+		  font-size: 12px;
+		  color: #222222;
+		  padding: 0 2px;
+	  }
+		  
+	  p {
+		  margin: 20px 0;
+	  }
+	  .mt6 {
+		  margin-top: 6px;
+	  }
+	  .mt-38 {
+		  margin-top: 32px;
+	  }
+  </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="container-wrapper">
+          <div class="header-img-bg">
+			  <!-- <div class="header-img"></div> -->
+			  <img class="img-logo" width="131px" height="50px" src="https://client.stellux.io/platform/lynfoo/img/email-template/logo@2x.png"/>
+			  <img class="img-email" width="152px" height="152px" src="https://client.stellux.io/img/email-template/youjian.png"/>
+          </div>
+          <div class="content">
+				  <p>親愛的客戶：</p>
+				  <p>感謝您對我們的IB計劃感興趣。</p>
+				  <p>我們已收到您的申請，並且正在審核。我們將盡快通知您審核結果。</p>
+				  <P>在此期間，請點擊<a href="https://quxiaodingyue.com" target="_blank">此處</a>開設帳戶。我們隨後會將您的帳戶升級為IB合作夥伴帳戶。</P>
+				  <p>如果您有任何問題，請隨時聯繫我們：<a href="https://lianxiwomen.com" target="_blank">在線咨詢</a>  <a href="https://t.me" target="_blank">Telegram</a>.</p>
+				  <p class="mt-38">
+					  <span style="color: #9C9C9C;display: block;">此致</span>
+					  Lynfoo 團隊
+				  </p>
+          </div>
+		  <div class="tips">
+			  <img class="img-logo" width="131px" height="50px" src="https://client.stellux.io/platform/lynfoo/img/email-template/logo@2x.png"/>
+			  <div class="go-back">
+				  <a href="https://www.instagram.com" target="_blank">
+					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/instagram.png"/>
+				  </a>
+				  <a href="https://t.me" target="_blank">
+					 <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/telegram.png"/> 
+				  </a>
+				  <a href="https://www.facebook.com" target="_blank">
+					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/fb.png"/>
+				  </a>
+				  <a href="https://x.com" target="_blank">
+					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/twitter.png"/>
+				  </a>
+			  </div>
+			  <div class="link-menu">
+				  <a href="https://fengxianjielu.com" target="_blank">
+					  風險揭露
+				  </a>
+				  <a href="https://lianxiwomen.com" target="_blank">
+					 聯絡我們
+				  </a>
+				  <a href="https://quxiaodingyue.com" target="_blank">
+					  取消訂閱
+				  </a>
+			  </div>
+		  </div>
+      </div>
+  </div>
+  </body>
+</html>
