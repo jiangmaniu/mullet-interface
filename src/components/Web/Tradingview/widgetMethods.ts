@@ -3,6 +3,7 @@ import { stores } from '@/context/mobxProvider'
 import { ChartStyle, IChartingLibraryWidget, ThemeName, TOverrides } from '@/libs/charting_library'
 import { isPC } from '@/utils'
 
+import ENV from '@/env'
 import { ThemeConst, ThemeDark } from './constant'
 import { getTradingviewThemeCssVar } from './theme'
 
@@ -166,10 +167,10 @@ export function setCSSCustomProperty(props: { tvWidget: IChartingLibraryWidget; 
 }
 
 // 创建水印LOGO
-export function createWatermarkLogo() {
+export function createWatermarkLogo(isDark?: boolean) {
   const chartContainer = document.getElementById('tradingview')
   const logo = document.createElement('img')
-  logo.src = '/kline-water-logo.png' // 替换为您的 LOGO 路径
+  logo.src = isDark ? ENV?.klineWatermarkLogoDark : ENV?.klineWatermarkLogo // 替换为您的 LOGO 路径
   logo.style.position = 'absolute'
   logo.style.bottom = '240px' // 调整位置
   logo.style.left = '70px' // 调整位置

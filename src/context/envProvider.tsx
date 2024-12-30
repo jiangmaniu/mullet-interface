@@ -1,12 +1,18 @@
-import { useBreakpoint } from '@ant-design/pro-components'
 import { debounce } from 'lodash'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+
+import { useDeviceChange } from '@/hooks/useDeviceChange'
+import { BrowserDeviceType } from '@/utils/device'
 
 type SizeInfo = {
   width: number
   height: number
 }
 type ProviderType = {
+  /**浏览器设备类型 */
+  browserDeviceType: BrowserDeviceType
+  /**是否是pwa应用 */
+  isPwaApp: boolean
   /** 屏幕宽高信息 */
   screenSize: SizeInfo
   /**手机模式，不包含ipad */
@@ -58,7 +64,6 @@ const Context = createContext<ProviderType>({} as ProviderType)
 
 export const EnvProvider = ({ children }: IProps) => {
   const [screenSize, setScreenSize] = useState({} as SizeInfo)
-  const breakPoint = useBreakpoint() || ''
 
   // 根据不同分辨率缩放屏幕大小
   function adjustScale(size: SizeInfo) {
@@ -96,16 +101,21 @@ export const EnvProvider = ({ children }: IProps) => {
     }
   }, [onResize])
 
-  const exposed = {
-    screenSize,
-    breakPoint,
-    isMobile: ['xs', 'sm'].includes(breakPoint), // 手机端，不包含ipad
-    isIpad: ['md', 'lg'].includes(breakPoint), // 是否是ipad端
-    isMobileOrIpad: ['xs', 'sm', 'md', 'lg'].includes(breakPoint), // 手机端，包含ipad
-    isPc: ['xl', 'xxl'].includes(breakPoint) // pc端 >= 1200px
-  } as ProviderType
+  /** 检查设备类型，如果设备类型发生变化，则跳转到对应的页面 */
+  const { exposed } = useDeviceChange()
 
-  return <Context.Provider value={exposed}>{children}</Context.Provider>
+  return (
+    <Context.Provider
+      value={
+        {
+          ...exposed,
+          screenSize
+        } as ProviderType
+      }
+    >
+      {children}
+    </Context.Provider>
+  )
 }
 
 export const useEnv = () => useContext(Context)

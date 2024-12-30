@@ -24,7 +24,8 @@ function UserCenterAccountDropdown({ theme }: IProps) {
   const { trade } = useStores()
   const { currentAccountInfo } = trade
   const { initialState } = useModel('@@initialState')
-  const { isDark } = useTheme()
+  const themeConfig = useTheme()
+  const isDark = themeConfig.theme.isDark
   const [accountBoxOpen, setAccountBoxOpen] = useState(false)
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
@@ -115,7 +116,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
                       <div>
                         <div>
                           <span className="text-[20px] text-primary font-pf-bold">
-                            {formatNum(item.money, { precision: item.currencyDecimal })}
+                            {Number(item.money) ? formatNum(item.money, { precision: item.currencyDecimal }) : '0.00'}
                           </span>{' '}
                           <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                         </div>

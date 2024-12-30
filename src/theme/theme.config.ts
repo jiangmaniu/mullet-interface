@@ -133,11 +133,21 @@ export const fontFamily =
   "pf-medium, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
 
 // 获取系列颜色
-const getColors = (colors: any, name: any) => {
+export const getColors = (colors: any, name: any) => {
   const result = {}
   Object.keys(colors).forEach((key: string) => {
     // @ts-ignore
     result[`--color-${name}-${key}`] = colors[key]
+  })
+  return result
+}
+
+// tailwindcss颜色使用变量代替
+export const getTailwindCssVarColor = <T = any>(colors: any, name: any) => {
+  const result = {} as T
+  Object.keys(colors).forEach((key: string) => {
+    // @ts-ignore
+    result[key] = `var(--color-${name}-${key})`
   })
   return result
 }
@@ -343,10 +353,10 @@ export const darkTheme = {
   '--color-red': red['650'] // 全局红
 }
 
-const setRootVars = (themeVars: any) => {
+export const setRootVars = (themeVars: any, isImportant?: boolean) => {
   let vars = ''
   Object.keys(themeVars).forEach((key) => {
-    vars += `${key}: ${themeVars[key]};\n`
+    vars += isImportant ? `${key}: ${themeVars[key]} !important;\n` : `${key}: ${themeVars[key]};\n`
   })
   return vars
 }
@@ -354,9 +364,9 @@ const setRootVars = (themeVars: any) => {
 // css变量注入页面中，通过var(--color-brand-primary)使用
 // 定义全局主题变量
 // 黑色主题，修改<html class="dark" /> 切换主题
-export const cssVars = `
+export const pcCssVars = `
   :root {
-    ${setRootVars(lightTheme)}
+    ${setRootVars(lightTheme)};
   }
   :root[class=dark] {
     ${setRootVars(darkTheme)}

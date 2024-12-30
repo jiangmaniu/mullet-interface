@@ -8,6 +8,7 @@ import { gray } from '@/theme/theme.config'
 import { formatEmail, formatMobile } from '@/utils'
 import { push } from '@/utils/navigator'
 
+import ENV from '@/env'
 import KycApproveInfoModal from './comp/KycApproveInfoModal'
 import KycFailModal from './comp/KycFailModal.tsx'
 import KycStepPie from './comp/KycStepPie'
@@ -281,7 +282,7 @@ export default function Setting() {
           <FormattedMessage id="mt.zhanghuguanli" />
         </div>
         <div className="text-secondary text-sm pb-[16px] pt-2">
-          <FormattedMessage id="mt.zhanghuguanlitips" />
+          <FormattedMessage id="mt.zhanghuguanlitips" values={{ name: ENV.name }} />
         </div>
         <div className="border border-gray-150 rounded-[7px] h-[64px] px-[26px] flex items-center justify-between">
           <div className="text-primary text-sm flex-1 border-r border-gray-150 flex items-center h-full">

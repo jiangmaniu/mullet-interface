@@ -1,11 +1,16 @@
 import { Outlet, useLocation } from '@umijs/max'
 import classNames from 'classnames'
+import { observer } from 'mobx-react-lite'
 
 // import Footer from '@/components/Web/Footer'
 import Header from '@/components/Web/Header'
+import { useEnv } from '@/context/envProvider'
+import { useStores } from '@/context/mobxProvider'
 
-export default function WebLayout() {
+function WebLayout() {
+  const { isPc, isMobileOrIpad } = useEnv()
   const { pathname } = useLocation()
+  const { global } = useStores()
   const isTradeLayout = pathname.indexOf('/trade') !== -1
 
   if (isTradeLayout) {
@@ -31,3 +36,4 @@ export default function WebLayout() {
     </div>
   )
 }
+export default observer(WebLayout)

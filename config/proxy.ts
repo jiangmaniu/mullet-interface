@@ -17,7 +17,7 @@ export default {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/api/': {
       // 要代理的地址
-      target: ENV.baseURL,
+      target: ENV?.baseURL,
       // target: 'https://www.cd-ex.com/apis',
       // target: 'https://awapis.cd-ex.com',
       // 配置了这个可以从 http 代理到 https

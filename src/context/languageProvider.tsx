@@ -33,13 +33,14 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
   const getAntdMobileLocale = (lng: ILanguage) => {
     return {
       'zh-TW': zhTW,
-      'en-US': enUS
+      'en-US': enUS,
+      'vi-VN': enUS
     }[lng]
   }
 
   // 修改地址栏pathname地址
   const updatePathname = (lng: ILanguage) => {
-    window.history.replaceState(null, '', `/${lng}${getPathname()}${location.hash}${location.search}`)
+    window.history.replaceState(null, '', `/${lng}${getPathname()}${window.location.hash}${window.location.search}`)
   }
 
   // @ts-ignore

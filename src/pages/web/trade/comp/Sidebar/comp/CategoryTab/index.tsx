@@ -5,7 +5,6 @@ import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
-import { useTheme } from '@/context/themeProvider'
 
 type IProps = {
   onChange?: (key: any) => void
@@ -16,7 +15,6 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
   const [current, setCurrent] = useState('0')
   const { trade } = useStores()
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
-  const { isDark } = useTheme()
   const intl = useIntl()
 
   const symbolCategory = trade.symbolCategory

@@ -26,7 +26,8 @@ type IProps = {
 function QuoteItem({ item, isActive, popupRef }: IProps) {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const { isMobileOrIpad } = useEnv()
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const { trade, ws, kline } = useStores()
   const symbol = item.symbol
   const res = getCurrentQuote(symbol)

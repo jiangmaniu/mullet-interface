@@ -19,7 +19,19 @@ import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
-import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
+import {
+  STORAGE_GET_CONF_INFO,
+  STORAGE_GET_HISTORY_SEARCH,
+  STORAGE_GET_ORDER_CONFIRM_CHECKED,
+  STORAGE_GET_POSITION_CONFIRM_CHECKED,
+  STORAGE_GET_QUICK_PLACE_ORDER_CHECKED,
+  STORAGE_REMOVE_HISTORY_SEARCH,
+  STORAGE_SET_CONF_INFO,
+  STORAGE_SET_HISTORY_SEARCH,
+  STORAGE_SET_ORDER_CONFIRM_CHECKED,
+  STORAGE_SET_POSITION_CONFIRM_CHECKED,
+  STORAGE_SET_QUICK_PLACE_ORDER_CHECKED
+} from '@/utils/storage'
 import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
 import klineStore from './kline'
@@ -111,7 +123,11 @@ class TradeStore {
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 2 // 浮动杠杆倍数，默认1
   @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
+  @observable orderQuickPlaceOrderChecked = true // 快速下单默认选择
+  @observable orderConfirmChecked = true // 下单二次确认弹窗
+  @observable positionConfirmChecked = false // 平仓二次确认弹窗
   @observable orderVolume = '0.01' // 交易区下单数量
+  @observable orderVolumeTag = '' // 手数标签快速选择
   @observable orderSpslChecked = false // 是否选中止盈止损
   @observable orderPrice = '' // 交易区下单价格
   @observable spValue = '' // 止盈输入框-按价格
@@ -131,6 +147,8 @@ class TradeStore {
   @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
   @observable showActiveSymbol = false // 是否展示当前，根据当前激活的品种，搜索交易历史记录
   @observable recordModalItem = {} as RecordModalItem // 持仓单、挂单弹窗item赋值
+  @observable pendingListLoading = true // 挂单列表loading
+  @observable positionListLoading = true // 持仓列表loading
   // ============================
 
   @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
@@ -148,14 +166,21 @@ class TradeStore {
   @observable expectedMargin = 0 // 预估保证金
   @observable maxOpenVolume = 0 // 最大可开手数
 
+  @observable historySearchList = [] as string[] // APP历史搜索记录
+
   // 初始化加载
-  init = () => {
+  init = async () => {
     // 初始化打开的品种列表
     this.initOpenSymbolNameList()
     // 初始化自选列表
     this.initFavoriteList()
     // 获取全部品种列表作为汇率校验
     this.getAllSimbleSymbols()
+
+    this.orderQuickPlaceOrderChecked = (await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()) || true
+    this.orderConfirmChecked = (await STORAGE_GET_ORDER_CONFIRM_CHECKED()) || false
+    this.positionConfirmChecked = (await STORAGE_GET_POSITION_CONFIRM_CHECKED()) || false
+    this.historySearchList = (await STORAGE_GET_HISTORY_SEARCH()) || []
   }
 
   // 右下角爆仓选择逐仓、全仓切换
@@ -173,6 +198,23 @@ class TradeStore {
 
   setTradePageActive = (value: boolean) => {
     this.tradePageActive = value
+  }
+
+  // =========== APP品种历史搜索记录 ==========
+
+  // 设置历史搜索记录
+  setHistorySearch = (value: string) => {
+    this.historySearchList.unshift(value)
+    // 只保留最新15条
+    if (this.historySearchList.length > 15) {
+      this.historySearchList = this.historySearchList.slice(0, 15)
+    }
+    STORAGE_SET_HISTORY_SEARCH(this.historySearchList)
+  }
+  // 清空搜索记录
+  removeHistorySearch = () => {
+    this.historySearchList = []
+    STORAGE_REMOVE_HISTORY_SEARCH()
   }
 
   // =========== 设置交易区操作 ==========
@@ -217,6 +259,11 @@ class TradeStore {
     this.orderPrice = orderPrice
   }
 
+  // 设置手数标签快速选择
+  setOrderVolumeTag = (tag: string) => {
+    this.orderVolumeTag = tag
+  }
+
   // 止盈价格输入框
   @action
   setSp = (value: any) => {
@@ -259,6 +306,27 @@ class TradeStore {
     this.isPosition = value
   }
 
+  // 设置订单-快速下单
+  setOrderQuickPlaceOrderChecked = (flag: boolean) => {
+    this.orderQuickPlaceOrderChecked = flag
+
+    STORAGE_SET_QUICK_PLACE_ORDER_CHECKED(flag)
+  }
+
+  // 下单二次确认弹窗-不在提醒
+  setOrderConfirmChecked = (flag: boolean) => {
+    this.orderConfirmChecked = flag
+
+    STORAGE_SET_ORDER_CONFIRM_CHECKED(flag)
+  }
+
+  // 平仓二次确认弹窗-不在提醒
+  setPositionConfirmChecked = (flag: boolean) => {
+    this.positionConfirmChecked = flag
+
+    STORAGE_SET_POSITION_CONFIRM_CHECKED(flag)
+  }
+
   // 重置止盈止损
   resetSpSl = () => {
     this.spValue = ''
@@ -272,6 +340,7 @@ class TradeStore {
   resetTradeAction = () => {
     this.orderVolume = '0.01'
     this.orderPrice = ''
+    this.orderVolumeTag = ''
     this.spValue = ''
     this.slValue = ''
     this.spAmount = ''
@@ -559,9 +628,9 @@ class TradeStore {
 
   // 获取打开的品种完整信息
   @action
-  getActiveSymbolInfo = (currentSymbolName?: string) => {
+  getActiveSymbolInfo = (currentSymbolName?: string, list?: Account.TradeSymbolListItem[]) => {
     const symbol = currentSymbolName || this.activeSymbolName
-    const symbolList = this.symbolListAll
+    const symbolList = list || this.symbolListAll
     const info = symbolList.find((item) => item.symbol === symbol) || {}
     return info as Account.TradeSymbolListItem
   }
@@ -824,6 +893,13 @@ class TradeStore {
   getPositionList = async () => {
     // 查询进行中的订单
     const res = await getBgaOrderPage({ current: 1, size: 999, status: 'BAG', accountId: this.currentAccountInfo?.id })
+
+    runInAction(() => {
+      setTimeout(() => {
+        this.positionListLoading = false
+      }, 300)
+    })
+
     if (res.success) {
       const data = (res.data?.records || []) as Order.BgaOrderPageListItem[]
       runInAction(() => {
@@ -858,6 +934,13 @@ class TradeStore {
       type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_MARKET_BUY_ORDER,STOP_LOSS_MARKET_SELL_ORDER',
       accountId: this.currentAccountInfo?.id
     })
+
+    runInAction(() => {
+      setTimeout(() => {
+        this.pendingListLoading = false
+      }, 300)
+    })
+
     if (res.success) {
       runInAction(() => {
         this.pendingList = (res.data?.records || []) as Order.OrderPageListItem[]

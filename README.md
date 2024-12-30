@@ -27,6 +27,33 @@ yarn dev:prod
 yarn start:mock
 ```
 
+## 环境变量
+
+按不同平台打包区分
+
+```bash
+# src/typing.d.ts类型
+declare enum APP_ENV {
+  'test' = 'test',
+  'dev' = 'dev',
+  'prod' = 'prod'
+}
+
+declare enum PLATFORM {
+  'stellux' = 'stellux',
+  'lynfoo' = 'lynfoo'
+}
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    /**平台类型 */
+    PLATFORM: keyof typeof PLATFORM
+    /**环境类型 */
+    APP_ENV: keyof typeof APP_ENV_ENUM
+  }
+}
+```
+
 ## 打包部署
 
 ### 打包线上测试环境

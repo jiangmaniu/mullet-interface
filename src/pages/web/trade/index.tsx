@@ -13,17 +13,15 @@ import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
-import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
+import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
 
+import { checkPageShowTime } from '@/utils/business'
 import BuyAndSell from './comp/BuyAndSell'
-import BtnGroup from './comp/BuyAndSellBtnGroup'
 import Center from './comp/Center'
 import Footer from './comp/Footer'
-import HeaderStatisInfo from './comp/HeaderStatisInfo'
 import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
 import Sidebar from './comp/Sidebar'
 import TradeRecord from './comp/TradeRecord'
-import TradingView from './comp/TradingView'
 import DepthPrice from './comp/Widget/DepthPrice'
 import Liquidation from './comp/Widget/Liquidation'
 
@@ -34,14 +32,14 @@ export default observer(() => {
   const { initialState } = useModel('@@initialState')
   const { fetchUserInfo } = useModel('user')
   const { pathname } = useLocation()
-  const { setTheme } = useTheme()
+  const { setMode } = useTheme()
   const currentUser = initialState?.currentUser
 
   const networkState = useNetwork()
   const isOnline = networkState.online
 
   // 同步数据到worker线程
-  const syncData = useSyncDataToWorker()
+  useSyncDataToWorker()
 
   useEffect(() => {
     if (!currentUser?.accountList?.length) {
@@ -51,10 +49,10 @@ export default observer(() => {
 
   useEffect(() => {
     // 设置交易页面主题变量为全局主题
-    setTheme(STORAGE_GET_TRADE_THEME())
+    setMode(STORAGE_GET_TRADE_THEME())
     return () => {
       // 重置全局主题
-      setTheme('light')
+      setMode('light')
     }
   }, [pathname])
 
@@ -70,17 +68,6 @@ export default observer(() => {
       push('/account')
     }
   }, [pathname, trade.currentAccountInfo])
-
-  const checkPageShowTime = () => {
-    // 记录上次进入时间
-    const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
-    // 缓存时间大于5分钟、初次载入
-    if ((updateTime && Date.now() - updateTime > 5 * 60 * 1000) || !updateTime) {
-      STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
-      return true
-    }
-    return false
-  }
 
   useEffect(() => {
     checkPageShowTime()
@@ -198,30 +185,7 @@ export default observer(() => {
             {/* <FloatTradeBox /> */}
           </div>
         }
-        wapComponent={
-          <div className="min-h-[100vh] bg-white">
-            <HeaderStatisInfo sidebarRef={sidebarRef} />
-            <TradingView />
-            <div
-              className="fixed bottom-0 left-0 flex w-full items-center justify-center rounded-t-xl bg-white"
-              style={{ boxShadow: '0px -2px 20px 0px rgba(182,182,182,0.2)' }}
-            >
-              {/* 底部浮动按钮 */}
-              <div className="relative flex flex-1 items-center justify-center py-2">
-                <BtnGroup type="footer" sellBgColor="var(--color-red-600)" />
-              </div>
-              <TradeRecord
-                trigger={
-                  <div className="mr-[15px] flex h-[46px] w-[46px] items-center justify-center rounded-xl border border-primary px-2">
-                    <img src="/img/record-icon.png" width={32} height={32} alt="" />
-                  </div>
-                }
-              />
-            </div>
-            <Sidebar ref={sidebarRef} />
-            <BuyAndSell ref={buyAndSellRef} />
-          </div>
-        }
+        wapComponent={<div></div>}
       />
       <BalanceEmptyModal />
       <ModalLoading open={trade.switchAccountLoading} tips={<FormattedMessage id="mt.qiehuanzhanghuzhong" />} />

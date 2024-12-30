@@ -14,6 +14,7 @@ import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { goLogin } from '@/utils/navigator'
 
+import ENV from '@/env'
 import ValidateCodeInput from '../../../../components/Form/ValidateCodeInput'
 
 type IProps = {
@@ -89,7 +90,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
     <div className="flex items-center flex-col justify-center mt-[100px]">
       {step !== 'FOUR' && (
         <div className="mb-8 cursor-pointer" onClick={onBack}>
-          <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
+          <img src={ENV.logo} alt="logo" className="h-[68px] w-[242px]" />
         </div>
       )}
       <div className="bg-white rounded-lg w-[490px] min-h-[200px] flex flex-col">

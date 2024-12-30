@@ -107,23 +107,23 @@ declare namespace Order {
     /**
      * 委托订单号
      */
-    orderId: number
+    orderId: any
     /**
      * 止损
      */
-    stopLoss: number
+    stopLoss: any
     /**
      * 止盈
      */
-    takeProfit: number
+    takeProfit: any
     /**
      * 限价价格
      */
-    limitPrice: number
+    limitPrice: any
     /**
      * 手数
      */
-    orderVolume: number
+    orderVolume: any
   }
 
   // 修改止盈止损参数
@@ -204,6 +204,7 @@ declare namespace Order {
      * 过期时间
      */
     expirationTime?: string
+    profit?: any
     /**
      * 主键
      */
@@ -232,6 +233,8 @@ declare namespace Order {
      * 订单保证金
      */
     orderMargin?: number
+    /**基础保证金 */
+    orderBaseMargin?: number
     /**
      * 订单交易量
      */
@@ -551,6 +554,10 @@ declare namespace Order {
      * 交易品种
      */
     symbol?: string
+    /**
+     * 订单ID
+     */
+    orderId?: string
   }
   // 成交记录-分页-列表
   type TradeRecordsPageListItem = {

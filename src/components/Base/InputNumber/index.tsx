@@ -98,7 +98,8 @@ function InputNumber(props: IProps) {
   const [inputValue, setInputValue] = useState<any>('')
   const [isFocus, setFocus] = useState(false)
   const newValue = Number(inputValue || 0)
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
 
   const isColumn = direction === 'column'
 

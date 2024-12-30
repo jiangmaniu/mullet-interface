@@ -410,7 +410,7 @@ export default {
   'mt.yanzhengbuzhou': 'Verification Steps',
   'mt.zhanghuguanli': 'Account Management',
   'mt.zhanghuguanlitips':
-    'Information used for logging into Stellux. If you believe your password may have been compromised, change it immediately.',
+    'Information used for logging into {name}. If you believe your password may have been compromised, change it immediately.',
   'mt.anquanrenzhengfangshi': 'Security Verification Method',
   'mt.anquanrenzhengfangshitips':
     'Security verification ensures that all sensitive transactions are authorized by you. We recommend entering the verification code for transaction confirmation.',
@@ -605,7 +605,7 @@ export default {
   'mt.jieshao': 'Introduction',
   'mt.heyuejiaoyizhengming': 'Contract Trading Proof',
   'mt.heyuejiaoyizhengmingtishi':
-    'Please upload your >30-day contract profit curve, trading data statistics, and other screenshots. If not uploaded, we will default to reviewing your Stellux contract trading records. You can upload 1-3 images, with each image size not exceeding 10 MB.',
+    'Please upload your >30-day contract profit curve, trading data statistics, and other screenshots. If not uploaded, we will default to reviewing your {name} contract trading records. You can upload 1-3 images, with each image size not exceeding 10 MB.',
   'mt.kexuan': '(Optional)',
   'mt.shangchuantupianhuotuozhuaifangru': 'Upload or drag and drop images here',
   'mt.tijiaoshenqing': 'Submit Application',
@@ -648,8 +648,8 @@ export default {
   'mt.qupingcang': 'Go to Close Position',
   'mt.wujiaoyizhanghu': 'No Trading Account',
   'mt.dangqianwujiaoyizhanghu': 'You currently do not have this trading account, do you want to create one?',
-  'mt.cdexsshequ': 'Stellux Community',
-  'mt.guanyucdex': 'About Stellux',
+  'mt.cdexsshequ': '{name} Community',
+  'mt.guanyucdex': 'About {name}',
   'mt.gongsijianjie': 'Company Introduction',
   'mt.boke': 'Blog',
   'mt.fuwu': 'Services',

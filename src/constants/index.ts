@@ -1,24 +1,22 @@
-const NAMESPACE = `stellux_client_${process.env.APP_ENV}` // 命名空间
+import ENV from '../env'
 
 // 系统名称
-export const SYSTEM_NAME = 'StelluX'
-
-// 秘钥
-export const CLIENT_ID = 'StelluxTrader-client' // 客户端id
-export const CLIENT_SECRET = 'stellux_trader_client_secret' // 客户端密钥
-// 注册识别码(从后台客户组获取，部署每套应用都需要填写不同的识别码，区分不同的应用，例如mc/cc/cd)
-export const REGISTER_APP_CODE = '123456' // @TODO 正式部署在修改
+const NAMESPACE = `${ENV?.name}_client_${process.env.APP_ENV as APP_ENV}` // 命名空间
 
 // 字体图标 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码
 export const ICONFONT_URL =
-  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_nnk3epogynh.js' : '/iconfont/iconfont.js'
+  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_ll8s36cynr.js' : '/iconfont/iconfont.js'
 
 // 首页
-export const WEB_HOME_PAGE = '/trade'
+export const WEB_HOME_PAGE = '/trade' // pc端首页
 export const ADMIN_HOME_PAGE = '/account'
+export const MOBILE_HOME_PAGE = '/app/quote' // 移动端首页
+export const WEB_LOGIN_PAGE = '/user/login' // 移动端登录页
+export const MOBILE_LOGIN_PAGE = '/app/login' // 移动端登录页
 
 // 本地存储-用户信息-键
+export const KEY_ACCOUNT_PASSWORD = NAMESPACE + '_' + 'account_password'
 export const KEY_TOKEN = NAMESPACE + '_' + 'token'
 export const KEY_USER_INFO = NAMESPACE + '_' + 'userInfo'
 export const KEY_PARAMS = NAMESPACE + '_' + 'params'
@@ -52,6 +50,28 @@ export const DEFAULT_LOCALE = 'en-US'
 export const SOURCE_CURRENCY = 'USD'
 export const CURRENCY = 'USDT'
 export const CURRENT_YEAR = 2024
+export const DEFAULT_CURRENCY_DECIMAL = 2 // 默认货币精度
 
 // 分页默认值
 export const DEFAULT_PAGE_SIZE = 10
+
+// 快速下单选择状态
+export const KEY_QUICK_PLACE_ORDER_CHECKED = NAMESPACE + '_' + 'quick_place_order_checked'
+
+// 订单二次确认弹窗
+export const KEY_ORDER_CONFIRM_CHECKED = NAMESPACE + '_' + 'order_confirm_checked'
+
+// 平仓二次确认弹窗
+export const KEY_POSITION_CONFIRM_CHECKED = NAMESPACE + '_' + 'position_confirm_checked'
+
+// 是否弹窗展示弹窗添加桌面图标
+export const KEY_SHOW_PWD_ADD_MODAL = NAMESPACE + '_' + 'pwa_added'
+
+// 历史搜索记录
+export const KEY_HISTORY_SEARCH = NAMESPACE + '_' + 'history_search'
+
+// 记录的设备类型
+export const KEY_DEVICE_TYPE = NAMESPACE + '_' + 'device_type'
+
+// APP 弹窗宽度
+export const APP_MODAL_WIDTH = 320

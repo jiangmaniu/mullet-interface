@@ -168,7 +168,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   const { setHasProList, hasProList } = useModel('global')
   const [showExportWhenData, setShowExportWhenData] = useState(false)
   const themeConfig = useTheme()
-  const themeMode = theme || themeConfig.theme
+  const themeMode = theme || themeConfig.theme.mode
   const isDark = themeMode === 'dark'
 
   const [showQueryBtn, setShowQueryBtn] = useState(false) // 避免切换页面，表单项没渲染出来，先出现查询按钮，页面闪动

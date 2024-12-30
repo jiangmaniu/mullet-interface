@@ -16,7 +16,8 @@ type IProps = {
 /**价格、涨跌幅 */
 function PricePercent({ symbol }: IProps) {
   const { trade, ws, kline } = useStores()
-  const { upColor, downColor, isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark, up: upColor, down: downColor } = theme
   const res = getCurrentQuote(symbol)
   const bid = res.bid // 卖价
   const ask = res.ask // 买价

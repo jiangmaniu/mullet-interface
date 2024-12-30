@@ -86,7 +86,7 @@ export default ({ id, trigger, onSuccess, onConfirm, open, onOpenChange }: IProp
           <div className=" w-[227px] h-[195px] flex items-center justify-center">
             <img src="/img/jieshugendan.svg" width={227} height={195} />
           </div>
-          <div className="flex flex-col flex-1 items-center gap-1.5 -mt-20">
+          <div className="flex flex-col flex-1 items-center gap-1.5 ">
             <span className=" text-lg text-primary font-semibold">
               <FormattedMessage id="mt.jieshudaidan" />
             </span>

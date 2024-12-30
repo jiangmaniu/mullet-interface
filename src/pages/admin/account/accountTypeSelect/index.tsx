@@ -129,7 +129,7 @@ function AccountList() {
                     <AccountTag code={item.groupCode} size="auto"></AccountTag>
                   </div>
                 </div>
-                <div className="border-b border-gray-250/25 my-5"></div>
+                <div className="border-b border-[#dadada40] my-5"></div>
                 <div>
                   {(item.synopsis?.list || []).slice(0, 3).map((v, index) => (
                     <div className="flex items-center justify-between pb-7" key={index}>

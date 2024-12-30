@@ -440,7 +440,7 @@ export function getCurrentDepth(currentSymbolName?: string) {
   const { ws, trade } = stores
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
-  const { dataSourceCode } = trade.getActiveSymbolInfo(symbol)
+  const { dataSourceCode } = trade.getActiveSymbolInfo(symbol, trade.symbolListAll)
   const dataSourceKey = `${dataSourceCode}/${symbol}`
 
   const currentDepth = depth.get(dataSourceKey)
@@ -469,12 +469,13 @@ export function getCurrentQuote(currentSymbolName?: string) {
   // }
 
   // 当前品种的详细信息
-  const currentSymbol = trade.getActiveSymbolInfo(symbol)
+  const currentSymbol = (trade.symbolListAll.find((item) => item.symbol === symbol) || {}) as Account.TradeSymbolListItem
   const dataSourceSymbol = currentSymbol?.dataSourceSymbol
   const dataSourceCode = currentSymbol?.dataSourceCode
   const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
 
   const currentQuote = quotes.get(dataSourceKey) // 行情信息
+  const quoteTimeStamp = currentQuote?.priceData?.id // 行情时间戳
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf as Symbol.PrepaymentConf // 当前品种预付款配置
   const transactionFeeConf = currentSymbol?.symbolConf?.transactionFeeConf as Symbol.TransactionFeeConf // 当前品种手续费配置
@@ -503,6 +504,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
     dataSourceKey, // 获取行情源的key
     digits,
     currentQuote,
+    quoteTimeStamp,
     currentSymbol, // 当前品种信息
     symbolConf, // 全部品种配置
     prepaymentConf, // 预付款配置

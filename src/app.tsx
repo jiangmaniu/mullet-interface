@@ -5,18 +5,22 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { Provider } from '@/context'
-import { cssVars } from '@/theme/theme.config'
+import { pcCssVars } from '@/theme/theme.config'
 
+import VConsole from 'vconsole'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
 import SwitchLanguage from './components/SwitchLanguage'
-import { ICONFONT_URL, WEB_HOME_PAGE } from './constants'
+import { ICONFONT_URL, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { useTheme } from './context/themeProvider'
+import { mobileCssVars } from './pages/webapp/theme/colors'
+import { handleJumpMobile } from './pages/webapp/utils/navigator'
 import { errorConfig } from './requestErrorConfig'
+import { isPC } from './utils'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN } from './utils/storage'
 
@@ -25,7 +29,7 @@ const loginPath = '/user/login'
 
 if (process.env.NODE_ENV === 'development') {
   // https://github.com/Tencent/vConsole
-  // const vConsole = new VConsole()
+  const vConsole = new VConsole()
 }
 
 // if ('serviceWorker' in navigator) {
@@ -67,6 +71,8 @@ export async function getInitialState(): Promise<{
       settings: defaultSettings as Partial<LayoutSettings>
     }
   }
+
+  console.log('getInitialState', defaultSettings)
   return {
     fetchUserInfo,
     settings: defaultSettings as Partial<LayoutSettings>
@@ -82,12 +88,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
   const [showMenuExtra, setShowMenuExtra] = useState(false)
   const { pageBgColor } = useModel('global')
   const { pathname } = useLocation()
-  const { setTheme } = useTheme()
+  const { setMode } = useTheme()
 
   // @TODO 临时设置切换主题，后面删除
   useEffect(() => {
     if (pathname !== '/trade') {
-      setTheme('light')
+      setMode('light')
     }
   }, [pathname])
 
@@ -109,6 +115,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
       paddingRight: 0,
       paddingTop: 0
     },
+    // pure: isMobileOrIpad ? true : false, // 是否删除掉所有的自带界面
     // actionsRender: () => [],
     actionsRender: () => [<HeaderRightContent key="content" isAdmin />],
     // avatarProps: {
@@ -169,6 +176,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
+      // 渲染移动端入口
+      // return <>{isMobileOrIpad ? <TabBottomBar /> : children}</>
       return <>{children}</>
     },
     menuHeaderRender: () => {
@@ -268,15 +277,23 @@ export const request = {
   ...errorConfig
 }
 
+export const patchRoutes = async ({ routes }: any) => {
+  // console.log('patchRoutes', routes)
+}
+
 // 修改被 react-router 渲染前的树状路由表
 // https://umijs.org/docs/api/runtime-config
 export const patchClientRoutes = ({ routes }: any) => {
   const { locationLng } = getBrowerLng()
   // 获取本地缓存的语言
   const lng = localStorage.getItem('umi_locale') || locationLng
+
   const token = STORAGE_GET_TOKEN()
-  // const HOME_PAGE = token ? ADMIN_HOME_PAGE : WEB_HOME_PAGE
-  const HOME_PAGE = token ? WEB_HOME_PAGE : loginPath
+  const jumpUrl = isPC() ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
+  const loginUrl = isPC() ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
+  const HOME_PAGE = token ? jumpUrl : loginUrl
+
+  console.log('patchClientRoutes', HOME_PAGE)
 
   // 首次默认重定向到en-US
   routes.unshift(
@@ -308,6 +325,8 @@ export function onRouteChange({ location, clientRoutes, routes, action, basename
   // if (!['/user/login'].includes(pathname) && !STORAGE_GET_TOKEN()) {
   //   push('/user/login')
   // }
+
+  handleJumpMobile()
 }
 
 export const rootContainer = (container: JSX.Element) => {
@@ -316,7 +335,8 @@ export const rootContainer = (container: JSX.Element) => {
       <>
         <Helmet>
           {/* 注入css变量 */}
-          <style>{cssVars}</style>
+          <style>{pcCssVars}</style>
+          <style>{mobileCssVars}</style>
           {/* 需要设置一次地址，否则不使用Layout的情况下，iconfont图标使用不显示 */}
           <script async={true} src={ICONFONT_URL}></script>
         </Helmet>

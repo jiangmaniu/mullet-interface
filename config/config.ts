@@ -3,6 +3,7 @@ import { defineConfig } from '@umijs/max'
 import { join } from 'path'
 import { GenerateSW } from 'workbox-webpack-plugin'
 import { DEFAULT_LOCALE } from '../src/constants/index'
+import ENV from '../src/env'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 import routes from './routes'
@@ -71,7 +72,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Stellux',
+  title: ENV?.name,
   layout: {
     locale: true,
     ...defaultSettings
@@ -160,20 +161,29 @@ export default defineConfig({
     { src: '/scripts/sw.js', async: true }
   ],
 
-  links: [{ rel: 'manifest', href: '/manifest.json' }],
+  links: [{ rel: 'manifest', href: ENV?.manifest }],
 
   metas: [
-    { name: 'application-name', content: 'Stellux' },
+    { name: 'application-name', content: ENV?.name },
     { name: 'apple-mobile-web-app-capable', content: 'yes' },
     { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
-    { name: 'apple-mobile-web-app-title', content: 'Stellux' },
-    { name: 'description', content: 'Stellux Trading Platform' },
+    { name: 'apple-mobile-web-app-title', content: ENV?.name },
+    { name: 'description', content: `${ENV?.name} Trading Platform` },
     { name: 'format-detection', content: 'telephone=no' },
     { name: 'mobile-web-app-capable', content: 'yes' },
     // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
     // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
-    { name: 'msapplication-tap-highlight', content: 'no' }
+    { name: 'msapplication-tap-highlight', content: 'no' },
+    // <meta name="viewport" content="width=device-width, initial-scale=1">
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
     // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
+  ],
+  favicons: [
+    // 完整地址
+    // 'https://domain.com/favicon.ico'
+    // 此时将指向 `/favicon.png` ，确保你的项目含有 `public/favicon.png`
+    // '/favicon.png'
+    ENV?.favicon || ''
   ],
 
   //================ pro 插件配置 =================
@@ -202,13 +212,15 @@ export default defineConfig({
   //   strategy: 'normal'
   // },
   mfsu: false, // 不使用mfsu，否则引入tradingview组件会有兼容问题
+  esbuildMinifyIIFE: true, // 解决打包 esbuild helpers 冲突
   requestRecord: {},
   tailwindcss: {},
   extraPostCSSPlugins: [require('tailwindcss'), require('autoprefixer')],
   // 将 node 的环境变量注入 define 配置中，可以在浏览器window.xx获取
   define: {
     BASE_URL: process.env.BASE_URL,
-    'process.env.APP_ENV': process.env.APP_ENV
+    'process.env.APP_ENV': process.env.APP_ENV,
+    'process.env.PLATFORM': process.env.PLATFORM
   },
   // 使用本地字体
   chainWebpack(config) {
@@ -227,7 +239,7 @@ export default defineConfig({
     if (process.env.NODE_ENV === 'production') {
       config.plugin('workbox').use(GenerateSW, [
         {
-          cacheId: 'stellux', // 设置前缀
+          cacheId: ENV?.name, // 设置前缀
           skipWaiting: true, // 强制等待中的 Service Worker 被激活
           clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
           cleanupOutdatedCaches: true, //删除过时、老版本的缓存
@@ -242,7 +254,7 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-js',
                 expiration: {
-                  maxEntries: 20, //最多缓存20个，超过的按照LRU原则删除
+                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
                   maxAgeSeconds: 5 * 60 // 5 min
                 }
               }
@@ -253,7 +265,7 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-css',
                 expiration: {
-                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
+                  maxEntries: 100, //最多缓存100个，超过的按照LRU原则删除
                   maxAgeSeconds: 5 * 60 // 5 min
                 }
               }
@@ -264,8 +276,19 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-image',
                 expiration: {
+                  maxEntries: 300, //最多缓存300个，超过的按照LRU原则删除
+                  maxAgeSeconds: 1 * 24 * 60 * 60 // 3 days
+                }
+              }
+            },
+            {
+              urlPattern: /.*(otf|ttf|woff|woff2).*/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'seed-font',
+                expiration: {
                   maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
-                  maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
+                  maxAgeSeconds: 3 * 24 * 60 * 60 // 3 days
                 }
               }
             }

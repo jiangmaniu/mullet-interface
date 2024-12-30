@@ -15,7 +15,8 @@ type IProps = {
 }
 
 function MarginTypeModal({ trigger }: IProps) {
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const { trade } = useStores()
   const modalRef = useRef<any>()
   const [current, setCurrent] = useState<API.MarginType>('CROSS_MARGIN')

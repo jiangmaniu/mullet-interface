@@ -6,6 +6,7 @@ import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
 import ENV from '@/env'
 
 import { formatMin2Time, getUid, groupBy, isImageFile, parseJsonFields } from '.'
+import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from './storage'
 
 //  =============
 
@@ -331,4 +332,43 @@ export const getBuySellInfo = (item: any) => {
 export const getDictLabelByLocale = (value: string) => {
   const [zh, en] = (value || '').split(',')
   return getLocale() === 'zh-TW' ? zh : en || zh
+}
+
+// 格式化品种数据为字母列表分类
+export function formatSymbolList(symbolList: any) {
+  // 1. 首先提取所有symbol并按字母排序
+  const symbols = symbolList.map((item: any) => item.symbol).sort()
+
+  // 2. 创建一个对象来存储按首字母分组的数据
+  const groupedData: any = {}
+
+  // 3. 遍历排序后的symbols，按首字母分组
+  symbols.forEach((symbol: string) => {
+    const firstLetter = symbol.charAt(0).toUpperCase()
+    if (!groupedData[firstLetter]) {
+      groupedData[firstLetter] = []
+    }
+    groupedData[firstLetter].push(symbol)
+  })
+
+  // 4. 转换成最终需要的格式
+  const result = Object.keys(groupedData)
+    .sort() // 确保A-Z顺序
+    .map((letter) => ({
+      title: letter,
+      data: groupedData[letter]
+    }))
+
+  return result
+}
+
+export const checkPageShowTime = () => {
+  // 记录上次进入时间
+  const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
+  // 缓存时间大于5分钟、初次载入
+  if ((updateTime && Date.now() - updateTime > 5 * 60 * 1000) || !updateTime) {
+    STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
+    return true
+  }
+  return false
 }

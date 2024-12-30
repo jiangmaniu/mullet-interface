@@ -15,7 +15,8 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 底部浮动条
 function Footer() {
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const networkState = useNetwork()
   const { ws, trade, kline } = useStores()
   const readyState = ws.socket?.readyState || ws.readyState || 0
