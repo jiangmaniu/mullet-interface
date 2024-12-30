@@ -13,6 +13,7 @@ import BuySellButton from '@/pages/webapp/components/Trade/BuySellModal/BuySellB
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 
+// import Tradingview from '@/components/Web/Tradingview'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import { useNetwork } from 'ahooks'
 import Header from './Header'

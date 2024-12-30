@@ -56,7 +56,7 @@ const TradingViewComp = ({ style }: IProps) => {
         src={url}
         style={{
           border: 'none',
-          height: isPc ? '591px' : `calc(100dvh - 260px)`,
+          height: isPc ? '591px' : `calc(100vh - 260px)`,
           width: '100%',
           visibility: loading ? 'hidden' : 'visible'
         }}

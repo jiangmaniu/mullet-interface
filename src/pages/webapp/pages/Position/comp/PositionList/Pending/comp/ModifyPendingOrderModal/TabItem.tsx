@@ -5,12 +5,12 @@ import useTrade from '@/hooks/useTrade'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import OrderVolume from '@/pages/webapp/components/Trade/TradeView/comp/OrderTopTabbar/OrderVolume'
+import PendingPrice from '@/pages/webapp/components/Trade/TradeView/comp/OrderTopTabbar/PendingPrice'
 import FullModeSpSl from '@/pages/webapp/components/Trade/TradeView/comp/SetSpSl/FullModeSpSl'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
 import { getMaxOpenVolume } from '@/utils/wsUtil'
 import { observer } from 'mobx-react'
-import PendingPrice from './comp/PendingPrice'
 
 export type IFormValues = {
   /** 价格 */

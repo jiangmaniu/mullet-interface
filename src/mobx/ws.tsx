@@ -116,10 +116,7 @@ class WSStore {
 
     switch (type) {
       case 'CONNECT_SUCCESS':
-        // pc端才执行回调
-        if (isPCByWidth()) {
-          this.handleOpenCallback()
-        }
+        this.handleOpenCallback()
         this.readyState = data?.readyState
         resolve?.()
         break
@@ -146,6 +143,7 @@ class WSStore {
         this.receiveTradeMessage(data)
         break
       case 'MESSAGE_RES':
+        console.log('data', data)
         // 更新消息通知
         const info = data as MessagePopupInfo
         if (isPCByWidth()) {
@@ -198,10 +196,13 @@ class WSStore {
 
   // 连接socket成功回调
   handleOpenCallback = () => {
-    this.batchSubscribeSymbol()
-    this.subscribeTrade()
     this.subscribeMessage()
-    this.subscribeDepth()
+    this.subscribeTrade()
+
+    if (isPCByWidth()) {
+      this.batchSubscribeSymbol()
+      this.subscribeDepth()
+    }
   }
 
   // ========== 连接相关 end ===============
