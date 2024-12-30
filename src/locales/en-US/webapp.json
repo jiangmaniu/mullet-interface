@@ -298,7 +298,7 @@
       "Email or Phone is required": "Email or Phone cannot be empty",
       "Verification code is required": "Verification code cannot be empty",
       "Verification code is not number": "Verification code must be a number",
-      "To Login": "To Login",
+      "To Login": "Login Now",
       "Register success": "Register Success",
       "Registering": "Registering"
     },
