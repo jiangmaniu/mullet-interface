@@ -220,7 +220,7 @@ function AccountNew() {
       <AccountCarousel key={accountTabActiveKey} accountTabActiveKey={accountTabActiveKey} setSelectedItem={setSelectedItem} />
 
       <SheetModal
-        height={400}
+        height={480}
         ref={bottomSheetModalRef}
         title={t('pages.account.Setting Name')}
         // footer={
