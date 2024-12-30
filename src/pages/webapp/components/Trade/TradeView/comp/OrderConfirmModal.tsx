@@ -67,7 +67,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height={'40%'}
+      height={'50%'}
       trigger={trigger}
       title={intl.formatMessage({ id: 'pages.trade.Confirm Order Title' })}
       confirmText={isBuy ? intl.formatMessage({ id: 'pages.trade.Confirm buy' }) : intl.formatMessage({ id: 'pages.trade.Confirm sell' })}

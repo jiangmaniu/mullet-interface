@@ -32,23 +32,23 @@ const TradingViewComp = ({ style }: IProps) => {
   const dataSourceSymbol = symbolInfo?.dataSourceSymbol
   const accountGroupId = trade.currentAccountInfo.accountGroupId
 
+  const token = STORAGE_GET_TOKEN()
+  // hideWatermarkLogo: 0隐藏
+  // watermarkLogoUrl 水印图片地址 网络图片地址
+  const watermarkLogoUrl =
+    ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production'
+      ? `${location.origin}/${isDark ? ENV.klineWatermarkLogoDark : ENV.klineWatermarkLogo}`
+      : '' // 网络图片地址 水印图片尺寸大小 522 × 146
+  const klineUrl = `${
+    ENV.tradingViewUrl
+  }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${
+    theme.direction + 1
+  }&accountGroupId=${accountGroupId}&token=${token}&hideWatermarkLogo=1&watermarkLogoUrl=${watermarkLogoUrl}`
+
   useEffect(() => {
     setLoading(true)
-    const token = STORAGE_GET_TOKEN()
-    // hideWatermarkLogo: 0隐藏
-    // watermarkLogoUrl 水印图片地址 网络图片地址
-    const watermarkLogoUrl =
-      ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production'
-        ? `${location.origin}/${isDark ? ENV.klineWatermarkLogoDark : ENV.klineWatermarkLogo}`
-        : '' // 网络图片地址 水印图片尺寸大小 522 × 146
-    const url = `${
-      ENV.tradingViewUrl
-    }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${
-      theme.direction + 1
-    }&accountGroupId=${accountGroupId}&token=${token}&hideWatermarkLogo=1&watermarkLogoUrl=${watermarkLogoUrl}`
-    // console.log('url', url)
-    setUrl(url)
-  }, [symbol, intl.locale, symbolInfo, isDark])
+    setUrl(klineUrl)
+  }, [klineUrl])
 
   const iframeDom = useMemo(() => {
     return (

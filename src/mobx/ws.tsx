@@ -116,7 +116,10 @@ class WSStore {
 
     switch (type) {
       case 'CONNECT_SUCCESS':
-        this.handleOpenCallback()
+        // pc端才执行回调
+        if (isPCByWidth()) {
+          this.handleOpenCallback()
+        }
         this.readyState = data?.readyState
         resolve?.()
         break
@@ -197,8 +200,8 @@ class WSStore {
   handleOpenCallback = () => {
     this.batchSubscribeSymbol()
     this.subscribeTrade()
-    this.subscribeDepth()
     this.subscribeMessage()
+    this.subscribeDepth()
   }
 
   // ========== 连接相关 end ===============
@@ -440,15 +443,15 @@ class WSStore {
         ...accountInfo
       }
     }
-    // 持仓列表、挂单列表
-    else if (type === 'ORDER') {
-      // 使用ws实时数据更新
+    // 持仓列表
+    else if (type === 'MARKET_ORDER') {
       const positionList = data.bagOrderList || []
-      const pendingList = data.limiteOrderList || []
-
       trade.positionList = formaOrderList(positionList)
+    }
+    // 挂单列表
+    else if (type === 'LIMIT_ORDER') {
+      const pendingList = data.limiteOrderList || []
       trade.pendingList = formaOrderList(pendingList)
-    } else if (type === 'LIMIT_ORDER') {
     }
     // 历史成交记录,用不到
     else if (type === 'TRADING') {
