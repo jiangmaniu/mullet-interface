@@ -52,7 +52,7 @@ export default function useSymbolQuoteSubscribe({ list }: IProps) {
 
     return () => {
       // 当前 tab 下所有品种取消订阅
-      ws.debounceBatchSubscribeSymbol()
+      ws.debounceBatchCloseSymbol()
     }
   }, [isOnline, isFocused, list?.length])
 
