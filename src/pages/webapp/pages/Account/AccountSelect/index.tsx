@@ -40,6 +40,7 @@ function AccountSelect() {
             width: 46,
             height: 46,
             borderRadius: 46,
+            marginBottom: 20,
             backgroundColor: theme.colors.backgroundColor.primary
           }}
           onPress={() => {
