@@ -83,7 +83,7 @@ const Kyc = observer(() => {
         </View>
         {kycStatus === 'TODO' ? (
           <Button
-            type="warnning"
+            type="primary"
             style={{ minWidth: 60 }}
             size="small"
             onClick={() => {
@@ -112,7 +112,10 @@ const Kyc = observer(() => {
         )}
       </View>
       {kycStatus === 'DISALLOW' && (
-        <View style={cn(' border border-gray-300 rounded-lg px-3 py-1 gap-10 mt-2')}>
+        <View
+          style={cn(' border border-gray-300 rounded-lg px-3 py-1 gap-10 mt-2')}
+          onClick={() => navigateTo('/app/user-center/verify-status')}
+        >
           <Text style={cn('text-sm !text-red')}>
             {t('pages.userCenter.shenhebutongguo')}: {remark}
           </Text>

@@ -137,8 +137,13 @@ export default function VerifyMsg() {
   }
 
   return (
-    <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
-      <Header title={i18n.t('pages.userCenter.shenfenrenzheng')} />
+    <BasicLayout
+      bgColor="secondary"
+      style={{ paddingLeft: 14, paddingRight: 14 }}
+      headerStyle={{ backgroundColor: theme.colors.backgroundColor.secondary }}
+      header={<Header title={i18n.t('pages.userCenter.shenfenrenzheng')} />}
+      fixedHeight
+    >
       <StepBox step={step} />
       <View className={cn('mt-5 px-2 flex-1')}>
         <View className={cn('flex flex-col gap-6')}>

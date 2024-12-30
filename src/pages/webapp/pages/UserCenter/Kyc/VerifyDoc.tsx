@@ -111,8 +111,10 @@ export default function VerifyDoc() {
           {i18n.t('common.operate.Submit')}
         </Button>
       }
+      headerStyle={{ backgroundColor: theme.colors.backgroundColor.secondary }}
+      header={<Header title={i18n.t('pages.userCenter.pinzhengrenzheng')} />}
+      fixedHeight
     >
-      <Header title={i18n.t('pages.userCenter.pinzhengrenzheng')} />
       <StepBox step={step} />
       <View className={cn('mt-9 px-2 flex flex-col gap-2')}>
         <Text className={cn('text-xl font-bold text-primary')}>{i18n.t('pages.userCenter.pinzhengrenzheng')}</Text>
