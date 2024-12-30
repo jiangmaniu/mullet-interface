@@ -50,11 +50,18 @@ export default function useSymbolQuoteSubscribe({ list }: IProps) {
       }, 200)
     }
 
+    // return () => {
+    //   // 当前 tab 下所有品种取消订阅
+    //   ws.debounceBatchCloseSymbol()
+    // }
+  }, [isOnline, isFocused, list?.length])
+
+  useEffect(() => {
     return () => {
       // 当前 tab 下所有品种取消订阅
       ws.debounceBatchCloseSymbol()
     }
-  }, [isOnline, isFocused, list?.length])
+  }, [])
 
   usePageVisibility(
     () => {

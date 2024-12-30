@@ -71,11 +71,18 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
       })
     }
 
+    // return () => {
+    //   // 离开弹窗时，取消行情订阅
+    //   ws.debounceBatchCloseSymbol()
+    // }
+  }, [visible, symbolList, activeSymbolName])
+
+  useEffect(() => {
     return () => {
       // 离开弹窗时，取消行情订阅
       ws.debounceBatchCloseSymbol()
     }
-  }, [visible, symbolList, activeSymbolName])
+  }, [])
 
   return (
     <SheetModal
