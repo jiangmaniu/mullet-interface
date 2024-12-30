@@ -204,6 +204,16 @@ class WSStore {
   // ========== 连接相关 end ===============
 
   // ============ 订阅相关 start ============
+  setSendingSymbols = (symbolList: SymbolWSItem[], cancel: boolean) => {
+    symbolList?.forEach((item) => {
+      // 记录当前正在订阅的符号
+      if (cancel) {
+        this.sendingSymbols.delete(this.symbolToString(item))
+      } else {
+        this.sendingSymbols.set(this.symbolToString(item), true)
+      }
+    })
+  }
 
   // 批量订阅行情(查询symbol列表后)
   batchSubscribeSymbol = ({
@@ -216,6 +226,10 @@ class WSStore {
   } = {}) => {
     const symbolList = toJS(list?.length ? list : trade.symbolListAll)
     if (!symbolList.length) return
+
+    // 标记当前正在订阅的符号
+    this.setSendingSymbols(symbolList, cancel)
+
     this.sendWorkerMessage({
       type: 'SUBSCRIBE_QUOTE',
       data: {
@@ -393,22 +407,24 @@ class WSStore {
     })
 
     // 2. 找到 this.sendingSymbols 中不在 this.toSendSymbols 中的符号，这些符号是即将要关闭的符号
-    const toClose = new Map<string, boolean>()
-    this.sendingSymbols.forEach((value, key) => {
-      if (toSend?.get(key)) {
-      } else {
-        toClose.set(key, true)
-      }
-    })
+    if (toSend?.size) {
+      const toClose = new Map<string, boolean>()
+      this.sendingSymbols.forEach((value, key) => {
+        if (toSend?.get(key)) {
+        } else {
+          toClose.set(key, true)
+        }
+      })
+      // 2.1 关闭即将要关闭的符号
+      const list2 = Array.from(toClose.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
+      // console.log('即将关闭的符号', list2)
+      this.debounceBatchCloseSymbol({ list: list2 })
+    }
 
     // 3. 打开即将要打开的符号
     const list = Array.from(toOpen.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
     // console.log('即将打开的符号', list)
     this.batchSubscribeSymbol({ list })
-
-    // 4. 关闭即将要关闭的符号
-    const list2 = Array.from(toClose.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
-    this.debounceBatchCloseSymbol({ list: list2 })
   }, 300)
 
   // 封装一个延迟执行的取消订阅方法
