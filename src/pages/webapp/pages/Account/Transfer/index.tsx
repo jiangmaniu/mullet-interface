@@ -180,6 +180,7 @@ function TransferScreen() {
         <Button
           type="primary"
           size="large"
+          className="mb-4"
           loading={false}
           onClick={handleSubmit(onSubmit)}
           disabled={!amount || !from || !to || !!errors.amount}
