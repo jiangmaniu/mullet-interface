@@ -109,6 +109,7 @@ const TransferDetailScreen = () => {
   }
 
   const renderItem = ({ item }: any) => {
+    console.log('item', item)
     const from = item.remark?.fromAccountId
     const to = item.remark?.toAccountId
     return (
@@ -149,7 +150,7 @@ const TransferDetailScreen = () => {
             <View className={cn('w-[150px] flex flex-row items-center overflow-hidden')}>
               <View className={cn(' flex h-4 min-w-[20px] items-center px-1 justify-center rounded bg-black text-xs font-normal mr-1')}>
                 <Text color="white" size="xs">
-                  {getTag(from)}
+                  {getTag(to)}
                 </Text>
               </View>
               <Text size="xs" color="primary" weight="medium">
@@ -168,8 +169,9 @@ const TransferDetailScreen = () => {
         const symbolMatch = item
         return symbolMatch
       })
-      .map((item) => ({
-        item
+      .map((item, index) => ({
+        item,
+        index
       }))
   }, [data])
 
@@ -220,7 +222,7 @@ const TransferDetailScreen = () => {
       /> */}
 
       {datas.length > 0 ? (
-        <VirtualList itemKey="item" data={datas}>
+        <VirtualList itemKey="index" data={datas}>
           {renderItem}
         </VirtualList>
       ) : (
