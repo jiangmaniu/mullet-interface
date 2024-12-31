@@ -1,7 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 import { LoginForm, ProFormText } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedHTMLMessage, FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
 import classNames from 'classnames'
 import { md5 } from 'js-md5'
@@ -20,6 +20,7 @@ import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
 import ENV from '@/env'
+import { PrivacyPolicyService } from '@/pages/webapp/pages/Welcome/RegisterSection/PrivacyPolicyService'
 import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
@@ -288,7 +289,8 @@ function Login() {
                 )}
                 {!isLoginTab && (
                   <div>
-                    <FormattedHTMLMessage id="mt.zhucetips" />
+                    {/* <FormattedHTMLMessage id="mt.zhucetips" /> */}
+                    <PrivacyPolicyService isPC />
                   </div>
                 )}
               </>
