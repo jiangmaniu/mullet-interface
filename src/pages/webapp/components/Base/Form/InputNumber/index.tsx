@@ -1,9 +1,7 @@
 import Iconfont from '@/components/Base/Iconfont'
-import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { regInput } from '@/utils'
 import { add, subtract } from '@/utils/float'
-import { observer } from 'mobx-react'
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { Text } from '../../Text'
 import { View } from '../../View'
@@ -43,8 +41,8 @@ export type InputNumberProps = TextFieldProps & {
   status?: 'error' | 'disabled'
   /** 自动全选 */
   autoSelectAll?: boolean
-  /** 在 onChange / onEndEditing 时修正数值 */
-  fixedTrigger?: 'onChange' | 'onEndEditing' | 'always'
+  /** 在 onChange 时修正数值 */
+  fixedTrigger?: 'onChange' | 'always' | 'never'
 }
 
 const InputNumber = forwardRef(
@@ -69,19 +67,16 @@ const InputNumber = forwardRef(
       onFocus,
       autoSelectAll = false,
       onChange,
-      onEndEditing,
       className,
-      fixedTrigger = 'onEndEditing',
+      fixedTrigger = 'never',
+      onBlur,
+      onEnterPress,
       ...res
     }: InputNumberProps,
     ref
   ) => {
-    const { global } = useStores()
     const { cn, theme } = useTheme()
 
-    /**
-     * --- 组件内部 inputValue 维护状态变化，在 onEndEditing 时候使用 inputValue 当前值响应外部传入的 onEndEditing 事件 ---
-     */
     const [inputValue, setInputValue] = useState(value)
     const newValue = useMemo(() => Number(inputValue || 0), [inputValue])
 
@@ -145,22 +140,17 @@ const InputNumber = forwardRef(
       onChange?.(newText)
     }
 
-    const handleEndEditing = (text: string | undefined) => {
-      if (!text) {
-        setTimeout(() => {
-          setInputValue('')
-          onEndEditing?.(text)
-        }, 10)
-        return
-      }
+    const checkMinMax = () => {
+      let newValue = Number(inputValue)
 
-      // 在 onEndEditing 时修正数值
-      if (fixedTrigger === 'onEndEditing' || fixedTrigger === 'always') {
-        const newText = fix(text)
-        setTimeout(() => {
-          setInputValue(newText)
-          onEndEditing?.(newText)
-        }, 10)
+      if (newValue && newValue < min) {
+        // 处理输入的最小值
+        newValue = min
+        onChange?.(String(newValue))
+      } else if (newValue && newValue > max) {
+        // 处理输入的最大值
+        newValue = max
+        onChange?.(String(newValue))
       }
     }
 
@@ -182,7 +172,6 @@ const InputNumber = forwardRef(
                     } else {
                       const retValue = String(subtract(newValue, step))
                       onChange?.(retValue)
-                      handleEndEditing?.(retValue)
                     }
                   }}
                   style={{ paddingLeft: 4 }}
@@ -204,28 +193,15 @@ const InputNumber = forwardRef(
         disabled={disabled}
         value={inputValue}
         clearable={false}
-        onBlur={() => {
-          let newValue = Number(inputValue)
-
-          // 处理输入的最小值
-          if (newValue && newValue < min) {
-            newValue = min
-            handleEndEditing?.(String(newValue))
-            return
-          }
-
-          // 处理输入的最大值
-          if (newValue && newValue > max) {
-            newValue = max
-            handleEndEditing?.(String(newValue))
-          }
+        onBlur={(e) => {
+          checkMinMax()
+          onBlur?.(e)
+        }}
+        onEnterPress={(e) => {
+          checkMinMax()
+          onEnterPress?.(e)
         }}
         onChange={handleChangeText}
-        // onChange={(value) => {
-        //   setInputValue(value)
-        //   handleEndEditing?.(String(value))
-        // }}
-        onEndEditing={() => handleEndEditing?.(String(inputValue))}
         onFocus={onFocus}
         containerStyle={{ marginBottom: 10 }}
         RightAccessory={() => (
@@ -239,7 +215,6 @@ const InputNumber = forwardRef(
                       onFocus?.(null as any)
                       onPressRightText?.()
                       onChange?.(String(max))
-                      handleEndEditing?.(String(max))
                     }}
                     className={cn('mr-2')}
                   >
@@ -262,7 +237,6 @@ const InputNumber = forwardRef(
                       // 最大值限制
                       const val = Math.min(Number(retValue), max)
                       onChange?.(String(val))
-                      handleEndEditing?.(String(val))
                     }
                   }}
                   style={{ paddingRight: 4 }}
@@ -286,4 +260,4 @@ const InputNumber = forwardRef(
   }
 )
 
-export default observer(InputNumber)
+export default InputNumber

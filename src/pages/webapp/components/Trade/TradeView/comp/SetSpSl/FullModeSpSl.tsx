@@ -140,7 +140,7 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               value={String(spValuePrice || '')}
               precision={d}
               fixedTrigger="onChange"
-              onEndEditing={(value) => {
+              onChange={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
                 }
@@ -166,7 +166,7 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               precision={d}
               // value={!spLeftFocus && !spRightFocus ? spValueEstimate : spRightFocus ? spAmount : spLeftFocus ? spValueEstimate : spPrice}
               value={String(spValueEstimate)}
-              onEndEditing={(value) => {
+              onChange={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
                 }
@@ -194,7 +194,7 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               precision={d}
               fixedTrigger="onChange"
               value={String(slValuePrice || '')}
-              onEndEditing={(value) => {
+              onChange={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
                 }
@@ -220,7 +220,7 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
               precision={d}
               min={-999999999999}
               value={String(slValueEstimate || '')}
-              onEndEditing={(value) => {
+              onChange={(value) => {
                 if (Number.isNaN(Number(value))) {
                   return
                 }

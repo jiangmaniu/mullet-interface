@@ -251,8 +251,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             value={email}
             onChange={(val) => {
               setValue('email', val?.trim())
-            }}
-            onEndEditing={(val) => {
               trigger('email')
             }}
             label={t('pages.login.Email Address')}
@@ -272,8 +270,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             onChange={(val) => {
               setValue('phone', val?.trim())
               setPhone?.(val?.trim())
-            }}
-            onEndEditing={(val) => {
               trigger('phone')
             }}
             label={t('pages.login.Phone')}
@@ -292,8 +288,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           value={password}
           onChange={(val) => {
             setValue('password', val?.trim())
-          }}
-          onEndEditing={(val) => {
             trigger('password')
           }}
           label={t('pages.login.Password')}

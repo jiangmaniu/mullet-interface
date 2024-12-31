@@ -84,7 +84,8 @@ function PendingPrice({ ...res }: IProps) {
       <InputNumber
         placeholder={intl.formatMessage({ id: 'pages.trade.Price' })}
         height={46}
-        onEndEditing={onChange}
+        fixedTrigger="onChange"
+        onChange={onChange}
         // status={showPriceTipRedColor ? 'error' : undefined}
         onAdd={onAdd}
         onMinus={onMinus}

@@ -39,7 +39,7 @@ function OrderVolume({ isFull }: IProps) {
     setInputing
   } = useTrade()
 
-  const onEndEditing = (value: any) => {
+  const onChange = (value: any) => {
     const val = Math.min(Number(value), maxOpenVolume)
     setOrderVolume(val || '')
   }
@@ -76,7 +76,8 @@ function OrderVolume({ isFull }: IProps) {
         // rightText={intl.formatMessage({id:"pages.trade.Max"})}
         placeholder={intl.formatMessage({ id: 'pages.trade.OrderVolume' })}
         height={50}
-        onEndEditing={onEndEditing}
+        fixedTrigger="onChange"
+        onChange={onChange}
         value={value}
         disabled={disabled}
         onAdd={onAdd}
@@ -99,7 +100,7 @@ function OrderVolume({ isFull }: IProps) {
                   return
                 }
                 setOrderVolumeTag(item)
-                onEndEditing?.(item)
+                onChange?.(item)
               }}
               size="xs"
               key={item}

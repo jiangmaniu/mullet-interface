@@ -19,7 +19,7 @@ export interface TextFieldAccessoryProps {
 
 export type InputTextAlign = 'center' | 'left' | 'right' | undefined
 
-export interface TextFieldProps extends Omit<InputProps, 'ref' | 'style' | 'onEndEditing'> {
+export interface TextFieldProps extends Omit<InputProps, 'ref' | 'style'> {
   /**
    * A style modifier for different input states.
    */
@@ -64,9 +64,6 @@ export interface TextFieldProps extends Omit<InputProps, 'ref' | 'style' | 'onEn
    * Note: It is a good idea to memoize this.
    */
   LeftAccessory?: ComponentType<any>
-
-  // 重写 onEndEditing 事件
-  onEndEditing?: (value: string | undefined) => void
 
   // 聚焦的时候自动全选
   autoSelectAll?: boolean
@@ -113,7 +110,6 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     onBlur,
     value,
     onChange,
-    onEndEditing, // 单独处理输入完成响应
     autoSelectAll = false,
     textAlign = 'left',
     fontSize = 14,
@@ -121,6 +117,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     pleacholderTextColor = theme.colors.Input.placeholderTextColor,
     placeholderTextSize = 14,
     maxLength,
+    onEnterPress,
     ...TextInputProps
   } = props
   const input = useRef<InputRef>(null)
@@ -149,27 +146,11 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     setInputValue(checkMaxLength(value))
   }, [value])
 
-  const handleOnEndEditing = (value: any) => {
-    // 设置新的定时器，500ms 后触发 onEndEditing
-    if (onEndEditing) {
-      // 清除之前的定时器
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current)
-      }
-      debounceTimer.current = setTimeout(() => {
-        onEndEditing(value)
-      }, 300)
-    }
-  }
-
   const handleChange = (value: string) => {
     const val = checkMaxLength(value)
 
     onChange?.(val || '')
-
     setInputValue(val)
-
-    handleOnEndEditing(value)
   }
 
   useImperativeHandle(ref, () => input.current)
@@ -239,6 +220,10 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
             setFocus(false)
             onBlur?.(e)
           }}
+          onEnterPress={(e) => {
+            setFocus(false)
+            onEnterPress?.(e)
+          }}
           clearable
           value={value}
           maxLength={maxLength}
@@ -261,7 +246,6 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
               }
             )
           }}
-          autoFocus={false}
         />
 
         {!!RightAccessory && (

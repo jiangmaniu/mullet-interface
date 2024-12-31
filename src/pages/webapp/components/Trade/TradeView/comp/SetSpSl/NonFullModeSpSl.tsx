@@ -200,7 +200,7 @@ function NonFullModeSpSl() {
                   value={String(spVal || '')}
                   precision={d}
                   // status={spFlag ? 'error' : undefined}
-                  onEndEditing={(value: any) => {
+                  onChange={(value: any) => {
                     // console.log('onChange', value)
                     if (Number.isNaN(Number(value))) {
                       return

@@ -181,7 +181,7 @@ const RenderPositionTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTab
         }
         height={42}
         value={count}
-        onEndEditing={(value) => {
+        onChange={(value) => {
           if (Number(value) > orderVolume) return
           setCount(value)
         }}

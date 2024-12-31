@@ -252,8 +252,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           value={newPassword}
           onChange={(val) => {
             setValue('newPassword', val?.trim())
-          }}
-          onEndEditing={(val) => {
             trigger('newPassword')
           }}
           label={t('pages.login.Password')}
