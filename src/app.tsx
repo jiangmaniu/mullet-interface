@@ -286,7 +286,7 @@ export const patchRoutes = async ({ routes }: any) => {
 export const patchClientRoutes = ({ routes }: any) => {
   const { locationLng } = getBrowerLng()
   // 获取本地缓存的语言
-  const lng = localStorage.getItem('umi_locale') || DEFAULT_LOCALE
+  const lng = localStorage.getItem('umi_locale') || (process.env.PLATFORM === 'lynfoo' ? DEFAULT_LOCALE : locationLng)
 
   const token = STORAGE_GET_TOKEN()
   const jumpUrl = isPC() ? WEB_HOME_PAGE : MOBILE_HOME_PAGE

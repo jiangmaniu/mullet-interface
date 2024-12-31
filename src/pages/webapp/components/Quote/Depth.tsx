@@ -58,7 +58,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
                   background: theme.colors.depthBuyBg,
                   height: 18,
                   position: 'absolute',
-                  top: 2,
+                  top: 1,
                   right: 0,
                   width: `${pencent >= 100 ? 100 : pencent}%`
                 }}

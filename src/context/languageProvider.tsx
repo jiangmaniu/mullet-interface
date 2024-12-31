@@ -55,7 +55,9 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
     // 处理路径上的语言 => /zh-TW/symbol 保存到本地
     if (hasPathnameLng) {
       localStorage.setItem('umi_locale', pathnameLng)
-    } else if (!tempLng) {
+    }
+    // stellux面向国外用户 使用浏览器定位功能切换语言
+    else if (!tempLng && process.env.PLATFORM === 'stellux') {
       // 首次加载后，再次切换语言，不在使用ip定位
       // 使用浏览器自带的检测功能
       localStorage.setItem('umi_locale', locationLng)
@@ -64,6 +66,7 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
     if (!localStorage.getItem('umi_locale')) {
       localStorage.setItem('umi_locale', DEFAULT_LOCALE)
     }
+
     const locale = getLocale()
     setLng(locale)
 
