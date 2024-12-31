@@ -1,7 +1,7 @@
 import { history } from '@umijs/max'
 import { stringify } from 'qs'
 
-import { MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
+import { DEFAULT_LOCALE, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { logout } from '@/services/api/user'
 
@@ -85,7 +85,7 @@ export const getPathnameLng = () => {
  * @returns
  */
 export const formatPathname = (pathname: string) => {
-  const lng = localStorage.getItem('umi_locale') || 'en-US'
+  const lng = localStorage.getItem('umi_locale') || DEFAULT_LOCALE
 
   return `/${lng}${pathname}`
 }
@@ -105,7 +105,7 @@ export const getPathname = (path?: string) => {
  * @returns
  */
 export const replacePathnameLng = (path: string, lang?: string) => {
-  const lng = lang || localStorage.getItem('umi_locale') || 'en-US'
+  const lng = lang || localStorage.getItem('umi_locale') || DEFAULT_LOCALE
   const pathname = getPathname(path)
 
   return `/${lng}${pathname}`

@@ -44,7 +44,7 @@ export const KEY_THEME = NAMESPACE + '_' + 'theme'
 export const KEY_TRADE_THEME = NAMESPACE + '_' + 'trade_theme'
 
 // 默认语言 en-US
-export const DEFAULT_LOCALE = 'en-US'
+export const DEFAULT_LOCALE = process.env.PLATFORM === 'lynfoo' ? 'zh-TW' : 'en-US'
 
 // 貨幣
 export const SOURCE_CURRENCY = 'USD'

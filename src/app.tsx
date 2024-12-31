@@ -12,7 +12,7 @@ import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
 import SwitchLanguage from './components/SwitchLanguage'
-import { ICONFONT_URL, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from './constants'
+import { DEFAULT_LOCALE, ICONFONT_URL, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
@@ -286,14 +286,12 @@ export const patchRoutes = async ({ routes }: any) => {
 export const patchClientRoutes = ({ routes }: any) => {
   const { locationLng } = getBrowerLng()
   // 获取本地缓存的语言
-  const lng = localStorage.getItem('umi_locale') || locationLng
+  const lng = localStorage.getItem('umi_locale') || DEFAULT_LOCALE
 
   const token = STORAGE_GET_TOKEN()
   const jumpUrl = isPC() ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
   const loginUrl = isPC() ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
   const HOME_PAGE = token ? jumpUrl : loginUrl
-
-  console.log('patchClientRoutes', HOME_PAGE)
 
   // 首次默认重定向到en-US
   routes.unshift(
@@ -313,7 +311,7 @@ export const patchClientRoutes = ({ routes }: any) => {
 // 埋点
 export function onRouteChange({ location, clientRoutes, routes, action, basename, isFirst }: any) {
   // 获取本地缓存的语言
-  const lng = localStorage.getItem('umi_locale') || 'en-US'
+  const lng = localStorage.getItem('umi_locale') || DEFAULT_LOCALE
   const { pathnameLng, hasPathnameLng, pathname } = getPathnameLng()
 
   // 如果地址中不存在语言路径，则添加语言路径

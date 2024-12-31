@@ -46,7 +46,7 @@ function OrderVolume({ isFull }: IProps) {
 
   const precision = countPrecision
   const value = String(orderVolume)
-  const max = Math.min(vmax, maxOpenVolume)
+  const max = Math.max(vmax, maxOpenVolume)
   const min = vmin
   const disabled = disabledInput
 

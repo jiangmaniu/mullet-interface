@@ -58,7 +58,6 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
     } else if (!tempLng) {
       // 首次加载后，再次切换语言，不在使用ip定位
       // 使用浏览器自带的检测功能
-      console.log('locationLng', locationLng)
       localStorage.setItem('umi_locale', locationLng)
     }
     // @hack 兼容首次加载没有设置默认语言，兼容umi设置默认语言

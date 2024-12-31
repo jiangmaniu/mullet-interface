@@ -125,14 +125,18 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
   }, [open])
 
   useEffect(() => {
-    if (visible) {
-      setTimeout(() => {
-        setLoading(false)
-      }, 1000)
+    if (showLoading) {
+      if (visible) {
+        setTimeout(() => {
+          setLoading(false)
+        }, 1000)
+      } else {
+        setLoading(true)
+      }
     } else {
-      setLoading(true)
+      setLoading(false)
     }
-  }, [visible])
+  }, [visible, showLoading])
 
   const show = (afterOpen?: () => void) => {
     setVisible(true)

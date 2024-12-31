@@ -135,21 +135,18 @@ function Depth() {
   const depth = getCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
 
-  const modeList: Array<{ key: ModeType; icon: string; colors: any[] }> = [
+  const modeList: Array<{ key: ModeType; icon: string }> = [
     {
       key: 'BUY_SELL',
-      icon: 'pankou-maimai',
-      colors: [theme.colors.red.DEFAULT, theme.colors.green.DEFAULT]
+      icon: 'pankou-maimai'
     },
     {
       key: 'BUY',
-      icon: 'pankou-mai',
-      colors: [theme.colors.green.DEFAULT]
+      icon: 'pankou-mai'
     },
     {
       key: 'SELL',
-      icon: 'pankou-mai1',
-      colors: [theme.colors.red.DEFAULT]
+      icon: 'pankou-mai1'
     }
   ]
 
@@ -209,7 +206,7 @@ function Depth() {
                     backgroundColor: item.key === mode ? theme.colors.gray[50] : 'transparent'
                   }}
                 >
-                  <Iconfont color={item.colors} name={item.icon} size={22} />
+                  <Iconfont name={item.icon} className={cn('cursor-pointer', item.key === mode ? 'opacity-100' : 'opacity-30')} size={22} />
                 </View>
               </View>
             ))}
