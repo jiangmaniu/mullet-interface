@@ -12,8 +12,8 @@ export default {
   ServiceTerm: '/platform/lynfoo/docs/serviceTerm.rtf', // 服务条款
   PrivacyAgreement: '/platform/lynfoo/docs/privacyAgreement.rtf', // 隐私协议
   // 秘钥
-  CLIENT_ID: 'StelluxTrader-client', // 客户端id
-  CLIENT_SECRET: 'stellux_trader_client_secret', // 客户端密钥
+  CLIENT_ID: 'WpTrader-client', // 客户端id
+  CLIENT_SECRET: 'wp_trader_client_secret', // 客户端密钥
   // 注册识别码(从后台客户组获取，部署每套应用都需要填写不同的识别码，区分不同的应用，例如mc/cc/cd)
   REGISTER_APP_CODE: '123456', // @TODO 正式部署在修改
   // webapp端配置
