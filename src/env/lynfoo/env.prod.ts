@@ -3,8 +3,8 @@ import config from './config'
 
 export default {
   ...config,
-  tradingViewUrl: 'https://tradingview.stellux.io',
-  baseURL: 'https://client.stellux.io',
-  ws: 'wss://websocket.stellux.io/websocketServer',
-  imgDomain: 'https://file.stellux.io/trade/'
+  tradingViewUrl: 'https://tradingview.lynfoocn.com',
+  baseURL: 'https://client.lynfoocn.com',
+  ws: 'wss://websocket.lynfoocn.com:443/websocketServer',
+  imgDomain: 'https://file.lynfoocn.com/trade/'
 }
