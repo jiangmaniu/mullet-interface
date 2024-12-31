@@ -105,7 +105,7 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
   }, [list.length]) // 依赖list长度变化重新添加监听
 
   return (
-    <div ref={containerRef} className={cn('flex-1 relative mt-[70px]')}>
+    <div ref={containerRef} className={cn('flex-1 relative mt-[70px] pb-8')}>
       {/* <View style={cn('my-3 ml-2')}>
         <Text size="base" color="primary" weight="medium">
           {t('pages.quote.Symbol List')}

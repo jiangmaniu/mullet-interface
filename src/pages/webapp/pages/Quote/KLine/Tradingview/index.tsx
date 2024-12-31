@@ -17,7 +17,7 @@ type IProps = {
 }
 
 const TradingViewComp = ({ style }: IProps) => {
-  const { isPc } = useEnv()
+  const { isPc, isPwaApp, browserDeviceType } = useEnv()
   const { lng } = useLang()
   const { theme, cn } = useTheme()
   const { trade } = useStores()
@@ -56,7 +56,7 @@ const TradingViewComp = ({ style }: IProps) => {
         src={url}
         style={{
           border: 'none',
-          height: isPc ? '591px' : `calc(100vh - 260px)`,
+          height: isPc ? '591px' : `calc(100vh - ${isPwaApp ? 340 : browserDeviceType === 'Safari' ? 320 : 260}px)`,
           width: '100%',
           visibility: loading ? 'hidden' : 'visible'
         }}
@@ -67,7 +67,7 @@ const TradingViewComp = ({ style }: IProps) => {
         }}
       />
     )
-  }, [url, loading])
+  }, [url, loading, isPwaApp, browserDeviceType])
 
   return (
     <div style={style} className="relative mb-3">
