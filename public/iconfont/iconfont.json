@@ -6,6 +6,41 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1205683",
+      "name": "idcard",
+      "font_class": "idcard",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    },
+    {
+      "icon_id": "5297134",
+      "name": "user",
+      "font_class": "user1",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "5317130",
+      "name": "earth",
+      "font_class": "earth",
+      "unicode": "e76d",
+      "unicode_decimal": 59245
+    },
+    {
+      "icon_id": "6278312",
+      "name": "盖章",
+      "font_class": "gaizhang",
+      "unicode": "e78d",
+      "unicode_decimal": 59277
+    },
+    {
+      "icon_id": "10131678",
+      "name": "face id",
+      "font_class": "faceid",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
       "icon_id": "41903961",
       "name": "行情-小按钮-更多",
       "font_class": "hangqing-xiaoanniu-gengduo",
