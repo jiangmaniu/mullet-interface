@@ -1,7 +1,9 @@
 import Iconfont from '@/components/Base/Iconfont'
+import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { regInput } from '@/utils'
 import { add, subtract } from '@/utils/float'
+import { observer } from 'mobx-react'
 import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { Text } from '../../Text'
 import { View } from '../../View'
@@ -74,6 +76,7 @@ const InputNumber = forwardRef(
     }: InputNumberProps,
     ref
   ) => {
+    const { global } = useStores()
     const { cn, theme } = useTheme()
 
     /**
@@ -283,4 +286,4 @@ const InputNumber = forwardRef(
   }
 )
 
-export default InputNumber
+export default observer(InputNumber)

@@ -17,7 +17,7 @@ type IProps = {
 }
 
 const TradingViewComp = ({ style }: IProps) => {
-  const { isPc } = useEnv()
+  const { isPc, isPwaApp, browserDeviceType } = useEnv()
   const { lng } = useLang()
   const { theme, cn } = useTheme()
   const { trade } = useStores()
@@ -32,23 +32,23 @@ const TradingViewComp = ({ style }: IProps) => {
   const dataSourceSymbol = symbolInfo?.dataSourceSymbol
   const accountGroupId = trade.currentAccountInfo.accountGroupId
 
+  const token = STORAGE_GET_TOKEN()
+  // hideWatermarkLogo: 0隐藏
+  // watermarkLogoUrl 水印图片地址 网络图片地址
+  const watermarkLogoUrl =
+    ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production'
+      ? `${location.origin}/${isDark ? ENV.klineWatermarkLogoDark : ENV.klineWatermarkLogo}`
+      : '' // 网络图片地址 水印图片尺寸大小 522 × 146
+  const klineUrl = `${
+    ENV.tradingViewUrl
+  }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${
+    theme.direction + 1
+  }&accountGroupId=${accountGroupId}&token=${token}&hideWatermarkLogo=1&watermarkLogoUrl=${watermarkLogoUrl}`
+
   useEffect(() => {
     setLoading(true)
-    const token = STORAGE_GET_TOKEN()
-    // hideWatermarkLogo: 0隐藏
-    // watermarkLogoUrl 水印图片地址 网络图片地址
-    const watermarkLogoUrl =
-      ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production'
-        ? `${location.origin}/${isDark ? ENV.klineWatermarkLogoDark : ENV.klineWatermarkLogo}`
-        : '' // 网络图片地址 水印图片尺寸大小 522 × 146
-    const url = `${
-      ENV.tradingViewUrl
-    }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${
-      theme.direction + 1
-    }&accountGroupId=${accountGroupId}&token=${token}&hideWatermarkLogo=1&watermarkLogoUrl=${watermarkLogoUrl}`
-    // console.log('url', url)
-    setUrl(url)
-  }, [symbol, intl.locale, symbolInfo, isDark])
+    setUrl(klineUrl)
+  }, [klineUrl])
 
   const iframeDom = useMemo(() => {
     return (
@@ -56,7 +56,7 @@ const TradingViewComp = ({ style }: IProps) => {
         src={url}
         style={{
           border: 'none',
-          height: isPc ? '591px' : `calc(100dvh - 260px)`,
+          height: isPc ? '591px' : `calc(100vh - ${isPwaApp ? 340 : browserDeviceType === 'Safari' ? 320 : 260}px)`,
           width: '100%',
           visibility: loading ? 'hidden' : 'visible'
         }}
@@ -67,7 +67,7 @@ const TradingViewComp = ({ style }: IProps) => {
         }}
       />
     )
-  }, [url, loading])
+  }, [url, loading, isPwaApp, browserDeviceType])
 
   return (
     <div style={style} className="relative mb-3">

@@ -98,7 +98,7 @@ function ModifyPendingOrderModal({ tabKey, trigger, item }: IProps, ref: Forward
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height={'60%'}
+      height={'65%'}
       trigger={trigger}
       onOpenChange={(open) => {
         if (open) {
@@ -156,6 +156,7 @@ function ModifyPendingOrderModal({ tabKey, trigger, item }: IProps, ref: Forward
       backgroundStyle={{ backgroundColor: theme.colors.backgroundColor.primary }}
       onConfirm={onConfirm}
       dragOnContent={false}
+      showLoading
     />
   )
 }

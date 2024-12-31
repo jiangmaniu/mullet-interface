@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn'
 
 import { stores } from '@/context/mobxProvider'
 import Button, { ButtonProps, ButtonType } from '../Button'
+import ActivityIndicator from '../Loading/ActivityIndicator'
 
 export type ModalRef = {
   show: () => void
@@ -70,10 +71,12 @@ type IProps = Partial<Props> & {
   open?: boolean
   /** 确认后是否关闭弹窗 */
   closeOnConfirm?: boolean
+  /**是否展示首次loading */
+  showLoading?: boolean
 }
 
-const SheetModal = (
-  {
+const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
+  let {
     buttonBlock = true,
     footerStyle,
     confirmButtonType,
@@ -98,13 +101,13 @@ const SheetModal = (
     hiddenContentScroll,
     open,
     closeOnConfirm = true,
+    showLoading = false,
     ...res
-  }: IProps,
-  ref: ForwardedRef<SheetRef>
-) => {
+  } = props
   const [submitLoading, setSubmitLoading] = useState(false)
   const [visible, setVisible] = useState(false)
   const intl = useIntl()
+  const [loading, setLoading] = useState(true)
 
   const sheetRef = useRef<BottomSheetRef>(null)
 
@@ -121,6 +124,16 @@ const SheetModal = (
     setVisible(!!open)
   }, [open])
 
+  useEffect(() => {
+    if (visible) {
+      setTimeout(() => {
+        setLoading(false)
+      }, 1000)
+    } else {
+      setLoading(true)
+    }
+  }, [visible])
+
   const show = (afterOpen?: () => void) => {
     setVisible(true)
 
@@ -130,6 +143,7 @@ const SheetModal = (
     beforeClose?.()
     onDismiss?.()
     setVisible(false)
+    setLoading(true)
   }
 
   // 将属性暴露给父元素
@@ -275,14 +289,21 @@ const SheetModal = (
             : [maxHeight / 4, maxHeight * 0.9] // 最小高度, 最大高度
         }}
         defaultSnap={({ lastSnap, snapPoints }) => lastSnap ?? Math.max(...snapPoints)}
-        footer={renderFooter()}
+        footer={!loading && renderFooter()}
         header={<>{title && <div className={cn('leading-7 text-center font-pf-medium text-base text-primary')}>{title}</div>}</>}
         scrollLocking
         expandOnContentDrag={dragOnContent}
         className={className}
         {...res}
       >
-        {children}
+        {/* 加loading避免安卓端键盘首次弹起 ，延迟渲染*/}
+        {loading && showLoading ? (
+          <div className="flex items-center justify-center min-h-[300px]">
+            <ActivityIndicator size={28} />
+          </div>
+        ) : (
+          children
+        )}
       </BottomSheet>
       {triggerDom}
     </>

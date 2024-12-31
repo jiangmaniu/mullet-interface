@@ -250,7 +250,7 @@ function PositionList() {
       />
       <SheetModal
         ref={modalRef}
-        height={'72%'}
+        height={'90%'}
         backgroundStyle={{ backgroundColor: theme.colors.backgroundColor.primary }}
         onConfirm={onConfirm}
         confirmText={t('common.operate.Confirm')}
@@ -259,6 +259,7 @@ function PositionList() {
           trade.setRecordModalItem({} as RecordModalItem)
         }}
         dragOnContent={false}
+        showLoading
       >
         {item && (
           <PositionContent item={item} close={close}>

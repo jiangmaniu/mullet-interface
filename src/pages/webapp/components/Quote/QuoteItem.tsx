@@ -81,7 +81,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
               {inViewport ? dayjs(res.quoteTimeStamp).format('HH:mm:ss') : '--:--:--'}
             </Text>
           </View>
-          <View className={cn('h-2 w-[1px] mx-1', { backgroundColor: theme.colors.Divider.primary })} />
+          <View className={cn('h-2 w-[1px] mx-[2px]', { backgroundColor: theme.colors.Divider.primary })} />
           <View className={cn('flex items-center flex-row')}>
             <Iconfont name="hangqing-diancha" size={14} />
             {/* 点差 */}
@@ -89,7 +89,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
               {res.spread}
             </Text>
           </View>
-          <View className={cn('h-2 w-[1px] mx-1', { backgroundColor: theme.colors.Divider.heavy })} />
+          <View className={cn('h-2 w-[1px] mx-[2px]', { backgroundColor: theme.colors.Divider.heavy })} />
           <Text color={(per as number) > 0 ? 'green' : 'red'} size="xs" className={cn('font-medium')}>
             {inViewport && bid ? ((per as number) > 0 ? `+${per}%` : `${per}%`) : '--'}
           </Text>

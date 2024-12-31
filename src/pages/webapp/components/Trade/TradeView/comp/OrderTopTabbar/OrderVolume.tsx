@@ -95,7 +95,7 @@ function OrderVolume({ isFull }: IProps) {
           return (
             <Button
               onClick={() => {
-                if (disabled) {
+                if (disabled || Number(item) > Number(maxOpenVolume)) {
                   return
                 }
                 setOrderVolumeTag(item)

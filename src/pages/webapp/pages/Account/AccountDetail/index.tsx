@@ -216,7 +216,7 @@ function AccountDetail() {
       </View>
 
       {!!trade.currentAccountInfo.synopsis?.list?.length && (
-        <>
+        <View className="mt-3">
           <Text className={cn('mt-[18px] ml-[6px]')} size="sm" color="weak" weight="light">
             {t('pages.account.Account Attributes')}
           </Text>
@@ -241,7 +241,7 @@ function AccountDetail() {
               ))}
             </View>
           </View>
-        </>
+        </View>
       )}
     </Basiclayout>
   )

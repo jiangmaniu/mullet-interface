@@ -5,12 +5,11 @@ import useTrade from '@/hooks/useTrade'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import OrderVolume from '@/pages/webapp/components/Trade/TradeView/comp/OrderTopTabbar/OrderVolume'
+import PendingPrice from '@/pages/webapp/components/Trade/TradeView/comp/OrderTopTabbar/PendingPrice'
 import FullModeSpSl from '@/pages/webapp/components/Trade/TradeView/comp/SetSpSl/FullModeSpSl'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
-import { getMaxOpenVolume } from '@/utils/wsUtil'
 import { observer } from 'mobx-react'
-import PendingPrice from './comp/PendingPrice'
 
 export type IFormValues = {
   /** 价格 */
@@ -39,7 +38,7 @@ export const RenderPendingTab = observer((props: IProps) => {
   const buySell = item.buySell as API.TradeBuySell
   const isBuy = buySell === 'BUY'
 
-  const maxOpenVolume = getMaxOpenVolume({ buySell }) || 0
+  const maxOpenVolume = trade.maxOpenVolume
 
   const {
     // 使用全局变量保存值，方便在hooks中实时计算，避免多个地方修改

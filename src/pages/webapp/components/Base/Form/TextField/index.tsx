@@ -149,7 +149,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     setInputValue(checkMaxLength(value))
   }, [value])
 
-  useEffect(() => {
+  const handleOnEndEditing = (value: any) => {
     // 设置新的定时器，500ms 后触发 onEndEditing
     if (onEndEditing) {
       // 清除之前的定时器
@@ -157,10 +157,10 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
         clearTimeout(debounceTimer.current)
       }
       debounceTimer.current = setTimeout(() => {
-        onEndEditing(inputValue)
+        onEndEditing(value)
       }, 300)
     }
-  }, [inputValue])
+  }
 
   const handleChange = (value: string) => {
     const val = checkMaxLength(value)
@@ -168,6 +168,8 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
     onChange?.(val || '')
 
     setInputValue(val)
+
+    handleOnEndEditing(value)
   }
 
   useImperativeHandle(ref, () => input.current)
@@ -259,6 +261,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
               }
             )
           }}
+          autoFocus={false}
         />
 
         {!!RightAccessory && (

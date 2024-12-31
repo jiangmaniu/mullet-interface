@@ -12,7 +12,7 @@ import { message } from '@/utils/message'
 import { getCurrentQuote } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { ForwardedRef, forwardRef, memo, useCallback, useImperativeHandle, useMemo, useState } from 'react'
+import { ForwardedRef, forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import { RenderTabRef } from '.'
 import { Params } from '../TopTabbar/types'
 
@@ -57,7 +57,11 @@ const RenderSliderComp = memo(
     const conf = useMemo(() => item?.conf, [item])
     const vmin = useMemo(() => conf?.minTrade || 0.01, [conf])
 
-    const sliderValue = useMemo(() => (count / orderVolume) * 100, [count, orderVolume])
+    const [sliderValue, setSliderValue] = useState(0)
+
+    useEffect(() => {
+      setSliderValue((count / orderVolume) * 100)
+    }, [count])
 
     const renderSlider = useMemo(() => {
       return (
@@ -67,18 +71,20 @@ const RenderSliderComp = memo(
           step={1}
           min={0}
           max={100}
-          onSlidingComplete={(v) => {
-            setSwipeEnabled?.(true)
-            const value = v?.[0] || 0
+          onChange={(value: any) => {
             // 可平仓手数*百分比
             const vol = toFixed((value / 100) * orderVolume, 2, false)
             // 不能小于最小手数
             setCount(Number(vol) < vmin ? vmin : vol)
+            setSliderValue(value)
+          }}
+          onSlidingComplete={(value) => {
+            setSwipeEnabled?.(true)
           }}
           value={sliderValue}
         />
       )
-    }, [sliderValue])
+    }, [sliderValue, vmin, orderVolume])
 
     return <View className={cn('mb-3 p-2')}>{renderSlider}</View>
   }
@@ -97,6 +103,12 @@ const RenderPositionTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTab
   const orderVolume = useMemo(() => Number(item.orderVolume || 0), [item.orderVolume]) // 手数
 
   const symbol = useMemo(() => item.symbol, [item.symbol])
+
+  useEffect(() => {
+    if (rawItem.orderVolume) {
+      setCount(String(rawItem.orderVolume))
+    }
+  }, [rawItem.orderVolume])
 
   useFocusEffect(
     useCallback(() => {
@@ -149,64 +161,58 @@ const RenderPositionTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTab
     submit: submitPosition
   }))
 
-  // 平仓
-  const RenderPositionTab = () => {
-    return (
-      <View className={cn('w-full min-h-[300px] ')}>
-        <View className={cn('pt-5 w-full')}>
-          <InputNumber
-            rightText={t('pages.trade.Max')}
-            placeholder={t('pages.trade.OrderVolume')}
-            label={
-              <View className={cn('items-center flex justify-between flex-row w-full')}>
-                <Text size="sm" weight="medium">
-                  {t('pages.position.Close Position Volume')}
-                </Text>
-                <View className={cn('flex-row items-center gap-x-1')}>
-                  <Text size="xs" color="secondary">
-                    {t('pages.position.Close Position Price')}
-                  </Text>
-                  <CurrentPrice buySell={item.buySell} symbol={symbol} />
-                </View>
-              </View>
-            }
-            height={42}
-            value={count}
-            onEndEditing={(value) => {
-              if (Number(value) > orderVolume) return
-              setCount(value)
-            }}
-            onAdd={() => {
-              if (count >= orderVolume) return
-              const c = (Number(count) + 0.01).toFixed(2)
-              setCount(c)
-            }}
-            onMinus={() => {
-              if (count <= 0.01) return
-              const c = (Number(count) - 0.01).toFixed(2)
-              setCount(c)
-            }}
-            max={orderVolume}
-            min={0.01}
-          />
-          <View className={cn('mt-8')}>
-            <RenderSliderComp setSwipeEnabled={props.setSwipeEnabled} rawItem={rawItem} setCount={setCount} count={count} />
-
-            <View className={cn('flex-row items-center justify-center gap-x-1')}>
+  return (
+    <View className={cn('mt-5')}>
+      <InputNumber
+        rightText={t('pages.trade.Max')}
+        placeholder={t('pages.trade.OrderVolume')}
+        label={
+          <View className={cn('items-center flex justify-between flex-row w-full')}>
+            <Text size="sm" weight="medium">
+              {t('pages.position.Close Position Volume')}
+            </Text>
+            <View className={cn('flex-row items-center gap-x-1')}>
               <Text size="xs" color="secondary">
-                {t('pages.position.Available Close Position Volume')}
+                {t('pages.position.Close Position Price')}
               </Text>
-              <Text size="xs" color="primary" weight="medium">
-                {orderVolume}
-                {t('pages.trade.Lot')}
-              </Text>
+              <CurrentPrice buySell={item.buySell} symbol={symbol} />
             </View>
           </View>
+        }
+        height={42}
+        value={count}
+        onEndEditing={(value) => {
+          if (Number(value) > orderVolume) return
+          setCount(value)
+        }}
+        onAdd={() => {
+          if (count >= orderVolume) return
+          const c = (Number(count) + 0.01).toFixed(2)
+          setCount(c)
+        }}
+        onMinus={() => {
+          if (count <= 0.01) return
+          const c = (Number(count) - 0.01).toFixed(2)
+          setCount(c)
+        }}
+        max={orderVolume}
+        min={0.01}
+      />
+      <View className={cn('mt-8')}>
+        <RenderSliderComp setSwipeEnabled={props.setSwipeEnabled} rawItem={rawItem} setCount={setCount} count={count} />
+
+        <View className={cn('flex-row items-center justify-center gap-x-1')}>
+          <Text size="xs" color="secondary">
+            {t('pages.position.Available Close Position Volume')}
+          </Text>
+          <Text size="xs" color="primary" weight="medium">
+            {orderVolume}
+            {t('pages.trade.Lot')}
+          </Text>
         </View>
       </View>
-    )
-  }
-  return <RenderPositionTab />
+    </View>
+  )
 })
 
 export default RenderPositionTab

@@ -31,11 +31,22 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
   const [tabValue, setTabValue] = useState('')
   const [tabIndex, setTabIndex] = useState<number>(0)
   const [searchValue, setSearchValue] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const bottomSheetModalRef = useRef<SheetRef>(null)
   const topTabbarRef = useRef<any>(null)
 
   const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    if (visible) {
+      setTimeout(() => {
+        setLoading(false)
+      }, 300)
+    } else {
+      setLoading(true)
+    }
+  }, [visible])
 
   useImperativeHandle(ref, () => ({
     show: (tabKey: any) => {
@@ -105,15 +116,17 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
       header={
         <View>
           <View className="mx-3">
-            <Search
-              inputWrapperStyle={{
-                backgroundColor: theme.colors.backgroundColor.secondary
-              }}
-              onChange={(value) => {
-                setSearchValue(value)
-              }}
-              value={searchValue}
-            />
+            {!loading && visible && (
+              <Search
+                inputWrapperStyle={{
+                  backgroundColor: theme.colors.backgroundColor.secondary
+                }}
+                onChange={(value) => {
+                  setSearchValue(value)
+                }}
+                value={searchValue}
+              />
+            )}
           </View>
           <SymbolTabbar
             tabKey={tabKey}
@@ -121,7 +134,7 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
               setTabKey(tabKey)
               setTabValue(tabValue)
               // setTabIndex(index as number)
-              topTabbarRef.current.swiper?.swipeTo?.(index)
+              topTabbarRef.current?.swiper?.swipeTo?.(index)
             }}
           />
         </View>

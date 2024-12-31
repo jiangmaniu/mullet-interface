@@ -42,7 +42,7 @@ function CancelPendingOrderModal({ trigger, item }: IProps, ref: ForwardedRef<Ca
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height={420}
+      height={'55%'}
       trigger={trigger}
       title={t('pages.position.Cancel Pending Order Title')}
       buttonBlock={false}
