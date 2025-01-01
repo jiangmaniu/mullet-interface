@@ -31,17 +31,21 @@ const TriggerDom = observer(({ showQuotePercent, onClick }: IProps) => {
 
   return (
     <View className={cn('flex-row items-center')} onClick={onClick}>
-      <View className={cn('flex-row items-center gap-x-2 pr-[2px]')}>
-        <SymbolIcon width={22} height={22} src={symbolInfo?.imgUrl} />
-        <Text size="lg" color="primary" weight="medium">
-          {activeSymbolName}
-        </Text>
-      </View>
-      <Iconfont name="xialacaidan" size={22} color={theme.isDark ? '#fff' : theme.colors.textColor.weak} />
-      {showQuotePercent && (
-        <Text size="sm" color={per < 0 ? 'red' : 'green'} weight="medium" className={cn('pl-1')}>
-          {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
-        </Text>
+      {activeSymbolName && (
+        <>
+          <View className={cn('flex-row items-center gap-x-2 pr-[2px]')}>
+            <SymbolIcon width={22} height={22} src={symbolInfo?.imgUrl} />
+            <Text size="lg" color="primary" weight="medium">
+              {activeSymbolName}
+            </Text>
+          </View>
+          <Iconfont name="xialacaidan" size={22} color={theme.isDark ? '#fff' : theme.colors.textColor.weak} />
+          {showQuotePercent && (
+            <Text size="sm" color={per < 0 ? 'red' : 'green'} weight="medium" className={cn('pl-1')}>
+              {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
+            </Text>
+          )}
+        </>
       )}
     </View>
   )

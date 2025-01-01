@@ -27,22 +27,26 @@ function SwitchAccount({ onSearch, showRightSearchIcon, isRemainAtCurrentPage }:
     <>
       <View className={cn('flex items-center mx-[14px] flex-row justify-between ')}>
         <View className={cn('flex items-center flex-row')}>
-          <View className={cn('rounded leading-4 px-[6px] py-[2px] mr-1 bg-gray')}>
-            <Text className={cn('text-xs')} color="white">
-              {trade.currentAccountInfo.synopsis?.abbr}
-            </Text>
-          </View>
-          <View
-            className={cn('flex-row items-center')}
-            onClick={() => {
-              selectAccountModalRef.current?.show()
-            }}
-          >
-            <Text size="base" color="primary" weight="semibold" className={cn('max-w-[210px] mr-1 truncate')}>
-              {trade.currentAccountInfo.name}
-            </Text>
-            <Iconfont name="qiehuanzhanghu-xiala" size={20} />
-          </View>
+          {trade.currentAccountInfo.name && (
+            <>
+              <View className={cn('rounded leading-4 px-[6px] py-[2px] mr-1 bg-gray')}>
+                <Text className={cn('text-xs')} color="white">
+                  {trade.currentAccountInfo.synopsis?.abbr}
+                </Text>
+              </View>
+              <View
+                className={cn('flex-row items-center')}
+                onClick={() => {
+                  selectAccountModalRef.current?.show()
+                }}
+              >
+                <Text size="base" color="primary" weight="semibold" className={cn('max-w-[210px] mr-1 truncate')}>
+                  {trade.currentAccountInfo.name}
+                </Text>
+                <Iconfont name="qiehuanzhanghu-xiala" size={20} />
+              </View>
+            </>
+          )}
         </View>
         {showRightSearchIcon ? (
           <div onClick={onSearch}>
