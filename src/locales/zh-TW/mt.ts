@@ -308,6 +308,9 @@ export default {
   'mt.bujisuanweishixiandyinglikuyun': '不计算未实现的盈利/亏损',
   'mt.jisuanweishixiandyinglikuyun': '计算未实现的盈利/亏损',
   'mt.guiling': '归零',
+  'mt.mairuchenggong': '买入成功',
+  'mt.maichuchenggong': '卖出成功',
+  'mt.chengjiao': '成交',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========

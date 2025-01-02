@@ -393,6 +393,17 @@ export const removeOrderMessageFieldNames = (message: string) => {
  * @param message
  * @returns
  */
+type MessageResult = {
+  symbol: string
+  /**下单手数 */
+  tradeVolume: string
+  /**订单方向 */
+  tradeDirection: API.TradeBuySell
+  /**保证金类型 */
+  marginType: API.MarginType
+  /**订单类型 */
+  orderType: API.OrderType
+}
 export const parseOrderMessage = (message: string) => {
   const regex = /\[([^\]]+)=([^\]]+)\]/g
   const result: any = {}
@@ -404,5 +415,5 @@ export const parseOrderMessage = (message: string) => {
     result[key] = value
   }
 
-  return result
+  return result as MessageResult
 }

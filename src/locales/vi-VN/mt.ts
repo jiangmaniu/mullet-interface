@@ -311,6 +311,9 @@ export default {
   'mt.bujisuanweishixiandyinglikuyun': 'Không tính lợi nhuận/thua lỗ chưa thực hiện',
   'mt.jisuanweishixiandyinglikuyun': 'Tính lợi nhuận/thua lỗ chưa thực hiện',
   'mt.guiling': 'Về không',
+  'mt.mairuchenggong': 'Mua thành công',
+  'mt.maichuchenggong': 'Bán thành công',
+  'mt.chengjiao': 'Thực hiện',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
