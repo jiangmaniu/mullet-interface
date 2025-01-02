@@ -74,7 +74,10 @@ const CodeInput = (props: IProps) => {
             handleInput(e, 'value2')
             if (e && e.length > 0) {
               inputRef3?.current?.focus()
-            } else {
+            }
+          }}
+          onKeyUp={(e: any) => {
+            if (e.key === 'Backspace') {
               inputRef1?.current?.focus()
             }
           }}
@@ -92,7 +95,10 @@ const CodeInput = (props: IProps) => {
             handleInput(e, 'value3')
             if (e && e.length > 0) {
               inputRef4?.current?.focus()
-            } else {
+            }
+          }}
+          onKeyUp={(e: any) => {
+            if (e.key === 'Backspace') {
               inputRef2?.current?.focus()
             }
           }}
@@ -110,7 +116,10 @@ const CodeInput = (props: IProps) => {
             handleInput(e, 'value4')
             if (e && e.length > 0) {
               inputRef5?.current?.focus()
-            } else {
+            }
+          }}
+          onKeyUp={(e: any) => {
+            if (e.key === 'Backspace') {
               inputRef3?.current?.focus()
             }
           }}
@@ -128,7 +137,10 @@ const CodeInput = (props: IProps) => {
             handleInput(e, 'value5')
             if (e && e.length > 0) {
               inputRef6?.current?.focus()
-            } else {
+            }
+          }}
+          onKeyUp={(e: any) => {
+            if (e.key === 'Backspace') {
               inputRef4?.current?.focus()
             }
           }}
@@ -146,7 +158,10 @@ const CodeInput = (props: IProps) => {
             handleInput(e, 'value6')
             if (e && e.length > 0) {
               inputRef6?.current?.blur()
-            } else {
+            }
+          }}
+          onKeyUp={(e: any) => {
+            if (e.key === 'Backspace') {
               inputRef5?.current?.focus()
             }
           }}
