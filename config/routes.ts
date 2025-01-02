@@ -96,6 +96,13 @@ export default [
       }
     ]
   },
+  /* ------------------------------- PageViewer ------------------------------- */
+  {
+    path: '/:lng/viewer/markdown',
+    layout: false,
+    component: './webapp/pages/Viewer/MarkdownPageViewer',
+    access: 'canAdmin' // 权限配置
+  },
   {
     path: '/:lng/account',
     name: 'myAccount',

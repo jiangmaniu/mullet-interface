@@ -1,3 +1,4 @@
+import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -7,6 +8,11 @@ import { navigateTo } from '@/pages/webapp/utils/navigator'
 export const PrivacyPolicyService = ({ isPC = false }: { isPC?: boolean }) => {
   const i18n = useI18n()
   const { theme } = useTheme()
+
+  const { isMobileOrIpad } = useEnv()
+
+  const prefix = isMobileOrIpad ? '/app' : ''
+
   return (
     <View
       style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', marginTop: 18 }}
@@ -21,8 +27,7 @@ export const PrivacyPolicyService = ({ isPC = false }: { isPC?: boolean }) => {
         <Text
           style={{ fontSize: isPC ? 14 : 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            // window.open(ENV.ServiceTerm, '_blank')
-            navigateTo('/app/viewer/markdown', {
+            navigateTo(`${prefix}/viewer/markdown`, {
               title: i18n.t('pages.login.termsService'),
               markdownFilePath: '/platform/lynfoo/docs/serviceTerm.md'
             })
@@ -42,7 +47,7 @@ export const PrivacyPolicyService = ({ isPC = false }: { isPC?: boolean }) => {
           style={{ fontSize: isPC ? 14 : 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
             // window.open(ENV.PrivacyAgreement, '_blank')
-            navigateTo('/app/viewer/markdown', {
+            navigateTo(`${prefix}/viewer/markdown`, {
               title: i18n.t('pages.login.privacyPolicy'),
               markdownFilePath: '/platform/lynfoo/docs/privacyAgreement.md'
             })
