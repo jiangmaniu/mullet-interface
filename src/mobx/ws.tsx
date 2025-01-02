@@ -8,8 +8,12 @@ import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
+import Iconfont from '@/components/Base/Iconfont'
+import { getEnum } from '@/constants/enum'
 import { isPCByWidth } from '@/utils'
-import { removeOrderMessageFieldNames } from '@/utils/business'
+import { getSymbolIcon, parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
+import { push } from '@/utils/navigator'
+import { getIntl } from '@umijs/max'
 import { Toast } from 'antd-mobile'
 import klineStore from './kline'
 import trade from './trade'
@@ -158,14 +162,78 @@ class WSStore {
             }
           })
         } else {
+          // Toast.show({
+          //   content: (
+          //     <div className="toast-container">
+          //       {info?.title}：{content}
+          //     </div>
+          //   ),
+          //   position: 'top',
+          //   duration: 3000
+          // })
+          const fields = parseOrderMessage(info?.content || '')
+          const symbolIcon = trade.symbolListAll.find((item) => item.symbol === fields.symbol)?.imgUrl
           Toast.show({
             content: (
-              <div className="toast-container">
-                {info?.title}：{content}
+              <div
+                className="w-full flex items-center flex-col"
+                onClick={() => {
+                  push('/app/user-center/message')
+                }}
+              >
+                <div className="flex items-center w-full justify-between px-[14px] py-[6px] bg-gray-50">
+                  <div className="flex items-center">
+                    <Iconfont size={18} name="chengjiaotongzhi" />
+                    <span className="pl-1 text-primary text-xs font-pf-medium">
+                      {fields.tradeDirection === 'BUY'
+                        ? getIntl().formatMessage({ id: 'mt.mairuchenggong' })
+                        : getIntl().formatMessage({ id: 'mt.maichuchenggong' })}
+                    </span>
+                  </div>
+                  <Iconfont size={18} name="anniu-gengduo" />
+                </div>
+                <div className="px-[14px] py-[10px] flex items-center justify-between w-full">
+                  <div className="flex flex-col">
+                    <div className="flex items-center">
+                      <div className="flex items-center">
+                        <img src={getSymbolIcon(symbolIcon)} width={20} height={20} alt="" className="rounded-full" />
+                        <span className="text-primary font-semibold text-base pl-1">{fields.symbol}</span>
+                      </div>
+                      <span className="text-green text-base font-pf-medium pl-2">
+                        {fields.tradeDirection === 'BUY'
+                          ? getIntl().formatMessage({ id: 'mt.mairu' })
+                          : getIntl().formatMessage({ id: 'mt.maichu' })}{' '}
+                        {/* @TODO 暂时没有杠杆支持 */}
+                        {/* 20X */}
+                      </span>
+                    </div>
+                    {/* @TODO 暂时没有保证金类型、订单类型 */}
+                    {(fields.marginType || fields.orderType) && (
+                      <div className="flex items-center pt-1">
+                        <span className="text-primary text-xs">
+                          {fields.marginType === 'CROSS_MARGIN'
+                            ? getIntl().formatMessage({ id: 'mt.quancang' })
+                            : getIntl().formatMessage({ id: 'mt.zhucang' })}
+                        </span>
+                        {fields.orderType && (
+                          <>
+                            <span className="mx-1 bg-gray-500 w-[1px] h-2"></span>
+                            <span className="text-primary text-xs">{getEnum().Enum.OrderType[fields.orderType]?.text}</span>
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-primary text-base font-pf-medium">
+                    {getIntl().formatMessage({ id: 'mt.chengjiao' })} {fields.tradeVolume}
+                    {getIntl().formatMessage({ id: 'mt.lot' })}
+                  </div>
+                </div>
               </div>
             ),
             position: 'top',
-            duration: 3000
+            duration: 2600,
+            maskClassName: 'webapp-custom-message'
           })
         }
         // 刷新消息列表

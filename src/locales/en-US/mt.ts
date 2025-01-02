@@ -311,6 +311,9 @@ export default {
   'mt.bujisuanweishixiandyinglikuyun': 'do not use unrealized profit/loss',
   'mt.jisuanweishixiandyinglikuyun': 'use unrealized profit/loss',
   'mt.guiling': 'zero',
+  'mt.mairuchenggong': 'Buy Success',
+  'mt.maichuchenggong': 'Sell Success',
+  'mt.chengjiao': 'Trade',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
