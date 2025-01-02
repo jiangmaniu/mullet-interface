@@ -193,12 +193,16 @@ function handleOpenCallback() {
 
 // 解析行情body数据
 function parseQuoteBodyData(body: string) {
-  //  报价数据格式：id,buy,buySize,sell,sellSize,dataSource,symbol,accountGroupId
+  // 报价数据格式：id,buy,buySize,sell,sellSize,dataSource,symbol,accountGroupId
+  // 使用账户组订阅数据格式
   // { "header": { "msgId": "symbol" }, "body": "1735636763941,94044.6,0,94047.325,0,mt5-BTCUSD,BTC,1826081893542576129" }
+  // 没有使用账户组订阅数据格式，最后两个为0占位。比如管理端数据源列表不能使用账户组订阅
+  // { "header": { "msgId": "symbol" }, "body": "1735636763941,94044.6,0,94047.325,0,mt5-BTCUSD,0,0" }
   const quoteItem = {} as IQuoteItem
   if (body && typeof body === 'string') {
     const [id, buy, buySize, sell, sellSize, dataSource, symbol, accountGroupId] = body.split(',')
-    quoteItem.symbol = symbol
+    const [dataSourceCode, dataSourceSymbol] = String(dataSource || '').split('-')
+    quoteItem.symbol = symbol === '0' ? dataSourceSymbol : symbol // 兼容没有使用账户组订阅情况
     quoteItem.dataSource = dataSource
     quoteItem.accountGroupId = accountGroupId
     quoteItem.priceData = {
