@@ -37,7 +37,7 @@ const TradingViewComp = ({ style }: IProps) => {
   // watermarkLogoUrl 水印图片地址 网络图片地址
   const watermarkLogoUrl =
     ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production'
-      ? `${location.origin}/${isDark ? ENV.klineWatermarkLogoDark : ENV.klineWatermarkLogo}`
+      ? `${location.origin}${isDark ? ENV.klineWatermarkLogoDark : ENV.klineWatermarkLogo}`
       : '' // 网络图片地址 水印图片尺寸大小 522 × 146
   const klineUrl = `${
     ENV.tradingViewUrl

@@ -65,7 +65,7 @@ const Content = observer(({ close }: { close: () => void }) => {
   )
 })
 
-const Footer = observer(() => {
+const Footer = observer(({ close }: { close: () => void }) => {
   const { theme, cn } = useTheme()
   const intl = useIntl()
   const { disabledBtn, disabledTrade, onSubmitOrder, onCheckSubmit } = useTrade()
@@ -81,6 +81,7 @@ const Footer = observer(() => {
     setSubmitLoading(true)
 
     // 关闭二次确认弹窗
+    orderConfirmModal.current?.close?.()
     orderConfirmModal.current?.close?.()
     await onSubmitOrder()
     setSubmitLoading(false)
@@ -146,11 +147,10 @@ function BuySellModal(props: any, ref: ForwardedRef<BuySellModalRef>) {
           setOrderType('MARKET_ORDER')
         }}
         ref={bottomSheetModalRef}
-        // snapPoints={['25%', modalHeight]}
         height={'96%'}
         children={<Content close={close} />}
         dragOnContent={false}
-        footer={<Footer />}
+        footer={<Footer close={close} />}
       />
     </>
   )
