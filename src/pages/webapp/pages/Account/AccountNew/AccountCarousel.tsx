@@ -35,12 +35,8 @@ function AccountCarousel({ accountTabActiveKey, setSelectedItem }: IProps) {
   }, [stores.trade.accountGroupList])
 
   const handleOnPress = (item: AccountGroup.AccountGroupItem) => {
-    // setSelectedItem(item)
     const index = data.findIndex((v) => v.groupName === item.groupName)
-
     swiperRef.current?.slideTo(index, 300)
-    // setActiveIndex(index)
-    // ref.current?.snapToItem(index, true, true)
   }
 
   useEffect(() => {
@@ -65,7 +61,7 @@ function AccountCarousel({ accountTabActiveKey, setSelectedItem }: IProps) {
             loop={true}
             initialSlide={0}
             onActiveIndexChange={(swiper) => {
-              setActiveIndex(Number.isNaN(swiper.activeIndex) ? 0 : swiper.activeIndex)
+              setActiveIndex(Number.isNaN(swiper.realIndex) ? 0 : swiper.realIndex)
             }}
           >
             {data.map((item, index) => (

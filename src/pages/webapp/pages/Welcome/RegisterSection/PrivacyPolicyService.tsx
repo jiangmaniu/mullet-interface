@@ -1,8 +1,8 @@
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { navigateTo } from '@/pages/webapp/utils/navigator'
 
 export const PrivacyPolicyService = ({ isPC = false }: { isPC?: boolean }) => {
   const i18n = useI18n()
@@ -21,7 +21,11 @@ export const PrivacyPolicyService = ({ isPC = false }: { isPC?: boolean }) => {
         <Text
           style={{ fontSize: isPC ? 14 : 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            window.open(ENV.ServiceTerm, '_blank')
+            // window.open(ENV.ServiceTerm, '_blank')
+            navigateTo('/app/viewer/markdown', {
+              title: i18n.t('pages.login.termsService'),
+              markdownFilePath: '/platform/lynfoo/docs/serviceTerm.md'
+            })
           }}
         >
           {i18n.t('pages.login.termsService')}
@@ -37,7 +41,11 @@ export const PrivacyPolicyService = ({ isPC = false }: { isPC?: boolean }) => {
         <Text
           style={{ fontSize: isPC ? 14 : 12, fontWeight: '600', color: theme.colors.textColor.primary }}
           onClick={() => {
-            window.open(ENV.PrivacyAgreement, '_blank')
+            // window.open(ENV.PrivacyAgreement, '_blank')
+            navigateTo('/app/viewer/markdown', {
+              title: i18n.t('pages.login.privacyPolicy'),
+              markdownFilePath: '/platform/lynfoo/docs/privacyAgreement.md'
+            })
           }}
         >
           {i18n.t('pages.login.privacyPolicy')}
