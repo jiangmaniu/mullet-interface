@@ -372,3 +372,37 @@ export const checkPageShowTime = () => {
   }
   return false
 }
+
+// 移除后台发送过来的消息模板中的字符[symbol=] [tradeVolume=]
+// "Order [symbol=BTC] [tradeVolume=0.01] [tradeDirection=BUY] Lot successful" => Order BTC 0.01 BUY Lot successful
+export const removeOrderMessageFieldNames = (message: string) => {
+  return (message || '')
+    .replace(/\[[^\]]+=/g, '')
+    .replace(/\]/g, '')
+    .trim()
+}
+
+/**解析消息模板返回的消息字符串，并提取所需的字段
+ * 示例
+ * Order [symbol=BTC] [tradeVolume=0.01] [tradeDirection=BUY] Lot successful" =>
+  {
+    "symbol": "BTC",
+    "tradeVolume": "0.01",
+    "tradeDirection": "BUY"
+  }
+ * @param message
+ * @returns
+ */
+export const parseOrderMessage = (message: string) => {
+  const regex = /\[([^\]]+)=([^\]]+)\]/g
+  const result: any = {}
+  let match
+
+  while ((match = regex.exec(message)) !== null) {
+    const key = match[1].trim()
+    const value = match[2].trim()
+    result[key] = value
+  }
+
+  return result
+}

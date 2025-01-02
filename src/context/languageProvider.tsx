@@ -56,8 +56,8 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
     if (hasPathnameLng) {
       localStorage.setItem('umi_locale', pathnameLng)
     }
-    // stellux面向国外用户 使用浏览器定位功能切换语言
-    else if (!tempLng && process.env.PLATFORM === 'stellux') {
+    // 使用浏览器定位功能切换语言
+    else if (!tempLng) {
       // 首次加载后，再次切换语言，不在使用ip定位
       // 使用浏览器自带的检测功能
       localStorage.setItem('umi_locale', locationLng)

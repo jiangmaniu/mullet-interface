@@ -85,7 +85,7 @@ function Message() {
   }
 
   return (
-    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
+    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} className="pb-[env(--safe-area-inset-bottom)]">
       <Header
         title={i18n.t('app.pageTitle.Message')}
         right={
@@ -107,7 +107,7 @@ function Message() {
         height={ContainerHeight}
         hasMore={hasMore}
         refreshing={refreshing}
-        contentContainerStyle={{ padding: 12 }}
+        contentContainerStyle={{ padding: 12, paddingBottom: 20 }}
         emptyConfig={{
           image: '/img/webapp/message-empty.png',
           imageStyle: { width: 134, height: 134 }

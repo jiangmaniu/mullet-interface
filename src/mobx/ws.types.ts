@@ -94,6 +94,8 @@ export type IDepth = {
   bids: IDepthPriceItem[]
   /**13位时间戳 */
   ts?: number
+  /**账户组id */
+  accountGroupId?: string
 }
 
 // 消息推送模版

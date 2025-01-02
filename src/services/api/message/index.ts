@@ -1,3 +1,4 @@
+import { removeOrderMessageFieldNames } from '@/utils/business'
 import { request } from '@/utils/request'
 
 // 获取我接收的消息列表
@@ -5,6 +6,18 @@ export async function getMyMessageList(params?: API.PageParam) {
   return request<API.Response<API.PageResult<Message.MessageItem>>>('/api/blade-message/message/my/list', {
     method: 'GET',
     params
+  }).then((res) => {
+    if (res.data?.records?.length) {
+      res.data.records = res.data.records.map((item) => {
+        if (item.content) {
+          // 格式化消息内容
+          item.content = removeOrderMessageFieldNames(item.content)
+        }
+        return item
+      })
+    }
+
+    return res
   })
 }
 
@@ -13,6 +26,12 @@ export async function getMyMessageInfo(params: API.IdParam) {
   return request<API.Response<Message.MessageItem>>('/api/blade-message/message/detail', {
     method: 'GET',
     params
+  }).then((res) => {
+    if (res.data?.content) {
+      // 格式化消息内容
+      res.data.content = removeOrderMessageFieldNames(res.data.content)
+    }
+    return res
   })
 }
 
