@@ -117,6 +117,8 @@ function SelectCountryModal({ isSimulate, list, onPress, isRemainAtCurrentPage }
                     <Iconfont name="hangqing-sousuo" size={20} />
                   </View>
                 )}
+                autoComplete="off"
+                autoFocus={false}
                 height={44}
                 placeholder={t('common.operate.Search')}
                 onChange={(text) => {

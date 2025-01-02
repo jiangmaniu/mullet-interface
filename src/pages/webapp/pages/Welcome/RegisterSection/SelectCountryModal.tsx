@@ -117,6 +117,8 @@ function SelectCountryModal({ isSimulate, onPress, isRemainAtCurrentPage }: IPro
             <View style={{ marginTop: 10 }}>
               <TextField
                 value={searchValue}
+                autoComplete="off"
+                autoFocus={false}
                 RightAccessory={({ style }) => (
                   <View style={style}>
                     <Iconfont name="hangqing-sousuo" size={20} />
