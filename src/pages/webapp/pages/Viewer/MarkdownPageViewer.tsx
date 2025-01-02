@@ -9,7 +9,7 @@ export default function MarkdownPageViewer() {
   const location = useLocation()
   const { theme } = useTheme()
   const params = new URLSearchParams(location.search)
-  const title = params?.get('title') || ''
+  const title = params?.get('title')
   const markdownFilePath = params?.get('markdownFilePath') || ''
 
   return (
@@ -21,27 +21,29 @@ export default function MarkdownPageViewer() {
         backgroundColor: theme.colors.backgroundColor.primary
       }}
       header={
-        <Header
-          title={title}
-          style={{
-            zIndex: 100,
-            paddingLeft: 14,
-            paddingRight: 14
-          }}
-          right={
-            <Iconfont
-              name="cangwei-monirujin"
-              size={28}
-              color={theme.colors.textColor.primary}
-              onClick={() => {
-                window.open(markdownFilePath, '_blank')
-              }}
-            />
-          }
-        />
+        title ? (
+          <Header
+            title={title}
+            style={{
+              zIndex: 100,
+              paddingLeft: 14,
+              paddingRight: 14
+            }}
+            right={
+              <Iconfont
+                name="cangwei-monirujin"
+                size={28}
+                color={theme.colors.textColor.primary}
+                onClick={() => {
+                  window.open(markdownFilePath, '_blank')
+                }}
+              />
+            }
+          />
+        ) : null
       }
     >
-      <div className="py-10">{markdownFilePath && <MarkdownViewer markdownFilePath={markdownFilePath} />}</div>
+      <div className="py-8">{markdownFilePath && <MarkdownViewer markdownFilePath={markdownFilePath} />}</div>
     </Basiclayout>
   )
 }
