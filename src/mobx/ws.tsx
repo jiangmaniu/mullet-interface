@@ -178,6 +178,7 @@ class WSStore {
               <div
                 className="w-full flex items-center flex-col"
                 onClick={() => {
+                  Toast.clear()
                   push('/app/user-center/message')
                 }}
               >
@@ -232,7 +233,7 @@ class WSStore {
               </div>
             ),
             position: 'top',
-            duration: 2600,
+            duration: 3000,
             maskClassName: 'webapp-custom-message'
           })
         }
