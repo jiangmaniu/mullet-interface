@@ -191,6 +191,64 @@ function handleOpenCallback() {
   startHeartbeat()
 }
 
+// 解析行情body数据
+function parseQuoteBodyData(body: string) {
+  // 报价数据格式：id,buy,buySize,sell,sellSize,dataSource,symbol,accountGroupId
+  // 使用账户组订阅数据格式
+  // { "header": { "msgId": "symbol" }, "body": "1735636763941,94044.6,0,94047.325,0,mt5-BTCUSD,BTC,1826081893542576129" }
+  // 没有使用账户组订阅数据格式，最后两个为0占位。比如管理端数据源列表不能使用账户组订阅
+  // { "header": { "msgId": "symbol" }, "body": "1735636763941,94044.6,0,94047.325,0,mt5-BTCUSD,0,0" }
+  const quoteItem = {} as IQuoteItem
+  if (body && typeof body === 'string') {
+    const [id, buy, buySize, sell, sellSize, dataSource, symbol, accountGroupId] = body.split(',')
+    const [dataSourceCode, dataSourceSymbol] = String(dataSource || '').split('-')
+    quoteItem.symbol = symbol === '0' ? dataSourceSymbol : symbol // 兼容没有使用账户组订阅情况
+    quoteItem.dataSource = dataSource
+    quoteItem.accountGroupId = accountGroupId
+    quoteItem.priceData = {
+      sellSize: Number(sellSize || 0),
+      buy: Number(buy || 0),
+      sell: Number(sell || 0),
+      id: Number(id || 0),
+      buySize: Number(buySize || 0)
+    }
+  }
+  return quoteItem
+}
+
+// 解析深度body数据
+function parseDepthBodyData(body: string) {
+  // 深度数据格式：asks(price*amount;price*amount;...),bids(price*amount;price*amount;...),dataSource,symbol,accountGroupId,ts
+  // { "header": { "msgId": "depth" }, "body": "94399.495*3.40948;94400.275*0.00052;94400.895*2.06585;94400.905*0.00499;94401.005*0.19438;94401.215*0.0424;94401.915*0.0424;94402.115*0.078;94402.125*0.84533;94402.135*0.15867;94402.405*0.07399;94402.415*0.11009;94402.715*0.00774;94402.865*0.00006;94404.395*0.04126;94404.455*0.02648;94404.715*0.0424;94406.055*0.05296;94406.635*0.05296;94407.435*0.00011,94396.77*0.21542;94396.63*0.0018;94396.3*0.00006;94396.29*0.08861;94396.26*0.00011;94396*0.0072;94395*0.00008;94394.16*0.00012;94393.93*0.00008;94393.58*0.00029;94393.27*0.003;94393.12*0.00008;94392.8*0.0424;94392.28*0.00012;94392*0.00729;94390.78*0.00017;94390.24*0.00012;94389.76*0.00006;94389.24*0.00012;94389.09*0.00015,binance-BTCUSDT,BTC,1,1735634057242" }
+  const depthData = {} as IDepth
+  if (body && typeof body === 'string') {
+    const [asks, bids, dataSource, symbol, accountGroupId, ts] = body.split(',')
+    depthData.symbol = symbol
+    depthData.dataSource = dataSource
+    depthData.accountGroupId = accountGroupId
+    depthData.ts = Number(ts || 0)
+    depthData.asks = asks
+      ? asks.split(';').map((item) => {
+          const [price, amount] = (item || '').split('_')
+          return {
+            price: Number(price || 0),
+            amount: Number(amount || 0)
+          }
+        })
+      : []
+    depthData.bids = bids
+      ? bids.split(';').map((item) => {
+          const [price, amount] = (item || '').split('_')
+          return {
+            price: Number(price || 0),
+            amount: Number(amount || 0)
+          }
+        })
+      : []
+  }
+  return depthData
+}
+
 // 接收消息回调
 function handleMessageCallback(d: any) {
   try {
@@ -207,11 +265,13 @@ function handleMessageCallback(d: any) {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        batchUpdateQuoteDataByNumber(data)
+        const quoteBody = parseQuoteBodyData(data)
+        batchUpdateQuoteDataByNumber(quoteBody)
         break
       // 深度报价
       case MessageType.depth:
-        batchUpdateDepthDataByNumber(data)
+        const depthBody = parseDepthBodyData(data)
+        batchUpdateDepthDataByNumber(depthBody)
         break
       // 交易信息：账户余额变动、持仓列表、挂单列表
       case MessageType.trade:

@@ -9,6 +9,7 @@ import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import { isPCByWidth } from '@/utils'
+import { removeOrderMessageFieldNames } from '@/utils/business'
 import { Toast } from 'antd-mobile'
 import klineStore from './kline'
 import trade from './trade'
@@ -146,10 +147,11 @@ class WSStore {
         console.log('data', data)
         // 更新消息通知
         const info = data as MessagePopupInfo
+        const content = removeOrderMessageFieldNames(info?.content || '')
         if (isPCByWidth()) {
           notification.info({
             message: <span className="text-primary font-medium">{info?.title}</span>,
-            description: <span className="text-secondary">{info?.content}</span>,
+            description: <span className="text-secondary">{content}</span>,
             placement: 'bottomLeft',
             style: {
               background: 'var(--dropdown-bg)'
@@ -159,7 +161,7 @@ class WSStore {
           Toast.show({
             content: (
               <div className="toast-container">
-                {info?.title}：{info?.content}
+                {info?.title}：{content}
               </div>
             ),
             position: 'top',
