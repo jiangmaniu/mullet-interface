@@ -5,22 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Stellux</title>
     <style>
-      body {
+        body {
           background-color: #fff;
-      }
-      .container {
+        }
+        .container {
           display: flex;
           /* margin-top: -120px; */
-      }
-      .container-wrapper {
-        width: 375px;
-        margin: 0 auto;
-        border-radius: 16px;
-        border: 1px solid #EDEDED;
-		overflow: hidden;
-      }
-      /* 兼容pc */
-      @media (min-width: 1200px) {
+        }
+        .container-wrapper {
+          width: 375px;
+          margin: 0 auto;
+          overflow: hidden;
+          border: 1px solid #ededed;
+          border-radius: 16px;
+        }
+        /* 兼容pc */
+        @media (min-width: 1200px) {
           .container {
             width: 1300px;
             margin-top: 0;
@@ -28,223 +28,228 @@
           .container-wrapper {
             width: 500px !important;
           }
-          .container-wrapper .header-img{
+          .container-wrapper .header-img {
             width: 500px !important;
             height: 183px !important;
             background-image: url(https://client.stellux.io/platform/stellux/img/email-template/temp-notice-pc.png);
           }
-      }
-	  .container-wrapper .header-img-bg {
-		  position: relative;
-		  height: 162px;
-		  background: linear-gradient(180deg, #FFECC1 -4%, #FFFFFF 90%);
-	  }
-	  .container-wrapper .header-img-bg .img-logo {
-		  position: absolute;
-		  left: 29px;
-		  top: 23px;
-	  }
-	  .container-wrapper .header-img-bg .img-email {
-		  position: absolute;
-		  right: 32px;
-		  bottom: -20px;
-	  }
-      .container-wrapper .content {
-		 /* position: relative;
-		  margin-top: -50px; */
-		  line-height: 1.5rem;
-          padding-left: 23px;
+        }
+        .container-wrapper .header-img-bg {
+          position: relative;
+          height: 162px;
+          background: linear-gradient(180deg, #dadaff -4%, #ffffff 90%);
+        }
+        .container-wrapper .header-img-bg .img-logo {
+          position: absolute;
+          top: 23px;
+          left: 29px;
+        }
+        .container-wrapper .header-img-bg .img-email {
+          position: absolute;
+          right: 32px;
+          bottom: -20px;
+        }
+        .container-wrapper .content {
           padding-right: 15px;
-		  padding-bottom: 5px;
-		  color: #222222;
-		  font-family: PingFang SC;
-		  font-feature-settings: "kern" on;
-		  font-size: 16px;
-      }
-	  .container-wrapper .content .btn {
-		  /* width: 100%; */
-		  max-width: 180px;
-		  height: 40px;
-		  display: flex;
-		  justify-content: center;
-		  align-items: center;
-		  background-color: #FCD535;
-		  border-radius: 30px;
-		  font-size: 18px;
-		  font-family: PingFangSC, PingFang SC;
-		  font-weight: 500;
-		  margin-top: 20px;
-		  cursor: pointer;
-	  }
-	  .container-wrapper .content .btn:hover{
-		  transition: all 0.3s ease;
-		  background: #f3d146;
-	  }
-	  .container-wrapper .content a {
-		  color: #222222;
-	  }
-	  .container-wrapper .content .line {
-	      width: 30px;
-	      height: 4px;
-	      margin-top: 12px;
-	      margin-bottom: 14px;
-	      background: #c49002;
-	  }
-	  .container-wrapper .content .title1 {
-	      width: 250px;
-	      color: #222222;
-	      font-size: 22px;
-	      font-weight: 600;
-	  }
-	  .container-wrapper .content .title2 {
-	      padding-bottom: 3px;
-	      color: #222222;
-	      font-weight: 400;
-	      font-size: 14px;
-	      line-height: 24px;
-	  }
-	  .container-wrapper .content .code {
-	      color: #222222;
-	      font-weight: bold;
-	      font-size: 28px;
-	      line-height: 32px;
-	      letter-spacing: 1px;
-	  }	
-	  .container-wrapper .content .code-text {
-	      color: #6a7073;
-	      font-weight: 400;
-	      font-size: 12px;
-	      line-height: 16px;
-		  margin-top: 12px;
-	  }
-	  .container-wrapper .tips {
-		  font-size: 12px;
-		  color: #B1B1B1;
-		  text-align: center;
-		  margin-top: 16px;
-		  padding: 20px 20px 26px;;
-		  background-color: #F6F6F6;
-	  }
-	  .container-wrapper .tips p {
-		  line-height: 16px;
-		  margin: 0;
-	  }
-	  .container-wrapper .tips .mt6 {
-		  margin-top: 6px;
-	  }
-	  .container-wrapper .tips .go-back {
-		  margin-top: 10px;
-	  }
-	  .container-wrapper .tips .go-back a {
-		  display: inline-block;
-	  }
-	  .container-wrapper .tips .go-back img{
-		  padding: 0 3px;
-		  cursor: pointer;
-	  }
-	  .container-wrapper .tips .link-menu {
-		  margin-top: 10px;
-	  }
-	  .container-wrapper .tips .link-menu a{
-		  font-size: 12px;
-		  color: #222222;
-		  padding: 0 5px;
-	  }
-	  @media only screen and (max-width: 740px) {
-		.container-wrapper {
-			width: 99%;
-		}
-		.container-wrapper .header-img-bg .img-logo {
-			left: 12px;
-		}
-		.container-wrapper .header-img-bg .img-email {
-			right: 0px;
-		}
-		.container-wrapper .content {
-			padding-left: 12px;
-			padding-right: 12px;
-		}
-		.container-wrapper .content .title1 {
-			width: 56%;
-		}
-	  }
-	  p {
-		  margin: 20px 0;
-	  }
-	  .mt6 {
-		  margin-top: 6px;
-	  }
-	  .mt-38 {
-		  margin-top: 32px;
-	  }
-		  
-	  .text-block {
-		  color: #222222;
-	  }
-	  .font-blod {
-		  font-weight: 700;
-	  }
-	  .text-sub {
-		  color: #3D3D3D;
-	  }
-	  .text-grey{
-		  color:#808487;
-	  }
-	  
-	  .flex-center {
-		  display: flex;
-	  }
-	  .ml-10 {
-		  margin-left: 10px;
-	  }
-  </style>
+          padding-bottom: 5px;
+          padding-left: 23px;
+          color: #222222;
+          font-size: 16px;
+          font-family: PingFang SC; x;
+      color: #222222;
+      font-family: PingFang
+          line-height: 1.5rem;
+          font-feature-settings: 'kern' on;
+        }
+        .container-wrapper .content .btn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          max-width: 180px;
+          height: 40px;
+          margin-top: 20px;
+          font-weight: 500;
+          font-size: 18px;
+          font-family: PingFangSC, PingFang SC;
+          background-color: #fcd535;
+          border-radius: 30px;
+          cursor: pointer;
+        }
+        .container-wrapper .content .btn:hover {
+          background: #f3d146;
+          transition: all 0.3s ease;
+        }
+        .container-wrapper .content a {
+          color: #222222;
+        }
+        .container-wrapper .content .line {
+          width: 30px;
+          height: 4px;
+          margin-top: 12px;
+          margin-bottom: 14px;
+          background: #222222;
+        }
+        .container-wrapper .content .title1 {
+          width: 250px;
+          color: #222222;
+          font-weight: 600;
+          font-size: 22px;
+        }
+        .container-wrapper .content .title2 {
+          padding-bottom: 3px;
+          color: #222222;
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 24px;
+        }
+        .container-wrapper .content .code {
+          color: #222222;
+          font-weight: bold;
+          font-size: 28px;
+          line-height: 32px;
+          letter-spacing: 1px;
+        }
+        .container-wrapper .content .code-text {
+          margin-top: 12px;
+          color: #6a7073;
+          font-weight: 400;
+          font-size: 12px;
+          line-height: 16px;
+        }
+        .container-wrapper .tips {
+          margin-top: 16px;
+          padding: 20px 20px 26px;
+          color: #b1b1b1;
+          font-size: 12px;
+          text-align: center;
+          background-color: #f6f6f6;
+        }
+        .container-wrapper .tips p {
+          margin: 0;
+          line-height: 16px;
+        }
+        .container-wrapper .tips .mt6 {
+          margin-top: 6px;
+        }
+        .container-wrapper .tips .go-back {
+          margin-top: 10px;
+        }
+        .container-wrapper .tips .go-back a {
+          display: inline-block;
+        }
+        .container-wrapper .tips .go-back img {
+          padding: 0 3px;
+          cursor: pointer;
+        }
+        .container-wrapper .tips .link-menu {
+          margin-top: 10px;
+        }
+        .container-wrapper .tips .link-menu a {
+          padding: 0 5px;
+          color: #222222;
+          font-size: 12px;
+        }
+        @media only screen and (max-width: 740px) {
+          .container-wrapper {
+            width: 99%;
+          }
+          .container-wrapper .header-img-bg .img-logo {
+            left: 12px;
+          }
+          .container-wrapper .header-img-bg .img-email {
+            right: 0px;
+          }
+          .container-wrapper .content {
+            padding-right: 12px;
+            padding-left: 12px;
+          }
+          .container-wrapper .content .title1 {
+            width: 56%;
+          }
+        }
+        p {
+          margin: 20px 0;
+        }
+        .mt6 {
+          margin-top: 6px;
+        }
+        .mt-38 {
+          margin-top: 32px;
+        }
+
+        .text-block {
+          color: #222222;
+        }
+        .font-blod {
+          font-weight: 700;
+        }
+        .text-sub {
+          color: #3d3d3d;
+        }
+        .text-grey {
+          color: #808487;
+        }
+
+        .flex-center {
+          display: flex;
+        }
+        .ml-10 {
+          margin-left: 10px;
+        }
+    </style>
   </head>
   <body>
     <div class="container">
       <div class="container-wrapper">
-          <div class="header-img-bg">
-			  <img class="img-logo" width="131px" height="50px" src="https://client.stellux.io/platform/stellux/img/email-template/logo@2x.png"/>
-			  <img class="img-email" width="152px" height="152px" src="https://client.stellux.io/img/email-template/youjian.png"/>
+        <div class="header-img-bg">
+          <img
+            class="img-logo"
+            width="131px"
+            height="50px"
+            src="https://client.stellux.io/platform/stellux/img/email-template/logo@2x.png"
+          />
+          <img class="img-email" width="152px" height="152px" src="https://client.stellux.io/img/email-template/youjian.png" />
+        </div>
+        <div class="content">
+          <div class="title1">Rút tiền thành công</div>
+          <div class="line"></div>
+          <div class="title2"
+            >【Stellux】Chào quý Khách hàng! Yêu cầu rút tiền của bạn đã được xử lý. Vui lòng kiểm tra lại, nếu có bất kỳ câu hỏi nào vui
+            lòng liên hệ Chăm sóc Khách hàng.</div
+          >
+          <p class="mt-38">
+            <span style="color: #9c9c9c; display: block">Trân trọng,</span>
+            Đội ngũ MC-PRIME
+          </p>
+        </div>
+        <div class="tips">
+          <img
+            class="img-logo"
+            width="131px"
+            height="50px"
+            src="https://client.stellux.io/platform/stellux/img/email-template/logo@2x.png"
+          />
+          <div class="go-back">
+            <a href="https://www.instagram.com" target="_blank">
+              <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/instagram.png" />
+            </a>
+            <a href="https://t.me" target="_blank">
+              <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/telegram.png" />
+            </a>
+            <a href="https://www.facebook.com" target="_blank">
+              <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/fb.png" />
+            </a>
+            <a href="https://x.com" target="_blank">
+              <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/twitter.png" />
+            </a>
           </div>
-          <div class="content">
-			  <div class="title1">Rút tiền thành công</div>
-			  <div class="line"></div>
-			  <div class="title2">【Stellux】Chào quý Khách hàng! Yêu cầu rút tiền của bạn đã được xử lý. Vui lòng kiểm tra lại, nếu có bất kỳ câu hỏi nào vui lòng liên hệ Chăm sóc Khách hàng.</div>
-			  <p class="mt-38">
-				  <span style="color: #9C9C9C;display: block;">Trân trọng,</span>
-				  Đội ngũ MC-PRIME
-			  </p>
+          <div class="link-menu">
+            <a href="https://fengxianjielu.com" target="_blank"> Cảnh báo Rủi ro </a>
+            <a href="https://lianxiwomen.com" target="_blank"> Liên hệ Chúng tôi </a>
+            <a href="https://quxiaodingyue.com" target="_blank"> Huỷ đăng ký </a>
           </div>
-		  <div class="tips">
-			  <img class="img-logo" width="131px" height="50px" src="https://client.stellux.io/platform/stellux/img/email-template/logo@2x.png"/>
-			  <div class="go-back">
-				  <a href="https://www.instagram.com" target="_blank">
-					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/instagram.png"/>
-				  </a>
-				  <a href="https://t.me" target="_blank">
-					 <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/telegram.png"/> 
-				  </a>
-				  <a href="https://www.facebook.com" target="_blank">
-					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/fb.png"/>
-				  </a>
-				  <a href="https://x.com" target="_blank">
-					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/twitter.png"/>
-				  </a>
-			  </div>
-			  <div class="link-menu">
-				  <a href="https://fengxianjielu.com" target="_blank">
-					  Cảnh báo Rủi ro
-				  </a>
-				  <a href="https://lianxiwomen.com" target="_blank">
-					 Liên hệ Chúng tôi
-				  </a>
-				  <a href="https://quxiaodingyue.com" target="_blank">
-					  Huỷ đăng ký
-				  </a>
-			  </div>
-		  </div>
+        </div>
       </div>
-  </div>
+    </div>
   </body>
 </html>
- 
