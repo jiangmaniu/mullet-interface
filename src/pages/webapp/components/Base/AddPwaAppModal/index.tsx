@@ -8,7 +8,7 @@ import { cn } from '@/utils/cn'
 import { getPathname } from '@/utils/navigator'
 import { STORAGE_GET_SHOW_PWA_ADD_MODAL, STORAGE_GET_TOKEN, STORAGE_SET_SHOW_PWA_ADD_MODAL } from '@/utils/storage'
 import { FormattedMessage, useLocation } from '@umijs/max'
-import { isAndroid, isIOS, isSafari } from 'react-device-detect'
+import { isAndroid, isChrome, isChromium, isEdge, isFirefox, isIOS, isSafari } from 'react-device-detect'
 import SheetModal from '../SheetModal'
 
 const AddPwaAppModal = () => {
@@ -17,6 +17,7 @@ const AddPwaAppModal = () => {
   const { isPc } = useEnv()
   const { pathname } = useLocation()
   const { isPwaApp } = useEnv()
+  const isPopularBrowser = isSafari || isChrome || isChromium || isFirefox || isEdge // 主流浏览器
 
   const addScreenList = [
     {
@@ -49,7 +50,6 @@ const AddPwaAppModal = () => {
 
   const init = async () => {
     let showModal = STORAGE_GET_SHOW_PWA_ADD_MODAL() === true ? false : true
-
     let type = 'iphoneChrome'
     if (isIOS) {
       type = isSafari ? 'iphoneSafari' : 'iphoneChrome'
@@ -89,6 +89,22 @@ const AddPwaAppModal = () => {
   useEffect(() => {
     init()
   }, [isPwaApp])
+
+  useEffect(() => {
+    // 排除pwa应用、排除非主流浏览器提示添加桌面图标
+    if (isPwaApp || !isPopularBrowser) return
+    // 每隔2小时（7200000毫秒）检查并显示提示
+    const intervalId = setInterval(() => {
+      const lastShown = localStorage.getItem('lastPwaPromptTime')
+      const now = Date.now()
+      if (lastShown && now - Number(lastShown) >= 7200000) {
+        setIsAddSreenModal(true)
+        localStorage.setItem('lastPwaPromptTime', now.toString())
+      }
+    }, 7200000)
+    // 清理定时器
+    return () => clearInterval(intervalId)
+  }, [isPwaApp, isPopularBrowser])
 
   const purePathname = getPathname(location.pathname)
   const token = STORAGE_GET_TOKEN()
