@@ -12,6 +12,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { getEnum } from '@/constants/enum'
 import { isPCByWidth } from '@/utils'
 import { getSymbolIcon, parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 import { getIntl } from '@umijs/max'
 import { Toast } from 'antd-mobile'
@@ -186,9 +187,7 @@ class WSStore {
                   <div className="flex items-center">
                     <Iconfont size={18} name="chengjiaotongzhi" />
                     <span className="pl-1 text-primary text-xs font-pf-medium">
-                      {fields.tradeDirection === 'BUY'
-                        ? getIntl().formatMessage({ id: 'mt.mairuchenggong' })
-                        : getIntl().formatMessage({ id: 'mt.maichuchenggong' })}
+                      {getIntl().formatMessage({ id: 'mt.dingdanchengjiao' })}
                     </span>
                   </div>
                   <Iconfont size={18} name="anniu-gengduo" />
@@ -200,7 +199,7 @@ class WSStore {
                         <img src={getSymbolIcon(symbolIcon)} width={20} height={20} alt="" className="rounded-full" />
                         <span className="text-primary font-semibold text-base pl-1">{fields.symbol}</span>
                       </div>
-                      <span className="text-green text-base font-pf-medium pl-2">
+                      <span className={cn('text-base font-pf-medium pl-2', fields.tradeDirection === 'BUY' ? 'text-green' : 'text-red')}>
                         {fields.tradeDirection === 'BUY'
                           ? getIntl().formatMessage({ id: 'mt.mairu' })
                           : getIntl().formatMessage({ id: 'mt.maichu' })}{' '}

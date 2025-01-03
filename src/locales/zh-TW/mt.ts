@@ -311,6 +311,7 @@ export default {
   'mt.mairuchenggong': '买入成功',
   'mt.maichuchenggong': '卖出成功',
   'mt.chengjiao': '成交',
+  'mt.dingdanchengjiao': '订单成交',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========

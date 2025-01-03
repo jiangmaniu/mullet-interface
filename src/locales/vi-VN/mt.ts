@@ -314,6 +314,7 @@ export default {
   'mt.mairuchenggong': 'Mua thành công',
   'mt.maichuchenggong': 'Bán thành công',
   'mt.chengjiao': 'Thực hiện',
+  'mt.dingdanchengjiao': 'Giao dịch đơn hàng',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
