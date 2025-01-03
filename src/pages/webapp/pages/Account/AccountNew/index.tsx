@@ -270,10 +270,13 @@ function AccountNew() {
           {/* 賬戶名稱 */}
           <TextField
             value={name}
+            autoSelectAll={false}
             onChange={(val) => {
               setValue('name', val)
               trigger('name')
             }}
+            autoComplete="off"
+            autoFocus={false}
             // status={errors.name ? 'error' : undefined}
             label={t('pages.account.Account Name')}
             placeholder={t('pages.account.Account Name Tips')}

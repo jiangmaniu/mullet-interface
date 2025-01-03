@@ -234,12 +234,12 @@ function UserCenter() {
     <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       <Header
         // sideMinWidth={130}
+        back
         left={
           <Text size="xl" weight="medium" color="primary">
             {t('app.pageTitle.Personal Center')}
           </Text>
         }
-        back={false}
         right={
           <View
             className="relative"

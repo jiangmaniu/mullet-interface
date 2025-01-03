@@ -243,7 +243,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             selectCountryModalRef.current?.show()
           }}
           // onSubmitEditing={() => authPasswordInput.current?.focus()}
-          RightAccessory={() => <Icon name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} />}
+          RightAccessory={() => (
+            <Icon name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} onClick={() => selectCountryModalRef.current?.show()} />
+          )}
         />
         {errors.areaCodeItem && <Text color="red">{errors.areaCodeItem.message}</Text>}
         {registerWay === 'EMAIL' && (
