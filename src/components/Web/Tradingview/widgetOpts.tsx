@@ -62,7 +62,9 @@ export default function getWidgetOpts(
   const enabled_features: ChartingLibraryFeatureset[] = [
     // 'seconds_resolution', // 分辨率（以秒为单位）​ 将 has_seconds 设置为 true
     'hide_resolution_in_legend', // 隐藏分钟线和小时线等这些在图例中展示
-    'display_legend_on_all_charts'
+    'display_legend_on_all_charts',
+    // https://www.tradingview.com/charting-library-docs/latest/customization/Featuresets/#behavior
+    'iframe_loading_compatibility_mode' // 兼容低版本浏览器 Enables alternative loading mode for the library, which can be used to support older browsers and a few non-standard browsers.
     // 在图例中显示符号的徽标，提供 LibrarySymbolInfo 对象的 logo_urls 属性中符号的 URL。将对象作为参数传递给 resolveSymbol 方法的回调
     // 'show_symbol_logos',
     // 'show_symbol_logo_in_legend',
