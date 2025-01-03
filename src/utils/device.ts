@@ -1,4 +1,7 @@
 export type BrowserDeviceType =
+  | 'VivoBrowser'
+  /** oppo */
+  | 'HeyTapBrowser'
   | 'Chrome'
   | 'Safari'
   | 'Mozilla Firefox'
@@ -18,7 +21,11 @@ export const isInStandaloneMode = () =>
 export const getBrowser = (): BrowserDeviceType => {
   let userAgent = navigator.userAgent
 
-  if (userAgent.indexOf('Chrome') !== -1 || userAgent.indexOf('CriOS') !== -1) {
+  if (userAgent.indexOf('VivoBrowser') !== -1) {
+    return 'VivoBrowser'
+  } else if (userAgent.indexOf('HeyTapBrowser') !== -1) {
+    return 'HeyTapBrowser'
+  } else if (userAgent.indexOf('Chrome') !== -1 || userAgent.indexOf('CriOS') !== -1) {
     return 'Chrome'
   } else if (userAgent.indexOf('Safari') !== -1) {
     return 'Safari'

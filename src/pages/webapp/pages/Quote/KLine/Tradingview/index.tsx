@@ -51,12 +51,22 @@ const TradingViewComp = ({ style }: IProps) => {
   }, [klineUrl])
 
   const iframeDom = useMemo(() => {
+    let height = 0
+    if (isPwaApp) {
+      height = 340
+    } else if (browserDeviceType === 'VivoBrowser' || browserDeviceType === 'HeyTapBrowser') {
+      height = 310
+    } else if (browserDeviceType === 'Safari') {
+      height = 320
+    } else {
+      height = 260
+    }
     return (
       <iframe
         src={url}
         style={{
           border: 'none',
-          height: isPc ? '591px' : `calc(100vh - ${isPwaApp ? 340 : browserDeviceType === 'Safari' ? 320 : 260}px)`,
+          height: isPc ? '591px' : `calc(100vh - ${height}px)`,
           width: '100%',
           visibility: loading ? 'hidden' : 'visible'
         }}
@@ -73,7 +83,7 @@ const TradingViewComp = ({ style }: IProps) => {
     <div style={style} className="relative mb-3">
       {iframeDom}
       {loading && (
-        <div className={cn('absolute top-28 left-0 right-0 flex justify-center items-center z-0')}>
+        <div className={cn('absolute top-0 left-0 right-0 flex justify-center items-center z-0')}>
           <Loading />
         </div>
       )}
