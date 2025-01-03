@@ -4,9 +4,9 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useMemo, useRef } from '
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useTrade from '@/hooks/useTrade'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
+import useMargin from '@/hooks/useMargin'
 import CheckBox from '../../../Base/CheckBox'
 import SheetModal, { SheetRef } from '../../../Base/SheetModal'
 import { Text } from '../../../Base/Text'
@@ -51,7 +51,10 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
   }, [isFixedMargin, isFixedLeverage, isFloatLeverage, trade.leverageMultiple])
 
   const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
-  const { expectedMargin } = useTrade()
+  // const { expectedMargin } = useTrade()
+
+  // 接口计算预估保证金
+  const expectedMargin = useMargin()
 
   const bottomSheetModalRef = useRef<SheetRef>(null)
 

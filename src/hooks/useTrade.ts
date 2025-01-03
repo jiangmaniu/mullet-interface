@@ -184,9 +184,6 @@ export default function useTrade(props?: IProps) {
   const countPrecision = useMemo(() => getPrecisionByNumber(symbolConf?.minTrade), [symbolConf]) // 手数精度
   const accountGroupPrecision = useMemo(() => trade.currentAccountInfo.currencyDecimal || 2, [trade.currentAccountInfo.currencyDecimal])
 
-  // 实时计算下单时预估保证金
-  const expectedMargin = trade.expectedMargin
-
   // 格式化数据
   const sl = useMemo(() => Number(slValue), [slValue])
   const sp = useMemo(() => Number(spValue), [spValue])
@@ -682,9 +679,7 @@ export default function useTrade(props?: IProps) {
     return true
   }
 
-  // 提交订单
-  const onSubmitOrder = async () => {
-    setInputing(true)
+  const orderParams = useMemo(() => {
     const orderParams = {
       symbol,
       buySell, // 订单方向
@@ -711,6 +706,16 @@ export default function useTrade(props?: IProps) {
     // 订单类型
     // @ts-ignore
     orderParams.type = type
+
+    return orderParams
+  }, [symbol, buySell, count, stopLoss, takeProfit, leverageMultiple, trade.currentAccountInfo?.id, orderType, orderPrice, marginType])
+
+  // 实时计算下单时预估保证金
+  const expectedMargin = trade.expectedMargin
+
+  // 提交订单
+  const onSubmitOrder = async () => {
+    setInputing(true)
 
     if (!onCheckSubmit()) {
       return
@@ -847,6 +852,7 @@ export default function useTrade(props?: IProps) {
     hasQuote,
     buySell,
     availableMargin,
+    orderParams,
 
     // 方法
     setSl,
