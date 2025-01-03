@@ -6,7 +6,6 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import useTrade from '@/hooks/useTrade'
 
-import { useEnv } from '@/context/envProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import Button from '../../Base/Button'
 import { Text } from '../../Base/Text'
@@ -62,7 +61,6 @@ export const BottomButton = observer(() => {
 
 function TradeView() {
   const { cn, theme } = useTheme()
-  const { isPwaApp, browserDeviceType } = useEnv()
 
   const { trade, ws } = useStores()
   const { activeSymbolName, symbolListAll } = trade
@@ -129,7 +127,7 @@ function TradeView() {
       {/* <View
         className={cn(
           'px-3 fixed w-full',
-          isPwaApp ? (browserDeviceType === 'Safari' ? 'bottom-[100px]' : 'bottom-[80px]') : 'bottom-[60px]'
+          isPwaApp ? (isSafari ? 'bottom-[100px]' : 'bottom-[80px]') : 'bottom-[60px]'
         )}
       >
         <View className={cn('mt-2')}>

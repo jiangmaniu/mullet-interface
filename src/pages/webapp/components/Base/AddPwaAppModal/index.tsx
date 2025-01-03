@@ -5,15 +5,14 @@ import { useEnv } from '@/context/envProvider'
 import ENV from '@/env'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { cn } from '@/utils/cn'
-import { getBrowser, getDeviceType } from '@/utils/device'
 import { getPathname } from '@/utils/navigator'
 import { STORAGE_GET_SHOW_PWA_ADD_MODAL, STORAGE_GET_TOKEN, STORAGE_SET_SHOW_PWA_ADD_MODAL } from '@/utils/storage'
 import { FormattedMessage, useLocation } from '@umijs/max'
+import { isAndroid, isIOS, isSafari } from 'react-device-detect'
 import SheetModal from '../SheetModal'
 
 const AddPwaAppModal = () => {
   const { t } = useI18n()
-  const deviceType = getDeviceType()
   const [isAddSreenModal, setIsAddSreenModal] = useState(false)
   const { isPc } = useEnv()
   const { pathname } = useLocation()
@@ -50,12 +49,11 @@ const AddPwaAppModal = () => {
 
   const init = async () => {
     let showModal = STORAGE_GET_SHOW_PWA_ADD_MODAL() === true ? false : true
-    const browser = getBrowser()
 
     let type = 'iphoneChrome'
-    if (deviceType === 'IOS') {
-      type = browser === 'Safari' ? 'iphoneSafari' : 'iphoneChrome'
-    } else if (deviceType === 'Android') {
+    if (isIOS) {
+      type = isSafari ? 'iphoneSafari' : 'iphoneChrome'
+    } else if (isAndroid) {
       //TODO 根据浏览器不同添加其他类型
       //   type = browser === 'Chrome' ? 'androidChrome' : 'other'
       type = 'androidChrome'

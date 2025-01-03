@@ -2,15 +2,12 @@ import { debounce } from 'lodash'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
 import { useDeviceChange } from '@/hooks/useDeviceChange'
-import { BrowserDeviceType } from '@/utils/device'
 
 type SizeInfo = {
   width: number
   height: number
 }
 type ProviderType = {
-  /**浏览器设备类型 */
-  browserDeviceType: BrowserDeviceType
   /**是否是pwa应用 */
   isPwaApp: boolean
   /** 屏幕宽高信息 */

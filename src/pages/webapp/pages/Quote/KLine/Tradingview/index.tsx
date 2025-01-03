@@ -1,7 +1,5 @@
 import { observer } from 'mobx-react'
 
-import { useEffect, useMemo, useState } from 'react'
-
 import Loading from '@/components/Base/Lottie/Loading'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
@@ -11,13 +9,15 @@ import { useTheme } from '@/context/themeProvider'
 import ENV from '@/env'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { useIntl } from '@umijs/max'
+import { useEffect, useMemo, useState } from 'react'
+import { browserName, isSafari } from 'react-device-detect'
 
 type IProps = {
   style?: React.CSSProperties
 }
 
 const TradingViewComp = ({ style }: IProps) => {
-  const { isPc, isPwaApp, browserDeviceType } = useEnv()
+  const { isPc, isPwaApp } = useEnv()
   const { lng } = useLang()
   const { theme, cn } = useTheme()
   const { trade } = useStores()
@@ -54,12 +54,12 @@ const TradingViewComp = ({ style }: IProps) => {
     let height = 0
     if (isPwaApp) {
       height = 340
-    } else if (browserDeviceType === 'VivoBrowser' || browserDeviceType === 'HeyTapBrowser') {
+    } else if (browserName === 'Vivo Browser' || browserName === 'HeyTap') {
       height = 310
-    } else if (browserDeviceType === 'Safari') {
+    } else if (isSafari) {
       height = 320
     } else {
-      height = 260
+      height = 280
     }
     return (
       <iframe
@@ -77,7 +77,7 @@ const TradingViewComp = ({ style }: IProps) => {
         }}
       />
     )
-  }, [url, loading, isPwaApp, browserDeviceType])
+  }, [url, loading, isPwaApp, browserName])
 
   return (
     <div style={style} className="relative mb-3">
