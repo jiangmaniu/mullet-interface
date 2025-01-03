@@ -86,7 +86,7 @@ export default function Tabs({
       },
       '.adm-tabs-tab-active': {
         color: 'var(--color-text-primary) !important',
-        fontWeight: '500 !important'
+        fontWeight: '600 !important'
       },
       '.adm-tabs-tab-list': {
         '.adm-tabs-tab-wrapper': {
