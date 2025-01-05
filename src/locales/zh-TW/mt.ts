@@ -34,6 +34,8 @@ export default {
   'mt.tingsundan': '停損單',
   'mt.maichuzuokong': '賣單·開空',
   'mt.mairuzuoduo': '買單·開多',
+  'mt.kaikong': '開空',
+  'mt.kaiduo': '開多',
   'mt.gangganbeishu': '杠杆倍数',
   'mt.tiaozhengganggan': '调整杠杆',
   'mt.tiaozhengganggantip1': '当前杠杆倍数最高可开:100,000,000 USDT',

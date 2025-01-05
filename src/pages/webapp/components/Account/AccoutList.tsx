@@ -38,7 +38,7 @@ const Item = ({
       }}
     >
       <View className={cn('flex flex-col flex-1')}>
-        <Text color="primary" size="lg" weight="medium" className={cn('max-w-[220px] pr-1 truncate')}>
+        <Text color="primary" size="lg" font="pf-bold" className={cn('max-w-[220px] pr-1 truncate')}>
           {item.name}
         </Text>
         <View className={cn('flex flex-row items-center justify-between gap-2')}>

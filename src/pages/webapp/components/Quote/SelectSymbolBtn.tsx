@@ -35,7 +35,7 @@ const TriggerDom = observer(({ showQuotePercent, onClick }: IProps) => {
         <>
           <View className={cn('flex-row items-center gap-x-2 pr-[2px]')}>
             <SymbolIcon width={22} height={22} src={symbolInfo?.imgUrl} />
-            <Text size="lg" color="primary" weight="medium">
+            <Text size="lg" color="primary" font="pf-bold">
               {activeSymbolName}
             </Text>
           </View>

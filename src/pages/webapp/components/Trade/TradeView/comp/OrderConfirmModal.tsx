@@ -71,6 +71,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
     <SheetModal
       ref={bottomSheetModalRef}
       height={'50%'}
+      autoHeight
       trigger={trigger}
       title={intl.formatMessage({ id: 'pages.trade.Confirm Order Title' })}
       confirmText={isBuy ? intl.formatMessage({ id: 'pages.trade.Confirm buy' }) : intl.formatMessage({ id: 'pages.trade.Confirm sell' })}
@@ -83,7 +84,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
               <SymbolIcon src={symbolInfo.imgUrl} width={32} height={32} />
               <View className={cn('pl-3')}>
                 <View className={cn('flex-row items-center')}>
-                  <Text size="base" weight="medium" className={cn('font-medium')}>
+                  <Text size="base" font="pf-bold">
                     {symbolInfo.symbol}
                   </Text>
                   <Text size="sm" weight="medium" color={isBuy ? 'green' : 'red'} className={cn('font-medium pl-2')}>
@@ -102,7 +103,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
           </View>
           <View className={cn('items-center flex-row mt-6 mb-3 justify-between')}>
             <View className={cn('items-center flex flex-col')}>
-              <Text size="base" weight="medium" color={isBuy ? 'green' : 'red'}>
+              <Text size="base" font="pf-bold" color={isBuy ? 'green' : 'red'}>
                 {leverage}
               </Text>
               <Text size="sm" color="weak">
@@ -110,7 +111,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
               </Text>
             </View>
             <View className={cn('items-center flex flex-col')}>
-              <Text size="base" weight="medium">
+              <Text size="base" font="pf-bold">
                 {orderVolume}
               </Text>
               <Text size="sm" color="weak">
@@ -119,7 +120,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
             </View>
             {/* @TODO */}
             {/* <View className={cn('items-center')}>
-              <Text size="base" weight="medium">
+              <Text size="base" font="pf-bold">
                 100
               </Text>
               <Text size="sm" color="weak">
@@ -127,7 +128,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
               </Text>
             </View> */}
             <View className={cn('items-center flex flex-col')}>
-              <Text size="base" weight="medium">
+              <Text size="base" font="pf-bold">
                 {expectedMargin} USD
               </Text>
               <Text size="sm" color="weak">

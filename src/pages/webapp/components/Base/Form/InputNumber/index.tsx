@@ -175,6 +175,7 @@ const InputNumber = forwardRef(
                     }
                   }}
                   style={{ paddingLeft: 4 }}
+                  className="flex items-center"
                 >
                   <Iconfont
                     name="shurukuang-jian"
@@ -216,7 +217,7 @@ const InputNumber = forwardRef(
                       onPressRightText?.()
                       onChange?.(String(max))
                     }}
-                    className={cn('mr-2')}
+                    className={cn('mr-2 flex items-center')}
                   >
                     <Text size="sm" weight="medium" color="primary">
                       {rightText}

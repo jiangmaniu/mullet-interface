@@ -270,7 +270,8 @@ function TransferScreen() {
         <TextField
           placeholder={t('pages.position.Please enter the amount')}
           height={52}
-          className={cn('leading-[28px]  font-dingpro-medium mb-0', amount ? 'text-[22px]' : 'text-sm')}
+          className={cn('font-dingpro-medium')}
+          fontSize={amount ? 22 : 14}
           RightAccessory={() => (
             <Text size="sm" color="primary" weight="medium" className={cn('px-[14px]')}>
               {SOURCE_CURRENCY}

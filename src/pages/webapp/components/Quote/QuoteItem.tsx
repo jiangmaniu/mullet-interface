@@ -69,7 +69,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
       <View className={cn('flex flex-col')}>
         <View className={cn('flex flex-row items-center pb-1')}>
           <SymbolIcon src={item.imgUrl} />
-          <Text color="primary" size="base" className={cn('ml-1 font-medium')}>
+          <Text color="primary" size="base" font="pf-bold" className={cn('ml-1')}>
             {item.alias || item.symbol}
           </Text>
           {/* 休市中状态 */}
@@ -102,7 +102,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
               <View
                 onClick={handleJump}
                 className={cn(
-                  'rounded-md text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden z-2 text-sm font-dingpro-medium'
+                  'rounded-md text-center relative top-[1px] pt-[1px] leading-[26px] h-[26px] min-h-[26px] overflow-hidden z-2 text-sm font-dingpro-medium'
                 )}
                 style={bidColorStyle}
               >
@@ -110,11 +110,11 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
               </View>
               <View
                 className={cn(
-                  'bg-gray-50 relative -top-[3px] pt-[3px] items-center justify-center border-l border-b border-r rounded-bl-md rounded-br-md h-[20px] -z-1'
+                  'bg-gray-50 relative -top-[3px] items-center justify-center border-l border-b border-r rounded-bl-md rounded-br-md h-[18px] -z-1'
                 )}
                 borderColor="weak"
               >
-                <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
+                <Text className={cn('text-[9px] pt-[1.5px]')} color="weak" font="dingpro-medium">
                   L:
                   {formatNum(res.low)}
                 </Text>
@@ -130,18 +130,20 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
             <>
               <View
                 onClick={handleJump}
-                className={cn('rounded-[6px] text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden text-sm font-dingpro-medium')}
+                className={cn(
+                  'rounded-[6px] relative top-[1px] pt-[1px] text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden text-sm font-dingpro-medium'
+                )}
                 style={askColorStyle}
               >
                 {ask ? formatNum(ask) : '--'}
               </View>
               <View
                 className={cn(
-                  'bg-gray-50 relative -top-[3px] pt-[3px] items-center justify-center border-l border-b border-r rounded-bl-md rounded-br-md h-[20px] -z-1'
+                  'bg-gray-50 relative -top-[3px] items-center justify-center border-l border-b border-r rounded-bl-md rounded-br-md h-[18px] -z-1'
                 )}
                 borderColor="weak"
               >
-                <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
+                <Text className={cn('text-[9px] pt-[1.5px]')} color="weak" font="dingpro-medium">
                   H:
                   {formatNum(res.high)}
                 </Text>

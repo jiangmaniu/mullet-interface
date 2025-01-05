@@ -71,17 +71,19 @@ function AccountCarousel({ accountTabActiveKey, setSelectedItem }: IProps) {
             ))}
           </Swiper>
 
-          <div className="flex flex-row gap-[10px]">
-            {data?.map((item, index) => (
-              <View
-                onClick={() => {
-                  swiperRef.current?.slideTo(index, 300)
-                }}
-                key={index}
-                className={cn('h-[6px] w-[14px] bg-gray-250 rounded-[3px]', { 'bg-black w-10': index === activeIndex })}
-              ></View>
-            ))}
-          </div>
+          {data?.length > 1 && (
+            <div className="flex flex-row gap-[10px]">
+              {data?.map((item, index) => (
+                <View
+                  onClick={() => {
+                    swiperRef.current?.slideTo(index, 300)
+                  }}
+                  key={index}
+                  className={cn('h-[6px] w-[14px] bg-gray-250 rounded-[3px]', { 'bg-black w-10': index === activeIndex })}
+                ></View>
+              ))}
+            </div>
+          )}
         </>
       ) : (
         <div className="h-[376px] flex items-center justify-center">

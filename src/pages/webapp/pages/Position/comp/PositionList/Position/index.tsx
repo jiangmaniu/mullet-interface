@@ -238,9 +238,9 @@ function PositionList() {
               {t('pages.position.No Position')}
             </Text>
             <Button type="primary" style={{ marginTop: 22, width: 143 }} href="/app/trade">
-              <View className={cn('flex flex-row items-center gap-2')}>
+              <View className={cn('flex flex-row items-end gap-2')}>
                 <Iconfont name="zhanghu-jiaoyi" size={20} color={theme.colors.textColor.reverse} />
-                <Text size="base" weight="bold" color="white">
+                <Text size="base" weight="bold" color="white" className="relative top-[1px]">
                   {t('pages.position.Go Trade')}
                 </Text>
               </View>
@@ -250,7 +250,8 @@ function PositionList() {
       />
       <SheetModal
         ref={modalRef}
-        height={'90%'}
+        // height={'90%'}
+        autoHeight
         backgroundStyle={{ backgroundColor: theme.colors.backgroundColor.primary }}
         onConfirm={onConfirm}
         confirmText={t('common.operate.Confirm')}

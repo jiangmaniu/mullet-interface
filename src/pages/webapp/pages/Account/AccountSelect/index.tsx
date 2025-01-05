@@ -69,7 +69,7 @@ function AccountSelect() {
       }
     >
       <View style={cn('mb-4 mt-5')}>
-        <Text size="22" weight="medium">
+        <Text size="22" font="pf-bold">
           {t('pages.account.Select Account')}
         </Text>
       </View>
@@ -79,7 +79,7 @@ function AccountSelect() {
           style={{ width: 32, height: 32, backgroundColor: theme.colors.backgroundColor.secondary, borderRadius: 100 }}
         />
         <View style={cn('flex flex-col')}>
-          <Text size="lg" weight="medium">
+          <Text size="lg" font="pf-bold">
             {ENV.name}
           </Text>
         </View>

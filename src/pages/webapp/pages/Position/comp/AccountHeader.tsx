@@ -56,7 +56,7 @@ function AccountHeader() {
                     {currentAccountInfo.isSimulate ? t('common.enum.accountType.DEMO') : t('common.enum.accountType.REAL')}
                   </Text>
                 </View>
-                <Text size="lg" weight="medium" color="primary">
+                <Text size="lg" font="pf-bold" color="primary">
                   {formatStringWithEllipsis(currentAccountInfo?.name || '', 20)}
                 </Text>
                 <Iconfont name="qiehuanzhanghu-xiala" size={24} />
@@ -74,9 +74,11 @@ function AccountHeader() {
                 />
                 <Text size="sm" weight="normal" color="primary">
                   {t('pages.position.Balance')}&nbsp;
-                  {formatNum(currentAccountInfo.money, {
-                    precision
-                  })}
+                  {Number(currentAccountInfo.money)
+                    ? formatNum(currentAccountInfo.money, {
+                        precision
+                      })
+                    : '0.00'}
                 </Text>
               </View>
             </View>
@@ -111,9 +113,11 @@ function AccountHeader() {
               {SOURCE_CURRENCY}
             </Text>
             <Text size="22" weight="medium" color="primary" font="dingpro-medium">
-              {formatNum(balance, {
-                precision
-              })}
+              {Number(balance)
+                ? formatNum(balance, {
+                    precision
+                  })
+                : '0.00'}
             </Text>
           </View>
           <View className={cn('flex flex-col items-end')}>
@@ -121,14 +125,17 @@ function AccountHeader() {
               {t('pages.position.Floating P&L')}
             </Text>
             {useMemo(
-              () => (
-                <Text size="sm" font="dingpro-regular" color={totalProfit > 0 ? 'green' : 'red'}>
-                  {totalProfit > 0 ? '+' : ''}
-                  {formatNum(totalProfit, {
-                    precision
-                  })}
-                </Text>
-              ),
+              () =>
+                totalProfit ? (
+                  <Text size="sm" font="dingpro-regular" color={totalProfit > 0 ? 'green' : 'red'}>
+                    {totalProfit > 0 ? '+' : ''}
+                    {formatNum(totalProfit, {
+                      precision
+                    })}
+                  </Text>
+                ) : (
+                  '0.00'
+                ),
               [totalProfit]
             )}
           </View>
@@ -139,9 +146,11 @@ function AccountHeader() {
               {t('pages.position.Advance Payment')}
             </Text>
             <Text size="sm" color="primary">
-              {formatNum(occupyMargin, {
-                precision
-              })}
+              {Number(occupyMargin)
+                ? formatNum(occupyMargin, {
+                    precision
+                  })
+                : '0.00'}
             </Text>
           </View>
           <View className={cn('flex flex-col max-w-[33%] justify-between')}>
@@ -149,9 +158,11 @@ function AccountHeader() {
               {t('pages.position.Available Advance Payment')}
             </Text>
             <Text size="sm" color="primary">
-              {formatNum(availableMargin, {
-                precision
-              })}
+              {Number(availableMargin)
+                ? formatNum(availableMargin, {
+                    precision
+                  })
+                : '0.00'}
             </Text>
           </View>
           <View className={cn('flex flex-col items-end max-w-[34%] justify-between')}>
@@ -159,9 +170,11 @@ function AccountHeader() {
               {t('pages.position.Advance Payment Ratio (%)')}
             </Text>
             <Text size="sm" color="primary">
-              {formatNum(advancePaymentRatio, {
-                precision: 2
-              })}
+              {advancePaymentRatio
+                ? formatNum(advancePaymentRatio, {
+                    precision: 2
+                  })
+                : '0.00'}
             </Text>
           </View>
         </View>

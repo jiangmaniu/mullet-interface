@@ -49,7 +49,8 @@ function SelectAccountModal({ isSimulate, header, onItem, isRemainAtCurrentPage 
   return (
     <SheetModal
       hiddenFooter
-      height={accountListLen >= 5 ? '90%' : '80%'}
+      // height={accountListLen >= 5 ? '90%' : '80%'}
+      autoHeight
       ref={bottomSheetModalRef}
       header={
         <>
@@ -58,7 +59,7 @@ function SelectAccountModal({ isSimulate, header, onItem, isRemainAtCurrentPage 
           ) : (
             <View className={cn('mx-5 mb-3')}>
               <View className={cn('items-center flex-row w-full justify-between')}>
-                <Text className={cn('text-[22px] leading-7')} weight="medium">
+                <Text className={cn('text-[22px] leading-7')} font="pf-bold">
                   {intl.formatMessage({ id: 'pages.trade.Account Title' })}
                 </Text>
                 <span
@@ -78,7 +79,7 @@ function SelectAccountModal({ isSimulate, header, onItem, isRemainAtCurrentPage 
                   style={{ width: 32, height: 32, backgroundColor: theme.colors.backgroundColor.secondary, borderRadius: 100 }}
                 />
                 <View className={cn('flex flex-col')}>
-                  <Text size="lg" weight="medium">
+                  <Text size="lg" font="pf-bold">
                     {ENV.name}
                   </Text>
                 </View>

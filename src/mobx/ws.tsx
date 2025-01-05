@@ -232,7 +232,7 @@ class WSStore {
               </div>
             ),
             position: 'top',
-            duration: 3000,
+            duration: 4000,
             maskClassName: 'webapp-custom-message'
           })
         }

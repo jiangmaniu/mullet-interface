@@ -130,7 +130,8 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      height={'45%'}
+      // height={'45%'}
+      autoHeight
       trigger={trigger}
       title={t('pages.trade.Market Price Close Position')}
       confirmText={

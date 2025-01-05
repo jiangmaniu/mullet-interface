@@ -34,6 +34,8 @@ export default {
   'mt.tingsundan': 'Stop Market',
   'mt.maichuzuokong': 'Open · Short',
   'mt.mairuzuoduo': 'Open · Long',
+  'mt.kaikong': 'Short',
+  'mt.kaiduo': 'Long',
   'mt.gangganbeishu': 'Leverage Ratio',
   'mt.tiaozhengganggan': 'Adjust Leverage',
   'mt.tiaozhengganggantip1': 'Maximum leverage currently available: 100,000,000 USDT',

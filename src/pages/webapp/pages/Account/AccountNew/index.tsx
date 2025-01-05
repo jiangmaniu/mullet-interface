@@ -35,7 +35,7 @@ const CurrentServer = observer(() => {
         style={{ width: 32, height: 32, backgroundColor: theme.colors.backgroundColor.secondary, borderRadius: 100 }}
       />
       <View className={cn('flex flex-col')}>
-        <Text size="lg" weight="medium">
+        <Text size="lg" font="pf-bold">
           {currentUser?.client_id}
         </Text>
       </View>
@@ -187,7 +187,7 @@ function AccountNew() {
       }}
       footer={
         <Button
-          style={{ flex: 1, width: '100%', flexGrow: 1 }}
+          style={{ flex: 1, width: '100%', flexGrow: 1, marginBottom: 12 }}
           size="large"
           type="primary"
           onClick={handlePresentModalPress}
@@ -198,7 +198,7 @@ function AccountNew() {
       }
     >
       <View className={cn('mb-3 mt-5')}>
-        <Text size="22" weight="medium">
+        <Text size="22" font="pf-bold">
           {t("pages.account.No Account? Let's create one!")}
         </Text>
       </View>
@@ -220,7 +220,7 @@ function AccountNew() {
       <AccountCarousel key={accountTabActiveKey} accountTabActiveKey={accountTabActiveKey} setSelectedItem={setSelectedItem} />
 
       <SheetModal
-        height={480}
+        height={370}
         ref={bottomSheetModalRef}
         title={t('pages.account.Setting Name')}
         // footer={

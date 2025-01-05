@@ -34,6 +34,8 @@ export default {
   'mt.tingsundan': 'Lệnh dừng thị trường',
   'mt.maichuzuokong': 'Mở · Bán',
   'mt.mairuzuoduo': 'Mở · Mua',
+  'mt.kaikong': 'Bán',
+  'mt.kaiduo': 'Mua',
   'mt.gangganbeishu': 'Tỷ lệ đòn bẩy',
   'mt.tiaozhengganggan': 'Điều chỉnh đòn bẩy',
   'mt.tiaozhengganggantip1': 'Đòn bẩy tối đa hiện tại có sẵn: 100,000,000 USDT',

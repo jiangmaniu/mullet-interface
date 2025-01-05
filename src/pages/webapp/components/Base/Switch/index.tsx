@@ -45,7 +45,7 @@ export default function Switch({
 
   return (
     <View
-      className={cn('px-2 min-w-[55px] py-[6px] rounded-[16px] flex-row', isChecked ? 'justify-end' : 'justify-start')}
+      className={cn('px-2 min-w-[46px] py-[5px] rounded-[16px] flex-row', isChecked ? 'justify-end' : 'justify-start')}
       onClick={handleToggle}
       style={{
         backgroundColor: isChecked ? activeThumbColor || theme.colors.Switch.activeTrackColor : theme.colors.Switch.inactiveTrackColor,
@@ -53,10 +53,10 @@ export default function Switch({
       }}
     >
       {isChecked && (
-        <>{checkedChildren ? checkedChildren : <img src="/img/webapp/icons/checkSwitch.png" style={{ width: 18, height: 18 }} />}</>
+        <>{checkedChildren ? checkedChildren : <img src="/img/webapp/icons/checkSwitch.png" style={{ width: 15, height: 15 }} />}</>
       )}
       {!isChecked && (
-        <>{unCheckedChildren ? unCheckedChildren : <img src="/img/webapp/icons/unCheckSwitch.png" style={{ width: 18, height: 18 }} />}</>
+        <>{unCheckedChildren ? unCheckedChildren : <img src="/img/webapp/icons/unCheckSwitch.png" style={{ width: 15, height: 15 }} />}</>
       )}
     </View>
   )

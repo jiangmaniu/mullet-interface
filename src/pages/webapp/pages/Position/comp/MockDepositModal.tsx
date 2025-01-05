@@ -94,6 +94,7 @@ function MockDepositModal(props: IProps, ref: ForwardedRef<ModalRef>) {
       <SheetModal
         ref={bottomSheetModalRef}
         height="55%"
+        autoHeight
         title={t('pages.position.Mock Account Deposit')}
         footer={
           <Button

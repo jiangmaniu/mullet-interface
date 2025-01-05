@@ -156,6 +156,8 @@ const ButtonWrapper: React.FC<ButtonProps> = (
 
   const _loadingSize = size === 'xs' ? 16 : 20
 
+  console.log('height', height)
+
   return (
     <View
       onClick={handlePress}
@@ -166,7 +168,7 @@ const ButtonWrapper: React.FC<ButtonProps> = (
         className={cn(btnWrapperClassName, className)}
         style={{
           ...(disabled ? { backgroundColor: theme.colors.Button.disabledBg } : {}),
-          ...(!height ? { height } : {}),
+          ...(height ? { height } : {}),
           ...(buttonStyle || {})
         }}
       >

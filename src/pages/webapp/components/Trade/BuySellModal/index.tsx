@@ -147,7 +147,8 @@ function BuySellModal(props: any, ref: ForwardedRef<BuySellModalRef>) {
           setOrderType('MARKET_ORDER')
         }}
         ref={bottomSheetModalRef}
-        height={'96%'}
+        // height={trade.orderSpslChecked ? '98%' : '80%'}
+        autoHeight
         children={<Content close={close} />}
         dragOnContent={false}
         footer={<Footer close={close} />}

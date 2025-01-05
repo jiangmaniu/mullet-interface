@@ -54,7 +54,9 @@ function SwitchAccount({ onSearch, showRightSearchIcon, isRemainAtCurrentPage }:
           </div>
         ) : (
           <Text size="lg" weight="bold" color="primary" font="dingpro-medium">
-            {formatNum(trade.currentAccountInfo.money, { precision: trade.currentAccountInfo.currencyDecimal })}
+            {Number(trade.currentAccountInfo.money)
+              ? formatNum(trade.currentAccountInfo.money, { precision: trade.currentAccountInfo.currencyDecimal })
+              : '0.00'}
           </Text>
         )}
       </View>
