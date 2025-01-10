@@ -9,9 +9,9 @@ import { isMainTabbar } from '@/pages/webapp/utils/navigator'
 import { checkPageShowTime } from '@/utils/business'
 import { message } from '@/utils/message'
 import { useNetwork } from 'ahooks'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
-import AddPwaAppModal from '../components/Base/AddPwaAppModal'
+import AddPwaAppModal from '../components/AddPwaAppModal'
 
 /**
  * webapp页面的布局-布局总入口
@@ -87,48 +87,48 @@ function WebAppLayout() {
     }
   }, [])
 
-  const Content = (
-    <>
-      <Outlet />
-      <AddPwaAppModal />
-      <Helmet>
-        <meta
-          name="viewport"
-          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
-        />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        {/* QQ强制全屏 */}
-        <meta name="fullscreen" content="yes" />
-        {/* UC强制全屏 */}
-        <meta name="x5-fullscreen" content="true" />
-        {/* IE/Edge浏览器 */}
-        {/* <meta name="msapplication-square70x70logo" content="img/icons/book-72.png" />
-        <meta name="msapplication-square150x150logo" content="img/icons/book-144.png" />
-        <meta name="msapplication-square310x310logo" content="img/icons/book-256.png" /> */}
-        {/* ios适配 */}
-        {/* <link rel="apple-touch-icon" href="/custom_icon.png" /> */}
-        {/* 不同分辨率的适配： */}
-        {/* <link rel="apple-touch-icon" href="touch-icon-iphone.png" />
-        <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png" />
-        <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png" /> */}
-        {/* apple-touch-startup-image：启动画面 */}
-        {/* <link rel="apple-touch-startup-image" href="/launch.png" /> */}
-      </Helmet>
-    </>
-  )
-
-  // 主Tabbar页面使用该布局
-  if (isMainTabbar(pathname)) {
+  const renderContent = useMemo(() => {
     return (
-      <div>
-        <div style={{ position: 'relative' }}>{Content}</div>
-        <TabBottomBar />
-      </div>
+      <>
+        <Outlet />
+        <AddPwaAppModal />
+        <Helmet>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+          />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          {/* QQ强制全屏 */}
+          <meta name="fullscreen" content="yes" />
+          {/* UC强制全屏 */}
+          <meta name="x5-fullscreen" content="true" />
+          {/* IE/Edge浏览器 */}
+          {/* <meta name="msapplication-square70x70logo" content="img/icons/book-72.png" />
+          <meta name="msapplication-square150x150logo" content="img/icons/book-144.png" />
+          <meta name="msapplication-square310x310logo" content="img/icons/book-256.png" /> */}
+          {/* ios适配 */}
+          {/* <link rel="apple-touch-icon" href="/custom_icon.png" /> */}
+          {/* 不同分辨率的适配： */}
+          {/* <link rel="apple-touch-icon" href="touch-icon-iphone.png" />
+          <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png" />
+          <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png" />
+          <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png" /> */}
+          {/* apple-touch-startup-image：启动画面 */}
+          {/* <link rel="apple-touch-startup-image" href="/launch.png" /> */}
+        </Helmet>
+      </>
     )
-  }
+  }, [])
 
-  // 其他子页面使用的布局
-  return <>{Content}</>
+  const renderTabbar = useMemo(() => {
+    return isMainTabbar(pathname) && <TabBottomBar />
+  }, [pathname])
+
+  return (
+    <div>
+      <div className="relative">{renderContent}</div>
+      {renderTabbar}
+    </div>
+  )
 }
 export default observer(WebAppLayout)

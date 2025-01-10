@@ -371,7 +371,6 @@ export default {
   'mt.shenqingchenggong': '申请成功',
   'mt.mianshouxufei': '免手续费',
   'mt.accountfudongyingkuitips': '当前仓位的浮动盈亏已包含相应的手续费和库存费',
-
   // ======= 个人中心-我的账户 结束 ==========
 
   // ======= 个人中心-设置 开始 ==========
@@ -485,6 +484,7 @@ export default {
   // 新加的字段 @TODO
   'mt.kycUploadTips': '支持JPG/JPEG/PNG,不能超过1M',
   'mt.kycUploadImgSizeTips': '图片大小不能超过{size}',
+  'mt.genggai': '更改',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========

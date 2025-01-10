@@ -10,7 +10,7 @@ import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { addTraadeFollowLead } from '@/services/api/tradeFollow/lead'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 
 import ENV from '@/env'
@@ -83,7 +83,7 @@ export default function Apply() {
         ...item,
         money: item.money,
         value: item.id,
-        label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
+        label: `${item.name} #${item?.id}`
       }))
   }, [accountGroupId])
 
@@ -354,7 +354,7 @@ export default function Apply() {
                                 <span className="flex flex-row justify-between items-center flex-1">
                                   <span className="flex flex-row justify-between items-center gap-1.5 ">
                                     {/* <AccountTag type="meifen" /> */}
-                                    <span>{hiddenCenterPartStr(item.id, 4)}</span>
+                                    <span>{item.id}</span>
                                   </span>
                                   <span className=" w-5 h-5"></span>
                                 </span>
@@ -371,7 +371,7 @@ export default function Apply() {
                             <span className="flex flex-row justify-between items-center flex-1">
                               <span className="flex flex-row justify-between items-center gap-1.5 ">
                                 {/* <AccountTag type="meifen" /> */}
-                                <span>{hiddenCenterPartStr(item.id, 4)}</span>
+                                <span>{item.id}</span>
                               </span>
                               <span className=" w-5 h-5"></span>
                             </span>

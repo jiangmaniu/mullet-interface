@@ -7,7 +7,7 @@ import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { DEFAULT_CURRENCY_DECIMAL, SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { formatNum } from '@/utils'
 
 import { onBack } from '@/utils/navigator'
 import { goHome } from '../../utils/navigator'
@@ -30,17 +30,22 @@ const Item = ({
 
   return (
     <div
-      className={cn('flex flex-row items-center justify-between p-4 rounded-xl')}
+      className={cn('p-4 rounded-xl')}
       onClick={onClick}
       style={{
         borderColor: item.id === currentAccountInfo.id ? theme.colors.backgroundColor.reverse : theme.colors.borderColor.weak,
         borderWidth: 1
       }}
     >
-      <View className={cn('flex flex-col flex-1')}>
-        <Text color="primary" size="lg" font="pf-bold" className={cn('max-w-[220px] pr-1 truncate')}>
+      <View className={cn('flex flex-row justify-between items-center')}>
+        <Text color="primary" size="lg" font="pf-bold" className={cn('max-w-[190px] pr-1 truncate')}>
           {item.name}
         </Text>
+        <Text color="primary" size="xl" font="dingpro-medium">
+          {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal ?? DEFAULT_CURRENCY_DECIMAL })}
+        </Text>
+      </View>
+      <View className={cn('flex flex-row items-center justify-between')}>
         <View className={cn('flex flex-row items-center justify-between gap-2')}>
           <View className={cn('items-center flex-row gap-x-2')}>
             <View
@@ -60,16 +65,11 @@ const Item = ({
                 <Text color="white">{item.synopsis?.abbr}</Text>
               </View>
             )}
-            <Text color="primary" size="sm" weight="light">
-              #{hiddenCenterPartStr(item.id, 4)}
+            <Text color="primary" size="sm" weight="light" className="max-w-[120px] inline-block truncate">
+              #{item.id}
             </Text>
           </View>
         </View>
-      </View>
-      <View className={cn('flex flex-col items-end')}>
-        <Text color="primary" size="lg" font="dingpro-medium">
-          {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal ?? DEFAULT_CURRENCY_DECIMAL })}
-        </Text>
         <Text color="weak" size="xs">
           {SOURCE_CURRENCY}
         </Text>

@@ -321,7 +321,7 @@ function HistoryOrderDetail() {
         </View>
         {/* body */}
 
-        <View bgColor="primary" className={cn(' flex-1 rounded-t-3xl mt-[14px] ')}>
+        <View bgColor="primary" className={cn(' flex-1 rounded-t-3xl mt-[14px] min-h-[90vh]')}>
           <View className={cn('flex-1 pt-[22px]')}>
             <View className={cn('flex flex-col gap-3 border-b px-5 pb-[22px] ')} borderColor="weak">
               {getItemDetails(info[0]).map((detail, index) => (

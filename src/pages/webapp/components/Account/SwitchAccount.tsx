@@ -40,7 +40,7 @@ function SwitchAccount({ onSearch, showRightSearchIcon, isRemainAtCurrentPage }:
                   selectAccountModalRef.current?.show()
                 }}
               >
-                <Text size="base" color="primary" weight="semibold" className={cn('max-w-[210px] mr-1 truncate')}>
+                <Text size="base" color="primary" font="pf-bold" className={cn('max-w-[210px] mr-1 truncate')}>
                   {trade.currentAccountInfo.name}
                 </Text>
                 <Iconfont name="qiehuanzhanghu-xiala" size={20} />
@@ -53,7 +53,7 @@ function SwitchAccount({ onSearch, showRightSearchIcon, isRemainAtCurrentPage }:
             <Iconfont name="hangqing-sousuo" size={28} />
           </div>
         ) : (
-          <Text size="lg" weight="bold" color="primary" font="dingpro-medium">
+          <Text size="lg" color="primary" font="dingpro-medium">
             {Number(trade.currentAccountInfo.money)
               ? formatNum(trade.currentAccountInfo.money, { precision: trade.currentAccountInfo.currencyDecimal })
               : '0.00'}

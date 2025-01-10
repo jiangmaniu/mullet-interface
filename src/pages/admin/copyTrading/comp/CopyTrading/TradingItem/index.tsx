@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderProps } from '@/models/takers'
-import { hiddenCenterPartStr } from '@/utils'
 
 import { AccountTag } from '../../AccountTag'
 import ListItemNumber, { IListItemNumber } from '../../ListItemNumber'
@@ -54,7 +53,7 @@ export const TradingItem = ({
           <div className="flex items-center gap-0.5 w-28">
             <Iconfont name="ren" width={38} color="black" height={38} />
             <div className="flex flex-col ">
-              <span className=" text-base font-normal leading-5">{hiddenCenterPartStr(tradeAccountId, 4)} </span>
+              <span className=" text-base font-normal leading-5">{tradeAccountId} </span>
               <span className=" text-xs text-gray-600">{name}</span>
             </div>
           </div>

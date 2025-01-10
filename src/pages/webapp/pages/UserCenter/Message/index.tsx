@@ -85,7 +85,7 @@ function Message() {
   }
 
   return (
-    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} className="pb-[env(--safe-area-inset-bottom)]">
+    <Basiclayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary} className="pb-[env(--safe-area-inset-bottom)]">
       <Header
         title={i18n.t('app.pageTitle.Message')}
         right={

@@ -9,7 +9,9 @@ import ListItem, { IlistItemProps } from '@/pages/webapp/components/Base/List/Li
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
+import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { setUserLanguage } from '@/services/api/user'
+import { onBack } from '@/utils/navigator'
 import { observer } from 'mobx-react'
 import { useMemo, useState } from 'react'
 
@@ -22,6 +24,7 @@ export const LngList = ({ list }: { list: IlistItemProps[] }) => {
   //   切换语言
   const handleChangeLanguage = async (item: IlistItemProps) => {
     if (item.value === i18n.locale) {
+      onBack()
       return
     }
     setLng(item.value as ILanguage)
@@ -60,7 +63,7 @@ export const LngList = ({ list }: { list: IlistItemProps[] }) => {
                 container: {
                   borderWidth: 1,
                   borderColor: isActive ? theme.colors.textColor.primary : theme.colors.borderColor.weak,
-                  borderRadius: 10
+                  borderRadius: 8
                 }
               }}
               key={index}
@@ -79,6 +82,7 @@ export const LngList = ({ list }: { list: IlistItemProps[] }) => {
 
 function Language() {
   const i18n = useI18n()
+  const { theme } = useTheme()
 
   const currentList = Object.keys(LanuageTransformMap).map((item) => {
     return {
@@ -97,9 +101,10 @@ function Language() {
   }, [searchValue, currentList])
 
   return (
-    <BasicLayout bgColor="secondary" style={{ paddingLeft: 14, paddingRight: 14 }}>
+    <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} style={{ paddingLeft: 14, paddingRight: 14 }}>
       <Header
         title={i18n.t('app.pageTitle.Language')}
+        onBack={() => navigateTo('/app/user-center')}
         // left={
         //   <View onPress={goBack}>
         //     <Iconfont name="fanhui" size={36} />

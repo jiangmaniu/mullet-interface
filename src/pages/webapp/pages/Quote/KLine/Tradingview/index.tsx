@@ -10,7 +10,7 @@ import ENV from '@/env'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { useIntl } from '@umijs/max'
 import { useEffect, useMemo, useState } from 'react'
-import { browserName, isSafari } from 'react-device-detect'
+import { isAndroid } from 'react-device-detect'
 
 type IProps = {
   style?: React.CSSProperties
@@ -53,23 +53,22 @@ const TradingViewComp = ({ style }: IProps) => {
   const iframeDom = useMemo(() => {
     let height = 0
     if (isPwaApp) {
-      height = 340
-    } else if (browserName === 'Vivo Browser' || browserName === 'HeyTap') {
-      height = 310
-    } else if (isSafari) {
-      height = 320
+      height = isAndroid ? 240 : 260
     } else {
-      height = 280
+      height = 240
     }
     return (
       <iframe
         src={url}
         style={{
           border: 'none',
-          height: isPc ? '591px' : `calc(100vh - ${height}px)`,
+          // 不要使用100vh safari视口有问题
+          height: isPc ? '591px' : document.documentElement.clientHeight - height,
           width: '100%',
           visibility: loading ? 'hidden' : 'visible'
         }}
+        width={'100%'}
+        height={'100%'}
         onLoad={() => {
           setTimeout(() => {
             setLoading(false)
@@ -77,7 +76,7 @@ const TradingViewComp = ({ style }: IProps) => {
         }}
       />
     )
-  }, [url, loading, isPwaApp, browserName])
+  }, [url, loading, isPwaApp])
 
   return (
     <div style={style} className="relative mb-3">

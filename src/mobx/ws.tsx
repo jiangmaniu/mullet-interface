@@ -149,7 +149,6 @@ class WSStore {
         this.receiveTradeMessage(data)
         break
       case 'MESSAGE_RES':
-        console.log('data', data)
         // 更新消息通知
         const info = data as MessagePopupInfo
         const content = removeOrderMessageFieldNames(info?.content || '')
@@ -180,7 +179,7 @@ class WSStore {
                 className="w-full flex items-center flex-col"
                 onClick={() => {
                   Toast.clear()
-                  push('/app/user-center/message')
+                  push('/app/position')
                 }}
               >
                 <div className="flex items-center w-full justify-between px-[14px] py-[6px] bg-gray-50">
@@ -492,7 +491,7 @@ class WSStore {
 
       // 2.1 关闭即将要关闭的符号
       if (toClose.size) {
-        console.log('即将关闭的符号', toClose.size, toClose)
+        // console.log('即将关闭的符号', toClose.size, toClose)
         const list2 = Array.from(toClose.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
         // console.log('即将关闭的符号', list2)
         this.debounceBatchCloseSymbol({ list: list2 })
@@ -526,6 +525,7 @@ class WSStore {
   // 处理交易消息
   @action
   receiveTradeMessage = (data: any) => {
+    // console.log('ws交易消息', data)
     const type = data.type as ITradeType
     // 账户余额变动
     if (type === 'ACCOUNT') {

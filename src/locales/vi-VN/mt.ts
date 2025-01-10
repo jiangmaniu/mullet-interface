@@ -490,6 +490,7 @@ export default {
 
   'mt.kycUploadTips': 'Hỗ trợ JPG/JPEG/PNG, không vượt quá 1MB.',
   'mt.kycUploadImgSizeTips': 'Kích thước ảnh không được vượt quá {size}',
+  'mt.genggai': 'Thay đổi',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========

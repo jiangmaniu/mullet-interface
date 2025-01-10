@@ -492,6 +492,7 @@ export default {
 
   'mt.kycUploadTips': 'Support JPG/JPEG/PNG, no larger than 1MB.',
   'mt.kycUploadImgSizeTips': 'Picture size cannot exceed{size}',
+  'mt.genggai': 'Change',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========

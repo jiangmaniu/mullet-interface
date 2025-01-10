@@ -220,7 +220,8 @@ function AccountNew() {
       <AccountCarousel key={accountTabActiveKey} accountTabActiveKey={accountTabActiveKey} setSelectedItem={setSelectedItem} />
 
       <SheetModal
-        height={370}
+        // height={370}
+        autoHeight
         ref={bottomSheetModalRef}
         title={t('pages.account.Setting Name')}
         // footer={
@@ -286,6 +287,7 @@ function AccountNew() {
             // autoComplete="email"
             // autoCorrect={false}
             // keyboardType="email-address"
+            containerClassName="mb-3"
           />
           {errors.name && <Text style={{ color: theme.colors.red.DEFAULT }}>{errors.name.message}</Text>}
         </View>

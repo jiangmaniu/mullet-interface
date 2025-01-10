@@ -127,7 +127,7 @@ function NonFullModeSpSl() {
     return (
       <Text color={value && !isPrice ? (Number(value) > 0 ? 'green' : 'red') : 'weak'}>
         {Number(value) > 0 && !isPrice ? '+' : ''}
-        {value || '--'} {isPrice ? '' : 'USD'}
+        {value || '0.00'} {isPrice ? '' : 'USD'}
       </Text>
     )
   }
@@ -158,7 +158,7 @@ function NonFullModeSpSl() {
       {orderSpslChecked && (
         <View className={cn('pt-3 w-full overflow-visible')}>
           <View>
-            <View className={cn('flex-row items-end overflow-visible')}>
+            <View className={cn('flex-row items-baseline overflow-visible')}>
               <Text size="sm" weight="medium" color="primary" className={cn('pr-2')}>
                 {intl.formatMessage({ id: 'pages.trade.Sp' })}
               </Text>
@@ -166,7 +166,7 @@ function NonFullModeSpSl() {
                 {intl.formatMessage({ id: 'pages.trade.Range' })} {isBuy ? rangeSymbol[0] : rangeSymbol[1]} {formatNum(sp_scope)} USD
               </Text>
             </View>
-            <View className={cn('items-center pt-2 flex-row justify-between gap-x-2')}>
+            <View className={cn('items-center pt-1 flex-row justify-between gap-x-2')}>
               <View className={cn('flex-1')}>
                 <InputNumber
                   // @TODO 暂时隐藏 PC端支持后在打开
@@ -232,7 +232,7 @@ function NonFullModeSpSl() {
             </View>
           </View>
           <View>
-            <View className={cn('flex-row items-end')}>
+            <View className={cn('flex-row items-baseline')}>
               <Text size="sm" weight="medium" color="primary" className={cn('pr-2')}>
                 {intl.formatMessage({ id: 'pages.trade.Sl' })}
               </Text>
@@ -240,7 +240,7 @@ function NonFullModeSpSl() {
                 {intl.formatMessage({ id: 'pages.trade.Range' })} {isBuy ? rangeSymbol[1] : rangeSymbol[0]} {formatNum(sl_scope)} USD
               </Text>
             </View>
-            <View className={cn('items-center pt-2 flex-row justify-between gap-x-2')}>
+            <View className={cn('items-center pt-1 flex-row justify-between gap-x-2')}>
               <View className={cn('flex-1')}>
                 <InputNumber
                   // @TODO 暂时隐藏 PC端支持后在打开

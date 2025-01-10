@@ -38,7 +38,8 @@ const renderList = (listData: Common.AreaCodeItem[], onPress: (item: Common.Area
                 borderWidth: 1,
                 borderColor: theme.colors.borderColor.weak,
                 borderRadius: 10
-              }
+              },
+              iconStyle: { display: 'none' }
             }}
             title={title}
             renderExtraElement={() => {

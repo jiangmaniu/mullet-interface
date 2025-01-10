@@ -46,7 +46,7 @@ function OrderVolume({ isFull }: IProps) {
 
   const precision = countPrecision
   const value = String(orderVolume)
-  const max = Math.max(vmax, maxOpenVolume)
+  const max = Math.min(vmax, maxOpenVolume)
   const min = vmin
   const disabled = disabledInput
 
@@ -85,6 +85,7 @@ function OrderVolume({ isFull }: IProps) {
         max={max}
         min={min}
         precision={precision}
+        fontSize={16}
         onFocus={() => {
           setInputing(true)
         }}

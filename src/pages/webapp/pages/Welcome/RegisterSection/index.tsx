@@ -19,6 +19,7 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
+import { regEmail } from '@/utils'
 import { useModel } from '@umijs/max'
 import PasswordTips from './PasswordTips'
 import { PrivacyPolicyService } from './PrivacyPolicyService'
@@ -142,7 +143,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       { message: t('pages.login.Residence Country is required') }
     ),
     phone: registerWay === 'PHONE' ? z.string().min(1, { message: t('pages.login.Phone is required') }) : z.string().optional(),
-    email: registerWay === 'EMAIL' ? z.string().email({ message: t('pages.login.Email placeholder') }) : z.string().optional(),
+    email:
+      registerWay === 'EMAIL'
+        ? z.string().refine((value) => regEmail.test(value), { message: t('pages.login.Email placeholder') })
+        : z.string().optional(),
     password: z
       .string()
       .min(6, { message: t('pages.login.Password min', { count: 6 }) })

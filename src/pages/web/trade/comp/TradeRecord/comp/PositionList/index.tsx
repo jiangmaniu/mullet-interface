@@ -366,7 +366,7 @@ function Position({ style, parentPopup }: IProps) {
         width: isZh ? 110 : 150,
         renderText(text, record, index, action) {
           const handlingFees = isOneLevel ? record.totalHandlingFees : text
-          return <span className="!text-[13px] text-primary">{handlingFees ? formatNum(handlingFees, { precision }) : '--'}</span>
+          return <span className="!text-[13px] text-primary">{handlingFees ? formatNum(handlingFees, { precision }) : '0.00'}</span>
         }
       },
       {
@@ -388,7 +388,7 @@ function Position({ style, parentPopup }: IProps) {
         width: 110,
         renderText(text, record, index, action) {
           const interestFees = isOneLevel ? record.totalInterestFees : text
-          return <span className="!text-[13px] text-primary">{interestFees ? formatNum(interestFees, { precision }) : '--'}</span>
+          return <span className="!text-[13px] text-primary">{interestFees ? formatNum(interestFees, { precision }) : '0.00'}</span>
         }
       },
       {

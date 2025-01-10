@@ -26,7 +26,7 @@ function AccountListItem({ value, label, tips }: IProps) {
       </Tooltip>
       <span className="my-0 ml-[18px] mr-[23px] h-[1px] flex-1 border-t-[1px] border-dashed border-gray-250 dark:border-gray-610"></span>
       <span className="max-w-[240px] break-all text-right text-primary !font-dingpro-medium">
-        {formatNum(value, { precision: currencyDecimal })} USD
+        {Number(value) ? formatNum(value, { precision: currencyDecimal }) : '0.00'} USD
       </span>
     </div>
   )

@@ -52,6 +52,7 @@ const CodeInput = (props: IProps) => {
           autoSelectAll={true}
           placeholder=""
           fixedTrigger="onChange"
+          fontSize={20}
           onChange={(e: any) => {
             handleInput(e, 'value1')
             if (e && e.length > 0) {
@@ -70,6 +71,7 @@ const CodeInput = (props: IProps) => {
           autoSelectAll={true}
           placeholder=""
           fixedTrigger="onChange"
+          fontSize={20}
           onChange={(e: any) => {
             handleInput(e, 'value2')
             if (e && e.length > 0) {
@@ -91,6 +93,7 @@ const CodeInput = (props: IProps) => {
           autoSelectAll={true}
           placeholder=""
           fixedTrigger="onChange"
+          fontSize={20}
           onChange={(e: any) => {
             handleInput(e, 'value3')
             if (e && e.length > 0) {
@@ -112,6 +115,7 @@ const CodeInput = (props: IProps) => {
           autoSelectAll={true}
           placeholder=""
           fixedTrigger="onChange"
+          fontSize={20}
           onChange={(e: any) => {
             handleInput(e, 'value4')
             if (e && e.length > 0) {
@@ -133,6 +137,7 @@ const CodeInput = (props: IProps) => {
           autoSelectAll={true}
           placeholder=""
           fixedTrigger="onChange"
+          fontSize={20}
           onChange={(e: any) => {
             handleInput(e, 'value5')
             if (e && e.length > 0) {
@@ -154,6 +159,7 @@ const CodeInput = (props: IProps) => {
           autoSelectAll={true}
           placeholder=""
           fixedTrigger="onChange"
+          fontSize={20}
           onChange={(e: any) => {
             handleInput(e, 'value6')
             if (e && e.length > 0) {

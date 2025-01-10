@@ -42,7 +42,7 @@ function SwitchTheme() {
           <div className="w-5 h-5 rounded-full p-1 flex items-center justify-center bg-[#7F53FE]">
             <Iconfont name={'yueliang'} width={14} height={14} color={'#fff'} />
           </div>
-          <div className="size-[22px] rounded-full p-1 flex items-center justify-center bg-gray-secondary">
+          <div className="size-[22px] rounded-full p-1 flex items-center justify-center bg-gray-secondary dark:bg-gray-800">
             <Iconfont name={'rijianmoshi-'} width={14} height={14} color={'#6B6B6B'} />
           </div>
         </div>

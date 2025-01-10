@@ -43,7 +43,7 @@ const ListItem = ({
 
   return (
     <View className={cn('mb-3 flex-1 flex flex-col', align === 'end' && 'items-end', align === 'center' && 'items-center')}>
-      <Text color="secondary" size="xs" leading="base" className={textClassName}>
+      <Text color="weak" size="xs" leading="base" className={textClassName}>
         {label}
       </Text>
       <Text color={valueColor || 'primary'} size="xs" leading="sm" className={textClassName}>
@@ -173,7 +173,7 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
               <Text size="xs" color="secondary">
                 {item?.createTime}
               </Text>
-              <Text size="xs" color="secondary">
+              <Text size="xs" color="weak">
                 {t('pages.position.Floating P&L')}(USD)/{t('pages.position.Yield Rate')}
               </Text>
             </View>

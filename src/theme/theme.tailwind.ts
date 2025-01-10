@@ -92,6 +92,7 @@ export default {
   colors: {
     // =========== 颜色覆盖 ==============
     ...merge(
+      cloneDeep(themeColorsMobile), //h5主题变量
       // pc主题变量
       cloneDeep({
         // 品牌主色
@@ -103,8 +104,7 @@ export default {
           // light: lightTheme.colorBrandLight // 品牌色-衍生色3
         },
         ...themeColor
-      }),
-      cloneDeep(themeColorsMobile) //优先使用h5的去覆盖pc的
+      })
     )
   },
   // 响应式

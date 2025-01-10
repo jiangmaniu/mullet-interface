@@ -111,19 +111,21 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             background: theme === 'black' ? '#fbfbfb' : '#222222'
           }}
         /> */}
-        <Iconfont
-          name="quan"
-          width={36}
-          height={36}
-          color={theme}
-          className=" cursor-pointer rounded-lg"
-          hoverStyle={{
-            background: theme === 'black' ? '#fbfbfb' : '#222222'
-          }}
-          onClick={() => {
-            push('/account')
-          }}
-        />
+        <Tooltip title={<FormattedMessage id="mt.gerenzhongxin" />} placement="bottom">
+          <Iconfont
+            name="quan"
+            width={36}
+            height={36}
+            color={theme}
+            className=" cursor-pointer rounded-lg"
+            hoverStyle={{
+              background: theme === 'black' ? '#fbfbfb' : '#222222'
+            }}
+            onClick={() => {
+              push('/account')
+            }}
+          />
+        </Tooltip>
         {/* <Iconfont
           name="kefu"
           width={36}

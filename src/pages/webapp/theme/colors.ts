@@ -114,7 +114,8 @@ export const extendColors = {
 
 export const themeColorsMobile = {
   // 系统自带默认颜色
-  ...colors,
+  // 不要使用这里，否则覆盖PC的
+  // ...colors,
 
   // 黄色系
   yellow: {

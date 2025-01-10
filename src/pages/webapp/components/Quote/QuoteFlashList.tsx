@@ -4,10 +4,10 @@ import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useMemo, useState } from 'react'
 
+import { useEnv } from '@/context/envProvider'
 import { useLoading } from '@/context/loadingProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-
 import useSymbolQuoteSubscribe from '../../hooks/useSymbolQuoteSubscribe'
 import FlashList from '../Base/List/FlashList'
 import { Text } from '../Base/Text'
@@ -30,6 +30,7 @@ type IProps = {
 function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible, position }: IProps) {
   const { cn, theme } = useTheme()
   const { trade, ws } = useStores()
+  const { isPwaApp } = useEnv()
   const intl = useIntl()
   const symbolList = trade.symbolListAll
   const [visibleItems, setVisibleItems] = useState<string[]>([])

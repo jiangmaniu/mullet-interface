@@ -8,7 +8,7 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
-import { formatNum, formatStringWithEllipsis, hiddenCenterPartStr } from '@/utils'
+import { formatNum, formatStringWithEllipsis } from '@/utils'
 import { observer } from 'mobx-react'
 import { useMemo, useRef } from 'react'
 import MockDepositModal from './MockDepositModal'
@@ -35,7 +35,7 @@ function AccountHeader() {
         navigateTo('/app/account/info')
       }}
     >
-      <View bgColor="primary" className={cn('p-5 mx-3 rounded-xl flex flex-col gap-[18px] shadow')}>
+      <View bgColor="primary" className={cn('p-5 mx-3 rounded-xl flex flex-col gap-[18px] border')} borderColor="weak">
         <View className={cn('flex flex-row items-start justify-between')}>
           {/* 切換賬號 */}
           <View
@@ -63,7 +63,7 @@ function AccountHeader() {
               </View>
               <View className={cn('flex flex-row items-center gap-2')}>
                 <Text size="sm" weight="normal" color="primary">
-                  #{hiddenCenterPartStr(currentAccountInfo.id, 4)}
+                  #{currentAccountInfo.id}
                 </Text>
                 {/* 分割線 */}
                 <View

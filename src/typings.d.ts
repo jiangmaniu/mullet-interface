@@ -45,6 +45,7 @@ declare enum PLATFORM {
 
 declare namespace NodeJS {
   interface ProcessEnv {
+    NODE_ENV: 'development' | 'production'
     /**平台类型 */
     PLATFORM: keyof typeof PLATFORM
     /**环境类型 */

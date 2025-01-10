@@ -40,9 +40,9 @@ function Header() {
           </View>
         </View>
         <View className={cn('overflow-hidden gap-1 flex-1 flex  items-center justify-end')}>
-          <View className={cn('flex flex-row gap-x-3 justify-start ')}>
+          <View className={cn('flex flex-row gap-x-4 justify-start ')}>
             <View className={cn('items-start flex-shrink flex flex-col')}>
-              <View className={cn('flex items-center')}>
+              <View className={cn('flex items-start flex-col')}>
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.Open Price' })}
                 </Text>
@@ -50,7 +50,7 @@ function Header() {
                   {formatNum(res.open)}
                 </Text>
               </View>
-              <View className={cn('items-center flex mt-2')}>
+              <View className={cn('items-start flex-col flex mt-2')}>
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.24 high price' })}
                 </Text>
@@ -60,7 +60,7 @@ function Header() {
               </View>
             </View>
             <View className={cn('items-start flex-shrink flex flex-col')}>
-              <View className={cn('flex items-center')}>
+              <View className={cn('flex items-start flex-col')}>
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.Close Price' })}
                 </Text>
@@ -68,7 +68,7 @@ function Header() {
                   {formatNum(res.close)}
                 </Text>
               </View>
-              <View className={cn('items-center mt-2 flex')}>
+              <View className={cn('items-start flex-col mt-2 flex')}>
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.24 low price' })}
                 </Text>

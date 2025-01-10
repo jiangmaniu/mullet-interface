@@ -62,7 +62,7 @@ function MarginTypeModal(props: IProps, ref: ForwardedRef<MarginTypeModalRef>) {
   return (
     <SheetModal ref={bottomSheetModalRef} height={enableIsolated ? '45%' : '30%'} hiddenFooter>
       <View className={cn('w-full')}>
-        <View className={cn('mx-7 mb-6 flex flex-col items-center')}>
+        <View className={cn('mx-7 mb-6 flex flex-col items-start')}>
           <Text size="xl" color="primary" font="pf-bold">
             {intl.formatMessage({ id: 'pages.trade.Margin Mode Title' })}
           </Text>

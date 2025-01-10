@@ -576,6 +576,7 @@ function getAccountBalance() {
   // console.log('totalHandlingFees', totalHandlingFees)
   // console.log('totalOrderProfit', totalOrderProfit)
   // console.log('totalProfit', totalProfit)
+  // console.log('balance', balance)
 
   // 账户组设置“可用计算未实现盈亏”时
   // 新可用预付款=原来的可用预付款+账户的持仓盈亏

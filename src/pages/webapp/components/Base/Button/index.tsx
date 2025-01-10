@@ -156,8 +156,6 @@ const ButtonWrapper: React.FC<ButtonProps> = (
 
   const _loadingSize = size === 'xs' ? 16 : 20
 
-  console.log('height', height)
-
   return (
     <View
       onClick={handlePress}
