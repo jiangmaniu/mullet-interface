@@ -232,7 +232,7 @@ class WSStore {
             ),
             position: 'top',
             duration: 4000,
-            maskClassName: 'webapp-custom-message'
+            maskClassName: 'webapp-custom-message animate__animated animate__bounceInDown'
           })
         }
         // 刷新消息列表
