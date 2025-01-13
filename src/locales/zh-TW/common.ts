@@ -108,7 +108,8 @@ export default {
   'common.Pulling': '拉',
   'common.CanRelease': '松开',
   'common.Refreshing': '加载中...',
-  'common.Complete': '完成'
+  'common.Complete': '完成',
+  'common.unset': '未设置'
 
   // "======= 公共结束 ==========": "",
 }

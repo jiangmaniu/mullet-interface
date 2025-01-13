@@ -34,6 +34,8 @@
     }
   },
   "common": {
+    "unset": "未設定",
+    "dot": "。",
     "Language": "語言",
     "Display": "顯示",
     "Theme switch": "主題切換",
@@ -48,9 +50,9 @@
     "Green": "綠",
     "Red": "紅",
     "language": {
-      "zh-TW": "繁體中文",
-      "en-US": "英文",
-      "vi-VN": "越南语"
+      "zh-TW": "繁体中文",
+      "en-US": "English",
+      "vi-VN": "Tiếng Việt"
     },
     "Loading": "加載中",
     "Push Settings": "推送設置",
@@ -250,7 +252,7 @@
       "Server no data": "沒有找到交易商",
       "Customer NO": "客戶號",
       "Customer NO Title": "登錄{server}",
-      "Customer NO placeholder": "例如：abc@gmail.com",
+      "Customer NO placeholder": "請輸入客戶號",
       "Password": "密碼",
       "Password placeholder": "注意包括大小寫字母以及特殊符號",
       "Password min": "密碼長度至少為{count}位",
@@ -262,6 +264,7 @@
       "=========================": "============== TODO: new at 20241209 ==============",
       "Register new account": "開立新賬戶",
       "Residence Country": "居住國家/區域",
+      "Residence": "區域",
       "Residence Country is required": "居住國家/區域不能為空",
       "Email Address": "電子郵箱地址",
       "yourPasswordMustContain": "您的密碼必須包含：",
@@ -272,7 +275,7 @@
       "clickRegister": "点击“立即注册”，即表示您同意",
       "termsService": "服务条款",
       "and": "和",
-      "privacyPolicy": "隐私政策。",
+      "privacyPolicy": "隐私政策",
       "Email placeholder": "請輸入電子郵箱地址",
       "Sending": "發送中",
       "Verify email": "驗證郵箱",
@@ -300,8 +303,8 @@
       "Verification code is required": "驗證碼不能為空",
       "Verification code is not number": "驗證碼必須是數字",
       "To Login": "立即登錄",
-      "Register success": "註冊成功",
-      "Registering": "註冊中"
+      "Registering": "註冊中",
+      "Register success": "註冊成功"
     },
     "============== 登录相关 结束 ==============": "",
 
@@ -545,7 +548,7 @@
       "============== 完善賬戶資料 开始 ==============": "TODO: new at 20241210",
       "weirenzheng": "未認證",
       "yirenzheng": "已認證",
-      "qingwanshanziliao": "您好！請完善賬戶資料，以便進行首次入金",
+      "qingwanshanziliao": "您好！請更新您的信息以進行入金。",
       "wanshan": "完善",
       "shimingrenzheng": "實名認證",
       "shenfenrenzheng": "身份認證",
@@ -576,11 +579,13 @@
       "ningxianzaikeyirujinbingkaishijiaoyi": "您已成功完成實名認證，現在可以進行入金交易",
       "shenfenrenzhengshenheweitongguo": "實名認證審核未通過",
       "shenfenrenzhengshenheweitongguotips": "請重新上傳證件照片，或聯繫客服",
+      "qingchongxinjinxingrenzheng": "請重新進行認證，或聯繫客服",
       "chongxinrenzheng": "重新認證",
       "bangdingshouji": "綁定手機",
       "bangdingyouxiang": "綁定郵箱",
       "shoujihaoma": "手機號碼",
       "qingshurushoujihaoma": "請輸入手機號",
+      "qingshurushoujihaoma2": "輸入手機號",
       "yongyuweilaicaozuo": "用於驗證您的賬戶和未來的操作",
       "huoquyanzhengma": "驗證碼",
       "chakanduanxinhuoquyanzhengma": "驗證碼將以短信方法發送至{phone}，請注意查收。",
@@ -601,10 +606,20 @@
       "qingshangchuanzhengjian": "請上傳證件照片",
       "clickUploadIDCard": "點擊上傳證件照片",
       "shenhezhong": "審核中",
+      "kycrenzhengyiwancheng": "KYC認證已完成",
       "shenfenrenzhengshenhezhongnaixindengdai": "您的身份認證申請已成功提交，請耐心等待審核結果。",
       "fangxinguanbi": "您可以放心關閉頁面。",
       "shenhebutongguo": "審核不通過",
-      "============== 完善賬戶資料 结束 ==============": ""
+      "============== 完善賬戶資料 结束 ==============": "",
+      "Certified information": "認證信息",
+      "wurenzhengxinxi": "無認證信息",
+      "qianwangrenzheng": "前往認證",
+      "zhengjianleixing": "證件類型",
+      "youxiang": "郵箱",
+      "genggaishoujihaoma": "更新手機號碼",
+      "genggaiyoudianzi": "更新郵箱",
+      "firstname": "名字",
+      "lastname": "姓氏"
     },
 
     "============== 个人中心 结束 ==============": "",

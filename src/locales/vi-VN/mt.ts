@@ -484,6 +484,7 @@ export default {
   'mt.dianjishangchuantupian': 'Nhấn hoặc kéo ảnh vào đây',
 
   'mt.shenhezhong': 'Đang Xét Duyệt',
+  'mt.kycrenzhengyiwancheng': 'KYC xác minh hoàn tất',
   'mt.shenfenrenzhengshenhezhong': 'Xác Minh Danh Tính Đang Xét Duyệt',
   'mt.shenfenrenzhengshenhezhongtips':
     'Chúng tôi sẽ hoàn thành việc xét duyệt sớm nhất có thể. Vui lòng kiên nhẫn chờ đợi. Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận chăm sóc khách hàng.',

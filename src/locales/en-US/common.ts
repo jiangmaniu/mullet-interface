@@ -108,6 +108,7 @@ export default {
   'common.Pulling': 'Pull',
   'common.CanRelease': 'Release',
   'common.Refreshing': 'Refreshing...',
-  'common.Complete': 'Complete'
+  'common.Complete': 'Complete',
+  'common.unset': 'Unset'
   // "======= 公共结束 ==========": "",
 }

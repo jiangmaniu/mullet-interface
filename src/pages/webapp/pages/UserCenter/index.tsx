@@ -5,7 +5,6 @@ import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { onLogout } from '@/utils/navigator'
-import Icon from '@ant-design/icons/lib/components/Icon'
 import { useModel } from '@umijs/max'
 import Button from '../../components/Base/Button'
 import Header from '../../components/Base/Header'
@@ -71,17 +70,26 @@ const Kyc = observer(() => {
   const remark = kycAuthInfo?.remark as string
   const phone = userInfo?.phone
   return (
-    <View style={cn('mb-5')}>
-      <View style={cn('flex flex-row items-center justify-between bg-white rounded-lg p-3 gap-10 mt-2')}>
-        <View style={cn('flex flex-row items-center flex-shrink ')}>
-          <Icon name="caidan-zhanghu" size={32} color={theme.colors.textColor.weak} />
-          {kycStatus === 'TODO' ? (
-            <Text style={cn('text-sm')}>{t('pages.userCenter.shenfenrenzhengshenhezhongnaixindengdai')}</Text>
+    <View className={cn('mb-5')}>
+      <View
+        className={cn('flex flex-row items-center justify-between bg-white rounded-lg p-3 gap-10 mt-2')}
+        onClick={() => {
+          kycStatus === 'SUCCESS' && navigateTo('/app/user-center/certification-information')
+        }}
+      >
+        <View className={cn('flex flex-row items-center flex-shrink ')}>
+          <Iconfont name="caidan-zhanghu" size={32} color={theme.colors.textColor.weak} style={{ marginRight: 10 }} />
+          {kycStatus === 'SUCCESS' ? (
+            <Text className={cn('text-sm')}>{t('pages.userCenter.kycrenzhengyiwancheng')}</Text>
+          ) : kycStatus === 'TODO' ? (
+            <Text className={cn('text-sm')}>{t('pages.userCenter.shenfenrenzhengshenhezhongnaixindengdai')}</Text>
           ) : (
-            <Text style={cn('text-sm')}>{t('pages.userCenter.qingwanshanziliao')}</Text>
+            <Text className={cn('text-sm')}>{t('pages.userCenter.qingwanshanziliao')}</Text>
           )}
         </View>
-        {kycStatus === 'TODO' ? (
+        {kycStatus === 'SUCCESS' ? (
+          <Iconfont name="quancangxiala" size={16} color={theme.colors.textColor.secondary} />
+        ) : kycStatus === 'TODO' ? (
           <Button
             type="primary"
             style={{ minWidth: 60 }}
@@ -94,7 +102,8 @@ const Kyc = observer(() => {
           </Button>
         ) : (
           <Button
-            style={{ minWidth: 60, background: theme.colors.brand.DEFAULT }}
+            type="success"
+            style={{ minWidth: 60 }}
             size="small"
             onClick={() => {
               if (userInfo?.phone && userInfo?.email) {
@@ -112,10 +121,10 @@ const Kyc = observer(() => {
       </View>
       {kycStatus === 'DISALLOW' && (
         <View
-          style={cn(' border border-gray-300 rounded-lg px-3 py-1 gap-10 mt-2')}
+          className={cn(' border border-gray-300 rounded-lg px-3 py-1 gap-10 mt-2')}
           onClick={() => navigateTo('/app/user-center/verify-status')}
         >
-          <Text style={cn('text-sm !text-red')}>
+          <Text className={cn('text-sm !text-red')}>
             {t('pages.userCenter.shenhebutongguo')}: {remark}
           </Text>
         </View>
@@ -142,7 +151,7 @@ function UserCenter() {
   const renderList = (listData: IlistItemProps[], title?: string, margin = true) => {
     return (
       <View>
-        {title && <View style={cn('mb-3 text-weak text-sm')}>{title}</View>}
+        {title && <View className={cn('mb-3 text-weak text-sm')}>{title}</View>}
         {/* style={{ backgroundColor: '#fff', marginTop: margin ? 8 : 0 }}> */}
         {listData.map((item: IlistItemProps, index: number) => {
           return (
@@ -252,7 +261,7 @@ function UserCenter() {
       <View style={{ paddingInline: 14, flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: 60 }}>
         <Account />
 
-        {!currentUser?.isKycAuth && <Kyc />}
+        <Kyc />
 
         {renderList(preferenceSetting, t('pages.userCenter.Trading Preferences'))}
         <View style={{ height: 8 }} />
@@ -265,7 +274,7 @@ function UserCenter() {
         >
           <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <Iconfont name="geren-tuichuzhanghu" size={20} color={theme.colors.gray[500]} />
-            <Text style={cn('!text-gray-500')}> {t('common.operate.Logout')}</Text>
+            <Text className={cn('!text-gray-500')}> {t('common.operate.Logout')}</Text>
           </View>
         </Button>
       </View>

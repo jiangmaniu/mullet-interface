@@ -31,8 +31,19 @@ const renderList = (listData: Common.AreaCodeItem[], onPress: (item: Common.Area
   return (
     <View style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
       {listData.map((item: Common.AreaCodeItem, index: number) => {
-        const title = locale === 'zh-TW' ? item.nameCn : item.nameEn
+        // const title = locale === 'zh-TW' ? item.nameCn : item.nameEn
+        // const isActive = current.id === item.id
+        const title = locale === 'zh-TW' ? `${item.nameCn} ${item.areaCode} ` : `${item.nameEn} ${item.areaCode}`
+
         const isActive = current.id === item.id
+        // @ts-ignore
+        item.renderExtraElement = () => {
+          if (isActive) {
+            return <Iconfont name="danchuang-xuanzhong" size={26} />
+          }
+          return <></>
+        }
+
         return (
           <ListItem
             styles={{
@@ -46,9 +57,9 @@ const renderList = (listData: Common.AreaCodeItem[], onPress: (item: Common.Area
               }
             }}
             title={title}
-            renderExtraElement={() => {
-              return <Text>{item.areaCode}</Text>
-            }}
+            // renderExtraElement={() => {
+            //   return <Text>{item.areaCode}</Text>
+            // }}
             key={index}
             {...item}
             first={!index}

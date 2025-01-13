@@ -486,6 +486,8 @@ export default {
   'mt.dianjishangchuantupian': 'Click or drag images here',
 
   'mt.shenhezhong': 'Under Review',
+  'mt.kycrenzhengyiwancheng': 'KYC verification completed',
+
   'mt.shenfenrenzhengshenhezhong': 'Identity Verification Under Review',
   'mt.shenfenrenzhengshenhezhongtips':
     'We will complete the review as soon as possible. Please be patient. If you have any questions, please contact customer service.',

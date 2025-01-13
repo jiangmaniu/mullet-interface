@@ -34,6 +34,8 @@
     }
   },
   "common": {
+    "unset": "Not Set",
+    "dot": ".",
     "Language": "Language",
     "Display": "Display",
     "Theme switch": "Theme Switch",
@@ -48,9 +50,9 @@
     "Green": "Green",
     "Red": "Red",
     "language": {
-      "zh-TW": "Traditional Chinese",
+      "zh-TW": "繁体中文",
       "en-US": "English",
-      "vi-VN": "Vietnamese"
+      "vi-VN": "Tiếng Việt"
     },
     "Loading": "Loading",
     "Push Settings": "Notification settings Settings",
@@ -250,10 +252,10 @@
       "Server no data": "No broker found",
       "Customer NO": "Customer Number",
       "Customer NO Title": "Login {server}",
-      "Customer NO placeholder": "Example: abc@gmail.com",
+      "Customer NO placeholder": "Please enter customer number",
       "Password": "Password",
-      "Password placeholder": "Include uppercase, lowercase letters, and special characters",
       "Password min": "Password must be at least {count} characters",
+      "Password placeholder": "Use mixed-case letters and special characters",
       "Password lowercase": "Password must include lowercase letters",
       "Password uppercase": "Password must include uppercase letters",
       "Password number": "Password must include numbers",
@@ -262,6 +264,7 @@
       "=========================": "============== TODO: new at 20241209 ==============",
       "Register new account": "Register new account",
       "Residence Country": "Residence Country/Region",
+      "Residence": "Region",
       "Residence Country is required": "Residence Country/Region cannot be empty",
       "Email Address": "Email Address",
       "yourPasswordMustContain": "Your password must contain:",
@@ -272,7 +275,7 @@
       "clickRegister": "Click “Register Now”, which means you agree to",
       "termsService": "Terms of Service",
       "and": "and",
-      "privacyPolicy": "Privacy Policy.",
+      "privacyPolicy": "Privacy Policy",
       "Email placeholder": "Please enter email address",
       "Sending": "Sending",
       "Verify email": "Verify email",
@@ -288,19 +291,19 @@
       "Phone is required": "Phone number cannot be empty",
       "Email is required": "Email cannot be empty",
       "Forgot password": "Forgot password?",
+      "Reset password": "Reset password",
+      "Verification Code": "Verification Code",
+      "Modify Success": "Modify Success",
       "Use Phone": "Use Phone",
       "Use Email": "Use Email",
-      "Reset password": "Reset password",
-      "Verification Code": "Get Verification Code",
-      "Modify Success": "Modify Success",
+      "Get Verification Code": "Get Verification Code",
       "Password Reset Success": "Password Reset Success",
       "qingjizhumima": "Please remember the new password, and do not disclose it",
       "Email or Phone is required": "Email or Phone cannot be empty",
       "Verification code is required": "Verification code cannot be empty",
       "Verification code is not number": "Verification code must be a number",
       "To Login": "Login Now",
-      "Register success": "Register Success",
-      "Registering": "Registering"
+      "Register success": "Register Success"
     },
     "============== Login Related End ==============": "",
 
@@ -544,7 +547,7 @@
       "============== 完善賬戶資料 开始 ==============": "TODO: new at 20241210",
       "weirenzheng": "Unverified",
       "yirenzheng": "Verified",
-      "qingwanshanziliao": "Complete your account info to deposit.",
+      "qingwanshanziliao": "Hello! Update your info to deposit.",
       "wanshan": "Complete",
       "shimingrenzheng": "Identity Verification",
       "shenfenrenzheng": "Identity Verification",
@@ -575,11 +578,13 @@
       "ningxianzaikeyirujinbingkaishijiaoyi": "You have successfully completed identity verification, you can now proceed with deposit transactions",
       "shenfenrenzhengshenheweitongguo": "Identity verification failed",
       "shenfenrenzhengshenheweitongguotips": "Please re-upload the document photos, or contact customer service",
+      "qingchongxinjinxingrenzheng": "Please re-verify, or contact customer service",
       "chongxinrenzheng": "Re-verify",
       "bangdingshouji": "Bind Phone",
       "bangdingyouxiang": "Bind Email",
       "shoujihaoma": "Phone Number",
-      "qingshurushoujihaoma": "Phone number",
+      "qingshurushoujihaoma": "Please enter your phone number",
+      "qingshurushoujihaoma2": "Enter phone",
       "yongyuweilaicaozuo": "Used to verify your account and future operations",
       "huoquyanzhengma": "Get Code",
       "chakanduanxinhuoquyanzhengma": "The verification code will be sent to the phone number {phone} by SMS, please check.",
@@ -600,10 +605,20 @@
       "qingshangchuanzhengjian": "Please upload document photos",
       "clickUploadIDCard": "Click to upload document photos",
       "shenhezhong": "Pending",
-      "shenfenrenzhengshenhezhongnaixindengdai": "Identity verification submitted. Await results.",
+      "kycrenzhengyiwancheng": "KYC verification completed",
+      "shenfenrenzhengshenhezhongnaixindengdai": "Your identity verification has been submitted. Please wait for the results.",
       "fangxinguanbi": "You can rest assured that the page can be closed.",
       "shenhebutongguo": "Verification failed",
-      "============== 完善賬戶資料 结束 ==============": ""
+      "============== 完善賬戶資料 结束 ==============": "",
+      "Certified information": "Certified Information",
+      "wurenzhengxinxi": "No certification information",
+      "qianwangrenzheng": "Go to verify",
+      "zhengjianleixing": "Document Type",
+      "youxiang": "Email",
+      "genggaishoujihaoma": "Update Phone Number",
+      "genggaiyoudianzi": "Update Email",
+      "firstname": "Name",
+      "lastname": "Last Name"
     },
 
     "============== User Center End ==============": "",
@@ -666,14 +681,5 @@
   "Common": {
     "From": "From",
     "To": "To"
-  },
-  "addScreen": {
-    "headerTitle": "Add to Home Screen",
-    "install": "Instal",
-    "iphoneChromeTips1": "Click share button on the right corner",
-    "iphoneChromeTips2": "Click 'Add to Home Screen' in the drop-down list",
-    "iphoneSafariTips1": "Click share button on the middle bottom",
-    "androidChromeTips1": "Click 'More' on the right corner ",
-    "androidChromeTips2": "Click 'Add to Home Screen' in the drop-down list"
   }
 }

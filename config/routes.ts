@@ -357,6 +357,12 @@ export default [
         component: './webapp/pages/UserCenter/Kyc/VerifyDoc',
         access: 'canAdmin' // 权限配置
       },
+      // 个人中心-认证信息
+      {
+        path: '/:lng/app/user-center/certification-information',
+        component: './webapp/pages/UserCenter/Certification',
+        access: 'canAdmin' // 权限配置
+      },
       {
         path: '/:lng/app/test',
         component: './webapp/pages/Test'

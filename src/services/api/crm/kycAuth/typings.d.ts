@@ -2,6 +2,10 @@ declare namespace KycAuth {
   // KYC身份认证-分页
   type ListItem = {
     /**
+     * 国家-简称
+     */
+    country?: string
+    /**
      * 审核时间
      */
     auditTime?: string

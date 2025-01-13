@@ -478,6 +478,7 @@ export default {
   'mt.dianjishangchuantupian': '点击或拖动图片到此处',
 
   'mt.shenhezhong': '审核中',
+  'mt.kycrenzhengyiwancheng': 'KYC认证完成',
   'mt.shenfenrenzhengshenhezhong': '身份认证审核中',
   'mt.shenfenrenzhengshenhezhongtips': '我們會盡快完成審核，請您耐心等待如有疑問，請聯繋客服',
 

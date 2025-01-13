@@ -35,7 +35,7 @@ const Account = () => {
               <Text size="lg" style={cn('font-semibold')}>
                 {currentUser?.userInfo?.account}
               </Text>
-              <View
+              {/* <View
                 onClick={(e) => {
                   e.stopPropagation()
                   e.preventDefault()
@@ -46,7 +46,7 @@ const Account = () => {
                 <Text style={cn('text-xs ', currentUser?.isKycAuth ? '!text-green' : '!text-red')}>
                   {currentUser?.isKycAuth ? t('pages.userCenter.yirenzheng') : t('pages.userCenter.weirenzheng')}
                 </Text>
-              </View>
+              </View> */}
             </View>
             {/* @ts-ignore */}
             <Text>{currentUser?.client_id}</Text>

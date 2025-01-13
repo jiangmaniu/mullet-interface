@@ -49,8 +49,8 @@ const AddPwaAppModal = () => {
 
   const init = async () => {
     // let isFirst = STORAGE_GET_SHOW_PWA_ADD_MODAL() === true ? false : true
-    // let showModal = isPopularBrowser && process.env.NODE_ENV === 'production' // 每次刷新页面都需要弹一次
-    let showModal = isPopularBrowser // 每次刷新页面都需要弹一次
+    let showModal = isPopularBrowser && process.env.NODE_ENV === 'production' // 每次刷新页面都需要弹一次
+    // let showModal = isPopularBrowser // 每次刷新页面都需要弹一次
     let type = 'iphoneChrome'
     if (isIOS) {
       type = isSafari ? 'iphoneSafari' : 'iphoneChrome'

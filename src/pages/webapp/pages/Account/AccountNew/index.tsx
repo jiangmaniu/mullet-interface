@@ -82,11 +82,24 @@ function AccountNew() {
 
   const [selectedItem, setSelectedItem] = useState<AccountGroup.AccountGroupItem | null>(null)
 
+  const encoder = new TextEncoder()
   const schema = z.object({
     name: z
       .string()
       .min(1, { message: t('pages.account.Account name cannot be empty') })
-      .max(8, { message: t('pages.account.Account name cannot be longer than 8 characters') })
+      .refine(
+        (value) => {
+          const isChinese = /[\u4e00-\u9fa5]/
+          if (isChinese.test(value)) {
+            // 中文字符限制为 8 个字符，即 8 * 3 字节
+            return encoder.encode(value).length <= 24 // 8 个中文字符大约是 24 字节
+          } else {
+            // 英文字符限制为 16 个字符，即 16 字节
+            return encoder.encode(value).length <= 16 // 16 个英文字符约是 16 字节
+          }
+        },
+        { message: t('pages.account.Account name cannot be longer than 8 characters') }
+      )
   })
 
   const {
@@ -238,7 +251,7 @@ function AccountNew() {
         onConfirm={handleSubmit(onSubmit)}
         confirmButtonProps={{ icon: 'anniu-gengduo', iconDirection: 'right', iconProps: { color: theme.colors.textColor.reverse } }}
       >
-        <View className={cn('flex-1 w-full px-[14px] flex flex-col mt-4 gap-4 ')}>
+        <View className={cn('flex-1 w-full px-[14px] flex flex-col mt-4 gap-4 pb-2.5 ')}>
           {/* 當前選中 */}
           <View
             borderColor="weak"

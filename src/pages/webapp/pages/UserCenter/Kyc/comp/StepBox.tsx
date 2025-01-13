@@ -20,7 +20,7 @@ const StepBox = (props: IProps) => {
       icon: (step: number) => (
         <View
           className={cn('w-[42px] h-[42px] rounded-full flex items-center justify-center border border-solid border-gray-300', {
-            'bg-brand text-reverse': step >= 1
+            'bg-black text-reverse': step >= 1
           })}
         >
           <Iconfont name="user1" size={20} color={step >= 1 ? theme.colors.textColor.reverse : theme.colors.textColor.weak} />
@@ -35,7 +35,7 @@ const StepBox = (props: IProps) => {
       icon: (step: number) => (
         <View
           className={cn('w-[42px] h-[42px] rounded-full flex items-center justify-center border border-solid border-gray-300', {
-            'bg-brand text-reverse': step >= 2
+            'bg-black text-reverse': step >= 2
           })}
         >
           <Iconfont name="idcard" size={20} color={step >= 2 ? theme.colors.textColor.reverse : theme.colors.textColor.weak} />
@@ -79,7 +79,7 @@ const StepBox = (props: IProps) => {
                 height: 4,
                 marginTop: 20,
                 borderRadius: 2,
-                backgroundColor: step > item.step ? theme.colors.textColor.brand : '#d1d5db'
+                backgroundColor: step > item.step ? theme.colors.textColor.primary : '#d1d5db'
               }}
             />
           )

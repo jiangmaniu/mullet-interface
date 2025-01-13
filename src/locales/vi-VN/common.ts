@@ -108,6 +108,7 @@ export default {
   'common.Pulling': 'Kéo',
   'common.CanRelease': 'Thả',
   'common.Refreshing': 'Đang làm mới...',
-  'common.Complete': 'Hoàn thành'
+  'common.Complete': 'Hoàn thành',
+  'common.unset': 'Không được đặt'
   // "======= 公共结束 ==========": "",
 }

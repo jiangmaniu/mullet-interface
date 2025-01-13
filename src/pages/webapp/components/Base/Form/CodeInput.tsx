@@ -2,16 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { ClassValue } from 'clsx'
 import { View } from '../View'
 import InputNumber from './InputNumber'
 
 interface IProps {
   value: any
   onChange: (value: any) => void
+  inputWrapperStyle?: ClassValue
+  height?: number
 }
 
 const CodeInput = (props: IProps) => {
-  const { value, onChange } = props
+  const { value, onChange, inputWrapperStyle, height = 48 } = props
   const i18n = useI18n()
   const { cn } = useTheme()
   const [isPhoneFocus, setIsPhoneFocus] = useState(false)
@@ -46,7 +49,8 @@ const CodeInput = (props: IProps) => {
       <View className={cn('flex flex-row items-start justify-start gap-1.5')}>
         <InputNumber
           ref={inputRef1}
-          className={' text-[22px] leading-[28px] p-0 h-[42px] w-[42px] '}
+          className={cn(' text-[22px] leading-[28px] p-0 h-[48px] w-[48px]', inputWrapperStyle)}
+          height={height}
           maxLength={1}
           controls={false}
           autoSelectAll={true}
@@ -65,7 +69,8 @@ const CodeInput = (props: IProps) => {
         />
         <InputNumber
           ref={inputRef2}
-          className={' text-[22px] leading-[28px] p-0 h-[42px] w-[42px] '}
+          className={cn(' text-[22px] leading-[28px] p-0 h-[48px] w-[48px]', inputWrapperStyle)}
+          height={height}
           maxLength={1}
           controls={false}
           autoSelectAll={true}
@@ -87,7 +92,8 @@ const CodeInput = (props: IProps) => {
         />
         <InputNumber
           ref={inputRef3}
-          className={' text-[22px] leading-[28px] p-0 h-[42px] w-[42px] '}
+          className={cn(' text-[22px] leading-[28px] p-0 h-[48px] w-[48px]', inputWrapperStyle)}
+          height={height}
           maxLength={1}
           controls={false}
           autoSelectAll={true}
@@ -109,7 +115,8 @@ const CodeInput = (props: IProps) => {
         />
         <InputNumber
           ref={inputRef4}
-          className={' text-[22px] leading-[28px] p-0 h-[42px] w-[42px] '}
+          className={cn(' text-[22px] leading-[28px] p-0 h-[48px] w-[48px]', inputWrapperStyle)}
+          height={height}
           maxLength={1}
           controls={false}
           autoSelectAll={true}
@@ -131,7 +138,8 @@ const CodeInput = (props: IProps) => {
         />
         <InputNumber
           ref={inputRef5}
-          className={' text-[22px] leading-[28px] p-0 h-[42px] w-[42px] '}
+          className={cn(' text-[22px] leading-[28px] p-0 h-[48px] w-[48px]', inputWrapperStyle)}
+          height={height}
           maxLength={1}
           controls={false}
           autoSelectAll={true}
@@ -153,7 +161,8 @@ const CodeInput = (props: IProps) => {
         />
         <InputNumber
           ref={inputRef6}
-          className={' text-[22px] leading-[28px] p-0 h-[42px] w-[42px] '}
+          className={cn(' text-[22px] leading-[28px] p-0 h-[48px] w-[48px]', inputWrapperStyle)}
+          height={height}
           maxLength={1}
           controls={false}
           autoSelectAll={true}
