@@ -26,6 +26,8 @@ function LngSelectModal({ title }: IProps, ref: ForwardedRef<ModalRef>) {
     }
   }))
 
+  // TODO: LanuageTransformMap 改成 languages = getAllLocales()
+
   const currentList = Object.keys(LanuageTransformMap).map((item) => {
     return {
       title: i18n.t(`common.language.${item}`),
