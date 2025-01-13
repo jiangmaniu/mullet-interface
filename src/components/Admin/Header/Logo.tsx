@@ -25,7 +25,7 @@ export default function Logo({
     //   className="!h-[48px] w-[171px]"
     // />
     <span
-      className="!h-[48px] w-[171px] cursor-default"
+      className="!h-[auto] w-[171px] cursor-default"
       onClick={(e) => {
         e.stopPropagation()
         // if (STORAGE_GET_TOKEN()) {
