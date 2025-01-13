@@ -166,12 +166,12 @@ function Message({ theme }: IProps) {
             name="xiaoxi"
             width={26}
             color={theme}
-            className="relative top-[3px] cursor-pointer rounded-lg"
+            className="cursor-pointer rounded-lg"
             hoverStyle={{
               background: theme === 'black' ? '#fbfbfb' : '#222222'
             }}
             height={26}
-            style={{ position: 'relative', top: 6 }}
+            style={{ position: 'relative', top: 4 }}
           />
         </Badge>
       </div>
