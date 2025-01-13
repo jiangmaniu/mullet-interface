@@ -1,3 +1,4 @@
+import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 import type { ForwardedRef } from 'react'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
@@ -19,7 +20,7 @@ const Item = (item: IlistItemProps) => {
   const { theme } = useTheme()
 
   const renderItem = {
-    renderExtraElement: () => (item.active ? <img style={{ width: 22, height: 22 }} src={'/img/webapp/icon/radio_b.png'} /> : <View />),
+    renderExtraElement: () => (item.active ? <Iconfont name="danchuang-xuanzhong" size={26} /> : <View />),
     ...item
   }
 
@@ -28,8 +29,12 @@ const Item = (item: IlistItemProps) => {
       {...renderItem}
       styles={{
         container: {
-          borderColor: theme.colors.borderColor.weak,
-          borderWidth: 1
+          borderWidth: 1,
+          borderColor: item.active ? theme.colors.textColor.primary : theme.colors.borderColor.weak,
+          borderRadius: 10
+        },
+        iconStyle: {
+          display: 'none'
         }
       }}
     />

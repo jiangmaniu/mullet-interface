@@ -236,21 +236,31 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   return (
     <View className={cn('flex-1 flex flex-col justify-between ')}>
       <View className={cn('flex flex-col gap-5 mb-5')}>
-        <TextField
-          value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
-          label={t('pages.login.Residence Country')}
-          height={50}
-          autoCapitalize="none"
-          // autoCorrect={false}
-          // keyboardType="email-address"
+        <View
           onClick={() => {
             selectCountryModalRef.current?.show()
           }}
-          // onSubmitEditing={() => authPasswordInput.current?.focus()}
-          RightAccessory={() => (
-            <Icon name="qiehuanzhanghu-xiala" size={20} style={{ marginRight: 16 }} onClick={() => selectCountryModalRef.current?.show()} />
-          )}
-        />
+        >
+          <TextField
+            value={areaCodeItem ? `(+${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
+            label={t('pages.login.Residence Country')}
+            height={50}
+            readOnly
+            autoCapitalize="none"
+            // autoCorrect={false}
+            // keyboardType="email-address"
+            // onSubmitEditing={() => authPasswordInput.current?.focus()}
+            RightAccessory={() => (
+              <Icon
+                name="qiehuanzhanghu-xiala"
+                size={20}
+                style={{ marginRight: 16 }}
+                onClick={() => selectCountryModalRef.current?.show()}
+              />
+            )}
+          />
+        </View>
+
         {errors.areaCodeItem && <Text color="red">{errors.areaCodeItem.message}</Text>}
         {registerWay === 'EMAIL' && (
           <TextField

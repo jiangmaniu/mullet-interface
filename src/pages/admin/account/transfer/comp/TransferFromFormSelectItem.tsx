@@ -106,10 +106,10 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
         value: item.id,
         label: (
           <div className="flex justify-between w-full">
-            {item?.synopsis?.abbr && (
+            {item?.synopsis?.tag && (
               <div className="flex px-1">
                 <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">
-                  {item?.synopsis?.abbr}
+                  {item?.synopsis?.tag}
                 </div>
               </div>
             )}

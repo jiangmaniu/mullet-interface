@@ -127,12 +127,12 @@ const AddPwaAppModal = () => {
                 <FormattedMessage id="addScreen.install" /> {ENV.name}
               </span>
               <span
-                className={cn('absolute left-[80px] top-[90px] text-primary text-sm', {
+                className={cn('absolute left-[90px] top-[90px] text-primary text-sm', {
                   '!top-[65px]': addSreenData.type === 'androidChrome',
                   '!top-[90px]': addSreenData.type === 'iphoneChrome'
                 })}
               >
-                {location.origin}
+                {location.host}
               </span>
             </div>
             <p className="mt-5">

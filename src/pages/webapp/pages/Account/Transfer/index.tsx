@@ -211,10 +211,10 @@ function TransferScreen() {
               className={cn('flex flex-row items-center justify-between flex-1 w-full')}
             >
               <View className={cn('flex flex-row items-center gap-2')}>
-                {from?.synopsis?.abbr && (
+                {from?.synopsis?.tag && (
                   <View className={cn(' flex h-5 min-w-[20px] items-center px-1 justify-center rounded bg-black text-xs font-normal')}>
                     <Text color="white" size="xs">
-                      {from.synopsis?.abbr}
+                      {from.synopsis?.tag}
                     </Text>
                   </View>
                 )}
@@ -270,7 +270,7 @@ function TransferScreen() {
         <TextField
           placeholder={t('pages.position.Please enter the amount')}
           height={52}
-          className={cn('font-dingpro-medium')}
+          className={cn('font-medium')}
           fontSize={amount ? 22 : 14}
           RightAccessory={() => (
             <Text size="sm" color="primary" weight="medium" className={cn('px-[14px]')}>

@@ -44,7 +44,7 @@ export default function Tabs({
   tabPaddingBottom = 10,
   fixedActiveLineWidth = 30,
   titleFontSize = 16,
-  activeLineHeight = 4,
+  activeLineHeight = 3,
   contentPadding = 0,
   activeLineBorderRadius = `100px 100px 0px 0px`,
   activeLineColor,

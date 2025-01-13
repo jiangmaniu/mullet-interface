@@ -143,7 +143,8 @@ export default function WelcomeScreen() {
   const [disabled, setDisabled] = useState(false)
 
   const footers = {
-    login: <Footer setSection={setSection} />,
+    // stellux没有注册
+    login: process.env.PLATFORM === 'lynfoo' && <Footer setSection={setSection} />,
     forgotPassword: <FooterForgotPassword handleSubmit={handleSubmit} disabled={disabled} />,
     resetPassword: <FooterResetPassword handleSubmit={handleSubmit} disabled={disabled} />
   }

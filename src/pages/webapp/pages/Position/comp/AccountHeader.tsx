@@ -35,7 +35,7 @@ function AccountHeader() {
         navigateTo('/app/account/info')
       }}
     >
-      <View bgColor="primary" className={cn('p-5 mx-3 rounded-xl flex flex-col gap-[18px] border')} borderColor="weak">
+      <View bgColor="primary" className={cn('px-4 py-[18px] mx-[14px] rounded-xl flex flex-col gap-[18px] border')} borderColor="weak">
         <View className={cn('flex flex-row items-start justify-between')}>
           {/* 切換賬號 */}
           <View
@@ -61,7 +61,7 @@ function AccountHeader() {
                 </Text>
                 <Iconfont name="qiehuanzhanghu-xiala" size={24} />
               </View>
-              <View className={cn('flex flex-row items-center gap-2')}>
+              <View className={cn('flex flex-row items-center gap-2 pt-[2px]')}>
                 <Text size="sm" weight="normal" color="primary">
                   #{currentAccountInfo.id}
                 </Text>

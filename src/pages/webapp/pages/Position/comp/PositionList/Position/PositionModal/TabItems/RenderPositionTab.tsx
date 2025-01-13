@@ -179,7 +179,7 @@ const RenderPositionTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTab
             </View>
           </View>
         }
-        height={42}
+        height={50}
         value={count}
         onChange={(value) => {
           if (Number(value) > orderVolume) return

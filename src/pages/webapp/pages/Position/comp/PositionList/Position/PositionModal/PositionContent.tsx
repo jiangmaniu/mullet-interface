@@ -39,7 +39,7 @@ const ListItem = ({
 }) => {
   const { cn, theme } = useTheme()
 
-  const textClassName = cn(align === 'end' && 'text-right', align === 'center' && 'text-center')
+  const textClassName = cn('pb-1', align === 'end' && 'text-right', align === 'center' && 'text-center')
 
   return (
     <View className={cn('mb-3 flex-1 flex flex-col', align === 'end' && 'items-end', align === 'center' && 'items-center')}>
@@ -67,7 +67,7 @@ export const ModalProfit = ({ profit, precision }: { profit: number | undefined;
 // 收益率组件
 export const ModalYieldRate = ({ yieldRate, precision }: { yieldRate: string; precision?: number }) => {
   return (
-    <Text size="xs" weight="medium" font="dingpro-medium" color={Number(yieldRate) > 0 ? 'green' : 'red'}>
+    <Text size="xs" weight="medium" font="dingpro-medium" color={parseInt(yieldRate) > 0 ? 'green' : 'red'}>
       {yieldRate}
     </Text>
   )
