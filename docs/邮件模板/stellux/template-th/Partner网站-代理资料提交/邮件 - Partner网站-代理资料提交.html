@@ -6,226 +6,235 @@
     <title>Stellux</title>
     <style>
       body {
-          background-color: #fff;
+        background-color: #fff;
       }
       .container {
-          display: flex;
-          /* margin-top: -120px; */
+        display: flex;
+        /* margin-top: -120px; */
       }
       .container-wrapper {
         width: 375px;
         margin: 0 auto;
+        overflow: hidden;
+        border: 1px solid #ededed;
         border-radius: 16px;
-        border: 1px solid #EDEDED;
-        /* padding-bottom: 18px; */
-		overflow: hidden;
+        border-radius: 16px;
       }
       /* 兼容pc */
       @media (min-width: 1200px) {
-          .container {
-            width: 1300px;
-            margin-top: 0;
-          }
-          .container-wrapper {
-            width: 500px !important;
-          }
-          .container-wrapper .header-img{
-            width: 500px !important;
-            height: 183px !important;
-            background-image: url(https://client.stellux.io/platform/stellux/img/email-template/temp-notice-pc.png);
-          }
+        .container {
+          width: 1300px;
+          margin-top: 0;
+        }
+        .container-wrapper {
+          width: 500px !important;
+        }
+        .container-wrapper .header-img {
+          width: 500px !important;
+          height: 183px !important;
+          background-image: url(https://client.stellux.io/platform/stellux/img/email-template/temp-notice-pc.png);
+        }
       }
-	  .container-wrapper .header-img-bg {
-		  position: relative;
-		  height: 162px;
-		  background: linear-gradient(180deg, #FFECC1 -4%, #FFFFFF 90%);
-	  }
-	  .container-wrapper .header-img-bg .img-logo {
-		  position: absolute;
-		  left: 29px;
-		  top: 23px;
-	  }
-	  .container-wrapper .header-img-bg .img-email {
-		  position: absolute;
-		  right: 32px;
-		  bottom: -20px;
-	  }
-	  
+      .container-wrapper .header-img-bg {
+        position: relative;
+        height: 162px;
+        background: linear-gradient(180deg, #dadaff -4%, #ffffff 90%);
+      }
+      .container-wrapper .header-img-bg .img-logo {
+        position: absolute;
+        top: 23px;
+        left: 29px;
+      }
+      .container-wrapper .header-img-bg .img-email {
+        position: absolute;
+        right: 32px;
+        bottom: -20px;
+      }
+
       .container-wrapper .header-img {
         width: 375px;
         height: 136px;
-        /* background: linear-gradient(180deg, #FFECC1 -4%, #FFFFFF 90%); */
+        /* background: linear-gradient(180deg, #DADAFF -4%, #FFFFFF 90%); */
         background-image: url(https://uc.cd-ex.com/img/temp-notice-h5.png);
         background-repeat: no-repeat;
         background-size: cover;
       }
       .container-wrapper .content {
-          padding-left: 23px;
-          padding-right: 15px;
-		  color: #222222;
-		  font-variation-settings: "opsz" auto;
-		  font-feature-settings: "kern" on;
-		  font-family: Adamina;
-		  font-size: 16px;
-		  padding-bottom: 5px;
+        padding-right: 15px;
+        padding-bottom: 5px;
+        padding-left: 23px;
+        color: #222222;
+        font-size: 16px;
+        font-family: Adamina;
+        font-variation-settings: 'opsz' auto;
+        font-feature-settings: 'kern' on;
       }
       .container-wrapper .content .line {
-          width: 30px;
-          height: 4px;
-          margin-top: 12px;
-          margin-bottom: 14px;
-          background: #c49002;
+        width: 30px;
+        height: 4px;
+        margin-top: 12px;
+        margin-bottom: 14px;
+        background: #222222;
       }
       .container-wrapper .content .title1 {
-          width: 310px;
-          color: #222222;
-          font-size: 22px;
-          font-weight: 600;
+        width: 310px;
+        color: #222222;
+        font-weight: 600;
+        font-size: 22px;
       }
       .container-wrapper .content .title2 {
-          padding-bottom: 3px;
-          color: #222222;
-          font-weight: 400;
-          font-size: 14px;
-          line-height: 24px;
+        padding-bottom: 3px;
+        color: #222222;
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 24px;
       }
-	  .container-wrapper .content .btn {
-		  width: 100%;
-		  height: 48px;
-		  display: flex;
-		  justify-content: center;
-		  align-items: center;
-		  background-color: #FCD535;
-		  border-radius: 8px;
-		  font-size: 18px;
-		  font-family: PingFangSC, PingFang SC;
-		  font-weight: 500;
-		  margin-top: 24px;
-		  cursor: pointer;
-	  }
-	  .container-wrapper .content .btn:hover{
-		  transition: all 0.3s ease;
-		  background: #f3d146;
-	  }
-	  .container-wrapper .content a {
-		  color: #222222;
-	  }
-	  .container-wrapper .tips {
-		  font-size: 12px;
-		  color: #B1B1B1;
-		  text-align: center;
-		  margin-top: 16px;
-		  padding: 20px 20px 26px;;
-		  background-color: #F6F6F6;
-	  }
-	  .container-wrapper .tips p {
-		  
-		  line-height: 16px;
-		  margin: 0;
-	  }
-	  .container-wrapper .tips .mt6 {
-		  margin-top: 6px;
-	  }
-	  .container-wrapper .tips .go-back {
-		  margin-top: 10px;
-	  }
-	  .container-wrapper .tips .go-back a {
-		  display: inline-block;
-	  }
-	  .container-wrapper .tips .go-back img{
-		  padding: 0 3px;
-		  cursor: pointer;
-	  }
+      .container-wrapper .content .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 48px;
+        margin-top: 24px;
+        font-weight: 500;
+        font-size: 18px;
+        font-family: PingFangSC, PingFang SC;
+        background-color: #fcd535;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .container-wrapper .content .btn:hover {
+        background: #f3d146;
+        transition: all 0.3s ease;
+      }
+      .container-wrapper .content a {
+        color: #222222;
+      }
+      .container-wrapper .tips {
+        margin-top: 16px;
+        padding: 20px 20px 26px;
+        color: #b1b1b1;
+        font-size: 12px;
+        text-align: center;
+        background-color: #f6f6f6;
+      }
+      .container-wrapper .tips p {
+        margin: 0;
+        line-height: 16px;
+      }
+      .container-wrapper .tips .mt6 {
+        margin-top: 6px;
+      }
+      .container-wrapper .tips .go-back {
+        margin-top: 10px;
+      }
+      .container-wrapper .tips .go-back a {
+        display: inline-block;
+      }
+      .container-wrapper .tips .go-back img {
+        padding: 0 3px;
+        cursor: pointer;
+      }
       .container-wrapper .content .end-text {
-          color: #222222;
-          font-weight: 500;
-          font-size: 14px;
-          margin-top: 28px;
+        margin-top: 28px;
+        color: #222222;
+        font-weight: 500;
+        font-size: 14px;
       }
-	  .container-wrapper .tips .link-menu {
-		  margin-top: 10px;
-	  }
-	  .container-wrapper .tips .link-menu a{
-		  font-size: 12px;
-		  color: #222222;
-		  padding: 0 2px;
-	  }
-	  @media only screen and (max-width: 740px) {
-		.container-wrapper {
-			width: 99%;
-		}
-		.container-wrapper .header-img-bg .img-logo {
-			left: 12px;
-		}
-		.container-wrapper .header-img-bg .img-email {
-			right: 0px;
-		}
-		.container-wrapper .content {
-			padding-left: 12px;
-			padding-right: 12px;
-		}
-		.container-wrapper .content .title1 {
-			width: 56%;
-		}
-	  }
-	  p {
-		  margin: 20px 0;
-	  }
-	  .mt6 {
-		  margin-top: 6px;
-	  }
-	  .mt-38 {
-		  margin-top: 32px;
-	  }
-  </style>
+      .container-wrapper .tips .link-menu {
+        margin-top: 10px;
+      }
+      .container-wrapper .tips .link-menu a {
+        padding: 0 2px;
+        color: #222222;
+        font-size: 12px;
+      }
+      @media only screen and (max-width: 740px) {
+        .container-wrapper {
+          width: 99%;
+        }
+        .container-wrapper .header-img-bg .img-logo {
+          left: 12px;
+        }
+        .container-wrapper .header-img-bg .img-email {
+          right: 0px;
+        }
+        .container-wrapper .content {
+          padding-right: 12px;
+          padding-left: 12px;
+        }
+        .container-wrapper .content .title1 {
+          width: 56%;
+        }
+      }
+      p {
+        margin: 20px 0;
+      }
+      .mt6 {
+        margin-top: 6px;
+      }
+      .mt-38 {
+        margin-top: 32px;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <div class="container-wrapper">
-          <div class="header-img-bg">
-			  <img class="img-logo" width="131px" height="50px" src="https://client.stellux.io/platform/stellux/img/email-template/logo@2x.png"/>
-			  <img class="img-email" width="152px" height="152px" src="https://client.stellux.io/img/email-template/youjian.png"/>
+        <div class="header-img-bg">
+          <img
+            class="img-logo"
+            width="131px"
+            height="50px"
+            src="https://client.stellux.io/platform/stellux/img/email-template/logo@2x.png"
+          />
+          <img class="img-email" width="152px" height="152px" src="https://client.stellux.io/img/email-template/youjian.png" />
+        </div>
+        <div class="content">
+          <p>เรียนคุณลูกค้า</p>
+          <p>ขอขอบคุณที่สนใจโปรแกรม IB ของเรา</p>
+          <p>เราได้รับใบสมัครของคุณแล้ว และทีมงานของเรากำลังตรวจสอบอยู่ จะมีการแจ้งอัปเดตให้ทราบในไม่ช้านี้</p>
+          <p
+            >ในระหว่างนี้ คลิก <a href="https://quxiaodingyue.com" target="_blank">ที่นี่</a> เพื่อเปิดบัญชี
+            ทีมงานของเราจะทำการอัปเกรดบัญชีของคุณเป็นบัญชีพันธมิตร IB ให้</p
+          >
+          <p
+            >หากคุณมีคำถามใด ๆ โปรดติดต่อ ได้เลย: <a href="https://lianxiwomen.com" target="_blank">Live Chat</a>
+            <a href="https://t.me" target="_blank">Telegram</a>.</p
+          >
+          <p class="mt-38">
+            <span style="color: #9c9c9c; display: block">ขอแสดงความนับถือ</span>
+            ทีม Stellux
+          </p>
+        </div>
+        <div class="tips">
+          <img
+            class="img-logo"
+            width="131px"
+            height="50px"
+            src="https://client.stellux.io/platform/stellux/img/email-template/logo@2x.png"
+          />
+          <div class="go-back">
+            <a href="https://www.instagram.com" target="_blank">
+              <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/instagram.png" />
+            </a>
+            <a href="https://t.me" target="_blank">
+              <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/telegram.png" />
+            </a>
+            <a href="https://www.facebook.com" target="_blank">
+              <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/fb.png" />
+            </a>
+            <a href="https://x.com" target="_blank">
+              <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/twitter.png" />
+            </a>
           </div>
-          <div class="content">
-				  <p>เรียนคุณลูกค้า</p>
-				  <p>ขอขอบคุณที่สนใจโปรแกรม IB ของเรา</p>
-				  <p>เราได้รับใบสมัครของคุณแล้ว และทีมงานของเรากำลังตรวจสอบอยู่ จะมีการแจ้งอัปเดตให้ทราบในไม่ช้านี้</p>
-				  <P>ในระหว่างนี้ คลิก <a href="https://quxiaodingyue.com" target="_blank">ที่นี่</a> เพื่อเปิดบัญชี ทีมงานของเราจะทำการอัปเกรดบัญชีของคุณเป็นบัญชีพันธมิตร IB ให้</P>
-				  <p>หากคุณมีคำถามใด ๆ โปรดติดต่อ ได้เลย: <a href="https://lianxiwomen.com" target="_blank">Live Chat</a>  <a href="https://t.me" target="_blank">Telegram</a>.</p>
-				  <p class="mt-38">
-				    <span style="color: #9C9C9C;display: block;">ขอแสดงความนับถือ</span>
-				    ทีม Stellux
-				  </p>
+          <div class="link-menu">
+            <a href="https://fengxianjielu.com" target="_blank"> การเปิดเผยความเสี่ยง </a>
+            <a href="https://lianxiwomen.com" target="_blank"> ติดต่อเรา </a>
+            <a href="https://quxiaodingyue.com" target="_blank"> ยกเลิกการสมัครรับข้อมูล </a>
           </div>
-		  <div class="tips">
-			  <img class="img-logo" width="131px" height="50px" src="https://client.stellux.io/platform/stellux/img/email-template/logo@2x.png"/>
-			  <div class="go-back">
-				  <a href="https://www.instagram.com" target="_blank">
-					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/instagram.png"/>
-				  </a>
-				  <a href="https://t.me" target="_blank">
-					 <img width="34px" height="34px" src="https://client.stellux.io/img/email-template/telegram.png"/> 
-				  </a>
-				  <a href="https://www.facebook.com" target="_blank">
-					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/fb.png"/>
-				  </a>
-				  <a href="https://x.com" target="_blank">
-					<img width="34px" height="34px" src="https://client.stellux.io/img/email-template/twitter.png"/>
-				  </a>
-			  </div>
-			  <div class="link-menu">
-				  <a href="https://fengxianjielu.com" target="_blank">
-					การเปิดเผยความเสี่ยง
-				  </a>
-				  <a href="https://lianxiwomen.com" target="_blank">
-					 ติดต่อเรา
-				  </a>
-				  <a href="https://quxiaodingyue.com" target="_blank">
-					  ยกเลิกการสมัครรับข้อมูล
-				  </a>
-			  </div>
-		  </div>
+        </div>
       </div>
-  </div>
+    </div>
   </body>
 </html>

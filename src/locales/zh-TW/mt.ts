@@ -34,6 +34,8 @@ export default {
   'mt.tingsundan': '停損單',
   'mt.maichuzuokong': '賣單·開空',
   'mt.mairuzuoduo': '買單·開多',
+  'mt.kaikong': '開空',
+  'mt.kaiduo': '開多',
   'mt.gangganbeishu': '杠杆倍数',
   'mt.tiaozhengganggan': '调整杠杆',
   'mt.tiaozhengganggantip1': '当前杠杆倍数最高可开:100,000,000 USDT',
@@ -311,6 +313,7 @@ export default {
   'mt.mairuchenggong': '买入成功',
   'mt.maichuchenggong': '卖出成功',
   'mt.chengjiao': '成交',
+  'mt.dingdanchengjiao': '订单成交',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
@@ -368,7 +371,6 @@ export default {
   'mt.shenqingchenggong': '申请成功',
   'mt.mianshouxufei': '免手续费',
   'mt.accountfudongyingkuitips': '当前仓位的浮动盈亏已包含相应的手续费和库存费',
-
   // ======= 个人中心-我的账户 结束 ==========
 
   // ======= 个人中心-设置 开始 ==========
@@ -482,6 +484,7 @@ export default {
   // 新加的字段 @TODO
   'mt.kycUploadTips': '支持JPG/JPEG/PNG,不能超过1M',
   'mt.kycUploadImgSizeTips': '图片大小不能超过{size}',
+  'mt.genggai': '更改',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========

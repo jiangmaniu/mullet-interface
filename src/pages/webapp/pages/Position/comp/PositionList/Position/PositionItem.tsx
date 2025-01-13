@@ -124,7 +124,7 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
           <SymbolIcon width={30} height={30} src={item.imgUrl} />
           <View className={cn('flex flex-col flex-1')}>
             {/* 第一行 */}
-            <View className={cn('pl-2 flex flex-row justify-between flex-1 ')}>
+            <View className={cn('pl-2 flex flex-row justify-between flex-1 relative top-[3px]')}>
               <View className={cn('flex-row items-center')}>
                 <Text size="base" color="primary" weight="medium" className={cn('pr-1')}>
                   {item.alias || symbol}

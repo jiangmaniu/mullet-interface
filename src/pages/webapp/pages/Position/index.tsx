@@ -32,7 +32,7 @@ const Position = () => {
         />
       )}
       <View className={cn('relative z-[1]')}>
-        <View className="mx-4 my-[9px]">
+        <View className="mx-4 py-[9px]">
           <Text size="xl" weight="medium" color="primary">
             {t('app.pageTitle.Position')}
           </Text>

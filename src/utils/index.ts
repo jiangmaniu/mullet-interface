@@ -159,7 +159,7 @@ export const formatNum = (value: any, opts?: IOpt) => {
   const { isTruncateDecimal = true } = opts || {}
   // 不是一个数字
   if (isNaN(value) || !Number(value)) {
-    return '--'
+    return '0.00'
   }
   const val = value || '0.00'
   const precision = opts?.precision || String(value).split('.')?.[1]?.length || 2

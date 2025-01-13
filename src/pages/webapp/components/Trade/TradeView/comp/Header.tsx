@@ -30,13 +30,13 @@ const BuySellPrice = observer(() => {
           <Button
             textClassName={cn('text-base font-dingpro-medium')}
             textStyle={bidColorStyle}
-            height={32}
+            height={26}
             className={cn('rounded-tl-[6px] border-[0px] rounded-tr-[0px] rounded-br-[0px] min-h-[26px] overflow-hidden z-2')}
             style={bidColorStyle}
           >
             {bid ? formatNum(bid) : '--'}
           </Button>
-          <View className={cn('bg-gray-50 items-center justify-center border-l border-r rounded-bl h-[18px] -z-1')} borderColor="weak">
+          <View className={cn('bg-gray-50 items-center justify-center border-l border-r rounded-bl h-[16px] -z-1')} borderColor="weak">
             <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
               L:
               {formatNum(low)}
@@ -52,14 +52,14 @@ const BuySellPrice = observer(() => {
           <Button
             textClassName={cn('text-base font-dingpro-medium')}
             textStyle={askColorStyle}
-            height={32}
+            height={26}
             className={cn('rounded-tr-[6px] border-[0px] rounded-tl-[0px] rounded-bl-[0px] min-h-[26px] overflow-hidden')}
             style={askColorStyle}
           >
             {ask ? formatNum(ask) : '--'}
           </Button>
           <View
-            className={cn('bg-gray-50 items-center justify-center border-l border-r rounded-br rounded-tr h-[18px] -z-1')}
+            className={cn('bg-gray-50 items-center justify-center border-l border-r rounded-br rounded-tr h-[16px] -z-1')}
             borderColor="weak"
           >
             <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
@@ -91,8 +91,8 @@ function Header() {
       <View className={cn('flex-row justify-between items-center')}>
         <View className={cn('flex-1 flex-row mr-3')}>
           <CustomArrowButton
-            leftText={intl.formatMessage({ id: 'pages.trade.Sell Make Short' })}
-            rightText={intl.formatMessage({ id: 'pages.trade.Buy Make Long' })}
+            leftText={intl.formatMessage({ id: 'mt.kaikong' })}
+            rightText={intl.formatMessage({ id: 'mt.kaiduo' })}
             // onChange={(key) => {
             //   trade.setBuySell(key === 'left' ? 'SELL' : 'BUY')
             // }}

@@ -14,6 +14,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { formatNum } from '@/utils'
 import { getCurrentDepth } from '@/utils/wsUtil'
 
+import useMargin from '@/hooks/useMargin'
 import { IPosition } from '.'
 import SetSpSl from '../SetSpSl'
 import OrderVolume from './OrderVolume'
@@ -36,7 +37,7 @@ function OrderTabItem({ position }: IProps) {
   const availableMargin = trade.accountBalanceInfo.availableMargin
 
   const {
-    expectedMargin,
+    // expectedMargin,
     maxOpenVolume,
     vmin,
     isMarketOrder,
@@ -54,6 +55,9 @@ function OrderTabItem({ position }: IProps) {
     resetSpSl,
     getInitPriceValue
   } = useTrade()
+
+  // 接口计算预估保证金
+  const expectedMargin = useMargin()
 
   const depth = getCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])

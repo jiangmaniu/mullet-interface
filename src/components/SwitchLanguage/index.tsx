@@ -77,7 +77,7 @@ export default function SwitchLanguage({ isAdmin = true, isTrade = false, theme 
     <>
       <div className="flex justify-center rounded-lg h-9 px-1">
         <Dropdown menu={langMenu} placement="bottomRight">
-          <span className={cn(className, isTrade ? 'dark:!bg-gray-700 bg-gray-120' : '')}>
+          <span className={cn(className, isTrade ? 'dark:bg-gray-700 bg-gray-120' : '')}>
             <Iconfont name="lng" width={36} height={36} color={theme} className="cursor-pointer rounded-lg" />
             <span
               style={{

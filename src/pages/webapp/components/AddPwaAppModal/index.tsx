@@ -1,23 +1,22 @@
-import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
+import { memo, useEffect, useState } from 'react'
 
 import { useEnv } from '@/context/envProvider'
 import ENV from '@/env'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { cn } from '@/utils/cn'
-import { getBrowser, getDeviceType } from '@/utils/device'
 import { getPathname } from '@/utils/navigator'
-import { STORAGE_GET_SHOW_PWA_ADD_MODAL, STORAGE_GET_TOKEN, STORAGE_SET_SHOW_PWA_ADD_MODAL } from '@/utils/storage'
+import { STORAGE_GET_TOKEN, STORAGE_SET_SHOW_PWA_ADD_MODAL } from '@/utils/storage'
 import { FormattedMessage, useLocation } from '@umijs/max'
-import SheetModal from '../SheetModal'
+import { isAndroid, isChrome, isChromium, isEdge, isFirefox, isIOS, isSafari } from 'react-device-detect'
+import SheetModal from '../Base/SheetModal'
 
 const AddPwaAppModal = () => {
   const { t } = useI18n()
-  const deviceType = getDeviceType()
   const [isAddSreenModal, setIsAddSreenModal] = useState(false)
   const { isPc } = useEnv()
   const { pathname } = useLocation()
   const { isPwaApp } = useEnv()
+  const isPopularBrowser = isSafari || isChrome || isChromium || isFirefox || isEdge // 主流浏览器
 
   const addScreenList = [
     {
@@ -49,13 +48,13 @@ const AddPwaAppModal = () => {
   const [addSreenData, setAddSreenData] = useState(addScreenList[0])
 
   const init = async () => {
-    let showModal = STORAGE_GET_SHOW_PWA_ADD_MODAL() === true ? false : true
-    const browser = getBrowser()
-
+    // let isFirst = STORAGE_GET_SHOW_PWA_ADD_MODAL() === true ? false : true
+    // let showModal = isPopularBrowser && process.env.NODE_ENV === 'production' // 每次刷新页面都需要弹一次
+    let showModal = isPopularBrowser // 每次刷新页面都需要弹一次
     let type = 'iphoneChrome'
-    if (deviceType === 'IOS') {
-      type = browser === 'Safari' ? 'iphoneSafari' : 'iphoneChrome'
-    } else if (deviceType === 'Android') {
+    if (isIOS) {
+      type = isSafari ? 'iphoneSafari' : 'iphoneChrome'
+    } else if (isAndroid) {
       //TODO 根据浏览器不同添加其他类型
       //   type = browser === 'Chrome' ? 'androidChrome' : 'other'
       type = 'androidChrome'
@@ -70,11 +69,13 @@ const AddPwaAppModal = () => {
     // 判断是否为pwa独立应用，PWA独立应用内不要弹窗
     if (isPwaApp) {
       showModal = false
-    } else {
-      STORAGE_SET_SHOW_PWA_ADD_MODAL(true)
     }
 
-    setIsAddSreenModal(showModal)
+    STORAGE_SET_SHOW_PWA_ADD_MODAL(false)
+
+    setTimeout(() => {
+      setIsAddSreenModal(showModal)
+    }, 2000)
     // window.addEventListener('beforeinstallprompt', (e) => {
     //   e.preventDefault()
     //   setIsAddSreenModal(true)
@@ -90,13 +91,11 @@ const AddPwaAppModal = () => {
 
   useEffect(() => {
     init()
-  }, [isPwaApp])
+  }, [isPwaApp, isPopularBrowser])
 
   const purePathname = getPathname(location.pathname)
   const token = STORAGE_GET_TOKEN()
   const showModal = purePathname.startsWith('/app/') && !!token
-
-  // console.log('addSreenData', addSreenData)
 
   return (
     <SheetModal
@@ -106,6 +105,7 @@ const AddPwaAppModal = () => {
       }}
       hiddenFooter
       height={'62%'}
+      autoHeight
       header={<div className="text-center text-base font-bold">{t('addScreen.headerTitle')}</div>}
       children={
         <div className="px-4">
@@ -127,12 +127,12 @@ const AddPwaAppModal = () => {
                 <FormattedMessage id="addScreen.install" /> {ENV.name}
               </span>
               <span
-                className={cn('absolute left-[110px] top-[90px] text-primary text-sm', {
-                  '!top-[65px] left-[80px]': addSreenData.type === 'androidChrome',
+                className={cn('absolute left-[90px] top-[90px] text-primary text-sm', {
+                  '!top-[65px]': addSreenData.type === 'androidChrome',
                   '!top-[90px]': addSreenData.type === 'iphoneChrome'
                 })}
               >
-                {location.origin}
+                {location.host}
               </span>
             </div>
             <p className="mt-5">
@@ -150,4 +150,4 @@ const AddPwaAppModal = () => {
   )
 }
 
-export default observer(AddPwaAppModal)
+export default memo(AddPwaAppModal)

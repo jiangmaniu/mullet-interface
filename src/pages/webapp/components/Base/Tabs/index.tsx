@@ -44,7 +44,7 @@ export default function Tabs({
   tabPaddingBottom = 10,
   fixedActiveLineWidth = 30,
   titleFontSize = 16,
-  activeLineHeight = 4,
+  activeLineHeight = 3,
   contentPadding = 0,
   activeLineBorderRadius = `100px 100px 0px 0px`,
   activeLineColor,
@@ -86,7 +86,7 @@ export default function Tabs({
       },
       '.adm-tabs-tab-active': {
         color: 'var(--color-text-primary) !important',
-        fontWeight: '500 !important'
+        fontWeight: '600 !important'
       },
       '.adm-tabs-tab-list': {
         '.adm-tabs-tab-wrapper': {

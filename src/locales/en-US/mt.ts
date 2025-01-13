@@ -34,6 +34,8 @@ export default {
   'mt.tingsundan': 'Stop Market',
   'mt.maichuzuokong': 'Open · Short',
   'mt.mairuzuoduo': 'Open · Long',
+  'mt.kaikong': 'Short',
+  'mt.kaiduo': 'Long',
   'mt.gangganbeishu': 'Leverage Ratio',
   'mt.tiaozhengganggan': 'Adjust Leverage',
   'mt.tiaozhengganggantip1': 'Maximum leverage currently available: 100,000,000 USDT',
@@ -314,6 +316,7 @@ export default {
   'mt.mairuchenggong': 'Buy Success',
   'mt.maichuchenggong': 'Sell Success',
   'mt.chengjiao': 'Trade',
+  'mt.dingdanchengjiao': 'Order Executed',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
@@ -489,6 +492,7 @@ export default {
 
   'mt.kycUploadTips': 'Support JPG/JPEG/PNG, no larger than 1MB.',
   'mt.kycUploadImgSizeTips': 'Picture size cannot exceed{size}',
+  'mt.genggai': 'Change',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========

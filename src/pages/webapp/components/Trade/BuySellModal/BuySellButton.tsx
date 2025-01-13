@@ -6,6 +6,7 @@ import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum } from '@/utils'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
+import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Button from '../../Base/Button'
 import { Text } from '../../Base/Text'
 import { View } from '../../Base/View'
@@ -19,6 +20,7 @@ type IProps = {
 function BuySellButton({ position = 'footer', onShow }: IProps) {
   const { cn } = useTheme()
   const { trade } = useStores()
+  const { t } = useI18n()
   const { buySell, setBuySell, orderQuickPlaceOrderChecked } = trade
   const isShowModal = position === 'modal'
 
@@ -56,7 +58,7 @@ function BuySellButton({ position = 'footer', onShow }: IProps) {
         className={cn(isShowModal && buySell === 'BUY' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'BUY' && '!text-weak')}
       >
-        Sell {hasQuote ? formatNum(quoteInfo.bid) : '--'}
+        {t('mt.kaikong')} {hasQuote ? formatNum(quoteInfo.bid) : '--'}
       </Button>
       {hasQuote && (
         <View className={cn('items-center justify-center bg-gray-85 px-1 rounded-[6px] z-[1] min-w-[36px] absolute dark:bg-white')}>
@@ -86,7 +88,7 @@ function BuySellButton({ position = 'footer', onShow }: IProps) {
         className={cn(isShowModal && buySell === 'SELL' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'SELL' && '!text-weak')}
       >
-        Buy {hasQuote ? formatNum(quoteInfo.ask) : '--'}
+        {t('mt.kaiduo')} {hasQuote ? formatNum(quoteInfo.ask) : '--'}
       </Button>
     </View>
   )

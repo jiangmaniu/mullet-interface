@@ -9,6 +9,7 @@ import { useTheme } from '@/context/themeProvider'
 import { formatNum } from '@/utils'
 import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
 
+import { useLang } from '@/context/languageProvider'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
 
@@ -129,6 +130,8 @@ function Depth() {
   const { cn, theme } = useTheme()
   const intl = useIntl()
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
+  const { lng } = useLang()
+  const isZh = lng === 'zh-TW'
 
   const quote = getCurrentQuote()
 
@@ -159,7 +162,7 @@ function Depth() {
   return (
     <>
       {hasDepth && (
-        <View className={cn('w-[150px] pl-5 pr-3')}>
+        <View className={cn('w-[150px] pl-5 pr-3', !isZh && 'pl-3')}>
           <View className={cn('flex-row pt-4 pb-1 items-center justify-between')}>
             <Text color="weak" size="xs" className={cn('leading-4')}>
               {intl.formatMessage({ id: 'pages.trade.Price' })}

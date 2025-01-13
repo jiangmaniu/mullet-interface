@@ -48,6 +48,7 @@ function OrderTopTabbar({ position = 'PAGE' }: IProps) {
           }}
           activeKey={trade.orderType}
           stretch
+          tabBarGutter={0}
           fixedActiveLineWidth={hasDepth && position === 'PAGE' ? 30 : 100}
         />
       </>

@@ -92,9 +92,11 @@ export default function StatisticCard({
     )
   }
   return (
+    // @ts-ignore
     <ProCard ghost bordered style={{ ...style, ...proCardStyle }} bodyStyle={{ overflowX: 'auto', overflowY: 'hidden' }} {...cardProps}>
       {items.map((item: Item, index) => {
         return (
+          // @ts-ignore
           <ProCard
             direction={item.icon ? 'row' : 'column'}
             className={index !== items.length - 1 && items.length > 1 && !isMobile ? 'proCardDivider' : ''}

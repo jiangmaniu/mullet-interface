@@ -23,7 +23,7 @@ const StepBox = (props: IProps) => {
             'bg-brand text-reverse': step >= 1
           })}
         >
-          <Iconfont name="user" size={20} color={step >= 1 ? theme.colors.textColor.reverse : theme.colors.textColor.weak} />
+          <Iconfont name="user1" size={20} color={step >= 1 ? theme.colors.textColor.reverse : theme.colors.textColor.weak} />
         </View>
       )
     },

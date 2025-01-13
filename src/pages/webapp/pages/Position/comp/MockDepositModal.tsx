@@ -8,7 +8,7 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { rechargeSimulate } from '@/services/api/tradeCore/account'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useModel } from '@umijs/max'
@@ -94,6 +94,7 @@ function MockDepositModal(props: IProps, ref: ForwardedRef<ModalRef>) {
       <SheetModal
         ref={bottomSheetModalRef}
         height="55%"
+        autoHeight
         title={t('pages.position.Mock Account Deposit')}
         footer={
           <Button
@@ -114,7 +115,7 @@ function MockDepositModal(props: IProps, ref: ForwardedRef<ModalRef>) {
                 {t('app.account.Account')}&nbsp;
               </Text>
               <Text size="sm" color="secondary">
-                #{hiddenCenterPartStr(currentAccountInfo.id, 4)}
+                #{currentAccountInfo.id}
               </Text>
             </View>
             <Text size="sm" color="weak" className={cn('mt-1')}>

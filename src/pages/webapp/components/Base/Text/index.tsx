@@ -68,6 +68,10 @@ type Font =
   | 'dingpro-regular'
   /** 数字字体加粗 */
   | 'dingpro-medium'
+  /**平方中等 */
+  | 'pf-medium'
+  /** 平方加粗 */
+  | 'pf-bold'
 
 type IProps = DOMAttributes<any> & {
   /** 主题文字颜色类型 */
@@ -146,7 +150,11 @@ export const Text = (props: IProps) => {
         /** 数字字体常规 */
         'dingpro-regular': 'font-dingpro-regular',
         /** 数字字体加粗 */
-        'dingpro-medium': 'font-dingpro-medium'
+        'dingpro-medium': 'font-dingpro-medium',
+        /**平方中等 */
+        'pf-medium': 'font-pf-medium',
+        /**平方加粗 */
+        'pf-bold': 'font-pf-bold'
       }
     },
     // 设置默认变体

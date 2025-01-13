@@ -67,12 +67,10 @@ const ListItem: React.FC<IlistItemProps> = ({
       className={cn('h-[60px] px-3 flex flex-row items-center rounded-lg')}
       style={{ backgroundColor: theme.colors.backgroundColor.heavy, ...styles?.container }}
     >
-      {!!icon && isValidElement(icon) ? (
-        icon
-      ) : (
-        // @ts-ignore
-        <Iconfont name={icon} size={20} color={_iconColor} style={{ marginRight: 8, ...styles?.iconStyle }} />
-      )}
+      {!!icon && isValidElement(icon)
+        ? icon
+        : // @ts-ignore
+          icon && <Iconfont name={icon} size={20} color={_iconColor} style={{ marginRight: 8, ...styles?.iconStyle }} />}
       <View className={cn('flex-1 h-full flex flex-row justify-between items-center')} style={styles?.itemStyle}>
         <View style={styles?.titleStyle}>
           <Text className={cn({ fontSize: 16 })} style={styles?.titleStyle}>

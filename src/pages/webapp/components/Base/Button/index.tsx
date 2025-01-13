@@ -166,7 +166,7 @@ const ButtonWrapper: React.FC<ButtonProps> = (
         className={cn(btnWrapperClassName, className)}
         style={{
           ...(disabled ? { backgroundColor: theme.colors.Button.disabledBg } : {}),
-          ...(!height ? { height } : {}),
+          ...(height ? { height } : {}),
           ...(buttonStyle || {})
         }}
       >

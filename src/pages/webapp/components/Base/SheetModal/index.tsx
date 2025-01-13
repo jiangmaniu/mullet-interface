@@ -73,6 +73,8 @@ type IProps = Partial<Props> & {
   closeOnConfirm?: boolean
   /**是否展示首次loading */
   showLoading?: boolean
+  /**跟随内容自适应高度和height互斥 */
+  autoHeight?: boolean
 }
 
 const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
@@ -88,6 +90,7 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
     onConfirm,
     onCancel,
     height,
+    autoHeight,
     hiddenFooter,
     trigger,
     title,
@@ -285,6 +288,7 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
         open={visible}
         // @ts-ignore
         snapPoints={({ minHeight, headerHeight, footerHeight, maxHeight }) => {
+          if (autoHeight) return minHeight
           return height
             ? // 如果传入的高度是百分比形式，则最大高度*百分比
               typeof height === 'string' && height.endsWith('%')
@@ -294,7 +298,7 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
         }}
         defaultSnap={({ lastSnap, snapPoints }) => lastSnap ?? Math.max(...snapPoints)}
         footer={!loading && renderFooter()}
-        header={<>{title && <div className={cn('leading-7 text-center font-pf-medium text-base text-primary')}>{title}</div>}</>}
+        header={<>{title && <div className={cn('leading-7 text-center font-pf-bold text-lg text-primary')}>{title}</div>}</>}
         scrollLocking
         expandOnContentDrag={dragOnContent}
         className={className}

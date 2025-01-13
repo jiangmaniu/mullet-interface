@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 import { ILanguage } from '@/constants/enum'
 import { DEFAULT_LOCALE, KEY_TEMP_LNG } from '@/constants/index'
+import { isPCByWidth } from '@/utils'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from '@/utils/navigator'
 
 interface ILanguageContextProps {
@@ -57,7 +58,7 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
       localStorage.setItem('umi_locale', pathnameLng)
     }
     // 使用浏览器定位功能切换语言
-    else if (!tempLng) {
+    else if (!tempLng && isPCByWidth()) {
       // 首次加载后，再次切换语言，不在使用ip定位
       // 使用浏览器自带的检测功能
       localStorage.setItem('umi_locale', locationLng)

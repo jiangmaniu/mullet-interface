@@ -177,7 +177,7 @@ class TradeStore {
     // 获取全部品种列表作为汇率校验
     this.getAllSimbleSymbols()
 
-    this.orderQuickPlaceOrderChecked = (await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()) || true
+    this.orderQuickPlaceOrderChecked = (await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()) || false
     this.orderConfirmChecked = (await STORAGE_GET_ORDER_CONFIRM_CHECKED()) || false
     this.positionConfirmChecked = (await STORAGE_GET_POSITION_CONFIRM_CHECKED()) || false
     this.historySearchList = (await STORAGE_GET_HISTORY_SEARCH()) || []

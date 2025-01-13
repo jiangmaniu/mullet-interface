@@ -1,7 +1,5 @@
 import { observer } from 'mobx-react'
 
-import { useEffect, useMemo, useState } from 'react'
-
 import Loading from '@/components/Base/Lottie/Loading'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
@@ -11,13 +9,15 @@ import { useTheme } from '@/context/themeProvider'
 import ENV from '@/env'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { useIntl } from '@umijs/max'
+import { useEffect, useMemo, useState } from 'react'
+import { isAndroid } from 'react-device-detect'
 
 type IProps = {
   style?: React.CSSProperties
 }
 
 const TradingViewComp = ({ style }: IProps) => {
-  const { isPc, isPwaApp, browserDeviceType } = useEnv()
+  const { isPc, isPwaApp } = useEnv()
   const { lng } = useLang()
   const { theme, cn } = useTheme()
   const { trade } = useStores()
@@ -51,15 +51,24 @@ const TradingViewComp = ({ style }: IProps) => {
   }, [klineUrl])
 
   const iframeDom = useMemo(() => {
+    let height = 0
+    if (isPwaApp) {
+      height = isAndroid ? 240 : 260
+    } else {
+      height = 240
+    }
     return (
       <iframe
         src={url}
         style={{
           border: 'none',
-          height: isPc ? '591px' : `calc(100vh - ${isPwaApp ? 340 : browserDeviceType === 'Safari' ? 320 : 260}px)`,
+          // 不要使用100vh safari视口有问题
+          height: isPc ? '591px' : document.documentElement.clientHeight - height,
           width: '100%',
           visibility: loading ? 'hidden' : 'visible'
         }}
+        width={'100%'}
+        height={'100%'}
         onLoad={() => {
           setTimeout(() => {
             setLoading(false)
@@ -67,14 +76,14 @@ const TradingViewComp = ({ style }: IProps) => {
         }}
       />
     )
-  }, [url, loading, isPwaApp, browserDeviceType])
+  }, [url, loading, isPwaApp])
 
   return (
     <div style={style} className="relative mb-3">
       {iframeDom}
       {loading && (
-        <div className={cn('absolute top-28 left-0 right-0 flex justify-center items-center z-0')}>
-          <Loading />
+        <div className={cn('absolute top-[50%] transform translate-y-[-50%] left-0 right-0 flex justify-center items-center z-0')}>
+          <Loading width={300} height={300} />
         </div>
       )}
     </div>

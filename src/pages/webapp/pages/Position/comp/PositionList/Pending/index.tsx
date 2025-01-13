@@ -56,15 +56,15 @@ function PendingList() {
       style={{ marginInline: 14, paddingTop: 4, paddingBottom: 60 }}
       showMoreText={false}
       ListEmptyComponent={
-        <View className={cn('w-full flex items-center flex-col justify-center h-80')}>
+        <View className={cn('w-full flex items-center flex-col justify-center h-80 mt-[30px]')}>
           <img src={'/img/webapp/icon-zanwucangwei.png'} style={{ width: 120, height: 120 }} />
           <Text size="sm" color="weak">
             {t('pages.position.No Order')}
           </Text>
-          <Button type="primary" style={{ marginTop: 22, width: 143 }} href="/app/trade">
-            <View className={cn('flex flex-row items-center gap-2')}>
+          <Button type="primary" style={{ marginTop: 22, width: 143 }} height={46} href="/app/trade">
+            <View className={cn('flex flex-row items-end gap-2')}>
               <Iconfont name="zhanghu-jiaoyi" size={20} color={theme.colors.textColor.reverse} />
-              <Text size="base" weight="bold" color="white">
+              <Text size="base" weight="bold" color="white" className="relative top-[1px] -left-1">
                 {t('pages.position.Go Trade')}
               </Text>
             </View>

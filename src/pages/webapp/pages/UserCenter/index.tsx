@@ -94,8 +94,7 @@ const Kyc = observer(() => {
           </Button>
         ) : (
           <Button
-            type="success"
-            style={{ minWidth: 60 }}
+            style={{ minWidth: 60, background: theme.colors.brand.DEFAULT }}
             size="small"
             onClick={() => {
               if (userInfo?.phone && userInfo?.email) {
@@ -143,11 +142,7 @@ function UserCenter() {
   const renderList = (listData: IlistItemProps[], title?: string, margin = true) => {
     return (
       <View>
-        {title && (
-          <Text size="sm" color="weak" style={cn('font-semibold mb-3')}>
-            {title}
-          </Text>
-        )}
+        {title && <View style={cn('mb-3 text-weak text-sm')}>{title}</View>}
         {/* style={{ backgroundColor: '#fff', marginTop: margin ? 8 : 0 }}> */}
         {listData.map((item: IlistItemProps, index: number) => {
           return (
@@ -163,6 +158,7 @@ function UserCenter() {
                   fontSize: '15px',
                   maxWidth: 250
                 },
+                iconStyle: { marginRight: 12 },
                 subTextStyle: {
                   fontSize: 14
                 }
@@ -236,7 +232,7 @@ function UserCenter() {
         // sideMinWidth={130}
         back
         left={
-          <Text size="xl" weight="medium" color="primary">
+          <Text size="xl" font="pf-bold" color="primary">
             {t('app.pageTitle.Personal Center')}
           </Text>
         }

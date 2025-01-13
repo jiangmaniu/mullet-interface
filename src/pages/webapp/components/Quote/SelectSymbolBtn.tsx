@@ -24,18 +24,18 @@ const TriggerDom = observer(({ showQuotePercent, onClick }: IProps) => {
   const intl = useIntl()
   const { trade } = useStores()
   const symbolInfo = trade.symbolListAll.find((item) => item.symbol === trade.activeSymbolName)
-  const { activeSymbolName } = trade
+  const { activeSymbolName, symbolListAll } = trade
   const quoteInfo = getCurrentQuote()
   const bid = quoteInfo.bid
   const per: any = quoteInfo.percent
 
   return (
     <View className={cn('flex-row items-center')} onClick={onClick}>
-      {activeSymbolName && (
+      {activeSymbolName && symbolListAll?.length > 0 && (
         <>
           <View className={cn('flex-row items-center gap-x-2 pr-[2px]')}>
             <SymbolIcon width={22} height={22} src={symbolInfo?.imgUrl} />
-            <Text size="lg" color="primary" weight="medium">
+            <Text size="lg" color="primary" font="pf-bold">
               {activeSymbolName}
             </Text>
           </View>

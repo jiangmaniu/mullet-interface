@@ -40,11 +40,12 @@ function LngSelectModal({ title }: IProps, ref: ForwardedRef<ModalRef>) {
       ref={bottomSheetModalRef}
       title={t('app.pageTitle.Language')}
       height={400}
+      autoHeight
       // snapPoints={['80%', '100%']} // 增加這個功能後 dismiss 會出現按鈕點擊異常問題
       // onConfirm={onConfirm}
       hiddenFooter
       children={
-        <div className="px-[14px]">
+        <div className="px-[14px] pb-4">
           <LngList list={currentList} />
         </div>
       }

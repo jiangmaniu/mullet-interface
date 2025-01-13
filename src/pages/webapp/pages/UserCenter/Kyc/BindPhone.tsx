@@ -209,8 +209,8 @@ function BindPhone() {
         // }
       />
       <View className={cn('mt-6 px-2 flex-col flex')}>
-        <Text className={cn(' text-xl text-primary font-bold')}>{i18n.t('pages.userCenter.qingshurushoujihaoma')}</Text>
-        <Text className={cn(' text-sm !text-gray-500 mt-1')}>{i18n.t('pages.userCenter.yongyuweilaicaozuo')}</Text>
+        <Text className={cn(' text-xl text-primary font-pf-bold')}>{i18n.t('pages.userCenter.qingshurushoujihaoma')}</Text>
+        <Text className={cn(' text-sm !text-gray-500 mt-1 mb-4')}>{i18n.t('pages.userCenter.yongyuweilaicaozuo')}</Text>
         <TextField
           value={phone}
           onChange={(val) => {
@@ -242,7 +242,7 @@ function BindPhone() {
         />
         {!!errors.phone && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.phone.message}</Text>}
         {!!errors.areaCode && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.areaCode.message}</Text>}
-        <Text className={cn('text-sm text-primary mt-5 max-w-[280px]')}>
+        <Text className={cn('text-sm text-primary mt-7 max-w-[280px]')}>
           {t('pages.userCenter.chakanduanxinhuoquyanzhengma', {
             phone: phone ? `+${areaCode}${phone}` : t('pages.userCenter.shoujihaoma')
           })}

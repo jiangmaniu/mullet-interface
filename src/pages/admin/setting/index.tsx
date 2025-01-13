@@ -307,56 +307,58 @@ export default function Setting() {
           </div>
         </div>
       </div>
-      <div className="pb-[26px]">
-        <div className="text-primary font-dingpro-medium text-xl font-semibold">
-          <FormattedMessage id="mt.anquanrenzhengfangshi" />
-        </div>
-        <div className="text-secondary text-sm pb-[16px] pt-2">
-          <FormattedMessage id="mt.anquanrenzhengfangshitips" />
-        </div>
-        <div className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
-          <div className="text-primary text-sm">
-            <span className="">
-              <FormattedMessage id="mt.anquanleixing" />：
-            </span>
-            <span className="pl-2">{phone ? `${phoneAreaCode} ${formatMobile(phone)}` : formatEmail(email)}</span>
+      {isFinished && (
+        <div className="pb-[26px]">
+          <div className="text-primary font-dingpro-medium text-xl font-semibold">
+            <FormattedMessage id="mt.anquanrenzhengfangshi" />
           </div>
-          {isKycAuth ? (
-            <>
-              {phone ? (
-                <ModifyPhoneModal
-                  trigger={
-                    <Button type="text">
-                      <span className="text-primary text-sm font-semibold cursor-pointer">
-                        <FormattedMessage id="common.genggai" />
-                      </span>
-                    </Button>
-                  }
-                />
-              ) : (
-                <ModifyEmailModal
-                  trigger={
-                    <Button type="text">
-                      <span className="text-primary text-sm font-semibold cursor-pointer">
-                        <FormattedMessage id="common.genggai" />
-                      </span>
-                    </Button>
-                  }
-                />
-              )}
-            </>
-          ) : (
-            <Button
-              type="text"
-              onClick={() => {
-                push('/setting/kyc')
-              }}
-            >
-              <span className="text-primary text-sm font-semibold cursor-pointer">{intl.formatMessage({ id: 'mt.bind' })}</span>
-            </Button>
-          )}
+          <div className="text-secondary text-sm pb-[16px] pt-2">
+            <FormattedMessage id="mt.anquanrenzhengfangshitips" />
+          </div>
+          <div className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
+            <div className="text-primary text-sm">
+              <span className="">
+                <FormattedMessage id="mt.anquanleixing" />：
+              </span>
+              <span className="pl-2">{phone ? `${phoneAreaCode} ${formatMobile(phone)}` : formatEmail(email)}</span>
+            </div>
+            {isKycAuth ? (
+              <>
+                {phone ? (
+                  <ModifyPhoneModal
+                    trigger={
+                      <Button type="text">
+                        <span className="text-primary text-sm font-semibold cursor-pointer">
+                          <FormattedMessage id="common.genggai" />
+                        </span>
+                      </Button>
+                    }
+                  />
+                ) : (
+                  <ModifyEmailModal
+                    trigger={
+                      <Button type="text">
+                        <span className="text-primary text-sm font-semibold cursor-pointer">
+                          <FormattedMessage id="common.genggai" />
+                        </span>
+                      </Button>
+                    }
+                  />
+                )}
+              </>
+            ) : (
+              <Button
+                type="text"
+                onClick={() => {
+                  push('/setting/kyc')
+                }}
+              >
+                <span className="text-primary text-sm font-semibold cursor-pointer">{intl.formatMessage({ id: 'common.genggai' })}</span>
+              </Button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
       {/* 实名认证成功弹窗 */}
       <KycApproveInfoModal ref={kycSuccModalRef} />
     </PageContainer>

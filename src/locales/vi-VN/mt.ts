@@ -34,6 +34,8 @@ export default {
   'mt.tingsundan': 'Lệnh dừng thị trường',
   'mt.maichuzuokong': 'Mở · Bán',
   'mt.mairuzuoduo': 'Mở · Mua',
+  'mt.kaikong': 'Bán',
+  'mt.kaiduo': 'Mua',
   'mt.gangganbeishu': 'Tỷ lệ đòn bẩy',
   'mt.tiaozhengganggan': 'Điều chỉnh đòn bẩy',
   'mt.tiaozhengganggantip1': 'Đòn bẩy tối đa hiện tại có sẵn: 100,000,000 USDT',
@@ -314,6 +316,7 @@ export default {
   'mt.mairuchenggong': 'Mua thành công',
   'mt.maichuchenggong': 'Bán thành công',
   'mt.chengjiao': 'Thực hiện',
+  'mt.dingdanchengjiao': 'Giao dịch đơn hàng',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
@@ -487,6 +490,7 @@ export default {
 
   'mt.kycUploadTips': 'Hỗ trợ JPG/JPEG/PNG, không vượt quá 1MB.',
   'mt.kycUploadImgSizeTips': 'Kích thước ảnh không được vượt quá {size}',
+  'mt.genggai': 'Thay đổi',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========

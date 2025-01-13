@@ -193,11 +193,15 @@ function handleOpenCallback() {
 
 // 解析行情body数据
 function parseQuoteBodyData(body: string) {
+  // 原格式
+  // {"header":{"msgId":"symbol"},"body":{"dataSource":"binance-SOLUSDT","priceData":{"sellSize":"63.38200000","sell":206.61200000,"buy":"206.61000000","id":1735807731722,"buySize":"61.67900000"},"symbol":"SOL","accountGroupId":"3"}}
+  // 新格式
   // 报价数据格式：id,buy,buySize,sell,sellSize,dataSource,symbol,accountGroupId
   // 使用账户组订阅数据格式
   // { "header": { "msgId": "symbol" }, "body": "1735636763941,94044.6,0,94047.325,0,mt5-BTCUSD,BTC,1826081893542576129" }
   // 没有使用账户组订阅数据格式，最后两个为0占位。比如管理端数据源列表不能使用账户组订阅
   // { "header": { "msgId": "symbol" }, "body": "1735636763941,94044.6,0,94047.325,0,mt5-BTCUSD,0,0" }
+
   const quoteItem = {} as IQuoteItem
   if (body && typeof body === 'string') {
     const [id, buy, buySize, sell, sellSize, dataSource, symbol, accountGroupId] = body.split(',')
@@ -218,7 +222,10 @@ function parseQuoteBodyData(body: string) {
 
 // 解析深度body数据
 function parseDepthBodyData(body: string) {
-  // 深度数据格式：asks(price*amount;price*amount;...),bids(price*amount;price*amount;...),dataSource,symbol,accountGroupId,ts
+  // 原格式
+  // {"header":{"msgId":"depth"},"body":{"symbol":"BTC","accountGroupId":"3","asks":"[{\"amount\":0.01403000,\"price\":96012.69000000},{\"amount\":0.00012000,\"price\":96012.70000000},{\"amount\":0.00012000,\"price\":96012.71000000},{\"amount\":0.00018000,\"price\":96012.73000000},{\"amount\":0.00118000,\"price\":96012.75000000},{\"amount\":0.00200000,\"price\":96012.76000000},{\"amount\":0.00178000,\"price\":96012.77000000},{\"amount\":0.00012000,\"price\":96012.78000000},{\"amount\":0.00111000,\"price\":96012.79000000},{\"amount\":0.00037000,\"price\":96012.80000000},{\"amount\":0.00012000,\"price\":96012.96000000},{\"amount\":0.00012000,\"price\":96013.05000000},{\"amount\":0.00037000,\"price\":96013.17000000},{\"amount\":0.00018000,\"price\":96013.27000000},{\"amount\":0.00198000,\"price\":96013.44000000},{\"amount\":0.00572000,\"price\":96013.45000000},{\"amount\":0.00011000,\"price\":96013.56000000},{\"amount\":0.00300000,\"price\":96013.91000000},{\"amount\":0.00006000,\"price\":96013.92000000},{\"amount\":0.00012000,\"price\":96013.93000000}]","bids":"[{\"amount\":7.99949000,\"price\":96000.00000000},{\"amount\":3.79417000,\"price\":95999.99000000},{\"amount\":0.00065000,\"price\":95999.96000000},{\"amount\":0.11040000,\"price\":95999.95000000},{\"amount\":0.00012000,\"price\":95999.90000000},{\"amount\":0.00111000,\"price\":95999.89000000},{\"amount\":0.00012000,\"price\":95999.63000000},{\"amount\":0.00012000,\"price\":95999.57000000},{\"amount\":0.00187000,\"price\":95999.56000000},{\"amount\":0.00012000,\"price\":95999.51000000},{\"amount\":0.00023000,\"price\":95999.42000000},{\"amount\":0.00012000,\"price\":95999.39000000},{\"amount\":0.00012000,\"price\":95999.34000000},{\"amount\":0.05220000,\"price\":95999.27000000},{\"amount\":0.00012000,\"price\":95999.24000000},{\"amount\":0.04170000,\"price\":95999.20000000},{\"amount\":0.22837000,\"price\":95999.04000000},{\"amount\":0.20861000,\"price\":95999.03000000},{\"amount\":0.00208000,\"price\":95999.00000000},{\"amount\":0.04167000,\"price\":95998.83000000}]","dataSource":"binance-BTCUSDT","ts":1735807767042}}
+  // 新格式
+  // 深度数据格式：asks(price_amount;price_amount;...),bids(price*amount;price_amount;...),dataSource,symbol,accountGroupId,ts
   // { "header": { "msgId": "depth" }, "body": "94399.495*3.40948;94400.275*0.00052;94400.895*2.06585;94400.905*0.00499;94401.005*0.19438;94401.215*0.0424;94401.915*0.0424;94402.115*0.078;94402.125*0.84533;94402.135*0.15867;94402.405*0.07399;94402.415*0.11009;94402.715*0.00774;94402.865*0.00006;94404.395*0.04126;94404.455*0.02648;94404.715*0.0424;94406.055*0.05296;94406.635*0.05296;94407.435*0.00011,94396.77*0.21542;94396.63*0.0018;94396.3*0.00006;94396.29*0.08861;94396.26*0.00011;94396*0.0072;94395*0.00008;94394.16*0.00012;94393.93*0.00008;94393.58*0.00029;94393.27*0.003;94393.12*0.00008;94392.8*0.0424;94392.28*0.00012;94392*0.00729;94390.78*0.00017;94390.24*0.00012;94389.76*0.00006;94389.24*0.00012;94389.09*0.00015,binance-BTCUSDT,BTC,1,1735634057242" }
   const depthData = {} as IDepth
   if (body && typeof body === 'string') {
@@ -569,6 +576,7 @@ function getAccountBalance() {
   // console.log('totalHandlingFees', totalHandlingFees)
   // console.log('totalOrderProfit', totalOrderProfit)
   // console.log('totalProfit', totalProfit)
+  // console.log('balance', balance)
 
   // 账户组设置“可用计算未实现盈亏”时
   // 新可用预付款=原来的可用预付款+账户的持仓盈亏

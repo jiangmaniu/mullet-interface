@@ -43,14 +43,14 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const symbolList = trade.symbolList // 全部品种列表
   const loading = trade.symbolListLoading
 
-  useEffect(() => {
-    // 1200px-1600px收起侧边栏
-    if (screenSize?.width > 1200 && screenSize?.width < 1600) {
-      setOpenTradeSidebar(false)
-    } else {
-      setOpenTradeSidebar(true)
-    }
-  }, [screenSize])
+  // useEffect(() => {
+  //   // 1200px-1600px收起侧边栏
+  //   if (screenSize?.width > 1200 && screenSize?.width < 1600) {
+  //     setOpenTradeSidebar(false)
+  //   } else {
+  //     setOpenTradeSidebar(true)
+  //   }
+  // }, [screenSize])
 
   useEffect(() => {
     if (activeKey === 'CATEGORY') {

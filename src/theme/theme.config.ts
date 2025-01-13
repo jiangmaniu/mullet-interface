@@ -265,6 +265,7 @@ export const lightTheme = {
 // 黑色主色变量
 // 自定义组件使用的css变量，antd组件请在theme.antd.ts中定义
 export const darkTheme = {
+  ...lightTheme,
   // brand
   '--color-brand-primary': blue['500'], // 品牌主色
   '--color-brand-text-primary': blue['400'], // 品牌主色-文字颜色

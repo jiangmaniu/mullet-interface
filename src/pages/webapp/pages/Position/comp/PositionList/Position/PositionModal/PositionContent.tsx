@@ -39,11 +39,11 @@ const ListItem = ({
 }) => {
   const { cn, theme } = useTheme()
 
-  const textClassName = cn(align === 'end' && 'text-right', align === 'center' && 'text-center')
+  const textClassName = cn('pb-1', align === 'end' && 'text-right', align === 'center' && 'text-center')
 
   return (
     <View className={cn('mb-3 flex-1 flex flex-col', align === 'end' && 'items-end', align === 'center' && 'items-center')}>
-      <Text color="secondary" size="xs" leading="base" className={textClassName}>
+      <Text color="weak" size="xs" leading="base" className={textClassName}>
         {label}
       </Text>
       <Text color={valueColor || 'primary'} size="xs" leading="sm" className={textClassName}>
@@ -67,7 +67,7 @@ export const ModalProfit = ({ profit, precision }: { profit: number | undefined;
 // 收益率组件
 export const ModalYieldRate = ({ yieldRate, precision }: { yieldRate: string; precision?: number }) => {
   return (
-    <Text size="xs" weight="medium" font="dingpro-medium" color={Number(yieldRate) > 0 ? 'green' : 'red'}>
+    <Text size="xs" weight="medium" font="dingpro-medium" color={parseInt(yieldRate) > 0 ? 'green' : 'red'}>
       {yieldRate}
     </Text>
   )
@@ -173,7 +173,7 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
               <Text size="xs" color="secondary">
                 {item?.createTime}
               </Text>
-              <Text size="xs" color="secondary">
+              <Text size="xs" color="weak">
                 {t('pages.position.Floating P&L')}(USD)/{t('pages.position.Yield Rate')}
               </Text>
             </View>

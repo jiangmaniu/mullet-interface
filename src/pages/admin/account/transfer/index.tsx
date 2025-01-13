@@ -10,7 +10,7 @@ import PageContainer from '@/components/Admin/PageContainer'
 import Hidden from '@/components/Base/Hidden'
 import { useStores } from '@/context/mobxProvider'
 import { transferAccount } from '@/services/api/tradeCore/account'
-import { formatNum, hiddenCenterPartStr, toFixed } from '@/utils'
+import { formatNum, toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
@@ -74,7 +74,7 @@ function TransferAccount() {
       rightText: (
         <div className="flex items-center">
           <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2">SX</div>
-          <div className="pl-[10px] text-sm text-primary font-semibold">{hiddenCenterPartStr(toAccountId, 4)}</div>
+          <div className="pl-[10px] text-sm text-primary font-semibold">{toAccountId}</div>
         </div>
       )
     },
@@ -83,7 +83,7 @@ function TransferAccount() {
       rightText: (
         <div className="flex items-center">
           <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2">SX</div>
-          <div className="pl-[10px] text-sm text-primary font-semibold">{hiddenCenterPartStr(fromAccountId, 4)}</div>
+          <div className="pl-[10px] text-sm text-primary font-semibold">{fromAccountId}</div>
         </div>
       )
     },

@@ -1,5 +1,5 @@
 import { ChartingLibraryFeatureset, ChartingLibraryWidgetOptions, LanguageCode, ResolutionString } from '@/libs/charting_library'
-
+import { isChrome, isChromium, isEdge, isFirefox, isSafari } from 'react-device-detect'
 import ma from './customIndicators/ma'
 
 const fullZero = (value: number | string) => String(value).padStart(2, '0')
@@ -25,6 +25,7 @@ export default function getWidgetOpts(
   const bgColor = theme === 'dark' ? ThemeConst.black : ThemeConst.white // 自定义背景颜色
   // const toolbar_bg = theme === 'dark' ? ThemeConst.black : '#f4f7f9' // 侧边工具栏和底部工具栏背景颜色
   const toolbar_bg = theme === 'dark' ? ThemeConst.black : '#fff' // 侧边工具栏和底部工具栏背景颜色
+  const isPopularBrowser = isSafari || isChrome || isChromium || isFirefox || isEdge // 主流浏览器
 
   /**
    * 关于移动端 https://www.tradingview.com/charting-library-docs/latest/mobile_specifics/
@@ -84,6 +85,14 @@ export default function getWidgetOpts(
       // 'always_show_legend_values_on_mobile', // 在移动设备上显示图例值
       'hide_left_toolbar_by_default' // 当用第一次进入隐藏左部工具栏
     )
+    // 非主流浏览器使用兼容模式
+    if (!isPopularBrowser) {
+      enabled_features.push(
+        // https://www.tradingview.com/charting-library-docs/latest/customization/Featuresets/#behavior
+        // 兼容低版本浏览器 Enables alternative loading mode for the library, which can be used to support older browsers and a few non-standard browsers.
+        'iframe_loading_compatibility_mode'
+      )
+    }
   } else {
     // disabled_features.push(
     // )

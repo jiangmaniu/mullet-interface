@@ -8,7 +8,7 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
-import { formatNum, formatStringWithEllipsis, hiddenCenterPartStr } from '@/utils'
+import { formatNum, formatStringWithEllipsis } from '@/utils'
 import { observer } from 'mobx-react'
 import { useMemo, useRef } from 'react'
 import MockDepositModal from './MockDepositModal'
@@ -35,7 +35,7 @@ function AccountHeader() {
         navigateTo('/app/account/info')
       }}
     >
-      <View bgColor="primary" className={cn('p-5 mx-3 rounded-xl flex flex-col gap-[18px] shadow')}>
+      <View bgColor="primary" className={cn('px-4 py-[18px] mx-[14px] rounded-xl flex flex-col gap-[18px] border')} borderColor="weak">
         <View className={cn('flex flex-row items-start justify-between')}>
           {/* 切換賬號 */}
           <View
@@ -56,14 +56,14 @@ function AccountHeader() {
                     {currentAccountInfo.isSimulate ? t('common.enum.accountType.DEMO') : t('common.enum.accountType.REAL')}
                   </Text>
                 </View>
-                <Text size="lg" weight="medium" color="primary">
+                <Text size="lg" font="pf-bold" color="primary">
                   {formatStringWithEllipsis(currentAccountInfo?.name || '', 20)}
                 </Text>
                 <Iconfont name="qiehuanzhanghu-xiala" size={24} />
               </View>
-              <View className={cn('flex flex-row items-center gap-2')}>
+              <View className={cn('flex flex-row items-center gap-2 pt-[2px]')}>
                 <Text size="sm" weight="normal" color="primary">
-                  #{hiddenCenterPartStr(currentAccountInfo.id, 4)}
+                  #{currentAccountInfo.id}
                 </Text>
                 {/* 分割線 */}
                 <View
@@ -74,9 +74,11 @@ function AccountHeader() {
                 />
                 <Text size="sm" weight="normal" color="primary">
                   {t('pages.position.Balance')}&nbsp;
-                  {formatNum(currentAccountInfo.money, {
-                    precision
-                  })}
+                  {Number(currentAccountInfo.money)
+                    ? formatNum(currentAccountInfo.money, {
+                        precision
+                      })
+                    : '0.00'}
                 </Text>
               </View>
             </View>
@@ -111,9 +113,11 @@ function AccountHeader() {
               {SOURCE_CURRENCY}
             </Text>
             <Text size="22" weight="medium" color="primary" font="dingpro-medium">
-              {formatNum(balance, {
-                precision
-              })}
+              {Number(balance)
+                ? formatNum(balance, {
+                    precision
+                  })
+                : '0.00'}
             </Text>
           </View>
           <View className={cn('flex flex-col items-end')}>
@@ -121,14 +125,17 @@ function AccountHeader() {
               {t('pages.position.Floating P&L')}
             </Text>
             {useMemo(
-              () => (
-                <Text size="sm" font="dingpro-regular" color={totalProfit > 0 ? 'green' : 'red'}>
-                  {totalProfit > 0 ? '+' : ''}
-                  {formatNum(totalProfit, {
-                    precision
-                  })}
-                </Text>
-              ),
+              () =>
+                totalProfit ? (
+                  <Text size="sm" font="dingpro-regular" color={totalProfit > 0 ? 'green' : 'red'}>
+                    {totalProfit > 0 ? '+' : ''}
+                    {formatNum(totalProfit, {
+                      precision
+                    })}
+                  </Text>
+                ) : (
+                  '0.00'
+                ),
               [totalProfit]
             )}
           </View>
@@ -139,9 +146,11 @@ function AccountHeader() {
               {t('pages.position.Advance Payment')}
             </Text>
             <Text size="sm" color="primary">
-              {formatNum(occupyMargin, {
-                precision
-              })}
+              {Number(occupyMargin)
+                ? formatNum(occupyMargin, {
+                    precision
+                  })
+                : '0.00'}
             </Text>
           </View>
           <View className={cn('flex flex-col max-w-[33%] justify-between')}>
@@ -149,9 +158,11 @@ function AccountHeader() {
               {t('pages.position.Available Advance Payment')}
             </Text>
             <Text size="sm" color="primary">
-              {formatNum(availableMargin, {
-                precision
-              })}
+              {Number(availableMargin)
+                ? formatNum(availableMargin, {
+                    precision
+                  })
+                : '0.00'}
             </Text>
           </View>
           <View className={cn('flex flex-col items-end max-w-[34%] justify-between')}>
@@ -159,9 +170,11 @@ function AccountHeader() {
               {t('pages.position.Advance Payment Ratio (%)')}
             </Text>
             <Text size="sm" color="primary">
-              {formatNum(advancePaymentRatio, {
-                precision: 2
-              })}
+              {advancePaymentRatio
+                ? formatNum(advancePaymentRatio, {
+                    precision: 2
+                  })
+                : '0.00'}
             </Text>
           </View>
         </View>

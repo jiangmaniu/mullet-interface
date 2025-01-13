@@ -3,7 +3,7 @@ export default {
   offical: 'www.stellux.io',
   manifest: '/platform/stellux/manifest.json', // PWA manifest
   logo: '/platform/stellux/img/pc-logo.svg',
-  logoDark: '/platform/stellux/img/pc-logo-dark.svg',
+  logoDark: '/platform/stellux/img/pc-logo-dark.png',
   favicon: '/platform/stellux/favicon.ico',
   klineWatermarkLogo: '/platform/stellux/img/kline-water-logo.png', // K线水印LOGO
   klineWatermarkLogoDark: '/platform/stellux/img/kline-water-logo.png', // K线水印LOGO

@@ -217,9 +217,12 @@ function ModalForm<T = Record<string, any>, U = Record<string, any>>(
             let success: any = false
             try {
               success = await onFinish?.(values)
+              // 关闭弹窗
+              close()
             } catch (e) {
               console.log('onFinish error', e)
             }
+
             return success
           }}
           {...res}

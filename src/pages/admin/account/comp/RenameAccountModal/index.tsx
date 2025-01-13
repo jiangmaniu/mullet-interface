@@ -7,7 +7,6 @@ import ModalForm from '@/components/Admin/ModalForm'
 import Button from '@/components/Base/Button'
 import { useStores } from '@/context/mobxProvider'
 import { UpdateAccount } from '@/services/api/tradeCore/account'
-import { hiddenCenterPartStr } from '@/utils'
 import { message } from '@/utils/message'
 
 type IProps = {
@@ -63,7 +62,7 @@ function RenameAccountModal({ info }: IProps, ref: any) {
       <div className="mb-4 flex">
         <div className="text-brand bg-brand/10 px-2 rounded flex items-center justify-center h-7">
           <FormattedMessage id="mt.zhanghu" />
-          {hiddenCenterPartStr(info.id, 4)}
+          {info?.id}
         </div>
       </div>
       <div className="text-sm text-secondary mb-5">

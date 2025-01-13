@@ -12,6 +12,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { getEnum } from '@/constants/enum'
 import { isPCByWidth } from '@/utils'
 import { getSymbolIcon, parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
+import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 import { getIntl } from '@umijs/max'
 import { Toast } from 'antd-mobile'
@@ -148,7 +149,6 @@ class WSStore {
         this.receiveTradeMessage(data)
         break
       case 'MESSAGE_RES':
-        console.log('data', data)
         // 更新消息通知
         const info = data as MessagePopupInfo
         const content = removeOrderMessageFieldNames(info?.content || '')
@@ -178,16 +178,15 @@ class WSStore {
               <div
                 className="w-full flex items-center flex-col"
                 onClick={() => {
-                  push('/app/user-center/message')
+                  Toast.clear()
+                  push('/app/position')
                 }}
               >
                 <div className="flex items-center w-full justify-between px-[14px] py-[6px] bg-gray-50">
                   <div className="flex items-center">
                     <Iconfont size={18} name="chengjiaotongzhi" />
                     <span className="pl-1 text-primary text-xs font-pf-medium">
-                      {fields.tradeDirection === 'BUY'
-                        ? getIntl().formatMessage({ id: 'mt.mairuchenggong' })
-                        : getIntl().formatMessage({ id: 'mt.maichuchenggong' })}
+                      {getIntl().formatMessage({ id: 'mt.dingdanchengjiao' })}
                     </span>
                   </div>
                   <Iconfont size={18} name="anniu-gengduo" />
@@ -199,7 +198,7 @@ class WSStore {
                         <img src={getSymbolIcon(symbolIcon)} width={20} height={20} alt="" className="rounded-full" />
                         <span className="text-primary font-semibold text-base pl-1">{fields.symbol}</span>
                       </div>
-                      <span className="text-green text-base font-pf-medium pl-2">
+                      <span className={cn('text-base font-pf-medium pl-2', fields.tradeDirection === 'BUY' ? 'text-green' : 'text-red')}>
                         {fields.tradeDirection === 'BUY'
                           ? getIntl().formatMessage({ id: 'mt.mairu' })
                           : getIntl().formatMessage({ id: 'mt.maichu' })}{' '}
@@ -232,8 +231,8 @@ class WSStore {
               </div>
             ),
             position: 'top',
-            duration: 2600,
-            maskClassName: 'webapp-custom-message'
+            duration: 4000,
+            maskClassName: 'webapp-custom-message animate__animated animate__bounceInDown'
           })
         }
         // 刷新消息列表
@@ -492,7 +491,7 @@ class WSStore {
 
       // 2.1 关闭即将要关闭的符号
       if (toClose.size) {
-        console.log('即将关闭的符号', toClose.size, toClose)
+        // console.log('即将关闭的符号', toClose.size, toClose)
         const list2 = Array.from(toClose.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
         // console.log('即将关闭的符号', list2)
         this.debounceBatchCloseSymbol({ list: list2 })
@@ -526,6 +525,7 @@ class WSStore {
   // 处理交易消息
   @action
   receiveTradeMessage = (data: any) => {
+    // console.log('ws交易消息', data)
     const type = data.type as ITradeType
     // 账户余额变动
     if (type === 'ACCOUNT') {

@@ -199,6 +199,7 @@ function TransferPreviewModal({ from, to, amount }: IProps, ref: ForwardedRef<Mo
       ref={bottomSheetModalRef}
       title={state === 'success' ? t('pages.position.Transfer Successful') : t('pages.position.Transfer Preview')}
       height={state === 'success' ? 480 : 600}
+      autoHeight
       // snapPoints={['80%', '100%']} // 增加這個功能後 dismiss 會出現按鈕點擊異常問題
       onConfirm={handleOnPress}
       closeOnConfirm={false}

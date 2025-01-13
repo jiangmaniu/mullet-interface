@@ -3,8 +3,6 @@ import { useIntl, useModel } from '@umijs/max'
 import Select, { DefaultOptionType } from 'antd/es/select'
 import { useEffect, useState } from 'react'
 
-import { hiddenCenterPartStr } from '@/utils'
-
 export default function AccountSelectAmount({
   onClick,
   style,
@@ -54,7 +52,7 @@ export default function AccountSelectAmount({
       options={accountList.map((item) => ({
         ...item,
         value: item.id,
-        label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
+        label: `${item.name} #${item?.id}`
       }))}
       // fieldProps={{
       //   open,

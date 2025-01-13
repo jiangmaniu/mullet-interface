@@ -7,7 +7,6 @@ import { gray } from 'tailwindcss/colors'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { tradeFollowListLeads } from '@/services/api/tradeFollow/lead'
-import { hiddenCenterPartStr } from '@/utils'
 import { message } from '@/utils/message'
 
 export default function AccountSelect({
@@ -76,7 +75,7 @@ export default function AccountSelect({
     return accountList.map((item) => ({
       ...item,
       key: item.leadId,
-      label: `${item.projectName} #${hiddenCenterPartStr(item?.tradeAccountId, 4)}`
+      label: `${item.projectName} #${item?.tradeAccountId}`
     }))
   }, [accountList])
 

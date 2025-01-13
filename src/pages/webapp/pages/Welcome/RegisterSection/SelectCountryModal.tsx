@@ -26,19 +26,21 @@ export type ModalRef = {
 const renderList = (listData: Common.AreaCodeItem[], onPress: (item: Common.AreaCodeItem) => void) => {
   const { cn, theme } = useTheme()
   const { locale } = useI18n()
+  const [current, setCurrent] = useState({} as any)
   return (
     <View style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
       {listData.map((item: Common.AreaCodeItem, index: number) => {
         const title = locale === 'zh-TW' ? item.nameCn : item.nameEn
-
+        const isActive = current.id === item.id
         return (
           <ListItem
             styles={{
               container: {
                 borderWidth: 1,
-                borderColor: theme.colors.borderColor.weak,
+                borderColor: isActive ? theme.colors.textColor.primary : theme.colors.borderColor.weak,
                 borderRadius: 10
-              }
+              },
+              iconStyle: { display: 'none' }
             }}
             title={title}
             renderExtraElement={() => {
@@ -49,6 +51,7 @@ const renderList = (listData: Common.AreaCodeItem[], onPress: (item: Common.Area
             first={!index}
             onPress={() => {
               onPress(item)
+              setCurrent(item)
             }}
           />
         )

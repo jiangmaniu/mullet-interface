@@ -8,7 +8,7 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { formatNum, hiddenCenterPartStr, toFixed } from '@/utils'
+import { formatNum, toFixed } from '@/utils'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
@@ -137,7 +137,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
                       </div>
                     </div>
                     <div className="flex-1 text-sm text-secondary leading-3">
-                      {item.name} #{hiddenCenterPartStr(item?.id, 4)}
+                      {item.name} #{item?.id}
                     </div>
                     <div className="flex items-center gap-x-3 mt-3">
                       {!isKycAuth && (

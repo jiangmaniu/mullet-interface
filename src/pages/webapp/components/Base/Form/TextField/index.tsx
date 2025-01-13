@@ -181,7 +181,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
       )}
 
       <View
-        className={cn('flex flex-row items-center overflow-hidden h-full w-full border rounded-[6px]')}
+        className={cn('flex flex-row items-center overflow-hidden h-full w-full border rounded-[8px]')}
         style={mergeCss(
           {
             borderColor: isFocus ? theme.colors.Input.activeBorderColor : theme.colors.Input.borderColor,

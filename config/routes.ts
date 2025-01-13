@@ -241,18 +241,15 @@ export default [
       /* ------------------------------- 登录/注册/忘记密码 ------------------------------- */
       {
         path: '/:lng/app/login',
-        component: './webapp/pages/Welcome',
-        access: 'canAdmin' // 权限配置
+        component: './webapp/pages/Welcome'
       },
       {
         path: '/:lng/app/forget-pwd',
-        component: './webapp/pages/User/ForgetPwd',
-        access: 'canAdmin' // 权限配置
+        component: './webapp/pages/User/ForgetPwd'
       },
       {
         path: '/:lng/app/reset-success',
-        component: './webapp/pages/Welcome/ResetSuccess',
-        access: 'canAdmin' // 权限配置
+        component: './webapp/pages/Welcome/ResetSuccess'
       },
       /* ------------------------------- 行情 ------------------------------- */
       // 行情-k线
@@ -362,14 +359,12 @@ export default [
       },
       {
         path: '/:lng/app/test',
-        component: './webapp/pages/Test',
-        access: 'canAdmin' // 权限配置
+        component: './webapp/pages/Test'
       },
       /* ------------------------------- PageViewer ------------------------------- */
       {
         path: '/:lng/app/viewer/markdown',
-        component: './webapp/pages/Viewer/MarkdownPageViewer',
-        access: 'canAdmin' // 权限配置
+        component: './webapp/pages/Viewer/MarkdownPageViewer'
       }
     ]
   },

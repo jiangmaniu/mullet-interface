@@ -222,6 +222,8 @@ export default defineConfig({
     'process.env.APP_ENV': process.env.APP_ENV,
     'process.env.PLATFORM': process.env.PLATFORM
   },
+  // 配置额外的 babel 插件。可传入插件地址或插件函数。
+  extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // 使用本地字体
   chainWebpack(config) {
     config.module
