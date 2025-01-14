@@ -176,6 +176,7 @@ export function createWatermarkLogo(isDark?: boolean) {
   logo.style.left = '70px' // 调整位置
   logo.style.width = '260'
   logo.style.height = '72px'
+  logo.style.opacity = 0.5
 
   // 将 LOGO 元素添加到图表容器中
   chartContainer.appendChild(logo)

@@ -155,7 +155,7 @@ function Login() {
         setTimeout(() => {
           setLoading(false)
           push(jumpPath)
-        }, 6000)
+        }, 2000)
 
         return
       } else {

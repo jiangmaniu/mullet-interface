@@ -2,7 +2,7 @@ import './index.less'
 
 import { useIntl } from '@umijs/max'
 import Lottie from 'lottie-react'
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import Modal from '../../Modal'
 import lynfooData from './json/lynfoo.json'
@@ -15,6 +15,15 @@ type IProps = {
 
 export default function Loading({ width = 400, height = 400 }: IProps) {
   const animationData = process.env.PLATFORM === 'lynfoo' ? lynfooData : stelluxData
+  const lottieRef = useRef(null)
+
+  useEffect(() => {
+    if (lottieRef.current) {
+      // @ts-ignore
+      lottieRef.current?.setSpeed(2.5)
+    }
+  }, [])
+
   return (
     <Lottie
       animationData={animationData}
@@ -23,6 +32,7 @@ export default function Loading({ width = 400, height = 400 }: IProps) {
       loop={true}
       assetsPath="/img/animation/"
       style={{ width, height }}
+      lottieRef={lottieRef}
     />
   )
 }
