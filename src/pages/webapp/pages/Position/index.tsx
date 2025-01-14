@@ -11,7 +11,7 @@ import PositionList from './comp/PositionList'
 
 const Position = () => {
   const { cn, theme } = useTheme()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { trade, ws } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
@@ -33,8 +33,8 @@ const Position = () => {
       )}
       <View className={cn('relative z-[1]')}>
         <View className="mx-4 py-[9px]">
-          <Text size="xl" weight="medium" color="primary">
-            {t('app.pageTitle.Position')}
+          <Text size="xl" font="pf-bold" color="primary">
+            {locale === 'zh-TW' ? t('app.pageTitle.Position') : t('app.pageTitle.Position').toUpperCase()}
           </Text>
         </View>
         <AccountHeader />

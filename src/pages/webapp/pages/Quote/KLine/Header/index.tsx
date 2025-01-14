@@ -46,17 +46,13 @@ function Header() {
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.Open Price' })}
                 </Text>
-                <Text color="weak" className={cn('text-[10px] leading-[14px]')}>
-                  {formatNum(res.open)}
-                </Text>
+                <Text className={cn('text-[10px] leading-[14px]')}>{formatNum(res.open)}</Text>
               </View>
               <View className={cn('items-start flex-col flex mt-2')}>
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.24 high price' })}
                 </Text>
-                <Text color="weak" className={cn('text-[10px] leading-[14px]')}>
-                  {formatNum(res.high)}
-                </Text>
+                <Text className={cn('text-[10px] leading-[14px]')}>{formatNum(res.high)}</Text>
               </View>
             </View>
             <View className={cn('items-start flex-shrink flex flex-col')}>
@@ -64,17 +60,13 @@ function Header() {
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.Close Price' })}
                 </Text>
-                <Text color="weak" className={cn('text-[10px] leading-[14px]')}>
-                  {formatNum(res.close)}
-                </Text>
+                <Text className={cn('text-[10px] leading-[14px]')}>{formatNum(res.close)}</Text>
               </View>
               <View className={cn('items-start flex-col mt-2 flex')}>
                 <Text color="weak" className={cn('text-[10px] leading-4')}>
                   {intl.formatMessage({ id: 'pages.trade.24 low price' })}
                 </Text>
-                <Text color="weak" className={cn('text-[10px] leading-[14px]')}>
-                  {formatNum(res.low)}
-                </Text>
+                <Text className={cn('text-[10px] leading-[14px]')}>{formatNum(res.low)}</Text>
               </View>
             </View>
           </View>

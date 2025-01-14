@@ -47,10 +47,10 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
           return (
             <View key={idx} onClick={() => setOrderPrice(item.price)} className="relative">
               <View style={cn('mb-[3px] flex-row items-center py-[3px] pr-1 justify-between h-5')} key={idx}>
-                <Text color="green" font="dingpro-medium" size="xs" weight="medium" style={cn('leading-[15px]')}>
+                <Text color="green" font="dingpro-medium" size="xs" style={cn('leading-[15px]')}>
                   {formatNum(item.price, { precision: digits })}
                 </Text>
-                <Text color="primary" size="xs" weight="medium" style={cn('leading-[15px]')}>
+                <Text color="primary" size="xs" font="dingpro-medium" style={cn('leading-[15px]')}>
                   {formatNum(item.amount)}
                 </Text>
               </View>

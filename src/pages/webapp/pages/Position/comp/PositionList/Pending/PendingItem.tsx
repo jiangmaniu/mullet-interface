@@ -37,7 +37,7 @@ function PendingItem({ item }: IProps) {
         <View className={cn('flex-row items-center')}>
           <SymbolIcon width={24} height={24} src={item.imgUrl} />
           <View className={cn('pl-2 flex-row items-center')}>
-            <Text size="base" color="primary" weight="medium" className={cn('pr-1')}>
+            <Text size="base" color="primary" font="pf-bold" className={cn('pr-1')}>
               {item.alias || item.symbol}
             </Text>
             <Text size="sm" color={item.buySell === 'BUY' ? 'green' : 'red'} weight="medium">

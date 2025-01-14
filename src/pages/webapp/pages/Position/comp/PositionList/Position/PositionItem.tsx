@@ -126,7 +126,7 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
             {/* 第一行 */}
             <View className={cn('pl-2 flex flex-row justify-between flex-1 relative top-[3px]')}>
               <View className={cn('flex-row items-center')}>
-                <Text size="base" color="primary" weight="medium" className={cn('pr-1')}>
+                <Text size="base" color="primary" font="pf-bold" className={cn('pr-1')}>
                   {item.alias || symbol}
                 </Text>
                 <Text size="sm" color={item.buySell === 'BUY' ? 'green' : 'red'} weight="medium">
