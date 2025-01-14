@@ -1,5 +1,6 @@
 // https://umijs.org/config/
 import { defineConfig } from '@umijs/max'
+import CompressionPlugin from 'compression-webpack-plugin'
 import { join } from 'path'
 import { GenerateSW } from 'workbox-webpack-plugin'
 import { DEFAULT_LOCALE } from '../src/constants/index'
@@ -224,6 +225,10 @@ export default defineConfig({
   },
   // 配置额外的 babel 插件。可传入插件地址或插件函数。
   extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
+  // https://umijs.org/docs/api/config#codesplitting
+  codeSplitting: {
+    jsStrategy: 'granularChunks'
+  },
   // 使用本地字体
   chainWebpack(config) {
     config.module
@@ -237,8 +242,8 @@ export default defineConfig({
         name: 'public/fonts/[name].[hash:8].[ext]'
       }))
 
-    // workbox 配置
     if (process.env.NODE_ENV === 'production') {
+      // workbox 配置
       config.plugin('workbox').use(GenerateSW, [
         {
           cacheId: ENV?.name, // 设置前缀
@@ -297,6 +302,15 @@ export default defineConfig({
           ]
         }
       ])
+
+      // 在打包时生成gzip文件。这样就不需要浪费服务器资源来压缩
+      config.plugin('compression-webpack-plugin').use(
+        new CompressionPlugin({
+          test: /.js$|.html$|.css$|.otf$|.ttf$|.TTF$/, // 压缩js，html，css文件
+          threshold: 10240, // 对超过10k的数据压缩
+          deleteOriginalAssets: false // 不删除源文件
+        })
+      )
     }
   }
 })

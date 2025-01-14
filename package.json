@@ -4,7 +4,7 @@
   "private": true,
   "description": "client",
   "scripts": {
-    "analyze": "cross-env ANALYZE=1 max build",
+    "analyze": "cross-env ANALYZE=1 ANALYZE_PORT=8888 max build",
     "build:lynfoo:prod": "cross-env APP_ENV=prod PLATFORM=lynfoo max build",
     "build:stellux:prod": "cross-env APP_ENV=prod PLATFORM=stellux max build",
     "build:stellux:test": "cross-env APP_ENV=test PLATFORM=stellux max build",
@@ -127,6 +127,7 @@
     "autoprefixer": "^10.4.16",
     "click-to-react-component": "^1.1.0",
     "commitizen": "^4.3.0",
+    "compression-webpack-plugin": "^11.1.0",
     "cross-env": "^7.0.3",
     "cz-conventional-changelog-zh": "^0.0.2",
     "eslint": "^8.34.0",
