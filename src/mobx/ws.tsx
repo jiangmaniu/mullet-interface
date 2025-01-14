@@ -156,7 +156,7 @@ class WSStore {
           notification.info({
             message: <span className="text-primary font-medium">{info?.title}</span>,
             description: <span className="text-secondary">{content}</span>,
-            placement: 'bottomLeft',
+            placement: 'bottomRight',
             style: {
               background: 'var(--dropdown-bg)'
             }
