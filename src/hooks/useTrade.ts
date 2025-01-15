@@ -731,7 +731,7 @@ export default function useTrade(props?: IProps) {
         setOrderPrice('')
 
         // 更新账户余额信息
-        await fetchUserInfo(true)
+        // await fetchUserInfo(true)
       }
     } catch (error) {
       console.log('onSubmitOrder error', error)
