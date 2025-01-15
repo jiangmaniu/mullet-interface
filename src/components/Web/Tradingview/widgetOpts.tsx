@@ -49,7 +49,9 @@ export default function getWidgetOpts(
     'timeframes_toolbar', // 隐藏底部工具条 时间栏
     'scales_date_format',
     'header_fullscreen_button', // 全屏
-    'display_market_status' // 隐藏图例旁边的市场状态
+    'display_market_status', // 隐藏图例旁边的市场状态
+    // 在标题面板上显示符号搜索按钮，展示在顶部的最左侧，移动端展示品种名称
+    'header_symbol_search'
     // 'use_localstorage_for_settings' // 背景色改不动，配置不生效的原因，需要禁用本地配置、背景色改不动，也跟主题色属性有关，不能存在主题色属性 theme: "dark",//"light"
     // 'main_series_scale_menu', // 隐藏右下角设置按钮
     // 'header_settings',    // 设置
@@ -72,8 +74,6 @@ export default function getWidgetOpts(
 
   if (props.isMobile) {
     disabled_features.push(
-      // 在标题面板上显示符号搜索按钮，展示在顶部的最左侧，移动端展示品种名称
-      'header_symbol_search',
       'context_menus', // 隐藏鼠标右键按钮
       'show_chart_property_page', // 隐藏右上角设置按钮
       'header_screenshot', // 截图
