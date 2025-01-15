@@ -138,9 +138,9 @@ export default function VerifyMsg() {
 
   return (
     <BasicLayout
-      bgColor="secondary"
+      bgColor="primary"
       style={{ paddingLeft: 14, paddingRight: 14 }}
-      headerStyle={{ backgroundColor: theme.colors.backgroundColor.secondary }}
+      headerStyle={{ backgroundColor: theme.colors.backgroundColor.primary }}
       header={<Header title={i18n.t('pages.userCenter.shenfenrenzheng')} />}
       fixedHeight
     >

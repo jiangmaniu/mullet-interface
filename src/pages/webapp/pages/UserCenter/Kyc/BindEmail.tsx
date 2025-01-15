@@ -144,8 +144,8 @@ function BindEmail() {
 
   return (
     <BasicLayout
-      bgColor="secondary"
-      headerColor={theme.colors.backgroundColor.secondary}
+      bgColor="primary"
+      headerColor={theme.colors.backgroundColor.primary}
       style={{ paddingLeft: 14, paddingRight: 14 }}
       footerStyle={{
         backgroundColor: 'transparent'
@@ -191,7 +191,7 @@ function BindEmail() {
           )}
         />
         {!!errors.email && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.email.message}</Text>}
-        <Text className={cn('text-sm text-primary mt-5 max-w-[280px]')}>
+        <Text className={cn('text-sm text-primary mt-5 inline-block max-w-[280px]')}>
           {t('pages.userCenter.chakanduanxinhuoquyanzhengma', {
             phone: email ? email : t('pages.login.Email Address')
           })}

@@ -178,8 +178,8 @@ function BindPhone() {
 
   return (
     <BasicLayout
-      bgColor="secondary"
-      headerColor={theme.colors.backgroundColor.secondary}
+      bgColor="primary"
+      headerColor={theme.colors.backgroundColor.primary}
       style={{ paddingLeft: 14, paddingRight: 14 }}
       footerStyle={{
         backgroundColor: 'transparent'

@@ -42,7 +42,7 @@ function OrderTopTabbar({ position = 'PAGE' }: IProps) {
           ]}
           onChange={(key: any) => {
             trade.setOrderType(key)
-            trade.setOrderSpslChecked(false)
+            // trade.setOrderSpslChecked(false)
             // 重置交易数据
             handleReset()
           }}

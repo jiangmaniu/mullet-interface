@@ -73,7 +73,7 @@ export default function VerifyStatus() {
 
   return (
     <BasicLayout
-      bgColor="secondary"
+      bgColor="primary"
       style={{ paddingLeft: 14, paddingRight: 14 }}
       header={
         <Header

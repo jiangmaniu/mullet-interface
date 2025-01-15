@@ -94,7 +94,7 @@ export default function VerifyDoc() {
 
   return (
     <BasicLayout
-      bgColor="secondary"
+      bgColor="primary"
       style={{ paddingLeft: 14, paddingRight: 14 }}
       footerStyle={{
         backgroundColor: 'transparent'
@@ -111,7 +111,7 @@ export default function VerifyDoc() {
           {i18n.t('common.operate.Submit')}
         </Button>
       }
-      headerStyle={{ backgroundColor: theme.colors.backgroundColor.secondary }}
+      headerStyle={{ backgroundColor: theme.colors.backgroundColor.primary }}
       header={<Header title={i18n.t('pages.userCenter.pinzhengrenzheng')} />}
       fixedHeight
     >
