@@ -11,8 +11,11 @@ type IProps = {
   activeKey?: any
 }
 
+const isStellux = process.env.PLATFORM === 'stellux'
+const DEFAULT_CURRENT = isStellux ? '0' : '10'
+
 function CategoryTabs({ onChange, activeKey }: IProps) {
-  const [current, setCurrent] = useState('0')
+  const [current, setCurrent] = useState(DEFAULT_CURRENT)
   const { trade } = useStores()
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const intl = useIntl()
@@ -20,7 +23,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
   const symbolCategory = trade.symbolCategory
 
   useEffect(() => {
-    setCurrent(activeKey || '0')
+    setCurrent(activeKey || DEFAULT_CURRENT)
   }, [activeKey])
 
   useEffect(() => {
@@ -29,7 +32,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
 
   useEffect(() => {
     // 切换账户时，重置当前tab
-    setCurrent('0')
+    setCurrent(DEFAULT_CURRENT)
   }, [trade.currentAccountInfo.id])
 
   const className = useEmotionCss(({ token }) => {
@@ -71,7 +74,8 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
             setCurrent(key)
 
             // 请求分类下的品种
-            trade.getSymbolList({ classify: key })
+            // trade.getSymbolList({ classify: key })
+            trade.symbolList = trade.symbolListAll.filter((v) => (key === '0' ? true : v.classify === key))
           })
         }}
         activeKey={current}

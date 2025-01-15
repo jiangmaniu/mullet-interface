@@ -753,7 +753,11 @@ class TradeStore {
     const res = await getTradeSymbolCategory()
     if (res.success) {
       runInAction(() => {
-        this.symbolCategory = [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...(res?.data || [])]
+        const data = res?.data || []
+        this.symbolCategory =
+          process.env.PLATFORM === 'stellux'
+            ? [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...data]
+            : [...data.slice(0, -1)]
       })
     }
   }

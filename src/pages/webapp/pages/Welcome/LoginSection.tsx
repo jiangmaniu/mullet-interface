@@ -108,7 +108,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         // 重新获取用户信息
         await user.handleLoginSuccess(result as User.UserInfo)
 
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        await new Promise((resolve) => setTimeout(resolve, 1000))
       } else {
         // console.log('result', result)
         // // 刷新验证码

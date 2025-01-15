@@ -48,21 +48,25 @@ type ITabbarProps = {
   className?: string
 }
 
+const isStellux = process.env.PLATFORM === 'stellux'
+
 const getTabList = () => [
   { key: 'FAVORITE', value: 'FAVORITE', title: getIntl().formatMessage({ id: 'common.operate.Favorite' }) },
-  { key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) },
+  ...(isStellux ? [{ key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) }] : []),
   { key: 'CRYPTO', value: '10', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Crypto' }) },
   { key: 'COMMODITIES', value: '20', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Commodities' }) },
   { key: 'FOREX', value: '30', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Forex' }) },
   { key: 'INDICES', value: '40', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Indices' }) },
-  { key: 'STOCK', value: '50', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Stock' }) }
+  ...(isStellux ? [{ key: 'STOCK', value: '50', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Stock' }) }] : [])
 ]
+
+const DEFAULT_TAB_KEY = isStellux ? 'ALL' : 'CRYPTO'
 
 export const SymbolTabbar = observer(
   forwardRef(({ tabKey, onChange, onChangeIndex, position, className }: ITabbarProps, ref: any) => {
     const intl = useIntl()
     const { pathname } = useLocation()
-    const [activeKey, setActiveKey] = useState<TabKey>('ALL')
+    const [activeKey, setActiveKey] = useState<TabKey>(DEFAULT_TAB_KEY)
     const { trade } = useStores()
     const favoriteList = trade.favoriteList
     const isPageMode = position === 'PAGE'
@@ -125,7 +129,7 @@ export const SymbolTabbar = observer(
 
 // 行情Tabs
 function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey, tabValue, tabIndex, onSwiperChange }: IProps, ref: any) {
-  const [activeKey, setActiveKey] = useState<TabKey>('ALL')
+  const [activeKey, setActiveKey] = useState<TabKey>(DEFAULT_TAB_KEY)
   const [activeTabValue, setActiveTabValue] = useState<string>('')
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const swiperRef = useRef<SwiperRef>(null)
