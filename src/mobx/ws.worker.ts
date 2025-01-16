@@ -524,10 +524,15 @@ function batchUpdateQuoteDataByNumber(data: any) {
   const dataSourceKey = `${dataSourceCode}/${sbl}` // 数据源 + 品种名称
   quotesCache.set(dataSourceKey, data)
 
+  // 加快首次渲染时间
+  if (!quotes.size) {
+    updateQuoteData()
+    return
+  }
+
   // 如果缓存太大，强制发送
   if (quotesCache.size >= MAX_CACHE_SIZE) {
     updateQuoteData()
-
     return
   }
 
