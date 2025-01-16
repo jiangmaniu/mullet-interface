@@ -25,6 +25,8 @@ function WebAppLayout() {
   const intl = useIntl()
   const isOnline = networkState.online
 
+  const isMainTab = isMainTabbar(pathname)
+
   // 同步数据到worker线程
   useSyncDataToWorker()
 
@@ -121,8 +123,8 @@ function WebAppLayout() {
   }, [])
 
   const renderTabbar = useMemo(() => {
-    return isMainTabbar(pathname) && <TabBottomBar />
-  }, [pathname])
+    return isMainTab && <TabBottomBar />
+  }, [isMainTab])
 
   return (
     <div>

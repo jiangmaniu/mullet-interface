@@ -35,7 +35,7 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible
   const symbolList = trade.symbolListAll
   const [visibleItems, setVisibleItems] = useState<string[]>([])
   const [refreshing, setRefreshing] = useState(false)
-
+  const [loading, setLoading] = useState(true)
   const { showLoading, hideLoading } = useLoading()
 
   const symbolListLoading = trade.symbolListLoading

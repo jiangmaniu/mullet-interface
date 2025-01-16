@@ -171,7 +171,7 @@ function PricePercent({ symbol }: IProps) {
       </Col>
       <Col span={4} className="flex flex-col items-end pr-2">
         {res.bid ? (
-          <div className={cn('text-right text-xs font-pf-bold font-dingpro-medium', per > 0 ? 'text-green' : 'text-red')}>
+          <div className={cn('text-right text-xs font-dingpro-medium', per > 0 ? 'text-green' : 'text-red')}>
             {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
           </div>
         ) : (

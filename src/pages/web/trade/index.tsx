@@ -70,6 +70,11 @@ export default observer(() => {
   }, [pathname, trade.currentAccountInfo])
 
   useEffect(() => {
+    // 提前初始化worker
+    ws.initWorker()
+  }, [])
+
+  useEffect(() => {
     checkPageShowTime()
 
     // 如果网络断开，在连接需要重新重新建立新的连接
@@ -77,12 +82,10 @@ export default observer(() => {
       ws.close()
     }
     if (isOnline) {
-      setTimeout(() => {
-        // 重新建立新连接
-        ws.connect()
-        // 重置tradingview实例
-        kline.destroyed()
-      }, 300)
+      // 重新建立新连接
+      ws.connect()
+      // 重置tradingview实例
+      kline.destroyed()
     }
 
     return () => {

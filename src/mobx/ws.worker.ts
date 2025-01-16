@@ -22,6 +22,8 @@ type UserConf = {
   websocketUrl: string
   token: string
   userInfo: User.UserInfo
+  /**是否是手机端 */
+  isMobile?: boolean
 }
 
 // 从主线程同步过来的公共基础数据
@@ -49,6 +51,7 @@ let subscribeDepthTimer: any = null
 let lastQuoteUpdateTime = 0
 let lastDepthUpdateTime = 0
 const THROTTLE_QUOTE_INTERVAL = 500
+const THROTTLE_QUOTE_MOBILE_INTERVAL = 300
 const THROTTLE_DEPTH_INTERVAL = 300
 const MAX_CACHE_SIZE = 80 // 设置最大缓存限制
 
@@ -529,7 +532,8 @@ function batchUpdateQuoteDataByNumber(data: any) {
   }
 
   const now = performance.now()
-  if (now - lastQuoteUpdateTime >= THROTTLE_QUOTE_INTERVAL) {
+  const interval = userConf.isMobile ? THROTTLE_QUOTE_MOBILE_INTERVAL : THROTTLE_QUOTE_INTERVAL
+  if (now - lastQuoteUpdateTime >= interval) {
     if (quotesCache.size > 0) {
       updateQuoteData()
     }

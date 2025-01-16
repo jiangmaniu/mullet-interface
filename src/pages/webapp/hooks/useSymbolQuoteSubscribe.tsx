@@ -45,9 +45,7 @@ export default function useSymbolQuoteSubscribe({ list }: IProps) {
     }
 
     if (isOnline) {
-      setTimeout(() => {
-        handleSubscribeQuote()
-      }, 200)
+      handleSubscribeQuote()
     }
 
     // return () => {

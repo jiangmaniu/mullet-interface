@@ -3,7 +3,9 @@ import { useMemo } from 'react'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { gray } from '@/theme/theme.config'
 import { getCurrentQuote } from '@/utils/wsUtil'
+import { useEmotionCss } from '@ant-design/use-emotion-css'
 
 type IProps = {
   /** 交易品种item */
@@ -19,54 +21,129 @@ export default function useQuoteColor(props?: IProps) {
 
   const res = getCurrentQuote(symbol)
 
-  const { bid, ask, percent: per, hasQuote, quotes, askDiff, bidDiff } = useMemo(() => res, [res])
+  const { bid, ask, percent: per } = useMemo(() => res, [res])
 
-  const quotesLength = useMemo(() => quotes.size, [quotes.size])
+  let bidColor = ''
+  let askColor = ''
 
-  const askColor = useMemo(() => {
-    if (hasQuote && quotesLength) {
-      return askDiff === 0 ? 'same' : askDiff > 0 ? 'up' : 'down'
+  if (res.hasQuote && res.quotes?.size > 0) {
+    // 涨跌额涨跌幅是0显示灰色
+    if (res?.askDiff === 0) {
+      askColor = 'same'
     } else {
-      return 'same'
+      askColor = res?.askDiff > 0 ? 'up' : 'down'
     }
-  }, [hasQuote, quotes, askDiff])
-
-  const bidColor = useMemo(() => {
-    if (hasQuote && quotesLength) {
-      return bidDiff === 0 ? 'same' : bidDiff > 0 ? 'up' : 'down'
+    if (res?.bidDiff === 0) {
+      bidColor = 'same'
     } else {
-      return 'same'
+      bidColor = res?.bidDiff > 0 ? 'up' : 'down'
     }
-  }, [hasQuote, quotes, bidDiff])
+  } else {
+    // 默认展示灰色
+    bidColor = 'same'
+    askColor = 'same'
+  }
 
-  const styles = useMemo(() => {
+  const quoteWrapperClassName = useEmotionCss((token) => {
     return {
-      up: {
-        backgroundColor: upColor,
-        color: 'white'
+      '@keyframes bgUp': {
+        '0%': {
+          background: upColor,
+          color: 'var(--color-white)'
+        },
+        '50%': {
+          background: upColor,
+          color: 'var(--color-white)'
+        },
+        '100%': {
+          background: 'transparent',
+          color: 'var(--color-text-primary)'
+        }
       },
-      down: {
-        backgroundColor: downColor,
-        color: 'white'
+      '@keyframes bgDown': {
+        '0%': {
+          background: downColor,
+          color: 'var(--color-white)'
+        },
+        '50%': {
+          background: downColor,
+          color: 'var(--color-white)'
+        },
+        '100%': {
+          background: 'transparent',
+          color: 'var(--color-text-primary)'
+        }
       },
-      same: {
-        backgroundColor: theme.colors.gray[80],
-        color: theme.colors.textColor.primary,
-        borderColor: theme.colors.borderColor.weak
+      '@keyframes bgSame': {
+        '0%': {
+          background: 'var(--color-gray-50)'
+        },
+        '80%': {
+          background: 'var(--color-gray-50)'
+        },
+        '100%': {
+          background: 'transparent'
+        }
+      },
+      // '.up': {
+      //   animationName: 'bgUp',
+      //   animationDuration: '1000ms',
+      //   animationIterationCount: 'initial',
+      //   animationDirection: 'alternate',
+      // },
+      // '.down': {
+      //   animationName: 'bgDown',
+      //   animationDuration: '1000ms',
+      //   animationIterationCount: 'initial',
+      //   animationDirection: 'alternate'
+      // },
+      '.up': {
+        animationName: 'bgUp',
+        animationDuration: '1000ms',
+        animationIterationCount: 'initial',
+        animationDirection: 'alternate',
+        animationTimingFunction: 'ease-in-out',
+        animationFillMode: 'initial',
+        background: upColor,
+        color: 'var(--color-white)'
+      },
+      '.down': {
+        animationName: 'bgDown',
+        animationDuration: '1000ms',
+        animationIterationCount: 'initial',
+        animationDirection: 'alternate',
+        animationTimingFunction: 'ease-in-out',
+        animationFillMode: 'initial',
+        background: downColor,
+        color: 'var(--color-white)'
+      },
+      '.same': {
+        // animationName: 'bgSame',
+        // animationDuration: '500ms',
+        // animationIterationCount: 'initial',
+        position: 'relative',
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          left: 0,
+          bottom: 0,
+          top: 0,
+          right: 0,
+          border: `1px solid ${isDark ? gray[575] : theme.colors.borderColor.weak}`
+        },
+        background: `${isDark ? gray[720] : theme.colors.gray[80]}`,
+        color: 'var(--color-text-primary)'
       }
     }
-  }, [upColor, downColor, theme, isPc])
-
-  const bidColorStyle = useMemo(() => styles[bidColor] || {}, [styles, bidColor])
-  const askColorStyle = useMemo(() => styles[askColor] || {}, [styles, askColor])
+  })
 
   return {
-    askColor,
     bidColor,
-    bidColorStyle,
-    askColorStyle,
+    askColor,
+    quoteWrapperClassName,
     bid,
     ask,
+    per,
     low: res.low,
     high: res.high,
     spread: res.spread

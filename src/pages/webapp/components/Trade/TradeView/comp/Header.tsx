@@ -8,7 +8,6 @@ import useQuoteColor from '@/pages/webapp/hooks/useQuoteColor'
 import { formatNum } from '@/utils'
 import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
 
-import Button from '../../../Base/Button'
 import CustomArrowButton from '../../../Base/CustomArrowButton'
 import { Text } from '../../../Base/Text'
 import { View } from '../../../Base/View'
@@ -16,7 +15,7 @@ import MarginTypeAndLeverageBtn from './MarginTypeAndLeverageBtn'
 
 const BuySellPrice = observer(() => {
   const { cn, theme } = useTheme()
-  const { bidColorStyle, askColorStyle, bid, ask, low, high, spread } = useQuoteColor()
+  const { askColor, bidColor, quoteWrapperClassName, bid, ask, low, high, spread } = useQuoteColor()
 
   const depth = getCurrentDepth()
   const hasDepth = useMemo(() => Number(depth?.asks?.length || 0) > 0 && Number(depth?.bids?.length || 0) > 0, [depth])
@@ -24,23 +23,25 @@ const BuySellPrice = observer(() => {
   if (hasDepth) return <></>
 
   return (
-    <View className={cn('mb-3')}>
+    <View className={cn('mb-3', quoteWrapperClassName)}>
       <View className={cn('flex items-center flex-row rounded-md gap-x-[6px] border-b border-t')} borderColor="weak">
         <View className={cn('relative flex-1 overflow-hidden bg-gray-50')}>
-          <Button
-            textClassName={cn('text-base font-dingpro-medium')}
-            textStyle={bidColorStyle}
-            height={26}
-            className={cn('rounded-tl-[6px] border-[0px] rounded-tr-[0px] rounded-br-[0px] min-h-[26px] overflow-hidden z-2')}
-            style={bidColorStyle}
+          <View
+            className={cn(
+              'h-[26px] text-base font-dingpro-medium text-center rounded-tl-[6px] border-[0px] rounded-tr-[0px] rounded-br-[0px] min-h-[26px] overflow-hidden z-2',
+              bidColor
+            )}
           >
             {bid ? formatNum(bid) : '--'}
-          </Button>
-          <View className={cn('bg-gray-50 items-center justify-center border-l border-r rounded-bl h-[16px] -z-1')} borderColor="weak">
-            <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
-              L:
-              {formatNum(low)}
-            </Text>
+          </View>
+          <View
+            className={cn(
+              'bg-gray-50 items-center text-center justify-center border-l border-r rounded-bl h-[16px] -z-1 text-[9px] text-weak font-dingpro-medium'
+            )}
+            borderColor="weak"
+          >
+            L:
+            {formatNum(low)}
           </View>
         </View>
         <View>
@@ -49,23 +50,22 @@ const BuySellPrice = observer(() => {
           </Text>
         </View>
         <View className={cn('relative flex-1 overflow-hidden bg-gray-50')}>
-          <Button
-            textClassName={cn('text-base font-dingpro-medium')}
-            textStyle={askColorStyle}
-            height={26}
-            className={cn('rounded-tr-[6px] border-[0px] rounded-tl-[0px] rounded-bl-[0px] min-h-[26px] overflow-hidden')}
-            style={askColorStyle}
+          <View
+            className={cn(
+              'h-[26px] text-base font-dingpro-medium text-center rounded-tr-[6px] border-[0px] rounded-tl-[0px] rounded-bl-[0px] min-h-[26px] overflow-hidden',
+              askColor
+            )}
           >
             {ask ? formatNum(ask) : '--'}
-          </Button>
+          </View>
           <View
-            className={cn('bg-gray-50 items-center justify-center border-l border-r rounded-br rounded-tr h-[16px] -z-1')}
+            className={cn(
+              'bg-gray-50 items-center text-center justify-center text-[9px] text-weak font-dingpro-medium border-l border-r rounded-br rounded-tr h-[16px] -z-1'
+            )}
             borderColor="weak"
           >
-            <Text className={cn('text-[9px]')} color="weak" font="dingpro-medium">
-              H:
-              {formatNum(high)}
-            </Text>
+            H:
+            {formatNum(high)}
           </View>
         </View>
       </View>

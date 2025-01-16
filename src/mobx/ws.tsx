@@ -65,17 +65,23 @@ class WSStore {
 
     this.initWorker(resolve)
 
-    // 向worker线程发送连接指令
-    this.initConnectTimer = setTimeout(() => {
-      this.sendWorkerMessage({
-        type: 'INIT_CONNECT',
-        data: {
-          token,
-          userInfo,
-          websocketUrl: this.websocketUrl
-        }
-      })
-    }, 300)
+    if (this.readyState !== 1) {
+      // 向worker线程发送连接指令
+      this.initConnectTimer = setTimeout(
+        () => {
+          this.sendWorkerMessage({
+            type: 'INIT_CONNECT',
+            data: {
+              token,
+              userInfo,
+              websocketUrl: this.websocketUrl,
+              isMobile: !isPCByWidth()
+            }
+          })
+        },
+        this.worker ? 0 : 300
+      )
+    }
   }
 
   @action
@@ -402,7 +408,7 @@ class WSStore {
 
   // 检查socket是否连接，如果未连接，则重新连接
   checkSocketReady = (fn?: () => void) => {
-    if (this.socket?.readyState !== 1) {
+    if (this.readyState !== 1) {
       this.reconnect(fn)
     } else {
       fn?.()
@@ -470,7 +476,7 @@ class WSStore {
    * 延迟批量订阅行情
    * toSend 传入空对象或不传值，表示取消所有订阅
    */
-  debounceBatchSubscribeSymbol = debounce((toSend?: Map<string, boolean>) => {
+  debounceBatchSubscribeSymbol = (toSend?: Map<string, boolean>) => {
     // 1. 找到 this.toSendSymbols 中不在 this.sendingSymbols 中的符号，这些符号是即将要打开的符号
     const toOpen = new Map<string, boolean>()
     toSend?.forEach((value, key) => {
@@ -502,7 +508,7 @@ class WSStore {
     const list = Array.from(toOpen.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
     // console.log('即将打开的符号', list)
     this.batchSubscribeSymbol({ list })
-  }, 300)
+  }
 
   // 封装一个延迟执行的取消订阅方法
   debounceBatchCloseSymbol = debounce(
@@ -518,7 +524,7 @@ class WSStore {
       // )
       this.batchSubscribeSymbol({ cancel: true, list })
     },
-    3000
+    100
   )
   // ========== H5 订阅相关 end ============
 

@@ -840,7 +840,9 @@ class TradeStore {
     }
     const res = await getTradeSymbolList({ ...params, accountId }).catch((e) => e)
     runInAction(() => {
-      this.symbolListLoading = false
+      setTimeout(() => {
+        this.symbolListLoading = false
+      }, 100)
     })
     if (res.success) {
       const symbolList = (res.data || []) as Account.TradeSymbolListItem[]

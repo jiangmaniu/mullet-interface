@@ -41,7 +41,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
 
   const isMarketOpen = inViewport ? trade.isMarketOpen(symbol) : false
 
-  const { bidColorStyle, askColorStyle } = useQuoteColor({ item })
+  const { quoteWrapperClassName, askColor, bidColor } = useQuoteColor({ item })
 
   const handleJump = () => {
     // 切换品种
@@ -61,7 +61,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
 
   return (
     <div
-      className={cn('mb-[10px] flex items-center flex-row justify-between py-2 px-2 rounded-xl bg-primary')}
+      className={cn('mb-[10px] flex items-center flex-row justify-between py-2 px-2 rounded-xl bg-primary', quoteWrapperClassName)}
       onClick={handleJump}
       ref={itemRef}
       data-inviewport={inViewport}
@@ -102,9 +102,9 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
               <View
                 onClick={handleJump}
                 className={cn(
-                  'rounded-md text-center relative top-[1px] pt-[1px] leading-[26px] h-[26px] min-h-[26px] overflow-hidden z-2 text-sm font-dingpro-medium'
+                  'rounded-md text-center relative top-[1px] pt-[1px] leading-[26px] h-[26px] min-h-[26px] overflow-hidden z-2 text-sm font-dingpro-medium',
+                  bidColor
                 )}
-                style={bidColorStyle}
               >
                 {bid ? formatNum(bid) : '--'}
               </View>
@@ -131,9 +131,9 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
               <View
                 onClick={handleJump}
                 className={cn(
-                  'rounded-[6px] relative top-[1px] pt-[1px] text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden text-sm font-dingpro-medium'
+                  'rounded-[6px] relative top-[1px] pt-[1px] text-center leading-[26px] h-[26px] min-h-[26px] overflow-hidden text-sm font-dingpro-medium',
+                  askColor
                 )}
-                style={askColorStyle}
               >
                 {ask ? formatNum(ask) : '--'}
               </View>

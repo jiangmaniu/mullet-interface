@@ -52,9 +52,7 @@ export default function useTradeViewQuoteSubscribe() {
     }
 
     if (isOnline) {
-      setTimeout(() => {
-        handleSubscribeTrade()
-      }, 200)
+      handleSubscribeTrade()
     }
 
     return () => {
