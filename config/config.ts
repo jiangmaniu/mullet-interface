@@ -8,7 +8,6 @@ import ENV from '../src/env'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 import routes from './routes'
-
 const { REACT_APP_ENV = 'dev' } = process.env
 
 export default defineConfig({
@@ -19,6 +18,8 @@ export default defineConfig({
    * @doc https://umijs.org/docs/api/config#hash
    */
   hash: true,
+
+  plugins: [require.resolve('./plugins/prefetch.ts')],
 
   // 只设置 dev 阶段的 sourcemap
   devtool: process.env.NODE_ENV === 'development' ? 'eval' : false,
