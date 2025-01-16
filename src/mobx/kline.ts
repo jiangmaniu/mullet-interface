@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { isPCByWidth } from '@/utils'
 import dayjs from 'dayjs'
 import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 import NP from 'number-precision'
@@ -169,7 +170,7 @@ class KlineStore {
           symbol: symbolInfo.dataSourceSymbol, // 数据源品种
           dataSourceCode: symbolInfo.dataSourceCode, // 数据源code
           current: 1,
-          size: 500, // 条数
+          size: isPCByWidth() ? 500 : 200, // 条数
           klineType, // 时间类型
           klineTime: to + 8 * 60 * 60 // 查询截止时间之前的k线数据
         }
