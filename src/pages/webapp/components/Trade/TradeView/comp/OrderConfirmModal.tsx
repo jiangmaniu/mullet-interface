@@ -1,6 +1,6 @@
 import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { ForwardedRef, forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
+import { ForwardedRef, forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
@@ -30,6 +30,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
   const { trade } = useStores()
   const { buySell, orderVolume, marginType } = trade
   const isBuy = buySell === 'BUY'
+  const [open, setOpen] = useState(false)
 
   const quoteInfo = getCurrentQuote()
   const prepaymentConf = quoteInfo?.prepaymentConf
@@ -54,7 +55,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
   // const { expectedMargin } = useTrade()
 
   // 接口计算预估保证金
-  const expectedMargin = useMargin()
+  const expectedMargin = useMargin({ isLimit: !open })
 
   const bottomSheetModalRef = useRef<SheetRef>(null)
 
@@ -77,6 +78,9 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
       confirmText={isBuy ? intl.formatMessage({ id: 'pages.trade.Confirm buy' }) : intl.formatMessage({ id: 'pages.trade.Confirm sell' })}
       confirmButtonType={isBuy ? 'success' : 'danger'}
       onConfirm={onConfirm}
+      onOpenChange={(open) => {
+        setOpen(open)
+      }}
       children={
         <View className={cn('px-5')}>
           <View className={cn('flex-row')}>

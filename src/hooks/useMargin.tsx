@@ -4,7 +4,13 @@ import { useDebounceEffect } from 'ahooks'
 import { useState } from 'react'
 import useTrade from './useTrade'
 
-export default function useMargin() {
+type IProps = {
+  /**是否限制请求 */
+  isLimit?: boolean
+}
+
+export default function useMargin(props?: IProps) {
+  const { isLimit = false } = props || {}
   const { orderParams } = useTrade()
   const { trade } = useStores()
   const accountGroupPrecision = trade.currentAccountInfo?.currencyDecimal || 2
@@ -14,11 +20,12 @@ export default function useMargin() {
 
   useDebounceEffect(
     () => {
+      if (isLimit) return
       trade.calcMargin(orderParams).then((res: any) => {
         setExpectedMargin(formatNum(res, { precision: accountGroupPrecision }))
       })
     },
-    [orderParams],
+    [orderParams, isLimit],
     {
       wait: 1000
     }
