@@ -48,13 +48,14 @@ function Trade() {
           <SelectSymbolBtn showQuotePercent />
         </View>
         {/* 交易视图 */}
-        {visible ? (
+        {/* {visible ? (
           <TradeView />
         ) : (
           <View className={cn('flex-1 justify-center items-center')}>
             <img style={{ width: 160, height: 186 }} src={'/img/webapp/logo-gray.png'} />
           </View>
-        )}
+        )} */}
+        <TradeView />
       </View>
     </Basiclayout>
   )
