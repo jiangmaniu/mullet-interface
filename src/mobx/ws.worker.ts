@@ -54,6 +54,7 @@ const THROTTLE_QUOTE_INTERVAL = 500
 const THROTTLE_QUOTE_MOBILE_INTERVAL = 300
 const THROTTLE_DEPTH_INTERVAL = 300
 const MAX_CACHE_SIZE = 80 // 设置最大缓存限制
+let quoteCount = 0 // 首次加载用到
 
 // ============ 接收主线程消息 start ==============
 self.addEventListener('message', (event) => {
@@ -525,8 +526,9 @@ function batchUpdateQuoteDataByNumber(data: any) {
   quotesCache.set(dataSourceKey, data)
 
   // 加快首次渲染时间
-  if (!quotes.size) {
+  if (quoteCount < 50) {
     updateQuoteData()
+    quoteCount++
     return
   }
 

@@ -79,7 +79,7 @@ class WSStore {
             }
           })
         },
-        this.worker ? 0 : 300
+        this.worker ? 30 : 300
       )
     }
   }

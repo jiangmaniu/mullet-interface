@@ -15,7 +15,7 @@ import {
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
-import { toFixed } from '@/utils'
+import { isPCByWidth, toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
@@ -106,6 +106,7 @@ class TradeStore {
   @observable symbolListLoading = true
   @observable symbolList: Account.TradeSymbolListItem[] = []
   @observable symbolListAll: Account.TradeSymbolListItem[] = [] // 首次查询的全部品种列表，不按条件查询
+  @observable symbolListMap = {} as Record<string, Account.TradeSymbolListItem> // 品种列表，按symbolName存储
 
   @observable userConfInfo = {} as UserConfInfo // 记录用户设置的品种名称、打开的品种列表、自选信息，按accountId储存
   // 当前accountId的配置信息从userConfInfo展开，切换accountId时，重新设置更新
@@ -832,17 +833,36 @@ class TradeStore {
   // 根据账户id查询侧边栏菜单交易品种列表
   @action
   getSymbolList = async (params = {} as Partial<Account.TradeSymbolListParams>) => {
+    const isPc = isPCByWidth()
     const accountId = params?.accountId || this.currentAccountInfo?.id
     if (!accountId) return
     // 查询全部
     if (params.classify === '0') {
       delete params.classify
     }
+    const cacheSymbolList = STORAGE_GET_CONF_INFO(`${this.currentAccountInfo?.id}.symbolList`) || []
+    // 如果缓存有优先取一次缓存的展示
+    if (cacheSymbolList?.length) {
+      this.symbolList = cacheSymbolList
+      this.symbolListAll = cacheSymbolList
+
+      runInAction(() => {
+        setTimeout(
+          () => {
+            this.symbolListLoading = false
+          },
+          isPc ? 0 : 800
+        )
+      })
+    }
     const res = await getTradeSymbolList({ ...params, accountId }).catch((e) => e)
     runInAction(() => {
-      setTimeout(() => {
-        this.symbolListLoading = false
-      }, 100)
+      setTimeout(
+        () => {
+          this.symbolListLoading = false
+        },
+        isPc ? 0 : 800
+      )
     })
     if (res.success) {
       const symbolList = (res.data || []) as Account.TradeSymbolListItem[]
@@ -851,6 +871,15 @@ class TradeStore {
         // 查询全部的品种列表
         if (!params.classify) {
           this.symbolListAll = symbolList
+
+          // 转成map结构
+          this.symbolListMap = symbolList.reduce((prev, curr) => {
+            prev[curr.symbol] = curr
+            return prev
+          }, {} as Record<string, Account.TradeSymbolListItem>)
+
+          // 缓存当前账号的品种列表
+          STORAGE_SET_CONF_INFO(symbolList, `${this.currentAccountInfo?.id}.symbolList`)
         }
 
         // 切换accountId后请求的品种列表可能不一致，设置第一个默认的品种名称

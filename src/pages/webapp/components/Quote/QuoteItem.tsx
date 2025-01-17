@@ -76,23 +76,31 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
           {hasQuote && !isMarketOpen && <Iconfont name="hangqing-xiushi" size={20} color="red" style={{ marginLeft: 5 }} />}
         </View>
         <View className={cn('flex flex-row items-center')}>
-          <View className={cn('max-w-[54px]')}>
-            <Text color="primary" size="xs">
-              {inViewport ? dayjs(res.quoteTimeStamp).format('HH:mm:ss') : '--:--:--'}
+          {res.hasQuote ? (
+            <>
+              <View className={cn('max-w-[54px]')}>
+                <Text color="primary" size="xs">
+                  {inViewport ? dayjs(res.quoteTimeStamp).format('HH:mm:ss') : '--:--:--'}
+                </Text>
+              </View>
+              <View className={cn('h-2 w-[1px] mx-[2px]', { backgroundColor: theme.colors.Divider.primary })} />
+              <View className={cn('flex items-center flex-row')}>
+                <Iconfont name="hangqing-diancha" size={14} />
+                {/* 点差 */}
+                <Text color="primary" size="xs">
+                  {res.spread}
+                </Text>
+              </View>
+              <View className={cn('h-2 w-[1px] mx-[2px]', { backgroundColor: theme.colors.Divider.heavy })} />
+              <Text color={(per as number) > 0 ? 'green' : 'red'} size="xs" className={cn('font-medium')}>
+                {inViewport && bid ? ((per as number) > 0 ? `+${per}%` : `${per}%`) : '--'}
+              </Text>
+            </>
+          ) : (
+            <Text size="xs" font="dingpro-regular">
+              --
             </Text>
-          </View>
-          <View className={cn('h-2 w-[1px] mx-[2px]', { backgroundColor: theme.colors.Divider.primary })} />
-          <View className={cn('flex items-center flex-row')}>
-            <Iconfont name="hangqing-diancha" size={14} />
-            {/* 点差 */}
-            <Text color="primary" size="xs">
-              {res.spread}
-            </Text>
-          </View>
-          <View className={cn('h-2 w-[1px] mx-[2px]', { backgroundColor: theme.colors.Divider.heavy })} />
-          <Text color={(per as number) > 0 ? 'green' : 'red'} size="xs" className={cn('font-medium')}>
-            {inViewport && bid ? ((per as number) > 0 ? `+${per}%` : `${per}%`) : '--'}
-          </Text>
+          )}
         </View>
       </View>
       <View className={cn('flex items-center flex-row gap-x-[6px]')}>
