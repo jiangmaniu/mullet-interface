@@ -252,8 +252,17 @@ export default defineConfig({
           clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
           cleanupOutdatedCaches: true, //删除过时、老版本的缓存
           swDest: 'service-wroker.js', // 输出 Service worker 文件
-          include: ['**/*.{html,js,css,png.jpg}'], // 匹配的文件
-          exclude: ['service-wroker.js', 'scripts/sw.js', 'manifest.json', 'umi.js', 'umi.css'], // 忽略的文件
+          // include: ['**/*.{html,js,css,png.jpg}'], // 匹配的文件
+          exclude: [
+            /index\.html$/,
+            '/service-wroker.js',
+            '/scripts/sw.js',
+            '/umi.js',
+            '/umi.css',
+            '/scripts/loading.js',
+            /^manifest.*\.json$/, //排除所有 manifest.json 文件
+            /^\/iconfont\/.*$/ // 排除 iconfont 目录下的所有文件
+          ], // 忽略的文件
           disableDevLogs: true,
           runtimeCaching: [
             {
@@ -279,7 +288,7 @@ export default defineConfig({
               }
             },
             {
-              urlPattern: /.*(png|svga).*/,
+              urlPattern: /.*(png|svga|jpg|jpeg|gif|ico|webp).*/,
               handler: 'CacheFirst',
               options: {
                 cacheName: 'seed-image',
