@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # 使用方法
-# 打包lynfoo正式环境镜像包 ./build.sh main build:lynfoo:prod stellux-client
-# 打包stellux正式环境镜像包 ./build.sh main build:stellux:prod stellux-client
-# 打包stellux测试环境镜像包 ./build.sh dev build:stellux:test stellux-client
+# 打包lynfoo正式环境镜像包 ./build.sh main build:lynfoo:prod stellux_client
+# 打包stellux正式环境镜像包 ./build.sh main build:stellux:prod stellux-_lient
+# 打包stellux测试环境镜像包 ./build.sh dev build:stellux:test stellux_client
 
 # 变量
 version="v1.0.0"
