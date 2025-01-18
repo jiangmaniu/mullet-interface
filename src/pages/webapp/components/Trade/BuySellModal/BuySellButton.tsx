@@ -60,13 +60,11 @@ function BuySellButton({ position = 'footer', onShow }: IProps) {
       >
         {t('mt.kaikong')} {hasQuote ? formatNum(quoteInfo.bid) : '--'}
       </Button>
-      {hasQuote && (
-        <View className={cn('items-center justify-center bg-gray-85 px-1 rounded-[6px] z-[1] min-w-[36px] absolute dark:bg-white')}>
-          <Text color="primary" size="sm" className={cn('leading-[22px]')}>
-            {quoteInfo.spread || 0}
-          </Text>
-        </View>
-      )}
+      <View className={cn('items-center justify-center bg-gray-85 px-1 rounded-[6px] z-[1] min-w-[36px] absolute dark:bg-white')}>
+        <Text color="primary" size="sm" className={cn('leading-[22px]')}>
+          {quoteInfo.spread || 0}
+        </Text>
+      </View>
       <Button
         type="success"
         size="large"
@@ -88,7 +86,7 @@ function BuySellButton({ position = 'footer', onShow }: IProps) {
         className={cn(isShowModal && buySell === 'SELL' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'SELL' && '!text-weak')}
       >
-        {t('mt.kaiduo')} {hasQuote ? formatNum(quoteInfo.ask) : '--'}
+        {t('mt.kaiduo')} {formatNum(quoteInfo.ask)}
       </Button>
     </View>
   )
