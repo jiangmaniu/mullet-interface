@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # 使用方法
-# 打包lynfoo正式环境镜像包 ./build.sh main build:lynfoo:prod
-# 打包stellux正式环境镜像包 ./build.sh main build:stellux:prod
-# 打包stellux测试环境镜像包 ./build.sh dev build:stellux:test
+# 打包lynfoo正式环境镜像包 ./build.sh main build:lynfoo:prod stellux-client
+# 打包stellux正式环境镜像包 ./build.sh main build:stellux:prod stellux-client
+# 打包stellux测试环境镜像包 ./build.sh dev build:stellux:test stellux-client
 
 # 变量
 version="v1.0.0"
 port="8000"
-registry_project="stellux-client"
+registry_project="$3"
 
 # 丢弃修改
 git checkout .
