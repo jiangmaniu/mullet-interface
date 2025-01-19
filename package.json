@@ -5,6 +5,7 @@
   "description": "client",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 ANALYZE_PORT=8888 max build",
+    "build": "max build",
     "build:lynfoo:prod": "cross-env APP_ENV=prod PLATFORM=lynfoo max build",
     "build:stellux:prod": "cross-env APP_ENV=prod PLATFORM=stellux max build",
     "build:stellux:test": "cross-env APP_ENV=test PLATFORM=stellux max build",
