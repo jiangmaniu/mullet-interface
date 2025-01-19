@@ -49,6 +49,6 @@ declare namespace NodeJS {
     /**平台类型 */
     PLATFORM: keyof typeof PLATFORM
     /**环境类型 */
-    APP_ENV: keyof typeof APP_ENV_ENUM
+    APP_ENV: keyof typeof APP_ENV
   }
 }
