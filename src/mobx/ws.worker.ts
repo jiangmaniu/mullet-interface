@@ -335,15 +335,20 @@ function batchSubscribeSymbol({
 } = {}) {
   const symbolList = list
   if (!symbolList.length) return
-  symbolList.forEach((item) => {
-    const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
-    const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
-    // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
-    const topic = item.accountGroupId ? topicAccount : topicNoAccount
-    send({
-      topic,
-      cancel
+
+  // 一次性订阅
+  const topics = symbolList
+    .map((item) => {
+      const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
+      const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
+      // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
+      return item.accountGroupId ? topicAccount : topicNoAccount
     })
+    .join(',')
+
+  send({
+    topic: topics,
+    cancel
   })
 }
 

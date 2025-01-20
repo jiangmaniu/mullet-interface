@@ -19,7 +19,7 @@ export default function Loading({ width = 400, height = 400 }: IProps) {
   useEffect(() => {
     if (lottieRef.current) {
       // @ts-ignore
-      lottieRef.current?.setSpeed(2.5)
+      lottieRef.current?.setSpeed(1)
     }
   }, [])
 
