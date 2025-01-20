@@ -476,7 +476,6 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
 
   const currentQuote = quotes.get(dataSourceKey) // 行情信息
-  const quoteTimeStamp = currentQuote?.priceData?.id // 行情时间戳
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf as Symbol.PrepaymentConf // 当前品种预付款配置
   const transactionFeeConf = currentSymbol?.symbolConf?.transactionFeeConf as Symbol.TransactionFeeConf // 当前品种手续费配置
@@ -486,6 +485,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const quotationConf = currentSymbol?.symbolConf?.quotationConf as Symbol.QuotationConf // 当前品种交易时间配置
   const symbolNewTicker = currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
   const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
+  const quoteTimeStamp = currentQuote?.priceData?.id || symbolNewPrice?.id // 行情时间戳
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
   let ask = toFixed(Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0), digits, false) // ask是买价，切记ask买价一般都比bid卖价高

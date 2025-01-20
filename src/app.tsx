@@ -7,6 +7,8 @@ import { ClickToComponent } from 'click-to-react-component'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
+import { CONFIG_URL } from '@/constants/config'
+import ENV from '@/env'
 import VConsole from 'vconsole'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
@@ -107,6 +109,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // 在 layout 底部渲染一个块
     // menuFooterRender: () => <div>菜单底部区域</div>,
     logo: <Logo />,
+    title: '',
     // layout 的内容区 style
     contentStyle: {
       background: pageBgColor,
@@ -286,7 +289,6 @@ export const patchRoutes = async ({ routes }: any) => {
 export const patchClientRoutes = ({ routes }: any) => {
   const { locationLng } = getBrowerLng()
   // 获取本地缓存的语言
-  // const lng = localStorage.getItem('umi_locale') || (process.env.PLATFORM === 'lynfoo' ? DEFAULT_LOCALE : locationLng)
   const lng = localStorage.getItem('umi_locale') || locationLng
 
   const token = STORAGE_GET_TOKEN()
@@ -338,6 +340,22 @@ export const rootContainer = (container: JSX.Element) => {
           <style>{mobileCssVars}</style>
           {/* 需要设置一次地址，否则不使用Layout的情况下，iconfont图标使用不显示 */}
           <script async={true} src={ICONFONT_URL}></script>
+          <script async={true} src={CONFIG_URL}></script>
+
+          {/* pwa配置 */}
+          <link ref="manifest" href={ENV.manifest} />
+          <link rel="shortcut icon" href={ENV.favicon} />
+
+          {/* meta标签 */}
+          <meta name="application-name" content={ENV?.name} />
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+          <meta name="apple-mobile-web-app-title" content={ENV?.name} />
+          <meta name="description" content="Trading Platform" />
+          <meta name="format-detection" content="telephone=no" />
+          <meta name="mobile-web-app-capable" content="yes" />
+          <meta name="msapplication-tap-highlight" content="no" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Helmet>
         <Provider>{container}</Provider>
         {/* 快速调试组件

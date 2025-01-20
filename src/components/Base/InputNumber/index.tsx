@@ -217,6 +217,11 @@ function InputNumber(props: IProps) {
       '.ant-input': {
         background: disabled ? 'transparent' : isDark ? gray[750] : '#fff'
       },
+      '.ant-input-wrapper,.ant-form-item-control-input': {
+        input: {
+          border: 'none !important'
+        }
+      },
       '.input-wrapper:hover':
         isDark && isFocus && showFloatTips
           ? {
@@ -227,7 +232,7 @@ function InputNumber(props: IProps) {
               border: disabled ? '1px solid none' : `1px solid #9c9c9c`
             },
       '.ant-form-item-control-input-content': {
-        background: disabled ? '#f8f8f8' : 'var(--input-bg)'
+        background: 'var(--input-bg)'
       }
     }
   })

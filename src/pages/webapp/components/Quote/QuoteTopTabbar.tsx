@@ -5,6 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 
 import { useStores } from '@/context/mobxProvider'
 
+import ENV from '@/env'
 import { cn } from '@/utils/cn'
 import { Swiper, SwiperRef } from 'antd-mobile'
 import Tabs from '../Base/Tabs'
@@ -48,19 +49,19 @@ type ITabbarProps = {
   className?: string
 }
 
-const isStellux = process.env.PLATFORM === 'stellux'
+const isSux = ENV.platform === 'sux'
 
 const getTabList = () => [
   { key: 'FAVORITE', value: 'FAVORITE', title: getIntl().formatMessage({ id: 'common.operate.Favorite' }) },
-  ...(isStellux ? [{ key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) }] : []),
+  ...(isSux ? [{ key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) }] : []),
   { key: 'CRYPTO', value: '10', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Crypto' }) },
   { key: 'COMMODITIES', value: '20', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Commodities' }) },
   { key: 'FOREX', value: '30', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Forex' }) },
   { key: 'INDICES', value: '40', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Indices' }) },
-  ...(isStellux ? [{ key: 'STOCK', value: '50', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Stock' }) }] : [])
+  ...(isSux ? [{ key: 'STOCK', value: '50', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Stock' }) }] : [])
 ]
 
-const DEFAULT_TAB_KEY = isStellux ? 'ALL' : 'CRYPTO'
+const DEFAULT_TAB_KEY = isSux ? 'ALL' : 'CRYPTO'
 
 export const SymbolTabbar = observer(
   forwardRef(({ tabKey, onChange, onChangeIndex, position, className }: ITabbarProps, ref: any) => {

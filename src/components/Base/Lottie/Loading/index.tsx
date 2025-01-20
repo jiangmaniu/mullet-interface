@@ -4,9 +4,8 @@ import { useIntl } from '@umijs/max'
 import Lottie from 'lottie-react'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
+import loadingData from '../../../../../public/platform/lottie/loading.json'
 import Modal from '../../Modal'
-import lynfooData from './json/lynfoo.json'
-import stelluxData from './json/stellux.json'
 
 type IProps = {
   width?: number
@@ -14,7 +13,7 @@ type IProps = {
 }
 
 export default function Loading({ width = 400, height = 400 }: IProps) {
-  const animationData = process.env.PLATFORM === 'lynfoo' ? lynfooData : stelluxData
+  const animationData = loadingData
   const lottieRef = useRef(null)
 
   useEffect(() => {

@@ -34,6 +34,7 @@ import {
 } from '@/utils/storage'
 import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
+import ENV from '@/env'
 import klineStore from './kline'
 import ws from './ws'
 import { IPositionListSymbolCalcInfo, MarginReteInfo } from './ws.types'
@@ -756,7 +757,7 @@ class TradeStore {
       runInAction(() => {
         const data = res?.data || []
         this.symbolCategory =
-          process.env.PLATFORM === 'stellux'
+          ENV.platform === 'sux'
             ? [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...data]
             : [...data.slice(0, -1)]
       })
@@ -895,13 +896,20 @@ class TradeStore {
       })
 
       // 获取品种后，动态订阅品种
-      if (ws.socket?.readyState === 1 || ws.readyState === 1) {
+      if (ws.readyState === 1) {
         setTimeout(() => {
           ws.batchSubscribeSymbol()
         }, 400)
       } else {
-        // 按需连接
-        // ws.reconnect()
+        if (!isPCByWidth()) {
+          ws.checkSocketReady(() => {
+            // 打开行情订阅
+            ws.openSymbol(
+              // 构建参数
+              ws.makeWsSymbolBySemi(this.symbolListAll.filter((item) => item.classify === '10'))
+            )
+          })
+        }
       }
     }
   }

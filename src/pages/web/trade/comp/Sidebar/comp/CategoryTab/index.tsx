@@ -5,14 +5,15 @@ import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
+import ENV from '@/env'
 
 type IProps = {
   onChange?: (key: any) => void
   activeKey?: any
 }
 
-const isStellux = process.env.PLATFORM === 'stellux'
-const DEFAULT_CURRENT = isStellux ? '0' : '10'
+const isSux = ENV.platform === 'sux'
+const DEFAULT_CURRENT = isSux ? '0' : '10'
 
 function CategoryTabs({ onChange, activeKey }: IProps) {
   const [current, setCurrent] = useState(DEFAULT_CURRENT)

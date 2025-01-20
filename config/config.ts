@@ -4,7 +4,6 @@ import CompressionPlugin from 'compression-webpack-plugin'
 import { join } from 'path'
 import { GenerateSW } from 'workbox-webpack-plugin'
 import { DEFAULT_LOCALE } from '../src/constants/index'
-import ENV from '../src/env'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 import routes from './routes'
@@ -74,7 +73,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: ENV?.name,
+  // title: ENV?.name,
   layout: {
     locale: true,
     ...defaultSettings
@@ -163,30 +162,30 @@ export default defineConfig({
     { src: '/scripts/sw.js', async: true }
   ],
 
-  links: [{ rel: 'manifest', href: ENV?.manifest }],
+  // links: [{ rel: 'manifest', href: ENV?.manifest }],
 
-  metas: [
-    { name: 'application-name', content: ENV?.name },
-    { name: 'apple-mobile-web-app-capable', content: 'yes' },
-    { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
-    { name: 'apple-mobile-web-app-title', content: ENV?.name },
-    { name: 'description', content: `${ENV?.name} Trading Platform` },
-    { name: 'format-detection', content: 'telephone=no' },
-    { name: 'mobile-web-app-capable', content: 'yes' },
-    // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
-    // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
-    { name: 'msapplication-tap-highlight', content: 'no' },
-    // <meta name="viewport" content="width=device-width, initial-scale=1">
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-    // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
-  ],
-  favicons: [
-    // 完整地址
-    // 'https://domain.com/favicon.ico'
-    // 此时将指向 `/favicon.png` ，确保你的项目含有 `public/favicon.png`
-    // '/favicon.png'
-    ENV?.favicon || ''
-  ],
+  // metas: [
+  //   { name: 'application-name', content: ENV?.name },
+  //   { name: 'apple-mobile-web-app-capable', content: 'yes' },
+  //   { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+  //   { name: 'apple-mobile-web-app-title', content: ENV?.name },
+  //   { name: 'description', content: `${ENV?.name} Trading Platform` },
+  //   { name: 'format-detection', content: 'telephone=no' },
+  //   { name: 'mobile-web-app-capable', content: 'yes' },
+  //   // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
+  //   // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
+  //   { name: 'msapplication-tap-highlight', content: 'no' },
+  //   // <meta name="viewport" content="width=device-width, initial-scale=1">
+  //   { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+  //   // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
+  // ],
+  // favicons: [
+  //   // 完整地址
+  //   // 'https://domain.com/favicon.ico'
+  //   // 此时将指向 `/favicon.png` ，确保你的项目含有 `public/favicon.png`
+  //   // '/favicon.png'
+  //   ENV?.favicon || ''
+  // ],
 
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],
@@ -219,11 +218,12 @@ export default defineConfig({
   tailwindcss: {},
   extraPostCSSPlugins: [require('tailwindcss'), require('autoprefixer')],
   // 将 node 的环境变量注入 define 配置中，可以在浏览器window.xx获取
-  define: {
-    BASE_URL: process.env.BASE_URL,
-    'process.env.APP_ENV': process.env.APP_ENV,
-    'process.env.PLATFORM': process.env.PLATFORM
-  },
+  // 不在通过这种方式，通过public/platform/config.js 获取
+  // define: {
+  //   BASE_URL: process.env.BASE_URL,
+  //   'process.env.APP_ENV': process.env.APP_ENV,
+  //   'process.env.PLATFORM': process.env.PLATFORM
+  // },
   // 配置额外的 babel 插件。可传入插件地址或插件函数。
   extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // https://umijs.org/docs/api/config#codesplitting
@@ -247,7 +247,7 @@ export default defineConfig({
       // workbox 配置
       config.plugin('workbox').use(GenerateSW, [
         {
-          cacheId: ENV?.name, // 设置前缀
+          cacheId: Date.now().toString(), // 设置前缀
           skipWaiting: true, // 强制等待中的 Service Worker 被激活
           clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
           cleanupOutdatedCaches: true, //删除过时、老版本的缓存
