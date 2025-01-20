@@ -906,7 +906,7 @@ class TradeStore {
             // 打开行情订阅
             ws.openSymbol(
               // 构建参数
-              ws.makeWsSymbolBySemi(this.symbolListAll.filter((item) => item.classify === '10'))
+              ws.makeWsSymbolBySemi(this.symbolListAll)
             )
           })
         }
