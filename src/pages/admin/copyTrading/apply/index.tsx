@@ -13,7 +13,7 @@ import { addTraadeFollowLead } from '@/services/api/tradeFollow/lead'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { AvatarUpload } from './AvatarUpload'
 import ContractUpload from './ContractUpload'
 

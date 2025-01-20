@@ -1,15 +1,17 @@
-import { action, makeAutoObservable, observable, reaction, runInAction } from 'mobx'
-
 import { stores } from '@/context/mobxProvider'
 import { getRegisterWay } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
 import { getMyMessageList, getUnReadMessageCount } from '@/services/api/message'
 import { onLogout } from '@/utils/navigator'
-import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_SET_USER_INFO } from '@/utils/storage'
+import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_SET_PLATFORM_CONFIG, STORAGE_SET_USER_INFO } from '@/utils/storage'
+import { action, makeAutoObservable, observable, reaction, runInAction } from 'mobx'
+import PLATFORM_DEFAULT_CONFIG from '../../public/platform/config.json'
 
 export type TabbarActiveKey = '/app/quote' | '/app/trade' | '/app/position' | '/app/user-center'
 
 export type DeviceType = 'PC' | 'MOBILE'
+
+export type IPlatformConfig = typeof PLATFORM_DEFAULT_CONFIG
 
 export class GlobalStore {
   constructor() {
@@ -41,6 +43,28 @@ export class GlobalStore {
   @observable pageIsFocused = true // 页面是否处于激活状态，进入页面默认是true，离开页面变为false
   @observable sheetModalOpen = true // 记录SheetModal是否打开
   @observable verifyCodeDown = -1 // 验证码倒计时
+  @observable platformConfig = {} as IPlatformConfig // 平台配置
+
+  // 获取平台配置
+  getPlatformConfig = async () => {
+    const config = await fetch(location.origin + '/platform/config.json')
+      .then((res) => res.json())
+      .then((data) => data)
+
+    // 缓存配置到本地
+    STORAGE_SET_PLATFORM_CONFIG(config)
+
+    this.setPlatformConfig(config)
+
+    return config
+  }
+
+  // 设置平台配置
+  setPlatformConfig = (conf: any) => {
+    runInAction(() => {
+      this.platformConfig = conf
+    })
+  }
 
   @action countDownVerifyCode = async (down: number) => {
     this.verifyCodeDown = down - 1

@@ -5,7 +5,7 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } from 
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { navigateTo } from '../../utils/navigator'
 import SheetModal, { SheetRef } from '../Base/SheetModal'
 import { Text } from '../Base/Text'

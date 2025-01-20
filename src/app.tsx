@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { CONFIG_URL } from '@/constants/config'
-import ENV from '@/env'
+import ENV from '@/env/config'
 import VConsole from 'vconsole'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'

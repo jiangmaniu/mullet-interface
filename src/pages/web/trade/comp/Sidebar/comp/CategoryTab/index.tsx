@@ -5,17 +5,17 @@ import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
-import ENV from '@/env'
+import ENV from '@/env/config'
 
 type IProps = {
   onChange?: (key: any) => void
   activeKey?: any
 }
 
-const isSux = ENV.platform === 'sux'
-const DEFAULT_CURRENT = isSux ? '0' : '10'
-
 function CategoryTabs({ onChange, activeKey }: IProps) {
+  const isSux = ENV.platform === 'sux'
+  const DEFAULT_CURRENT = isSux ? '0' : '10'
+
   const [current, setCurrent] = useState(DEFAULT_CURRENT)
   const { trade } = useStores()
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性

@@ -1,0 +1,28 @@
+{
+  "name": "Stellux",
+  "platform": "sux",
+  "offical": "www.stellux.io",
+  "manifest": "/platform/manifest.json",
+  "logo": "/platform/img/pc-logo.svg",
+  "logoDark": "/platform/img/pc-logo-dark.png",
+  "favicon": "/platform/favicon.ico",
+  "klineWatermarkLogo": "/platform/img/kline-water-logo.png",
+  "klineWatermarkLogoDark": "/platform/img/kline-water-logo.png",
+  "featureWatermarkLogo": "/platform/img/kline-water-logo.png",
+  "featureWatermarkLogoDark": "/platform/img/feature-water-logo-dark.png",
+  "ServiceTerm": "",
+  "PrivacyAgreement": "",
+  "CLIENT_ID": "StelluxTrader-client",
+  "CLIENT_SECRET": "stellux_trader_client_secret",
+  "REGISTER_APP_CODE": "123456",
+  "webapp": {
+    "smallLogo": "/platform/img/logo-small.png",
+    "textLogo": "/platform/img/logo-text.png",
+    "grayLogo": "/platform/img/logo-gray.png",
+    "logo": "/platform/img/webapp-logo.png"
+  },
+  "tradingViewUrl": "https://tradingview.stellux.io",
+  "baseURL": "https://client.stellux.io",
+  "ws": "wss://websocket.stellux.io/websocketServer",
+  "imgDomain": "https://file.stellux.io/trade/"
+}

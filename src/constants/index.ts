@@ -1,7 +1,5 @@
-import ENV from '../env'
-
-// 系统名称
-const NAMESPACE = `${ENV?.name}_client` // 命名空间
+// 系统名称 @TODO: 根据项目修改
+const NAMESPACE = `client` // 命名空间
 
 // 字体图标 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码
@@ -72,6 +70,9 @@ export const KEY_HISTORY_SEARCH = NAMESPACE + '_' + 'history_search'
 
 // 记录的设备类型
 export const KEY_DEVICE_TYPE = NAMESPACE + '_' + 'device_type'
+
+// 平台配置文件
+export const KEY_PLATFORM_CONFIG = NAMESPACE + '_' + 'platform_config'
 
 // APP 弹窗宽度
 export const APP_MODAL_WIDTH = 320

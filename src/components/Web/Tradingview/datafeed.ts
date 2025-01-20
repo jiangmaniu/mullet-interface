@@ -1,5 +1,5 @@
 // @ts-nocheck
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { ChartingLibraryWidgetOptions, DatafeedConfiguration, LibrarySymbolInfo } from '@/libs/charting_library'
 import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'

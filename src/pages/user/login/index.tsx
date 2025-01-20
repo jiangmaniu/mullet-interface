@@ -19,7 +19,7 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { PrivacyPolicyService } from '@/pages/webapp/pages/Welcome/RegisterSection/PrivacyPolicyService'
 import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'

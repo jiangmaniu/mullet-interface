@@ -1,7 +1,7 @@
 import { action, configure, makeObservable, observable } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'
@@ -66,16 +66,16 @@ class WSStore {
   @observable quotes = new Map<string, IQuoteItem>() // 当前行情
   @observable depth = new Map<string, IDepth>() // 当前深度
   @observable symbols = {} // 储存品种请求列表
-  @observable websocketUrl = ENV.ws
   lastQuoteUpdateTime = 0
   lastDepthUpdateTime = 0
 
   @action
   async connect() {
     const token = STORAGE_GET_TOKEN()
+    const websocketUrl = ENV.ws
     // token不要传bear前缀
     // 游客传WebSocket:visitor
-    this.socket = new ReconnectingWebSocket(this.websocketUrl, ['WebSocket', token ? token : 'visitor'], {
+    this.socket = new ReconnectingWebSocket(websocketUrl, ['WebSocket', token ? token : 'visitor'], {
       minReconnectionDelay: 1,
       connectionTimeout: 3000, // 重连时间
       maxEnqueuedMessages: 0, // 不缓存发送失败的指令

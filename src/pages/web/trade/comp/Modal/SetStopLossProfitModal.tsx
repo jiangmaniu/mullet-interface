@@ -114,7 +114,7 @@ export default observer(
                   </span>
                 </div>
               </div>
-              <div className="absolute left-0 top-[130px] w-full border border-dashed border-gray-250/70 dark:border-gray-610 xl:hidden"></div>
+              <div className="absolute left-0 top-[130px] w-full border border-dashed border-gray-50 dark:border-gray-610 xl:hidden"></div>
               <div className="my-3 xl:hidden"></div>
               <div className="flex w-full items-center pt-2">
                 <div className="flex items-center max-xl:pt-2">

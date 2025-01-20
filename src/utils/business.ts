@@ -3,7 +3,7 @@
 import { getIntl, getLocale } from '@umijs/max'
 
 import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
-import ENV from '@/env'
+import ENV from '@/env/config'
 
 import { formatMin2Time, getUid, groupBy, isImageFile, parseJsonFields } from '.'
 import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from './storage'

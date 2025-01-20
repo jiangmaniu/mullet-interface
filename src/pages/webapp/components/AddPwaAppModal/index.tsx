@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react'
 
 import { useEnv } from '@/context/envProvider'
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { cn } from '@/utils/cn'
 import { getPathname } from '@/utils/navigator'

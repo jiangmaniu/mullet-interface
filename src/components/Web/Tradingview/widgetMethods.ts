@@ -3,7 +3,7 @@ import { stores } from '@/context/mobxProvider'
 import { ChartStyle, IChartingLibraryWidget, ThemeName, TOverrides } from '@/libs/charting_library'
 import { isPC } from '@/utils'
 
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { ThemeConst, ThemeDark } from './constant'
 import { getTradingviewThemeCssVar } from './theme'
 

@@ -6,7 +6,7 @@ import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { Spin } from 'antd'
 
 type IProps = {

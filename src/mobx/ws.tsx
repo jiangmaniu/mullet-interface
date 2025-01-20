@@ -3,7 +3,7 @@ import { debounce } from 'lodash'
 import { action, configure, makeObservable, observable, toJS } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'
@@ -50,7 +50,6 @@ class WSStore {
   @observable quotes = new Map<string, IQuoteItem>() // 当前行情
   @observable depth = new Map<string, IDepth>() // 当前行情
   @observable symbols = {} // 储存品种请求列表
-  @observable websocketUrl = ENV.ws
 
   originSend: any = null // socket 原生 send 方法
   sendingList: any[] = [] // 发送队列
@@ -61,6 +60,7 @@ class WSStore {
   async connect(resolve?: () => void) {
     const token = await STORAGE_GET_TOKEN()
     const userInfo = (await STORAGE_GET_USER_INFO()) as User.UserInfo
+    const websocketUrl = ENV?.ws
     if (!token) return
 
     this.initWorker(resolve)
@@ -74,7 +74,7 @@ class WSStore {
             data: {
               token,
               userInfo,
-              websocketUrl: this.websocketUrl,
+              websocketUrl,
               isMobile: !isPCByWidth()
             }
           })

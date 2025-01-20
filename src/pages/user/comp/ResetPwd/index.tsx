@@ -14,7 +14,7 @@ import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { goLogin } from '@/utils/navigator'
 
-import ENV from '@/env'
+import ENV from '@/env/config'
 import ValidateCodeInput from '../../../../components/Form/ValidateCodeInput'
 
 type IProps = {

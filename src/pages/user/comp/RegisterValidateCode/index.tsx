@@ -6,7 +6,7 @@ import Button from '@/components/Base/Button'
 import ValidateCodeInput, { ISendType, Params } from '@/components/Form/ValidateCodeInput'
 import { message } from '@/utils/message'
 
-import ENV from '@/env'
+import ENV from '@/env/config'
 import ResetPwd from '../ResetPwd'
 
 export type IValidateCodeType = 'RESET_PWD' | 'REGISTER'

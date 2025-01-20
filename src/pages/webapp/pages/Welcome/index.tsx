@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTheme } from '@/context/themeProvider'
 
 import { default as Icon, default as Iconfont } from '@/components/Base/Iconfont'
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { replace } from '@/utils/navigator'
 import { capitalizeFirstLetter } from '@/utils/str'
 import { useLocation } from '@umijs/max'

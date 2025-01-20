@@ -1,5 +1,5 @@
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env'
+import ENV from '@/env/config'
 import { useModel } from '@umijs/max'
 
 export default function Logo({
