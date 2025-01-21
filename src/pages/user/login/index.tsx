@@ -11,7 +11,7 @@ import { flushSync } from 'react-dom'
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Tabs from '@/components/Base/Tabs'
 import { ADMIN_HOME_PAGE, WEB_HOME_PAGE } from '@/constants'
-import { getCaptcha, login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
+import { login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
 import { goHome, push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
 
@@ -53,8 +53,8 @@ function Login() {
   const [captchaInfo, setCaptchaInfo] = useState({} as User.Captcha)
 
   const handleCaptcha = async () => {
-    const res = await getCaptcha()
-    setCaptchaInfo(res)
+    // const res = await getCaptcha()
+    // setCaptchaInfo(res)
   }
 
   useEffect(() => {
