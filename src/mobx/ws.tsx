@@ -496,12 +496,12 @@ class WSStore {
       })
 
       // 2.1 关闭即将要关闭的符号
-      if (toClose.size) {
-        // console.log('即将关闭的符号', toClose.size, toClose)
-        const list2 = Array.from(toClose.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
-        // console.log('即将关闭的符号', list2)
-        this.debounceBatchCloseSymbol({ list: list2 })
-      }
+      // if (toClose.size) {
+      // console.log('即将关闭的符号', toClose.size, toClose)
+      const list2 = Array.from(toClose.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
+      // console.log('即将关闭的符号', list2)
+      this.debounceBatchCloseSymbol({ list: list2 })
+      // }
     }
 
     // 3. 打开即将要打开的符号
@@ -524,7 +524,7 @@ class WSStore {
       // )
       this.batchSubscribeSymbol({ cancel: true, list })
     },
-    100
+    3000
   )
   // ========== H5 订阅相关 end ============
 
