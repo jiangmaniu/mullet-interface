@@ -8,6 +8,7 @@ const serverConf = STORAGE_GET_PLATFORM_CONFIG() || {}
 
 // 开发环境配置，本地接口调试使用
 const devConf = {
+  ...serverConf,
   ws: process.env.WS_URL,
   imgDomain: process.env.IMG_DOMAIN,
   BASE_URL: process.env.BASE_URL
