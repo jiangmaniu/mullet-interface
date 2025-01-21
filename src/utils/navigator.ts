@@ -3,7 +3,6 @@ import { stringify } from 'qs'
 
 import { DEFAULT_LOCALE, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
-import { logout } from '@/services/api/user'
 
 import { SUPPORTED_LANGUAGES } from '@/constants/enum'
 import { isPCByWidth } from '.'
@@ -21,9 +20,9 @@ import {
  * @param requestLogout 不请求退出接口
  */
 export const onLogout = async (noRequestLogout?: boolean) => {
-  if (!noRequestLogout) {
-    await logout().catch((e) => e)
-  }
+  // if (!noRequestLogout) {
+  //   await logout().catch((e) => e)
+  // }
 
   STORAGE_REMOVE_TOKEN()
   STORAGE_REMOVE_USER_INFO()
