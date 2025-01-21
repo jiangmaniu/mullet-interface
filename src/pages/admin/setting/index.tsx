@@ -8,7 +8,7 @@ import { gray } from '@/theme/theme.config'
 import { formatEmail, formatMobile } from '@/utils'
 import { push } from '@/utils/navigator'
 
-import ENV from '@/env/config'
+import ENV from '@/env'
 import KycApproveInfoModal from './comp/KycApproveInfoModal'
 import KycFailModal from './comp/KycFailModal.tsx'
 import KycStepPie from './comp/KycStepPie'

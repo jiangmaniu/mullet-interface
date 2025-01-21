@@ -5,7 +5,7 @@ import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
-import ENV from '@/env/config'
+import ENV from '@/env'
 
 type IProps = {
   onChange?: (key: any) => void

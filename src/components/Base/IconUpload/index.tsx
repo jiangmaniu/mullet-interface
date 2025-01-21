@@ -3,7 +3,7 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { FormInstance, Modal } from 'antd'
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 

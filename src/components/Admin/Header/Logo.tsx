@@ -1,5 +1,4 @@
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env/config'
 import { useModel } from '@umijs/max'
 
 export default function Logo({
@@ -36,7 +35,7 @@ export default function Logo({
         // }
       }}
     >
-      <img className="!h-[48px] w-[171px]" src={theme.isDark ? ENV.logoDark : ENV.logo} alt="logo" />
+      <img className="!h-[48px] w-[171px]" src={theme.isDark ? '/platform/img/pc-logo-dark.png' : '/platform/img/pc-logo.svg'} alt="logo" />
     </span>
   )
 }

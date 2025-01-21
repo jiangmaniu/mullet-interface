@@ -4,7 +4,7 @@ import ma from './customIndicators/ma'
 
 const fullZero = (value: number | string) => String(value).padStart(2, '0')
 
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { isPCByWidth } from '@/utils'
 import { defaultInterval, ThemeConst } from './constant'
 import DataFeedBase from './datafeed'

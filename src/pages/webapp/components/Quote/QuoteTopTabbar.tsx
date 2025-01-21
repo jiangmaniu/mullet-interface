@@ -5,7 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 
 import { useStores } from '@/context/mobxProvider'
 
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { cn } from '@/utils/cn'
 import { Swiper, SwiperRef } from 'antd-mobile'
 import Tabs from '../Base/Tabs'

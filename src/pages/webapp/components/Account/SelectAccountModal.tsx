@@ -5,7 +5,7 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } from 
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { navigateTo } from '../../utils/navigator'
 import SheetModal, { SheetRef } from '../Base/SheetModal'
 import { Text } from '../Base/Text'
@@ -75,7 +75,7 @@ function SelectAccountModal({ isSimulate, header, onItem, isRemainAtCurrentPage 
               </View>
               <View className={cn('flex flex-row items-center gap-1 mb-2 mt-3')}>
                 <img
-                  src={ENV.webapp.smallLogo}
+                  src={'/platform/img/logo-small.png'}
                   style={{ width: 32, height: 32, backgroundColor: theme.colors.backgroundColor.secondary, borderRadius: 100 }}
                 />
                 <View className={cn('flex flex-col')}>

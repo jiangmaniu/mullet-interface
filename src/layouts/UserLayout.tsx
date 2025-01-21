@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 
 import SwitchLanguage from '@/components/SwitchLanguage'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env/config'
+import ENV from '@/env'
 
 /**
  * 登录、注册、忘记密码页面的布局

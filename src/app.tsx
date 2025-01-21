@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { CONFIG_URL } from '@/constants/config'
-import ENV from '@/env/config'
+import ENV from '@/env'
 import VConsole from 'vconsole'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
@@ -343,8 +343,8 @@ export const rootContainer = (container: JSX.Element) => {
           <script async={true} src={CONFIG_URL}></script>
 
           {/* pwa配置 */}
-          <link ref="manifest" href={ENV.manifest} />
-          <link rel="shortcut icon" href={ENV.favicon} />
+          <link ref="manifest" href="/platform/manifest.json" />
+          <link rel="shortcut icon" href="/platform/favicon.ico" />
 
           {/* meta标签 */}
           <meta name="application-name" content={ENV?.name} />

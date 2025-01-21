@@ -2,7 +2,7 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { AccoutList } from '@/pages/webapp/components/Account/AccoutList'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -75,7 +75,7 @@ function AccountSelect() {
       </View>
       <View style={cn('flex flex-row items-center gap-1 mb-7')}>
         <img
-          src={ENV.webapp.smallLogo}
+          src={'/platform/img/logo-small.png'}
           style={{ width: 32, height: 32, backgroundColor: theme.colors.backgroundColor.secondary, borderRadius: 100 }}
         />
         <View style={cn('flex flex-col')}>

@@ -9,7 +9,6 @@ import Popup from '@/components/Base/Popup'
 import { transferWeekDay } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env/config'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { formatTimeStr } from '@/utils/business'
@@ -106,7 +105,9 @@ function Futures({ trigger, style }: IProps) {
         <div className="absolute left-8 flex w-[92%] justify-between">
           <div
             className={cn('relative top-0 h-[92px] w-[328px] bg-cover bg-no-repeat opacity-50 dark:opacity-[0.05]')}
-            style={{ backgroundImage: `url(${theme.isDark ? ENV.featureWatermarkLogoDark : ENV.featureWatermarkLogo})` }}
+            style={{
+              backgroundImage: `url(${theme.isDark ? '/platform/img/feature-water-logo-dark.png' : '/platform/img/kline-water-logo.png'})`
+            }}
           />
           <div className="h-[180px] w-[227px] bg-[url(/img/heyue-mask.png)] dark:bg-[url(/img/mask2-dark.png)] bg-cover bg-no-repeat" />
         </div>

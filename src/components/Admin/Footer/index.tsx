@@ -5,7 +5,7 @@ import React from 'react'
 
 import { CURRENT_YEAR } from '@/constants'
 
-import ENV from '@/env/config'
+import ENV from '@/env'
 import Logo from '../Header/Logo'
 
 const Footer: React.FC = () => {

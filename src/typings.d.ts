@@ -35,5 +35,11 @@ interface Window {
 declare namespace NodeJS {
   interface ProcessEnv {
     NODE_ENV: 'development' | 'production'
+    /**ws地址 */
+    WS_URL: string
+    /**baseurl */
+    BASE_URL: string
+    /**图片域名 */
+    IMG_DOMAIN: string
   }
 }

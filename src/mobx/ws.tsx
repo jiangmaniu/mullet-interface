@@ -3,7 +3,7 @@ import { debounce } from 'lodash'
 import { action, configure, makeObservable, observable, toJS } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'

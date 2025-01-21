@@ -29,7 +29,7 @@ export const PrivacyPolicyService = ({ isPC = false }: { isPC?: boolean }) => {
           onClick={() => {
             navigateTo(`${prefix}/viewer/markdown`, {
               title: i18n.t('pages.login.termsService'),
-              markdownFilePath: '/platform/lynfoo/docs/serviceTerm.md'
+              markdownFilePath: '/platform/docs/serviceTerm.md'
             })
           }}
         >
@@ -49,7 +49,7 @@ export const PrivacyPolicyService = ({ isPC = false }: { isPC?: boolean }) => {
             // window.open(ENV.PrivacyAgreement, '_blank')
             navigateTo(`${prefix}/viewer/markdown`, {
               title: i18n.t('pages.login.privacyPolicy'),
-              markdownFilePath: '/platform/lynfoo/docs/privacyAgreement.md'
+              markdownFilePath: '/platform/docs/privacyAgreement.md'
             })
           }}
         >

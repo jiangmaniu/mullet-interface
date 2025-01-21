@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useTheme } from '@/context/themeProvider'
 
 import { default as Icon, default as Iconfont } from '@/components/Base/Iconfont'
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { replace } from '@/utils/navigator'
 import { capitalizeFirstLetter } from '@/utils/str'
 import { useLocation } from '@umijs/max'
@@ -347,7 +347,7 @@ export default function WelcomeScreen() {
                 height: 54,
                 left: -12
               }}
-              src={ENV.webapp.textLogo}
+              src={'/platform/img/logo-text.png'}
             />
             {/* <View style={{ display: section === 'server' ? 'flex' : 'none' }}>
               <Text size="xl" color="primary" className={cn('font-bold')}>

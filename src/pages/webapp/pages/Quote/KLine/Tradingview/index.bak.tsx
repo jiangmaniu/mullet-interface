@@ -6,7 +6,7 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { useIntl } from '@umijs/max'
 import { useEffect, useMemo, useState } from 'react'
@@ -36,8 +36,8 @@ const TradingViewComp = ({ style }: IProps) => {
   // hideWatermarkLogo: 0隐藏
   // watermarkLogoUrl 水印图片地址 网络图片地址
   const watermarkLogoUrl =
-    ENV.klineWatermarkLogo && process.env.NODE_ENV === 'production'
-      ? `${location.origin}${isDark ? ENV.klineWatermarkLogoDark : ENV.klineWatermarkLogo}`
+    process.env.NODE_ENV === 'production'
+      ? `${location.origin}${isDark ? '/platform/img/kline-water-logo.png' : '/platform/img/kline-water-logo.png'}`
       : '' // 网络图片地址 水印图片尺寸大小 522 × 146
   const klineUrl = `${
     ENV.tradingViewUrl

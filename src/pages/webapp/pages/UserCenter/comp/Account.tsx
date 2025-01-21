@@ -1,6 +1,5 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env/config'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
@@ -26,7 +25,7 @@ const Account = () => {
             />
           ) : (
             <img
-              src={ENV.webapp.smallLogo}
+              src={'/platform/img/logo-small.png'}
               style={{ width: 54, height: 54, backgroundColor: theme.colors.backgroundColor.primary, borderRadius: 100 }}
             />
           )}

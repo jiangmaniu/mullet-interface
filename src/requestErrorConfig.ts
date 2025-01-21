@@ -4,7 +4,7 @@ import { Base64 } from 'js-base64'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { getLocaleForBackend } from './constants/enum'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'

@@ -1,6 +1,5 @@
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env/config'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -43,7 +42,7 @@ function CertificationInformation() {
             position: 'relative'
           }}
         >
-          <img src={ENV.webapp.grayLogo} style={{ width: 70, height: 80, position: 'absolute', bottom: 16, right: 23 }} />
+          <img src={'/platform/img/logo-gray.png'} style={{ width: 70, height: 80, position: 'absolute', bottom: 16, right: 23 }} />
 
           {/* <Text className={cn('text-xs top-1 right-1 absolute ')}>{NAMESPACE}</Text> */}
           <View className={cn('flex flex-col items-start justify-start gap-2.5 ')}>

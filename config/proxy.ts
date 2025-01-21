@@ -1,5 +1,3 @@
-import ENV from '../src/env'
-
 /**
  * @name 代理的配置
  * @see 在生产环境 代理是无法生效的，所以这里没有生产环境的配置
@@ -11,13 +9,14 @@ import ENV from '../src/env'
  *
  * @doc https://umijs.org/docs/guides/proxy
  */
+
 export default {
   // 如果需要自定义本地开发服务器  请取消注释按需调整
   dev: {
     // localhost:8000/api/** -> https://preview.pro.ant.design/api/**
     '/api/': {
       // 要代理的地址
-      target: ENV?.baseURL,
+      target: process.env.BASE_URL,
       // target: 'https://www.cd-ex.com/apis',
       // target: 'https://awapis.cd-ex.com',
       // 配置了这个可以从 http 代理到 https

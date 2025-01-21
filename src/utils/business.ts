@@ -3,7 +3,7 @@
 import { getIntl, getLocale } from '@umijs/max'
 
 import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
-import ENV from '@/env/config'
+import ENV from '@/env'
 
 import { formatMin2Time, getUid, groupBy, isImageFile, parseJsonFields } from '.'
 import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from './storage'
@@ -277,7 +277,8 @@ export const formatSymbolConf = (data: any) => {
  * @returns
  */
 export const getSymbolIcon = (imgUrl: any) => {
-  return isImageFile(imgUrl) ? `${ENV.imgDomain}${imgUrl}` : `/img/default-symbol-icon.png`
+  const imgDomain = ENV?.imgDomain
+  return isImageFile(imgUrl) ? `${imgDomain}${imgUrl}` : `/img/default-symbol-icon.png`
 }
 
 /**

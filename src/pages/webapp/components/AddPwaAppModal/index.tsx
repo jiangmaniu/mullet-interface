@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react'
 
 import { useEnv } from '@/context/envProvider'
-import ENV from '@/env/config'
+import ENV from '@/env'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { cn } from '@/utils/cn'
 import { getPathname } from '@/utils/navigator'
@@ -117,7 +117,7 @@ const AddPwaAppModal = () => {
                   '!-top-5': addSreenData.type === 'androidChrome'
                 })}
               >
-                <img src={ENV.webapp.logo} className="w-[58px] h-[58px]" />
+                <img src={'/platform/img/webapp-logo.png'} className="w-[58px] h-[58px]" />
               </div>
               <span
                 className={cn('absolute left-[87px] top-[27px] text-primary text-base font-medium', {

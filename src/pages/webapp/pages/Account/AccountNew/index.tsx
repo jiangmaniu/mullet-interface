@@ -2,7 +2,6 @@ import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env/config'
 import { DefaultAccountTabbar } from '@/pages/webapp/components/Account/AccoutList'
 import Button from '@/pages/webapp/components/Base/Button'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
@@ -31,7 +30,7 @@ const CurrentServer = observer(() => {
   return (
     <View className={cn('flex flex-row items-center gap-1 mb-5')}>
       <img
-        src={ENV.webapp.smallLogo}
+        src={'/platform/img/logo-small.png'}
         style={{ width: 32, height: 32, backgroundColor: theme.colors.backgroundColor.secondary, borderRadius: 100 }}
       />
       <View className={cn('flex flex-col')}>

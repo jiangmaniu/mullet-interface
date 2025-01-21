@@ -34,7 +34,7 @@ import {
 } from '@/utils/storage'
 import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
-import ENV from '@/env/config'
+import ENV from '@/env'
 import klineStore from './kline'
 import ws from './ws'
 import { IPositionListSymbolCalcInfo, MarginReteInfo } from './ws.types'

@@ -1,20 +1,22 @@
-// 环境变量-仅仅用于调试
+import { IPlatformConfig } from '@/mobx/global'
+import { STORAGE_GET_PLATFORM_CONFIG } from '@/utils/storage'
 
-let ENV = {
-  // ========= stellux 正式环境 ================
-  baseURL: 'https://client.stellux.io', // API地址
-  ws: 'wss://websocket.stellux.io/websocketServer', // websocket地址
-  imgDomain: 'https://file.stellux.io/trade/' // 图片地址
+// 在页面中使用的变量
 
-  // ========= stellux 测试环境 ================
-  // baseURL: 'https://client-dev.stellux.io',
-  // ws: 'wss://websocket-dev.stellux.io/websocketServer',
-  // imgDomain: 'https://file-dev.stellux.io/trade/' // 图片域名前缀
+// 服务端配置，从public/platform/config.json中动态获取
+const serverConf = STORAGE_GET_PLATFORM_CONFIG() || {}
 
-  // ========= lynfoo 正式环境 ================
-  // baseURL: 'https://client.lynfoocn.com',
-  // ws: 'wss://websocket.lynfoocn.com:443/websocketServer',
-  // imgDomain: 'https://file.lynfoocn.com/trade/'
+// 开发环境配置，本地接口调试使用
+const devConf = {
+  ws: process.env.WS_URL,
+  imgDomain: process.env.IMG_DOMAIN,
+  BASE_URL: process.env.BASE_URL
 }
+
+const conf = process.env.NODE_ENV === 'production' ? serverConf : devConf
+
+const ENV = {
+  ...conf
+} as IPlatformConfig
 
 export default ENV
