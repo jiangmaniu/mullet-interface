@@ -274,7 +274,7 @@ export default defineConfig({
           runtimeCaching: [
             {
               urlPattern: /.*\.js.*/i,
-              handler: 'CacheFirst',
+              handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'seed-js',
                 expiration: {
@@ -285,7 +285,7 @@ export default defineConfig({
             },
             {
               urlPattern: /.*css.*/,
-              handler: 'CacheFirst',
+              handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'seed-css',
                 expiration: {
@@ -296,7 +296,7 @@ export default defineConfig({
             },
             {
               urlPattern: /.*(png|svga|jpg|jpeg|gif|ico|webp).*/,
-              handler: 'CacheFirst',
+              handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'seed-image',
                 expiration: {
@@ -307,7 +307,7 @@ export default defineConfig({
             },
             {
               urlPattern: /.*(otf|ttf|woff|woff2).*/,
-              handler: 'CacheFirst',
+              handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'seed-font',
                 expiration: {
@@ -318,7 +318,7 @@ export default defineConfig({
             },
             {
               urlPattern: /\/platform\/.+\/.+\.json$/i,
-              handler: 'StaleWhileRevalidate',
+              handler: 'NetworkFirst', // 优先使用网络资源，如果网络资源不可用，则使用缓存资源
               options: {
                 cacheName: 'seed-json',
                 expiration: {
