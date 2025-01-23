@@ -23,23 +23,24 @@ export default function (api: IApi) {
     // 遍历产物，查找以 /p__webapp__pages/ 开头的文件
     assets.forEach((asset: any) => {
       const pureName = asset.name.split('.').filter((v: any) => v)[0]
-      // if (asset.name.indexOf('p__webapp__pages') !== -1 && mobilePrefetchRouteName.includes(pureName)) {
-      // 移动端还是是全部预加载
-      // prefetch 资源的加载是非阻塞的。浏览器会在空闲时下载这些资源，而不会影响当前页面的渲染或用户交互。
-      if (asset.name.indexOf('p__webapp__pages') !== -1) {
-        if (asset.name.endsWith('.js')) {
-          mobilePrefetchScripts.push({
-            rel: 'prefetch',
-            as: 'script',
-            href: `/${asset.name}` // 根据实际路径生成
-          })
-        }
-        if (asset.name.endsWith('.css')) {
-          mobilePrefetchStyles.push({
-            rel: 'prefetch',
-            as: 'style',
-            href: `/${asset.name}` // 根据实际路径生成
-          })
+      if (asset.name.indexOf('p__webapp__pages') !== -1 && mobilePrefetchRouteName.includes(pureName)) {
+        // 移动端还是是全部预加载
+        // prefetch 资源的加载是非阻塞的。浏览器会在空闲时下载这些资源，而不会影响当前页面的渲染或用户交互。
+        if (asset.name.indexOf('p__webapp__pages') !== -1) {
+          if (asset.name.endsWith('.js')) {
+            mobilePrefetchScripts.push({
+              rel: 'prefetch',
+              as: 'script',
+              href: `/${asset.name}` // 根据实际路径生成
+            })
+          }
+          if (asset.name.endsWith('.css')) {
+            mobilePrefetchStyles.push({
+              rel: 'prefetch',
+              as: 'style',
+              href: `/${asset.name}` // 根据实际路径生成
+            })
+          }
         }
       }
     })

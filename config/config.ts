@@ -256,7 +256,7 @@ export default defineConfig({
           clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
           cleanupOutdatedCaches: true, //删除过时、老版本的缓存
           swDest: 'service-wroker.js', // 输出 Service worker 文件
-          // include: ['**/*.{html,js,css,png.jpg}'], // 匹配的文件
+          include: ['**/*.{html,js,css,png,jpg,svg,.woff2,.woff,.otf}'], // 匹配的文件
           exclude: [
             /index\.html$/,
             '/service-wroker.js',
@@ -274,51 +274,51 @@ export default defineConfig({
           runtimeCaching: [
             {
               urlPattern: /.*\.js.*/i,
-              handler: 'CacheFirst',
+              handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'seed-js',
                 expiration: {
                   maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
-                  maxAgeSeconds: 5 * 60 // 5 min
-                }
-              }
-            },
-            {
-              urlPattern: /.*css.*/,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'seed-css',
-                expiration: {
-                  maxEntries: 100, //最多缓存100个，超过的按照LRU原则删除
-                  maxAgeSeconds: 5 * 60 // 5 min
-                }
-              }
-            },
-            {
-              urlPattern: /.*(png|svga|jpg|jpeg|gif|ico|webp).*/,
-              handler: 'CacheFirst',
-              options: {
-                cacheName: 'seed-image',
-                expiration: {
-                  maxEntries: 300, //最多缓存300个，超过的按照LRU原则删除
                   maxAgeSeconds: 10 * 60 // 10 min
                 }
               }
             },
             {
+              urlPattern: /.*css.*/,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'seed-css',
+                expiration: {
+                  maxEntries: 30, //最多缓存100个，超过的按照LRU原则删除
+                  maxAgeSeconds: 10 * 60 // 10 min
+                }
+              }
+            },
+            {
+              urlPattern: /.*(png|svga|jpg|jpeg|gif|ico|webp).*/,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'seed-image',
+                expiration: {
+                  maxEntries: 10, //最多缓存300个，超过的按照LRU原则删除
+                  maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
+                }
+              }
+            },
+            {
               urlPattern: /.*(otf|ttf|woff|woff2).*/,
-              handler: 'CacheFirst',
+              handler: 'StaleWhileRevalidate',
               options: {
                 cacheName: 'seed-font',
                 expiration: {
-                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
+                  maxEntries: 4, //最多缓存30个，超过的按照LRU原则删除
                   maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
                 }
               }
             },
             {
               urlPattern: /\/platform\/.+\/.+\.json$/i,
-              handler: 'StaleWhileRevalidate',
+              handler: 'NetworkFirst', // 优先使用网络资源，如果网络资源不可用，则使用缓存资源
               options: {
                 cacheName: 'seed-json',
                 expiration: {
@@ -334,9 +334,10 @@ export default defineConfig({
       // 在打包时生成gzip文件。这样就不需要浪费服务器资源来压缩
       config.plugin('compression-webpack-plugin').use(
         new CompressionPlugin({
-          test: /.js$|.html$|.css$|.otf$|.ttf$|.TTF$/, // 压缩js，html，css文件
-          threshold: 10240, // 对超过10k的数据压缩
-          deleteOriginalAssets: false // 不删除源文件
+          test: /.js$|.html$|.css$|.otf$|.ttf$|.TTF|.woff2|.svg$/, // 压缩js，html，css文件
+          deleteOriginalAssets: false, // 不删除源文件
+          threshold: 10240, // 只压缩大小超过此阈值的资源（单位为字节）
+          algorithm: 'gzip' // 使用gzip压缩
         })
       )
     }
