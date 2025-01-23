@@ -12,40 +12,53 @@
 /**数字字体-常规**/
 @font-face {
   font-family: dingpro-regular;
-  src: url('/fonts/DINPro-Regular.otf') format('opentype');
+  src: url('/fonts/DINPro-Regular.woff') format('opentype');
 }
 
 /**数字字体-加粗**/
 @font-face {
   font-family: dingpro-medium;
-  src: url('/fonts/DINPro-Medium.otf') format('opentype');
+  src: url('/fonts/DINPro-Medium.woff') format('opentype');
 }
 
 /**鸿蒙字体-常规**/
 // @font-face {
 //   font-family: hms-regular;
-//   src: url('/fonts/HarmonyOS_Sans_Regular.ttf') format('truetype');
+//   src: url('/fonts/HarmonyOS_Sans_Regular.woff') format('truetype');
 // }
 /**鸿蒙字体-粗体**/
 // @font-face {
 //   font-family: hms-bold;
-//   src: url('/fonts/HarmonyOS_Sans_Medium.ttf') format('truetype');
+//   src: url('/fonts/HarmonyOS_Sans_Medium.woff') format('truetype');
 // }
 /**鸿蒙字体-细体**/
 // @font-face {
 //   font-family: hms-thin;
-//   src: url('/fonts/HarmonyOS_Sans_Light.ttf') format('truetype');
+//   src: url('/fonts/HarmonyOS_Sans_Light.woff') format('truetype');
 // }
+
+// /**平方字体-中等字体**/
+// @font-face {
+//   font-family: pf-medium;
+//   src: url('/fonts/PingFangMedium.woff2') format('truetype');
+// }
+// /**平方字体-加粗字体**/
+// @font-face {
+//   font-family: pf-bold;
+//   src: url('/fonts/PingFangBold.woff2') format('truetype');
+// }
+
+// ===== 使用鸿蒙代替苹方字体，减少字体包大小 ======
 
 /**平方字体-中等字体**/
 @font-face {
   font-family: pf-medium;
-  src: url('/fonts/PingFangMedium.ttf') format('truetype');
+  src: url('/fonts/HarmonyOS_Sans_Regular.woff') format('truetype');
 }
 /**平方字体-加粗字体**/
 @font-face {
   font-family: pf-bold;
-  src: url('/fonts/PingFangBold.ttf') format('truetype');
+  src: url('/fonts/HarmonyOS_Sans_Medium.woff') format('truetype');
 }
 
 * {
@@ -71,6 +84,7 @@
 body,
 html {
   color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
 }
 html,
 body,

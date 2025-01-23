@@ -9,9 +9,11 @@ import { isMainTabbar } from '@/pages/webapp/utils/navigator'
 import { checkPageShowTime } from '@/utils/business'
 import { message } from '@/utils/message'
 import { useNetwork } from 'ahooks'
-import { useEffect, useMemo } from 'react'
+import { lazy, useEffect, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
 import AddPwaAppModal from '../components/AddPwaAppModal'
+
+const Tradingview = lazy(() => import('@/components/Web/Tradingview'))
 
 /**
  * webapp页面的布局-布局总入口
@@ -128,6 +130,10 @@ function WebAppLayout() {
 
   return (
     <div>
+      {/* 隐藏全局加载k线资源 */}
+      <div style={{ display: 'none' }}>
+        <Tradingview />
+      </div>
       <div className="relative">{renderContent}</div>
       {renderTabbar}
     </div>
