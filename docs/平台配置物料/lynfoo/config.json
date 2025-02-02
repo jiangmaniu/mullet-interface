@@ -5,7 +5,6 @@
   "CLIENT_ID": "WpTrader-client",
   "CLIENT_SECRET": "wp_trader_client_secret",
   "REGISTER_APP_CODE": "123456",
-  "tradingViewUrl": "https://tradingview.lynfoocn.com",
   "ws": "wss://websocket.lynfoocn.com:443/websocketServer",
   "imgDomain": "https://file.lynfoocn.com/trade/"
 }

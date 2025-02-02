@@ -14,7 +14,22 @@ const devConf = {
   BASE_URL: process.env.BASE_URL
 }
 
-const conf = process.env.NODE_ENV === 'production' ? serverConf : devConf
+// 针对平台做seo打包配置，暂时不需要
+const seoConf =
+  process.env.PLATFORM_SEO === '1'
+    ? {
+        name: process.env.SEO_PLATFORM_NAME,
+        desc: process.env.SEO_PLATFORM_DESC
+      }
+    : {}
+
+const conf =
+  process.env.NODE_ENV === 'production'
+    ? {
+        ...seoConf,
+        ...serverConf
+      }
+    : devConf
 
 const ENV = {
   ...conf

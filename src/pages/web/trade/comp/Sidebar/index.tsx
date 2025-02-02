@@ -18,6 +18,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
+import ENV from '@/env'
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
 
@@ -54,7 +55,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
 
   useEffect(() => {
     if (activeKey === 'CATEGORY') {
-      trade.getSymbolList({ classify: '0' })
+      trade.getSymbolList({ classify: ENV.platform === 'sux' ? '0' : '10' })
     }
   }, [activeKey])
 

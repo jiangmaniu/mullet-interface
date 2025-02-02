@@ -221,11 +221,14 @@ export default defineConfig({
   // 不在通过这种方式，通过public/platform/config.js 获取
   define:
     // 开发环境使用环境变量，生产环境使用配置文件
-    process.env.NODE_ENV === 'development'
+    process.env.NODE_ENV === 'development' || process.env.PLATFORM_SEO === '1'
       ? {
           'process.env.BASE_URL': process.env.BASE_URL,
           'process.env.WS_URL': process.env.WS_URL,
-          'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN
+          'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN,
+          // seo配置
+          'process.env.SEO_PLATFORM_NAME': process.env.SEO_PLATFORM_NAME,
+          'process.env.SEO_PLATFORM_DESC': process.env.SEO_PLATFORM_DESC
         }
       : {},
   // 配置额外的 babel 插件。可传入插件地址或插件函数。
@@ -336,7 +339,7 @@ export default defineConfig({
         new CompressionPlugin({
           test: /.js$|.html$|.css$|.otf$|.ttf$|.TTF|.woff2|.svg$/, // 压缩js，html，css文件
           deleteOriginalAssets: false, // 不删除源文件
-          threshold: 10240, // 只压缩大小超过此阈值的资源（单位为字节）
+          threshold: 1024 * 50, //  只压缩大小超过此50kb阈值的资源（单位为字节）
           algorithm: 'gzip' // 使用gzip压缩
         })
       )

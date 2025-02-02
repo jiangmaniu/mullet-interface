@@ -6,6 +6,8 @@
   "scripts": {
     "analyze": "cross-env ANALYZE=1 ANALYZE_PORT=8888 max build",
     "build": "max build",
+    "build:lyn:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env.seo/.env.lyn max build",
+    "build:sux:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env.seo/.env.sux max build",
     "cz": "git add . && git-cz",
     "dev": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env.dev max dev",
     "dev:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env.prod max dev",
