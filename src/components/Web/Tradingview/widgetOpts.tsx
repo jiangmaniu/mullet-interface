@@ -4,7 +4,7 @@ import ma from './customIndicators/ma'
 
 const fullZero = (value: number | string) => String(value).padStart(2, '0')
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { isPCByWidth } from '@/utils'
 import { defaultInterval, ThemeConst } from './constant'
 import DataFeedBase from './datafeed'
@@ -20,6 +20,7 @@ export default function getWidgetOpts(
   containerRef: any,
   datafeedParams: any
 ): ChartingLibraryWidgetOptions {
+  const ENV = getEnv()
   const theme = props.theme
   const isDark = theme === 'dark'
   const bgColor = theme === 'dark' ? ThemeConst.black : ThemeConst.white // 自定义背景颜色

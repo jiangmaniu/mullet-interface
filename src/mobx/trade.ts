@@ -34,7 +34,7 @@ import {
 } from '@/utils/storage'
 import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import klineStore from './kline'
 import ws from './ws'
 import { IPositionListSymbolCalcInfo, MarginReteInfo } from './ws.types'
@@ -752,6 +752,7 @@ class TradeStore {
   // 查询品种分类
   @action
   getSymbolCategory = async () => {
+    const ENV = getEnv()
     const res = await getTradeSymbolCategory()
     if (res.success) {
       runInAction(() => {

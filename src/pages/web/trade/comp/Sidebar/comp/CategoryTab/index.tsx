@@ -5,7 +5,7 @@ import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
-import ENV from '@/env'
+import { getEnv } from '@/env'
 
 type IProps = {
   onChange?: (key: any) => void
@@ -13,6 +13,7 @@ type IProps = {
 }
 
 function CategoryTabs({ onChange, activeKey }: IProps) {
+  const ENV = getEnv()
   const isSux = ENV.platform === 'sux'
   const DEFAULT_CURRENT = isSux ? '0' : '10'
 

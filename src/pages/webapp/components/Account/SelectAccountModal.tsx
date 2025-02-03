@@ -5,7 +5,7 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } from 
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { navigateTo } from '../../utils/navigator'
 import SheetModal, { SheetRef } from '../Base/SheetModal'
 import { Text } from '../Base/Text'
@@ -26,6 +26,7 @@ export type SelectAccountModalRef = {
 
 /** 选择账户弹窗 */
 function SelectAccountModal({ isSimulate, header, onItem, isRemainAtCurrentPage }: IProps, ref: ForwardedRef<SelectAccountModalRef>) {
+  const ENV = getEnv()
   const { cn, theme } = useTheme()
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')

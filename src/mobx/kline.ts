@@ -8,7 +8,7 @@ import { IChartingLibraryWidget } from '@/libs/charting_library'
 import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { IQuoteItem } from './ws.types'
 
 NP.enableBoundaryChecking(false)
@@ -136,6 +136,7 @@ class KlineStore {
    * @returns
    */
   getHttpHistoryBars = async (symbolInfo, resolution, from, to, countBack) => {
+    const ENV = getEnv()
     const precision = symbolInfo.precision
     const klineType =
       {
@@ -215,6 +216,7 @@ class KlineStore {
   // 首次加载/切换分辨率/左右移动时间轴触发，http方式获取k线柱历史数据
   @action
   getDataFeedBarCallback = (obj = {}) => {
+    const ENV = getEnv()
     const { symbolInfo, resolution, firstDataRequest, from, to, countBack } = obj
     this.datafeedBarCallbackObj = obj
 

@@ -18,7 +18,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
 
@@ -29,6 +29,7 @@ type IProps = {
 }
 
 const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
+  const ENV = getEnv()
   const { global, trade } = useStores()
   const { isMobileOrIpad, breakPoint, screenSize } = useEnv()
   const intl = useIntl()

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { ChartingLibraryWidgetOptions, DatafeedConfiguration, LibrarySymbolInfo } from '@/libs/charting_library'
 import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'
@@ -45,6 +45,7 @@ class DataFeedBase {
    * @param {*Function} onResolveErrorCallback   失败回调
    */
   async resolveSymbol(symbolName, onSymbolResolvedCallback, onResolveErrorCallback, extension) {
+    const ENV = getEnv()
     const res = await request(`/api/trade-core/coreApi/public/symbol/detail?symbol=${symbolName}`).catch((e) => e)
     const symbolInfo = res?.data || {}
     const currentSymbol = {

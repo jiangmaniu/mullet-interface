@@ -8,7 +8,6 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { CONFIG_URL } from '@/constants/config'
-import ENV from '@/env'
 import VConsole from 'vconsole'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
@@ -19,6 +18,7 @@ import { useEnv } from './context/envProvider'
 import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { useTheme } from './context/themeProvider'
+import { getEnv } from './env'
 import { mobileCssVars } from './pages/webapp/theme/colors'
 import { handleJumpMobile } from './pages/webapp/utils/navigator'
 import { errorConfig } from './requestErrorConfig'
@@ -331,6 +331,7 @@ export function onRouteChange({ location, clientRoutes, routes, action, basename
 }
 
 export const rootContainer = (container: JSX.Element) => {
+  const ENV = getEnv()
   return React.createElement(
     () => (
       <>
@@ -341,6 +342,9 @@ export const rootContainer = (container: JSX.Element) => {
           {/* 需要设置一次地址，否则不使用Layout的情况下，iconfont图标使用不显示 */}
           <script async={true} src={ICONFONT_URL}></script>
           <script async={true} src={CONFIG_URL}></script>
+
+          {/* DNS预取回 */}
+          <link rel="dns-prefetch" href={ENV?.imgDomain?.replace('/trade/', '')} />
 
           {/* pwa配置 */}
           <link ref="manifest" href="/platform/manifest.json" />

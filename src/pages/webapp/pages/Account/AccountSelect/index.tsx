@@ -2,7 +2,8 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env'
+import { getEnv } from '@/env'
+
 import { AccoutList } from '@/pages/webapp/components/Account/AccoutList'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -15,6 +16,7 @@ import { observer } from 'mobx-react'
 import { useState } from 'react'
 
 function AccountSelect() {
+  const ENV = getEnv()
   const { cn, theme } = useTheme()
   const { t } = useI18n()
   const { global } = useStores()

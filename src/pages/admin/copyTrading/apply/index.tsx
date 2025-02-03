@@ -13,12 +13,13 @@ import { addTraadeFollowLead } from '@/services/api/tradeFollow/lead'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { AvatarUpload } from './AvatarUpload'
 import ContractUpload from './ContractUpload'
 
 // 申请成为带单员
 export default function Apply() {
+  const ENV = getEnv()
   const intl = useIntl()
   const placeholderName = intl.formatMessage({
     id: 'mt.mingcheng'
