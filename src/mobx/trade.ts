@@ -171,6 +171,7 @@ class TradeStore {
   @observable historySearchList = [] as string[] // APP历史搜索记录
 
   // 初始化加载
+  @action
   init = async () => {
     // 初始化打开的品种列表
     this.initOpenSymbolNameList()
@@ -186,18 +187,22 @@ class TradeStore {
   }
 
   // 右下角爆仓选择逐仓、全仓切换
+  @action
   setCurrentLiquidationSelectBgaId = (value: any) => {
     this.currentLiquidationSelectBgaId = value
   }
 
+  @action
   setSwitchAccountLoading = (loading: boolean) => {
     this.switchAccountLoading = loading
   }
 
+  @action
   setShowActiveSymbol = (value: boolean) => {
     this.showActiveSymbol = value
   }
 
+  @action
   setTradePageActive = (value: boolean) => {
     this.tradePageActive = value
   }
@@ -205,6 +210,7 @@ class TradeStore {
   // =========== APP品种历史搜索记录 ==========
 
   // 设置历史搜索记录
+  @action
   setHistorySearch = (value: string) => {
     this.historySearchList.unshift(value)
     // 只保留最新15条
@@ -214,6 +220,7 @@ class TradeStore {
     STORAGE_SET_HISTORY_SEARCH(this.historySearchList)
   }
   // 清空搜索记录
+  @action
   removeHistorySearch = () => {
     this.historySearchList = []
     STORAGE_REMOVE_HISTORY_SEARCH()
@@ -222,46 +229,55 @@ class TradeStore {
   // =========== 设置交易区操作 ==========
 
   // 设置弹窗选择的保证金类型
+  @action
   setMarginType = (marginType: API.MarginType) => {
     this.marginType = marginType
   }
 
   // 设置弹窗选择的浮动杠杆倍数
+  @action
   setLeverageMultiple = (leverageMultiple: number) => {
     this.leverageMultiple = leverageMultiple
   }
 
   // 浮动杠杆模式最大可开手数
+  @action
   setLeverageMultipleMaxOpenVolume = (maxOpenVolume: number) => {
     this.leverageMultipleMaxOpenVolume = maxOpenVolume
   }
 
   // 设置买卖类型切换
+  @action
   setBuySell = (buySell: API.TradeBuySell) => {
     this.buySell = buySell
   }
 
   // 设置订单类型Tabs切换
+  @action
   setOrderType = (orderType: ITradeTabsOrderType) => {
     this.orderType = orderType
   }
 
   // 下单手数
+  @action
   setOrderVolume = (orderVolume: any) => {
     this.orderVolume = orderVolume
   }
 
   // 设置订单止盈止损
+  @action
   setOrderSpslChecked = (flag: boolean) => {
     this.orderSpslChecked = flag
   }
 
   // 限价单下单价格
+  @action
   setOrderPrice = (orderPrice: any) => {
     this.orderPrice = orderPrice
   }
 
   // 设置手数标签快速选择
+  @action
   setOrderVolumeTag = (tag: string) => {
     this.orderVolumeTag = tag
   }
@@ -300,15 +316,18 @@ class TradeStore {
   }
 
   // 设置交易记录持仓单、挂单弹窗数据
+  @action
   setRecordModalItem = (item: RecordModalItem) => {
     this.recordModalItem = item
   }
 
+  @action
   setIsPosition = (value: boolean) => {
     this.isPosition = value
   }
 
   // 设置订单-快速下单
+  @action
   setOrderQuickPlaceOrderChecked = (flag: boolean) => {
     this.orderQuickPlaceOrderChecked = flag
 
@@ -316,6 +335,7 @@ class TradeStore {
   }
 
   // 下单二次确认弹窗-不在提醒
+  @action
   setOrderConfirmChecked = (flag: boolean) => {
     this.orderConfirmChecked = flag
 
@@ -323,6 +343,7 @@ class TradeStore {
   }
 
   // 平仓二次确认弹窗-不在提醒
+  @action
   setPositionConfirmChecked = (flag: boolean) => {
     this.positionConfirmChecked = flag
 
@@ -330,7 +351,9 @@ class TradeStore {
   }
 
   // 重置止盈止损
+  @action
   resetSpSl = () => {
+    // 将多次UI更新合并为一次
     this.spValue = ''
     this.slValue = ''
     this.spAmount = ''
@@ -356,6 +379,7 @@ class TradeStore {
   // =============================
 
   // 获取创建账户页面-账户组列表
+  @action
   getAccountGroupList = async () => {
     if (this.accountGroupListLoading) return
     this.accountGroupListLoading = true

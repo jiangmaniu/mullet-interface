@@ -68,7 +68,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
     >
       <View className={cn('flex flex-col')}>
         <View className={cn('flex flex-row items-center pb-1')}>
-          <SymbolIcon src={item.imgUrl} />
+          {inViewport && <SymbolIcon src={item.imgUrl} />}
           <Text color="primary" size="base" font="pf-bold" className={cn('ml-1')}>
             {item.alias || item.symbol}
           </Text>

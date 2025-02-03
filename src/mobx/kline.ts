@@ -201,7 +201,10 @@ class KlineStore {
             }
           })
           .reverse() // 反转数据，按时间从大到小排序
-        this.barList = bars
+
+        runInAction(() => {
+          this.bars = [...this.bars, ...bars]
+        })
         return bars
       } else {
         return []
@@ -209,7 +212,7 @@ class KlineStore {
     } catch (err) {
       console.log(err)
       // 请求加载出问题返回上一次有数据的
-      return this.barList || []
+      return this.bars || []
     }
   }
   // datafeed getBars回调处理
