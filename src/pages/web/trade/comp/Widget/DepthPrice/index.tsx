@@ -61,13 +61,9 @@ function DeepPrice() {
       <div className="flex items-center justify-between">
         <div>
           {/* 当前行情卖价 */}
-          {quote.hasQuote ? (
-            <span className={cn('text-lg pr-[10px] font-pf-bold', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
-              {formatNum(quote.bid)}
-            </span>
-          ) : (
-            <span className="text-[13px]">--</span>
-          )}
+          <span className={cn('text-lg pr-[10px] font-pf-bold', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
+            {formatNum(quote.bid)}
+          </span>
         </div>
         {/* 更多打开一个页面交互没有 */}
         {/* <span className="!text-xs text-secondary cursor-pointer">

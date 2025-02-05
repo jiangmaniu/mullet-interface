@@ -5,7 +5,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 
 import { useStores } from '@/context/mobxProvider'
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { cn } from '@/utils/cn'
 import { Swiper, SwiperRef } from 'antd-mobile'
 import Tabs from '../Base/Tabs'
@@ -49,25 +49,32 @@ type ITabbarProps = {
   className?: string
 }
 
-const isSux = ENV.platform === 'sux'
+const getTabList = () => {
+  const ENV = getEnv()
+  const isSux = ENV.platform === 'sux'
+  return [
+    { key: 'FAVORITE', value: 'FAVORITE', title: getIntl().formatMessage({ id: 'common.operate.Favorite' }) },
+    ...(isSux ? [{ key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) }] : []),
+    { key: 'CRYPTO', value: '10', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Crypto' }) },
+    { key: 'COMMODITIES', value: '20', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Commodities' }) },
+    { key: 'FOREX', value: '30', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Forex' }) },
+    { key: 'INDICES', value: '40', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Indices' }) },
+    ...(isSux ? [{ key: 'STOCK', value: '50', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Stock' }) }] : [])
+  ]
+}
 
-const getTabList = () => [
-  { key: 'FAVORITE', value: 'FAVORITE', title: getIntl().formatMessage({ id: 'common.operate.Favorite' }) },
-  ...(isSux ? [{ key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) }] : []),
-  { key: 'CRYPTO', value: '10', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Crypto' }) },
-  { key: 'COMMODITIES', value: '20', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Commodities' }) },
-  { key: 'FOREX', value: '30', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Forex' }) },
-  { key: 'INDICES', value: '40', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Indices' }) },
-  ...(isSux ? [{ key: 'STOCK', value: '50', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Stock' }) }] : [])
-]
-
-const DEFAULT_TAB_KEY = isSux ? 'ALL' : 'CRYPTO'
+const GET_DEFAULT_TAB_KEY = () => {
+  const ENV = getEnv()
+  const isSux = ENV.platform === 'sux'
+  const DEFAULT_TAB_KEY = isSux ? 'ALL' : 'CRYPTO'
+  return DEFAULT_TAB_KEY
+}
 
 export const SymbolTabbar = observer(
   forwardRef(({ tabKey, onChange, onChangeIndex, position, className }: ITabbarProps, ref: any) => {
     const intl = useIntl()
     const { pathname } = useLocation()
-    const [activeKey, setActiveKey] = useState<TabKey>(DEFAULT_TAB_KEY)
+    const [activeKey, setActiveKey] = useState<TabKey>(GET_DEFAULT_TAB_KEY())
     const { trade } = useStores()
     const favoriteList = trade.favoriteList
     const isPageMode = position === 'PAGE'
@@ -130,7 +137,7 @@ export const SymbolTabbar = observer(
 
 // 行情Tabs
 function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey, tabValue, tabIndex, onSwiperChange }: IProps, ref: any) {
-  const [activeKey, setActiveKey] = useState<TabKey>(DEFAULT_TAB_KEY)
+  const [activeKey, setActiveKey] = useState<TabKey>(GET_DEFAULT_TAB_KEY())
   const [activeTabValue, setActiveTabValue] = useState<string>('')
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const swiperRef = useRef<SwiperRef>(null)

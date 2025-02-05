@@ -3,13 +3,13 @@ import { debounce } from 'lodash'
 import { action, configure, makeObservable, observable, toJS } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
-import ENV from '@/env'
 import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { getEnum } from '@/constants/enum'
+import { getEnv } from '@/env'
 import { isPCByWidth } from '@/utils'
 import { getSymbolIcon, parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
 import { cn } from '@/utils/cn'
@@ -58,6 +58,7 @@ class WSStore {
   // ========== 连接相关 start ==========
   @action
   async connect(resolve?: () => void) {
+    const ENV = getEnv()
     const token = await STORAGE_GET_TOKEN()
     const userInfo = (await STORAGE_GET_USER_INFO()) as User.UserInfo
     const websocketUrl = ENV?.ws

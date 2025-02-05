@@ -5,16 +5,17 @@ import React from 'react'
 
 import { CURRENT_YEAR } from '@/constants'
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import Logo from '../Header/Logo'
 
 const Footer: React.FC = () => {
+  const ENV = getEnv()
   const intl = useIntl()
   const list = [
     {
       title: intl.formatMessage({ id: 'mt.guanyucdex' }),
       value: [
-        intl.formatMessage({ id: 'mt.cdexsshequ' }, { name: ENV.name }),
+        intl.formatMessage({ id: 'mt.cdexsshequ' }, { name: ENV?.name }),
         intl.formatMessage({ id: 'mt.gongsijianjie' }),
         intl.formatMessage({ id: 'mt.boke' })
       ]

@@ -6,7 +6,7 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { useIntl } from '@umijs/max'
 import { useEffect, useMemo, useState } from 'react'
@@ -17,6 +17,7 @@ type IProps = {
 }
 
 const TradingViewComp = ({ style }: IProps) => {
+  const ENV = getEnv()
   const { isPc, isPwaApp } = useEnv()
   const { lng } = useLang()
   const { theme, cn } = useTheme()

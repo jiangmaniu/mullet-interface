@@ -8,7 +8,7 @@ import { gray } from '@/theme/theme.config'
 import { formatEmail, formatMobile } from '@/utils'
 import { push } from '@/utils/navigator'
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import KycApproveInfoModal from './comp/KycApproveInfoModal'
 import KycFailModal from './comp/KycFailModal.tsx'
 import KycStepPie from './comp/KycStepPie'
@@ -17,6 +17,7 @@ import ModifyPasswordModal from './comp/ModifyPasswordModal'
 import ModifyPhoneModal from './comp/ModifyPhoneModal'
 
 export default function Setting() {
+  const ENV = getEnv()
   const [tabKey, setTabKey] = useState('')
   const [showPersonInfo, setShowPersonInfo] = useState(false)
   const intl = useIntl()

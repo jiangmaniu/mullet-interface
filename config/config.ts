@@ -4,6 +4,7 @@ import CompressionPlugin from 'compression-webpack-plugin'
 import { join } from 'path'
 import { GenerateSW } from 'workbox-webpack-plugin'
 import { DEFAULT_LOCALE } from '../src/constants/index'
+import serverEnv from '../src/env/server'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 import routes from './routes'
@@ -73,7 +74,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  // title: ENV?.name,
+  title: serverEnv?.name,
   layout: {
     locale: true,
     ...defaultSettings
@@ -164,21 +165,25 @@ export default defineConfig({
 
   // links: [{ rel: 'manifest', href: ENV?.manifest }],
 
-  // metas: [
-  //   { name: 'application-name', content: ENV?.name },
-  //   { name: 'apple-mobile-web-app-capable', content: 'yes' },
-  //   { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
-  //   { name: 'apple-mobile-web-app-title', content: ENV?.name },
-  //   { name: 'description', content: `${ENV?.name} Trading Platform` },
-  //   { name: 'format-detection', content: 'telephone=no' },
-  //   { name: 'mobile-web-app-capable', content: 'yes' },
-  //   // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
-  //   // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
-  //   { name: 'msapplication-tap-highlight', content: 'no' },
-  //   // <meta name="viewport" content="width=device-width, initial-scale=1">
-  //   { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-  //   // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
-  // ],
+  // seo
+  metas:
+    process.env.PLATFORM_SEO === '1'
+      ? [
+          { name: 'application-name', content: serverEnv?.name },
+          { name: 'apple-mobile-web-app-capable', content: 'yes' },
+          { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+          { name: 'apple-mobile-web-app-title', content: serverEnv?.name },
+          { name: 'description', content: `${serverEnv?.name} Trading Platform` },
+          { name: 'format-detection', content: 'telephone=no' },
+          { name: 'mobile-web-app-capable', content: 'yes' },
+          // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
+          // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
+          { name: 'msapplication-tap-highlight', content: 'no' },
+          // <meta name="viewport" content="width=device-width, initial-scale=1">
+          { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+          // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
+        ]
+      : [],
   // favicons: [
   //   // 完整地址
   //   // 'https://domain.com/favicon.ico'
@@ -221,13 +226,19 @@ export default defineConfig({
   // 不在通过这种方式，通过public/platform/config.js 获取
   define:
     // 开发环境使用环境变量，生产环境使用配置文件
-    process.env.NODE_ENV === 'development'
-      ? {
-          'process.env.BASE_URL': process.env.BASE_URL,
-          'process.env.WS_URL': process.env.WS_URL,
-          'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN
-        }
-      : {},
+    {
+      'process.env.PLATFORM_SEO': process.env.PLATFORM_SEO,
+      ...(process.env.NODE_ENV === 'development' || process.env.PLATFORM_SEO === '1'
+        ? {
+            'process.env.BASE_URL': process.env.BASE_URL,
+            'process.env.WS_URL': process.env.WS_URL,
+            'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN,
+            // seo配置
+            'process.env.SEO_PLATFORM_NAME': process.env.SEO_PLATFORM_NAME,
+            'process.env.SEO_PLATFORM_DESC': process.env.SEO_PLATFORM_DESC
+          }
+        : {})
+    },
   // 配置额外的 babel 插件。可传入插件地址或插件函数。
   extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // https://umijs.org/docs/api/config#codesplitting
@@ -336,7 +347,7 @@ export default defineConfig({
         new CompressionPlugin({
           test: /.js$|.html$|.css$|.otf$|.ttf$|.TTF|.woff2|.svg$/, // 压缩js，html，css文件
           deleteOriginalAssets: false, // 不删除源文件
-          threshold: 10240, // 只压缩大小超过此阈值的资源（单位为字节）
+          threshold: 1024 * 50, //  只压缩大小超过此50kb阈值的资源（单位为字节）
           algorithm: 'gzip' // 使用gzip压缩
         })
       )

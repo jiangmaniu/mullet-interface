@@ -3,10 +3,10 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { FormInstance, Modal } from 'antd'
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
-import ENV from '@/env'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 
+import { getEnv } from '@/env'
 import { upload } from './upload'
 
 interface IProps {
@@ -73,6 +73,7 @@ export default forwardRef(
     const [loading, setLoading] = useState(false)
     const [errorTip, setErrorTip] = useState('')
     const intl = useIntl()
+    const ENV = getEnv()
 
     // 图片展示域名
     const imgDomain = ENV.imgDomain

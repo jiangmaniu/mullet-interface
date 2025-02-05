@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from 'react'
 
 import { useEnv } from '@/context/envProvider'
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { cn } from '@/utils/cn'
 import { getPathname } from '@/utils/navigator'
@@ -11,6 +11,7 @@ import { isAndroid, isChrome, isChromium, isEdge, isFirefox, isIOS, isSafari } f
 import SheetModal from '../Base/SheetModal'
 
 const AddPwaAppModal = () => {
+  const ENV = getEnv()
   const { t } = useI18n()
   const [isAddSreenModal, setIsAddSreenModal] = useState(false)
   const { isPc } = useEnv()

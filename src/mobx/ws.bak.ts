@@ -1,11 +1,11 @@
 import { action, configure, makeObservable, observable } from 'mobx'
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
-import ENV from '@/env'
 import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
+import { getEnv } from '@/env'
 import trade from './trade'
 import { IDepth, IQuoteItem, MessageType } from './ws.types'
 
@@ -71,8 +71,9 @@ class WSStore {
 
   @action
   async connect() {
+    const ENV = getEnv()
     const token = STORAGE_GET_TOKEN()
-    const websocketUrl = ENV.ws
+    const websocketUrl = ENV.ws as string
     // token不要传bear前缀
     // 游客传WebSocket:visitor
     this.socket = new ReconnectingWebSocket(websocketUrl, ['WebSocket', token ? token : 'visitor'], {

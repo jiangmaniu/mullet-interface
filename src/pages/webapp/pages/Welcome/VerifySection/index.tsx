@@ -7,7 +7,7 @@ import { useTheme } from '@/context/themeProvider'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -50,6 +50,7 @@ const CountDown = observer(
     const { t } = useI18n()
     const { cn } = useTheme()
     const { global } = useStores()
+    const ENV = getEnv()
 
     useEffect(() => {
       global.verifyCodeDown === -1 && global.countDownVerifyCode(defaultSeconds)
@@ -79,6 +80,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   { setSection, startAnimation, email, phone, areaCodeItem, password }: Props,
   ref
 ) => {
+  const ENV = getEnv()
   const { t, locale } = useI18n()
   const { cn, theme } = useTheme()
 
@@ -122,7 +124,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
     try {
       const body = {
-        code: ENV.REGISTER_APP_CODE,
+        code: ENV.REGISTER_APP_CODE as string,
         country: areaCodeItem?.abbr,
         // password: md5(password),
         password: password,

@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 
 import SwitchLanguage from '@/components/SwitchLanguage'
 import { useTheme } from '@/context/themeProvider'
-import ENV from '@/env'
+import { getEnv } from '@/env'
 
 /**
  * 登录、注册、忘记密码页面的布局
@@ -12,6 +12,7 @@ import ENV from '@/env'
 export default function UserLayout() {
   const { pathname } = useLocation()
   const { setMode } = useTheme()
+  const ENV = getEnv()
 
   // @TODO 临时设置切换主题，后面删除
   useEffect(() => {

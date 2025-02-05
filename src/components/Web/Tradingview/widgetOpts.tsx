@@ -4,7 +4,7 @@ import ma from './customIndicators/ma'
 
 const fullZero = (value: number | string) => String(value).padStart(2, '0')
 
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { isPCByWidth } from '@/utils'
 import { defaultInterval, ThemeConst } from './constant'
 import DataFeedBase from './datafeed'
@@ -20,6 +20,7 @@ export default function getWidgetOpts(
   containerRef: any,
   datafeedParams: any
 ): ChartingLibraryWidgetOptions {
+  const ENV = getEnv()
   const theme = props.theme
   const isDark = theme === 'dark'
   const bgColor = theme === 'dark' ? ThemeConst.black : ThemeConst.white // 自定义背景颜色
@@ -109,8 +110,8 @@ export default function getWidgetOpts(
     // 您的后端的一个版本。支持的值为： '1.0' | “1.1”。
     // charts_storage_api_version: '1.1',
     // timeframe: '1M', // 设置图表展示的时间范围数据
-    // timezone: 'Asia/Shanghai', // 设置时区
-    timezone: 'Etc/UTC',
+    timezone: ENV.platform === 'lyn' ? 'Asia/Shanghai' : 'Etc/UTC', // 设置时区
+    // timezone: 'Etc/UTC',
     library_path: '/tradingview/charting_library/', // 核心库位置
     // @ts-ignore
     datafeed: new DataFeedBase(datafeedParams),

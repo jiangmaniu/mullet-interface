@@ -19,7 +19,7 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { PrivacyPolicyService } from '@/pages/webapp/pages/Welcome/RegisterSection/PrivacyPolicyService'
 import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
@@ -34,6 +34,7 @@ function Login() {
   const { initialState, setInitialState } = useModel('@@initialState')
   const [tabActiveKey, setTabActiveKey] = useState<ITabType>('LOGIN') // 登录、注册
   const [form] = Form.useForm()
+  const ENV = getEnv()
 
   const [isEmailTab, setIsEmailTab] = useState(true) // 邮箱和手机选项切换
   const [loading, setLoading] = useState(false)

@@ -1,4 +1,5 @@
 import { stores } from '@/context/mobxProvider'
+import serverConf from '@/env/server'
 import { getRegisterWay } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
 import { getMyMessageList, getUnReadMessageCount } from '@/services/api/message'
@@ -11,7 +12,7 @@ export type TabbarActiveKey = '/app/quote' | '/app/trade' | '/app/position' | '/
 
 export type DeviceType = 'PC' | 'MOBILE'
 
-export type IPlatformConfig = typeof PLATFORM_DEFAULT_CONFIG
+export type IPlatformConfig = Partial<typeof PLATFORM_DEFAULT_CONFIG>
 
 export class GlobalStore {
   constructor() {
@@ -43,7 +44,7 @@ export class GlobalStore {
   @observable pageIsFocused = true // 页面是否处于激活状态，进入页面默认是true，离开页面变为false
   @observable sheetModalOpen = true // 记录SheetModal是否打开
   @observable verifyCodeDown = -1 // 验证码倒计时
-  @observable platformConfig = {} as IPlatformConfig // 平台配置
+  @observable env = {} as IPlatformConfig // 平台配置
 
   // 获取平台配置
   getPlatformConfig = async () => {
@@ -62,7 +63,10 @@ export class GlobalStore {
   // 设置平台配置
   setPlatformConfig = (conf: any) => {
     runInAction(() => {
-      this.platformConfig = conf
+      this.env = {
+        ...serverConf,
+        ...conf
+      }
     })
   }
 
