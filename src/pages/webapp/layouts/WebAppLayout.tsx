@@ -68,6 +68,9 @@ function WebAppLayout() {
     if (event.touches.length > 1) {
       event.preventDefault() // 禁止双指缩放
     }
+    // if (event.target.tagName === 'IMG') {
+    //   event.preventDefault()
+    // }
   }
 
   function handleGestureStart(event: TouchEvent) {

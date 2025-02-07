@@ -233,6 +233,9 @@ export default defineConfig({
             'process.env.BASE_URL': process.env.BASE_URL,
             'process.env.WS_URL': process.env.WS_URL,
             'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN,
+            'process.env.CLIENT_ID': process.env.CLIENT_ID,
+            'process.env.CLIENT_SECRET': process.env.CLIENT_SECRET,
+            'process.env.REGISTER_APP_CODE': process.env.REGISTER_APP_CODE,
             // seo配置
             'process.env.SEO_PLATFORM_NAME': process.env.SEO_PLATFORM_NAME,
             'process.env.SEO_PLATFORM_DESC': process.env.SEO_PLATFORM_DESC

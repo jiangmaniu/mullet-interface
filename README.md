@@ -16,42 +16,72 @@ yarn install
 
 ## 本地开发启动
 
+**环境变量**
+
+- `.env.dev` 开发阶段环境变量
+- `.env.test` 测试阶段环境变量
+- `.env.prod` 线上环境环境变量
+
 ```bash
-# 启动本地开发
+# 联调后台开发服务环境
 yarn dev
 
-# 启动本地线上环境
+# 联调测试阶段环境
+yarn dev:test
+
+# 联调线上环境
 yarn dev:prod
 
-# 启动本地mock服务
+# 启动本地mock服务，用于快速没有服务的情况下联调接口字段 配置根目录下 mock/xx 来使用
 yarn start:mock
 ```
 
-## 环境变量
+## 项目SEO化按不同平台打包(暂时不考虑)
 
-按不同平台打包区分
+目前为了打一个docker镜像包通用全部客户，从`public/platform/config.json`中读取不同平台配置，如果需要做seo在使用这样方式打包
+
+> 如需要针对SEO优化，不同平台需要单独打包
+> 处理.env.platform.seo下的不同平台.env文件
 
 ```bash
-# src/typing.d.ts类型
-declare enum APP_ENV {
-  'test' = 'test',
-  'dev' = 'dev',
-  'prod' = 'prod'
-}
+"build:lyn:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env.platform.seo/.env.lyn max build",
+"build:sux:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env.platform.seo/.env.sux max build",
+```
 
-declare enum PLATFORM {
-  'stellux' = 'stellux',
-  'lynfoo' = 'lynfoo'
-}
+> 打包时按需注入环境变量到代码中，在页面中可以访问process.env.xx的值
 
-declare namespace NodeJS {
-  interface ProcessEnv {
-    /**平台类型 */
-    PLATFORM: keyof typeof PLATFORM
-    /**环境类型 */
-    APP_ENV: keyof typeof APP_ENV_ENUM
-  }
-}
+```js
+// config/config.ts配置
+define:
+  // 开发环境使用环境变量，生产环境使用配置文件
+  {
+    'process.env.PLATFORM_SEO': process.env.PLATFORM_SEO,
+    ...(process.env.NODE_ENV === 'development' || process.env.PLATFORM_SEO === '1'
+      ? {
+            'process.env.BASE_URL': process.env.BASE_URL,
+            'process.env.WS_URL': process.env.WS_URL,
+            'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN,
+            'process.env.CLIENT_ID': process.env.CLIENT_ID,
+            'process.env.CLIENT_SECRET': process.env.CLIENT_SECRET,
+            'process.env.REGISTER_APP_CODE': process.env.REGISTER_APP_CODE,
+            // seo配置
+            'process.env.SEO_PLATFORM_NAME': process.env.SEO_PLATFORM_NAME,
+            'process.env.SEO_PLATFORM_DESC': process.env.SEO_PLATFORM_DESC
+          // seo配置
+          'process.env.SEO_PLATFORM_NAME': process.env.SEO_PLATFORM_NAME,
+          'process.env.SEO_PLATFORM_DESC': process.env.SEO_PLATFORM_DESC
+        }
+      : {})
+  },
+```
+
+> 按需注入环境变量
+
+```js
+// config/config.ts
+metas: [
+  { name: 'application-name', content: serverEnv?.name },
+]
 ```
 
 ## 打包部署

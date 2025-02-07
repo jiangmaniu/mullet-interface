@@ -7,8 +7,8 @@ export const getEnv = () => {
   const clientConf = STORAGE_GET_PLATFORM_CONFIG() || {}
 
   const env = {
-    ...serverConf,
-    ...clientConf
+    ...clientConf,
+    ...serverConf
   }
   return env as IPlatformConfig
 }

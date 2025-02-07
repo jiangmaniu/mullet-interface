@@ -1,10 +1,11 @@
 ﻿import { RequestConfig } from '@umijs/max'
 import { Base64 } from 'js-base64'
 
-import { STORAGE_GET_PLATFORM_CONFIG, STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
+import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
 import { getLocaleForBackend } from './constants/enum'
+import { getEnv } from './env'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
 
@@ -119,7 +120,7 @@ export const errorConfig: RequestConfig = {
       // 请求之前添加token
       const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
       const token = config.token || STORAGE_GET_TOKEN() || ''
-      const conf = STORAGE_GET_PLATFORM_CONFIG() || {}
+      const env = getEnv()
       const headers: any = {
         'Content-Type': 'x-www-form-urlencoded',
         Language: getLocaleForBackend(),
@@ -129,7 +130,7 @@ export const errorConfig: RequestConfig = {
 
       if (config.authorization !== false) {
         // 客户端认证
-        headers['Authorization'] = `Basic ${Base64.encode(`${conf.CLIENT_ID}:${conf.CLIENT_SECRET}`)}`
+        headers['Authorization'] = `Basic ${Base64.encode(`${env.CLIENT_ID}:${env.CLIENT_SECRET}`)}`
       }
 
       if (token) {
