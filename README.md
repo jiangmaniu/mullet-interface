@@ -18,19 +18,19 @@ yarn install
 
 **环境变量**
 
-- `.env.dev` 开发阶段环境变量
-- `.env.test` 测试阶段环境变量
-- `.env.prod` 线上环境环境变量
+- `.env-conf/stellux`  stellux 平台环境变量
+- `.env-conf/.env.lynfoo.prod` lynfoo 平台环境变量
 
 ```bash
-# 联调后台开发服务环境
-yarn dev
-
-# 联调测试阶段环境
-yarn dev:test
-
-# 联调线上环境
-yarn dev:prod
+# stellux
+# 开发阶段的环境
+"dev:stellux:dev": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/stellux/.env.stellux.dev max dev",
+# 测试阶段的环境
+"dev:stellux:test": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/stellux/.env.stellux.test max dev",
+# 线上阶段的环境
+"dev:stellux:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/stellux/.env.stellux.prod max dev",
+# lynfoo 线上阶段的环境
+"dev:lynfoo:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/.env.lynfoo.prod max dev",
 
 # 启动本地mock服务，用于快速没有服务的情况下联调接口字段 配置根目录下 mock/xx 来使用
 yarn start:mock
@@ -41,11 +41,11 @@ yarn start:mock
 目前为了打一个docker镜像包通用全部客户，从`public/platform/config.json`中读取不同平台配置，如果需要做seo在使用这样方式打包
 
 > 如需要针对SEO优化，不同平台需要单独打包
-> 处理.env.platform.seo下的不同平台.env文件
+> 处理.env下的不同平台.env文件
 
 ```bash
-"build:lyn:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env.platform.seo/.env.lyn max build",
-"build:sux:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env.platform.seo/.env.sux max build",
+"build:lynfoo:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .en-conf/.env.lynfoo.prod max build",
+"build:stellux:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .en-conf/stellux/.env.stellux.prod max build",
 ```
 
 > 打包时按需注入环境变量到代码中，在页面中可以访问process.env.xx的值
@@ -86,17 +86,11 @@ metas: [
 
 ## 打包部署
 
-### 打包线上测试环境
-
-```bash
-yarn build:test
-```
-
-### 打包到生产环境
+### 打包
 
 ```bash
 # 执行打包命令
-yarn build:prod
+yarn build
 ```
 
 打包成功目录是`dist`，把`dist`下的静态资源部署即可
