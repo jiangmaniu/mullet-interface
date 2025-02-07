@@ -36,6 +36,7 @@ module.exports = {
     'react/no-children-prop': 'off',
     '@typescript-eslint/ban-types': 'off',
     'prefer-rest-params': 'off',
-    'react/no-string-refs': 'off'
+    'react/no-string-refs': 'off',
+    'guard-for-in': 'off'
   }
 }
