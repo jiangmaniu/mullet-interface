@@ -20,7 +20,7 @@ function PendingList() {
   const { cn, theme } = useTheme()
   const { trade } = useStores()
   const { currentAccountInfo } = trade
-  const pendingList = toJS(trade.pendingList)
+  const pendingList = toJS(trade?.pendingList || [])
 
   useEffect(() => {
     trade.getPendingList()

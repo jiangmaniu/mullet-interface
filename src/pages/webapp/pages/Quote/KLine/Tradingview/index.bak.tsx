@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react'
 
 import Loading from '@/components/Base/Lottie/Loading'
-import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
@@ -9,7 +8,7 @@ import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { useIntl } from '@umijs/max'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { isAndroid } from 'react-device-detect'
 
 type IProps = {
@@ -40,16 +39,16 @@ const TradingViewComp = ({ style }: IProps) => {
     process.env.NODE_ENV === 'production'
       ? `${location.origin}${isDark ? '/platform/img/kline-water-logo.png' : '/platform/img/kline-water-logo.png'}`
       : '' // 网络图片地址 水印图片尺寸大小 522 × 146
-  const klineUrl = `${
-    ENV.tradingViewUrl
-  }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${
-    theme.direction + 1
-  }&accountGroupId=${accountGroupId}&token=${token}&hideWatermarkLogo=1&watermarkLogoUrl=${watermarkLogoUrl}`
+  // const klineUrl = `${
+  //   ENV.tradingViewUrl
+  // }?locale=${getTradingViewLng()}&symbolName=${symbol}&dataSourceCode=${dataSourceCode}&dataSourceSymbol=${dataSourceSymbol}&colorType=${
+  //   theme.direction + 1
+  // }&accountGroupId=${accountGroupId}&token=${token}&hideWatermarkLogo=1&watermarkLogoUrl=${watermarkLogoUrl}`
 
-  useEffect(() => {
-    setLoading(true)
-    setUrl(klineUrl)
-  }, [klineUrl])
+  // useEffect(() => {
+  //   setLoading(true)
+  //   setUrl(klineUrl)
+  // }, [klineUrl])
 
   const iframeDom = useMemo(() => {
     let height = 0

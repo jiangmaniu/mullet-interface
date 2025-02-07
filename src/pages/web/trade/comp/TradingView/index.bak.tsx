@@ -1,8 +1,7 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { observer } from 'mobx-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
-import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
@@ -26,18 +25,18 @@ const TradingViewComp = ({ style }: IProps) => {
   const dataSourceCode = symbolInfo?.dataSourceCode
   const dataSourceSymbol = symbolInfo?.dataSourceSymbol
 
-  useEffect(() => {
-    if (dataSourceSymbol) {
-      setLoading(true)
-      setTradeUrl(
-        `${
-          ENV.tradingViewUrl
-        }/?lang=${getTradingViewLng()}&dataSourceSymbol=${dataSourceSymbol}&dataSourceCode=${dataSourceCode}&symbolName=${
-          symbolInfo?.symbol
-        }`
-      )
-    }
-  }, [lng, activeSymbolName, dataSourceCode])
+  // useEffect(() => {
+  //   if (dataSourceSymbol) {
+  //     setLoading(true)
+  //     setTradeUrl(
+  //       `${
+  //         ENV.tradingViewUrl
+  //       }/?lang=${getTradingViewLng()}&dataSourceSymbol=${dataSourceSymbol}&dataSourceCode=${dataSourceCode}&symbolName=${
+  //         symbolInfo?.symbol
+  //       }`
+  //     )
+  //   }
+  // }, [lng, activeSymbolName, dataSourceCode])
 
   const iframeDom = useMemo(() => {
     return (

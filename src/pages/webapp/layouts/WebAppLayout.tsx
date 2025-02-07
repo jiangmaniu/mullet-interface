@@ -131,9 +131,9 @@ function WebAppLayout() {
   return (
     <div>
       {/* 隐藏全局加载k线资源 */}
-      <div style={{ display: 'none' }}>
+      {/* <div style={{ display: 'none' }}>
         <Tradingview />
-      </div>
+      </div> */}
       <div className="relative">{renderContent}</div>
       {renderTabbar}
     </div>

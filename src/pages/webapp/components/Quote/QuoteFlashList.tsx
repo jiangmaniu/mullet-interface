@@ -8,7 +8,6 @@ import { useEnv } from '@/context/envProvider'
 import { useLoading } from '@/context/loadingProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useSymbolQuoteSubscribe from '../../hooks/useSymbolQuoteSubscribe'
 import FlashList from '../Base/List/FlashList'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
@@ -84,11 +83,6 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible
 
     return list.filter((v) => v.symbol.toLowerCase().indexOf(String(searchValue).toLowerCase()) !== -1)
   }, [symbolDataList, trade.favoriteList.length, searchValue, visible])
-
-  // 订阅品种列表数据
-  useSymbolQuoteSubscribe({
-    list
-  })
 
   const renderItem = (item: Account.TradeSymbolListItem) => {
     return (

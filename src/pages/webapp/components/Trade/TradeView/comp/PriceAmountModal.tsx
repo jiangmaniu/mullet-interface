@@ -3,7 +3,6 @@ import { observer } from 'mobx-react'
 import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
-import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { IPriceOrAmountType } from '@/mobx/trade'
 
@@ -25,11 +24,8 @@ export type PriceAmountModalRef = {
 function PriceAmountModal({ trigger, onChange, value }: IProps, ref: ForwardedRef<PriceAmountModalRef>) {
   const bottomSheetModalRef = useRef<SheetRef>(null)
   const intl = useIntl()
-  const { trade } = useStores()
-  const { cn, theme } = useTheme()
+  const { cn } = useTheme()
   const [selectValue, setSelectValue] = useState<IPriceOrAmountType>('PRICE')
-  const { buySell, orderType, setOrderType, orderSpslChecked, setOrderSpslChecked } = trade
-  const isBuy = buySell === 'BUY'
 
   useImperativeHandle(ref, () => ({
     show: () => {

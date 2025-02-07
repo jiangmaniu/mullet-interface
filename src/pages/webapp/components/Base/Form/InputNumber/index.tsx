@@ -43,6 +43,8 @@ export type InputNumberProps = TextFieldProps & {
   autoSelectAll?: boolean
   /** 在 onChange 时修正数值 */
   fixedTrigger?: 'onChange' | 'always' | 'never'
+  /** 只允许正数 */
+  onlyPositive?: boolean
 }
 
 const InputNumber = forwardRef(
@@ -69,6 +71,8 @@ const InputNumber = forwardRef(
       onChange,
       className,
       fixedTrigger = 'never',
+      /** 只允许正数 */
+      onlyPositive = false,
       onBlur,
       onEnterPress,
       ...res
@@ -110,6 +114,7 @@ const InputNumber = forwardRef(
       if (hiddenPrecision) {
         newText = newText.replace(/[^\d]/g, '') // 只允许输入数字
         newText = newText.replace(/^0+(\d)/, '$1') // 如果以0开头，去掉前导0
+        newText = newText.replace(/(\d)-/, '$1') // 不允许数字后出现负号
       } else {
         // 处理输入小数
         newText = newText.replace(/[^-\d.]/g, '') // 允许负号、数字和小数点
@@ -117,7 +122,13 @@ const InputNumber = forwardRef(
         newText = newText.replace(/^(-?)\./, '$10.') // 如果以小数点开始，在小数点前加0
         newText = newText.replace(/\.{2,}/g, '.') // 只保留第一个小数点
         newText = newText.replace(/^(-?[^.]*\.[^.]*)(\..*)?$/, '$1') // 只保留第一个小数点之后的部分
+        newText = newText.replace(/(\d)-/, '$1') // 不允许数字后出现负号
         newText = regInput(newText, precision)
+      }
+
+      // 只允许正数
+      if (onlyPositive) {
+        newText = newText.replace(/^-/, '') // 去掉负号
       }
 
       // 处理输入的最大值
@@ -125,7 +136,7 @@ const InputNumber = forwardRef(
         newText = max
       }
 
-      return newText
+      return String(newText)
     }
 
     const handleChangeText = (text: string) => {

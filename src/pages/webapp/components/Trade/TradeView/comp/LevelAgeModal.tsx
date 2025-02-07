@@ -23,8 +23,7 @@ function LevelAgeModal(props: any, ref: ForwardedRef<LevelAgeModalRef>) {
   const intl = useIntl()
   const { trade } = useStores()
   const { cn, theme } = useTheme()
-  const { buySell, orderType, setOrderType, orderSpslChecked, setOrderSpslChecked, leverageMultiple } = trade
-  const isBuy = buySell === 'BUY'
+  const { leverageMultiple } = trade
   const quoteInfo = getCurrentQuote()
   const symbolConf = quoteInfo?.symbolConf
   const prepaymentConf = symbolConf?.prepaymentConf

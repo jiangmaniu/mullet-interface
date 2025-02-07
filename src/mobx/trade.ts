@@ -32,11 +32,11 @@ import {
   STORAGE_SET_POSITION_CONFIRM_CHECKED,
   STORAGE_SET_QUICK_PLACE_ORDER_CHECKED
 } from '@/utils/storage'
-import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import { covertProfit } from '@/utils/wsUtil'
 
 import { getEnv } from '@/env'
 import klineStore from './kline'
-import ws from './ws'
+import ws, { SymbolWSItem } from './ws'
 import { IPositionListSymbolCalcInfo, MarginReteInfo } from './ws.types'
 
 export type UserConfInfo = Record<
@@ -122,6 +122,7 @@ class TradeStore {
   //  ========= 交易区操作 =========
   @observable marginType: API.MarginType = 'CROSS_MARGIN' // 交易区保证金类型
   @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
+  @observable isBuy = true // 交易区买卖类型
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 2 // 浮动杠杆倍数，默认1
   @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
@@ -179,6 +180,8 @@ class TradeStore {
     this.initFavoriteList()
     // 获取全部品种列表作为汇率校验
     this.getAllSimbleSymbols()
+    // 获取持仓列表
+    this.getPositionList()
 
     this.orderQuickPlaceOrderChecked = (await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()) || false
     this.orderConfirmChecked = (await STORAGE_GET_ORDER_CONFIRM_CHECKED()) || false
@@ -250,6 +253,7 @@ class TradeStore {
   @action
   setBuySell = (buySell: API.TradeBuySell) => {
     this.buySell = buySell
+    this.isBuy = buySell === 'BUY'
   }
 
   // 设置订单类型Tabs切换
@@ -537,9 +541,9 @@ class TradeStore {
   @action
   getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
     const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
-    const quote = getCurrentQuote()
-    const conf = item?.conf || quote?.symbolConf // 品种配置信息
-    const buySell = this.buySell
+    // const quote = getCurrentQuote()
+    // const conf = item?.conf || quote?.symbolConf // 品种配置信息
+    // const buySell = this.buySell
     const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
     // 全仓保证金率：全仓净值/占用 = 保证金率
     // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
@@ -638,6 +642,92 @@ class TradeStore {
     })
   }
 
+  /**
+   * 订阅当前选中及持仓列表品种的行情, 打开页面或切换品种时调用
+   * @param cover 是否自动取消其他历史订阅
+   */
+  @action
+  subscribeCurrentAndPositionSymbol = ({ cover = false }: { cover?: boolean }) => {
+    const activeSymbolInfo = this.getActiveSymbolInfo()
+    // const symbolList = toJS(this.positionList).map((item) => item.symbol) as string[]
+    // const symbolList = [activeSymbolInfo, ...this.positionList]
+    // const symbolNames = Array.from(new Set(symbolList.map((item) => item.symbol))) as string[]
+    const symbolList = this.positionList
+    const symbols = Array.from(
+      new Set(
+        symbolList.map((item) =>
+          JSON.stringify({
+            accountGroupId: item?.accountGroupId,
+            symbol: item.symbol,
+            dataSourceCode: item.dataSourceCode,
+            conf: {
+              profitCurrency: item.conf?.profitCurrency
+            }
+          })
+        )
+      )
+    ).map((str) => JSON.parse(str))
+
+    setTimeout(() => {
+      ws.checkSocketReady(() => {
+        console.log('订阅当前选中及持仓列表品种的行情', cover ? '【并取消其他历史订阅】' : '', [activeSymbolInfo, ...symbols])
+        // 打开行情订阅
+        ws.openPosition({
+          symbols: ws.makeWsSymbolBySemi([activeSymbolInfo, ...symbols]),
+          cover
+        })
+
+        /** 动态订阅汇率品种行情，用于计算下单时保证金等 */
+
+        // 1. 持仓列表品种
+        symbols.forEach((item) => {
+          if (item?.conf) {
+            ws.subscribeExchangeRateQuote(item.conf)
+          }
+        })
+        // 2. 当前选中品种
+        ws.subscribeExchangeRateQuote()
+      })
+    })
+  }
+
+  @action
+  subscribePositionSymbol = ({ cover = true }: { cover?: boolean }) => {
+    const symbolList = this.positionList
+    const symbols = Array.from(
+      new Set(
+        symbolList.map((item) =>
+          JSON.stringify({
+            accountGroupId: item?.accountGroupId,
+            symbol: item.symbol,
+            dataSourceCode: item.dataSourceCode,
+            conf: {
+              profitCurrency: item.conf?.profitCurrency
+            }
+          })
+        )
+      )
+    ).map((str) => JSON.parse(str))
+
+    setTimeout(() => {
+      ws.checkSocketReady(() => {
+        console.log('订阅当前持仓列表品种的行情', cover ? '【并取消其他历史订阅】' : '', symbols)
+        // 打开行情订阅
+        ws.openPosition({
+          symbols: ws.makeWsSymbolBySemi(symbols as SymbolWSItem[]),
+          cover
+        })
+
+        // 动态订阅汇率品种行情，用于计算下单时保证金等
+        symbols.forEach((item) => {
+          if (item?.conf) {
+            ws.subscribeExchangeRateQuote(item.conf)
+          }
+        })
+      })
+    })
+  }
+
   // 切换交易品种
   @action
   switchSymbol = (symbol: string) => {
@@ -647,7 +737,6 @@ class TradeStore {
     this.setOpenSymbolNameList(symbol)
     // 设置当前当前的symbol
     this.setActiveSymbolName(symbol)
-
     // 切换品种事件
     mitt.emit('symbol_change')
   }
@@ -698,14 +787,14 @@ class TradeStore {
   setActiveSymbolName(key: string) {
     // 取消订阅上一个的深度报价
     ws.subscribeDepth(true)
+    this.activeSymbolName = key
 
     setTimeout(() => {
-      this.activeSymbolName = key
       // STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
       STORAGE_SET_CONF_INFO(key, `${this.currentAccountInfo?.id}.activeSymbolName`)
       // 重新订阅深度
       ws.subscribeDepth()
-    }, 300)
+    }, 50)
   }
 
   // 更新本地缓存的symbol列表
@@ -922,19 +1011,16 @@ class TradeStore {
 
       // 获取品种后，动态订阅品种
       if (ws.readyState === 1) {
+        // TODO: 这里需要优化，如果切换之后是持仓页面或交易页面，只需要订阅当前品种和持仓列表品种
         setTimeout(() => {
-          ws.batchSubscribeSymbol()
-        }, 400)
-      } else {
-        if (!isPCByWidth()) {
           ws.checkSocketReady(() => {
             // 打开行情订阅
-            ws.openSymbol(
+            ws.openSymbol({
               // 构建参数
-              ws.makeWsSymbolBySemi(this.symbolListAll)
-            )
+              symbols: ws.makeWsSymbolBySemi(this.symbolListAll)
+            })
           })
-        }
+        }, 400)
       }
     }
   }
@@ -974,12 +1060,13 @@ class TradeStore {
         this.positionList = data
       })
 
-      // 动态订阅汇率品种行情
-      if (data.length) {
-        data.forEach((item) => {
-          ws.subscribeExchangeRateQuote(item.conf)
-        })
-      }
+      // 动态订阅汇率品种行情, 初始化持仓列表时，不主动取消其他历史订阅
+      this.subscribePositionSymbol({ cover: false })
+      // if (data.length) {
+      //   data.forEach((item) => {
+      //     ws.subscribeExchangeRateQuote(item.conf)
+      //   })
+      // }
     }
     return res
   }
@@ -1036,7 +1123,7 @@ class TradeStore {
   createOrder = async (params: Order.CreateOrder) => {
     const intl = getIntl()
     const orderType = params.type
-    const isBuy = params.buySell === 'BUY'
+    // const isBuy = params.buySell === 'BUY'
     const res = await createOrder(params)
     if (res.success) {
       // 市价单：买入卖出单

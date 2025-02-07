@@ -144,6 +144,8 @@ const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRe
                   setMargin(v)
                   setSliderValue(v ? (v / avaMargin) * 100 : 0) // 计算滑块值
                 }}
+                onlyPositive
+                fixedTrigger="always"
                 max={avaMargin}
                 min={0.01}
                 disabled={!avaMargin}

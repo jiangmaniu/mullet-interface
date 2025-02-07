@@ -536,27 +536,27 @@ export function getCurrentQuote(currentSymbolName?: string) {
   return result
 }
 
-function hasQuoteChanged(cachedData: any): boolean {
-  const { ws, trade } = stores
-  const { quotes } = ws
+// function hasQuoteChanged(cachedData: any): boolean {
+//   const { ws, trade } = stores
+//   const { quotes } = ws
 
-  // 获取最新数据源key
-  const dataSourceKey = cachedData.dataSourceKey
-  const currentQuote = quotes.get(dataSourceKey)
+//   // 获取最新数据源key
+//   const dataSourceKey = cachedData.dataSourceKey
+//   const currentQuote = quotes.get(dataSourceKey)
 
-  // 如果没有最新行情，认为数据已变化
-  if (!currentQuote?.priceData) {
-    return true
-  }
+//   // 如果没有最新行情，认为数据已变化
+//   if (!currentQuote?.priceData) {
+//     return true
+//   }
 
-  // 比较关键价格数据
-  const newBuy = currentQuote?.priceData?.buy
-  const newSell = currentQuote?.priceData?.sell
+//   // 比较关键价格数据
+//   const newBuy = currentQuote?.priceData?.buy
+//   const newSell = currentQuote?.priceData?.sell
 
-  return (
-    // 比较买卖价
-    newBuy !== cachedData.currentQuote?.priceData?.buy ||
-    newSell !== cachedData.currentQuote?.priceData?.sell ||
-    cachedData.symbol !== trade.activeSymbolName
-  )
-}
+//   return (
+//     // 比较买卖价
+//     newBuy !== cachedData.currentQuote?.priceData?.buy ||
+//     newSell !== cachedData.currentQuote?.priceData?.sell ||
+//     cachedData.symbol !== trade.activeSymbolName
+//   )
+// }

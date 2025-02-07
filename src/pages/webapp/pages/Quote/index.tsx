@@ -29,7 +29,13 @@ function Quote() {
         />
       </View>
       <QuoteTopTabbar />
-      <SelectSymbolModal ref={selectSymbolModalRef} from="Quote" beforeClose={() => setQuoteVisible(true)} />
+      <SelectSymbolModal
+        ref={selectSymbolModalRef}
+        from="Quote"
+        afterClose={() => {
+          trade.subscribeCurrentAndPositionSymbol({ cover: true })
+        }}
+      />
     </Basiclayout>
   )
 }
