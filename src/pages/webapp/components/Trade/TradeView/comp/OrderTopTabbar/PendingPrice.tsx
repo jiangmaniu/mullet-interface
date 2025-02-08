@@ -4,10 +4,12 @@ import { observer } from 'mobx-react'
 import { SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useTrade from '@/hooks/useTrade'
 import InputNumber from '@/pages/webapp/components/Base/Form/InputNumber'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
+import useDisabled from '@/pages/webapp/hooks/trade/useDisabled'
+import usePrice from '@/pages/webapp/hooks/trade/usePrice'
+import useQuote from '@/pages/webapp/hooks/trade/useQoute'
 import { formatNum } from '@/utils'
 
 type IProps = {}
@@ -18,19 +20,14 @@ function PendingPrice({ ...res }: IProps) {
   const intl = useIntl()
 
   const { trade } = useStores()
-  const { orderType, orderPrice: price, setOrderPrice } = trade
+  const { setOrderPrice } = trade
 
-  const {
-    step2,
-    d,
-    priceTip,
-    priceRangeSymbol,
-    // price,
-    showPriceTipRedColor,
-    disabledInput
-    // 方法
-    // setOrderPrice
-  } = useTrade()
+  // 行情
+  const { step2, d, orderPrice: price } = useQuote()
+  // 价格
+  const { priceTip, priceRangeSymbol, showPriceTipRedColor } = usePrice()
+  // 禁用
+  const { disabledInput } = useDisabled()
 
   const onChange = (value?: string) => {
     if (value) {
@@ -89,9 +86,7 @@ function PendingPrice({ ...res }: IProps) {
         // status={showPriceTipRedColor ? 'error' : undefined}
         onAdd={onAdd}
         onMinus={onMinus}
-        value={price}
-        // priceRange={priceRange}
-        // showPriceTipRedColor={showPriceTipRedColor}
+        value={price as string}
         disabled={disabled}
         className="text-base"
         {...res}
