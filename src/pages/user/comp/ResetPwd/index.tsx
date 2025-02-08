@@ -14,6 +14,7 @@ import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { goLogin } from '@/utils/navigator'
 
+import { md5 } from 'js-md5'
 import ValidateCodeInput from '../../../../components/Form/ValidateCodeInput'
 
 type IProps = {
@@ -66,10 +67,8 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
 
   // 提交修改密码
   const handleSubmit = async (values: any) => {
-    console.log('values', values)
-
     const params = {
-      newPassword,
+      newPassword: md5(newPassword),
       emailOrPhone: values.emailOrPhone,
       validateCode: values.validateCode,
       phoneAreaCode: values.phoneAreaCode

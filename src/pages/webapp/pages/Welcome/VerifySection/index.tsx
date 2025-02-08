@@ -14,9 +14,9 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { registerSubmitEmail, registerSubmitPhone, sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { message } from '@/utils/message'
+import { md5 } from 'js-md5'
 import { observer } from 'mobx-react'
 import type { TypeSection, WELCOME_STEP_TYPES } from '..'
-
 export interface FormData {
   email?: string
   phone?: string
@@ -126,8 +126,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       const body = {
         code: ENV.REGISTER_APP_CODE as string,
         country: areaCodeItem?.abbr,
-        // password: md5(password),
-        password: password,
+        password: md5(password),
+        // password: password,
         validateCode: Number(code)
       }
 
