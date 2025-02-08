@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
-import { forwardRef, useMemo, useRef } from 'react'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
@@ -62,6 +62,14 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
 
   if (!symbol) return null
 
+  const [initialed, setInitialed] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setInitialed(true)
+    }, 1000)
+  }, [])
+
   return (
     <div
       className={cn('mb-[10px] flex items-center flex-row justify-between py-2 px-2 rounded-xl bg-primary', quoteWrapperClassName)}
@@ -76,7 +84,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
             {item.alias || item.symbol}
           </Text>
           {/* 休市中状态 */}
-          {hasQuote && !isMarketOpen && <Iconfont name="hangqing-xiushi" size={20} color="red" style={{ marginLeft: 5 }} />}
+          {initialed && !isMarketOpen && <Iconfont name="hangqing-xiushi" size={20} color="red" style={{ marginLeft: 5 }} />}
         </View>
         <View className={cn('flex flex-row items-center')}>
           <View className={cn('max-w-[54px]')}>

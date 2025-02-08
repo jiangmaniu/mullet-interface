@@ -114,12 +114,12 @@ function QuoteFlashList({ height, searchValue, onItem, tabKey, tabValue, visible
             <View className="flex items-center justify-end min-w-[180px] gap-x-[100px]">
               <View className={cn('text-center')}>
                 <Text size="xs" color="weak">
-                  {intl.formatMessage({ id: 'pages.trade.Buy Price' })}
+                  {intl.formatMessage({ id: 'pages.trade.Sell Price' })}
                 </Text>
               </View>
               <View className={cn('pr-3 text-end')}>
                 <Text size="xs" color="weak">
-                  {intl.formatMessage({ id: 'pages.trade.Sell Price' })}
+                  {intl.formatMessage({ id: 'pages.trade.Buy Price' })}
                 </Text>
               </View>
             </View>
