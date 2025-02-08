@@ -6,10 +6,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 
 import usePageVisibility from '@/hooks/usePageVisibility'
-import useDisabled from '@/pages/webapp/hooks/trade/useDisabled'
-import useSubmitOrder from '@/pages/webapp/hooks/trade/useSubmitOrder'
 import Button from '../../Base/Button'
-import { Text } from '../../Base/Text'
 import { View } from '../../Base/View'
 import Depth from '../../Quote/Depth'
 import Header from './comp/Header'
@@ -22,8 +19,8 @@ export const BottomButton = observer(() => {
   const isBuy = trade.isBuy
   // const { disabledBtn, disabledTrade, onSubmitOrder, onCheckSubmit, orderVolume } = useTrade()
   const { orderVolume } = trade
-  const { disabledBtn, disabledTrade } = useDisabled()
-  const { onSubmitOrder, onCheckSubmit } = useSubmitOrder()
+  // const { disabledBtn, disabledTrade } = useDisabled()
+  // const { onSubmitOrder, onCheckSubmit } = useSubmitOrder()
 
   const orderConfirmModal = useRef<OrderConfirmModalRef>(null)
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -33,12 +30,12 @@ export const BottomButton = observer(() => {
     setSubmitLoading(true)
     // 关闭二次确认弹窗
     orderConfirmModal.current?.close?.()
-    await onSubmitOrder()
+    // await onSubmitOrder()
     setSubmitLoading(false)
   }
 
   const handleConfirm = async () => {
-    if (!onCheckSubmit()) return
+    // if (!onCheckSubmit()) return
     // 提醒弹窗
     if (trade.orderConfirmChecked) {
       // 直接下单，不在二次确认
@@ -50,15 +47,7 @@ export const BottomButton = observer(() => {
   }
   return (
     <>
-      <Button size="large" type={isBuy ? 'success' : 'danger'} disabled={disabledBtn} onClick={handleConfirm} loading={submitLoading}>
-        <Text color="reverse" weight="medium" size="base">
-          {disabledTrade
-            ? intl.formatMessage({ id: 'pages.trade.Account Disabled' })
-            : `${
-                isBuy ? intl.formatMessage({ id: 'pages.trade.Buy btn' }) : intl.formatMessage({ id: 'pages.trade.Sell btn' })
-              } ${intl.formatMessage({ id: 'pages.trade.xx lot' }, { count: Number(orderVolume) })}`}
-        </Text>
-      </Button>
+      <Button size="large" type={isBuy ? 'success' : 'danger'} onClick={handleConfirm} loading={submitLoading}></Button>
       <OrderConfirmModal ref={orderConfirmModal} onConfirm={handleSubmitOrder} />
     </>
   )

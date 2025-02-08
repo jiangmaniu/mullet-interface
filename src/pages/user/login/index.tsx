@@ -196,7 +196,7 @@ function Login() {
     const params = {
       emailOrPhone: username,
       validateCode: values.validateCode,
-      password: values.password,
+      password: md5(values.password as string),
       country: values.country,
       code: ENV.REGISTER_APP_CODE,
       phoneAreaCode: values.phoneAreaCode

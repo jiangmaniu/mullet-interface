@@ -141,10 +141,10 @@ export default function PageContainer({
       {/* 返回按钮 */}
       {backTitle && backPath && (
         <div
-          className={cn('pt-7 flex items-center px-6 justify-center sticky top-[66px] z-10')}
+          className={cn('pt-4 md:pt-7 pb-2 md:pb-0 flex items-center px-5 md:px-6 justify-center sticky top-[66px] z-10')}
           style={{ background: pageBgColorMode === 'white' ? '#fff' : 'var(--bg-base-gray)', ...backStyle }}
         >
-          <div className="flex items-center relative -left-2 xl:w-1300 w-1120 mx-4">
+          <div className="flex items-center relative -left-2 xl:w-1300 w-1120 mx-0 md:mx-4">
             <div
               className="hover:bg-gray-150 rounded-full cursor-pointer"
               onClick={() => {
@@ -153,7 +153,7 @@ export default function PageContainer({
             >
               <img src="/img/uc/arrow-left.png" width={40} height={40} />
             </div>
-            <div className="text-[24px] font-bold ml-3 w-full">{backTitle}</div>
+            <div className="text-[24px] font-bold ml-1 md:ml-3 w-full">{backTitle}</div>
           </div>
         </div>
       )}

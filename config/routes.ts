@@ -128,20 +128,35 @@ export default [
     component: './admin/account/accountTypeSelect/add',
     hideInMenu: true
   },
-  // {
-  //   path: '/:lng/deposit',
-  //   name: 'deposit',
-  //   icon: 'icon-geren-rujin',
-  //   access: 'canAdmin', // 权限配置
-  //   component: './admin/deposit'
-  // },
-  // {
-  //   path: '/:lng/withdrawal',
-  //   name: 'withdrawal',
-  //   icon: 'icon-geren-chujin',
-  //   access: 'canAdmin', // 权限配置
-  //   component: './admin/withdrawal'
-  // },
+  {
+    path: '/:lng/deposit',
+    name: 'deposit',
+    icon: 'icon-geren-rujin',
+    access: 'canAdmin', // 权限配置
+    component: './admin/deposit'
+  },
+  {
+    path: '/:lng/deposit/process/:method',
+    name: 'depositProcess',
+    icon: 'icon-geren-rujin',
+    access: 'canAdmin', // 权限配置
+    component: './admin/deposit/process',
+    hideInMenu: true
+  },
+  {
+    path: '/:lng/withdrawal',
+    name: 'withdrawal',
+    icon: 'icon-geren-chujin',
+    access: 'canAdmin', // 权限配置
+    component: './admin/withdrawal'
+  },
+  {
+    path: '/:lng/withdrawal/process/:method',
+    name: 'withdrawalProcess',
+    access: 'canAdmin', // 权限配置
+    component: './admin/withdrawal/process',
+    hideInMenu: true
+  },
   // {
   //   path: '/:lng/withdrawal/add',
   //   access: 'canAdmin', // 权限配置
