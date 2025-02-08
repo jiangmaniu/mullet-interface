@@ -28,6 +28,9 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
   const phone = currentUser?.userInfo?.phone as string
   const email = currentUser?.userInfo?.email as string
   const account = currentUser?.account as string
+  const isKycAuth = currentUser?.isKycAuth
+
+  const isPhoneCheck = phone && isKycAuth
 
   return (
     <Modal
@@ -46,7 +49,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
         }
 
         setSubmitLoading(true)
-        const reqFn = isEmailRegisterWay ? forgetPasswordEmail : forgetPasswordPhone
+        const reqFn = isPhoneCheck ? forgetPasswordPhone : forgetPasswordEmail
         const res = await reqFn({
           emailOrPhone: currentUser?.account as string,
           newPassword,
@@ -116,13 +119,11 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
       <FormCaptcha
         name="validateCode"
         onSend={async () => {
-          const reqFn = isEmailRegisterWay ? sendEmailCode : sendPhoneCode
+          const reqFn = isPhoneCheck ? sendPhoneCode : sendEmailCode
           const res = await reqFn()
           return res.success
         }}
-        label={
-          isEmailRegisterWay ? intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' }) : intl.formatMessage({ id: 'mt.shoujiyanzheng' })
-        }
+        label={isPhoneCheck ? intl.formatMessage({ id: 'mt.shoujiyanzheng' }) : intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' })}
         rules={[
           {
             required: true,

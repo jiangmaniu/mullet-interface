@@ -38,6 +38,7 @@ export type Instance = {
   action?: ActionType
 }
 
+// @ts-ignore
 interface IProps<T, U> extends ProTableProps<T, U> {
   /**@name 表格 */
   columns: ProColumns<T>[]
@@ -168,7 +169,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   const { setHasProList, hasProList } = useModel('global')
   const [showExportWhenData, setShowExportWhenData] = useState(false)
   const themeConfig = useTheme()
-  const themeMode = theme || themeConfig.theme
+  const themeMode = theme || themeConfig.theme.mode
   const isDark = themeMode === 'dark'
 
   const [showQueryBtn, setShowQueryBtn] = useState(false) // 避免切换页面，表单项没渲染出来，先出现查询按钮，页面闪动
@@ -222,6 +223,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       span: 4, // 控制搜索表单的宽 col ant-col-5
       // 控制 查询、重置按钮距离左侧的距离
       submitterColSpanProps: { span: showExportBtn ? 4 : 2, offset: 0, ...((search && search.submitterColSpanProps) || {}) },
+      // @ts-ignore
       optionRender: (searchConfig, props, dom) => {
         return [
           <div key="action" className="flex items-center">
@@ -491,6 +493,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       actionRef={actionRef}
       rowKey="id"
       // false则不显示table工具栏
+      // @ts-ignore
       options={!hideOptions ? { ...options } : false}
       // 表格默认的 size
       defaultSize="middle"

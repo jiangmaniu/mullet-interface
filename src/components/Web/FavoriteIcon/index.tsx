@@ -13,7 +13,8 @@ type IProps = {
 // 收藏图标
 function FavoriteIcon({ symbol, ...res }: IProps) {
   const { trade } = useStores()
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const isActive = trade.favoriteList.some((item) => item.symbol === symbol)
   const color = isDark ? gray['670'] : gray['200']
   const activeColor = isDark ? yellow['400'] : yellow['490']

@@ -1,0 +1,63 @@
+import React, { useEffect, useState } from 'react'
+
+import { useTheme } from '@/context/themeProvider'
+
+import { View } from '../View'
+
+type IProps = {
+  /** 是否默认选中 */
+  checked?: boolean
+  disabled?: boolean
+  loading?: boolean
+  onChange?: (checked: boolean) => void
+  /** 选中时的内容 */
+  checkedChildren?: React.ReactNode
+  /** 非选中时的内容 */
+  unCheckedChildren?: React.ReactNode
+  style?: React.CSSProperties
+  activeThumbColor?: string
+}
+
+export default function Switch({
+  style,
+  checked,
+  disabled,
+  loading,
+  onChange,
+  checkedChildren,
+  unCheckedChildren,
+  activeThumbColor
+}: IProps) {
+  const { cn, theme } = useTheme()
+  const [isChecked, setIsChecked] = useState(false)
+
+  useEffect(() => {
+    setIsChecked(checked as boolean)
+  }, [checked])
+
+  const handleToggle = () => {
+    if (!disabled && !loading) {
+      const newChecked = !isChecked
+      setIsChecked(newChecked)
+      onChange && onChange(newChecked)
+    }
+  }
+
+  return (
+    <View
+      className={cn('px-2 min-w-[46px] py-[5px] rounded-[16px] flex-row', isChecked ? 'justify-end' : 'justify-start')}
+      onClick={handleToggle}
+      style={{
+        backgroundColor: isChecked ? activeThumbColor || theme.colors.Switch.activeTrackColor : theme.colors.Switch.inactiveTrackColor,
+        ...style
+      }}
+    >
+      {isChecked && (
+        <>{checkedChildren ? checkedChildren : <img src="/img/webapp/icons/checkSwitch.png" style={{ width: 15, height: 15 }} />}</>
+      )}
+      {!isChecked && (
+        <>{unCheckedChildren ? unCheckedChildren : <img src="/img/webapp/icons/unCheckSwitch.png" style={{ width: 15, height: 15 }} />}</>
+      )}
+    </View>
+  )
+}

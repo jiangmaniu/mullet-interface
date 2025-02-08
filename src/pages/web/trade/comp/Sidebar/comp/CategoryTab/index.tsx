@@ -5,7 +5,7 @@ import { observer } from 'mobx-react'
 import { useEffect, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
-import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 
 type IProps = {
   onChange?: (key: any) => void
@@ -13,16 +13,19 @@ type IProps = {
 }
 
 function CategoryTabs({ onChange, activeKey }: IProps) {
-  const [current, setCurrent] = useState('0')
+  const ENV = getEnv()
+  const isSux = ENV.platform === 'sux'
+  const DEFAULT_CURRENT = isSux ? '0' : '10'
+
+  const [current, setCurrent] = useState(DEFAULT_CURRENT)
   const { trade } = useStores()
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
-  const { isDark } = useTheme()
   const intl = useIntl()
 
   const symbolCategory = trade.symbolCategory
 
   useEffect(() => {
-    setCurrent(activeKey || '0')
+    setCurrent(activeKey || DEFAULT_CURRENT)
   }, [activeKey])
 
   useEffect(() => {
@@ -31,7 +34,7 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
 
   useEffect(() => {
     // 切换账户时，重置当前tab
-    setCurrent('0')
+    setCurrent(DEFAULT_CURRENT)
   }, [trade.currentAccountInfo.id])
 
   const className = useEmotionCss(({ token }) => {
@@ -73,7 +76,8 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
             setCurrent(key)
 
             // 请求分类下的品种
-            trade.getSymbolList({ classify: key })
+            // trade.getSymbolList({ classify: key })
+            trade.symbolList = trade.symbolListAll.filter((v) => (key === '0' ? true : v.classify === key))
           })
         }}
         activeKey={current}

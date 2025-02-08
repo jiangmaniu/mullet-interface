@@ -15,7 +15,8 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 底部浮动条
 function Footer() {
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const networkState = useNetwork()
   const { ws, trade, kline } = useStores()
   const readyState = ws.socket?.readyState || ws.readyState || 0
@@ -128,15 +129,15 @@ function Footer() {
           )} */}
         </div>
       </Tooltip>
-      <div className="flex h-full flex-1 items-center overflow-x-auto">
-        <Marquee pauseOnHover speed={20} gradient={isDark ? false : true}>
+      <div className="flex h-full flex-1 items-center overflow-x-auto overflow-y-hidden">
+        <Marquee pauseOnHover speed={30} gradient={isDark ? false : true}>
           {trade.symbolListAll.map((item, idx) => {
             const res = getCurrentQuote(item.symbol)
             const per: any = res.percent
             const bid = res.bid
 
             return (
-              <div key={idx} className="h-full border-r border-r-gray-200 dark:border-gray-700 px-4">
+              <div key={idx} className="h-full w-[160px] flex items-center justify-center border-r border-r-gray-200 dark:border-gray-700">
                 <div
                   className="flex cursor-pointer items-center"
                   onClick={() => {

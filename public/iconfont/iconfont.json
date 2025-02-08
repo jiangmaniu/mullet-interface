@@ -6,6 +6,461 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "1205683",
+      "name": "idcard",
+      "font_class": "idcard",
+      "unicode": "e65b",
+      "unicode_decimal": 58971
+    },
+    {
+      "icon_id": "5297134",
+      "name": "user",
+      "font_class": "user1",
+      "unicode": "e64b",
+      "unicode_decimal": 58955
+    },
+    {
+      "icon_id": "5317130",
+      "name": "earth",
+      "font_class": "earth",
+      "unicode": "e76d",
+      "unicode_decimal": 59245
+    },
+    {
+      "icon_id": "6278312",
+      "name": "盖章",
+      "font_class": "gaizhang",
+      "unicode": "e78d",
+      "unicode_decimal": 59277
+    },
+    {
+      "icon_id": "10131678",
+      "name": "face id",
+      "font_class": "faceid",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "41903961",
+      "name": "行情-小按钮-更多",
+      "font_class": "hangqing-xiaoanniu-gengduo",
+      "unicode": "e73b",
+      "unicode_decimal": 59195
+    },
+    {
+      "icon_id": "41903952",
+      "name": "个人-版本更新",
+      "font_class": "geren-banbengengxin",
+      "unicode": "e73c",
+      "unicode_decimal": 59196
+    },
+    {
+      "icon_id": "41903958",
+      "name": "复制",
+      "font_class": "fuzhi",
+      "unicode": "e73d",
+      "unicode_decimal": 59197
+    },
+    {
+      "icon_id": "41903960",
+      "name": "行情-变动",
+      "font_class": "hangqing-biandong",
+      "unicode": "e73e",
+      "unicode_decimal": 59198
+    },
+    {
+      "icon_id": "41903949",
+      "name": "返回",
+      "font_class": "fanhui",
+      "unicode": "e73f",
+      "unicode_decimal": 59199
+    },
+    {
+      "icon_id": "41903948",
+      "name": "个人中心-消息",
+      "font_class": "gerenzhongxin-xiaoxi",
+      "unicode": "e740",
+      "unicode_decimal": 59200
+    },
+    {
+      "icon_id": "41903957",
+      "name": "下拉菜单",
+      "font_class": "xialacaidan",
+      "unicode": "e741",
+      "unicode_decimal": 59201
+    },
+    {
+      "icon_id": "41903950",
+      "name": "弹窗-更多",
+      "font_class": "danchuang-gengduo",
+      "unicode": "e742",
+      "unicode_decimal": 59202
+    },
+    {
+      "icon_id": "41903956",
+      "name": "划转记录-指向",
+      "font_class": "huazhuanjilu-zhixiang",
+      "unicode": "e743",
+      "unicode_decimal": 59203
+    },
+    {
+      "icon_id": "41903951",
+      "name": "个人-下单确认",
+      "font_class": "geren-xiadanqueren",
+      "unicode": "e744",
+      "unicode_decimal": 59204
+    },
+    {
+      "icon_id": "41903939",
+      "name": "输入框-减",
+      "font_class": "shurukuang-jian",
+      "unicode": "e745",
+      "unicode_decimal": 59205
+    },
+    {
+      "icon_id": "41903955",
+      "name": "交易-图表设置",
+      "font_class": "jiaoyi-tubiaoshezhi",
+      "unicode": "e746",
+      "unicode_decimal": 59206
+    },
+    {
+      "icon_id": "41903931",
+      "name": "菜单-交易",
+      "font_class": "caidan-jiaoyi",
+      "unicode": "e748",
+      "unicode_decimal": 59208
+    },
+    {
+      "icon_id": "41903953",
+      "name": "进入",
+      "font_class": "jinru",
+      "unicode": "e749",
+      "unicode_decimal": 59209
+    },
+    {
+      "icon_id": "41903937",
+      "name": "个人-退出账户",
+      "font_class": "geren-tuichuzhanghu",
+      "unicode": "e74a",
+      "unicode_decimal": 59210
+    },
+    {
+      "icon_id": "41903946",
+      "name": "查看密码",
+      "font_class": "chakanmima",
+      "unicode": "e74b",
+      "unicode_decimal": 59211
+    },
+    {
+      "icon_id": "41903945",
+      "name": "划转",
+      "font_class": "huazhuan1",
+      "unicode": "e74c",
+      "unicode_decimal": 59212
+    },
+    {
+      "icon_id": "41903936",
+      "name": "菜单-仓位",
+      "font_class": "caidan-cangwei",
+      "unicode": "e74d",
+      "unicode_decimal": 59213
+    },
+    {
+      "icon_id": "41903942",
+      "name": "个人-主题切换",
+      "font_class": "geren-zhutiqiehuan",
+      "unicode": "e74e",
+      "unicode_decimal": 59214
+    },
+    {
+      "icon_id": "41903944",
+      "name": "方点",
+      "font_class": "fangdian",
+      "unicode": "e74f",
+      "unicode_decimal": 59215
+    },
+    {
+      "icon_id": "41903943",
+      "name": "菜单-行情",
+      "font_class": "caidan-hangqing",
+      "unicode": "e750",
+      "unicode_decimal": 59216
+    },
+    {
+      "icon_id": "41903940",
+      "name": "账户-交易",
+      "font_class": "zhanghu-jiaoyi",
+      "unicode": "e751",
+      "unicode_decimal": 59217
+    },
+    {
+      "icon_id": "41903933",
+      "name": "交易-技术指标",
+      "font_class": "jiaoyi-jishuzhibiao",
+      "unicode": "e752",
+      "unicode_decimal": 59218
+    },
+    {
+      "icon_id": "41903935",
+      "name": "订单-筛选",
+      "font_class": "dingdan-shaixuan",
+      "unicode": "e753",
+      "unicode_decimal": 59219
+    },
+    {
+      "icon_id": "41903934",
+      "name": "菜单-账户",
+      "font_class": "caidan-zhanghu",
+      "unicode": "e754",
+      "unicode_decimal": 59220
+    },
+    {
+      "icon_id": "41903938",
+      "name": "输入框-加",
+      "font_class": "shurukuang-jia",
+      "unicode": "e755",
+      "unicode_decimal": 59221
+    },
+    {
+      "icon_id": "41903930",
+      "name": "交易-切换币种",
+      "font_class": "jiaoyi-qiehuanbizhong",
+      "unicode": "e756",
+      "unicode_decimal": 59222
+    },
+    {
+      "icon_id": "41903928",
+      "name": "新建账户",
+      "font_class": "xinjianzhanghu",
+      "unicode": "e757",
+      "unicode_decimal": 59223
+    },
+    {
+      "icon_id": "41903925",
+      "name": "按钮-更多",
+      "font_class": "anniu-gengduo",
+      "unicode": "e758",
+      "unicode_decimal": 59224
+    },
+    {
+      "icon_id": "41903929",
+      "name": "个人-语言",
+      "font_class": "geren-yuyan",
+      "unicode": "e759",
+      "unicode_decimal": 59225
+    },
+    {
+      "icon_id": "41903927",
+      "name": "闭眼",
+      "font_class": "biyan",
+      "unicode": "e75a",
+      "unicode_decimal": 59226
+    },
+    {
+      "icon_id": "41903926",
+      "name": "扫码",
+      "font_class": "saoma",
+      "unicode": "e75b",
+      "unicode_decimal": 59227
+    },
+    {
+      "icon_id": "41903974",
+      "name": "个人-快速下单",
+      "font_class": "geren-kuaisuxiadan",
+      "unicode": "e75c",
+      "unicode_decimal": 59228
+    },
+    {
+      "icon_id": "41903954",
+      "name": "仓位-模拟入金",
+      "font_class": "cangwei-monirujin",
+      "unicode": "e75d",
+      "unicode_decimal": 59229
+    },
+    {
+      "icon_id": "41903932",
+      "name": "个人-平仓确认",
+      "font_class": "geren-pingcangqueren",
+      "unicode": "e75e",
+      "unicode_decimal": 59230
+    },
+    {
+      "icon_id": "41903973",
+      "name": "账户-划转",
+      "font_class": "zhanghu-huazhuan",
+      "unicode": "e75f",
+      "unicode_decimal": 59231
+    },
+    {
+      "icon_id": "41903972",
+      "name": "划转记录-划转",
+      "font_class": "huazhuanjilu-huazhuan",
+      "unicode": "e760",
+      "unicode_decimal": 59232
+    },
+    {
+      "icon_id": "41903971",
+      "name": "账户-记录",
+      "font_class": "zhanghu-jilu",
+      "unicode": "e761",
+      "unicode_decimal": 59233
+    },
+    {
+      "icon_id": "41903964",
+      "name": "弹窗-选中",
+      "font_class": "danchuang-xuanzhong",
+      "unicode": "e762",
+      "unicode_decimal": 59234
+    },
+    {
+      "icon_id": "41903947",
+      "name": "弹窗-关闭",
+      "font_class": "danchuang-guanbi",
+      "unicode": "e763",
+      "unicode_decimal": 59235
+    },
+    {
+      "icon_id": "41903970",
+      "name": "全仓下拉",
+      "font_class": "quancangxiala",
+      "unicode": "e764",
+      "unicode_decimal": 59236
+    },
+    {
+      "icon_id": "41903969",
+      "name": "行情-搜索",
+      "font_class": "hangqing-sousuo",
+      "unicode": "e765",
+      "unicode_decimal": 59237
+    },
+    {
+      "icon_id": "41903968",
+      "name": "划转-选择",
+      "font_class": "huazhuan-xuanze",
+      "unicode": "e766",
+      "unicode_decimal": 59238
+    },
+    {
+      "icon_id": "41903967",
+      "name": "语言",
+      "font_class": "yuyan",
+      "unicode": "e767",
+      "unicode_decimal": 59239
+    },
+    {
+      "icon_id": "41903965",
+      "name": "账户-更多",
+      "font_class": "zhanghu-gengduo",
+      "unicode": "e768",
+      "unicode_decimal": 59240
+    },
+    {
+      "icon_id": "41903966",
+      "name": "行情-点差",
+      "font_class": "hangqing-diancha",
+      "unicode": "e769",
+      "unicode_decimal": 59241
+    },
+    {
+      "icon_id": "41903962",
+      "name": "划转-指向",
+      "font_class": "huazhuan-zhixiang",
+      "unicode": "e76a",
+      "unicode_decimal": 59242
+    },
+    {
+      "icon_id": "41903959",
+      "name": "个人-推送设置",
+      "font_class": "geren-tuisongshezhi",
+      "unicode": "e76b",
+      "unicode_decimal": 59243
+    },
+    {
+      "icon_id": "41903963",
+      "name": "切换账户-下拉",
+      "font_class": "qiehuanzhanghu-xiala",
+      "unicode": "e76c",
+      "unicode_decimal": 59244
+    },
+    {
+      "icon_id": "42003791",
+      "name": "交易-开空",
+      "font_class": "jiaoyi-kaikong",
+      "unicode": "e76e",
+      "unicode_decimal": 59246
+    },
+    {
+      "icon_id": "42003792",
+      "name": "交易-开多",
+      "font_class": "jiaoyi-kaiduo",
+      "unicode": "e76f",
+      "unicode_decimal": 59247
+    },
+    {
+      "icon_id": "42031116",
+      "name": "行情-休市",
+      "font_class": "hangqing-xiushi",
+      "unicode": "e770",
+      "unicode_decimal": 59248
+    },
+    {
+      "icon_id": "42032833",
+      "name": "hzld",
+      "font_class": "a-hzld",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "42032822",
+      "name": "lzhd",
+      "font_class": "a-lzhd",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "42069111",
+      "name": "通知-进入",
+      "font_class": "tongzhi-jinru",
+      "unicode": "e771",
+      "unicode_decimal": 59249
+    },
+    {
+      "icon_id": "42069110",
+      "name": "成交通知",
+      "font_class": "chengjiaotongzhi",
+      "unicode": "e772",
+      "unicode_decimal": 59250
+    },
+    {
+      "icon_id": "42069369",
+      "name": "划转记录",
+      "font_class": "a-bianzu15",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
+      "icon_id": "41911740",
+      "name": "涨跌颜色",
+      "font_class": "zhangdieyanse",
+      "unicode": "e7431",
+      "unicode_decimal": 947249
+    },
+    {
+      "icon_id": "42673093",
+      "name": "qrcode",
+      "font_class": "a-bianzu19",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
+      "icon_id": "42667288",
+      "name": "saomiao",
+      "font_class": "bianzu",
+      "unicode": "e613",
+      "unicode_decimal": 58899
+    },
+    {
       "icon_id": "40135086",
       "name": "清理",
       "font_class": "qingli",

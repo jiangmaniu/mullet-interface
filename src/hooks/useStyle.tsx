@@ -8,6 +8,13 @@ export default function useStyle() {
         color: 'var(--color-text-weak) !important',
         background: '#fff !important',
         fontWeight: '500 !important'
+      },
+      '.ant-empty': {
+        height: '350px !important',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column'
       }
     }
   })

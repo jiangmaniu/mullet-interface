@@ -7,6 +7,10 @@
 #header-toolbar-symbol-search .icon-GwQQdU8S {
   display: none;
 }
+/* 隐藏图例左边的品种和交易所名称一整块 */
+.noWrapWrapper-l31H9iuA {
+  display: none !important;
+}
 .button-cq__ntSC {
   width: auto !important;
 }

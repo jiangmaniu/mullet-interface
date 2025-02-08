@@ -2,12 +2,20 @@ import lodashGet from 'lodash/get'
 import lodashSet from 'lodash/set'
 
 import {
+  KEY_ACCOUNT_PASSWORD,
   KEY_ACTIVE_SYMBOL_NAME,
+  KEY_DEVICE_TYPE,
   KEY_FAVORITE,
+  KEY_HISTORY_SEARCH,
   KEY_LOCATION_INFO,
   KEY_NEXT_REFRESH_TOKEN_TIME,
+  KEY_ORDER_CONFIRM_CHECKED,
   KEY_PARAMS,
+  KEY_PLATFORM_CONFIG,
+  KEY_POSITION_CONFIRM_CHECKED,
   KEY_PWD,
+  KEY_QUICK_PLACE_ORDER_CHECKED,
+  KEY_SHOW_PWD_ADD_MODAL,
   KEY_SYMBOL_NAME_LIST,
   KEY_THEME,
   KEY_TOKEN,
@@ -20,6 +28,12 @@ import {
 import { valuetype } from './type'
 
 // ============================================================
+
+// 本地存储-账号密码
+export const STORAGE_GET_ACCOUNT_PASSWORD = genStorageGet(KEY_ACCOUNT_PASSWORD)
+export const STORAGE_SET_ACCOUNT_PASSWORD = genStorageSet(KEY_ACCOUNT_PASSWORD)
+export const STORAGE_REMOVE_ACCOUNT_PASSWORD = storageRemove(KEY_ACCOUNT_PASSWORD)
+
 // 本地存储-令牌
 export const STORAGE_GET_TOKEN = genStorageGet(KEY_TOKEN)
 export const STORAGE_SET_TOKEN = genStorageSet(KEY_TOKEN)
@@ -76,6 +90,36 @@ export const STORAGE_SET_THEME = genStorageSet(KEY_THEME)
 // 交易页面主题色
 export const STORAGE_GET_TRADE_THEME = genStorageGet(KEY_TRADE_THEME)
 export const STORAGE_SET_TRADE_THEME = genStorageSet(KEY_TRADE_THEME)
+
+// 快速下单状态状态标记
+export const STORAGE_GET_QUICK_PLACE_ORDER_CHECKED = genStorageGet(KEY_QUICK_PLACE_ORDER_CHECKED)
+export const STORAGE_SET_QUICK_PLACE_ORDER_CHECKED = genStorageSet(KEY_QUICK_PLACE_ORDER_CHECKED)
+
+// 订单二次确认弹窗
+export const STORAGE_GET_ORDER_CONFIRM_CHECKED = genStorageGet(KEY_ORDER_CONFIRM_CHECKED)
+export const STORAGE_SET_ORDER_CONFIRM_CHECKED = genStorageSet(KEY_ORDER_CONFIRM_CHECKED)
+
+// 平仓二次确认弹窗
+export const STORAGE_GET_POSITION_CONFIRM_CHECKED = genStorageGet(KEY_POSITION_CONFIRM_CHECKED)
+export const STORAGE_SET_POSITION_CONFIRM_CHECKED = genStorageSet(KEY_POSITION_CONFIRM_CHECKED)
+
+// 平仓二次确认弹窗
+export const STORAGE_GET_SHOW_PWA_ADD_MODAL = genStorageGet(KEY_SHOW_PWD_ADD_MODAL)
+export const STORAGE_SET_SHOW_PWA_ADD_MODAL = genStorageSet(KEY_SHOW_PWD_ADD_MODAL)
+
+// 历史搜索记录
+export const STORAGE_GET_HISTORY_SEARCH = genStorageGet(KEY_HISTORY_SEARCH)
+export const STORAGE_SET_HISTORY_SEARCH = genStorageSet(KEY_HISTORY_SEARCH)
+export const STORAGE_REMOVE_HISTORY_SEARCH = storageRemove(KEY_HISTORY_SEARCH)
+
+// 存储记录的设备类型
+export const STORAGE_GET_DEVICE_TYPE = genStorageGet(KEY_DEVICE_TYPE)
+export const STORAGE_SET_DEVICE_TYPE = genStorageSet(KEY_DEVICE_TYPE)
+export const STORAGE_REMOVE_DEVICE_TYPE = storageRemove(KEY_DEVICE_TYPE)
+
+// 平台配置
+export const STORAGE_GET_PLATFORM_CONFIG = genStorageGet(KEY_PLATFORM_CONFIG)
+export const STORAGE_SET_PLATFORM_CONFIG = genStorageSet(KEY_PLATFORM_CONFIG)
 
 // =================================================
 

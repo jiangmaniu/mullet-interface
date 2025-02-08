@@ -24,7 +24,8 @@ type IProps = {
 // 追加、提取保证金
 function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
   const intl = useIntl()
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const { trade } = useStores()
   const { availableMargin } = trade.getAccountBalance()
   const [inputValue, setInputValue] = useState(0)

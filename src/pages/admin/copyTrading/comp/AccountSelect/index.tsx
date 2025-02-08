@@ -4,7 +4,6 @@ import { useIntl, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import { hiddenCenterPartStr } from '@/utils'
 import { message } from '@/utils/message'
 
 export default function AccountSelect({ onClick, style }: { onClick?: (item: any) => void; style?: React.CSSProperties | undefined }) {
@@ -51,7 +50,7 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
       options={accountList.map((item) => ({
         ...item,
         value: item.id,
-        label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
+        label: `${item.name} #${item?.id}`
       }))}
       fieldProps={{
         open,
@@ -80,7 +79,7 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
               <div className="flex justify-between w-full p-2">
                 <div className="flex justify-between w-full">
                   <div className="flex-1 text-sm font-bold text-primary truncate">
-                    {item.name} #{hiddenCenterPartStr(item?.id, 4)}
+                    {item.name} #{item?.id}
                   </div>
                 </div>
               </div>

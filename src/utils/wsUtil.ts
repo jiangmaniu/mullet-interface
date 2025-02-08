@@ -440,7 +440,7 @@ export function getCurrentDepth(currentSymbolName?: string) {
   const { ws, trade } = stores
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
-  const { dataSourceCode } = trade.getActiveSymbolInfo(symbol)
+  const { dataSourceCode } = trade.getActiveSymbolInfo(symbol, trade.symbolListAll)
   const dataSourceKey = `${dataSourceCode}/${symbol}`
 
   const currentDepth = depth.get(dataSourceKey)
@@ -469,7 +469,8 @@ export function getCurrentQuote(currentSymbolName?: string) {
   // }
 
   // 当前品种的详细信息
-  const currentSymbol = trade.getActiveSymbolInfo(symbol)
+  // const currentSymbol = (trade.symbolListAll.find((item) => item.symbol === symbol) || {}) as Account.TradeSymbolListItem
+  const currentSymbol = trade.symbolListMap?.[symbol] || {}
   const dataSourceSymbol = currentSymbol?.dataSourceSymbol
   const dataSourceCode = currentSymbol?.dataSourceCode
   const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
@@ -484,6 +485,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const quotationConf = currentSymbol?.symbolConf?.quotationConf as Symbol.QuotationConf // 当前品种交易时间配置
   const symbolNewTicker = currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
   const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
+  const quoteTimeStamp = currentQuote?.priceData?.id || symbolNewPrice?.id // 行情时间戳
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
   let ask = toFixed(Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0), digits, false) // ask是买价，切记ask买价一般都比bid卖价高
@@ -503,6 +505,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
     dataSourceKey, // 获取行情源的key
     digits,
     currentQuote,
+    quoteTimeStamp,
     currentSymbol, // 当前品种信息
     symbolConf, // 全部品种配置
     prepaymentConf, // 预付款配置
@@ -533,27 +536,27 @@ export function getCurrentQuote(currentSymbolName?: string) {
   return result
 }
 
-function hasQuoteChanged(cachedData: any): boolean {
-  const { ws, trade } = stores
-  const { quotes } = ws
+// function hasQuoteChanged(cachedData: any): boolean {
+//   const { ws, trade } = stores
+//   const { quotes } = ws
 
-  // 获取最新数据源key
-  const dataSourceKey = cachedData.dataSourceKey
-  const currentQuote = quotes.get(dataSourceKey)
+//   // 获取最新数据源key
+//   const dataSourceKey = cachedData.dataSourceKey
+//   const currentQuote = quotes.get(dataSourceKey)
 
-  // 如果没有最新行情，认为数据已变化
-  if (!currentQuote?.priceData) {
-    return true
-  }
+//   // 如果没有最新行情，认为数据已变化
+//   if (!currentQuote?.priceData) {
+//     return true
+//   }
 
-  // 比较关键价格数据
-  const newBuy = currentQuote?.priceData?.buy
-  const newSell = currentQuote?.priceData?.sell
+//   // 比较关键价格数据
+//   const newBuy = currentQuote?.priceData?.buy
+//   const newSell = currentQuote?.priceData?.sell
 
-  return (
-    // 比较买卖价
-    newBuy !== cachedData.currentQuote?.priceData?.buy ||
-    newSell !== cachedData.currentQuote?.priceData?.sell ||
-    cachedData.symbol !== trade.activeSymbolName
-  )
-}
+//   return (
+//     // 比较买卖价
+//     newBuy !== cachedData.currentQuote?.priceData?.buy ||
+//     newSell !== cachedData.currentQuote?.priceData?.sell ||
+//     cachedData.symbol !== trade.activeSymbolName
+//   )
+// }

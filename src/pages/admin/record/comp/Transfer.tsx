@@ -42,6 +42,7 @@ function Transfer({ params }: IProps) {
         }}
         pagination={{
           pageSize: 10,
+          // @ts-ignore TODO： ts check 待驗證
           align: 'end'
         }}
         params={params}

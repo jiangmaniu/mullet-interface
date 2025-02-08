@@ -1,11 +1,13 @@
 // https://umijs.org/config/
 import { defineConfig } from '@umijs/max'
+import CompressionPlugin from 'compression-webpack-plugin'
 import { join } from 'path'
+import { GenerateSW } from 'workbox-webpack-plugin'
 import { DEFAULT_LOCALE } from '../src/constants/index'
+import serverEnv from '../src/env/server'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 import routes from './routes'
-
 const { REACT_APP_ENV = 'dev' } = process.env
 
 export default defineConfig({
@@ -16,6 +18,8 @@ export default defineConfig({
    * @doc https://umijs.org/docs/api/config#hash
    */
   hash: true,
+
+  plugins: [require.resolve('./plugins/prefetch.ts')],
 
   // 只设置 dev 阶段的 sourcemap
   devtool: process.env.NODE_ENV === 'development' ? 'eval' : false,
@@ -70,7 +74,7 @@ export default defineConfig({
    * @name layout 插件
    * @doc https://umijs.org/docs/max/layout-menu
    */
-  title: 'Stellux',
+  title: serverEnv?.name,
   layout: {
     locale: true,
     ...defaultSettings
@@ -155,8 +159,38 @@ export default defineConfig({
    */
   headScripts: [
     // 解决首次加载时白屏的问题
-    { src: '/scripts/loading.js', async: true }
+    { src: '/scripts/loading.js', async: true },
+    { src: '/scripts/sw.js', async: true }
   ],
+
+  // links: [{ rel: 'manifest', href: ENV?.manifest }],
+
+  // seo
+  metas:
+    process.env.PLATFORM_SEO === '1'
+      ? [
+          { name: 'application-name', content: serverEnv?.name },
+          { name: 'apple-mobile-web-app-capable', content: 'yes' },
+          { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+          { name: 'apple-mobile-web-app-title', content: serverEnv?.name },
+          { name: 'description', content: `${serverEnv?.name} Trading Platform` },
+          { name: 'format-detection', content: 'telephone=no' },
+          { name: 'mobile-web-app-capable', content: 'yes' },
+          // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
+          // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
+          { name: 'msapplication-tap-highlight', content: 'no' },
+          // <meta name="viewport" content="width=device-width, initial-scale=1">
+          { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+          // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
+        ]
+      : [],
+  // favicons: [
+  //   // 完整地址
+  //   // 'https://domain.com/favicon.ico'
+  //   // 此时将指向 `/favicon.png` ，确保你的项目含有 `public/favicon.png`
+  //   // '/favicon.png'
+  //   ENV?.favicon || ''
+  // ],
 
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],
@@ -184,13 +218,35 @@ export default defineConfig({
   //   strategy: 'normal'
   // },
   mfsu: false, // 不使用mfsu，否则引入tradingview组件会有兼容问题
+  esbuildMinifyIIFE: true, // 解决打包 esbuild helpers 冲突
   requestRecord: {},
   tailwindcss: {},
   extraPostCSSPlugins: [require('tailwindcss'), require('autoprefixer')],
   // 将 node 的环境变量注入 define 配置中，可以在浏览器window.xx获取
-  define: {
-    BASE_URL: process.env.BASE_URL,
-    'process.env.APP_ENV': process.env.APP_ENV
+  // 不在通过这种方式，通过public/platform/config.js 获取
+  define:
+    // 开发环境使用环境变量，生产环境使用配置文件
+    {
+      'process.env.PLATFORM_SEO': process.env.PLATFORM_SEO,
+      ...(process.env.NODE_ENV === 'development' || process.env.PLATFORM_SEO === '1'
+        ? {
+            'process.env.BASE_URL': process.env.BASE_URL,
+            'process.env.WS_URL': process.env.WS_URL,
+            'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN,
+            'process.env.CLIENT_ID': process.env.CLIENT_ID,
+            'process.env.CLIENT_SECRET': process.env.CLIENT_SECRET,
+            'process.env.REGISTER_APP_CODE': process.env.REGISTER_APP_CODE,
+            // seo配置
+            'process.env.SEO_PLATFORM_NAME': process.env.SEO_PLATFORM_NAME,
+            'process.env.SEO_PLATFORM_DESC': process.env.SEO_PLATFORM_DESC
+          }
+        : {})
+    },
+  // 配置额外的 babel 插件。可传入插件地址或插件函数。
+  extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
+  // https://umijs.org/docs/api/config#codesplitting
+  codeSplitting: {
+    jsStrategy: 'granularChunks'
   },
   // 使用本地字体
   chainWebpack(config) {
@@ -204,5 +260,100 @@ export default defineConfig({
         ...options,
         name: 'public/fonts/[name].[hash:8].[ext]'
       }))
+
+    if (process.env.NODE_ENV === 'production') {
+      // workbox 配置
+      config.plugin('workbox').use(GenerateSW, [
+        {
+          cacheId: Date.now().toString(), // 设置前缀
+          skipWaiting: true, // 强制等待中的 Service Worker 被激活
+          clientsClaim: true, // Service Worker 被激活后使其立即获得页面控制权
+          cleanupOutdatedCaches: true, //删除过时、老版本的缓存
+          swDest: 'service-wroker.js', // 输出 Service worker 文件
+          include: ['**/*.{html,js,css,png,jpg,svg,.woff2,.woff,.otf}'], // 匹配的文件
+          exclude: [
+            /index\.html$/,
+            '/service-wroker.js',
+            '/scripts/sw.js',
+            '/umi.js',
+            '/umi.css',
+            '/scripts/loading.js',
+            '/platform/config.js',
+            '/platform/config.json',
+            /^manifest.*\.json$/, //排除所有 manifest.json 文件
+            /^\/iconfont\/.*$/, // 排除 iconfont 目录下的所有文件
+            /^\/platform\/.*$/ // 排除 iconfont 目录下的所有文件
+          ], // 忽略的文件
+          disableDevLogs: true,
+          runtimeCaching: [
+            {
+              urlPattern: /.*\.js.*/i,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'seed-js',
+                expiration: {
+                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
+                  maxAgeSeconds: 10 * 60 // 10 min
+                }
+              }
+            },
+            {
+              urlPattern: /.*css.*/,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'seed-css',
+                expiration: {
+                  maxEntries: 30, //最多缓存100个，超过的按照LRU原则删除
+                  maxAgeSeconds: 10 * 60 // 10 min
+                }
+              }
+            },
+            {
+              urlPattern: /.*(png|svga|jpg|jpeg|gif|ico|webp).*/,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'seed-image',
+                expiration: {
+                  maxEntries: 10, //最多缓存300个，超过的按照LRU原则删除
+                  maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
+                }
+              }
+            },
+            {
+              urlPattern: /.*(otf|ttf|woff|woff2).*/,
+              handler: 'StaleWhileRevalidate',
+              options: {
+                cacheName: 'seed-font',
+                expiration: {
+                  maxEntries: 4, //最多缓存30个，超过的按照LRU原则删除
+                  maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
+                }
+              }
+            },
+            {
+              urlPattern: /\/platform\/.+\/.+\.json$/i,
+              handler: 'NetworkFirst', // 优先使用网络资源，如果网络资源不可用，则使用缓存资源
+              options: {
+                cacheName: 'seed-json',
+                expiration: {
+                  maxEntries: 32,
+                  maxAgeSeconds: 1 // 1s
+                }
+              }
+            }
+          ]
+        }
+      ])
+
+      // 在打包时生成gzip文件。这样就不需要浪费服务器资源来压缩
+      config.plugin('compression-webpack-plugin').use(
+        new CompressionPlugin({
+          test: /.js$|.html$|.css$|.otf$|.ttf$|.TTF|.woff2|.svg$/, // 压缩js，html，css文件
+          deleteOriginalAssets: false, // 不删除源文件
+          threshold: 1024 * 50, //  只压缩大小超过此50kb阈值的资源（单位为字节）
+          algorithm: 'gzip' // 使用gzip压缩
+        })
+      )
+    }
   }
 })

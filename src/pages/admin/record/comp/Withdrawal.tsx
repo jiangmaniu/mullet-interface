@@ -90,8 +90,8 @@ function Withdrawal({ params, onSelectItem }: IProps) {
         query: (params) => onQuery(params)
       }}
       pagination={{
-        pageSize: 10,
-        align: 'end'
+        pageSize: 10
+        // align: 'end'
       }}
       params={params}
       className="px-4 home-custom-commision-list"

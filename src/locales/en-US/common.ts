@@ -104,6 +104,11 @@ export default {
   'common.monichongzhi': 'Deposit (Demo)',
   'common.gendanfenrun': 'Copy Trading Profit Share',
   'common.shuaxin': 'Refresh',
-  'common.qingchu': 'Clear'
+  'common.qingchu': 'Clear',
+  'common.Pulling': 'Pull',
+  'common.CanRelease': 'Release',
+  'common.Refreshing': 'Refreshing...',
+  'common.Complete': 'Complete',
+  'common.unset': 'Unset'
   // "======= 公共结束 ==========": "",
 }

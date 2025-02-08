@@ -6,6 +6,7 @@ import { createContext, useContext, useEffect, useState } from 'react'
 
 import { ILanguage } from '@/constants/enum'
 import { DEFAULT_LOCALE, KEY_TEMP_LNG } from '@/constants/index'
+import { isPCByWidth } from '@/utils'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from '@/utils/navigator'
 
 interface ILanguageContextProps {
@@ -33,13 +34,14 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
   const getAntdMobileLocale = (lng: ILanguage) => {
     return {
       'zh-TW': zhTW,
-      'en-US': enUS
+      'en-US': enUS,
+      'vi-VN': enUS
     }[lng]
   }
 
   // 修改地址栏pathname地址
   const updatePathname = (lng: ILanguage) => {
-    window.history.replaceState(null, '', `/${lng}${getPathname()}${location.hash}${location.search}`)
+    window.history.replaceState(null, '', `/${lng}${getPathname()}${window.location.hash}${window.location.search}`)
   }
 
   // @ts-ignore
@@ -54,16 +56,18 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
     // 处理路径上的语言 => /zh-TW/symbol 保存到本地
     if (hasPathnameLng) {
       localStorage.setItem('umi_locale', pathnameLng)
-    } else if (!tempLng) {
+    }
+    // 使用浏览器定位功能切换语言
+    else if (!tempLng && isPCByWidth()) {
       // 首次加载后，再次切换语言，不在使用ip定位
       // 使用浏览器自带的检测功能
-      console.log('locationLng', locationLng)
       localStorage.setItem('umi_locale', locationLng)
     }
     // @hack 兼容首次加载没有设置默认语言，兼容umi设置默认语言
     if (!localStorage.getItem('umi_locale')) {
       localStorage.setItem('umi_locale', DEFAULT_LOCALE)
     }
+
     const locale = getLocale()
     setLng(locale)
 

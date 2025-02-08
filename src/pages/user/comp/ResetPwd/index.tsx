@@ -89,7 +89,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
     <div className="flex items-center flex-col justify-center mt-[100px]">
       {step !== 'FOUR' && (
         <div className="mb-8 cursor-pointer" onClick={onBack}>
-          <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
+          <img src="/platform/img/pc-logo.svg" alt="logo" className="h-[68px] w-[242px]" />
         </div>
       )}
       <div className="bg-white rounded-lg w-[490px] min-h-[200px] flex flex-col">

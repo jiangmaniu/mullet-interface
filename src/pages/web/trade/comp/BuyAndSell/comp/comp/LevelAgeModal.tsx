@@ -16,12 +16,13 @@ type IProps = {
 
 function LevelAgeModal({ trigger }: IProps) {
   const intl = useIntl()
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const { trade } = useStores()
   const modalRef = useRef<any>()
   const [current, setCurrent] = useState(0)
 
-  const currentSymbol = trade.getActiveSymbolInfo()
+  const currentSymbol = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf
 
   // const maxOpenLeverage = Math.max.apply(Math, [

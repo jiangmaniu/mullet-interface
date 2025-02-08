@@ -23,7 +23,8 @@ type IProps = {
 function Message({ theme }: IProps) {
   const { global } = useStores()
   const { isMobileOrIpad } = useEnv()
-  const { isDark } = useTheme()
+  const themeConfig = useTheme()
+  const isDark = themeConfig.theme.isDark
   const { unReadCount, messageList } = global
 
   const className = useEmotionCss(({ token }) => {
@@ -71,7 +72,7 @@ function Message({ theme }: IProps) {
     <Dropdown
       dropdownRender={(originNode) => {
         return (
-          <div className="bg-white w-[320px] rounded-xl dark:!shadow-none border dark:border-[--dropdown-border-color] border-[#f3f3f3] dark:bg-[--dropdown-bg]">
+          <div className="bg-white w-[320px] rounded-xl dark:!shadow-none border shadow-sm dark:border-[--dropdown-border-color] border-[#f3f3f3] dark:bg-[--dropdown-bg]">
             {messageList.length > 0 ? (
               <>
                 <div className="flex items-center justify-between p-5">
@@ -165,12 +166,12 @@ function Message({ theme }: IProps) {
             name="xiaoxi"
             width={26}
             color={theme}
-            className=" cursor-pointer rounded-lg"
+            className="cursor-pointer rounded-lg"
             hoverStyle={{
               background: theme === 'black' ? '#fbfbfb' : '#222222'
             }}
             height={26}
-            style={{ position: 'relative', top: 3 }}
+            style={{ position: 'relative', top: 4 }}
           />
         </Badge>
       </div>

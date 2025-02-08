@@ -1,12 +1,11 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { observer } from 'mobx-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 
-import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
-import ENV from '@/env'
+import { getEnv } from '@/env'
 import { Spin } from 'antd'
 
 type IProps = {
@@ -14,6 +13,7 @@ type IProps = {
 }
 
 const TradingViewComp = ({ style }: IProps) => {
+  const ENV = getEnv()
   const { isPc } = useEnv()
   const { lng } = useLang()
   const [tradeUrl, setTradeUrl] = useState('')
@@ -21,22 +21,22 @@ const TradingViewComp = ({ style }: IProps) => {
   const [loading, setLoading] = useState(false)
 
   const activeSymbolName = trade.activeSymbolName
-  const symbolInfo = trade.getActiveSymbolInfo()
+  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
   const dataSourceCode = symbolInfo?.dataSourceCode
   const dataSourceSymbol = symbolInfo?.dataSourceSymbol
 
-  useEffect(() => {
-    if (dataSourceSymbol) {
-      setLoading(true)
-      setTradeUrl(
-        `${
-          ENV.tradingViewUrl
-        }/?lang=${getTradingViewLng()}&dataSourceSymbol=${dataSourceSymbol}&dataSourceCode=${dataSourceCode}&symbolName=${
-          symbolInfo?.symbol
-        }`
-      )
-    }
-  }, [lng, activeSymbolName, dataSourceCode])
+  // useEffect(() => {
+  //   if (dataSourceSymbol) {
+  //     setLoading(true)
+  //     setTradeUrl(
+  //       `${
+  //         ENV.tradingViewUrl
+  //       }/?lang=${getTradingViewLng()}&dataSourceSymbol=${dataSourceSymbol}&dataSourceCode=${dataSourceCode}&symbolName=${
+  //         symbolInfo?.symbol
+  //       }`
+  //     )
+  //   }
+  // }, [lng, activeSymbolName, dataSourceCode])
 
   const iframeDom = useMemo(() => {
     return (

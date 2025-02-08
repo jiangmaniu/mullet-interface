@@ -1,7 +1,7 @@
 import { useIntl } from '@umijs/max'
 import { Button, message, notification } from 'antd'
-
 import defaultSettings from '../config/defaultSettings'
+import { stores } from './context/mobxProvider'
 
 const { pwa } = defaultSettings
 const isHttps = document.location.protocol === 'https:'
@@ -90,3 +90,6 @@ if (pwa) {
 
   clearCache()
 }
+
+// 全局请求环境配置
+stores.global.getPlatformConfig()

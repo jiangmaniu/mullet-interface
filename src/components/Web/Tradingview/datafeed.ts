@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { getEnv } from '@/env'
 import { ChartingLibraryWidgetOptions, DatafeedConfiguration, LibrarySymbolInfo } from '@/libs/charting_library'
 import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'
@@ -44,15 +45,15 @@ class DataFeedBase {
    * @param {*Function} onResolveErrorCallback   失败回调
    */
   async resolveSymbol(symbolName, onSymbolResolvedCallback, onResolveErrorCallback, extension) {
+    const ENV = getEnv()
     const res = await request(`/api/trade-core/coreApi/public/symbol/detail?symbol=${symbolName}`).catch((e) => e)
     const symbolInfo = res?.data || {}
     const currentSymbol = {
       ...symbolInfo,
       precision: symbolInfo?.symbolDecimal || 2,
       description: symbolInfo?.remark || '',
-      exchange: 'Stellux', // 交易所名称
+      exchange: ENV.name, // 交易所名称
       session: '24x7',
-      timezone: 'Europe/London',
       name: symbolInfo.symbol, // 展示的自定义名称
       dataSourceCode: symbolInfo.dataSourceCode // 数据源名称
     }
@@ -96,7 +97,8 @@ class DataFeedBase {
       // Mo-Fr 00:00-24:00 或 Su-Sa 00:00-24:00 表示交易所在一周七天的全天（24小时）都有交易，并且在非交易时间段也显示数据
       session: '0000-0000|0000-0000:1234567;1',
       // 该交易品种的时区
-      timezone: 'Etc/UTC'
+      // timezone: 'Etc/UTC'
+      timezone: ENV.platform === 'lyn' ? 'Asia/Shanghai' : 'Etc/UTC' // 设置时区
     } as LibrarySymbolInfo
 
     setTimeout(() => {

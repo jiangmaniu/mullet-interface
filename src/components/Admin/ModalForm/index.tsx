@@ -1,4 +1,4 @@
-import { ModalForm as ProModalForm,ModalFormProps } from '@ant-design/pro-components'
+import { ModalFormProps, ModalForm as ProModalForm } from '@ant-design/pro-components'
 import { Form } from 'antd'
 import { TabBarExtraContent } from 'rc-tabs/lib/interface'
 import { cloneElement, forwardRef, useEffect, useImperativeHandle, useMemo, useState } from 'react'
@@ -217,9 +217,12 @@ function ModalForm<T = Record<string, any>, U = Record<string, any>>(
             let success: any = false
             try {
               success = await onFinish?.(values)
+              // 关闭弹窗
+              close()
             } catch (e) {
               console.log('onFinish error', e)
             }
+
             return success
           }}
           {...res}

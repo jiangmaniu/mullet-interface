@@ -4,7 +4,7 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { FormInstance } from 'antd'
 import { DatePicker, DatePickerProps, Toast } from 'antd-mobile'
 import { PickerDate } from 'antd-mobile/es/components/date-picker/util'
-import lodash from 'lodash-es'
+import cloneDeep from 'lodash/cloneDeep'
 import moment from 'moment'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
@@ -49,7 +49,7 @@ export default forwardRef(
     ref
   ) => {
     const intl = useIntl()
-    const [dates, setDates] = useState(lodash.cloneDeep(showDefaultValue ? initValue : { startDate: '', endDate: '' }))
+    const [dates, setDates] = useState(cloneDeep(showDefaultValue ? initValue : { startDate: '', endDate: '' }))
     const [visible, setVisible] = useState(false)
     const [selectedKey, setSelectedKey] = useState('')
 

@@ -11,7 +11,7 @@ function AccountBalance() {
 
   return (
     <span className="text-base font-pf-bold  dark:text-primary">
-      {formatNum(balance > 0 ? balance : 0, { precision: currencyDecimal })} USD
+      {Number(balance) ? formatNum(balance > 0 ? balance : 0, { precision: currencyDecimal }) : '0.00'} USD
     </span>
   )
 }

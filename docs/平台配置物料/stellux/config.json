@@ -1,0 +1,10 @@
+{
+  "name": "Stellux",
+  "platform": "sux",
+  "websiteUrl": "www.stellux.io",
+  "CLIENT_ID": "StelluxTrader-client",
+  "CLIENT_SECRET": "stellux_trader_client_secret",
+  "REGISTER_APP_CODE": "123456",
+  "ws": "wss://websocket.stellux.io/websocketServer",
+  "imgDomain": "https://file.stellux.io/trade/"
+}

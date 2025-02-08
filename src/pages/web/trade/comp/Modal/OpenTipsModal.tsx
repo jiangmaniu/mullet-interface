@@ -133,7 +133,7 @@ export default observer((props, ref) => {
               </span>
             </div>
           )}
-          <div className="my-4 w-full border border-dashed border-gray-250/70"></div>
+          <div className="my-4 w-full border border-dashed border-gray-50"></div>
           <SwitchPcOrWapLayout
             pcComponent={
               <>

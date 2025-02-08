@@ -3,9 +3,10 @@
 import { getIntl, getLocale } from '@umijs/max'
 
 import { TRADE_BUY_SELL, transferWeekDay } from '@/constants/enum'
-import ENV from '@/env'
 
+import { getEnv } from '@/env'
 import { formatMin2Time, getUid, groupBy, isImageFile, parseJsonFields } from '.'
+import { STORAGE_GET_TRADE_PAGE_SHOW_TIME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from './storage'
 
 //  =============
 
@@ -276,7 +277,9 @@ export const formatSymbolConf = (data: any) => {
  * @returns
  */
 export const getSymbolIcon = (imgUrl: any) => {
-  return isImageFile(imgUrl) ? `${ENV.imgDomain}${imgUrl}` : `/img/default-symbol-icon.png`
+  const ENV = getEnv()
+  const imgDomain = ENV?.imgDomain
+  return isImageFile(imgUrl) ? `${imgDomain}${imgUrl}` : `/img/default-symbol-icon.png`
 }
 
 /**
@@ -331,4 +334,88 @@ export const getBuySellInfo = (item: any) => {
 export const getDictLabelByLocale = (value: string) => {
   const [zh, en] = (value || '').split(',')
   return getLocale() === 'zh-TW' ? zh : en || zh
+}
+
+// 格式化品种数据为字母列表分类
+export function formatSymbolList(symbolList: any) {
+  // 1. 首先提取所有symbol并按字母排序
+  const symbols = symbolList.map((item: any) => item.symbol).sort()
+
+  // 2. 创建一个对象来存储按首字母分组的数据
+  const groupedData: any = {}
+
+  // 3. 遍历排序后的symbols，按首字母分组
+  symbols.forEach((symbol: string) => {
+    const firstLetter = symbol.charAt(0).toUpperCase()
+    if (!groupedData[firstLetter]) {
+      groupedData[firstLetter] = []
+    }
+    groupedData[firstLetter].push(symbol)
+  })
+
+  // 4. 转换成最终需要的格式
+  const result = Object.keys(groupedData)
+    .sort() // 确保A-Z顺序
+    .map((letter) => ({
+      title: letter,
+      data: groupedData[letter]
+    }))
+
+  return result
+}
+
+export const checkPageShowTime = () => {
+  // 记录上次进入时间
+  const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
+  // 缓存时间大于5分钟、初次载入
+  if ((updateTime && Date.now() - updateTime > 5 * 60 * 1000) || !updateTime) {
+    STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
+    return true
+  }
+  return false
+}
+
+// 移除后台发送过来的消息模板中的字符[symbol=] [tradeVolume=]
+// "Order [symbol=BTC] [tradeVolume=0.01] [tradeDirection=BUY] Lot successful" => Order BTC 0.01 BUY Lot successful
+export const removeOrderMessageFieldNames = (message: string) => {
+  return (message || '')
+    .replace(/\[[^\]]+=/g, '')
+    .replace(/\]/g, '')
+    .trim()
+}
+
+/**解析消息模板返回的消息字符串，并提取所需的字段
+ * 示例
+ * Order [symbol=BTC] [tradeVolume=0.01] [tradeDirection=BUY] Lot successful" =>
+  {
+    "symbol": "BTC",
+    "tradeVolume": "0.01",
+    "tradeDirection": "BUY"
+  }
+ * @param message
+ * @returns
+ */
+type MessageResult = {
+  symbol: string
+  /**下单手数 */
+  tradeVolume: string
+  /**订单方向 */
+  tradeDirection: API.TradeBuySell
+  /**保证金类型 */
+  marginType: API.MarginType
+  /**订单类型 */
+  orderType: API.OrderType
+}
+export const parseOrderMessage = (message: string) => {
+  const regex = /\[([^\]]+)=([^\]]+)\]/g
+  const result: any = {}
+  let match
+
+  while ((match = regex.exec(message)) !== null) {
+    const key = match[1].trim()
+    const value = match[2].trim()
+    result[key] = value
+  }
+
+  return result as MessageResult
 }

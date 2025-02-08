@@ -34,6 +34,8 @@ export default {
   'mt.tingsundan': '停損單',
   'mt.maichuzuokong': '賣單·開空',
   'mt.mairuzuoduo': '買單·開多',
+  'mt.kaikong': '開空',
+  'mt.kaiduo': '開多',
   'mt.gangganbeishu': '杠杆倍数',
   'mt.tiaozhengganggan': '调整杠杆',
   'mt.tiaozhengganggantip1': '当前杠杆倍数最高可开:100,000,000 USDT',
@@ -308,6 +310,10 @@ export default {
   'mt.bujisuanweishixiandyinglikuyun': '不计算未实现的盈利/亏损',
   'mt.jisuanweishixiandyinglikuyun': '计算未实现的盈利/亏损',
   'mt.guiling': '归零',
+  'mt.mairuchenggong': '买入成功',
+  'mt.maichuchenggong': '卖出成功',
+  'mt.chengjiao': '成交',
+  'mt.dingdanchengjiao': '订单成交',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
@@ -365,7 +371,6 @@ export default {
   'mt.shenqingchenggong': '申请成功',
   'mt.mianshouxufei': '免手续费',
   'mt.accountfudongyingkuitips': '当前仓位的浮动盈亏已包含相应的手续费和库存费',
-
   // ======= 个人中心-我的账户 结束 ==========
 
   // ======= 个人中心-设置 开始 ==========
@@ -404,7 +409,7 @@ export default {
   'mt.zanweiwancheng': '暂未完成',
   'mt.yanzhengbuzhou': '验证步骤',
   'mt.zhanghuguanli': '账户管理',
-  'mt.zhanghuguanlitips': '用于登录Stellux的信息。如您认为密码可能已经泄露，请随时更改密码',
+  'mt.zhanghuguanlitips': '用于登录{name}的信息。如您认为密码可能已经泄露，请随时更改密码',
   'mt.anquanrenzhengfangshi': '安全验证方式',
   'mt.anquanrenzhengfangshitips': '安全验证可以确保所有敏感交易均已得到您的授权我们建议您输入验证码确认相关交易',
   'mt.anquanleixing': '安全类型',
@@ -473,12 +478,14 @@ export default {
   'mt.dianjishangchuantupian': '点击或拖动图片到此处',
 
   'mt.shenhezhong': '审核中',
+  'mt.kycrenzhengyiwancheng': 'KYC认证完成',
   'mt.shenfenrenzhengshenhezhong': '身份认证审核中',
   'mt.shenfenrenzhengshenhezhongtips': '我們會盡快完成審核，請您耐心等待如有疑問，請聯繋客服',
 
   // 新加的字段 @TODO
   'mt.kycUploadTips': '支持JPG/JPEG/PNG,不能超过1M',
   'mt.kycUploadImgSizeTips': '图片大小不能超过{size}',
+  'mt.genggai': '更改',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========
@@ -598,7 +605,7 @@ export default {
   'mt.jieshao': '介紹',
   'mt.heyuejiaoyizhengming': '合約交易證明',
   'mt.heyuejiaoyizhengmingtishi':
-    '请上传您>30 日的合约收益曲线、交易数請上傳您>30日的合約收益曲線、交易數據統計等截圖;若不上傳，我們將默認審核您StelluX合約交易記錄。 可上傳1~3張国片，單張国片大小不超過10 MB',
+    '请上传您>30 日的合约收益曲线、交易数請上傳您>30日的合約收益曲線、交易數據統計等截圖;若不上傳，我們將默認審核您{name}合約交易記錄。 可上傳1~3張国片，單張国片大小不超過10 MB',
   'mt.kexuan': '(可選)',
   'mt.shangchuantupianhuotuozhuaifangru': '上傳圖片或者拖拽放入',
   'mt.tijiaoshenqing': '提交申請',

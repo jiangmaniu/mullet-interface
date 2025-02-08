@@ -16,7 +16,8 @@ type IProps = {
 /**价格、涨跌幅 */
 function PricePercent({ symbol }: IProps) {
   const { trade, ws, kline } = useStores()
-  const { upColor, downColor, isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark, up: upColor, down: downColor } = theme
   const res = getCurrentQuote(symbol)
   const bid = res.bid // 卖价
   const ask = res.ask // 买价
@@ -170,7 +171,7 @@ function PricePercent({ symbol }: IProps) {
       </Col>
       <Col span={4} className="flex flex-col items-end pr-2">
         {res.bid ? (
-          <div className={cn('text-right text-xs font-pf-bold font-dingpro-medium', per > 0 ? 'text-green' : 'text-red')}>
+          <div className={cn('text-right text-xs font-dingpro-medium', per > 0 ? 'text-green' : 'text-red')}>
             {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
           </div>
         ) : (

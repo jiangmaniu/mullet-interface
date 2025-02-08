@@ -1,4 +1,4 @@
-import { DrawerForm as ProDrawerForm,DrawerFormProps } from '@ant-design/pro-components'
+import { DrawerFormProps, DrawerForm as ProDrawerForm } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Form } from 'antd'
 import { TabBarExtraContent } from 'rc-tabs/lib/interface'

@@ -53,7 +53,7 @@ function RegisterValidateCode({ onBack, onConfirm, sendType, type, open }: IProp
       {isOpen && (
         <div className="flex items-center flex-col flex-1 justify-center -mt-12">
           <div className="mb-8" onClick={onBack}>
-            <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px] cursor-pointer" />
+            <img src="/platform/img/pc-logo.svg" alt="logo" className="h-[68px] w-[242px] cursor-pointer" />
           </div>
           <div className="bg-white rounded-lg w-[490px] min-h-[200px] flex flex-col">
             <Form form={form}>

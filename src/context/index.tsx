@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { EnvProvider } from './envProvider'
 import { LanguageProvider } from './languageProvider'
-import { StoresProvider } from './mobxProvider'
+import { LoadingProvider } from './loadingProvider'
+import { StoresProvider, stores } from './mobxProvider'
 import { NotificationProvider } from './notification'
 import { ThemeProvider } from './themeProvider'
 
@@ -9,15 +11,23 @@ interface IProps {
 }
 
 export const Provider = ({ children }: IProps): JSX.Element => {
+  useEffect(() => {
+    stores.ws.initWorker()
+    // 提前建立socket连接，加快首次进入页面行情连接速度
+    stores.ws.connect()
+  }, [])
+
   return (
     <NotificationProvider>
-      <StoresProvider>
-        <ThemeProvider>
-          <LanguageProvider>
-            <EnvProvider>{children}</EnvProvider>
-          </LanguageProvider>
-        </ThemeProvider>
-      </StoresProvider>
+      <LoadingProvider>
+        <StoresProvider>
+          <EnvProvider>
+            <ThemeProvider>
+              <LanguageProvider>{children}</LanguageProvider>
+            </ThemeProvider>
+          </EnvProvider>
+        </StoresProvider>
+      </LoadingProvider>
     </NotificationProvider>
   )
 }

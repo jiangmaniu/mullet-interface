@@ -4,8 +4,8 @@ import { Base64 } from 'js-base64'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
-import { CLIENT_ID, CLIENT_SECRET } from './constants'
 import { getLocaleForBackend } from './constants/enum'
+import { getEnv } from './env'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
 
@@ -60,7 +60,7 @@ export const errorConfig: RequestConfig = {
         const errorInfo: IErrorInfo = error.info
         if (errorInfo) {
           const { message: errorMessage, code } = errorInfo
-          if (code === 401) {
+          if (code === 401 || code === 500) {
             // 登录失效，重新去登录
             return onLogout()
           } else {
@@ -120,6 +120,7 @@ export const errorConfig: RequestConfig = {
       // 请求之前添加token
       const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
       const token = config.token || STORAGE_GET_TOKEN() || ''
+      const env = getEnv()
       const headers: any = {
         'Content-Type': 'x-www-form-urlencoded',
         Language: getLocaleForBackend(),
@@ -129,7 +130,7 @@ export const errorConfig: RequestConfig = {
 
       if (config.authorization !== false) {
         // 客户端认证
-        headers['Authorization'] = `Basic ${Base64.encode(`${CLIENT_ID}:${CLIENT_SECRET}`)}`
+        headers['Authorization'] = `Basic ${Base64.encode(`${env.CLIENT_ID}:${env.CLIENT_SECRET}`)}`
       }
 
       if (token) {

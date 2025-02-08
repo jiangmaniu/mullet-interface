@@ -238,7 +238,7 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
       label: intl.formatMessage({ id: 'mt.lishigendan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={historyColumns} datas={histories} loading={loading} />
+          <TabTable columns={historyColumns as any} datas={histories} loading={loading} />
 
           <div className="self-end">
             <Pagination
@@ -261,7 +261,7 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
       label: intl.formatMessage({ id: 'mt.dangqiangendan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={orderColumns} datas={orders} loading={loading} />
+          <TabTable columns={orderColumns as any} datas={orders} loading={loading} />
 
           <div className="self-end">
             <Pagination
@@ -281,7 +281,7 @@ export const useTabsConfig = ({ followerId, leadId, defaultTabKey }: { followerI
       label: intl.formatMessage({ id: 'mt.lishigendan' }),
       children: (
         <div className="flex flex-col gap-3.5 mb-4">
-          <TabTable columns={historyColumns} datas={histories} loading={loading} />
+          <TabTable columns={historyColumns as any} datas={histories} loading={loading} />
 
           <div className="self-end">
             <Pagination

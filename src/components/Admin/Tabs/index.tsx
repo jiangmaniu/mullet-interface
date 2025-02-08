@@ -127,7 +127,7 @@ export default function Tabs({
                 key={idx}
                 className={cn(
                   'min-w-[186px] relative hover:text-primary cursor-pointer border-gray-150 border-l border-t border-r flex items-center justify-center text-base rounded-t-2xl h-[50px] font-semibold',
-                  item.key === tabKey ? 'bg-white !border-b-0 text-primary !z-[50]' : 'bg-[#F8FBFD] text-secondary'
+                  item.key === tabKey ? 'bg-white !border-b-0 text-primary !z-[3]' : 'bg-[#F8FBFD] text-secondary'
                 )}
                 style={{ zIndex: tabItems.length - idx, left: -16 * idx, ...tabBarStyle }}
                 onClick={() => handleChange(item.key)}

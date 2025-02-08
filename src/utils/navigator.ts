@@ -1,10 +1,11 @@
 import { history } from '@umijs/max'
 import { stringify } from 'qs'
 
-import { WEB_HOME_PAGE } from '@/constants'
+import { DEFAULT_LOCALE, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
-import { logout } from '@/services/api/user'
 
+import { SUPPORTED_LANGUAGES } from '@/constants/enum'
+import { isPCByWidth } from '.'
 import {
   STORAGE_GET_TOKEN,
   STORAGE_REMOVE_TOKEN,
@@ -19,9 +20,9 @@ import {
  * @param requestLogout 不请求退出接口
  */
 export const onLogout = async (noRequestLogout?: boolean) => {
-  if (!noRequestLogout) {
-    await logout().catch((e) => e)
-  }
+  // if (!noRequestLogout) {
+  //   await logout().catch((e) => e)
+  // }
 
   STORAGE_REMOVE_TOKEN()
   STORAGE_REMOVE_USER_INFO()
@@ -33,15 +34,18 @@ export const onLogout = async (noRequestLogout?: boolean) => {
   // 关闭行情
   stores.ws.close()
 
+  const isPc = isPCByWidth()
+  const loginUrl = isPc ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
+
   // 退出登录，并且将当前的 url 保存
   const { search, pathname } = window.location
   const urlParams = new URL(window.location.href).searchParams
   /** 此方法会跳转到 redirect 参数所在的位置 */
   const redirect = urlParams.get('redirect')
   // Note: There may be security issues, please note
-  if (window.location.pathname !== '/user/login' && !redirect) {
+  if (window.location.pathname !== loginUrl && !redirect) {
     history.replace({
-      pathname: '/user/login',
+      pathname: loginUrl,
       search: stringify({
         redirect: pathname + search
       })
@@ -51,7 +55,8 @@ export const onLogout = async (noRequestLogout?: boolean) => {
 
 // 跳转登页
 export const goLogin = () => {
-  push('/user/login')
+  const loginUrl = isPCByWidth() ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
+  push(loginUrl)
 }
 
 export const goKefu = () => {}
@@ -69,7 +74,7 @@ export const getPathnameLng = () => {
   return {
     pathname,
     pathnameLng,
-    hasPathnameLng: pathnameLng && ['zh-TW', 'en-US'].includes(pathnameLng)
+    hasPathnameLng: pathnameLng && SUPPORTED_LANGUAGES.includes(pathnameLng)
   }
 }
 
@@ -79,7 +84,7 @@ export const getPathnameLng = () => {
  * @returns
  */
 export const formatPathname = (pathname: string) => {
-  const lng = localStorage.getItem('umi_locale') || 'en-US'
+  const lng = localStorage.getItem('umi_locale') || DEFAULT_LOCALE
 
   return `/${lng}${pathname}`
 }
@@ -90,7 +95,7 @@ export const formatPathname = (pathname: string) => {
 export const getPathname = (path?: string) => {
   const pathname = path || location.pathname
 
-  return pathname.replace('/zh-TW', '').replace('/en-US', '')
+  return pathname.replace(new RegExp(`^/(${SUPPORTED_LANGUAGES.join('|')})`), '').replace(/\/$/, '')
 }
 
 /**
@@ -99,7 +104,7 @@ export const getPathname = (path?: string) => {
  * @returns
  */
 export const replacePathnameLng = (path: string, lang?: string) => {
-  const lng = lang || localStorage.getItem('umi_locale') || 'en-US'
+  const lng = lang || localStorage.getItem('umi_locale') || DEFAULT_LOCALE
   const pathname = getPathname(path)
 
   return `/${lng}${pathname}`
@@ -158,9 +163,10 @@ export const goToService = () => {}
 
 // 跳转首页
 export const goHome = () => {
+  const homeUrl = isPCByWidth() ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
   if (STORAGE_GET_TOKEN()) {
-    push(WEB_HOME_PAGE)
+    push(homeUrl)
   } else {
-    push('/user/login')
+    goLogin()
   }
 }

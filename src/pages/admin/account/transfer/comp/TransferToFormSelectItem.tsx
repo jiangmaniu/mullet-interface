@@ -5,7 +5,7 @@ import { useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
-import { formatNum, hiddenCenterPartStr, toFixed } from '@/utils'
+import { formatNum, toFixed } from '@/utils'
 
 type IProps = {
   form: FormInstance
@@ -96,15 +96,15 @@ export default function TransferToFormSelectItem({ form }: IProps) {
         value: item.id,
         label: (
           <div className="flex justify-between w-full">
-            {item?.synopsis?.abbr && (
+            {item?.synopsis?.tag && (
               <div className="flex px-1">
                 <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">
-                  {item?.synopsis?.abbr}
+                  {item?.synopsis?.tag}
                 </div>
               </div>
             )}
             <div className="flex-1 text-sm font-bold text-primary truncate">
-              {item.name} / {hiddenCenterPartStr(item?.id, 4)}
+              {item.name} / {item?.id}
             </div>
           </div>
         )

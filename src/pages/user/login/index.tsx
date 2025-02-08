@@ -1,7 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 import { LoginForm, ProFormText } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedHTMLMessage, FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
 import classNames from 'classnames'
 import { md5 } from 'js-md5'
@@ -10,8 +10,8 @@ import { flushSync } from 'react-dom'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Tabs from '@/components/Base/Tabs'
-import { ADMIN_HOME_PAGE, REGISTER_APP_CODE, WEB_HOME_PAGE } from '@/constants'
-import { getCaptcha, login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
+import { ADMIN_HOME_PAGE, WEB_HOME_PAGE } from '@/constants'
+import { login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
 import { goHome, push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
 
@@ -19,6 +19,8 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
+import { getEnv } from '@/env'
+import { PrivacyPolicyService } from '@/pages/webapp/pages/Welcome/RegisterSection/PrivacyPolicyService'
 import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
@@ -32,6 +34,7 @@ function Login() {
   const { initialState, setInitialState } = useModel('@@initialState')
   const [tabActiveKey, setTabActiveKey] = useState<ITabType>('LOGIN') // 登录、注册
   const [form] = Form.useForm()
+  const ENV = getEnv()
 
   const [isEmailTab, setIsEmailTab] = useState(true) // 邮箱和手机选项切换
   const [loading, setLoading] = useState(false)
@@ -51,8 +54,8 @@ function Login() {
   const [captchaInfo, setCaptchaInfo] = useState({} as User.Captcha)
 
   const handleCaptcha = async () => {
-    const res = await getCaptcha()
-    setCaptchaInfo(res)
+    // const res = await getCaptcha()
+    // setCaptchaInfo(res)
   }
 
   useEffect(() => {
@@ -153,7 +156,7 @@ function Login() {
         setTimeout(() => {
           setLoading(false)
           push(jumpPath)
-        }, 6000)
+        }, 2000)
 
         return
       } else {
@@ -195,7 +198,7 @@ function Login() {
       validateCode: values.validateCode,
       password: values.password,
       country: values.country,
-      code: REGISTER_APP_CODE,
+      code: ENV.REGISTER_APP_CODE,
       phoneAreaCode: values.phoneAreaCode
     } as User.RegisterParams
 
@@ -245,7 +248,7 @@ function Login() {
           <LoginForm
             title={
               <div className="mb-8 cursor-pointer" onClick={goHome}>
-                <img src="/logo.svg" alt="logo" className="h-[68px] w-[242px]" />
+                <img src="/platform/img/pc-logo.svg" alt="logo" className="h-[68px] w-[242px]" />
               </div>
             }
             rootClassName={className}
@@ -287,7 +290,8 @@ function Login() {
                 )}
                 {!isLoginTab && (
                   <div>
-                    <FormattedHTMLMessage id="mt.zhucetips" />
+                    {/* <FormattedHTMLMessage id="mt.zhucetips" /> */}
+                    <PrivacyPolicyService isPC />
                   </div>
                 )}
               </>

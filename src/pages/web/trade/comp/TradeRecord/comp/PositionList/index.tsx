@@ -7,7 +7,6 @@ import { observer } from 'mobx-react'
 import { useEffect, useRef, useState } from 'react'
 
 import StandardTable from '@/components/Admin/StandardTable'
-import LockIcon from '@/components/Base/Svg/LockIcon'
 import SelectIcon from '@/components/Base/Svg/SelectIcon'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { useEnv } from '@/context/envProvider'
@@ -113,12 +112,12 @@ function Position({ style, parentPopup }: IProps) {
                   <div className="bg-gray-200 dark:bg-gray-700 flex items-center font-pf-bold text-primary text-xs flex-shrink justify-center rounded w-[18px] h-[18px] mx-2 p-1">
                     {childrenListLen}
                   </div>
-                  <span className="flex items-center">
+                  {/* <span className="flex items-center">
                     {!!record.leverageMultiple && (
                       <span className={cn('text-sm font-pf-bold', colorClassName)}>{record.leverageMultiple}X</span>
-                    )}
-                    <LockIcon color={record.buySell === 'BUY' ? 'var(--color-green)' : 'var(--color-red)'} />
-                  </span>
+                    )} */}
+                  {/**<LockIcon color={record.buySell === 'BUY' ? 'var(--color-green)' : 'var(--color-red)'} /> */}
+                  {/* </span> */}
                   <span className="flex">
                     <SelectIcon style={{ transform: isExpandCurrentRow(record.id) ? 'rotate(180deg)' : 'rotate(0deg)' }} />
                   </span>
@@ -367,7 +366,7 @@ function Position({ style, parentPopup }: IProps) {
         width: isZh ? 110 : 150,
         renderText(text, record, index, action) {
           const handlingFees = isOneLevel ? record.totalHandlingFees : text
-          return <span className="!text-[13px] text-primary">{handlingFees ? formatNum(handlingFees, { precision }) : '--'}</span>
+          return <span className="!text-[13px] text-primary">{handlingFees ? formatNum(handlingFees, { precision }) : '0.00'}</span>
         }
       },
       {
@@ -389,7 +388,7 @@ function Position({ style, parentPopup }: IProps) {
         width: 110,
         renderText(text, record, index, action) {
           const interestFees = isOneLevel ? record.totalInterestFees : text
-          return <span className="!text-[13px] text-primary">{interestFees ? formatNum(interestFees, { precision }) : '--'}</span>
+          return <span className="!text-[13px] text-primary">{interestFees ? formatNum(interestFees, { precision }) : '0.00'}</span>
         }
       },
       {
@@ -534,116 +533,126 @@ function Position({ style, parentPopup }: IProps) {
     }
   })
 
+  const handleScrollTable = (e: any) => {
+    const items = Array.from(document.querySelectorAll('.ant-table-content'))
+    // 拖动任意表格 联动多表格滚动条
+    items.forEach((item) => {
+      item.scrollLeft = e.target.scrollLeft
+    })
+  }
+
   return (
     <>
       {/* 加上loading避免右侧闪动问题 */}
       <Spin spinning={loading} style={{ background: 'var(--bg-primary)' }}>
-        <StandardTable
-          columns={getColumns('oneLevel')}
-          key={trade.currentAccountInfo.id}
-          // ghost
-          dataSource={loading ? [] : dataSource}
-          showOptionColumn={false}
-          stripe={false}
-          hasTableBordered
-          hideSearch
-          cardBordered={false}
-          bordered={false}
-          className={cn(recordListClassName, className)}
-          cardProps={{
-            bodyStyle: { padding: 0 },
-            headStyle: { borderRadius: 0 },
-            className: ''
-          }}
-          size="small"
-          rowClassName={(record, i) => {
-            let className = record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
-            className = isExpandCurrentRow(record.id) ? `${className} !bg-[--bg-base-gray] position-table-expand-row` : className
-            return className
-          }}
-          pageSize={pageSize}
-          pagination={{
-            total: showActiveSymbol ? dataSource.filter((v) => v.symbol === activeSymbolName).length : dataSource.length,
-            onShowSizeChange(current, size) {
-              setPageNum(current)
-            }
-          }}
-          expandable={{
-            // columnWidth: 30,
-            showExpandColumn: false,
-            expandRowByClick: true, // 点击行展开
-            rowExpandable: (record) => Number(record.childrenList?.length || 0) > 1, // 可展开行
-            expandedRowKeys,
-            onExpandedRowsChange(expandedRowKeys) {
-              // console.log('expandedRowKeys', expandedRowKeys)
-              setExpandedRowKeys(expandedRowKeys)
-              expandedRowKeysRef.current = expandedRowKeys
-            },
-            expandedRowRender: (record) => {
-              return (
-                <StandardTable
-                  columns={[
-                    {
-                      title: (
-                        <span className="!pl-1">
-                          <FormattedMessage id="mt.pinlei" />
-                        </span>
-                      ), // 与 antd 中基本相同，但是支持通过传入一个方法
-                      dataIndex: 'category',
-                      hideInSearch: true, // 在 table的查询表单 中隐藏
-                      ellipsis: false,
-                      fieldProps: {
-                        placeholder: ''
-                      },
-                      formItemProps: {
-                        label: '' // 去掉form label
-                      },
-                      fixed: 'left',
-                      width: 240,
-                      renderText(text, record, index, action) {
-                        const buySellInfo = getBuySellInfo(record)
-                        return (
-                          <div className="flex items-center">
-                            <div className="flex flex-col pl-[32px]">
-                              <span className="text-base font-pf-bold text-primary">{record.alias || record.symbol}</span>
-                              <span className={cn('text-xs font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+        <div onScrollCapture={handleScrollTable}>
+          <StandardTable
+            columns={getColumns('oneLevel')}
+            key={trade.currentAccountInfo.id}
+            // ghost
+            dataSource={loading ? [] : dataSource}
+            showOptionColumn={false}
+            stripe={false}
+            hasTableBordered
+            hideSearch
+            cardBordered={false}
+            bordered={false}
+            className={cn(recordListClassName, className)}
+            cardProps={{
+              bodyStyle: { padding: 0 },
+              headStyle: { borderRadius: 0 },
+              className: ''
+            }}
+            size="small"
+            rowClassName={(record, i) => {
+              let className = record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
+              className = isExpandCurrentRow(record.id) ? `${className} !bg-[--bg-base-gray] position-table-expand-row` : className
+              return className
+            }}
+            pageSize={pageSize}
+            pagination={{
+              total: showActiveSymbol ? dataSource.filter((v) => v.symbol === activeSymbolName).length : dataSource.length,
+              onShowSizeChange(current, size) {
+                setPageNum(current)
+              }
+            }}
+            expandable={{
+              // columnWidth: 30,
+              showExpandColumn: false,
+              expandRowByClick: true, // 点击行展开
+              rowExpandable: (record) => Number(record.childrenList?.length || 0) > 1, // 可展开行
+              expandedRowKeys,
+              onExpandedRowsChange(expandedRowKeys) {
+                // console.log('expandedRowKeys', expandedRowKeys)
+                setExpandedRowKeys(expandedRowKeys)
+                expandedRowKeysRef.current = expandedRowKeys
+              },
+              expandedRowRender: (record) => {
+                return (
+                  <StandardTable
+                    columns={[
+                      {
+                        title: (
+                          <span className="!pl-1">
+                            <FormattedMessage id="mt.pinlei" />
+                          </span>
+                        ), // 与 antd 中基本相同，但是支持通过传入一个方法
+                        dataIndex: 'category',
+                        hideInSearch: true, // 在 table的查询表单 中隐藏
+                        ellipsis: false,
+                        fieldProps: {
+                          placeholder: ''
+                        },
+                        formItemProps: {
+                          label: '' // 去掉form label
+                        },
+                        fixed: 'left',
+                        width: 240,
+                        renderText(text, record, index, action) {
+                          const buySellInfo = getBuySellInfo(record)
+                          return (
+                            <div className="flex items-center">
+                              <div className="flex flex-col pl-[32px]">
+                                <span className="text-base font-pf-bold text-primary">{record.alias || record.symbol}</span>
+                                <span className={cn('text-xs font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+                              </div>
                             </div>
-                          </div>
-                        )
-                      }
-                    },
-                    ...getColumns('expand').slice(1)
-                  ]}
-                  key={trade.currentAccountInfo.id}
-                  // ghost
-                  dataSource={record?.childrenList || []}
-                  showOptionColumn={false}
-                  stripe={false}
-                  hasTableBordered
-                  hideSearch
-                  cardBordered={false}
-                  bordered={false}
-                  showHeader={false}
-                  className={recordListClassName}
-                  cardProps={{
-                    bodyStyle: { padding: 0 },
-                    headStyle: { borderRadius: 0 },
-                    className: ''
-                  }}
-                  size="small"
-                  pagination={false}
-                  rowClassName={(record, i) => {
-                    return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
-                  }}
-                />
-              )
-            },
+                          )
+                        }
+                      },
+                      ...getColumns('expand').slice(1)
+                    ]}
+                    key={trade.currentAccountInfo.id}
+                    // ghost
+                    dataSource={record?.childrenList || []}
+                    showOptionColumn={false}
+                    stripe={false}
+                    hasTableBordered
+                    hideSearch
+                    cardBordered={false}
+                    bordered={false}
+                    showHeader={false}
+                    className={recordListClassName}
+                    cardProps={{
+                      bodyStyle: { padding: 0 },
+                      headStyle: { borderRadius: 0 },
+                      className: ''
+                    }}
+                    size="small"
+                    pagination={false}
+                    rowClassName={(record, i) => {
+                      return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
+                    }}
+                  />
+                )
+              },
 
-            expandIcon: ({ expanded, onExpand, record }) => {
-              return <></>
-            }
-          }}
-        />
+              expandIcon: ({ expanded, onExpand, record }) => {
+                return <></>
+              }
+            }}
+          />
+        </div>
       </Spin>
       {/* 平仓修改确认弹窗 */}
       <ClosePositionConfirmModal ref={closePositionRef} />

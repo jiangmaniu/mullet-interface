@@ -9,7 +9,6 @@ import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
 import SwitchTheme from '@/components/SwitchTheme'
 import { useEnv } from '@/context/envProvider'
-import { useTheme } from '@/context/themeProvider'
 import { goKefu, push } from '@/utils/navigator'
 
 import { HeaderTheme } from '../Header/types'
@@ -84,7 +83,6 @@ type IHeaderRightProps = {
 export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' }: IHeaderRightProps) => {
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
   const { initialState } = useModel('@@initialState')
-  const { isDark } = useTheme()
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
   const { pathname } = useLocation()
@@ -113,19 +111,21 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             background: theme === 'black' ? '#fbfbfb' : '#222222'
           }}
         /> */}
-        <Iconfont
-          name="quan"
-          width={36}
-          height={36}
-          color={theme}
-          className=" cursor-pointer rounded-lg"
-          hoverStyle={{
-            background: theme === 'black' ? '#fbfbfb' : '#222222'
-          }}
-          onClick={() => {
-            push('/account')
-          }}
-        />
+        <Tooltip title={<FormattedMessage id="mt.gerenzhongxin" />} placement="bottom">
+          <Iconfont
+            name="quan"
+            width={36}
+            height={36}
+            color={theme}
+            className=" cursor-pointer rounded-lg"
+            hoverStyle={{
+              background: theme === 'black' ? '#fbfbfb' : '#222222'
+            }}
+            onClick={() => {
+              push('/account')
+            }}
+          />
+        </Tooltip>
         {/* <Iconfont
           name="kefu"
           width={36}

@@ -10,7 +10,7 @@ module.exports = {
     semi: 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
     'trailing-comma': 'off', // 末尾不需要逗号
-    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/imports': 'off',
     'simple-import-sort/exports': 'warn',
     '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
@@ -32,6 +32,11 @@ module.exports = {
     'no-useless-escape': 'off',
     'no-case-declarations': 'off',
     '@typescript-eslint/no-unused-expressions': 'off',
-    '@typescript-eslint/no-loop-func': 'off'
+    '@typescript-eslint/no-loop-func': 'off',
+    'react/no-children-prop': 'off',
+    '@typescript-eslint/ban-types': 'off',
+    'prefer-rest-params': 'off',
+    'react/no-string-refs': 'off',
+    'guard-for-in': 'off'
   }
 }

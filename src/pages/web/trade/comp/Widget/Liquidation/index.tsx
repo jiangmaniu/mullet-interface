@@ -20,7 +20,8 @@ import Gauge from './Gauge'
 function Liquidation() {
   const intl = useIntl()
   const { trade } = useStores()
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const activeSymbolName = trade.activeSymbolName
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const quoteInfo = getCurrentQuote() // 保留，取值触发更新
@@ -95,7 +96,7 @@ function Liquidation() {
         label: intl.formatMessage({ id: 'mt.quancang' }),
         value: 'CROSS_MARGIN',
         key: 'CROSS_MARGIN',
-        imgUrl: trade.getActiveSymbolInfo().imgUrl
+        imgUrl: trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll).imgUrl
       },
       ...list
     ]

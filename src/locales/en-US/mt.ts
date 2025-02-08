@@ -34,6 +34,8 @@ export default {
   'mt.tingsundan': 'Stop Market',
   'mt.maichuzuokong': 'Open · Short',
   'mt.mairuzuoduo': 'Open · Long',
+  'mt.kaikong': 'Short',
+  'mt.kaiduo': 'Long',
   'mt.gangganbeishu': 'Leverage Ratio',
   'mt.tiaozhengganggan': 'Adjust Leverage',
   'mt.tiaozhengganggantip1': 'Maximum leverage currently available: 100,000,000 USDT',
@@ -311,6 +313,10 @@ export default {
   'mt.bujisuanweishixiandyinglikuyun': 'do not use unrealized profit/loss',
   'mt.jisuanweishixiandyinglikuyun': 'use unrealized profit/loss',
   'mt.guiling': 'zero',
+  'mt.mairuchenggong': 'Buy Success',
+  'mt.maichuchenggong': 'Sell Success',
+  'mt.chengjiao': 'Trade',
+  'mt.dingdanchengjiao': 'Order Executed',
   // ======= 交易页面 结束 ==========
 
   // ======= 个人中心-我的账户 开始 ==========
@@ -410,7 +416,7 @@ export default {
   'mt.yanzhengbuzhou': 'Verification Steps',
   'mt.zhanghuguanli': 'Account Management',
   'mt.zhanghuguanlitips':
-    'Information used for logging into Stellux. If you believe your password may have been compromised, change it immediately.',
+    'Information used for logging into {name}. If you believe your password may have been compromised, change it immediately.',
   'mt.anquanrenzhengfangshi': 'Security Verification Method',
   'mt.anquanrenzhengfangshitips':
     'Security verification ensures that all sensitive transactions are authorized by you. We recommend entering the verification code for transaction confirmation.',
@@ -480,12 +486,15 @@ export default {
   'mt.dianjishangchuantupian': 'Click or drag images here',
 
   'mt.shenhezhong': 'Under Review',
+  'mt.kycrenzhengyiwancheng': 'KYC verification completed',
+
   'mt.shenfenrenzhengshenhezhong': 'Identity Verification Under Review',
   'mt.shenfenrenzhengshenhezhongtips':
     'We will complete the review as soon as possible. Please be patient. If you have any questions, please contact customer service.',
 
   'mt.kycUploadTips': 'Support JPG/JPEG/PNG, no larger than 1MB.',
   'mt.kycUploadImgSizeTips': 'Picture size cannot exceed{size}',
+  'mt.genggai': 'Change',
   // ======= 个人中心-设置 结束 ==========
 
   // ========== 个人中心-跟单 开始 ==========
@@ -605,7 +614,7 @@ export default {
   'mt.jieshao': 'Introduction',
   'mt.heyuejiaoyizhengming': 'Contract Trading Proof',
   'mt.heyuejiaoyizhengmingtishi':
-    'Please upload your >30-day contract profit curve, trading data statistics, and other screenshots. If not uploaded, we will default to reviewing your Stellux contract trading records. You can upload 1-3 images, with each image size not exceeding 10 MB.',
+    'Please upload your >30-day contract profit curve, trading data statistics, and other screenshots. If not uploaded, we will default to reviewing your {name} contract trading records. You can upload 1-3 images, with each image size not exceeding 10 MB.',
   'mt.kexuan': '(Optional)',
   'mt.shangchuantupianhuotuozhuaifangru': 'Upload or drag and drop images here',
   'mt.tijiaoshenqing': 'Submit Application',
@@ -648,8 +657,8 @@ export default {
   'mt.qupingcang': 'Go to Close Position',
   'mt.wujiaoyizhanghu': 'No Trading Account',
   'mt.dangqianwujiaoyizhanghu': 'You currently do not have this trading account, do you want to create one?',
-  'mt.cdexsshequ': 'Stellux Community',
-  'mt.guanyucdex': 'About Stellux',
+  'mt.cdexsshequ': '{name} Community',
+  'mt.guanyucdex': 'About {name}',
   'mt.gongsijianjie': 'Company Introduction',
   'mt.boke': 'Blog',
   'mt.fuwu': 'Services',

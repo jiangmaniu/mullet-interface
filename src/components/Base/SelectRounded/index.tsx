@@ -31,7 +31,7 @@ export default function SelectRounded({ defaultValue, value, onChange, options, 
       style={{ width: 132, height: 38 }}
       defaultValue={defaultValue}
       value={value}
-      onChange={onChange}
+      onChange={onChange as any}
       variant={variant}
       options={options}
       labelRender={labelRender}

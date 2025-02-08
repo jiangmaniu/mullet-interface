@@ -16,7 +16,5 @@ export default function SwitchPcOrWapLayout({ children, pcComponent, wapComponen
   if (children) {
     return <>{children}</>
   }
-  // @TODO 暂时不考虑h5
-  // return <>{isMobileOrIpad ? wapComponent : pcComponent}</>
-  return <>{pcComponent}</>
+  return <>{isMobileOrIpad ? wapComponent : pcComponent}</>
 }

@@ -5,15 +5,17 @@ import React from 'react'
 
 import { CURRENT_YEAR } from '@/constants'
 
+import { getEnv } from '@/env'
 import Logo from '../Header/Logo'
 
 const Footer: React.FC = () => {
+  const ENV = getEnv()
   const intl = useIntl()
   const list = [
     {
       title: intl.formatMessage({ id: 'mt.guanyucdex' }),
       value: [
-        intl.formatMessage({ id: 'mt.cdexsshequ' }),
+        intl.formatMessage({ id: 'mt.cdexsshequ' }, { name: ENV?.name }),
         intl.formatMessage({ id: 'mt.gongsijianjie' }),
         intl.formatMessage({ id: 'mt.boke' })
       ]
@@ -48,7 +50,7 @@ const Footer: React.FC = () => {
 
           <div className=" flex flex-col gap-2 items-start">
             <span className=" text-sm text-gray-700">
-              <FormattedMessage id="mt.cdexsshequ" />
+              <FormattedMessage id="mt.cdexsshequ" values={{ name: ENV.name }} />
             </span>
             <span className=" grid grid-cols-6 items-center w-full gap-1">
               <img src="/img/footer/app_icon1.svg" width={20} height={20} className=" cursor-pointer" />

@@ -2,10 +2,10 @@ import './index.less'
 
 import { useIntl } from '@umijs/max'
 import Lottie from 'lottie-react'
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
+import loadingData from '../../../../../public/platform/lottie/loading.json'
 import Modal from '../../Modal'
-import animationData from './loading.json'
 
 type IProps = {
   width?: number
@@ -13,6 +13,16 @@ type IProps = {
 }
 
 export default function Loading({ width = 400, height = 400 }: IProps) {
+  const animationData = loadingData
+  const lottieRef = useRef(null)
+
+  useEffect(() => {
+    if (lottieRef.current) {
+      // @ts-ignore
+      lottieRef.current?.setSpeed(1)
+    }
+  }, [])
+
   return (
     <Lottie
       animationData={animationData}
@@ -21,23 +31,34 @@ export default function Loading({ width = 400, height = 400 }: IProps) {
       loop={true}
       assetsPath="/img/animation/"
       style={{ width, height }}
+      lottieRef={lottieRef}
     />
   )
 }
 
+export type ModalLoadingRef = {
+  show: (before?: () => void) => void
+  close: (after?: () => void) => void
+}
+
 export const ModalLoading = forwardRef(
-  ({ title, tips, open }: { title?: React.ReactNode; tips?: React.ReactNode; open?: boolean }, ref: any) => {
+  (
+    { title, tips, open, width }: { width?: number; title?: React.ReactNode; tips?: React.ReactNode; open?: boolean },
+    ref: React.Ref<ModalLoadingRef>
+  ) => {
     const [isOpen, setIsOpen] = useState<any>(false)
     const intl = useIntl()
 
     // 暴露给父组件的方法
     useImperativeHandle(ref, () => {
       return {
-        show: () => {
+        show: (before?: () => void) => {
+          before?.()
           setIsOpen(true)
         },
-        close: () => {
+        close: (after?: () => void) => {
           setIsOpen(false)
+          after?.()
         }
       }
     })
@@ -49,7 +70,7 @@ export const ModalLoading = forwardRef(
     return (
       <Modal
         open={isOpen}
-        width={400}
+        width={width || 400}
         closable={false}
         maskClosable={false}
         footer={null}
@@ -57,10 +78,10 @@ export const ModalLoading = forwardRef(
         title={title}
         styles={{ content: { padding: 0 }, header: { paddingInline: 20, paddingTop: 20 } }}
       >
-        <div className="relative -top-8">
-          <Loading height={300} />
+        <div className="relative -top-4">
+          <Loading width={width} height={300} />
         </div>
-        <div className="flex items-center justify-center text-secondary text-base relative -top-12 ">
+        <div className="flex items-center justify-center text-secondary text-base relative -top-10 ">
           {tips}
           <span className="dot-ani" />
         </div>

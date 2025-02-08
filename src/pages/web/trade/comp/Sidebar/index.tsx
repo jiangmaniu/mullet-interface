@@ -18,6 +18,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
+import { getEnv } from '@/env'
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
 
@@ -28,6 +29,7 @@ type IProps = {
 }
 
 const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
+  const ENV = getEnv()
   const { global, trade } = useStores()
   const { isMobileOrIpad, breakPoint, screenSize } = useEnv()
   const intl = useIntl()
@@ -37,23 +39,24 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const [categoryTabKey, setCategoryTabKey] = useState(0) // 品种分类
   const [list, setList] = useState([] as Account.TradeSymbolListItem[])
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
-  const { isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark } = theme
   const searchInputRef = useRef<any>()
   const symbolList = trade.symbolList // 全部品种列表
   const loading = trade.symbolListLoading
 
-  useEffect(() => {
-    // 1200px-1600px收起侧边栏
-    if (screenSize?.width > 1200 && screenSize?.width < 1600) {
-      setOpenTradeSidebar(false)
-    } else {
-      setOpenTradeSidebar(true)
-    }
-  }, [screenSize])
+  // useEffect(() => {
+  //   // 1200px-1600px收起侧边栏
+  //   if (screenSize?.width > 1200 && screenSize?.width < 1600) {
+  //     setOpenTradeSidebar(false)
+  //   } else {
+  //     setOpenTradeSidebar(true)
+  //   }
+  // }, [screenSize])
 
   useEffect(() => {
     if (activeKey === 'CATEGORY') {
-      trade.getSymbolList({ classify: '0' })
+      trade.getSymbolList({ classify: ENV.platform === 'sux' ? '0' : '10' })
     }
   }, [activeKey])
 

@@ -94,6 +94,8 @@ export type IDepth = {
   bids: IDepthPriceItem[]
   /**13位时间戳 */
   ts?: number
+  /**账户组id */
+  accountGroupId?: string
 }
 
 // 消息推送模版
@@ -114,8 +116,8 @@ export type MessagePopupInfo = {
 export type ITradeType =
   /** 限价单下单 */
   | 'LIMIT_ORDER'
-  /**订单变更 */
-  | 'ORDER'
+  /**市价单变更 */
+  | 'MARKET_ORDER'
   /**账户变更 */
   | 'ACCOUNT'
   /**成交记录 */

@@ -100,6 +100,7 @@ export default function AreaCodeSelect({
           disabled={disabled}
           label={label}
           initialValue={initialValue}
+          // @ts-ignore
           onChange={(value, option = {}) => {
             // @ts-ignore
             const val = option.areaCode
@@ -113,6 +114,7 @@ export default function AreaCodeSelect({
             onChange?.(val, option)
           }}
           {...selectProps}
+          // @ts-ignore
           fieldProps={{
             // @ts-ignore
             ...(selectProps?.fieldProps || {}),

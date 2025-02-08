@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import Button from '@/components/Base/Button'
 import { SOURCE_CURRENCY } from '@/constants'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { formatNum } from '@/utils'
 
 import { AccountTag } from '../AccountTag'
 
@@ -92,7 +92,7 @@ export default ({ form, info }: IProps) => {
                           <AccountTag size="auto" color={item.groupName} code={item.groupCode}>
                             {/* {item.groupName} */}
                           </AccountTag>
-                          <span>{hiddenCenterPartStr(item.id, 4)}</span>
+                          <span>{item.id}</span>
                         </span>
                         <span className=" w-5 h-5"></span>
                       </span>
@@ -111,7 +111,7 @@ export default ({ form, info }: IProps) => {
                       <AccountTag size="auto" color={item.groupName}>
                         {item.groupName}
                       </AccountTag>
-                      <span>{hiddenCenterPartStr(item.id, 4)}</span>
+                      <span>{item.id}</span>
                     </span>
                     <span className=" w-5 h-5"></span>
                   </span>
@@ -130,7 +130,7 @@ export default ({ form, info }: IProps) => {
           options={accountList.map((item) => ({
             ...item,
             value: item.id,
-            label: `${item.name} #${hiddenCenterPartStr(item?.id, 4)}`
+            label: `${item.name} #${item?.id}`
           }))}
         />
       </div>

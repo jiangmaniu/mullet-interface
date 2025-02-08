@@ -1,15 +1,6 @@
 /* stylelint-disable */
 @import './styles/index.less';
 
-/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
-// @TODO 上线需要下载字体包，然后替换路径
-@font-face {
-  font-family: 'iconfont'; /* Project id 4571567 */
-  src: url('//at.alicdn.com/t/c/font_4571567_kxtarq9d7s.woff2?t=1717463800681') format('woff2'),
-    url('//at.alicdn.com/t/c/font_4571567_kxtarq9d7s.woff?t=1717463800681') format('woff'),
-    url('//at.alicdn.com/t/c/font_4571567_kxtarq9d7s.ttf?t=1717463800681') format('truetype');
-}
-
 .iconfont {
   font-size: 16px;
   font-family: 'iconfont' !important;
@@ -21,40 +12,53 @@
 /**数字字体-常规**/
 @font-face {
   font-family: dingpro-regular;
-  src: url('/fonts/DINPro-Regular.otf') format('opentype');
+  src: url('/fonts/DINPro-Regular.woff') format('opentype');
 }
 
 /**数字字体-加粗**/
 @font-face {
   font-family: dingpro-medium;
-  src: url('/fonts/DINPro-Medium.otf') format('opentype');
+  src: url('/fonts/DINPro-Medium.woff') format('opentype');
 }
 
 /**鸿蒙字体-常规**/
-@font-face {
-  font-family: hms-regular;
-  src: url('/fonts/HarmonyOS_Sans_Regular.ttf') format('truetype');
-}
+// @font-face {
+//   font-family: hms-regular;
+//   src: url('/fonts/HarmonyOS_Sans_Regular.woff') format('truetype');
+// }
 /**鸿蒙字体-粗体**/
-@font-face {
-  font-family: hms-bold;
-  src: url('/fonts/HarmonyOS_Sans_Medium.ttf') format('truetype');
-}
+// @font-face {
+//   font-family: hms-bold;
+//   src: url('/fonts/HarmonyOS_Sans_Medium.woff') format('truetype');
+// }
 /**鸿蒙字体-细体**/
-@font-face {
-  font-family: hms-thin;
-  src: url('/fonts/HarmonyOS_Sans_Light.ttf') format('truetype');
-}
+// @font-face {
+//   font-family: hms-thin;
+//   src: url('/fonts/HarmonyOS_Sans_Light.woff') format('truetype');
+// }
+
+// /**平方字体-中等字体**/
+// @font-face {
+//   font-family: pf-medium;
+//   src: url('/fonts/PingFangMedium.woff2') format('truetype');
+// }
+// /**平方字体-加粗字体**/
+// @font-face {
+//   font-family: pf-bold;
+//   src: url('/fonts/PingFangBold.woff2') format('truetype');
+// }
+
+// ===== 使用鸿蒙代替苹方字体，减少字体包大小 ======
 
 /**平方字体-中等字体**/
 @font-face {
   font-family: pf-medium;
-  src: url('/fonts/PingFangMedium.ttf') format('truetype');
+  src: url('/fonts/HarmonyOS_Sans_Regular.woff') format('truetype');
 }
 /**平方字体-加粗字体**/
 @font-face {
   font-family: pf-bold;
-  src: url('/fonts/PingFangBold.ttf') format('truetype');
+  src: url('/fonts/HarmonyOS_Sans_Medium.woff') format('truetype');
 }
 
 * {
@@ -80,6 +84,7 @@
 body,
 html {
   color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
 }
 html,
 body,
@@ -87,6 +92,19 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+// 只在移动端（小于 1200px）应用这些样式
+@media screen and (max-width: 1200px) {
+  body,
+  html {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    touch-action: manipulation; /* 禁止缩放手势 */
+    overscroll-behavior: none; /* 防止滚动导致缩放 */
+  }
 }
 
 .colorWeak {
@@ -246,4 +264,26 @@ ol {
 .no-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
+}
+
+// webapp custom message
+.webapp-custom-message {
+  .adm-toast-main {
+    top: 75px !important;
+    width: 90% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    color: var(--color-text-primary) !important;
+    background: var(--dropdown-bg) !important;
+    border: 1px solid #dadada;
+    border-radius: 16px !important;
+    box-shadow: 0px 10px 24px 0px rgba(164, 164, 164, 0.3);
+  }
+  .adm-auto-center-content {
+    width: 100%;
+  }
+}
+
+.ant-segmented:focus-visible {
+  outline: none !important;
 }

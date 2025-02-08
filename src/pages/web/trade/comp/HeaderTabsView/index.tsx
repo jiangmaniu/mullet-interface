@@ -32,7 +32,8 @@ function HeaderTabsView() {
 
   const extraWidth = {
     'zh-TW': '920px',
-    'en-US': '900px'
+    'en-US': '900px',
+    'vi-VN': '900px'
   }[lng]
 
   if (getPathname() !== '/trade') {

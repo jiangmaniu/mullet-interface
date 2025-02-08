@@ -32,6 +32,13 @@ const SubmitButton = observer(() => {
   const disabledSubmitBtn = recordModalItem.id ? false : disabledBtn
   const isMarketOpen = trade.isMarketOpen()
 
+  const BuySellButton = (
+    <>
+      {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {orderVolume}{' '}
+      <FormattedMessage id="mt.lot" />
+    </>
+  )
+
   return (
     <Button
       type="primary"
@@ -44,12 +51,7 @@ const SubmitButton = observer(() => {
     >
       {hasQuote ? (
         <>
-          {!disabledTrade && isMarketOpen && (
-            <>
-              {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {orderVolume}{' '}
-              <FormattedMessage id="mt.lot" />
-            </>
-          )}
+          {!disabledTrade && isMarketOpen && BuySellButton}
           {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
           {!isMarketOpen && !disabledTrade && (
             <div className="flex items-center">
@@ -59,7 +61,7 @@ const SubmitButton = observer(() => {
           )}
         </>
       ) : (
-        '...'
+        BuySellButton
       )}
     </Button>
   )
@@ -157,7 +159,7 @@ export default observer(
                   <FormattedMessage id="mt.yugubaozhengjin" />
                 </span>
                 <span className="text-xs text-primary !font-dingpro-medium">
-                  {currentAccountInfo.orderMode === 'LOCKED_POSITION' ? '--' : <ExpectedMargin />}
+                  <ExpectedMargin />
                 </span>
               </div>
               <div className="flex items-center justify-between pb-[6px] w-full">

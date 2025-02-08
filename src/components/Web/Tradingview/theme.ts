@@ -24,7 +24,7 @@ export const getTradingviewThemeCssVar = (theme: ThemeName) => {
     // /* 将鼠标悬停在右侧工具栏上的活动按钮上时的背景颜色 */
     // '--tv-color-toolbar-button-background-active-hover': primary,
     // /* 工具栏按钮的文本和图标颜色 */
-    // '--tv-color-toolbar-button-text': '#767E8A',
+    '--tv-color-toolbar-button-text': '#767E8A',
     // /* 将鼠标悬停在工具栏按钮上时的文本和图标颜色 */
     // '--tv-color-toolbar-button-text-hover': 'rgb(74, 20, 140)',
     /* 活动工具栏按钮的文本和图标颜色 */

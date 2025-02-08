@@ -1,4 +1,5 @@
 // @ts-nocheck
+import { isPCByWidth } from '@/utils'
 import dayjs from 'dayjs'
 import { action, makeAutoObservable, observable, runInAction } from 'mobx'
 import NP from 'number-precision'
@@ -7,6 +8,7 @@ import { IChartingLibraryWidget } from '@/libs/charting_library'
 import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'
 
+import { getEnv } from '@/env'
 import { IQuoteItem } from './ws.types'
 
 NP.enableBoundaryChecking(false)
@@ -134,6 +136,7 @@ class KlineStore {
    * @returns
    */
   getHttpHistoryBars = async (symbolInfo, resolution, from, to, countBack) => {
+    const ENV = getEnv()
     const precision = symbolInfo.precision
     const klineType =
       {
@@ -169,9 +172,10 @@ class KlineStore {
           symbol: symbolInfo.dataSourceSymbol, // 数据源品种
           dataSourceCode: symbolInfo.dataSourceCode, // 数据源code
           current: 1,
-          size: 500, // 条数
+          size: isPCByWidth() ? 500 : 200, // 条数
           klineType, // 时间类型
-          klineTime: to + 8 * 60 * 60 // 查询截止时间之前的k线数据
+          // klineTime: to + 8 * 60 * 60 // 查询截止时间之前的k线数据
+          klineTime: ENV.platform === 'lyn' ? to : to + 8 * 60 * 60 // lyn国内运营 东八区
         }
       })
         .catch((e) => e)
@@ -197,7 +201,10 @@ class KlineStore {
             }
           })
           .reverse() // 反转数据，按时间从大到小排序
-        this.barList = bars
+
+        runInAction(() => {
+          this.bars = [...this.bars, ...bars]
+        })
         return bars
       } else {
         return []
@@ -205,13 +212,14 @@ class KlineStore {
     } catch (err) {
       console.log(err)
       // 请求加载出问题返回上一次有数据的
-      return this.barList || []
+      return this.bars || []
     }
   }
   // datafeed getBars回调处理
   // 首次加载/切换分辨率/左右移动时间轴触发，http方式获取k线柱历史数据
   @action
   getDataFeedBarCallback = (obj = {}) => {
+    const ENV = getEnv()
     const { symbolInfo, resolution, firstDataRequest, from, to, countBack } = obj
     this.datafeedBarCallbackObj = obj
 
@@ -222,7 +230,8 @@ class KlineStore {
           this.datafeedBarCallbackObj.onHistoryCallback(bars, { noData: false })
           runInAction(() => {
             const lastbar = bars.at(-1) // 最后一个数据
-            this.lastBarTime = bars[0]?.time / 1000 - 8 * 60 * 60 // 记录最后一次时间，用于作为请求k线的截止时间
+            // this.lastBarTime = bars[0]?.time / 1000 - 8 * 60 * 60 // 记录最后一次时间，用于作为请求k线的截止时间
+            this.lastBarTime = ENV.platform === 'lyn' ? bars[0]?.time / 1000 : bars[0]?.time / 1000 - 8 * 60 * 60
             this.lastbar = lastbar
           })
         } else {
@@ -232,13 +241,17 @@ class KlineStore {
     } else {
       this.getHttpHistoryBars(symbolInfo, resolution, from, this.lastBarTime, countBack).then((bars) => {
         if (bars?.length) {
-          if (this.lastBarTime === bars[0]?.time / 1000 - 8 * 60 * 60) {
+          // if (this.lastBarTime === bars[0]?.time / 1000 - 8 * 60 * 60) {
+          const timeFlag =
+            ENV.platform === 'lyn' ? this.lastBarTime === bars[0]?.time / 1000 : this.lastBarTime === bars[0]?.time / 1000 - 8 * 60 * 60
+          if (timeFlag) {
             this.datafeedBarCallbackObj.onHistoryCallback([], { noData: true })
           } else if (bars.length) {
             this.datafeedBarCallbackObj.onHistoryCallback(bars, { noData: false })
           }
           runInAction(() => {
-            this.lastBarTime = bars[0]?.time / 1000 - 8 * 60 * 60 // 记录最后一次时间，用于作为请求k线的截止时间
+            // this.lastBarTime = bars[0]?.time / 1000 - 8 * 60 * 60 // 记录最后一次时间，用于作为请求k线的截止时间
+            this.lastBarTime = ENV.platform === 'lyn' ? bars[0]?.time / 1000 : bars[0]?.time / 1000 - 8 * 60 * 60
           })
         } else {
           this.datafeedBarCallbackObj.onHistoryCallback(bars, { noData: true })

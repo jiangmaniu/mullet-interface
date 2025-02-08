@@ -12,6 +12,7 @@ import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useDebounceEffect, usePrevious } from 'ahooks'
 import { observer } from 'mobx-react'
+import { isAndroid } from 'react-device-detect'
 import { STORAGE_GET_CHART_PROPS, STORAGE_REMOVE_CHART_PROPS, ThemeConst } from './constant'
 import { ColorType, applyOverrides, createWatermarkLogo, setCSSCustomProperty, setChartStyleProperties, setSymbol } from './widgetMethods'
 import getWidgetOpts from './widgetOpts'
@@ -19,21 +20,22 @@ import getWidgetOpts from './widgetOpts'
 const Tradingview = () => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
   const { kline, trade } = useStores()
-  const { isMobile, isIpad, isMobileOrIpad, isPc } = useEnv()
+  const { isMobile, isIpad, isMobileOrIpad, isPc, isPwaApp } = useEnv()
   const symbolName = trade.activeSymbolName
   const previousSymbolName = usePrevious(symbolName)
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
   const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
   const switchSymbolLoading = kline.switchSymbolLoading
 
-  const { theme, isDark } = useTheme()
+  const { theme } = useTheme()
+  const { isDark, mode } = theme
   const datafeedParams = {
     setActiveSymbolInfo: kline.setActiveSymbolInfo, // 记录当前的symbol
     removeActiveSymbol: kline.removeActiveSymbol, // 取消订阅移除symbol
     getDataFeedBarCallback: kline.getDataFeedBarCallback // 获取k线柱数据回调
   }
 
-  const themeMode = (theme || 'light') as ThemeName
+  const themeMode = (mode || 'light') as ThemeName
   const params = {
     symbol: symbolName as string, // 品种名称
     locale: (getTradingViewLng() || 'en') as LanguageCode, // 英文 en 繁体zh_TW 印尼id_ID
@@ -118,7 +120,7 @@ const Tradingview = () => {
       })
 
       // 添加水印LOGO
-      createWatermarkLogo()
+      createWatermarkLogo(isDark)
 
       // tvWidget.headerReady().then(() => {
       // 	const button = tvWidget.createButton();
@@ -217,8 +219,15 @@ const Tradingview = () => {
     }
   })
 
+  let height = 0
+  if (isPwaApp) {
+    height = isAndroid ? 240 : 260
+  } else {
+    height = 240
+  }
+
   return (
-    <div className={cn('h-[585px] relative', className)}>
+    <div className={cn('relative', className)} style={{ height: isPc ? 585 : document.documentElement.clientHeight - height }}>
       <div id="tradingview" ref={chartContainerRef} className="relative flex flex-1 h-full" style={{ opacity: loading ? 0 : 1 }} />
       {isChartLoading && (
         <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-full z-40">

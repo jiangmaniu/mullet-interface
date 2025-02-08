@@ -166,15 +166,16 @@ export function setCSSCustomProperty(props: { tvWidget: IChartingLibraryWidget; 
 }
 
 // 创建水印LOGO
-export function createWatermarkLogo() {
+export function createWatermarkLogo(isDark?: boolean) {
   const chartContainer = document.getElementById('tradingview')
   const logo = document.createElement('img')
-  logo.src = '/kline-water-logo.png' // 替换为您的 LOGO 路径
+  logo.src = isDark ? '/platform/img/kline-water-logo-dark.png' : '/platform/img/kline-water-logo.png' // 替换为您的 LOGO 路径
   logo.style.position = 'absolute'
   logo.style.bottom = '240px' // 调整位置
   logo.style.left = '70px' // 调整位置
   logo.style.width = '260'
   logo.style.height = '72px'
+  logo.style.opacity = 0.5
 
   // 将 LOGO 元素添加到图表容器中
   chartContainer.appendChild(logo)

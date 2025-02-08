@@ -6,7 +6,6 @@ import ModalForm from '@/components/Admin/ModalForm'
 import Button from '@/components/Base/Button'
 import { useStores } from '@/context/mobxProvider'
 import { rechargeSimulate } from '@/services/api/tradeCore/account'
-import { hiddenCenterPartStr } from '@/utils'
 import { message } from '@/utils/message'
 
 type IProps = {
@@ -53,7 +52,7 @@ function RechargeSimulateModal({ trigger, info }: IProps) {
       <div className="mb-4 flex justify-center">
         <div className="text-brand bg-brand/10 px-2 rounded flex items-center justify-center h-7">
           <FormattedMessage id="mt.zhanghu" />
-          {hiddenCenterPartStr(info.id, 4)}
+          {info?.id}
         </div>
       </div>
       <div className="flex flex-col items-center">
@@ -66,7 +65,7 @@ function RechargeSimulateModal({ trigger, info }: IProps) {
         </div>
       </div>
       <Button type="primary" style={{ height: 42 }} block className="!mt-7" htmlType="submit" loading={loading}>
-        <FormattedMessage id="common.querenrujin" />
+        <FormattedMessage id="common.confirm" />
       </Button>
     </ModalForm>
   )

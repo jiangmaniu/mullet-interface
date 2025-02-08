@@ -13,7 +13,7 @@ export const STORAGE_REMOVE_CHART_PROPS = storageRemove(KEY_TRADINGVIEW_CHART_PR
 // 主题色配置
 export const ThemeConst = {
   primary: '#183EFC',
-  textPrimary: '#183EFC',
+  textPrimary: '#222',
   white: '#fff',
   black: '#161A1E', // 黑色主题背景色
   red: '#C54747',
@@ -21,8 +21,8 @@ export const ThemeConst = {
 }
 
 export const ThemeDark = {
-  primary: '#4775EE',
-  textPrimary: '#4775EE',
+  primary: '#f4f4f4',
+  textPrimary: '#f4f4f4',
   red: '#F95050',
   green: '#29BE95'
 }

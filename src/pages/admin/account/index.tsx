@@ -15,7 +15,7 @@ import Empty from '@/components/Base/Empty'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { formatNum, hiddenCenterPartStr } from '@/utils'
+import { formatNum } from '@/utils'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
 
@@ -38,7 +38,7 @@ function Account() {
   const [leftTime, setLeftTime] = useState<any>(0)
   const modalRef = useRef<any>()
   const [modalInfo, setModalInfo] = useState({} as User.AccountItem)
-  const { setTheme } = useTheme()
+  const { setMode } = useTheme()
 
   const [searchParams] = useSearchParams()
   const searchKey = searchParams.get('key') as any
@@ -139,7 +139,7 @@ function Account() {
                 <div className="flex flex-col">
                   <div className="flex items-center">
                     <div className="text-sm font-bold text-primary">
-                      {item.name} / {hiddenCenterPartStr(item?.id, 4)}
+                      {item.name} / {item.id}
                     </div>
                     <div className="ml-[10px] flex px-1 items-center">
                       <div
@@ -246,7 +246,7 @@ function Account() {
                   type="primary"
                   style={{ height: 46, width: 108 }}
                   onClick={() => {
-                    setTheme(STORAGE_GET_TRADE_THEME() || 'light')
+                    setMode(STORAGE_GET_TRADE_THEME() || 'light')
                     trade.setCurrentAccountInfo(item)
                     trade.jumpTrade()
                   }}

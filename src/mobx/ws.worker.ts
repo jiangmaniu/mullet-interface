@@ -22,6 +22,8 @@ type UserConf = {
   websocketUrl: string
   token: string
   userInfo: User.UserInfo
+  /**是否是手机端 */
+  isMobile?: boolean
 }
 
 // 从主线程同步过来的公共基础数据
@@ -49,8 +51,10 @@ let subscribeDepthTimer: any = null
 let lastQuoteUpdateTime = 0
 let lastDepthUpdateTime = 0
 const THROTTLE_QUOTE_INTERVAL = 500
+const THROTTLE_QUOTE_MOBILE_INTERVAL = 300
 const THROTTLE_DEPTH_INTERVAL = 300
 const MAX_CACHE_SIZE = 80 // 设置最大缓存限制
+let quoteCount = 0 // 首次加载用到
 
 // ============ 接收主线程消息 start ==============
 self.addEventListener('message', (event) => {
@@ -191,6 +195,71 @@ function handleOpenCallback() {
   startHeartbeat()
 }
 
+// 解析行情body数据
+function parseQuoteBodyData(body: string) {
+  // 原格式
+  // {"header":{"msgId":"symbol"},"body":{"dataSource":"binance-SOLUSDT","priceData":{"sellSize":"63.38200000","sell":206.61200000,"buy":"206.61000000","id":1735807731722,"buySize":"61.67900000"},"symbol":"SOL","accountGroupId":"3"}}
+  // 新格式
+  // 报价数据格式：id,buy,buySize,sell,sellSize,dataSource,symbol,accountGroupId
+  // 使用账户组订阅数据格式
+  // { "header": { "msgId": "symbol" }, "body": "1735636763941,94044.6,0,94047.325,0,mt5-BTCUSD,BTC,1826081893542576129" }
+  // 没有使用账户组订阅数据格式，最后两个为0占位。比如管理端数据源列表不能使用账户组订阅
+  // { "header": { "msgId": "symbol" }, "body": "1735636763941,94044.6,0,94047.325,0,mt5-BTCUSD,0,0" }
+
+  const quoteItem = {} as IQuoteItem
+  if (body && typeof body === 'string') {
+    const [id, buy, buySize, sell, sellSize, dataSource, symbol, accountGroupId] = body.split(',')
+    const [dataSourceCode, dataSourceSymbol] = String(dataSource || '').split('-')
+    quoteItem.symbol = symbol === '0' ? dataSourceSymbol : symbol // 兼容没有使用账户组订阅情况
+    quoteItem.dataSource = dataSource
+    quoteItem.accountGroupId = accountGroupId
+    quoteItem.priceData = {
+      sellSize: Number(sellSize || 0),
+      buy: Number(buy || 0),
+      sell: Number(sell || 0),
+      id: Number(id || 0),
+      buySize: Number(buySize || 0)
+    }
+  }
+  return quoteItem
+}
+
+// 解析深度body数据
+function parseDepthBodyData(body: string) {
+  // 原格式
+  // {"header":{"msgId":"depth"},"body":{"symbol":"BTC","accountGroupId":"3","asks":"[{\"amount\":0.01403000,\"price\":96012.69000000},{\"amount\":0.00012000,\"price\":96012.70000000},{\"amount\":0.00012000,\"price\":96012.71000000},{\"amount\":0.00018000,\"price\":96012.73000000},{\"amount\":0.00118000,\"price\":96012.75000000},{\"amount\":0.00200000,\"price\":96012.76000000},{\"amount\":0.00178000,\"price\":96012.77000000},{\"amount\":0.00012000,\"price\":96012.78000000},{\"amount\":0.00111000,\"price\":96012.79000000},{\"amount\":0.00037000,\"price\":96012.80000000},{\"amount\":0.00012000,\"price\":96012.96000000},{\"amount\":0.00012000,\"price\":96013.05000000},{\"amount\":0.00037000,\"price\":96013.17000000},{\"amount\":0.00018000,\"price\":96013.27000000},{\"amount\":0.00198000,\"price\":96013.44000000},{\"amount\":0.00572000,\"price\":96013.45000000},{\"amount\":0.00011000,\"price\":96013.56000000},{\"amount\":0.00300000,\"price\":96013.91000000},{\"amount\":0.00006000,\"price\":96013.92000000},{\"amount\":0.00012000,\"price\":96013.93000000}]","bids":"[{\"amount\":7.99949000,\"price\":96000.00000000},{\"amount\":3.79417000,\"price\":95999.99000000},{\"amount\":0.00065000,\"price\":95999.96000000},{\"amount\":0.11040000,\"price\":95999.95000000},{\"amount\":0.00012000,\"price\":95999.90000000},{\"amount\":0.00111000,\"price\":95999.89000000},{\"amount\":0.00012000,\"price\":95999.63000000},{\"amount\":0.00012000,\"price\":95999.57000000},{\"amount\":0.00187000,\"price\":95999.56000000},{\"amount\":0.00012000,\"price\":95999.51000000},{\"amount\":0.00023000,\"price\":95999.42000000},{\"amount\":0.00012000,\"price\":95999.39000000},{\"amount\":0.00012000,\"price\":95999.34000000},{\"amount\":0.05220000,\"price\":95999.27000000},{\"amount\":0.00012000,\"price\":95999.24000000},{\"amount\":0.04170000,\"price\":95999.20000000},{\"amount\":0.22837000,\"price\":95999.04000000},{\"amount\":0.20861000,\"price\":95999.03000000},{\"amount\":0.00208000,\"price\":95999.00000000},{\"amount\":0.04167000,\"price\":95998.83000000}]","dataSource":"binance-BTCUSDT","ts":1735807767042}}
+  // 新格式
+  // 深度数据格式：asks(price_amount;price_amount;...),bids(price*amount;price_amount;...),dataSource,symbol,accountGroupId,ts
+  // { "header": { "msgId": "depth" }, "body": "94399.495*3.40948;94400.275*0.00052;94400.895*2.06585;94400.905*0.00499;94401.005*0.19438;94401.215*0.0424;94401.915*0.0424;94402.115*0.078;94402.125*0.84533;94402.135*0.15867;94402.405*0.07399;94402.415*0.11009;94402.715*0.00774;94402.865*0.00006;94404.395*0.04126;94404.455*0.02648;94404.715*0.0424;94406.055*0.05296;94406.635*0.05296;94407.435*0.00011,94396.77*0.21542;94396.63*0.0018;94396.3*0.00006;94396.29*0.08861;94396.26*0.00011;94396*0.0072;94395*0.00008;94394.16*0.00012;94393.93*0.00008;94393.58*0.00029;94393.27*0.003;94393.12*0.00008;94392.8*0.0424;94392.28*0.00012;94392*0.00729;94390.78*0.00017;94390.24*0.00012;94389.76*0.00006;94389.24*0.00012;94389.09*0.00015,binance-BTCUSDT,BTC,1,1735634057242" }
+  const depthData = {} as IDepth
+  if (body && typeof body === 'string') {
+    const [asks, bids, dataSource, symbol, accountGroupId, ts] = body.split(',')
+    depthData.symbol = symbol
+    depthData.dataSource = dataSource
+    depthData.accountGroupId = accountGroupId
+    depthData.ts = Number(ts || 0)
+    depthData.asks = asks
+      ? asks.split(';').map((item) => {
+          const [price, amount] = (item || '').split('_')
+          return {
+            price: Number(price || 0),
+            amount: Number(amount || 0)
+          }
+        })
+      : []
+    depthData.bids = bids
+      ? bids.split(';').map((item) => {
+          const [price, amount] = (item || '').split('_')
+          return {
+            price: Number(price || 0),
+            amount: Number(amount || 0)
+          }
+        })
+      : []
+  }
+  return depthData
+}
+
 // 接收消息回调
 function handleMessageCallback(d: any) {
   try {
@@ -207,11 +276,13 @@ function handleMessageCallback(d: any) {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        batchUpdateQuoteDataByNumber(data)
+        const quoteBody = parseQuoteBodyData(data)
+        batchUpdateQuoteDataByNumber(quoteBody)
         break
       // 深度报价
       case MessageType.depth:
-        batchUpdateDepthDataByNumber(data)
+        const depthBody = parseDepthBodyData(data)
+        batchUpdateDepthDataByNumber(depthBody)
         break
       // 交易信息：账户余额变动、持仓列表、挂单列表
       case MessageType.trade:
@@ -264,15 +335,20 @@ function batchSubscribeSymbol({
 } = {}) {
   const symbolList = list
   if (!symbolList.length) return
-  symbolList.forEach((item) => {
-    const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
-    const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
-    // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
-    const topic = item.accountGroupId ? topicAccount : topicNoAccount
-    send({
-      topic,
-      cancel
+
+  // 一次性订阅
+  const topics = symbolList
+    .map((item) => {
+      const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
+      const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
+      // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
+      return item.accountGroupId ? topicAccount : topicNoAccount
     })
+    .join(',')
+
+  send({
+    topic: topics,
+    cancel
   })
 }
 
@@ -454,15 +530,22 @@ function batchUpdateQuoteDataByNumber(data: any) {
   const dataSourceKey = `${dataSourceCode}/${sbl}` // 数据源 + 品种名称
   quotesCache.set(dataSourceKey, data)
 
+  // 加快首次渲染时间
+  if (quoteCount < 50) {
+    updateQuoteData()
+    quoteCount++
+    return
+  }
+
   // 如果缓存太大，强制发送
   if (quotesCache.size >= MAX_CACHE_SIZE) {
     updateQuoteData()
-
     return
   }
 
   const now = performance.now()
-  if (now - lastQuoteUpdateTime >= THROTTLE_QUOTE_INTERVAL) {
+  const interval = userConf.isMobile ? THROTTLE_QUOTE_MOBILE_INTERVAL : THROTTLE_QUOTE_INTERVAL
+  if (now - lastQuoteUpdateTime >= interval) {
     if (quotesCache.size > 0) {
       updateQuoteData()
     }
@@ -471,7 +554,7 @@ function batchUpdateQuoteDataByNumber(data: any) {
 
 // =========  计算相关 start ============
 
-// 计算账户余额信息
+// 计算账户余额信息： 需要订阅持仓中所有类型
 function getAccountBalance() {
   const currencyDecimal = currentAccountInfo.currencyDecimal
 
@@ -483,7 +566,7 @@ function getAccountBalance() {
   )
   // 可用保证金
   let availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
-  // 持仓总浮动盈亏
+  // 持仓总浮动盈亏: 需要订阅持仓中所有类型
   const totalOrderProfit = Number(toFixed(getCurrentAccountFloatProfit(positionList), currencyDecimal))
   // 持仓单总的库存费
   const totalInterestFees = Number(
@@ -509,6 +592,7 @@ function getAccountBalance() {
   // console.log('totalHandlingFees', totalHandlingFees)
   // console.log('totalOrderProfit', totalOrderProfit)
   // console.log('totalProfit', totalProfit)
+  // console.log('balance', balance)
 
   // 账户组设置“可用计算未实现盈亏”时
   // 新可用预付款=原来的可用预付款+账户的持仓盈亏

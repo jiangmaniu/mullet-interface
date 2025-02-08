@@ -27,6 +27,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
               showLessItems: true,
               showSizeChanger: false, // 不显示分页大小切换
               showTotal: undefined,
+              // @ts-ignore TODO： ts check 待驗證
               align: 'center',
               hideOnSinglePage: true, // 在没有数据或只有一页数据时隐藏分页栏
               ...(pagination || {})

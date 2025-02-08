@@ -1,6 +1,6 @@
 import qs from 'qs'
 
-import { push } from '@/utils/navigator'
+import { onLogout } from '@/utils/navigator'
 import { request } from '@/utils/request'
 
 // 客户用户-新增
@@ -35,7 +35,7 @@ export async function getClientDetail(params: API.IdParam) {
     params
   }).then((res) => {
     if (res?.code !== 200) {
-      push('/user/login')
+      onLogout()
       return {}
     }
     if (res.data?.accountList?.length) {

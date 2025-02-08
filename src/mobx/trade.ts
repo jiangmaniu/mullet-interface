@@ -15,15 +15,28 @@ import {
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
-import { toFixed } from '@/utils'
+import { isPCByWidth, toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
-import { STORAGE_GET_CONF_INFO, STORAGE_SET_CONF_INFO } from '@/utils/storage'
-import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import {
+  STORAGE_GET_CONF_INFO,
+  STORAGE_GET_HISTORY_SEARCH,
+  STORAGE_GET_ORDER_CONFIRM_CHECKED,
+  STORAGE_GET_POSITION_CONFIRM_CHECKED,
+  STORAGE_GET_QUICK_PLACE_ORDER_CHECKED,
+  STORAGE_REMOVE_HISTORY_SEARCH,
+  STORAGE_SET_CONF_INFO,
+  STORAGE_SET_HISTORY_SEARCH,
+  STORAGE_SET_ORDER_CONFIRM_CHECKED,
+  STORAGE_SET_POSITION_CONFIRM_CHECKED,
+  STORAGE_SET_QUICK_PLACE_ORDER_CHECKED
+} from '@/utils/storage'
+import { covertProfit } from '@/utils/wsUtil'
 
+import { getEnv } from '@/env'
 import klineStore from './kline'
-import ws from './ws'
+import ws, { SymbolWSItem } from './ws'
 import { IPositionListSymbolCalcInfo, MarginReteInfo } from './ws.types'
 
 export type UserConfInfo = Record<
@@ -94,6 +107,7 @@ class TradeStore {
   @observable symbolListLoading = true
   @observable symbolList: Account.TradeSymbolListItem[] = []
   @observable symbolListAll: Account.TradeSymbolListItem[] = [] // 首次查询的全部品种列表，不按条件查询
+  @observable symbolListMap = {} as Record<string, Account.TradeSymbolListItem> // 品种列表，按symbolName存储
 
   @observable userConfInfo = {} as UserConfInfo // 记录用户设置的品种名称、打开的品种列表、自选信息，按accountId储存
   // 当前accountId的配置信息从userConfInfo展开，切换accountId时，重新设置更新
@@ -108,10 +122,15 @@ class TradeStore {
   //  ========= 交易区操作 =========
   @observable marginType: API.MarginType = 'CROSS_MARGIN' // 交易区保证金类型
   @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
+  @observable isBuy = true // 交易区买卖类型
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 2 // 浮动杠杆倍数，默认1
   @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
+  @observable orderQuickPlaceOrderChecked = true // 快速下单默认选择
+  @observable orderConfirmChecked = true // 下单二次确认弹窗
+  @observable positionConfirmChecked = false // 平仓二次确认弹窗
   @observable orderVolume = '0.01' // 交易区下单数量
+  @observable orderVolumeTag = '' // 手数标签快速选择
   @observable orderSpslChecked = false // 是否选中止盈止损
   @observable orderPrice = '' // 交易区下单价格
   @observable spValue = '' // 止盈输入框-按价格
@@ -131,6 +150,8 @@ class TradeStore {
   @observable recordTabKey: IRecordTabKey = 'POSITION' // 交易记录切换
   @observable showActiveSymbol = false // 是否展示当前，根据当前激活的品种，搜索交易历史记录
   @observable recordModalItem = {} as RecordModalItem // 持仓单、挂单弹窗item赋值
+  @observable pendingListLoading = true // 挂单列表loading
+  @observable positionListLoading = true // 持仓列表loading
   // ============================
 
   @observable currentLiquidationSelectBgaId = 'CROSS_MARGIN' // 默认全仓，右下角爆仓选择逐仓、全仓切换
@@ -148,73 +169,121 @@ class TradeStore {
   @observable expectedMargin = 0 // 预估保证金
   @observable maxOpenVolume = 0 // 最大可开手数
 
+  @observable historySearchList = [] as string[] // APP历史搜索记录
+
   // 初始化加载
-  init = () => {
+  @action
+  init = async () => {
     // 初始化打开的品种列表
     this.initOpenSymbolNameList()
     // 初始化自选列表
     this.initFavoriteList()
     // 获取全部品种列表作为汇率校验
     this.getAllSimbleSymbols()
+    // 获取持仓列表
+    this.getPositionList()
+
+    this.orderQuickPlaceOrderChecked = (await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()) || false
+    this.orderConfirmChecked = (await STORAGE_GET_ORDER_CONFIRM_CHECKED()) || false
+    this.positionConfirmChecked = (await STORAGE_GET_POSITION_CONFIRM_CHECKED()) || false
+    this.historySearchList = (await STORAGE_GET_HISTORY_SEARCH()) || []
   }
 
   // 右下角爆仓选择逐仓、全仓切换
+  @action
   setCurrentLiquidationSelectBgaId = (value: any) => {
     this.currentLiquidationSelectBgaId = value
   }
 
+  @action
   setSwitchAccountLoading = (loading: boolean) => {
     this.switchAccountLoading = loading
   }
 
+  @action
   setShowActiveSymbol = (value: boolean) => {
     this.showActiveSymbol = value
   }
 
+  @action
   setTradePageActive = (value: boolean) => {
     this.tradePageActive = value
+  }
+
+  // =========== APP品种历史搜索记录 ==========
+
+  // 设置历史搜索记录
+  @action
+  setHistorySearch = (value: string) => {
+    this.historySearchList.unshift(value)
+    // 只保留最新15条
+    if (this.historySearchList.length > 15) {
+      this.historySearchList = this.historySearchList.slice(0, 15)
+    }
+    STORAGE_SET_HISTORY_SEARCH(this.historySearchList)
+  }
+  // 清空搜索记录
+  @action
+  removeHistorySearch = () => {
+    this.historySearchList = []
+    STORAGE_REMOVE_HISTORY_SEARCH()
   }
 
   // =========== 设置交易区操作 ==========
 
   // 设置弹窗选择的保证金类型
+  @action
   setMarginType = (marginType: API.MarginType) => {
     this.marginType = marginType
   }
 
   // 设置弹窗选择的浮动杠杆倍数
+  @action
   setLeverageMultiple = (leverageMultiple: number) => {
     this.leverageMultiple = leverageMultiple
   }
 
   // 浮动杠杆模式最大可开手数
+  @action
   setLeverageMultipleMaxOpenVolume = (maxOpenVolume: number) => {
     this.leverageMultipleMaxOpenVolume = maxOpenVolume
   }
 
   // 设置买卖类型切换
+  @action
   setBuySell = (buySell: API.TradeBuySell) => {
     this.buySell = buySell
+    this.isBuy = buySell === 'BUY'
   }
 
   // 设置订单类型Tabs切换
+  @action
   setOrderType = (orderType: ITradeTabsOrderType) => {
     this.orderType = orderType
   }
 
   // 下单手数
+  @action
   setOrderVolume = (orderVolume: any) => {
     this.orderVolume = orderVolume
   }
 
   // 设置订单止盈止损
+  @action
   setOrderSpslChecked = (flag: boolean) => {
     this.orderSpslChecked = flag
   }
 
   // 限价单下单价格
+  @action
   setOrderPrice = (orderPrice: any) => {
     this.orderPrice = orderPrice
+  }
+
+  // 设置手数标签快速选择
+  @action
+  setOrderVolumeTag = (tag: string) => {
+    this.orderVolumeTag = tag
   }
 
   // 止盈价格输入框
@@ -251,16 +320,44 @@ class TradeStore {
   }
 
   // 设置交易记录持仓单、挂单弹窗数据
+  @action
   setRecordModalItem = (item: RecordModalItem) => {
     this.recordModalItem = item
   }
 
+  @action
   setIsPosition = (value: boolean) => {
     this.isPosition = value
   }
 
+  // 设置订单-快速下单
+  @action
+  setOrderQuickPlaceOrderChecked = (flag: boolean) => {
+    this.orderQuickPlaceOrderChecked = flag
+
+    STORAGE_SET_QUICK_PLACE_ORDER_CHECKED(flag)
+  }
+
+  // 下单二次确认弹窗-不在提醒
+  @action
+  setOrderConfirmChecked = (flag: boolean) => {
+    this.orderConfirmChecked = flag
+
+    STORAGE_SET_ORDER_CONFIRM_CHECKED(flag)
+  }
+
+  // 平仓二次确认弹窗-不在提醒
+  @action
+  setPositionConfirmChecked = (flag: boolean) => {
+    this.positionConfirmChecked = flag
+
+    STORAGE_SET_POSITION_CONFIRM_CHECKED(flag)
+  }
+
   // 重置止盈止损
+  @action
   resetSpSl = () => {
+    // 将多次UI更新合并为一次
     this.spValue = ''
     this.slValue = ''
     this.spAmount = ''
@@ -272,6 +369,7 @@ class TradeStore {
   resetTradeAction = () => {
     this.orderVolume = '0.01'
     this.orderPrice = ''
+    this.orderVolumeTag = ''
     this.spValue = ''
     this.slValue = ''
     this.spAmount = ''
@@ -285,6 +383,7 @@ class TradeStore {
   // =============================
 
   // 获取创建账户页面-账户组列表
+  @action
   getAccountGroupList = async () => {
     if (this.accountGroupListLoading) return
     this.accountGroupListLoading = true
@@ -442,9 +541,9 @@ class TradeStore {
   @action
   getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
     const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
-    const quote = getCurrentQuote()
-    const conf = item?.conf || quote?.symbolConf // 品种配置信息
-    const buySell = this.buySell
+    // const quote = getCurrentQuote()
+    // const conf = item?.conf || quote?.symbolConf // 品种配置信息
+    // const buySell = this.buySell
     const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
     // 全仓保证金率：全仓净值/占用 = 保证金率
     // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
@@ -543,6 +642,92 @@ class TradeStore {
     })
   }
 
+  /**
+   * 订阅当前选中及持仓列表品种的行情, 打开页面或切换品种时调用
+   * @param cover 是否自动取消其他历史订阅
+   */
+  @action
+  subscribeCurrentAndPositionSymbol = ({ cover = false }: { cover?: boolean }) => {
+    const activeSymbolInfo = this.getActiveSymbolInfo()
+    // const symbolList = toJS(this.positionList).map((item) => item.symbol) as string[]
+    // const symbolList = [activeSymbolInfo, ...this.positionList]
+    // const symbolNames = Array.from(new Set(symbolList.map((item) => item.symbol))) as string[]
+    const symbolList = this.positionList
+    const symbols = Array.from(
+      new Set(
+        symbolList.map((item) =>
+          JSON.stringify({
+            accountGroupId: item?.accountGroupId,
+            symbol: item.symbol,
+            dataSourceCode: item.dataSourceCode,
+            conf: {
+              profitCurrency: item.conf?.profitCurrency
+            }
+          })
+        )
+      )
+    ).map((str) => JSON.parse(str))
+
+    setTimeout(() => {
+      ws.checkSocketReady(() => {
+        console.log('订阅当前选中及持仓列表品种的行情', cover ? '【并取消其他历史订阅】' : '', [activeSymbolInfo, ...symbols])
+        // 打开行情订阅
+        ws.openPosition({
+          symbols: ws.makeWsSymbolBySemi([activeSymbolInfo, ...symbols]),
+          cover
+        })
+
+        /** 动态订阅汇率品种行情，用于计算下单时保证金等 */
+
+        // 1. 持仓列表品种
+        symbols.forEach((item) => {
+          if (item?.conf) {
+            ws.subscribeExchangeRateQuote(item.conf)
+          }
+        })
+        // 2. 当前选中品种
+        ws.subscribeExchangeRateQuote()
+      })
+    })
+  }
+
+  @action
+  subscribePositionSymbol = ({ cover = true }: { cover?: boolean }) => {
+    const symbolList = this.positionList
+    const symbols = Array.from(
+      new Set(
+        symbolList.map((item) =>
+          JSON.stringify({
+            accountGroupId: item?.accountGroupId,
+            symbol: item.symbol,
+            dataSourceCode: item.dataSourceCode,
+            conf: {
+              profitCurrency: item.conf?.profitCurrency
+            }
+          })
+        )
+      )
+    ).map((str) => JSON.parse(str))
+
+    setTimeout(() => {
+      ws.checkSocketReady(() => {
+        console.log('订阅当前持仓列表品种的行情', cover ? '【并取消其他历史订阅】' : '', symbols)
+        // 打开行情订阅
+        ws.openPosition({
+          symbols: ws.makeWsSymbolBySemi(symbols as SymbolWSItem[]),
+          cover
+        })
+
+        // 动态订阅汇率品种行情，用于计算下单时保证金等
+        symbols.forEach((item) => {
+          if (item?.conf) {
+            ws.subscribeExchangeRateQuote(item.conf)
+          }
+        })
+      })
+    })
+  }
+
   // 切换交易品种
   @action
   switchSymbol = (symbol: string) => {
@@ -552,16 +737,15 @@ class TradeStore {
     this.setOpenSymbolNameList(symbol)
     // 设置当前当前的symbol
     this.setActiveSymbolName(symbol)
-
     // 切换品种事件
     mitt.emit('symbol_change')
   }
 
   // 获取打开的品种完整信息
   @action
-  getActiveSymbolInfo = (currentSymbolName?: string) => {
+  getActiveSymbolInfo = (currentSymbolName?: string, list?: Account.TradeSymbolListItem[]) => {
     const symbol = currentSymbolName || this.activeSymbolName
-    const symbolList = this.symbolListAll
+    const symbolList = list || this.symbolListAll
     const info = symbolList.find((item) => item.symbol === symbol) || {}
     return info as Account.TradeSymbolListItem
   }
@@ -603,14 +787,14 @@ class TradeStore {
   setActiveSymbolName(key: string) {
     // 取消订阅上一个的深度报价
     ws.subscribeDepth(true)
+    this.activeSymbolName = key
 
     setTimeout(() => {
-      this.activeSymbolName = key
       // STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
       STORAGE_SET_CONF_INFO(key, `${this.currentAccountInfo?.id}.activeSymbolName`)
       // 重新订阅深度
       ws.subscribeDepth()
-    }, 300)
+    }, 50)
   }
 
   // 更新本地缓存的symbol列表
@@ -681,10 +865,15 @@ class TradeStore {
   // 查询品种分类
   @action
   getSymbolCategory = async () => {
+    const ENV = getEnv()
     const res = await getTradeSymbolCategory()
     if (res.success) {
       runInAction(() => {
-        this.symbolCategory = [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...(res?.data || [])]
+        const data = res?.data || []
+        this.symbolCategory =
+          ENV.platform === 'sux'
+            ? [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...data]
+            : [...data.slice(0, -1)]
       })
     }
   }
@@ -759,15 +948,36 @@ class TradeStore {
   // 根据账户id查询侧边栏菜单交易品种列表
   @action
   getSymbolList = async (params = {} as Partial<Account.TradeSymbolListParams>) => {
+    const isPc = isPCByWidth()
     const accountId = params?.accountId || this.currentAccountInfo?.id
     if (!accountId) return
     // 查询全部
     if (params.classify === '0') {
       delete params.classify
     }
+    const cacheSymbolList = STORAGE_GET_CONF_INFO(`${this.currentAccountInfo?.id}.symbolList`) || []
+    // 如果缓存有优先取一次缓存的展示
+    if (cacheSymbolList?.length) {
+      this.symbolList = cacheSymbolList
+      this.symbolListAll = cacheSymbolList
+
+      runInAction(() => {
+        setTimeout(
+          () => {
+            this.symbolListLoading = false
+          },
+          isPc ? 0 : 800
+        )
+      })
+    }
     const res = await getTradeSymbolList({ ...params, accountId }).catch((e) => e)
     runInAction(() => {
-      this.symbolListLoading = false
+      setTimeout(
+        () => {
+          this.symbolListLoading = false
+        },
+        isPc ? 0 : 800
+      )
     })
     if (res.success) {
       const symbolList = (res.data || []) as Account.TradeSymbolListItem[]
@@ -776,6 +986,15 @@ class TradeStore {
         // 查询全部的品种列表
         if (!params.classify) {
           this.symbolListAll = symbolList
+
+          // 转成map结构
+          this.symbolListMap = symbolList.reduce((prev, curr) => {
+            prev[curr.symbol] = curr
+            return prev
+          }, {} as Record<string, Account.TradeSymbolListItem>)
+
+          // 缓存当前账号的品种列表
+          STORAGE_SET_CONF_INFO(symbolList, `${this.currentAccountInfo?.id}.symbolList`)
         }
 
         // 切换accountId后请求的品种列表可能不一致，设置第一个默认的品种名称
@@ -791,13 +1010,17 @@ class TradeStore {
       })
 
       // 获取品种后，动态订阅品种
-      if (ws.socket?.readyState === 1 || ws.readyState === 1) {
+      if (ws.readyState === 1) {
+        // TODO: 这里需要优化，如果切换之后是持仓页面或交易页面，只需要订阅当前品种和持仓列表品种
         setTimeout(() => {
-          ws.batchSubscribeSymbol()
+          ws.checkSocketReady(() => {
+            // 打开行情订阅
+            ws.openSymbol({
+              // 构建参数
+              symbols: ws.makeWsSymbolBySemi(this.symbolListAll)
+            })
+          })
         }, 400)
-      } else {
-        // 按需连接
-        // ws.reconnect()
       }
     }
   }
@@ -824,18 +1047,26 @@ class TradeStore {
   getPositionList = async () => {
     // 查询进行中的订单
     const res = await getBgaOrderPage({ current: 1, size: 999, status: 'BAG', accountId: this.currentAccountInfo?.id })
+
+    runInAction(() => {
+      setTimeout(() => {
+        this.positionListLoading = false
+      }, 300)
+    })
+
     if (res.success) {
       const data = (res.data?.records || []) as Order.BgaOrderPageListItem[]
       runInAction(() => {
         this.positionList = data
       })
 
-      // 动态订阅汇率品种行情
-      if (data.length) {
-        data.forEach((item) => {
-          ws.subscribeExchangeRateQuote(item.conf)
-        })
-      }
+      // 动态订阅汇率品种行情, 初始化持仓列表时，不主动取消其他历史订阅
+      this.subscribePositionSymbol({ cover: false })
+      // if (data.length) {
+      //   data.forEach((item) => {
+      //     ws.subscribeExchangeRateQuote(item.conf)
+      //   })
+      // }
     }
     return res
   }
@@ -858,6 +1089,13 @@ class TradeStore {
       type: 'LIMIT_BUY_ORDER,LIMIT_SELL_ORDER,STOP_LOSS_LIMIT_BUY_ORDER,STOP_LOSS_LIMIT_SELL_ORDER,STOP_LOSS_MARKET_BUY_ORDER,STOP_LOSS_MARKET_SELL_ORDER',
       accountId: this.currentAccountInfo?.id
     })
+
+    runInAction(() => {
+      setTimeout(() => {
+        this.pendingListLoading = false
+      }, 300)
+    })
+
     if (res.success) {
       runInAction(() => {
         this.pendingList = (res.data?.records || []) as Order.OrderPageListItem[]
@@ -885,7 +1123,7 @@ class TradeStore {
   createOrder = async (params: Order.CreateOrder) => {
     const intl = getIntl()
     const orderType = params.type
-    const isBuy = params.buySell === 'BUY'
+    // const isBuy = params.buySell === 'BUY'
     const res = await createOrder(params)
     if (res.success) {
       // 市价单：买入卖出单
