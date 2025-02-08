@@ -366,18 +366,44 @@ class TradeStore {
 
   // 重置交易操作
   @action
-  resetTradeAction = () => {
-    this.orderVolume = '0.01'
-    this.orderPrice = ''
-    this.orderVolumeTag = ''
-    this.spValue = ''
-    this.slValue = ''
-    this.spAmount = ''
-    this.slAmount = ''
-    this.spPriceOrAmountType = 'PRICE'
-    this.slPriceOrAmountType = 'PRICE'
-    this.recordModalItem = {} as RecordModalItem
-    this.isPosition = false
+  resetTradeAction = (params?: {
+    orderVolume?: string
+    orderPrice?: string
+    orderVolumeTag?: string
+    spValue?: string
+    slValue?: string
+    spAmount?: string
+    slAmount?: string
+    spPriceOrAmountType?: IPriceOrAmountType
+    slPriceOrAmountType?: IPriceOrAmountType
+    recordModalItem?: RecordModalItem
+    isPosition?: boolean
+  }) => {
+    const {
+      orderVolume = '0.01',
+      orderPrice = '',
+      orderVolumeTag = '',
+      spValue = '',
+      slValue = '',
+      spAmount = '',
+      slAmount = '',
+      spPriceOrAmountType = 'PRICE',
+      slPriceOrAmountType = 'PRICE',
+      recordModalItem = {} as RecordModalItem,
+      isPosition = false
+    } = params || {}
+
+    this.orderVolume = orderVolume
+    this.orderPrice = orderPrice
+    this.orderVolumeTag = orderVolumeTag
+    this.spValue = spValue
+    this.slValue = slValue
+    this.spAmount = spAmount
+    this.slAmount = slAmount
+    this.spPriceOrAmountType = spPriceOrAmountType as IPriceOrAmountType
+    this.slPriceOrAmountType = slPriceOrAmountType as IPriceOrAmountType
+    this.recordModalItem = recordModalItem
+    this.isPosition = isPosition
   }
 
   // =============================

@@ -42,28 +42,28 @@ const CurrentPrice = observer(({ buySell, symbol }: any) => {
 const RenderSliderComp = memo(
   ({
     rawItem: item,
-    setCount,
-    count,
-    setSwipeEnabled
+    // setCount,
+    // count,
+    // setSwipeEnabled,
+    setSwipeEnabled,
+    onSlidingComplete,
+    initialValue
   }: {
     rawItem: Order.BgaOrderPageListItem
-    setCount: (value: number) => void
-    count: number
     setSwipeEnabled?: (value: boolean) => void
+    onSlidingComplete?: (value: number) => void
+    initialValue: number
   }) => {
-    const { cn, theme } = useTheme()
+    const { cn } = useTheme()
 
     const orderVolume = useMemo(() => Number(item.orderVolume || 0), [item.orderVolume]) // 手数
-    const conf = useMemo(() => item?.conf, [item])
-    const vmin = useMemo(() => conf?.minTrade || 0.01, [conf])
-
     const [sliderValue, setSliderValue] = useState(0)
 
     useEffect(() => {
-      setSliderValue((count / orderVolume) * 100)
-    }, [count])
+      setSliderValue((initialValue / orderVolume) * 100)
+    }, [initialValue])
 
-    const renderSlider = useMemo(() => {
+    const renderSlider = () => {
       return (
         <Slider
           unit="%"
@@ -72,21 +72,18 @@ const RenderSliderComp = memo(
           min={0}
           max={100}
           onChange={(value: any) => {
-            // 可平仓手数*百分比
-            const vol = toFixed((value / 100) * orderVolume, 2, false)
-            // 不能小于最小手数
-            setCount(Number(vol) < vmin ? vmin : vol)
             setSliderValue(value)
           }}
           onSlidingComplete={(value) => {
             setSwipeEnabled?.(true)
+            onSlidingComplete?.(value)
           }}
-          value={sliderValue}
+          value={[sliderValue]}
         />
       )
-    }, [sliderValue, vmin, orderVolume])
+    }
 
-    return <View className={cn('mb-3 p-2')}>{renderSlider}</View>
+    return <View className={cn('mb-3 p-2')}>{renderSlider()}</View>
   }
 )
 
@@ -161,6 +158,16 @@ const RenderPositionTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTab
     submit: submitPosition
   }))
 
+  const conf = useMemo(() => item?.conf, [item])
+  const vmin = useMemo(() => conf?.minTrade || 0.01, [conf])
+
+  const onSlidingComplete = (value: number) => {
+    // 可平仓手数*百分比
+    const vol = toFixed((value / 100) * orderVolume, 2, false)
+    // 不能小于最小手数
+    setCount(Number(vol) < vmin ? vmin : vol)
+  }
+
   return (
     <View className={cn('mt-5')}>
       <InputNumber
@@ -199,7 +206,12 @@ const RenderPositionTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTab
         min={0.01}
       />
       <View className={cn('mt-8')}>
-        <RenderSliderComp setSwipeEnabled={props.setSwipeEnabled} rawItem={rawItem} setCount={setCount} count={count} />
+        <RenderSliderComp
+          setSwipeEnabled={props.setSwipeEnabled}
+          rawItem={rawItem}
+          onSlidingComplete={onSlidingComplete}
+          initialValue={count}
+        />
 
         <View className={cn('flex-row items-center justify-center gap-x-1')}>
           <Text size="xs" color="secondary">

@@ -1,14 +1,12 @@
 import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useEffect, useState } from 'react'
 
 import { SOURCE_CURRENCY } from '@/constants'
-import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useTrade from '@/hooks/useTrade'
 import InputNumber from '@/pages/webapp/components/Base/Form/InputNumber'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
+import useSpSl from '@/pages/webapp/hooks/trade/useSpSl'
 import { formatNum } from '@/utils'
 
 type IFormValues = {
@@ -37,7 +35,7 @@ const ProfitScope = observer(() => {
   const { cn, theme } = useTheme()
   const intl = useIntl()
 
-  const { spFlag, isBuy, sp_scope, d, rangeSymbol } = useTrade()
+  const { spFlag, isBuy, sp_scope, d, rangeSymbol } = useSpSl()
 
   return (
     <View className={cn('flex-row items-end')}>
@@ -55,7 +53,7 @@ const StopLossScope = observer(() => {
   const { cn, theme } = useTheme()
   const intl = useIntl()
 
-  const { slFlag, isBuy, sl_scope, d, rangeSymbol } = useTrade()
+  const { slFlag, isBuy, sl_scope, d, rangeSymbol } = useSpSl()
 
   return (
     <View className={cn('flex-row items-end')}>
@@ -71,56 +69,17 @@ const StopLossScope = observer(() => {
 })
 
 /** 全屏模式展示 下单止盈止损设置 */
-function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) {
-  const { trade } = useStores()
-  const { orderType } = trade
-  const { cn, theme } = useTheme()
+function FullModeSpSl() {
+  const { cn } = useTheme()
   const intl = useIntl()
 
-  // 缓存按价格或者金额展示的值，用于恢复表单展示
-  const [formData, setFormData] = useState<IFormValues>({
-    // 止盈
-    spPriceShow: '',
-    spAmountShow: '',
-    // 止损
-    slPriceShow: '',
-    slAmountShow: ''
-  })
+  let { d, step, setSp, setSl, spValuePrice, slValuePrice, disabledInput: disabled, onSpAdd, onSpMinus, onSlAdd, onSlMinus } = useSpSl()
 
-  // 记录计算过的值
-  const updateValue = (key: keyof IFormValues, value: any) => {
-    setFormData({
-      ...formData,
-      [key]: String(value)
-    })
-  }
-
-  let {
-    d,
-    step,
-    setSp,
-    setSl,
-    setSpAmount,
-    setSlAmount,
-    spValueEstimate,
-    slValueEstimate,
-    spValuePrice,
-    slValuePrice,
-    setInputing,
-    disabledInput: disabled,
-    onSpAdd,
-    onSpMinus,
-    onSlAdd,
-    onSlMinus
-  } = useTrade({
-    marketItem
-  })
-
-  useEffect(() => {
-    if (setValues) {
-      setValues(Number(slValuePrice || 0), Number(spValuePrice || 0))
-    }
-  }, [setValues, slValuePrice, spValuePrice])
+  // useEffect(() => {
+  //   if (setValues) {
+  //     setValues(Number(slValuePrice || 0), Number(spValuePrice || 0))
+  //   }
+  // }, [setValues, slValuePrice, spValuePrice])
 
   return (
     <View className={cn('pt-3 w-full')}>
@@ -130,9 +89,6 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
           <View className={cn('flex-1')}>
             <InputNumber
               textAlign="center"
-              onFocus={() => {
-                setInputing(true)
-              }}
               step={step}
               // status={spFlag ? 'error' : undefined}
               placeholder={intl.formatMessage({ id: 'pages.trade.Price' })}
@@ -184,9 +140,6 @@ function FullModeSpSl({ useOuterTrade = false, setValues, marketItem }: IProps) 
           <View className={cn('flex-1')}>
             <InputNumber
               textAlign="center"
-              onFocus={() => {
-                setInputing(true)
-              }}
               step={step}
               // status={slFlag ? 'error' : undefined}
               placeholder={intl.formatMessage({ id: 'pages.trade.Price' })}

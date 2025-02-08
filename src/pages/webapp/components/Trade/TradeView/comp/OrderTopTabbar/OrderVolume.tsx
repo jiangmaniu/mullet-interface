@@ -4,10 +4,11 @@ import { useMemo } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useTrade from '@/hooks/useTrade'
 import Button from '@/pages/webapp/components/Base/Button'
 import InputNumber from '@/pages/webapp/components/Base/Form/InputNumber'
 import { View } from '@/pages/webapp/components/Base/View'
+import useDisabled from '@/pages/webapp/hooks/trade/useDisabled'
+import useQuote from '@/pages/webapp/hooks/trade/useQoute'
 
 type IProps = {
   isFull?: boolean
@@ -18,26 +19,10 @@ function OrderVolume({ isFull }: IProps) {
   const { cn, theme } = useTheme()
   const intl = useIntl()
   const { trade } = useStores()
-  const { setOrderVolumeTag, orderVolumeTag, orderType } = trade
 
-  const {
-    step,
-    countPrecision,
-    maxOpenVolume,
-    vmax,
-    vmin,
-    d,
-    isBuy,
-    orderVolume,
-    disabledInput,
-    // 方法
-    setSl,
-    setSp,
-    setOrderVolume,
-    resetSpSl,
-    getInitPriceValue,
-    setInputing
-  } = useTrade()
+  const { setOrderVolume, setOrderVolumeTag, orderVolumeTag, isBuy, maxOpenVolume } = trade
+  const { step, vmax, vmin, countPrecision, orderVolume } = useQuote()
+  const { disabledInput } = useDisabled()
 
   const onChange = (value: any) => {
     const val = Math.min(Number(value), maxOpenVolume)
@@ -86,9 +71,6 @@ function OrderVolume({ isFull }: IProps) {
         min={min}
         precision={precision}
         fontSize={16}
-        onFocus={() => {
-          setInputing(true)
-        }}
         style={{ fontSize, lineHeight: 22 }}
       />
       <View className={cn('items-center gap-x-2  justify-between flex-row')}>
