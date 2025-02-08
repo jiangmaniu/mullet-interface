@@ -1,6 +1,10 @@
 {
   "name": "Stellux",
   "platform": "sux",
+  "enableQuoteCategoryAllTab": true,
+  "enableQuoteCategorySTOCKTab": true,
+  "enableWebAppLogin": false,
+  "isChinaTimeZone": false,
   "websiteUrl": "www.stellux.io",
   "CLIENT_ID": "StelluxTrader-client",
   "CLIENT_SECRET": "stellux_trader_client_secret",

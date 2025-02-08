@@ -1,6 +1,10 @@
 {
   "name": "Lynfoo",
   "platform": "lyn",
+  "enableQuoteCategoryAllTab": false,
+  "enableQuoteCategorySTOCKTab": false,
+  "enableWebAppLogin": true,
+  "isChinaTimeZone": true,
   "websiteUrl": "www.lynfoo.io",
   "CLIENT_ID": "WpTrader-client",
   "CLIENT_SECRET": "wp_trader_client_secret",

@@ -56,7 +56,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
 
   useEffect(() => {
     if (activeKey === 'CATEGORY') {
-      trade.getSymbolList({ classify: ENV.platform === 'sux' ? '0' : '10' })
+      trade.getSymbolList({ classify: ENV.enableQuoteCategoryAllTab ? '0' : '10' })
     }
   }, [activeKey])
 
