@@ -1,43 +1,42 @@
 import { ProForm } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import { AutoComplete, FormInstance } from 'antd'
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
-import { message } from '@/utils/message'
+import { stores } from '@/context/mobxProvider'
+import { observer } from 'mobx-react'
 
 type IProps = {
   form: FormInstance
 }
 
 /**转入表单项 */
-export default function TransferToCryptoItem({ form }: IProps) {
-  const [open, setOpen] = useState(false)
+function TransferToCryptoItem({ form }: IProps) {
   const intl = useIntl()
-  const { initialState } = useModel('@@initialState')
-
-  const currentUser = initialState?.currentUser
-  const list = [
-    {
-      label: 'addr1 (1234567890xxxxxxxabcdabcd)',
-      value: '1234567890xxxxxxxabcdabcd'
-    },
-    {
-      label: 'addr2 (123456789xxxxxxxabcdabcd2)',
-      value: '123456789xxxxxxxabcdabcd2'
-    }
-  ]
 
   const [searchValue, setSearchValue] = useState('')
-  const searchList = list.filter((item) => item.label.includes(searchValue))
 
   const handleSearch = (value: string) => {
     setSearchValue(value)
   }
 
+  const widthdrawAddress = stores.wallet.withdrawalAddress
+  const searchList = widthdrawAddress.filter((item) => item.label.includes(searchValue))
+
+  const [initialed, setInitialed] = useState(false)
+  useLayoutEffect(() => {
+    if (!initialed && widthdrawAddress.length === 0) {
+      stores.wallet.getWithdrawalAddressList()
+      setInitialed(true)
+      return
+    }
+  }, [widthdrawAddress, intl, initialed])
+
   return (
     <div className="relative">
       <ProForm.Item
+        addonWarpStyle={{}}
         label={
           <span className="text-sm text-primary font-medium">
             <FormattedMessage id="mt.tibidizhi" />
@@ -58,7 +57,9 @@ export default function TransferToCryptoItem({ form }: IProps) {
         ]}
       >
         <AutoComplete
-          size="large"
+          style={{
+            height: '38px'
+          }}
           onChange={(value) => {
             form.setFieldValue('toAccountId', value)
           }}
@@ -67,13 +68,13 @@ export default function TransferToCryptoItem({ form }: IProps) {
           placeholder={intl.formatMessage({ id: 'mt.shurudizhi' })}
         />
       </ProForm.Item>
-      <div className="absolute top-[34px] right-2 flex flex-row items-center gap-2 z-10">
+      <div className="absolute top-[36px] right-2 flex flex-row items-center gap-2 z-10">
         <SelectSuffixIcon opacity={0.5} />
         <div className="bg-gray-250 h-3 w-[1px] "></div>
         <span
           className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
           onClick={() => {
-            message.info('敬请期待')
+            // message.info('敬请期待')
           }}
         >
           <FormattedMessage id="mt.dizhiguanli" />
@@ -82,3 +83,5 @@ export default function TransferToCryptoItem({ form }: IProps) {
     </div>
   )
 }
+
+export default observer(TransferToCryptoItem)

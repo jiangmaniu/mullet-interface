@@ -11,6 +11,7 @@ import SwitchTheme from '@/components/SwitchTheme'
 import { useEnv } from '@/context/envProvider'
 import { goKefu, push } from '@/utils/navigator'
 
+import Button from '@/components/Base/Button'
 import { HeaderTheme } from '../Header/types'
 import AccountDropdown from './AccountDropdown'
 import Message from './Message'
@@ -97,6 +98,17 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
         {isTradePage && <TradeAccountDropdown theme={theme} />}
         {/* 个人中心账户信息下拉dropdown */}
         {!isTradePage && realAccountList.length > 0 && <UserCenterAccountDropdown theme={theme} />}
+
+        <Button
+          onClick={() => {
+            push(`/deposit`)
+          }}
+          type="primary"
+          style={{ width: 108 }}
+          // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
+        >
+          <FormattedMessage id="mt.rujin" />
+        </Button>
 
         {/* 消息管理 */}
         <Message theme={theme} />

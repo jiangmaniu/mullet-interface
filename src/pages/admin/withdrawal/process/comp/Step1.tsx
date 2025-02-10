@@ -1,11 +1,15 @@
-import { ProForm, ProFormText } from '@ant-design/pro-components'
-import { FormattedMessage } from '@umijs/max'
+import { ProForm } from '@ant-design/pro-components'
+import { FormattedMessage, useParams, useSearchParams } from '@umijs/max'
 import { Button, Form } from 'antd'
 import { FormInstance } from 'antd/lib'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
 
+import ProFormText from '@/components/Admin/Form/ProFormText'
+import { stores, useStores } from '@/context/mobxProvider'
+import { observer } from 'mobx-react'
+import { useMemo } from 'react'
 import { transferCurr } from '..'
 import TransferAmount from './TransferAmount'
 import TransferFormSelectItem from './TransferFormSelectItem'
@@ -13,17 +17,15 @@ import TransferMethodSelectItem from './TransferMethodSelectItem'
 import TransferToBankItem from './TransferToBankItem'
 import TransferToCryptoItem from './TransferToCryptoItem'
 
-export const Step1 = ({
+const Step1 = ({
   form,
   loading,
-  methodInfo,
   currentUser,
   fromAccountInfo,
   handleSubmit
 }: {
   form: FormInstance<any>
   loading: boolean
-  methodInfo?: Wallet.WithdrawMethod
   currentUser?: User.UserInfo
   fromAccountInfo?: User.AccountItem
   handleSubmit: () => void
@@ -31,12 +33,40 @@ export const Step1 = ({
   const amount = Form.useWatch('amount', form)
   const currency = Form.useWatch('currency', form)
 
+  const { trade } = useStores()
+  const { currentAccountInfo } = trade
+
+  const methodId = Form.useWatch('methodId', form)
+
+  const methods = stores.wallet.withdrawalMethods
+
+  const methodInfo = useMemo(() => {
+    return methods.find((item) => item.id === methodId)
+  }, [methodId, methods])
+
+  const params = useParams()
+  const method = params?.method as string
+
+  // 手续费
+  const handlingFee = Form.useWatch('handlingFee', form)
+  // 实际到账金额
+  const actualAmount = Form.useWatch('actualAmount', form)
+
+  const [searchParams] = useSearchParams()
+  const tradeAccountId = searchParams.get('tradeAccountId') as string
+  console.log('tradeAccountId', tradeAccountId)
+
   return (
     <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
       <div className="flex-1 form-item-divider-left flex-shrink min-w-[340px] max-w-[700px]">
         <ProForm
           onFinish={async (values: Account.TransferAccountParams) => {
             return
+          }}
+          initialValues={{
+            methodId: method,
+            fromAccountId: tradeAccountId || currentAccountInfo.id,
+            type: 'crypto'
           }}
           disabled={loading}
           submitter={false}
@@ -53,11 +83,12 @@ export const Step1 = ({
           <ProFormText name="chain" hidden />
           <ProFormText name="name" hidden />
           <ProFormText name="bankName" hidden />
+          <ProFormText name="actualAmount" hidden />
 
-          <TransferMethodSelectItem form={form} methodInfo={methodInfo} />
+          <TransferMethodSelectItem form={form} type={methodInfo?.type} tips={methodInfo?.tips} />
           <TransferFormSelectItem form={form} />
 
-          {methodInfo?.type === 'crypto' ? <TransferToCryptoItem form={form} /> : <TransferToBankItem form={form} />}
+          {methodInfo?.type === 'bank' ? <TransferToBankItem form={form} /> : <TransferToCryptoItem form={form} />}
 
           <TransferAmount form={form} currentUser={currentUser} />
 
@@ -73,7 +104,7 @@ export const Step1 = ({
             </span>
             <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
             <span className="flex-shrink-0">
-              {transferCurr(amount)} {currency}
+              {formatNum(transferCurr(handlingFee), { precision: 2 })} {currency}
             </span>
           </div>
           <div className="text-secondary text-sm  flex flex-row items-center justify-between gap-4">
@@ -82,7 +113,7 @@ export const Step1 = ({
             </span>
             <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
             <span className="flex-shrink-0">
-              {formatNum(transferCurr(amount), { precision: fromAccountInfo?.currencyDecimal })} {currency}
+              {formatNum(transferCurr(actualAmount), { precision: fromAccountInfo?.currencyDecimal })} {currency}
             </span>
           </div>
         </ProForm>
@@ -104,3 +135,5 @@ export const Step1 = ({
     </div>
   )
 }
+
+export default observer(Step1)

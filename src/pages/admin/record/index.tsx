@@ -20,7 +20,8 @@ import Withdrawal from './comp/Withdrawal'
 export type IParams = {
   startTime?: string
   endTime?: string
-  accountId: any
+  tradeAccountId?: any
+  accountId?: any
 }
 
 type ITabKey = 'deposit' | 'withdrawal' | 'transfer'
@@ -68,7 +69,7 @@ export default function Record() {
   const searchKey = searchParams.get('key') as ITabKey
 
   useEffect(() => {
-    setParams({ ...params, accountId: accountList?.[0]?.id })
+    setParams({ ...params, tradeAccountId: accountList?.[0]?.id })
   }, [accountList])
 
   useEffect(() => {
@@ -118,13 +119,13 @@ export default function Record() {
             options={accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))}
             placeholder={intl.formatMessage({ id: 'mt.xuanzezhanghu' })}
             fieldProps={{
-              value: params.accountId,
+              value: params.tradeAccountId,
               allowClear: false,
               size: 'middle',
               onChange: (value: any) => {
                 setParams({
                   ...params,
-                  accountId: value
+                  tradeAccountId: value
                 })
               }
             }}
@@ -149,7 +150,7 @@ export default function Record() {
       {tabKey === 'withdrawal' && <Withdrawal params={params} onSelectItem={onSelectItem} />}
       {tabKey === 'transfer' && <Transfer params={params} />}
 
-      {/* 实名认证成功弹窗 */}
+      {/* 消息弹窗 */}
       <InfoModal ref={modalRef} item={selectedItem} />
     </PageContainer>
   )

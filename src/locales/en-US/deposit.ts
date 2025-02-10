@@ -11,6 +11,8 @@ export default {
   'mt.chongbidizhi': 'Deposit currency address',
   'mt.qingzhuanzhangzhixiafangqukuailiandizhi':
     'If you need to deposit, please transfer to the blockchain address below. You can copy the address or use your phone camera to scan the QR code',
+  'mt.qingzaishijianzhineiwanchengzhuanzhang': 'Please transfer within {value}',
+  'mt.chakanjindu': 'View progress',
   'mt.jixu': 'Continue',
   'mt.fuzhi': 'Copy',
   'mt.fuzhichenggong': 'Copy successful',

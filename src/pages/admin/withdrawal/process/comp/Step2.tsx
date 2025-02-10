@@ -1,6 +1,6 @@
 import { ProForm, ProFormText as RawProFormText } from '@ant-design/pro-components'
-import { FormattedMessage, getIntl } from '@umijs/max'
-import { Button } from 'antd'
+import { FormattedMessage, getIntl, useModel } from '@umijs/max'
+import { Button, Form, message } from 'antd'
 import { FormInstance } from 'antd/lib'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -10,96 +10,118 @@ import { CardContainer } from '@/pages/admin/copyTrading/comp/CardContainer'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
+import { sendCustomPhoneCode } from '@/services/api/user'
 import { transferCurr } from '..'
 
 export const Step2 = ({
   form,
-  values,
   fromAccountInfo,
   loading,
   setStep,
   handleSubmit
 }: {
   form: FormInstance<any>
-  values?: Record<string, any>
   fromAccountInfo?: User.AccountItem
   loading?: boolean
   setStep: (step: number) => void
   handleSubmit: () => void
 }) => {
+  const currency = Form.useWatch('currency', form)
+  const chain = Form.useWatch('chain', form)
+  const type = Form.useWatch('type', form)
+  const toAccountId = Form.useWatch('toAccountId', form)
+  const name = Form.useWatch('name', form)
+  const bankName = Form.useWatch('bankName', form)
+  const amount = Form.useWatch('amount', form)
+  const handlingFee = Form.useWatch('handlingFee', form)
+
   const options = useMemo(() => {
     return [
       {
         label: getIntl().formatMessage({ id: 'mt.bizhong' }),
-        value: values?.currency
+        value: currency
       },
       {
         label: getIntl().formatMessage({ id: 'mt.lianmingcheng' }),
-        value: values?.chain
+        value: chain
       },
-      ...(values?.type === 'crypto'
+      ...(type === 'crypto'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.tibidizhi' }),
-              value: values?.toAccountId
+              value: toAccountId
             }
           ]
         : []),
       {
         label: getIntl().formatMessage({ id: 'mt.xingming' }),
-        value: values?.name
+        value: name
       },
       {
         label: getIntl().formatMessage({ id: 'mt.yinghangmingcheng' }),
-        value: values?.bankName
+        value: bankName
       },
-      ...(values?.type === 'bank'
+      ...(type === 'bank'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.yinghangzhanghu' }),
-              value: values?.toAccountId
+              value: toAccountId
             }
           ]
         : []),
       {
         label: getIntl().formatMessage({ id: 'mt.tixianjine' }),
-        value: `${formatNum(values?.amount, { precision: fromAccountInfo?.currencyDecimal })} ${values?.currency}`
+        value: `${formatNum(amount, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
       },
       {
         label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
-        value: `${formatNum(values?.handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${values?.currency}`
+        value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
       },
-      ...(values?.type === 'crypto'
+      ...(type === 'crypto'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.shijidaozhang' }),
-              value: `${formatNum(transferCurr(values?.amount - values?.handlingFee), { precision: fromAccountInfo?.currencyDecimal })} ${
-                values?.currency
-              }`
+              value: `${formatNum(transferCurr(amount - handlingFee), { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
             }
           ]
         : [
             {
               label: getIntl().formatMessage({ id: 'mt.daozhangusd' }),
-              value: `${formatNum(values?.amount - values?.handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${
-                values?.currency
-              }`
+              value: `${formatNum(amount - handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
             },
             {
-              label: getIntl().formatMessage({ id: 'mt.daozhanghuansuan' }, { value: values?.currency }),
-              value: `${formatNum(transferCurr(values?.amount - values?.handlingFee), { precision: fromAccountInfo?.currencyDecimal })} ${
-                values?.currency
-              }`
+              label: getIntl().formatMessage({ id: 'mt.daozhanghuansuan' }, { value: currency }),
+              value: `${formatNum(transferCurr(amount - handlingFee), { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
             }
           ])
     ]
-  }, [values])
+  }, [currency, chain, type, toAccountId, name, bankName, amount, handlingFee])
 
   const [sendTime, setSendTime] = useState(0)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  console.log('currentUser', currentUser)
+
   const handleGetVerificationCode = async () => {
     if (sendTime > 0) return
-    setSendTime(60)
+
+    if (!currentUser?.userInfo?.phone) {
+      message.info(getIntl().formatMessage({ id: 'mt.qingxianwanshankycrenzheng' }))
+      return
+    }
+
+    sendCustomPhoneCode({
+      phone: currentUser?.userInfo?.phone,
+      phoneAreaCode: currentUser?.userInfo?.phoneAreaCode
+    })
+      .then((res) => {
+        res.success && setSendTime(60)
+      })
+      .catch((err) => {
+        console.log('err', err)
+      })
   }
 
   useEffect(() => {

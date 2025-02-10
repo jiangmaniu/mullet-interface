@@ -6,7 +6,7 @@ import { observer } from 'mobx-react'
 
 import ProList from '@/components/Admin/ProList'
 import Iconfont from '@/components/Base/Iconfont'
-import { getDepositMethodList } from '@/services/api/wallet'
+import { getWithdrawalOrderList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
@@ -23,63 +23,67 @@ function Withdrawal({ params, onSelectItem }: IProps) {
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList || []
 
-  const mockList: Wallet.DepositRecord[] = [
-    {
-      icon: '',
-      orderId: '2042197400471',
-      createTime: '2024-12-04 14:59:59',
-      amount: 1000,
-      type: 'crypto',
-      currency: 'USDT',
-      chain: 'ERC 20',
-      status: 'pending',
-      toAccountId: '1859151139088416770'
-    },
-    {
-      icon: '',
-      orderId: '2042197400472',
-      createTime: '2024-12-04 14:59:59',
-      amount: 1000,
-      type: 'bank',
-      currency: 'USD',
-      bank: 'Bank of America',
-      status: 'finished',
-      toAccountId: '1826513486237188098'
-    },
-    {
-      icon: '',
-      orderId: '2042197400473',
-      createTime: '2024-12-04 14:59:59',
-      amount: 1000,
-      type: 'bank',
-      currency: 'USD',
-      bank: 'Bank of America',
-      status: 'failed',
-      toAccountId: '1826513486237188098'
-    },
-    {
-      icon: '',
-      orderId: '2042197400474',
-      createTime: '2024-12-04 14:59:59',
-      amount: 1000,
-      type: 'bank',
-      currency: 'USD',
-      bank: 'Bank of America',
-      status: 'beginning',
-      toAccountId: '1826513486237188098'
-    }
-  ]
+  // const mockList: Wallet.DepositRecord[] = [
+  //   {
+  //     icon: '',
+  //     orderId: '2042197400471',
+  //     createTime: '2024-12-04 14:59:59',
+  //     amount: 1000,
+  //     type: 'crypto',
+  //     currency: 'USDT',
+  //     chain: 'ERC 20',
+  //     status: 'pending',
+  //     toAccountId: '1859151139088416770'
+  //   },
+  //   {
+  //     icon: '',
+  //     orderId: '2042197400472',
+  //     createTime: '2024-12-04 14:59:59',
+  //     amount: 1000,
+  //     type: 'bank',
+  //     currency: 'USD',
+  //     bank: 'Bank of America',
+  //     status: 'finished',
+  //     toAccountId: '1826513486237188098'
+  //   },
+  //   {
+  //     icon: '',
+  //     orderId: '2042197400473',
+  //     createTime: '2024-12-04 14:59:59',
+  //     amount: 1000,
+  //     type: 'bank',
+  //     currency: 'USD',
+  //     bank: 'Bank of America',
+  //     status: 'failed',
+  //     toAccountId: '1826513486237188098'
+  //   },
+  //   {
+  //     icon: '',
+  //     orderId: '2042197400474',
+  //     createTime: '2024-12-04 14:59:59',
+  //     amount: 1000,
+  //     type: 'bank',
+  //     currency: 'USD',
+  //     bank: 'Bank of America',
+  //     status: 'beginning',
+  //     toAccountId: '1826513486237188098'
+  //   }
+  // ]
 
   const onQuery = async (params: IParams) => {
-    if (!params.accountId) return
-    const data = await getDepositMethodList({ current: 1, size: 10, ...params })
+    if (!params.tradeAccountId) return
+    const data = await getWithdrawalOrderList({
+      // current: 1,
+      // size: 10,
+      startTime: params.startTime,
+      endTime: params.endTime,
+      tradeAccountId: params.tradeAccountId as string
+    })
 
     const res = data.data
-    // const total = res?.total
-    // const list = res?.records || []
 
-    let total = 2
-    let list = mockList
+    let total = res?.total
+    let list = res?.records || []
     return { data: list, total, success: true }
   }
 
@@ -108,32 +112,23 @@ function Withdrawal({ params, onSelectItem }: IProps) {
                   <FormattedMessage id="mt.chujin" />
                 </div>
                 <div className="text-secondary text-xs">
-                  <FormattedMessage id="mt.danhao" />:{item.orderId}
+                  <FormattedMessage id="mt.danhao" />:{item.orderNo}
                 </div>
               </div>
             </div>
             <div className=" flex flex-row gap-2 md:gap-3 items-center  justify-center flex-grow">
               <div className="flex flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden flex-shrink ">
                 <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-                  {accountList.find((v) => v.id === item.toAccountId)?.synopsis?.abbr}
+                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
                 </div>
                 <span className=" text-nowrap text-ellipsis overflow-hidden">
-                  {accountList.find((v) => v.id === item.toAccountId)?.synopsis?.name}
+                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.name}
                 </span>
               </div>
               <div>
                 <Iconfont name="zhixiang" width={14} color="black" height={14} />
               </div>
-              <div className="text-end ">
-                {item.type === 'crypto' ? (
-                  <span>
-                    {item.currency}
-                    {item.chain}
-                  </span>
-                ) : (
-                  <span>{item.bank}</span>
-                )}
-              </div>
+              <div className="text-end ">{item.type === 'bank' ? <span>{item.bank}</span> : <span>{item.baseCurrency}</span>}</div>
             </div>
             <div className="text-start min-w-[100px] flex flex-row gap-2" onClick={(e) => e.stopPropagation()}>
               {/* @ts-ignore */}
@@ -141,12 +136,12 @@ function Withdrawal({ params, onSelectItem }: IProps) {
                 <span
                   className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'pending' && 'animate-pulse')}
                   // @ts-ignore
-                  style={{ backgroundColor: statusMap[item.status].color }}
+                  style={{ backgroundColor: statusMap[item.status]?.color || '#9C9C9C' }}
                 >
                   {/*  */}
                 </span>
                 {/* @ts-ignore */}
-                {statusMap[item.status].text}
+                {statusMap[item.status]?.text || '[status]'}
               </div>
               {item.status === 'beginning' && (
                 <Popconfirm
@@ -164,7 +159,7 @@ function Withdrawal({ params, onSelectItem }: IProps) {
               )}
             </div>
             <div className="text-end min-w-[150px] text-base  md:text-xl font-bold">
-              {formatNum(item.amount)} {item.currency}
+              {formatNum(item.baseOrderAmount)} {item.baseCurrency}
             </div>
           </div>
         </div>

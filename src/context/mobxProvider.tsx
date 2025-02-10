@@ -1,9 +1,9 @@
 import React from 'react'
 
-import depositStore from '../mobx/deposit/index'
 import globalStore from '../mobx/global'
 import klineStore from '../mobx/kline'
 import tradeStore from '../mobx/trade'
+import walletStore from '../mobx/wallet/index'
 import wsStore from '../mobx/ws'
 
 class Stores {
@@ -11,7 +11,7 @@ class Stores {
   global = globalStore
   trade = tradeStore
   kline = klineStore
-  deposit = depositStore
+  wallet = walletStore
 }
 export const stores = new Stores()
 

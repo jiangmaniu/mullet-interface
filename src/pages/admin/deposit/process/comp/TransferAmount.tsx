@@ -7,7 +7,7 @@ import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 type IProps = {
   form: FormInstance
   currentUser?: User.UserInfo
-  methodInfo?: Wallet.DepositMethod
+  methodInfo?: Wallet.fundsMethodPageListItem
 }
 
 export default function TransferAmount({ form, currentUser, methodInfo }: IProps) {

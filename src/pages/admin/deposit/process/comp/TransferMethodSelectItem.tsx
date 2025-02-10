@@ -1,29 +1,34 @@
-import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
-import classNames from 'classnames'
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
+import classNames from 'classnames'
+import { observer } from 'mobx-react'
 
 type IProps = {
   form: FormInstance
-  methodInfo?: Wallet.DepositMethod
+  tips?: string
 }
 
 /**转入表单项 */
-export default function TransferMethodSelectItem({ form, methodInfo }: IProps) {
+function TransferMethodSelectItem({ form, tips }: IProps) {
   const [open, setOpen] = useState(false)
   const intl = useIntl()
-  const { initialState } = useModel('@@initialState')
-
-  const currentUser = initialState?.currentUser
-  const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
 
   // const fromAccountId = Form.useWatch('fromAccountId', form) // 转出
   const methodId = Form.useWatch('methodId', form) // 转入
-  // const methodInfo = stores.deposit.methods.find((item) => item.title === methodId) // 转入账号信息
+
+  const methods = stores.wallet.depositMethods
+  useLayoutEffect(() => {
+    if (methods.length === 0) {
+      const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
+      stores.wallet.getDepositMethods({ language })
+      return
+    }
+  }, [methods, intl])
 
   return (
     <div>
@@ -52,7 +57,6 @@ export default function TransferMethodSelectItem({ form, methodInfo }: IProps) {
           listHeight: 300,
           optionRender: (option) => {
             const item = option?.data || {}
-
             return (
               <div
                 onClick={() => {
@@ -62,7 +66,7 @@ export default function TransferMethodSelectItem({ form, methodInfo }: IProps) {
                   'bg-[#f5f5f5]': item.id === methodId
                 })}
               >
-                <div className="flex w-full py-2 ml-[10px]">{item.title}</div>
+                <div className="flex w-full py-2 ml-[10px]">{item.label}</div>
               </div>
             )
           },
@@ -80,22 +84,26 @@ export default function TransferMethodSelectItem({ form, methodInfo }: IProps) {
             }
           }
         ]}
-        options={stores.deposit.depositMethods.map((item) => ({
+        options={methods.map((item) => ({
           // ...item,
           value: item.id,
           label: (
-            <div className="flex justify-between w-full gap-2">
-              <img src={item.icon} alt="" className="w-5 h-5 rounded-full bg-gray" />
-              <div className="flex-1 text-sm font-bold text-primary truncate">{item.title}</div>
+            <div className="flex justify-start w-full gap-2">
+              <img src={item.icon} alt="" className="w-5 h-5 rounded-full overflow-hidden bg-gray" />
+              <div className="flex-1 text-sm font-bold text-primary truncate">
+                {item.channelRevealName}&nbsp;({item.channelNo})
+              </div>
             </div>
           )
         }))}
       />
-      {methodInfo?.tips && (
+      {tips && (
         <div className="text-xs bg-gray-120 rounded-lg py-2 px-2.5 mt-2.5">
-          <div dangerouslySetInnerHTML={{ __html: methodInfo?.tips || '' }} />
+          <div dangerouslySetInnerHTML={{ __html: tips || '' }} />
         </div>
       )}
     </div>
   )
 }
+
+export default observer(TransferMethodSelectItem)

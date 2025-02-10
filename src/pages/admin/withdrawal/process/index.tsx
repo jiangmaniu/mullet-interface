@@ -1,18 +1,18 @@
 import './index.less'
 
-import { PageLoading } from '@ant-design/pro-components'
-import { FormattedMessage, useModel, useParams } from '@umijs/max'
+import { PageLoading, useIntl } from '@ant-design/pro-components'
+import { FormattedMessage, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { md5 } from 'js-md5'
-import { useEffect, useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import { stores } from '@/context/mobxProvider'
-import { confirmWithdrawOrder, generateWithdrawOrder } from '@/services/api/wallet'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
-import { Step1 } from './comp/Step1'
+import { generateWithdrawOrder } from '@/services/api/wallet'
+import { md5 } from 'js-md5'
+import Step1 from './comp/Step1'
 import { Step2 } from './comp/Step2'
 import { Step3 } from './comp/Step3'
 
@@ -27,46 +27,19 @@ export const transferCurr = (value?: number) => {
 export default function WithdrawalProcess() {
   const [form] = Form.useForm()
 
-  const params = useParams()
-  const method = params?.method as string
+  const methods = stores.wallet.depositMethods
+  const intl = useIntl()
+
+  useLayoutEffect(() => {
+    if (methods.length === 0) {
+      const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
+      stores.wallet.getWithdrawalMethods({ language })
+      return
+    }
+  }, [methods, intl])
 
   const methodId = Form.useWatch('methodId', form)
   const fromAccountId = Form.useWatch('fromAccountId', form)
-
-  useEffect(() => {
-    if (form) {
-      form.setFieldValue('methodId', method)
-    }
-  }, [form])
-
-  const methodInfo = useMemo(() => {
-    return stores.deposit.withdrawalMethods.find((item) => item.id === methodId)
-  }, [methodId])
-
-  useEffect(() => {
-    if (form && methodInfo) {
-      // form.setFieldValue('address', methodInfo?.address)
-      // 20241202：默认选择 USD, 目前只有 USD 币种；
-      form.setFieldValue('type', methodInfo.type)
-      form.setFieldValue('methodId', methodInfo.id)
-
-      // 设置链信息
-      if (methodInfo.type === 'crypto') {
-        form.setFieldValue('currency', methodInfo?.options?.crypto?.value)
-        form.setFieldValue('chain', methodInfo?.options?.chain?.value)
-        form.setFieldValue('name', undefined)
-        form.setFieldValue('bankName', undefined)
-      }
-
-      // 设置用户银行卡信息
-      if (methodInfo.type === 'bank') {
-        form.setFieldValue('currency', 'USD')
-        form.setFieldValue('chain', undefined)
-        form.setFieldValue('name', 'username') // user.bankList.find(v => v.id === toAccountId)?.name
-        form.setFieldValue('bankName', methodInfo?.options?.bankName?.value)
-      }
-    }
-  }, [form, methodInfo])
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
@@ -77,34 +50,34 @@ export default function WithdrawalProcess() {
 
   const [step, setStep] = useState(0)
 
-  const [values, setValues] = useState<Record<string, any> | undefined>(undefined)
+  // const [values, setValues] = useState<Record<string, any> | undefined>(undefined)
   const handleSubmit0 = async () => {
     form
       .validateFields()
       .then((values) => {
-        setLoading(true)
-        generateWithdrawOrder({
-          methodId: values.methodId,
-          fromAccountId: values.fromAccountId,
-          toAccountId: values.toAccountId,
-          currency: values.currency,
-          amount: values.amount,
-          remark: values.remark
-        })
-          .then((res) => {
-            // 回填生成的订单 id
-            form.setFieldValue('orderId', res?.data?.id ?? 'xxxx')
+        setStep(1)
+        // generateWithdrawOrder({
+        //   address: values.toAccountId,
+        //   baseOrderAmount: values.amount,
+        //   channelId: values.methodId,
+        //   password: values.password,
+        //   phoneCode: values.code,
+        //   tradeAccountId: values.fromAccountId,
+        // })
+        //   .then((res) => {
+        //     // 回填生成的订单 id
+        //     form.setFieldValue('orderId', res?.data?.id ?? 'xxxx')
 
-            setValues({
-              ...values,
-              orderId: res?.data?.id ?? 'xxxx'
-            })
+        //     setValues({
+        //       ...values,
+        //       orderId: res?.data?.id ?? 'xxxx'
+        //     })
 
-            setStep(1)
-          })
-          .finally(() => {
-            setLoading(false)
-          })
+        //     setStep(1)
+        //   })
+        //   .finally(() => {
+        //     setLoading(false)
+        //   })
       })
       .catch((err) => {
         console.log('err', err)
@@ -117,18 +90,43 @@ export default function WithdrawalProcess() {
       .then((values) => {
         setLoading(true)
 
-        confirmWithdrawOrder({
-          orderId: values.orderId,
-          password: md5(values.password as string),
-          code: values.code
+        generateWithdrawOrder({
+          address: values.toAccountId,
+          baseOrderAmount: values.amount,
+          channelId: values.methodId,
+          password: md5(values.password),
+          phoneCode: values.code,
+          tradeAccountId: values.fromAccountId
         })
           .then((res) => {
-            // push('/withdrawal/order')
-            setStep(2)
+            console.log('res', res)
+
+            // 回填生成的订单 id
+            // form.setFieldValue('orderId', res?.data?.id ?? 'xxxx')
+
+            // setValues({
+            //   ...values,
+            //   orderId: res?.data?.id ?? 'xxxx'
+            // })
+
+            // setStep(1)
           })
           .finally(() => {
             setLoading(false)
           })
+
+        // confirmWithdrawOrder({
+        //   orderId: values.orderId,
+        //   password: md5(values.password as string),
+        //   code: values.code
+        // })
+        //   .then((res) => {
+        //     // push('/withdrawal/order')
+        //     setStep(2)
+        //   })
+        //   .finally(() => {
+        //     setLoading(false)
+        //   })
       })
       .catch((err) => {
         console.log('err', err)
@@ -160,25 +158,11 @@ export default function WithdrawalProcess() {
         </div>
       )}
       <div className={cn(step === 0 ? 'block' : 'hidden')}>
-        <Step1
-          form={form}
-          loading={loading}
-          methodInfo={methodInfo}
-          currentUser={currentUser}
-          fromAccountInfo={fromAccountInfo}
-          handleSubmit={handleSubmit0}
-        />
+        <Step1 form={form} loading={loading} currentUser={currentUser} fromAccountInfo={fromAccountInfo} handleSubmit={handleSubmit0} />
       </div>
       <div className="flex flex-col gap-21">
         <div className={cn(step === 1 ? 'block' : 'hidden')}>
-          <Step2
-            form={form}
-            values={values}
-            fromAccountInfo={fromAccountInfo}
-            loading={loading}
-            setStep={setStep}
-            handleSubmit={handleSubmit1}
-          />
+          <Step2 form={form} fromAccountInfo={fromAccountInfo} loading={loading} setStep={setStep} handleSubmit={handleSubmit1} />
         </div>
         <div className={cn(step === 2 ? 'block' : 'hidden')}>
           <Step3 handleSubmit={handleSubmit2} />
