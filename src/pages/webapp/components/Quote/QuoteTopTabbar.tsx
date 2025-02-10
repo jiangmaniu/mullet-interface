@@ -51,22 +51,22 @@ type ITabbarProps = {
 
 const getTabList = () => {
   const ENV = getEnv()
+  const isSux = ENV.platform === 'sux'
   return [
     { key: 'FAVORITE', value: 'FAVORITE', title: getIntl().formatMessage({ id: 'common.operate.Favorite' }) },
-    ...(ENV.enableQuoteCategoryAllTab ? [{ key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) }] : []),
+    ...(isSux ? [{ key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) }] : []),
     { key: 'CRYPTO', value: '10', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Crypto' }) },
     { key: 'COMMODITIES', value: '20', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Commodities' }) },
     { key: 'FOREX', value: '30', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Forex' }) },
     { key: 'INDICES', value: '40', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Indices' }) },
-    ...(ENV.enableQuoteCategorySTOCKTab
-      ? [{ key: 'STOCK', value: '50', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Stock' }) }]
-      : [])
+    ...(isSux ? [{ key: 'STOCK', value: '50', title: getIntl().formatMessage({ id: 'common.SymbolCategory.Stock' }) }] : [])
   ]
 }
 
 const GET_DEFAULT_TAB_KEY = () => {
   const ENV = getEnv()
-  const DEFAULT_TAB_KEY = ENV.enableQuoteCategorySTOCKTab ? 'ALL' : 'CRYPTO'
+  const isSux = ENV.platform === 'sux'
+  const DEFAULT_TAB_KEY = isSux ? 'ALL' : 'CRYPTO'
   return DEFAULT_TAB_KEY
 }
 

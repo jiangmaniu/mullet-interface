@@ -175,7 +175,7 @@ class KlineStore {
           size: isPCByWidth() ? 500 : 200, // 条数
           klineType, // 时间类型
           // klineTime: to + 8 * 60 * 60 // 查询截止时间之前的k线数据
-          klineTime: ENV.isChinaTimeZone ? to : to + 8 * 60 * 60 // lyn国内运营 东八区
+          klineTime: ENV.platform === 'lyn' ? to : to + 8 * 60 * 60 // lyn国内运营 东八区
         }
       })
         .catch((e) => e)
@@ -231,7 +231,7 @@ class KlineStore {
           runInAction(() => {
             const lastbar = bars.at(-1) // 最后一个数据
             // this.lastBarTime = bars[0]?.time / 1000 - 8 * 60 * 60 // 记录最后一次时间，用于作为请求k线的截止时间
-            this.lastBarTime = ENV.isChinaTimeZone ? bars[0]?.time / 1000 : bars[0]?.time / 1000 - 8 * 60 * 60
+            this.lastBarTime = ENV.platform === 'lyn' ? bars[0]?.time / 1000 : bars[0]?.time / 1000 - 8 * 60 * 60
             this.lastbar = lastbar
           })
         } else {
@@ -242,9 +242,8 @@ class KlineStore {
       this.getHttpHistoryBars(symbolInfo, resolution, from, this.lastBarTime, countBack).then((bars) => {
         if (bars?.length) {
           // if (this.lastBarTime === bars[0]?.time / 1000 - 8 * 60 * 60) {
-          const timeFlag = ENV.isChinaTimeZone
-            ? this.lastBarTime === bars[0]?.time / 1000
-            : this.lastBarTime === bars[0]?.time / 1000 - 8 * 60 * 60
+          const timeFlag =
+            ENV.platform === 'lyn' ? this.lastBarTime === bars[0]?.time / 1000 : this.lastBarTime === bars[0]?.time / 1000 - 8 * 60 * 60
           if (timeFlag) {
             this.datafeedBarCallbackObj.onHistoryCallback([], { noData: true })
           } else if (bars.length) {
@@ -252,7 +251,7 @@ class KlineStore {
           }
           runInAction(() => {
             // this.lastBarTime = bars[0]?.time / 1000 - 8 * 60 * 60 // 记录最后一次时间，用于作为请求k线的截止时间
-            this.lastBarTime = ENV.isChinaTimeZone ? bars[0]?.time / 1000 : bars[0]?.time / 1000 - 8 * 60 * 60
+            this.lastBarTime = ENV.platform === 'lyn' ? bars[0]?.time / 1000 : bars[0]?.time / 1000 - 8 * 60 * 60
           })
         } else {
           this.datafeedBarCallbackObj.onHistoryCallback(bars, { noData: true })

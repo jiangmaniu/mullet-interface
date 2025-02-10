@@ -14,7 +14,8 @@ type IProps = {
 
 function CategoryTabs({ onChange, activeKey }: IProps) {
   const ENV = getEnv()
-  const DEFAULT_CURRENT = ENV.enableQuoteCategoryAllTab ? '0' : '10'
+  const isSux = ENV.platform === 'sux'
+  const DEFAULT_CURRENT = isSux ? '0' : '10'
 
   const [current, setCurrent] = useState(DEFAULT_CURRENT)
   const { trade } = useStores()

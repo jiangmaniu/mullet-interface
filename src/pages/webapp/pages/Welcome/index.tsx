@@ -145,7 +145,7 @@ export default function WelcomeScreen() {
   const [disabled, setDisabled] = useState(false)
 
   const footers = {
-    login: ENV.enableWebAppLogin && <Footer setSection={setSection} />,
+    login: ENV.platform === 'lyn' && <Footer setSection={setSection} />,
     forgotPassword: <FooterForgotPassword handleSubmit={handleSubmit} disabled={disabled} />,
     resetPassword: <FooterResetPassword handleSubmit={handleSubmit} disabled={disabled} />
   }

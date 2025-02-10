@@ -781,9 +781,10 @@ class TradeStore {
     if (res.success) {
       runInAction(() => {
         const data = res?.data || []
-        this.symbolCategory = ENV.enableQuoteCategoryAllTab
-          ? [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...data]
-          : [...data.slice(0, -1)]
+        this.symbolCategory =
+          ENV.platform === 'sux'
+            ? [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...data]
+            : [...data.slice(0, -1)]
       })
     }
   }
