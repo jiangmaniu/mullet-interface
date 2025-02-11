@@ -4,19 +4,18 @@ import { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useMemo, us
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useTrade from '@/hooks/useTrade'
 import CheckBox from '@/pages/webapp/components/Base/CheckBox'
 import InputNumber from '@/pages/webapp/components/Base/Form/InputNumber'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { formatNum } from '@/utils'
 
+import useSpSl from '@/pages/webapp/hooks/trade/useSpSl'
 import PriceAmountModal, { PriceAmountModalRef } from '../PriceAmountModal'
 
 const RenderSpPriceAmountModal = forwardRef((_, ref: ForwardedRef<PriceAmountModalRef>) => {
-  const { setSpPriceOrAmountType, spPriceOrAmountType } = useTrade({
-    //   initialized: true
-  })
+  const { setSpPriceOrAmountType, spPriceOrAmountType } = useSpSl()
+
   const valueKey = spPriceOrAmountType
   const modalRef = useRef<PriceAmountModalRef>(null)
   useImperativeHandle(ref, () => ({
@@ -40,9 +39,7 @@ const RenderSpPriceAmountModal = forwardRef((_, ref: ForwardedRef<PriceAmountMod
 })
 
 const RenderSlPriceAmountModal = forwardRef((_, ref: ForwardedRef<PriceAmountModalRef>) => {
-  const { setSlPriceOrAmountType, slPriceOrAmountType } = useTrade({
-    // initialized: true
-  })
+  const { setSlPriceOrAmountType, slPriceOrAmountType } = useSpSl()
   const valueKey = slPriceOrAmountType
   const modalRef = useRef<PriceAmountModalRef>(null)
 
@@ -69,14 +66,13 @@ const RenderSlPriceAmountModal = forwardRef((_, ref: ForwardedRef<PriceAmountMod
 // 交易页面非全屏模式止盈止损
 function NonFullModeSpSl() {
   const { trade } = useStores()
-  const { orderSpslChecked, setOrderSpslChecked, orderType } = trade
-  const { cn, theme } = useTheme()
+  const { orderSpslChecked, setOrderSpslChecked } = trade
+  const { cn } = useTheme()
   const intl = useIntl()
 
   const {
     showSpScopeRedColor,
     showSlScopeRedColor,
-    setInputing,
     d,
     step,
     sp_scope,
@@ -98,7 +94,7 @@ function NonFullModeSpSl() {
     onSpMinus,
     onSlAdd,
     onSlMinus
-  } = useTrade()
+  } = useSpSl()
 
   const spVal = useMemo(() => {
     return spPriceOrAmountType === 'PRICE' ? spValuePrice : spValueEstimateRaw
@@ -189,10 +185,6 @@ function NonFullModeSpSl() {
                   // controls={false}
                   // textAlign="left"
                   textAlign="center"
-                  onFocus={() => {
-                    console.log('onFocus')
-                    setInputing(true)
-                  }}
                   fixedTrigger="onChange"
                   step={step}
                   placeholder={intl.formatMessage({ id: 'pages.trade.Sp' })}
@@ -263,9 +255,6 @@ function NonFullModeSpSl() {
                   // controls={false}
                   // textAlign="left"
                   textAlign="center"
-                  onFocus={() => {
-                    setInputing(true)
-                  }}
                   step={step}
                   fixedTrigger="onChange"
                   placeholder={

@@ -52,8 +52,9 @@ const TriggerDom = observer(({ showQuotePercent, onClick }: IProps) => {
 })
 
 function SelectSymbolBtn({ showQuotePercent }: IProps) {
-  const { cn, theme } = useTheme()
+  const { cn } = useTheme()
   const selectSymbolModalRef = useRef<SelectSymbolModalRef>(null)
+  const { trade } = useStores()
 
   return (
     <>
@@ -61,7 +62,12 @@ function SelectSymbolBtn({ showQuotePercent }: IProps) {
         <TriggerDom showQuotePercent={showQuotePercent} onClick={() => selectSymbolModalRef.current?.show()} />
         <SymbolFavoriteIcon />
       </View>
-      <SelectSymbolModal ref={selectSymbolModalRef} />
+      <SelectSymbolModal
+        ref={selectSymbolModalRef}
+        afterClose={() => {
+          trade.subscribeCurrentAndPositionSymbol({ cover: true })
+        }}
+      />
     </>
   )
 }

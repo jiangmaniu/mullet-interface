@@ -14,7 +14,7 @@ import QuoteTopTabbar, { SymbolTabbar, TabKey } from './QuoteTopTabbar'
 type IProps = {
   trigger?: JSX.Element
   from?: 'Quote'
-  beforeClose?: () => void
+  afterClose?: () => void
 }
 
 export type SelectSymbolModalRef = {
@@ -24,7 +24,7 @@ export type SelectSymbolModalRef = {
 }
 
 /** 选择品种列表弹窗 */
-function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: ForwardedRef<SelectSymbolModalRef>) {
+function SelectSymbolModal({ trigger, from, afterClose }: IProps, ref: ForwardedRef<SelectSymbolModalRef>) {
   const { cn, theme } = useTheme()
   const intl = useIntl()
   const [tabKey, setTabKey] = useState<TabKey>('ALL')
@@ -60,24 +60,24 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
   }))
 
   const { ws, trade } = useStores()
-  const symbolList = trade.symbolListAll
-  const activeSymbolName = trade.activeSymbolName
+  const { symbolListAll, positionList, activeSymbolName } = trade
+  // const symbolList = toJS(positionList).map((item) => item.symbol) as string[]
 
   // 当打开行情弹窗时，打开行情订阅
   useEffect(() => {
     // 使用 useFocusEffect 來確保頁面聚焦時顯示, 離開頁面時隱藏,
     // 优化卡顿问题
 
-    if (visible && symbolList.length) {
+    if (visible && symbolListAll.length) {
       setTimeout(() => {
-        console.log('selectSymbolselectSymbolselectSymbol 订阅行情')
+        console.log('selectSymbolselect 订阅行情')
         //  检查socket是否连接，如果未连接，则重新连接
         ws.checkSocketReady(() => {
           // 打开行情订阅
-          ws.openSymbol(
+          ws.openSymbol({
             // 构建参数
-            ws.makeWsSymbolBySemi(symbolList)
-          )
+            symbols: ws.makeWsSymbolBySemi(symbolListAll)
+          })
         })
       })
     }
@@ -86,14 +86,7 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
     //   // 离开弹窗时，取消行情订阅
     //   ws.debounceBatchCloseSymbol()
     // }
-  }, [visible, symbolList, activeSymbolName])
-
-  useEffect(() => {
-    return () => {
-      // 离开弹窗时，取消行情订阅
-      ws.debounceBatchCloseSymbol()
-    }
-  }, [])
+  }, [visible, symbolListAll, activeSymbolName])
 
   return (
     <SheetModal
@@ -109,7 +102,10 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
         setVisible(false)
         setSearchValue('')
         setTabKey('ALL')
-        beforeClose?.()
+
+        setTimeout(() => {
+          afterClose?.()
+        }, 50)
       }}
       dragOnContent={false}
       hiddenContentScroll
@@ -153,6 +149,7 @@ function SelectSymbolModal({ trigger, from, beforeClose }: IProps, ref: Forwarde
             }}
             tabKey={tabKey}
             tabValue={tabValue}
+            visible={visible}
             // tabIndex={tabIndex}
             position="MODAL"
             height={document.body.clientHeight - 185}

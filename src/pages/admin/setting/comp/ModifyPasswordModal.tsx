@@ -11,6 +11,7 @@ import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode 
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { onLogout, push } from '@/utils/navigator'
+import { md5 } from 'js-md5'
 
 type IProps = {
   trigger: JSX.Element
@@ -39,8 +40,6 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
       title={<FormattedMessage id="mt.xiugaimima" />}
       contentStyle={{ paddingInline: 20 }}
       onFinish={async (values: any) => {
-        console.log('values', values)
-
         const { newPassword, confirmNewPassword, validateCode } = values
 
         if (newPassword !== confirmNewPassword) {
@@ -52,7 +51,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
         const reqFn = isPhoneCheck ? forgetPasswordPhone : forgetPasswordEmail
         const res = await reqFn({
           emailOrPhone: currentUser?.account as string,
-          newPassword,
+          newPassword: md5(newPassword),
           validateCode
         })
         setSubmitLoading(false)

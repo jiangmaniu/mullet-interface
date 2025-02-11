@@ -26,20 +26,6 @@ function KLine() {
   const isOnline = networkState.online
 
   const { trade, ws } = useStores()
-  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
-
-  const handleSubscribe = () => {
-    // socket
-    setTimeout(() => {
-      ws.checkSocketReady(() => {
-        // 打开行情订阅
-        ws.openTrade(
-          // 构建参数
-          ws.makeWsSymbolBySemi([symbolInfo])[0]
-        )
-      })
-    })
-  }
 
   useEffect(() => {
     // 如果网络断开，在连接需要重新重新建立新的连接
@@ -49,20 +35,21 @@ function KLine() {
 
     if (isOnline) {
       setTimeout(() => {
-        handleSubscribe()
+        trade.subscribeCurrentAndPositionSymbol({ cover: true })
       }, 200)
     }
 
     return () => {
       // 离开当前页面的时候，取消行情订阅
-      ws.closeTrade()
+      // ws.closeTrade()
+      ws.closePosition()
     }
-  }, [symbolInfo, isOnline])
+  }, [isOnline])
 
   usePageVisibility(
     () => {
       // 用户从后台切换回前台时执行的操作
-      handleSubscribe()
+      trade.subscribeCurrentAndPositionSymbol({ cover: true })
     },
     () => {
       // 用户从前台切换到后台时执行的操作

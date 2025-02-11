@@ -1,33 +1,14 @@
 import { observer } from 'mobx-react'
-import { useCallback, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 import SwitchAccount from '../../components/Account/SwitchAccount'
 import { View } from '../../components/Base/View'
 import SelectSymbolBtn from '../../components/Quote/SelectSymbolBtn'
 import TradeView, { BottomButton } from '../../components/Trade/TradeView'
-import useFocusEffect from '../../hooks/useFocusEffect'
-import useIsFocused from '../../hooks/useIsFocused'
 import Basiclayout from '../../layouts/BasicLayout'
 
 function Trade() {
   const { cn, theme } = useTheme()
-
-  const [visible, setVisible] = useState(false)
-  const isFocused = useIsFocused()
-
-  useFocusEffect(
-    useCallback(() => {
-      // 使用 useFocusEffect 來確保頁面聚焦時顯示, 離開頁面時隱藏,
-      // 优化卡顿问题
-      setTimeout(() => {
-        setVisible(true)
-      }, 150)
-      return () => {
-        setVisible(false)
-      }
-    }, [])
-  )
 
   return (
     <Basiclayout

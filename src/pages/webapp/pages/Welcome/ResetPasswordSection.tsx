@@ -17,6 +17,7 @@ import { useEnv } from '@/context/envProvider'
 import { forgetPasswordEmail, forgetPasswordPhone } from '@/services/api/user'
 import { cn } from '@/utils/cn'
 import { useModel } from '@umijs/max'
+import { md5 } from 'js-md5'
 import { TextField } from '../../components/Base/Form/TextField'
 import { View } from '../../components/Base/View'
 import { useI18n } from '../../hooks/useI18n'
@@ -97,13 +98,13 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       if (values.email) {
         result = await forgetPasswordEmail({
           emailOrPhone: values.email || '',
-          newPassword: values.newPassword,
+          newPassword: md5(values.newPassword),
           validateCode: Number(values.validateCode)
         })
       } else {
         result = await forgetPasswordPhone({
           emailOrPhone: values.phone || '',
-          newPassword: values.newPassword,
+          newPassword: md5(values.newPassword),
           validateCode: Number(values.validateCode)
         })
       }

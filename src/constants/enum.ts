@@ -275,6 +275,13 @@ export const getEnum = () => {
     UsableAdvanceCharge: {
       NOT_PROFIT_LOSS: { text: intl.formatMessage({ id: 'mt.bujisuanweishixiandyinglikuyun' }) },
       PROFIT_LOSS: { text: intl.formatMessage({ id: 'mt.jisuanweishixiandyinglikuyun' }) }
+    }, // 出金订单状态
+    PaymentWithdrawalOrderStatus: {
+      SUCCESS: { text: intl.formatMessage({ id: 'mt.shenhetongguo' }) },
+      RECEIPT: { text: intl.formatMessage({ id: 'mt.yidaozhang' }) },
+      WAIT: { text: intl.formatMessage({ id: 'mt.zhuanzhangzhong' }) },
+      REJECT: { text: intl.formatMessage({ id: 'mt.jujue' }) },
+      FAIL: { text: intl.formatMessage({ id: 'mt.shibai' }) }
     }
   }
   //  ============= 业务枚举值 ================

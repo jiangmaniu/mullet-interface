@@ -554,7 +554,7 @@ function batchUpdateQuoteDataByNumber(data: any) {
 
 // =========  计算相关 start ============
 
-// 计算账户余额信息
+// 计算账户余额信息： 需要订阅持仓中所有类型
 function getAccountBalance() {
   const currencyDecimal = currentAccountInfo.currencyDecimal
 
@@ -566,7 +566,7 @@ function getAccountBalance() {
   )
   // 可用保证金
   let availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
-  // 持仓总浮动盈亏
+  // 持仓总浮动盈亏: 需要订阅持仓中所有类型
   const totalOrderProfit = Number(toFixed(getCurrentAccountFloatProfit(positionList), currencyDecimal))
   // 持仓单总的库存费
   const totalInterestFees = Number(

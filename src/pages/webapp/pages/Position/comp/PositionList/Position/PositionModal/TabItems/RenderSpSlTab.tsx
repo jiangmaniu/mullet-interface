@@ -1,9 +1,11 @@
 import { useStores } from '@/context/mobxProvider'
-import useTrade from '@/hooks/useTrade'
 import FullModeSpSl from '@/pages/webapp/components/Trade/TradeView/comp/SetSpSl/FullModeSpSl'
+import useSpSl from '@/pages/webapp/hooks/trade/useSpSl'
 import useFocusEffect from '@/pages/webapp/hooks/useFocusEffect'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useState } from 'react'
+import { message } from '@/utils/message'
+import { observer } from 'mobx-react'
+import { ForwardedRef, forwardRef, useCallback, useImperativeHandle } from 'react'
 import { RenderTabRef } from '.'
 import { Params } from '../TopTabbar/types'
 
@@ -18,36 +20,40 @@ const RenderSpSlTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRef>
   const { t } = useI18n()
   const { trade } = useStores()
 
-  useTrade({
-    marketItem: item
-  })
-
-  const [stopLoss, setStopLoss] = useState(item.stopLoss)
-  const [takeProfit, setTakeProfit] = useState(item.takeProfit)
-
-  const setValues = (sl: number, tp: number) => {
-    setStopLoss(sl)
-    setTakeProfit(tp)
-  }
+  const { slValuePrice: stopLoss, spValuePrice: takeProfit } = useSpSl()
 
   // 止盈止损确认
-  const submitSpsl = useCallback(async () => {
+  const submitSpsl = async () => {
     const msg = t('pages.trade.SpSl Set Error')
-    const params = {
-      bagOrderId: item?.id,
-      stopLoss,
-      takeProfit
-    } as Order.ModifyStopProfitLossParams
 
-    console.log('止盈止损确认参数', params)
+    try {
+      if (!stopLoss || !takeProfit) {
+        message.info(msg)
+        return
+      }
 
-    const res = await trade.modifyStopProfitLoss(params)
+      const params = {
+        bagOrderId: item?.id,
+        stopLoss,
+        takeProfit
+      } as Order.ModifyStopProfitLossParams
 
-    if (res.success) {
-      // 关闭弹窗
+      console.log('止盈止损确认参数', params)
+
+      const res = await trade.modifyStopProfitLoss(params)
+
+      if (res.success) {
+        // 关闭弹窗
+        close?.()
+      } else {
+        message.info(msg)
+        close?.()
+      }
+    } catch (error) {
+      message.info(JSON.stringify(error))
       close?.()
     }
-  }, [t, item, trade, close, stopLoss, takeProfit])
+  }
 
   useImperativeHandle(ref, () => ({
     submit: submitSpsl
@@ -60,7 +66,7 @@ const RenderSpSlTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRef>
     }, [])
   )
 
-  return <FullModeSpSl useOuterTrade setValues={setValues} />
+  return <FullModeSpSl />
 })
 
-export default RenderSpSlTab
+export default observer(RenderSpSlTab)

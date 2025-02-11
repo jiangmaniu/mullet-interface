@@ -21,10 +21,7 @@ function MarginTypeModal(props: IProps, ref: ForwardedRef<MarginTypeModalRef>) {
   const bottomSheetModalRef = useRef<SheetRef>(null)
   const intl = useIntl()
   const { trade } = useStores()
-  const { cn, theme } = useTheme()
-  const { buySell, orderType, setOrderType, orderSpslChecked, setOrderSpslChecked } = trade
-  const isBuy = buySell === 'BUY'
-
+  const { cn } = useTheme()
   const enableIsolated = trade.currentAccountInfo.enableIsolated
 
   useImperativeHandle(ref, () => ({

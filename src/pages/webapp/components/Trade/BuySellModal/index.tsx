@@ -4,9 +4,10 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } from 
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useTrade from '@/hooks/useTrade'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
+import useDisabled from '@/pages/webapp/hooks/trade/useDisabled'
+import useSubmitOrder from '@/pages/webapp/hooks/trade/useSubmitOrder'
 import Button from '../../Base/Button'
 import SheetModal, { SheetRef } from '../../Base/SheetModal'
 import { Text } from '../../Base/Text'
@@ -68,7 +69,9 @@ const Content = observer(({ close }: { close: () => void }) => {
 const Footer = observer(({ close }: { close: () => void }) => {
   const { theme, cn } = useTheme()
   const intl = useIntl()
-  const { disabledBtn, disabledTrade, onSubmitOrder, onCheckSubmit } = useTrade()
+  // const { disabledBtn, disabledTrade, onSubmitOrder, onCheckSubmit } = useTrade()
+  const { disabledBtn, disabledTrade } = useDisabled()
+  const { onSubmitOrder, onCheckSubmit } = useSubmitOrder()
   const { trade } = useStores()
   const { buySell } = trade
   const isBuy = buySell === 'BUY'

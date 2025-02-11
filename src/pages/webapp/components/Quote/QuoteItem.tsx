@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
-import { forwardRef, useMemo, useRef } from 'react'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
@@ -27,7 +27,7 @@ type IProps = {
 function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
   const { cn, theme } = useTheme()
   const { up: upColor, down: downColor, isDark } = theme
-  const { trade } = useStores()
+  const { trade, ws } = useStores()
   const symbol = item?.symbol
   const itemRef = useRef<HTMLDivElement>(null)
   const [inViewport] = useInViewport(itemRef)
@@ -44,8 +44,11 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
   const { quoteWrapperClassName, askColor, bidColor } = useQuoteColor({ item })
 
   const handleJump = () => {
-    // 切换品种
+    // 1. 切换品种
     trade.switchSymbol(symbol)
+
+    // 2. 订阅当前选中及持仓列表品种的行情
+    trade.subscribeCurrentAndPositionSymbol({ cover: true })
 
     if (onItem) {
       onItem(item)
@@ -58,6 +61,14 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
   }
 
   if (!symbol) return null
+
+  const [initialed, setInitialed] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => {
+      setInitialed(true)
+    }, 1000)
+  }, [])
 
   return (
     <div
@@ -73,7 +84,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
             {item.alias || item.symbol}
           </Text>
           {/* 休市中状态 */}
-          {hasQuote && !isMarketOpen && <Iconfont name="hangqing-xiushi" size={20} color="red" style={{ marginLeft: 5 }} />}
+          {initialed && !isMarketOpen && <Iconfont name="hangqing-xiushi" size={20} color="red" style={{ marginLeft: 5 }} />}
         </View>
         <View className={cn('flex flex-row items-center')}>
           <View className={cn('max-w-[54px]')}>

@@ -230,18 +230,30 @@ function Account() {
                   ) : (
                     <>
                       {/* @TODO 真实账户暂时不支持入金 */}
-                      {/* <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
+                      <Button
+                        onClick={() => {
+                          push(`/deposit?tradeAccountId=${item.id}`)
+                        }}
+                        style={{ height: 46, width: 108 }}
+                        icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
+                      >
                         <FormattedMessage id="mt.rujin" />
-                      </Button> */}
+                      </Button>
                     </>
                   )}
                 </Tooltip>
                 {/* @TODO 真实账户暂时不支持出金 */}
-                {/* {!isSimulate && (
-                  <Button style={{ height: 46, width: 108 }} icon={<img src="/img/chujin_icon.png" width={20} height={20} />}>
+                {!isSimulate && (
+                  <Button
+                    onClick={() => {
+                      push(`/withdrawal?tradeAccountId=${item.id}`)
+                    }}
+                    style={{ height: 46, width: 108 }}
+                    icon={<img src="/img/chujin_icon.png" width={20} height={20} />}
+                  >
                     <FormattedMessage id="mt.chujin" />
                   </Button>
-                )} */}
+                )}
                 <Button
                   type="primary"
                   style={{ height: 46, width: 108 }}

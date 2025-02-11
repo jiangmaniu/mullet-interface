@@ -54,6 +54,8 @@ class WSStore {
   originSend: any = null // socket 原生 send 方法
   sendingList: any[] = [] // 发送队列
   sendingSymbols = new Map<string, boolean>() // 发送队列
+  toOpenSymbols = new Map<string, boolean>() // 即将打开的符号
+  toCloseSymbols = new Map<string, boolean>() // 即将关闭的符号
 
   // ========== 连接相关 start ==========
   @action
@@ -276,7 +278,10 @@ class WSStore {
     this.subscribeTrade()
 
     if (isPCByWidth()) {
-      this.batchSubscribeSymbol()
+      this.openSymbol({
+        symbols: this.makeWsSymbolBySemi(trade.symbolListAll)
+      })
+
       this.subscribeDepth()
     }
   }
@@ -284,32 +289,45 @@ class WSStore {
   // ========== 连接相关 end ===============
 
   // ============ 订阅相关 start ============
-  setSendingSymbols = (symbolList: SymbolWSItem[], cancel: boolean) => {
+  setSendingSymbols = ({ symbolList, cancel, cover }: { symbolList: SymbolWSItem[]; cancel: boolean; cover?: boolean }) => {
     symbolList?.forEach((item) => {
       // 记录当前正在订阅的符号
       if (cancel) {
         this.sendingSymbols.delete(this.symbolToString(item))
+        this.toCloseSymbols.set(this.symbolToString(item), true)
       } else {
         this.sendingSymbols.set(this.symbolToString(item), true)
+        this.toCloseSymbols.delete(this.symbolToString(item))
       }
     })
+
+    // 如果 cover, 则订阅的同时，关闭未订阅的符号连接
+    if (cover) {
+      // 将 sendingSymbols 中存在于 _symbolList 以外的 symbol 添加到 toCloseSymbols
+      this.sendingSymbols.forEach((_, key) => {
+        const exists = symbolList.some((item) => this.symbolToString(item) === key)
+
+        if (!exists) {
+          this.toCloseSymbols.set(key, true)
+          this.sendingSymbols.delete(key)
+        }
+      })
+    }
+
+    console.log('正在订阅的符号：', this.sendingSymbols)
+    console.log('即将关闭的符号：', this.toCloseSymbols)
+
+    // 订阅操作立即执行，取消操作延迟执行
+    !cancel && this.subscribeSymbol(symbolList, cancel)
+
+    // 延迟取消订阅
+    this.debounceBatchCloseSymbol()
+
+    console.log('--- end -----------------')
   }
 
-  // 批量订阅行情(查询symbol列表后)
-  batchSubscribeSymbol = ({
-    cancel = false,
-    list = []
-  }: {
-    cancel?: boolean
-    needAccountGroupId?: boolean
-    list?: Array<{ accountGroupId?: any; symbol: string; dataSourceCode?: any }>
-  } = {}) => {
-    const symbolList = toJS(list?.length ? list : trade.symbolListAll)
-    if (!symbolList.length) return
-
-    // 标记当前正在订阅的符号
-    this.setSendingSymbols(symbolList, cancel)
-
+  // 订阅或取消订阅行情
+  subscribeSymbol = (symbolList: SymbolWSItem[], cancel: boolean) => {
     this.sendWorkerMessage({
       type: 'SUBSCRIBE_QUOTE',
       data: {
@@ -317,6 +335,32 @@ class WSStore {
         list: symbolList
       }
     })
+  }
+
+  /**
+   * 批量订阅行情(查询symbol列表后)【先标记后订阅】
+   * @param cancel 是否取消订阅
+   * @param list 需要订阅的符号列表
+   * @param cover 是否取消其他历史订阅
+   */
+  batchSubscribeSymbol = ({
+    cancel = false,
+    list = [],
+    cover = false
+  }: {
+    cancel?: boolean
+    needAccountGroupId?: boolean
+    list?: SymbolWSItem[]
+    cover?: boolean
+  }) => {
+    if (!list?.length) return
+
+    const symbolList = toJS(list)
+
+    console.log(' ')
+    console.log(`--- start: 批量${cancel ? '取消' : '订阅'}行情${cover ? '[并取消其他历史订阅]' : ''}:`, symbolList.length)
+    // 先打标记
+    this.setSendingSymbols({ symbolList, cancel, cover })
   }
 
   // 动态订阅汇率品种行情
@@ -337,14 +381,18 @@ class WSStore {
 
     if (!symbolInfo) return
 
-    this.batchSubscribeSymbol({
-      list: [
-        {
-          accountGroupId: trade.currentAccountInfo.accountGroupId,
-          symbol: symbolInfo.symbol
-        }
-      ]
-    })
+    // console.log('---订阅汇率品种行情:', symbolInfo.symbol)
+
+    const toSend = new Map<string, boolean>()
+    toSend.set(
+      this.symbolToString({
+        accountGroupId: trade.currentAccountInfo.accountGroupId,
+        symbol: symbolInfo.symbol
+      }),
+      true
+    )
+
+    this.debounceBatchSubscribeSymbol({ toSend })
   }
 
   // 订阅当前打开的品种深度报价
@@ -430,8 +478,12 @@ class WSStore {
     }
   }
 
-  /** 打开行情订阅 */
-  openSymbol = (symbols: SymbolWSItem[]) => {
+  /**
+   * 打开行情订阅
+   * @param symbols 需要订阅的符号列表
+   * @param cover 是否取消其他历史订阅
+   **/
+  openSymbol = ({ symbols, cover }: { symbols: SymbolWSItem[]; cover?: boolean }) => {
     const toSend = new Map<string, boolean>()
 
     // 找到 symbols 中不在 [正在订阅列表] 中的符号
@@ -439,32 +491,29 @@ class WSStore {
       toSend.set(this.symbolToString(symbol), true)
     })
 
-    if (toSend.size) {
-      this.debounceBatchSubscribeSymbol(toSend)
+    if (toSend.size || cover) {
+      this.debounceBatchSubscribeSymbol({ toSend, cover })
     }
   }
 
-  /** 打开交易订阅 */
-  openTrade = (symbol: SymbolWSItem) => {
-    this.openSymbol([symbol])
-    this.subscribeDepth()
-  }
+  // 弃用 openTrade & closeTrade：20250207， 使用 openPosition & closePosition 代替
 
-  /** 注意：离开交易页或者切换品种时，请主动取消订阅 */
-  closeTrade = () => {
-    this.debounceBatchSubscribeSymbol()
-    this.subscribeDepth(true)
-  }
-
-  /** 打开仓位订阅 */
-  openPosition = (symbols: SymbolWSItem[]) => {
-    this.openSymbol(symbols)
+  /**
+   * 打开仓位订阅
+   * @param symbols 需要订阅的符号列表
+   * @param cover 是否取消其他历史订阅
+   */
+  openPosition = ({ symbols, cover = true }: { symbols: SymbolWSItem[]; cover?: boolean }) => {
+    this.openSymbol({
+      symbols,
+      cover
+    })
     this.subscribePosition()
   }
 
   /** 注意：离开仓位页面时，请主动取消订阅 */
-  closePosition = (symbols?: SymbolWSItem[]) => {
-    this.debounceBatchSubscribeSymbol()
+  closePosition = () => {
+    this.debounceBatchCloseSymbol()
     this.subscribePosition(true)
   }
 
@@ -475,9 +524,10 @@ class WSStore {
 
   /**
    * 延迟批量订阅行情
-   * toSend 传入空对象或不传值，表示取消所有订阅
+   * @param toSend 需要订阅的符号列表
+   * @param cover 是否取消其他历史订阅
    */
-  debounceBatchSubscribeSymbol = (toSend?: Map<string, boolean>) => {
+  debounceBatchSubscribeSymbol = ({ toSend, cover }: { toSend: Map<string, boolean>; cover?: boolean }) => {
     // 1. 找到 this.toSendSymbols 中不在 this.sendingSymbols 中的符号，这些符号是即将要打开的符号
     const toOpen = new Map<string, boolean>()
     toSend?.forEach((value, key) => {
@@ -486,46 +536,41 @@ class WSStore {
       }
     })
 
-    // 2. 找到 this.sendingSymbols 中不在 this.toSendSymbols 中的符号，这些符号是即将要关闭的符号
-    if (toSend?.size) {
-      const toClose = new Map<string, boolean>()
-      this.sendingSymbols.forEach((value, key) => {
-        if (toSend?.get(key)) {
-        } else {
-          toClose.set(key, true)
-        }
-      })
-
-      // 2.1 关闭即将要关闭的符号
-      if (toClose.size) {
-        // console.log('即将关闭的符号', toClose.size, toClose)
-        const list2 = Array.from(toClose.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
-        // console.log('即将关闭的符号', list2)
-        this.debounceBatchCloseSymbol({ list: list2 })
-      }
-    }
-
     // 3. 打开即将要打开的符号
     const list = Array.from(toOpen.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
-    // console.log('即将打开的符号', list)
-    this.batchSubscribeSymbol({ list })
+
+    if (cover) {
+      // 订阅列表，并取消其他历史订阅
+      const listToSend = Array.from(toSend.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
+      this.batchSubscribeSymbol({ list: listToSend, cover })
+    } else if (toOpen?.size) {
+      this.batchSubscribeSymbol({ list })
+    } else {
+      console.log('==== 重复订阅，无需关闭订阅 ====》', toSend)
+      toSend.forEach((value, key) => {
+        // 已经订阅，如果【待停止订阅】列表中存在，则移除
+        this.toCloseSymbols.delete(key)
+      })
+    }
   }
 
   // 封装一个延迟执行的取消订阅方法
+
   debounceBatchCloseSymbol = debounce(
-    ({
-      list = []
-    }: {
-      list?: Array<SymbolWSItem>
+    ({}: // list = []
+    {
+      // list?: Array<SymbolWSItem>
       source?: string
     } = {}) => {
-      // console.log(
-      //   '即将关闭的符号',
-      //   list.map((item) => this.symbolToString(item))
-      // )
-      this.batchSubscribeSymbol({ cancel: true, list })
+      console.log('取消订阅的符号：', JSON.stringify(this.toCloseSymbols))
+      const list = Array.from(this.toCloseSymbols.keys()).map((key) => this.stringToSymbol(key)) as SymbolWSItem[]
+      // 取消订阅
+      this.subscribeSymbol(list, true)
+
+      console.log('正在订阅的符号：', this.sendingSymbols)
+      this.toCloseSymbols.clear()
     },
-    100
+    8000
   )
   // ========== H5 订阅相关 end ============
 

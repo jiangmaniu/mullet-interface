@@ -10,7 +10,6 @@ import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum, formatStringWithEllipsis } from '@/utils'
 import { useNetwork } from 'ahooks'
-import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 import SimpleTooltip from './Tooltip'
@@ -27,19 +26,10 @@ function AccountDetail() {
   const precision = currentAccountInfo.currencyDecimal ?? DEFAULT_CURRENCY_DECIMAL
   const { balance, availableMargin, totalProfit, occupyMargin } = trade.accountBalanceInfo
 
-  const positionList = toJS(trade.positionList)
-  const symbolList = positionList.map((item) => item.symbol) as string[]
-
   const handleSubscribe = () => {
     setTimeout(() => {
-      //  检查socket是否连接，如果未连接，则重新连接
-      ws.checkSocketReady(() => {
-        // 打开行情订阅
-        ws.openPosition(
-          // 构建参数
-          ws.makeWsSymbol(symbolList)
-        )
-      })
+      // 打开行情订阅
+      trade.subscribePositionSymbol({})
     })
   }
 
@@ -56,10 +46,11 @@ function AccountDetail() {
     }
 
     return () => {
+      console.log('离开当前 account detail 的时候，取消仓位订阅')
       // 离开当前 tab 的时候，取消行情订阅
-      ws.closePosition(ws.makeWsSymbol(symbolList))
+      ws.closePosition()
     }
-  }, [symbolList.length, isOnline])
+  }, [isOnline])
 
   usePageVisibility(
     () => {

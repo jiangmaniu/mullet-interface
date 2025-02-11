@@ -1,30 +1,69 @@
+import './index.less'
+
 import { ProFormDateRangePicker } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
+import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { Segmented } from 'antd'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import PageContainer from '@/components/Admin/PageContainer'
-import { useStores } from '@/context/mobxProvider'
 
+import Deposit from './comp/Deposit'
+import InfoModal from './comp/InfoModal'
 import Transfer from './comp/Transfer'
+import Withdrawal from './comp/Withdrawal'
 
 export type IParams = {
   startTime?: string
   endTime?: string
-  accountId: any
+  tradeAccountId?: any
+  accountId?: any
 }
 
 type ITabKey = 'deposit' | 'withdrawal' | 'transfer'
+
+type IStatusMap = {
+  [key in Wallet.IWithdrawalOrderStatus]: {
+    text: string
+    color: string
+    options?: {
+      text: string
+      fn: () => void
+    }
+  }
+}
+
+export const statusMap: IStatusMap = {
+  WAIT: {
+    text: getIntl().formatMessage({ id: 'mt.daishenghe' }),
+    color: '#9C9C9C'
+  },
+
+  SUCCESS: {
+    text: getIntl().formatMessage({ id: 'mt.tongguo' }),
+    color: '#FF9700'
+  },
+  RECEIPT: {
+    text: getIntl().formatMessage({ id: 'mt.yidaozhang' }),
+    color: '#45A48A'
+  },
+  REJECT: {
+    text: getIntl().formatMessage({ id: 'mt.shenheshibai' }),
+    color: '#C54747'
+  },
+  FAIL: {
+    text: getIntl().formatMessage({ id: 'mt.shibai' }),
+    color: '#C54747'
+  }
+}
 
 export default function Record() {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
-  const { ws, trade } = useStores()
 
   const [tabKey, setTabKey] = useState<ITabKey>('transfer')
   const intl = useIntl()
@@ -33,7 +72,7 @@ export default function Record() {
   const searchKey = searchParams.get('key') as ITabKey
 
   useEffect(() => {
-    setParams({ ...params, accountId: accountList?.[0]?.id })
+    setParams({ ...params, tradeAccountId: accountList?.[0]?.id })
   }, [accountList])
 
   useEffect(() => {
@@ -50,12 +89,20 @@ export default function Record() {
     }
   })
 
+  const [selectedItem, setSelectedItem] = useState<Wallet.WithdrawRecord | undefined>(undefined)
+  const modalRef = useRef<any>()
+
+  const onSelectItem = (item: Wallet.WithdrawRecord) => {
+    setSelectedItem(item)
+    modalRef.current.show()
+  }
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
-      <div className="text-[24px] font-bold text-primary">
+      <div className="text-[24px] font-bold text-primary mb-7">
         <FormattedMessage id="mt.churujinjilu" />
       </div>
-      <div className="flex items-center justify-between my-4">
+
+      <div className="flex items-center justify-between my-4 flex-wrap gap-y-4">
         <Segmented
           className="account"
           onChange={(key: any) => {
@@ -63,8 +110,8 @@ export default function Record() {
           }}
           value={tabKey}
           options={[
-            { label: <FormattedMessage id="mt.rujin" />, value: 'deposit', disabled: true },
-            { label: <FormattedMessage id="mt.chujin" />, value: 'withdrawal', disabled: true },
+            { label: <FormattedMessage id="mt.rujin" />, value: 'deposit' },
+            { label: <FormattedMessage id="mt.chujin" />, value: 'withdrawal' },
             { label: <FormattedMessage id="mt.huazhuan" />, value: 'transfer' }
           ]}
           style={{ width: 300 }}
@@ -75,13 +122,13 @@ export default function Record() {
             options={accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))}
             placeholder={intl.formatMessage({ id: 'mt.xuanzezhanghu' })}
             fieldProps={{
-              value: params.accountId,
+              value: params.tradeAccountId,
               allowClear: false,
               size: 'middle',
               onChange: (value: any) => {
                 setParams({
                   ...params,
-                  accountId: value
+                  tradeAccountId: value
                 })
               }
             }}
@@ -102,9 +149,12 @@ export default function Record() {
           />
         </div>
       </div>
-      {/* {tabKey === 'deposit' && <Deposit />}
-      {tabKey === 'withdrawal' && <Withdrawal />} */}
+      {tabKey === 'deposit' && <Deposit params={params} />}
+      {tabKey === 'withdrawal' && <Withdrawal params={params} onSelectItem={onSelectItem} />}
       {tabKey === 'transfer' && <Transfer params={params} />}
+
+      {/* 消息弹窗 */}
+      <InfoModal ref={modalRef} item={selectedItem} />
     </PageContainer>
   )
 }

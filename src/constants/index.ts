@@ -4,7 +4,7 @@ const NAMESPACE = `client` // 命名空间
 // 字体图标 替换设计提供的地址 https://blog.csdn.net/weixin_44119268/article/details/102629409
 // 注意：UI图标更新后，需要重新更新地址和本地代码
 export const ICONFONT_URL =
-  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_ll8s36cynr.js' : '/iconfont/iconfont.js'
+  process.env.NODE_ENV === 'development' ? '//at.alicdn.com/t/c/font_4571567_0lq977ba1p2m.js' : '/iconfont/iconfont.js'
 
 // 首页
 export const WEB_HOME_PAGE = '/trade' // pc端首页

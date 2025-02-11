@@ -6,7 +6,6 @@ import { useEffect, useMemo } from 'react'
 import { SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useTrade from '@/hooks/useTrade'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
 import Switch from '@/pages/webapp/components/Base/Switch'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -15,6 +14,7 @@ import { formatNum } from '@/utils'
 import { getCurrentDepth } from '@/utils/wsUtil'
 
 import useMargin from '@/hooks/useMargin'
+import useQuote from '@/pages/webapp/hooks/trade/useQoute'
 import { IPosition } from '.'
 import SetSpSl from '../SetSpSl'
 import OrderVolume from './OrderVolume'
@@ -29,32 +29,24 @@ function OrderTabItem({ position }: IProps) {
   const { cn, theme } = useTheme()
   const intl = useIntl()
   const { trade } = useStores()
-  const { buySell, orderType, orderSpslChecked, setOrderQuickPlaceOrderChecked, orderQuickPlaceOrderChecked } = trade
-  // const [activeTag, setActiveTag] = useState<any>('')
-  // const tabKey = orderType
-  // const position = props.position // 组件的位置
+  const {
+    orderType,
+    orderSpslChecked,
+    setOrderQuickPlaceOrderChecked,
+    orderQuickPlaceOrderChecked,
+    setOrderVolume,
+    setOrderPrice,
+    maxOpenVolume // 最大可开仓量
+  } = trade
 
   const availableMargin = trade.accountBalanceInfo.availableMargin
 
-  const {
-    // expectedMargin,
-    maxOpenVolume,
-    vmin,
-    isMarketOrder,
-    isBuy,
-    d,
-    symbol,
-
-    // 方法
-    // setSl,
-    // setSp,
-    setOrderVolume,
-    setOrderPrice,
-    onAdd,
-    onMinus,
-    resetSpSl,
-    getInitPriceValue
-  } = useTrade()
+  /**
+   *  useTrade 分成 useOpenVolumn、useOrderType、useQuote
+   * */
+  const isMarketOrder = useMemo(() => orderType === 'MARKET_ORDER', [orderType]) // 市价单
+  const { vmin, getInitPriceValue, isBuy } = useQuote() // 行情相关：价格、小数位、买卖方向
+  // 尽量从 trade 中取数据和方法
 
   // 接口计算预估保证金
   const expectedMargin = useMargin()
@@ -64,17 +56,12 @@ function OrderTabItem({ position }: IProps) {
 
   // 切换品种、买卖重置内容
   useEffect(() => {
-    resetSpSl()
     setOrderVolume(vmin)
-    setOrderPrice(getInitPriceValue())
-  }, [symbol, buySell, orderType, vmin])
+  }, [vmin])
 
   useEffect(() => {
-    // 取消勾选了止盈止损，重置值
-    if (!orderSpslChecked) {
-      resetSpSl()
-    }
-  }, [orderSpslChecked])
+    !isMarketOrder && setOrderPrice(getInitPriceValue())
+  }, [isMarketOrder])
 
   return (
     <View className={cn('flex-1 px-3', position === 'PAGE' && 'px-3', !!hasDepth && position === 'PAGE' && 'pr-0')}>
@@ -118,7 +105,7 @@ function OrderTabItem({ position }: IProps) {
                 {intl.formatMessage({ id: 'pages.trade.Estimated Margin' })}
               </Text>
               <Text size="xs" color="primary" className={cn('px-1')}>
-                {expectedMargin} {SOURCE_CURRENCY}
+                {expectedMargin || '--'} {SOURCE_CURRENCY}
               </Text>
               {/* <View className={cn('h-2 w-[1px] mx-1', { backgroundColor: theme.colors.Divider.primary })} /> */}
               {/* @TODO 计算公式？ */}
@@ -148,7 +135,7 @@ function OrderTabItem({ position }: IProps) {
           <View className={cn('flex-row justify-between items-center mb-1')}>
             <Text color="weak">{intl.formatMessage({ id: 'pages.trade.Estimated Margin' })}</Text>
             <Text color="primary" weight="medium" font="dingpro-medium">
-              {expectedMargin} {SOURCE_CURRENCY}
+              {expectedMargin || '--'} {SOURCE_CURRENCY}
             </Text>
           </View>
         </View>

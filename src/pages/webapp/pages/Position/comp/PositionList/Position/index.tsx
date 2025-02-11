@@ -3,7 +3,6 @@ import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useLoading } from '@/context/loadingProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import usePageVisibility from '@/hooks/usePageVisibility'
 import { RecordModalItem } from '@/mobx/trade'
 import Button from '@/pages/webapp/components/Base/Button'
 import FlashList from '@/pages/webapp/components/Base/List/FlashList'
@@ -109,58 +108,36 @@ function PositionList() {
     setVisibleItems(newVisibleItems)
   }, 100)
 
-  const onEndReached = () => {
-    // if (tabIndex == 0) {
-    //   if ((PAGE_SIZE * pageNum) <= tradeList.length) {
-    //     setPageNum(pageNum + 1)
-    //   }
-    // } else {
-    //   if ((PAGE_SIZE * pageNum) <= pendingList.length) {
-    //     setPageNum(pageNum + 1)
-    //   }
-    // }
-  }
+  // const handleSubscribe = () => {
+  //   setTimeout(() => {
+  //     // 打开行情订阅
+  //     trade.subscribePositionSymbol({})
+  //   })
+  // }
 
-  const handleSubscribe = () => {
-    setTimeout(() => {
-      //  检查socket是否连接，如果未连接，则重新连接
-      ws.checkSocketReady(() => {
-        // 打开行情订阅
-        ws.openPosition(
-          // 构建参数
-          ws.makeWsSymbol(symbolList)
-        )
-      })
-    })
-  }
+  // useEffect(() => {
+  //   // 如果网络断开，在连接需要重新重新建立新的连接
+  //   if (!isOnline) {
+  //     ws.close()
+  //   }
 
-  useEffect(() => {
-    // 如果网络断开，在连接需要重新重新建立新的连接
-    if (!isOnline) {
-      ws.close()
-    }
+  //   if (isOnline) {
+  //     setTimeout(() => {
+  //       handleSubscribe()
+  //     }, 200)
+  //   }
 
-    if (isOnline) {
-      setTimeout(() => {
-        handleSubscribe()
-      }, 200)
-    }
+  // }, [symbolList.length, isOnline])
 
-    return () => {
-      // 离开当前 tab 的时候，取消行情订阅
-      ws.closePosition(ws.makeWsSymbol(symbolList))
-    }
-  }, [symbolList.length, isOnline])
-
-  usePageVisibility(
-    () => {
-      // 用户从后台切换回前台时执行的操作
-      handleSubscribe()
-    },
-    () => {
-      // 用户从前台切换到后台时执行的操作
-    }
-  )
+  // usePageVisibility(
+  //   () => {
+  //     // 用户从后台切换回前台时执行的操作
+  //     handleSubscribe()
+  //   },
+  //   () => {
+  //     // 用户从前台切换到后台时执行的操作
+  //   }
+  // )
 
   // 保证金确认
   const submitPosition = useCallback(async () => {

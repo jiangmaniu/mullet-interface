@@ -195,9 +195,12 @@ function TradeAccountDropdown({ theme }: IProps) {
                       setAccountBoxOpen(false)
 
                       // 取消之前账户组品种行情订阅
-                      ws.batchSubscribeSymbol({
-                        cancel: true
-                      })
+                      console.log('取消之前账户组品种行情订阅')
+                      /**
+                       * 尽量避免在 stores 之外直接调用 batchSubscribeSymbol 方法
+                       * 关闭 ws 连接时，统一使用 debounceBatchCloseSymbol 方法
+                       */
+                      ws.debounceBatchCloseSymbol()
 
                       setTimeout(() => {
                         trade.setCurrentAccountInfo(item)

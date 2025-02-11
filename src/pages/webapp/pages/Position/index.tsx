@@ -12,7 +12,7 @@ import PositionList from './comp/PositionList'
 const Position = () => {
   const { cn, theme } = useTheme()
   const { t, locale } = useI18n()
-  const { trade, ws } = useStores()
+  const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
   const isFocused = useIsFocused()

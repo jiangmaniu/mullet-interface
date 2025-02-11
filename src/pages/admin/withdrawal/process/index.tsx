@@ -1,0 +1,192 @@
+import './index.less'
+
+import { PageLoading, useIntl } from '@ant-design/pro-components'
+import { FormattedMessage, useModel } from '@umijs/max'
+import { Form } from 'antd'
+import { useLayoutEffect, useMemo, useState } from 'react'
+
+import PageContainer from '@/components/Admin/PageContainer'
+import { stores } from '@/context/mobxProvider'
+import { cn } from '@/utils/cn'
+import { push } from '@/utils/navigator'
+
+import { generateWithdrawOrder } from '@/services/api/wallet'
+import { message } from '@/utils/message'
+import { md5 } from 'js-md5'
+import Step1 from './comp/Step1'
+import { Step2 } from './comp/Step2'
+import { Step3 } from './comp/Step3'
+
+// 汇率换算
+export const transferCurr = (value?: number) => {
+  const val = value || 0
+
+  // TODO: 汇率换算
+  return val * 1
+}
+
+export default function WithdrawalProcess() {
+  const [form] = Form.useForm()
+
+  const methods = stores.wallet.depositMethods
+  const intl = useIntl()
+
+  useLayoutEffect(() => {
+    if (methods.length === 0) {
+      const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
+      stores.wallet.getWithdrawalMethods({ language })
+      return
+    }
+  }, [methods, intl])
+
+  const methodId = Form.useWatch('methodId', form)
+  const fromAccountId = Form.useWatch('fromAccountId', form)
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
+  const fromAccountInfo = useMemo(() => {
+    return accountList.find((item) => item.id === fromAccountId)
+  }, [fromAccountId, accountList])
+
+  const [step, setStep] = useState(0)
+
+  // const [values, setValues] = useState<Record<string, any> | undefined>(undefined)
+  const handleSubmit0 = async () => {
+    form
+      .validateFields()
+      .then((values) => {
+        setStep(1)
+        // generateWithdrawOrder({
+        //   address: values.toAccountId,
+        //   baseOrderAmount: values.amount,
+        //   channelId: values.methodId,
+        //   password: values.password,
+        //   phoneCode: values.code,
+        //   tradeAccountId: values.fromAccountId,
+        // })
+        //   .then((res) => {
+        //     // 回填生成的订单 id
+        //     form.setFieldValue('orderId', res?.data?.id ?? 'xxxx')
+
+        //     setValues({
+        //       ...values,
+        //       orderId: res?.data?.id ?? 'xxxx'
+        //     })
+
+        //     setStep(1)
+        //   })
+        //   .finally(() => {
+        //     setLoading(false)
+        //   })
+      })
+      .catch((err) => {
+        console.log('err', err)
+      })
+  }
+
+  const handleSubmit1 = async () => {
+    form
+      .validateFields()
+      .then((values) => {
+        setLoading(true)
+
+        generateWithdrawOrder({
+          address: values.toAccountId,
+          baseOrderAmount: values.amount,
+          channelId: values.methodId,
+          password: md5(values.password),
+          phoneCode: values.code,
+          tradeAccountId: values.fromAccountId
+        })
+          .then((res) => {
+            // 回填生成的订单 id
+            // form.setFieldValue('orderId', res?.data?.id ?? 'xxxx')
+
+            // setValues({
+            //   ...values,
+            //   orderId: res?.data?.id ?? 'xxxx'
+            // })
+
+            if (res.success) {
+              setStep(2)
+            } else {
+              message.info(res.message)
+            }
+          })
+          .finally(() => {
+            setLoading(false)
+          })
+
+        // confirmWithdrawOrder({
+        //   orderId: values.orderId,
+        //   password: md5(values.password as string),
+        //   code: values.code
+        // })
+        //   .then((res) => {
+        //     // push('/withdrawal/order')
+        //     setStep(2)
+        //   })
+        //   .finally(() => {
+        //     setLoading(false)
+        //   })
+      })
+      .catch((err) => {
+        console.log('err', err)
+      })
+  }
+
+  const handleSubmit2 = async () => {
+    push('/record?key=withdrawal')
+    // setStep(3)
+  }
+
+  const [loading, setLoading] = useState(false)
+
+  return (
+    <PageContainer
+      pageBgColorMode={step === 0 ? 'white' : 'gray'}
+      fluidWidth
+      backUrl="/withdrawal"
+      backTitle={<FormattedMessage id="mt.quanbushoukuanfangshi" />}
+    >
+      {step === 0 && (
+        <div className="text-primary font-bold text-[24px] mb-9">
+          <FormattedMessage id="mt.chujin" />
+        </div>
+      )}
+      {loading && (
+        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0 z-10">
+          <PageLoading />
+        </div>
+      )}
+      <div className={cn(step === 0 ? 'block' : 'hidden')}>
+        <Step1 form={form} loading={loading} currentUser={currentUser} fromAccountInfo={fromAccountInfo} handleSubmit={handleSubmit0} />
+      </div>
+      <div className="flex flex-col gap-21">
+        <div className={cn(step === 1 ? 'block' : 'hidden')}>
+          <Step2 form={form} fromAccountInfo={fromAccountInfo} loading={loading} setStep={setStep} handleSubmit={handleSubmit1} />
+        </div>
+        <div className={cn(step === 2 ? 'block' : 'hidden')}>
+          <Step3 handleSubmit={handleSubmit2} />
+        </div>
+        <div className={cn(' w-[340px] md:w-[536px] max-w-full', step === 1 || step === 2 ? 'block' : 'hidden')}>
+          <span className="text-primary text-sm font-semibold">
+            <FormattedMessage id="mt.chujinxuzhi" />
+          </span>
+          <p className="text-secondary text-xs mt-5">
+            1. 出金金额少於50U，收取3U手續費 <br />
+            <br />
+            2.用戶交易量少於出金金额50%，收取出金金额5%手續費 <br />
+            <br />
+            3.當前有處理中的訂單時，無法出金 <br />
+            <br />
+            4.出金時間（GMT+8)：工作日09:00-18:00，不在此時段提交的出金訂單，會在下一工作日處理 <br />
+            <br />
+            5.請務必確認設備安全，防止信息被篡改或洩漏
+          </p>
+        </div>
+      </div>
+    </PageContainer>
+  )
+}

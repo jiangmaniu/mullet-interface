@@ -8,6 +8,7 @@ import { useStores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { cn } from '@/utils/cn'
 import { Swiper, SwiperRef } from 'antd-mobile'
+import useSymbolQuoteSubscribe from '../../hooks/useSymbolQuoteSubscribe'
 import Tabs from '../Base/Tabs'
 import QuoteFlashList from './QuoteFlashList'
 
@@ -136,7 +137,10 @@ export const SymbolTabbar = observer(
 )
 
 // 行情Tabs
-function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey, tabValue, tabIndex, onSwiperChange }: IProps, ref: any) {
+function QuoteTopTabbar(
+  { height, position = 'PAGE', searchValue, onItem, tabKey, tabValue, tabIndex, onSwiperChange, visible = true }: IProps,
+  ref: any
+) {
   const [activeKey, setActiveKey] = useState<TabKey>(GET_DEFAULT_TAB_KEY())
   const [activeTabValue, setActiveTabValue] = useState<string>('')
   const [activeIndex, setActiveIndex] = useState<number>(0)
@@ -166,6 +170,9 @@ function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey
     }
   })
 
+  // 订阅品种列表数据
+  useSymbolQuoteSubscribe({ visible })
+
   return (
     <div className="pb-[50px]">
       {position === 'PAGE' && (
@@ -181,8 +188,6 @@ function QuoteTopTabbar({ height, position = 'PAGE', searchValue, onItem, tabKey
           className="sticky top-[48px] z-[1] bg-secondary border-t border-weak"
         />
       )}
-      {/* <QuoteFlashList height={height} onItem={onItem} tabKey={activeKey} tabValue={activeTabValue} searchValue={searchValue} /> */}
-
       <Swiper
         direction="horizontal"
         loop={false}

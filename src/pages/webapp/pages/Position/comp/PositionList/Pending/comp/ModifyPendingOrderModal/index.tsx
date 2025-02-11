@@ -1,17 +1,18 @@
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import useTrade from '@/hooks/useTrade'
 import { RecordModalItem } from '@/mobx/trade'
 import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
+import useDisabled from '@/pages/webapp/hooks/trade/useDisabled'
+import useQuote from '@/pages/webapp/hooks/trade/useQoute'
+import useSpSl from '@/pages/webapp/hooks/trade/useSpSl'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
-import { ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } from 'react'
-import { IFormValues } from './TabItem'
+import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
 import ModifyPendingTopTabbar, { Params } from './TopTabbar'
 
 type IProps = {
@@ -30,12 +31,8 @@ function ModifyPendingOrderModal({ tabKey, trigger, item }: IProps, ref: Forward
   const { cn, theme } = useTheme()
   const { t } = useI18n()
   const { trade } = useStores()
-  const [formData, setFormData] = useState({} as IFormValues)
-  const [currentTab, setCurrentTab] = useState<Params['tabKey']>('PENDING')
 
   const bottomSheetModalRef = useRef<SheetRef>(null)
-  const isBuy = item.buySell === 'BUY'
-  const orderType = item.type
 
   const close = () => {
     bottomSheetModalRef.current?.sheet?.dismiss()
@@ -48,21 +45,31 @@ function ModifyPendingOrderModal({ tabKey, trigger, item }: IProps, ref: Forward
     close
   }))
 
-  const {
-    setOrderPrice,
-    setOrderVolume,
-    slFlag,
-    spFlag,
-    orderVolume,
-    price: limitPrice,
-    setSp,
-    setSl,
-    stopLoss,
-    takeProfit,
-    disabledBtn
-  } = useTrade({
-    limitStopItem: item
-  })
+  // const {
+  //   setOrderPrice,
+  //   setOrderVolume,
+  //   slFlag,
+  //   spFlag,
+  //   orderVolume,
+  //   price: limitPrice,
+  //   setSp,
+  //   setSl,
+  //   stopLoss,
+  //   takeProfit,
+  //   disabledBtn
+  // } = useTrade({
+  //   limitStopItem: item
+  // })
+
+  const { orderVolume, orderPrice: limitPrice } = useQuote()
+  const { slFlag, spFlag, spValuePrice, slValuePrice } = useSpSl()
+  const { disabledBtn } = useDisabled()
+  const stopLoss = useMemo(() => (Number.isNaN(slValuePrice) || slValuePrice === 0 ? undefined : slValuePrice), [slValuePrice])
+  const takeProfit = useMemo(() => (Number.isNaN(spValuePrice) || spValuePrice === 0 ? undefined : spValuePrice), [spValuePrice])
+
+  useEffect(() => {
+    console.log('disabledBtn', disabledBtn)
+  }, [disabledBtn])
 
   // 修改挂单
   const onConfirm = async () => {
@@ -102,16 +109,16 @@ function ModifyPendingOrderModal({ tabKey, trigger, item }: IProps, ref: Forward
       trigger={trigger}
       onOpenChange={(open) => {
         if (open) {
-          setOrderPrice(item.limitPrice || '')
-          setOrderVolume(item.orderVolume || '')
-          setSp(item.takeProfit || '')
-          setSl(item.stopLoss || '')
+          // setOrderPrice(item.limitPrice || '')
+          // setOrderVolume(item.orderVolume || '')
+          // setSp(item.takeProfit || '')
+          // setSl(item.stopLoss || '')
         } else {
           // 关闭弹窗
-          setOrderPrice('')
-          setSp('')
-          setSl('')
-          setOrderVolume('')
+          // setOrderPrice('')
+          // setSp('')
+          // setSl('')
+          // setOrderVolume('')
           // 重置内容
           trade.setRecordModalItem({} as RecordModalItem)
         }
@@ -147,9 +154,6 @@ function ModifyPendingOrderModal({ tabKey, trigger, item }: IProps, ref: Forward
             // }}
             item={item}
             tabKey={tabKey}
-            onChangeTab={(tabKey) => {
-              setCurrentTab(tabKey)
-            }}
           />
         </View>
       }

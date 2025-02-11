@@ -529,6 +529,12 @@ declare namespace Order {
     addAdvanceCharge: number
     /**强制平仓比例 */
     compelCloseRatio: number
+    /** 订单类型 */
+    type?: API.OrderType
+    /** 限价价格 */
+    limitPrice?: number
+    /** 账户组ID */
+    accountGroupId?: string
   }
   // 成交记录-分页-参数
   type TradeRecordsPageListParams = {

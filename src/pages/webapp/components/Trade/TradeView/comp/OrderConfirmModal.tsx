@@ -6,7 +6,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
-import useMargin from '@/hooks/useMargin'
+import useMargin from '@/pages/webapp/hooks/trade/useMargin'
 import CheckBox from '../../../Base/CheckBox'
 import SheetModal, { SheetRef } from '../../../Base/SheetModal'
 import { Text } from '../../../Base/Text'
@@ -55,7 +55,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
   // const { expectedMargin } = useTrade()
 
   // 接口计算预估保证金
-  const expectedMargin = useMargin({ isLimit: !open })
+  const expectedMargin = useMargin()
 
   const bottomSheetModalRef = useRef<SheetRef>(null)
 
@@ -133,7 +133,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
             </View> */}
             <View className={cn('items-center flex flex-col')}>
               <Text size="base" font="pf-bold">
-                {expectedMargin} USD
+                {expectedMargin || '--'} USD
               </Text>
               <Text size="sm" color="weak">
                 {intl.formatMessage({ id: 'pages.trade.Estimated Margin' })}
