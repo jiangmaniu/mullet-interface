@@ -10,11 +10,10 @@ import { useEffect, useRef, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import PageContainer from '@/components/Admin/PageContainer'
+import { useStores } from '@/context/mobxProvider'
 
-import Deposit from './comp/Deposit'
-import InfoModal from './comp/InfoModal'
-import Transfer from './comp/Transfer'
-import Withdrawal from './comp/Withdrawal'
+import BankCard from './address/BankCard'
+import CryptoAddress from './address/CryptoAddress'
 
 export type IParams = {
   startTime?: string
@@ -23,7 +22,7 @@ export type IParams = {
   accountId?: any
 }
 
-type ITabKey = 'deposit' | 'withdrawal' | 'transfer'
+type ITabKey = 'bankCard' | 'cryptoAddress'
 
 type IStatusMap = {
   [key in Wallet.IOrderStatus]: {
@@ -55,12 +54,13 @@ export const statusMap: IStatusMap = {
   }
 }
 
-export default function Record() {
+export default function Addresss() {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
+  const { ws, trade } = useStores()
 
-  const [tabKey, setTabKey] = useState<ITabKey>('transfer')
+  const [tabKey, setTabKey] = useState<ITabKey>('cryptoAddress')
   const intl = useIntl()
   const [params, setParams] = useState({} as IParams)
   const [searchParams] = useSearchParams()
@@ -105,9 +105,8 @@ export default function Record() {
           }}
           value={tabKey}
           options={[
-            { label: <FormattedMessage id="mt.rujin" />, value: 'deposit' },
-            { label: <FormattedMessage id="mt.chujin" />, value: 'withdrawal' },
-            { label: <FormattedMessage id="mt.huazhuan" />, value: 'transfer' }
+            { label: <FormattedMessage id="mt.shuziqianbao" />, value: 'cryptoAddress' },
+            { label: <FormattedMessage id="mt.yinhangka" />, value: 'bankCard' }
           ]}
           style={{ width: 300 }}
           block
@@ -144,12 +143,10 @@ export default function Record() {
           />
         </div>
       </div>
-      {tabKey === 'deposit' && <Deposit params={params} />}
-      {tabKey === 'withdrawal' && <Withdrawal params={params} onSelectItem={onSelectItem} />}
-      {tabKey === 'transfer' && <Transfer params={params} />}
-
+      {tabKey === 'bankCard' && <BankCard params={params} />}
+      {tabKey === 'cryptoAddress' && <CryptoAddress params={params} />}
       {/* 消息弹窗 */}
-      <InfoModal ref={modalRef} item={selectedItem} />
+      {/* <InfoModal ref={modalRef} item={selectedItem} /> */}
     </PageContainer>
   )
 }

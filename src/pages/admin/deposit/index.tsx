@@ -10,7 +10,7 @@ import { observer } from 'mobx-react'
 import { useLayoutEffect } from 'react'
 import DepositMethod from './comp'
 
-const Methods = observer(({ kycStatus, tradeAccountId }: { kycStatus: API.ApproveStatus; tradeAccountId: string | undefined }) => {
+const Methods = observer(({ kycStatus }: { kycStatus: API.ApproveStatus }) => {
   const intl = useIntl()
 
   const methods = stores.wallet.depositMethods
@@ -23,6 +23,9 @@ const Methods = observer(({ kycStatus, tradeAccountId }: { kycStatus: API.Approv
       return
     }
   }, [methods, intl])
+
+  const [searchParams] = useSearchParams()
+  const tradeAccountId = searchParams.get('tradeAccountId') as string
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:gap-[38px] md:gap-[24px] gap-[16px]">
@@ -45,9 +48,6 @@ function Deposit() {
   const currentUser = initialState?.currentUser
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
-
-  const [searchParams] = useSearchParams()
-  const tradeAccountId = searchParams.get('tradeAccountId') as string
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
@@ -80,7 +80,7 @@ function Deposit() {
               <span className=" text-secondary text-sm ">&nbsp;({intl.formatMessage({ id: 'mt.renzhenghoukaiqi' })})</span>
             )}
           </div>
-          <Methods kycStatus={kycStatus} tradeAccountId={tradeAccountId} />
+          <Methods kycStatus={kycStatus} />
         </div>
       </div>
     </PageContainer>

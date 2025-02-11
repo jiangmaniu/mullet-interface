@@ -99,8 +99,6 @@ export default function WithdrawalProcess() {
           tradeAccountId: values.fromAccountId
         })
           .then((res) => {
-            console.log('res', res)
-
             // 回填生成的订单 id
             // form.setFieldValue('orderId', res?.data?.id ?? 'xxxx')
 
@@ -109,7 +107,7 @@ export default function WithdrawalProcess() {
             //   orderId: res?.data?.id ?? 'xxxx'
             // })
 
-            // setStep(1)
+            setStep(2)
           })
           .finally(() => {
             setLoading(false)
@@ -134,7 +132,7 @@ export default function WithdrawalProcess() {
   }
 
   const handleSubmit2 = async () => {
-    push('/withdrawal')
+    push('/record?key=withdrawal')
     // setStep(3)
   }
 

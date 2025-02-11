@@ -1,59 +1,20 @@
-import { FormattedMessage, getIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import ProList from '@/components/Admin/ProList'
 import Iconfont from '@/components/Base/Iconfont'
 import { getDepositOrderList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
-
-import { cn } from '@/utils/cn'
-import { IParams } from '..'
+import { IParams } from '../Address'
 
 type IProps = {
   params: IParams
 }
 
-const statusMap = {
-  WAIT: {
-    text: getIntl().formatMessage({ id: 'mt.dengdai' }),
-    color: '#9C9C9C'
-  },
-
-  SUCCESS: {
-    text: getIntl().formatMessage({ id: 'mt.shenhechenggong' }),
-    color: '#45A48A'
-  }
-}
-
 // 入金记录
-function Deposit({ params }: IProps) {
+function CryptoAddress({ params }: IProps) {
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList || []
-
-  // const mockList: Wallet.DepositRecord[] = [
-  //   {
-  //     icon: '',
-  //     orderId: '2042197400471',
-  //     createTime: '2024-12-04 14:59:59',
-  //     amount: 1000,
-  //     type: 'crypto',
-  //     currency: 'USDT',
-  //     chain: 'ERC 20',
-  //     status: 'pending',
-  //     toAccountId: '1859151139088416770'
-  //   },
-  //   {
-  //     icon: '',
-  //     orderId: '2042197400472',
-  //     createTime: '2024-12-04 14:59:59',
-  //     amount: 1000,
-  //     type: 'bank',
-  //     currency: 'USD',
-  //     bank: 'Bank of America',
-  //     status: 'finished',
-  //     toAccountId: '1826513486237188098'
-  //   }
-  // ]
 
   const onQuery = async (params: IParams) => {
     if (!params.tradeAccountId) return
@@ -86,7 +47,7 @@ function Deposit({ params }: IProps) {
       className="px-4 home-custom-commision-list"
       ghost
       split={false}
-      renderItem={(item: Wallet.depositOrderListItem, index) => (
+      renderItem={(item: Wallet.DepositRecord, index) => (
         <div className="flex flex-col gap-2 mb-5">
           <div className="text-16 font-medium text-gray-900">{item.createTime} </div>
           <div className="flex items-center flex-wrap gap-y-4 justify-between border border-gray-150 py-5 px-4 rounded-lg">
@@ -107,7 +68,7 @@ function Deposit({ params }: IProps) {
                   <span>{item.bank}</span>
                 ) : (
                   <span>
-                    {item.channelIcon || '[icon]'}
+                    {item.icon || '[icon]'}
                     {item.channelRevealName || '[channelRevealName]'}
                   </span>
                 )}
@@ -124,20 +85,8 @@ function Deposit({ params }: IProps) {
                 </span>
               </div>
             </div>
-            {/* <div className="text-start min-w-[100px]">{item.status || '[status]'}</div> */}
-            {/* @ts-ignore */}
-            <div className="text-sm flex items-center" style={{ color: statusMap[item.status]?.color }}>
-              <span
-                className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'pending' && 'animate-pulse')}
-                // @ts-ignore
-                style={{ backgroundColor: statusMap[item.status]?.color || '#9C9C9C' }}
-              >
-                {/*  */}
-              </span>
-              {/* @ts-ignore */}
-              {statusMap[item.status]?.text || '[status]'}
-            </div>
-            <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
+            <div className="text-start min-w-[100px]">{item.status || '[status]'}</div>
+            <div className="text-end min-w-[150px] text-base  md:text-xl font-bold">
               {formatNum(item.baseOrderAmount)} {item.baseCurrency}
             </div>
           </div>
@@ -147,4 +96,4 @@ function Deposit({ params }: IProps) {
   )
 }
 
-export default observer(Deposit)
+export default observer(CryptoAddress)

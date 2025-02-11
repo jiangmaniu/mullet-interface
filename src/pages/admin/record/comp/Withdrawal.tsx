@@ -15,7 +15,7 @@ import { statusMap } from '../index'
 
 type IProps = {
   params: IParams
-  onSelectItem?: (item: Wallet.WithdrawRecord) => void
+  onSelectItem?: (item: Wallet.withdrawalOrderListItem) => void
 }
 
 // 入金记录
@@ -132,7 +132,7 @@ function Withdrawal({ params, onSelectItem }: IProps) {
             </div>
             <div className="text-start min-w-[100px] flex flex-row gap-2" onClick={(e) => e.stopPropagation()}>
               {/* @ts-ignore */}
-              <div className="text-sm flex items-center" style={{ color: statusMap[item.status].color }}>
+              <div className="text-sm flex items-center" style={{ color: statusMap[item.status]?.color }}>
                 <span
                   className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'pending' && 'animate-pulse')}
                   // @ts-ignore
@@ -158,7 +158,7 @@ function Withdrawal({ params, onSelectItem }: IProps) {
                 </Popconfirm>
               )}
             </div>
-            <div className="text-end min-w-[150px] text-base  md:text-xl font-bold">
+            <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
               {formatNum(item.baseOrderAmount)} {item.baseCurrency}
             </div>
           </div>

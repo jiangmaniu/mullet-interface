@@ -176,7 +176,7 @@ export const Step2 = ({
                 {
                   id: 'mt.qingshurushoudaodeyanzhengma'
                 },
-                { value: 12345678910 }
+                { value: `${currentUser?.userInfo?.phoneAreaCode}${currentUser?.userInfo?.phone}` }
               )}
             >
               <div className="flex items-center flex-wrap gap-6">

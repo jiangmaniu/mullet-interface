@@ -19,7 +19,7 @@ export default function DepositMethod({
       )}
       onClick={() => {
         if (status === 'unlocked') {
-          push(`/deposit/process/${item.id}?tradeAccountId=${tradeAccountId}`)
+          push(`/deposit/process/${item.id}` + (tradeAccountId ? `?tradeAccountId=${tradeAccountId}` : ''))
         }
       }}
     >

@@ -22,7 +22,7 @@ function TransferToCryptoItem({ form }: IProps) {
   }
 
   const widthdrawAddress = stores.wallet.withdrawalAddress
-  const searchList = widthdrawAddress.filter((item) => item.label.includes(searchValue))
+  const searchList = widthdrawAddress.filter((item) => item.label?.includes(searchValue))
 
   const [initialed, setInitialed] = useState(false)
   useLayoutEffect(() => {

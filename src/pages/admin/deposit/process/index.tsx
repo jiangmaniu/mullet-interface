@@ -26,10 +26,6 @@ export default function DepositProcess() {
   const [searchParams] = useSearchParams()
   const tradeAccountId = searchParams.get('tradeAccountId') as string
 
-  useEffect(() => {
-    console.log('tradeAccountId', tradeAccountId)
-  }, [tradeAccountId])
-
   const methodId = Form.useWatch('methodId', form)
   // const toAccountId = Form.useWatch('toAccountId', form)
   const methods = stores.wallet.depositMethods

@@ -54,5 +54,11 @@ export default {
   'mt.chexiao': '撤銷',
   'mt.queding': '確定',
   'mt.chujinzhanghu': '出金賬戶',
-  'mt.shoukuanzhanghu': '收款賬戶'
+  'mt.shoukuanzhanghu': '收款賬戶',
+  'mt.shuziqianbao': '數字錢包',
+  'mt.yinhangka': '銀行卡',
+  'mt.dengdai': '待審核',
+  'mt.shenhechenggong': '審核成功',
+  'mt.shenhezhong': '審核中',
+  'mt.shenheshibai': '審核失敗'
 }

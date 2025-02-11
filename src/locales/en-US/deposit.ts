@@ -54,5 +54,11 @@ export default {
   'mt.chexiao': 'Cancel',
   'mt.queding': 'Confirm',
   'mt.chujinzhanghu': 'Withdrawal account',
-  'mt.shoukuanzhanghu': 'Receiving account'
+  'mt.shoukuanzhanghu': 'Receiving account',
+  'mt.shuziqianbao': 'Digital wallet',
+  'mt.yinhangka': 'Bank card',
+  'mt.dengdai': 'Pending review',
+  'mt.shenhechenggong': 'Audit successful',
+  'mt.shenheshibai': 'Audit failed',
+  'mt.shenhezhong': 'Auditing'
 }

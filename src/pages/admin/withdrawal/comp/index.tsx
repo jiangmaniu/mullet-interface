@@ -19,7 +19,7 @@ export default function WithdrawalMethod({
       )}
       onClick={() => {
         if (status === 'unlocked') {
-          push(`/withdrawal/process/${item.id}?tradeAccountId=${tradeAccountId}`)
+          push(`/withdrawal/process/${item.id}` + (tradeAccountId ? `?tradeAccountId=${tradeAccountId}` : ''))
         }
       }}
     >
