@@ -10,12 +10,13 @@ import { observer } from 'mobx-react'
 
 type IProps = {
   form: FormInstance
-  type: 'bank' | 'crypto'
+  type?: 'bank' | 'crypto'
   tips?: string
+  disabled?: boolean
 }
 
 /**转入表单项 */
-function TransferMethodSelectItem({ form, type, tips }: IProps) {
+function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IProps) {
   const [open, setOpen] = useState(false)
   const [openCurrency, setOpenCurrency] = useState(false)
   const intl = useIntl()
@@ -44,7 +45,7 @@ function TransferMethodSelectItem({ form, type, tips }: IProps) {
   }, [methods, intl])
 
   const methodInfo = useMemo(() => {
-    return methods.find((item) => item.id === methodId)
+    return methods.find((item) => item.channelId === methodId)
   }, [methodId, methods])
 
   useEffect(() => {
@@ -82,6 +83,7 @@ function TransferMethodSelectItem({ form, type, tips }: IProps) {
                 <FormattedMessage id="mt.chujinfangshi" />
               </span>
             }
+            disabled={disabled}
             className="flex-1"
             name="methodId"
             placeholder={intl.formatMessage({ id: 'mt.xuanzechujinfangshi' })}
@@ -101,7 +103,7 @@ function TransferMethodSelectItem({ form, type, tips }: IProps) {
                       setOpen(false)
                     }}
                     className={classNames('cursor-pointer rounded-lg border  border-gray-250 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
-                      'bg-[#f5f5f5]': item.id === methodId
+                      'bg-[#f5f5f5]': item.channelId === methodId
                     })}
                   >
                     <div className="flex w-full py-2 ml-[10px]">{item.label}</div>
@@ -124,7 +126,7 @@ function TransferMethodSelectItem({ form, type, tips }: IProps) {
             ]}
             options={methods.map((item) => ({
               // ...item,
-              value: item.id,
+              value: item.channelId,
               label: (
                 <div className="flex justify-between w-full gap-2">
                   <img src={item.icon} alt="" className="w-5 h-5 rounded-full bg-gray" />

@@ -71,6 +71,24 @@ export async function generateWithdrawOrder(body: Wallet.GenerateWithdrawOrderPa
   })
 }
 
+// /trade-payment/paymentClient/withdrawalAddress/modify
+// 修改提现地址
+export async function modifyWithdrawalAddress(body: { id: string; remark: string }) {
+  return request<API.Response<any>>('/api/trade-payment/paymentClient/withdrawalAddress/modify', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// /trade-payment/paymentClient/withdrawalAddress/remove
+// 删除提现地址
+export async function removeWithdrawalAddress(body: { id: string }) {
+  return request<API.Response<any>>('/api/trade-payment/paymentClient/withdrawalAddress/remove?id=' + body.id, {
+    method: 'POST',
+    data: body
+  })
+}
+
 /**
  * 出入金方式列表(不分页)
  * @param params

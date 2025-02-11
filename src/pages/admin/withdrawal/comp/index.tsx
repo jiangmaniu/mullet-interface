@@ -1,6 +1,7 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
+import { useLayoutEffect, useState } from 'react'
 
 export default function WithdrawalMethod({
   item,
@@ -11,6 +12,16 @@ export default function WithdrawalMethod({
   status: Wallet.IMethodStatus
   tradeAccountId: string | undefined
 }) {
+  const [explanation, setExplanation] = useState<Record<string, any>[]>([])
+  useLayoutEffect(() => {
+    try {
+      const parsedExplanation = JSON.parse(item.explanation || '{}')
+      setExplanation(parsedExplanation)
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
+
   return (
     <div
       className={cn(
@@ -33,14 +44,13 @@ export default function WithdrawalMethod({
         </div>
       </div>
       <div className="pl-[14px] pr-[18px] py-4 border-t border-gray-250 flex flex-col gap-[10px]">
-        {item.explanation}
-        {/* {item.options &&
-          Object.entries(item.options).map(([key, value]) => (
+        {explanation &&
+          Object.entries(explanation).map(([key, value]) => (
             <div className="flex flex-row items-center justify-start gap-[18px]" key={key}>
-              <div className=" text-sm text-secondary  min-w-20 ">{value?.label}</div>
-              <div className="text-sm font-semibold text-gray-900">{value?.desc}</div>
+              <div className=" text-sm text-secondary  min-w-20 ">{value?.title}</div>
+              <div className="text-sm font-semibold text-gray-900">{value?.content}</div>
             </div>
-          ))} */}
+          ))}
       </div>
     </div>
   )

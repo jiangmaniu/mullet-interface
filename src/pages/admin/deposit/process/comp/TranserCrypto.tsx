@@ -42,8 +42,8 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
   useEffect(() => {
     if (address) {
       console.log('setTime')
-      // setTime(60 * 30)
-      setTime(5) // 测试
+      setTime(60 * 30)
+      // setTime(5) // 测试
       setTimer()
     }
 

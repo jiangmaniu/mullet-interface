@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
 import { generateWithdrawOrder } from '@/services/api/wallet'
+import { message } from '@/utils/message'
 import { md5 } from 'js-md5'
 import Step1 from './comp/Step1'
 import { Step2 } from './comp/Step2'
@@ -107,7 +108,11 @@ export default function WithdrawalProcess() {
             //   orderId: res?.data?.id ?? 'xxxx'
             // })
 
-            setStep(2)
+            if (res.success) {
+              setStep(2)
+            } else {
+              message.info(res.message)
+            }
           })
           .finally(() => {
             setLoading(false)

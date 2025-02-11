@@ -67,5 +67,7 @@ export default {
   'mt.jujue': '拒絕',
   'mt.shibai': '失敗',
   'mt.dizhi': '地址',
-  'mt.xiugai': '修改'
+  'mt.xiugai': '修改',
+  'mt.querenshanchugaidizhima': '確認刪除該地址嗎？',
+  'mt.tishi': '提示'
 }

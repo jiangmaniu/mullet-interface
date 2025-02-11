@@ -5,14 +5,18 @@ import ProList from '@/components/Admin/ProList'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { getWithdrawalAddressList } from '@/services/api/wallet'
+import { Popconfirm } from 'antd'
+import { forwardRef, useImperativeHandle } from 'react'
 import { IParams } from '../Address'
 
 type IProps = {
   params: IParams
+  onSelectItem: (item: Wallet.WithdrawalAddress) => void
+  onDeleteItem: (item: Wallet.WithdrawalAddress) => void
 }
 
 // 入金记录
-function CryptoAddress({ params }: IProps) {
+function CryptoAddress({ params, onSelectItem, onDeleteItem }: IProps, ref: any) {
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList || []
 
@@ -29,6 +33,10 @@ function CryptoAddress({ params }: IProps) {
     let list = res?.records || []
     return { data: list, total, success: true }
   }
+
+  useImperativeHandle(ref, () => ({
+    onQuery
+  }))
 
   return (
     <ProList
@@ -49,7 +57,9 @@ function CryptoAddress({ params }: IProps) {
           {/* <div className="text-16 font-medium text-gray-900">{item.createTime} </div> */}
           <div className="flex items-center flex-wrap gap-y-4 justify-between border border-gray-150 py-5 px-4 rounded-lg">
             <div className="flex flew-row items-center gap-4 text-start min-w-[180px]">
-              <div className=" bg-gray-50 w-10 h-10 rounded-full border-gray-100"></div>
+              <div className=" bg-gray-50 w-10 h-10 rounded-full border-gray-100 flex items-center justify-center">
+                <Iconfont name="qianbaodizhi" color="gray" width={18} height={18} />
+              </div>
               <div>
                 <div className="text-primary font-bold">{item.channelName}</div>
                 <div className="text-secondary text-xs">{item.id}</div>
@@ -68,23 +78,25 @@ function CryptoAddress({ params }: IProps) {
                 </div>
               </div>
             </div>
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row items-center gap-4">
               <Button
-              // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
+                onClick={() => {
+                  onSelectItem(item)
+                }}
+                // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
               >
                 <FormattedMessage id="mt.xiugai" />
               </Button>
 
-              <Button
-                style={{
-                  width: 40,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
+              <Popconfirm
+                title={<FormattedMessage id="mt.tishi" />}
+                description={<FormattedMessage id="mt.querenshanchugaidizhima" />}
+                onConfirm={() => onDeleteItem(item)}
               >
-                <Iconfont name="bianji" color="gray" width={20} height={20} />
-              </Button>
+                <span className="text-red-500">
+                  <FormattedMessage id="common.delete" />
+                </span>
+              </Popconfirm>
             </div>
           </div>
         </div>
@@ -93,4 +105,4 @@ function CryptoAddress({ params }: IProps) {
   )
 }
 
-export default observer(CryptoAddress)
+export default observer(forwardRef(CryptoAddress))

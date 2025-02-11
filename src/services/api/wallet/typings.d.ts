@@ -310,13 +310,18 @@ declare namespace Wallet {
      */
     address?: string
     /**
+     * 渠道ID
+     */
+    channelId?: string
+    /**
      * 渠道显示名称（ERC20）
      */
     channelName?: string
+
     /**
      * 提币地址ID
      */
-    id?: number
+    id: string
     /**
      * 说明
      */

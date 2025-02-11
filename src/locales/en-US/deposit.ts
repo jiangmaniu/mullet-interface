@@ -67,5 +67,7 @@ export default {
   'mt.jujue': 'Rejected',
   'mt.shibai': 'Failed',
   'mt.dizhi': 'Address',
-  'mt.xiugai': 'Modify'
+  'mt.xiugai': 'Modify',
+  'mt.querenshanchugaidizhima': 'Are you sure you want to delete this address?',
+  'mt.tishi': 'Tips'
 }

@@ -10,6 +10,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { stores, useStores } from '@/context/mobxProvider'
 import { generateDepositOrder } from '@/services/api/wallet'
 
+import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 import ConfirmModal from './comp/ConfirmModal'
 import TransferCrypto from './comp/TranserCrypto'
@@ -47,27 +48,7 @@ export default function DepositProcess() {
   const { trade } = useStores()
   const { currentAccountInfo } = trade
 
-  useEffect(() => {
-    console.log('currentAccountInfo', currentAccountInfo)
-  }, [currentAccountInfo])
-
-  // const toAccountInfo = useMemo(() => {
-  //   return currentUser?.accountList?.find((item) => item.id === toAccountId)
-  // }, [toAccountId])
-
   const step = useRef(0)
-
-  const generateAddress = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      code: 200,
-      success: true,
-      data: {
-        address: '0x1234567890abcdef'
-      }
-    }
-  }
 
   const handleSubmit0 = async () => {
     form.validateFields().then((values) => {
@@ -85,6 +66,8 @@ export default function DepositProcess() {
             form.setFieldValue('address', res.data.address)
 
             step.current = 1
+          } else {
+            message.info(res.message)
           }
         })
         .finally(() => {
@@ -102,7 +85,6 @@ export default function DepositProcess() {
   }
 
   const handleReset = () => {
-    console.log('handleReset')
     form.setFieldValue('address', '')
 
     step.current = 0

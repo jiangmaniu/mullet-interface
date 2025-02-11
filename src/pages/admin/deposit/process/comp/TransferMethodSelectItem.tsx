@@ -63,7 +63,7 @@ function TransferMethodSelectItem({ form, tips }: IProps) {
                   setOpen(false)
                 }}
                 className={classNames('cursor-pointer rounded-lg border  border-gray-250 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
-                  'bg-[#f5f5f5]': item.id === methodId
+                  'bg-[#f5f5f5]': item.channelId === methodId
                 })}
               >
                 <div className="flex w-full py-2 ml-[10px]">{item.label}</div>
@@ -86,7 +86,7 @@ function TransferMethodSelectItem({ form, tips }: IProps) {
         ]}
         options={methods.map((item) => ({
           // ...item,
-          value: item.id,
+          value: item.channelId,
           label: (
             <div className="flex justify-start w-full gap-2">
               <img src={item.icon} alt="" className="w-5 h-5 rounded-full overflow-hidden bg-gray" />

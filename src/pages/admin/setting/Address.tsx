@@ -1,17 +1,16 @@
 import './index.less'
 
-import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { Segmented } from 'antd'
-import classNames from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 
-import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import PageContainer from '@/components/Admin/PageContainer'
-import { useStores } from '@/context/mobxProvider'
 
+import { modifyWithdrawalAddress, removeWithdrawalAddress } from '@/services/api/wallet'
+import { message } from '@/utils/message'
 import BankCard from './address/BankCard'
 import CryptoAddress from './address/CryptoAddress'
+import EditModal from './address/EditModal'
 
 export type IParams = {
   startTime?: string
@@ -56,7 +55,6 @@ export default function Addresss() {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
-  const { ws, trade } = useStores()
 
   const [tabKey, setTabKey] = useState<ITabKey>('cryptoAddress')
   const intl = useIntl()
@@ -74,21 +72,42 @@ export default function Addresss() {
     }
   }, [searchKey])
 
-  const filterClassName = useEmotionCss(({ token }) => {
-    return {
-      '.ant-select-selector,.ant-picker-range': {
-        borderRadius: '16px !important'
-      }
-    }
-  })
-
-  const [selectedItem, setSelectedItem] = useState<Wallet.WithdrawRecord | undefined>(undefined)
+  const [selectedItem, setSelectedItem] = useState<Wallet.WithdrawalAddress | undefined>(undefined)
   const modalRef = useRef<any>()
 
-  const onSelectItem = (item: Wallet.WithdrawRecord) => {
+  const onSelectItem = (item: Wallet.WithdrawalAddress) => {
     setSelectedItem(item)
     modalRef.current.show()
   }
+
+  const cryptoAddressRef = useRef<any>()
+
+  const onUpdateItem = async (values: any) => {
+    if (values.id) {
+      const res = await modifyWithdrawalAddress({
+        id: values.id,
+        remark: values.remark
+      })
+      if (res.code === 200) {
+        message.info(res.message)
+        cryptoAddressRef.current?.onQuery()
+      }
+    }
+  }
+
+  const onDeleteItem = (item: Wallet.WithdrawalAddress) => {
+    removeWithdrawalAddress({ id: item.id })
+      .then((res) => {
+        if (res.success) {
+          message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          cryptoAddressRef.current?.onQuery()
+        }
+      })
+      .catch((err) => {
+        message.info(err.message)
+      })
+  }
+
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
       <div className="text-[24px] font-bold text-primary mb-7">
@@ -109,7 +128,7 @@ export default function Addresss() {
           style={{ width: 300 }}
           block
         />
-        <div className={classNames('flex items-center gap-x-3', filterClassName)}>
+        {/* <div className={classNames('flex items-center gap-x-3', filterClassName)}>
           <ProFormSelect
             options={accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))}
             placeholder={intl.formatMessage({ id: 'mt.xuanzezhanghu' })}
@@ -126,12 +145,14 @@ export default function Addresss() {
             }}
             width={150}
           />
-        </div>
+        </div> */}
       </div>
-      {tabKey === 'cryptoAddress' && <CryptoAddress params={params} />}
+      {tabKey === 'cryptoAddress' && (
+        <CryptoAddress ref={cryptoAddressRef} params={params} onSelectItem={onSelectItem} onDeleteItem={onDeleteItem} />
+      )}
       {tabKey === 'bankCard' && <BankCard params={params} />}
       {/* 消息弹窗 */}
-      {/* <InfoModal ref={modalRef} item={selectedItem} /> */}
+      <EditModal ref={modalRef} item={selectedItem} onUpdateItem={onUpdateItem} />
     </PageContainer>
   )
 }
