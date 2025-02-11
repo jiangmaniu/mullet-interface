@@ -1,9 +1,7 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { Form, FormInstance, Space } from 'antd'
+import { Form, FormInstance } from 'antd'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
-import Dropdown from '@/components/Base/Dropdown'
-import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 type IProps = {
   form: FormInstance
   currentUser?: User.UserInfo
@@ -36,10 +34,10 @@ export default function TransferAmount({ form, currentUser, methodInfo }: IProps
 
   return (
     <div>
-      <div className="text-sm text-primary font-medium mb-3">
+      <ProFormText name="currency" hidden />
+      {/* <div className="text-sm text-primary font-medium mb-3">
         <FormattedMessage id="mt.jine" />
       </div>
-      <ProFormText name="currency" hidden />
       <div className=" border h-[38px]  border-[rgb(217,217,217)] hover:border-gray-500 py-1 px-[7px] rounded-[9px] flex-shrink flex flex-row items-center gap-2">
         <div className="flex-1">
           <ProFormText
@@ -60,7 +58,7 @@ export default function TransferAmount({ form, currentUser, methodInfo }: IProps
             <SelectSuffixIcon opacity={0.5} />
           </Space>
         </Dropdown>
-      </div>
+      </div> */}
       <div className="flex justify-between text-gray-500 text-xs mt-2">
         <span>{methodInfo?.options?.limit?.desc}</span>
         <span>

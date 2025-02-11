@@ -5,6 +5,7 @@ import { useLayoutEffect, useState } from 'react'
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
+import ENV from '@/env/server'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 
@@ -89,7 +90,7 @@ function TransferMethodSelectItem({ form, tips }: IProps) {
           value: item.channelId,
           label: (
             <div className="flex justify-start w-full gap-2">
-              <img src={item.icon} alt="" className="w-5 h-5 rounded-full overflow-hidden bg-gray" />
+              <img src={`${ENV.imgDomain}${item.channelIcon}`} alt="" className="w-5 h-5 rounded-full overflow-hidden bg-gray" />
               <div className="flex-1 text-sm font-bold text-primary truncate">
                 {item.channelRevealName}&nbsp;({item.channelNo})
               </div>

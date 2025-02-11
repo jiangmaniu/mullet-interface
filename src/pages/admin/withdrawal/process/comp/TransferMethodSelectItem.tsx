@@ -6,6 +6,7 @@ import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
+import ENV from '@/env/server'
 import { observer } from 'mobx-react'
 
 type IProps = {
@@ -129,7 +130,7 @@ function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IPr
               value: item.channelId,
               label: (
                 <div className="flex justify-between w-full gap-2">
-                  <img src={item.icon} alt="" className="w-5 h-5 rounded-full bg-gray" />
+                  <img src={`${ENV.imgDomain}${item.channelIcon}`} alt="" className="w-5 h-5 rounded-full bg-gray" />
                   <div className="flex-1 text-sm font-bold text-primary truncate">
                     {item.channelRevealName}&nbsp;({item.channelNo})
                   </div>

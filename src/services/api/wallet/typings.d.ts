@@ -214,6 +214,11 @@ declare namespace Wallet {
      * 汇率差价百分比 %
      */
     userExchangeDifferencePercentage?: number
+
+    /**
+     * 渠道图标
+     */
+    channelIcon?: string
     [property: string]: any
   }
 

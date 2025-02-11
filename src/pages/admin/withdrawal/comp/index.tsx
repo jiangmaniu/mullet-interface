@@ -1,4 +1,5 @@
 import Iconfont from '@/components/Base/Iconfont'
+import ENV from '@/env/server'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 import { useLayoutEffect, useState } from 'react'
@@ -37,6 +38,7 @@ export default function WithdrawalMethod({
       <div className="pl-[14px] pr-[18px] py-2 flex justify-between">
         <div className="flex flex-row items-center gap-2">
           {/* <Iconfont name={item.icon} width={24} height={24} color="black" /> */}
+          <img src={`${ENV.imgDomain}${item.channelIcon}`} alt={item.channelRevealName} width={24} height={24} />
           <div className=" text-base text-gary-900">{item.channelRevealName}</div>
         </div>
         <div className="text-sm text-secondary">
