@@ -4,8 +4,12 @@ import { Base64 } from 'js-base64'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
+import { md5 } from 'js-md5'
 import { getLocaleForBackend } from './constants/enum'
 import { getEnv } from './env'
+import { getUid } from './utils'
+import crypto from './utils/crypto'
+import { sortObjectByKey } from './utils/helpers'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
 
@@ -19,6 +23,10 @@ type IRequestOptions = RequestOptions & {
   needToken?: boolean
   /**接口是否需要客户端鉴权 */
   authorization?: boolean
+  /**接口需要防重放，针对POST请求 */
+  replayProtection?: boolean
+  /**接口需要加密请求参数，针对POST请求 */
+  cryptoData?: boolean
 }
 
 /**
@@ -137,6 +145,51 @@ export const errorConfig: RequestConfig = {
         headers['Blade-Auth'] = `${userInfo.token_type} ${token}`
       }
 
+      // get请求加密
+      if (config.params && config.cryptoData) {
+        const data = crypto.encrypt(JSON.stringify(config.params))
+        config.params = { data }
+      }
+
+      // POST接口
+      if (config.method === 'post') {
+        // 启用接口防重放
+        if (config.replayProtection) {
+          const timestamp = Date.now()
+          const nonce = getUid()
+          const stringifyBodyparams = JSON.stringify({
+            // 业务参数排序
+            ...sortObjectByKey(config.data),
+            timestamp,
+            nonce,
+            appkey: 'KblZBTQ5t7TLYsif5SVs7fcJbpUj7igu' // @TODO 和后台约定的接口防重放的appkey
+          })
+          // console.log('stringifyBodyparams', stringifyBodyparams)
+          // console.log('md5', md5(stringifyBodyparams))
+          // md5签名
+          headers['sign'] = md5(stringifyBodyparams)
+          // 时间戳
+          headers['timestamp'] = timestamp
+          // 随机数
+          headers['nonce'] = nonce
+        }
+        // 启用接口加密请求参数传输
+        if (config.cryptoData) {
+          // console.log('加密前的请求参数', config.data)
+          // 对接口使用AES堆成加密请求参数
+          config.data = crypto.encrypt(JSON.stringify(config.data))
+          // console.log('加密后的请求参数', config.data)
+          // console.log('解密后的请求参数', JSON.parse(crypto.decrypt(config.data)))
+          // 标记text请求
+          config.text = true
+        }
+      }
+
+      // headers中配置text请求
+      if (config.text === true) {
+        headers['Content-Type'] = 'text/plain'
+      }
+
       if (config?.params?.pageSize) {
         // 传给后台分页大小是size
         config.params.size = config.params.pageSize
@@ -157,6 +210,15 @@ export const errorConfig: RequestConfig = {
     (response) => {
       // 拦截响应数据，进行个性化处理
       const { data } = response as unknown as API.Response
+
+      // 解析加密报文
+      // @ts-ignore
+      if (response.config.cryptoData) {
+        // @ts-ignore
+        const d = JSON.parse(crypto.decryptAES(response.data, crypto.aesKey))
+        // @ts-ignore
+        response.data = d
+      }
 
       return response
     }

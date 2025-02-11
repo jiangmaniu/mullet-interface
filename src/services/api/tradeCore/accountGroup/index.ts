@@ -13,6 +13,7 @@ import { request } from '@/utils/request'
 export async function getAccountGroupList() {
   return request<API.Response<AccountGroup.AccountGroupItem[]>>('/api/trade-crm/crmClient/account/accountGroup', {
     method: 'GET'
+    // cryptoData: true
   }).then((res) => {
     if (res?.success && res.data?.length) {
       res.data.forEach((item) => {

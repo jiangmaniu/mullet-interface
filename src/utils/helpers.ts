@@ -32,3 +32,17 @@ function isEmpty(object: any) {
   }
   return true
 }
+
+export function sortObjectByKey(obj: any) {
+  // 创建一个新的对象来存储排序后的结果
+  const sortedObj: any = {}
+
+  // 获取对象的键并按字母顺序排序
+  Object.keys(obj)
+    .sort()
+    .forEach((key) => {
+      sortedObj[key] = obj[key] // 将排序后的键值对添加到新对象中
+    })
+
+  return sortedObj // 返回排序后的对象
+}
