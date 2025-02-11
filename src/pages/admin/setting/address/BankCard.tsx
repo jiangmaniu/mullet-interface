@@ -3,7 +3,6 @@ import { observer } from 'mobx-react'
 
 import ProList from '@/components/Admin/ProList'
 import Iconfont from '@/components/Base/Iconfont'
-import { getDepositOrderList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { IParams } from '../Address'
 
@@ -18,18 +17,20 @@ function BankCard({ params }: IProps) {
 
   const onQuery = async (params: IParams) => {
     if (!params.tradeAccountId) return
-    const data = await getDepositOrderList({
-      // current: 1,
-      // size: 10,
-      startTime: params.startTime,
-      endTime: params.endTime,
-      tradeAccountId: params.tradeAccountId as string
-    })
+    // const data = await getDepositOrderList({
+    //   // current: 1,
+    //   // size: 10,
+    //   startTime: params.startTime,
+    //   endTime: params.endTime,
+    //   tradeAccountId: params.tradeAccountId as string
+    // })
 
-    const res = data.data
+    // const res = data.data
 
-    let total = res?.total
-    let list = res?.records || []
+    // let total = res?.total
+    // let list = res?.records || []
+    let list: Wallet.WithdrawalAddress[] = []
+    let total = 0
     return { data: list, total, success: true }
   }
 

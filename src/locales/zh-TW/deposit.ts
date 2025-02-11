@@ -60,5 +60,12 @@ export default {
   'mt.dengdai': '待審核',
   'mt.shenhechenggong': '審核成功',
   'mt.shenhezhong': '審核中',
-  'mt.shenheshibai': '審核失敗'
+  'mt.shenheshibai': '審核失敗',
+  'mt.shenhetongguo': '審核通過',
+  'mt.yidaozhang': '已到賬',
+  'mt.zhuanzhangzhong': '轉賬中',
+  'mt.jujue': '拒絕',
+  'mt.shibai': '失敗',
+  'mt.dizhi': '地址',
+  'mt.xiugai': '修改'
 }

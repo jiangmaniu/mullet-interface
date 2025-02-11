@@ -26,7 +26,7 @@ export type IParams = {
 type ITabKey = 'deposit' | 'withdrawal' | 'transfer'
 
 type IStatusMap = {
-  [key in Wallet.IOrderStatus]: {
+  [key in Wallet.IWithdrawalOrderStatus]: {
     text: string
     color: string
     options?: {
@@ -37,20 +37,25 @@ type IStatusMap = {
 }
 
 export const statusMap: IStatusMap = {
-  beginning: {
+  WAIT: {
     text: getIntl().formatMessage({ id: 'mt.daishenghe' }),
     color: '#9C9C9C'
   },
-  pending: {
-    text: getIntl().formatMessage({ id: 'mt.shenhezhong' }),
+
+  SUCCESS: {
+    text: getIntl().formatMessage({ id: 'mt.tongguo' }),
     color: '#FF9700'
   },
-  finished: {
-    text: getIntl().formatMessage({ id: 'mt.tongguo' }),
+  RECEIPT: {
+    text: getIntl().formatMessage({ id: 'mt.yidaozhang' }),
     color: '#45A48A'
   },
-  failed: {
+  REJECT: {
     text: getIntl().formatMessage({ id: 'mt.shenheshibai' }),
+    color: '#C54747'
+  },
+  FAIL: {
+    text: getIntl().formatMessage({ id: 'mt.shibai' }),
     color: '#C54747'
   }
 }

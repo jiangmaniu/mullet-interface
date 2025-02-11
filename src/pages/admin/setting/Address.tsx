@@ -1,11 +1,9 @@
 import './index.less'
 
-import { ProFormDateRangePicker } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { Segmented } from 'antd'
 import classNames from 'classnames'
-import dayjs from 'dayjs'
 import { useEffect, useRef, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
@@ -128,23 +126,10 @@ export default function Addresss() {
             }}
             width={150}
           />
-          <ProFormDateRangePicker
-            fieldProps={{
-              onChange: (value) => {
-                const startTime = value ? dayjs(value[0]).format('YYYY-MM-DD') + ' 00:00:00' : undefined
-                const endTime = value ? dayjs(value[1]).format('YYYY-MM-DD') + ' 23:59:59' : undefined
-                setParams({
-                  ...params,
-                  startTime,
-                  endTime
-                })
-              }
-            }}
-          />
         </div>
       </div>
-      {tabKey === 'bankCard' && <BankCard params={params} />}
       {tabKey === 'cryptoAddress' && <CryptoAddress params={params} />}
+      {tabKey === 'bankCard' && <BankCard params={params} />}
       {/* 消息弹窗 */}
       {/* <InfoModal ref={modalRef} item={selectedItem} /> */}
     </PageContainer>

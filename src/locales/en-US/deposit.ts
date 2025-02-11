@@ -60,5 +60,12 @@ export default {
   'mt.dengdai': 'Pending review',
   'mt.shenhechenggong': 'Audit successful',
   'mt.shenheshibai': 'Audit failed',
-  'mt.shenhezhong': 'Auditing'
+  'mt.shenhezhong': 'Auditing',
+  'mt.shenhetongguo': 'Audit passed',
+  'mt.yidaozhang': 'Received',
+  'mt.zhuanzhangzhong': 'Transferring',
+  'mt.jujue': 'Rejected',
+  'mt.shibai': 'Failed',
+  'mt.dizhi': 'Address',
+  'mt.xiugai': 'Modify'
 }
