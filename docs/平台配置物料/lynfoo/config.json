@@ -6,5 +6,7 @@
   "CLIENT_SECRET": "wp_trader_client_secret",
   "REGISTER_APP_CODE": "123456",
   "ws": "wss://websocket.lynfoocn.com:443/websocketServer",
-  "imgDomain": "https://file.lynfoocn.com/trade/"
+  "imgDomain": "https://file.lynfoocn.com/trade/",
+  "REGISTER_MODULE": "1",
+  "SKIP_KYC_STEP_ONE": "1"
 }

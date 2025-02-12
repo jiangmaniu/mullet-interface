@@ -10,7 +10,7 @@ import { flushSync } from 'react-dom'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Tabs from '@/components/Base/Tabs'
-import { ADMIN_HOME_PAGE, WEB_HOME_PAGE } from '@/constants'
+import { ADMIN_HOME_PAGE, DEFAULT_AREA_CODE, WEB_HOME_PAGE } from '@/constants'
 import { login, registerSubmitEmail, registerSubmitPhone } from '@/services/api/user'
 import { goHome, push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
@@ -18,6 +18,7 @@ import { setLocalUserInfo } from '@/utils/storage'
 import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem'
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
+import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { PrivacyPolicyService } from '@/pages/webapp/pages/Welcome/RegisterSection/PrivacyPolicyService'
@@ -46,7 +47,7 @@ function Login() {
 
   const username = Form.useWatch('username', form)
   const password = Form.useWatch('password', form)
-  const phoneAreaCode = Form.useWatch('phoneAreaCode', form) || '+852' // 默认香港区号
+  const phoneAreaCode = Form.useWatch('phoneAreaCode', form) || `+${DEFAULT_AREA_CODE}` // 默认香港区号
 
   const validateCodeRef = useRef<any>() // 注册、重置密码验证码
   const pwdTipsRef = useRef<any>()
@@ -239,6 +240,11 @@ function Login() {
   }
 
   const renderLoginContent = () => {
+    const { list, run } = useModel('areaList')
+    const { lng } = useLang()
+
+    const defaultAreaCode = list?.find((item) => item.areaCode === DEFAULT_AREA_CODE)
+
     return (
       <div
         className={classNames('flex items-center justify-center mt-10 flex-1 h-full', rootClassName)}
@@ -276,6 +282,11 @@ function Login() {
               }
             }}
             form={form}
+            initialValues={{
+              phoneAreaCode: `+${DEFAULT_AREA_CODE}`,
+              country: defaultAreaCode?.abbr || '',
+              countryName: lng === 'zh-TW' ? defaultAreaCode?.nameTw : defaultAreaCode?.nameEn || ''
+            }}
             actions={
               <>
                 {isLoginTab && (

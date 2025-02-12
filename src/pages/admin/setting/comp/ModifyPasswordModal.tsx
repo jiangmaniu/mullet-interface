@@ -1,12 +1,14 @@
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 import Modal from '@/components/Admin/ModalForm'
 import Button from '@/components/Base/Button'
 import FormCaptcha from '@/components/Form/Captcha'
 import PwdTips from '@/components/PwdTips'
+import { stores } from '@/context/mobxProvider'
+import { getEnv } from '@/env'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
@@ -32,6 +34,36 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
   const isKycAuth = currentUser?.isKycAuth
 
   const isPhoneCheck = phone && isKycAuth
+
+  const onSend = async () => {
+    let reqFn = isPhoneCheck ? sendPhoneCode : sendEmailCode
+
+    if (getEnv().SKIP_KYC_STEP_ONE === '1') {
+      reqFn = stores.global.registerWay === 'PHONE' ? sendPhoneCode : sendEmailCode
+    }
+
+    const res = await reqFn()
+    return res.success
+  }
+
+  const [sendLabel, setSendLabel] = useState('')
+
+  const setSendLabelValue = useCallback(() => {
+    let value = isPhoneCheck ? intl.formatMessage({ id: 'mt.shoujiyanzheng' }) : intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' })
+
+    if (getEnv().SKIP_KYC_STEP_ONE === '1') {
+      value =
+        stores.global.registerWay === 'PHONE'
+          ? intl.formatMessage({ id: 'mt.shoujiyanzheng' })
+          : intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' })
+    }
+
+    setSendLabel(value)
+  }, [stores.global.registerWay, intl, isPhoneCheck])
+
+  useEffect(() => {
+    setSendLabelValue()
+  }, [setSendLabelValue])
 
   return (
     <Modal
@@ -117,12 +149,8 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
       />
       <FormCaptcha
         name="validateCode"
-        onSend={async () => {
-          const reqFn = isPhoneCheck ? sendPhoneCode : sendEmailCode
-          const res = await reqFn()
-          return res.success
-        }}
-        label={isPhoneCheck ? intl.formatMessage({ id: 'mt.shoujiyanzheng' }) : intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' })}
+        onSend={onSend}
+        label={sendLabel}
         rules={[
           {
             required: true,

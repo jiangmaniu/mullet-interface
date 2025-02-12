@@ -6,5 +6,7 @@
   "CLIENT_SECRET": "stellux_trader_client_secret",
   "REGISTER_APP_CODE": "123456",
   "ws": "wss://websocket.stellux.io/websocketServer",
-  "imgDomain": "https://file.stellux.io/trade/"
+  "imgDomain": "https://file.stellux.io/trade/",
+  "REGISTER_MODULE": "0",
+  "SKIP_KYC_STEP_ONE": "0"
 }

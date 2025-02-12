@@ -6,6 +6,7 @@ import { InputProps } from 'antd/lib'
 import { useEffect, useState } from 'react'
 
 import AreaCodeSelect from '@/components/Form/AreaCodeSelect'
+import { DEFAULT_AREA_CODE } from '@/constants'
 import { regMobile } from '@/utils'
 
 type IProps = {
@@ -73,7 +74,7 @@ export default function PhoneSelectFormItem({
 
   useEffect(() => {
     // 默认显示香港区号
-    form.setFieldValue(names[1], '+852')
+    form.setFieldValue(names[1], `+${DEFAULT_AREA_CODE}`)
   }, [])
 
   const handleSendCode = async () => {

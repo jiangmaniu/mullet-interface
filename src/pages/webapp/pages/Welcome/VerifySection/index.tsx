@@ -21,7 +21,7 @@ export interface FormData {
   email?: string
   phone?: string
   password: string
-  areaCodeItem: Common.AreaCodeItem | undefined
+  areaCode?: string
 }
 
 interface Props {
@@ -29,55 +29,42 @@ interface Props {
   startAnimation?: (toValue: number) => void
   email?: string
   phone?: string
-  areaCodeItem?: Common.AreaCodeItem
   password?: string
+  areaCode?: string
+  countryList: Common.AreaCodeItem[]
 }
 
-const CountDown = observer(
-  ({
-    email,
-    phone,
-    areaCodeItem,
-    onSendCode,
-    defaultSeconds
-  }: {
-    email?: string
-    phone?: string
-    areaCodeItem?: Common.AreaCodeItem
-    onSendCode: () => void
-    defaultSeconds: number
-  }) => {
-    const { t } = useI18n()
-    const { cn } = useTheme()
-    const { global } = useStores()
-    const ENV = getEnv()
+const CountDown = observer(({ onSendCode, defaultSeconds }: { onSendCode: () => void; defaultSeconds: number }) => {
+  const { t } = useI18n()
+  const { cn } = useTheme()
+  const { global } = useStores()
+  const ENV = getEnv()
 
-    useEffect(() => {
-      global.verifyCodeDown === -1 && global.countDownVerifyCode(defaultSeconds)
-    }, [])
+  useEffect(() => {
+    global.verifyCodeDown === -1 && global.countDownVerifyCode(defaultSeconds)
+  }, [])
 
-    return (
-      <View className={cn('flex flex-row mt-1 mb-8 flex-wrap')}>
-        <Text className={cn('text-start text-sm text-weak')}>{t('pages.login.Did not receive the verification code')}</Text>
-        {global.verifyCodeDown === -1 ? (
-          <>
-            <Text className={cn('text-start text-sm text-weak')}>{t('pages.login.click to')}</Text>
-            <View onPress={onSendCode}>
-              <Text className={cn('text-start text-sm !text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
-            </View>
-          </>
-        ) : (
-          <Text className={cn('text-start text-sm text-weak')}>
-            {t('pages.login.Please try again after seconds', { second: global.verifyCodeDown })}
-          </Text>
-        )}
-      </View>
-    )
-  }
-)
+  return (
+    <View className={cn('flex flex-row mt-1 mb-8 flex-wrap')}>
+      <Text className={cn('text-start text-sm text-weak')}>{t('pages.login.Did not receive the verification code')}</Text>
+      {global.verifyCodeDown === -1 ? (
+        <>
+          <Text className={cn('text-start text-sm text-weak')}>{t('pages.login.click to')}</Text>
+          <View onPress={onSendCode}>
+            <Text className={cn('text-start text-sm !text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
+          </View>
+        </>
+      ) : (
+        <Text className={cn('text-start text-sm text-weak')}>
+          {t('pages.login.Please try again after seconds', { second: global.verifyCodeDown })}
+        </Text>
+      )}
+    </View>
+  )
+})
 
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
-  { setSection, startAnimation, email, phone, areaCodeItem, password }: Props,
+  { setSection, startAnimation, email, phone, areaCode, password, countryList }: Props,
   ref
 ) => {
   const ENV = getEnv()
@@ -109,6 +96,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const loadingRef = useRef<ModalLoadingRef>(null)
   const [tips, setTips] = useState('')
 
+  const areaCodeItem = countryList.find((item) => item.areaCode === areaCode)
+
   // 登录
   const onSubmit = async () => {
     // const loging = dialog(<LottieLoading tips={t('pages.login.Registering')} />)
@@ -116,7 +105,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       setTips(t('pages.login.Registering'))
     })
 
-    if ((!email && (!phone || !areaCodeItem)) || !code || !password) {
+    if ((!email && (!phone || !areaCode)) || !code || !password) {
       message.info('error')
       loadingRef.current?.close()
       return
@@ -127,7 +116,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         code: ENV.REGISTER_APP_CODE as string,
         country: areaCodeItem?.abbr,
         password: md5(password),
-        // password: password,
         validateCode: Number(code)
       }
 
@@ -141,11 +129,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       } else if (global.registerWay === 'PHONE' && phone) {
         result = await registerSubmitPhone({
           emailOrPhone: phone,
+          phoneAreaCode: `+${areaCode}`,
           ...body
         })
       }
-
-      console.log('result', result)
 
       if (result?.success) {
         // 等待两秒
@@ -180,7 +167,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       } else if (phone) {
         result = await sendCustomPhoneCode({
           phone: phone,
-          phoneAreaCode: areaCodeItem?.areaCode
+          phoneAreaCode: areaCode
         })
       }
 
@@ -202,12 +189,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             {t('pages.login.Please enter the sixdigit verification code')}
           </Text>
           <Text className={cn('text-start text-sm !text-secondary mt-1.5')}>
-            {t('pages.login.Verification code sent to', { email: phone ? `+${areaCodeItem?.areaCode}${phone}` : email })}
+            {t('pages.login.Verification code sent to', { email: phone ? `+${areaCode}${phone}` : email })}
           </Text>
           <View className={cn('flex flex-col  mt-[18px]')}>
             <CodeInput value={code} onChange={setCode} />
           </View>
-          <CountDown email={email} phone={phone} areaCodeItem={areaCodeItem} onSendCode={onSendCode} defaultSeconds={defaultSeconds} />
+          <CountDown onSendCode={onSendCode} defaultSeconds={defaultSeconds} />
           <View className={cn('flex flex-row justify-end items-center gap-4 self-end')}>
             <Button type="default" loading={false} height={42} className={cn('mt-4 w-[128px] ')} onPress={goback}>
               {t('common.operate.Back')}

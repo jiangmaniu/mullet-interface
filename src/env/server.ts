@@ -19,8 +19,7 @@ const devConf = {
   imgDomain: process.env.IMG_DOMAIN, // 图片地址
   BASE_URL: process.env.BASE_URL, // 接口地址
   CLIENT_ID: process.env.CLIENT_ID, // 客户端ID
-  CLIENT_SECRET: process.env.CLIENT_SECRET, // 客户端密钥
-  REGISTER_APP_CODE: process.env.REGISTER_APP_CODE // 注册应用code
+  CLIENT_SECRET: process.env.CLIENT_SECRET // 客户端密钥
 }
 
 const conf = process.env.NODE_ENV === 'production' ? seoConf : devConf

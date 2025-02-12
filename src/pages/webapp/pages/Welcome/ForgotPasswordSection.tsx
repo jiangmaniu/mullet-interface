@@ -13,16 +13,16 @@ import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
-import { APP_MODAL_WIDTH } from '@/constants'
+import { APP_MODAL_WIDTH, DEFAULT_AREA_CODE } from '@/constants'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { cn } from '@/utils/cn'
+import { STORAGE_GET_ACCOUNT_PASSWORD } from '@/utils/storage'
 import { useModel } from '@umijs/max'
 import { TextField } from '../../components/Base/Form/TextField'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
 import { useI18n } from '../../hooks/useI18n'
-import type { ModalRef } from './RegisterSection/SelectCountryModal'
-import SelectCountryModal from './RegisterSection/SelectCountryModal'
+import SelectCountryModal, { ModalRef } from '../UserCenter/Kyc/comp/SelectCountryModal'
 export interface FormData {
   email?: string
   phone?: string
@@ -36,8 +36,8 @@ interface Props {
   phone?: string
   setEmail?: (email: string) => void
   setPhone?: (phone: string) => void
-  areaCodeItem?: Common.AreaCodeItem
-  setAreaCodeItem: (areaCodeItem: Common.AreaCodeItem | undefined) => void
+  areaCode?: string
+  setAreaCode: (areaCode: string) => void
   setDisabled: (disabled: boolean) => void
 }
 
@@ -49,8 +49,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     setEmail,
     phone: phoneProps,
     setPhone,
-    areaCodeItem: areaCodeItemProps,
-    setAreaCodeItem,
+    areaCode: areaCodeProps,
+    setAreaCode,
     setDisabled
   }: Props,
   ref
@@ -134,9 +134,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     formState: { errors }
   } = useForm<FormData>({
     defaultValues: async () => ({
-      email: emailProps || '',
-      phone: phoneProps || '',
-      areaCode: areaCodeItemProps?.areaCode || ''
+      email: emailProps || (await STORAGE_GET_ACCOUNT_PASSWORD('email')) || '',
+      phone: phoneProps || (await STORAGE_GET_ACCOUNT_PASSWORD('phone')) || '',
+      areaCode: areaCodeProps || (await STORAGE_GET_ACCOUNT_PASSWORD('areaCode')) || DEFAULT_AREA_CODE
     }),
     mode: 'all',
     resolver: zodResolver(schema)
@@ -156,7 +156,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const handleSelectCountry = (item?: Common.AreaCodeItem) => {
     if (item) {
       setValue('areaCode', item.areaCode)
-      setAreaCodeItem(item)
+      setAreaCode?.(item.areaCode)
 
       trigger('areaCode')
     }

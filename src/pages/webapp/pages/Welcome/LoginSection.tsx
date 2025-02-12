@@ -16,9 +16,12 @@ import {
 } from '@/utils/storage'
 import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 
+import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
-import { APP_MODAL_WIDTH } from '@/constants'
+import { APP_MODAL_WIDTH, DEFAULT_AREA_CODE } from '@/constants'
+import { stores } from '@/context/mobxProvider'
 import { login } from '@/services/api/user'
+import { regMobile } from '@/utils'
 import { useModel } from '@umijs/max'
 import { Checkbox } from 'antd'
 import { md5 } from 'js-md5'
@@ -26,12 +29,15 @@ import { TextField } from '../../components/Base/Form/TextField'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
 import { useI18n } from '../../hooks/useI18n'
+import SelectCountryModal, { ModalRef } from '../UserCenter/Kyc/comp/SelectCountryModal'
 interface FormData {
   tenanId: string
   tenanName: string
-  email: string
   password: string
   remember: boolean
+  email?: string
+  phone?: string
+  areaCode?: string
 }
 
 interface Props {
@@ -43,6 +49,10 @@ interface Props {
   startAnimation?: (toValue: number) => void
   email?: string
   setEmail: (email: string) => void
+  phone?: string
+  setPhone: (phone: string) => void
+  areaCode?: string
+  setAreaCode: (areaCode: string) => void
 }
 
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
@@ -54,7 +64,11 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     setTenanName,
     startAnimation,
     email: emailProps,
-    setEmail
+    setEmail,
+    phone: phoneProps,
+    setPhone,
+    areaCode: areaCodeProps,
+    setAreaCode
   }: Props,
   ref
 ) => {
@@ -85,14 +99,18 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   )
 
   const loadingRef = useRef<ModalLoadingRef>(null)
+  const [loadingTips, setLoadingTips] = useState('')
 
   // 登录
-  const onSubmit = async (values: User.LoginParams & { email: string }) => {
-    loadingRef.current?.show()
+  const onSubmit = async (values: User.LoginParams & { email?: string; phone?: string; areaCode?: string }) => {
+    loadingRef.current?.show(() => {
+      setLoadingTips(t('pages.login.Logining'))
+    })
 
     try {
       const result = await login({
-        username: values.email?.trim(),
+        username: registerWay === 'EMAIL' ? values.email?.trim() : values.phone?.trim(),
+        phoneAreaCode: `+${values.areaCode}`,
         password: md5(values.password as string),
         tenanId: '000000',
         type: 'account',
@@ -136,9 +154,17 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   // 拦截平台/系统返回操作
   // useGoBackHandler(goback, [])
 
+  const registerWay = stores.global.registerWay
+
   /** 表单控制 */
   const schema = z.object({
-    email: z.string().email({ message: t('pages.login.Email placeholder') }),
+    phone:
+      registerWay === 'PHONE'
+        ? z.string().refine((value) => regMobile.test(value), { message: t('pages.login.Phone placeholder') })
+        : z.string().optional(),
+    areaCode:
+      registerWay === 'PHONE' ? z.string().min(1, { message: t('pages.login.Residence Country is required') }) : z.string().optional(),
+    email: registerWay === 'EMAIL' ? z.string().email({ message: t('pages.login.Email placeholder') }) : z.string().optional(),
     password: z
       .string()
       .min(6, { message: t('pages.login.Password min', { count: 6 }) })
@@ -161,7 +187,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       tenanName: tenanNameProps || (await STORAGE_GET_ACCOUNT_PASSWORD('tenanName')),
       email: emailProps || (await STORAGE_GET_ACCOUNT_PASSWORD('email')) || '',
       password: (await STORAGE_GET_ACCOUNT_PASSWORD('password')) || '',
-      remember: (await STORAGE_GET_ACCOUNT_PASSWORD('remember')) || false
+      remember: (await STORAGE_GET_ACCOUNT_PASSWORD('remember')) || false,
+      phone: phoneProps || (await STORAGE_GET_ACCOUNT_PASSWORD('phone')) || '',
+      areaCode: areaCodeProps || (await STORAGE_GET_ACCOUNT_PASSWORD('areaCode')) || DEFAULT_AREA_CODE
     }),
     mode: 'all',
     resolver: zodResolver(schema)
@@ -172,6 +200,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const email = watch('email')
   const password = watch('password')
   const remember = watch('remember')
+  const phone = watch('phone')
+  const areaCode = watch('areaCode')
   // 用 useRef 来存储旧的状态
   const prevRemember = useRef<boolean | undefined>(undefined)
 
@@ -190,10 +220,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         tenanName,
         email,
         password,
-        remember
+        remember,
+        phone,
+        areaCode
       })
     }
-  }, [tenanId, tenanName, email, password])
+  }, [tenanId, tenanName, email, password, phone, areaCode])
 
   useEffect(() => {
     const _prevRemembr = prevRemember.current
@@ -204,46 +236,87 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         tenanName,
         email,
         password,
-        remember
+        remember,
+        phone,
+        areaCode
       })
       // 触发表单验证
-      trigger('email')
-      trigger('password')
+      // trigger('email')
+      // trigger('phone')
+      // trigger('areaCode')
+      // trigger('password')
     } else if (_prevRemembr) {
       STORAGE_REMOVE_ACCOUNT_PASSWORD()
     }
     prevRemember.current = remember
   }, [remember])
 
+  const selectCountryModalRef = useRef<ModalRef>(null)
+  const handleSelectCountry = (item?: Common.AreaCodeItem) => {
+    if (item) {
+      setValue('areaCode', item.areaCode)
+      setAreaCode?.(item.areaCode)
+      trigger('areaCode')
+    }
+  }
+
   return (
     <View className={cn('flex-1 flex flex-col justify-between mb-1')}>
       <View>
         <View className={cn('flex flex-col gap-5 mb-5')}>
-          <TextField
-            value={email}
-            onChange={(val) => {
-              setValue('email', val?.trim())
-              setEmail?.(val?.trim())
-              trigger('email')
-            }}
-            label={t('pages.login.Email placeholder')}
-            // RightLabel={() => RightLabel}
-            placeholder={t('pages.login.Email placeholder')}
-            height={50}
-            autoCapitalize="none"
-            autoComplete="password"
-            // autoCorrect={false}
-            // onSubmitEditing={() => {
-            //   // todo
-            // }}
-          />
+          {registerWay === 'EMAIL' && (
+            <TextField
+              value={email}
+              onChange={(val) => {
+                setValue('email', val?.trim())
+                setEmail?.(val?.trim())
+                trigger('email')
+              }}
+              label={t('pages.login.Email placeholder')}
+              // RightLabel={() => RightLabel}
+              placeholder={t('pages.login.Email placeholder')}
+              height={50}
+              autoCapitalize="none"
+              autoComplete="password"
+            />
+          )}
           {!!errors.email && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.email.message}</Text>}
+          {registerWay === 'PHONE' && (
+            <TextField
+              value={phone}
+              onChange={(val) => {
+                setValue('phone', val?.trim())
+                setPhone?.(val?.trim())
+                trigger('phone')
+              }}
+              label={t('pages.userCenter.shoujihaoma')}
+              placeholder={t('pages.userCenter.qingshurushoujihaoma')}
+              height={50}
+              containerStyle={{
+                marginTop: 4
+              }}
+              style={{
+                lineHeight: 18
+              }}
+              LeftAccessory={() => (
+                <View className={cn('pl-[15px]')} onPress={() => selectCountryModalRef.current?.show()}>
+                  <View className={cn('flex flex-row items-center gap-1')}>
+                    <Text>{areaCode ? `+${areaCode}` : t('components.select.PlacehodlerSim')}</Text>
+                    <Iconfont name="qiehuanzhanghu-xiala" size={24} />
+                  </View>
+                </View>
+              )}
+            />
+          )}
+          {!!errors.phone && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.phone.message}</Text>}
+          {!!errors.areaCode && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.areaCode.message}</Text>}
+
           <TextField
             ref={authPasswordInput}
             value={password}
             onChange={(val) => {
               setValue('password', val?.trim())
-              trigger('password')
+              // trigger('password')
             }}
             label={t('pages.login.Password')}
             placeholder={t('pages.login.Password placeholder')}
@@ -290,7 +363,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           </View>
         </View>
       </View>
-      <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={t('pages.login.Logining')} />
+      <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={loadingTips} />
+
+      <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} />
     </View>
   )
 }

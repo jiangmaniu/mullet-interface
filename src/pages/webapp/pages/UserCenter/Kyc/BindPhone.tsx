@@ -5,7 +5,6 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
-import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
@@ -63,8 +62,6 @@ function BindPhone() {
   const { global } = useStores()
 
   const user = useModel('user')
-
-  const { screenSize } = useEnv()
 
   const schema = z.object({
     phone: z.string().min(1, { message: t('pages.userCenter.qingshurushoujihaoma') }),
@@ -168,12 +165,20 @@ function BindPhone() {
 
   const disabled = !!errors.phone || !!errors.areaCode || !!errors.code
 
+  // 获取国家列表
   const [countryList, setCountryList] = useState<Common.AreaCodeItem[]>([])
-  useLayoutEffect(() => {
-    getAreaCode().then((res) => {
+  const getCountryList = async () => {
+    try {
+      const res = await getAreaCode()
       const list = res.data?.filter((item) => item.areaCode !== '0')
       setCountryList(list || [])
-    })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useLayoutEffect(() => {
+    getCountryList()
   }, [])
 
   return (
@@ -260,7 +265,7 @@ function BindPhone() {
         {!!errors.code && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.code.message}</Text>}
       </View>
 
-      <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} list={countryList} />
+      <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} />
       <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={loadingTips} />
     </BasicLayout>
   )

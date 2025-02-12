@@ -6,12 +6,12 @@ import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { getAreaCode } from '@/services/api/common'
 import { observer } from 'mobx-react'
 import type { ForwardedRef } from 'react'
-import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 type IProps = {
-  list: Common.AreaCodeItem[]
   isSimulate?: boolean
   header?: React.ReactNode
   onPress?: (item?: Common.AreaCodeItem) => void
@@ -74,17 +74,65 @@ const renderList = (listData: Common.AreaCodeItem[], onPress: (item: Common.Area
   )
 }
 
+const Children = observer(
+  ({
+    handlePress,
+    searchValue,
+    list
+  }: {
+    handlePress: (item: Common.AreaCodeItem) => void
+    searchValue: string
+    list: Common.AreaCodeItem[]
+  }) => {
+    const { cn, theme } = useTheme()
+    const { t, locale } = useI18n()
+
+    const filteredList = useMemo<Common.AreaCodeItem[]>(() => {
+      if (!searchValue) return list || []
+
+      return (
+        list?.filter((item) => {
+          const title = locale === 'zh-TW' ? item.nameCn : item.nameEn
+          return title.toLowerCase().includes(searchValue.toLowerCase()) || item.areaCode.toLowerCase().includes(searchValue.toLowerCase())
+        }) ?? []
+      )
+    }, [searchValue, list])
+
+    return (
+      <View className={cn('flex-1')}>
+        <View className={cn('flex-1 mx-3 pb-10')}>{renderList(filteredList, handlePress)}</View>
+      </View>
+    )
+  }
+)
+
 /** 选择账户弹窗 */
-function SelectCountryModal({ isSimulate, list, onPress, isRemainAtCurrentPage }: IProps, ref: ForwardedRef<ModalRef>) {
+function SelectCountryModal({ isSimulate, onPress, isRemainAtCurrentPage }: IProps, ref: ForwardedRef<ModalRef>) {
   const { cn, theme } = useTheme()
   const { t, locale } = useI18n()
   const [loading, setLoading] = useState(true)
   const [open, setOpen] = useState(false)
 
+  const [countryList, setCountryList] = useState<Common.AreaCodeItem[]>([])
+  const getCountryList = async () => {
+    try {
+      const res = await getAreaCode()
+      const list = res.data?.filter((item) => item.areaCode !== '0')
+      setCountryList(list || [])
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useLayoutEffect(() => {
+    getCountryList()
+  }, [])
+
   const bottomSheetModalRef = useRef<SheetRef>(null)
 
   useImperativeHandle(ref, () => ({
     show: () => {
+      setSearchValue('')
       bottomSheetModalRef.current?.sheet?.present()
     },
     close: () => {
@@ -98,28 +146,12 @@ function SelectCountryModal({ isSimulate, list, onPress, isRemainAtCurrentPage }
     }, 800)
   }, [open])
 
-  // const [filteredList, setFilteredList] = useState<Common.AreaCodeItem[]>([])
-
-  // useEffect(() => {
-  //   setFilteredList(list || [])
-  // }, [list])
-
   const handlePress = (item: Common.AreaCodeItem) => {
-    // setFilteredList(countryList)
     onPress?.(item)
     bottomSheetModalRef.current?.sheet?.dismiss()
   }
 
   const [searchValue, setSearchValue] = useState('')
-
-  const filteredList = useMemo<Common.AreaCodeItem[]>(() => {
-    if (!searchValue) return list
-
-    return list.filter((item) => {
-      const title = locale === 'zh-TW' ? item.nameCn : item.nameEn
-      return title.toLowerCase().includes(searchValue.toLowerCase()) || item.areaCode.toLowerCase().includes(searchValue.toLowerCase())
-    })
-  }, [searchValue, list])
 
   return (
     <SheetModal
@@ -168,13 +200,9 @@ function SelectCountryModal({ isSimulate, list, onPress, isRemainAtCurrentPage }
           )}
         </>
       }
-      children={
-        <View className={cn('flex-1')}>
-          <View className={cn('flex-1 mx-3 pb-10')}>{renderList(filteredList, handlePress)}</View>
-        </View>
-      }
+      children={<Children handlePress={handlePress} searchValue={searchValue} list={countryList} />}
     />
   )
 }
 
-export default observer(forwardRef(SelectCountryModal))
+export default forwardRef(SelectCountryModal)

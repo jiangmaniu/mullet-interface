@@ -1,11 +1,13 @@
 import type { ReactElement } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
 import { default as Icon, default as Iconfont } from '@/components/Base/Iconfont'
 
+import { DEFAULT_AREA_CODE } from '@/constants'
 import { getEnv } from '@/env'
+import { getAreaCode } from '@/services/api/common'
 import { replace } from '@/utils/navigator'
 import { capitalizeFirstLetter } from '@/utils/str'
 import { useLocation } from '@umijs/max'
@@ -20,7 +22,7 @@ import { FooterForgotPassword, ForgotPasswordSection } from './ForgotPasswordSec
 import { ForgotVerifySection } from './ForgotVerifySection'
 import LngSelectModal from './LngSelectModal'
 import { Footer, LoginSection } from './LoginSection'
-import { RegisterSection } from './RegisterSection'
+import RegisterSection from './RegisterSection'
 import { FooterResetPassword, ResetPasswordSection } from './ResetPasswordSection'
 import { VerifySection } from './VerifySection'
 
@@ -56,8 +58,8 @@ export interface SectionProps {
   password: any
   setSubTitle?: any
   startAnimation?: (toValue: number) => void
-  areaCodeItem?: Common.AreaCodeItem
-  setAreaCodeItem?: (areaCodeItem: Common.AreaCodeItem | undefined) => void
+  areaCode?: string
+  setAreaCode?: (areaCode: string) => void
   email?: string
   setEmail?: (email: string) => void
 }
@@ -87,9 +89,25 @@ export default function WelcomeScreen() {
   const [tenanName, setTenanName] = useState<string>('')
   const [email, setEmail] = useState<string>()
   const [phone, setPhone] = useState<string>()
-  const [areaCodeItem, setAreaCodeItem] = useState<Common.AreaCodeItem>()
+  const [areaCode, setAreaCode] = useState<string>(DEFAULT_AREA_CODE)
   const [password, setPassword] = useState<string>()
   const [validateCode, setValidateCode] = useState<string>()
+
+  // 获取国家列表
+  const [countryList, setCountryList] = useState<Common.AreaCodeItem[]>([])
+  const getCountryList = async () => {
+    try {
+      const res = await getAreaCode()
+      const list = res.data?.filter((item) => item.areaCode !== '0')
+      setCountryList(list || [])
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useLayoutEffect(() => {
+    getCountryList()
+  }, [])
 
   const sectionRef = useRef<TypeSection | null>(null)
   const gobackHandler = (e: any) => {
@@ -145,7 +163,7 @@ export default function WelcomeScreen() {
   const [disabled, setDisabled] = useState(false)
 
   const footers = {
-    login: ENV.platform === 'lyn' && <Footer setSection={setSection} />,
+    login: getEnv().REGISTER_MODULE === '1' && <Footer setSection={setSection} />,
     forgotPassword: <FooterForgotPassword handleSubmit={handleSubmit} disabled={disabled} />,
     resetPassword: <FooterResetPassword handleSubmit={handleSubmit} disabled={disabled} />
   }
@@ -162,6 +180,10 @@ export default function WelcomeScreen() {
         startAnimation={startAnimation}
         email={email}
         setEmail={setEmail}
+        phone={phone}
+        setPhone={setPhone}
+        areaCode={areaCode}
+        setAreaCode={setAreaCode}
       />
     ),
     // server: (
@@ -183,9 +205,10 @@ export default function WelcomeScreen() {
         setEmail={setEmail}
         phone={phone}
         setPhone={setPhone}
-        areaCodeItem={areaCodeItem}
-        setAreaCodeItem={setAreaCodeItem}
+        areaCode={areaCode}
+        setAreaCode={setAreaCode}
         setPassword={setPassword}
+        countryList={countryList}
       />
     ),
     verify: (
@@ -195,8 +218,9 @@ export default function WelcomeScreen() {
         startAnimation={startAnimation}
         email={email}
         phone={phone}
-        areaCodeItem={areaCodeItem}
         password={password}
+        countryList={countryList}
+        areaCode={areaCode}
       />
     ),
     forgotPassword: (
@@ -208,8 +232,8 @@ export default function WelcomeScreen() {
         setEmail={setEmail}
         phone={phone}
         setPhone={setPhone}
-        areaCodeItem={areaCodeItem}
-        setAreaCodeItem={setAreaCodeItem}
+        areaCode={areaCode}
+        setAreaCode={setAreaCode}
         setDisabled={setDisabled}
       />
     ),
@@ -220,8 +244,8 @@ export default function WelcomeScreen() {
         startAnimation={startAnimation}
         email={email}
         phone={phone}
-        areaCodeItem={areaCodeItem}
         setValidateCode={setValidateCode}
+        areaCode={areaCode}
       />
     ),
     resetPassword: (
@@ -231,7 +255,7 @@ export default function WelcomeScreen() {
         startAnimation={startAnimation}
         email={email}
         phone={phone}
-        areaCodeItem={areaCodeItem}
+        areaCode={areaCode}
         validateCode={validateCode}
         setDisabled={setDisabled}
       />

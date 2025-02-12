@@ -20,7 +20,6 @@ export interface FormData {
   email?: string
   phone?: string
   password: string
-  areaCodeItem: Common.AreaCodeItem | undefined
 }
 
 interface Props {
@@ -28,7 +27,7 @@ interface Props {
   startAnimation?: (toValue: number) => void
   email?: string
   phone?: string
-  areaCodeItem?: Common.AreaCodeItem
+  areaCode?: string
   setValidateCode: (code: string) => void
 }
 
@@ -36,13 +35,13 @@ const CountDown = observer(
   ({
     email,
     phone,
-    areaCodeItem,
+    areaCode,
     onSendCode,
     defaultSeconds = 60
   }: {
     email?: string
     phone?: string
-    areaCodeItem?: Common.AreaCodeItem
+    areaCode?: string
     onSendCode: () => void
     defaultSeconds?: number
   }) => {
@@ -75,7 +74,7 @@ const CountDown = observer(
 )
 
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
-  { setSection, startAnimation, email, phone, areaCodeItem, setValidateCode }: Props,
+  { setSection, startAnimation, email, phone, areaCode, setValidateCode }: Props,
   ref
 ) => {
   const { t, locale } = useI18n()
@@ -136,7 +135,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       } else if (phone) {
         result = await sendCustomPhoneCode({
           phone: phone,
-          phoneAreaCode: areaCodeItem?.areaCode
+          phoneAreaCode: areaCode
         })
       }
 
@@ -157,7 +156,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             {t('pages.login.Please enter the sixdigit verification code')}
           </Text>
           <Text className={cn('text-start text-sm !text-secondary mt-1.5')}>
-            {t('pages.login.Verification code sent to', { email: phone ? `+${areaCodeItem?.areaCode}${phone}` : email })}
+            {t('pages.login.Verification code sent to', { email: phone ? `+${areaCode}${phone}` : email })}
           </Text>
           <View className={cn('flex flex-col gap-6 mt-[18px]')}>
             <CodeInput
@@ -168,7 +167,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
               }}
             />
           </View>
-          <CountDown email={email} phone={phone} areaCodeItem={areaCodeItem} onSendCode={onSendCode} defaultSeconds={defaultSeconds} />
+          <CountDown email={email} phone={phone} areaCode={areaCode} onSendCode={onSendCode} defaultSeconds={defaultSeconds} />
           {error && <Text style={cn('text-start text-sm !text-red-500')}>{error}</Text>}
           <View style={cn('flex flex-row justify-end items-center gap-4 self-end')}>
             <Button type="default" loading={false} height={42} className={cn('mt-4 w-[128px] ')} onPress={goback}>

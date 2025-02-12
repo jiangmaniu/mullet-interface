@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import type { ForwardRefRenderFunction } from 'react'
-import React, { useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -13,7 +13,7 @@ import { STORAGE_GET_ACCOUNT_PASSWORD, STORAGE_SET_ACCOUNT_PASSWORD } from '@/ut
 import type { TypeSection, WELCOME_STEP_TYPES } from '..'
 
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
-import { APP_MODAL_WIDTH } from '@/constants'
+import { APP_MODAL_WIDTH, DEFAULT_AREA_CODE } from '@/constants'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -21,16 +21,16 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { regEmail } from '@/utils'
 import { useModel } from '@umijs/max'
+import { observer } from 'mobx-react'
+import SelectCountryModal, { ModalRef } from '../../UserCenter/Kyc/comp/SelectCountryModal'
 import PasswordTips from './PasswordTips'
 import { PrivacyPolicyService } from './PrivacyPolicyService'
-import type { ModalRef } from './SelectCountryModal'
-import SelectCountryModal from './SelectCountryModal'
 
 export interface FormData {
   email?: string
   phone?: string
   password: string
-  areaCodeItem?: Common.AreaCodeItem
+  areaCode?: string
 }
 
 interface Props {
@@ -38,11 +38,12 @@ interface Props {
   startAnimation?: (toValue: number) => void
   phone?: string
   setPhone?: (phone: string) => void
-  areaCodeItem?: Common.AreaCodeItem
-  setAreaCodeItem: (areaCodeItem: Common.AreaCodeItem | undefined) => void
+  areaCode?: string
+  setAreaCode?: (areaCode: string) => void
   setPassword: (password: string) => void
   email?: string
   setEmail?: (email: string) => void
+  countryList: Common.AreaCodeItem[]
 }
 
 const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
@@ -51,11 +52,12 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     startAnimation,
     phone: phoneProps,
     setPhone,
-    areaCodeItem: areaCodeItemProps,
-    setAreaCodeItem,
+    areaCode: areaCodeProps,
+    setAreaCode,
     setPassword,
     email: emailProps,
-    setEmail
+    setEmail,
+    countryList
   }: Props,
   ref
 ) => {
@@ -106,7 +108,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       } else if (registerWay === 'PHONE') {
         result = await sendCustomPhoneCode({
           phone: values.phone,
-          phoneAreaCode: values.areaCodeItem?.areaCode
+          phoneAreaCode: values.areaCode
         })
       }
 
@@ -135,13 +137,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   /** 表单控制 */
   const schema = z.object({
-    areaCodeItem: z.object(
-      {
-        id: z.string().min(1, { message: t('pages.login.Residence Country is required') }),
-        areaCode: z.string().min(1, { message: t('pages.login.Residence Country is required') })
-      },
-      { message: t('pages.login.Residence Country is required') }
-    ),
+    areaCode:
+      registerWay === 'PHONE' ? z.string().min(1, { message: t('pages.login.Residence Country is required') }) : z.string().optional(),
     phone: registerWay === 'PHONE' ? z.string().min(1, { message: t('pages.login.Phone is required') }) : z.string().optional(),
     email:
       registerWay === 'EMAIL'
@@ -165,30 +162,30 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   } = useForm<FormData>({
     defaultValues: async () => ({
       email: emailProps || (await STORAGE_GET_ACCOUNT_PASSWORD('email')) || '',
-      phone: phoneProps || '',
+      phone: phoneProps || (await STORAGE_GET_ACCOUNT_PASSWORD('phone')) || '',
       password: (await STORAGE_GET_ACCOUNT_PASSWORD('password')) || '',
-      areaCodeItem: areaCodeItemProps || undefined
+      areaCode: areaCodeProps || (await STORAGE_GET_ACCOUNT_PASSWORD('areaCode')) || DEFAULT_AREA_CODE
     }),
     mode: 'all',
     resolver: zodResolver(schema)
   })
 
   const password = watch('password')
-  const areaCodeItem = watch('areaCodeItem')
+  const areaCode = watch('areaCode')
   const email = watch('email')
   const phone = watch('phone')
   useEffect(() => {
     /** 如果 remember 为 true，则账号密码变更时，将账号密码存储到本地 */
     const updatePassword = async () => {
       setPassword(password)
-      const stores = await STORAGE_GET_ACCOUNT_PASSWORD()
-      if (stores.remember) {
+      const store = await STORAGE_GET_ACCOUNT_PASSWORD()
+      if (store?.remember) {
         STORAGE_SET_ACCOUNT_PASSWORD({
-          tenanId: stores.tenanId,
-          tenanName: stores.tenanName,
-          username: stores.username,
-          remember: stores.remember,
-          email: stores.email,
+          tenanId: store.tenanId,
+          tenanName: store.tenanName,
+          username: store.username,
+          remember: store.remember,
+          email: store.email,
           password
         })
       }
@@ -200,14 +197,16 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   useEffect(() => {
     const updateEmail = async () => {
       setEmail?.(email || '')
-      const stores = await STORAGE_GET_ACCOUNT_PASSWORD()
-      if (stores.remember) {
+      const store = await STORAGE_GET_ACCOUNT_PASSWORD()
+      if (store?.remember) {
         STORAGE_SET_ACCOUNT_PASSWORD({
-          tenanId: stores.tenanId,
-          tenanName: stores.tenanName,
-          username: stores.username,
-          remember: stores.remember,
-          password: stores.password,
+          tenanId: store.tenanId,
+          tenanName: store.tenanName,
+          username: store.username,
+          remember: store.remember,
+          password: store.password,
+          phone: store.phone,
+          areaCode: store.areaCode,
           email: email || ''
         })
       }
@@ -219,19 +218,21 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   useEffect(() => {
     /** 更新 */
-    if (areaCodeItemProps) setValue('areaCodeItem', areaCodeItemProps)
+    if (areaCodeProps) setValue('areaCode', areaCodeProps)
     if (phoneProps) setValue('phone', phoneProps)
-  }, [areaCodeItemProps, phoneProps])
+  }, [areaCodeProps, phoneProps])
 
   const selectCountryModalRef = useRef<ModalRef>(null)
   const handleSelectCountry = (item?: Common.AreaCodeItem) => {
     if (item) {
-      setValue('areaCodeItem', item)
-      setAreaCodeItem(item)
+      setValue('areaCode', item.areaCode)
+      setAreaCode?.(item.areaCode)
 
-      trigger('areaCodeItem')
+      trigger('areaCode')
     }
   }
+
+  const areaCodeItem = countryList.find((item) => item.areaCode === areaCode)
 
   return (
     <View className={cn('flex-1 flex flex-col justify-between ')}>
@@ -242,7 +243,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           }}
         >
           <TextField
-            value={areaCodeItem ? `(+${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
+            value={`(+${areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}`}
             label={t('pages.login.Residence Country')}
             height={50}
             readOnly
@@ -261,7 +262,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           />
         </View>
 
-        {errors.areaCodeItem && <Text color="red">{errors.areaCodeItem.message}</Text>}
+        {errors.areaCode && <Text color="red">{errors.areaCode.message}</Text>}
         {registerWay === 'EMAIL' && (
           <TextField
             value={email}
@@ -292,9 +293,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             placeholder={t('pages.login.Phone placeholder')}
             height={50}
             autoCapitalize="none"
-            // autoCorrect={false}
-            // keyboardType="phone-pad"
-            // onSubmitEditing={() => authPasswordInput.current?.focus()}
           />
         )}
         {errors.phone && <Text color="red">{errors.phone.message}</Text>}
@@ -329,7 +327,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         height={48}
         className={cn('mt-4')}
         onPress={handleSubmit(onSubmit)}
-        disabled={!!errors.email || !!errors.password || !!errors.areaCodeItem || disabled}
+        disabled={!!errors.email || !!errors.password || !!errors.areaCode || disabled}
       >
         {t('pages.login.Continue')}
       </Button>
@@ -341,4 +339,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   )
 }
 
-export const RegisterSection = React.forwardRef(_Section)
+const RegisterSection = forwardRef(_Section)
+
+export default observer(RegisterSection)

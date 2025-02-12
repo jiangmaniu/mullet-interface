@@ -13,10 +13,9 @@ import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
-import { useEnv } from '@/context/envProvider'
+import { stores } from '@/context/mobxProvider'
 import { forgetPasswordEmail, forgetPasswordPhone } from '@/services/api/user'
 import { cn } from '@/utils/cn'
-import { useModel } from '@umijs/max'
 import { md5 } from 'js-md5'
 import { TextField } from '../../components/Base/Form/TextField'
 import { View } from '../../components/Base/View'
@@ -29,7 +28,7 @@ export interface FormData {
   phone?: string
   newPassword: string
   validateCode: string
-  areaCodeItem?: Common.AreaCodeItem
+  areaCode?: string
 }
 
 interface Props {
@@ -38,7 +37,7 @@ interface Props {
   email?: string
   phone?: string
   validateCode?: string
-  areaCodeItem?: Common.AreaCodeItem
+  areaCode?: string
   setDisabled: (disabled: boolean) => void
 }
 
@@ -49,21 +48,13 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     email: emailProps,
     phone: phoneProps,
     validateCode: validateCodeProps,
-    areaCodeItem: areaCodeItemProps,
+    areaCode: areaCodeProps,
     setDisabled
   }: Props,
   ref
 ) => {
-  const { t, locale } = useI18n()
-  const { cn, theme } = useTheme()
-
-  const { screenSize } = useEnv()
-
-  const user = useModel('user')
-
-  useEffect(() => {
-    console.log(emailProps, phoneProps, validateCodeProps, areaCodeItemProps)
-  }, [])
+  const { t } = useI18n()
+  const { cn } = useTheme()
 
   useLayoutEffect(() => {
     startAnimation?.(24)
@@ -105,6 +96,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         result = await forgetPasswordPhone({
           emailOrPhone: values.phone || '',
           newPassword: md5(values.newPassword),
+          // phoneAreaCode: values.areaCode,
           validateCode: Number(values.validateCode)
         })
       }
@@ -135,30 +127,32 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   // 拦截平台/系统返回操作
   // useGoBackHandler(goback, [])
 
-  // const registerWay = stores.global.registerWay
+  const registerWay = stores.global.registerWay
 
   /** 表单控制 */
   const schema = z.object({
-    areaCodeItem: phoneProps
-      ? z.object(
-          {
-            id: z.string().min(1, { message: t('pages.login.Residence Country is required') }),
-            areaCode: z.string().min(1, { message: t('pages.login.Residence Country is required') })
-          },
-          { message: t('pages.login.Residence Country is required') }
-        )
-      : z
-          .object(
-            {
-              id: z.string().min(1, { message: t('pages.login.Residence Country is required') }),
-              areaCode: z.string().min(1, { message: t('pages.login.Residence Country is required') })
-            },
-            { message: t('pages.login.Residence Country is required') }
-          )
-          .optional(),
+    // areaCodeItem: phoneProps
+    //   ? z.object(
+    //       {
+    //         id: z.string().min(1, { message: t('pages.login.Residence Country is required') }),
+    //         areaCode: z.string().min(1, { message: t('pages.login.Residence Country is required') })
+    //       },
+    //       { message: t('pages.login.Residence Country is required') }
+    //     )
+    //   : z
+    //       .object(
+    //         {
+    //           id: z.string().min(1, { message: t('pages.login.Residence Country is required') }),
+    //           areaCode: z.string().min(1, { message: t('pages.login.Residence Country is required') })
+    //         },
+    //         { message: t('pages.login.Residence Country is required') }
+    //       )
+    //       .optional(),
+    areaCode:
+      registerWay === 'PHONE' ? z.string().min(1, { message: t('pages.login.Residence Country is required') }) : z.string().optional(),
     validateCode: z.string().min(1, { message: t('pages.login.Verification code is required') }),
-    email: emailProps ? z.string().email({ message: t('pages.login.Email is required') }) : z.string().optional(),
-    phone: phoneProps ? z.string().min(1, { message: t('pages.login.Phone is required') }) : z.string().optional(),
+    email: registerWay === 'EMAIL' ? z.string().email({ message: t('pages.login.Email is required') }) : z.string().optional(),
+    phone: registerWay === 'PHONE' ? z.string().min(1, { message: t('pages.login.Phone is required') }) : z.string().optional(),
     newPassword: z
       .string()
       .min(6, { message: t('pages.login.Password min', { count: 6 }) })
@@ -176,7 +170,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     getValues
   } = useForm<FormData>({
     defaultValues: async () => ({
-      areaCodeItem: areaCodeItemProps || undefined,
+      areaCode: areaCodeProps || '',
       email: emailProps || '',
       phone: phoneProps || '',
       validateCode: validateCodeProps || '',
@@ -196,6 +190,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         tenanName: stores?.tenanName,
         username: stores?.username,
         remember: stores?.remember,
+        areaCode: areaCodeProps,
+        email: emailProps,
+        phone: phoneProps,
         password: newPassword
       })
     }
@@ -221,8 +218,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const [pwdisabled, setPWDisabled] = useState(false)
 
   const propsDisabled = phoneProps
-    ? !!errors.phone || !!errors.areaCodeItem || !!errors.validateCode
-    : !!errors.email || !!errors.areaCodeItem || !!errors.validateCode
+    ? !!errors.phone || !!errors.areaCode || !!errors.validateCode
+    : !!errors.email || !!errors.areaCode || !!errors.validateCode
 
   const disabled = propsDisabled || pwdisabled
 
@@ -240,10 +237,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   useEffect(() => {
     /** 更新 */
-    if (areaCodeItemProps) setValue('areaCodeItem', areaCodeItemProps)
+    if (areaCodeProps) setValue('areaCode', areaCodeProps)
     if (emailProps) setValue('email', emailProps)
     if (phoneProps) setValue('phone', phoneProps)
-  }, [areaCodeItemProps, emailProps, phoneProps])
+  }, [areaCodeProps, emailProps, phoneProps])
 
   return (
     <View className={cn('flex-1 flex flex-col justify-between mb-12')}>

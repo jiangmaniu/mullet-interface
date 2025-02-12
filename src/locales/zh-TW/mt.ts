@@ -7,7 +7,7 @@ export default {
   'mt.zhucechenggong': '注册成功',
   'mt.lijizhuce': '立即注册',
   'mt.zhucetips':
-    '点击“立即注册”，即表示您同意<span style="color:#051C2C;font-weight:bold">服务条款</span>和<span style="color:#051C2C;font-weight:bold">隐私政策</span>',
+    '點擊“立即注冊”，即表示您同意<span style="color:#051C2C;font-weight:bold">服務條款</span>和<span style="color:#051C2C;font-weight:bold">隱私政策</span>',
   'mt.kailixinzhanghu': '开立新账户',
   'mt.shurumima': '输入密码',
   'mt.qingshurumima': '请输入密码',

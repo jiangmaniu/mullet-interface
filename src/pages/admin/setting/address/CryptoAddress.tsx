@@ -93,9 +93,10 @@ function CryptoAddress({ params, onSelectItem, onDeleteItem }: IProps, ref: any)
                 description={<FormattedMessage id="mt.querenshanchugaidizhima" />}
                 onConfirm={() => onDeleteItem(item)}
               >
-                <span className="text-red-500">
+                {/* <span className="text-red-500">
                   <FormattedMessage id="common.delete" />
-                </span>
+                </span> */}
+                <Iconfont name="lajitong" color="red" width={20} height={20} />
               </Popconfirm>
             </div>
           </div>

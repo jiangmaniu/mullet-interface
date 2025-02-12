@@ -4,6 +4,7 @@ import { useCallback, useRef } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 import { onLogout } from '@/utils/navigator'
 import { useModel } from '@umijs/max'
 import Button from '../../components/Base/Button'
@@ -106,7 +107,7 @@ const Kyc = observer(() => {
             style={{ minWidth: 60 }}
             size="small"
             onClick={() => {
-              if (userInfo?.phone && userInfo?.email) {
+              if ((userInfo?.phone && userInfo?.email) || getEnv().SKIP_KYC_STEP_ONE === '1') {
                 navigateTo('/app/user-center/verify-msg')
               } else if (userInfo?.phone && !userInfo?.email) {
                 navigateTo('/app/user-center/bind-email')

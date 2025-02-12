@@ -119,12 +119,20 @@ export default function VerifyMsg() {
 
   const disabled = !areaCode || !firstName || !lastName || !identificationCode || !identificationType
 
+  // 获取国家列表
   const [countryList, setCountryList] = useState<Common.AreaCodeItem[]>([])
-  useLayoutEffect(() => {
-    getAreaCode().then((res) => {
+  const getCountryList = async () => {
+    try {
+      const res = await getAreaCode()
       const list = res.data?.filter((item) => item.areaCode !== '0')
       setCountryList(list || [])
-    })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useLayoutEffect(() => {
+    getCountryList()
   }, [])
 
   const areacodeRef = useRef<any>(null)
@@ -280,7 +288,7 @@ export default function VerifyMsg() {
           {t('common.operate.Continue')}
         </Button>
       </View>
-      <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} list={countryList} />
+      <SelectCountryModal ref={selectCountryModalRef} onPress={handleSelectCountry} />
     </BasicLayout>
   )
 }
