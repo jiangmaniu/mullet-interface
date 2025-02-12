@@ -130,7 +130,18 @@ function Withdrawal({ params, onSelectItem }: IProps) {
               <div>
                 <Iconfont name="zhixiang" width={14} color="black" height={14} />
               </div>
-              <div className="text-end ">{item.type === 'bank' ? <span>{item.bank}</span> : <span>{item.baseCurrency}</span>}</div>
+              <div className="text-end ">
+                {item.type === 'bank' ? (
+                  <span>{item.bank}</span>
+                ) : (
+                  <div className="flex flex-row items-center gap-1">
+                    <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
+                      <Iconfont name="qianbaodizhi" width={14} color="white" height={14} />
+                    </div>
+                    <span>{item.address}</span>
+                  </div>
+                )}
+              </div>
             </div>
             <div className="text-start min-w-[100px] flex flex-row gap-2" onClick={(e) => e.stopPropagation()}>
               {/* @ts-ignore */}

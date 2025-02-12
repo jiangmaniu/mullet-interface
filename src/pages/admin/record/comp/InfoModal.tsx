@@ -76,7 +76,13 @@ function InfoModal({ item }: IProps, ref: any) {
           <span className="text-sm text-secondary">
             <FormattedMessage id="mt.shoukuanzhanghu" />
           </span>
-          {item?.address}
+
+          <div className="flex flex-row items-center gap-1">
+            <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
+              <Iconfont name="qianbaodizhi" width={14} color="white" height={14} />
+            </div>
+            <span>{item?.address}</span>
+          </div>
           {/* {item?.type === 'crypto' ? (
             <span>
               {item?.currency}

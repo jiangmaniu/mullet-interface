@@ -255,7 +255,7 @@ declare namespace Wallet {
     /**
      * 订单状态（1待支付 2支付成功 3支付失败）
      */
-    status?: string
+    status?: IWithdrawalOrderStatus
     /**
      * 交易账户ID
      */

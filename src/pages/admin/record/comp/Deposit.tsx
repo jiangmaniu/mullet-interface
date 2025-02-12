@@ -1,4 +1,4 @@
-import { FormattedMessage, getIntl, useModel } from '@umijs/max'
+import { FormattedMessage, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import ProList from '@/components/Admin/ProList'
@@ -8,23 +8,11 @@ import { formatNum } from '@/utils'
 
 import { getEnv } from '@/env'
 import { cn } from '@/utils/cn'
-import { IParams } from '..'
+import { IParams, statusMap } from '..'
 
 type IProps = {
   params: IParams
   onSelectItem?: (item: Wallet.depositOrderListItem) => void
-}
-
-const statusMap = {
-  WAIT: {
-    text: getIntl().formatMessage({ id: 'mt.dengdai' }),
-    color: '#9C9C9C'
-  },
-
-  SUCCESS: {
-    text: getIntl().formatMessage({ id: 'mt.shenhechenggong' }),
-    color: '#45A48A'
-  }
 }
 
 // 入金记录
@@ -129,17 +117,15 @@ function Deposit({ params, onSelectItem }: IProps) {
               </div>
             </div>
             {/* <div className="text-start min-w-[100px]">{item.status || '[status]'}</div> */}
-            {/* @ts-ignore */}
-            <div className="text-sm flex items-center" style={{ color: statusMap[item.status]?.color }}>
+
+            <div className="text-sm flex items-center" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
               <span
                 className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
-                // @ts-ignore
-                style={{ backgroundColor: statusMap[item.status]?.color || '#9C9C9C' }}
+                style={{ backgroundColor: statusMap[item.status ?? 'FAIL']?.color || '#9C9C9C' }}
               >
-                {/*  */}
+                {/* 占位 */}
               </span>
-              {/* @ts-ignore */}
-              {statusMap[item.status]?.text || '[status]'}
+              {statusMap[item.status ?? 'FAIL']?.text || '[status]'}
             </div>
             <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
               {formatNum(item.baseOrderAmount)} {item.baseCurrency}
