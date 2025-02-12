@@ -74,6 +74,8 @@ declare namespace User {
     account: string
     jti: string
     success?: boolean
+    /**接口防重放秘钥 */
+    app_key?: string
   }>
   // 客户详细信息
   type ClientInfo = {
