@@ -103,6 +103,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       }
 
       if (result?.success) {
+        setPhone?.(values.phone || '')
+        setAreaCode?.(values.areaCode || '')
+        setEmail?.(values.email || '')
         setSection('forgotVerify')
       }
     } catch (error: any) {
