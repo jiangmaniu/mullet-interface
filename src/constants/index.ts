@@ -79,3 +79,6 @@ export const APP_MODAL_WIDTH = 320
 
 // 默认区号
 export const DEFAULT_AREA_CODE = '86'
+
+// 支付訂單超時時限
+export const PAYMENT_ORDER_TIMEOUT = 30 * 60 * 1000

@@ -7,7 +7,12 @@ import Button from '@/components/Base/Button'
 import { cn } from '@/utils/cn'
 import { message } from '@/utils/message'
 import dayjs from 'dayjs'
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import duration from 'dayjs/plugin/duration'
+
+dayjs.extend(duration)
+
+import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 type IProps = {
   form: FormInstance
@@ -18,43 +23,21 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
   const intl = useIntl()
 
   const address = Form.useWatch('address', form) ?? ''
+  const createTime = Form.useWatch('createTime', form) ?? ''
 
-  const timer = useRef<NodeJS.Timeout | null>(null)
-  const [time, setTime] = useState(0)
-
-  const setTimer = () => {
-    timer.current = setInterval(() => {
-      setTime((prev) => {
-        if (prev <= 0) {
-          clearInterval(timer.current as NodeJS.Timeout)
-          timer.current = null
-
-          // 弹窗提示
-          handleTimeout()
-          return 0
-        }
-
-        return prev - 1
-      })
-    }, 1000)
-  }
-
-  useEffect(() => {
-    if (address) {
-      console.log('setTime')
-      setTime(60 * 30)
-      // setTime(5) // 测试
-      setTimer()
+  const createDate = useMemo(() => {
+    try {
+      return dayjs(createTime)
+    } catch (error) {
+      return dayjs()
     }
+  }, [createTime])
 
-    return () => {
-      if (timer.current) {
-        console.log('clear')
-        clearInterval(timer.current as NodeJS.Timeout)
-        timer.current = null
-      }
-    }
-  }, [address])
+  const validDate = useMemo(() => {
+    return createDate.add(1, 'minute')
+  }, [createDate])
+
+  // const [time, setTime] = useState(0)
 
   const qrRef = useRef<HTMLDivElement>(null)
 
@@ -76,6 +59,43 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
       download: downloadQRCode
     }
   })
+
+  // const duration = dayjs.duration(dayjs().diff(validDate)).format('mm:ss')
+  const [duration, setDuration] = useState(-1)
+
+  const getDuration = () => {
+    return PAYMENT_ORDER_TIMEOUT - dayjs().diff(validDate)
+  }
+
+  const timer = useRef<NodeJS.Timeout | null>(null)
+
+  const setTimer = () => {
+    timer.current = setInterval(() => {
+      const duration = getDuration()
+      setDuration(duration)
+      if (duration <= 0) {
+        handleTimeout()
+        setDuration(-1)
+        clearInterval(timer.current as NodeJS.Timeout)
+        timer.current = null
+      }
+    }, 1000)
+  }
+
+  useEffect(() => {
+    if (address) {
+      // setTime(60 * 30)
+      // setTime(5) // 测试
+      setTimer()
+    }
+
+    return () => {
+      if (timer.current) {
+        clearInterval(timer.current as NodeJS.Timeout)
+        timer.current = null
+      }
+    }
+  }, [address])
 
   return (
     <div>
@@ -111,7 +131,7 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
             </div>
           </div>
           <div className={cn('text-2xl text-primary font-semibold hidden', address && 'block')}>
-            <FormattedMessage id="mt.qingzaishijianzhineiwanchengzhuanzhang" values={{ value: dayjs.unix(time).format('mm:ss') }} />
+            <FormattedMessage id="mt.qingzaishijianzhineiwanchengzhuanzhang" values={{ value: dayjs.duration(duration).format('mm:ss') }} />
           </div>
         </div>
       </div>

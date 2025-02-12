@@ -5,6 +5,7 @@ import { useLayoutEffect, useState } from 'react'
 
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
+import { push } from '@/utils/navigator'
 import { observer } from 'mobx-react'
 
 type IProps = {
@@ -75,6 +76,7 @@ function TransferToCryptoItem({ form }: IProps) {
           className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
           onClick={() => {
             // message.info('敬请期待')
+            push('/setting?key=address')
           }}
         >
           <FormattedMessage id="mt.dizhiguanli" />

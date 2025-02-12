@@ -10,7 +10,6 @@ import Iconfont from '@/components/Base/Iconfont'
 import { stores, useStores } from '@/context/mobxProvider'
 import { generateDepositOrder } from '@/services/api/wallet'
 
-import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 import ConfirmModal from './comp/ConfirmModal'
 import TransferCrypto from './comp/TranserCrypto'
@@ -48,7 +47,9 @@ export default function DepositProcess() {
   const { trade } = useStores()
   const { currentAccountInfo } = trade
 
-  const step = useRef(0)
+  const [step, setStep] = useState(0)
+
+  const [createTime, setCreateTime] = useState()
 
   const handleSubmit0 = async () => {
     form.validateFields().then((values) => {
@@ -64,10 +65,9 @@ export default function DepositProcess() {
           if (res.success) {
             // TODO: 生成充值地址
             form.setFieldValue('address', res.data.address)
+            form.setFieldValue('createTime', res.data.createTime)
 
-            step.current = 1
-          } else {
-            message.info(res.message)
+            setStep(1)
           }
         })
         .finally(() => {
@@ -81,13 +81,14 @@ export default function DepositProcess() {
   const confirmModalRef = useRef<any>()
 
   const handleTimeout = () => {
+    setStep(0)
     confirmModalRef.current?.show()
   }
 
   const handleReset = () => {
     form.setFieldValue('address', '')
 
-    step.current = 0
+    setStep(0)
   }
 
   const cryptoRef = useRef<any>()
@@ -123,13 +124,14 @@ export default function DepositProcess() {
             className="flex flex-col gap-6"
           >
             <ProFormText name="methodId" hidden />
+            <ProFormText name="createTime" hidden />
             <TransferMethodSelectItem form={form} tips={methodInfo?.tips} />
             <TransferToFormSelectItem form={form} />
             {/* {methodInfo?.type === 'crypto' && <TransferCrypto form={form} />} */}
             <TransferCrypto form={form} handleTimeout={handleTimeout} ref={cryptoRef} />
             <TransferAmount form={form} currentUser={currentUser} methodInfo={methodInfo} />
 
-            {step.current === 0 && (
+            {step === 0 && (
               <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit0} disabled={loading}>
                 <div className="flex flex-row items-center gap-2">
                   <FormattedMessage id="mt.jixu" />
@@ -137,7 +139,7 @@ export default function DepositProcess() {
                 </div>
               </Button>
             )}
-            {step.current === 1 && (
+            {step === 1 && (
               <Button
                 type="primary"
                 htmlType="submit"
@@ -146,8 +148,8 @@ export default function DepositProcess() {
                 onClick={() => {
                   // step.current = 1
                   // TODO: 下载二维码并把 step 设置为 2
+                  setStep(2)
                   handleDownload()
-                  step.current = 2
                 }}
               >
                 <div className="flex flex-row items-center gap-2">
@@ -156,7 +158,7 @@ export default function DepositProcess() {
                 </div>
               </Button>
             )}
-            {step.current === 2 && (
+            {step === 2 && (
               <Button
                 type="primary"
                 size="large"

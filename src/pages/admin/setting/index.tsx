@@ -1,4 +1,4 @@
-import { FormattedMessage, useModel } from '@umijs/max'
+import { FormattedMessage, useModel, useSearchParams } from '@umijs/max'
 import { useEffect, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
@@ -20,6 +20,13 @@ export default function Setting() {
   ]
 
   const [tabKey, setTabKey] = useState('security')
+
+  const [searchParams] = useSearchParams()
+  const key = searchParams.get('key') as string
+
+  useEffect(() => {
+    setTabKey(key)
+  }, [key])
 
   useEffect(() => {
     // 刷新用户信息

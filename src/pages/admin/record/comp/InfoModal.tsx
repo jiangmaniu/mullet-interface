@@ -47,7 +47,7 @@ function InfoModal({ item }: IProps, ref: any) {
               </div>
             </div>
             <div className="text-xs text-secondary pt-1">
-              <FormattedMessage id="mt.danhao" />:{item?.orderId || '-'}
+              <FormattedMessage id="mt.danhao" />:{item?.orderNo || '-'}
             </div>
           </div>
         </div>
@@ -56,17 +56,17 @@ function InfoModal({ item }: IProps, ref: any) {
       ref={modalRef}
     >
       <span className=" text-sm text-primary">{item?.createTime}</span>
-      <div className="flex flex-row items-center justify-between gap-4 mt-[14px] text-sm">
+      <div className="flex flex-row items-center justify-between flex-wrap gap-4 mt-[14px] text-sm">
         <div className="flex flex-col items-start gap-1">
           <span className="text-sm text-secondary">
             <FormattedMessage id="mt.chujinzhanghu" />
           </span>
           <div className="flex flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden flex-shrink ">
             <div className="flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-              {accountList.find((v) => v.id === item?.toAccountId)?.synopsis?.abbr}
+              {accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis?.abbr}
             </div>
             <span className=" text-nowrap text-ellipsis overflow-hidden">
-              {accountList.find((v) => v.id === item?.toAccountId)?.synopsis?.name}
+              {accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis?.name}
             </span>
           </div>
         </div>
@@ -76,14 +76,15 @@ function InfoModal({ item }: IProps, ref: any) {
           <span className="text-sm text-secondary">
             <FormattedMessage id="mt.shoukuanzhanghu" />
           </span>
-          {item?.type === 'crypto' ? (
+          {item?.address}
+          {/* {item?.type === 'crypto' ? (
             <span>
               {item?.currency}
               {item?.chain}
             </span>
           ) : (
             <span>{item?.bank}</span>
-          )}
+          )} */}
         </div>
       </div>
 
@@ -92,7 +93,7 @@ function InfoModal({ item }: IProps, ref: any) {
       <div className="flex flex-row justify-between items-end">
         <div className="flex flex-col items-start gap-1">
           <div className=" min-w-[150px] text-base  md:text-xl font-bold">
-            {formatNum(item?.amount)} {item?.currency}
+            {formatNum(item?.orderAmount)} {item?.currency}
           </div>
 
           <span className="text-sm text-secondary">

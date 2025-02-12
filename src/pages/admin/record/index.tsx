@@ -41,10 +41,9 @@ export const statusMap: IStatusMap = {
     text: getIntl().formatMessage({ id: 'mt.daishenghe' }),
     color: '#9C9C9C'
   },
-
   SUCCESS: {
     text: getIntl().formatMessage({ id: 'mt.tongguo' }),
-    color: '#FF9700'
+    color: '#45A48A'
   },
   RECEIPT: {
     text: getIntl().formatMessage({ id: 'mt.yidaozhang' }),
@@ -89,10 +88,10 @@ export default function Record() {
     }
   })
 
-  const [selectedItem, setSelectedItem] = useState<Wallet.WithdrawRecord | undefined>(undefined)
+  const [selectedItem, setSelectedItem] = useState<Wallet.depositOrderListItem | Wallet.withdrawalOrderListItem | undefined>(undefined)
   const modalRef = useRef<any>()
 
-  const onSelectItem = (item: Wallet.WithdrawRecord) => {
+  const onSelectItem = (item: Wallet.depositOrderListItem | Wallet.withdrawalOrderListItem) => {
     setSelectedItem(item)
     modalRef.current.show()
   }
@@ -149,7 +148,7 @@ export default function Record() {
           />
         </div>
       </div>
-      {tabKey === 'deposit' && <Deposit params={params} />}
+      {tabKey === 'deposit' && <Deposit params={params} onSelectItem={onSelectItem} />}
       {tabKey === 'withdrawal' && <Withdrawal params={params} onSelectItem={onSelectItem} />}
       {tabKey === 'transfer' && <Transfer params={params} />}
 

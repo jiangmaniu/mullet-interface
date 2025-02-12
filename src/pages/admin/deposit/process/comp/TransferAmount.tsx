@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
@@ -59,7 +59,7 @@ export default function TransferAmount({ form, currentUser, methodInfo }: IProps
           </Space>
         </Dropdown>
       </div> */}
-      <div className="flex justify-between text-gray-500 text-xs mt-2">
+      {/* <div className="flex justify-between text-gray-500 text-xs mt-2">
         <span>{methodInfo?.options?.limit?.desc}</span>
         <span>
           ≈ {transferCurr(amount)} {currency}
@@ -73,7 +73,7 @@ export default function TransferAmount({ form, currentUser, methodInfo }: IProps
         <span className="flex-shrink-0">
           {transferCurr(amount)} {currency}
         </span>
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { useState } from 'react'
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { hiddenCenterPartStr } from '@/utils'
-import { message } from '@/utils/message'
+import { push } from '@/utils/navigator'
 
 type IProps = {
   form: FormInstance
@@ -80,7 +80,8 @@ export default function TransferToBankItem({ form }: IProps) {
         <span
           className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
           onClick={() => {
-            message.info('敬请期待')
+            // message.info('敬请期待')
+            push('/setting?key=address')
           }}
         >
           <FormattedMessage id="mt.yinghangkaguanli" />
