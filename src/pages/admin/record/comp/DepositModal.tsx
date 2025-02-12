@@ -6,14 +6,15 @@ import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
+import { getEnv } from '@/env'
 import { statusMap } from '..'
 
 type IProps = {
   trigger?: JSX.Element
-  item?: Wallet.withdrawalOrderListItem
+  item?: Wallet.depositOrderListItem
 }
 
-function InfoModal({ item }: IProps, ref: any) {
+function DepositModal({ item }: IProps, ref: any) {
   const modalRef = useRef<any>()
 
   const { initialState } = useModel('@@initialState')
@@ -59,7 +60,20 @@ function InfoModal({ item }: IProps, ref: any) {
       <div className="flex flex-row items-center justify-between flex-wrap gap-4 mt-[14px] text-sm">
         <div className="flex flex-col items-start gap-1">
           <span className="text-sm text-secondary">
-            <FormattedMessage id="mt.chujinzhanghu" />
+            <FormattedMessage id="mt.rujinwangluo" />
+          </span>
+          <div className="flex flex-row items-center gap-1">
+            {item?.channelIcon && (
+              <img src={`${getEnv().imgDomain}${item?.channelIcon}`} alt="" width={18} height={18} className="bg-gray-150 rounded-full" />
+            )}
+            <span>{item?.channelRevealName ?? '[channelRevealName]'}</span>
+          </div>
+        </div>
+        <Iconfont name="zhixiang" width={20} color="black" height={20} />
+
+        <div className="flex flex-col items-start gap-1">
+          <span className="text-sm text-secondary">
+            <FormattedMessage id="mt.shoukuanzhanghu" />
           </span>
           <div className="flex flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden flex-shrink ">
             <div className="flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
@@ -69,22 +83,6 @@ function InfoModal({ item }: IProps, ref: any) {
               {accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis?.name}
             </span>
           </div>
-        </div>
-        <Iconfont name="zhixiang" width={20} color="black" height={20} />
-
-        <div className="flex flex-col items-start gap-1">
-          <span className="text-sm text-secondary">
-            <FormattedMessage id="mt.shoukuanzhanghu" />
-          </span>
-          {item?.address}
-          {/* {item?.type === 'crypto' ? (
-            <span>
-              {item?.currency}
-              {item?.chain}
-            </span>
-          ) : (
-            <span>{item?.bank}</span>
-          )} */}
         </div>
       </div>
 
@@ -114,4 +112,4 @@ function InfoModal({ item }: IProps, ref: any) {
   )
 }
 
-export default forwardRef(InfoModal)
+export default forwardRef(DepositModal)

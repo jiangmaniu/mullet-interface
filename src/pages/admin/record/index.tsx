@@ -12,6 +12,7 @@ import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import PageContainer from '@/components/Admin/PageContainer'
 
 import Deposit from './comp/Deposit'
+import DepositModal from './comp/DepositModal'
 import InfoModal from './comp/InfoModal'
 import Transfer from './comp/Transfer'
 import Withdrawal from './comp/Withdrawal'
@@ -90,10 +91,16 @@ export default function Record() {
 
   const [selectedItem, setSelectedItem] = useState<Wallet.depositOrderListItem | Wallet.withdrawalOrderListItem | undefined>(undefined)
   const modalRef = useRef<any>()
+  const modalRefD = useRef<any>()
 
-  const onSelectItem = (item: Wallet.depositOrderListItem | Wallet.withdrawalOrderListItem) => {
+  const onSelectItem = (item: Wallet.withdrawalOrderListItem) => {
     setSelectedItem(item)
     modalRef.current.show()
+  }
+
+  const onSelectItemD = (item: Wallet.depositOrderListItem) => {
+    setSelectedItem(item)
+    modalRefD.current.show()
   }
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
@@ -148,12 +155,13 @@ export default function Record() {
           />
         </div>
       </div>
-      {tabKey === 'deposit' && <Deposit params={params} onSelectItem={onSelectItem} />}
+      {tabKey === 'deposit' && <Deposit params={params} onSelectItem={onSelectItemD} />}
       {tabKey === 'withdrawal' && <Withdrawal params={params} onSelectItem={onSelectItem} />}
       {tabKey === 'transfer' && <Transfer params={params} />}
 
       {/* 消息弹窗 */}
-      <InfoModal ref={modalRef} item={selectedItem} />
+      <InfoModal ref={modalRef} item={selectedItem as Wallet.withdrawalOrderListItem | undefined} />
+      <DepositModal ref={modalRefD} item={selectedItem as Wallet.depositOrderListItem | undefined} />
     </PageContainer>
   )
 }

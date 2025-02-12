@@ -223,6 +223,7 @@ declare namespace Wallet {
   }
 
   type depositOrderListItem = {
+    channelIcon?: string
     /**
      * 账户编号
      */

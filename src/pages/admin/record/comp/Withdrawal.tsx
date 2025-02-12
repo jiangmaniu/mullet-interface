@@ -119,7 +119,7 @@ function Withdrawal({ params, onSelectItem }: IProps) {
               </div>
             </div>
             <div className=" flex flex-row gap-2 md:gap-3 items-center  justify-center flex-grow">
-              <div className="flex flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden flex-shrink ">
+              <div className="flex flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden flex-shrink justify-end ">
                 <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
                   {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
                 </div>
@@ -136,7 +136,7 @@ function Withdrawal({ params, onSelectItem }: IProps) {
               {/* @ts-ignore */}
               <div className="text-sm flex items-center" style={{ color: statusMap[item.status]?.color }}>
                 <span
-                  className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'pending' && 'animate-pulse')}
+                  className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
                   // @ts-ignore
                   style={{ backgroundColor: statusMap[item.status]?.color || '#9C9C9C' }}
                 >
@@ -161,7 +161,7 @@ function Withdrawal({ params, onSelectItem }: IProps) {
               )}
             </div>
             <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
-              {formatNum(item.baseOrderAmount)} {item.baseCurrency}
+              {formatNum(item.orderAmount)} {item.baseCurrency}
             </div>
           </div>
         </div>

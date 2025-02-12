@@ -6,6 +6,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { getDepositOrderList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 
+import { getEnv } from '@/env'
 import { cn } from '@/utils/cn'
 import { IParams } from '..'
 
@@ -105,14 +106,14 @@ function Deposit({ params, onSelectItem }: IProps) {
               </div>
             </div>
             <div className=" flex flex-row gap-2 md:gap-3 items-center  justify-center flex-grow">
-              <div className="text-end text-sm font-medium flex-1">
+              <div className="text-end text-sm font-medium flex-1 flex flex-row items-center justify-end gap-1">
                 {item.type === 'bank' ? (
                   <span>{item.bank}</span>
                 ) : (
-                  <span>
-                    {item.channelIcon}
-                    {item.channelRevealName || '[channelRevealName]'}
-                  </span>
+                  <>
+                    <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
+                    <span> {item.channelRevealName || '[channelRevealName]'}</span>
+                  </>
                 )}
               </div>
               <div>
@@ -131,7 +132,7 @@ function Deposit({ params, onSelectItem }: IProps) {
             {/* @ts-ignore */}
             <div className="text-sm flex items-center" style={{ color: statusMap[item.status]?.color }}>
               <span
-                className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'pending' && 'animate-pulse')}
+                className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
                 // @ts-ignore
                 style={{ backgroundColor: statusMap[item.status]?.color || '#9C9C9C' }}
               >

@@ -69,5 +69,6 @@ export default {
   'mt.dizhi': 'Address',
   'mt.xiugai': 'Modify',
   'mt.querenshanchugaidizhima': 'Are you sure you want to delete this address?',
-  'mt.tishi': 'Tips'
+  'mt.tishi': 'Tips',
+  'mt.rujinwangluo': 'Deposit network'
 }

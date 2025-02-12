@@ -69,5 +69,6 @@ export default {
   'mt.dizhi': '地址',
   'mt.xiugai': '修改',
   'mt.querenshanchugaidizhima': '確認刪除該地址嗎？',
-  'mt.tishi': '提示'
+  'mt.tishi': '提示',
+  'mt.rujinwangluo': '入金網路'
 }
