@@ -189,7 +189,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             {t('pages.login.Please enter the sixdigit verification code')}
           </Text>
           <Text className={cn('text-start text-sm !text-secondary mt-1.5')}>
-            {t('pages.login.Verification code sent to', { email: phone ? `+${areaCode}${phone}` : email })}
+            {t('pages.login.Verification code sent to', { email: global.registerWay === 'PHONE' ? `+${areaCode}${phone}` : email })}
           </Text>
           <View className={cn('flex flex-col  mt-[18px]')}>
             <CodeInput value={code} onChange={setCode} />

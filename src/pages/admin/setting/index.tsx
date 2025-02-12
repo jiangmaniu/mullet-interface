@@ -25,7 +25,7 @@ export default function Setting() {
   const key = searchParams.get('key') as string
 
   useEffect(() => {
-    setTabKey(key)
+    key && setTabKey(key)
   }, [key])
 
   useEffect(() => {
