@@ -65,7 +65,7 @@ function Deposit() {
             <Button
               type="primary"
               onClick={() => {
-                push('/setting/kyc')
+                push('/setting')
               }}
             >
               {intl.formatMessage({ id: 'mt.wanshangerenziliao' })}

@@ -216,7 +216,7 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
             disabled={isBindPhone ? !phone || !phoneAreaCode || !validateCode : !email || !validateCode}
             onClick={handleSubmitTwoStep}
           >
-            <FormattedMessage id="common.xiayibu" />
+            <FormattedMessage id="common.bangding" />
           </Button>
         </div>
       </div>
