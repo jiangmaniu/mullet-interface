@@ -8,6 +8,7 @@ import { formatNum } from '@/utils'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { stores, useStores } from '@/context/mobxProvider'
+import { cn } from '@/utils/cn'
 import { observer } from 'mobx-react'
 import { useMemo } from 'react'
 import { transferCurr } from '..'
@@ -54,11 +55,12 @@ const Step1 = ({
 
   const [searchParams] = useSearchParams()
   const tradeAccountId = searchParams.get('tradeAccountId') as string
-  console.log('tradeAccountId', tradeAccountId)
+
+  const disabled = !amount || !actualAmount || Number(actualAmount) <= 0 || loading
 
   return (
     <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
-      <div className="flex-1 form-item-divider-left flex-shrink min-w-[340px] max-w-[700px]">
+      <div className="flex-1 form-item-divider-left flex-shrink min-w-[566px] max-w-[700px]">
         <ProForm
           onFinish={async (values: Account.TransferAccountParams) => {
             return
@@ -92,7 +94,7 @@ const Step1 = ({
 
           <TransferAmount form={form} currentUser={currentUser} />
 
-          <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit} disabled={loading}>
+          <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit} disabled={disabled}>
             <div className="flex flex-row items-center gap-2">
               <FormattedMessage id="mt.tixian" />
               <Iconfont name="zhixiang" color="white" width={18} height={18} />
@@ -107,7 +109,11 @@ const Step1 = ({
               {formatNum(transferCurr(handlingFee), { precision: 2 })} {currency}
             </span>
           </div>
-          <div className="text-secondary text-sm  flex flex-row items-center justify-between gap-4">
+          <div
+            className={cn('text-secondary text-sm  flex flex-row items-center justify-between gap-4', {
+              'text-red': Number(actualAmount) < 0
+            })}
+          >
             <span className="flex-shrink-0">
               <FormattedMessage id="mt.shijidaozhang" />
             </span>
@@ -120,11 +126,11 @@ const Step1 = ({
       </div>
       <div className="flex flex-col justify-start items-start gap-4">
         <div className="text-primary text-sm font-semibold">
-          <FormattedMessage id="mt.rujinxuzhi" />
+          <FormattedMessage id="mt.chujinxuzhi" />
         </div>
         <div className="text-secondary text-xs">
           {methodInfo?.notice ? (
-            <div dangerouslySetInnerHTML={{ __html: methodInfo?.notice }} />
+            <p dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
           ) : (
             <div className="text-xs text-gray-400">
               <FormattedMessage id="mt.zanwuneirong" />

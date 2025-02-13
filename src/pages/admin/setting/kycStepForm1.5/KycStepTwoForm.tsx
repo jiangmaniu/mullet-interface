@@ -8,7 +8,6 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import { submitBaseAuth } from '@/services/api/crm/kycAuth'
-import { push } from '@/utils/navigator'
 
 import { DEFAULT_AREA_CODE } from '@/constants'
 import { getEnv } from '@/env'
@@ -50,7 +49,7 @@ export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void })
     }
   ]
 
-  !getEnv().ID_CARD_ONLY &&
+  !getEnv()?.ID_CARD_ONLY &&
     idCardTypeOptions.push({
       key: 'PASSPORT',
       label: intl.formatMessage({ id: 'mt.huzhao' })
@@ -162,45 +161,8 @@ export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void })
             handleSubmitTwoStep()
           }}
         >
-          <FormattedMessage id="common.xiayibu" />
+          <FormattedMessage id="common.queren" />
         </Button>
-      </div>
-    )
-  }
-
-  // 身份认证审核中
-  const renderFourStep = () => {
-    return (
-      <div className="mt-3">
-        <div className="text-primary text-sm font-semibold mb-3">
-          <FormattedMessage id="mt.shenhezhong" />
-        </div>
-
-        <div className="flex justify-center">
-          <div className="flex items-center justify-center flex-col w-[320px]">
-            <img src="/img/shenhezhong.png" width={136} height={136} />
-            <div className="my-4 text-primary font-semibold text-[22px]">
-              <FormattedMessage id="mt.shenfenrenzhengshenhezhong" />
-            </div>
-            <div className="text-secondary text-base">
-              <FormattedMessage id="mt.shenfenrenzhengshenhezhongtips" />
-            </div>
-            <Button
-              type="primary"
-              style={{ height: 46, width: 220, marginTop: 50 }}
-              block
-              onClick={() => {
-                setTimeout(() => {
-                  setStep('ONE')
-                }, 200)
-
-                push('/setting')
-              }}
-            >
-              <FormattedMessage id="common.queren" />
-            </Button>
-          </div>
-        </div>
       </div>
     )
   }

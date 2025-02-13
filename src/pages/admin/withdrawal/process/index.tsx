@@ -3,7 +3,7 @@ import './index.less'
 import { PageLoading, useIntl } from '@ant-design/pro-components'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import { stores } from '@/context/mobxProvider'
@@ -13,6 +13,7 @@ import { push } from '@/utils/navigator'
 import { generateWithdrawOrder } from '@/services/api/wallet'
 import { message } from '@/utils/message'
 import { md5 } from 'js-md5'
+import { observer } from 'mobx-react'
 import Step1 from './comp/Step1'
 import { Step2 } from './comp/Step2'
 import { Step3 } from './comp/Step3'
@@ -24,6 +25,21 @@ export const transferCurr = (value?: number) => {
   // TODO: 汇率换算
   return val * 1
 }
+
+const Notice = observer(({ methodId }: { methodId: string }) => {
+  const methodInfo = stores.wallet.withdrawalMethods.find((item) => item.id === methodId)
+  return (
+    <div className="text-secondary text-xs">
+      {methodInfo?.notice ? (
+        <p dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
+      ) : (
+        <div className="text-xs text-gray-400">
+          <FormattedMessage id="mt.zanwuneirong" />
+        </div>
+      )}
+    </div>
+  )
+})
 
 export default function WithdrawalProcess() {
   const [form] = Form.useForm()
@@ -143,6 +159,14 @@ export default function WithdrawalProcess() {
 
   const [loading, setLoading] = useState(false)
 
+  const methodInfo = useMemo(() => {
+    return methods.find((item) => item.id === methodId)
+  }, [methodId, methods])
+
+  useEffect(() => {
+    console.log(methodInfo)
+  }, [methodInfo])
+
   return (
     <PageContainer
       pageBgColorMode={step === 0 ? 'white' : 'gray'}
@@ -174,17 +198,7 @@ export default function WithdrawalProcess() {
           <span className="text-primary text-sm font-semibold">
             <FormattedMessage id="mt.chujinxuzhi" />
           </span>
-          <p className="text-secondary text-xs mt-5">
-            1. 出金金额少於50U，收取3U手續費 <br />
-            <br />
-            2.用戶交易量少於出金金额50%，收取出金金额5%手續費 <br />
-            <br />
-            3.當前有處理中的訂單時，無法出金 <br />
-            <br />
-            4.出金時間（GMT+8)：工作日09:00-18:00，不在此時段提交的出金訂單，會在下一工作日處理 <br />
-            <br />
-            5.請務必確認設備安全，防止信息被篡改或洩漏
-          </p>
+          <Notice methodId={methodId} />
         </div>
       </div>
     </PageContainer>

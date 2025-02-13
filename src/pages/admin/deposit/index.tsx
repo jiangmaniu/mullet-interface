@@ -10,7 +10,7 @@ import { observer } from 'mobx-react'
 import { useLayoutEffect } from 'react'
 import DepositMethod from './comp'
 
-const Methods = observer(({ kycStatus }: { kycStatus: API.ApproveStatus }) => {
+const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
   const intl = useIntl()
 
   const methods = stores.wallet.depositMethods
@@ -30,12 +30,7 @@ const Methods = observer(({ kycStatus }: { kycStatus: API.ApproveStatus }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:gap-[38px] md:gap-[24px] gap-[16px]">
       {methods.map((item: Wallet.fundsMethodPageListItem) => (
-        <DepositMethod
-          item={item}
-          key={item.title}
-          status={kycStatus === 'SUCCESS' ? 'unlocked' : 'locked'}
-          tradeAccountId={tradeAccountId}
-        />
+        <DepositMethod item={item} key={item.title} status={kycStatus ? 'unlocked' : 'locked'} tradeAccountId={tradeAccountId} />
       ))}
     </div>
   )
@@ -48,6 +43,7 @@ function Deposit() {
   const currentUser = initialState?.currentUser
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
+  const isBaseAuth = currentUser?.isBaseAuth || false
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
@@ -58,7 +54,7 @@ function Deposit() {
         {kycStatus !== 'SUCCESS' && (
           <div className=" border border-gray-150 rounded-lg px-5 py-4 flex justify-between">
             <div className="flex flex-row items-center gap-[18px]">
-              <Iconfont name="zhanghu" width={32} height={32} color="black" />
+              <Iconfont name="Authenticator" width={32} height={32} color="black" />
               <div className=" text-base font-semibold text-gray-900">{intl.formatMessage({ id: 'mt.wanshanzhanghuziliao' })}</div>
             </div>
 
@@ -76,11 +72,9 @@ function Deposit() {
         <div>
           <div className="  text-base text-gray-900 mb-6 ">
             {intl.formatMessage({ id: 'mt.rujinfangshi' })}
-            {kycStatus !== 'SUCCESS' && (
-              <span className=" text-secondary text-sm ">&nbsp;({intl.formatMessage({ id: 'mt.renzhenghoukaiqi' })})</span>
-            )}
+            {isBaseAuth && <span className=" text-secondary text-sm ">&nbsp;({intl.formatMessage({ id: 'mt.renzhenghoukaiqi' })})</span>}
           </div>
-          <Methods kycStatus={kycStatus} />
+          <Methods kycStatus={isBaseAuth} />
         </div>
       </div>
     </PageContainer>

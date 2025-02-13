@@ -97,6 +97,16 @@ export default function DepositProcess() {
     cryptoRef.current?.download()
   }
 
+  const escapedStr = (str: string) => {
+    return str
+      .replace(/\\/g, '\\\\') // 转义反斜杠
+      .replace(/\n/g, '\\n') // 转义换行符
+      .replace(/\t/g, '\\t') // 转义制表符
+      .replace(/\r/g, '\\r') // 转义回车符
+      .replace(/\f/g, '\\f') // 转义换页符
+      .replace(/"/g, '\\"') // 转义双引号
+  }
+
   return (
     <PageContainer pageBgColorMode="white" fluidWidth backUrl="/deposit" backTitle={<FormattedMessage id="mt.quanbuzhifufangshi" />}>
       <div className="text-primary font-bold text-[24px] mb-9">
@@ -108,7 +118,7 @@ export default function DepositProcess() {
         </div>
       )}
       <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
-        <div className="flex-1 form-item-divider-left flex-shrink  min-w-[340px] max-w-[700px]">
+        <div className="flex-1 form-item-divider-left flex-shrink  min-w-[566px] max-w-[700px]">
           <ProForm
             onFinish={async (values: Account.TransferAccountParams) => {
               return
@@ -180,7 +190,7 @@ export default function DepositProcess() {
           </div>
           <div className="text-secondary text-xs">
             {methodInfo?.notice ? (
-              <div dangerouslySetInnerHTML={{ __html: methodInfo?.notice }} />
+              <p dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
             ) : (
               <div className="text-xs text-gray-400">
                 <FormattedMessage id="mt.zanwuneirong" />
