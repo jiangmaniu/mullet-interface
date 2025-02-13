@@ -1,21 +1,18 @@
+import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
-import { formatEmail, formatMobile } from '@/utils'
 import { push } from '@/utils/navigator'
-import { ArrowRightOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Button } from 'antd'
-import { useRef, useState } from 'react'
-import { gray } from 'tailwindcss/colors'
+import { useRef } from 'react'
 import KycApproveInfoModal from './comp/KycApproveInfoModal'
-import KycFailModal from './comp/KycFailModal.tsx'
-import KycStepPie from './comp/KycStepPie'
-import ModifyEmailModal from './comp/ModifyEmailModal'
 import ModifyPasswordModal from './comp/ModifyPasswordModal'
-import ModifyPhoneModal from './comp/ModifyPhoneModal'
+import AdvanceKycApproveInfoModal from './kycV1.5/AdvanceKycApproveInfoModal'
+import BaseKycApproveInfoModal from './kycV1.5/BaseKycApproveInfoModal'
+import BindContactModal from './kycV1.5/BindContactModal'
+import KycStatus from './kycV2/KycStatus'
 
 export default function Security() {
   const ENV = getEnv()
-  const [showPersonInfo, setShowPersonInfo] = useState(false)
   const intl = useIntl()
   const kycSuccModalRef = useRef<any>()
   const { initialState } = useModel('@@initialState')
@@ -66,267 +63,106 @@ export default function Security() {
     kycSuccModalRef?.current?.show()
   }
 
+  const informations = [
+    {
+      title: <FormattedMessage id="common.guojia" />,
+      value: intl.locale === 'zh-TW' ? currentUser?.countryInfo?.nameTw : currentUser?.countryInfo?.nameEn
+    },
+    {
+      title: <FormattedMessage id="common.shoujihao" />,
+      value: phoneAreaCode + ' ' + phone
+    },
+    {
+      title: <FormattedMessage id="common.dianziyouxiang" />,
+      value: email || (
+        <span className=" underline cursor-pointer">
+          <FormattedMessage id="common.bangding" />
+        </span>
+      ),
+      onClick: () => {
+        const checked = stores.global.registerWay === 'EMAIL' ? phone : email
+        !checked && bindModal.current?.show()
+      }
+    }
+  ]
+
+  const baseModal = useRef<any>()
+  const advanceModal = useRef<any>()
+  const bindModal = useRef<any>()
+
+  const handleKycStatusClick = (status: number) => {
+    // TODO
+    if (status === 0) {
+      baseModal.current?.show()
+    } else if (status === 2 || status === 4) {
+      kycSuccModalRef.current?.show()
+    } else if (status === 3) {
+      advanceModal.current?.show()
+    }
+  }
+
   return (
     <>
       <div className="pb-[26px]">
-        <div className="text-primary font-dingpro-medium text-xl font-semibold pb-[18px]">
-          <FormattedMessage id="mt.zhanghu" />
-        </div>
-        <div className="flex items-center justify-between gap-x-[27px]">
-          <div className="border border-gray-150 rounded-[7px] p-[30px] flex-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <KycStepPie step={finishedStep} />
-                <div className="flex flex-col pl-5">
-                  <div className="text-primary text-sm">
-                    <FormattedMessage id="mt.yanzhengzhuangtai" />
-                  </div>
-                  {isFinished && (
-                    <div className="text-green text-base py-[6px]">
-                      <FormattedMessage id="mt.yiwancheng" />
-                    </div>
-                  )}
-                  {!isFinished && (
-                    <div className="text-red-700 text-base py-[6px]">{kycStatusName || <FormattedMessage id="mt.zanweiwancheng" />}</div>
-                  )}
-                  <div className="text-primary text-xs">
-                    <FormattedMessage id="mt.yiwanchengxxstep" values={{ step: finishedStep }} />
-                  </div>
-                </div>
-              </div>
-              <Button type="text">
-                <div className="flex items-center cursor-pointer">
-                  {/* 没有提交kyc申请 */}
-                  {!kycStatus && (
-                    <span className="text-primary text-base leading-4 font-semibold pr-2" onClick={handleJumpKycAuth}>
-                      <FormattedMessage id="common.quwancheng" />
-                    </span>
-                  )}
-                  {/* 实名认证成功 */}
-                  {kycStatus === 'SUCCESS' && (
-                    <span className="text-primary text-base leading-4 font-semibold pr-2" onClick={handleKycSuccModal}>
-                      <FormattedMessage id="common.chakan" />
-                    </span>
-                  )}
-                  {/* 认证中 */}
-                  {kycStatus === 'TODO' && (
-                    <span className="text-primary text-base leading-4 font-semibold pr-2" onClick={handleJumpKycAuth}>
-                      <FormattedMessage id="common.chakan" />
-                    </span>
-                  )}
-                  {/* 实名认证失败 */}
-                  {kycStatus === 'DISALLOW' && (
-                    <KycFailModal
-                      trigger={
-                        <span className="text-primary text-base leading-4 font-semibold pr-2">
-                          <FormattedMessage id="common.chakan" />
-                        </span>
-                      }
-                    />
-                  )}
-                  {kycStatus !== 'TODO' && <ArrowRightOutlined style={{ color: gray[900], fontSize: 16 }} />}
-                </div>
-              </Button>
-            </div>
-          </div>
-          <div className="border border-gray-150 rounded-[7px] p-[30px] flex-1">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <img src="/img/wuxian.png" width={70} height={70} />
-                <div className="flex flex-col pl-7">
-                  <div className="text-primary text-sm">
-                    <FormattedMessage id="mt.rujinxianzhi" />
-                  </div>
-                  <div className="text-green text-xl py-[6px]">
-                    <FormattedMessage id="mt.wuxian" />
-                  </div>
-                  <div className="text-primary text-sm">
-                    <FormattedMessage id="mt.qujueyuzhifufangshi" />
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="rounded-[7px] border border-gray-150 py-[23px] px-[37px]">
+          <div className="flex flex-col gap-2">
+            <span className="font-medium text-xl">{userInfo?.account}</span>
+            <span className="text-secondary text-sm">{userInfo?.createTime}</span>
           </div>
         </div>
       </div>
       <div className="pb-[26px]">
-        <div className="text-primary font-dingpro-medium text-xl font-semibold pb-[18px]">
-          <FormattedMessage id="mt.yanzhengbuzhou" />
+        <div className="text-primary font-dingpro-medium text-xl font-semibold pb-[16px]">
+          <FormattedMessage id="mt.kyczhuangtai" />
         </div>
-        <div className="border border-gray-150 rounded-[7px]">
-          <div className="py-[18px] border-b border-gray-150 px-4">
-            <div
-              className="flex items-center justify-between cursor-pointer"
-              onClick={() => {
-                // 手机、邮箱都存在才可以展开
-                if (email && phone) {
-                  setShowPersonInfo(!showPersonInfo)
-                } else {
-                  handleJumpKycAuth()
-                }
-              }}
-            >
-              <div className="flex items-center">
-                <img src={`/img/${phone && email ? 'kyc-succ' : 'kyc-fail'}.png`} width={24} height={24} />
-                <div className="pl-2 font-semibold text-base">
-                  {phone && email && <FormattedMessage id="mt.yiquerengerenziliao" />}
-                  {!email && <FormattedMessage id="mt.bangdingyouxiang" />}
-                  {!phone && <FormattedMessage id="mt.bangdingshouji" />}
-                </div>
-              </div>
-              <img src={`/img/${showPersonInfo ? 'arrow-down' : 'arrow-right'}.png`} width={24} height={24} />
+        <KycStatus onClick={handleKycStatusClick} />
+      </div>
+      <div className="pb-[26px]">
+        <div className="text-primary font-dingpro-medium text-xl font-semibold">
+          <FormattedMessage id="mt.xinxi" />
+        </div>
+        <div className="text-secondary text-sm pb-[16px] pt-2">
+          <FormattedMessage id="mt.zhanghuguanlitips2" values={{ name: ENV.name }} />
+        </div>
+        <div className="flex flex-col gap-3">
+          {informations.map((item, index) => (
+            <div key={index} className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
+              <span className="text-base font-normal">{item.title}</span>
+              <span className="text-base font-normal" onClick={item?.onClick}>
+                {item.value}
+              </span>
             </div>
-            {showPersonInfo && (
-              <div className="pl-8 pt-3">
-                {/* <div className="text-xs text-primary py-2">
-                  <FormattedMessage id="mt.ninyiquerengerenziliao" />
-                </div> */}
-                <div className="flex items-center">
-                  <div className="flex items-center">
-                    <img src="/img/youxiang.png" width={14} height={14} />
-                    <span className="text-sm text-primary pl-2">{formatEmail(email)}</span>
-                  </div>
-                  {phone && (
-                    <>
-                      <div className="size-[3px] bg-gray rounded-full mx-4"></div>
-                      <div className="flex items-center">
-                        <img src="/img/shouji.png" width={14} height={14} />
-                        <span className="text-sm text-primary pl-2">
-                          {phoneAreaCode} {formatMobile(phone)}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                  {isKycAuth && firstName && (
-                    <>
-                      <div className="size-[3px] bg-gray rounded-full mx-4"></div>
-                      <div className="flex items-center">
-                        <img src="/img/yonghu.png" width={14} height={14} />
-                        <span className="text-sm text-primary pl-2">
-                          {firstName}·{lastName}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-          {/* <div
-            className="flex items-center justify-between py-[18px] border-b border-gray-150 px-4 cursor-pointer"
-            onClick={handleJumpKycAuth}
-          >
-            <div className="flex items-center">
-              <img src={`/img/${isKycAuth ? 'kyc-succ' : 'kyc-fail'}.png`} width={24} height={24} />
-              <div className="pl-2 font-semibold text-base">
-                {isKycAuth ? <FormattedMessage id="mt.nindeshenfenyirenzheng" /> : <FormattedMessage id="mt.nindesshenfenrenzheng" />}
-              </div>
-            </div>
-            <img src="/img/arrow-right.png" width={24} height={24} />
-          </div> */}
-          <div className="flex items-center justify-between py-[18px] px-4 cursor-pointer" onClick={handleJumpKycAuth}>
-            <div className="flex items-center">
-              <img src={`/img/${isKycAuth ? 'kyc-succ' : 'kyc-fail'}.png`} width={24} height={24} />
-              <div className="pl-2 font-semibold text-base">
-                {isKycAuth ? <FormattedMessage id="mt.nindeshenfenyirenzheng" /> : <FormattedMessage id="mt.nindesshenfenrenzheng" />}
-              </div>
-            </div>
-            <div className="flex items-center">
-              {!kycStatus && (
-                <Button size="small" autoInsertSpace={false} className="mr-2 !font-semibold !rounded-lg !h-[30px] !text-sm !border-gray">
-                  <FormattedMessage id="common.wanshan" />
-                  <ArrowRightOutlined className="ml-1" />
-                </Button>
-              )}
-              <img src="/img/arrow-right.png" width={24} height={24} />
-            </div>
-          </div>
+          ))}
         </div>
       </div>
       <div className="pb-[26px]">
         <div className="text-primary font-dingpro-medium text-xl font-semibold">
-          <FormattedMessage id="mt.zhanghuguanli" />
+          <FormattedMessage id="mt.anquan" />
         </div>
         <div className="text-secondary text-sm pb-[16px] pt-2">
           <FormattedMessage id="mt.zhanghuguanlitips" values={{ name: ENV.name }} />
         </div>
-        <div className="border border-gray-150 rounded-[7px] h-[64px] px-[26px] flex items-center justify-between">
-          <div className="text-primary text-sm flex-1 border-r border-gray-150 flex items-center h-full">
-            <span className="">
-              <FormattedMessage id="mt.zhanghao" />：
-            </span>
-            <span className="pl-2">{formatMobile(currentUser?.account)}</span>
-          </div>
-          <div className="flex items-center justify-between flex-1 pl-7">
-            <span className="text-primary text-sm">
-              <FormattedMessage id="common.mima" />：<span className="font-medium">﹡﹡﹡﹡﹡﹡﹡﹡﹡﹡</span>
-            </span>
-            <ModifyPasswordModal
-              trigger={
-                <Button type="text">
-                  <span className="text-primary text-sm font-semibold cursor-pointer">
-                    <FormattedMessage id="common.genggai" />
-                  </span>
-                </Button>
-              }
-            />
-          </div>
+        <div className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
+          <span className="text-base font-normal">
+            <FormattedMessage id="mt.zhanghaomima" />
+          </span>
+
+          <ModifyPasswordModal
+            trigger={
+              <Button type="text">
+                <span className="text-primary text-sm font-semibold cursor-pointer">
+                  <FormattedMessage id="mt.xiugaimima" />
+                </span>
+              </Button>
+            }
+          />
         </div>
       </div>
-      {isFinished && (
-        <div className="pb-[26px]">
-          <div className="text-primary font-dingpro-medium text-xl font-semibold">
-            <FormattedMessage id="mt.anquanrenzhengfangshi" />
-          </div>
-          <div className="text-secondary text-sm pb-[16px] pt-2">
-            <FormattedMessage id="mt.anquanrenzhengfangshitips" />
-          </div>
-          <div className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
-            <div className="text-primary text-sm">
-              <span className="">
-                <FormattedMessage id="mt.anquanleixing" />：
-              </span>
-              <span className="pl-2">{phone ? `${phoneAreaCode} ${formatMobile(phone)}` : formatEmail(email)}</span>
-            </div>
-            {isKycAuth ? (
-              <>
-                {phone ? (
-                  <ModifyPhoneModal
-                    trigger={
-                      <Button type="text">
-                        <span className="text-primary text-sm font-semibold cursor-pointer">
-                          <FormattedMessage id="common.genggai" />
-                        </span>
-                      </Button>
-                    }
-                  />
-                ) : (
-                  <ModifyEmailModal
-                    trigger={
-                      <Button type="text">
-                        <span className="text-primary text-sm font-semibold cursor-pointer">
-                          <FormattedMessage id="common.genggai" />
-                        </span>
-                      </Button>
-                    }
-                  />
-                )}
-              </>
-            ) : (
-              <Button
-                type="text"
-                onClick={() => {
-                  push('/setting/kyc')
-                }}
-              >
-                <span className="text-primary text-sm font-semibold cursor-pointer">{intl.formatMessage({ id: 'common.genggai' })}</span>
-              </Button>
-            )}
-          </div>
-        </div>
-      )}
       {/* 实名认证成功弹窗 */}
       <KycApproveInfoModal ref={kycSuccModalRef} />
+      <BaseKycApproveInfoModal ref={baseModal} />
+      <AdvanceKycApproveInfoModal ref={advanceModal} />
+      <BindContactModal ref={bindModal} />
     </>
   )
 }

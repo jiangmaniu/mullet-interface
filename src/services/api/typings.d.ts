@@ -201,6 +201,8 @@ declare namespace API {
     | 'ID_CARD'
     /**护照 */
     | 'PASSPORT'
+    /**駕照 */
+    | 'DRIVER_LICENSE'
 
   //  注册方式
   type RegisterWay = 'PHONE' | 'EMAIL'

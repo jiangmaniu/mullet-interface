@@ -162,6 +162,14 @@ declare namespace User {
     }
     /**国家-简称 */
     country?: string
+    /** 是否基礎認證 */
+    isBaseAuth?: number
+    /** 證件類型 */
+    identificationType?: number
+    /** 姓 */
+    lastName?: string
+    /**名 */
+    firstName?: string
   }
   // 客户用户信息
   type ClientUserInfo = {

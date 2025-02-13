@@ -692,6 +692,29 @@ export default {
   //  ========== 其他组件相关 开始 ==========
   'mt.uploadHelpTips': '点击上传图标，支持png/jpg/svg，尺寸125x125，大小不超过300KB',
   'mt.uploadFileTypeTips': '只能上传格式为png/jpeg/jpg/svg的文件',
-  'mt.wenjiandaxiaobunengchaoguo': '文件大小不能超過 {limit}MB'
+  'mt.wenjiandaxiaobunengchaoguo': '文件大小不能超過 {limit}MB',
   // ========== 其他组件相关 结束 ==========
+
+  // 20250212
+  'mt.kyczhuangtai': 'KYC 狀態',
+  'mt.xinxi': '信息',
+  'mt.zhanghuguanlitips2': '用於登錄{name}的輔助信息。注意自己的信息安全。',
+  'mt.anquan': '安全',
+  'mt.chakanxinxi': '查看信息',
+  'mt.weiwanchengchujirenzheng': '未完成初級認證',
+  'mt.quchujirenzheng': '去初級認證',
+  'mt.yiwanchengchujirenzheng': '已完成初級認證',
+  'mt.gaojirenzhengbeijujue': '高級認證被拒絕',
+  'mt.zaishiyici': '再試一次',
+  'mt.qugaojirenzheng': '去高級認證',
+  'mt.yiwanchenggaojirenzheng': '已完成高級認證',
+  'mt.qingnaixindenghoushenhe': '請耐心等候審核',
+  'mt.qingwanchengchujirenzheng': '請完成初級認證，以便入金進行交易',
+  'mt.weifangbianchujin': '為方便出金，建議您完成高級認證',
+  'mt.qingzixianzhaoshuomingchongshi': '請仔細按照說明重試',
+  'mt.ninyiwanchengsuoyourenzheng': '您已完成所有認證，開始交易吧',
+  'mt.kycrenzheng': 'Kyc 認證',
+  'mt.wanchengchujirenzheng': '完成初級認證',
+  'mt.kycjichurenzheng': 'Kyc 基礎認證',
+  'mt.kycgaojirenzheng': 'Kyc 高級認證'
 }

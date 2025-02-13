@@ -1,8 +1,10 @@
-import { useIntl } from '@umijs/max'
+import { useIntl, useModel } from '@umijs/max'
 import { FormInstance } from 'antd'
 
-import AreaCodeSelect from '@/components/Form/AreaCodeSelect'
+import AreaCodeSelect, { AreaCodeItem } from '@/components/Form/AreaCodeSelect'
 
+import { useLang } from '@/context/languageProvider'
+import { useEffect, useState } from 'react'
 import ProFormText from '../ProFormText'
 
 type IProps = {
@@ -10,15 +12,46 @@ type IProps = {
   height?: number
   placeholder?: string
   label?: React.ReactNode
+  initialValue?: string
 }
 
-export default function SelectCountryFormItem({ form, height = 49, placeholder, label }: IProps) {
+export default function SelectCountryFormItem({ form, height = 49, placeholder, label, initialValue: _initialValue }: IProps) {
   const intl = useIntl()
+  const { lng } = useLang()
+  const isZh = lng === 'zh-TW'
+
+  const { list } = useModel('areaList')
+
+  const options = list
+    ?.filter((item) => item.areaCode !== '0')
+    ?.map((v: AreaCodeItem) => {
+      const areaNameZh = v.nameTw
+      const areaName = v.nameEn
+      const label = isZh ? areaNameZh : areaName || areaNameZh
+      return {
+        ...v,
+        label,
+        value: v.id,
+        areaCode: `+${v.areaCode}`
+      }
+    })
+
+  const [initialValue, setInitialValue] = useState('')
+
+  useEffect(() => {
+    const item = options?.find((item) => item.areaCode === _initialValue)
+    form.setFieldValue('countryName', item?.label)
+    form.setFieldValue('country', item?.abbr)
+
+    setInitialValue(item?.label || '')
+  }, [_initialValue, options])
+
   return (
     <>
       <AreaCodeSelect
         name="countryName"
         form={form}
+        initialValue={initialValue}
         selectProps={{
           allowClear: false,
           fieldProps: { size: 'large' },

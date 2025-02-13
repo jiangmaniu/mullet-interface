@@ -701,6 +701,29 @@ export default {
   //  ========== 其他组件相关 开始 ==========
   'mt.uploadHelpTips': 'Click to upload icon, supports png/jpg/svg, size 125x125, no larger than 300KB',
   'mt.uploadFileTypeTips': 'Only files in png/jpeg/jpg/svg format can be uploaded',
-  'mt.wenjiandaxiaobunengchaoguo': 'File size cannot exceed {limit}MB'
+  'mt.wenjiandaxiaobunengchaoguo': 'File size cannot exceed {limit}MB',
   // ========== 其他组件相关 结束 ==========
+
+  // 20250212
+  'mt.kyczhuangtai': 'KYC Status',
+  'mt.xinxi': 'Information',
+  'mt.zhanghuguanlitips2': 'Used to assist you log in to {name}. Please change your password if you suspect your password has been leaked.',
+  'mt.anquan': 'Security',
+  'mt.chakanxinxi': 'View Information',
+  'mt.weiwanchengchujirenzheng': 'Initial Verification Not Completed',
+  'mt.quchujirenzheng': 'Go to Initial Verification',
+  'mt.yiwanchengchujirenzheng': 'Initial Verification Completed',
+  'mt.gaojirenzhengbeijujue': 'Advanced Verification Rejected',
+  'mt.zaishiyici': 'Try Again',
+  'mt.qugaojirenzheng': 'Go to Advanced Verification',
+  'mt.yiwanchenggaojirenzheng': 'Advanced Verification Completed',
+  'mt.qingnaixindenghoushenhe': 'Please wait for approval',
+  'mt.qingwanchengchujirenzheng': 'Please complete the initial verification to enable deposit and withdrawal',
+  'mt.weifangbianchujin': 'To facilitate withdrawals, we suggest you complete the advanced verification',
+  'mt.qingzixianzhaoshuomingchongshi': 'Please carefully follow the instructions',
+  'mt.ninyiwanchengsuoyourenzheng': 'Congratulations! All verifications have been completed. Start trading now!',
+  'mt.kycrenzheng': 'Kyc Verification',
+  'mt.wanchengchujirenzheng': 'Complete Base Verification',
+  'mt.kycjichurenzheng': 'Kyc Basic Verification',
+  'mt.kycgaojirenzheng': 'Kyc Advanced Verification'
 }

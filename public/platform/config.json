@@ -8,5 +8,6 @@
   "ws": "wss://websocket.stellux.io/websocketServer",
   "imgDomain": "https://file.stellux.io/trade/",
   "REGISTER_MODULE": "1",
-  "SKIP_KYC_STEP_ONE": "1"
+  "SKIP_KYC_STEP_ONE": "1",
+  "ID_CARD_ONLY": "1"
 }

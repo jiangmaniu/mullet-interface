@@ -109,7 +109,9 @@ export default {
   'common.CanRelease': '松开',
   'common.Refreshing': '加载中...',
   'common.Complete': '完成',
-  'common.unset': '未设置'
+  'common.unset': '未设置',
+  'common.shoujihao': '手機號',
+  'common.bangding': '綁定'
 
   // "======= 公共结束 ==========": "",
 }

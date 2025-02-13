@@ -13,6 +13,7 @@ config.json 用例：
   "imgDomain": "https://file.stellux.io/trade/", // 圖片域名
   "REGISTER_MODULE": "1", // 開啟註冊模組
   "PAYMENT_MODULE": "1", // 開啟支付模組
-  "SKIP_KYC_STEP_ONE": "1" // 跳過KYC第一步
+  "SKIP_KYC_STEP_ONE": "1", // 允许跳過KYC第一步
+  "ID_CARD_ONLY": "1" // 只支持身份证认证
 }
 ```

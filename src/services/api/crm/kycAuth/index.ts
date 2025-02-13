@@ -2,6 +2,22 @@ import qs from 'qs'
 
 import { request } from '@/utils/request'
 
+// KYC 基礎認證
+export async function submitBaseAuth(body: KycAuth.SubmitBaseAuthParams) {
+  return request<API.Response>('/api/trade-crm/crmClient/user/baseAuth', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// KYC 高級認證
+export async function submitSeniorAuth(body: { authImgsUrl: string }) {
+  return request<API.Response>(`/api/trade-crm/crmClient/user/seniorAuth?authImgsUrl=${body.authImgsUrl}`, {
+    method: 'POST',
+    data: body
+  })
+}
+
 // KYC身份认证-提交审核
 export async function submitKycAuth(body: KycAuth.SubmitKycAuthParams) {
   return request<API.Response>('/api/trade-crm/crmClient/user/kycAuth', {

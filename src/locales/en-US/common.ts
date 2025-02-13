@@ -109,6 +109,9 @@ export default {
   'common.CanRelease': 'Release',
   'common.Refreshing': 'Refreshing...',
   'common.Complete': 'Complete',
-  'common.unset': 'Unset'
+  'common.unset': 'Unset',
+  'common.shoujihao': 'Phone Number',
+  'common.bangding': 'Bind'
+
   // "======= 公共结束 ==========": "",
 }

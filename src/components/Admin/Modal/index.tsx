@@ -58,6 +58,7 @@ function Modal(
     open,
     hiddenSubmitter,
     okText,
+    styles,
     ...res
   }: IProps,
   ref: any
@@ -168,16 +169,19 @@ function Modal(
           }}
           wrapClassName="modal-no-padding"
           styles={{
+            ...styles,
             header: {
               background: isTabList ? 'var(--modal-header-bg)' : '#fff',
               paddingTop: 24,
               paddingLeft: 0,
-              paddingRight: 0
+              paddingRight: 0,
+              ...styles?.header
             },
             footer: {
               paddingTop: 5,
               paddingLeft: 28,
-              paddingRight: 28
+              paddingRight: 28,
+              ...styles?.footer
             }
           }}
           footer={

@@ -93,4 +93,18 @@ declare namespace KycAuth {
     /**国家-简称 */
     country?: string
   }
+
+  // KYC基础认证-提交审核
+  type SubmitBaseAuthParams = {
+    /**国家-简称 */
+    country: string
+    /**名(名字) */
+    firstName: string
+    /**姓(姓氏) */
+    lastName: string
+    /**证件号 */
+    identificationCode: string
+    /**证件类型 */
+    identificationType: API.IdentificationType
+  }
 }

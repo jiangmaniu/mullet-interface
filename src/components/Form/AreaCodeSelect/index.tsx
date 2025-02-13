@@ -11,7 +11,7 @@ import { useLang } from '@/context/languageProvider'
 import useLangChange from '@/hooks/useLangChange'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 
-type AreaCodeItem = Common.AreaCodeItem
+export type AreaCodeItem = Common.AreaCodeItem
 /**
  * 手机区号选择
  * @returns
