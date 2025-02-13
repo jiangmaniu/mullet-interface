@@ -16,7 +16,6 @@ import {
 } from '@/utils/storage'
 import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 
-import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH, DEFAULT_AREA_CODE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
@@ -110,7 +109,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     try {
       const result = await login({
         username: registerWay === 'EMAIL' ? values.email?.trim() : values.phone?.trim(),
-        phoneAreaCode: `+${values.areaCode}`,
+        phoneAreaCode: registerWay === 'PHONE' ? `+${values.areaCode}` : '',
         password: md5(values.password as string),
         tenanId: '000000',
         type: 'account',
@@ -162,8 +161,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       registerWay === 'PHONE'
         ? z.string().refine((value) => regMobile.test(value), { message: t('pages.login.Phone placeholder') })
         : z.string().optional(),
-    areaCode:
-      registerWay === 'PHONE' ? z.string().min(1, { message: t('pages.login.Residence Country is required') }) : z.string().optional(),
+    // areaCode:
+    //   registerWay === 'PHONE' ? z.string().min(1, { message: t('pages.login.Residence Country is required') }) : z.string().optional(),
     email: registerWay === 'EMAIL' ? z.string().email({ message: t('pages.login.Email placeholder') }) : z.string().optional(),
     password: z
       .string()
@@ -224,6 +223,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         phone,
         areaCode
       })
+      setEmail?.(email || '')
+      setPhone?.(phone || '')
+      setAreaCode?.(areaCode || '')
     }
   }, [tenanId, tenanName, email, password, phone, areaCode])
 
@@ -298,18 +300,18 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
               style={{
                 lineHeight: 18
               }}
-              LeftAccessory={() => (
-                <View className={cn('pl-[15px]')} onPress={() => selectCountryModalRef.current?.show()}>
-                  <View className={cn('flex flex-row items-center gap-1')}>
-                    <Text>{areaCode ? `+${areaCode}` : t('components.select.PlacehodlerSim')}</Text>
-                    <Iconfont name="qiehuanzhanghu-xiala" size={24} />
-                  </View>
-                </View>
-              )}
+              // LeftAccessory={() => (
+              //   <View className={cn('pl-[15px]')} onPress={() => selectCountryModalRef.current?.show()}>
+              //     <View className={cn('flex flex-row items-center gap-1')}>
+              //       <Text>{areaCode ? `+${areaCode}` : t('components.select.PlacehodlerSim')}</Text>
+              //       <Iconfont name="qiehuanzhanghu-xiala" size={24} />
+              //     </View>
+              //   </View>
+              // )}
             />
           )}
           {!!errors.phone && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.phone.message}</Text>}
-          {!!errors.areaCode && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.areaCode.message}</Text>}
+          {/* {!!errors.areaCode && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.areaCode.message}</Text>} */}
 
           <TextField
             ref={authPasswordInput}

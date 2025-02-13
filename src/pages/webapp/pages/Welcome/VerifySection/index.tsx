@@ -167,7 +167,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
       } else if (phone) {
         result = await sendCustomPhoneCode({
           phone: phone,
-          phoneAreaCode: areaCode
+          phoneAreaCode: areaCode ? `+${areaCode}` : ''
         })
       }
 

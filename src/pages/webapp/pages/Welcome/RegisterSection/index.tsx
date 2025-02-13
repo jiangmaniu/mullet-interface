@@ -116,6 +116,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         setPhone?.(values.phone || '')
         setAreaCode?.(values.areaCode || '')
         setEmail?.(values.email || '')
+        setPassword(values.password || '')
         setSection('verify')
       }
     } catch (error: any) {
@@ -177,45 +178,26 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const areaCode = watch('areaCode')
   const email = watch('email')
   const phone = watch('phone')
+
   useEffect(() => {
     /** 如果 remember 为 true，则账号密码变更时，将账号密码存储到本地 */
-    const updatePassword = async () => {
-      setPassword(password)
-      const store = await STORAGE_GET_ACCOUNT_PASSWORD()
-      if (store?.remember) {
+    const update = async () => {
+      const stores = await STORAGE_GET_ACCOUNT_PASSWORD()
+      if (stores.remember) {
         STORAGE_SET_ACCOUNT_PASSWORD({
-          tenanId: store.tenanId,
-          tenanName: store.tenanName,
-          username: store.username,
-          remember: store.remember,
-          email: store.email,
-          password
+          tenanId: stores.tenanId,
+          tenanName: stores.tenanName,
+          username: stores.username,
+          remember: stores.remember,
+          email: email || stores.email,
+          phone: phone || stores.phone,
+          areaCode: areaCode || stores.areaCode,
+          password: password || stores.password
         })
       }
     }
-
-    updatePassword()
-  }, [password])
-
-  useEffect(() => {
-    const updateEmail = async () => {
-      setEmail?.(email || '')
-      const store = await STORAGE_GET_ACCOUNT_PASSWORD()
-      if (store?.remember) {
-        STORAGE_SET_ACCOUNT_PASSWORD({
-          tenanId: store.tenanId,
-          tenanName: store.tenanName,
-          username: store.username,
-          remember: store.remember,
-          password: store.password,
-          phone: store.phone,
-          areaCode: store.areaCode,
-          email: email || ''
-        })
-      }
-    }
-    updateEmail()
-  }, [email])
+    update()
+  }, [password, email, phone, areaCode])
 
   const [disabled, setDisabled] = useState(false)
 
@@ -246,7 +228,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           }}
         >
           <TextField
-            value={`(+${areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}`}
+            value={areaCodeItem ? `(+${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
             label={t('pages.login.Residence Country')}
             height={50}
             readOnly
