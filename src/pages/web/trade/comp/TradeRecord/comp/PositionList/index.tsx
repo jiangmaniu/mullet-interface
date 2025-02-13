@@ -563,6 +563,7 @@ function Position({ style, parentPopup }: IProps) {
               headStyle: { borderRadius: 0 },
               className: ''
             }}
+            scroll={{ y: 430 }}
             size="small"
             rowClassName={(record, i) => {
               let className = record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
