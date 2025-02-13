@@ -54,7 +54,7 @@ function Deposit() {
         {kycStatus !== 'SUCCESS' && (
           <div className=" border border-gray-150 rounded-lg px-5 py-4 flex justify-between">
             <div className="flex flex-row items-center gap-[18px]">
-              <Iconfont name="Authenticator" width={32} height={32} color="black" />
+              <Iconfont name="renzheng" width={40} height={40} />
               <div className=" text-base font-semibold text-gray-900">{intl.formatMessage({ id: 'mt.wanshanzhanghuziliao' })}</div>
             </div>
 
