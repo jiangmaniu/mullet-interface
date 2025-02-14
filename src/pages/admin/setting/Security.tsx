@@ -96,7 +96,7 @@ export default function Security() {
       baseModal.current?.show()
     } else if (status === 2 || status === 4) {
       kycSuccModalRef.current?.show()
-    } else if (status === 3) {
+    } else if (status === 1 || status === 3) {
       advanceModal.current?.show()
     }
   }
