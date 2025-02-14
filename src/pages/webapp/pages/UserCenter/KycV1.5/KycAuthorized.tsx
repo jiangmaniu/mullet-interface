@@ -13,15 +13,7 @@ export default function KycAuthorized() {
 
   return (
     <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary} style={{ overflow: 'hidden' }}>
-      <Header
-        title={i18n.t('app.pageTitle.Kyc Authorized')}
-        onBack={() => onBack()}
-        // left={
-        //   <View onPress={goBack}>
-        //     <Iconfont name="fanhui" size={36} />
-        //   </View>
-        // }
-      />
+      <Header title={i18n.t('app.pageTitle.Kyc Authorized')} onBack={() => onBack()} />
       <View className={cn('flex items-center justify-center pt-[36px] pb-[28px] ')}>
         <img src="/img/webapp/kyc-bg-0.png" alt="kyc-authorized" style={{ width: 102, height: 102 }} />
       </View>

@@ -12,9 +12,7 @@ import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { getAreaCode } from '@/services/api/common'
 import { submitBaseAuth } from '@/services/api/crm/kycAuth'
 import { message } from '@/utils/message'
-import { onBack } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useModel } from '@umijs/max'
 import { Radio } from 'antd'
 import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -34,7 +32,6 @@ type FormData = {
 export default function VerifyMsg({ onSuccess }: { onSuccess: () => void }) {
   const { cn, theme } = useTheme()
   const i18n = useI18n()
-  const { fetchUserInfo } = useModel('user')
   const { t, locale } = i18n
 
   /** 表单控制 */
@@ -105,10 +102,8 @@ export default function VerifyMsg({ onSuccess }: { onSuccess: () => void }) {
     }).then(async (res) => {
       if (res.success) {
         message.info(i18n.t('common.operate.Op Success'))
-        // 刷新用户信息
-        await fetchUserInfo()
 
-        onBack()
+        onSuccess()
 
         return
       }

@@ -363,13 +363,13 @@ export default [
       // 个人中心-验证消息
       {
         path: '/:lng/app/user-center/verify-msg',
-        component: './webapp/pages/UserCenter/KycV1.5/VerifyMsg',
+        component: './webapp/pages/UserCenter/KycV1.5/KycVerifyMsgPage',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-验证证件照
       {
         path: '/:lng/app/user-center/verify-document',
-        component: './webapp/pages/UserCenter/KycV1.5/VerifyDoc',
+        component: './webapp/pages/UserCenter/KycV1.5/KycVerifyDocPage',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-认证信息
@@ -383,6 +383,11 @@ export default [
         path: '/:lng/app/user-center/kyc-authorized',
         component: './webapp/pages/UserCenter/KycV1.5/KycAuthorized',
         access: 'canAdmin' // 权限配置
+      },
+      // 个人中心- kyc 认证
+      {
+        path: '/:lng/app/user-center/kyc-webview-page',
+        component: './webapp/pages/UserCenter/KycV1.5/KycWebviewPage'
       },
       {
         path: '/:lng/app/test',

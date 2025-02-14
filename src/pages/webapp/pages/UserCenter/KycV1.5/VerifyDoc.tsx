@@ -8,16 +8,14 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { submitSeniorAuth } from '@/services/api/crm/kycAuth'
 import { message } from '@/utils/message'
-import { onBack } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useLocation, useModel } from '@umijs/max'
+import { useLocation } from '@umijs/max'
 import { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-export default function VerifyDoc() {
+export default function VerifyDoc({ onSuccess }: { onSuccess: () => void }) {
   const { cn, theme } = useTheme()
   const i18n = useI18n()
-  const user = useModel('user')
 
   const location = useLocation()
   // 获取 URL 中的查询参数（searchParams）
@@ -36,10 +34,7 @@ export default function VerifyDoc() {
       .then(async (res) => {
         if (res.success) {
           message.info(i18n.t('common.operate.Op Success'))
-          // 更新账户余额信息
-          await user.fetchUserInfo(true)
-
-          onBack()
+          onSuccess()
           return
         }
       })
