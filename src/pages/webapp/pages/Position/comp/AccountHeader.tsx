@@ -25,7 +25,10 @@ function AccountHeader() {
 
   const precision = currentAccountInfo.currencyDecimal ?? DEFAULT_CURRENCY_DECIMAL
 
-  const advancePaymentRatio = useMemo(() => (availableMargin ? (occupyMargin / availableMargin) * 100 : 0), [occupyMargin, availableMargin])
+  const advancePaymentRatio = useMemo(
+    () => (occupyMargin > 0 && availableMargin > 0 ? (occupyMargin / availableMargin) * 100 : 0),
+    [occupyMargin, availableMargin]
+  )
 
   return (
     <View
