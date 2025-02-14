@@ -1,4 +1,4 @@
-FROM nginx:1.27.4
+FROM nginx:1.26.3
 VOLUME /tmp
 ENV LANG en_US.UTF-8
 ADD ./dist/ /usr/share/nginx/html/
