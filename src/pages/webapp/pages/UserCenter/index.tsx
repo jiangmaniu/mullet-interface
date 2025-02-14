@@ -4,7 +4,6 @@ import { useCallback, useRef } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { getEnv } from '@/env'
 import { onLogout } from '@/utils/navigator'
 import { useModel } from '@umijs/max'
 import Button from '../../components/Base/Button'
@@ -18,9 +17,10 @@ import useFocusEffect from '../../hooks/useFocusEffect'
 import { useI18n } from '../../hooks/useI18n'
 import BasicLayout from '../../layouts/BasicLayout'
 import { navigateTo } from '../../utils/navigator'
-import MessageStore from './Message/MessageStore'
 import Account from './comp/Account'
 import { ModalConfirm } from './comp/ModalConfirm'
+import KycStatus from './KycV1.5/KycStatus'
+import MessageStore from './Message/MessageStore'
 
 const QuickPlaceOrderSwitch = observer(() => {
   const { trade } = useStores()
@@ -55,82 +55,6 @@ const PositionConfirmSwitch = observer(() => {
         trade.setPositionConfirmChecked(checked)
       }}
     />
-  )
-})
-
-const Kyc = observer(() => {
-  const { cn, theme } = useTheme()
-  const { t } = useI18n()
-
-  const { initialState } = useModel('@@initialState')
-  const currentUser = initialState?.currentUser
-
-  const userInfo = currentUser?.userInfo
-  const kycAuthInfo = currentUser?.kycAuth?.[0]
-  const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
-  const remark = kycAuthInfo?.remark as string
-  const phone = userInfo?.phone
-  return (
-    <View className={cn('mb-5')}>
-      <View
-        className={cn('flex flex-row items-center justify-between bg-white rounded-lg p-3 gap-10 mt-2')}
-        onClick={() => {
-          kycStatus === 'SUCCESS' && navigateTo('/app/user-center/certification-information')
-        }}
-      >
-        <View className={cn('flex flex-row items-center flex-shrink ')}>
-          <Iconfont name="caidan-zhanghu" size={32} color={theme.colors.textColor.weak} style={{ marginRight: 10 }} />
-          {kycStatus === 'SUCCESS' ? (
-            <Text className={cn('text-sm')}>{t('pages.userCenter.kycrenzhengyiwancheng')}</Text>
-          ) : kycStatus === 'TODO' ? (
-            <Text className={cn('text-sm')}>{t('pages.userCenter.shenfenrenzhengshenhezhongnaixindengdai')}</Text>
-          ) : (
-            <Text className={cn('text-sm')}>{t('pages.userCenter.qingwanshanziliao')}</Text>
-          )}
-        </View>
-        {kycStatus === 'SUCCESS' ? (
-          <Iconfont name="quancangxiala" size={16} color={theme.colors.textColor.secondary} />
-        ) : kycStatus === 'TODO' ? (
-          <Button
-            type="primary"
-            style={{ minWidth: 60 }}
-            size="small"
-            onClick={() => {
-              navigateTo('/app/user-center/verify-status')
-            }}
-          >
-            <Text color="reverse">{t('pages.userCenter.shenhezhong')}</Text>
-          </Button>
-        ) : (
-          <Button
-            type="success"
-            style={{ minWidth: 60 }}
-            size="small"
-            onClick={() => {
-              if ((userInfo?.phone && userInfo?.email) || getEnv().SKIP_KYC_STEP_ONE === '1') {
-                navigateTo('/app/user-center/verify-msg')
-              } else if (userInfo?.phone && !userInfo?.email) {
-                navigateTo('/app/user-center/bind-email')
-              } else if (!userInfo?.phone && userInfo?.email) {
-                navigateTo('/app/user-center/bind-phone')
-              }
-            }}
-          >
-            <Text color="reverse">{t('pages.userCenter.wanshan')}</Text>
-          </Button>
-        )}
-      </View>
-      {kycStatus === 'DISALLOW' && (
-        <View
-          className={cn(' border border-gray-300 rounded-lg px-3 py-1 gap-10 mt-2')}
-          onClick={() => navigateTo('/app/user-center/verify-status')}
-        >
-          <Text className={cn('text-sm !text-red')}>
-            {t('pages.userCenter.shenhebutongguo')}: {remark}
-          </Text>
-        </View>
-      )}
-    </View>
   )
 })
 
@@ -262,7 +186,7 @@ function UserCenter() {
       <View style={{ paddingInline: 14, flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: 60 }}>
         <Account />
 
-        <Kyc />
+        <KycStatus />
 
         {renderList(preferenceSetting, t('pages.userCenter.Trading Preferences'))}
         <View style={{ height: 8 }} />

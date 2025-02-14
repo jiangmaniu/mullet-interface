@@ -21,7 +21,8 @@
       "Select Account": "Select Account",
       "Transfer": "Transfer",
       "Transfer Records": "Transfer Records",
-      "Message": "Message"
+      "Message": "Message",
+      "Kyc Authorized": "Kyc Authorized"
     },
     "account": {
       "Account": "Account",
@@ -618,7 +619,9 @@
       "genggaishoujihaoma": "Update Phone Number",
       "genggaiyoudianzi": "Update Email",
       "firstname": "Name",
-      "lastname": "Last Name"
+      "lastname": "Last Name",
+      "chujirenzheng": "Kyc Basic Verification",
+      "gaojirenzheng": "Kyc Advanced Verification"
     },
 
     "============== User Center End ==============": "",

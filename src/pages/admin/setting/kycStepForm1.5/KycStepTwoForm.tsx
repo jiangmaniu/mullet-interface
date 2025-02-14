@@ -55,19 +55,6 @@ export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void })
       label: intl.formatMessage({ id: 'mt.huzhao' })
     })
 
-  const steps = [
-    {
-      key: 'TWO',
-      icon: '/img/kyc-user.png',
-      activeIcon: '/img/kyc-user-white.png',
-      desc: <FormattedMessage id="mt.shenfenrenzheng" />
-    }
-  ]
-
-  const idx = steps.findIndex((v) => v.key === step)
-  const activeSteps = steps.slice(0, idx + 1).map((item) => item.key)
-  const activeLineStep = steps.slice(0, idx).map((item) => item.key)
-
   useEffect(() => {
     // 手机、邮箱已绑定，直接跳过
     if (userInfo?.phone && userInfo?.email && kycStatus !== 'TODO') {
@@ -81,7 +68,6 @@ export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void })
   // 提交手机或邮箱绑定
   const handleSubmitTwoStep = async () => {
     form.validateFields().then((values) => {
-      console.log('values', values)
       // submitBaseAuth
       submitBaseAuth({ ...values, identificationType }).then((res) => {
         if (res.success) {

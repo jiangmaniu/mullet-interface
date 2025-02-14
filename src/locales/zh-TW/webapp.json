@@ -21,7 +21,8 @@
       "Select Account": "選擇賬戶",
       "Transfer": "劃轉",
       "Transfer Records": "轉賬記錄",
-      "Message": "消息"
+      "Message": "消息",
+      "Kyc Authorized": "Kyc 認證"
     },
     "account": {
       "Account": "賬戶",
@@ -619,7 +620,9 @@
       "genggaishoujihaoma": "更新手機號碼",
       "genggaiyoudianzi": "更新郵箱",
       "firstname": "名字",
-      "lastname": "姓氏"
+      "lastname": "姓氏",
+      "chujirenzheng": "Kyc 基礎認證",
+      "gaojirenzheng": "Kyc 高級認證"
     },
 
     "============== 个人中心 结束 ==============": "",

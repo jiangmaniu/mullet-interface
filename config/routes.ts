@@ -363,19 +363,25 @@ export default [
       // 个人中心-验证消息
       {
         path: '/:lng/app/user-center/verify-msg',
-        component: './webapp/pages/UserCenter/Kyc/VerifyMsg',
+        component: './webapp/pages/UserCenter/Kyc/KycV1.5/VerifyMsg',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-验证证件照
       {
         path: '/:lng/app/user-center/verify-document',
-        component: './webapp/pages/UserCenter/Kyc/VerifyDoc',
+        component: './webapp/pages/UserCenter/Kyc/KycV1.5/VerifyDoc',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-认证信息
       {
         path: '/:lng/app/user-center/certification-information',
         component: './webapp/pages/UserCenter/Certification',
+        access: 'canAdmin' // 权限配置
+      },
+      // 个人中心- kyc 认证
+      {
+        path: '/:lng/app/user-center/kyc-authorized',
+        component: './webapp/pages/UserCenter/KycV1.5/KycAuthorized',
         access: 'canAdmin' // 权限配置
       },
       {
