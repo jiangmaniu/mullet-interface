@@ -48,7 +48,7 @@ export class GlobalStore {
 
   // 获取平台配置
   getPlatformConfig = async () => {
-    const config = await fetch(location.origin + '/platform/config.json')
+    const config = await fetch(location.origin + `/platform/config.json?t=${Date.now()}`)
       .then((res) => res.json())
       .then((data) => data)
 

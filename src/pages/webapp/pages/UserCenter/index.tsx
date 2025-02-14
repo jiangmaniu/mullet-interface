@@ -17,10 +17,10 @@ import useFocusEffect from '../../hooks/useFocusEffect'
 import { useI18n } from '../../hooks/useI18n'
 import BasicLayout from '../../layouts/BasicLayout'
 import { navigateTo } from '../../utils/navigator'
-import Account from './comp/Account'
-import { ModalConfirm } from './comp/ModalConfirm'
 import KycStatus from './KycV1.5/KycStatus'
 import MessageStore from './Message/MessageStore'
+import Account from './comp/Account'
+import { ModalConfirm } from './comp/ModalConfirm'
 
 const QuickPlaceOrderSwitch = observer(() => {
   const { trade } = useStores()
