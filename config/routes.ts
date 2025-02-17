@@ -343,11 +343,11 @@ export default [
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-实名认证状态
-      {
-        path: '/:lng/app/user-center/verify-status',
-        component: './webapp/pages/UserCenter/Kyc/VerifyStatus',
-        access: 'canAdmin' // 权限配置
-      },
+      // {
+      //   path: '/:lng/app/user-center/verify-status',
+      //   component: './webapp/pages/UserCenter/Kyc/VerifyStatus',
+      //   access: 'canAdmin' // 权限配置
+      // },
       // 个人中心-绑定邮箱
       {
         path: '/:lng/app/user-center/bind-email',
@@ -370,6 +370,18 @@ export default [
       {
         path: '/:lng/app/user-center/verify-document',
         component: './webapp/pages/UserCenter/KycV1.5/KycVerifyDocPage',
+        access: 'canAdmin' // 权限配置
+      },
+      // 个人中心-验证状态
+      {
+        path: '/:lng/app/user-center/verify-status',
+        component: './webapp/pages/UserCenter/KycV1.5/KycVerifyStatusPage',
+        access: 'canAdmin' // 权限配置
+      },
+      // 个人中心-验证状态
+      {
+        path: '/:lng/app/user-center/verify-information',
+        component: './webapp/pages/UserCenter/KycV1.5/KycVerifyInformationPage',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-认证信息

@@ -142,7 +142,7 @@ export const errorConfig: RequestConfig = {
       }
 
       if (token) {
-        headers['Blade-Auth'] = `${userInfo.token_type} ${token}`
+        headers['Blade-Auth'] = `${userInfo?.token_type || 'Bearer'} ${token}`
       }
 
       // get请求加密

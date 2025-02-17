@@ -9,9 +9,13 @@ import { setLocalUserInfo } from '@/utils/storage'
 export default function User() {
   const { initialState, setInitialState } = useModel('@@initialState')
 
+  const lastUpdateTime = stores.global.lastUpdateTime
+  const setLastUpdateTime = stores.global.setLastUpdateTime
+
   // 重新获取用户信息赋值
   const fetchUserInfo = async (refreshAccount?: boolean) => {
     const userInfo = await stores.global.fetchUserInfo(refreshAccount)
+
     if (userInfo) {
       flushSync(() => {
         setInitialState((s) => ({
@@ -48,6 +52,8 @@ export default function User() {
   return {
     fetchUserInfo,
     handleLoginSuccess,
-    isEmailRegisterWay
+    isEmailRegisterWay,
+    lastUpdateTime,
+    setLastUpdateTime
   }
 }

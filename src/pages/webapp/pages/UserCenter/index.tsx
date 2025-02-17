@@ -17,7 +17,7 @@ import useFocusEffect from '../../hooks/useFocusEffect'
 import { useI18n } from '../../hooks/useI18n'
 import BasicLayout from '../../layouts/BasicLayout'
 import { navigateTo } from '../../utils/navigator'
-import KycStatus from './KycV1.5/KycStatus'
+import KycStatus from './KycV2/KycStatus'
 import MessageStore from './Message/MessageStore'
 import Account from './comp/Account'
 import { ModalConfirm } from './comp/ModalConfirm'
@@ -159,6 +159,21 @@ function UserCenter() {
   const handleLoginOut = () => {
     modalConfirmRef.current?.show()
   }
+
+  const updateGap = 1 * 5 * 1000 // 打開該頁面的時候主動刷新用戶信息，間隔：30秒
+  const user = useModel('user')
+  useFocusEffect(
+    useCallback(() => {
+      // 如果最后一次刷新时间是 updateGap 之前，在后台主动刷新一次用户信息
+      if (user.lastUpdateTime && Date.now().valueOf() - user.lastUpdateTime > updateGap) {
+        console.log('=====主动刷新')
+        user.fetchUserInfo(false)
+      }
+
+      // 获取未读消息数量
+      messageStore.getUnreadMessageCount()
+    }, [])
+  )
 
   return (
     <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>

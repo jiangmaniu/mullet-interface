@@ -617,7 +617,14 @@
       "genggaishoujihaoma": "Cập nhật số điện thoại",
       "genggaiyoudianzi": "Cập nhật email",
       "firstname": "Tên",
-      "lastname": "Họ"
+      "lastname": "Họ",
+      "chujirenzheng": "Xác thực cơ bản",
+      "gaojirenzheng": "Xác thực cao cấp",
+      "renzhengxingming": "Tên xác thực",
+      "qurujin": "Đi nạp tiền",
+      "tijiaoshenhe": "Gửi xác thực",
+      "yigaojirenzheng": "Xác thực cao cấp (Hỗ trợ nạp/rút tiền)",
+      "yichujirenzheng": "Bạn đã hoàn tất xác thực cơ bản, có thể chọn nạp tiền hoặc tiếp tục xác thực cao cấp (mở quyền rút tiền)"
     },
 
     "============== 个人中心 结束 ==============": "",

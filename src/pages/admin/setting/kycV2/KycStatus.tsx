@@ -1,4 +1,5 @@
 import Iconfont from '@/components/Base/Iconfont'
+import { getKycStatus } from '@/pages/webapp/pages/UserCenter/KycV2/KycStatus'
 import { cn } from '@/utils/cn'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
@@ -11,23 +12,12 @@ const KycStatus = ({ onClick }: { onClick: (status: number) => void }) => {
   const currentUser = initialState?.currentUser
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus
-  const isBaseAuth = currentUser?.isBaseAuth
-  const isKycAuth = currentUser?.isKycAuth
+  const isBaseAuth = currentUser?.isBaseAuth || false
+  const isKycAuth = currentUser?.isKycAuth || false
 
   const status = useMemo(() => {
-    // 不會出現待審核狀態
-    if (isBaseAuth && !isKycAuth && kycStatus !== 'TODO' && kycStatus !== 'CANCEL' && kycStatus !== 'DISALLOW') {
-      return 1 // 初级审核通过，待申请高级认证
-    } else if (isBaseAuth && kycStatus === 'TODO') {
-      return 2 // 初级审核通过，高级认证待审批
-    } else if (isBaseAuth && kycStatus === 'DISALLOW') {
-      return 3 // 初级审核已通过，高级认证不通过
-    } else if (isBaseAuth && kycStatus === 'SUCCESS') {
-      return 4 // 审核通过
-    } else {
-      return 0 // 初始
-    }
-  }, [kycStatus, isBaseAuth])
+    return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
+  }, [kycStatus, isBaseAuth, isKycAuth])
 
   const statusLabels = [
     {

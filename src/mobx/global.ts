@@ -1,3 +1,4 @@
+import { DEFAULT_REGISTER_WAY } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import serverConf from '@/env/server'
 import { getRegisterWay } from '@/services/api/common'
@@ -32,7 +33,7 @@ export class GlobalStore {
       }
     )
   }
-  @observable registerWay: API.RegisterWay = 'EMAIL' // 注册方式: EMAIL | PHONE
+  @observable registerWay: API.RegisterWay = DEFAULT_REGISTER_WAY // 注册方式: EMAIL | PHONE
   @observable messageList = [] as Message.MessageItem[] // 消息列表
   @observable messageCurrent = 1 // 消息列表页码
   @observable messageTotalCount = 1 // 总页码
@@ -45,6 +46,12 @@ export class GlobalStore {
   @observable sheetModalOpen = true // 记录SheetModal是否打开
   @observable verifyCodeDown = -1 // 验证码倒计时
   @observable env = {} as IPlatformConfig // 平台配置
+
+  @observable lastUpdateTime = 0 // 最后一次更新时间(时间戳)
+
+  setLastUpdateTime = (lastUpdateTime: number) => {
+    this.lastUpdateTime = lastUpdateTime
+  }
 
   // 获取平台配置
   getPlatformConfig = async () => {
@@ -128,6 +135,9 @@ export class GlobalStore {
 
       // 更新本地的用户信息
       STORAGE_SET_USER_INFO(currentUser)
+
+      // 记录最后一次更新时间
+      this.setLastUpdateTime(Date.now().valueOf())
 
       // 刷新账户信息
       if (refreshAccount !== false) {
