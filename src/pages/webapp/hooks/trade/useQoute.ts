@@ -176,7 +176,13 @@ export default function useQuote() {
   }, [marginTypeRMI, marginTypeT])
 
   const isStopLossLimit = useMemo(() => {
-    return orderType === 'STOP_LOSS_LIMIT_BUY_ORDER' || orderType === 'STOP_LOSS_LIMIT_SELL_ORDER' || orderType === 'STOP_LIMIT_ORDER'
+    return (
+      orderType === 'STOP_LOSS_LIMIT_BUY_ORDER' ||
+      orderType === 'STOP_LOSS_LIMIT_SELL_ORDER' ||
+      orderType === 'STOP_LIMIT_ORDER' ||
+      orderType === 'STOP_LOSS_MARKET_BUY_ORDER' ||
+      orderType === 'STOP_LOSS_MARKET_SELL_ORDER'
+    )
   }, [orderType])
 
   const isLimit = useMemo(() => {

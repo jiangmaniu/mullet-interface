@@ -1,3 +1,4 @@
+import { message } from '@/utils/message'
 import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useModel, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
@@ -39,17 +40,14 @@ const Children = observer(
     }
 
     const ref1 = useRef<any>(null)
-    const ref2 = useRef<any>(null)
-    const ref3 = useRef<any>(null)
+    const ref0 = useRef<any>(null)
 
     useImperativeHandle(ref, () => ({
       onSubmit: () => {
-        if (status === '1') {
+        if (status === '0') {
+          ref0.current?.onSubmit()
+        } else if (status === '1') {
           ref1.current?.onSubmit()
-        } else if (status === '2') {
-          ref2.current?.onSubmit()
-        } else if (status === '3') {
-          ref3.current?.onSubmit()
         }
       }
     }))
@@ -77,7 +75,7 @@ const Children = observer(
         ) : status === '4' ? (
           <VerifyStatus4 />
         ) : (
-          <VerifyMsg onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
+          <VerifyMsg ref={ref0} onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
         )}
       </div>
     )
@@ -115,10 +113,19 @@ export default function KycWebviewPage() {
     }
   }, [token, user_id, status])
 
+  const ref = useRef<any>(null)
   useEffect(() => {
     const messageHandler = (e: any) => {
-      const data = e?.data ? JSON.parse(e?.data) : undefined
-      console.log('监听消息', data)
+      try {
+        const data = e?.data ? JSON.parse(e?.data) : undefined
+        console.log('监听消息', data)
+
+        if (data?.action === 'submit') {
+          ref.current?.onSubmit()
+        }
+      } catch (error) {
+        message.info(`监听消息错误: ${JSON.stringify(error)}`)
+      }
     }
 
     if (isIOS) {
@@ -136,5 +143,5 @@ export default function KycWebviewPage() {
     }
   }, [])
 
-  return <Children status={status} />
+  return <Children status={status} ref={ref} />
 }

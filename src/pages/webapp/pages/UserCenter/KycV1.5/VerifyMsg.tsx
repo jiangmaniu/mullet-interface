@@ -98,14 +98,6 @@ const VerifyMsg = forwardRef(
         ...data,
         identificationType: data.identificationType as API.IdentificationType
       }).then(async (res) => {
-        // @ts-ignore
-        window.ReactNativeWebView.postMessage(
-          JSON.stringify({
-            type: 'success',
-            res
-          })
-        )
-
         if (res.success) {
           message.info(i18n.t('common.operate.Op Success'))
 
@@ -113,6 +105,8 @@ const VerifyMsg = forwardRef(
 
           return
         }
+
+        message.info(res.msg)
       })
     }
 

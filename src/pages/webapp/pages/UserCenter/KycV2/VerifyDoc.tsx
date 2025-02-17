@@ -36,6 +36,8 @@ const VerifyDoc = forwardRef(
             onSuccess()
             return
           }
+
+          message.info(res.msg)
         })
         .catch((err) => {
           message.info(err.message)

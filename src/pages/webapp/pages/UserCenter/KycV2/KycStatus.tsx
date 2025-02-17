@@ -8,14 +8,14 @@ import { useMemo } from 'react'
 import { View } from '../../../components/Base/View'
 
 export const getKycStatus = (kycStatus: API.ApproveStatus, isBaseAuth: boolean, isKycAuth: boolean) => {
-  if (isBaseAuth && !isKycAuth && kycStatus !== 'TODO' && kycStatus !== 'CANCEL' && kycStatus !== 'DISALLOW') {
+  if (isBaseAuth && isKycAuth) {
+    return 4 // 审核通过
+  } else if (isBaseAuth && !isKycAuth && kycStatus !== 'TODO' && kycStatus !== 'CANCEL' && kycStatus !== 'DISALLOW') {
     return 1 // 初级审核通过，待申请高级认证
   } else if (isBaseAuth && kycStatus === 'TODO') {
     return 2 // 初级审核通过，高级认证待审批
   } else if (isBaseAuth && kycStatus === 'DISALLOW') {
     return 3 // 初级审核已通过，高级认证不通过
-  } else if (isBaseAuth && kycStatus === 'SUCCESS') {
-    return 4 // 审核通过
   } else {
     return 0 // 初始
   }
