@@ -392,12 +392,6 @@ export default [
       },
       // 个人中心- kyc 认证
       {
-        path: '/:lng/app/user-center/kyc-authorized',
-        component: './webapp/pages/UserCenter/KycV1.5/KycAuthorized',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心- kyc 认证
-      {
         path: '/:lng/app/user-center/kyc-webview-page',
         component: './webapp/pages/UserCenter/KycV1.5/KycWebviewPage'
       },
