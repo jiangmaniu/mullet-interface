@@ -5,10 +5,12 @@ import { deleteEmptyProperty } from '../utils/helpers'
 
 // 针对平台做seo打包配置，暂时不需要
 const seoConf =
-  process.env.PLATFORM_SEO === '1'
+  process.env.PLATFORM_SEO === '1' || process.env.NODE_ENV === 'development'
     ? {
-        name: process.env.SEO_PLATFORM_NAME,
-        desc: process.env.SEO_PLATFORM_DESC
+        // 按需把public/platform/config.json配置同步过来，需要在.env-conf 中配置
+        name: process.env.name,
+        platform: process.env.platform,
+        desc: process.env.desc
       }
     : {}
 

@@ -18,7 +18,7 @@ yarn install
 
 **环境变量**
 
-- `.env-conf/stellux`  stellux 平台环境变量
+- `.env-conf/stellux` stellux 平台环境变量
 - `.env-conf/.env.lynfoo.prod` lynfoo 平台环境变量
 
 ```bash
@@ -36,19 +36,19 @@ yarn install
 yarn start:mock
 ```
 
-## 项目SEO化按不同平台打包(暂时不考虑)
+## 项目 SEO 化按不同平台打包(暂时不考虑)
 
-目前为了打一个docker镜像包通用全部客户，从`public/platform/config.json`中读取不同平台配置，如果需要做seo在使用这样方式打包
+目前为了打一个 docker 镜像包通用全部客户，从`public/platform/config.json`中读取不同平台配置，如果需要做 seo 在使用这样方式打包
 
-> 如需要针对SEO优化，不同平台需要单独打包
-> 处理.env下的不同平台.env文件
+> 如需要针对 SEO 优化，不同平台需要单独打包
+> 处理.env 下的不同平台.env 文件
 
 ```bash
 "build:lynfoo:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .en-conf/.env.lynfoo.prod max build",
 "build:stellux:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .en-conf/stellux/.env.stellux.prod max build",
 ```
 
-> 打包时按需注入环境变量到代码中，在页面中可以访问process.env.xx的值
+> 打包时按需注入环境变量到代码中，在页面中可以访问 process.env.xx 的值
 
 ```js
 // config/config.ts配置
@@ -65,11 +65,11 @@ define:
             'process.env.CLIENT_SECRET': process.env.CLIENT_SECRET,
             'process.env.REGISTER_APP_CODE': process.env.REGISTER_APP_CODE,
             // seo配置
-            'process.env.SEO_PLATFORM_NAME': process.env.SEO_PLATFORM_NAME,
-            'process.env.SEO_PLATFORM_DESC': process.env.SEO_PLATFORM_DESC
+            'process.env.name': process.env.name,
+            'process.env.desc': process.env.desc
           // seo配置
-          'process.env.SEO_PLATFORM_NAME': process.env.SEO_PLATFORM_NAME,
-          'process.env.SEO_PLATFORM_DESC': process.env.SEO_PLATFORM_DESC
+          'process.env.name': process.env.name,
+          'process.env.desc': process.env.desc
         }
       : {})
   },
@@ -79,9 +79,7 @@ define:
 
 ```js
 // config/config.ts
-metas: [
-  { name: 'application-name', content: serverEnv?.name },
-]
+metas: [{ name: 'application-name', content: serverEnv?.name }]
 ```
 
 ## 打包部署

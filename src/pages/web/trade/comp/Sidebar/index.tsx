@@ -36,14 +36,16 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const [searchValue, setSearchValue] = useState('')
   const popupRef = useRef()
   const [activeKey, setActiveKey] = useState<'FAVORITE' | 'CATEGORY'>('CATEGORY') // 自选、品类 FAVORITE CATEGORY
-  const [categoryTabKey, setCategoryTabKey] = useState(0) // 品种分类
+  const [categoryTabKey, setCategoryTabKey] = useState('') // 品种分类
   const [list, setList] = useState([] as Account.TradeSymbolListItem[])
   const { openTradeSidebar, setOpenTradeSidebar } = useModel('global')
   const { theme } = useTheme()
   const { isDark } = theme
   const searchInputRef = useRef<any>()
-  const symbolList = trade.symbolList // 全部品种列表
-  const loading = trade.symbolListLoading
+  const defaultClassify = ENV.platform === 'sux' ? '0' : '10'
+  const symbolList = trade.symbolListAll.filter((item) => (categoryTabKey === '0' ? true : item.classify === categoryTabKey)) // 全部品种列表
+
+  const [loading, setLoading] = useState(true)
 
   // useEffect(() => {
   //   // 1200px-1600px收起侧边栏
@@ -55,14 +57,29 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   // }, [screenSize])
 
   useEffect(() => {
-    if (activeKey === 'CATEGORY') {
-      trade.getSymbolList({ classify: ENV.platform === 'sux' ? '0' : '10' })
+    if (trade.symbolListLoading) {
+      setTimeout(() => {
+        setLoading(false)
+      }, 300)
+    } else {
+      setLoading(false)
     }
+  }, [trade.symbolListLoading])
+
+  useEffect(() => {
+    setSearchValue('')
+    setCategoryTabKey(defaultClassify)
   }, [activeKey])
 
   useEffect(() => {
     setSearchValue('')
   }, [trade.currentAccountInfo])
+
+  useEffect(() => {
+    if (!searchValue) {
+      setCategoryTabKey(defaultClassify)
+    }
+  }, [searchValue])
 
   // 对外暴露接口
   useImperativeHandle(ref, () => {
@@ -72,7 +89,8 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   // 搜索
   const handleSearchChange = (e: any) => {
     const value = e.target.value
-    const filterList = symbolList.filter((v) => v.symbol.toLowerCase().indexOf(String(value).toLowerCase()) !== -1)
+    const searchData = activeKey === 'FAVORITE' ? trade.favoriteList : trade.symbolListAll
+    const filterList = searchData.filter((v) => v.symbol.toLowerCase().indexOf(String(value).toLowerCase()) !== -1)
 
     setSearchValue(value)
     setList(filterList)
