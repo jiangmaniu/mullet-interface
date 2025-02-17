@@ -82,3 +82,6 @@ export const DEFAULT_AREA_CODE = '86'
 
 // 支付訂單超時時限
 export const PAYMENT_ORDER_TIMEOUT = 2 * 60 * 1000
+
+// 註冊方式
+export const DEFAULT_REGISTER_WAY = 'PHONE' // PHONE | EMAIL

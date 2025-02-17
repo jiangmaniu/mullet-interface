@@ -10,6 +10,7 @@
  * @doc https://umijs.org/docs/guides/proxy
  */
 
+// const zlib = require('zlib')
 export default {
   // 如果需要自定义本地开发服务器  请取消注释按需调整
   dev: {
@@ -22,7 +23,46 @@ export default {
       // 配置了这个可以从 http 代理到 https
       // 依赖 origin 的功能可能需要这个，比如 cookie
       changeOrigin: true,
-      pathRewrite: { '^/api/': '/api/' }
+      pathRewrite: { '^/api/': '/api/' },
+      onProxyReq: (proxyReq: any, req: any, res: any) => {
+        console.log('[请求拦截]', req.method, req.url, proxyReq.getHeaders())
+      },
+      onProxyRes: (proxyRes: any, req: any, res: any) => {
+        console.log('[响应拦截]', req.method, req.url)
+
+        // let body: any = []
+
+        // proxyRes.on('data', (chunk: any) => {
+        //   body.push(chunk)
+        // })
+
+        // proxyRes.on('end', () => {
+        //   body = Buffer.concat(body)
+
+        //   // 检查是否是 Gzip 或 Deflate 压缩
+        //   const encoding = proxyRes.headers['content-encoding']
+        //   if (encoding === 'gzip') {
+        //     zlib.gunzip(body, (err: any, decoded: any) => {
+        //       if (!err) {
+        //         console.log(decoded.toString('utf8')) // 解码后打印
+        //       } else {
+        //         console.error('Gzip 解压失败:', err)
+        //       }
+        //     })
+        //   } else if (encoding === 'deflate') {
+        //     zlib.inflate(body, (err: any, decoded: any) => {
+        //       if (!err) {
+        //         console.log(decoded.toString('utf8'))
+        //       } else {
+        //         console.error('Deflate 解压失败:', err)
+        //       }
+        //     })
+        //   } else {
+        //     // 直接转换为字符串
+        //     console.log(body.toString('utf8'))
+        //   }
+        // })
+      }
     }
   },
 

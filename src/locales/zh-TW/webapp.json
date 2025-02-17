@@ -622,7 +622,12 @@
       "firstname": "名字",
       "lastname": "姓氏",
       "chujirenzheng": "Kyc 基礎認證",
-      "gaojirenzheng": "Kyc 高級認證"
+      "gaojirenzheng": "Kyc 高級認證",
+      "renzhengxingming": "認證姓名",
+      "qurujin": "去入金",
+      "tijiaoshenhe": "提交審核",
+      "yigaojirenzheng": "已高級認證 (支持入金出金)",
+      "yichujirenzheng": "您已完成初级认证，可以选择入金或者继续高级认证 (开通出金权限)"
     },
 
     "============== 个人中心 结束 ==============": "",

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 
+import { useEnv } from '@/context/envProvider'
 import { cn } from '@/utils/cn'
 import { Helmet } from 'react-helmet'
 import { View } from '../components/Base/View'
@@ -52,6 +53,7 @@ const Basiclayout: React.FC<Iprops> = ({
 }) => {
   const { theme } = useTheme()
   const { pathname } = useLocation()
+  const { screenSize } = useEnv()
 
   // 动态设置页面body背景颜色
   useEffect(() => {
@@ -132,7 +134,7 @@ const Basiclayout: React.FC<Iprops> = ({
         style={{
           paddingTop: fixedHeight ? headerHeight : undefined,
           paddingBottom: fixedHeight ? footerHeight : undefined,
-          height: fixedHeight ? `calc(100% - ${headerHeight}px - ${footerHeight}px)` : undefined,
+          height: fixedHeight ? `${screenSize.height - headerHeight - footerHeight}px)` : undefined,
           ...style
         }}
       >

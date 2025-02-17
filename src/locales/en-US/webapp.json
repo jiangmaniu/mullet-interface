@@ -621,7 +621,12 @@
       "firstname": "Name",
       "lastname": "Last Name",
       "chujirenzheng": "Kyc Basic Verification",
-      "gaojirenzheng": "Kyc Advanced Verification"
+      "gaojirenzheng": "Kyc Advanced Verification",
+      "renzhengxingming": "Verification Name",
+      "qurujin": "Go Deposit",
+      "tijiaoshenhe": "Submit Review",
+      "yigaojirenzheng": "Advanced Verification (Support Deposit/Withdrawal)",
+      "yichujirenzheng": "You have completed basic verification, you can choose to deposit or continue advanced verification (open withdrawal permission)"
     },
 
     "============== User Center End ==============": "",

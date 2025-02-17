@@ -36,6 +36,9 @@ function WebAppLayout() {
     checkPageShowTime()
 
     if (!isOnline) {
+      // @ts-ignore
+      if (window.ReactNativeWebView) return
+
       // 网络断开
       message.info(intl.formatMessage({ id: 'mt.duankailianjie' }))
     }

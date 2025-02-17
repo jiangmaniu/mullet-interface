@@ -165,11 +165,13 @@ declare namespace User {
     /** 是否基礎認證 */
     isBaseAuth?: boolean
     /** 證件類型 */
-    identificationType?: number
+    identificationType?: 'ID_CARD' | 'PASSPORT'
     /** 姓 */
     lastName?: string
     /**名 */
     firstName?: string
+    /** 證件號 */
+    identificationCode?: string
   }
   // 客户用户信息
   type ClientUserInfo = {
@@ -377,7 +379,6 @@ declare namespace User {
     currencyUnit?: string
     /**账户组可用预付款配置 */
     usableAdvanceCharge?: API.UsableAdvanceCharge
-
     /** 跟单状态 */
     followStatus?: number
   }
