@@ -2,6 +2,7 @@ import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useModel, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
+import { isAndroid, isIOS } from 'react-device-detect'
 import VerifyDoc from '../KycV2/VerifyDoc'
 import VerifyStatus2 from '../KycV2/VerifyStatus2'
 import VerifyStatus3 from '../KycV2/VerifyStatus3'
@@ -120,10 +121,18 @@ export default function KycWebviewPage() {
       console.log('监听消息', data)
     }
 
-    window.addEventListener('message', messageHandler)
+    if (isIOS) {
+      window.addEventListener('message', messageHandler)
+    } else if (isAndroid) {
+      document.addEventListener('message', messageHandler)
+    }
 
     return () => {
-      window.removeEventListener('message', messageHandler) // 清理事件监听器
+      if (isIOS) {
+        window.removeEventListener('message', messageHandler)
+      } else if (isAndroid) {
+        document.removeEventListener('message', messageHandler)
+      }
     }
   }, [])
 
