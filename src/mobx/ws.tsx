@@ -278,9 +278,12 @@ class WSStore {
     this.subscribeTrade()
 
     if (isPCByWidth()) {
-      this.openSymbol({
-        symbols: this.makeWsSymbolBySemi(trade.symbolListAll)
-      })
+      // this.openSymbol({
+      //   symbols: this.makeWsSymbolBySemi(trade.symbolListAll)
+      // })
+
+      // PC 订阅所有品种, 跳过标记环节
+      this.subscribeSymbol(this.makeWsSymbolBySemi(toJS(trade.symbolListAll)), false)
 
       this.subscribeDepth()
     }
