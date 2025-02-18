@@ -121,6 +121,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         password: md5(password),
         validateCode: Number(code)
       }
+      const isPhoneRegister = global.registerWay === 'PHONE' && phone
 
       let result: API.Response<any> | undefined
       setIsRegistering(true)
@@ -129,7 +130,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           emailOrPhone: email,
           ...body
         })
-      } else if (global.registerWay === 'PHONE' && phone) {
+      } else if (isPhoneRegister) {
         result = await registerSubmitPhone({
           emailOrPhone: phone,
           phoneAreaCode: `+${areaCode}`,
@@ -148,9 +149,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
         // 自动登录(无需验证码方式)
         const result = await login({
-          username: email || phone,
+          username: isPhoneRegister ? phone : email,
           password: body.password,
-          phoneAreaCode: phone ? areaCode : undefined,
+          phoneAreaCode: isPhoneRegister ? areaCode : undefined,
           tenanId: '000000',
           type: 'account',
           grant_type: 'password',
