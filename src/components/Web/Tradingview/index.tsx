@@ -7,6 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
+import klineStore from '@/mobx/kline'
 import { cn } from '@/utils/cn'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
@@ -72,8 +73,21 @@ const Tradingview = () => {
 
       // 动态设置css变量
       setCSSCustomProperty({ tvWidget, theme })
-
       // setSymbol(symbolName, tvWidget)
+
+      // 监听分时等时间周期变化，请求请求历史k线数据，重置缓存
+      tvWidget
+        .activeChart()
+        .onIntervalChanged()
+        .subscribe(null, (interval, timeframeObj) => {
+          console.log('interval', interval, timeframeObj)
+          // @ts-ignore
+          klineStore.activeSymbolInfo.onResetCacheNeededCallback?.() // 重置缓存
+          setTimeout(() => {
+            // Force the chart to re-request data. Before calling this function the onResetCacheNeededCallback callback from IDatafeedChartApi.subscribeBars should be called.
+            tvWidget.activeChart().resetData() // 重置数据
+          }, 100)
+        })
 
       // 默认显示MACD指标在k线底部
       if (showBottomMACD === 1) {

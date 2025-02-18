@@ -42,7 +42,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const { theme } = useTheme()
   const { isDark } = theme
   const searchInputRef = useRef<any>()
-  const defaultClassify = ENV.platform === 'sux' ? '0' : '10'
+  const defaultClassify = ENV.ENABLE_QUOTE_CATEGORY_ALL_TAB ? '0' : '10'
   const symbolList = trade.symbolListAll.filter((item) => (categoryTabKey === '0' ? true : item.classify === categoryTabKey)) // 全部品种列表
 
   const [loading, setLoading] = useState(true)

@@ -14,7 +14,7 @@ type IProps = {
 
 function CategoryTabs({ onChange, activeKey }: IProps) {
   const ENV = getEnv()
-  const isSux = ENV.platform === 'sux'
+  const isSux = ENV.ENABLE_QUOTE_CATEGORY_ALL_TAB
   const DEFAULT_CURRENT = isSux ? '0' : '10'
 
   const [current, setCurrent] = useState(DEFAULT_CURRENT)

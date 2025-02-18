@@ -8,5 +8,8 @@
   "ws": "wss://websocket.lynfoocn.com:443/websocketServer",
   "imgDomain": "https://file.lynfoocn.com/trade/",
   "REGISTER_MODULE": "1",
-  "SKIP_KYC_STEP_ONE": "1"
+  "SKIP_KYC_STEP_ONE": "1",
+  "ENABLE_CHINA_TIMEZONE": true,
+  "ENABLE_QUOTE_CATEGORY_ALL_TAB": false,
+  "saleSmartlyJsUrl": "https://plugin-code.salesmartly.com/js/project_247458_254142_1739857483.js"
 }
