@@ -12,8 +12,11 @@ import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { registerSubmitEmail, registerSubmitPhone, sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
+import { login, registerSubmitEmail, registerSubmitPhone, sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { message } from '@/utils/message'
+import { push } from '@/utils/navigator'
+import { setLocalUserInfo } from '@/utils/storage'
+import { useModel } from '@umijs/max'
 import { md5 } from 'js-md5'
 import { observer } from 'mobx-react'
 import type { TypeSection, WELCOME_STEP_TYPES } from '..'
@@ -70,7 +73,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const ENV = getEnv()
   const { t, locale } = useI18n()
   const { cn, theme } = useTheme()
-
+  const { fetchUserInfo } = useModel('user')
   const defaultSeconds = 60
 
   useLayoutEffect(() => {
@@ -140,7 +143,28 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
         global.countDownVerifyCode(-1)
         message.info(t('pages.login.Register success'))
-        setSection('login')
+        // setSection('login')
+        // 自动登录跳转到账户列表选择页
+
+        // 自动登录(无需验证码方式)
+        const result = await login({
+          username: email || phone,
+          password: body.password,
+          phoneAreaCode: phone ? areaCode : undefined,
+          tenanId: '000000',
+          type: 'account',
+          grant_type: 'password',
+          scope: 'all'
+        })
+
+        if (result?.success) {
+          // 缓存用户信息
+          setLocalUserInfo(result)
+          // 重新获取用户信息
+          await fetchUserInfo()
+          // 跳转到账户选择页面
+          push('/app/account/select')
+        }
       }
     } catch (error: any) {
       setIsRegistering(false)
