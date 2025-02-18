@@ -98,7 +98,7 @@ class DataFeedBase {
       session: '0000-0000|0000-0000:1234567;1',
       // 该交易品种的时区
       // timezone: 'Etc/UTC'
-      timezone: ENV.platform === 'lyn' ? 'Asia/Shanghai' : 'Etc/UTC' // 设置时区
+      timezone: ENV.ENABLE_CHINA_TIMEZONE ? 'Asia/Shanghai' : 'Etc/UTC' // 设置时区
     } as LibrarySymbolInfo
 
     setTimeout(() => {

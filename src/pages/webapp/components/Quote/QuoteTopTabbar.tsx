@@ -52,7 +52,7 @@ type ITabbarProps = {
 
 const getTabList = () => {
   const ENV = getEnv()
-  const isSux = ENV.platform === 'sux'
+  const isSux = ENV.ENABLE_QUOTE_CATEGORY_ALL_TAB
   return [
     { key: 'FAVORITE', value: 'FAVORITE', title: getIntl().formatMessage({ id: 'common.operate.Favorite' }) },
     ...(isSux ? [{ key: 'ALL', value: '0', title: getIntl().formatMessage({ id: 'common.All' }) }] : []),
@@ -66,7 +66,7 @@ const getTabList = () => {
 
 const GET_DEFAULT_TAB_KEY = () => {
   const ENV = getEnv()
-  const isSux = ENV.platform === 'sux'
+  const isSux = ENV.ENABLE_QUOTE_CATEGORY_ALL_TAB
   const DEFAULT_TAB_KEY = isSux ? 'ALL' : 'CRYPTO'
   return DEFAULT_TAB_KEY
 }
