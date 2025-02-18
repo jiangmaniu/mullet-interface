@@ -25,10 +25,10 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/api/': '/api/' },
       onProxyReq: (proxyReq: any, req: any, res: any) => {
-        console.log('[请求拦截]', req.method, req.url, proxyReq.getHeaders())
+        // console.log('[请求拦截]', req.method, req.url, proxyReq.getHeaders())
       },
       onProxyRes: (proxyRes: any, req: any, res: any) => {
-        console.log('[响应拦截]', req.method, req.url)
+        // console.log('[响应拦截]', req.method, req.url)
 
         // let body: any = []
 

@@ -350,6 +350,9 @@ export const rootContainer = (container: JSX.Element) => {
           <link ref="manifest" href="/platform/manifest.json" />
           <link rel="shortcut icon" href="/platform/favicon.ico" />
 
+          {/* 右下角悬浮saleSmartly客服配置 */}
+          {ENV.saleSmartlyJsUrl && <script async={true} src={ENV.saleSmartlyJsUrl}></script>}
+
           {/* meta标签 */}
           <meta name="application-name" content={ENV?.name} />
           <meta name="apple-mobile-web-app-capable" content="yes" />
