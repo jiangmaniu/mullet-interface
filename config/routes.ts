@@ -144,6 +144,22 @@ export default [
     hideInMenu: true
   },
   {
+    path: '/:lng/deposit/otc/:id',
+    name: 'depositOtc',
+    icon: 'icon-geren-rujin',
+    access: 'canAdmin', // 权限配置
+    component: './admin/deposit/otc',
+    hideInMenu: true
+  },
+  {
+    path: '/:lng/deposit/wait',
+    name: 'depositWait',
+    icon: 'icon-geren-rujin',
+    access: 'canAdmin', // 权限配置
+    component: './admin/deposit/otc/wait',
+    hideInMenu: true
+  },
+  {
     path: '/:lng/withdrawal',
     name: 'withdrawal',
     icon: 'icon-geren-chujin',

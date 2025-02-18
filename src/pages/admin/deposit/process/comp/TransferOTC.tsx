@@ -1,14 +1,14 @@
-import { useIntl } from '@umijs/max'
-import { Form, FormInstance } from 'antd'
+import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
+import { ProFormText } from '@ant-design/pro-components'
+import { FormattedMessage, useIntl } from '@umijs/max'
+import { Dropdown, Form, FormInstance, Space } from 'antd'
 
-import ProFormText from '@/components/Admin/Form/ProFormText'
 type IProps = {
   form: FormInstance
-  currentUser?: User.UserInfo
   methodInfo?: Wallet.fundsMethodPageListItem
 }
 
-export default function TransferAmount({ form, currentUser, methodInfo }: IProps) {
+export default function TransferOTC({ form, methodInfo }: IProps) {
   const intl = useIntl()
 
   const currency = Form.useWatch('currency', form)
@@ -33,9 +33,8 @@ export default function TransferAmount({ form, currentUser, methodInfo }: IProps
   }
 
   return (
-    <div>
-      <ProFormText name="currency" hidden />
-      {/* <div className="text-sm text-primary font-medium mb-3">
+    <div className="flex flex-col ">
+      <div className="text-sm text-primary font-medium mb-3">
         <FormattedMessage id="mt.jine" />
       </div>
       <div className=" border h-[38px]  border-[rgb(217,217,217)] hover:border-gray-500 py-1 px-[7px] rounded-[9px] flex-shrink flex flex-row items-center gap-2">
@@ -58,8 +57,8 @@ export default function TransferAmount({ form, currentUser, methodInfo }: IProps
             <SelectSuffixIcon opacity={0.5} />
           </Space>
         </Dropdown>
-      </div> */}
-      {/* <div className="flex justify-between text-gray-500 text-xs mt-2">
+      </div>
+      <div className="flex justify-between text-gray-500 text-xs mt-2">
         <span>{methodInfo?.options?.limit?.desc}</span>
         <span>
           ≈ {transferCurr(amount)} {currency}
@@ -73,7 +72,7 @@ export default function TransferAmount({ form, currentUser, methodInfo }: IProps
         <span className="flex-shrink-0">
           {transferCurr(amount)} {currency}
         </span>
-      </div> */}
+      </div>
     </div>
   )
 }

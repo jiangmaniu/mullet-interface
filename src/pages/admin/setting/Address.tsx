@@ -6,10 +6,11 @@ import { useEffect, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 
-import { modifyWithdrawalAddress, removeWithdrawalAddress } from '@/services/api/wallet'
+import { modifyWithdrawalAddress, modifyWithdrawalBank, removeWithdrawalAddress, removeWithdrawalBank } from '@/services/api/wallet'
 import { message } from '@/utils/message'
 import BankCard from './address/BankCard'
 import CryptoAddress from './address/CryptoAddress'
+import EditBankModal from './address/EditBankModal'
 import EditModal from './address/EditModal'
 
 export type IParams = {
@@ -74,13 +75,31 @@ export default function Addresss() {
 
   const [selectedItem, setSelectedItem] = useState<Wallet.WithdrawalAddress | undefined>(undefined)
   const modalRef = useRef<any>()
+  const modal2Ref = useRef<any>()
 
   const onSelectItem = (item: Wallet.WithdrawalAddress) => {
     setSelectedItem(item)
     modalRef.current.show()
   }
 
+  const [selectedBankCard, setSelectedBankCard] = useState<Wallet.WithdrawalBank | undefined>(undefined)
+  const onSelectBankCard = (item: Wallet.WithdrawalBank) => {
+    setSelectedBankCard(item)
+    modalRef.current.show()
+  }
+
   const cryptoAddressRef = useRef<any>()
+
+  const onUpdateBankCard = async (values: any) => {
+    if (values.id) {
+      const res = await modifyWithdrawalBank({ id: values.id, remark: values.remark })
+      if (res.success) {
+        message.info(res.msg)
+        cryptoAddressRef.current?.onQuery()
+        modalRef.current?.close()
+      }
+    }
+  }
 
   const onUpdateItem = async (values: any) => {
     if (values.id) {
@@ -98,6 +117,19 @@ export default function Addresss() {
 
   const onDeleteItem = (item: Wallet.WithdrawalAddress) => {
     removeWithdrawalAddress({ id: item.id })
+      .then((res) => {
+        if (res.success) {
+          message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          cryptoAddressRef.current?.onQuery()
+        }
+      })
+      .catch((err) => {
+        message.info(err.message)
+      })
+  }
+
+  const onDeleteBankCard = (item: Wallet.WithdrawalBank) => {
+    removeWithdrawalBank({ id: item?.id?.toString() ?? '' })
       .then((res) => {
         if (res.success) {
           message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
@@ -129,6 +161,16 @@ export default function Addresss() {
           style={{ width: 300 }}
           block
         />
+        {/* {tabKey === 'bankCard' && (
+          <Button
+            type="primary"
+            onClick={() => {
+              modal2Ref.current.show()
+            }}
+          >
+            <FormattedMessage id="mt.tianjiayinhangka" />
+          </Button>
+        )} */}
         {/* <div className={classNames('flex items-center gap-x-3', filterClassName)}>
           <ProFormSelect
             options={accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))}
@@ -151,9 +193,10 @@ export default function Addresss() {
       {tabKey === 'cryptoAddress' && (
         <CryptoAddress ref={cryptoAddressRef} params={params} onSelectItem={onSelectItem} onDeleteItem={onDeleteItem} />
       )}
-      {tabKey === 'bankCard' && <BankCard params={params} />}
+      {tabKey === 'bankCard' && <BankCard params={params} onSelectItem={onSelectBankCard} />}
       {/* 消息弹窗 */}
       <EditModal ref={modalRef} item={selectedItem} onUpdateItem={onUpdateItem} />
+      <EditBankModal ref={modal2Ref} item={selectedBankCard} onUpdateItem={onUpdateBankCard} />
     </PageContainer>
   )
 }

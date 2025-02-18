@@ -7,6 +7,7 @@ import { cn } from '@/utils/cn'
 
 type IProps = {
   title: string | React.JSX.Element
+  subtitle?: string | React.JSX.Element
   onChange: (value: string) => void
   options?: {
     value: string
@@ -16,7 +17,7 @@ type IProps = {
   style?: clsx.ClassValue
   children: React.ReactNode
 }
-export const CardContainer = ({ title, defaultValue, onChange, options, children, style }: IProps) => {
+export const CardContainer = ({ title, subtitle, defaultValue, onChange, options, children, style }: IProps) => {
   const [value, setValue] = useState(defaultValue)
   const handleOnChange = (value: string) => {
     setValue(value)
@@ -38,6 +39,7 @@ export const CardContainer = ({ title, defaultValue, onChange, options, children
             suffixIcon={<CaretDownOutlined className=" text-gray-600" />}
           />
         )}
+        {subtitle}
       </div>
       {children}
     </div>

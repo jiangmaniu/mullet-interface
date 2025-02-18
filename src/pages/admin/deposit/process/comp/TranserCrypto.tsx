@@ -12,7 +12,7 @@ import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
 
 import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
-import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 type IProps = {
   form: FormInstance
@@ -24,6 +24,7 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
 
   const address = Form.useWatch('address', form) ?? ''
   const createTime = Form.useWatch('createTime', form) ?? ''
+  const canncelOrderTime = Form.useWatch('canncelOrderTime', form) ?? ''
 
   const createDate = useMemo(() => {
     try {
@@ -32,10 +33,6 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
       return dayjs()
     }
   }, [createTime])
-
-  const validDate = useMemo(() => {
-    return createDate.add(1, 'minute')
-  }, [createDate])
 
   // const [time, setTime] = useState(0)
 
@@ -60,15 +57,14 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
     }
   })
 
-  // const duration = dayjs.duration(dayjs().diff(validDate)).format('mm:ss')
   const [duration, setDuration] = useState(-1)
 
-  const getDuration = () => {
-    return PAYMENT_ORDER_TIMEOUT - dayjs().diff(validDate)
-  }
+  const getDuration = useCallback(() => {
+    if (!canncelOrderTime || !Number.isFinite(Number(canncelOrderTime))) return PAYMENT_ORDER_TIMEOUT - dayjs().diff(createDate)
+    return Number(canncelOrderTime) * 60 * 1000 - dayjs().diff(createDate)
+  }, [createDate, canncelOrderTime])
 
   const timer = useRef<NodeJS.Timeout | null>(null)
-
   const setTimer = () => {
     timer.current = setInterval(() => {
       const duration = getDuration()

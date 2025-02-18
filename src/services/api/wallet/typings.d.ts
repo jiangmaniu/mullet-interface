@@ -14,6 +14,10 @@ declare namespace Wallet {
 
   type IOrderStatus = 'beginning' | 'pending' | 'finished' | 'failed' // 订单状态: 开始 / 等待 / 完成 / 失败
 
+  type PaymentType = 'OTC' | 'CHAIN' // 支付类型: OTC / 链
+
+  type CertificateStatus = 'FAIL' | 'NOSUBMIT' | 'PASS' | 'SUBMIT' // 凭证状态
+
   /**
    * 订单状态
    */
@@ -87,16 +91,232 @@ declare namespace Wallet {
     channelId: number
     // 交易账户 ID
     tradeAccountId: string
-    // // 充值方式
-    // methodId: string
-    // // 充值金额
-    // amount: number
-    // // 交易账户 ID
-    // toAccountId: string
-    // // 币种
-    // currency?: string
-    // // 备注
-    // remark?: string
+    // 订单金额
+    baseOrderAmount?: number
+  }
+
+  type GenerateDepositOrderResult = {
+    /**
+     * 钱包地址
+     */
+    address?: string
+    /**
+     * 银行卡账号
+     */
+    bankCard?: string
+    /**
+     * 银行名称
+     */
+    bankName?: string
+    /**
+     * 取消订单时间
+     */
+    canncelOrderTime?: number
+    /**
+     * 创建时间
+     */
+    createTime?: Date
+    /**
+     * 订单ID
+     */
+    id?: number
+    /**
+     * 地址二维码
+     */
+    qrCode?: string
+    /**
+     * 支付到账金额
+     */
+    receiptAmount?: number
+    /**
+     * 币种
+     */
+    symbol?: string
+    /**
+     * 姓名
+     */
+    userName?: string
+    [property: string]: any
+  }
+
+  type GenerateDepositOrderDetailResult = {
+    /**
+     * 客户账户
+     */
+    account?: string
+    /**
+     * 充值地址
+     */
+    address?: string
+    /**
+     * 地址状态1失效，0使用中
+     */
+    addressStatus?: number
+    /**
+     * 银行卡
+     */
+    bankCard?: string
+    /**
+     * 银行名称
+     */
+    bankName?: string
+    /**
+     * 基准货币单位
+     */
+    baseCurrency?: string
+    /**
+     * 基准货币手续费
+     */
+    baseHandlingFee?: number
+    /**
+     * 基准货币订单金额
+     */
+    baseOrderAmount?: number
+    /**
+     * 到账金额
+     */
+    baseReceiptAmount?: number
+    /**
+     * 取消订单时间
+     */
+    canncelOrderTime?: number
+    /**
+     * 凭证状态
+     */
+    certificateStatus?: CertificateStatus
+    /**
+     * 凭证图片
+     */
+    certificateUrl?: string
+    /**
+     * 渠道入账金额
+     */
+    channelAccountAmount?: number
+    /**
+     * 渠道手续费
+     */
+    channelBaseHandlingFee?: number
+    /**
+     * 渠道结算汇率
+     */
+    channelExchangeRate?: number
+    /**
+     * 渠道ID
+     */
+    channelId?: number
+    /**
+     * 支付渠道名称
+     */
+    channelName?: string
+    /**
+     * 支付通道编号
+     */
+    channelNo?: string
+    /**
+     * 通道编号字典值
+     */
+    channelNoValue?: string
+    /**
+     * 渠道回调订单编号
+     */
+    channelOrderNo?: string
+    /**
+     * 渠道结算货币基准
+     */
+    channelSettlementCurrency?: string
+    /**
+     * 支付渠道类型
+     */
+    channelType?: string
+    /**
+     * 创建时间
+     */
+    createTime?: string
+    /**
+     * 汇差收取费用
+     */
+    exchangeDifferenceFee?: number
+    /**
+     * 汇差收取百分比
+     */
+    exchangeDifferencePercentage?: number
+    /**
+     * 汇率
+     */
+    exchangeRate?: number
+    /**
+     * 账户组组CODE
+     */
+    groupCode?: string
+    /**
+     * 账户组名称
+     */
+    groupName?: string
+    /**
+     * 手续费
+     */
+    handlingFee?: number
+    /**
+     * 主键
+     */
+    id?: number
+    /**
+     * 订单金额
+     */
+    orderAmount?: number
+    /**
+     * 订单编号
+     */
+    orderNo?: string
+    /**
+     * 支付类型
+     */
+    paymentType?: PaymentType
+    /**
+     * 二维码
+     */
+    qrCode?: string
+    /**
+     * 到账金额法币
+     */
+    receiptAmount?: number
+    /**
+     * 到账时间
+     */
+    receiptTime?: Date
+    /**
+     * 备注
+     */
+    remark?: string
+    /**
+     * 订单状态
+     */
+    status?: IWithdrawalOrderStatus
+    /**
+     * 币种
+     */
+    symbol?: string
+    /**
+     * 交易账户ID
+     */
+    tradeAccountId?: number
+    /**
+     * 交易哈希
+     */
+    txid?: string
+    /**
+     * 更新时间
+     */
+    updateTime?: Date
+    /**
+     * 用户ID
+     */
+    userId?: number
+    /**
+     * 客户姓名
+     */
+    userName?: string
+    [property: string]: any
   }
 
   // /**
@@ -167,6 +387,10 @@ declare namespace Wallet {
      */
     baseCurrency?: string
     /**
+     * 渠道图标
+     */
+    channelIcon?: string
+    /**
      * 渠道ID
      */
     channelId?: number
@@ -195,9 +419,17 @@ declare namespace Wallet {
      */
     notice?: string
     /**
+     * 支付类型,OTC，CHAIN(链)
+     */
+    paymentType?: PaymentType
+    /**
      * 币种
      */
     symbol?: string
+    /**
+     * 汇差百分比
+     */
+    userExchangeDifferencePercentage?: number
     /**
      * 客户单笔固定手续费
      */
@@ -207,18 +439,15 @@ declare namespace Wallet {
      */
     userSingleLeastFee?: number
     /**
-     * 客户交易百分比手续费 %
+     * 客户交易百分比手续费
      */
     userTradePercentageFee?: number
-    /**
-     * 汇率差价百分比 %
-     */
-    userExchangeDifferencePercentage?: number
 
     /**
-     * 渠道图标
+     * 通道编号字典值，用於識別支付方式類型
      */
-    channelIcon?: string
+    channelNoValue?: string
+
     [property: string]: any
   }
 
@@ -310,6 +539,42 @@ declare namespace Wallet {
     [property: string]: any
   }
 
+  type WithdrawalBank = {
+    /**
+     * 银行卡号
+     */
+    bankCard?: string
+    /**
+     * 银行名称
+     */
+    bankName?: string
+    /**
+     * 创建时间
+     */
+    createTime?: Date
+    /**
+     * 主键
+     */
+    id?: number
+    /**
+     * 备注
+     */
+    remark?: string
+    /**
+     * 更新时间
+     */
+    updateTime?: Date
+    /**
+     * 用户ID
+     */
+    userId?: number
+    /**
+     * 姓名
+     */
+    userName?: string
+    [property: string]: any
+  }
+
   type WithdrawalAddress = {
     /**
      * 提币地址
@@ -364,6 +629,14 @@ declare namespace Wallet {
      * 交易账户ID
      */
     tradeAccountId?: number
+    /**
+     * 银行名称
+     */
+    bankName?: string
+    /**
+     * 银行账号
+     */
+    bankCard?: string
     [property: string]: any
   }
 }

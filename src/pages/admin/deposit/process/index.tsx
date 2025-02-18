@@ -1,9 +1,9 @@
 import './index.less'
 
 import { PageLoading, ProForm, ProFormText } from '@ant-design/pro-components'
-import { FormattedMessage, useModel, useParams, useSearchParams } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel, useParams, useSearchParams } from '@umijs/max'
 import { Button, Form } from 'antd'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Iconfont from '@/components/Base/Iconfont'
@@ -11,13 +11,14 @@ import { stores, useStores } from '@/context/mobxProvider'
 import { generateDepositOrder } from '@/services/api/wallet'
 
 import { push } from '@/utils/navigator'
+import { observer } from 'mobx-react'
 import ConfirmModal from './comp/ConfirmModal'
 import TransferCrypto from './comp/TranserCrypto'
-import TransferAmount from './comp/TransferAmount'
 import TransferMethodSelectItem from './comp/TransferMethodSelectItem'
+import TransferOTC from './comp/TransferOTC'
 import TransferToFormSelectItem from './comp/TransferToFormSelectItem'
 
-export default function DepositProcess() {
+function DepositProcess() {
   const [form] = Form.useForm()
 
   const params = useParams()
@@ -27,8 +28,19 @@ export default function DepositProcess() {
   const tradeAccountId = searchParams.get('tradeAccountId') as string
 
   const methodId = Form.useWatch('methodId', form)
-  // const toAccountId = Form.useWatch('toAccountId', form)
+  const amount = Form.useWatch('amount', form)
   const methods = stores.wallet.depositMethods
+  const toAccountId = Form.useWatch('toAccountId', form)
+
+  const intl = useIntl()
+  useLayoutEffect(() => {
+    if (methods.length === 0) {
+      const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
+      stores.wallet.getDepositMethods({ language })
+
+      return
+    }
+  }, [methods, intl])
 
   const methodInfo = useMemo(() => {
     return methods.find((item) => item.id === methodId)
@@ -39,6 +51,7 @@ export default function DepositProcess() {
       // form.setFieldValue('address', methodInfo?.address)
       // 20241202：默认选择 USD, 目前只有 USD 币种；
       form.setFieldValue('currency', 'USD')
+      console.log('methodInfo', methodInfo)
     }
   }, [form, methodInfo])
 
@@ -51,21 +64,35 @@ export default function DepositProcess() {
 
   const [createTime, setCreateTime] = useState()
 
+  // const [paymentInfo, setPaymentInfo] = useState<Wallet.GenerateDepositOrderResult>()
+
   const handleSubmit0 = async () => {
     form.validateFields().then((values) => {
       setLoading(true)
       generateDepositOrder({
-        // methodId: values.methodId,
-        // amount: values.amount,
         tradeAccountId: values.toAccountId,
-        channelId: values.methodId
-        // currency: values.currency
+        channelId: values.methodId,
+        baseOrderAmount: values.amount
       })
         .then((res) => {
           if (res.success) {
+            if (methodInfo?.paymentType === 'OTC') {
+              push(`/deposit/otc/${res.data?.id}?backUrl=/deposit/process/${values.methodId}`)
+              return
+            }
+
+            // setPaymentInfo(res.data)
+
+            // // wechat & alipay
+            // form.setFieldValue('qrCode', res.data?.qrCode)
+            // form.setFieldValue('receiptAmount', res.data?.receiptAmount)
+            // form.setFieldValue('userName', res.data?.userName)
+            // form.setFieldValue('symbol', res.data?.symbol)
+
             // TODO: 生成充值地址
-            form.setFieldValue('address', res.data.address)
-            form.setFieldValue('createTime', res.data.createTime)
+            form.setFieldValue('address', res.data?.address)
+            form.setFieldValue('createTime', res.data?.createTime)
+            form.setFieldValue('canncelOrderTime', res.data?.canncelOrderTime)
 
             setStep(1)
           }
@@ -107,6 +134,8 @@ export default function DepositProcess() {
       .replace(/"/g, '\\"') // 转义双引号
   }
 
+  const disabled = loading || !methodId || !toAccountId || (methodInfo?.paymentType === 'OTC' && !amount)
+
   return (
     <PageContainer pageBgColorMode="white" fluidWidth backUrl="/deposit" backTitle={<FormattedMessage id="mt.quanbuzhifufangshi" />}>
       <div className="text-primary font-bold text-[24px] mb-9">
@@ -135,14 +164,16 @@ export default function DepositProcess() {
           >
             <ProFormText name="methodId" hidden />
             <ProFormText name="createTime" hidden />
+            <ProFormText name="currency" hidden />
+            <ProFormText name="canncelOrderTime" hidden />
             <TransferMethodSelectItem form={form} tips={methodInfo?.tips} />
             <TransferToFormSelectItem form={form} />
             {/* {methodInfo?.type === 'crypto' && <TransferCrypto form={form} />} */}
-            <TransferCrypto form={form} handleTimeout={handleTimeout} ref={cryptoRef} />
-            <TransferAmount form={form} currentUser={currentUser} methodInfo={methodInfo} />
+            {methodInfo?.paymentType === 'CHAIN' && <TransferCrypto form={form} handleTimeout={handleTimeout} ref={cryptoRef} />}
+            {methodInfo?.paymentType === 'OTC' && <TransferOTC form={form} methodInfo={methodInfo} />}
 
             {step === 0 && (
-              <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit0} disabled={loading}>
+              <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit0} disabled={disabled}>
                 <div className="flex flex-row items-center gap-2">
                   <FormattedMessage id="mt.jixu" />
                   <Iconfont name="zhixiang" color="white" width={18} height={18} />
@@ -203,3 +234,5 @@ export default function DepositProcess() {
     </PageContainer>
   )
 }
+
+export default observer(DepositProcess)

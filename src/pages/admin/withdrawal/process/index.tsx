@@ -109,6 +109,8 @@ export default function WithdrawalProcess() {
 
         generateWithdrawOrder({
           address: values.toAccountId,
+          bankName: values.bankName,
+          bankCard: values.bankCard,
           baseOrderAmount: values.amount,
           channelId: values.methodId,
           password: md5(values.password),

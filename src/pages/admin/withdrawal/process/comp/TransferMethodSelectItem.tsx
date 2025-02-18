@@ -11,13 +11,13 @@ import { observer } from 'mobx-react'
 
 type IProps = {
   form: FormInstance
-  type?: 'bank' | 'crypto'
+  type?: 'OTC' | 'CHAIN'
   tips?: string
   disabled?: boolean
 }
 
 /**转入表单项 */
-function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IProps) {
+function TransferMethodSelectItem({ form, type = 'OTC', tips, disabled }: IProps) {
   const [open, setOpen] = useState(false)
   const [openCurrency, setOpenCurrency] = useState(false)
   const intl = useIntl()
@@ -53,7 +53,7 @@ function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IPr
     if (form && methodInfo) {
       // form.setFieldValue('address', methodInfo?.address)
       // 20241202：默认选择 USD, 目前只有 USD 币种；
-      form.setFieldValue('type', methodInfo?.type)
+      form.setFieldValue('type', methodInfo?.paymentType)
       form.setFieldValue('currency', methodInfo?.baseCurrency)
 
       // 设置链信息
@@ -139,7 +139,7 @@ function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IPr
             }))}
           />
         </div>
-        {type === 'bank' && (
+        {type === 'OTC' && (
           <ProFormSelect
             name="currency"
             placeholder={intl.formatMessage({ id: 'mt.huobileixing' })}

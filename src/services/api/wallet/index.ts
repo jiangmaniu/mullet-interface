@@ -14,9 +14,36 @@ export async function getFundsMethodPageList(params?: Wallet.fundsMethodPageList
 // /trade-payment/paymentClient/deposit/create
 // 生成入金订单
 export async function generateDepositOrder(body: Wallet.GenerateDepositOrderParams) {
-  return request<API.Response<any>>('/api/trade-payment/paymentClient/deposit/create', {
+  return request<API.Response<Wallet.GenerateDepositOrderResult>>('/api/trade-payment/paymentClient/deposit/create', {
     method: 'POST',
     data: body
+  })
+}
+
+// /trade-payment/paymentClient/deposit/cancelDepositOrdder
+// 取消入金订单
+export async function cancelDepositOrder(body: { id: string }) {
+  return request<API.Response<any>>('/api/trade-payment/paymentClient/deposit/cancelDepositOrdder', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// /trade-payment/paymentClient/deposit/submitCertificate
+// 提交入金憑證
+export async function submitDepositCertificate(body: { id: string; certificateUrl: string }) {
+  return request<API.Response<any>>('/api/trade-payment/paymentClient/deposit/submitCertificate', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// /trade-payment/paymentClient/deposit/getOrderDetail
+// 入金訂單詳情
+export async function getDepositOrderDetail(params?: { id: string }) {
+  return request<API.Response<Wallet.GenerateDepositOrderDetailResult>>('/api/trade-payment/paymentClient/deposit/getOrderDetail', {
+    method: 'GET',
+    params
   })
 }
 
@@ -53,6 +80,32 @@ export async function getWithdrawalOrderList(
   )
 }
 
+// /trade-payment/paymentClient/withdrawalBank/pageList
+// 获取提现银行列表
+export async function getWithdrawalBankList(params?: API.PageParam) {
+  return request<API.Response<API.PageResult<Wallet.WithdrawalBank>>>('/api/trade-payment/paymentClient/withdrawalBank/pageList', {
+    method: 'GET',
+    params
+  })
+}
+
+// /trade-payment/paymentClient/withdrawalBank/modify
+// 修改提现银行
+export async function modifyWithdrawalBank(body: { id: string; remark: string }) {
+  return request<API.Response<any>>('/api/trade-payment/paymentClient/withdrawalBank/modify', {
+    method: 'POST',
+    data: body
+  })
+}
+
+// /trade-payment/paymentClient/withdrawalBank/remove
+// 删除提现银行
+export async function removeWithdrawalBank(body: { id: string }) {
+  return request<API.Response<any>>('/api/trade-payment/paymentClient/withdrawalBank/remove', {
+    method: 'POST',
+    data: body
+  })
+}
 // /trade-payment/paymentClient/withdrawalAddress/pageList
 // 获取提现地址列表
 export async function getWithdrawalAddressList(params?: API.PageParam) {

@@ -87,10 +87,10 @@ const Step1 = ({
           <ProFormText name="bankName" hidden />
           <ProFormText name="actualAmount" hidden />
 
-          <TransferMethodSelectItem form={form} type={methodInfo?.type} tips={methodInfo?.tips} />
+          <TransferMethodSelectItem form={form} type={methodInfo?.paymentType} tips={methodInfo?.tips} />
           <TransferFormSelectItem form={form} />
 
-          {methodInfo?.type === 'bank' ? <TransferToBankItem form={form} /> : <TransferToCryptoItem form={form} />}
+          {methodInfo?.paymentType === 'OTC' ? <TransferToBankItem form={form} /> : <TransferToCryptoItem form={form} />}
 
           <TransferAmount form={form} currentUser={currentUser} />
 
