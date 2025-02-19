@@ -38,6 +38,7 @@ export const Step2 = ({
   const handlingFee = Form.useWatch('handlingFee', form)
   const symbol = Form.useWatch('symbol', form)
   const actualAmount = Form.useWatch('actualAmount', form)
+  const exchangeRate = Form.useWatch('exchangeRate', form)
 
   const [disabled, setDisabled] = useState(true)
 
@@ -93,6 +94,10 @@ export const Step2 = ({
             }
           ]
         : [
+            {
+              label: getIntl().formatMessage({ id: 'mt.pingtaihuilv' }),
+              value: `${formatNum(exchangeRate, { precision: fromAccountInfo?.currencyDecimal })}`
+            },
             {
               label: getIntl().formatMessage({ id: 'mt.daozhangusd' }),
               value: `${formatNum(amount - handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`

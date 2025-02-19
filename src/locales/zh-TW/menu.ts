@@ -7,5 +7,6 @@ export default {
   'menu.copyTrading': '跟單',
   'menu.setting': '設置',
   'menu.depositWaiting': '入金待審核',
-  'menu.withdrawalWaiting': '出金待審核'
+  'menu.withdrawalWaiting': '出金待審核',
+  'menu.withdrawalProcess': '出金流程'
 }

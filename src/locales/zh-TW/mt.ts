@@ -743,5 +743,6 @@ export default {
   'mt.tianjiayinhangka': '添加銀行卡',
   'mt.yinhangmingcheng': '銀行名稱',
   'mt.qingshuruyinhangmincheng': '請輸入/選擇銀行名稱',
-  'mt.qingshuruyinhangmingcheng': '請輸入/選擇銀行賬戶'
+  'mt.qingshuruyinhangmingcheng': '請輸入/選擇銀行賬戶',
+  'mt.pingtaihuilv': '平台匯率'
 }

@@ -746,5 +746,6 @@ export default {
   'mt.weixinsaomazhifu': 'Thanh toán bằng QR code, vui lòng đảm bảo thông tin người nhận phù hợp',
   'mt.zhifubaosaomazhifu': 'Thanh toán bằng QR code, vui lòng đảm bảo thông tin người nhận phù hợp',
   'mt.beizhuzijiderujinzhanghu': 'Ghi chú tài khoản nạp tiền của bạn, lưu ý không ghi bất kỳ thông tin vi phạm nào',
-  'mt.tianjiayinhangka': 'Thêm thẻ ngân hàng'
+  'mt.tianjiayinhangka': 'Thêm thẻ ngân hàng',
+  'mt.yinhangmingcheng': 'Tên ngân hàng'
 }

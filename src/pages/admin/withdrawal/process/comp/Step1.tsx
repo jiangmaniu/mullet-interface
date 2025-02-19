@@ -10,7 +10,6 @@ import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { cn } from '@/utils/cn'
-import { transferHandlingFee } from '@/utils/deposit'
 import { observer } from 'mobx-react'
 import TransferAmount from './TransferAmount'
 import TransferFormSelectItem from './TransferFormSelectItem'
@@ -78,9 +77,9 @@ const Step1 = ({
           <ProFormText name="crypto" hidden />
           <ProFormText name="chain" hidden />
           <ProFormText name="name" hidden />
-          <ProFormText name="bankName" hidden />
           <ProFormText name="actualAmount" hidden />
           <ProFormText name="symbol" hidden />
+          <ProFormText name="exchangeRate" hidden />
 
           <TransferMethodSelectItem form={form} methodInfo={methodInfo} />
           <TransferFormSelectItem form={form} />
@@ -100,7 +99,7 @@ const Step1 = ({
             </span>
             <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
             <span className="flex-shrink-0">
-              {formatNum(transferHandlingFee(handlingFee, methodInfo as Wallet.fundsMethodPageListItem), { precision: 2 })} {currency}
+              {formatNum(handlingFee, { precision: 2 })} {currency}
             </span>
           </div>
           <div

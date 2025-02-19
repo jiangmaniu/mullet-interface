@@ -751,5 +751,6 @@ export default {
   'mt.weixinsaomazhifu': 'WeChat QR code payment, please ensure the payment merchant information is consistent',
   'mt.zhifubaosaomazhifu': 'Alipay QR code payment, please ensure the payment merchant information is consistent',
   'mt.beizhuzijiderujinzhanghu': 'Note your deposit account, please do not note any违规信息',
-  'mt.tianjiayinhangka': 'Add Bank Card'
+  'mt.tianjiayinhangka': 'Add Bank Card',
+  'mt.pingtaihuilv': 'Platform Exchange Rate'
 }

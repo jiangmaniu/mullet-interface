@@ -59,6 +59,7 @@ function TransferMethodSelectItem({ form, disabled, methodInfo }: IProps) {
       form.setFieldValue('type', methodInfo?.paymentType)
       form.setFieldValue('currency', methodInfo?.baseCurrency)
       form.setFieldValue('symbol', methodInfo?.symbol)
+      form.setFieldValue('exchangeRate', methodInfo?.exchangeRate)
 
       // 设置链信息
       // if (methodInfo.type === 'crypto') {
