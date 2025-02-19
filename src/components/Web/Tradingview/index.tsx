@@ -7,6 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
+import usePageVisibility from '@/hooks/usePageVisibility'
 import klineStore from '@/mobx/kline'
 import { cn } from '@/utils/cn'
 import { LoadingOutlined } from '@ant-design/icons'
@@ -222,6 +223,23 @@ const Tradingview = () => {
     [symbolName, switchSymbolLoading],
     {
       wait: 700
+    }
+  )
+
+  usePageVisibility(
+    () => {
+      console.log('页面回到前台')
+      if (symbolName) {
+        // @ts-ignore
+        klineStore.activeSymbolInfo?.onResetCacheNeededCallback?.() // 重置缓存
+        setTimeout(() => {
+          // 刷新k线
+          setSymbol(symbolName, kline.tvWidget)
+        }, 100)
+      }
+    },
+    () => {
+      console.log('页面切换到后台')
     }
   )
 
