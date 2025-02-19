@@ -7,7 +7,6 @@ import { SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
-import Switch from '@/pages/webapp/components/Base/Switch'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { formatNum } from '@/utils'
@@ -141,7 +140,7 @@ function OrderTabItem({ position }: IProps) {
         </View>
       )}
       {/* k线页面 快速下单-弹窗展示 */}
-      {position === 'MODAL' && (
+      {/* {position === 'MODAL' && (
         <View className={cn('flex-row items-center justify-between', !orderSpslChecked && 'mt-5')}>
           <View className={cn('flex-col items-start gap-x-2 flex')}>
             <Text color="primary" size="base" weight="medium">
@@ -158,7 +157,7 @@ function OrderTabItem({ position }: IProps) {
             checked={orderQuickPlaceOrderChecked}
           />
         </View>
-      )}
+      )} */}
       {/* </ScrollView> */}
     </View>
   )

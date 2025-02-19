@@ -12,8 +12,13 @@ import { View } from '../../../Base/View'
 import LevelAgeModal, { LevelAgeModalRef } from './LevelAgeModal'
 import MarginTypeModal, { MarginTypeModalRef } from './MarginTypeModal'
 
+type IProps = {
+  /**没有深度盘口视图 */
+  noDepth?: boolean
+}
+
 /** 保证金类型、杠杆选择按钮 */
-function MarginTypeAndLeverageBtn() {
+function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
   const intl = useIntl()
   const { cn, theme } = useTheme()
   const { trade } = useStores()
@@ -39,9 +44,60 @@ function MarginTypeAndLeverageBtn() {
     leverage = `${trade.leverageMultiple || 2}X`
   }
 
-  return (
-    <>
-      <View className={cn('flex-row gap-x-1')}>
+  const marginTypeLabel =
+    trade.marginType === 'CROSS_MARGIN'
+      ? intl.formatMessage({ id: 'common.enum.MarginType.CROSS_MARGIN' })
+      : intl.formatMessage({ id: 'common.enum.MarginType.ISOLATED_MARGIN' })
+
+  const disableMarginBtn = isFixedMargin || isFixedLeverage || disabledBtn
+
+  const renderView = () => {
+    // 交易页面-没有盘口的视图
+    if (noDepth) {
+      return (
+        <View className={cn('flex-row gap-x-2 px-3 border-b border-gray-50 mb-2 pb-3 w-full')}>
+          <View
+            onClick={() => {
+              // bottomSheetModalRef.current?.sheet?.dismiss()
+              marginTypeModalRef.current?.show()
+            }}
+            disabled={disabledBtn}
+          >
+            <View
+              borderColor="weak"
+              className={cn('flex-row py-1 px-2 items-center justify-center border-[0.5px] border-gray-130 rounded-[6px]')}
+            >
+              <Text color="primary" size="sm" weight="medium" className={cn('pr-1 px-5')}>
+                {marginTypeLabel}
+              </Text>
+              <Iconfont name="quancangxiala" style={{ transform: 'rotate(90deg)' }} size={16} color={theme.isDark ? '#fff' : '#CFCFCF'} />
+            </View>
+          </View>
+          <View
+            onClick={() => {
+              levelAgeModalRef.current?.show()
+            }}
+            disabled={disableMarginBtn}
+          >
+            <View
+              className={cn(
+                'flex-row py-1 px-2 items-center justify-center border-[0.5px] rounded-[6px]',
+                !isFloatLeverage && 'bg-gray-130 border-[transparent]'
+              )}
+            >
+              <Text color="primary" size="sm" weight="medium" className={cn('pr-1 px-5')}>
+                {leverage}
+              </Text>
+              {isFloatLeverage && (
+                <Iconfont name="quancangxiala" style={{ transform: 'rotate(90deg)' }} size={16} color={theme.isDark ? '#fff' : '#CFCFCF'} />
+              )}
+            </View>
+          </View>
+        </View>
+      )
+    }
+    return (
+      <View className={cn('flex-row gap-x-1 px-3')}>
         <View
           onClick={() => {
             // bottomSheetModalRef.current?.sheet?.dismiss()
@@ -49,11 +105,9 @@ function MarginTypeAndLeverageBtn() {
           }}
           disabled={disabledBtn}
         >
-          <View className={cn('rounded flex-row bg-gray-50 py-1 px-2 items-center justify-center')}>
+          <View className={cn('rounded flex-row py-1 px-2 items-center justify-center')}>
             <Text color="primary" size="sm" weight="medium" className={cn('pr-1')}>
-              {trade.marginType === 'CROSS_MARGIN'
-                ? intl.formatMessage({ id: 'common.enum.MarginType.CROSS_MARGIN' })
-                : intl.formatMessage({ id: 'common.enum.MarginType.ISOLATED_MARGIN' })}
+              {marginTypeLabel}
             </Text>
             <Iconfont name="quancangxiala" size={16} color={theme.isDark ? '#fff' : '#CFCFCF'} />
           </View>
@@ -62,7 +116,7 @@ function MarginTypeAndLeverageBtn() {
           onClick={() => {
             levelAgeModalRef.current?.show()
           }}
-          disabled={isFixedMargin || isFixedLeverage || disabledBtn}
+          disabled={disableMarginBtn}
         >
           <View className={cn('rounded flex-row py-1 px-2 items-center justify-center', isFloatLeverage ? 'bg-gray-50' : 'bg-gray-80')}>
             <Text color="primary" size="sm" weight="medium" className={cn('pr-1')}>
@@ -72,6 +126,12 @@ function MarginTypeAndLeverageBtn() {
           </View>
         </View>
       </View>
+    )
+  }
+
+  return (
+    <>
+      {renderView()}
       <MarginTypeModal ref={marginTypeModalRef} />
       <LevelAgeModal ref={levelAgeModalRef} />
     </>

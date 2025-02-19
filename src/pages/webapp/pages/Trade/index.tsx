@@ -24,7 +24,7 @@ function Trade() {
       {/* 账号选择弹窗 */}
       <SwitchAccount isRemainAtCurrentPage />
       <View className={cn('flex flex-col rounded-tl-[22px] rounded-tr-[22px] flex-1 mt-2 pt-2')} bgColor="primary">
-        <View className={cn('px-3')}>
+        <View className={cn('px-3 pb-1 border-b border-gray-50')}>
           {/* 选择交易品种 */}
           <SelectSymbolBtn showQuotePercent />
         </View>
