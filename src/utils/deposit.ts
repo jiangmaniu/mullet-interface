@@ -32,7 +32,7 @@ export const depositTransferCurr = (value: number, methodInfo?: Wallet.fundsMeth
   let val = value || 0
 
   // 匯率： 平台匯率 + 匯差百分比
-  const _exchangeRate = (exchangeRate || 1.0) + (1 + (userExchangeDifferencePercentage || 0) * 0.01)
+  const _exchangeRate = (exchangeRate || 1.0) * (1 + (userExchangeDifferencePercentage || 0) * 0.01)
 
   // 手續費：單筆最低手續費 或 入金金額 * 交易百分比手續費 + 單筆固定手續費
   const fee = countHandingFee(val, methodInfo)
@@ -52,7 +52,7 @@ export const withdrawCountTransferCurr = (value: number, methodInfo?: Wallet.fun
   let val = value || 0
 
   // 匯率： 平台匯率 + 匯差百分比
-  const _exchangeRate = (exchangeRate || 1.0) + (1 - (userExchangeDifferencePercentage || 0)) * 0.01
+  const _exchangeRate = (exchangeRate || 1.0) * (1 - (userExchangeDifferencePercentage || 0) * 0.01)
 
   // 手續費：單筆最低手續費 或 入金金額 * 交易百分比手續費 + 單筆固定手續費
   const fee = countHandingFee(val, methodInfo)
