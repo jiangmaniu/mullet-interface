@@ -22,14 +22,6 @@ import { observer } from 'mobx-react'
 
 dayjs.extend(duration)
 
-// 汇率换算
-export const transferCurr = (value?: number) => {
-  const val = value || 0
-
-  // TODO: 汇率换算
-  return val * 1
-}
-
 const Notice = observer(({ methodId }: { methodId: string }) => {
   const methodInfo = stores.wallet.withdrawalMethods.find((item) => item.id === methodId)
   return (
@@ -68,10 +60,12 @@ const Detail = ({
 
   const methods = stores.wallet.depositMethods
   const intl = useIntl()
+  const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
   useLayoutEffect(() => {
-    if (methods.length === 0) {
+    if (methods.length === 0 || prevIntl !== intl.locale) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
       stores.wallet.getWithdrawalMethods({ language })
+      setPrevIntl(intl.locale)
       return
     }
   }, [methods, intl])

@@ -1,6 +1,6 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { AutoComplete, Form, FormInstance } from 'antd'
-import { useEffect, useLayoutEffect, useState } from 'react'
+import { AutoComplete, FormInstance } from 'antd'
+import { useLayoutEffect, useState } from 'react'
 
 import { getWithdrawalBankList } from '@/services/api/wallet'
 import { ProFormItem } from '@ant-design/pro-components'
@@ -17,8 +17,8 @@ export default function TransferToBankItem({ form }: IProps) {
 
   const currentUser = initialState?.currentUser
 
-  const [bankList, setBankList] = useState<Wallet.WithdrawalBank[]>([])
-  const [cardList, setCardList] = useState<Wallet.WithdrawalBank[]>([])
+  const [bankList, setBankList] = useState<{ value: string; label: string }[]>([])
+  const [cardList, setCardList] = useState<{ value: string; label: string }[]>([])
 
   useLayoutEffect(() => {
     getWithdrawalBankList({
@@ -26,18 +26,26 @@ export default function TransferToBankItem({ form }: IProps) {
       size: 1000
     }).then((res) => {
       if (res.success) {
-        setBankList(res.data?.records || [])
+        const list = res.data?.records || []
+
+        const bankNames = Array.from(new Set(list.map((item) => item.bankName || '')))
+        setBankList(
+          bankNames.map((name) => ({
+            value: name,
+            label: name
+          }))
+        )
+
+        const bankCards = Array.from(new Set(list.map((item) => item.bankCard || '')))
+        setCardList(
+          bankCards.map((card) => ({
+            value: card,
+            label: card
+          }))
+        )
       }
     })
   }, [])
-
-  const toAccountId = Form.useWatch('toAccountId', form) // 转出
-
-  const bankName = Form.useWatch('bankName', form)
-
-  useEffect(() => {
-    console.log('bankName', bankName)
-  }, [bankName])
 
   return (
     <>
@@ -89,10 +97,7 @@ export default function TransferToBankItem({ form }: IProps) {
         <AutoComplete
           size="large"
           className="fix-select-search-input"
-          options={bankList.map((item) => ({
-            value: item.id,
-            label: item.name
-          }))}
+          options={bankList}
           placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmincheng' })}
           onChange={(value) => {
             console.log('value', value)
@@ -104,10 +109,7 @@ export default function TransferToBankItem({ form }: IProps) {
         <AutoComplete
           size="large"
           className="fix-select-search-input"
-          options={cardList.map((item) => ({
-            value: item.id,
-            label: item.name
-          }))}
+          options={cardList}
           placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmingcheng' })}
           onChange={(value) => {
             console.log('value', value)

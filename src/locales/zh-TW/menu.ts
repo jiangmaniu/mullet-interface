@@ -5,5 +5,7 @@ export default {
   'menu.withdrawal': '出金',
   'menu.depositAndwithdrawalRecord': '出入金記錄',
   'menu.copyTrading': '跟單',
-  'menu.setting': '設置'
+  'menu.setting': '設置',
+  'menu.depositWaiting': '入金待審核',
+  'menu.withdrawalWaiting': '出金待審核'
 }

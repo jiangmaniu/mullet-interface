@@ -7,11 +7,11 @@ import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
-import { stores, useStores } from '@/context/mobxProvider'
+import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
+import { useStores } from '@/context/mobxProvider'
 import { cn } from '@/utils/cn'
+import { transferHandlingFee } from '@/utils/deposit'
 import { observer } from 'mobx-react'
-import { useMemo } from 'react'
-import { transferCurr } from '..'
 import TransferAmount from './TransferAmount'
 import TransferFormSelectItem from './TransferFormSelectItem'
 import TransferMethodSelectItem from './TransferMethodSelectItem'
@@ -23,27 +23,21 @@ const Step1 = ({
   loading,
   currentUser,
   fromAccountInfo,
-  handleSubmit
+  handleSubmit,
+  methodInfo
 }: {
   form: FormInstance<any>
   loading: boolean
   currentUser?: User.UserInfo
   fromAccountInfo?: User.AccountItem
   handleSubmit: () => void
+  methodInfo?: Wallet.fundsMethodPageListItem
 }) => {
   const amount = Form.useWatch('amount', form)
   const currency = Form.useWatch('currency', form)
 
   const { trade } = useStores()
   const { currentAccountInfo } = trade
-
-  const methodId = Form.useWatch('methodId', form)
-
-  const methods = stores.wallet.withdrawalMethods
-
-  const methodInfo = useMemo(() => {
-    return methods.find((item) => item.id === methodId)
-  }, [methodId, methods])
 
   const params = useParams()
   const method = params?.method as string
@@ -86,13 +80,13 @@ const Step1 = ({
           <ProFormText name="name" hidden />
           <ProFormText name="bankName" hidden />
           <ProFormText name="actualAmount" hidden />
+          <ProFormText name="symbol" hidden />
 
-          <TransferMethodSelectItem form={form} type={methodInfo?.paymentType} tips={methodInfo?.tips} />
+          <TransferMethodSelectItem form={form} methodInfo={methodInfo} />
           <TransferFormSelectItem form={form} />
-
           {methodInfo?.paymentType === 'OTC' ? <TransferToBankItem form={form} /> : <TransferToCryptoItem form={form} />}
 
-          <TransferAmount form={form} currentUser={currentUser} />
+          <TransferAmount form={form} currentUser={currentUser} methodInfo={methodInfo} />
 
           <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit} disabled={disabled}>
             <div className="flex flex-row items-center gap-2">
@@ -106,12 +100,12 @@ const Step1 = ({
             </span>
             <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
             <span className="flex-shrink-0">
-              {formatNum(transferCurr(handlingFee), { precision: 2 })} {currency}
+              {formatNum(transferHandlingFee(handlingFee, methodInfo as Wallet.fundsMethodPageListItem), { precision: 2 })} {currency}
             </span>
           </div>
           <div
             className={cn('text-secondary text-sm  flex flex-row items-center justify-between gap-4', {
-              'text-red': Number(actualAmount) < 0
+              // 'text-red': Number(actualAmount) < 0
             })}
           >
             <span className="flex-shrink-0">
@@ -119,7 +113,8 @@ const Step1 = ({
             </span>
             <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
             <span className="flex-shrink-0">
-              {formatNum(transferCurr(actualAmount), { precision: fromAccountInfo?.currencyDecimal })} {currency}
+              {formatNum(Math.max(actualAmount, 0), { precision: DEFAULT_CURRENCY_DECIMAL })}
+              &nbsp;{methodInfo?.symbol}
             </span>
           </div>
         </ProForm>

@@ -6,9 +6,10 @@ type IProps = {
   onChange?: (value: string) => void
   form?: FormInstance
   name?: NamePath
+  disabled?: boolean
 }
 
-export default function CodeInput({ onChange, form, name = 'validateCode' }: IProps) {
+export default function CodeInput({ onChange, form, name = 'validateCode', disabled = false }: IProps) {
   const className = useEmotionCss(({ token }) => {
     return {
       '.ant-otp-input': {
@@ -30,7 +31,7 @@ export default function CodeInput({ onChange, form, name = 'validateCode' }: IPr
   return (
     <div className={className}>
       <Form.Item noStyle name={name}>
-        <Input.OTP onChange={handleChange} />
+        <Input.OTP onChange={handleChange} disabled={disabled} />
       </Form.Item>
     </div>
   )

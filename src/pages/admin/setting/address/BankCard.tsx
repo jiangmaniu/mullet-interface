@@ -2,9 +2,9 @@ import { FormattedMessage, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import ProList from '@/components/Admin/ProList'
-import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { getWithdrawalBankList } from '@/services/api/wallet'
+import { formatBankCard } from '@/utils/deposit'
 import { Popconfirm } from 'antd'
 import { forwardRef, useImperativeHandle } from 'react'
 import { IParams } from '../Address'
@@ -60,32 +60,32 @@ function BankCard({ params, onSelectItem, onDeleteItem }: IProps, ref: any) {
                 <Iconfont name="qianbaodizhi" color="gray" width={18} height={18} />
               </div>
               <div>
-                <div className="text-primary font-bold">{item.channelName}</div>
-                <div className="text-secondary text-xs">{item.id}</div>
+                <div className="text-primary font-bold">{item.userName}</div>
+                <div className="text-secondary text-xs">{item.bankName}</div>
               </div>
             </div>
             <div className=" flex flex-row gap-2 md:gap-3 items-center justify-center flex-grow">
               <div>
                 <div className=" text-xs font-semibold flex-1 flex flex-row gap-2 items-center ">
-                  <span>{item.icon || '[icon]'}</span>
+                  <span>{formatBankCard(item.bankCard || '')}</span>
+                  {/* <span>{item.icon || '[icon]'}</span>
                   <span>{item.symbol || '[symbol]'}</span>
                   <span>·</span>
                   <span>
                     <FormattedMessage id="mt.dizhi" />
                   </span>
-                  <span>{item.address}</span>
+                  <span>{item.address}</span> */}
                 </div>
               </div>
             </div>
             <div className="flex flex-row items-center gap-4">
-              <Button
+              {/* <Button
                 onClick={() => {
                   onSelectItem(item)
                 }}
-                // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
               >
                 <FormattedMessage id="mt.xiugai" />
-              </Button>
+              </Button> */}
 
               <Popconfirm
                 title={<FormattedMessage id="mt.tishi" />}

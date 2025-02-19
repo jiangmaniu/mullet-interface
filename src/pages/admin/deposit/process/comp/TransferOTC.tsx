@@ -1,4 +1,6 @@
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
+import { formatNum } from '@/utils'
+import { depositTransferCurr } from '@/utils/deposit'
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Dropdown, Form, FormInstance, Space } from 'antd'
@@ -23,14 +25,6 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
       }
     }
   ]
-
-  // 汇率换算
-  const transferCurr = (value?: number) => {
-    const val = value || 0
-
-    // TODO: 汇率换算
-    return val * 1.0
-  }
 
   return (
     <div className="flex flex-col ">
@@ -59,9 +53,14 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
         </Dropdown>
       </div>
       <div className="flex justify-between text-gray-500 text-xs mt-2">
-        <span>{methodInfo?.options?.limit?.desc}</span>
+        {/* <span>{methodInfo?.options?.limit?.desc}</span> */}
         <span>
-          ≈ {transferCurr(amount)} {currency}
+          {`${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(methodInfo?.singleAmountMax || 99999)} ${
+            methodInfo?.baseCurrency
+          }`}
+        </span>
+        <span>
+          ≈ {depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem)} {methodInfo?.symbol}
         </span>
       </div>
       <div className="text-secondary text-sm mt-5 flex flex-row items-center justify-between gap-4">
@@ -70,7 +69,7 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
         </span>
         <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
         <span className="flex-shrink-0">
-          {transferCurr(amount)} {currency}
+          {depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem)} {methodInfo?.symbol}
         </span>
       </div>
     </div>

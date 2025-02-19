@@ -85,7 +85,7 @@ export default function Addresss() {
   const [selectedBankCard, setSelectedBankCard] = useState<Wallet.WithdrawalBank | undefined>(undefined)
   const onSelectBankCard = (item: Wallet.WithdrawalBank) => {
     setSelectedBankCard(item)
-    modalRef.current.show()
+    modal2Ref.current.show()
   }
 
   const cryptoAddressRef = useRef<any>()

@@ -7,19 +7,21 @@ import { stores } from '@/context/mobxProvider'
 
 import { push } from '@/utils/navigator'
 import { observer } from 'mobx-react'
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import WithdrawalMethod from './comp'
 
 const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
   const intl = useIntl()
 
   const methods = stores.wallet.withdrawalMethods
+  const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
 
   useLayoutEffect(() => {
-    if (methods.length === 0) {
+    if (methods.length === 0 || prevIntl !== intl.locale) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
       stores.wallet.getWithdrawalMethods({ language })
 
+      setPrevIntl(intl.locale)
       return
     }
   }, [methods, intl])
@@ -51,7 +53,7 @@ function Withdrawal() {
         <FormattedMessage id="mt.chujin" />
       </div>
       <div className="flex flex-col gap-8 ">
-        {kycStatus !== 'SUCCESS' && (
+        {!isKycAuth && (
           <div className=" border border-gray-150 rounded-lg px-5 py-4 flex justify-between">
             <div className="flex flex-row items-center gap-[18px]">
               <Iconfont name="renzheng" width={40} height={40} />

@@ -1,39 +1,19 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
-import { stores } from '@/context/mobxProvider'
 import { formatNum, toFixed } from '@/utils'
+import { transferHandlingFee, withdrawCountTransferCurr } from '@/utils/deposit'
 import { observer } from 'mobx-react'
 
 type IProps = {
   form: FormInstance
   currentUser?: User.UserInfo
+  methodInfo?: Wallet.fundsMethodPageListItem
 }
 
-// 汇率换算
-const transferCurr = (value?: number) => {
-  const val = value || 0
-
-  // TODO: 汇率换算
-  return val * 1.0
-}
-
-// 计算手续费
-const calcHandlingFee = (value?: number, methodInfo?: Wallet.fundsMethodPageListItem) => {
-  const val = value || 0
-
-  if (!methodInfo) return 0
-
-  const { userSingleFixedFee, userSingleLeastFee, userTradePercentageFee } = methodInfo
-
-  const res = Math.max(val * (userTradePercentageFee || 0) * 0.01 + (userSingleFixedFee || 0), userSingleLeastFee || 0)
-
-  return res
-}
-
-function TransferAmount({ form, currentUser }: IProps) {
+function TransferAmount({ form, currentUser, methodInfo }: IProps) {
   const intl = useIntl()
 
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
@@ -54,26 +34,11 @@ function TransferAmount({ form, currentUser }: IProps) {
 
   const amount = Form.useWatch('amount', form)
 
-  const methodId = Form.useWatch('methodId', form)
-
-  const methods = stores.wallet.withdrawalMethods
-
-  const methodInfo = useMemo(() => {
-    return methods.find((item) => item.id === methodId)
-  }, [methodId, methods])
-
-  useEffect(() => {
-    console.log('methodInfo', methodInfo)
-  }, [methodInfo])
-
   useEffect(() => {
     // TODO: 计算手续费 和 实际到账金额
-    const handlingFee = calcHandlingFee(amount, methodInfo)
-    form.setFieldValue('handlingFee', formatNum(handlingFee, { precision: 2 }))
-    form.setFieldValue(
-      'actualAmount',
-      formatNum(Math.max(amount - handlingFee - (methodInfo?.userExchangeDifferencePercentage || 0), 0), { precision: 2 })
-    )
+    // const handlingFee = countHandingFee(amount, methodInfo)
+    form.setFieldValue('handlingFee', transferHandlingFee(amount, methodInfo))
+    form.setFieldValue('actualAmount', withdrawCountTransferCurr(amount, methodInfo))
   }, [amount])
 
   return (

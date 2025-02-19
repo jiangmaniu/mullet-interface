@@ -383,6 +383,34 @@ declare namespace Wallet {
    */
   type fundsMethodPageListItem = {
     /**
+     * 汇率
+     */
+    exchangeRate?: number
+    /**
+     * 汇差百分比
+     */
+    userExchangeDifferencePercentage?: number
+    /**
+     * 客户交易百分比手续费
+     */
+    userTradePercentageFee?: number
+    /**
+     * 客户单笔固定手续费
+     */
+    userSingleFixedFee?: number
+    /**
+     * 客户单笔最低手续费
+     */
+    userSingleLeastFee?: number
+    /**
+     * 单笔最小金额
+     */
+    singleAmountMin?: number
+    /**
+     * 单笔最大金额
+     */
+    singleAmountMax?: number
+    /**
      * 基准货币
      */
     baseCurrency?: string

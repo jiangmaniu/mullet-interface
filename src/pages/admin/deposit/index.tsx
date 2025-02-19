@@ -51,7 +51,7 @@ function Deposit() {
         <FormattedMessage id="mt.rujin" />
       </div>
       <div className="flex flex-col gap-8 ">
-        {kycStatus !== 'SUCCESS' && (
+        {!isBaseAuth && (
           <div className=" border border-gray-150 rounded-lg px-5 py-4 flex justify-between">
             <div className="flex flex-row items-center gap-[18px]">
               <Iconfont name="renzheng" width={40} height={40} />

@@ -3,7 +3,7 @@ import './index.less'
 import { PageLoading, useIntl } from '@ant-design/pro-components'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import { stores } from '@/context/mobxProvider'
@@ -17,14 +17,6 @@ import { observer } from 'mobx-react'
 import Step1 from './comp/Step1'
 import { Step2 } from './comp/Step2'
 import { Step3 } from './comp/Step3'
-
-// 汇率换算
-export const transferCurr = (value?: number) => {
-  const val = value || 0
-
-  // TODO: 汇率换算
-  return val * 1
-}
 
 const Notice = observer(({ methodId }: { methodId: string }) => {
   const methodInfo = stores.wallet.withdrawalMethods.find((item) => item.id === methodId)
@@ -41,16 +33,18 @@ const Notice = observer(({ methodId }: { methodId: string }) => {
   )
 })
 
-export default function WithdrawalProcess() {
+function WithdrawalProcess() {
   const [form] = Form.useForm()
 
-  const methods = stores.wallet.depositMethods
+  const methods = stores.wallet.withdrawalMethods
   const intl = useIntl()
 
+  const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
   useLayoutEffect(() => {
-    if (methods.length === 0) {
+    if (methods.length === 0 || prevIntl !== intl.locale) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
       stores.wallet.getWithdrawalMethods({ language })
+      setPrevIntl(intl.locale)
       return
     }
   }, [methods, intl])
@@ -161,13 +155,7 @@ export default function WithdrawalProcess() {
 
   const [loading, setLoading] = useState(false)
 
-  const methodInfo = useMemo(() => {
-    return methods.find((item) => item.id === methodId)
-  }, [methodId, methods])
-
-  useEffect(() => {
-    console.log(methodInfo)
-  }, [methodInfo])
+  const methodInfo = useMemo(() => methods.find((item) => item.id === methodId), [methodId, methods])
 
   return (
     <PageContainer
@@ -187,11 +175,25 @@ export default function WithdrawalProcess() {
         </div>
       )}
       <div className={cn(step === 0 ? 'block' : 'hidden')}>
-        <Step1 form={form} loading={loading} currentUser={currentUser} fromAccountInfo={fromAccountInfo} handleSubmit={handleSubmit0} />
+        <Step1
+          form={form}
+          loading={loading}
+          currentUser={currentUser}
+          fromAccountInfo={fromAccountInfo}
+          handleSubmit={handleSubmit0}
+          methodInfo={methodInfo}
+        />
       </div>
       <div className="flex flex-col gap-21">
         <div className={cn(step === 1 ? 'block' : 'hidden')}>
-          <Step2 form={form} fromAccountInfo={fromAccountInfo} loading={loading} setStep={setStep} handleSubmit={handleSubmit1} />
+          <Step2
+            form={form}
+            fromAccountInfo={fromAccountInfo}
+            loading={loading}
+            setStep={setStep}
+            handleSubmit={handleSubmit1}
+            methodInfo={methodInfo}
+          />
         </div>
         <div className={cn(step === 2 ? 'block' : 'hidden')}>
           <Step3 handleSubmit={handleSubmit2} />
@@ -206,3 +208,5 @@ export default function WithdrawalProcess() {
     </PageContainer>
   )
 }
+
+export default observer(WithdrawalProcess)
