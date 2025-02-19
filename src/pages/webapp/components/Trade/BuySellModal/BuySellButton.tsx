@@ -53,15 +53,15 @@ function BuySellButton({ position = 'footer', onShow }: IProps) {
             }
           }, 50)
         }}
-        height={40}
+        height={32}
         isDebounce={false}
-        className={cn(isShowModal && buySell === 'BUY' && 'bg-gray-80')}
+        className={cn('rounded-[6px]', isShowModal && buySell === 'BUY' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'BUY' && '!text-weak')}
       >
         {t('mt.kaikong')} {hasQuote ? formatNum(quoteInfo.bid) : '--'}
       </Button>
-      <View className={cn('items-center justify-center bg-gray-85 px-1 rounded-[6px] z-[1] min-w-[36px] absolute dark:bg-white')}>
-        <Text color="primary" size="sm" className={cn('leading-[22px]')}>
+      <View className={cn('h-[18px] items-center justify-center bg-gray-85 px-1 rounded-[6px] z-[1] min-w-[36px] absolute dark:bg-white')}>
+        <Text color="primary" size="sm">
           {quoteInfo.spread || 0}
         </Text>
       </View>
@@ -81,9 +81,9 @@ function BuySellButton({ position = 'footer', onShow }: IProps) {
             }
           }, 50)
         }}
-        height={40}
+        height={32}
         isDebounce={false}
-        className={cn(isShowModal && buySell === 'SELL' && 'bg-gray-80')}
+        className={cn('rounded-[6px]', isShowModal && buySell === 'SELL' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'SELL' && '!text-weak')}
       >
         {t('mt.kaiduo')} {formatNum(quoteInfo.ask)}

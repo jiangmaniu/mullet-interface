@@ -8,9 +8,9 @@ import useQuoteColor from '@/pages/webapp/hooks/useQuoteColor'
 import { formatNum } from '@/utils'
 import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
 
-import CustomArrowButton from '../../../Base/CustomArrowButton'
 import { Text } from '../../../Base/Text'
 import { View } from '../../../Base/View'
+import BuySellButton from '../../BuySellModal/BuySellButton'
 import MarginTypeAndLeverageBtn from './MarginTypeAndLeverageBtn'
 
 const BuySellPrice = observer(() => {
@@ -80,25 +80,18 @@ function Header() {
   const { trade } = useStores()
   const quoteInfo = getCurrentQuote()
 
-  // const getCurrentDepth = useGetCurrentDepthCallback()
-  // const depth = getCurrentDepth()
-  // const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
+  const depth = getCurrentDepth()
+  const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
+
+  if (hasDepth) return <></>
 
   return (
-    <View className={cn('mt-3 px-3')}>
-      <BuySellPrice />
-
-      <View className={cn('flex-row justify-between items-center')}>
-        <View className={cn('flex-1 flex-row mr-3')}>
-          <CustomArrowButton
-            leftText={intl.formatMessage({ id: 'mt.kaikong' })}
-            rightText={intl.formatMessage({ id: 'mt.kaiduo' })}
-            // onChange={(key) => {
-            //   trade.setBuySell(key === 'left' ? 'SELL' : 'BUY')
-            // }}
-          />
-        </View>
-        <MarginTypeAndLeverageBtn />
+    <View className={cn('mt-3')}>
+      <View className={cn('flex-row justify-between items-center pb-[10px]')}>
+        <MarginTypeAndLeverageBtn noDepth />
+      </View>
+      <View className={cn('flex-row mx-3 border mb-2 p-[5px] rounded-[9px]')} borderColor="weak">
+        <BuySellButton position="modal" />
       </View>
     </View>
   )
