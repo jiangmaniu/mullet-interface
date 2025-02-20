@@ -1060,21 +1060,23 @@ class TradeStore {
     const res = await getSymbolIsHoliday({ symbols: this.symbolListAll.map((item) => item.symbol).join(',') })
     const data = res?.data || ({} as any)
     runInAction(() => {
-      this.symbolList = this.symbolList.map((item) => {
-        return {
-          ...item,
-          isInHoliday: !!data[item?.symbol]
-        }
-      })
-      this.symbolListAll = this.symbolListAll.map((item) => {
-        return {
-          ...item,
-          isInHoliday: !!data[item?.symbol]
-        }
-      })
-      Object.keys(this.symbolListMap).forEach((key) => {
-        this.symbolListMap[key].isInHoliday = !!data[key]
-      })
+      if (res.success) {
+        this.symbolList = this.symbolList.map((item) => {
+          return {
+            ...item,
+            isInHoliday: !!data[item?.symbol]
+          }
+        })
+        this.symbolListAll = this.symbolListAll.map((item) => {
+          return {
+            ...item,
+            isInHoliday: !!data[item?.symbol]
+          }
+        })
+        Object.keys(this.symbolListMap).forEach((key) => {
+          this.symbolListMap[key].isInHoliday = !!data[key]
+        })
+      }
     })
   }
 

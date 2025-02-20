@@ -37,6 +37,7 @@ export async function getHolidayDetail(params: API.IdParam) {
 export async function getSymbolIsHoliday(params: { symbols: string }) {
   return request<API.Response<any>>(`/api/trade-core/coreApi/holiday/symbolIsHoliday`, {
     method: 'GET',
+    skipErrorHandler: true,
     params
   })
 }

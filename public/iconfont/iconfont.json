@@ -6,6 +6,160 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "43402959",
+      "name": "edit",
+      "font_class": "edit",
+      "unicode": "e779",
+      "unicode_decimal": 59257
+    },
+    {
+      "icon_id": "43402958",
+      "name": "chat",
+      "font_class": "chat",
+      "unicode": "e77a",
+      "unicode_decimal": 59258
+    },
+    {
+      "icon_id": "43402957",
+      "name": "service",
+      "font_class": "service",
+      "unicode": "e77b",
+      "unicode_decimal": 59259
+    },
+    {
+      "icon_id": "43402956",
+      "name": "go",
+      "font_class": "go",
+      "unicode": "e77c",
+      "unicode_decimal": 59260
+    },
+    {
+      "icon_id": "43402955",
+      "name": "bank",
+      "font_class": "bank",
+      "unicode": "e77d",
+      "unicode_decimal": 59261
+    },
+    {
+      "icon_id": "43402954",
+      "name": "zhuanzhang",
+      "font_class": "zhuanzhang",
+      "unicode": "e77e",
+      "unicode_decimal": 59262
+    },
+    {
+      "icon_id": "43402953",
+      "name": "rujin",
+      "font_class": "rujin1",
+      "unicode": "e77f",
+      "unicode_decimal": 59263
+    },
+    {
+      "icon_id": "43402951",
+      "name": "msg",
+      "font_class": "msg",
+      "unicode": "e780",
+      "unicode_decimal": 59264
+    },
+    {
+      "icon_id": "43402952",
+      "name": "phone",
+      "font_class": "phone",
+      "unicode": "e781",
+      "unicode_decimal": 59265
+    },
+    {
+      "icon_id": "43402949",
+      "name": "email",
+      "font_class": "email",
+      "unicode": "e782",
+      "unicode_decimal": 59266
+    },
+    {
+      "icon_id": "43402948",
+      "name": "chujin",
+      "font_class": "chujin1",
+      "unicode": "e783",
+      "unicode_decimal": 59267
+    },
+    {
+      "icon_id": "43402950",
+      "name": "key",
+      "font_class": "key",
+      "unicode": "e784",
+      "unicode_decimal": 59268
+    },
+    {
+      "icon_id": "43402947",
+      "name": "addr",
+      "font_class": "addr",
+      "unicode": "e785",
+      "unicode_decimal": 59269
+    },
+    {
+      "icon_id": "43385531",
+      "name": "kefu",
+      "font_class": "a-bianzu20",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
+      "icon_id": "43377666",
+      "name": "fuzhi",
+      "font_class": "a-bianzu3beifen2",
+      "unicode": "e615",
+      "unicode_decimal": 58901
+    },
+    {
+      "icon_id": "43341087",
+      "name": "认证",
+      "font_class": "renzheng",
+      "unicode": "e778",
+      "unicode_decimal": 59256
+    },
+    {
+      "icon_id": "25537530",
+      "name": "垃圾桶",
+      "font_class": "lajitong",
+      "unicode": "e7ce",
+      "unicode_decimal": 59342
+    },
+    {
+      "icon_id": "43312586",
+      "name": "钱包地址",
+      "font_class": "qianbaodizhi",
+      "unicode": "e773",
+      "unicode_decimal": 59251
+    },
+    {
+      "icon_id": "43312588",
+      "name": "出金",
+      "font_class": "chujin",
+      "unicode": "e774",
+      "unicode_decimal": 59252
+    },
+    {
+      "icon_id": "43312587",
+      "name": "入金",
+      "font_class": "rujin",
+      "unicode": "e775",
+      "unicode_decimal": 59253
+    },
+    {
+      "icon_id": "43312585",
+      "name": "银行卡",
+      "font_class": "yinhangka",
+      "unicode": "e776",
+      "unicode_decimal": 59254
+    },
+    {
+      "icon_id": "43312584",
+      "name": "划转",
+      "font_class": "huazhuan2",
+      "unicode": "e777",
+      "unicode_decimal": 59255
+    },
+    {
       "icon_id": "1205683",
       "name": "idcard",
       "font_class": "idcard",

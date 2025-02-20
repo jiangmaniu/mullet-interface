@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4571567 */
-  src: url('iconfont.woff2?t=1736589566440') format('woff2'),
-       url('iconfont.woff?t=1736589566440') format('woff'),
-       url('iconfont.ttf?t=1736589566440') format('truetype');
+  src: url('iconfont.woff2?t=1740038043913') format('woff2'),
+       url('iconfont.woff?t=1740038043913') format('woff'),
+       url('iconfont.ttf?t=1740038043913') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,94 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-edit:before {
+  content: "\e779";
+}
+
+.icon-chat:before {
+  content: "\e77a";
+}
+
+.icon-service:before {
+  content: "\e77b";
+}
+
+.icon-go:before {
+  content: "\e77c";
+}
+
+.icon-bank:before {
+  content: "\e77d";
+}
+
+.icon-zhuanzhang:before {
+  content: "\e77e";
+}
+
+.icon-rujin1:before {
+  content: "\e77f";
+}
+
+.icon-msg:before {
+  content: "\e780";
+}
+
+.icon-phone:before {
+  content: "\e781";
+}
+
+.icon-email:before {
+  content: "\e782";
+}
+
+.icon-chujin1:before {
+  content: "\e783";
+}
+
+.icon-key:before {
+  content: "\e784";
+}
+
+.icon-addr:before {
+  content: "\e785";
+}
+
+.icon-a-bianzu20:before {
+  content: "\e616";
+}
+
+.icon-a-bianzu3beifen2:before {
+  content: "\e615";
+}
+
+.icon-renzheng:before {
+  content: "\e778";
+}
+
+.icon-lajitong:before {
+  content: "\e7ce";
+}
+
+.icon-qianbaodizhi:before {
+  content: "\e773";
+}
+
+.icon-chujin:before {
+  content: "\e774";
+}
+
+.icon-rujin:before {
+  content: "\e775";
+}
+
+.icon-yinhangka:before {
+  content: "\e776";
+}
+
+.icon-huazhuan2:before {
+  content: "\e777";
 }
 
 .icon-idcard:before {
