@@ -167,6 +167,9 @@ class KlineStore {
     //     quoteUtil.timeToBin(0)
     // )
     try {
+      if (!to) {
+        return this.bars
+      }
       const res = await request('/api/trade-market/marketApi/public/symbol/klineList', {
         params: {
           symbol: symbolInfo.dataSourceSymbol, // 数据源品种

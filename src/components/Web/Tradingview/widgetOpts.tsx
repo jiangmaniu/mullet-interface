@@ -110,7 +110,7 @@ export default function getWidgetOpts(
     // 您的后端的一个版本。支持的值为： '1.0' | “1.1”。
     // charts_storage_api_version: '1.1',
     // 设置图表的初始时间范围。时间范围是加载并显示在屏幕上的K线范围。有效的时间范围是一个数字加一个字母，D为数天，M为数月
-    timeframe: '1D', // 重要：置图表展示的时间范围数据 -- 避免多次请求历史数据，默认展示1天数据 将会触发getBars请求数据的范围 frm to
+    // timeframe: '1D', // 图表展示的时间范围数据 -- 避免多次请求历史数据，默认展示1天数据 将会触发getBars请求数据的范围 frm to
     timezone: 'exchange', // 使用交易所的时区 即resolveSymbol那里currentSymbolInfo设置的品种的时区，这样更合理，因为不同品种的时区不同
     library_path: '/tradingview/charting_library/', // 核心库位置
     // @ts-ignore
