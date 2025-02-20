@@ -28,7 +28,10 @@ function TransferAmount({ form, currentUser, methodInfo }: IProps) {
   const availableMoney = Number(toFixed(money - occupyMargin))
 
   const handleSetAll = () => {
-    const amount = formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL, raw: true })
+    const amount = formatNum(availableMoney, {
+      precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL,
+      raw: true
+    })
 
     form.setFieldValue('amount', amount)
   }

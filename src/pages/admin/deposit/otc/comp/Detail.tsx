@@ -27,7 +27,7 @@ const Notice = observer(({ methodId }: { methodId: string }) => {
   return (
     <div className="text-secondary text-xs w-[276px]">
       {methodInfo?.notice ? (
-        <p dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
+        <p className="leading-7" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
       ) : (
         <div className="text-xs text-gray-400">
           <FormattedMessage id="mt.zanwuneirong" />

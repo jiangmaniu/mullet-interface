@@ -747,5 +747,14 @@ export default {
   'mt.zhifubaosaomazhifu': 'Thanh toán bằng QR code, vui lòng đảm bảo thông tin người nhận phù hợp',
   'mt.beizhuzijiderujinzhanghu': 'Ghi chú tài khoản nạp tiền của bạn, lưu ý không ghi bất kỳ thông tin vi phạm nào',
   'mt.tianjiayinhangka': 'Thêm thẻ ngân hàng',
-  'mt.yinhangmingcheng': 'Tên ngân hàng'
+  'mt.yinhangmingcheng': 'Tên ngân hàng',
+  'mt.querentixian': 'Xác nhận rút tiền',
+  'mt.shoukuanfangshi': 'Phương thức thanh toán',
+  'mt.anquanrenzheng': 'Xác minh an toàn',
+  'mt.dingdanshixiao': 'Đơn hàng hết hạn, vui lòng tạo lại',
+  'mt.chakanduanxin': 'Xem tin nhắn, nhận mã xác thực',
+  'mt.yanzhengmajiangfasongzhi': 'Mã xác thực sẽ được gửi đến {value}, vui lòng kiểm tra {type}.',
+  'mt.shoujiduanxin': 'Tin nhắn điện thoại',
+  'mt.huoquyanzhengma': 'Nhận mã xác thực',
+  'mt.qingshuruzhanghaomimayanzhengma': 'Vui lòng nhập mật khẩu tài khoản và mã xác thực'
 }

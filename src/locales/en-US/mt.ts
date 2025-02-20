@@ -752,5 +752,14 @@ export default {
   'mt.zhifubaosaomazhifu': 'Alipay QR code payment, please ensure the payment merchant information is consistent',
   'mt.beizhuzijiderujinzhanghu': 'Note your deposit account, please do not note any违规信息',
   'mt.tianjiayinhangka': 'Add Bank Card',
-  'mt.pingtaihuilv': 'Platform Exchange Rate'
+  'mt.pingtaihuilv': 'Platform Exchange Rate',
+  'mt.querentixian': 'Confirm Withdrawal',
+  'mt.shoukuanfangshi': 'Payment Method',
+  'mt.anquanrenzheng': 'Security Verification',
+  'mt.dingdanshixiao': 'Order expired, please create again',
+  'mt.chakanduanxin': 'View SMS, get verification code',
+  'mt.yanzhengmajiangfasongzhi': 'Verification code will be sent to {value}, please check your {type}.',
+  'mt.shoujiduanxin': 'SMS',
+  'mt.huoquyanzhengma': 'Get Verification Code',
+  'mt.qingshuruzhanghaomimayanzhengma': 'Please enter your account password and verification code'
 }

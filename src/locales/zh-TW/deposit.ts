@@ -1,5 +1,7 @@
 export default {
-  'mt.wanshanzhanghuziliao': '您好!請完善賬戶資料，以便進行首次入金',
+  'mt.wanshanzhanghuziliao': '您好!請完善賬戶資料，以便進行{value}',
+  'mt.shoucirujin': '首次入金',
+  'mt.shoucichujin': '首次出金',
   'mt.wanshangerenziliao': '完善個人資料',
   'mt.rujinfangshi': '入金方式',
   'mt.renzhenghoukaiqi': '認證後開啟使用',

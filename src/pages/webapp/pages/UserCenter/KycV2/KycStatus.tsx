@@ -105,7 +105,7 @@ const KycStatus = () => {
         }}
       >
         <span className=" text-sm font-medium ">{statusLabels[status].operation}</span>
-        <Iconfont name="jinru" size={20} />
+        <Iconfont name="huazhuanjilu-zhixiang" size={20} />
       </div>
     </View>
   )

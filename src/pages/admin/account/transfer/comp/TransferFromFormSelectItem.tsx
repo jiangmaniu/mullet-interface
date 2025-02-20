@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
+import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { formatNum, toFixed } from '@/utils'
 
 type IProps = {
@@ -56,7 +57,7 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
             <SelectSuffixIcon opacity={0.5} />
             <div className="bg-gray-250 h-3 w-[1px] mr-3"></div>
             <div className="text-primary text-sm py-3 !font-dingpro-medium">
-              {formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal })} USD
+              {formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} USD
             </div>
           </>
         ),

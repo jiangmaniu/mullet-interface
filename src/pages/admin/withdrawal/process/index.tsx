@@ -23,7 +23,7 @@ const Notice = observer(({ methodId }: { methodId: string }) => {
   return (
     <div className="text-secondary text-xs">
       {methodInfo?.notice ? (
-        <p dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
+        <p className="leading-7" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
       ) : (
         <div className="text-xs text-gray-400">
           <FormattedMessage id="mt.zanwuneirong" />
@@ -198,7 +198,7 @@ function WithdrawalProcess() {
         <div className={cn(step === 2 ? 'block' : 'hidden')}>
           <Step3 handleSubmit={handleSubmit2} />
         </div>
-        <div className={cn(' w-[340px] md:w-[536px] max-w-full', step === 1 || step === 2 ? 'block' : 'hidden')}>
+        <div className={cn('w-[340px] md:w-[536px] max-w-full', step === 1 || step === 2 ? 'block' : 'hidden')}>
           <span className="text-primary text-sm font-semibold">
             <FormattedMessage id="mt.chujinxuzhi" />
           </span>

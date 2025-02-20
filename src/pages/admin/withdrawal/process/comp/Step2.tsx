@@ -10,6 +10,7 @@ import { CardContainer } from '@/pages/admin/copyTrading/comp/CardContainer'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
+import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { sendCustomPhoneCode } from '@/services/api/user'
 
 export const Step2 = ({
@@ -78,29 +79,31 @@ export const Step2 = ({
         : []),
       {
         label: getIntl().formatMessage({ id: 'mt.tixianjine' }),
-        value: `${formatNum(amount, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
+        value: `${formatNum(amount, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${currency}`
       },
       {
         label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
-        value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
+        value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${currency}`
       },
       ...(type === 'CHAIN'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.shijidaozhang' }),
               value: `${formatNum(amount - handlingFee, {
-                precision: fromAccountInfo?.currencyDecimal
+                precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
               })} ${currency}`
             }
           ]
         : [
             {
               label: getIntl().formatMessage({ id: 'mt.pingtaihuilv' }),
-              value: `${formatNum(exchangeRate, { precision: fromAccountInfo?.currencyDecimal })}`
+              value: `${formatNum(exchangeRate, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })}`
             },
             {
               label: getIntl().formatMessage({ id: 'mt.daozhangusd' }),
-              value: `${formatNum(amount - handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
+              value: `${formatNum(amount - handlingFee, {
+                precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
+              })} ${currency}`
             },
             {
               label: getIntl().formatMessage({ id: 'mt.daozhanghuansuan' }, { value: symbol }),

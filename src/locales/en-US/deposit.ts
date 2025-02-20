@@ -1,5 +1,7 @@
 export default {
-  'mt.wanshanzhanghuziliao': 'Hello! Please complete your account information to proceed with your first deposit.',
+  'mt.wanshanzhanghuziliao': 'Hello! Please complete your account information {value}',
+  'mt.shoucirujin': 'to proceed with your first deposit.',
+  'mt.shoucichujin': 'to proceed with your first withdrawal.',
   'mt.wanshangerenziliao': 'Complete personal information',
   'mt.rujinfangshi': 'Deposit method',
   'mt.renzhenghoukaiqi': 'Open after certification',

@@ -6,15 +6,14 @@ import { useState } from 'react'
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import Iconfont from '@/components/Base/Iconfont'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
-import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
-import { formatNum, hiddenCenterPartStr, toFixed } from '@/utils'
+import { formatNum, toFixed } from '@/utils'
 
 type IProps = {
   form: FormInstance
 }
 
 /**转入表单项 */
-export default function TransferFormSelectItem({ form }: IProps) {
+export default function TransferToFormSelectItem({ form }: IProps) {
   const [open, setOpen] = useState(false)
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')
@@ -23,13 +22,13 @@ export default function TransferFormSelectItem({ form }: IProps) {
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
 
   // const fromAccountId = Form.useWatch('fromAccountId', form) // 转出
-  const fromAccountId = Form.useWatch('fromAccountId', form) // 转入
+  const toAccountId = Form.useWatch('toAccountId', form) // 转入
   // const fromAccountInfo = accountList.find((item) => item.id === fromAccountId) // 转出账号信息
-  const fromAccountInfo = accountList.find((item) => item.id === fromAccountId) // 转入账号信息
+  const toAccountInfo = accountList.find((item) => item.id === toAccountId) // 转入账号信息
 
   // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
-  const occupyMargin = Number(toFixed(Number(fromAccountInfo?.margin || 0) + Number(fromAccountInfo?.isolatedMargin || 0)))
-  const money = fromAccountInfo?.money || 0
+  const occupyMargin = Number(toFixed(Number(toAccountInfo?.margin || 0) + Number(toAccountInfo?.isolatedMargin || 0)))
+  const money = toAccountInfo?.money || 0
   // 可用余额
   const availableMoney = Number(toFixed(money - occupyMargin))
 
@@ -38,11 +37,11 @@ export default function TransferFormSelectItem({ form }: IProps) {
       <ProFormSelect
         label={
           <span className="text-sm text-primary font-medium">
-            <FormattedMessage id="mt.zhuanchuzhanghu" />
+            <FormattedMessage id="mt.zhuanruzhanghao" />
           </span>
         }
-        name="fromAccountId"
-        placeholder={intl.formatMessage({ id: 'mt.xuanzezhuanchuzhanghu' })}
+        name="toAccountId"
+        placeholder={intl.formatMessage({ id: 'mt.xuanzezhuanruzhanghao' })}
         allowClear={false}
         fieldProps={{
           open,
@@ -52,7 +51,7 @@ export default function TransferFormSelectItem({ form }: IProps) {
               <SelectSuffixIcon opacity={0.5} />
               <div className="bg-gray-250 h-3 w-[1px] mr-3"></div>
               <div className="text-primary text-sm py-3 !font-dingpro-medium">
-                {formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} USD
+                {formatNum(availableMoney, { precision: toAccountInfo?.currencyDecimal })} USD
               </div>
             </>
           ),
@@ -67,7 +66,7 @@ export default function TransferFormSelectItem({ form }: IProps) {
                   setOpen(false)
                 }}
                 className={classNames('cursor-pointer rounded-lg border border-gray-250 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
-                  'bg-[#f5f5f5]': item.id === fromAccountInfo
+                  'bg-[#f5f5f5]': item.id === toAccountId
                 })}
               >
                 <div className="flex w-full py-2 ml-[10px]">{item.label}</div>
@@ -81,9 +80,15 @@ export default function TransferFormSelectItem({ form }: IProps) {
           {
             required: true,
             validator(rule, value, callback) {
-              if (!fromAccountInfo) {
+              // setTimeout(() => {
+              //   form.validateFields(['fromAccountId'])
+              // }, 300)
+              if (!toAccountId) {
                 return Promise.reject(intl.formatMessage({ id: 'mt.xuanzezhuanruzhanghao' }))
               }
+              // if (toAccountId === fromAccountId) {
+              //   return Promise.reject(intl.formatMessage({ id: 'mt.zhuanruzhanchuzhanghaobunengxiangtong' }))
+              // }
               return Promise.resolve()
             }
           }
@@ -101,7 +106,7 @@ export default function TransferFormSelectItem({ form }: IProps) {
                 </div>
               )}
               <div className="flex-1 text-sm font-bold text-primary truncate">
-                {item.name} / {hiddenCenterPartStr(item?.id, 4)}
+                {item.name} / {item?.id}
               </div>
             </div>
           )

@@ -130,8 +130,8 @@ export const getBrowerLng = () => {
  * 多语言 push跳转方法
  * @param path 跳转路径
  */
-export const push = (path: string) => {
-  history.push(formatPathname(path))
+export const push = (path: string, state?: any) => {
+  history.push(formatPathname(path), state)
 }
 
 /**

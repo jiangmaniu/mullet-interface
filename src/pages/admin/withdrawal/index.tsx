@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
+import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
@@ -57,7 +57,9 @@ function Withdrawal() {
           <div className=" border border-gray-150 rounded-lg px-5 py-4 flex justify-between">
             <div className="flex flex-row items-center gap-[18px]">
               <Iconfont name="renzheng" width={40} height={40} />
-              <div className=" text-base font-semibold text-gray-900">{intl.formatMessage({ id: 'mt.wanshanzhanghuziliao' })}</div>
+              <div className=" text-base font-semibold text-gray-900">
+                {intl.formatMessage({ id: 'mt.wanshanzhanghuziliao' }, { value: getIntl().formatMessage({ id: 'mt.shoucichujin' }) })}
+              </div>
             </div>
 
             <Button

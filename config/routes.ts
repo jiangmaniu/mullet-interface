@@ -411,6 +411,31 @@ export default [
         path: '/:lng/app/user-center/kyc-webview-page',
         component: './webapp/pages/UserCenter/KycV1.5/KycWebviewPage'
       },
+      // 入金
+      {
+        path: '/:lng/app/deposit',
+        component: './webapp/pages/Deposit.webview'
+      },
+      // 出金
+      {
+        path: '/:lng/app/withdraw',
+        component: './webapp/pages/Withdraw.webview'
+      },
+      // 出金過程
+      {
+        path: '/:lng/app/withdraw/process/:method',
+        component: './webapp/pages/Withdraw.webview/Process'
+      },
+      // 出金預覽
+      {
+        path: '/:lng/app/withdraw/preview',
+        component: './webapp/pages/Withdraw.webview/Preview'
+      },
+      // 出金等待
+      {
+        path: '/:lng/app/withdraw/wait',
+        component: './webapp/pages/Withdraw.webview/Wait'
+      },
       {
         path: '/:lng/app/test',
         component: './webapp/pages/Test'

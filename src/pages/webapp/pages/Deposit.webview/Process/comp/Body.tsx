@@ -12,11 +12,11 @@ import { generateDepositOrder } from '@/services/api/wallet'
 
 import { push } from '@/utils/navigator'
 import { observer } from 'mobx-react'
-import ConfirmModal from './comp/ConfirmModal'
-import TransferCrypto from './comp/TranserCrypto'
-import TransferMethodSelectItem from './comp/TransferMethodSelectItem'
-import TransferOTC from './comp/TransferOTC'
-import TransferToFormSelectItem from './comp/TransferToFormSelectItem'
+import ConfirmModal from './ConfirmModal'
+import TransferCrypto from './TranserCrypto'
+import TransferMethodSelectItem from './TransferMethodSelectItem'
+import TransferOTC from './TransferOTC'
+import TransferToFormSelectItem from './TransferToFormSelectItem'
 
 function DepositProcess() {
   const [form] = Form.useForm()

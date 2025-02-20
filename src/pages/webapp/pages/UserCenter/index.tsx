@@ -175,6 +175,29 @@ function UserCenter() {
     }, [])
   )
 
+  const rukou = [
+    {
+      icon: 'rujin',
+      title: t('mt.rujin'),
+      href: '/app/deposit'
+    },
+    {
+      icon: 'chujin',
+      title: t('mt.chujin'),
+      href: '/app/withdraw'
+    },
+    {
+      icon: 'zijinjilu',
+      title: t('mt.zijinjilu'),
+      href: '/app/user-center/zijinjilu'
+    },
+    {
+      icon: 'kefu',
+      title: t('mt.kefu'),
+      href: '/app/user-center/kefu'
+    }
+  ]
+
   return (
     <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       <Header
@@ -202,6 +225,17 @@ function UserCenter() {
         <Account />
 
         <KycStatus />
+
+        <View className={cn('flex flex-row justify-between w-full px-[22px] mt-2.5 mb-7 ')}>
+          {rukou.map((item) => {
+            return (
+              <View className={cn('flex flex-col items-center gap-2')} key={item.title} onClick={() => navigateTo(item.href)}>
+                <Iconfont name={item.icon} size={28} />
+                <Text size="sm">{item.title}</Text>
+              </View>
+            )
+          })}
+        </View>
 
         {renderList(preferenceSetting, t('pages.userCenter.Trading Preferences'))}
         <View style={{ height: 8 }} />

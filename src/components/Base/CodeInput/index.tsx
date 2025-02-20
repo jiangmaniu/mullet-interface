@@ -7,14 +7,16 @@ type IProps = {
   form?: FormInstance
   name?: NamePath
   disabled?: boolean
+  width?: number
+  height?: number
 }
 
-export default function CodeInput({ onChange, form, name = 'validateCode', disabled = false }: IProps) {
+export default function CodeInput({ onChange, form, name = 'validateCode', disabled = false, width = 38, height = 38 }: IProps) {
   const className = useEmotionCss(({ token }) => {
     return {
       '.ant-otp-input': {
-        width: 38,
-        height: 38,
+        width,
+        height,
         fontSize: '22px !important'
       },
       '.ant-input-outlined:hover': {

@@ -744,5 +744,18 @@ export default {
   'mt.yinhangmingcheng': '銀行名稱',
   'mt.qingshuruyinhangmincheng': '請輸入/選擇銀行名稱',
   'mt.qingshuruyinhangmingcheng': '請輸入/選擇銀行賬戶',
-  'mt.pingtaihuilv': '平台匯率'
+  'mt.pingtaihuilv': '平台匯率',
+  'mt.zijinjilu': '資金記錄',
+  'mt.kefu': '客服',
+  'mt.yinhangkadizhi': '銀行卡地址',
+  'mt.qianbaodizhi': '錢包地址',
+  'mt.querentixian': '確認提現',
+  'mt.shoukuanfangshi': '收款方式',
+  'mt.anquanrenzheng': '安全認證',
+  'mt.dingdanshixiao': '訂單失效，請重新創建',
+  'mt.chakanduanxin': '查看短信,獲取驗證碼',
+  'mt.yanzhengmajiangfasongzhi': '驗證碼將發送至{value}，請查看您的{type}。',
+  'mt.shoujiduanxin': '手機短信',
+  'mt.huoquyanzhengma': '獲取驗證碼',
+  'mt.qingshuruzhanghaomimayanzhengma': '請輸入賬號密碼和驗證碼'
 }
