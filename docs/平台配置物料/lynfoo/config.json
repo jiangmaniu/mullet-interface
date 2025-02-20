@@ -9,6 +9,5 @@
   "imgDomain": "https://file.lynfoocn.com/trade/",
   "REGISTER_MODULE": "1",
   "SKIP_KYC_STEP_ONE": "1",
-  "ENABLE_CHINA_TIMEZONE": true,
   "ENABLE_QUOTE_CATEGORY_ALL_TAB": false
 }
