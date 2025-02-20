@@ -725,5 +725,32 @@ export default {
   'mt.kycrenzheng': 'Kyc Verification',
   'mt.wanchengchujirenzheng': 'Complete Base Verification',
   'mt.kycjichurenzheng': 'Kyc Basic Verification',
-  'mt.kycgaojirenzheng': 'Kyc Advanced Verification'
+  'mt.kycgaojirenzheng': 'Kyc Advanced Verification',
+  'mt.dengdairujin': 'Waiting for Deposit',
+  'mt.rujinjine': 'Deposit Amount',
+  'mt.cankaohuilv': 'Reference Exchange Rate',
+  'mt.rujinzhanghu': 'Deposit Account',
+  'mt.fukuanxinxi': 'Payment Information',
+  'mt.shoukuanxingming': 'Payee Name',
+  'mt.shoukuanyinghang': 'Payee Bank',
+  'mt.daizhifujine': 'Amount to be Paid',
+  'mt.youyuhuilvbodong':
+    'Due to exchange rate fluctuations, please pay as soon as possible. The actual payment amount is based on the submitted order.',
+  'mt.quxiaodingdan': 'Cancel Order',
+  'mt.yifukuanshagnchuanpingzheng': 'Payment Successful, Please Upload Payment Proof',
+  'mt.qingzaishijianneiwanchengdingdanzhifu':
+    'Please complete the order payment within {time}, otherwise it will be automatically canceled.',
+  'mt.shangchuanpinzheng': 'Upload Proof',
+  'mt.qingshangchuangpingzheng': 'Please upload proof',
+  'mt.nindezijinyujiliangxiaoshineidaoda': 'Your funds are expected to arrive within two hours',
+  'mt.nindejiaoyizhengzaichulizhong': 'Your funds are being processed',
+  'mt.rujinshenqingchenggong': 'Deposit application successful, customer service is reviewing...',
+  'mt.chakandingdan': 'View Order',
+  'mt.rujinshiyudaowenti': 'Encountered an issue during deposit?',
+  'mt.shoukuanerweima': 'Payment QR Code',
+  'mt.weixinsaomazhifu': 'WeChat QR code payment, please ensure the payment merchant information is consistent',
+  'mt.zhifubaosaomazhifu': 'Alipay QR code payment, please ensure the payment merchant information is consistent',
+  'mt.beizhuzijiderujinzhanghu': 'Note your deposit account, please do not note any违规信息',
+  'mt.tianjiayinhangka': 'Add Bank Card',
+  'mt.pingtaihuilv': 'Platform Exchange Rate'
 }

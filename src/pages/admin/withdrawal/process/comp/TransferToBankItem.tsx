@@ -1,11 +1,9 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { Form, FormInstance } from 'antd'
-import { useState } from 'react'
+import { AutoComplete, FormInstance } from 'antd'
+import { useLayoutEffect, useState } from 'react'
 
-import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
-import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
-import { hiddenCenterPartStr } from '@/utils'
-import { push } from '@/utils/navigator'
+import { getWithdrawalBankList } from '@/services/api/wallet'
+import { ProFormItem } from '@ant-design/pro-components'
 
 type IProps = {
   form: FormInstance
@@ -18,23 +16,41 @@ export default function TransferToBankItem({ form }: IProps) {
   const { initialState } = useModel('@@initialState')
 
   const currentUser = initialState?.currentUser
-  const bankList = [
-    {
-      name: 'masterCard',
-      id: '1234567890'
-    },
-    {
-      name: 'ICBC',
-      id: '1234567891'
-    }
-  ]
 
-  const toAccountId = Form.useWatch('toAccountId', form) // 转出
+  const [bankList, setBankList] = useState<{ value: string; label: string }[]>([])
+  const [cardList, setCardList] = useState<{ value: string; label: string }[]>([])
+
+  useLayoutEffect(() => {
+    getWithdrawalBankList({
+      current: 1,
+      size: 1000
+    }).then((res) => {
+      if (res.success) {
+        const list = res.data?.records || []
+
+        const bankNames = Array.from(new Set(list.map((item) => item.bankName || '')))
+        setBankList(
+          bankNames.map((name) => ({
+            value: name,
+            label: name
+          }))
+        )
+
+        const bankCards = Array.from(new Set(list.map((item) => item.bankCard || '')))
+        setCardList(
+          bankCards.map((card) => ({
+            value: card,
+            label: card
+          }))
+        )
+      }
+    })
+  }, [])
 
   return (
-    <div className="relative">
-      <ProFormSelect
-        name="toAccountId"
+    <>
+      {/* <ProFormSelect
+        name="bankName"
         label={
           <span className="text-sm text-primary font-medium">
             <FormattedMessage id="mt.yinghangzhanghu" />
@@ -48,14 +64,18 @@ export default function TransferToBankItem({ form }: IProps) {
           suffixIcon: <></>,
           showSearch: false,
           listHeight: 300,
-          optionLabelProp: 'label'
+          optionLabelProp: 'label',
+          onChange(value, option) {
+            console.log('value', value)
+            console.log('option', option)
+          }
         }}
         rules={[
           {
             required: true,
             validator(rule, value, callback) {
-              if (!toAccountId) {
-                return Promise.reject(intl.formatMessage({ id: 'mt.xuanzezhuanruzhanghao' }))
+              if (!value) {
+                return Promise.reject(intl.formatMessage({ id: 'mt.xuanzeyinhangzhanghu' }))
               }
               return Promise.resolve()
             }
@@ -72,9 +92,32 @@ export default function TransferToBankItem({ form }: IProps) {
             </div>
           )
         }))}
-      />
+      /> */}
+      <ProFormItem name="bankName" label={<FormattedMessage id="mt.yinhangmingcheng" />}>
+        <AutoComplete
+          size="large"
+          className="fix-select-search-input"
+          options={bankList}
+          placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmincheng' })}
+          onChange={(value) => {
+            console.log('value', value)
+          }}
+        />
+      </ProFormItem>
 
-      <div className="absolute top-[34px] right-2 flex flex-row items-center gap-2 z-10">
+      <ProFormItem name="bankCard" label={<FormattedMessage id="mt.yinghangzhanghu" />}>
+        <AutoComplete
+          size="large"
+          className="fix-select-search-input"
+          options={cardList}
+          placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmingcheng' })}
+          onChange={(value) => {
+            console.log('value', value)
+          }}
+        />
+      </ProFormItem>
+
+      {/* <div className="absolute top-[34px] right-2 flex flex-row items-center gap-2 z-10">
         <SelectSuffixIcon opacity={0.5} />
         <div className="bg-gray-250 h-3 w-[1px] "></div>
         <span
@@ -86,7 +129,7 @@ export default function TransferToBankItem({ form }: IProps) {
         >
           <FormattedMessage id="mt.yinghangkaguanli" />
         </span>
-      </div>
-    </div>
+      </div> */}
+    </>
   )
 }

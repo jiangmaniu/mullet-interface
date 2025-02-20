@@ -1,34 +1,48 @@
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
 import classNames from 'classnames'
-import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
-import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { observer } from 'mobx-react'
 
 type IProps = {
   form: FormInstance
-  type?: 'bank' | 'crypto'
-  tips?: string
   disabled?: boolean
+  methodInfo?: Wallet.fundsMethodPageListItem
 }
 
 /**转入表单项 */
-function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IProps) {
+function TransferMethodSelectItem({ form, disabled, methodInfo }: IProps) {
   const [open, setOpen] = useState(false)
   const [openCurrency, setOpenCurrency] = useState(false)
   const intl = useIntl()
+
+  const type = methodInfo?.paymentType
+  const tips = methodInfo?.tips
+
   const currencyList = [
+    {
+      value: 'CNY',
+      title: '🇨🇳 CNY'
+    },
+    {
+      value: 'RMB',
+      title: '🇨🇳 RMB'
+    },
     {
       value: 'USD',
       title: '🇺🇸 USD'
     },
     {
-      value: 'CNY',
-      title: '🇨🇳 CNY'
+      value: 'HKD',
+      title: '🇭🇰 HKD'
+    },
+    {
+      value: 'EUR',
+      title: '🇪🇺 EUR'
     }
   ]
 
@@ -37,24 +51,15 @@ function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IPr
   const currency = Form.useWatch('currency', form) // 货币类型
 
   const methods = stores.wallet.withdrawalMethods
-  useLayoutEffect(() => {
-    if (methods.length === 0) {
-      const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
-      stores.wallet.getWithdrawalMethods({ language })
-      return
-    }
-  }, [methods, intl])
-
-  const methodInfo = useMemo(() => {
-    return methods.find((item) => item.channelId === methodId)
-  }, [methodId, methods])
 
   useEffect(() => {
     if (form && methodInfo) {
       // form.setFieldValue('address', methodInfo?.address)
       // 20241202：默认选择 USD, 目前只有 USD 币种；
-      form.setFieldValue('type', methodInfo?.type)
+      form.setFieldValue('type', methodInfo?.paymentType)
       form.setFieldValue('currency', methodInfo?.baseCurrency)
+      form.setFieldValue('symbol', methodInfo?.symbol)
+      form.setFieldValue('exchangeRate', methodInfo?.exchangeRate)
 
       // 设置链信息
       // if (methodInfo.type === 'crypto') {
@@ -131,7 +136,7 @@ function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IPr
               label: (
                 <div className="flex justify-between w-full gap-2">
                   <img src={`${getEnv().imgDomain}${item.channelIcon}`} alt="" className="w-5 h-5 rounded-full bg-gray" />
-                  <div className="flex-1 text-sm font-bold text-primary truncate">
+                  <div className="flex-1 text-sm text-primary truncate">
                     {item.channelRevealName}&nbsp;({item.channelNo})
                   </div>
                 </div>
@@ -139,18 +144,25 @@ function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IPr
             }))}
           />
         </div>
-        {type === 'bank' && (
+        {type === 'OTC' && (
+          <div className="text-sm text-primary font-medium w-[116px] h-[42px] rounded-lg border-gray-250 border flex items-center justify-center">
+            {currencyList.find((item) => item.value === methodInfo?.symbol)?.title}
+          </div>
+        )}
+
+        {/* {type === 'OTC' && (
           <ProFormSelect
             name="currency"
             placeholder={intl.formatMessage({ id: 'mt.huobileixing' })}
             allowClear={false}
+            disabled={true}
             fieldProps={{
               open: openCurrency,
               style: {
                 minWidth: 110
               },
               onDropdownVisibleChange: (visible) => setOpenCurrency(visible),
-              suffixIcon: <SelectSuffixIcon opacity={0.5} />,
+              // suffixIcon: <SelectSuffixIcon opacity={0.5} />,
               showSearch: false,
               listHeight: 300,
 
@@ -178,7 +190,7 @@ function TransferMethodSelectItem({ form, type = 'crypto', tips, disabled }: IPr
               )
             }))}
           />
-        )}
+        )} */}
       </div>
       {tips && (
         <div className="text-xs bg-gray-120 rounded-lg py-2 px-2.5 mt-2.5">

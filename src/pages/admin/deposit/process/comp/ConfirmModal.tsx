@@ -19,9 +19,9 @@ function ConfirmModal(props: IProps, ref: any) {
   return (
     <Modal
       width={430}
-      afterOpenChange={(open) => {
-        props.handleReset()
-      }}
+      // afterOpenChange={(open) => {
+      //   !open && props.handleReset()
+      // }}
       title={<FormattedMessage id="mt.dingdanyichaoshi" />}
       footer={null}
       ref={modalRef}

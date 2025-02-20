@@ -4,5 +4,8 @@ export default {
   'menu.withdrawal': 'Rút tiền',
   'menu.depositAndwithdrawalRecord': 'Lịch sử Nạp và Rút tiền',
   'menu.copyTrading': 'Sao chép giao dịch',
-  'menu.setting': 'Cài đặt'
+  'menu.setting': 'Cài đặt',
+  'menu.depositWaiting': 'Nạp tiền đang chờ',
+  'menu.withdrawalWaiting': 'Rút tiền đang chờ',
+  'menu.withdrawalProcess': 'Quy trình rút tiền'
 }

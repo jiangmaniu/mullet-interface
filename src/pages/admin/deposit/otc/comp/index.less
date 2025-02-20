@@ -1,0 +1,25 @@
+.deposit-detail-container {
+  position: relative;
+}
+
+.deposit-detail-container::after {
+  position: absolute;
+  right: -30px;
+  display: block;
+  width: 1px;
+  height: 100%;
+  background-color: #d8d8d8;
+  content: '';
+}
+
+.img-preview:hover {
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.guanbi {
+  display: none;
+}
+
+.img-preview:hover .guanbi {
+  display: block;
+}

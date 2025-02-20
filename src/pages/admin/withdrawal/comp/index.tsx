@@ -27,7 +27,7 @@ export default function WithdrawalMethod({
     <div
       className={cn(
         ' border border-gray-250 rounded-lg flex flex-col',
-        status !== 'locked' ? 'cursor-pointer hover:shadow-md' : 'filter grayscale-50 opacity-50'
+        status !== 'locked' ? 'cursor-pointer hover:shadow-[0px_0px_12px_0px_rgba(0,0,0,0.1)]' : 'filter grayscale-50 opacity-50'
       )}
       onClick={() => {
         if (status === 'unlocked') {
@@ -35,7 +35,7 @@ export default function WithdrawalMethod({
         }
       }}
     >
-      <div className="pl-[14px] pr-[18px] py-2 flex justify-between">
+      <div className="pl-[14px] pr-[18px] py-2.5 flex justify-between">
         <div className="flex flex-row items-center gap-2">
           {/* <Iconfont name={item.icon} width={24} height={24} color="black" /> */}
           <img src={`${getEnv().imgDomain}${item.channelIcon}`} alt={item.channelRevealName} width={24} height={24} />

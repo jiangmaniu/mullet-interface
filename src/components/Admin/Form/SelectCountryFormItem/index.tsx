@@ -4,7 +4,7 @@ import { FormInstance } from 'antd'
 import AreaCodeSelect, { AreaCodeItem } from '@/components/Form/AreaCodeSelect'
 
 import { useLang } from '@/context/languageProvider'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import ProFormText from '../ProFormText'
 
 type IProps = {
@@ -37,14 +37,6 @@ export default function SelectCountryFormItem({ form, height = 49, placeholder, 
     })
 
   const [initialValue, setInitialValue] = useState('')
-
-  useEffect(() => {
-    const item = options?.find((item) => item.areaCode === _initialValue)
-    form.setFieldValue('countryName', item?.label)
-    form.setFieldValue('country', item?.abbr)
-
-    setInitialValue(item?.label || '')
-  }, [_initialValue, options])
 
   return (
     <>

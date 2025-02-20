@@ -11,20 +11,21 @@ import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
 import { sendCustomPhoneCode } from '@/services/api/user'
-import { transferCurr } from '..'
 
 export const Step2 = ({
   form,
   fromAccountInfo,
   loading,
   setStep,
-  handleSubmit
+  handleSubmit,
+  methodInfo
 }: {
   form: FormInstance<any>
   fromAccountInfo?: User.AccountItem
   loading?: boolean
   setStep: (step: number) => void
   handleSubmit: () => void
+  methodInfo?: Wallet.fundsMethodPageListItem
 }) => {
   const currency = Form.useWatch('currency', form)
   const chain = Form.useWatch('chain', form)
@@ -32,8 +33,14 @@ export const Step2 = ({
   const toAccountId = Form.useWatch('toAccountId', form)
   const name = Form.useWatch('name', form)
   const bankName = Form.useWatch('bankName', form)
+  const bankCard = Form.useWatch('bankCard', form)
   const amount = Form.useWatch('amount', form)
   const handlingFee = Form.useWatch('handlingFee', form)
+  const symbol = Form.useWatch('symbol', form)
+  const actualAmount = Form.useWatch('actualAmount', form)
+  const exchangeRate = Form.useWatch('exchangeRate', form)
+
+  const [disabled, setDisabled] = useState(true)
 
   const options = useMemo(() => {
     return [
@@ -45,7 +52,7 @@ export const Step2 = ({
         label: getIntl().formatMessage({ id: 'mt.lianmingcheng' }),
         value: chain
       },
-      ...(type === 'crypto'
+      ...(type === 'CHAIN'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.tibidizhi' }),
@@ -61,11 +68,11 @@ export const Step2 = ({
         label: getIntl().formatMessage({ id: 'mt.yinghangmingcheng' }),
         value: bankName
       },
-      ...(type === 'bank'
+      ...(type === 'OTC'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.yinghangzhanghu' }),
-              value: toAccountId
+              value: bankCard
             }
           ]
         : []),
@@ -77,21 +84,27 @@ export const Step2 = ({
         label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
         value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
       },
-      ...(type === 'crypto'
+      ...(type === 'CHAIN'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.shijidaozhang' }),
-              value: `${formatNum(transferCurr(amount - handlingFee), { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
+              value: `${formatNum(amount - handlingFee, {
+                precision: fromAccountInfo?.currencyDecimal
+              })} ${currency}`
             }
           ]
         : [
+            {
+              label: getIntl().formatMessage({ id: 'mt.pingtaihuilv' }),
+              value: `${formatNum(exchangeRate, { precision: fromAccountInfo?.currencyDecimal })}`
+            },
             {
               label: getIntl().formatMessage({ id: 'mt.daozhangusd' }),
               value: `${formatNum(amount - handlingFee, { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
             },
             {
-              label: getIntl().formatMessage({ id: 'mt.daozhanghuansuan' }, { value: currency }),
-              value: `${formatNum(transferCurr(amount - handlingFee), { precision: fromAccountInfo?.currencyDecimal })} ${currency}`
+              label: getIntl().formatMessage({ id: 'mt.daozhanghuansuan' }, { value: symbol }),
+              value: `${actualAmount} ${symbol}`
             }
           ])
     ]
@@ -102,7 +115,6 @@ export const Step2 = ({
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  console.log('currentUser', currentUser)
 
   const handleGetVerificationCode = async () => {
     if (sendTime > 0) return
@@ -118,6 +130,8 @@ export const Step2 = ({
     })
       .then((res) => {
         res.success && setSendTime(60)
+
+        setDisabled(false)
       })
       .catch((err) => {
         console.log('err', err)
@@ -180,7 +194,7 @@ export const Step2 = ({
               )}
             >
               <div className="flex items-center flex-wrap gap-6">
-                <CodeInput form={form} name="code" />
+                <CodeInput form={form} name="code" disabled={disabled} />
                 <span
                   className={cn('text-primary ', sendTime > 0 ? 'cursor-pointer hover:underline' : '')}
                   onClick={handleGetVerificationCode}
