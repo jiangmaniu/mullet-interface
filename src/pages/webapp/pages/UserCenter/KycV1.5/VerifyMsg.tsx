@@ -160,7 +160,7 @@ const VerifyMsg = forwardRef(
             <View className={cn('flex flex-col mt-3 gap-[11px]')}>
               <TextField
                 ref={areacodeRef}
-                value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
+                value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameTw : areaCodeItem?.nameEn}` : ''}
                 onFocus={handlerAreaCodeFocus}
                 onChange={(val) => {
                   if (val) selectCountryModalRef.current?.show()

@@ -234,7 +234,9 @@ function Login() {
         // @ts-ignore
         const hasAccount = currentUser?.accountList?.length > 0
         const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
-        push(jumpPath)
+        // push(jumpPath)
+        // 直接跳转到账户选择页面
+        push(ADMIN_HOME_PAGE)
       }
     }
   }

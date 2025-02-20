@@ -97,8 +97,7 @@ class DataFeedBase {
       // Mo-Fr 00:00-24:00 或 Su-Sa 00:00-24:00 表示交易所在一周七天的全天（24小时）都有交易，并且在非交易时间段也显示数据
       session: '0000-0000|0000-0000:1234567;1',
       // 该交易品种的时区
-      // timezone: 'Etc/UTC'
-      timezone: ENV.ENABLE_CHINA_TIMEZONE ? 'Asia/Shanghai' : 'Etc/UTC' // 设置时区
+      timezone: 'Asia/Shanghai' // 交易所的时区 @TODO 后期做时区处理本地化
     } as LibrarySymbolInfo
 
     setTimeout(() => {

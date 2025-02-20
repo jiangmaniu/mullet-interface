@@ -17,12 +17,15 @@ const SpScopeProfit = observer(() => {
         <span className="px-[2px]">{isBuy ? '≥' : '≤'}</span>
         <span className="dark:text-primary">{formatNum(sp_scope)} USD</span>
       </span>
-      <span className="!font-dingpro-regular">
-        <FormattedMessage id="mt.yujiyingkui" />
-        <span className="pl-[2px]">
-          <span className="dark:text-primary">{spValueEstimate} USD</span>
+      {/* 有值才展示预计盈亏 */}
+      {!spFlag && spValueEstimate && (
+        <span className="!font-dingpro-regular">
+          <FormattedMessage id="mt.yujiyingkui" />
+          <span className="pl-[2px]">
+            <span className="dark:text-primary">{spValueEstimate} USD</span>
+          </span>
         </span>
-      </span>
+      )}
     </div>
   )
 })
@@ -37,12 +40,15 @@ const SlScopeProfit = observer(() => {
         <span className="px-[2px]">{isBuy ? '≤' : '≥'}</span>
         <span className="dark:text-primary">{formatNum(sl_scope)} USD</span>
       </span>
-      <span className="!font-dingpro-regular">
-        <FormattedMessage id="mt.yujiyingkui" />
-        <span className="pl-[2px]">
-          <span className="dark:text-primary">{slValueEstimate} USD</span>
+      {/* 有值才展示预计盈亏 */}
+      {!slFlag && slValueEstimate && (
+        <span className="!font-dingpro-regular">
+          <FormattedMessage id="mt.yujiyingkui" />
+          <span className="pl-[2px]">
+            <span className="dark:text-primary">{slValueEstimate} USD</span>
+          </span>
         </span>
-      </span>
+      )}
     </div>
   )
 })

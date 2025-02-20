@@ -75,6 +75,8 @@ function NonFullModeSpSl() {
     showSlScopeRedColor,
     d,
     step,
+    spFlag,
+    slFlag,
     sp_scope,
     sl_scope,
     rangeSymbol,
@@ -211,7 +213,7 @@ function NonFullModeSpSl() {
               {spPriceOrAmountType === 'PRICE' ? (
                 <>
                   <Text color="weak">{intl.formatMessage({ id: 'pages.trade.Estimated profit loss' })}</Text>
-                  {renderSpsl(spValueEstimateRaw)}
+                  {!showSpScopeRedColor ? renderSpsl(spValueEstimateRaw) : '--'}
                 </>
               ) : (
                 <>
@@ -285,7 +287,7 @@ function NonFullModeSpSl() {
               {slPriceOrAmountType === 'PRICE' ? (
                 <>
                   <Text color="weak">{intl.formatMessage({ id: 'pages.trade.Estimated profit loss' })}</Text>
-                  {renderSpsl(slValueEstimateRaw)}
+                  {!showSlScopeRedColor ? renderSpsl(slValueEstimateRaw) : '--'}
                 </>
               ) : (
                 <>
