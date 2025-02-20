@@ -177,22 +177,22 @@ function UserCenter() {
 
   const rukou = [
     {
-      icon: 'rujin',
+      icon: 'rujin1',
       title: t('mt.rujin'),
       href: '/app/deposit'
     },
     {
-      icon: 'chujin',
+      icon: 'chujin1',
       title: t('mt.chujin'),
       href: '/app/withdraw'
     },
     {
-      icon: 'zijinjilu',
+      icon: 'zhuanzhang',
       title: t('mt.zijinjilu'),
       href: '/app/user-center/zijinjilu'
     },
     {
-      icon: 'kefu',
+      icon: 'msg',
       title: t('mt.kefu'),
       href: '/app/user-center/kefu'
     }
