@@ -24,45 +24,45 @@ export default {
       // 依赖 origin 的功能可能需要这个，比如 cookie
       changeOrigin: true,
       pathRewrite: { '^/api/': '/api/' },
-      onProxyReq: (proxyReq: any, req: any, res: any) => {
-        // console.log('[请求拦截]', req.method, req.url, proxyReq.getHeaders())
-      },
-      onProxyRes: (proxyRes: any, req: any, res: any) => {
-        // console.log('[响应拦截]', req.method, req.url)
+      // onProxyReq: (proxyReq: any, req: any, res: any) => {
+      //   // console.log('[请求拦截]', req.method, req.url, proxyReq.getHeaders())
+      // },
+      // onProxyRes: (proxyRes: any, req: any, res: any) => {
+      //   // console.log('[响应拦截]', req.method, req.url)
 
-        // let body: any = []
+      //   // let body: any = []
 
-        // proxyRes.on('data', (chunk: any) => {
-        //   body.push(chunk)
-        // })
+      //   // proxyRes.on('data', (chunk: any) => {
+      //   //   body.push(chunk)
+      //   // })
 
-        // proxyRes.on('end', () => {
-        //   body = Buffer.concat(body)
+      //   // proxyRes.on('end', () => {
+      //   //   body = Buffer.concat(body)
 
-        //   // 检查是否是 Gzip 或 Deflate 压缩
-        //   const encoding = proxyRes.headers['content-encoding']
-        //   if (encoding === 'gzip') {
-        //     zlib.gunzip(body, (err: any, decoded: any) => {
-        //       if (!err) {
-        //         console.log(decoded.toString('utf8')) // 解码后打印
-        //       } else {
-        //         console.error('Gzip 解压失败:', err)
-        //       }
-        //     })
-        //   } else if (encoding === 'deflate') {
-        //     zlib.inflate(body, (err: any, decoded: any) => {
-        //       if (!err) {
-        //         console.log(decoded.toString('utf8'))
-        //       } else {
-        //         console.error('Deflate 解压失败:', err)
-        //       }
-        //     })
-        //   } else {
-        //     // 直接转换为字符串
-        //     console.log(body.toString('utf8'))
-        //   }
-        // })
-      }
+      //   //   // 检查是否是 Gzip 或 Deflate 压缩
+      //   //   const encoding = proxyRes.headers['content-encoding']
+      //   //   if (encoding === 'gzip') {
+      //   //     zlib.gunzip(body, (err: any, decoded: any) => {
+      //   //       if (!err) {
+      //   //         console.log(decoded.toString('utf8')) // 解码后打印
+      //   //       } else {
+      //   //         console.error('Gzip 解压失败:', err)
+      //   //       }
+      //   //     })
+      //   //   } else if (encoding === 'deflate') {
+      //   //     zlib.inflate(body, (err: any, decoded: any) => {
+      //   //       if (!err) {
+      //   //         console.log(decoded.toString('utf8'))
+      //   //       } else {
+      //   //         console.error('Deflate 解压失败:', err)
+      //   //       }
+      //   //     })
+      //   //   } else {
+      //   //     // 直接转换为字符串
+      //   //     console.log(body.toString('utf8'))
+      //   //   }
+      //   // })
+      // }
     }
   },
 

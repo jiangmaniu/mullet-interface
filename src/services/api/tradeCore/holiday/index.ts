@@ -32,3 +32,11 @@ export async function getHolidayDetail(params: API.IdParam) {
     params
   })
 }
+
+// 假期日历-判断品种当前是否在假期
+export async function getSymbolIsHoliday(params: { symbols: string }) {
+  return request<API.Response<any>>(`/api/trade-core/coreApi/holiday/symbolIsHoliday`, {
+    method: 'GET',
+    params
+  })
+}

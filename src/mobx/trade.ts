@@ -35,6 +35,7 @@ import {
 import { covertProfit } from '@/utils/wsUtil'
 
 import { getEnv } from '@/env'
+import { getSymbolIsHoliday } from '@/services/api/tradeCore/holiday'
 import klineStore from './kline'
 import ws, { SymbolWSItem } from './ws'
 import { IPositionListSymbolCalcInfo, MarginReteInfo } from './ws.types'
@@ -939,6 +940,7 @@ class TradeStore {
     const symbolInfo = this.getActiveSymbolInfo(symbol)
     const tradeTimeConf = symbolInfo?.symbolConf?.tradeTimeConf || []
 
+    if (!symbolInfo.isInHoliday) return false
     if (!symbolInfo.id) return false
 
     const now = new Date()
@@ -1047,7 +1049,33 @@ class TradeStore {
           })
         }, 400)
       }
+
+      // 判断品种是否在假期内
+      this.getSymbolIsHoliday()
     }
+  }
+
+  @action
+  getSymbolIsHoliday = async () => {
+    const res = await getSymbolIsHoliday({ symbols: this.symbolListAll.map((item) => item.symbol).join(',') })
+    const data = res?.data || ({} as any)
+    runInAction(() => {
+      this.symbolList = this.symbolList.map((item) => {
+        return {
+          ...item,
+          isInHoliday: !!data[item?.symbol]
+        }
+      })
+      this.symbolListAll = this.symbolListAll.map((item) => {
+        return {
+          ...item,
+          isInHoliday: !!data[item?.symbol]
+        }
+      })
+      Object.keys(this.symbolListMap).forEach((key) => {
+        this.symbolListMap[key].isInHoliday = !!data[key]
+      })
+    })
   }
 
   // 切换交易记录TabKey

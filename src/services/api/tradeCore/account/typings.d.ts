@@ -79,6 +79,8 @@ declare namespace Account {
     accountGroupId?: string
     /**分类 */
     classify?: string
+    /**自定义字段 是否在假期内 */
+    isInHoliday?: boolean
   }
   type SymbolNewPrice = {
     /**卖交易量 */
