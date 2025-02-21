@@ -1,4 +1,4 @@
-import { useIntl } from '@umijs/max'
+import { useIntl, useParams } from '@umijs/max'
 import { Form } from 'antd'
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
@@ -6,9 +6,10 @@ import { stores } from '@/context/mobxProvider'
 
 import { useTheme } from '@/context/themeProvider'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
-import { generateWithdrawOrder } from '@/services/api/wallet'
-import { message } from '@/utils/message'
-import { md5 } from 'js-md5'
+import { getWithdrawalOrderDetail } from '@/services/api/wallet'
+import { formatNum } from '@/utils'
+import { colorToRGBA } from '@/utils/color'
+import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
 
@@ -72,45 +73,48 @@ const WithdrawalWait = forwardRef(({ onSuccess, onDisabledChange }: WebviewCompo
     }
   }, [disabled])
 
-  const handleSubmit1 = async (params: any) => {
-    console.log('params', params)
+  const params = useParams()
+  const id = params?.id as string
 
-    if (!params.password || !params.code) {
-      message.info('请输入密码和验证码')
-      return
+  const [paymentInfo, setPaymentInfo] = useState<any>({})
+
+  useLayoutEffect(() => {
+    if (id) {
+      // 请求接口得到 paymentInfo
+      getWithdrawalOrderDetail({ id }).then((res) => {
+        if (res.success) {
+          setPaymentInfo(res.data)
+        }
+      })
     }
+  }, [id])
 
-    form
-      .validateFields()
-      .then((values) => {
-        setLoading(true)
-
-        generateWithdrawOrder({
-          address: values.toAccountId,
-          bankName: values.bankName,
-          bankCard: values.bankCard,
-          baseOrderAmount: values.amount,
-          channelId: values.methodId,
-          password: md5(params.password),
-          phoneCode: params.code,
-          tradeAccountId: values.fromAccountId
-        })
-          .then((res) => {
-            if (res.success) {
-            } else {
-              message.info(res.message)
-            }
-          })
-          .finally(() => {
-            setLoading(false)
-          })
-      })
-      .catch((err) => {
-        console.log('err', err)
-      })
-  }
-
-  return <div className="bg-white"></div>
+  return (
+    <div className="bg-secondary">
+      <div className="bg-white w-full flex-1 flex flex-col items-center rounded-t-3xl">
+        <img src={`/img/chujin-usd.png`} className="w-[168px] h-[168px] mx-auto mt-[64px]" />
+        <div className=" text-[42px] leading-[46px] text-primary font-dingpro-medium mt-1">
+          {formatNum(paymentInfo?.amount || 1000)}
+          &nbsp; {paymentInfo?.currency || 'USD'}
+        </div>
+        <div className=" text-sm font-normal mt-1">{intl.formatMessage({ id: 'mt.dengdaichujin' })}</div>
+        <div className=" text-[22px] leading-[32px] text-primary  mt-4">
+          {intl.formatMessage({ id: 'mt.nindejiaoyizhengzaichulizhong2' })}
+        </div>
+        <div className=" text-base text-secondary mt-[3px]">{intl.formatMessage({ id: 'mt.dengdaichujin' })}</div>
+        <div
+          className={classNames(['py-[6px] px-[7px] rounded border border-1  text-sm mt-[22px]'])}
+          style={{
+            backgroundColor: colorToRGBA('#183EFC', 0.1),
+            borderColor: colorToRGBA('#183EFC', 0.2),
+            color: '#183EFC'
+          }}
+        >
+          {intl.formatMessage({ id: 'mt.zijinyujiliangxiaoshineidaoda' })}
+        </div>
+      </div>
+    </div>
+  )
 })
 
 export default observer(WithdrawalWait)

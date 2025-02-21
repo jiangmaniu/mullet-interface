@@ -761,5 +761,6 @@ export default {
   'mt.yanzhengmajiangfasongzhi': 'Verification code will be sent to {value}, please check your {type}.',
   'mt.shoujiduanxin': 'SMS',
   'mt.huoquyanzhengma': 'Get Verification Code',
-  'mt.qingshuruzhanghaomimayanzhengma': 'Please enter your account password and verification code'
+  'mt.qingshuruzhanghaomimayanzhengma': 'Please enter your account password and verification code',
+  'mt.chujinxianzhi': 'Withdrawal Limit'
 }

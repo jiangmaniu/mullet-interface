@@ -118,9 +118,9 @@ const WithdrawalPreview = forwardRef(({ onSuccess, onDisabledChange }: WebviewCo
         })
           .then((res) => {
             if (res.success) {
-              push(`/app/withdraw/wait/${res.data.orderId}`)
+              push(`/app/withdraw/wait/${res.data.id}`)
             } else {
-              message.info(res.msg)
+              message.info(res.data.msg)
             }
           })
           .finally(() => {

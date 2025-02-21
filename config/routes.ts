@@ -433,8 +433,13 @@ export default [
       },
       // 出金等待
       {
-        path: '/:lng/app/withdraw/wait',
+        path: '/:lng/app/withdraw/wait/:id',
         component: './webapp/pages/Withdraw.webview/Wait'
+      },
+      // 出入金记录
+      {
+        path: '/:lng/app/record/payment',
+        component: './webapp/pages/Record/Payment.webview'
       },
       {
         path: '/:lng/app/test',

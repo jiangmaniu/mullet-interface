@@ -94,7 +94,7 @@ export default function Addresss() {
     if (values.id) {
       const res = await modifyWithdrawalBank({ id: values.id, remark: values.remark })
       if (res.success) {
-        message.info(res.msg)
+        message.info(res.data.msg)
         cryptoAddressRef.current?.onQuery()
         modalRef.current?.close()
       }
@@ -108,7 +108,7 @@ export default function Addresss() {
         remark: values.remark
       })
       if (res.success) {
-        message.info(res.msg)
+        message.info(res.data.msg)
         cryptoAddressRef.current?.onQuery()
         modalRef.current?.close()
       }

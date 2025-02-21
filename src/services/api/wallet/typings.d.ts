@@ -319,6 +319,185 @@ declare namespace Wallet {
     [property: string]: any
   }
 
+  type GenerateWithdrawalOrderDetailResult = {
+    /**
+     * 客户账户
+     */
+    account?: string
+    /**
+     * 充值地址
+     */
+    address?: string
+    /**
+     * 地址状态1失效，0使用中
+     */
+    addressStatus?: number
+    /**
+     * 银行卡
+     */
+    bankCard?: string
+    /**
+     * 银行名称
+     */
+    bankName?: string
+    /**
+     * 基准货币单位
+     */
+    baseCurrency?: string
+    /**
+     * 基准货币手续费
+     */
+    baseHandlingFee?: number
+    /**
+     * 基准货币订单金额
+     */
+    baseOrderAmount?: number
+    /**
+     * 到账金额
+     */
+    baseReceiptAmount?: number
+    /**
+     * 取消订单时间
+     */
+    canncelOrderTime?: number
+    /**
+     * 凭证状态
+     */
+    certificateStatus?: CertificateStatus
+    /**
+     * 凭证图片
+     */
+    certificateUrl?: string
+    /**
+     * 渠道入账金额
+     */
+    channelAccountAmount?: number
+    /**
+     * 渠道手续费
+     */
+    channelBaseHandlingFee?: number
+    /**
+     * 渠道结算汇率
+     */
+    channelExchangeRate?: number
+    /**
+     * 渠道ID
+     */
+    channelId?: number
+    /**
+     * 支付渠道名称
+     */
+    channelName?: string
+    /**
+     * 支付通道编号
+     */
+    channelNo?: string
+    /**
+     * 通道编号字典值
+     */
+    channelNoValue?: string
+    /**
+     * 渠道回调订单编号
+     */
+    channelOrderNo?: string
+    /**
+     * 渠道结算货币基准
+     */
+    channelSettlementCurrency?: string
+    /**
+     * 支付渠道类型
+     */
+    channelType?: string
+    /**
+     * 创建时间
+     */
+    createTime?: string
+    /**
+     * 汇差收取费用
+     */
+    exchangeDifferenceFee?: number
+    /**
+     * 汇差收取百分比
+     */
+    exchangeDifferencePercentage?: number
+    /**
+     * 汇率
+     */
+    exchangeRate?: number
+    /**
+     * 账户组组CODE
+     */
+    groupCode?: string
+    /**
+     * 账户组名称
+     */
+    groupName?: string
+    /**
+     * 手续费
+     */
+    handlingFee?: number
+    /**
+     * 主键
+     */
+    id?: number
+    /**
+     * 订单金额
+     */
+    orderAmount?: number
+    /**
+     * 订单编号
+     */
+    orderNo?: string
+    /**
+     * 支付类型
+     */
+    paymentType?: PaymentType
+    /**
+     * 二维码
+     */
+    qrCode?: string
+    /**
+     * 到账金额法币
+     */
+    receiptAmount?: number
+    /**
+     * 到账时间
+     */
+    receiptTime?: Date
+    /**
+     * 备注
+     */
+    remark?: string
+    /**
+     * 订单状态
+     */
+    status?: IWithdrawalOrderStatus
+    /**
+     * 币种
+     */
+    symbol?: string
+    /**
+     * 交易账户ID
+     */
+    tradeAccountId?: number
+    /**
+     * 交易哈希
+     */
+    txid?: string
+    /**
+     * 更新时间
+     */
+    updateTime?: Date
+    /**
+     * 用户ID
+     */
+    userId?: number
+    /**
+     * 客户姓名
+     */
+    userName?: string
+    [property: string]: any
+  }
   // /**
   //  * 生成提现订单（预览）
   //  */

@@ -201,7 +201,6 @@ const Step2 = ({
           title: getIntl().formatMessage({ id: 'mt.dingdanshixiao' }),
           closable: false,
           onOk: () => {
-            console.log('backUrl', backUrl)
             push(backUrl)
           }
         })

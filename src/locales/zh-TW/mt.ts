@@ -757,5 +757,6 @@ export default {
   'mt.yanzhengmajiangfasongzhi': '驗證碼將發送至{value}，請查看您的{type}。',
   'mt.shoujiduanxin': '手機短信',
   'mt.huoquyanzhengma': '獲取驗證碼',
-  'mt.qingshuruzhanghaomimayanzhengma': '請輸入賬號密碼和驗證碼'
+  'mt.qingshuruzhanghaomimayanzhengma': '請輸入賬號密碼和驗證碼',
+  'mt.chujinxianzhi': '出金限值'
 }

@@ -47,6 +47,14 @@ export async function getDepositOrderDetail(params?: { id: string }) {
   })
 }
 
+// /trade-payment/paymentClient/withdrawal/getOrderDetail
+// 出金訂單詳情
+export async function getWithdrawalOrderDetail(params?: { id: string }) {
+  return request<API.Response<Wallet.GenerateWithdrawalOrderDetailResult>>('/api/trade-payment/paymentClient/withdrawal/getOrderDetail', {
+    method: 'GET',
+    params
+  })
+}
 // /trade-payment/paymentClient/deposit/depositOrderList
 // 客戶端入金記錄
 export async function getDepositOrderList(

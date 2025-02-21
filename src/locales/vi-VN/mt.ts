@@ -756,5 +756,6 @@ export default {
   'mt.yanzhengmajiangfasongzhi': 'Mã xác thực sẽ được gửi đến {value}, vui lòng kiểm tra {type}.',
   'mt.shoujiduanxin': 'Tin nhắn điện thoại',
   'mt.huoquyanzhengma': 'Nhận mã xác thực',
-  'mt.qingshuruzhanghaomimayanzhengma': 'Vui lòng nhập mật khẩu tài khoản và mã xác thực'
+  'mt.qingshuruzhanghaomimayanzhengma': 'Vui lòng nhập mật khẩu tài khoản và mã xác thực',
+  'mt.chujinxianzhi': 'Giới hạn rút tiền'
 }

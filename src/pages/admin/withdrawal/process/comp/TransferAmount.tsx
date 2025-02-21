@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
 import { useEffect } from 'react'
 
@@ -31,6 +31,7 @@ function TransferAmount({ form, currentUser, methodInfo }: IProps) {
     const amount = formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL, raw: true })
 
     form.setFieldValue('amount', amount)
+    form.validateFields(['amount'])
   }
 
   const amount = Form.useWatch('amount', form)
@@ -41,6 +42,10 @@ function TransferAmount({ form, currentUser, methodInfo }: IProps) {
     form.setFieldValue('handlingFee', transferHandlingFee(amount, methodInfo))
     form.setFieldValue('actualAmount', withdrawCountTransferCurr(amount, methodInfo))
   }, [amount])
+
+  const tips = `${getIntl().formatMessage({ id: 'mt.chujinxianzhi' })} ${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(
+    methodInfo?.singleAmountMax || 99999
+  )} ${methodInfo?.baseCurrency}`
 
   return (
     <div className="relative">
@@ -54,7 +59,7 @@ function TransferAmount({ form, currentUser, methodInfo }: IProps) {
           allowClear: false
         }}
         name="amount"
-        placeholder={intl.formatMessage({ id: 'mt.qingshurushuzi' })}
+        placeholder={tips}
         rules={[
           {
             required: true,
@@ -64,8 +69,12 @@ function TransferAmount({ form, currentUser, methodInfo }: IProps) {
                 return callback(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
               }
 
-              if (Number(value) > availableMoney) {
-                return callback(intl.formatMessage({ id: 'mt.yuebuzu' }))
+              if (Number(value) < (methodInfo?.singleAmountMin || 0)) {
+                return callback(tips)
+              }
+
+              if (Number(value) > (methodInfo?.singleAmountMax || 99999)) {
+                return callback(tips)
               }
 
               return callback()
