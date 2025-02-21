@@ -171,6 +171,7 @@ class TradeStore {
   @observable maxOpenVolume = 0 // 最大可开手数
 
   @observable historySearchList = [] as string[] // APP历史搜索记录
+  @observable holidaySymbolMap = {} as any // 假期品种map true是正常交易 false是假期内暂停交易
 
   // 初始化加载
   @action
@@ -940,7 +941,7 @@ class TradeStore {
     const symbolInfo = this.getActiveSymbolInfo(symbol)
     const tradeTimeConf = symbolInfo?.symbolConf?.tradeTimeConf || []
 
-    if (!symbolInfo.isInHoliday) return false
+    if (this.isSymbolInHoliday(symbol)) return false
     if (!symbolInfo.id) return false
 
     const now = new Date()
@@ -1061,23 +1062,17 @@ class TradeStore {
     const data = res?.data || ({} as any)
     runInAction(() => {
       if (res.success) {
-        this.symbolList = this.symbolList.map((item) => {
-          return {
-            ...item,
-            isInHoliday: !!data[item?.symbol]
-          }
-        })
-        this.symbolListAll = this.symbolListAll.map((item) => {
-          return {
-            ...item,
-            isInHoliday: !!data[item?.symbol]
-          }
-        })
-        Object.keys(this.symbolListMap).forEach((key) => {
-          this.symbolListMap[key].isInHoliday = !!data[key]
-        })
+        this.holidaySymbolMap = data
       }
     })
+  }
+
+  // 判断品种是否在假期内
+  @action
+  isSymbolInHoliday = (symbol: any) => {
+    const keys = Object.keys(this.holidaySymbolMap)
+    // holidaySymbolMap[symbol] true 正常交易 false在假期内
+    return keys.includes(symbol) && this.holidaySymbolMap[symbol] === false
   }
 
   // 切换交易记录TabKey
