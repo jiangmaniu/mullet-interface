@@ -34,7 +34,7 @@ function WithdrawPreview() {
       headerColor={theme.colors.backgroundColor.secondary}
       fixedHeight
       footer={
-        <div className="flex flex-row  justify-between gap-2.5 mt-2 mb-2.5 w-full bg-red">
+        <div className="flex flex-row  justify-between gap-2.5 mt-2 mb-2.5 w-full ">
           <div className="flex-1 flex-grow">
             <Button
               type="primary"
@@ -51,7 +51,7 @@ function WithdrawPreview() {
             size="large"
             className=" w-[88px]"
             onClick={() => {
-              push('/app/record/payment')
+              push(`/app/record/payment?type=CHUJIN`)
             }}
           >
             {getIntl().formatMessage({ id: 'mt.chakandingdan' })}

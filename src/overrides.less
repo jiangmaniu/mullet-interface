@@ -460,6 +460,44 @@ input:focus {
 
   .ant-segmented-item-selected {
     box-shadow: none !important;
+
+    .ant-segmented-item-label {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+  }
+
+  .ant-segmented-thumb {
+    height: 30px;
+    margin: 1px;
+    padding: 1px 10px;
+    border-radius: 26px;
+    box-shadow: none !important;
+    animation: borderRadiusChange 0.3s ease-in-out forwards;
+    animation-play-state: paused;
+    animation-timing-function: steps(5, end);
+  }
+
+  .ant-segmented-item {
+    margin: 1px;
+    padding: 1px 10px;
+    border-radius: 26px;
+  }
+}
+
+.record.ant-segmented {
+  overflow: hidden;
+  background: rgb(247, 247, 247);
+  border-radius: 26px;
+
+  .ant-segmented-item-selected {
+    background-color: white;
+    box-shadow: none !important;
+
+    .ant-segmented-item-label {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
   }
 
   .ant-segmented-thumb {

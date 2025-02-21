@@ -758,5 +758,13 @@ export default {
   'mt.shoujiduanxin': '手機短信',
   'mt.huoquyanzhengma': '獲取驗證碼',
   'mt.qingshuruzhanghaomimayanzhengma': '請輸入賬號密碼和驗證碼',
-  'mt.chujinxianzhi': '出金限值'
+  'mt.chujinxianzhi': '出金限值',
+  'mt.xuanzeshijianfanwei': '選擇時間範圍',
+  'mt.dakuanwangluo': '付款網絡',
+  'mt.fukuanzhanghu': '付款賬戶',
+  'mt.dengdaichujin': '等待出金',
+  'mt.nindejiaoyizhengzaichulizhong2': '您的交易正在處理中',
+  'mt.chujinshenqingchenggong': '出金申請成功，客服正在加緊審核中...',
+  'mt.zijinyujiliangxiaoshineidaoda': '您的資金預計兩小時內到達',
+  'mt.qujiaoyi': '去交易'
 }

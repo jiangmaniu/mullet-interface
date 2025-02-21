@@ -704,6 +704,10 @@ declare namespace Wallet {
    */
   type withdrawalOrderListItem = {
     /**
+     * 手续费
+     */
+    baseHandlingFee?: number
+    /**
      * 账户编号
      */
     account?: string

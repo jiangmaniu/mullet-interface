@@ -101,7 +101,7 @@ const WithdrawalWait = forwardRef(({ onSuccess, onDisabledChange }: WebviewCompo
         <div className=" text-[22px] leading-[32px] text-primary  mt-4">
           {intl.formatMessage({ id: 'mt.nindejiaoyizhengzaichulizhong2' })}
         </div>
-        <div className=" text-base text-secondary mt-[3px]">{intl.formatMessage({ id: 'mt.dengdaichujin' })}</div>
+        <div className=" text-base text-secondary mt-[3px]">{intl.formatMessage({ id: 'mt.chujinshenqingchenggong' })}</div>
         <div
           className={classNames(['py-[6px] px-[7px] rounded border border-1  text-sm mt-[22px]'])}
           style={{

@@ -54,7 +54,7 @@ function CryptoAddress({ params, onSelectItem, onDeleteItem }: IProps, ref: any)
       split={false}
       renderItem={(item: Wallet.WithdrawalAddress, index) => (
         <div className="flex flex-col gap-2 mb-5">
-          {/* <div className="text-16 font-medium text-gray-900">{item.createTime} </div> */}
+          {/* <div className=" font-medium text-gray-900">{item.createTime} </div> */}
           <div className="flex items-center flex-wrap gap-y-4 justify-between border border-gray-150 py-5 px-4 rounded-lg">
             <div className="flex flew-row items-center gap-4 text-start min-w-[180px]">
               <div className=" bg-gray-50 w-10 h-10 rounded-full border-gray-100 flex items-center justify-center">
