@@ -13,7 +13,7 @@ function Deposit() {
   return (
     <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       <Header onBack={() => navigateTo('/app/user-center')} />
-      <div className="px-[14px]">
+      <div className="px-[14px] pt-2">
         <MethodList />
       </div>
     </BasicLayout>

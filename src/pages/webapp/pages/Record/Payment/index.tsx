@@ -2,6 +2,7 @@ import { useTheme } from '@/context/themeProvider'
 import Header from '@/pages/webapp/components/Base/Header'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { push } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { getIntl, useIntl, useSearchParams } from '@umijs/max'
 import { Segmented } from 'antd'
 import { useEffect, useState } from 'react'
@@ -108,7 +109,7 @@ export default function PaymentRecord() {
         {key === 'RUJIN' && (
           <DepositList
             onUpload={(item) => {
-              push(`/app/deposit/otc/${item?.id}`)
+              push(appendHideParamIfNeeded(`/app/deposit/otc/${item?.id}`))
             }}
           />
         )}

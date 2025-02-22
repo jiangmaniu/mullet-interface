@@ -8,5 +8,12 @@ export default {
   'menu.setting': '設置',
   'menu.depositWaiting': '入金待審核',
   'menu.withdrawalWaiting': '出金待審核',
-  'menu.withdrawalProcess': '出金流程'
+  'menu.withdrawalProcess': '出金流程',
+  'menu.withdrawalPreview': '出金預覽',
+  'menu.withdrawalWait': '出金等待',
+  'menu.depositOtc': '入金流程',
+  'menu.depositOtcWait': '入金等待',
+  'menu.depositOtcProcess': '入金流程',
+  'menu.depositOtcPreview': '入金預覽',
+  'menu.recordPayment': '出入金記錄'
 }

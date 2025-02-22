@@ -410,49 +410,59 @@ export default [
       {
         path: '/:lng/app/user-center/kyc-webview-page',
         component: './webapp/pages/UserCenter/KycV1.5/KycWebviewPage'
-      }, // 入金
+      },
+      // 入金 （h5 & webview）
       {
         path: '/:lng/app/deposit',
+        name: 'deposit',
         component: './webapp/pages/Deposit'
       },
-      // 出金
+      // 出金 （h5 & webview）
       {
         path: '/:lng/app/withdraw',
+        name: 'withdraw',
         component: './webapp/pages/Withdraw'
       },
-      // 出金過程
+      // 出金過程 （h5 & webview）
       {
         path: '/:lng/app/withdraw/process/:method',
+        name: 'withdrawProcess',
         component: './webapp/pages/Withdraw/Process'
       },
-      // 出金預覽
+      // 出金預覽 （h5 & webview）
       {
         path: '/:lng/app/withdraw/preview',
+        name: 'withdrawPreview',
         component: './webapp/pages/Withdraw/Preview'
       },
-      // 出金等待
+      // 出金等待 （h5 & webview）
       {
         path: '/:lng/app/withdraw/wait/:id',
+        name: 'withdrawWait',
         component: './webapp/pages/Withdraw/Wait'
       },
-      // 出入金记录
+      // 出入金记录 （h5 & webview）
       {
         path: '/:lng/app/record/payment',
+        name: 'recordPayment',
         component: './webapp/pages/Record/Payment'
       },
-      // 入金过程
+      // 入金过程 （h5 & webview）
       {
         path: '/:lng/app/deposit/process/:method',
+        name: 'depositProcess',
         component: './webapp/pages/Deposit/Process'
       },
-      // 入金 OTC
+      // 入金 OTC （h5 & webview）
       {
         path: '/:lng/app/deposit/otc/:id',
+        name: 'depositOtc',
         component: './webapp/pages/Deposit/Otc'
       },
-      // 入金等待
+      // 入金等待 （h5 & webview）
       {
         path: '/:lng/app/deposit/wait/:id',
+        name: 'depositWait',
         component: './webapp/pages/Deposit/Wait'
       },
       // 个人信息
@@ -486,59 +496,7 @@ export default [
       }
     ]
   },
-  // ======================== RN 页面路由 (增強交互，頁面跳轉（彈窗）以通知方式讓 rn 處理) ======================
-  {
-    path: '/:lng/webview',
-    layout: false,
-    component: './webapp/layouts/WebAppLayout',
-    routes: [
-      // 入金 （webview）
-      {
-        path: '/:lng/webview/deposit',
-        component: './webapp/pages/Deposit.webview'
-      },
-      // 出金 （webview）
-      {
-        path: '/:lng/webview/withdraw',
-        component: './webapp/pages/Withdraw.webview'
-      },
-      // 出金過程 （webview）
-      {
-        path: '/:lng/webview/withdraw/process/:method',
-        component: './webapp/pages/Withdraw.webview/Process'
-      },
-      // 出金預覽 （webview）
-      {
-        path: '/:lng/webview/withdraw/preview',
-        component: './webapp/pages/Withdraw.webview/Preview'
-      },
-      // 出金等待 （webview）
-      {
-        path: '/:lng/webview/withdraw/wait/:id',
-        component: './webapp/pages/Withdraw.webview/Wait'
-      },
-      // 出入金记录 （webview）
-      {
-        path: '/:lng/webview/record/payment',
-        component: './webapp/pages/Record/Payment.webview'
-      },
-      // 入金过程 （webview）
-      {
-        path: '/:lng/webview/deposit/process/:method',
-        component: './webapp/pages/Deposit.webview/Process'
-      },
-      // 入金 OTC （webview）
-      {
-        path: '/:lng/webview/deposit/otc/:id',
-        component: './webapp/pages/Deposit.webview/Otc'
-      },
-      // 入金等待 （webview）
-      {
-        path: '/:lng/webview/deposit/wait/:id',
-        component: './webapp/pages/Deposit.webview/Wait'
-      }
-    ]
-  },
+
   // ======================== 移动端页面路由 end ======================
 
   {

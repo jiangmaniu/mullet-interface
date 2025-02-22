@@ -178,7 +178,7 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
                   getIntl().formatMessage({ id: 'mt.qingzaixxmiaohouchongshi' }, { count: sendTime })
                 ) : (
                   <span className="text-brand text-xs cursor-pointer" onClick={handleGetVerificationCode}>
-                    {getIntl().formatMessage({ id: 'common.chongxinfasong' })}
+                    &nbsp;{getIntl().formatMessage({ id: 'common.chongxinfasong' })}
                   </span>
                 )}
               </div>

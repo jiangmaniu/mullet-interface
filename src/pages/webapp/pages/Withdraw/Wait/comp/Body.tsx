@@ -66,7 +66,7 @@ const WithdrawalWait = forwardRef(({ onSuccess, onDisabledChange }: WebviewCompo
 
   return (
     <div className="bg-secondary">
-      <div className="bg-white w-full flex-1 flex flex-col items-center rounded-t-3xl">
+      <div className="bg-white w-full flex-1 flex flex-col items-center rounded-t-3xl px-[14px] text-center">
         <img src={`/img/chujin-usd.png`} className="w-[168px] h-[168px] mx-auto mt-[64px]" />
         <div className=" text-[42px] leading-[46px] text-primary font-dingpro-medium mt-1">
           {formatNum(paymentInfo?.baseOrderAmount || 1000)}

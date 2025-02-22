@@ -226,10 +226,14 @@ function UserCenter() {
 
         <KycStatus />
 
-        <View className={cn('flex flex-row justify-between w-full px-[22px] mt-2.5 mb-7 ')}>
+        <View className={cn('grid grid-cols-4 items-start w-full px-[12px] mt-2.5 mb-7 gap-8 ')}>
           {rukou.map((item) => {
             return (
-              <View className={cn('flex flex-col items-center gap-2')} key={item.title} onClick={() => navigateTo(item.href)}>
+              <View
+                className={cn('flex flex-col items-center text-center gap-2 w-full')}
+                key={item.title}
+                onClick={() => navigateTo(item.href)}
+              >
                 <Iconfont name={item.icon} size={28} />
                 <Text size="sm">{item.title}</Text>
               </View>

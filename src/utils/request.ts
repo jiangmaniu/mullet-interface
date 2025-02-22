@@ -19,3 +19,19 @@ export const request: typeof umiRequest = <T>(url: string, opts: RequestOptions 
       }
     })
 }
+
+/**
+ * 判斷是不是 reactnativewebview，如果是查詢參數拼接 hide=1
+ * @param url 請求的 URL
+ * @returns 拼接后的 URL
+ */
+export const appendHideParamIfNeeded = (url: string): string => {
+  // @ts-ignore
+  if (window.ReactNativeWebView) {
+    const [baseUrl, queryString] = url.split('?')
+    const params = new URLSearchParams(queryString || '')
+    params.set('hideHeader', '1')
+    return `${baseUrl}?${params.toString()}`
+  }
+  return url
+}

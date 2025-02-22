@@ -79,7 +79,20 @@ const WithdrawalProcess = forwardRef(({ onSuccess, onDisabledChange }: WebviewCo
     onSubmit: handleSubmit0
   }))
 
-  const disabled = !amount || !actualAmount || Number(actualAmount) <= 0 || loading
+  const [valid, setValid] = useState(false)
+  useEffect(() => {
+    amount &&
+      form
+        .validateFields(['amount'])
+        .then((values) => {
+          setValid(true)
+        })
+        .catch((err) => {
+          setValid(false)
+        })
+  }, [amount])
+
+  const disabled = !amount || !actualAmount || Number(actualAmount) <= 0 || loading || !valid
 
   useEffect(() => {
     if (disabled) {

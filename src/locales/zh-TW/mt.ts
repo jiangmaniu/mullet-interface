@@ -793,5 +793,6 @@ export default {
   'mt.qingquebaoninbinweijinxingzhuanzhang': '請確保您並未進行轉賬，以免資金損失。',
   'mt.duociquxiao': '多次取消入金後當天無法再進行入金。',
   'mt.rujindengdai': '入金等待',
-  'mt.chujindengdai': '出金等待'
+  'mt.chujindengdai': '出金等待',
+  'mt.dingdanyichaoshi': '訂單已超時'
 }

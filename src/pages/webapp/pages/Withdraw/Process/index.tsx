@@ -6,6 +6,7 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { push } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -33,7 +34,7 @@ function Deposit() {
   }
 
   const onSuccess = (params?: any) => {
-    push(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`, params)
+    push(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
   }
 
   return (

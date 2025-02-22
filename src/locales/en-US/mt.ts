@@ -752,6 +752,7 @@ export default {
   'mt.zhifubaosaomazhifu': 'Alipay QR code payment, please ensure the payment merchant information is consistent',
   'mt.beizhuzijiderujinzhanghu': 'Note your deposit account, please do not note any违规信息',
   'mt.tianjiayinhangka': 'Add Bank Card',
+
   'mt.pingtaihuilv': 'Platform Exchange Rate',
   'mt.querentixian': 'Confirm Withdrawal',
   'mt.shoukuanfangshi': 'Payment Method',
@@ -762,6 +763,16 @@ export default {
   'mt.shoujiduanxin': 'SMS',
   'mt.huoquyanzhengma': 'Get Verification Code',
   'mt.qingshuruzhanghaomimayanzhengma': 'Please enter your account password and verification code',
+  'mt.yinhangmingcheng': 'Bank Name',
+  'mt.qingshuruyinhangmincheng': 'Please enter/select bank name',
+  'mt.qingshuruyinhangmingcheng': 'Please enter/select bank account',
+  'mt.zijinjilu': 'History',
+  'mt.kefu': 'Service',
+  'mt.yinhangkadizhi': 'Bank Card Address',
+  'mt.qianbaodizhi': 'Wallet Address',
+  'mt.gerenxinxi': 'Personal Information',
+  'mt.zhuceriqi': 'Registration Date',
+  'mt.guojia': 'Country',
   'mt.chujinxianzhi': 'Withdrawal Limit',
   'mt.xuanzeshijianfanwei': 'Select Time Range',
   'mt.dakuanwangluo': 'Payment Network',
@@ -777,5 +788,6 @@ export default {
   'mt.duociquxiao': 'Multiple times of canceling deposits will result in a ban on deposits for the day.',
   'mt.rujindengdai': 'Waiting for Deposit',
   'mt.chujindengdai': 'Waiting for Withdrawal',
-  'mt.shangchuanpingzheng': 'Upload Proof'
+  'mt.shangchuanpingzheng': 'Upload Proof',
+  'mt.dingdanyichaoshi': 'Order expired'
 }

@@ -36,6 +36,7 @@ function Deposit() {
       bgColor="primary"
       headerColor={theme.colors.backgroundColor.primary}
       fixedHeight
+      header={<Header onBack={() => navigateTo('/app/user-center')} />}
       footer={
         <Button type="primary" size="large" className="mt-2 mb-2.5" onClick={handleSubmit} disabled={disabled}>
           <div className="flex flex-row items-center gap-2 text-reverse text-base">
@@ -45,7 +46,6 @@ function Deposit() {
         </Button>
       }
     >
-      <Header onBack={() => navigateTo('/app/user-center')} />
       <Body ref={ref} onDisabledChange={onDisabledChange} onSuccess={onSuccess} />
     </BasicLayout>
   )

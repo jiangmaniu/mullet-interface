@@ -12,6 +12,7 @@ import { generateWithdrawOrder } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { md5 } from 'js-md5'
 import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
@@ -33,7 +34,7 @@ const Notice = observer(({ methodId }: { methodId: string }) => {
   )
 })
 
-const WithdrawalPreview = forwardRef(({ onSuccess, onDisabledChange }: WebviewComponentProps, ref) => {
+const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref) => {
   const { theme } = useTheme()
   const [form] = Form.useForm()
 
@@ -118,7 +119,7 @@ const WithdrawalPreview = forwardRef(({ onSuccess, onDisabledChange }: WebviewCo
         })
           .then((res) => {
             if (res.success) {
-              push(`/app/withdraw/wait/${res.data.id}`)
+              push(appendHideParamIfNeeded(`/app/withdraw/wait/${res.data.id}`))
             } else {
               message.info(res.data.msg)
             }

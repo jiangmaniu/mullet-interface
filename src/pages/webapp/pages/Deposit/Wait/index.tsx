@@ -5,7 +5,7 @@ import Header from '@/pages/webapp/components/Base/Header'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { CustomerService } from '@/utils/chat'
-import { push } from '@/utils/navigator'
+import { push, replace } from '@/utils/navigator'
 import { FormattedMessage, getIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -38,7 +38,17 @@ function WithdrawPreview() {
               size="large"
               className="w-full"
               onClick={() => {
-                push('/app/trade')
+                // @ts-ignore
+                if (window.ReactNativeWebView) {
+                  // @ts-ignore
+                  window.ReactNativeWebView.postMessage(
+                    JSON.stringify({
+                      type: 'trade'
+                    })
+                  )
+                } else {
+                  push('/app/trade')
+                }
               }}
             >
               {getIntl().formatMessage({ id: 'mt.qujiaoyi' })}
@@ -48,7 +58,7 @@ function WithdrawPreview() {
             size="large"
             className=" w-[88px]"
             onClick={() => {
-              push(`/app/record/payment?type=RUJIN`)
+              replace(`/app/record/payment?type=RUJIN`)
             }}
           >
             {getIntl().formatMessage({ id: 'mt.chakandingdan' })}

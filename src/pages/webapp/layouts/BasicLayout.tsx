@@ -1,4 +1,4 @@
-import { useLocation } from '@umijs/max'
+import { useLocation, useSearchParams } from '@umijs/max'
 import React, { useEffect, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
@@ -97,6 +97,9 @@ const Basiclayout: React.FC<Iprops> = ({
     }
   }, [hiddenScrollBar])
 
+  const [searchParams] = useSearchParams()
+  const hideHeader = searchParams.get('hideHeader') === '1'
+
   return (
     <>
       <Helmet>
@@ -106,7 +109,7 @@ const Basiclayout: React.FC<Iprops> = ({
         <meta name="msapplication-TileColor" content={statusBarBgColor} />
       </Helmet>
 
-      {header && (
+      {!hideHeader && header && (
         <div
           id="body-header"
           className={cn(headerClassName)}

@@ -5,7 +5,6 @@ import Header from '@/pages/webapp/components/Base/Header'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { CustomerService } from '@/utils/chat'
-import { push } from '@/utils/navigator'
 import { FormattedMessage, getIntl, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -23,10 +22,6 @@ function WithdrawPreview() {
   const ref = useRef<WebviewComponentRef>(null)
   const handleSubmit = () => {
     ref.current?.onSubmit()
-  }
-
-  const onSuccess = (values?: any) => {
-    push('/app/withdraw/preview', values)
   }
 
   const [query] = useSearchParams()
@@ -53,7 +48,7 @@ function WithdrawPreview() {
           </div>
         }
       />
-      <Body ref={ref} onDisabledChange={onDisabledChange} onSuccess={onSuccess} />
+      <Body ref={ref} onDisabledChange={onDisabledChange} />
     </BasicLayout>
   )
 }

@@ -11,6 +11,7 @@ import { generateDepositOrder } from '@/services/api/wallet'
 import { useTheme } from '@/context/themeProvider'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { push } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
 import ConfirmModal from './ConfirmModal'
@@ -52,7 +53,6 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
       // form.setFieldValue('address', methodInfo?.address)
       // 20241202：默认选择 USD, 目前只有 USD 币种；
       form.setFieldValue('currency', 'USD')
-      console.log('methodInfo', methodInfo)
     }
   }, [form, methodInfo])
 
@@ -78,7 +78,7 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
         .then((res) => {
           if (res.success) {
             if (methodInfo?.paymentType === 'OTC') {
-              push(`/app/deposit/otc/${res.data?.id}?backUrl=/app/deposit/process/${values.methodId}`)
+              push(appendHideParamIfNeeded(`/app/deposit/otc/${res.data?.id}?backUrl=/app/deposit/process/${values.methodId}`))
               return
             }
 

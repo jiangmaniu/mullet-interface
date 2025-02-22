@@ -38,13 +38,25 @@ function WithdrawPreview() {
       bgColor="primary"
       headerColor={theme.colors.backgroundColor.secondary}
       fixedHeight
+      header={
+        <Header
+          className="bg-secondary"
+          onBack={() => navigateTo(backUrl)}
+          right={
+            <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={CustomerService}>
+              <Iconfont name="chat" width={20} height={20} />
+              <FormattedMessage id="mt.lianxikefu" />
+            </div>
+          }
+        />
+      }
       footer={
         <div className="flex flex-row  justify-between gap-2.5 mt-2 mb-2.5 w-full ">
           <div className="flex-1 flex-grow">
             <Button
               type="primary"
               size="large"
-              className="w-full"
+              className="w-full text-center"
               onClick={() => {
                 ref.current?.onUpload()
               }}
@@ -54,7 +66,7 @@ function WithdrawPreview() {
           </div>
           <Button
             size="large"
-            className=" w-[88px]"
+            className=" w-[88px] text-center"
             onClick={() => {
               ref.current?.onCancel()
             }}
@@ -64,16 +76,6 @@ function WithdrawPreview() {
         </div>
       }
     >
-      <Header
-        className="bg-secondary"
-        onBack={() => navigateTo(backUrl)}
-        right={
-          <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={CustomerService}>
-            <Iconfont name="chat" width={20} height={20} />
-            <FormattedMessage id="mt.lianxikefu" />
-          </div>
-        }
-      />
       <Body ref={ref} onDisabledChange={onDisabledChange} onSuccess={onSuccess} />
     </BasicLayout>
   )

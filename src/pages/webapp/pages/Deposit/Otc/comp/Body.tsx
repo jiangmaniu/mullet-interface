@@ -11,6 +11,7 @@ import { getDepositOrderDetail } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
 import CancelModal from './CancelModal'
@@ -142,11 +143,10 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
   const backUrl = query.get('backUrl') as string
 
   const handleReset = () => {
-    console.log('handleReset')
     if (backUrl) {
-      push(backUrl)
+      push(appendHideParamIfNeeded(backUrl))
     } else {
-      push('/app/deposit')
+      push(appendHideParamIfNeeded('/app/deposit'))
     }
   }
 

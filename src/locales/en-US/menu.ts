@@ -8,5 +8,12 @@ export default {
   'menu.setting': 'Settings',
   'menu.depositWaiting': 'Deposit Waiting',
   'menu.withdrawalWaiting': 'Withdrawal Waiting',
-  'menu.withdrawalProcess': 'Withdrawal Process'
+  'menu.withdrawalProcess': 'Withdrawal Process',
+  'menu.withdrawalPreview': 'Withdrawal Preview',
+  'menu.withdrawalWait': 'Withdrawal Wait',
+  'menu.depositOtc': 'Deposit Process',
+  'menu.depositOtcWait': 'Deposit Waiting',
+  'menu.depositOtcProcess': 'Deposit Process',
+  'menu.depositOtcPreview': 'Deposit Preview',
+  'menu.recordPayment': 'Record Payment'
 }

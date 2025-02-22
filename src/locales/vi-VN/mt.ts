@@ -757,6 +757,15 @@ export default {
   'mt.shoujiduanxin': 'Tin nhắn điện thoại',
   'mt.huoquyanzhengma': 'Nhận mã xác thực',
   'mt.qingshuruzhanghaomimayanzhengma': 'Vui lòng nhập mật khẩu tài khoản và mã xác thực',
+  'mt.qingshuruyinhangmincheng': 'Vui lòng nhập/chọn tên ngân hàng',
+  'mt.qingshuruyinhangmingcheng': 'Vui lòng nhập/chọn tài khoản ngân hàng',
+  'mt.zijinjilu': 'Lịch sử giao dịch',
+  'mt.kefu': 'Hỗ trợ khách hàng',
+  'mt.yinhangkadizhi': 'Địa chỉ thẻ ngân hàng',
+  'mt.qianbaodizhi': 'Địa chỉ ví',
+  'mt.gerenxinxi': 'Thông tin cá nhân',
+  'mt.zhuceriqi': 'Ngày đăng ký',
+  'mt.guojia': 'Quốc gia',
   'mt.chujinxianzhi': 'Giới hạn rút tiền',
   'mt.xuanzeshijianfanwei': 'Chọn khoảng thời gian',
   'mt.dakuanwangluo': 'Mạng thanh toán',
@@ -772,5 +781,6 @@ export default {
   'mt.duociquxiao': 'Nhiều lần hủy đơn hàng sẽ dẫn đến việc không thể nạp tiền trong ngày.',
   'mt.rujindengdai': 'Đang chờ nạp tiền',
   'mt.chujindengdai': 'Đang chờ rút tiền',
-  'mt.shangchuanpingzheng': 'Tải lên chứng từ'
+  'mt.shangchuanpingzheng': 'Tải lên chứng từ',
+  'mt.dingdanyichaoshi': 'Đơn hàng đã hết hạn'
 }

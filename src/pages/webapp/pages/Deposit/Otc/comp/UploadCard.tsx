@@ -34,13 +34,13 @@ export default function ({ setImgs, imgs }: IProps) {
       'Blade-Auth': `${userInfo.token_type} ${userInfo.access_token}`
     },
     accept: 'image/png, image/jpeg, image/jpg',
-    beforeUpload: (file) => {
-      const isLt1MB = file.size / 1024 / 1024 <= 1
-      if (!isLt1MB) {
-        message.info(`${intl.formatMessage({ id: 'mt.kycUploadImgSizeTips' }, { size: 1 })}MB`)
-      }
-      return isLt1MB
-    },
+    // beforeUpload: (file) => {
+    //   const isLt1MB = file.size / 1024 / 1024 <= 1
+    //   if (!isLt1MB) {
+    //     message.info(`${intl.formatMessage({ id: 'mt.kycUploadImgSizeTips' }, { size: 1 })}MB`)
+    //   }
+    //   return isLt1MB
+    // },
     onChange(info) {
       console.log('info', info)
       const data = info?.file?.response?.data || {}
