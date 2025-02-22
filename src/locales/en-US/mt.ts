@@ -776,5 +776,6 @@ export default {
   'mt.qingquebaoninbinweijinxingzhuanzhang': 'Please ensure you have not transferred funds, to avoid loss of funds.',
   'mt.duociquxiao': 'Multiple times of canceling deposits will result in a ban on deposits for the day.',
   'mt.rujindengdai': 'Waiting for Deposit',
-  'mt.chujindengdai': 'Waiting for Withdrawal'
+  'mt.chujindengdai': 'Waiting for Withdrawal',
+  'mt.shangchuanpingzheng': 'Upload Proof'
 }

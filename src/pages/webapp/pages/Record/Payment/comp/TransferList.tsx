@@ -1,7 +1,7 @@
 import Iconfont from '@/components/Base/Iconfont'
+import { SOURCE_CURRENCY } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { getEnv } from '@/env'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import Empty from '@/pages/webapp/components/Base/List/Empty'
 import More from '@/pages/webapp/components/Base/List/More'
@@ -9,25 +9,24 @@ import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { getWithdrawalOrderList } from '@/services/api/wallet'
+import { getMoneyRecordsPageList } from '@/services/api/tradeCore/account'
 import { formatNum } from '@/utils'
-import { FormattedMessage, useModel } from '@umijs/max'
+import { useModel } from '@umijs/max'
 import { PullToRefresh } from 'antd-mobile'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
 import VirtualList from 'rc-virtual-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { statusMap } from '..'
-import WithdrawDetailModal from './WithdrawDetailModal'
+import Tooltip from '../../../Account/AccountDetail/Tooltip'
 
 /**
  * 资金流水
  */
-function WithdrawList() {
+function DepositList() {
   const i18n = useI18n()
   const { cn } = useTheme()
 
-  const [data, setData] = useState<Wallet.withdrawalOrderListItem[]>([])
+  const [data, setData] = useState<Wallet.depositOrderListItem[]>([])
   const [current, setCurrent] = useState(1)
   const [size, setSize] = useState(10)
   const [total, setTotal] = useState(0)
@@ -35,15 +34,17 @@ function WithdrawList() {
   const [endTime, setEndTime] = useState<string | undefined>(undefined)
 
   const getDatas = useCallback(() => {
-    getWithdrawalOrderList({
-      current: current,
-      size: size,
-      tradeAccountId: stores.trade.currentAccountInfo?.id,
-      startTime,
-      endTime
+    getMoneyRecordsPageList({
+      current,
+      size,
+      type: 'TRANSFER',
+      accountId: stores.trade.currentAccountInfo?.id,
+      startTime: startTime ? dayjs(startTime).format('YYYY-MM-DD 00:00:00') : undefined,
+      endTime: endTime ? dayjs(endTime).format('YYYY-MM-DD 23:59:59') : undefined
     }).then((res) => {
       if (res.success && res.data?.records) {
-        setData(data.concat(res.data.records))
+        const uniqueRecords = res.data.records.filter((record) => !data.some((existingRecord) => existingRecord.id === record.id))
+        setData((prevData) => prevData.concat(uniqueRecords))
         setTotal(Number(res.data.total))
       }
     })
@@ -74,72 +75,86 @@ function WithdrawList() {
   const currentUser = initialState?.currentUser
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
 
+  const getTag = (accountId: any) => {
+    return accountList.find((item) => item.id === accountId)?.synopsis?.abbr
+  }
+
+  const getName = (accountId: any) => {
+    return accountList.find((item) => item.id === accountId)?.name
+  }
+
+  const getId = (accountId: any) => {
+    return accountList.find((item) => item.id === accountId)?.id
+  }
+
   const { theme } = useTheme()
 
-  const renderItem = ({ item }: { item: Wallet.withdrawalOrderListItem }) => {
+  const renderItem = ({ item }: any) => {
+    console.log('item', item)
+    const from = item.remark?.fromAccountId
+    const to = item.remark?.toAccountId
     return (
-      <div className="flex flex-col gap-[6px] mb-5" onClick={() => onSelectItem(item)}>
+      <div className="flex flex-col gap-[6px] mb-5">
         <div className=" text-xs font-medium text-gray-900 flex flex-row items-center gap-1">
           <Iconfont name="shijian" size={14} color={theme.colors.textColor.primary} />
           <span className="text-gray-900">{item.createTime}</span>
         </div>
-        <div className="flex items-center bg-white flex-wrap gap-y-4 justify-betwee p-3 rounded-lg">
-          <div className="flex flex-row justify-between w-full">
-            <div className="flex flew-row items-center gap-3 text-start min-w-[180px] flex-shrink-0">
-              <div className=" bg-gray-50 w-10 h-10 rounded-full bg-secondary border border-gray-130 flex items-center justify-center">
-                <Iconfont name="chujin" color="gray" width={18} height={18} />
-              </div>
-              <div className="w-[100px]">
-                <div className="text-primary font-bold flex items-center">
-                  <FormattedMessage id="mt.chujin" />
-                  <span className=" text-xs font-normal" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
-                    &nbsp;·&nbsp;{statusMap[item.status ?? 'FAIL']?.text || '[status]'}
-                  </span>
-                </div>
-                <div className="text-weak text-xs overflow-visible text-nowrap">
-                  <FormattedMessage id="mt.danhao" />:{item.orderNo}
-                </div>
-              </div>
-            </div>
-            <div className="text-end min-w-[180px] text-base  md:text-xl font-bold flex-1">
-              {formatNum(item.baseOrderAmount)} {item.baseCurrency}
-            </div>
-          </div>
-          <div className="flex flex-row justify-between w-full">
-            <div className=" flex flex-row gap-2.5 items-center justify-center pl-[2px] ">
-              <div className="flex text-sm flex-row items-center gap-1 overflow-hidden  ">
-                <div className="flex h-4 min-w-[34px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
-                </div>
-                <span className=" text-nowrap text-ellipsis overflow-hidden">
-                  {/* {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.name} */}
-                  &nbsp;#{accountList.find((v) => v.id === item.tradeAccountId)?.id}
-                </span>
-              </div>
-
-              <Iconfont name="go" width={16} color="black" height={16} />
-              <div className="text-end text-sm font-medium flex-1 flex flex-row items-center justify-start flex-shrink gap-1">
-                <div>
-                  {item.type === 'bank' ? (
-                    <span>{item.bank}</span>
-                  ) : (
-                    <div className="flex flex-row items-center gap-1">
-                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-[22px] h-[22px] bg-gray-100 rounded-full" />
-                      <span> {item.address || '[channelRevealName]'}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <View bgColor="primary" borderColor="weak" className={cn(' rounded-xl flex flex-col w-full py-[14px] px-3 gap-4')}>
+          <View className={cn('flex flex-row justify-between items-start')}>
+            <View className={cn('flex flex-row justify-start items-center gap-3')}>
+              <View className={cn(' rounded-full w-10 h-10 flex items-center justify-center border border-gray-130')} bgColor="secondary">
+                <Iconfont name="huazhuanjilu-huazhuan" size={18} color={theme.colors.textColor.primary} />
+              </View>
+              <View className={cn('flex flex-col items-start')}>
+                <Text size="sm" weight="medium" color="primary">
+                  {i18n.t('pages.position.Transfer2')}
+                </Text>
+                <Text size="xs" color="weak" weight="light">
+                  {i18n.t('mt.danhao')}:{item.id}
+                </Text>
+              </View>
+            </View>
+            <Text size="base" color="primary" weight="medium">
+              {formatNum(item.money)}&nbsp;{SOURCE_CURRENCY}
+            </Text>
+          </View>
+          <View className={cn('flex flex-row justify-start items-center')}>
+            <Tooltip content={getName(from)} trigger="onPress" placement="top-start">
+              <View className={cn('w-[150px] flex flex-row items-center overflow-hidden')}>
+                <View className={cn(' flex h-4 min-w-[20px] items-center px-1 justify-center rounded bg-black text-xs font-normal mr-1')}>
+                  <Text color="white" size="xs">
+                    {getTag(from)}
+                  </Text>
+                </View>
+                <Text size="xs" color="primary" weight="medium">
+                  {/* {formatStringWithEllipsis(getName(from) || '', 12)} */}
+                  &nbsp;#{getId(from)}
+                </Text>
+              </View>
+            </Tooltip>
+            <Iconfont name="tongzhi-jinru" size={16} className={cn('mx-3')} />
+            <Tooltip content={getName(to)} trigger="onPress" placement="top-end">
+              <View className={cn('w-[150px] flex flex-row items-center overflow-hidden')}>
+                <View className={cn(' flex h-4 min-w-[20px] items-center px-1 justify-center rounded bg-black text-xs font-normal mr-1')}>
+                  <Text color="white" size="xs">
+                    {getTag(to)}
+                  </Text>
+                </View>
+                <Text size="xs" color="primary" weight="medium">
+                  {/* {formatStringWithEllipsis(getName(to) || '', 12)} */}
+                  &nbsp;#{getId(to)}
+                </Text>
+              </View>
+            </Tooltip>
+          </View>
+        </View>
       </div>
     )
   }
 
-  const onSelectItem = (item: Wallet.withdrawalOrderListItem) => {
+  const onSelectItem = (item: Wallet.depositOrderListItem) => {
     setItem(item)
-    withdrawDetailModalRef.current?.show()
+    depositDetailModalRef.current?.show()
   }
 
   const datas = useMemo(() => {
@@ -152,8 +167,8 @@ function WithdrawList() {
     setEndTime(dayjs(endDate).format('YYYY-MM-DD 23:59:59'))
   }
 
-  const [item, setItem] = useState<Wallet.withdrawalOrderListItem | undefined>(undefined)
-  const withdrawDetailModalRef = useRef<ModalRef>(null)
+  const [item, setItem] = useState<Wallet.depositOrderListItem | undefined>(undefined)
+  const depositDetailModalRef = useRef<ModalRef>(null)
 
   return (
     <PullToRefresh onRefresh={onRefresh}>
@@ -204,10 +219,9 @@ function WithdrawList() {
           )}
         </div>
         <DateRangePickerSheetModal ref={dateRangePickerRef} onConfirm={onDateRangeConfirm} />
-        <WithdrawDetailModal ref={withdrawDetailModalRef} item={item} />
       </View>
     </PullToRefresh>
   )
 }
 
-export default observer(WithdrawList)
+export default observer(DepositList)

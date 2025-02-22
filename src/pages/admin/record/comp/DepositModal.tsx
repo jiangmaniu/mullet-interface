@@ -55,7 +55,7 @@ function DepositModal({ item }: IProps, ref: any) {
                     push(`/deposit/otc/${item?.id}`)
                   }}
                 >
-                  上傳憑證
+                  <FormattedMessage id="mt.shangchuanpingzheng" />
                 </div>
               )}
             </div>

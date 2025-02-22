@@ -1,46 +1,11 @@
 import { useTheme } from '@/context/themeProvider'
-import Header from '@/pages/webapp/components/Base/Header'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
-import { getIntl, useIntl, useSearchParams } from '@umijs/max'
+import { useIntl, useSearchParams } from '@umijs/max'
 import { Segmented } from 'antd'
 import { useEffect, useState } from 'react'
-import DepositList from './comp/DepositList'
-import TransferList from './comp/TransferList'
-import WithdrawList from './comp/WithdrawList'
-
-type IStatusMap = {
-  [key in Wallet.IWithdrawalOrderStatus]: {
-    text: string
-    color: string
-    options?: {
-      text: string
-      fn: () => void
-    }
-  }
-}
-
-export const statusMap: IStatusMap = {
-  WAIT: {
-    text: getIntl().formatMessage({ id: 'mt.daishenghe' }),
-    color: '#9C9C9C'
-  },
-  SUCCESS: {
-    text: getIntl().formatMessage({ id: 'mt.tongguo' }),
-    color: '#45A48A'
-  },
-  RECEIPT: {
-    text: getIntl().formatMessage({ id: 'mt.yidaozhang' }),
-    color: '#45A48A'
-  },
-  REJECT: {
-    text: getIntl().formatMessage({ id: 'mt.shenheshibai' }),
-    color: '#C54747'
-  },
-  FAIL: {
-    text: getIntl().formatMessage({ id: 'mt.shibai' }),
-    color: '#C54747'
-  }
-}
+import DepositList from '../Payment/comp/DepositList'
+import TransferList from '../Payment/comp/TransferList'
+import WithdrawList from '../Payment/comp/WithdrawList'
 
 export default function PaymentRecord() {
   const { theme } = useTheme()
@@ -71,6 +36,21 @@ export default function PaymentRecord() {
     }
   }, [type])
 
+  const onUpload = (item: any) => {
+    // @ts-ignore
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        type: 'push',
+        params: {
+          path: '/webview/deposit/otc',
+          query: {
+            id: item?.id
+          }
+        }
+      })
+    )
+  }
+
   return (
     <Basiclayout
       fixedHeight
@@ -79,17 +59,6 @@ export default function PaymentRecord() {
       headerColor="secondary"
       style={{ paddingBottom: 80 }}
       footerClassName="flex items-center justify-center"
-      header={
-        <Header
-          title={intl.formatMessage({ id: 'mt.churujinjilu' })}
-          style={{
-            paddingLeft: 14,
-            paddingRight: 14,
-            backgroundColor: theme.colors.backgroundColor.secondary
-          }}
-          // back={back}
-        />
-      }
     >
       <div className="mt-4">
         <div className="px-[14px]">
@@ -104,7 +73,7 @@ export default function PaymentRecord() {
           />
         </div>
         {key === 'CHUJIN' && <WithdrawList />}
-        {key === 'RUJIN' && <DepositList />}
+        {key === 'RUJIN' && <DepositList onUpload={onUpload} />}
         {key === 'HUAZHUAN' && <TransferList />}
       </div>
     </Basiclayout>

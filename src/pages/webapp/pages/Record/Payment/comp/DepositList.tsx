@@ -23,7 +23,7 @@ import DepositDetailModal from './DepositDetailModal'
 /**
  * 资金流水
  */
-function DepositList() {
+function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListItem) => void }) {
   const i18n = useI18n()
   const { cn } = useTheme()
 
@@ -84,22 +84,28 @@ function DepositList() {
           <span className="text-gray-900">{item.createTime}</span>
         </div>
         <div className="flex items-center bg-white flex-wrap gap-y-4 justify-betwee p-3 rounded-lg">
-          <div className="flex flex-row justify-between w-full">
+          <div className="flex flex-row-reverse justify-between w-full">
+            <div className="text-end min-w-[120px] text-base  md:text-xl font-bold flex-1">
+              {formatNum(item.baseOrderAmount)} {item.baseCurrency}
+            </div>
             <div className="flex flew-row items-center gap-3 text-start min-w-[180px] flex-shrink-0">
               <div className=" bg-gray-50 w-10 h-10 rounded-full bg-secondary border border-gray-130 flex items-center justify-center">
                 <Iconfont name="rujin" color="gray" width={18} height={18} />
               </div>
-              <div className="w-[100px]">
-                <div className="text-primary font-bold">
+              <div className="w-[100px] overflow-visible text-nowrap">
+                {/* <div className="text-primary font-bold">
                   <FormattedMessage id="mt.rujin" />
+                </div> */}
+                <div className="text-primary font-bold flex items-center">
+                  <FormattedMessage id="mt.rujin" />
+                  <span className=" text-xs font-normal" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
+                    &nbsp;·&nbsp;{statusMap[item.status ?? 'FAIL']?.text || '[status]'}
+                  </span>
                 </div>
                 <div className="text-weak text-xs overflow-visible text-nowrap">
                   <FormattedMessage id="mt.danhao" />:{item.orderNo}
                 </div>
               </div>
-            </div>
-            <div className="text-end min-w-[180px] text-base  md:text-xl font-bold flex-1">
-              {formatNum(item.baseOrderAmount)} {item.baseCurrency}
             </div>
           </div>
           <div className="flex flex-row justify-between w-full">
@@ -128,15 +134,6 @@ function DepositList() {
                   &nbsp;#{accountList.find((v) => v.id === item.tradeAccountId)?.id}
                 </span>
               </div>
-            </div>
-            <div className="text-sm flex items-center " style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
-              <span
-                className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
-                style={{ backgroundColor: statusMap[item.status ?? 'FAIL']?.color || '#9C9C9C' }}
-              >
-                {/* 占位 */}
-              </span>
-              {statusMap[item.status ?? 'FAIL']?.text || '[status]'}
             </div>
           </div>
         </div>
@@ -211,7 +208,7 @@ function DepositList() {
           )}
         </div>
         <DateRangePickerSheetModal ref={dateRangePickerRef} onConfirm={onDateRangeConfirm} />
-        <DepositDetailModal ref={depositDetailModalRef} item={item} />
+        <DepositDetailModal ref={depositDetailModalRef} item={item} onUpload={onUpload} />
       </View>
     </PullToRefresh>
   )

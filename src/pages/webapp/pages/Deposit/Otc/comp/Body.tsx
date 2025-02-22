@@ -1,0 +1,218 @@
+import { PageLoading } from '@ant-design/pro-components'
+import { FormattedMessage, getIntl, useIntl, useParams, useSearchParams } from '@umijs/max'
+import { Form } from 'antd'
+import { forwardRef, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
+
+import { stores } from '@/context/mobxProvider'
+
+import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
+import { useTheme } from '@/context/themeProvider'
+import { getDepositOrderDetail } from '@/services/api/wallet'
+import { formatNum } from '@/utils'
+import { message } from '@/utils/message'
+import { push } from '@/utils/navigator'
+import { observer } from 'mobx-react'
+import { WebviewComponentProps } from '../../WebviewPage'
+import CancelModal from './CancelModal'
+import ConfirmModal from './ConfirmModal'
+import Step2 from './Step2'
+import { Timer } from './Timer'
+import UploadModal from './UploadModal'
+
+const Notice = observer(({ methodId }: { methodId: string }) => {
+  const methodInfo = stores.wallet.depositMethods.find((item) => item.id === methodId)
+  return (
+    <div className="text-secondary text-xs">
+      {methodInfo?.notice ? (
+        <p className="leading-7" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
+      ) : (
+        <div className="text-xs text-gray-400">
+          <FormattedMessage id="mt.zanwuneirong" />
+        </div>
+      )}
+    </div>
+  )
+})
+
+const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref) => {
+  const { theme } = useTheme()
+  const [form] = Form.useForm()
+
+  const [paymentInfo, setPaymentInfo] = useState<Wallet.GenerateDepositOrderDetailResult>({})
+
+  const methods = stores.wallet.depositMethods
+  const intl = useIntl()
+
+  const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
+  useLayoutEffect(() => {
+    if (methods.length === 0 || prevIntl !== intl.locale) {
+      const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
+      stores.wallet.getDepositMethods({ language })
+      setPrevIntl(intl.locale)
+      return
+    }
+  }, [methods, intl])
+
+  const [loading, setLoading] = useState(false)
+
+  const methodInfo = useMemo(() => methods.find((item) => item.id === paymentInfo?.channelId), [paymentInfo, methods])
+
+  // const disabled = !amount || !actualAmount || Number(actualAmount) <= 0 || loading
+
+  // useEffect(() => {
+  //   if (disabled) {
+  //     onDisabledChange?.(true)
+  //   } else {
+  //     onDisabledChange?.(false)
+  //   }
+  // }, [disabled])
+
+  const handleSubmit1 = async (params: any) => {
+    console.log('params', params)
+
+    if (!params.password || !params.code) {
+      message.info(getIntl().formatMessage({ id: 'mt.qingshuruzhanghaomimayanzhengma' }))
+      return
+    }
+
+    form
+      .validateFields()
+      .then((values) => {
+        setLoading(true)
+
+        // generateDepositOrder({
+        //   address: values.toAccountId,
+        //   bankName: values.bankName,
+        //   bankCard: values.bankCard,
+        //   baseOrderAmount: values.amount,
+        //   channelId: values.methodId,
+        //   password: md5(params.password),
+        //   phoneCode: params.code,
+        //   tradeAccountId: values.fromAccountId
+        // })
+        //   .then((res) => {
+        //     if (res.success) {
+        //       push(`/app/withdraw/wait/${res.data.id}`)
+        //     } else {
+        //       message.info(res.data.msg)
+        //     }
+        //   })
+        //   .finally(() => {
+        //     setLoading(false)
+        //   })
+      })
+      .catch((err) => {
+        console.log('err', err)
+      })
+  }
+
+  const params = useParams()
+  const id = params?.id as string
+
+  useLayoutEffect(() => {
+    if (id) {
+      // 请求接口得到 paymentInfo
+      getDepositOrderDetail({ id }).then((res) => {
+        if (res.success) {
+          setPaymentInfo(res.data || {})
+        }
+      })
+    }
+  }, [id])
+
+  const confirmModalRef = useRef<any>()
+  const handleTimeout = () => {
+    confirmModalRef.current?.show()
+  }
+
+  const uploadModalRef = useRef<any>()
+
+  const onUpload = async () => {
+    uploadModalRef.current?.show()
+  }
+
+  const cancelModalRef = useRef<any>()
+
+  const onCancel = async () => {
+    cancelModalRef.current?.show()
+  }
+
+  const [query] = useSearchParams()
+
+  const backUrl = query.get('backUrl') as string
+
+  const handleReset = () => {
+    console.log('handleReset')
+    if (backUrl) {
+      push(backUrl)
+    } else {
+      push('/app/deposit')
+    }
+  }
+
+  useImperativeHandle(ref, () => ({
+    onSubmit: handleSubmit1,
+    onUpload,
+    onCancel
+  }))
+
+  return (
+    <div className="bg-gray-55">
+      <div className="flex flex-col gap-1 items-center pt-9">
+        <span className=" text-sm font-normal">
+          <FormattedMessage id="mt.daizhifujine" />
+        </span>
+        <span className=" text-[42px] leading-[46px] font-dingpro-medium">
+          {formatNum(paymentInfo?.receiptAmount, { precision: DEFAULT_CURRENCY_DECIMAL })}&nbsp;
+          {paymentInfo?.channelSettlementCurrency}
+        </span>
+        <span className=" text-sm font-medium mt-1">
+          {/* <FormattedMessage id="mt.shijidaozhang" /> */}
+          &nbsp;{formatNum(paymentInfo?.baseOrderAmount, { precision: DEFAULT_CURRENCY_DECIMAL })}&nbsp;{paymentInfo?.baseCurrency}
+        </span>
+      </div>
+      <div className="flex flex-col gap-1 items-center pt-10 pb-7">
+        <Timer paymentInfo={paymentInfo} handleTimeout={handleTimeout} address={paymentInfo?.address || ''} />
+        <div className="text-sm mt-3">
+          <span className=" text-secondary">
+            <FormattedMessage id="mt.cankaohuilv" />
+          </span>
+          &nbsp;
+          <span className="text-primary">
+            {`1 ${paymentInfo?.baseCurrency} ≈ ${formatNum(paymentInfo?.exchangeRate, {
+              precision: DEFAULT_CURRENCY_DECIMAL
+            })} ${paymentInfo?.channelSettlementCurrency}`}
+          </span>
+        </div>
+      </div>
+      {loading && (
+        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0 z-10">
+          <PageLoading />
+        </div>
+      )}
+
+      <Step2 loading={loading} paymentInfo={paymentInfo} />
+
+      <div className="flex flex-col justify-start items-start gap-4 flex-1 pt-2.5 px-[14px] mt-1.5 border-t border-[#f0f0f0] bg-white">
+        <div className="text-primary text-sm font-semibold">
+          <FormattedMessage id="mt.rujinxuzhi" />
+        </div>
+        <div className="text-secondary text-xs">
+          {methodInfo?.notice ? (
+            <p className="leading-7" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
+          ) : (
+            <div className="text-xs text-gray-400">
+              <FormattedMessage id="mt.zanwuneirong" />
+            </div>
+          )}
+        </div>
+      </div>
+      <UploadModal ref={uploadModalRef} id={id} certificateUrl={paymentInfo?.certificateUrl || ''} />
+      <CancelModal ref={cancelModalRef} id={id} backUrl={backUrl} />
+
+      <ConfirmModal ref={confirmModalRef} handleReset={handleReset} />
+    </div>
+  )
+})
+
+export default observer(DepositOtc)

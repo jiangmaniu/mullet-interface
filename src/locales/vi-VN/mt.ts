@@ -771,5 +771,6 @@ export default {
   'mt.qingquebaoninbinweijinxingzhuanzhang': 'Vui lòng đảm bảo bạn không chuyển tiền, để tránh mất tiền.',
   'mt.duociquxiao': 'Nhiều lần hủy đơn hàng sẽ dẫn đến việc không thể nạp tiền trong ngày.',
   'mt.rujindengdai': 'Đang chờ nạp tiền',
-  'mt.chujindengdai': 'Đang chờ rút tiền'
+  'mt.chujindengdai': 'Đang chờ rút tiền',
+  'mt.shangchuanpingzheng': 'Tải lên chứng từ'
 }

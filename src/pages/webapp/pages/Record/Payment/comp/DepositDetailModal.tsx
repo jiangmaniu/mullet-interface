@@ -5,7 +5,6 @@ import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/S
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { push } from '@/utils/navigator'
 import { FormattedMessage, useModel } from '@umijs/max'
 import type { ForwardedRef } from 'react'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
@@ -13,10 +12,11 @@ import { statusMap } from '..'
 
 type IProps = {
   item: Wallet.depositOrderListItem | undefined
+  onUpload: (item: Wallet.depositOrderListItem) => void
 }
 
 /** 选择账户弹窗 */
-function DepositDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
+function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalRef>) {
   const i18n = useI18n()
   const { t } = i18n
   const { theme } = useTheme()
@@ -67,16 +67,6 @@ function DepositDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
                 </span>
                 {statusMap[item?.status ?? 'FAIL']?.text || '[status]'}
               </div>
-              {item?.status === 'WAIT' && (
-                <div
-                  className="text-xs font-normal underline text-yellow-700 italic mr-1"
-                  onClick={() => {
-                    push(`/app/deposit/otc/${item?.id}`)
-                  }}
-                >
-                  上傳憑證
-                </div>
-              )}
             </div>
           </div>
 
@@ -120,8 +110,8 @@ function DepositDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
               </div>
             </div>
           </div>
-          <div className={cn('flex flex-row justify-between items-end mt-4 pb-4', item?.status === 'REJECT' && 'border-b border-gray-100')}>
-            <div className="flex flex-col gap-1.5">
+          <div className={cn('grid grid-cols-2  mt-4 pb-4', item?.status === 'REJECT' && 'border-b border-gray-100')}>
+            <div className="flex flex-col gap-1.5 items-start">
               <div className="text-end text-xl font-medium flex-1">
                 {formatNum(item?.baseOrderAmount)} {item?.baseCurrency}
               </div>
@@ -129,13 +119,25 @@ function DepositDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
                 <FormattedMessage id="mt.jine" />
               </span>
             </div>
-            <div className="flex gap-2.5">
-              <span className=" text-xs text-secondary">
-                <FormattedMessage id="mt.shouxufei" />
-              </span>
-              <span className=" text-xs text-primary">
-                {item?.baseHandlingFee} {item?.baseCurrency}
-              </span>
+            <div className="flex justify-between items-end flex-col flex-1 h-full">
+              {item?.status === 'WAIT' && (
+                <div
+                  className="text-xs font-normal underline text-yellow-700 italic mr-1"
+                  onClick={() => {
+                    onUpload(item)
+                  }}
+                >
+                  <FormattedMessage id="mt.shangchuanpingzheng" />
+                </div>
+              )}
+              <div className="flex flex-row gap-2.5">
+                <span className=" text-xs text-secondary">
+                  <FormattedMessage id="mt.shouxufei" />
+                </span>
+                <span className=" text-xs text-primary">
+                  {item?.baseHandlingFee} {item?.baseCurrency}
+                </span>
+              </div>
             </div>
           </div>
 

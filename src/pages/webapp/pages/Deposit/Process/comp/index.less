@@ -1,0 +1,20 @@
+.form-item-divider-left {
+  position: relative;
+}
+
+.form-item-divider-left::after {
+  position: absolute;
+  top: 0;
+  right: -50px;
+  display: block;
+  width: 1px;
+  height: 100%;
+  background-color: #d8d8d8;
+  content: '';
+}
+
+@media (max-width: 1024px) {
+  .form-item-divider-left::after {
+    content: none;
+  }
+}
