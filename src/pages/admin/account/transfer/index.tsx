@@ -147,6 +147,7 @@ function TransferAccount() {
           rules={[
             {
               required: true,
+              // @ts-ignore
               validator(rule, value, callback) {
                 if (!value) {
                   return Promise.reject(intl.formatMessage({ id: 'mt.qingshuruyue' }))

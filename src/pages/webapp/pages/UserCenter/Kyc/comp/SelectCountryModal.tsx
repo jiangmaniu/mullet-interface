@@ -16,6 +16,7 @@ type IProps = {
   header?: React.ReactNode
   onPress?: (item?: Common.AreaCodeItem) => void
   isRemainAtCurrentPage?: boolean
+  title?: string
 }
 
 export type ModalRef = {
@@ -107,7 +108,7 @@ const Children = observer(
 )
 
 /** 选择账户弹窗 */
-function SelectCountryModal({ isSimulate, onPress, isRemainAtCurrentPage }: IProps, ref: ForwardedRef<ModalRef>) {
+function SelectCountryModal({ isSimulate, onPress, isRemainAtCurrentPage, title }: IProps, ref: ForwardedRef<ModalRef>) {
   const { cn, theme } = useTheme()
   const { t, locale } = useI18n()
   const [loading, setLoading] = useState(true)
@@ -170,7 +171,7 @@ function SelectCountryModal({ isSimulate, onPress, isRemainAtCurrentPage }: IPro
             <View className={cn('mx-3 mb-3')}>
               <View className={cn('items-center flex-row w-full justify-between')}>
                 <Text className={cn('text-[22px] leading-7')} weight="medium">
-                  {t('pages.login.Residence Country')}
+                  {title || t('pages.login.Residence Country')}
                 </Text>
               </View>
               <View style={{ marginTop: 10 }}>

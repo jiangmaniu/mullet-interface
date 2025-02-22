@@ -17,7 +17,7 @@ export interface IlistItemProps {
   subTitle?: string
   value?: string | number
   /** 右侧副文本 */
-  subText?: string
+  subText?: React.ReactNode
   href?: string
   params?: { [key: string]: any }
   rightIcon?: any
@@ -27,6 +27,7 @@ export interface IlistItemProps {
   first?: boolean
   /** 是否被选中 */
   active?: boolean
+  hiddenRightIcon?: boolean
   styles?: {
     container?: React.CSSProperties
     iconStyle?: React.CSSProperties
@@ -47,6 +48,7 @@ const ListItem: React.FC<IlistItemProps> = ({
   styles,
   first,
   rightIcon,
+  hiddenRightIcon,
   href,
   params,
   onPress
@@ -87,7 +89,7 @@ const ListItem: React.FC<IlistItemProps> = ({
                 {subText}
               </Text>
             )}
-            <Iconfont name="quancangxiala" size={16} color={theme.colors.textColor.secondary} />
+            {!hiddenRightIcon && <Iconfont name="quancangxiala" size={16} color={theme.colors.textColor.secondary} />}
           </View>
         )}
       </View>

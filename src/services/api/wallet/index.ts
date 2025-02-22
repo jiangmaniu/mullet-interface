@@ -100,7 +100,7 @@ export async function modifyWithdrawalBank(body: { id: string; remark: string })
 
 // /trade-payment/paymentClient/withdrawalBank/remove
 // 删除提现银行
-export async function removeWithdrawalBank(body: { id: string }) {
+export async function removeWithdrawalBank(body: { id: any }) {
   return request<API.Response<any>>('/api/trade-payment/paymentClient/withdrawalBank/remove', {
     method: 'POST',
     data: body
