@@ -465,11 +465,6 @@ export default [
         path: '/:lng/app/modify-password',
         component: './webapp/pages/UserCenter/ModifyPassword'
       },
-      // 修改密码
-      {
-        path: '/:lng/app/modify-password',
-        component: './webapp/pages/UserCenter/ModifyPassword'
-      },
       // 银行卡地址
       {
         path: '/:lng/app/bankcard-address',
