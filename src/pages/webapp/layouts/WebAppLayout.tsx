@@ -1,4 +1,4 @@
-import { Outlet, useIntl, useLocation, useModel } from '@umijs/max'
+import { Outlet, useIntl, useLocation, useModel, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
@@ -8,6 +8,7 @@ import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
 import { isMainTabbar } from '@/pages/webapp/utils/navigator'
 import { checkPageShowTime } from '@/utils/business'
 import { message } from '@/utils/message'
+import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useNetwork } from 'ahooks'
 import { lazy, useEffect, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
@@ -26,6 +27,9 @@ function WebAppLayout() {
   const networkState = useNetwork()
   const intl = useIntl()
   const isOnline = networkState.online
+  const [searchParams] = useSearchParams()
+  const token = searchParams.get('token')
+  const user_id = searchParams.get('user_id')
 
   const isMainTab = isMainTabbar(pathname)
 
@@ -96,6 +100,19 @@ function WebAppLayout() {
       document.body.removeEventListener('gesturestart', handleGestureStart as EventListener)
     }
   }, [])
+
+  // 全局设置token
+  useEffect(() => {
+    if (token && user_id) {
+      STORAGE_SET_TOKEN(token)
+      STORAGE_SET_USER_INFO({ user_id })
+
+      setTimeout(() => {
+        // 获取用户信息
+        fetchUserInfo()
+      }, 100)
+    }
+  }, [token])
 
   const renderContent = useMemo(() => {
     return (
