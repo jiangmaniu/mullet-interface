@@ -1,64 +1,64 @@
 import { ProForm } from '@ant-design/pro-components'
-import { FormattedMessage, getIntl, useIntl, useLocation, useModel, useSearchParams } from '@umijs/max'
-import { Form, message } from 'antd'
-import { FormInstance } from 'antd/lib'
-import { useEffect, useMemo, useState } from 'react'
+import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
+import { message } from 'antd'
+import { useMemo, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
 
-import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
-import { push } from '@/utils/navigator'
-import confirm from 'antd/es/modal/confirm'
+import { getEnv } from '@/env'
 import { observer } from 'mobx-react'
 
-const Step2 = ({
-  form,
-  loading,
-  methodInfo
-}: {
-  form: FormInstance<any>
-  loading?: boolean
-  methodInfo?: Wallet.fundsMethodPageListItem
-}) => {
+const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wallet.GenerateDepositOrderDetailResult }) => {
   const { locale } = useIntl()
 
-  const currency = Form.useWatch('currency', form)
-  const chain = Form.useWatch('chain', form)
-  const type = Form.useWatch('type', form)
-  const name = Form.useWatch('name', form)
-  const bankName = Form.useWatch('bankName', form)
-  const bankCard = Form.useWatch('bankCard', form)
-  const amount = Form.useWatch('amount', form)
-  const handlingFee = Form.useWatch('handlingFee', form)
-  const symbol = Form.useWatch('symbol', form)
-  const actualAmount = Form.useWatch('actualAmount', form)
-  const exchangeRate = Form.useWatch('exchangeRate', form)
-  const fromAccountId = Form.useWatch('fromAccountId', form)
+  const {
+    baseCurrency,
+    address,
+    chain,
+    paymentType,
+    name,
+    bankName,
+    bankCard,
+    amount,
+    handlingFee,
+    symbol,
+    actualAmount,
+    exchangeRate,
+    tradeAccountId,
+    channelNo,
+    channelNoValue
+  } = paymentInfo || {}
+
+  const otcType = useMemo(() => {
+    const type = channelNoValue?.split('-')?.[0]
+    console.log('type', type)
+    return type
+  }, [channelNoValue])
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
 
   const fromAccountInfo = useMemo(() => {
-    return accountList.find((item) => item.id === fromAccountId)
-  }, [fromAccountId, accountList])
+    return accountList.find((item) => item.id === String(tradeAccountId))
+  }, [tradeAccountId, accountList])
 
   const [disabled, setDisabled] = useState(true)
 
   const options = useMemo(() => {
     return [
       {
-        label: getIntl().formatMessage({ id: 'mt.shoukuanfangshi' }),
-        value: methodInfo?.channelNo
+        label: getIntl().formatMessage({ id: 'mt.zhifufangshi' }),
+        value: channelNo
       },
 
-      ...(type === 'CHAIN'
+      ...(paymentType === 'CHAIN'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.bizhong' }),
-              value: currency
+              value: baseCurrency
             },
             {
               label: getIntl().formatMessage({ id: 'mt.lianmingcheng' }),
@@ -66,7 +66,7 @@ const Step2 = ({
             },
             {
               label: getIntl().formatMessage({ id: 'mt.tibidizhi' }),
-              value: fromAccountId
+              value: address
             }
           ]
         : []),
@@ -105,7 +105,7 @@ const Step2 = ({
           )
         }
       },
-      ...(type === 'OTC'
+      ...(paymentType === 'OTC' && otcType === 'bank'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.shoukuanyinhang' }),
@@ -163,17 +163,17 @@ const Step2 = ({
             }
           ]
         : []),
-      {
-        label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
-        value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${currency}`
-      },
-      ...(type === 'CHAIN'
+      // {
+      //   label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
+      //   value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${baseCurrency}`
+      // },
+      ...(paymentType === 'CHAIN'
         ? [
             {
               label: getIntl().formatMessage({ id: 'mt.shijidaozhang' }),
               value: `${formatNum(actualAmount, {
                 precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
-              })} ${currency}`
+              })} ${baseCurrency}`
             }
           ]
         : [
@@ -183,43 +183,43 @@ const Step2 = ({
             // }
           ])
     ]
-  }, [currency, chain, type, name, bankName, amount, handlingFee])
+  }, [baseCurrency, chain, paymentType, name, bankName, amount, handlingFee, actualAmount, exchangeRate])
 
-  const location = useLocation()
-  const values = (location.state || {}) as Wallet.fundsMethodPageListItem
+  // const location = useLocation()
+  // const values = (location.state || {}) as Wallet.fundsMethodPageListItem
 
   const [query] = useSearchParams()
 
   const backUrl = query.get('backUrl') as string
   const [invalid, setInvalid] = useState(false)
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (!values?.methodId) {
-        setInvalid(true)
-        confirm({
-          title: getIntl().formatMessage({ id: 'mt.dingdanshixiao' }),
-          closable: false,
-          onOk: () => {
-            push(backUrl)
-          }
-        })
-      }
-    }, 600)
-  }, [])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (!values?.methodId) {
+  //       setInvalid(true)
+  //       confirm({
+  //         title: getIntl().formatMessage({ id: 'mt.dingdanshixiao' }),
+  //         closable: false,
+  //         onOk: () => {
+  //           push(backUrl)
+  //         }
+  //       })
+  //     }
+  //   }, 600)
+  // }, [])
   return (
-    <div className="flex items-center justify-center w-full h-full mt-10 flex-1 ">
+    <div className="flex items-center justify-center w-full h-full flex-1 ">
       <div className=" pt-4 bg-white w-full rounded-t-3xl flex-1">
         <div className="flex flex-row items-center gap-2 border-b w-full pb-[14px] px-5 border-b-gray-70 ">
           <span className=" text-sm text-secondary">
-            <FormattedMessage id="mt.chujinzhanghu" />
+            <FormattedMessage id="mt.rujinzhanghu" />
           </span>
 
           <div className="flex flex-row items-center gap-1 text-sm">
             <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
               {fromAccountInfo?.synopsis?.abbr}
             </div>
-            <span className="flex-shrink-0">{fromAccountId}</span>
+            <span className="flex-shrink-0">{tradeAccountId}</span>
           </div>
         </div>
         <div className="px-[14px] pb-4">
@@ -230,28 +230,12 @@ const Step2 = ({
             disabled={loading}
             submitter={false}
             layout="vertical"
-            form={form}
             className="flex flex-col gap-6"
-            initialValues={{
-              ...values
-            }}
           >
-            <ProFormText name="orderId" hidden />
-            <ProFormText name="methodId" hidden />
-            <ProFormText name="handlingFee" hidden />
-            <ProFormText name="currency" hidden />
-            <ProFormText name="type" hidden />
-            <ProFormText name="crypto" hidden />
-            <ProFormText name="chain" hidden />
-            <ProFormText name="name" hidden />
-            <ProFormText name="actualAmount" hidden />
-            <ProFormText name="symbol" hidden />
-            <ProFormText name="exchangeRate" hidden />
-            <ProFormText name="amount" hidden />
-            <ProFormText name="fromAccountId" hidden />
-            <ProFormText name="bankCard" hidden />
-            <ProFormText name="bankName" hidden />
             <div className="flex flex-col gap-6 mt-6">
+              <div className=" text-primary text-sm font-semibold">
+                <FormattedMessage id="mt.fukuanxinxi" />
+              </div>
               {options
                 .filter((item) => item.value)
                 .map((item, index) => (
@@ -262,50 +246,28 @@ const Step2 = ({
                   </div>
                 ))}
 
-              {/* <RawProFormText.Password
-              name="password"
-              initialValue=""
-              fieldProps={{ type: 'password', allowClear: false }}
-              label={getIntl().formatMessage({ id: 'mt.zhanghaomima' })}
-              placeholder={getIntl().formatMessage({ id: 'mt.qingshuruzhanghaomima' })}
-            />
-            <ProForm.Item
-              label={getIntl().formatMessage(
-                {
-                  id: 'mt.qingshurushoudaodeyanzhengma'
-                },
-                { value: `${currentUser?.userInfo?.phoneAreaCode}${currentUser?.userInfo?.phone}` }
-              )}
-            >
-              <div className="flex items-center flex-wrap gap-6">
-                <CodeInput form={form} name="code" disabled={disabled} />
-                <span
-                  className={cn('text-primary ', sendTime > 0 ? 'cursor-pointer hover:underline' : '')}
-                  onClick={handleGetVerificationCode}
-                >
-                  <FormattedMessage id="mt.huodeyanzhengma" />
-                  {sendTime > 0 && ` (${sendTime}s)`}
-                </span>
-              </div>
-            </ProForm.Item> */}
+              {paymentType === 'OTC' && otcType !== 'bank' && (
+                <div className="flex flex-col items-center  font-normal ">
+                  <div className="text-sm text-primary font-medium ">
+                    <FormattedMessage id="mt.shoukuanerweima" />
+                  </div>
+                  <div className="w-[154px] h-[154px] bg-secondary mt-2 ">
+                    <img src={`${getEnv().imgDomain}${paymentInfo?.qrCode}`} alt="qrcode" style={{ width: '100%', height: '100%' }} />
+                  </div>
 
-              {/* <div className="flex flex-row gap-2 items-center mt-2 ">
-              <Button
-                type="default"
-                size="large"
-                onClick={() => {
-                  setStep(0)
-                }}
-              >
-                <img src="/img/uc/arrow-left.png" width={32} height={32} />
-              </Button>
-              <Button type="primary" htmlType="submit" size="large" className="flex-1" onClick={handleSubmit} disabled={loading}>
-                <div className="flex flex-row items-center gap-2">
-                  <FormattedMessage id="mt.tixian" />
-                  <Iconfont name="zhixiang" color="white" width={18} height={18} />
+                  <div className="flex flex-col-reverse justify-between h-full flex-1 gap-4 mt-3 text-center">
+                    <div className="text-xs text-secondary font-normal ">
+                      {otcType === 'wechat' ? (
+                        <FormattedMessage id="mt.weixinsaomazhifu" />
+                      ) : (
+                        <FormattedMessage id="mt.zhifubaosaomazhifu" />
+                      )}
+                      <br />
+                      <FormattedMessage id="mt.beizhuzijiderujinzhanghu" />
+                    </div>
+                  </div>
                 </div>
-              </Button>
-            </div> */}
+              )}
             </div>
             <div className="-mt-[7px]">
               <span className="  font-normal text-weak  text-xs ">

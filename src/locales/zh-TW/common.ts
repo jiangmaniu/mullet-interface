@@ -111,7 +111,7 @@ export default {
   'common.Complete': '完成',
   'common.unset': '未设置',
   'common.shoujihao': '手機號',
-  'common.bangding': '綁定'
-
+  'common.bangding': '綁定',
+  'common.zhanbu': '暫不'
   // "======= 公共结束 ==========": "",
 }

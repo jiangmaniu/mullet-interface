@@ -441,6 +441,21 @@ export default [
         path: '/:lng/app/record/payment',
         component: './webapp/pages/Record/Payment.webview'
       },
+      // 入金过程
+      {
+        path: '/:lng/app/deposit/process/:method',
+        component: './webapp/pages/Deposit.webview/Process'
+      },
+      // 入金 OTC
+      {
+        path: '/:lng/app/deposit/otc/:id',
+        component: './webapp/pages/Deposit.webview/Otc'
+      },
+      // 入金等待
+      {
+        path: '/:lng/app/deposit/wait/:id',
+        component: './webapp/pages/Deposit.webview/Wait'
+      },
       {
         path: '/:lng/app/test',
         component: './webapp/pages/Test'

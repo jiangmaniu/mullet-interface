@@ -6,7 +6,7 @@ import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { CustomerService } from '@/utils/chat'
 import { push } from '@/utils/navigator'
-import { FormattedMessage, getIntl, useSearchParams } from '@umijs/max'
+import { FormattedMessage, getIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
@@ -25,27 +25,40 @@ function WithdrawPreview() {
     ref.current?.onSubmit()
   }
 
-  const onSuccess = (values?: any) => {
-    push('/app/withdraw/preview', values)
-  }
-
-  const [query] = useSearchParams()
-
-  const backUrl = query.get('backUrl') as string
   return (
     <BasicLayout
       bgColor="primary"
       headerColor={theme.colors.backgroundColor.secondary}
       fixedHeight
       footer={
-        <Button type="primary" size="large" className="mt-2 mb-2.5" onClick={handleSubmit} disabled={disabled}>
-          {getIntl().formatMessage({ id: 'mt.tixian' })}
-        </Button>
+        <div className="flex flex-row  justify-between gap-2.5 mt-2 mb-2.5 w-full ">
+          <div className="flex-1 flex-grow">
+            <Button
+              type="primary"
+              size="large"
+              className="w-full"
+              onClick={() => {
+                push('/app/trade')
+              }}
+            >
+              {getIntl().formatMessage({ id: 'mt.qujiaoyi' })}
+            </Button>
+          </div>
+          <Button
+            size="large"
+            className=" w-[88px]"
+            onClick={() => {
+              push(`/app/record/payment?type=RUJIN`)
+            }}
+          >
+            {getIntl().formatMessage({ id: 'mt.chakandingdan' })}
+          </Button>
+        </div>
       }
     >
       <Header
         className="bg-secondary"
-        onBack={() => navigateTo(backUrl)}
+        onBack={() => navigateTo('/app/deposit')}
         right={
           <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={CustomerService}>
             <Iconfont name="chat" width={20} height={20} />
@@ -53,7 +66,7 @@ function WithdrawPreview() {
           </div>
         }
       />
-      <Body ref={ref} onDisabledChange={onDisabledChange} onSuccess={onSuccess} />
+      <Body ref={ref} onDisabledChange={onDisabledChange} />
     </BasicLayout>
   )
 }

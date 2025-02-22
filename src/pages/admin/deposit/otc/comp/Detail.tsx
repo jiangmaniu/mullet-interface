@@ -70,10 +70,6 @@ const Detail = ({
     }
   }, [methods, intl])
 
-  const methodInfo = useMemo(() => {
-    return methods.find((item) => item.id === paymentInfo?.channelId)
-  }, [paymentInfo, methods])
-
   const {
     channelName,
     baseOrderAmount,
@@ -86,7 +82,8 @@ const Detail = ({
     baseCurrency,
     channelAccountAmount,
     channelSettlementCurrency,
-    receiptAmount
+    receiptAmount,
+    channelNoValue
   } = paymentInfo
 
   const options = [
@@ -119,9 +116,8 @@ const Detail = ({
   ]
 
   const otcType = useMemo(() => {
-    return 'wechat'
-    // return methodInfo?.channelNoValue?.split('-')?.[0]
-  }, [methodInfo])
+    return channelNoValue?.split('-')?.[0]
+  }, [channelNoValue])
 
   const options2 = useMemo(() => {
     return [
@@ -132,7 +128,7 @@ const Detail = ({
       ...(otcType === 'bank'
         ? [
             {
-              label: getIntl().formatMessage({ id: 'mt.shoukuanyinghang' }),
+              label: getIntl().formatMessage({ id: 'mt.shoukuanyinhang' }),
               value: bankName
             },
             {

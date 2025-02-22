@@ -1,4 +1,4 @@
-import './index.less'
+// import './index.less'
 
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
@@ -23,6 +23,8 @@ export default function ({ setImgs, imgs }: IProps) {
   const intl = useIntl()
 
   const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
+
+  // TODO: 上传图片 可能要适配 rn 端
   const props: UploadProps = {
     name: 'file',
     multiple: false,
@@ -65,13 +67,13 @@ export default function ({ setImgs, imgs }: IProps) {
     <>
       <Dragger {...props}>
         {url ? (
-          <div className="flex items-center justify-center">
-            <img src={url} width={390} height={176} />
+          <div className="flex items-center justify-center flex-1">
+            <img src={url} width={347} height={235} />
           </div>
         ) : (
           <div className="flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center bg-cover w-[390px] h-[176px]">
-              <img src="/img/upload-01.png" width={80} height={80} />
+            <div className="flex flex-col items-center justify-center bg-cover w-[347px] h-[235px]">
+              <img src="/img/upload-01.png" width={72} height={72} />
               <span className="text-primary text-sm font-semibold">
                 <FormattedMessage id="mt.dianjishangchuantupian" />
               </span>

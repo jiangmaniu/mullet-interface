@@ -729,7 +729,7 @@ export default {
   'mt.rujinzhanghu': 'Tài khoản nạp tiền',
   'mt.fukuanxinxi': 'Thông tin thanh toán',
   'mt.shoukuanxingming': 'Tên người nhận',
-  'mt.shoukuanyinghang': 'Ngân hàng người nhận',
+  'mt.shoukuanyinhang': 'Ngân hàng người nhận',
   'mt.daizhifujine': 'Số tiền cần thanh toán',
   'mt.youyuhuilvbodong': 'Do biến động tỷ giá, vui lòng thanh toán càng sớm càng tốt. Số tiền thanh toán thực tế dựa trên đơn hàng đã gửi.',
   'mt.quxiaodingdan': 'Hủy đơn hàng',
@@ -765,5 +765,11 @@ export default {
   'mt.nindejiaoyizhengzaichulizhong2': 'Giao dịch của bạn đang được xử lý',
   'mt.chujinshenqingchenggong': 'Đơn rút tiền thành công, hỗ trợ đang xử lý...',
   'mt.zijinyujiliangxiaoshineidaoda': 'Số tiền của bạn được dự kiến sẽ đến trong vòng hai giờ',
-  'mt.qujiaoyi': 'Đi đến giao dịch'
+  'mt.qujiaoyi': 'Đi đến giao dịch',
+  'mt.xuanzerujinfangshi': 'Chọn phương thức nạp tiền',
+  'mt.shengyufukuanshijian': 'Thời gian thanh toán còn lại {time}',
+  'mt.qingquebaoninbinweijinxingzhuanzhang': 'Vui lòng đảm bảo bạn không chuyển tiền, để tránh mất tiền.',
+  'mt.duociquxiao': 'Nhiều lần hủy đơn hàng sẽ dẫn đến việc không thể nạp tiền trong ngày.',
+  'mt.rujindengdai': 'Đang chờ nạp tiền',
+  'mt.chujindengdai': 'Đang chờ rút tiền'
 }

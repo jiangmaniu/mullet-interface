@@ -32,15 +32,36 @@ function WithdrawPreview() {
   const [query] = useSearchParams()
 
   const backUrl = query.get('backUrl') as string
+
   return (
     <BasicLayout
       bgColor="primary"
       headerColor={theme.colors.backgroundColor.secondary}
       fixedHeight
       footer={
-        <Button type="primary" size="large" className="mt-2 mb-2.5" onClick={handleSubmit} disabled={disabled}>
-          {getIntl().formatMessage({ id: 'mt.tixian' })}
-        </Button>
+        <div className="flex flex-row  justify-between gap-2.5 mt-2 mb-2.5 w-full ">
+          <div className="flex-1 flex-grow">
+            <Button
+              type="primary"
+              size="large"
+              className="w-full"
+              onClick={() => {
+                ref.current?.onUpload()
+              }}
+            >
+              {getIntl().formatMessage({ id: 'mt.yifukuanshagnchuanpingzheng' })}
+            </Button>
+          </div>
+          <Button
+            size="large"
+            className=" w-[88px]"
+            onClick={() => {
+              ref.current?.onCancel()
+            }}
+          >
+            {getIntl().formatMessage({ id: 'mt.quxiaodingdan' })}
+          </Button>
+        </div>
       }
     >
       <Header

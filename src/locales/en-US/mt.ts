@@ -732,7 +732,7 @@ export default {
   'mt.rujinzhanghu': 'Deposit Account',
   'mt.fukuanxinxi': 'Payment Information',
   'mt.shoukuanxingming': 'Payee Name',
-  'mt.shoukuanyinghang': 'Payee Bank',
+  'mt.shoukuanyinhang': 'Payee Bank',
   'mt.daizhifujine': 'Amount to be Paid',
   'mt.youyuhuilvbodong':
     'Due to exchange rate fluctuations, please pay as soon as possible. The actual payment amount is based on the submitted order.',
@@ -770,5 +770,11 @@ export default {
   'mt.nindejiaoyizhengzaichulizhong2': 'Your transaction is being processed',
   'mt.chujinshenqingchenggong': 'Withdrawal application successful, customer service is reviewing...',
   'mt.zijinyujiliangxiaoshineidaoda': 'Your funds are expected to arrive within two hours',
-  'mt.qujiaoyi': 'Go to Trade'
+  'mt.qujiaoyi': 'Go to Trade',
+  'mt.xuanzerujinfangshi': 'Select Deposit Method',
+  'mt.shengyufukuanshijian': 'Remaining payment time {time}',
+  'mt.qingquebaoninbinweijinxingzhuanzhang': 'Please ensure you have not transferred funds, to avoid loss of funds.',
+  'mt.duociquxiao': 'Multiple times of canceling deposits will result in a ban on deposits for the day.',
+  'mt.rujindengdai': 'Waiting for Deposit',
+  'mt.chujindengdai': 'Waiting for Withdrawal'
 }

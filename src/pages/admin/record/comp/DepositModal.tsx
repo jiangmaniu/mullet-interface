@@ -7,6 +7,7 @@ import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
 import { getEnv } from '@/env'
+import { push } from '@/utils/navigator'
 import { statusMap } from '..'
 
 type IProps = {
@@ -32,7 +33,7 @@ function DepositModal({ item }: IProps, ref: any) {
         <div className="flex items-center">
           <img src="/img/default-avatar.png" width={40} height={40} />
           <div className="pl-3">
-            <div className="text-lg text-primary font-semibold flex flex-row gap-3">
+            <div className="text-lg text-primary font-semibold flex flex-row items-center gap-3">
               {item?.type}
               {/* @ts-ignore */}
               <div className="text-sm flex items-center" style={{ color: statusMap[item?.status]?.color }}>
@@ -46,6 +47,17 @@ function DepositModal({ item }: IProps, ref: any) {
                 {/* @ts-ignore */}
                 {statusMap[item?.status]?.text}
               </div>
+
+              {item?.status === 'WAIT' && (
+                <div
+                  className="text-sm font-normal underline text-yellow-700 italic mr-1"
+                  onClick={() => {
+                    push(`/deposit/otc/${item?.id}`)
+                  }}
+                >
+                  上傳憑證
+                </div>
+              )}
             </div>
             <div className="text-xs text-secondary pt-1">
               <FormattedMessage id="mt.danhao" />:{item?.orderNo || '-'}

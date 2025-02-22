@@ -75,6 +75,8 @@ type IProps = Partial<Props> & {
   showLoading?: boolean
   /**跟随内容自适应高度和height互斥 */
   autoHeight?: boolean
+
+  emotionClassName?: any
 }
 
 const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
@@ -105,6 +107,7 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
     open,
     closeOnConfirm = true,
     showLoading = false,
+    emotionClassName: _className = {},
     ...res
   } = props
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -272,7 +275,8 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
         ? {
             overflow: 'hidden !important'
           }
-        : undefined
+        : undefined,
+      ..._className
     }
   })
 

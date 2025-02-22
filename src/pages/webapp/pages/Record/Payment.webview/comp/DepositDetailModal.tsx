@@ -5,6 +5,7 @@ import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/S
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
+import { push } from '@/utils/navigator'
 import { FormattedMessage, useModel } from '@umijs/max'
 import type { ForwardedRef } from 'react'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
@@ -56,14 +57,26 @@ function DepositDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
                 </div>
               </div>
             </div>
-            <div className="text-sm font-normal flex items-center " style={{ color: statusMap[item?.status ?? 'FAIL']?.color }}>
-              <span
-                className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item?.status === 'WAIT' && 'animate-pulse')}
-                style={{ backgroundColor: statusMap[item?.status ?? 'FAIL']?.color || '#9C9C9C' }}
-              >
-                {/* 占位 */}
-              </span>
-              {statusMap[item?.status ?? 'FAIL']?.text || '[status]'}
+            <div className="flex flex-col items-end gap-1">
+              <div className="text-sm font-normal flex items-center " style={{ color: statusMap[item?.status ?? 'FAIL']?.color }}>
+                <span
+                  className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item?.status === 'WAIT' && 'animate-pulse')}
+                  style={{ backgroundColor: statusMap[item?.status ?? 'FAIL']?.color || '#9C9C9C' }}
+                >
+                  {/* 占位 */}
+                </span>
+                {statusMap[item?.status ?? 'FAIL']?.text || '[status]'}
+              </div>
+              {item?.status === 'WAIT' && (
+                <div
+                  className="text-xs font-normal underline text-yellow-700 italic mr-1"
+                  onClick={() => {
+                    push(`/app/deposit/otc/${item?.id}`)
+                  }}
+                >
+                  上傳憑證
+                </div>
+              )}
             </div>
           </div>
 

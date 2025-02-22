@@ -27,7 +27,7 @@ export const MethodList = observer(() => {
 
   return (
     <div className="flex flex-col gap-3">
-      <span className=" font-bold text-xl pl-2.5 pb-[5px]">{intl.formatMessage({ id: 'mt.xuanzechujinfangshi' })}</span>
+      <span className=" font-bold text-xl pl-2.5 pb-[5px]">{intl.formatMessage({ id: 'mt.xuanzerujinfangshi' })}</span>
       {methods.map((item: Wallet.fundsMethodPageListItem, index: number) => (
         <DepositMethod item={item} key={index} status={isBaseAuth ? 'unlocked' : 'locked'} tradeAccountId={tradeAccountId} />
       ))}

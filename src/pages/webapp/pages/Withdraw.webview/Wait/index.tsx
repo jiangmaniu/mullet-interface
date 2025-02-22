@@ -4,6 +4,7 @@ import Button from '@/pages/webapp/components/Base/Button'
 import Header from '@/pages/webapp/components/Base/Header'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
+import { CustomerService } from '@/utils/chat'
 import { push } from '@/utils/navigator'
 import { FormattedMessage, getIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
@@ -63,11 +64,9 @@ function WithdrawPreview() {
         className="bg-secondary"
         onBack={() => navigateTo('/app/withdraw')}
         right={
-          <div className="flex flex-row items-end gap-1.5 pr-[2px]">
-            <Iconfont name="anniu-gengduo" color="white" width={20} height={20} />
-            <span className="flex-1 text-sm">
-              <FormattedMessage id="mt.lianxikefu" />
-            </span>
+          <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={CustomerService}>
+            <Iconfont name="chat" width={20} height={20} />
+            <FormattedMessage id="mt.lianxikefu" />
           </div>
         }
       />
