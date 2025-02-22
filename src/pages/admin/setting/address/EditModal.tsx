@@ -1,12 +1,11 @@
 import { FormattedMessage, getIntl, useModel } from '@umijs/max'
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
 import { ProForm } from '@ant-design/pro-components'
 import { Form } from 'antd'
-import TransferMethodSelectItem from '../../withdrawal/process/comp/TransferMethodSelectItem'
 
 type IProps = {
   trigger?: JSX.Element
@@ -37,6 +36,18 @@ function EditModal({ item, onUpdateItem }: IProps, ref: any) {
     })
   }
 
+  useEffect(() => {
+    if (item) {
+      form.setFieldsValue({
+        id: item?.id,
+        methodId: item?.channelId,
+        address: item?.address,
+        remark: item?.remark,
+        channelName: item.channelName
+      })
+    }
+  }, [item])
+
   return (
     <Modal
       width={430}
@@ -53,16 +64,11 @@ function EditModal({ item, onUpdateItem }: IProps, ref: any) {
         submitter={false}
         layout="vertical"
         form={form}
-        initialValues={{
-          id: item?.id,
-          methodId: item?.channelId,
-          address: item?.address,
-          remark: item?.remark
-        }}
         className="flex flex-col gap-6"
       >
-        <TransferMethodSelectItem form={form} disabled={!!item} />
-
+        {/* <TransferMethodSelectItem form={form} disabled={!!item} /> */}
+        {/* 出金方式 */}
+        <ProFormText name="channelName" disabled label={getIntl().formatMessage({ id: 'mt.chujinfangshi' })} />
         <ProFormText name="id" hidden />
 
         <ProFormText
@@ -72,7 +78,7 @@ function EditModal({ item, onUpdateItem }: IProps, ref: any) {
           placeholder={getIntl().formatMessage({ id: 'mt.shurudizhi' })}
           rules={[
             {
-              required: true,
+              required: false,
               message: getIntl().formatMessage({ id: 'mt.shurudizhi' })
             }
           ]}

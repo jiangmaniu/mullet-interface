@@ -8,9 +8,10 @@ const uncheckIcon = '/img/icons/uncheck-icon.png'
 
 interface IProps {
   pwd: string
+  style?: React.CSSProperties
 }
 
-export default forwardRef(({ pwd }: IProps, ref: any) => {
+export default forwardRef(({ pwd, style }: IProps, ref: any) => {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -59,7 +60,7 @@ export default forwardRef(({ pwd }: IProps, ref: any) => {
   const lenInfo = getCheckInfo('len')
 
   return (
-    <div style={{ backgroundColor: '#fff', marginTop: -10 }}>
+    <div style={{ backgroundColor: '#fff', marginTop: -10, ...style }}>
       <div style={{ color: '#3B3B3B', fontSize: 14, paddingBottom: 10 }}>
         <FormattedMessage id="mt.YourPasswordMustContain" />
       </div>

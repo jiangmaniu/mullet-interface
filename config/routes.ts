@@ -456,6 +456,31 @@ export default [
         path: '/:lng/app/deposit/wait/:id',
         component: './webapp/pages/Deposit.webview/Wait'
       },
+      // 个人信息
+      {
+        path: '/:lng/app/person-info',
+        component: './webapp/pages/UserCenter/PersonInfo'
+      },
+      // 修改密码
+      {
+        path: '/:lng/app/modify-password',
+        component: './webapp/pages/UserCenter/ModifyPassword'
+      },
+      // 修改密码
+      {
+        path: '/:lng/app/modify-password',
+        component: './webapp/pages/UserCenter/ModifyPassword'
+      },
+      // 银行卡地址
+      {
+        path: '/:lng/app/bankcard-address',
+        component: './webapp/pages/UserCenter/BankCardAddress'
+      },
+      // 数字钱包地址
+      {
+        path: '/:lng/app/wallet-address',
+        component: './webapp/pages/UserCenter/WalletAddress'
+      },
       {
         path: '/:lng/app/test',
         component: './webapp/pages/Test'

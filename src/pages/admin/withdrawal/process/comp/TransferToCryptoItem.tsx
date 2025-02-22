@@ -47,6 +47,7 @@ function TransferToCryptoItem({ form }: IProps) {
         rules={[
           {
             required: true,
+            // @ts-ignore
             validator(rule, value, callback) {
               if (!value) {
                 return callback(intl.formatMessage({ id: 'mt.shurudizhi' }))
