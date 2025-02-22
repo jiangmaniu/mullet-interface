@@ -189,7 +189,7 @@ function UserCenter() {
     {
       icon: 'zhuanzhang',
       title: t('mt.zijinjilu'),
-      href: '/app/user-center/zijinjilu'
+      href: '/app/record/payment'
     },
     {
       icon: 'msg',

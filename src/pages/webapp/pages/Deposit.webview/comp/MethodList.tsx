@@ -7,7 +7,7 @@ import DepositMethod from './DepositMethod'
 export const MethodList = observer(() => {
   const intl = useIntl()
 
-  const methods = stores.wallet.depositMethods.concat(stores.wallet.depositMethods)
+  const methods = stores.wallet.depositMethods
 
   useLayoutEffect(() => {
     if (methods.length === 0) {

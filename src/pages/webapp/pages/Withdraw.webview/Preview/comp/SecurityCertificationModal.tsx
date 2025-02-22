@@ -14,7 +14,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 
 type IProps = {
   title?: string
-  onSubmit: (values: any) => void
+  onSubmit: (values: any) => Promise<void>
 }
 
 /** 选择账户弹窗 */
@@ -88,13 +88,30 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
   const type =
     registerWay === 'PHONE' ? getIntl().formatMessage({ id: 'mt.shoujiduanxin' }) : getIntl().formatMessage({ id: 'common.dianziyouxiang' })
 
+  const [loading, setLoading] = useState(false)
   const handleSubmit = () => {
     form.validateFields().then((values) => {
-      onSubmit(values)
+      setLoading(true)
+      onSubmit(values).finally(() => {
+        setLoading(false)
+      })
     })
   }
 
-  const disabled = !password || !code
+  useEffect(() => {
+    password &&
+      form
+        .validateFields(['password'])
+        .then((values) => {
+          setInvalid(false)
+        })
+        .catch((err) => {
+          setInvalid(true)
+        })
+  }, [password])
+
+  const disabled = !password || !code || loading
+  const [invalid, setInvalid] = useState(true)
 
   return (
     <SheetModal
@@ -108,7 +125,7 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
               {getIntl().formatMessage({ id: 'mt.querentixian' })}
             </Button>
           ) : (
-            <Button size="large" className="mt-2 mb-2.5" onClick={handleGetVerificationCode}>
+            <Button size="large" className="mt-2 mb-2.5" disabled={invalid} onClick={handleGetVerificationCode}>
               {getIntl().formatMessage({ id: 'mt.huoquyanzhengma' })}
             </Button>
           )}
@@ -119,7 +136,11 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
           <ProForm form={form} submitter={false}>
             <ProFormText.Password
               name="password"
-              fieldProps={{ type: 'password', allowClear: false, size: 'large' }}
+              fieldProps={{
+                type: 'password',
+                allowClear: false,
+                size: 'large'
+              }}
               label={getIntl().formatMessage({ id: 'mt.zhanghaomima' })}
               placeholder={getIntl().formatMessage({ id: 'mt.qingshuruzhanghaomima' })}
               rules={[

@@ -5,7 +5,7 @@ import Header from '@/pages/webapp/components/Base/Header'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { push } from '@/utils/navigator'
-import { FormattedMessage, getIntl } from '@umijs/max'
+import { FormattedMessage, getIntl, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
@@ -28,6 +28,9 @@ function WithdrawPreview() {
     push('/app/withdraw/preview', values)
   }
 
+  const [query] = useSearchParams()
+
+  const backUrl = query.get('backUrl') as string
   return (
     <BasicLayout
       bgColor="primary"
@@ -41,7 +44,7 @@ function WithdrawPreview() {
     >
       <Header
         className="bg-secondary"
-        onBack={() => navigateTo('/app/user-center')}
+        onBack={() => navigateTo(backUrl)}
         right={
           <div className="flex flex-row items-end gap-1.5 pr-[2px]">
             <Iconfont name="anniu-gengduo" color="white" width={20} height={20} />

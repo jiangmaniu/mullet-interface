@@ -761,5 +761,14 @@ export default {
   'mt.yanzhengmajiangfasongzhi': 'Verification code will be sent to {value}, please check your {type}.',
   'mt.shoujiduanxin': 'SMS',
   'mt.huoquyanzhengma': 'Get Verification Code',
-  'mt.qingshuruzhanghaomimayanzhengma': 'Please enter your account password and verification code'
+  'mt.qingshuruzhanghaomimayanzhengma': 'Please enter your account password and verification code',
+  'mt.chujinxianzhi': 'Withdrawal Limit',
+  'mt.xuanzeshijianfanwei': 'Select Time Range',
+  'mt.dakuanwangluo': 'Payment Network',
+  'mt.fukuanzhanghu': 'Payment Account',
+  'mt.dengdaichujin': 'Waiting for Withdrawal',
+  'mt.nindejiaoyizhengzaichulizhong2': 'Your transaction is being processed',
+  'mt.chujinshenqingchenggong': 'Withdrawal application successful, customer service is reviewing...',
+  'mt.zijinyujiliangxiaoshineidaoda': 'Your funds are expected to arrive within two hours',
+  'mt.qujiaoyi': 'Go to Trade'
 }

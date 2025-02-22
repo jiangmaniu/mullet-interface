@@ -30,18 +30,38 @@ function WithdrawPreview() {
 
   return (
     <BasicLayout
-      bgColor="secondary"
+      bgColor="primary"
       headerColor={theme.colors.backgroundColor.secondary}
       fixedHeight
       footer={
-        <Button type="primary" size="large" className="mt-2 mb-2.5" onClick={handleSubmit} disabled={disabled}>
-          {getIntl().formatMessage({ id: 'mt.tixian' })}
-        </Button>
+        <div className="flex flex-row  justify-between gap-2.5 mt-2 mb-2.5 w-full ">
+          <div className="flex-1 flex-grow">
+            <Button
+              type="primary"
+              size="large"
+              className="w-full"
+              onClick={() => {
+                push('/app/trade')
+              }}
+            >
+              {getIntl().formatMessage({ id: 'mt.qujiaoyi' })}
+            </Button>
+          </div>
+          <Button
+            size="large"
+            className=" w-[88px]"
+            onClick={() => {
+              push(`/app/record/payment?type=CHUJIN`)
+            }}
+          >
+            {getIntl().formatMessage({ id: 'mt.chakandingdan' })}
+          </Button>
+        </div>
       }
     >
       <Header
         className="bg-secondary"
-        onBack={() => navigateTo('/app/user-center')}
+        onBack={() => navigateTo('/app/withdraw')}
         right={
           <div className="flex flex-row items-end gap-1.5 pr-[2px]">
             <Iconfont name="anniu-gengduo" color="white" width={20} height={20} />

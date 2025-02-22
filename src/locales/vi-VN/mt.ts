@@ -756,5 +756,14 @@ export default {
   'mt.yanzhengmajiangfasongzhi': 'Mã xác thực sẽ được gửi đến {value}, vui lòng kiểm tra {type}.',
   'mt.shoujiduanxin': 'Tin nhắn điện thoại',
   'mt.huoquyanzhengma': 'Nhận mã xác thực',
-  'mt.qingshuruzhanghaomimayanzhengma': 'Vui lòng nhập mật khẩu tài khoản và mã xác thực'
+  'mt.qingshuruzhanghaomimayanzhengma': 'Vui lòng nhập mật khẩu tài khoản và mã xác thực',
+  'mt.chujinxianzhi': 'Giới hạn rút tiền',
+  'mt.xuanzeshijianfanwei': 'Chọn khoảng thời gian',
+  'mt.dakuanwangluo': 'Mạng thanh toán',
+  'mt.fukuanzhanghu': 'Tài khoản thanh toán',
+  'mt.dengdaichujin': 'Đang chờ rút tiền',
+  'mt.nindejiaoyizhengzaichulizhong2': 'Giao dịch của bạn đang được xử lý',
+  'mt.chujinshenqingchenggong': 'Đơn rút tiền thành công, hỗ trợ đang xử lý...',
+  'mt.zijinyujiliangxiaoshineidaoda': 'Số tiền của bạn được dự kiến sẽ đến trong vòng hai giờ',
+  'mt.qujiaoyi': 'Đi đến giao dịch'
 }

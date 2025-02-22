@@ -28,6 +28,9 @@ function Header({ title, onBack, back = true, left, ...res }: IProps) {
         height: '100%',
         display: 'flex',
         alignItems: 'center'
+      },
+      '.adm-nav-bar-title': {
+        fontWeight: 600
       }
     }
   })

@@ -29,11 +29,10 @@ function FundRecord() {
   const [current, setCurrent] = useState(1)
   const [size, setSize] = useState(10)
   const [total, setTotal] = useState(0)
-  const [refreshing, setRefreshing] = useState(true)
   const [startTime, setStartTime] = useState<string | undefined>(undefined)
   const [endTime, setEndTime] = useState<string | undefined>(undefined)
 
-  const getDatas = () => {
+  const getDatas = useCallback(() => {
     // 分页加载数据
     getMoneyRecordsPageList({
       current: current,
@@ -41,24 +40,19 @@ function FundRecord() {
       accountId: stores.trade.currentAccountInfo?.id,
       startTime,
       endTime
+    }).then((res) => {
+      if (res.success && res.data?.records) {
+        setData(data.concat(res.data.records))
+        setTotal(Number(res.data.total))
+      }
     })
-      .then((res) => {
-        if (res.success && res.data?.records) {
-          setData(data.concat(res.data.records))
-          setTotal(Number(res.data.total))
-        }
-      })
-      .finally(() => {
-        setRefreshing(false)
-      })
-  }
-
-  useEffect(getDatas, [current, size, stores.trade.currentAccountInfo?.id]) // Adding dependencies to useEffect
+  }, [current, size, stores.trade.currentAccountInfo?.id, startTime, endTime])
 
   // 加载更多
   const onEndReached = useCallback(() => {
     if (data.length < total) {
       setCurrent(current + 1)
+      getDatas()
     }
   }, [data.length, total])
 
@@ -66,20 +60,14 @@ function FundRecord() {
     setData([])
     setTotal(0)
     setCurrent(1)
-    setRefreshing(true)
+    getDatas()
   }
 
   useEffect(() => {
-    if (startTime && endTime) {
+    if ((startTime && endTime) || (!startTime && !endTime)) {
       onRefresh()
     }
   }, [startTime, endTime])
-
-  useEffect(() => {
-    if (refreshing) {
-      getDatas()
-    }
-  }, [refreshing])
 
   const renderItem = ({ item }: { item: Account.MoneyRecordsPageListItem }) => {
     return (
