@@ -2,6 +2,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { getEnv } from '@/env'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { useLayoutEffect, useState } from 'react'
 
 export default function DepositMethod({
@@ -31,7 +32,7 @@ export default function DepositMethod({
       )}
       onClick={() => {
         if (status === 'unlocked') {
-          push(`/app/deposit/process/${item.id}` + (tradeAccountId ? `?tradeAccountId=${tradeAccountId}` : ''))
+          push(appendHideParamIfNeeded(`/app/deposit/process/${item.id}` + (tradeAccountId ? `?tradeAccountId=${tradeAccountId}` : '')))
         }
       }}
     >

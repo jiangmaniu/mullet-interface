@@ -15,7 +15,17 @@ const NoFoundPage: React.FC = () => {
         <Button
           type="primary"
           onClick={() => {
-            push(isPc ? '/' : '/app/quote')
+            // @ts-ignore
+            if (window.ReactNativeWebView) {
+              // @ts-ignore
+              window.ReactNativeWebView.postMessage(
+                JSON.stringify({
+                  type: 'home'
+                })
+              )
+            } else {
+              push(isPc ? '/' : '/app/quote')
+            }
           }}
         >
           Back Home

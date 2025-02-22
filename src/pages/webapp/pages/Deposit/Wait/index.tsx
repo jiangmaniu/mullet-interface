@@ -6,6 +6,7 @@ import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { CustomerService } from '@/utils/chat'
 import { push, replace } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { FormattedMessage, getIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -58,7 +59,7 @@ function WithdrawPreview() {
             size="large"
             className=" w-[88px]"
             onClick={() => {
-              replace(`/app/record/payment?type=RUJIN`)
+              replace(appendHideParamIfNeeded(`/app/record/payment?type=RUJIN`))
             }}
           >
             {getIntl().formatMessage({ id: 'mt.chakandingdan' })}

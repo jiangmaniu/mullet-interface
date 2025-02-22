@@ -19,7 +19,7 @@ function UploadModal(props: IProps, ref: ForwardedRef<ModalRef>) {
   const [imgs, setImgs] = useState<string[]>([])
 
   useEffect(() => {
-    setImgs(props.certificateUrl?.split(',') || [])
+    props.certificateUrl && setImgs(props.certificateUrl?.split(',') || [])
   }, [props.certificateUrl])
 
   const handleSubmit = () => {

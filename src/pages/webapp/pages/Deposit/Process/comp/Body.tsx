@@ -158,7 +158,7 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
   return (
     <BasicLayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary}>
       <div className="px-[14px]">
-        <div className=" font-bold text-xl pl-2.5 pb-6 pt-2.5">{intl.formatMessage({ id: 'mt.chujin' })}</div>
+        <div className=" font-bold text-xl pl-2.5 pb-6 pt-2.5">{intl.formatMessage({ id: 'mt.rujin' })}</div>
         {loading && (
           <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0 z-10">
             <PageLoading />
