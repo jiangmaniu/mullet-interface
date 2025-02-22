@@ -8,7 +8,6 @@ import { modifyWithdrawalAddress } from '@/services/api/wallet'
 import { message } from '@/utils/message'
 import { ProForm } from '@ant-design/pro-components'
 import { Form } from 'antd'
-import TransferMethodSelectItem from '../../Withdraw.webview/Process/comp/TransferMethodSelectItem'
 
 type IProps = {
   reload: () => void
@@ -57,7 +56,8 @@ function EditModal({ reload }: IProps, ref: any) {
       id: item?.id,
       methodId: item?.channelId,
       address: item?.address,
-      remark: item?.remark
+      remark: item?.remark,
+      channelName: item.channelName
     })
   }, [item])
 
@@ -82,7 +82,9 @@ function EditModal({ reload }: IProps, ref: any) {
             form={form}
             className="flex flex-col gap-6"
           >
-            <TransferMethodSelectItem form={form} disabled={!!item} />
+            {/* <TransferMethodSelectItem form={form} disabled={!!item} /> */}
+            {/* 出金方式 */}
+            <ProFormText name="channelName" disabled label={getIntl().formatMessage({ id: 'mt.chujinfangshi' })} />
 
             <ProFormText name="id" hidden />
 
