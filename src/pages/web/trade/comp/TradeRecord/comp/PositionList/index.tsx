@@ -19,6 +19,7 @@ import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
+import { useTheme } from '@/context/themeProvider'
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 import CurrentPrice from './comp/CurrentPrice'
 import MarginRate from './comp/MarginRate'
@@ -504,6 +505,10 @@ function Position({ style, parentPopup }: IProps) {
     return v
   })
 
+  const themeConfig = useTheme()
+  const themeMode = themeConfig.theme.mode
+  const isDark = themeMode === 'dark'
+
   const className = useEmotionCss(({ token }) => {
     return {
       '.ant-table-expanded-row.ant-table-expanded-row-level-1': {
@@ -529,16 +534,46 @@ function Position({ style, parentPopup }: IProps) {
       },
       '.ant-table-expanded-row .ant-table': {
         marginInline: '0 !important'
+      },
+      '.ant-table > .ant-table-container .ant-table-body': {
+        '&::-webkit-scrollbar': {
+          height: `7px !important`,
+          width: 4,
+          scrollbarColor: 'transparent'
+        },
+        '&::-webkit-scrollbar-thumb': {
+          borderRadius: 5,
+          background: `${isDark ? '#161A1E' : '#fff'} !important`,
+          boxShadow: 'none'
+        },
+        '&::-webkit-scrollbar-track': {
+          boxShadow: 'none',
+          borderRadius: 0,
+          background: `${isDark ? '#161A1E' : '#fff'}  !important`
+        }
+      },
+      '.ant-table:hover .ant-table-container .ant-table-body': {
+        '&::-webkit-scrollbar-thumb': {
+          background: isDark ? '#2A2A32 !important' : 'rgba(0, 0, 0, 0.07)',
+          borderRadius: 5,
+          boxShadow: isDark ? 'inset 0 0 10px #2A2A32' : 'inset 0 0 10px rgba(0, 0, 0, 0.07)'
+        }
       }
     }
   })
 
   const handleScrollTable = (e: any) => {
+    const rootTableBody = document.querySelector('.ant-table-body')
     const items = Array.from(document.querySelectorAll('.ant-table-content'))
     // 拖动任意表格 联动多表格滚动条
     items.forEach((item) => {
       item.scrollLeft = e.target.scrollLeft
     })
+
+    // 联动最外层表格滚动条
+    if (rootTableBody) {
+      rootTableBody.scrollLeft = e.target.scrollLeft
+    }
   }
 
   return (
@@ -563,7 +598,7 @@ function Position({ style, parentPopup }: IProps) {
               headStyle: { borderRadius: 0 },
               className: ''
             }}
-            scroll={{ y: 430 }}
+            scroll={{ y: 410 }}
             size="small"
             rowClassName={(record, i) => {
               let className = record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
