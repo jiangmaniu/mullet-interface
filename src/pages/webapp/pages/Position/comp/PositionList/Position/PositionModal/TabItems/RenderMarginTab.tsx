@@ -94,8 +94,6 @@ const RenderMarginTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRe
     if (success) {
       // 关闭弹窗
       close?.()
-      // 刷新持仓单
-      trade.getPositionList(true)
       // 刷新账户信息
       await fetchUserInfo(true)
       message.info(t('common.operate.Op Success'))

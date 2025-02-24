@@ -37,6 +37,7 @@ function AccountDetail() {
     }
 
     if (isOnline) {
+      console.log('isOnline')
       setTimeout(() => {
         handleSubscribe()
       }, 200)

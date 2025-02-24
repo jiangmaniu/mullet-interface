@@ -1114,7 +1114,7 @@ class TradeStore {
 
     if (tabKey === 'POSITION') {
       // 持仓
-      this.getPositionList()
+      this.getPositionList(true)
     } else if (tabKey === 'PENDING') {
       // 挂单
       this.getPendingList()
