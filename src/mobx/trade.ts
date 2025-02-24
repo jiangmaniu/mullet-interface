@@ -108,7 +108,7 @@ class TradeStore {
   @observable symbolListLoading = true
   @observable symbolList: Account.TradeSymbolListItem[] = []
   @observable symbolListAll: Account.TradeSymbolListItem[] = [] // 首次查询的全部品种列表，不按条件查询
-  @observable symbolListMap = {} as Record<string, Account.TradeSymbolListItem> // 品种列表，按symbolName存储
+  @observable symbolMapAll = {} as { [key: string]: Account.TradeSymbolListItem } // 首次查询的全部品种列表，不按条件查询
 
   @observable userConfInfo = {} as UserConfInfo // 记录用户设置的品种名称、打开的品种列表、自选信息，按accountId储存
   // 当前accountId的配置信息从userConfInfo展开，切换accountId时，重新设置更新
@@ -756,6 +756,44 @@ class TradeStore {
     })
   }
 
+  @action
+  subscribePendingSymbol = ({ cover = false }: { cover?: boolean }) => {
+    const accountGroupId = this.currentAccountInfo.accountGroupId
+    const symbolList = this.pendingList
+    const symbols = Array.from(
+      new Set(
+        symbolList.map((item) =>
+          JSON.stringify({
+            accountGroupId: accountGroupId,
+            symbol: item.symbol,
+            dataSourceCode: item.dataSourceCode,
+            conf: {
+              profitCurrency: item.conf?.profitCurrency
+            }
+          })
+        )
+      )
+    ).map((str) => JSON.parse(str))
+
+    setTimeout(() => {
+      ws.checkSocketReady(() => {
+        console.log('订阅当前挂单列表品种的行情', cover ? '【并取消其他历史订阅】' : '', symbols)
+        // 打开行情订阅
+        ws.openPosition({
+          symbols: ws.makeWsSymbolBySemi(symbols as SymbolWSItem[]),
+          cover
+        })
+
+        // 动态订阅汇率品种行情，用于计算下单时保证金等
+        symbols.forEach((item) => {
+          if (item?.conf) {
+            ws.subscribeExchangeRateQuote(item.conf)
+          }
+        })
+      })
+    })
+  }
+
   // 切换交易品种
   @action
   switchSymbol = (symbol: string) => {
@@ -773,8 +811,7 @@ class TradeStore {
   @action
   getActiveSymbolInfo = (currentSymbolName?: string, list?: Account.TradeSymbolListItem[]) => {
     const symbol = currentSymbolName || this.activeSymbolName
-    const symbolList = list || this.symbolListAll
-    const info = symbolList.find((item) => item.symbol === symbol) || {}
+    const info = this.symbolMapAll?.[symbol] || {}
     return info as Account.TradeSymbolListItem
   }
 
@@ -789,7 +826,7 @@ class TradeStore {
   setOpenSymbolNameList(name: string) {
     this.setActiveSymbolName(name)
     if (this.openSymbolNameList.some((item) => item.symbol === name)) return
-    const symbolItem = this.symbolList.find((item) => item.symbol === name) as Account.TradeSymbolListItem
+    const symbolItem = this.symbolMapAll?.[name]
     this.openSymbolNameList.push(symbolItem)
     this.updateLocalOpenSymbolNameList()
   }
@@ -877,7 +914,7 @@ class TradeStore {
   @action toggleSymbolFavorite(name?: string) {
     const symbolName = name || this.activeSymbolName // 不传name，使用当前激活的
     const index = this.favoriteList.findIndex((v) => v.symbol === symbolName)
-    const item: any = this.symbolList.find((v) => v.symbol === symbolName)
+    const item = this.symbolMapAll?.[symbolName]
     // 删除
     if (index !== -1) {
       this.favoriteList.splice(index, 1)
@@ -988,6 +1025,7 @@ class TradeStore {
     if (cacheSymbolList?.length) {
       this.symbolList = cacheSymbolList
       this.symbolListAll = cacheSymbolList
+      this.symbolMapAll = keyBy(cacheSymbolList, 'symbol') // 存一份 map
 
       runInAction(() => {
         setTimeout(
@@ -1014,12 +1052,7 @@ class TradeStore {
         // 查询全部的品种列表
         if (!params.classify) {
           this.symbolListAll = symbolList
-
-          // 转成map结构
-          this.symbolListMap = symbolList.reduce((prev, curr) => {
-            prev[curr.symbol] = curr
-            return prev
-          }, {} as Record<string, Account.TradeSymbolListItem>)
+          this.symbolMapAll = keyBy(symbolList, 'symbol') // 缓存全部品种列表的map
 
           // 缓存当前账号的品种列表
           STORAGE_SET_CONF_INFO(symbolList, `${this.currentAccountInfo?.id}.symbolList`)
@@ -1094,7 +1127,7 @@ class TradeStore {
 
   // 查询持仓列表
   @action
-  getPositionList = async () => {
+  getPositionList = async (cover = false) => {
     // 查询进行中的订单
     const res = await getBgaOrderPage({ current: 1, size: 999, status: 'BAG', accountId: this.currentAccountInfo?.id })
 
@@ -1111,12 +1144,7 @@ class TradeStore {
       })
 
       // 动态订阅汇率品种行情, 初始化持仓列表时，不主动取消其他历史订阅
-      this.subscribePositionSymbol({ cover: false })
-      // if (data.length) {
-      //   data.forEach((item) => {
-      //     ws.subscribeExchangeRateQuote(item.conf)
-      //   })
-      // }
+      this.subscribePositionSymbol({ cover })
     }
     return res
   }
@@ -1150,6 +1178,9 @@ class TradeStore {
       runInAction(() => {
         this.pendingList = (res.data?.records || []) as Order.OrderPageListItem[]
       })
+
+      // 动态订阅汇率品种行情, 初始化持仓列表时，不主动取消其他历史订阅
+      this.subscribePendingSymbol({ cover: false })
     }
   }
   // 查询止盈止损列表
@@ -1214,7 +1245,7 @@ class TradeStore {
     const res = await modifyStopProfitLoss(params)
     if (res.success) {
       // 更新持仓列表
-      this.getPositionList()
+      this.getPositionList(true)
       // 更新止盈止损列表
       // this.getStopLossProfitList()
 

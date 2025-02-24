@@ -442,10 +442,10 @@ class WSStore {
   // ========== H5订阅相关 start ============
   // 工具方法：通过符号列表，生成成品符号列表
   makeWsSymbol = (symbols: string[], _accountGroupId?: string) => {
-    const symbolList = trade.symbolListAll
+    const symbolMap = trade.symbolMapAll
     const symbolSemis = symbols.map((symbol) => ({
       symbol,
-      dataSourceCode: symbolList.find((item) => item.symbol === symbol)?.dataSourceCode
+      dataSourceCode: symbolMap?.[symbol]?.dataSourceCode
     })) as SymbolWSItemSemi[]
 
     const accountGroupId = _accountGroupId || trade.currentAccountInfo.accountGroupId

@@ -27,10 +27,7 @@ function AccountDetail() {
   const { balance, availableMargin, totalProfit, occupyMargin } = trade.accountBalanceInfo
 
   const handleSubscribe = () => {
-    setTimeout(() => {
-      // 打开行情订阅
-      trade.subscribePositionSymbol({})
-    })
+    trade.subscribePositionSymbol({ cover: true })
   }
 
   useEffect(() => {

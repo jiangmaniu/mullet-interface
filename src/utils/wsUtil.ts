@@ -440,7 +440,10 @@ export function getCurrentDepth(currentSymbolName?: string) {
   const { ws, trade } = stores
   const { depth } = ws
   const symbol = currentSymbolName || trade.activeSymbolName
-  const { dataSourceCode } = trade.getActiveSymbolInfo(symbol, trade.symbolListAll)
+  // const { dataSourceCode } = trade.getActiveSymbolInfo(symbol, trade.symbolListAll)
+
+  const { dataSourceCode } = trade.symbolMapAll?.[symbol] || {}
+
   const dataSourceKey = `${dataSourceCode}/${symbol}`
 
   const currentDepth = depth.get(dataSourceKey)
@@ -470,7 +473,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
 
   // 当前品种的详细信息
   // const currentSymbol = (trade.symbolListAll.find((item) => item.symbol === symbol) || {}) as Account.TradeSymbolListItem
-  const currentSymbol = trade.symbolListMap?.[symbol] || {}
+  const currentSymbol = trade.symbolMapAll?.[symbol] || {}
   const dataSourceSymbol = currentSymbol?.dataSourceSymbol
   const dataSourceCode = currentSymbol?.dataSourceCode
   const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取

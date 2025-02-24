@@ -99,7 +99,7 @@ function PositionList() {
 
   useEffect(() => {
     if (!currentAccountInfo.id) return
-    trade.getPositionList().catch((err) => {})
+    trade.getPositionList(true).catch((err) => {})
   }, [trade, currentAccountInfo.id])
 
   const onViewableItemsChanged = debounce((viewableItems) => {
