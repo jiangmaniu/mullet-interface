@@ -30,8 +30,28 @@ declare const BASE_URL: string
 // 为 Window 增加参数
 interface Window {
   tvWidget: any
-  // 客服
-  ssq: any
+  // salesmartly客服
+  ssq: {
+    // 参考 https://help.salesmartly.com/docs/707UF1#2.1%20%E8%AE%BE%E7%BD%AE%E7%99%BB%E5%BD%95%E4%BF%A1%E6%81%AF
+    push: (
+      name:
+        | 'chatOpen'
+        | 'chatClose'
+        | 'setLoginInfo'
+        | 'onUnRead'
+        | 'onSendMessage'
+        | 'onOpenChat'
+        | 'onCloseChat'
+        | 'onOpenCollection'
+        | 'onReady'
+        | 'hideCloseIcon'
+        | 'hideUpload',
+      opts?: any
+    ) => void
+  }
+  __ssc: {
+    setting: any
+  }
   /**react-native webview对象 */
   ReactNativeWebView: {
     postMessage: (message: string) => void

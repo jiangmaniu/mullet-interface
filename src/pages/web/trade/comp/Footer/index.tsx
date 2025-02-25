@@ -10,7 +10,7 @@ import SignalIcon from '@/components/Base/Svg/SignalIcon'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { cn } from '@/utils/cn'
-import { goToService } from '@/utils/navigator'
+import { goKefu } from '@/utils/navigator'
 import { getCurrentQuote } from '@/utils/wsUtil'
 
 // 底部浮动条
@@ -164,7 +164,7 @@ function Footer() {
           </span>
         </div>
       </div> */}
-      <div className="flex cursor-pointer items-center pl-3 " onClick={goToService}>
+      <div className="flex cursor-pointer items-center pl-3 " onClick={goKefu}>
         <img src="/img/kefu-icon.png" width={22} height={22} alt="" />
         <span className="text-xs font-normal text-weak">
           <FormattedMessage id="mt.zaixiankefu" />

@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { onLogout } from '@/utils/navigator'
+import { goKefu, onLogout } from '@/utils/navigator'
 import { useModel } from '@umijs/max'
 import Button from '../../components/Base/Button'
 import Header from '../../components/Base/Header'
@@ -187,7 +187,8 @@ function UserCenter() {
 
   const kycTipsModalRef = useRef<any>(null)
 
-  const rukou = [
+  // 快捷入口
+  const quickEntry = [
     {
       icon: 'rujin1',
       title: t('mt.rujin'),
@@ -220,7 +221,9 @@ function UserCenter() {
     {
       icon: 'msg',
       title: t('mt.kefu'),
-      href: '/app/user-center/kefu'
+      onClick: () => {
+        goKefu()
+      }
     }
   ]
 
@@ -253,7 +256,7 @@ function UserCenter() {
         <KycStatus />
 
         <View className={cn('grid grid-cols-4 items-start w-full px-[12px] mt-2.5 mb-7 gap-8 ')}>
-          {rukou.map((item) => {
+          {quickEntry.map((item) => {
             return (
               <View
                 className={cn('flex flex-col items-center text-center gap-2 w-full')}
