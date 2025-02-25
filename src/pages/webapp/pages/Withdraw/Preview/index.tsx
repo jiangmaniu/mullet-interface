@@ -39,7 +39,7 @@ function WithdrawPreview() {
       }
     >
       <Header
-        className="bg-secondary"
+        className="bg-primary"
         onBack={() => navigateTo(backUrl)}
         right={
           <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={CustomerService}>

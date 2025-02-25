@@ -6,7 +6,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { getWithdrawalBankList } from '@/services/api/wallet'
 import { formatBankCard } from '@/utils/deposit'
 import { Popconfirm } from 'antd'
-import { forwardRef, useImperativeHandle } from 'react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { IParams } from '../Address'
 
 type IProps = {
@@ -20,7 +20,6 @@ function BankCard({ params, onSelectItem, onDeleteItem }: IProps, ref: any) {
   const accountList = initialState?.currentUser?.accountList || []
 
   const onQuery = async (params: IParams) => {
-    if (!params.tradeAccountId) return
     const data = await getWithdrawalBankList({
       current: 1,
       size: 1000
@@ -33,12 +32,17 @@ function BankCard({ params, onSelectItem, onDeleteItem }: IProps, ref: any) {
     return { data: list, total, success: true }
   }
 
+  const listRef = useRef<any>()
+
   useImperativeHandle(ref, () => ({
-    onQuery
+    onQuery: () => {
+      listRef.current?.reload()
+    }
   }))
 
   return (
     <ProList
+      actionRef={listRef}
       rowKey="orderId" // 设置列表唯一key
       action={{
         query: (params) => onQuery(params)

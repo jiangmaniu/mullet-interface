@@ -88,31 +88,34 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const accountList = currentUser?.accountList || []
   const { pathname } = useLocation()
   const isTradePage = pathname.indexOf('/trade') !== -1
+  const isBaseAuth = currentUser?.isBaseAuth
 
   const realAccountList = accountList.filter((item) => !item.isSimulate)
 
   return (
     <div className="flex items-center">
       <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
+        {isBaseAuth && (
+          <Button
+            onClick={() => {
+              push(`/deposit`)
+            }}
+            type="default"
+            // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
+          >
+            <div className="flex flex-row gap-1.5 items-center">
+              <Iconfont name="rujin1" width={20} height={20} />
+              <span className=" w-[1px] h-[18px] bg-[#ddd]"></span>
+              <FormattedMessage id="mt.rujin" />
+            </div>
+          </Button>
+        )}
         {/* 交易页面账户信息下拉dropdown */}
         {isTradePage && <TradeAccountDropdown theme={theme} />}
         {/* 个人中心账户信息下拉dropdown */}
         {!isTradePage && realAccountList.length > 0 && <UserCenterAccountDropdown theme={theme} />}
-
-        <Button
-          onClick={() => {
-            push(`/deposit`)
-          }}
-          type="primary"
-          style={{ width: 108 }}
-          // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
-        >
-          <FormattedMessage id="mt.rujin" />
-        </Button>
-
         {/* 消息管理 */}
         <Message theme={theme} />
-
         {/* <Iconfont
           name="caidan"
           width={36}

@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 
-import { modifyWithdrawalAddress, modifyWithdrawalBank, removeWithdrawalAddress, removeWithdrawalBank } from '@/services/api/wallet'
+import { modifyWithdrawalAddress, modifyWithdrawalBank, removeWithdrawalAddress } from '@/services/api/wallet'
 import { message } from '@/utils/message'
 import BankCard from './address/BankCard'
 import CryptoAddress from './address/CryptoAddress'
@@ -61,13 +61,14 @@ export default function Addresss() {
   const intl = useIntl()
   const [params, setParams] = useState({} as IParams)
   const [searchParams] = useSearchParams()
-  const searchKey = searchParams.get('key') as ITabKey
+  const searchKey = searchParams.get('subkey') as ITabKey
 
   useEffect(() => {
     setParams({ ...params, tradeAccountId: accountList?.[0]?.id })
   }, [accountList])
 
   useEffect(() => {
+    console.log('searchKey', searchKey)
     if (searchKey) {
       setTabKey(searchKey)
     }
@@ -89,6 +90,7 @@ export default function Addresss() {
   }
 
   const cryptoAddressRef = useRef<any>()
+  const bankCardRef = useRef<any>()
 
   const onUpdateBankCard = async (values: any) => {
     if (values.id) {
@@ -129,23 +131,24 @@ export default function Addresss() {
   }
 
   const onDeleteBankCard = (item: Wallet.WithdrawalBank) => {
-    removeWithdrawalBank({ id: item?.id?.toString() ?? '' })
-      .then((res) => {
-        if (res.success) {
-          message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
-          cryptoAddressRef.current?.onQuery()
-        }
-      })
-      .catch((err) => {
-        message.info(err.message)
-      })
+    bankCardRef.current?.onQuery()
+    // removeWithdrawalBank({ id: item?.id?.toString() ?? '' })
+    //   .then((res) => {
+    //     if (res.success) {
+    //       message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+    //       bankCardRef.current?.onQuery()
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     message.info(err.message)
+    //   })
   }
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
-      <div className="text-[24px] font-bold text-primary mb-7">
+      {/* <div className="text-[24px] font-bold text-primary mb-7">
         <FormattedMessage id="mt.churujinjilu" />
-      </div>
+      </div> */}
 
       <div className="flex items-center justify-between my-4 flex-wrap gap-y-4">
         <Segmented
@@ -193,7 +196,9 @@ export default function Addresss() {
       {tabKey === 'cryptoAddress' && (
         <CryptoAddress ref={cryptoAddressRef} params={params} onSelectItem={onSelectItem} onDeleteItem={onDeleteItem} />
       )}
-      {tabKey === 'bankCard' && <BankCard params={params} onSelectItem={onSelectBankCard} />}
+      {tabKey === 'bankCard' && (
+        <BankCard ref={bankCardRef} params={params} onSelectItem={onSelectBankCard} onDeleteItem={onDeleteBankCard} />
+      )}
       {/* 消息弹窗 */}
       <EditModal ref={modalRef} item={selectedItem} onUpdateItem={onUpdateItem} />
       <EditBankModal ref={modal2Ref} item={selectedBankCard} onUpdateItem={onUpdateBankCard} />

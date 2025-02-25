@@ -782,5 +782,7 @@ export default {
   'mt.rujindengdai': 'Đang chờ nạp tiền',
   'mt.chujindengdai': 'Đang chờ rút tiền',
   'mt.shangchuanpingzheng': 'Tải lên chứng từ',
-  'mt.dingdanyichaoshi': 'Đơn hàng đã hết hạn'
+  'mt.dingdanyichaoshi': 'Đơn hàng đã hết hạn',
+  'mt.zhuceshijian': 'Ngày đăng ký',
+  'mt.gerenziliao': 'Thống tin cá nhân'
 }

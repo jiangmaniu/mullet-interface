@@ -17,6 +17,7 @@ export default function TransferToBankItem({ form }: IProps) {
 
   const currentUser = initialState?.currentUser
 
+  const [rawList, setRawList] = useState<Wallet.WithdrawalBank[]>([])
   const [bankList, setBankList] = useState<{ value: string; label: string }[]>([])
   const [cardList, setCardList] = useState<{ value: string; label: string }[]>([])
 
@@ -27,6 +28,7 @@ export default function TransferToBankItem({ form }: IProps) {
     }).then((res) => {
       if (res.success) {
         const list = res.data?.records || []
+        setRawList(list)
 
         const bankNames = Array.from(new Set(list.map((item) => item.bankName || '')))
         setBankList(
@@ -49,70 +51,46 @@ export default function TransferToBankItem({ form }: IProps) {
 
   return (
     <>
-      {/* <ProFormSelect
+      <ProFormItem
         name="bankName"
-        label={
-          <span className="text-sm text-primary font-medium">
-            <FormattedMessage id="mt.yinghangzhanghu" />
-          </span>
-        }
-        placeholder={intl.formatMessage({ id: 'mt.xuanzeyinghangzhanghu' })}
-        allowClear={false}
-        fieldProps={{
-          open,
-          onDropdownVisibleChange: (visible) => setOpen(visible),
-          suffixIcon: <></>,
-          showSearch: false,
-          listHeight: 300,
-          optionLabelProp: 'label',
-          onChange(value, option) {
-            console.log('value', value)
-            console.log('option', option)
-          }
-        }}
+        label={<FormattedMessage id="mt.yinhangmingcheng" />}
         rules={[
-          {
-            required: true,
-            validator(rule, value, callback) {
-              if (!value) {
-                return Promise.reject(intl.formatMessage({ id: 'mt.xuanzeyinhangzhanghu' }))
-              }
-              return Promise.resolve()
-            }
-          }
+          { required: true, message: intl.formatMessage({ id: 'common.qingshuru' }) + intl.formatMessage({ id: 'mt.yinhangmingcheng' }) }
         ]}
-        options={bankList.map((item) => ({
-          ...item,
-          value: item.id,
-          label: (
-            <div className="flex justify-between w-full">
-              <div className="flex-1 text-sm font-bold text-primary truncate">
-                {item.name} / {hiddenCenterPartStr(item?.id, 4)}
-              </div>
-            </div>
-          )
-        }))}
-      /> */}
-      <ProFormItem name="bankName" label={<FormattedMessage id="mt.yinhangmingcheng" />}>
+      >
         <AutoComplete
           size="large"
           className="fix-select-search-input"
           options={bankList}
           placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmincheng' })}
           onChange={(value) => {
-            console.log('value', value)
+            form.setFieldValue('bankName', value)
           }}
         />
       </ProFormItem>
 
-      <ProFormItem name="bankCard" label={<FormattedMessage id="mt.yinghangzhanghu" />}>
+      <ProFormItem
+        name="bankCard"
+        label={<FormattedMessage id="mt.yinghangzhanghu" />}
+        rules={[
+          { required: true, message: intl.formatMessage({ id: 'common.qingshuru' }) + intl.formatMessage({ id: 'mt.yinghangzhanghu' }) }
+        ]}
+      >
         <AutoComplete
           size="large"
           className="fix-select-search-input"
           options={cardList}
           placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmingcheng' })}
           onChange={(value) => {
-            console.log('value', value)
+            form.setFieldValue('bankCard', value)
+
+            const bankName = rawList.find((item) => item.bankCard === value)?.bankName
+
+            if (bankName) {
+              form.setFieldsValue({
+                bankName: bankName
+              })
+            }
           }}
         />
       </ProFormItem>

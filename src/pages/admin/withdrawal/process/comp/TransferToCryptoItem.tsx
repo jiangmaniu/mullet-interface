@@ -5,6 +5,7 @@ import { useLayoutEffect, useState } from 'react'
 
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
+import { getWithdrawalAddressList } from '@/services/api/wallet'
 import { push } from '@/utils/navigator'
 import { observer } from 'mobx-react'
 
@@ -33,6 +34,26 @@ function TransferToCryptoItem({ form }: IProps) {
       return
     }
   }, [widthdrawAddress, intl, initialed])
+
+  const [bankList, setBankList] = useState<{ value: string; label: string }[]>([])
+
+  useLayoutEffect(() => {
+    getWithdrawalAddressList({
+      current: 1,
+      size: 1000
+    }).then((res) => {
+      if (res.success) {
+        const list = res.data?.records || []
+
+        setBankList(
+          list.map((i) => ({
+            value: i.address,
+            label: i.address
+          }))
+        )
+      }
+    })
+  }, [])
 
   return (
     <div className="relative">
@@ -65,7 +86,7 @@ function TransferToCryptoItem({ form }: IProps) {
           onChange={(value) => {
             form.setFieldValue('toAccountId', value)
           }}
-          options={searchList} // 设置自动完成的选项
+          options={bankList} // 设置自动完成的选项
           onSearch={handleSearch} // 监听搜索事件
           placeholder={intl.formatMessage({ id: 'mt.shurudizhi' })}
         />
@@ -77,7 +98,7 @@ function TransferToCryptoItem({ form }: IProps) {
           className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
           onClick={() => {
             // message.info('敬请期待')
-            push('/setting?key=address')
+            push('/setting?key=address&subkey=cryptoAddress')
           }}
         >
           <FormattedMessage id="mt.dizhiguanli" />

@@ -84,9 +84,9 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
             methodInfo?.baseCurrency
           }`}
         </span>
-        <span>
+        {/* <span>
           ≈ {depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem)} {methodInfo?.symbol}
-        </span>
+        </span> */}
       </div>
       <div className="text-secondary text-sm mt-5 flex flex-row items-center justify-between gap-4">
         <span className="flex-shrink-0">
@@ -94,7 +94,7 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
         </span>
         <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
         <span className="flex-shrink-0">
-          {depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem)} {methodInfo?.symbol}
+          {amount ? depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem) : '0'} {methodInfo?.symbol}
         </span>
       </div>
     </div>

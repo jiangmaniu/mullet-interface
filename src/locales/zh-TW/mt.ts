@@ -794,5 +794,7 @@ export default {
   'mt.duociquxiao': '多次取消入金後當天無法再進行入金。',
   'mt.rujindengdai': '入金等待',
   'mt.chujindengdai': '出金等待',
-  'mt.dingdanyichaoshi': '訂單已超時'
+  'mt.dingdanyichaoshi': '訂單已超時',
+  'mt.zhuceshijian': '註冊時間',
+  'mt.gerenziliao': '個人資料'
 }

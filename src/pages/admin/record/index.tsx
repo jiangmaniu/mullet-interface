@@ -65,7 +65,7 @@ export default function Record() {
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
 
-  const [tabKey, setTabKey] = useState<ITabKey>('transfer')
+  const [tabKey, setTabKey] = useState<ITabKey>('deposit')
   const intl = useIntl()
   const [params, setParams] = useState({} as IParams)
   const [searchParams] = useSearchParams()

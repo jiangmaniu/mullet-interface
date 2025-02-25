@@ -789,5 +789,7 @@ export default {
   'mt.rujindengdai': 'Waiting for Deposit',
   'mt.chujindengdai': 'Waiting for Withdrawal',
   'mt.shangchuanpingzheng': 'Upload Proof',
-  'mt.dingdanyichaoshi': 'Order expired'
+  'mt.dingdanyichaoshi': 'Order expired',
+  'mt.zhuceshijian': 'Registration Time',
+  'mt.gerenziliao': 'Personal Information'
 }

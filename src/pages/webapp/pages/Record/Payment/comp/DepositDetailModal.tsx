@@ -141,9 +141,10 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
             </div>
           </div>
 
-          {item?.status === 'REJECT' && item?.remark && (
+          {item?.status === 'FAIL' && item?.remark && (
             <div className="text-sm text-primary mt-4 px-2">
-              <FormattedMessage id="mt.beizhu" />:{item?.remark}
+              <FormattedMessage id="mt.beizhu" />
+              :&nbsp;{item?.remark}
             </div>
           )}
         </div>

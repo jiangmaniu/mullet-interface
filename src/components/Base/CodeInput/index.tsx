@@ -1,5 +1,6 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { Form, FormInstance, Input } from 'antd'
+import { Rule } from 'antd/es/form'
 import { NamePath } from 'antd/es/form/interface'
 
 type IProps = {
@@ -9,9 +10,18 @@ type IProps = {
   disabled?: boolean
   width?: number
   height?: number
+  rules?: Rule[]
 }
 
-export default function CodeInput({ onChange, form, name = 'validateCode', disabled = false, width = 38, height = 38 }: IProps) {
+export default function CodeInput({
+  onChange,
+  form,
+  name = 'validateCode',
+  disabled = false,
+  width = 38,
+  height = 38,
+  rules = []
+}: IProps) {
   const className = useEmotionCss(({ token }) => {
     return {
       '.ant-otp-input': {
@@ -32,7 +42,7 @@ export default function CodeInput({ onChange, form, name = 'validateCode', disab
 
   return (
     <div className={className}>
-      <Form.Item noStyle name={name}>
+      <Form.Item noStyle name={name} rules={rules}>
         <Input.OTP onChange={handleChange} disabled={disabled} />
       </Form.Item>
     </div>

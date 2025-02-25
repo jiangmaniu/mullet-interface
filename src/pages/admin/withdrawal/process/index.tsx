@@ -11,7 +11,6 @@ import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
 import { generateWithdrawOrder } from '@/services/api/wallet'
-import { message } from '@/utils/message'
 import { md5 } from 'js-md5'
 import { observer } from 'mobx-react'
 import Step1 from './comp/Step1'
@@ -122,8 +121,6 @@ function WithdrawalProcess() {
 
             if (res.success) {
               setStep(2)
-            } else {
-              message.info(res.message)
             }
           })
           .finally(() => {
@@ -185,7 +182,7 @@ function WithdrawalProcess() {
         />
       </div>
       <div className="flex flex-col gap-21">
-        <div className={cn(step === 1 ? 'block' : 'hidden')}>
+        {step === 1 && (
           <Step2
             form={form}
             fromAccountInfo={fromAccountInfo}
@@ -194,7 +191,7 @@ function WithdrawalProcess() {
             handleSubmit={handleSubmit1}
             methodInfo={methodInfo}
           />
-        </div>
+        )}
         <div className={cn(step === 2 ? 'block' : 'hidden')}>
           <Step3 handleSubmit={handleSubmit2} />
         </div>

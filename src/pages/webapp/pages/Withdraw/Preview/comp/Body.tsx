@@ -137,13 +137,13 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
     <div className="bg-gray-55">
       <div className="flex flex-col gap-1 items-center pt-9">
         <span className=" text-sm font-normal">
-          <FormattedMessage id="mt.tixianjine" />
+          <FormattedMessage id="mt.shijidaozhang" />
         </span>
         <span className=" text-[42px] leading-[46px] font-dingpro-medium">
           {formatNum(actualAmount, { precision: DEFAULT_CURRENCY_DECIMAL })}&nbsp;{symbol}
         </span>
         <span className=" text-sm font-medium mt-1">
-          <FormattedMessage id="mt.shijidaozhang" />
+          <FormattedMessage id="mt.tixianjine" />
           &nbsp;{formatNum(amount, { precision: DEFAULT_CURRENCY_DECIMAL })}&nbsp;{currency}
         </span>
       </div>

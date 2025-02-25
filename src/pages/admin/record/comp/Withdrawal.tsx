@@ -145,7 +145,7 @@ function Withdrawal({ params, onSelectItem }: IProps) {
             </div>
             <div className="text-start min-w-[100px] flex flex-row gap-2" onClick={(e) => e.stopPropagation()}>
               {/* @ts-ignore */}
-              <div className="text-sm flex items-center" style={{ color: statusMap[item.status]?.color }}>
+              <div className="text-sm flex items-center w-[80px] justify-center" style={{ color: statusMap[item.status]?.color }}>
                 <span
                   className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
                   // @ts-ignore
