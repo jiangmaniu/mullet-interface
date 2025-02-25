@@ -1,5 +1,6 @@
 import { removeOrderMessageFieldNames } from '@/utils/business'
 import { request } from '@/utils/request'
+import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 // 获取我接收的消息列表
 export async function getMyMessageList(params?: API.PageParam) {
@@ -44,7 +45,16 @@ export async function readAllMessage() {
 }
 
 // 获取未读消息数量
-export async function getUnReadMessageCount() {
+export async function getUnReadMessageCount(): Promise<API.Response<number>> {
+  const token = await STORAGE_GET_TOKEN()
+
+  if (!token) {
+    // 没有token，返回0
+    return new Promise((resolve) => {
+      resolve({ success: true, data: 10 } as API.Response<number>)
+    })
+  }
+
   return request<API.Response>(`/api/blade-message/message/unReadSize`, {
     method: 'POST'
   })

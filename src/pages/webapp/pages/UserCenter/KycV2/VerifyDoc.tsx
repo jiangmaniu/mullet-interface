@@ -36,8 +36,6 @@ const VerifyDoc = forwardRef(
             onSuccess()
             return
           }
-
-          message.info(res.data.msg)
         })
         .catch((err) => {
           message.info(err.message)
@@ -112,22 +110,24 @@ const VerifyDoc = forwardRef(
               >
                 <img src={file.link} style={{ width: '100%', height: 188 }} />
               </View>
-              <img
+
+              <div
                 onClick={() => {
                   setFile({})
                 }}
-                src="/img/shanchu.png"
-                className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] rounded-full cursor-pointer guanbi"
-              />
+                className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] z-100 rounded-full cursor-pointer guanbi"
+              >
+                <img src="/img/shanchu.png" className="w-full h-full" />
+              </div>
             </View>
           ) : (
             <View
               onPress={async () => {
                 uploadSheetModalRef.current?.show()
               }}
-              className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden px-[27px] py-[37px]')}
+              className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden h-[188px] px-[27px] py-[37px]')}
             >
-              <View className="flex flex-col items-center justify-start h-[114px] -mt-[20px]">
+              <View className="flex flex-col items-center justify-start -mt-2  ">
                 <img src="/img/idcard-bg2.png" width={100} height={100} />
                 <Text style={{ fontWeight: '500', color: theme.colors.textColor.primary }} size="sm">
                   {i18n.t('pages.userCenter.clickUploadIDCard')}

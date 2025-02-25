@@ -58,16 +58,6 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
 
   const methodInfo = useMemo(() => methods.find((item) => item.id === paymentInfo?.channelId), [paymentInfo, methods])
 
-  // const disabled = !amount || !actualAmount || Number(actualAmount) <= 0 || loading
-
-  // useEffect(() => {
-  //   if (disabled) {
-  //     onDisabledChange?.(true)
-  //   } else {
-  //     onDisabledChange?.(false)
-  //   }
-  // }, [disabled])
-
   const handleSubmit1 = async (params: any) => {
     console.log('params', params)
 
@@ -80,27 +70,6 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
       .validateFields()
       .then((values) => {
         setLoading(true)
-
-        // generateDepositOrder({
-        //   address: values.toAccountId,
-        //   bankName: values.bankName,
-        //   bankCard: values.bankCard,
-        //   baseOrderAmount: values.amount,
-        //   channelId: values.methodId,
-        //   password: md5(params.password),
-        //   phoneCode: params.code,
-        //   tradeAccountId: values.fromAccountId
-        // })
-        //   .then((res) => {
-        //     if (res.success) {
-        //       push(`/app/withdraw/wait/${res.data.id}`)
-        //     } else {
-        //       message.info(res.data.msg)
-        //     }
-        //   })
-        //   .finally(() => {
-        //     setLoading(false)
-        //   })
       })
       .catch((err) => {
         console.log('err', err)

@@ -69,7 +69,8 @@ export const withdrawCountTransferCurr = (value: number, methodInfo?: Wallet.fun
   const fee = countHandingFee(val, methodInfo)
 
   val = (val - fee) * _exchangeRate
-  return val
+
+  return Number(val.toFixed(DEFAULT_CURRENCY_DECIMAL))
 }
 
 // 出金：實際到賬汇率换算

@@ -1,5 +1,5 @@
 import Iconfont from '@/components/Base/Iconfont'
-import { getKycStatus } from '@/pages/webapp/pages/UserCenter/KycV2/KycStatus'
+import { getKycStatus } from '@/pages/webapp/hooks/useKycStatusInfo'
 import { cn } from '@/utils/cn'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'

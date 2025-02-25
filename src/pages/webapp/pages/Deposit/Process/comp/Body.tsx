@@ -6,8 +6,9 @@ import { Form } from 'antd'
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { stores, useStores } from '@/context/mobxProvider'
-import { generateDepositOrder } from '@/services/api/wallet'
+import { generateDepositOrder, getDepositOrderDetail } from '@/services/api/wallet'
 
+import { useLoading } from '@/context/loadingProvider'
 import { useTheme } from '@/context/themeProvider'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { push } from '@/utils/navigator'
@@ -15,6 +16,7 @@ import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
 import ConfirmModal from './ConfirmModal'
+import ContinueModal from './ContinueModal'
 import TransferCrypto from './TranserCrypto'
 import TransferMethodSelectItem from './TransferMethodSelectItem'
 import TransferOTC from './TransferOTC'
@@ -63,36 +65,46 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
 
   const [step, setStep] = useState(0)
 
-  const [createTime, setCreateTime] = useState()
-
   // const [paymentInfo, setPaymentInfo] = useState<Wallet.GenerateDepositOrderResult>()
+
+  const [orderId, setOrderId] = useState(-1)
 
   const handleSubmit0 = async () => {
     form.validateFields().then((values) => {
       setLoading(true)
-      generateDepositOrder({
-        tradeAccountId: values.toAccountId,
-        channelId: values.methodId,
-        baseOrderAmount: values.amount
-      })
-        .then((res) => {
-          if (res.success) {
-            if (methodInfo?.paymentType === 'OTC') {
-              push(appendHideParamIfNeeded(`/app/deposit/otc/${res.data?.id}?backUrl=/app/deposit/process/${values.methodId}`))
-              return
-            }
 
-            // TODO: 生成充值地址
-            form.setFieldValue('address', res.data?.address)
-            form.setFieldValue('createTime', res.data?.createTime)
-            form.setFieldValue('canncelOrderTime', res.data?.canncelOrderTime)
-
-            setStep(1)
-          }
-        })
-        .finally(() => {
+      getDepositOrderDetail({ channelId: String(values.methodId) }).then((res) => {
+        if (res.success && res.data?.id) {
+          setOrderId(res.data.id)
+          continueModalRef.current?.show()
           setLoading(false)
+          return
+        }
+
+        generateDepositOrder({
+          tradeAccountId: values.toAccountId,
+          channelId: values.methodId,
+          baseOrderAmount: values.amount
         })
+          .then((res) => {
+            if (res.success) {
+              if (methodInfo?.paymentType === 'OTC') {
+                push(appendHideParamIfNeeded(`/app/deposit/otc/${res.data?.id}?backUrl=/app/deposit/process/${values.methodId}`))
+                return
+              }
+
+              // TODO: 生成充值地址
+              form.setFieldValue('address', res.data?.address)
+              form.setFieldValue('createTime', res.data?.createTime)
+              form.setFieldValue('canncelOrderTime', res.data?.canncelOrderTime)
+
+              setStep(1)
+            }
+          })
+          .finally(() => {
+            setLoading(false)
+          })
+      })
     })
   }
 
@@ -103,7 +115,7 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
   const [loading, setLoading] = useState(false)
 
   const confirmModalRef = useRef<any>()
-
+  const continueModalRef = useRef<any>()
   const handleTimeout = () => {
     setStep(0)
     confirmModalRef.current?.show()
@@ -113,6 +125,10 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
     form.setFieldValue('address', '')
 
     setStep(0)
+  }
+
+  const handleGo = () => {
+    push(`/app/deposit/otc/${orderId}?backUrl=/app/deposit/process/${methodId}`)
   }
 
   const cryptoRef = useRef<any>()
@@ -155,6 +171,22 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
   }, [disabled])
 
   const { theme } = useTheme()
+
+  const { showLoading, hideLoading } = useLoading()
+  useEffect(() => {
+    if (methodInfo) {
+      showLoading()
+      getDepositOrderDetail({ channelId: methodInfo.id })
+        .then((res) => {
+          if (res.success && res.data?.id) {
+            push(`/app/deposit/otc/${res.data.id}`)
+          }
+        })
+        .finally(() => {
+          hideLoading()
+        })
+    }
+  }, [methodInfo])
   return (
     <BasicLayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary}>
       <div className="px-[14px]">
@@ -250,6 +282,7 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
           </div>
         </div>
         <ConfirmModal ref={confirmModalRef} handleReset={handleReset} />
+        <ContinueModal ref={continueModalRef} handleGo={handleGo} />
       </div>
     </BasicLayout>
   )

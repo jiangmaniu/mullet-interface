@@ -8,11 +8,13 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import PageContainer from '@/components/Admin/PageContainer'
 import Iconfont from '@/components/Base/Iconfont'
 import { stores, useStores } from '@/context/mobxProvider'
-import { generateDepositOrder } from '@/services/api/wallet'
+import { generateDepositOrder, getDepositOrderDetail } from '@/services/api/wallet'
 
+import { useLoading } from '@/context/loadingProvider'
 import { push } from '@/utils/navigator'
 import { observer } from 'mobx-react'
 import ConfirmModal from './comp/ConfirmModal'
+import ContinueModal from './comp/ContinueModal'
 import TransferCrypto from './comp/TranserCrypto'
 import TransferMethodSelectItem from './comp/TransferMethodSelectItem'
 import TransferOTC from './comp/TransferOTC'
@@ -66,39 +68,48 @@ function DepositProcess() {
 
   // const [paymentInfo, setPaymentInfo] = useState<Wallet.GenerateDepositOrderResult>()
 
+  const { showLoading, hideLoading } = useLoading()
+  const [orderId, setOrderId] = useState(-1)
+
   const handleSubmit0 = async () => {
     form.validateFields().then((values) => {
       setLoading(true)
-      generateDepositOrder({
-        tradeAccountId: values.toAccountId,
-        channelId: values.methodId,
-        baseOrderAmount: values.amount
-      })
+      showLoading()
+      getDepositOrderDetail({ channelId: values.methodId })
         .then((res) => {
-          if (res.success) {
-            if (methodInfo?.paymentType === 'OTC') {
-              push(`/deposit/otc/${res.data?.id}?backUrl=/deposit/process/${values.methodId}`)
-              return
-            }
-
-            // setPaymentInfo(res.data)
-
-            // // wechat & alipay
-            // form.setFieldValue('qrCode', res.data?.qrCode)
-            // form.setFieldValue('receiptAmount', res.data?.receiptAmount)
-            // form.setFieldValue('userName', res.data?.userName)
-            // form.setFieldValue('symbol', res.data?.symbol)
-
-            // TODO: 生成充值地址
-            form.setFieldValue('address', res.data?.address)
-            form.setFieldValue('createTime', res.data?.createTime)
-            form.setFieldValue('canncelOrderTime', res.data?.canncelOrderTime)
-
-            setStep(1)
+          if (res.success && res.data?.id) {
+            setOrderId(res.data.id)
+            continueModalRef.current?.show()
+            setLoading(false)
+            return
           }
+
+          generateDepositOrder({
+            tradeAccountId: values.toAccountId,
+            channelId: values.methodId,
+            baseOrderAmount: values.amount
+          })
+            .then((res) => {
+              if (res.success) {
+                if (methodInfo?.paymentType === 'OTC') {
+                  push(`/deposit/otc/${res.data?.id}?backUrl=/deposit/process/${values.methodId}`)
+                  return
+                }
+
+                // TODO: 生成充值地址
+                form.setFieldValue('address', res.data?.address)
+                form.setFieldValue('createTime', res.data?.createTime)
+                form.setFieldValue('canncelOrderTime', res.data?.canncelOrderTime)
+
+                setStep(1)
+              }
+            })
+            .finally(() => {
+              setLoading(false)
+            })
         })
         .finally(() => {
-          setLoading(false)
+          hideLoading()
         })
     })
   }
@@ -106,10 +117,14 @@ function DepositProcess() {
   const [loading, setLoading] = useState(false)
 
   const confirmModalRef = useRef<any>()
-
+  const continueModalRef = useRef<any>()
   const handleTimeout = () => {
     setStep(0)
     confirmModalRef.current?.show()
+  }
+
+  const handleGo = () => {
+    push(`/deposit/otc/${orderId}?backUrl=/deposit/process/${methodId}`)
   }
 
   const handleReset = () => {
@@ -244,6 +259,7 @@ function DepositProcess() {
         </div>
       </div>
       <ConfirmModal ref={confirmModalRef} handleReset={handleReset} />
+      <ContinueModal ref={continueModalRef} handleGo={handleGo} />
     </PageContainer>
   )
 }

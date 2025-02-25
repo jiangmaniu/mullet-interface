@@ -103,7 +103,7 @@ function DepositModal({ item }: IProps, ref: any) {
       <div className="flex flex-row justify-between items-end">
         <div className="flex flex-col items-start gap-1">
           <div className=" min-w-[150px] text-base  md:text-xl font-bold">
-            {formatNum(item?.orderAmount)} {item?.symbol}
+            {formatNum(item?.receiptAmount)} {item?.symbol}
           </div>
 
           <span className="text-sm text-secondary">

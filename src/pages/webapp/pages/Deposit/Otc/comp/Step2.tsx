@@ -27,6 +27,7 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
     exchangeRate,
     tradeAccountId,
     channelNo,
+    userName,
     channelNoValue
   } = paymentInfo || {}
 
@@ -71,26 +72,18 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
         : []),
       {
         label: getIntl().formatMessage({ id: 'mt.shoukuanxingming' }),
-        value: currentUser?.firstName,
+        value: userName,
         render: () => {
           return (
             <div className="flex items-center gap-2">
-              <span className="flex-shrink-0">
-                {locale === 'zh-TW'
-                  ? `${currentUser?.lastName}${currentUser?.firstName}`
-                  : `${currentUser?.firstName} ${currentUser?.lastName}`}
-              </span>
+              <span className="flex-shrink-0">{userName}</span>
               <Iconfont
                 name="a-bianzu3beifen2"
                 color="gray"
                 width={18}
                 height={18}
                 onClick={() => {
-                  copyToClipboard(
-                    locale === 'zh-TW'
-                      ? `${currentUser?.lastName}${currentUser?.firstName}`
-                      : `${currentUser?.firstName} ${currentUser?.lastName}`
-                  )
+                  copyToClipboard(userName || '')
                 }}
               />
             </div>

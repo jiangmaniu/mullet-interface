@@ -160,7 +160,7 @@ export default defineConfig({
   headScripts: [
     // 解决首次加载时白屏的问题
     { src: '/scripts/loading.js', async: true },
-    { src: '/scripts/sw.js', async: true },
+    { src: '/scripts/sw.js', async: true }
   ],
 
   // links: [{ rel: 'manifest', href: ENV?.manifest }],
@@ -247,7 +247,8 @@ export default defineConfig({
   extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // https://umijs.org/docs/api/config#codesplitting
   codeSplitting: {
-    jsStrategy: 'granularChunks'
+    // jsStrategy: 'granularChunks',
+    jsStrategy: 'depPerChunk'
   },
   // 使用本地字体
   chainWebpack(config) {

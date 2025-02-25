@@ -6,6 +6,7 @@ import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { CustomerService } from '@/utils/chat'
 import { FormattedMessage, getIntl, useSearchParams } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
@@ -13,6 +14,8 @@ import Body from './comp/Body'
 
 function WithdrawPreview() {
   const { theme } = useTheme()
+
+  useTitle(getIntl().formatMessage({ id: 'menu.withdrawalPreview' }))
 
   const [disabled, setDisabled] = useState(false)
   const onDisabledChange = (disabled: boolean) => {

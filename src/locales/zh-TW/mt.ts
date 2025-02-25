@@ -433,6 +433,7 @@ export default {
   'mt.timeTips1': '開始時間不能大於結束時間',
   'mt.timeTips2': '結束時間不能小於開始時間',
   'mt.shenfenrenzhengweitongguotips': '身份認證審核未通過，請重新進行認證或者聯繫客服',
+  'mt.womenhuijinkuaiwanchengshenhe': '我們會盡快審核您的身份認證，請耐心等待, 如有疑問請聯繋客服',
   'mt.chongxinrenzheng': '重新认证',
   'mt.lianxikefu': '联系客服',
   'mt.xiugaimima': '修改密码',
@@ -799,5 +800,8 @@ export default {
   'mt.gerenziliao': '個人資料',
   'mt.shangchuanpingzheng': '上傳凭證',
   'mt.zhuanrujine': '轉入金額',
-  'mt.daozhangjine': '到賬金額'
+  'mt.daozhangjine': '到賬金額',
+  'mt.shenfenrenzhengshibai': '身份認證失敗',
+  'mt.nintijiaodeziliaobuquanqieyoucuowu': '您提交的資料不完整或存在錯誤，請檢查後重新提交',
+  'mt.yicunzaiweiwanchengdingdan': '已存在未完成的訂單，請先完成訂單'
 }

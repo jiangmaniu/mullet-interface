@@ -7,7 +7,8 @@ import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
-import { FormattedMessage, useModel } from '@umijs/max'
+import { FormattedMessage, getIntl, useModel } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
@@ -19,6 +20,8 @@ function Deposit() {
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
   const isBaseAuth = currentUser?.isBaseAuth || false
+
+  useTitle(getIntl().formatMessage({ id: 'menu.withdrawalProcess' }))
 
   const { theme } = useTheme()
   const i18n = useI18n()
@@ -35,6 +38,8 @@ function Deposit() {
 
   const onSuccess = (params?: any) => {
     push(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
+    // console.log(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
+    // push(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
   }
 
   return (

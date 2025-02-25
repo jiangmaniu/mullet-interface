@@ -439,6 +439,8 @@ export default {
   'mt.timeTips1': 'Thời gian bắt đầu không được muộn hơn thời gian kết thúc',
   'mt.timeTips2': 'Thời gian kết thúc không được sớm hơn thời gian bắt đầu',
   'mt.shenfenrenzhengweitongguotips': 'Xác minh danh tính không thành công, vui lòng thử lại hoặc liên hệ bộ phận hỗ trợ',
+  'mt.womenhuijinkuaiwanchengshenhe':
+    'Chúng tôi sẽ hoàn thành việc xét duyệt sớm nhất có thể. Vui lòng kiên nhẫn chờ đợi. Nếu có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận chăm sóc khách hàng.',
   'mt.chongxinrenzheng': 'Xác minh lại',
   'mt.lianxikefu': 'Liên hệ hỗ trợ',
   'mt.xiugaimima': 'Thay đổi mật khẩu',
@@ -786,5 +788,8 @@ export default {
   'mt.zhuceshijian': 'Ngày đăng ký',
   'mt.gerenziliao': 'Thống tin cá nhân',
   'mt.zhuanrujine': 'Số tiền chuyển vào',
-  'mt.daozhangjine': 'Số tiền đến'
+  'mt.daozhangjine': 'Số tiền đến',
+  'mt.shenfenrenzhengshibai': 'Xác minh thất bại',
+  'mt.nintijiaodeziliaobuquanqieyoucuowu': 'Bạn đã nộp thông tin không đầy đủ hoặc không chính xác, vui lòng kiểm tra và nộp lại',
+  'mt.yicunzaiweiwanchengdingdan': 'Đơn hàng đã tồn tại, vui lòng hoàn thành đơn hàng trước'
 }

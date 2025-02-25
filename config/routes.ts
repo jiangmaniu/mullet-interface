@@ -379,13 +379,13 @@ export default [
       // 个人中心-验证消息
       {
         path: '/:lng/app/user-center/verify-msg',
-        component: './webapp/pages/UserCenter/KycV1.5/KycVerifyMsgPage',
+        component: './webapp/pages/UserCenter/KycV2/KycVerifyMsgPage',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-验证证件照
       {
         path: '/:lng/app/user-center/verify-document',
-        component: './webapp/pages/UserCenter/KycV1.5/KycVerifyDocPage',
+        component: './webapp/pages/UserCenter/KycV2/KycVerifyDocPage',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-验证状态
@@ -490,7 +490,7 @@ export default [
         path: '/:lng/app/smart-kefu',
         access: 'canAdmin', // 权限配置
         component: './webapp/pages/SalesmartKefu',
-        hideInMenu: true,
+        hideInMenu: true
       },
       {
         path: '/:lng/app/test',

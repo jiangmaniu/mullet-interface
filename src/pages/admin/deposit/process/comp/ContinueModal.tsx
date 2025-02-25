@@ -1,0 +1,34 @@
+import { FormattedMessage } from '@umijs/max'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
+
+import Modal from '@/components/Admin/Modal'
+import Button from '@/components/Base/Button'
+
+type IProps = {
+  trigger?: JSX.Element
+  handleGo: () => void
+}
+
+function ContinueModal(props: IProps, ref: any) {
+  const modalRef = useRef<any>()
+
+  useImperativeHandle(ref, () => {
+    return modalRef.current
+  })
+
+  return (
+    <Modal width={430} title={<FormattedMessage id="mt.yicunzaiweiwanchengdingdan" />} footer={null} ref={modalRef}>
+      <Button
+        type="primary"
+        className="w-full"
+        onClick={() => {
+          props.handleGo()
+        }}
+      >
+        <FormattedMessage id="common.queren" />
+      </Button>
+    </Modal>
+  )
+}
+
+export default forwardRef(ContinueModal)

@@ -5,6 +5,7 @@ import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { getIntl, useIntl, useSearchParams } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import { Segmented } from 'antd'
 import { useEffect, useState } from 'react'
 import DepositList from './comp/DepositList'
@@ -78,6 +79,8 @@ export default function PaymentRecord() {
       setKey(type)
     }
   }, [type])
+
+  useTitle(intl.formatMessage({ id: 'menu.recordPayment' }))
 
   return (
     <Basiclayout

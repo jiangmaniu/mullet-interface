@@ -9,7 +9,9 @@ import ModifyPasswordModal from './comp/ModifyPasswordModal'
 import AdvanceKycApproveInfoModal from './kycV1.5/AdvanceKycApproveInfoModal'
 import BaseKycApproveInfoModal from './kycV1.5/BaseKycApproveInfoModal'
 import BindContactModal from './kycV1.5/BindContactModal'
+import KycRejectModal from './kycV2/KycRejectModal'
 import KycStatus from './kycV2/KycStatus'
+import KycWaitModal from './kycV2/KycWaitModal'
 
 export default function Security() {
   const ENV = getEnv()
@@ -89,15 +91,20 @@ export default function Security() {
   const baseModal = useRef<any>()
   const advanceModal = useRef<any>()
   const bindModal = useRef<any>()
-
+  const kycRejectModal = useRef<any>()
+  const kycWaitModal = useRef<any>()
   const handleKycStatusClick = (status: number) => {
     // TODO
     if (status === 0) {
       baseModal.current?.show()
-    } else if (status === 2 || status === 4) {
+    } else if (status === 4) {
       kycSuccModalRef.current?.show()
-    } else if (status === 1 || status === 3) {
+    } else if (status === 1) {
       advanceModal.current?.show()
+    } else if (status === 3) {
+      kycRejectModal.current?.show()
+    } else if (status === 2) {
+      kycWaitModal.current?.show()
     }
   }
 
@@ -164,8 +171,20 @@ export default function Security() {
       {/* 实名认证成功弹窗 */}
       <KycApproveInfoModal ref={kycSuccModalRef} />
       <BaseKycApproveInfoModal ref={baseModal} />
-      <AdvanceKycApproveInfoModal ref={advanceModal} />
+      <AdvanceKycApproveInfoModal
+        ref={advanceModal}
+        onClose={() => {
+          kycWaitModal.current?.show()
+        }}
+      />
       <BindContactModal ref={bindModal} />
+      <KycWaitModal ref={kycWaitModal} />
+      <KycRejectModal
+        ref={kycRejectModal}
+        onClose={() => {
+          advanceModal.current?.show()
+        }}
+      />
     </>
   )
 }

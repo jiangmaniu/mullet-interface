@@ -7,6 +7,7 @@ import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { CustomerService } from '@/utils/chat'
 import { push } from '@/utils/navigator'
 import { FormattedMessage, getIntl, useSearchParams } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
@@ -14,6 +15,8 @@ import Body from './comp/Body'
 
 function WithdrawPreview() {
   const { theme } = useTheme()
+
+  useTitle(getIntl().formatMessage({ id: 'menu.depositOtcPreview' }))
 
   const [disabled, setDisabled] = useState(false)
   const onDisabledChange = (disabled: boolean) => {
@@ -41,7 +44,7 @@ function WithdrawPreview() {
       header={
         <Header
           className="bg-secondary"
-          onBack={() => navigateTo(backUrl)}
+          onBack={() => navigateTo(backUrl || '/app/deposit')}
           right={
             <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={CustomerService}>
               <Iconfont name="chat" width={20} height={20} />

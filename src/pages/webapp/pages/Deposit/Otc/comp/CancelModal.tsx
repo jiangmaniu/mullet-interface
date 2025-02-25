@@ -33,7 +33,7 @@ function CancelModal({ id, backUrl }: IProps, ref: ForwardedRef<ModalRef>) {
     if (id) {
       cancelDepositOrder({ id }).then((res) => {
         if (res.success) {
-          push(backUrl || '/deposit')
+          push(backUrl || '/app/deposit')
         }
       })
     }

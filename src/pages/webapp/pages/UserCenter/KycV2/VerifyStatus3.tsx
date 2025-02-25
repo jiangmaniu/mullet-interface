@@ -2,6 +2,7 @@ import { useTheme } from '@/context/themeProvider'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { useModel } from '@umijs/max'
 
 type FormData = {
   areaCode: string
@@ -17,6 +18,10 @@ const VerifyStatus3 = () => {
   const i18n = useI18n()
   const { t } = i18n
 
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const remark = currentUser?.remark
+
   return (
     <>
       <View className={cn('mt-[80px] px-2 flex-1')}>
@@ -27,7 +32,7 @@ const VerifyStatus3 = () => {
               {t('mt.shenheshibai')}
             </Text>
             <Text size="sm" color="secondary">
-              {t('mt.shenfenrenzhengweitongguotips')}
+              {remark ? remark : t('mt.nintijiaodeziliaobuquanqieyoucuowu')}
             </Text>
           </View>
         </View>

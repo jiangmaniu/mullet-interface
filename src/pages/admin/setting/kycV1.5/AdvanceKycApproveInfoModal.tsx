@@ -7,9 +7,10 @@ import KycStepThreeForm from '../kycStepForm1.5/KycStepThreeForm'
 
 type IProps = {
   trigger?: JSX.Element
+  onClose?: () => void
 }
 
-function AdvanceKycApproveInfoModal({ trigger }: IProps, ref: any) {
+function AdvanceKycApproveInfoModal({ trigger, onClose }: IProps, ref: any) {
   const modalRef = useRef<any>()
   const { theme } = useTheme()
 
@@ -19,6 +20,7 @@ function AdvanceKycApproveInfoModal({ trigger }: IProps, ref: any) {
 
   const onSuccess = () => {
     modalRef.current?.close()
+    onClose?.()
   }
 
   return (

@@ -8,6 +8,7 @@ import { CustomerService } from '@/utils/chat'
 import { push, replace } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { FormattedMessage, getIntl } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
@@ -15,6 +16,8 @@ import Body from './comp/Body'
 
 function WithdrawPreview() {
   const { theme } = useTheme()
+
+  useTitle(getIntl().formatMessage({ id: 'menu.depositOtcWait' }))
 
   const [disabled, setDisabled] = useState(false)
   const onDisabledChange = (disabled: boolean) => {

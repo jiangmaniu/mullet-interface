@@ -106,7 +106,7 @@ const VerifyMsg = forwardRef(
           return
         }
 
-        message.info(res.data.msg)
+        message.info(res.msg)
       })
     }
 

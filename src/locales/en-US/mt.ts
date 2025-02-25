@@ -441,6 +441,8 @@ export default {
   'mt.timeTips1': 'The start time cannot be later than the end time',
   'mt.timeTips2': 'The end time cannot be earlier than the start time',
   'mt.shenfenrenzhengweitongguotips': 'Identity verification failed, please try again or contact customer support',
+  'mt.womenhuijinkuaiwanchengshenhe':
+    'We will complete the review as soon as possible. Please be patient. If you have any questions, please contact customer service.',
   'mt.chongxinrenzheng': 'Reverify',
   'mt.lianxikefu': 'Contact Support',
   'mt.xiugaimima': 'Change Password',
@@ -793,5 +795,8 @@ export default {
   'mt.zhuceshijian': 'Registration Time',
   'mt.gerenziliao': 'Personal Information',
   'mt.zhuanrujine': 'Deposit Amount',
-  'mt.daozhangjine': 'Arrival Amount'
+  'mt.daozhangjine': 'Arrival Amount',
+  'mt.shenfenrenzhengshibai': 'Identity Verification Failed',
+  'mt.nintijiaodeziliaobuquanqieyoucuowu': 'You submitted incomplete or incorrect data, please check and resubmit',
+  'mt.yicunzaiweiwanchengdingdan': 'There is an existing incomplete order, please complete the order first'
 }

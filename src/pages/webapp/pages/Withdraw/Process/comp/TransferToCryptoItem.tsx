@@ -76,8 +76,13 @@ function TransferToCryptoItem({ form }: IProps) {
         <span
           className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
           onClick={() => {
-            // message.info('敬请期待')
-            push('/setting?key=address')
+            // @ts-ignore
+            if (window.ReactNativeWebView) {
+              // @ts-ignore
+              window.ReactNativeWebView.postMessage('dizhiguanli')
+            } else {
+              push('/app/wallet-address')
+            }
           }}
         >
           <FormattedMessage id="mt.dizhiguanli" />

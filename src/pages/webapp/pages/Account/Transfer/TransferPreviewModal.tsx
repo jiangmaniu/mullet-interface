@@ -182,7 +182,7 @@ function TransferPreviewModal({ from, to, amount }: IProps, ref: ForwardedRef<Mo
         // 刷新用户信息
         user.fetchUserInfo(true)
       } else {
-        message.info(res.data.msg)
+        message.info(res.msg)
       }
     } else if (state === 'success') {
       bottomSheetModalRef.current?.sheet?.dismiss(() => {

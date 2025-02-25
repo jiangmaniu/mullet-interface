@@ -1,5 +1,5 @@
 import { observer, useLocalObservable } from 'mobx-react'
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
@@ -17,7 +17,7 @@ import useFocusEffect from '../../hooks/useFocusEffect'
 import { useI18n } from '../../hooks/useI18n'
 import BasicLayout from '../../layouts/BasicLayout'
 import { navigateTo } from '../../utils/navigator'
-import KycStatus, { getKycStatus } from './KycV2/KycStatus'
+import KycStatus from './KycV2/KycStatus'
 import MessageStore from './Message/MessageStore'
 import Account from './comp/Account'
 import KycTipsModal from './comp/KycTipsModal'
@@ -71,10 +71,6 @@ function UserCenter() {
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
-
-  const status = useMemo(() => {
-    return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
-  }, [kycStatus, isBaseAuth, isKycAuth])
 
   useFocusEffect(
     useCallback(() => {

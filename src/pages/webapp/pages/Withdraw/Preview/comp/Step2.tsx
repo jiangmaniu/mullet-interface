@@ -9,8 +9,6 @@ import { copyToClipboard, formatNum } from '@/utils'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
-import { push } from '@/utils/navigator'
-import confirm from 'antd/es/modal/confirm'
 import { observer } from 'mobx-react'
 
 const Step2 = ({
@@ -167,25 +165,28 @@ const Step2 = ({
   const location = useLocation()
   const values = (location.state || {}) as Wallet.fundsMethodPageListItem
 
+  useEffect(() => {
+    console.log('values', values)
+  }, [values])
+
   const [query] = useSearchParams()
 
-  const backUrl = query.get('backUrl') as string
-  const [invalid, setInvalid] = useState(false)
+  // const backUrl = query.get('backUrl') as string
+  // const [invalid, setInvalid] = useState(false)
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (!values?.methodId) {
-        setInvalid(true)
-        confirm({
-          title: getIntl().formatMessage({ id: 'mt.dingdanshixiao' }),
-          closable: false,
-          onOk: () => {
-            push(backUrl)
-          }
-        })
-      }
-    }, 600)
-  }, [])
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     if (!values?.methodId) {
+  //       confirm({
+  //         title: getIntl().formatMessage({ id: 'mt.dingdanshixiao' }),
+  //         closable: false,
+  //         onOk: () => {
+  //           push(backUrl || '/app/withdraw')
+  //         }
+  //       })
+  //     }
+  //   }, 600)
+  // }, [])
   return (
     <div className="flex items-center justify-center w-full h-full mt-10 flex-1 ">
       <div className=" pt-4 bg-white w-full rounded-t-3xl flex-1">

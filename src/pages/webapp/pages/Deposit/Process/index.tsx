@@ -5,7 +5,8 @@ import Header from '@/pages/webapp/components/Base/Header'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, getIntl } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
@@ -14,6 +15,8 @@ import Body from './comp/Body'
 function Deposit() {
   const { theme } = useTheme()
   const i18n = useI18n()
+
+  useTitle(getIntl().formatMessage({ id: 'menu.depositProcess' }))
 
   const [disabled, setDisabled] = useState(false)
   const onDisabledChange = (disabled: boolean) => {

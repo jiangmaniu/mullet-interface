@@ -5,10 +5,10 @@ import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { isAndroid, isIOS } from 'react-device-detect'
 import VerifyDoc from '../KycV2/VerifyDoc'
+import VerifyMsg from '../KycV2/VerifyMsg'
 import VerifyStatus2 from '../KycV2/VerifyStatus2'
 import VerifyStatus3 from '../KycV2/VerifyStatus3'
 import VerifyStatus4 from '../KycV2/VerifyStatus4'
-import VerifyMsg from './VerifyMsg'
 
 const Children = observer(
   forwardRef(({ status }: { status: string }, ref: any) => {
@@ -21,26 +21,10 @@ const Children = observer(
       )
     }
 
-    const onDeposit = () => {
-      // @ts-ignore
-      window.ReactNativeWebView.postMessage(
-        JSON.stringify({
-          type: 'deposit'
-        })
-      )
-    }
-
-    const onRetry = () => {
-      // @ts-ignore
-      window.ReactNativeWebView.postMessage(
-        JSON.stringify({
-          type: 'retry'
-        })
-      )
-    }
-
     const ref1 = useRef<any>(null)
     const ref0 = useRef<any>(null)
+
+    const [retry, setRetry] = useState(false)
 
     useImperativeHandle(ref, () => ({
       onSubmit: () => {
@@ -49,6 +33,9 @@ const Children = observer(
         } else if (status === '1') {
           ref1.current?.onSubmit()
         }
+      },
+      onRetry: () => {
+        setRetry(true)
       }
     }))
 
@@ -66,7 +53,7 @@ const Children = observer(
 
     return (
       <div className="px-[14px]">
-        {status === '1' ? (
+        {status === '1' || retry ? (
           <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
         ) : status === '2' ? (
           <VerifyStatus2 />
@@ -122,6 +109,10 @@ export default function KycWebviewPage() {
 
         if (data?.action === 'submit') {
           ref.current?.onSubmit()
+        }
+
+        if (data?.action === 'retry') {
+          ref.current?.onRetry()
         }
       } catch (error) {
         message.info(`监听消息错误: ${JSON.stringify(error)}`)
