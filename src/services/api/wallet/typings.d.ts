@@ -790,7 +790,7 @@ declare namespace Wallet {
     /**
      * 提币地址
      */
-    address?: string
+    address: string
     /**
      * 渠道ID
      */

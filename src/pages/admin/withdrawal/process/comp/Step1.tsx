@@ -11,6 +11,7 @@ import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { cn } from '@/utils/cn'
 import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
 import TransferAmount from './TransferAmount'
 import TransferFormSelectItem from './TransferFormSelectItem'
 import TransferMethodSelectItem from './TransferMethodSelectItem'
@@ -34,6 +35,9 @@ const Step1 = ({
 }) => {
   const amount = Form.useWatch('amount', form)
   const currency = Form.useWatch('currency', form)
+  const bankName = Form.useWatch('bankName', form)
+  const bankCard = Form.useWatch('bankCard', form)
+  const toAccountId = Form.useWatch('toAccountId', form)
 
   const { trade } = useStores()
   const { currentAccountInfo } = trade
@@ -49,7 +53,27 @@ const Step1 = ({
   const [searchParams] = useSearchParams()
   const tradeAccountId = searchParams.get('tradeAccountId') as string
 
-  const disabled = !amount || !actualAmount || Number(actualAmount) <= 0 || loading
+  const [valid, setValid] = useState(false)
+  useEffect(() => {
+    amount &&
+      form
+        .validateFields(['amount'])
+        .then((values) => {
+          setValid(true)
+        })
+        .catch((err) => {
+          setValid(false)
+        })
+  }, [amount])
+
+  const disabled =
+    !amount ||
+    !actualAmount ||
+    Number(actualAmount) <= 0 ||
+    loading ||
+    !valid ||
+    (methodInfo?.paymentType === 'OTC' && (!bankCard || !bankName)) ||
+    (methodInfo?.paymentType === 'CHAIN' && !toAccountId)
 
   return (
     <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">

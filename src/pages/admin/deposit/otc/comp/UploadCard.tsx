@@ -3,7 +3,7 @@ import './index.less'
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import type { UploadProps } from 'antd'
-import { Upload } from 'antd'
+import { Image, Upload } from 'antd'
 import { useState } from 'react'
 
 import { getEnv } from '@/env'
@@ -24,6 +24,7 @@ export default function ({ setImgs, imgs }: IProps) {
 
   const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
   const props: UploadProps = {
+    disabled: imgs.length >= 3,
     name: 'file',
     multiple: false,
     showUploadList: false,
@@ -82,7 +83,7 @@ export default function ({ setImgs, imgs }: IProps) {
       <div className="flex flex-row gap-[14px] mt-[15px]">
         {imgs.map((img, index) => (
           <div className="w-[86px] h-[86px] bg-gray-120 rounded-lg relative img-preview" key={index}>
-            <img src={`${getEnv().imgDomain}${img}`} width={86} height={86} />
+            <Image src={`${getEnv().imgDomain}${img}`} width={86} height={86} />
             <img
               onClick={() => {
                 setImgs(imgs.filter((_, i) => i !== index))

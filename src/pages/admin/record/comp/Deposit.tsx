@@ -62,6 +62,20 @@ function Deposit({ params, onSelectItem }: IProps) {
     return { data: list, total, success: true }
   }
 
+  const optTypeIcon = (item: Wallet.withdrawalOrderListItem) => {
+    const optType = item?.channelNoValue?.split('-')?.[0]
+
+    if (optType === 'bank') {
+      return 'yhk'
+    } else if (optType === 'wechat') {
+      return 'wx'
+    } else if (optType === 'alipay') {
+      return 'zfb'
+    }
+
+    return 'usdt'
+  }
+
   return (
     <ProList
       rowKey="orderId" // 设置列表唯一key
@@ -93,13 +107,15 @@ function Deposit({ params, onSelectItem }: IProps) {
                 </div>
               </div>
             </div>
-            <div className=" flex flex-row gap-2 md:gap-3 items-center  justify-center flex-grow">
-              <div className="text-end text-sm font-medium flex-1 flex flex-row items-center justify-end gap-1">
+            <div className=" flex flex-row gap-2 md:gap-3 items-center justify-start min-w-[300px]">
+              <div className=" text-sm font-medium flex flex-row items-center gap-1">
                 {item.type === 'bank' ? (
                   <span>{item.bank}</span>
                 ) : (
                   <>
-                    <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
+                    {item?.channelIcon && (
+                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
+                    )}
                     <span> {item.channelRevealName || '[channelRevealName]'}</span>
                   </>
                 )}
@@ -107,7 +123,7 @@ function Deposit({ params, onSelectItem }: IProps) {
               <div>
                 <Iconfont name="zhixiang" width={14} color="black" height={14} />
               </div>
-              <div className="flex text-sm font-bold flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden  ">
+              <div className="flex text-sm font-bold flex-row items-center gap-1  overflow-hidden  ">
                 <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
                   {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
                 </div>
@@ -118,7 +134,7 @@ function Deposit({ params, onSelectItem }: IProps) {
             </div>
             {/* <div className="text-start min-w-[100px]">{item.status || '[status]'}</div> */}
 
-            <div className="text-sm flex items-center" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
+            <div className="text-sm flex items-center w-[80px] justify-center" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
               <span
                 className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
                 style={{ backgroundColor: statusMap[item.status ?? 'FAIL']?.color || '#9C9C9C' }}

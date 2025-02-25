@@ -134,7 +134,20 @@ function DepositProcess() {
       .replace(/"/g, '\\"') // 转义双引号
   }
 
-  const disabled = loading || !methodId || !toAccountId || (methodInfo?.paymentType === 'OTC' && !amount)
+  const [valid, setValid] = useState(false)
+  useEffect(() => {
+    amount &&
+      form
+        .validateFields(['amount'])
+        .then((values) => {
+          setValid(true)
+        })
+        .catch((err) => {
+          setValid(false)
+        })
+  }, [amount])
+
+  const disabled = loading || !methodId || !toAccountId || (methodInfo?.paymentType === 'OTC' && !amount) || !valid
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth backUrl="/deposit" backTitle={<FormattedMessage id="mt.quanbuzhifufangshi" />}>

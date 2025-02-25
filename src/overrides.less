@@ -133,16 +133,26 @@
 }
 
 // antd message 样式修改
-.custom-message-wrapper {
-  .ant-message-notice-content {
-    padding: 11px 42px !important;
-    background: rgba(1, 1, 1, 0.6) !important;
-    border-radius: 29px !important;
-  }
-  .ant-message-custom-content {
-    color: #fff !important;
-    font-weight: 500 !important;
-    font-size: 16px !important;
+.ant-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
+  .ant-message-notice-wrapper {
+    .custom-message-wrapper {
+      .ant-message-notice-content {
+        padding: 11px 42px !important;
+        background: rgba(1, 1, 1, 0.6) !important;
+        border-radius: 29px !important;
+      }
+      .ant-message-custom-content {
+        color: #fff !important;
+        font-weight: 500 !important;
+        font-size: 16px !important;
+      }
+    }
   }
 }
 

@@ -84,9 +84,13 @@ const VerifyDoc = forwardRef(
 
     return (
       <View className={cn('px-2 flex flex-col gap-2 ')}>
-        <Text className={cn('text-xl font-bold text-primary')}>{i18n.t('pages.userCenter.pinzhengrenzheng')}</Text>
-        <Text className={cn('text-xs text-gray-570')}>{i18n.t('pages.userCenter.shagnchuanzhaopianbixuqingxi')}</Text>
-        <View className={cn('flex flex-col mt-3 gap-[11px]')}>
+        <Text className={cn('text-xl font-bold text-primary')} weight="bold">
+          {i18n.t('pages.userCenter.pinzhengrenzheng')}
+        </Text>
+        <Text className={cn('text-xs text-weak')} color="weak">
+          {i18n.t('pages.userCenter.shagnchuanzhaopianbixuqingxi')}
+        </Text>
+        <View className={cn('flex flex-col mt-3 gap-[11px] mb-[50px]')}>
           <View className={cn('flex flex-row gap-2')}>
             <Text size="base" weight="medium">
               {i18n.t('pages.userCenter.renzhengxingming')}:&nbsp;
@@ -95,35 +99,37 @@ const VerifyDoc = forwardRef(
                 : `${currentUser?.firstName || 'firstName'} ${currentUser?.lastName || 'lastName'}`}
             </Text>
           </View>
-          <Text className={cn('text-sm font-medium text-primary mt-2.5')}>{i18n.t('pages.userCenter.shagnchuanzhengjian')}</Text>
+          <Text className={cn('text-sm font-medium text-primary mt-2.5')} weight="medium">
+            {i18n.t('pages.userCenter.shagnchuanzhengjian')}
+          </Text>
           {file.link ? (
-            <View
-              onPress={async () => {
-                uploadSheetModalRef.current?.show()
-              }}
-              className={cn(' border border-dashed border-[#6A7073] rounded-lg overflow-hidden ')}
-            >
-              <img src={file.link} style={{ width: '100%', height: 188 }} />
+            <View className="relative">
+              <View
+                onPress={async () => {
+                  uploadSheetModalRef.current?.show()
+                }}
+                className={cn('border border-dashed border-[#6A7073] rounded-lg overflow-hidden ')}
+              >
+                <img src={file.link} style={{ width: '100%', height: 188 }} />
+              </View>
+              <img
+                onClick={() => {
+                  setFile({})
+                }}
+                src="/img/shanchu.png"
+                className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] rounded-full cursor-pointer guanbi"
+              />
             </View>
           ) : (
             <View
               onPress={async () => {
                 uploadSheetModalRef.current?.show()
               }}
-              className={cn(' border border-dashed border-[#6A7073] bg-gray-50 rounded-lg overflow-hidden px-[27px] py-[37px]')}
+              className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden px-[27px] py-[37px]')}
             >
-              <View
-                style={{
-                  width: '100%',
-                  height: 114,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundSize: 'cover',
-                  backgroundImage: `url('/img/webapp/uploadImg.png')`
-                }}
-              >
-                <Text style={{ fontWeight: '500', color: theme.colors.textColor.primary }}>
+              <View className="flex flex-col items-center justify-start h-[114px] -mt-[20px]">
+                <img src="/img/idcard-bg2.png" width={100} height={100} />
+                <Text style={{ fontWeight: '500', color: theme.colors.textColor.primary }} size="sm">
                   {i18n.t('pages.userCenter.clickUploadIDCard')}
                 </Text>
               </View>

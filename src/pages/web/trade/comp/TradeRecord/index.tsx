@@ -54,7 +54,7 @@ function TradeRecord({ trigger }: IProps) {
 
   useEffect(() => {
     // 获取挂单、持仓、止盈止损接口
-    trade.getPositionList()
+    trade.getPositionList(true)
     trade.getPendingList()
     // trade.getStopLossProfitList()
   }, [trade.currentAccountInfo?.id])

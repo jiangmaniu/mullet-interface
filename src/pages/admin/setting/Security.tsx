@@ -107,7 +107,10 @@ export default function Security() {
         <div className="rounded-[7px] border border-gray-150 py-[23px] px-[37px]">
           <div className="flex flex-col gap-2">
             <span className="font-medium text-xl">{userInfo?.account}</span>
-            <span className="text-secondary text-sm">{userInfo?.createTime}</span>
+            <span className="text-secondary text-sm">
+              <FormattedMessage id="mt.zhuceshijian" />
+              :&nbsp;{userInfo?.createTime}
+            </span>
           </div>
         </div>
       </div>

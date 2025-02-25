@@ -723,7 +723,7 @@ export default {
   'mt.rujinzhanghu': '入金賬戶',
   'mt.fukuanxinxi': '付款信息',
   'mt.shoukuanxingming': '收款姓名',
-  'mt.shoukuanyinghang': '收款銀行',
+  'mt.shoukuanyinhang': '收款銀行',
   'mt.daizhifujine': '待支付金額',
   'mt.youyuhuilvbodong': '由於匯率波動，請盡快支付，實際支付金額以提交訂單為準',
   'mt.quxiaodingdan': '取消訂單',
@@ -787,5 +787,17 @@ export default {
   'mt.nindejiaoyizhengzaichulizhong2': '您的交易正在處理中',
   'mt.chujinshenqingchenggong': '出金申請成功，客服正在加緊審核中...',
   'mt.zijinyujiliangxiaoshineidaoda': '您的資金預計兩小時內到達',
-  'mt.qujiaoyi': '去交易'
+  'mt.qujiaoyi': '去交易',
+  'mt.xuanzerujinfangshi': '選擇入金方式',
+  'mt.shengyufukuanshijian': '剩餘付款時間 {time}',
+  'mt.qingquebaoninbinweijinxingzhuanzhang': '請確保您並未進行轉賬，以免資金損失。',
+  'mt.duociquxiao': '多次取消入金後當天無法再進行入金。',
+  'mt.rujindengdai': '入金等待',
+  'mt.chujindengdai': '出金等待',
+  'mt.dingdanyichaoshi': '訂單已超時',
+  'mt.zhuceshijian': '註冊時間',
+  'mt.gerenziliao': '個人資料',
+  'mt.shangchuanpingzheng': '上傳凭證',
+  'mt.zhuanrujine': '轉入金額',
+  'mt.daozhangjine': '到賬金額'
 }

@@ -10,7 +10,7 @@ export default function Setting() {
 
   const tabList = [
     {
-      label: <FormattedMessage id="mt.anquanshezhi" />,
+      label: <FormattedMessage id="mt.gerenziliao" />,
       key: 'security'
     },
     {

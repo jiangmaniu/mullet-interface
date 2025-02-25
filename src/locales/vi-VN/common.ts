@@ -109,6 +109,7 @@ export default {
   'common.CanRelease': 'Thả',
   'common.Refreshing': 'Đang làm mới...',
   'common.Complete': 'Hoàn thành',
-  'common.unset': 'Không được đặt'
+  'common.unset': 'Không được đặt',
+  'common.zhanbu': 'Không ngay lập tức'
   // "======= 公共结束 ==========": "",
 }

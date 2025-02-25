@@ -6,6 +6,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
+import { getEnv } from '@/env'
 import { statusMap } from '..'
 
 type IProps = {
@@ -78,9 +79,12 @@ function InfoModal({ item }: IProps, ref: any) {
           </span>
 
           <div className="flex flex-row items-center gap-1">
-            <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
+            {/* <div className="h-5 w-5 rounded-full bg-blue-600 flex items-center justify-center">
               <Iconfont name="qianbaodizhi" width={14} color="white" height={14} />
-            </div>
+            </div> */}
+            {item?.channelIcon && (
+              <img src={`${getEnv().imgDomain}${item?.channelIcon}`} alt="" width={18} height={18} className="bg-gray-150 rounded-full" />
+            )}
             <span>{item?.address}</span>
           </div>
           {/* {item?.type === 'crypto' ? (
@@ -99,11 +103,11 @@ function InfoModal({ item }: IProps, ref: any) {
       <div className="flex flex-row justify-between items-end">
         <div className="flex flex-col items-start gap-1">
           <div className=" min-w-[150px] text-base  md:text-xl font-bold">
-            {formatNum(item?.orderAmount)} {item?.currency}
+            {formatNum(item?.receiptAmount)} {item?.symbol}
           </div>
 
           <span className="text-sm text-secondary">
-            <FormattedMessage id="mt.jine" />
+            <FormattedMessage id="mt.daozhangjine" />
           </span>
         </div>
         <div className="flex flex-row items-center">
@@ -112,7 +116,7 @@ function InfoModal({ item }: IProps, ref: any) {
             &nbsp;
           </span>
           <div className="text-sm text-primary">
-            {formatNum(item?.fee)} {item?.currency}
+            {formatNum(item?.baseHandlingFee)} {item?.baseCurrency}
           </div>
         </div>
       </div>

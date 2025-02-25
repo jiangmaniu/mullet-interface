@@ -1,6 +1,6 @@
 import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
@@ -69,14 +69,22 @@ function TradeView() {
   const { cn } = useTheme()
 
   const { trade, ws } = useStores()
+  const { activeSymbolName, symbolMapAll } = trade
+  const symbolInfo = useMemo(() => {
+    return symbolMapAll?.[activeSymbolName]
+  }, [activeSymbolName, symbolMapAll.size])
+
   useEffect(() => {
+    // 重置交易状态
+    trade.resetTradeAction()
+    trade.setOrderType('MARKET_ORDER')
     trade.subscribeCurrentAndPositionSymbol({ cover: true })
 
     return () => {
       // 离开当前页面的时候，取消行情订阅
       ws.closePosition()
     }
-  }, [])
+  }, [symbolInfo])
 
   usePageVisibility(
     () => {

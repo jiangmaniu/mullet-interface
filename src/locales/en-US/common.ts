@@ -111,7 +111,7 @@ export default {
   'common.Complete': 'Complete',
   'common.unset': 'Unset',
   'common.shoujihao': 'Phone Number',
-  'common.bangding': 'Bind'
-
+  'common.bangding': 'Bind',
+  'common.zhanbu': 'Not Now'
   // "======= 公共结束 ==========": "",
 }

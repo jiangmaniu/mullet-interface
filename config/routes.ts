@@ -406,40 +406,64 @@ export default [
         component: './webapp/pages/UserCenter/Certification',
         access: 'canAdmin' // 权限配置
       },
-      // 个人中心- kyc 认证
+      // 个人中心- kyc 认证（webview）
       {
         path: '/:lng/app/user-center/kyc-webview-page',
         component: './webapp/pages/UserCenter/KycV1.5/KycWebviewPage'
       },
-      // 入金
+      // 入金 （h5 & webview）
       {
         path: '/:lng/app/deposit',
-        component: './webapp/pages/Deposit.webview'
+        name: 'deposit',
+        component: './webapp/pages/Deposit'
       },
-      // 出金
+      // 出金 （h5 & webview）
       {
         path: '/:lng/app/withdraw',
-        component: './webapp/pages/Withdraw.webview'
+        name: 'withdraw',
+        component: './webapp/pages/Withdraw'
       },
-      // 出金過程
+      // 出金過程 （h5 & webview）
       {
         path: '/:lng/app/withdraw/process/:method',
-        component: './webapp/pages/Withdraw.webview/Process'
+        name: 'withdrawProcess',
+        component: './webapp/pages/Withdraw/Process'
       },
-      // 出金預覽
+      // 出金預覽 （h5 & webview）
       {
         path: '/:lng/app/withdraw/preview',
-        component: './webapp/pages/Withdraw.webview/Preview'
+        name: 'withdrawPreview',
+        component: './webapp/pages/Withdraw/Preview'
       },
-      // 出金等待
+      // 出金等待 （h5 & webview）
       {
         path: '/:lng/app/withdraw/wait/:id',
-        component: './webapp/pages/Withdraw.webview/Wait'
+        name: 'withdrawWait',
+        component: './webapp/pages/Withdraw/Wait'
       },
-      // 出入金记录
+      // 出入金记录 （h5 & webview）
       {
         path: '/:lng/app/record/payment',
-        component: './webapp/pages/Record/Payment.webview'
+        name: 'recordPayment',
+        component: './webapp/pages/Record/Payment'
+      },
+      // 入金过程 （h5 & webview）
+      {
+        path: '/:lng/app/deposit/process/:method',
+        name: 'depositProcess',
+        component: './webapp/pages/Deposit/Process'
+      },
+      // 入金 OTC （h5 & webview）
+      {
+        path: '/:lng/app/deposit/otc/:id',
+        name: 'depositOtc',
+        component: './webapp/pages/Deposit/Otc'
+      },
+      // 入金等待 （h5 & webview）
+      {
+        path: '/:lng/app/deposit/wait/:id',
+        name: 'depositWait',
+        component: './webapp/pages/Deposit/Wait'
       },
       // 个人信息
       {
@@ -479,6 +503,7 @@ export default [
       }
     ]
   },
+
   // ======================== 移动端页面路由 end ======================
   {
     path: '*',

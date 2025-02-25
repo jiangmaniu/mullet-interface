@@ -6,7 +6,7 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { getWithdrawalAddressList } from '@/services/api/wallet'
 import { Popconfirm } from 'antd'
-import { forwardRef, useImperativeHandle } from 'react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { IParams } from '../Address'
 
 type IProps = {
@@ -21,7 +21,6 @@ function CryptoAddress({ params, onSelectItem, onDeleteItem }: IProps, ref: any)
   const accountList = initialState?.currentUser?.accountList || []
 
   const onQuery = async (params: IParams) => {
-    if (!params.tradeAccountId) return
     const data = await getWithdrawalAddressList({
       current: 1,
       size: 1000
@@ -34,13 +33,18 @@ function CryptoAddress({ params, onSelectItem, onDeleteItem }: IProps, ref: any)
     return { data: list, total, success: true }
   }
 
+  const listRef = useRef<any>()
+
   useImperativeHandle(ref, () => ({
-    onQuery
+    onQuery: () => {
+      listRef.current?.reload()
+    }
   }))
 
   return (
     <ProList
       rowKey="orderId" // 设置列表唯一key
+      actionRef={listRef}
       action={{
         query: (params) => onQuery(params)
       }}
@@ -62,7 +66,8 @@ function CryptoAddress({ params, onSelectItem, onDeleteItem }: IProps, ref: any)
               </div>
               <div>
                 <div className="text-primary font-bold">{item.channelName}</div>
-                <div className="text-secondary text-xs">{item.id}</div>
+                {/* <div className="text-secondary text-xs">{item.id}</div> */}
+                {item.remark && <div className="text-secondary text-xs">{item.remark}</div>}
               </div>
             </div>
             <div className=" flex flex-row gap-2 md:gap-3 items-center justify-center flex-grow">

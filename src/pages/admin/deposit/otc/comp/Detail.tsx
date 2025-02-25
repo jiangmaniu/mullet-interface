@@ -12,7 +12,9 @@ import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { cancelDepositOrder } from '@/services/api/wallet'
+import { CustomerService } from '@/utils/chat'
 import { cn } from '@/utils/cn'
+import { depositExchangeRate } from '@/utils/deposit'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 import { Popconfirm } from 'antd'
@@ -64,7 +66,7 @@ const Detail = ({
   useLayoutEffect(() => {
     if (methods.length === 0 || prevIntl !== intl.locale) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
-      stores.wallet.getWithdrawalMethods({ language })
+      stores.wallet.getDepositMethods({ language })
       setPrevIntl(intl.locale)
       return
     }
@@ -72,7 +74,7 @@ const Detail = ({
 
   const methodInfo = useMemo(() => {
     return methods.find((item) => item.id === paymentInfo?.channelId)
-  }, [paymentInfo, methods])
+  }, [methods, paymentInfo])
 
   const {
     channelName,
@@ -86,7 +88,8 @@ const Detail = ({
     baseCurrency,
     channelAccountAmount,
     channelSettlementCurrency,
-    receiptAmount
+    receiptAmount,
+    channelNoValue
   } = paymentInfo
 
   const options = [
@@ -100,7 +103,14 @@ const Detail = ({
     },
     {
       label: getIntl().formatMessage({ id: 'mt.cankaohuilv' }),
-      value: exchangeRate
+      value: exchangeRate,
+      render: () => {
+        return (
+          <span>
+            1 {baseCurrency} ≈ {depositExchangeRate(methodInfo)} {channelSettlementCurrency}
+          </span>
+        )
+      }
     },
     {
       label: getIntl().formatMessage({ id: 'mt.rujinzhanghu' }),
@@ -119,9 +129,8 @@ const Detail = ({
   ]
 
   const otcType = useMemo(() => {
-    return 'wechat'
-    // return methodInfo?.channelNoValue?.split('-')?.[0]
-  }, [methodInfo])
+    return channelNoValue?.split('-')?.[0]
+  }, [channelNoValue])
 
   const options2 = useMemo(() => {
     return [
@@ -132,7 +141,7 @@ const Detail = ({
       ...(otcType === 'bank'
         ? [
             {
-              label: getIntl().formatMessage({ id: 'mt.shoukuanyinghang' }),
+              label: getIntl().formatMessage({ id: 'mt.shoukuanyinhang' }),
               value: bankName
             },
             {
@@ -320,7 +329,7 @@ const Detail = ({
         </div>
       </CardContainer>
 
-      <span className="flex flex-row items-center gap-3 mt-[26px]">
+      <span className="flex flex-row items-center gap-3 mt-[26px] cursor-pointer" onClick={CustomerService}>
         <Iconfont name="kefu" size={24} />
         <span>
           <FormattedMessage id="mt.rujinshiyudaowenti" />
