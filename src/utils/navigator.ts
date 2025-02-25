@@ -59,7 +59,9 @@ export const goLogin = () => {
   push(loginUrl)
 }
 
-export const goKefu = () => {}
+export const goKefu = () => {
+  window.ssq?.push?.('chatOpen')
+}
 
 /**
  * 获取多语言路径信息

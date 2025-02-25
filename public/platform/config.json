@@ -10,5 +10,8 @@
   "REGISTER_MODULE": "1",
   "SKIP_KYC_STEP_ONE": "1",
   "ID_CARD_ONLY": "1",
-  "ENABLE_QUOTE_CATEGORY_ALL_TAB": true
+  "SHOW_QUOTE_CATEGORY_ALL_TAB": true,
+  "HIDE_ACCOUNT_TRANSFER": false,
+  "HIDE_CREATE_ACCOUNT": true,
+  "salesmartlyJSUrl": "https://plugin-code.salesmartly.com/js/project_247867_254558_1739880055.js"
 }
