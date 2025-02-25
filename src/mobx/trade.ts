@@ -185,7 +185,8 @@ class TradeStore {
     // 获取持仓列表
     this.getPositionList()
 
-    this.orderQuickPlaceOrderChecked = (await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()) || false
+    const localOrderQuickPlaceOrderChecked = await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()
+    this.orderQuickPlaceOrderChecked = localOrderQuickPlaceOrderChecked !== null ? localOrderQuickPlaceOrderChecked : true
     this.orderConfirmChecked = (await STORAGE_GET_ORDER_CONFIRM_CHECKED()) || false
     this.positionConfirmChecked = (await STORAGE_GET_POSITION_CONFIRM_CHECKED()) || false
     this.historySearchList = (await STORAGE_GET_HISTORY_SEARCH()) || []
@@ -935,7 +936,7 @@ class TradeStore {
     if (res.success) {
       runInAction(() => {
         const data = res?.data || []
-        this.symbolCategory = ENV.ENABLE_QUOTE_CATEGORY_ALL_TAB
+        this.symbolCategory = ENV.SHOW_QUOTE_CATEGORY_ALL_TAB
           ? [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...data]
           : [...data.slice(0, -1)]
       })

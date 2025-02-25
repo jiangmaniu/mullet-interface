@@ -15,7 +15,7 @@ import ValidateCodeInput from '@/components/Form/ValidateCodeInput'
 import { submitKycAuth } from '@/services/api/crm/kycAuth'
 import { bindEmail, bindPhone } from '@/services/api/user'
 import { message } from '@/utils/message'
-import { push } from '@/utils/navigator'
+import { goKefu, push } from '@/utils/navigator'
 
 import UploadIdcard from './UploadIdcard'
 
@@ -228,7 +228,7 @@ export default function KycStepForm() {
           </Hidden>
         </div>
         <div className="mt-[60px]">
-          <div className="flex items-center justify-center flex-1">
+          <div className="flex items-center justify-center flex-1" onClick={goKefu}>
             <img src="/img/kefu.png" width={28} height={28} />
             <span className="text-sm text-primary cursor-pointer">
               <FormattedMessage id="mt.yanzhengshiyudaowenti" />?

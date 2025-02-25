@@ -160,7 +160,7 @@ export default defineConfig({
   headScripts: [
     // 解决首次加载时白屏的问题
     { src: '/scripts/loading.js', async: true },
-    { src: '/scripts/sw.js', async: true }
+    { src: '/scripts/sw.js', async: true },
   ],
 
   // links: [{ rel: 'manifest', href: ENV?.manifest }],

@@ -8,6 +8,7 @@ import { IChartingLibraryWidget } from '@/libs/charting_library'
 import mitt from '@/utils/mitt'
 import { request } from '@/utils/request'
 
+import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { IQuoteItem } from './ws.types'
 
@@ -42,13 +43,15 @@ class KlineStore {
     this.switchSymbolLoading = flag
   }
 
+  @action
   updateKlineData(quotes: Map<string, IQuoteItem>) {
     const symbolInfo = this.activeSymbolInfo.symbolInfo
     if (symbolInfo && quotes.size) {
       const symbol = symbolInfo.name
       const dataSourceCode = symbolInfo.dataSourceCode
       const data = quotes.get(`${dataSourceCode}/${symbol}`)
-      if (data && data.symbol === symbol) {
+      // 只更新当前激活的品种
+      if (data && data.symbol === symbol && symbol === stores.trade.activeSymbolName) {
         const resolution = this.activeSymbolInfo.resolution
         const precision = symbolInfo.precision
         // 通过ws更新k线数据
@@ -57,7 +60,9 @@ class KlineStore {
           // 实时更新k线数据，通过datefeed subscribeBars提供的onRealtimeCallback方法更新
           this.activeSymbolInfo.onRealtimeCallback?.(newLastBar)
           // 更新最后一条k线
-          this.lastbar = newLastBar
+          runInAction(() => {
+            this.lastbar = newLastBar
+          })
         }
       }
     }
@@ -71,7 +76,9 @@ class KlineStore {
     const lastBar = this.lastbar
     if (!lastBar) return
     let resolution = currentSymbol.resolution
-    const serverTime = socketData?.priceData?.id / 1000 // 服务器返回的时间戳
+    const oneMin = resolution === '1'
+    // 一分钟k线使用本地实时时间绘制
+    const serverTime = oneMin ? Date.now() / 1000 : socketData?.priceData?.id / 1000 // 服务器返回的时间戳
 
     let rounded = serverTime
     const ask = socketData?.priceData?.buy // 卖价

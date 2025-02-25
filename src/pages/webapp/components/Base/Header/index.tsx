@@ -1,9 +1,10 @@
 import { NavBar, NavBarProps } from 'antd-mobile'
 
 import Iconfont from '@/components/Base/Iconfont'
+import useHideHeader from '@/pages/webapp/hooks/useHideHeader'
 import { cn } from '@/utils/cn'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { history, useSearchParams } from '@umijs/max'
+import { history } from '@umijs/max'
 
 type IProps = NavBarProps & {
   title?: React.ReactNode
@@ -15,8 +16,7 @@ type IProps = NavBarProps & {
 
 // 移动端公共导航组件
 function Header({ title, onBack, back = true, left, ...res }: IProps) {
-  const [searchParams] = useSearchParams()
-  const hideHeader = searchParams.get('hideHeader') === '1'
+  const { isHideHeader } = useHideHeader()
   const className = useEmotionCss(({ token }) => {
     return {
       '.adm-nav-bar-back-arrow': {
@@ -37,7 +37,7 @@ function Header({ title, onBack, back = true, left, ...res }: IProps) {
     }
   })
 
-  if (hideHeader) return <></>
+  if (isHideHeader) return <></>
 
   return (
     <NavBar

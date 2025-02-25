@@ -19,6 +19,7 @@ import { formatNum } from '@/utils'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
 
+import { getEnv } from '@/env'
 import Header from './comp/Header'
 import RechargeSimulateModal from './comp/RechargeSimulateModal'
 import RenameAccountModal from './comp/RenameAccountModal'
@@ -39,6 +40,7 @@ function Account() {
   const modalRef = useRef<any>()
   const [modalInfo, setModalInfo] = useState({} as User.AccountItem)
   const { setMode } = useTheme()
+  const ENV = getEnv()
 
   const [searchParams] = useSearchParams()
   const searchKey = searchParams.get('key') as any
@@ -121,14 +123,16 @@ function Account() {
             { label: <FormattedMessage id="mt.monizhanghu" />, value: 'DEMO' }
           ]}
         />
-        <Button
-          icon={<PlusCircleOutlined style={{ fontSize: 16 }} />}
-          onClick={() => {
-            push(`/account/type`)
-          }}
-        >
-          <FormattedMessage id="mt.chuangjianxinzhanghu" />
-        </Button>
+        {!ENV.HIDE_CREATE_ACCOUNT && (
+          <Button
+            icon={<PlusCircleOutlined style={{ fontSize: 16 }} />}
+            onClick={() => {
+              push(`/account/type`)
+            }}
+          >
+            <FormattedMessage id="mt.chuangjianxinzhanghu" />
+          </Button>
+        )}
       </div>
       <div className="pt-6">
         {currentAccountList.map((item, idx) => {
@@ -282,28 +286,29 @@ function Account() {
                     },
                     items: [
                       // @ts-ignore
-                      !isSimulate && {
-                        key: 'transfer',
-                        label: (
-                          <Modal
-                            trigger={
-                              <span className="text-sm text-secondary hover:text-primary">
-                                <FormattedMessage id="common.zhuanzhang" />
-                              </span>
-                            }
-                            title={<FormattedMessage id="common.wenxintishi" />}
-                            width={380}
-                            okText={<FormattedMessage id="mt.qurenzheng" />}
-                            onFinish={() => {
-                              push('/setting/kyc')
-                            }}
-                          >
-                            <div className="text-base text-primary">
-                              <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
-                            </div>
-                          </Modal>
-                        )
-                      },
+                      !isSimulate &&
+                        !ENV.HIDE_ACCOUNT_TRANSFER && {
+                          key: 'transfer',
+                          label: (
+                            <Modal
+                              trigger={
+                                <span className="text-sm text-secondary hover:text-primary">
+                                  <FormattedMessage id="common.zhuanzhang" />
+                                </span>
+                              }
+                              title={<FormattedMessage id="common.wenxintishi" />}
+                              width={380}
+                              okText={<FormattedMessage id="mt.qurenzheng" />}
+                              onFinish={() => {
+                                push('/setting/kyc')
+                              }}
+                            >
+                              <div className="text-base text-primary">
+                                <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
+                              </div>
+                            </Modal>
+                          )
+                        },
                       {
                         key: 'rename',
                         label: (

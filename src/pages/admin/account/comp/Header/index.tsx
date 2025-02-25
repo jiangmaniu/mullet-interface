@@ -2,7 +2,9 @@ import { FormattedMessage, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
+import useKycStatusInfo from '@/pages/webapp/hooks/useKycStatusInfo'
 import { hiddenCenterPartStr } from '@/utils'
+import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
 function Header() {
@@ -12,6 +14,9 @@ function Header() {
   const isKycAuth = currentUser?.isKycAuth
 
   const currentAccountInfo = trade.currentAccountInfo
+
+  const kycInfo = useKycStatusInfo()
+
   return (
     <div className="flex items-center">
       <div className="flex items-center">
@@ -19,7 +24,7 @@ function Header() {
           <FormattedMessage id="mt.myAccount" />
         </span>
         <span className="text-primary text-sm font-bold pl-6">Hi, {hiddenCenterPartStr(currentUser?.userInfo?.account, 6)}</span>
-        {isKycAuth && (
+        {/* {isKycAuth && (
           <span className="text-green text-sm ml-3 px-[7px] py-1 rounded bg-[#45a48a1c]">
             <FormattedMessage id="mt.yirenzheng" />
           </span>
@@ -28,12 +33,20 @@ function Header() {
           <span
             className="text-red text-sm ml-3 px-[7px] py-1 rounded  cursor-pointer bg-[#c5474712]"
             onClick={() => {
-              push('/setting/kyc')
+              push('/setting')
             }}
           >
-            <FormattedMessage id="mt.weirenzheng" />
+            <FormattedMessage id="mt.weirenzheng" />2
           </span>
-        )}
+        )} */}
+        <div
+          className="flex flex-col items-start justify-start ml-3 cursor-pointer"
+          onClick={() => {
+            push('/setting')
+          }}
+        >
+          <span className={cn('text-xs font-pf-medium', kycInfo?.color)}>{kycInfo?.label}</span>
+        </div>
       </div>
     </div>
   )

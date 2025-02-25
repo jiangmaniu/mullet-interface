@@ -485,6 +485,13 @@ export default [
         path: '/:lng/app/wallet-address',
         component: './webapp/pages/UserCenter/WalletAddress'
       },
+      // salesmartly客服
+      {
+        path: '/:lng/app/smart-kefu',
+        access: 'canAdmin', // 权限配置
+        component: './webapp/pages/SalesmartKefu',
+        hideInMenu: true,
+      },
       {
         path: '/:lng/app/test',
         component: './webapp/pages/Test'
@@ -498,7 +505,6 @@ export default [
   },
 
   // ======================== 移动端页面路由 end ======================
-
   {
     path: '*',
     layout: false,

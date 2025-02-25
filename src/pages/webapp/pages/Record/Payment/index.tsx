@@ -1,4 +1,5 @@
 import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 import Header from '@/pages/webapp/components/Base/Header'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { push } from '@/utils/navigator'
@@ -47,6 +48,7 @@ export const statusMap: IStatusMap = {
 export default function PaymentRecord() {
   const { theme } = useTheme()
   const intl = useIntl()
+  const ENV = getEnv()
 
   const [searchParams] = useSearchParams()
   const type = searchParams.get('type')
@@ -61,10 +63,14 @@ export default function PaymentRecord() {
       label: intl.formatMessage({ id: 'mt.rujin' }),
       value: 'RUJIN'
     },
-    {
-      label: intl.formatMessage({ id: 'mt.huazhuan' }),
-      value: 'HUAZHUAN'
-    }
+    ...(!ENV?.HIDE_CREATE_ACCOUNT
+      ? [
+          {
+            label: intl.formatMessage({ id: 'mt.huazhuan' }),
+            value: 'HUAZHUAN'
+          }
+        ]
+      : [])
   ]
 
   useEffect(() => {

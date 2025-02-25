@@ -30,6 +30,13 @@ declare const BASE_URL: string
 // 为 Window 增加参数
 interface Window {
   tvWidget: any
+  // 客服
+  ssq: any
+  /**react-native webview对象 */
+  ReactNativeWebView: {
+    postMessage: (message: string) => void
+    injectedObjectJson: (message: any) => void
+  }
 }
 
 declare namespace NodeJS {

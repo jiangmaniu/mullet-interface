@@ -8,6 +8,7 @@ import Button from '@/components/Base/Button'
 import FormCaptcha from '@/components/Form/Captcha'
 import { editPhone, sendCustomPhoneCode, sendPhoneCode } from '@/services/api/user'
 import { message } from '@/utils/message'
+import { goKefu } from '@/utils/navigator'
 
 type IProps = {
   trigger: JSX.Element
@@ -101,7 +102,7 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
         formItemProps={{ style: { marginBottom: 24 } }}
       />
       <div className="flex items-center justify-between gap-x-5 mt-8">
-        <div className="flex items-center flex-1">
+        <div className="flex items-center flex-1" onClick={goKefu}>
           <img src="/img/kefu.png" width={28} height={28} />
           <span className="text-sm text-primary cursor-pointer">
             <FormattedMessage id="mt.yanzhengshiyudaowenti" />?

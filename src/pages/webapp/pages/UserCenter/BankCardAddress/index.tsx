@@ -4,6 +4,7 @@ import { useTheme } from '@/context/themeProvider'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
+import useHideHeader from '@/pages/webapp/hooks/useHideHeader'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { getWithdrawalBankList, removeWithdrawalBank } from '@/services/api/wallet'
@@ -11,6 +12,7 @@ import { message } from '@/utils/message'
 import { ActionType } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { getIntl } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import { Dialog, SwipeAction } from 'antd-mobile'
 import { useRef } from 'react'
 
@@ -19,6 +21,10 @@ export default function BankCardAddress() {
   const { t } = useI18n()
   const modalRef = useRef<any>(null)
   const actionRef = useRef<ActionType>(null)
+  const { isHideHeader } = useHideHeader()
+
+  // 设置页面标题
+  useTitle(t('mt.yinghangkaguanli'))
 
   const className = useEmotionCss((token) => {
     return {
@@ -69,8 +75,8 @@ export default function BankCardAddress() {
   return (
     <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       <Header />
-      <View className={cn('text-[20px] font-pf-bold font-medium px-[22px] pb-4')}>{t('mt.yinhangka')}</View>
-      <View className={cn('px-[14px] flex flex-col gap-y-3 h-[92vh] overflow-y-auto', className)}>
+      {!isHideHeader && <View className={cn('text-[20px] font-pf-bold font-medium px-[22px] pb-4')}>{t('mt.yinhangka')}</View>}
+      <View className={cn('px-[14px] flex flex-col gap-y-3 h-[92vh] overflow-y-auto', className, isHideHeader && 'mt-3')}>
         <ProList
           rowKey="id" // 设置列表唯一key
           action={{

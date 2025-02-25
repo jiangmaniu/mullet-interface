@@ -11,11 +11,11 @@ import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { bindEmail, sendCustomEmailCode } from '@/services/api/user'
+import { regEmail } from '@/utils'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useIntl } from '@umijs/max'
+import { useIntl, useModel } from '@umijs/max'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -40,7 +40,7 @@ const CountDown = observer(({ email, onSendCode }: { email?: string; onSendCode:
             {t('pages.login.click to')}
           </Text>
           <View onPress={onSendCode}>
-            <Text style={cn('text-start text-xs !text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
+            <Text style={cn('text-start text-xs !text-blue-600 ml-1')}>{t('mt.huoquyanzhengma')}</Text>
           </View>
         </>
       ) : (
@@ -64,9 +64,13 @@ function BindEmailModal(props: IProps) {
   const intl = useIntl()
   const bottomSheetModalRef = useRef<SheetRef>(null)
   const { screenSize } = useEnv()
+  const user = useModel('user')
 
   const schema = z.object({
-    email: z.string().min(1, { message: t('pages.login.Email placeholder') }),
+    email: z
+      .string()
+      .min(1, { message: t('pages.login.Email placeholder') })
+      .refine((data) => regEmail.test(data), { message: t('mt.youxianggeshibuzhengque') }),
     code: z
       .string()
       .min(6, { message: t('pages.userCenter.yanzhengmacuowu') })
@@ -95,6 +99,8 @@ function BindEmailModal(props: IProps) {
   const [loadingTips, setLoadingTips] = useState('')
 
   const onSubmit = async (data: FormData) => {
+    console.log('data', data)
+
     // const loging = dialog(<LottieLoading tips={t('pages.login.Sending')} />)
     loadingRef.current?.show(() => {
       setLoadingTips(t('pages.login.Sending'))
@@ -107,8 +113,11 @@ function BindEmailModal(props: IProps) {
       })
 
       if (res?.success) {
-        message.info(t('pages.userCenter.bingdingchenggong'), 2)
-        navigateTo('app/user-center/verify-msg')
+        bottomSheetModalRef.current?.sheet.dismiss()
+        message.info(t('pages.userCenter.bingdingchenggong'))
+
+        // 刷新用户信息
+        user.fetchUserInfo()
       }
     } catch (error: any) {
     } finally {
@@ -145,7 +154,7 @@ function BindEmailModal(props: IProps) {
 
   const sendDisabled = global.verifyCodeDown !== -1
 
-  const disabled = !!errors?.email?.message || !!errors?.code?.message
+  const disabled = !!errors?.email?.message || !!errors?.code?.message || !code
 
   console.log('errors', errors)
 
@@ -199,7 +208,8 @@ function BindEmailModal(props: IProps) {
         </div>
       }
       // @ts-ignore
-      onConfirm={onSubmit}
+      onConfirm={handleSubmit(onSubmit)}
+      closeOnConfirm={false}
     />
   )
 }

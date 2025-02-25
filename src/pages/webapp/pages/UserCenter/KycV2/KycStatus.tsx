@@ -1,10 +1,10 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import useKycStatusInfo from '@/pages/webapp/hooks/useKycStatusInfo'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
-import { FormattedMessage, useModel } from '@umijs/max'
+import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useMemo } from 'react'
 import { View } from '../../../components/Base/View'
 
 export const getKycStatus = (kycStatus: API.ApproveStatus, isBaseAuth: boolean, isKycAuth: boolean) => {
@@ -33,42 +33,45 @@ const KycStatus = () => {
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
 
-  const status = useMemo(() => {
-    return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
-  }, [kycStatus, isBaseAuth, isKycAuth])
+  // const status = useMemo(() => {
+  //   return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
+  // }, [kycStatus, isBaseAuth, isKycAuth])
 
-  const statusLabels = [
-    {
-      label: <FormattedMessage id="mt.weiwanchengchujirenzheng" />,
-      desc: <FormattedMessage id="mt.qingwanchengchujirenzheng" />,
-      operation: <FormattedMessage id="mt.quchujirenzheng" />,
-      color: 'text-red'
-    },
-    {
-      label: <FormattedMessage id="mt.yiwanchengchujirenzheng" />,
-      desc: <FormattedMessage id="mt.weifangbianchujin" />,
-      operation: <FormattedMessage id="mt.qugaojirenzheng" />,
-      color: 'text-green'
-    },
-    {
-      label: <FormattedMessage id="mt.shenhezhong" />,
-      desc: <FormattedMessage id="mt.qingnaixindenghoushenhe" />,
-      operation: <FormattedMessage id="mt.chakanjindu" />,
-      color: 'text-yellow-500'
-    },
-    {
-      label: <FormattedMessage id="mt.gaojirenzhengbeijujue" />,
-      desc: <FormattedMessage id="mt.qingzixianzhaoshuomingchongshi" />,
-      operation: <FormattedMessage id="mt.zaishiyici" />,
-      color: 'text-red'
-    },
-    {
-      label: <FormattedMessage id="mt.yiwanchenggaojirenzheng" />,
-      desc: <FormattedMessage id="mt.ninyiwanchengsuoyourenzheng" />,
-      operation: <FormattedMessage id="mt.chakanxinxi" />,
-      color: 'text-green'
-    }
-  ]
+  // const statusLabels = [
+  //   {
+  //     label: <FormattedMessage id="mt.weiwanchengchujirenzheng" />,
+  //     desc: <FormattedMessage id="mt.qingwanchengchujirenzheng" />,
+  //     operation: <FormattedMessage id="mt.quchujirenzheng" />,
+  //     color: 'text-red'
+  //   },
+  //   {
+  //     label: <FormattedMessage id="mt.yiwanchengchujirenzheng" />,
+  //     desc: <FormattedMessage id="mt.weifangbianchujin" />,
+  //     operation: <FormattedMessage id="mt.qugaojirenzheng" />,
+  //     color: 'text-green'
+  //   },
+  //   {
+  //     label: <FormattedMessage id="mt.shenhezhong" />,
+  //     desc: <FormattedMessage id="mt.qingnaixindenghoushenhe" />,
+  //     operation: <FormattedMessage id="mt.chakanjindu" />,
+  //     color: 'text-yellow-500'
+  //   },
+  //   {
+  //     label: <FormattedMessage id="mt.gaojirenzhengbeijujue" />,
+  //     desc: <FormattedMessage id="mt.qingzixianzhaoshuomingchongshi" />,
+  //     operation: <FormattedMessage id="mt.zaishiyici" />,
+  //     color: 'text-red'
+  //   },
+  //   {
+  //     label: <FormattedMessage id="mt.yiwanchenggaojirenzheng" />,
+  //     desc: <FormattedMessage id="mt.ninyiwanchengsuoyourenzheng" />,
+  //     operation: <FormattedMessage id="mt.chakanxinxi" />,
+  //     color: 'text-green'
+  //   }
+  // ]
+
+  const kycInfo = useKycStatusInfo()
+  const status = kycInfo?.status
 
   const onClick = () => {
     if (status === 1) {
@@ -94,8 +97,8 @@ const KycStatus = () => {
       <div className="flex items-center gap-1.5 px-2.5">
         <img src={`/img/kyc-status-${status}.png`} width={70} height={70} className="w-[70px] h-[70px]" />
         <div className="flex flex-col items-start justify-start gap-1.5">
-          <span className={cn('text-base font-medium', statusLabels[status].color)}>{statusLabels[status].label}</span>
-          <span className=" text-xs text-gray-600 ">{statusLabels[status].desc}</span>
+          <span className={cn('text-base font-medium', kycInfo?.color)}>{kycInfo?.label}</span>
+          <span className=" text-xs text-gray-600 ">{kycInfo?.desc}</span>
         </div>
       </div>
       <div
@@ -104,7 +107,7 @@ const KycStatus = () => {
           //   onClick(status)
         }}
       >
-        <span className=" text-sm font-medium ">{statusLabels[status].operation}</span>
+        <span className=" text-sm font-medium ">{kycInfo?.operation}</span>
         <Iconfont name="huazhuanjilu-zhixiang" size={20} />
       </div>
     </View>

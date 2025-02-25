@@ -10,6 +10,8 @@ type SizeInfo = {
 type ProviderType = {
   /**是否是pwa应用 */
   isPwaApp: boolean
+  /**是否在react-native webview中打开 */
+  isRNWebview: boolean
   /** 屏幕宽高信息 */
   screenSize: SizeInfo
   /**手机模式，不包含ipad */

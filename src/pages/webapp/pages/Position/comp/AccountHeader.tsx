@@ -2,6 +2,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { DEFAULT_CURRENCY_DECIMAL, SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 import SelectAccountModal, { SelectAccountModalRef } from '@/pages/webapp/components/Account/SelectAccountModal'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -20,6 +21,7 @@ function AccountHeader() {
   const currentAccountInfo = trade.currentAccountInfo
   const selectAccountModalRef = useRef<SelectAccountModalRef>(null)
   const mockDepositModalRef = useRef<ModalRef>(null)
+  const ENV = getEnv()
 
   const { balance, availableMargin, totalProfit, occupyMargin } = trade.accountBalanceInfo
 
@@ -96,16 +98,20 @@ function AccountHeader() {
               <Iconfont name="cangwei-monirujin" size={26} />
             </View>
           ) : (
-            <View
-              onClick={(e) => {
-                e.stopPropagation()
-                navigateTo('/app/account/transfer')
-              }}
-              className="size-[35px] flex items-center justify-center"
-              style={{ backgroundColor: theme.colors.gray[50], borderRadius: 200 }}
-            >
-              <Iconfont name="zhanghu-huazhuan" size={26} />
-            </View>
+            <>
+              {!ENV.HIDE_ACCOUNT_TRANSFER && (
+                <View
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    navigateTo('/app/account/transfer')
+                  }}
+                  className="size-[35px] flex items-center justify-center"
+                  style={{ backgroundColor: theme.colors.gray[50], borderRadius: 200 }}
+                >
+                  <Iconfont name="zhanghu-huazhuan" size={26} />
+                </View>
+              )}
+            </>
           )}
         </View>
         <View className={cn('flex flex-row justify-between items-end')}>

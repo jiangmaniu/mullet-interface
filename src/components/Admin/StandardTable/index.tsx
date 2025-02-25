@@ -425,7 +425,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           background: 'none !important'
         },
         '&::-webkit-scrollbar-track': {
-          boxShadow: 0,
+          boxShadow: 'none',
           borderRadius: 0,
           background: `${isDark ? '#17171c' : '#fff'}  !important`
         },
