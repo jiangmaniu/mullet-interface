@@ -11,6 +11,7 @@ import { useEffect, useRef, useState } from 'react'
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import PageContainer from '@/components/Admin/PageContainer'
 
+import { getEnv } from '@/env'
 import Deposit from './comp/Deposit'
 import DepositModal from './comp/DepositModal'
 import InfoModal from './comp/InfoModal'
@@ -65,6 +66,8 @@ export default function Record() {
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
 
+  const ENV = getEnv()
+
   const [tabKey, setTabKey] = useState<ITabKey>('deposit')
   const intl = useIntl()
   const [params, setParams] = useState({} as IParams)
@@ -118,7 +121,7 @@ export default function Record() {
           options={[
             { label: <FormattedMessage id="mt.rujin" />, value: 'deposit' },
             { label: <FormattedMessage id="mt.chujin" />, value: 'withdrawal' },
-            { label: <FormattedMessage id="mt.huazhuan" />, value: 'transfer' }
+            ...(!ENV.HIDE_CREATE_ACCOUNT ? [{ label: <FormattedMessage id="mt.huazhuan" />, value: 'transfer' }] : [])
           ]}
           style={{ width: 300 }}
           block
