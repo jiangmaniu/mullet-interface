@@ -57,7 +57,7 @@ function WithdrawPreview() {
           </div>
           <Button
             size="large"
-            className=" w-[88px]"
+            className=" w-[88px] text-center"
             onClick={() => {
               replace(appendHideParamIfNeeded(`/app/record/payment?type=RUJIN`))
             }}

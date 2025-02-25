@@ -120,6 +120,16 @@ function DepositModal({ item }: IProps, ref: any) {
           </div>
         </div>
       </div>
+
+      {item?.status === 'FAIL' && item?.remark && (
+        <>
+          <div className="h-[.5px] w-full bg-gray-250 my-6"></div>
+          <div className="text-sm text-primary mt-4 px-2">
+            <FormattedMessage id="mt.beizhu" />
+            :&nbsp;{item?.remark}
+          </div>
+        </>
+      )}
     </Modal>
   )
 }

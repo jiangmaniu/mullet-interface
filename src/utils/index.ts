@@ -554,3 +554,21 @@ export const toNegativeOrEmpty = (value: any) => {
   if (Number.isNaN(val)) return ''
   return val === 0 ? '0' : -Math.abs(val).toString()
 }
+
+/**
+ * 复制到剪贴板
+ * @param text
+ */
+export const copyToClipboard = (text: string) => {
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  document.body.appendChild(textarea)
+  textarea.select()
+  try {
+    document.execCommand('copy')
+    message.info(getIntl().formatMessage({ id: 'mt.fuzhichenggong' }))
+  } catch (err) {
+    message.info(getIntl().formatMessage({ id: 'mt.caozuoshibai' }))
+  }
+  document.body.removeChild(textarea)
+}

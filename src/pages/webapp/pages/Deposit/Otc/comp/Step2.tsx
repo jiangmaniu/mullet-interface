@@ -1,10 +1,9 @@
 import { ProForm } from '@ant-design/pro-components'
 import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
-import { message } from 'antd'
 import { useMemo, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
-import { formatNum } from '@/utils'
+import { copyToClipboard, formatNum } from '@/utils'
 
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { getEnv } from '@/env'
@@ -87,18 +86,11 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
                 width={18}
                 height={18}
                 onClick={() => {
-                  navigator.clipboard
-                    .writeText(
-                      locale === 'zh-TW'
-                        ? `${currentUser?.lastName} ${currentUser?.firstName}`
-                        : `${currentUser?.firstName} ${currentUser?.lastName}` || ''
-                    )
-                    .then(() => {
-                      message.info(getIntl().formatMessage({ id: 'mt.fuzhichenggong' }))
-                    })
-                    .catch(() => {
-                      message.info(getIntl().formatMessage({ id: 'mt.caozuoshibai' }))
-                    })
+                  copyToClipboard(
+                    locale === 'zh-TW'
+                      ? `${currentUser?.lastName}${currentUser?.firstName}`
+                      : `${currentUser?.firstName} ${currentUser?.lastName}`
+                  )
                 }}
               />
             </div>
@@ -120,14 +112,7 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
                       width={18}
                       height={18}
                       onClick={() => {
-                        navigator.clipboard
-                          .writeText(bankName || '')
-                          .then(() => {
-                            message.info(getIntl().formatMessage({ id: 'mt.fuzhichenggong' }))
-                          })
-                          .catch(() => {
-                            message.info(getIntl().formatMessage({ id: 'mt.caozuoshibai' }))
-                          })
+                        copyToClipboard(bankName || '')
                       }}
                     />
                   </div>
@@ -147,14 +132,7 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
                       width={18}
                       height={18}
                       onClick={() => {
-                        navigator.clipboard
-                          .writeText(bankCard || '')
-                          .then(() => {
-                            message.info(getIntl().formatMessage({ id: 'mt.fuzhichenggong' }))
-                          })
-                          .catch(() => {
-                            message.info(getIntl().formatMessage({ id: 'mt.caozuoshibai' }))
-                          })
+                        copyToClipboard(bankCard || '')
                       }}
                     />
                   </div>
