@@ -24,6 +24,7 @@ export default function ({ setImgs, imgs }: IProps) {
 
   const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
   const props: UploadProps = {
+    disabled: imgs.length >= 3,
     name: 'file',
     multiple: false,
     showUploadList: false,

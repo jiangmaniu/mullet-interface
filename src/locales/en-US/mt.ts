@@ -791,5 +791,7 @@ export default {
   'mt.shangchuanpingzheng': 'Upload Proof',
   'mt.dingdanyichaoshi': 'Order expired',
   'mt.zhuceshijian': 'Registration Time',
-  'mt.gerenziliao': 'Personal Information'
+  'mt.gerenziliao': 'Personal Information',
+  'mt.zhuanrujine': 'Deposit Amount',
+  'mt.daozhangjine': 'Arrival Amount'
 }

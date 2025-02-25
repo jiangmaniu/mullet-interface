@@ -784,5 +784,7 @@ export default {
   'mt.shangchuanpingzheng': 'Tải lên chứng từ',
   'mt.dingdanyichaoshi': 'Đơn hàng đã hết hạn',
   'mt.zhuceshijian': 'Ngày đăng ký',
-  'mt.gerenziliao': 'Thống tin cá nhân'
+  'mt.gerenziliao': 'Thống tin cá nhân',
+  'mt.zhuanrujine': 'Số tiền chuyển vào',
+  'mt.daozhangjine': 'Số tiền đến'
 }

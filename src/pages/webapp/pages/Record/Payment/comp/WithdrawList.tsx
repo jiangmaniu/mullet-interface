@@ -86,7 +86,7 @@ function WithdrawList() {
         </div>
         <div className="flex items-center bg-white flex-wrap gap-y-4 justify-betwee p-3 rounded-lg">
           <div className="flex flex-row-reverse justify-between w-full">
-            <div className="text-end min-w-[120px] text-base  md:text-xl font-bold flex-1">
+            <div className="text-end text-base  md:text-xl font-bold ">
               {formatNum(item.baseOrderAmount)} {item.baseCurrency}
             </div>
             <div className="flex flew-row items-center gap-3 text-start overflow-visible flex-shrink-0">
@@ -100,14 +100,14 @@ function WithdrawList() {
                     &nbsp;·&nbsp;{statusMap[item.status ?? 'FAIL']?.text || '[status]'}
                   </span>
                 </div>
-                <div className="text-weak text-xs overflow-visible text-nowrap">
+                <span className="text-weak text-xs whitespace-nowrap overflow-visible text-nowrap flex-nowrap ">
                   <FormattedMessage id="mt.danhao" />:{item.orderNo}
-                </div>
+                </span>
               </div>
             </div>
           </div>
           <div className="flex flex-row justify-between w-full">
-            <div className=" flex flex-row gap-2.5 items-center justify-center pl-[2px] ">
+            <div className=" flex flex-row gap-2.5 items-center justify-center pl-[2px] overflow-hidden">
               <div className="flex text-sm flex-row items-center gap-1 overflow-hidden  ">
                 <div className="flex h-4 min-w-[34px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
                   {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
@@ -119,17 +119,17 @@ function WithdrawList() {
               </div>
 
               <Iconfont name="go" width={16} color="black" height={16} />
-              <div className="text-end text-sm font-medium flex-1 flex flex-row items-center justify-start flex-shrink gap-1">
-                <div>
+              <div className="text-end text-sm font-medium flex-1 flex flex-row items-center justify-start  gap-1 overflow-hidden">
+                <>
                   {item.type === 'bank' ? (
-                    <span>{item.bank}</span>
+                    <div className="text-ellipsis">{item.bank}</div>
                   ) : (
-                    <div className="flex flex-row items-center gap-1">
+                    <div className="flex flex-row items-center gap-1 overflow-hidden">
                       <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-[22px] h-[22px] bg-gray-100 rounded-full" />
-                      <span> {item.address || '[channelRevealName]'}</span>
+                      <div className="text-ellipsis overflow-hidden w-full"> {item.address || '[channelRevealName]'}</div>
                     </div>
                   )}
-                </div>
+                </>
               </div>
             </div>
           </div>

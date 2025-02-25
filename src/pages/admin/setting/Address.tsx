@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 
-import { modifyWithdrawalAddress, modifyWithdrawalBank, removeWithdrawalAddress } from '@/services/api/wallet'
+import { modifyWithdrawalAddress, modifyWithdrawalBank, removeWithdrawalAddress, removeWithdrawalBank } from '@/services/api/wallet'
 import { message } from '@/utils/message'
 import BankCard from './address/BankCard'
 import CryptoAddress from './address/CryptoAddress'
@@ -131,17 +131,16 @@ export default function Addresss() {
   }
 
   const onDeleteBankCard = (item: Wallet.WithdrawalBank) => {
-    bankCardRef.current?.onQuery()
-    // removeWithdrawalBank({ id: item?.id?.toString() ?? '' })
-    //   .then((res) => {
-    //     if (res.success) {
-    //       message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
-    //       bankCardRef.current?.onQuery()
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     message.info(err.message)
-    //   })
+    removeWithdrawalBank({ id: item?.id?.toString() ?? '' })
+      .then((res) => {
+        if (res.success) {
+          message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          bankCardRef.current?.onQuery()
+        }
+      })
+      .catch((err) => {
+        message.info(err.message)
+      })
   }
 
   return (

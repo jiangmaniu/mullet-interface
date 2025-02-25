@@ -62,6 +62,20 @@ function Deposit({ params, onSelectItem }: IProps) {
     return { data: list, total, success: true }
   }
 
+  const optTypeIcon = (item: Wallet.withdrawalOrderListItem) => {
+    const optType = item?.channelNoValue?.split('-')?.[0]
+
+    if (optType === 'bank') {
+      return 'yhk'
+    } else if (optType === 'wechat') {
+      return 'wx'
+    } else if (optType === 'alipay') {
+      return 'zfb'
+    }
+
+    return 'usdt'
+  }
+
   return (
     <ProList
       rowKey="orderId" // 设置列表唯一key
@@ -99,7 +113,9 @@ function Deposit({ params, onSelectItem }: IProps) {
                   <span>{item.bank}</span>
                 ) : (
                   <>
-                    <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
+                    {item?.channelIcon && (
+                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
+                    )}
                     <span> {item.channelRevealName || '[channelRevealName]'}</span>
                   </>
                 )}

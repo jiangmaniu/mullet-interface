@@ -796,5 +796,8 @@ export default {
   'mt.chujindengdai': '出金等待',
   'mt.dingdanyichaoshi': '訂單已超時',
   'mt.zhuceshijian': '註冊時間',
-  'mt.gerenziliao': '個人資料'
+  'mt.gerenziliao': '個人資料',
+  'mt.shangchuanpingzheng': '上傳凭證',
+  'mt.zhuanrujine': '轉入金額',
+  'mt.daozhangjine': '到賬金額'
 }

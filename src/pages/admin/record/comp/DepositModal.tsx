@@ -103,11 +103,11 @@ function DepositModal({ item }: IProps, ref: any) {
       <div className="flex flex-row justify-between items-end">
         <div className="flex flex-col items-start gap-1">
           <div className=" min-w-[150px] text-base  md:text-xl font-bold">
-            {formatNum(item?.orderAmount)} {item?.baseCurrency}
+            {formatNum(item?.orderAmount)} {item?.symbol}
           </div>
 
           <span className="text-sm text-secondary">
-            <FormattedMessage id="mt.jine" />
+            <FormattedMessage id="mt.zhuanrujine" />
           </span>
         </div>
         <div className="flex flex-row items-center">

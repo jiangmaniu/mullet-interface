@@ -102,7 +102,7 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
                     &nbsp;·&nbsp;{statusMap[item.status ?? 'FAIL']?.text || '[status]'}
                   </span>
                 </div>
-                <div className="text-weak text-xs overflow-visible text-nowrap">
+                <div className="text-weak text-xs overflow-visible whitespace-nowrap text-nowrap">
                   <FormattedMessage id="mt.danhao" />:{item.orderNo}
                 </div>
               </div>

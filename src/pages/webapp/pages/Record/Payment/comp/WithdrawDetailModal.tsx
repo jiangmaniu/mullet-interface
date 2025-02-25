@@ -51,7 +51,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
                 <div className="text-primary font-bold">
                   <FormattedMessage id="mt.chujin" />
                 </div>
-                <div className="text-weak text-xs overflow-visible text-nowrap">
+                <div className="text-weak text-xs overflow-visible whitespace-nowrap text-nowrap">
                   <FormattedMessage id="mt.danhao" />:{item?.orderNo}
                 </div>
               </div>
@@ -85,7 +85,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
             <span className="text-weak text-sm">{item?.createTime}</span>
           </div>
 
-          <div className="flex flex-row items-end justify-start gap-7 mt-6 pb-4 border-b border-gray-100">
+          <div className="flex flex-row items-end justify-start gap-x-7 gap-y-4 mt-6 pb-4 border-b border-gray-100 flex-wrap">
             <div className="flex flex-col gap-2">
               <div className=" text-secondary text-xs font-normal">
                 <FormattedMessage id="mt.chujinzhanghu" />
@@ -108,7 +108,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
                 <FormattedMessage id="mt.shoukuanzhanghu" />
               </div>
               <div className="text-end text-sm font-medium flex-1 flex flex-row items-center justify-start flex-shrink gap-1">
-                <div>
+                <>
                   {item?.type === 'bank' ? (
                     <span>{item?.bank}</span>
                   ) : (
@@ -117,7 +117,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
                       <span> {item?.address}</span>
                     </div>
                   )}
-                </div>
+                </>
               </div>
             </div>
           </div>
@@ -125,7 +125,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
           <div className={cn('flex flex-row justify-between items-end mt-4 pb-4', item?.status === 'REJECT' && 'border-b border-gray-100')}>
             <div className="flex flex-col gap-1.5">
               <div className="text-end text-xl font-medium flex-1">
-                {formatNum(item?.baseOrderAmount)} {item?.baseCurrency}
+                {formatNum(item?.receiptAmount)} {item?.symbol}
               </div>
               <span className=" text-xs text-secondary">
                 <FormattedMessage id="mt.jine" />
