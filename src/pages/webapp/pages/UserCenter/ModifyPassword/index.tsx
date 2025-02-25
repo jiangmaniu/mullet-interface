@@ -10,14 +10,16 @@ import { getEnv } from '@/env'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
+import useHideHeader from '@/pages/webapp/hooks/useHideHeader'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
-import { onLogout, push } from '@/utils/navigator'
+import { goKefu, onLogout, push } from '@/utils/navigator'
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import { Form } from 'antd'
 import { md5 } from 'js-md5'
 
@@ -45,8 +47,10 @@ export default () => {
   const email = currentUser?.userInfo?.email as string
   const account = currentUser?.account as string
   const isKycAuth = currentUser?.isKycAuth
-
+  const { isHideHeader } = useHideHeader()
   const isPhoneCheck = phone && isKycAuth
+
+  useTitle(t('mt.xiuggaimima'))
 
   const onSend = async () => {
     let reqFn = isPhoneCheck ? sendPhoneCode : sendEmailCode
@@ -86,7 +90,7 @@ export default () => {
       footer={
         <div>
           {/* @TODO 客服接入 */}
-          <div className="flex items-center justify-center flex-1 pb-4">
+          <div className="flex items-center justify-center flex-1 pb-4" onClick={goKefu}>
             <img src="/img/kefu.png" width={28} height={28} />
             <span className="text-sm text-primary font-pf-bold cursor-pointer">
               <FormattedMessage id="mt.yanzhengshiyudaowenti" />?
@@ -154,7 +158,7 @@ export default () => {
                 placeholder={intl.formatMessage({ id: 'mt.pleaseInputPwdPlaceholder' })}
                 fieldProps={{
                   size: 'large',
-                  style: { height: 42 },
+                  style: { height: 46 },
                   onFocus: () => {
                     pwdTipsRef?.current?.show()
                   },
@@ -178,7 +182,7 @@ export default () => {
               placeholder={intl.formatMessage({ id: 'mt.zaicishuruxinmima' })}
               fieldProps={{
                 size: 'large',
-                style: { height: 42 }
+                style: { height: 46 }
               }}
               rules={[
                 {
@@ -197,7 +201,10 @@ export default () => {
                   message: intl.formatMessage({ id: 'mt.shuruyanzhengma' })
                 }
               ]}
-              fieldProps={{ placeholder: intl.formatMessage({ id: 'mt.shuruyanzhengma' }) }}
+              height={46}
+              fieldProps={{
+                placeholder: intl.formatMessage({ id: 'mt.shuruyanzhengma' })
+              }}
             />
           </View>
         </View>

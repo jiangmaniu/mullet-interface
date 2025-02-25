@@ -49,7 +49,7 @@ function CryptoAddress({ params, onSelectItem, onDeleteItem }: IProps, ref: any)
         // align: 'end'
       }}
       params={params}
-      className="px-4 home-custom-commision-list"
+      className="home-custom-commision-list"
       ghost
       split={false}
       renderItem={(item: Wallet.WithdrawalAddress, index) => (

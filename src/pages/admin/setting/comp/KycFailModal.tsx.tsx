@@ -3,7 +3,7 @@ import { useRef } from 'react'
 
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
-import { push } from '@/utils/navigator'
+import { goKefu, push } from '@/utils/navigator'
 
 type IProps = {
   trigger: JSX.Element
@@ -23,7 +23,7 @@ export default function KycFailModal({ trigger }: IProps) {
         <div className="pt-3 text-primary text-base break-all">{remark || <FormattedMessage id="mt.shenfenrenzhengweitongguotips" />}</div>
       </div>
       <div className="flex items-center justify-between">
-        <div className="flex items-center justify-center flex-1">
+        <div className="flex items-center justify-center flex-1" onClick={goKefu}>
           <img src="/img/kefu.png" width={28} height={28} />
           <span className="text-base text-primary">
             <FormattedMessage id="mt.lianxikefu" />

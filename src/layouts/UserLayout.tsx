@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import SwitchLanguage from '@/components/SwitchLanguage'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import { goKefu } from '@/utils/navigator'
 
 /**
  * 登录、注册、忘记密码页面的布局
@@ -32,7 +33,7 @@ export default function UserLayout() {
     <div className="flex flex-col bg-[url(/img/uc/login-bg.png)] bg-no-repeat bg-[size:100%_100%] h-full overflow-hidden bg-gray-50">
       <div className="flex gap-x-4 justify-end items-center pr-5 pt-3">
         <SwitchLanguage isAdmin={false} />
-        <div className="cursor-pointer relative -top-[1px]">
+        <div className="cursor-pointer relative -top-[1px]" onClick={goKefu}>
           <img src="/img/uc/kefu.png" width={28} height={28} />
         </div>
       </div>

@@ -4,8 +4,6 @@ import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@
 import { Segmented } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
-import PageContainer from '@/components/Admin/PageContainer'
-
 import { modifyWithdrawalAddress, modifyWithdrawalBank, removeWithdrawalAddress, removeWithdrawalBank } from '@/services/api/wallet'
 import { message } from '@/utils/message'
 import BankCard from './address/BankCard'
@@ -142,12 +140,8 @@ export default function Addresss() {
   }
 
   return (
-    <PageContainer pageBgColorMode="white" fluidWidth>
-      <div className="text-[24px] font-bold text-primary mb-7">
-        <FormattedMessage id="mt.churujinjilu" />
-      </div>
-
-      <div className="flex items-center justify-between my-4 flex-wrap gap-y-4">
+    <>
+      <div className="flex items-center justify-between mb-4 flex-wrap gap-y-4">
         <Segmented
           className="account"
           onChange={(key: any) => {
@@ -197,6 +191,6 @@ export default function Addresss() {
       {/* 消息弹窗 */}
       <EditModal ref={modalRef} item={selectedItem} onUpdateItem={onUpdateItem} />
       <EditBankModal ref={modal2Ref} item={selectedBankCard} onUpdateItem={onUpdateBankCard} />
-    </PageContainer>
+    </>
   )
 }

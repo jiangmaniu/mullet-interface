@@ -12,7 +12,7 @@ import { getEnv } from '@/env'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
-import { onLogout, push } from '@/utils/navigator'
+import { goKefu, onLogout, push } from '@/utils/navigator'
 import { md5 } from 'js-md5'
 
 type IProps = {
@@ -161,7 +161,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
         formItemProps={{ style: { marginBottom: 24 } }}
       />
       <div className="flex items-center justify-between gap-x-5 mt-8">
-        <div className="flex items-center flex-1">
+        <div className="flex items-center flex-1" onClick={goKefu}>
           <img src="/img/kefu.png" width={28} height={28} />
           <span className="text-sm text-primary cursor-pointer">
             <FormattedMessage id="mt.yanzhengshiyudaowenti" />?

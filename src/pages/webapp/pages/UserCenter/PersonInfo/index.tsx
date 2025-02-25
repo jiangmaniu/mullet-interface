@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react'
 import { useTheme } from '@/context/themeProvider'
 import { getWithdrawalAddressList, getWithdrawalBankList } from '@/services/api/wallet'
 import { useLocation, useModel } from '@umijs/max'
-import { useRequest } from 'ahooks'
+import { useRequest, useTitle } from 'ahooks'
 import Header from '../../../components/Base/Header'
 import ListItem, { IlistItemProps } from '../../../components/Base/List/ListItem'
 import { SheetRef } from '../../../components/Base/SheetModal'
@@ -13,8 +13,6 @@ import { useI18n } from '../../../hooks/useI18n'
 import BasicLayout from '../../../layouts/BasicLayout'
 import BindEmailModal from '../Kyc/modal/BindEmailModal'
 import BindPhoneModal from '../Kyc/modal/BindPhoneModal'
-import ModifyEmailModal from '../Kyc/modal/ModifyEmailModal'
-import ModifyPhoneModal from '../Kyc/modal/ModifyPhoneModal'
 import HeaderInfo from './HeaderInfo'
 
 function UserCenter() {
@@ -30,6 +28,8 @@ function UserCenter() {
 
   const { data: addrRes, run: queryAddr } = useRequest(getWithdrawalAddressList, { manual: true })
   const { data: bankRes, run: queryBank } = useRequest(getWithdrawalBankList, { manual: true })
+
+  useTitle(t('mt.gerenxinxi'))
 
   useEffect(() => {
     queryAddr()
@@ -79,20 +79,28 @@ function UserCenter() {
       icon: 'phone',
       title: t('mt.shoujihao'),
       // hiddenRightIcon: true,
-      // @TODO 绑定或者修改手机号弹窗
+      // 绑定或者修改手机号弹窗
+      // subText: currentUser?.userInfo?.phone ? (
+      //   <ModifyPhoneModal
+      //     trigger={
+      //       <span>
+      //         {currentUser?.userInfo?.phoneAreaCode || ''} {currentUser?.userInfo?.phone || '-'}
+      //       </span>
+      //     }
+      //   />
+      // ) : (
+      //   <BindPhoneModal trigger={<span>{t('mt.bangding')}</span>} />
+      // ),
+      // 只能绑定，不能修改
       subText: currentUser?.userInfo?.phone ? (
-        <ModifyPhoneModal
-          trigger={
-            <span>
-              {currentUser?.userInfo?.phoneAreaCode || ''} {currentUser?.userInfo?.phone || '-'}
-            </span>
-          }
-        />
+        <>
+          +{currentUser?.userInfo?.phoneAreaCode?.replace('+', '') || ''} {currentUser?.userInfo?.phone || '-'}
+        </>
       ) : (
         <BindPhoneModal trigger={<span>{t('mt.bangding')}</span>} />
       ),
+      hiddenRightIcon: !!currentUser?.userInfo?.phone,
       styles: {
-        // @TODO 判断颜色
         subTextStyle: {
           color: !currentUser?.userInfo?.phone ? 'var(--color-primary)' : 'var(--color-text-weak)'
         }
@@ -101,14 +109,16 @@ function UserCenter() {
     {
       icon: 'email',
       title: t('mt.youxiang'),
-      // @TODO 绑定或者修改邮箱弹窗
-      subText: currentUser?.userInfo?.email ? (
-        <ModifyEmailModal trigger={<span>{currentUser?.userInfo?.email}</span>} />
-      ) : (
-        <BindEmailModal trigger={<span>{t('mt.bangding')}</span>} />
-      ),
+      // 绑定或者修改邮箱弹窗
+      // subText: currentUser?.userInfo?.email ? (
+      //   <ModifyEmailModal trigger={<span>{currentUser?.userInfo?.email}</span>} />
+      // ) : (
+      //   <BindEmailModal trigger={<span>{t('mt.bangding')}</span>} />
+      // ),
+      // 只能绑定，不能修改
+      subText: currentUser?.userInfo?.email ? currentUser?.userInfo?.email : <BindEmailModal trigger={<span>{t('mt.bangding')}</span>} />,
+      hiddenRightIcon: !!currentUser?.userInfo?.phone,
       styles: {
-        // @TODO 判断颜色
         subTextStyle: {
           color: !currentUser?.userInfo?.email ? 'var(--color-primary)' : 'var(--color-text-weak)'
         }
@@ -127,7 +137,7 @@ function UserCenter() {
           color: 'var(--color-primary)'
         }
       },
-      href: '/app/modify-password'
+      href: `/app/modify-password`
     }
   ]
 
@@ -136,14 +146,14 @@ function UserCenter() {
     {
       icon: 'yinhangka',
       title: t('mt.yinhangkadizhi'),
-      subText: t('mt.xxtiao', { count: addrRes?.data?.records?.length || 0 }),
-      href: '/app/bankcard-address'
+      subText: t('mt.xxtiao', { count: bankRes?.data?.records?.length || 0 }),
+      href: `/app/bankcard-address`
     },
     {
       icon: 'addr',
       title: t('mt.qianbaodizhi'),
-      subText: t('mt.xxtiao', { count: bankRes?.data?.records?.length || 0 }),
-      href: '/app/wallet-address'
+      subText: t('mt.xxtiao', { count: addrRes?.data?.records?.length || 0 }),
+      href: `/app/wallet-address`
     }
   ]
 

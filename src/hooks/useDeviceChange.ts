@@ -10,6 +10,7 @@ export const useDeviceChange = () => {
 
   const exposed = {
     isPwaApp: isInStandaloneMode(),
+    isRNWebview: !!window.ReactNativeWebView,
     breakPoint,
     isMobile: ['xs', 'sm'].includes(breakPoint), // 手机端，不包含ipad
     isIpad: ['md', 'lg'].includes(breakPoint), // 是否是ipad端

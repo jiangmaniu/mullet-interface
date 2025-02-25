@@ -37,27 +37,31 @@ function AccountSelect() {
       style={{ paddingLeft: 14, paddingRight: 14, paddingBottom: 80 }}
       footerClassName="flex items-center justify-center"
       footer={
-        <Button
-          style={{
-            width: 46,
-            height: 46,
-            borderRadius: 46,
-            marginBottom: 20,
-            backgroundColor: theme.colors.backgroundColor.primary
-          }}
-          onPress={() => {
-            navigateTo('/app/account/create?key=' + accountTabActiveKey + '&back=' + back)
+        <>
+          {!ENV.HIDE_CREATE_ACCOUNT && (
+            <Button
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 46,
+                marginBottom: 20,
+                backgroundColor: theme.colors.backgroundColor.primary
+              }}
+              onPress={() => {
+                navigateTo('/app/account/create?key=' + accountTabActiveKey + '&back=' + back)
 
-            // navigate('AccountNew', {
-            //   key: accountTabActiveKey,
-            //   back
-            // })
-          }}
-        >
-          <div className="flex items-center justify-center">
-            <Iconfont name="xinjianzhanghu" size={30} />
-          </div>
-        </Button>
+                // navigate('AccountNew', {
+                //   key: accountTabActiveKey,
+                //   back
+                // })
+              }}
+            >
+              <div className="flex items-center justify-center">
+                <Iconfont name="xinjianzhanghu" size={30} />
+              </div>
+            </Button>
+          )}
+        </>
       }
       header={
         <Header

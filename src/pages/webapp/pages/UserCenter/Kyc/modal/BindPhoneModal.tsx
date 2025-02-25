@@ -2,8 +2,7 @@ import { observer } from 'mobx-react'
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
-import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
-import { APP_MODAL_WIDTH } from '@/constants'
+import { ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
@@ -12,7 +11,6 @@ import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { getAreaCode } from '@/services/api/common'
 import { bindPhone, sendCustomPhoneCode } from '@/services/api/user'
 import { message } from '@/utils/message'
@@ -45,7 +43,7 @@ const CountDown = observer(({ phone, onSendCode }: { phone?: string; onSendCode:
             {t('pages.login.click to')}
           </Text>
           <View onPress={onSendCode}>
-            <Text style={cn('text-start text-xs !text-blue-600 ml-1')}>{t('pages.login.Resend')}</Text>
+            <Text style={cn('text-start text-xs !text-blue-600 ml-1')}>{t('mt.huoquyanzhengma')}</Text>
           </View>
         </>
       ) : (
@@ -116,11 +114,11 @@ function BindPhoneModal(props: IProps) {
       })
 
       if (res?.success) {
-        message.info(t('pages.userCenter.bingdingchenggong'), 2)
+        message.info(t('pages.userCenter.bingdingchenggong'))
+
+        bottomSheetModalRef.current?.sheet.dismiss()
 
         await user.fetchUserInfo(true)
-
-        navigateTo('/app/user-center/verify-msg')
       }
     } catch (error: any) {
     } finally {
@@ -170,7 +168,7 @@ function BindPhoneModal(props: IProps) {
     }
   }
 
-  const disabled = !!errors.phone || !!errors.areaCode || !!errors.code
+  const disabled = !!errors.phone || !!errors.areaCode || !!errors.code || !phone || !code || !areaCode
 
   // 获取国家列表
   const [countryList, setCountryList] = useState<Common.AreaCodeItem[]>([])
@@ -251,11 +249,13 @@ function BindPhoneModal(props: IProps) {
               title={intl.formatMessage({ id: 'mt.xuanzequhao' })}
               onPress={handleSelectCountry}
             />
-            <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={loadingTips} />
+            {/* <ModalLoading width={APP_MODAL_WIDTH} ref={loadingRef} tips={loadingTips} /> */}
           </div>
         }
         // @ts-ignore
-        onConfirm={onSubmit}
+        onConfirm={handleSubmit(onSubmit)}
+        disabled={disabled}
+        closeOnConfirm={false}
       />
     </>
   )

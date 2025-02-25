@@ -63,16 +63,18 @@ function SelectAccountModal({ isSimulate, header, onItem, isRemainAtCurrentPage 
                 <Text className={cn('text-[22px] leading-7')} font="pf-bold">
                   {intl.formatMessage({ id: 'pages.trade.Account Title' })}
                 </Text>
-                <span
-                  onClick={() => {
-                    navigateTo('/app/account/create', {
-                      key: accountTabActiveKey
-                    })
-                    bottomSheetModalRef.current?.sheet?.dismiss()
-                  }}
-                >
-                  <Iconfont name="xinjianzhanghu" size={30} />
-                </span>
+                {!ENV.HIDE_CREATE_ACCOUNT && (
+                  <span
+                    onClick={() => {
+                      navigateTo('/app/account/create', {
+                        key: accountTabActiveKey
+                      })
+                      bottomSheetModalRef.current?.sheet?.dismiss()
+                    }}
+                  >
+                    <Iconfont name="xinjianzhanghu" size={30} />
+                  </span>
+                )}
               </View>
               <View className={cn('flex flex-row items-center gap-1 mb-2 mt-3')}>
                 <img

@@ -1,6 +1,7 @@
 import { Outlet, useIntl, useLocation, useModel, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
 
+import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
@@ -21,6 +22,7 @@ const Tradingview = lazy(() => import('@/components/Web/Tradingview'))
  * @returns
  */
 function WebAppLayout() {
+  const { isRNWebview } = useEnv()
   const { pathname } = useLocation()
   const { fetchUserInfo } = useModel('user')
   const { trade, ws, global } = useStores()
@@ -41,7 +43,7 @@ function WebAppLayout() {
 
     if (!isOnline) {
       // @ts-ignore
-      if (window.ReactNativeWebView) return
+      if (isRNWebview) return
 
       // 网络断开
       message.info(intl.formatMessage({ id: 'mt.duankailianjie' }))

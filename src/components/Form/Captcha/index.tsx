@@ -11,8 +11,9 @@ interface IProps extends ProFormCaptchaProps {
   onSend: (phoneOrEmail?: string) => Promise<any>
   /** @name 获取验证码的方法 */
   onGetCaptcha?: (mobile: string) => Promise<void>
+  height?: number
 }
-const FormCaptcha: React.FC<IProps> = ({ onSend, fieldProps, ...res }) => {
+const FormCaptcha: React.FC<IProps> = ({ onSend, fieldProps, height, ...res }) => {
   const intl = useIntl()
   const captchaRef = useRef<any>(null)
   const [loading, setLoading] = useState(false)
@@ -27,7 +28,7 @@ const FormCaptcha: React.FC<IProps> = ({ onSend, fieldProps, ...res }) => {
         )
       }}
       countDown={59}
-      fieldProps={{ style: { marginRight: 0, height: 42 }, size: 'large', ...fieldProps }}
+      fieldProps={{ style: { marginRight: 0, height: height || 42 }, size: 'large', type: 'number', ...fieldProps }}
       captchaProps={{ loading, style: { position: 'absolute', right: 8, color: 'var(--color-text-primary)' }, type: 'link' }}
       // 如果需要失败可以 throw 一个错误出来，onGetCaptcha 会自动停止
       // throw new Error("获取验证码错误")

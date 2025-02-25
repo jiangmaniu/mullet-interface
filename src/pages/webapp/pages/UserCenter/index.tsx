@@ -24,6 +24,7 @@ import { ModalConfirm } from './comp/ModalConfirm'
 
 const QuickPlaceOrderSwitch = observer(() => {
   const { trade } = useStores()
+
   return (
     <Switch
       onChange={(checked) => {
