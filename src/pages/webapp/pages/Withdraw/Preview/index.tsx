@@ -4,7 +4,7 @@ import Button from '@/pages/webapp/components/Base/Button'
 import Header from '@/pages/webapp/components/Base/Header'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
-import { CustomerService } from '@/utils/chat'
+import { goKefu } from '@/utils/navigator'
 import { FormattedMessage, getIntl, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -42,7 +42,7 @@ function WithdrawPreview() {
         className="bg-primary"
         onBack={() => navigateTo(backUrl)}
         right={
-          <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={CustomerService}>
+          <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={goKefu}>
             <Iconfont name="chat" width={20} height={20} />
             <FormattedMessage id="mt.lianxikefu" />
           </div>

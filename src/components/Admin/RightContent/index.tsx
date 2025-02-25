@@ -141,7 +141,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             }}
           />
         </Tooltip>
-        {/* <Iconfont
+        <Iconfont
           name="kefu"
           width={36}
           height={36}
@@ -150,7 +150,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           hoverStyle={{
             background: theme === 'black' ? '#fbfbfb' : '#222222'
           }}
-        /> */}
+          onClick={goKefu}
+        />
         {/* 账户信息下拉 */}
         <AccountDropdown theme={theme} />
       </div>

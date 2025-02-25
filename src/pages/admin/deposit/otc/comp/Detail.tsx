@@ -12,11 +12,10 @@ import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { cancelDepositOrder } from '@/services/api/wallet'
-import { CustomerService } from '@/utils/chat'
 import { cn } from '@/utils/cn'
 import { depositExchangeRate } from '@/utils/deposit'
 import { message } from '@/utils/message'
-import { push } from '@/utils/navigator'
+import { goKefu, push } from '@/utils/navigator'
 import { Popconfirm } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -329,7 +328,7 @@ const Detail = ({
         </div>
       </CardContainer>
 
-      <span className="flex flex-row items-center gap-3 mt-[26px] cursor-pointer" onClick={CustomerService}>
+      <span className="flex flex-row items-center gap-3 mt-[26px] cursor-pointer" onClick={goKefu}>
         <Iconfont name="kefu" size={24} />
         <span>
           <FormattedMessage id="mt.rujinshiyudaowenti" />
