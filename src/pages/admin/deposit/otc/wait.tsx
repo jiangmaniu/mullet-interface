@@ -4,7 +4,7 @@ import { Form } from 'antd'
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
-import { push } from '@/utils/navigator'
+import { goKefu, push } from '@/utils/navigator'
 
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
@@ -92,7 +92,7 @@ export default function DepositOtc() {
             >
               <FormattedMessage id="mt.chakandingdan" />
             </Button>
-            <span className="flex flex-row items-center gap-3 mt-[15px]">
+            <span className="flex flex-row items-center gap-3 mt-[15px]" onClick={goKefu}>
               <Iconfont name="kefu" size={24} />
               <span>
                 <FormattedMessage id="mt.rujinshiyudaowenti" />

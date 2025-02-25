@@ -60,7 +60,11 @@ export const goLogin = () => {
 }
 
 export const goKefu = () => {
-  window.ssq?.push?.('chatOpen')
+  if (isPCByWidth()) {
+    window.ssq?.push?.('chatOpen')
+  } else {
+    push('/app/smart-kefu')
+  }
 }
 
 /**
@@ -159,9 +163,6 @@ export const onBack = () => {
 
   push(getPathname(`/${path}`))
 }
-
-// 跳转客服页面 @TODO
-export const goToService = () => {}
 
 // 跳转首页
 export const goHome = () => {

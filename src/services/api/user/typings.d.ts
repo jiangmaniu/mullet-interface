@@ -175,6 +175,7 @@ declare namespace User {
   }
   // 客户用户信息
   type ClientUserInfo = {
+    lastLoginIp?: string
     /**
      * 账号
      */

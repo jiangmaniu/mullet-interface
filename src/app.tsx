@@ -23,6 +23,7 @@ import { mobileCssVars } from './pages/webapp/theme/colors'
 import { handleJumpMobile } from './pages/webapp/utils/navigator'
 import { errorConfig } from './requestErrorConfig'
 import { isPC } from './utils'
+import { seriesLoadScripts } from './utils/loadScript'
 import { getBrowerLng, getPathname, getPathnameLng, replacePathnameLng } from './utils/navigator'
 import { STORAGE_GET_TOKEN } from './utils/storage'
 
@@ -332,6 +333,14 @@ export function onRouteChange({ location, clientRoutes, routes, action, basename
 
 export const rootContainer = (container: JSX.Element) => {
   const ENV = getEnv()
+
+  // 必须等待执行完成脚本后，调用回调函数
+  ENV?.salesmartlyJSUrl &&
+    seriesLoadScripts([ENV?.salesmartlyJSUrl], () => {
+      // 设置聊天插件图标隐藏，可配合打开窗口api实现自定义图标
+      window.__ssc.setting = { hideIcon: true }
+    })
+
   return React.createElement(
     () => (
       <>
