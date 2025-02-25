@@ -128,7 +128,7 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
   }
 
   const handleGo = () => {
-    push(`/app/deposit/otc/${orderId}?backUrl=/app/deposit/process/${methodId}`)
+    push(appendHideParamIfNeeded(`/app/deposit/otc/${orderId}?backUrl=/app/deposit/process/${methodId}`))
   }
 
   const cryptoRef = useRef<any>()

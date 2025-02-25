@@ -12,6 +12,7 @@ import { generateDepositOrder, getDepositOrderDetail } from '@/services/api/wall
 
 import { useLoading } from '@/context/loadingProvider'
 import { push } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
 import ConfirmModal from './comp/ConfirmModal'
 import ContinueModal from './comp/ContinueModal'
@@ -124,7 +125,7 @@ function DepositProcess() {
   }
 
   const handleGo = () => {
-    push(`/deposit/otc/${orderId}?backUrl=/deposit/process/${methodId}`)
+    push(appendHideParamIfNeeded(`/deposit/otc/${orderId}?backUrl=/deposit/process/${methodId}`))
   }
 
   const handleReset = () => {
