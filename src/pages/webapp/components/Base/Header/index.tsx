@@ -1,7 +1,7 @@
 import { NavBar, NavBarProps } from 'antd-mobile'
 
 import Iconfont from '@/components/Base/Iconfont'
-import useHideHeader from '@/pages/webapp/hooks/useHideHeader'
+import { useEnv } from '@/context/envProvider'
 import { cn } from '@/utils/cn'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { history } from '@umijs/max'
@@ -16,7 +16,7 @@ type IProps = NavBarProps & {
 
 // 移动端公共导航组件
 function Header({ title, onBack, back = true, left, ...res }: IProps) {
-  const { isHideHeader } = useHideHeader()
+  const { isRNWebview } = useEnv()
   const className = useEmotionCss(({ token }) => {
     return {
       '.adm-nav-bar-back-arrow': {
@@ -37,7 +37,7 @@ function Header({ title, onBack, back = true, left, ...res }: IProps) {
     }
   })
 
-  if (isHideHeader) return <></>
+  if (isRNWebview) return <></>
 
   return (
     <NavBar

@@ -10,7 +10,6 @@ import { getEnv } from '@/env'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
-import useHideHeader from '@/pages/webapp/hooks/useHideHeader'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
@@ -47,7 +46,6 @@ export default () => {
   const email = currentUser?.userInfo?.email as string
   const account = currentUser?.account as string
   const isKycAuth = currentUser?.isKycAuth
-  const { isHideHeader } = useHideHeader()
   const isPhoneCheck = phone && isKycAuth
 
   useTitle(t('mt.xiuggaimima'))
