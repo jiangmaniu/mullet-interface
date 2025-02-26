@@ -33,7 +33,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
   const account = currentUser?.account as string
   const isKycAuth = currentUser?.isKycAuth
 
-  const isPhoneCheck = phone && isKycAuth
+  const isPhoneCheck = phone
 
   const onSend = async () => {
     let reqFn = isPhoneCheck ? sendPhoneCode : sendEmailCode
