@@ -7,10 +7,10 @@ import KycStepThreeForm from '../kycStepForm1.5/KycStepThreeForm'
 
 type IProps = {
   trigger?: JSX.Element
-  onClose?: () => void
+  onSuccess?: () => void
 }
 
-function AdvanceKycApproveInfoModal({ trigger, onClose }: IProps, ref: any) {
+function AdvanceKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
   const modalRef = useRef<any>()
   const { theme } = useTheme()
 
@@ -18,26 +18,34 @@ function AdvanceKycApproveInfoModal({ trigger, onClose }: IProps, ref: any) {
     return modalRef.current
   })
 
-  const onSuccess = () => {
+  const handleSubmit = () => {
     modalRef.current?.close()
-    onClose?.()
+    onSuccess?.()
   }
 
   return (
     <Modal
       styles={{
         header: {
-          backgroundColor: theme.colors.backgroundColor.secondary
+          backgroundColor: theme.colors.backgroundColor.secondary,
+          marginBottom: 0
         }
       }}
-      contentStyle={{ padding: 20 }}
-      title={<FormattedMessage id="mt.kycgaojirenzheng" />}
+      contentStyle={{ padding: 0 }}
+      renderTitle={() => (
+        <>
+          <div className="h-[100px] w-[280px] relative">
+            <FormattedMessage id="mt.kycgaojirenzheng" />
+            <img src="/img/kyc-i1.png" className="absolute top-0 right-0" width={102} height={102} />
+          </div>
+        </>
+      )}
       trigger={trigger}
-      width={596}
+      width={528}
       footer={null}
       ref={modalRef}
     >
-      <KycStepThreeForm onSuccess={onSuccess} />
+      <KycStepThreeForm onSuccess={handleSubmit} />
     </Modal>
   )
 }

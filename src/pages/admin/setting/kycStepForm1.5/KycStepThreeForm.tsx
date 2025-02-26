@@ -3,11 +3,11 @@ import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
 import { useEffect, useState } from 'react'
 
-import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import { submitSeniorAuth } from '@/services/api/crm/kycAuth'
 import { message } from '@/utils/message'
 
+import { push } from '@/utils/navigator'
 import UploadIdcard from './UploadIdcard'
 
 export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
@@ -22,55 +22,6 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
 
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
-
-  const phone = Form.useWatch('phone', form)
-  const phoneAreaCode = Form.useWatch('phoneAreaCode', form)
-  const validateCode = Form.useWatch('validateCode', form)
-  const email = Form.useWatch('email', form)
-
-  const identificationCode = Form.useWatch('identificationCode', form)
-  const firstName = Form.useWatch('firstName', form)
-  const lastName = Form.useWatch('lastName', form)
-  const country = Form.useWatch('country', form)
-
-  const isBindPhone = !userInfo?.phone
-  const [identificationType, setIdentificationType] = useState<API.IdentificationType>('ID_CARD') // 证件类型
-
-  // 证件类型
-  const idCardTypeOptions: Array<{ key: API.IdentificationType; label: string }> = [
-    {
-      key: 'ID_CARD',
-      label: intl.formatMessage({ id: 'mt.shenfenzheng' })
-    },
-    {
-      key: 'PASSPORT',
-      label: intl.formatMessage({ id: 'mt.huzhao' })
-    }
-  ]
-
-  const steps = [
-    {
-      key: 'ONE',
-      icon: '/img/kyc-phone.png',
-      activeIcon: '/img/kyc-phone.png',
-      desc: <FormattedMessage id="mt.bangdingshoujihuoyouxiang" />
-    },
-    {
-      key: 'TWO',
-      icon: '/img/kyc-user.png',
-      activeIcon: '/img/kyc-user-white.png',
-      desc: <FormattedMessage id="mt.shenfenrenzheng" />
-    },
-    {
-      key: 'THREE',
-      icon: '/img/kyc-idcard.png',
-      activeIcon: '/img/kyc-idcard-white.png',
-      desc: <FormattedMessage id="mt.pingzhengrenzheng" />
-    }
-  ]
-  const idx = steps.findIndex((v) => v.key === step)
-  const activeSteps = steps.slice(0, idx + 1).map((item) => item.key)
-  const activeLineStep = steps.slice(0, idx).map((item) => item.key)
 
   useEffect(() => {
     // 手机、邮箱已绑定，直接跳过
@@ -103,9 +54,7 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
       // 刷新用户信息
       await fetchUserInfo()
 
-      setTimeout(() => {
-        setStep('FOUR')
-      }, 100)
+      onSuccess?.()
     }
   }
 
@@ -117,14 +66,28 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
             <FormattedMessage id="mt.shangchuanzhengjian" />
           </div>
           <div className="flex items-center justify-center">
-            <div className="w-[304px] h-[168px]">
+            <div className="w-[488px] h-[236px]">
               <UploadIdcard form={form} />
             </div>
           </div>
         </div>
-        <Button type="primary" style={{ height: 46, marginTop: 70 }} block onClick={handleSubmit} loading={submitLoading}>
-          <FormattedMessage id="common.tijiao" />
-        </Button>
+        <div className="flex flex-row items-center gap-4">
+          <Button
+            type="primary"
+            style={{ height: 46, marginTop: 70 }}
+            block
+            onClick={() => {
+              push('/deposit')
+            }}
+            loading={submitLoading}
+          >
+            <FormattedMessage id="mt.qurujin" />
+          </Button>
+
+          <Button style={{ height: 46, marginTop: 70 }} block onClick={handleSubmit} loading={submitLoading}>
+            <FormattedMessage id="common.tijiao" />
+          </Button>
+        </div>
       </div>
     )
   }
@@ -132,6 +95,12 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
   const renderHeader = () => {
     return (
       <>
+        <div className="text-primary pb-3 font-medium">
+          <FormattedMessage id="mt.renzhengxingming" />:
+          {intl.locale === 'zh-TW'
+            ? `${currentUser?.lastName || 'lastName'}${currentUser?.firstName || 'firstName'}`
+            : `${currentUser?.firstName || 'firstName'} ${currentUser?.lastName || 'lastName'}`}
+        </div>
         <div className="mb-5">
           <div className="text-primary font-semibold text-[22px]">
             <FormattedMessage id="mt.pingzhengrenzheng" />
@@ -145,25 +114,30 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
   }
 
   return (
-    <PageContainer pageBgColorMode="white" backTitle={<FormattedMessage id="mt.shezhi" />}>
-      <div className="flex justify-center">
-        {/* <div className="w-[596px] bg-white rounded-xl border border-gray-180 p-7"> */}
-        <div className="w-[596px] bg-white rounded-xl px-7">
-          <ProForm
-            onFinish={async (values: any) => {
-              console.log('values', values)
-
-              return
-            }}
-            submitter={false}
-            layout="vertical"
-            form={form}
-          >
-            {renderHeader()}
-            {renderThreeStep()}
-          </ProForm>
-        </div>
+    <>
+      <div
+        className="w-full h-10 px-5 text-blue align-middle flex items-center"
+        style={{
+          backgroundColor: 'rgba(24, 62, 252, 0.08)'
+        }}
+      >
+        ◆&nbsp; <FormattedMessage id="mt.ninyiwanchengchujirenzheng" />
       </div>
-    </PageContainer>
+      <div className=" p-5">
+        <ProForm
+          onFinish={async (values: any) => {
+            console.log('values', values)
+
+            return
+          }}
+          submitter={false}
+          layout="vertical"
+          form={form}
+        >
+          {renderHeader()}
+          {renderThreeStep()}
+        </ProForm>
+      </div>
+    </>
   )
 }

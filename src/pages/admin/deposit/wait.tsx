@@ -1,6 +1,5 @@
 import { PageLoading } from '@ant-design/pro-components'
 import { FormattedMessage, useParams } from '@umijs/max'
-import { Form } from 'antd'
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
@@ -9,11 +8,9 @@ import { goKefu, push } from '@/utils/navigator'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { getDepositOrderDetail } from '@/services/api/wallet'
-import { CardContainer } from '../../copyTrading/comp/CardContainer'
+import { CardContainer } from '../copyTrading/comp/CardContainer'
 
 export default function DepositOtc() {
-  const [form] = Form.useForm()
-
   const params = useParams()
   const id = params?.id as string
 
@@ -92,7 +89,7 @@ export default function DepositOtc() {
             >
               <FormattedMessage id="mt.chakandingdan" />
             </Button>
-            <span className="flex flex-row items-center gap-3 mt-[15px]" onClick={goKefu}>
+            <span className="flex flex-row items-center gap-3 mt-[15px] cursor-pointer" onClick={goKefu}>
               <Iconfont name="kefu" size={24} />
               <span>
                 <FormattedMessage id="mt.rujinshiyudaowenti" />

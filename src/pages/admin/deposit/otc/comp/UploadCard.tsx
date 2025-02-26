@@ -84,13 +84,14 @@ export default function ({ setImgs, imgs }: IProps) {
         {imgs.map((img, index) => (
           <div className="w-[86px] h-[86px] bg-gray-120 rounded-lg relative img-preview" key={index}>
             <Image src={`${getEnv().imgDomain}${img}`} width={86} height={86} />
-            <img
+            <div
               onClick={() => {
                 setImgs(imgs.filter((_, i) => i !== index))
               }}
-              src="/img/shanchu.png"
               className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] rounded-full cursor-pointer guanbi"
-            />
+            >
+              <img src="/img/shanchu.png" className="w-full h-full" />
+            </div>
             {/* <Iconfont name="danchuang-guanbi" className="text-secondary" size={18} /> */}
           </div>
         ))}

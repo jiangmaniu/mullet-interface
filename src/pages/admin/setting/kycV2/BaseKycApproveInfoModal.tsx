@@ -1,4 +1,4 @@
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
@@ -8,14 +8,16 @@ import Button from '@/components/Base/Button'
 import { DEFAULT_AREA_CODE } from '@/constants'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import { submitBaseAuth } from '@/services/api/crm/kycAuth'
 import { ProForm } from '@ant-design/pro-components'
-import { Form } from 'antd'
+import { Form, message } from 'antd'
 
 type IProps = {
   trigger?: JSX.Element
+  onSuccess?: () => void
 }
 
-function BaseKycApproveInfoModal({ trigger }: IProps, ref: any) {
+function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
   const modalRef = useRef<any>()
   const { theme } = useTheme()
 
@@ -45,6 +47,26 @@ function BaseKycApproveInfoModal({ trigger }: IProps, ref: any) {
   const firstName = Form.useWatch('firstName', form)
   const lastName = Form.useWatch('lastName', form)
   const country = Form.useWatch('country', form)
+
+  const { fetchUserInfo, isEmailRegisterWay } = useModel('user')
+  // 提交手机或邮箱绑定
+  const handleSubmitTwoStep = async () => {
+    form.validateFields().then((values) => {
+      // submitBaseAuth
+      submitBaseAuth({ ...values, identificationType }).then((res) => {
+        if (res.success) {
+          message.info(intl.formatMessage({ id: 'mt.tijiaochenggong' }))
+          // 刷新用户信息
+          fetchUserInfo()
+
+          modalRef.current?.close()
+          onSuccess?.()
+
+          return
+        }
+      })
+    })
+  }
 
   return (
     <Modal
@@ -133,9 +155,7 @@ function BaseKycApproveInfoModal({ trigger }: IProps, ref: any) {
         type="primary"
         block
         disabled={!lastName || !firstName || !identificationCode || !country}
-        onClick={() => {
-          modalRef?.current?.close()
-        }}
+        onClick={handleSubmitTwoStep}
       >
         <FormattedMessage id="mt.wanchengchujirenzheng" />
       </Button>

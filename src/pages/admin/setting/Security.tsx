@@ -6,9 +6,9 @@ import { Button } from 'antd'
 import { useRef } from 'react'
 import KycApproveInfoModal from './comp/KycApproveInfoModal'
 import ModifyPasswordModal from './comp/ModifyPasswordModal'
-import AdvanceKycApproveInfoModal from './kycV1.5/AdvanceKycApproveInfoModal'
-import BaseKycApproveInfoModal from './kycV1.5/BaseKycApproveInfoModal'
 import BindContactModal from './kycV1.5/BindContactModal'
+import AdvanceKycApproveInfoModal from './kycV2/AdvanceKycApproveInfoModal'
+import BaseKycApproveInfoModal from './kycV2/BaseKycApproveInfoModal'
 import KycRejectModal from './kycV2/KycRejectModal'
 import KycStatus from './kycV2/KycStatus'
 import KycWaitModal from './kycV2/KycWaitModal'
@@ -170,10 +170,15 @@ export default function Security() {
       </div>
       {/* 实名认证成功弹窗 */}
       <KycApproveInfoModal ref={kycSuccModalRef} />
-      <BaseKycApproveInfoModal ref={baseModal} />
+      <BaseKycApproveInfoModal
+        ref={baseModal}
+        onSuccess={() => {
+          advanceModal.current?.show()
+        }}
+      />
       <AdvanceKycApproveInfoModal
         ref={advanceModal}
-        onClose={() => {
+        onSuccess={() => {
           kycWaitModal.current?.show()
         }}
       />
@@ -181,7 +186,7 @@ export default function Security() {
       <KycWaitModal ref={kycWaitModal} />
       <KycRejectModal
         ref={kycRejectModal}
-        onClose={() => {
+        onSuccess={() => {
           advanceModal.current?.show()
         }}
       />

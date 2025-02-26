@@ -5,7 +5,6 @@ import { Upload } from 'antd'
 import { FormInstance } from 'antd/lib'
 import { useState } from 'react'
 
-import Button from '@/components/Base/Button'
 import { message } from '@/utils/message'
 import { STORAGE_GET_USER_INFO } from '@/utils/storage'
 
@@ -30,13 +29,13 @@ export default function ({ form }: IProps) {
       'Blade-Auth': `${userInfo.token_type} ${userInfo.access_token}`
     },
     accept: 'image/png, image/jpeg, image/jpg',
-    beforeUpload: (file) => {
-      const isLt1MB = file.size / 1024 / 1024 <= 1
-      if (!isLt1MB) {
-        message.info(`${intl.formatMessage({ id: 'mt.kycUploadImgSizeTips' }, { size: 1 })}MB`)
-      }
-      return isLt1MB
-    },
+    // beforeUpload: (file) => {
+    //   const isLt1MB = file.size / 1024 / 1024 <= 1
+    //   if (!isLt1MB) {
+    //     message.info(`${intl.formatMessage({ id: 'mt.kycUploadImgSizeTips' }, { size: 1 })}MB`)
+    //   }
+    //   return isLt1MB
+    // },
     onChange(info) {
       console.log('info', info)
       const data = info?.file?.response?.data || {}
@@ -63,17 +62,15 @@ export default function ({ form }: IProps) {
         <Dragger {...props}>
           {url ? (
             <div className="flex items-center justify-center">
-              <img src={url} width={230} height={114} />
+              <img src={url} width={488} height={236} />
             </div>
           ) : (
-            <div className="flex items-center justify-center">
-              <div className="bg-[url(/img/idcard-bg.png)] bg-cover w-[230px] h-[114px] px-8 py-7">
+            <div className="flex items-center flex-col justify-center">
+              <div className="flex flex-col items-center justify-center bg-cover w-[390px] h-[176px]">
+                <img src="/img/upload-01.png" width={80} height={80} />
                 <span className="text-primary text-sm font-semibold">
                   <FormattedMessage id="mt.dianjishangchuantupian" />
                 </span>
-                <Button className="!h-[30px] px-5 text-sm mt-5 !rounded-[22px]" type="primary">
-                  <FormattedMessage id="common.shangchuan" />
-                </Button>
               </div>
             </div>
           )}
@@ -91,9 +88,9 @@ export default function ({ form }: IProps) {
           </div>
         )}
       </div>
-      <div className="text-secondary text-xs mt-2">
+      {/* <div className="text-secondary text-xs mt-2">
         <FormattedMessage id="mt.kycUploadTips" />
-      </div>
+      </div> */}
       {/* 隐藏表单项提交 */}
       <ProFormText name="authImgsUrl" hidden />
     </>

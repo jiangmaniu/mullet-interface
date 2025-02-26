@@ -8,10 +8,10 @@ import { getKycStatus } from '@/pages/webapp/hooks/useKycStatusInfo'
 
 type IProps = {
   trigger?: JSX.Element
-  onClose?: () => void
+  onSuccess?: () => void
 }
 
-function KycRejectModal({ trigger, onClose }: IProps, ref: any) {
+function KycRejectModal({ trigger, onSuccess }: IProps, ref: any) {
   const modalRef = useRef<any>()
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
@@ -66,7 +66,7 @@ function KycRejectModal({ trigger, onClose }: IProps, ref: any) {
         block
         onClick={() => {
           modalRef?.current?.close()
-          onClose?.()
+          onSuccess?.()
         }}
       >
         <FormattedMessage id="mt.chongxinrenzheng" />

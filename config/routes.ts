@@ -156,7 +156,7 @@ export default [
     name: 'depositWait',
     icon: 'icon-geren-rujin',
     access: 'canAdmin', // 权限配置
-    component: './admin/deposit/otc/wait',
+    component: './admin/deposit/wait',
     hideInMenu: true
   },
   {

@@ -182,7 +182,7 @@ export const Step2 = ({
 
   return (
     <div className="flex items-center justify-center w-full h-full mt-10 ">
-      <CardContainer title={<FormattedMessage id="mt.chujin" />} onChange={() => {}} defaultValue={undefined}>
+      <CardContainer title={<FormattedMessage id="mt.chujin" />} style={'w-[552px]'} onChange={() => {}} defaultValue={undefined}>
         <div className="flex flex-col gap-6 mt-6">
           {options
             .filter((item) => item.value)

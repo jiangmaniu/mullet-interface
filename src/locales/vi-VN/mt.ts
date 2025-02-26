@@ -791,5 +791,8 @@ export default {
   'mt.daozhangjine': 'Số tiền đến',
   'mt.shenfenrenzhengshibai': 'Xác minh thất bại',
   'mt.nintijiaodeziliaobuquanqieyoucuowu': 'Bạn đã nộp thông tin không đầy đủ hoặc không chính xác, vui lòng kiểm tra và nộp lại',
-  'mt.yicunzaiweiwanchengdingdan': 'Đơn hàng đã tồn tại, vui lòng hoàn thành đơn hàng trước'
+  'mt.yicunzaiweiwanchengdingdan': 'Đơn hàng đã tồn tại, vui lòng hoàn thành đơn hàng trước',
+  'mt.ninyiwanchengchujirenzheng':
+    'Bạn đã hoàn thành xác minh cơ bản, có thể chọn nạp tiền hoặc tiếp tục xác minh nâng cao (mở quyền rút tiền)',
+  'mt.renzhengxingming': 'Tên xác minh'
 }

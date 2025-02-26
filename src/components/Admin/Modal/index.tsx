@@ -30,6 +30,7 @@ interface IProps extends ModalProps {
   hiddenSubmitter?: boolean
   /**确认按钮文本 */
   okText?: React.ReactNode
+  titleStyle?: React.CSSProperties
 }
 
 /**
@@ -59,6 +60,7 @@ function Modal(
     hiddenSubmitter,
     okText,
     styles,
+    titleStyle,
     ...res
   }: IProps,
   ref: any
@@ -132,8 +134,8 @@ function Modal(
         <AntdModal
           open={isOpen}
           title={
-            <div>
-              <div className="flex items-center pb-3 px-7">
+            <>
+              <div className="flex items-center pb-3 px-7" style={{ ...titleStyle }}>
                 {!renderTitle && (
                   <>
                     {title && <span className="text-lg text-primary font-semibold">{title}</span>}
@@ -155,7 +157,7 @@ function Modal(
                 }}
                 tabBarExtraContent={tabBarExtraContent}
               />
-            </div>
+            </>
           }
           width={870}
           destroyOnClose={true}
