@@ -19,7 +19,7 @@ function KycWaitModal({ trigger, onClose }: IProps, ref: any) {
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
-  const remark = currentUser?.remark
+  const remark = kycAuthInfo?.remark
 
   const status = useMemo(() => {
     return getKycStatus(kycStatus, isBaseAuth, isKycAuth)

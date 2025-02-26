@@ -20,7 +20,8 @@ const VerifyStatus3 = () => {
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const remark = currentUser?.remark
+  const kycAuthInfo = currentUser?.kycAuth?.[0]
+  const remark = kycAuthInfo?.remark
 
   return (
     <>

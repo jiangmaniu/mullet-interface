@@ -25,6 +25,7 @@ import {
   STORAGE_GET_ORDER_CONFIRM_CHECKED,
   STORAGE_GET_POSITION_CONFIRM_CHECKED,
   STORAGE_GET_QUICK_PLACE_ORDER_CHECKED,
+  STORAGE_GET_TOKEN,
   STORAGE_REMOVE_HISTORY_SEARCH,
   STORAGE_SET_CONF_INFO,
   STORAGE_SET_HISTORY_SEARCH,
@@ -1129,6 +1130,11 @@ class TradeStore {
   // 查询持仓列表
   @action
   getPositionList = async (cover = false) => {
+    const token = await STORAGE_GET_TOKEN()
+    if (!token) {
+      return
+    }
+
     // 查询进行中的订单
     const res = await getBgaOrderPage({ current: 1, size: 999, status: 'BAG', accountId: this.currentAccountInfo?.id })
 
