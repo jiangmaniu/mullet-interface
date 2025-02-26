@@ -4,7 +4,7 @@ import Button from '@/pages/webapp/components/Base/Button'
 import Header from '@/pages/webapp/components/Base/Header'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
-import { goKefu, push } from '@/utils/navigator'
+import { goKefu } from '@/utils/navigator'
 import { FormattedMessage, getIntl, useSearchParams } from '@umijs/max'
 import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
@@ -27,9 +27,10 @@ function WithdrawPreview() {
     ref.current?.onSubmit()
   }
 
-  const onSuccess = (values?: any) => {
-    push('/app/withdraw/preview', values)
-  }
+  // const onSuccess = (values?: any) => {
+  //   // push('/app/withdraw/preview', values)
+  //   replace('/app/withdraw/preview', values)
+  // }
 
   const [query] = useSearchParams()
 
@@ -78,7 +79,7 @@ function WithdrawPreview() {
         </div>
       }
     >
-      <Body ref={ref} onDisabledChange={onDisabledChange} onSuccess={onSuccess} />
+      <Body ref={ref} onDisabledChange={onDisabledChange} />
     </BasicLayout>
   )
 }

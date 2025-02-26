@@ -3,27 +3,32 @@ import { depositTransferCurr } from '@/utils/deposit'
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
+import { observer } from 'mobx-react'
 
 type IProps = {
   form: FormInstance
   methodInfo?: Wallet.fundsMethodPageListItem
 }
 
-export default function TransferOTC({ form, methodInfo }: IProps) {
+const TransferOTC = observer(({ form, methodInfo }: IProps) => {
   const intl = useIntl()
 
   const currency = Form.useWatch('currency', form)
   const amount = Form.useWatch('amount', form)
 
-  const items = [
-    {
-      label: 'USD',
-      key: 'USD',
-      onClick: () => {
-        form.setFieldValue('currency', 'USD')
-      }
-    }
-  ]
+  // const toAccountId = Form.useWatch('toAccountId', form)
+
+  // const { initialState } = useModel('@@initialState')
+
+  // const currentUser = initialState?.currentUser
+  // const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
+
+  // const toAccountInfo = accountList.find((item) => item.id === toAccountId) // 转入账号信息
+  // // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
+  // const occupyMargin = Number(toFixed(Number(toAccountInfo?.margin || 0) + Number(toAccountInfo?.isolatedMargin || 0)))
+  // const money = toAccountInfo?.money || 0
+  // // 可用余额
+  // const availableMoney = Number(toFixed(money - occupyMargin))
 
   const tips = `${getIntl().formatMessage({ id: 'mt.rujinxianzhi' })} ${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(
     methodInfo?.singleAmountMax || 99999
@@ -58,6 +63,10 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
               if (Number(value) < (methodInfo?.singleAmountMin || 0)) {
                 return callback(tips)
               }
+
+              // if (Number(value) > availableMoney) {
+              //   return callback(intl.formatMessage({ id: 'mt.yuebuzu' }))
+              // }
 
               if (Number(value) > (methodInfo?.singleAmountMax || 99999)) {
                 return callback(tips)
@@ -99,4 +108,6 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
       </div>
     </div>
   )
-}
+})
+
+export default TransferOTC

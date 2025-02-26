@@ -11,7 +11,7 @@ import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { generateWithdrawOrder } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
-import { push } from '@/utils/navigator'
+import { replace } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { md5 } from 'js-md5'
 import { observer } from 'mobx-react'
@@ -119,7 +119,7 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
         })
           .then((res) => {
             if (res.success) {
-              push(appendHideParamIfNeeded(`/app/withdraw/wait/${res.data.id}`))
+              replace(appendHideParamIfNeeded(`/app/withdraw/wait/${res.data.id}`))
             } else {
               message.info(res.data.msg)
             }

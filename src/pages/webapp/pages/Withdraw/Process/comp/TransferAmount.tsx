@@ -76,6 +76,10 @@ function TransferAmount({ form, currentUser, methodInfo }: IProps) {
                 return callback(tips)
               }
 
+              if (Number(value) > availableMoney) {
+                return callback(intl.formatMessage({ id: 'mt.yuebuzu' }))
+              }
+
               if (Number(value) > (methodInfo?.singleAmountMax || 99999)) {
                 return callback(tips)
               }

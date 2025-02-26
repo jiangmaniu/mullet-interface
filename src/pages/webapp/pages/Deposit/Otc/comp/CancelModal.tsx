@@ -2,7 +2,8 @@ import Button from '@/pages/webapp/components/Base/Button'
 import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { cancelDepositOrder } from '@/services/api/wallet'
-import { push } from '@/utils/navigator'
+import { replace } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { FormattedMessage, getIntl } from '@umijs/max'
 import type { ForwardedRef } from 'react'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
@@ -33,7 +34,7 @@ function CancelModal({ id, backUrl }: IProps, ref: ForwardedRef<ModalRef>) {
     if (id) {
       cancelDepositOrder({ id }).then((res) => {
         if (res.success) {
-          push(backUrl || '/app/deposit')
+          replace(appendHideParamIfNeeded(backUrl || '/app/deposit'))
         }
       })
     }

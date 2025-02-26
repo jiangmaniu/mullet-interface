@@ -144,8 +144,8 @@ export const push = (path: string, state?: any) => {
  * 多语言 replace跳转方法
  * @param path 跳转路径
  */
-export const replace = (path: string) => {
-  history.replace(formatPathname(path))
+export const replace = (path: string, state?: any) => {
+  history.replace(formatPathname(path), state)
 }
 
 /**

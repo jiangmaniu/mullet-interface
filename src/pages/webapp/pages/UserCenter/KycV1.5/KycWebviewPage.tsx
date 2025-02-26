@@ -1,4 +1,3 @@
-import { message } from '@/utils/message'
 import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useModel, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
@@ -116,7 +115,7 @@ export default function KycWebviewPage() {
           ref.current?.onRetry()
         }
       } catch (error) {
-        message.info(`监听消息错误: ${JSON.stringify(error)}`)
+        // message.info(`监听消息错误: ${JSON.stringify(error)}`)
       }
     }
 
