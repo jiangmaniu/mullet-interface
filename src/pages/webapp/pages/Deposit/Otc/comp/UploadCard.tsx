@@ -8,7 +8,7 @@ import { useState } from 'react'
 
 import { getEnv } from '@/env'
 import { message } from '@/utils/message'
-import { STORAGE_GET_USER_INFO } from '@/utils/storage'
+import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 
 const { Dragger } = Upload
 
@@ -23,6 +23,7 @@ export default function ({ setImgs, imgs }: IProps) {
   const intl = useIntl()
 
   const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
+  const token = STORAGE_GET_TOKEN() || ''
 
   // TODO: 上传图片 可能要适配 rn 端
   const props: UploadProps = {
@@ -31,7 +32,7 @@ export default function ({ setImgs, imgs }: IProps) {
     showUploadList: false,
     action: '/api/blade-resource/oss/endpoint/put-file',
     headers: {
-      'Blade-Auth': `${userInfo.token_type} ${userInfo.access_token}`
+      'Blade-Auth': `${userInfo?.token_type || 'Bearer'} ${token}`
     },
     accept: 'image/png, image/jpeg, image/jpg',
     // beforeUpload: (file) => {
