@@ -141,17 +141,19 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             }}
           />
         </Tooltip>
-        <Iconfont
-          name="kefu"
-          width={36}
-          height={36}
-          color={theme}
-          className=" cursor-pointer rounded-lg"
-          hoverStyle={{
-            background: theme === 'black' ? '#fbfbfb' : '#222222'
-          }}
-          onClick={goKefu}
-        />
+        <Tooltip title={<FormattedMessage id="mt.zaixiankefu" />} placement="bottom">
+          <Iconfont
+            name="kefu"
+            width={36}
+            height={36}
+            color={theme}
+            className=" cursor-pointer rounded-lg"
+            hoverStyle={{
+              background: theme === 'black' ? '#fbfbfb' : '#222222'
+            }}
+            onClick={goKefu}
+          />
+        </Tooltip>
         {/* 账户信息下拉 */}
         <AccountDropdown theme={theme} />
       </div>
