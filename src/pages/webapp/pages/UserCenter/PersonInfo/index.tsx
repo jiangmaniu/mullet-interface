@@ -73,7 +73,7 @@ function UserCenter() {
       icon: 'earth',
       title: t('mt.guojia'),
       hiddenRightIcon: true,
-      subText: locale === 'zh-TW' ? currentUser?.countryInfo?.nameTw || '-' : currentUser?.countryInfo?.nameEn || '-'
+      subText: locale === 'zh-TW' ? currentUser?.countryInfo?.nameCn || '-' : currentUser?.countryInfo?.nameEn || '-'
     },
     {
       icon: 'phone',

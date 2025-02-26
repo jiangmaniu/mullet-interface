@@ -228,7 +228,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           }}
         >
           <TextField
-            value={areaCodeItem ? `(+${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameTw : areaCodeItem?.nameEn}` : ''}
+            value={areaCodeItem ? `(+${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
             label={t('pages.login.Residence Country')}
             height={50}
             readOnly

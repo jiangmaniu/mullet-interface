@@ -68,7 +68,7 @@ export default function Security() {
   const informations = [
     {
       title: <FormattedMessage id="common.guojia" />,
-      value: intl.locale === 'zh-TW' ? currentUser?.countryInfo?.nameTw : currentUser?.countryInfo?.nameEn
+      value: intl.locale === 'zh-TW' ? currentUser?.countryInfo?.nameCn : currentUser?.countryInfo?.nameEn
     },
     {
       title: <FormattedMessage id="common.shoujihao" />,

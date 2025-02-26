@@ -25,7 +25,7 @@ export default function SelectCountryFormItem({ form, height = 49, placeholder, 
   const options = list
     ?.filter((item) => item.areaCode !== '0')
     ?.map((v: AreaCodeItem) => {
-      const areaNameZh = v.nameTw
+      const areaNameZh = v.nameCn
       const areaName = v.nameEn
       const label = isZh ? areaNameZh : areaName || areaNameZh
       return {

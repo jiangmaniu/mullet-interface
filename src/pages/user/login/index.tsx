@@ -287,7 +287,7 @@ function Login() {
             initialValues={{
               phoneAreaCode: `+${DEFAULT_AREA_CODE}`,
               country: defaultAreaCode?.abbr || '',
-              countryName: lng === 'zh-TW' ? defaultAreaCode?.nameTw : defaultAreaCode?.nameEn || ''
+              countryName: lng === 'zh-TW' ? defaultAreaCode?.nameCn : defaultAreaCode?.nameEn || ''
             }}
             actions={
               <>
