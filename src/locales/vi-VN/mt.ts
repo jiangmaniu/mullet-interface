@@ -795,5 +795,7 @@ export default {
   'mt.ninyiwanchengchujirenzheng':
     'Bạn đã hoàn thành xác minh cơ bản, có thể chọn nạp tiền hoặc tiếp tục xác minh nâng cao (mở quyền rút tiền)',
   'mt.renzhengxingming': 'Tên xác minh',
-  'mt.chukanshili': 'Xem ví dụ'
+  'mt.chukanshili': 'Xem ví dụ',
+  'mt.quanbuchujinfangshi': 'Tất cả phương thức rút tiền',
+  'mt.jiazaigengduo': 'Tải thêm'
 }

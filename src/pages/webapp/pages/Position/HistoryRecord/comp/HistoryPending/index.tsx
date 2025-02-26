@@ -17,7 +17,8 @@ import CoinHeader, { ISymbolItem } from '../../../comp/CoinHeader'
 
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import Empty from '@/pages/webapp/components/Base/List/Empty'
-import More from '@/pages/webapp/components/Base/List/More'
+import End from '@/pages/webapp/components/Base/List/End'
+import GetMore from '@/pages/webapp/components/Base/List/GetMore'
 import { PullToRefresh } from '@/pages/webapp/components/Base/List/PullToRefresh'
 import VirtualList from 'rc-virtual-list'
 
@@ -300,7 +301,11 @@ function HistoryPending() {
         </View>
 
         {datas.length > 0 ? (
-          <VirtualList itemKey="index" data={datas} extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}>
+          <VirtualList
+            itemKey="index"
+            data={datas}
+            extraRender={() => <View>{data.length < total ? <GetMore onClick={onEndReached} /> : <End />}</View>}
+          >
             {({ item }) => renderItem({ item })}
           </VirtualList>
         ) : (

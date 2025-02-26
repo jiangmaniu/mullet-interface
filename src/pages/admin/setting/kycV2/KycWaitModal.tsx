@@ -40,14 +40,14 @@ function KycWaitModal({ trigger, onClose }: IProps, ref: any) {
       }}
       contentStyle={{ padding: 20 }}
       renderTitle={() => (
-        <div className="h-[100px] w-60 relative">
-          <FormattedMessage id="mt.shenheshibai" />
+        <div className="h-[100px] w-[260px] relative">
+          <FormattedMessage id="mt.shenhezhong" />
           <img src="/img/kyc-i1.png" className="absolute top-0 right-0" width={102} height={102} />
         </div>
       )}
       trigger={trigger}
       title={<FormattedMessage id="mt.shenhezhong" />}
-      width={430}
+      width={480}
       footer={null}
       ref={modalRef}
     >
@@ -55,7 +55,7 @@ function KycWaitModal({ trigger, onClose }: IProps, ref: any) {
         <span className=" text-xl font-bold">
           <FormattedMessage id="mt.shenfenrenzhengshenhezhong" />
         </span>
-        <span className=" text-sm text-gray-500">
+        <span className=" text-sm text-gray-500 text-center">
           <FormattedMessage id="mt.womenhuijinkuaiwanchengshenhe" />
         </span>
       </div>

@@ -5,8 +5,9 @@ import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import Empty from '@/pages/webapp/components/Base/List/Empty'
+import End from '@/pages/webapp/components/Base/List/End'
+import GetMore from '@/pages/webapp/components/Base/List/GetMore'
 import { IlistItemProps } from '@/pages/webapp/components/Base/List/ListItem'
-import More from '@/pages/webapp/components/Base/List/More'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -295,7 +296,7 @@ function HistoryPosition() {
             itemKey="index"
             data={datas}
             style={{ padding: 0, paddingTop: 8 }}
-            extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}
+            extraRender={() => <View>{data.length < total ? <GetMore onClick={onEndReached} /> : <End />}</View>}
           >
             {renderItem}
           </VirtualList>

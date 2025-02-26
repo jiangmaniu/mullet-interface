@@ -802,5 +802,7 @@ export default {
   'mt.ninyiwanchengchujirenzheng':
     'You have completed the basic verification, you can choose to deposit or continue to advanced verification (open withdrawal permission)',
   'mt.renzhengxingming': 'Verification Name',
-  'mt.chukanshili': 'View Example'
+  'mt.chukanshili': 'View Example',
+  'mt.quanbuchujinfangshi': 'All Withdrawal Methods',
+  'mt.jiazaigengduo': 'Load More'
 }

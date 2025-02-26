@@ -13,6 +13,7 @@ import { cn } from '@/utils/cn'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useLang } from '@/context/languageProvider'
 import { sendCustomPhoneCode } from '@/services/api/user'
+import { withdrawExchangeRate } from '@/utils/deposit'
 import { message } from '@/utils/message'
 
 export const Step2 = ({
@@ -104,7 +105,9 @@ export const Step2 = ({
         : [
             {
               label: getIntl().formatMessage({ id: 'mt.pingtaihuilv' }),
-              value: `${formatNum(exchangeRate, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })}`
+              value: `${formatNum(withdrawExchangeRate(methodInfo), {
+                precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
+              })}`
             },
             {
               label: getIntl().formatMessage({ id: 'mt.daozhangusd' }),

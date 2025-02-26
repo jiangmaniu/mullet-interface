@@ -159,7 +159,7 @@ function WithdrawalProcess() {
       pageBgColorMode={step === 0 ? 'white' : 'gray'}
       fluidWidth
       backUrl="/withdrawal"
-      backTitle={<FormattedMessage id="mt.quanbushoukuanfangshi" />}
+      backTitle={<FormattedMessage id="mt.quanbuchujinfangshi" />}
     >
       {step === 0 && (
         <div className="text-primary font-bold text-[24px] mb-9">

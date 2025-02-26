@@ -806,5 +806,7 @@ export default {
   'mt.yicunzaiweiwanchengdingdan': '已存在未完成的訂單，請先完成訂單',
   'mt.ninyiwanchengchujirenzheng': '您已完成初級認證，可以選擇入金或者繼續高級認證（開通出金權限）',
   'mt.renzhengxingming': '認證姓名',
-  'mt.chukanshili': '查看示例'
+  'mt.chukanshili': '查看示例',
+  'mt.quanbuchujinfangshi': '全部出金方式',
+  'mt.jiazaigengduo': '加載更多'
 }

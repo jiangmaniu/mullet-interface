@@ -4,7 +4,6 @@ import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import Empty from '@/pages/webapp/components/Base/List/Empty'
-import More from '@/pages/webapp/components/Base/List/More'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -18,6 +17,8 @@ import { observer } from 'mobx-react'
 import VirtualList from 'rc-virtual-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import End from '@/pages/webapp/components/Base/List/End'
+import GetMore from '@/pages/webapp/components/Base/List/GetMore'
 import { statusMap } from '..'
 import WithdrawDetailModal from './WithdrawDetailModal'
 
@@ -43,8 +44,8 @@ function WithdrawList() {
       startTime,
       endTime
     }).then((res) => {
-      if (res.success && res.data?.records) {
-        setData(data.concat(res.data.records))
+      if (res.success && res?.data && res?.data?.records) {
+        setData((prev) => prev.concat((res.data?.records || []) as Wallet.withdrawalOrderListItem[]))
         setTotal(Number(res.data.total))
       }
     })
@@ -194,7 +195,11 @@ function WithdrawList() {
         <div className="px-[14px] pt-5">
           {datas.length > 0 ? (
             <View className={cn('pt-2')}>
-              <VirtualList itemKey="index" data={datas} extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}>
+              <VirtualList
+                itemKey="index"
+                data={datas}
+                extraRender={() => <View>{data.length < total ? <GetMore onClick={onEndReached} /> : <End />}</View>}
+              >
                 {renderItem}
               </VirtualList>
             </View>

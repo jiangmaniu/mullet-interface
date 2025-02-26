@@ -4,7 +4,8 @@ import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import Empty from '@/pages/webapp/components/Base/List/Empty'
-import More from '@/pages/webapp/components/Base/List/More'
+import End from '@/pages/webapp/components/Base/List/End'
+import GetMore from '@/pages/webapp/components/Base/List/GetMore'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -42,8 +43,8 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
       startTime,
       endTime
     }).then((res) => {
-      if (res.success && res.data?.records) {
-        setData(data.concat(res.data.records))
+      if (res.success && res?.data && res?.data?.records) {
+        setData((prev) => prev.concat((res.data?.records || []) as Wallet.depositOrderListItem[]))
         setTotal(Number(res.data.total))
       }
     })
@@ -163,15 +164,22 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
     <PullToRefresh onRefresh={onRefresh}>
       <View bgColor="secondary" className={cn('flex-1 min-h-[90vh]')}>
         <View className={cn('flex flex-row justify-between items-center pt-[14px] px-[14px] pb-2 border-b border-gray-70')}>
-          <View onPress={() => dateRangePickerRef.current?.show()}>
+          <View
+            onPress={() => {
+              if (startTime && endTime) {
+                // 清空日期
+                setStartTime(undefined)
+                setEndTime(undefined)
+              } else {
+                dateRangePickerRef.current?.show()
+              }
+            }}
+          >
             {startTime && endTime ? (
               <div
                 className="flex flex-row items-center gap-[5px]"
-                onClick={() => {
-                  // 清空日期
-                  setStartTime(undefined)
-                  setEndTime(undefined)
-                }}
+                // onClick={() => {
+                // }}
               >
                 <Iconfont name="riqi" size={28} />
                 <Text size="sm" color="primary">
@@ -197,7 +205,11 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
         <div className="px-[14px] pt-5">
           {datas.length > 0 ? (
             <View className={cn('pt-2')}>
-              <VirtualList itemKey="index" data={datas} extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}>
+              <VirtualList
+                itemKey="index"
+                data={datas}
+                extraRender={() => <View>{data.length < total ? <GetMore onClick={onEndReached} /> : <End />}</View>}
+              >
                 {renderItem}
               </VirtualList>
             </View>
