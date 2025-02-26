@@ -28,7 +28,12 @@ const FormCaptcha: React.FC<IProps> = ({ onSend, fieldProps, height, ...res }) =
         )
       }}
       countDown={59}
-      fieldProps={{ style: { marginRight: 0, height: height || 42 }, size: 'large', type: 'number', ...fieldProps }}
+      fieldProps={{
+        style: { marginRight: 0, height: height || 42 },
+        size: 'large',
+        type: 'number',
+        ...fieldProps
+      }}
       captchaProps={{ loading, style: { position: 'absolute', right: 8, color: 'var(--color-text-primary)' }, type: 'link' }}
       // 如果需要失败可以 throw 一个错误出来，onGetCaptcha 会自动停止
       // throw new Error("获取验证码错误")

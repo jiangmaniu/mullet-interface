@@ -132,7 +132,7 @@ export default function Security() {
           <FormattedMessage id="mt.xinxi" />
         </div>
         <div className="text-secondary text-sm pb-[16px] pt-2">
-          <FormattedMessage id="mt.zhanghuguanlitips2" values={{ name: ENV.name }} />
+          <FormattedMessage id="mt.shezhixinxifubiaoti" />
         </div>
         <div className="flex flex-col gap-3">
           {informations.map((item, index) => (
@@ -150,7 +150,7 @@ export default function Security() {
           <FormattedMessage id="mt.anquan" />
         </div>
         <div className="text-secondary text-sm pb-[16px] pt-2">
-          <FormattedMessage id="mt.zhanghuguanlitips" values={{ name: ENV.name }} />
+          <FormattedMessage id="mt.anquanfubiaoti" />
         </div>
         <div className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
           <span className="text-base font-normal">

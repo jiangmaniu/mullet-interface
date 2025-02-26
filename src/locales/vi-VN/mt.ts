@@ -797,5 +797,10 @@ export default {
   'mt.renzhengxingming': 'Tên xác minh',
   'mt.chukanshili': 'Xem ví dụ',
   'mt.quanbuchujinfangshi': 'Tất cả phương thức rút tiền',
-  'mt.jiazaigengduo': 'Tải thêm'
+  'mt.jiazaigengduo': 'Tải thêm',
+  'mt.shezhixinxifubiaoti':
+    'Thông tin liên hệ của bạn sẽ được sử dụng cho quản lý tài khoản, nhận thông báo, vui lòng đảm bảo rằng bạn đã liên kết kịp thời để tránh bỏ lỡ thông báo quan trọng.',
+  'mt.anquanfubiaoti': 'Nếu bạn nghĩ rằng mật khẩu có thể đã bị rò rỉ, vui lòng thay đổi mật khẩu kịp thời.',
+  'mt.bangdingyouxiangtishi': 'Liên kết email của bạn sẽ được sử dụng để nhận thông tin thông báo.',
+  'mt.bangdingshoujitishi': 'Liên kết điện thoại của bạn sẽ được sử dụng để nhận thông tin thông báo.'
 }

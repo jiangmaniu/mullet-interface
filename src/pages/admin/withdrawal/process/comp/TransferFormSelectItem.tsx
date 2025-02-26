@@ -7,7 +7,7 @@ import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import Iconfont from '@/components/Base/Iconfont'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
-import { formatNum, hiddenCenterPartStr, toFixed } from '@/utils'
+import { formatNum, toFixed } from '@/utils'
 
 type IProps = {
   form: FormInstance
@@ -101,7 +101,7 @@ export default function TransferFormSelectItem({ form }: IProps) {
                 </div>
               )}
               <div className="flex-1 text-sm font-bold text-primary truncate">
-                {item.name} / {hiddenCenterPartStr(item?.id, 4)}
+                {item.name} / {item?.id}
               </div>
             </div>
           )

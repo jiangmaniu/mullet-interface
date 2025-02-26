@@ -137,7 +137,7 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
             {isBindPhone ? <FormattedMessage id="mt.shurunindeshoujihaoma" /> : <FormattedMessage id="mt.qingshurunindeyouxiang" />}
           </div>
           <div className="text-secondary text-sm pt-1 mb-4">
-            <FormattedMessage id="mt.yongyuyanzhengnidezhanghu" />
+            {isBindPhone ? <FormattedMessage id="mt.bangdingshoujitishi" /> : <FormattedMessage id="mt.bangdingyouxiangtishi" />}
           </div>
           {isBindPhone ? (
             <PhoneSelectFormItem
@@ -169,7 +169,7 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
             <FormCaptcha
               name="email"
               label={intl.formatMessage({ id: 'common.dianziyouxiang' })}
-              fieldProps={{ placeholder: intl.formatMessage({ id: 'mt.shuruyouxiangyanzhengma' }) }}
+              fieldProps={{ placeholder: intl.formatMessage({ id: 'mt.shuruyouxiangyanzhengma' }), type: 'text' }}
               formItemProps={{ style: { marginBottom: 24 } }}
               onSend={async () => {
                 if (!email) {

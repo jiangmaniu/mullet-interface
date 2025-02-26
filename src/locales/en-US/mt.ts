@@ -804,5 +804,10 @@ export default {
   'mt.renzhengxingming': 'Verification Name',
   'mt.chukanshili': 'View Example',
   'mt.quanbuchujinfangshi': 'All Withdrawal Methods',
-  'mt.jiazaigengduo': 'Load More'
+  'mt.jiazaigengduo': 'Load More',
+  'mt.shezhixinxifubiaoti':
+    'Your contact information will be used for account management and receiving notifications. Please bind it in time to avoid missing important notifications.',
+  'mt.anquanfubiaoti': 'If you think your password may have been leaked, please change it in time.',
+  'mt.bangdingyouxiangtishi': 'Binding your email will be used to receive notification information.',
+  'mt.bangdingshoujitishi': 'Binding your phone will be used to receive notification information.'
 }
