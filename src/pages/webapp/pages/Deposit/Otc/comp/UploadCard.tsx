@@ -1,7 +1,7 @@
 // import './index.less'
 
 import { ProFormText } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage } from '@umijs/max'
 import type { UploadProps } from 'antd'
 import { Image, Upload } from 'antd'
 import { useState } from 'react'
@@ -20,7 +20,6 @@ type IProps = {
 export default function ({ setImgs, imgs }: IProps) {
   const [fileName, setFileName] = useState('') // 文件名路径
   const [url, setUrl] = useState('') // 完整地址
-  const intl = useIntl()
 
   const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
   const token = STORAGE_GET_TOKEN() || ''
