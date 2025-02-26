@@ -4,7 +4,6 @@ import { useIntl } from '@umijs/max'
 import Lottie from 'lottie-react'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
-import loadingData from '../../../../../public/platform/lottie/loading.json'
 import Modal from '../../Modal'
 
 type IProps = {
@@ -13,7 +12,7 @@ type IProps = {
 }
 
 export default function Loading({ width = 400, height = 400 }: IProps) {
-  const animationData = loadingData
+  const [animationData, setAnimationData] = useState(null)
   const lottieRef = useRef(null)
 
   useEffect(() => {
@@ -23,16 +22,28 @@ export default function Loading({ width = 400, height = 400 }: IProps) {
     }
   }, [])
 
+  useEffect(() => {
+    fetch('/platform/lottie/loading.json')
+      .then((res) => res.json())
+      .then((data) => {
+        setAnimationData(data)
+      })
+  }, [])
+
   return (
-    <Lottie
-      animationData={animationData}
-      renderer="svg"
-      autoplay={true}
-      loop={true}
-      assetsPath="/img/animation/"
-      style={{ width, height }}
-      lottieRef={lottieRef}
-    />
+    <>
+      {animationData && (
+        <Lottie
+          animationData={animationData}
+          renderer="svg"
+          autoplay={true}
+          loop={true}
+          assetsPath="/img/animation/"
+          style={{ width, height }}
+          lottieRef={lottieRef}
+        />
+      )}
+    </>
   )
 }
 
