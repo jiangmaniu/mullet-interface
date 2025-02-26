@@ -16,7 +16,8 @@ const Children = observer(
       // @ts-ignore
       window.ReactNativeWebView.postMessage(
         JSON.stringify({
-          type: 'success'
+          type: 'success',
+          status
         })
       )
     }

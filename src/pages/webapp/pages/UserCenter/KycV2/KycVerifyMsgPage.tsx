@@ -4,7 +4,7 @@ import Header from '@/pages/webapp/components/Base/Header'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
-import { onBack } from '@/utils/navigator'
+import { push } from '@/utils/navigator'
 import { useModel } from '@umijs/max'
 import { useRef, useState } from 'react'
 import VerifyMsg from './VerifyMsg'
@@ -63,7 +63,8 @@ export default function KycVerifyMsgPage() {
           onSuccess={async () => {
             // 刷新用户信息
             await user.fetchUserInfo()
-            onBack()
+            // onBack()
+            push('/app/user-center/verify-document')
           }}
         />
       </View>
