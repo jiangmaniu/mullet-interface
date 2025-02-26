@@ -20,7 +20,7 @@ export default function AreaList() {
 
     const info = list.find((item) => item.abbr === abbr)
 
-    const countryName = lng === 'zh-TW' ? info?.nameTw : info?.nameEn
+    const countryName = lng === 'zh-TW' ? info?.nameCn : info?.nameEn
 
     return countryName
   }

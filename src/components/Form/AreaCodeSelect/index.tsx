@@ -55,7 +55,7 @@ export default function AreaCodeSelect({
   const options = list
     ?.filter((item) => item.areaCode !== '0')
     ?.map((v: AreaCodeItem) => {
-      const areaNameZh = v.nameTw
+      const areaNameZh = v.nameCn
       const areaName = v.nameEn
       const label = lng === 'zh-TW' ? areaNameZh : areaName || areaNameZh
       return {
@@ -164,11 +164,11 @@ export default function AreaCodeSelect({
           renderSelectItem={({ items, selectedLabel }) => {
             // @ts-ignore
             const item = options?.find((v: AreaCodeItem) => {
-              const label = lng === 'zh-TW' ? v.nameTw : v.nameEn
+              const label = lng === 'zh-TW' ? v.nameCn : v.nameEn
               return label === selectedLabel
             }) as AreaCodeItem
 
-            const label = lng === 'zh-TW' ? item?.nameTw : item?.nameEn
+            const label = lng === 'zh-TW' ? item?.nameCn : item?.nameEn
             return <span className="text-main">{item.areaCode}</span>
           }}
           showSearch

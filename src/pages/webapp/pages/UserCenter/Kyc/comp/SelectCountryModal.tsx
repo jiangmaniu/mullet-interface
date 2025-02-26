@@ -32,9 +32,9 @@ const renderList = (listData: Common.AreaCodeItem[], onPress: (item: Common.Area
   return (
     <View style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
       {listData.map((item: Common.AreaCodeItem, index: number) => {
-        // const title = locale === 'zh-TW' ? item.nameTw : item.nameEn
+        // const title = locale === 'zh-TW' ? item.nameCn : item.nameEn
         // const isActive = current.id === item.id
-        const title = locale === 'zh-TW' ? `${item.nameTw} ${item.areaCode} ` : `${item.nameEn} ${item.areaCode}`
+        const title = locale === 'zh-TW' ? `${item.nameCn} ${item.areaCode} ` : `${item.nameEn} ${item.areaCode}`
 
         const isActive = current.id === item.id
         // @ts-ignore
@@ -93,7 +93,7 @@ const Children = observer(
 
       return (
         list?.filter((item) => {
-          const title = locale === 'zh-TW' ? item.nameTw : item.nameEn
+          const title = locale === 'zh-TW' ? item.nameCn : item.nameEn
           return title.toLowerCase().includes(searchValue.toLowerCase()) || item.areaCode.toLowerCase().includes(searchValue.toLowerCase())
         }) ?? []
       )
@@ -189,7 +189,7 @@ function SelectCountryModal({ isSimulate, onPress, isRemainAtCurrentPage, title 
                     setSearchValue(text)
                     // title or value
                     // const filteredList = list.filter((item) => {
-                    //   const title = locale === 'zh-TW' ? item.nameTw : item.nameEn
+                    //   const title = locale === 'zh-TW' ? item.nameCn : item.nameEn
                     //   return title.toLowerCase().includes(text.toLowerCase()) || item.areaCode.toLowerCase().includes(text.toLowerCase())
                     // })
                     // setFilteredList(filteredList)
