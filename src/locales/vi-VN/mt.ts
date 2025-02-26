@@ -794,5 +794,6 @@ export default {
   'mt.yicunzaiweiwanchengdingdan': 'Đơn hàng đã tồn tại, vui lòng hoàn thành đơn hàng trước',
   'mt.ninyiwanchengchujirenzheng':
     'Bạn đã hoàn thành xác minh cơ bản, có thể chọn nạp tiền hoặc tiếp tục xác minh nâng cao (mở quyền rút tiền)',
-  'mt.renzhengxingming': 'Tên xác minh'
+  'mt.renzhengxingming': 'Tên xác minh',
+  'mt.chukanshili': 'Xem ví dụ'
 }

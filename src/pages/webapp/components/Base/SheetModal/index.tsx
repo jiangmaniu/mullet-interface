@@ -77,6 +77,8 @@ type IProps = Partial<Props> & {
   autoHeight?: boolean
 
   emotionClassName?: any
+
+  header?: React.ReactNode
 }
 
 const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
@@ -108,6 +110,7 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
     closeOnConfirm = true,
     showLoading = false,
     emotionClassName: _className = {},
+    header,
     ...res
   } = props
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -302,7 +305,9 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
         }}
         defaultSnap={({ lastSnap, snapPoints }) => lastSnap ?? Math.max(...snapPoints)}
         footer={!loading && renderFooter()}
-        header={<>{title && <div className={cn('leading-7 text-center font-pf-bold text-lg text-primary')}>{title}</div>}</>}
+        header={
+          <>{header ? header : title && <div className={cn('leading-7 text-center font-pf-bold text-lg text-primary')}>{title}</div>}</>
+        }
         scrollLocking
         expandOnContentDrag={dragOnContent}
         className={className}

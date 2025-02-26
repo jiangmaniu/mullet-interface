@@ -1,6 +1,6 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useLocation, useModel } from '@umijs/max'
-import { useNetwork } from 'ahooks'
+import { FormattedMessage, getIntl, useLocation, useModel } from '@umijs/max'
+import { useNetwork, useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
@@ -26,6 +26,8 @@ import DepthPrice from './comp/Widget/DepthPrice'
 import Liquidation from './comp/Widget/Liquidation'
 
 export default observer(() => {
+  useTitle(getIntl().formatMessage({ id: 'menu.trade' }))
+
   const sidebarRef = useRef()
   const buyAndSellRef = useRef<any>(null)
   const { ws, trade, kline } = useStores()

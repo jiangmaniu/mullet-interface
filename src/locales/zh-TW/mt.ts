@@ -805,5 +805,6 @@ export default {
   'mt.nintijiaodeziliaobuquanqieyoucuowu': '您提交的資料不完整或存在錯誤，請檢查後重新提交',
   'mt.yicunzaiweiwanchengdingdan': '已存在未完成的訂單，請先完成訂單',
   'mt.ninyiwanchengchujirenzheng': '您已完成初級認證，可以選擇入金或者繼續高級認證（開通出金權限）',
-  'mt.renzhengxingming': '認證姓名'
+  'mt.renzhengxingming': '認證姓名',
+  'mt.chukanshili': '查看示例'
 }

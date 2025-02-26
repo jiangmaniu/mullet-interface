@@ -3,7 +3,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 
 import Modal from '@/components/Admin/Modal'
 import { message } from '@/utils/message'
-import { GetProp, UploadProps } from 'antd'
+import { GetProp, Image, UploadProps } from 'antd'
 
 import Button from '@/components/Base/Button'
 import { submitDepositCertificate } from '@/services/api/wallet'
@@ -50,13 +50,23 @@ function UploadModal(props: IProps, ref: any) {
     })
   }
 
+  const [visible, setVisible] = useState(false)
+
   return (
     <Modal
       width={500}
       afterOpenChange={(open) => {
         // props.handleReset()
       }}
-      title={<FormattedMessage id="mt.shangchuanpinzheng" />}
+      title={
+        <span className="">
+          <FormattedMessage id="mt.shangchuanpinzheng" />
+
+          <span className="text-red-500 text-sm font-normal underline cursor-pointer ml-4" onClick={() => setVisible(true)}>
+            <FormattedMessage id="mt.chukanshili" />
+          </span>
+        </span>
+      }
       footer={null}
       ref={modalRef}
     >
@@ -64,11 +74,20 @@ function UploadModal(props: IProps, ref: any) {
       <Button size="large" type="primary" className="mt-5 w-full" onClick={handleSubmit}>
         <FormattedMessage id="common.tijiao" />
       </Button>
-      {/* <Children>
-        <div className='flex items-center justify-center'>
 
-        </div>
-      </Children> */}
+      <Image.PreviewGroup
+        preview={{
+          visible,
+          scaleStep: 1,
+          onVisibleChange: (value) => {
+            setVisible(value)
+          }
+        }}
+      >
+        <Image width={200} style={{ display: 'none' }} src={'/img/shili-01.jpeg'} />
+        <Image width={200} style={{ display: 'none' }} src={'/img/shili-02.png'} />
+        <Image width={200} style={{ display: 'none' }} src={'/img/shili-03.jpeg'} />
+      </Image.PreviewGroup>
     </Modal>
   )
 }

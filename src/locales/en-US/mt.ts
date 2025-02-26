@@ -801,5 +801,6 @@ export default {
   'mt.yicunzaiweiwanchengdingdan': 'There is an existing incomplete order, please complete the order first',
   'mt.ninyiwanchengchujirenzheng':
     'You have completed the basic verification, you can choose to deposit or continue to advanced verification (open withdrawal permission)',
-  'mt.renzhengxingming': 'Verification Name'
+  'mt.renzhengxingming': 'Verification Name',
+  'mt.chukanshili': 'View Example'
 }

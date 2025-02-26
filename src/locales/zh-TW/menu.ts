@@ -15,5 +15,6 @@ export default {
   'menu.depositOtcWait': '入金等待',
   'menu.depositOtcProcess': '入金流程',
   'menu.depositOtcPreview': '入金預覽',
-  'menu.recordPayment': '出入金記錄'
+  'menu.recordPayment': '出入金記錄',
+  'menu.trade': '交易'
 }
