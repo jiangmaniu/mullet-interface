@@ -27,12 +27,16 @@ export class GlobalStore {
             this.countDownVerifyCode(down)
           }, 1000)
           return () => {
+            if (this.verifyCodeDownTimer) {
+              clearTimeout(this.verifyCodeDownTimer as NodeJS.Timeout)
+              this.verifyCodeDownTimer = null
+            }
+          }
+        } else {
+          if (this.verifyCodeDownTimer) {
             clearTimeout(this.verifyCodeDownTimer as NodeJS.Timeout)
             this.verifyCodeDownTimer = null
           }
-        } else {
-          clearTimeout(this.verifyCodeDownTimer as NodeJS.Timeout)
-          this.verifyCodeDownTimer = null
         }
       }
     )
