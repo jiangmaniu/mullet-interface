@@ -9,6 +9,7 @@ import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useTheme } from '@/context/themeProvider'
 import { getDepositOrderDetail } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
+import { withdrawExchangeRate } from '@/utils/deposit'
 import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
@@ -148,7 +149,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
           </span>
           &nbsp;
           <span className="text-primary">
-            {`1 ${paymentInfo?.baseCurrency} ≈ ${formatNum(paymentInfo?.exchangeRate, {
+            {`1 ${paymentInfo?.baseCurrency} ≈ ${formatNum(withdrawExchangeRate(methodInfo), {
               precision: DEFAULT_CURRENCY_DECIMAL
             })} ${paymentInfo?.channelSettlementCurrency}`}
           </span>

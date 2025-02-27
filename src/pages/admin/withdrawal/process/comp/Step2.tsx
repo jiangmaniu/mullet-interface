@@ -220,7 +220,7 @@ export const Step2 = ({
             <ProFormText name="exchangeRate" hidden />
             <ProFormText name="methodId" hidden />
 
-            <ProFormText name="formAccountId" hidden />
+            <ProFormText name="fromAccountId" hidden />
             <ProFormText name="bankCard" hidden />
             <ProFormText name="bankName" hidden />
             <ProFormText name="toAccountId" hidden />
