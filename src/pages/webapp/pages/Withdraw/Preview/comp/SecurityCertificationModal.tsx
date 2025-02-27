@@ -1,6 +1,7 @@
-import CodeInput from '@/components/Base/CodeInput'
+// import CodeInput from '@/components/Base/CodeInput'
 import { stores } from '@/context/mobxProvider'
 import Button from '@/pages/webapp/components/Base/Button'
+import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
 import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { sendCustomPhoneCode } from '@/services/api/user'
