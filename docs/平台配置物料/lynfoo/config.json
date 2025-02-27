@@ -12,5 +12,6 @@
   "SHOW_QUOTE_CATEGORY_ALL_TAB": false,
   "HIDE_ACCOUNT_TRANSFER": true,
   "HIDE_CREATE_ACCOUNT": true,
+  "HIDE_ACCOUNT_RENAME": true,
   "salesmartlyJSUrl": "https://plugin-code.salesmartly.com/js/project_247867_254558_1739880055.js"
 }

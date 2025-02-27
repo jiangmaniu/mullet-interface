@@ -272,66 +272,69 @@ function Account() {
                     <FormattedMessage id="common.jiaoyi" />
                   </span>
                 </Button>
-                <Dropdown
-                  menu={{
-                    onClick: (event: MenuInfo) => {
-                      const { key } = event
-                      console.log('key', key)
-                      if (key === 'transfer' && isKycAuth) {
-                        push(`/account/transfer?from=${item.id}`)
-                      } else if (key === 'rename') {
-                        setModalInfo(item)
-                        modalRef.current.setOpen(true)
-                      }
-                    },
-                    items: [
-                      // @ts-ignore
-                      !isSimulate &&
-                        !ENV.HIDE_ACCOUNT_TRANSFER && {
-                          key: 'transfer',
+                {!ENV.HIDE_ACCOUNT_RENAME && !ENV.HIDE_ACCOUNT_TRANSFER && (
+                  <Dropdown
+                    menu={{
+                      onClick: (event: MenuInfo) => {
+                        const { key } = event
+                        console.log('key', key)
+                        if (key === 'transfer' && isKycAuth) {
+                          push(`/account/transfer?from=${item.id}`)
+                        } else if (key === 'rename') {
+                          setModalInfo(item)
+                          modalRef.current.setOpen(true)
+                        }
+                      },
+                      items: [
+                        // @ts-ignore
+                        !isSimulate &&
+                          !ENV.HIDE_ACCOUNT_TRANSFER && {
+                            key: 'transfer',
+                            label: (
+                              <Modal
+                                trigger={
+                                  <span className="text-sm text-secondary hover:text-primary">
+                                    <FormattedMessage id="common.zhuanzhang" />
+                                  </span>
+                                }
+                                title={<FormattedMessage id="common.wenxintishi" />}
+                                width={380}
+                                okText={<FormattedMessage id="mt.qurenzheng" />}
+                                onFinish={() => {
+                                  push('/setting/kyc')
+                                }}
+                              >
+                                <div className="text-base text-primary">
+                                  <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
+                                </div>
+                              </Modal>
+                            )
+                          },
+                        // @ts-ignore
+                        !ENV.HIDE_ACCOUNT_RENAME && {
+                          key: 'rename',
                           label: (
-                            <Modal
-                              trigger={
-                                <span className="text-sm text-secondary hover:text-primary">
-                                  <FormattedMessage id="common.zhuanzhang" />
-                                </span>
-                              }
-                              title={<FormattedMessage id="common.wenxintishi" />}
-                              width={380}
-                              okText={<FormattedMessage id="mt.qurenzheng" />}
-                              onFinish={() => {
-                                push('/setting/kyc')
-                              }}
-                            >
-                              <div className="text-base text-primary">
-                                <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
-                              </div>
-                            </Modal>
+                            <span className="text-sm text-secondary hover:text-primary">
+                              <FormattedMessage id="mt.zhanghuchongmingming" />
+                            </span>
                           )
-                        },
-                      {
-                        key: 'rename',
-                        label: (
-                          <span className="text-sm text-secondary hover:text-primary">
-                            <FormattedMessage id="mt.zhanghuchongmingming" />
-                          </span>
-                        )
-                      }
-                      // {
-                      //   key: 'editPwd',
-                      //   label: (
-                      //     <span className="text-sm text-secondary hover:text-primary">
-                      //       <FormattedMessage id="mt.genggaijiaoyimima" />
-                      //     </span>
-                      //   )
-                      // }
-                    ]
-                  }}
-                >
-                  <div className="hover:bg-gray-50 flex items-center justify-center p-3 rounded-full w-[46px] h-[46px] cursor-pointer">
-                    <img src="/img/dian.png" width={4} height={22} />
-                  </div>
-                </Dropdown>
+                        }
+                        // {
+                        //   key: 'editPwd',
+                        //   label: (
+                        //     <span className="text-sm text-secondary hover:text-primary">
+                        //       <FormattedMessage id="mt.genggaijiaoyimima" />
+                        //     </span>
+                        //   )
+                        // }
+                      ]
+                    }}
+                  >
+                    <div className="hover:bg-gray-50 flex items-center justify-center p-3 rounded-full w-[46px] h-[46px] cursor-pointer">
+                      <img src="/img/dian.png" width={4} height={22} />
+                    </div>
+                  </Dropdown>
+                )}
               </div>
             </div>
           )
