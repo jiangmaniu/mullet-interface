@@ -273,7 +273,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
               onChange={(val) => {
                 setValue('email', val?.trim())
                 setEmail?.(val?.trim())
-                trigger('email')
+
+                if (errors.email) {
+                  trigger('email')
+                }
               }}
               label={t('pages.login.Email placeholder')}
               // RightLabel={() => RightLabel}
@@ -290,7 +293,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
               onChange={(val) => {
                 setValue('phone', val?.trim())
                 setPhone?.(val?.trim())
-                trigger('phone')
+
+                if (errors.phone) {
+                  trigger('phone')
+                }
               }}
               label={t('pages.userCenter.shoujihaoma')}
               placeholder={t('pages.userCenter.qingshurushoujihaoma')}
@@ -320,6 +326,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             onChange={(val) => {
               setValue('password', val?.trim())
               // trigger('password')
+              if (errors.password) {
+                trigger('password')
+              }
             }}
             label={t('pages.login.Password')}
             placeholder={t('pages.login.Password placeholder')}

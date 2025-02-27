@@ -338,7 +338,7 @@ const Detail = ({
           </div>
           <div>
             <span className="text-primary text-sm font-semibold">
-              <FormattedMessage id="mt.chujinxuzhi" />
+              <FormattedMessage id="mt.rujinxuzhi" />
             </span>
             <Notice methodId={String(paymentInfo?.id)} />
           </div>

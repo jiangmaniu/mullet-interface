@@ -15,9 +15,11 @@ type IProps = {
   /** 按钮展示位置 弹窗、页面底部 */
   position?: 'modal' | 'footer'
   onShow?: () => void
+  /** 按钮高度 */
+  btnHeight?: number
 }
 
-function BuySellButton({ position = 'footer', onShow }: IProps) {
+function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) {
   const { cn } = useTheme()
   const { trade } = useStores()
   const { t } = useI18n()
@@ -53,7 +55,7 @@ function BuySellButton({ position = 'footer', onShow }: IProps) {
             }
           }, 50)
         }}
-        height={32}
+        height={btnHeight}
         isDebounce={false}
         className={cn('rounded-[6px]', isShowModal && buySell === 'BUY' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'BUY' && '!text-weak')}
@@ -81,7 +83,7 @@ function BuySellButton({ position = 'footer', onShow }: IProps) {
             }
           }, 50)
         }}
-        height={32}
+        height={btnHeight}
         isDebounce={false}
         className={cn('rounded-[6px]', isShowModal && buySell === 'SELL' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'SELL' && '!text-weak')}

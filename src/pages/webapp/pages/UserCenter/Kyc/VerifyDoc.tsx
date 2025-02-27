@@ -49,7 +49,7 @@ export default function VerifyDoc() {
       lastName,
       identificationCode,
       identificationType,
-      authImgsUrl: file.name
+      authImgsUrl: file?.name
     })
       .then(async (res) => {
         if (res.success) {
@@ -89,7 +89,7 @@ export default function VerifyDoc() {
 
   const onChange = (val: any) => {
     setFile(val)
-    val.name && setValue('name', val.name)
+    val?.name && setValue('name', val.name)
   }
 
   return (
@@ -121,7 +121,7 @@ export default function VerifyDoc() {
         <Text className={cn('text-xs text-weak')}>{i18n.t('pages.userCenter.shagnchuanzhaopianbixuqingxi')}</Text>
         <View className={cn('flex flex-col mt-8 gap-[11px]')}>
           <Text className={cn('text-sm font-medium text-primary')}>{i18n.t('pages.userCenter.shagnchuanzhengjian')}</Text>
-          {file.link ? (
+          {file?.link ? (
             <View
               onPress={async () => {
                 uploadSheetModalRef.current?.show()

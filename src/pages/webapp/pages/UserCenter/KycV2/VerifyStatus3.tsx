@@ -28,13 +28,13 @@ const VerifyStatus3 = () => {
       <View className={cn('mt-[80px] px-2 flex-1')}>
         <View className="flex-1 flex flex-col gap-[35px] items-center">
           <img src={'/img/webapp/kyc-shenheshibai.png'} alt="kyc_status3" style={{ width: '176px', height: '176px' }} />
-          <View className="flex flex-col gap-2.5 items-center">
+          <View className="flex flex-col gap-2.5 items-center max-w-full ">
             <Text size="lg" weight="bold">
               {t('mt.shenheshibai')}
             </Text>
-            <Text size="sm" color="secondary">
+            <View className="max-w-full text-center text-secondary text-sm break-all whitespace-pre-wrap">
               {remark ? remark : t('mt.nintijiaodeziliaobuquanqieyoucuowu')}
-            </Text>
+            </View>
           </View>
         </View>
 

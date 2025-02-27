@@ -55,7 +55,7 @@ const Content = observer(({ close }: { close: () => void }) => {
             </View>
           </View>
           <View className={cn('flex-row mx-3 border mb-2 p-[5px] rounded-[9px]')} borderColor="weak">
-            <BuySellButton position="modal" />
+            <BuySellButton position="modal" btnHeight={32} />
           </View>
         </View>
         <View className={cn('flex-1 overflow-y-auto')}>
