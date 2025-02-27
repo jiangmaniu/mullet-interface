@@ -1,12 +1,18 @@
 import { MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { isInStandaloneMode } from '@/utils/device'
+import mitt from '@/utils/mitt'
+import { getPathname } from '@/utils/navigator'
 import { STORAGE_GET_DEVICE_TYPE, STORAGE_GET_TOKEN, STORAGE_SET_DEVICE_TYPE } from '@/utils/storage'
 import { useBreakpoint } from '@ant-design/pro-components'
+import qs from 'qs'
 import { useEffect } from 'react'
 
 export const useDeviceChange = () => {
   const breakPoint = useBreakpoint() || ''
+  const pathname = location.pathname
+  const purePath = getPathname(pathname)
+  const searchParams = qs.parse(location.search, { ignoreQueryPrefix: true })
 
   const exposed = {
     isPwaApp: isInStandaloneMode(),
@@ -22,20 +28,32 @@ export const useDeviceChange = () => {
     STORAGE_SET_DEVICE_TYPE(type)
   }
 
-  const jumpUrl = exposed.isPc ? WEB_HOME_PAGE : MOBILE_HOME_PAGE
+  const jumpUrl = exposed.isPc ? WEB_HOME_PAGE : purePath || MOBILE_HOME_PAGE
   const loginUrl = exposed.isPc ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
 
   const getHomePage = async () => {
-    const token = await STORAGE_GET_TOKEN()
+    let token = await STORAGE_GET_TOKEN()
+    if (!token) {
+      // 处理RN端设置token异步问题
+      return new Promise((resolve) => {
+        mitt.on('tokenChange', (token) => {
+          resolve(token ? jumpUrl : loginUrl)
+        })
+      })
+    }
+
     return token ? jumpUrl : loginUrl
   }
 
   // 设备切换
   const changeDeviceType = async (currentDeviceType: 'PC' | 'MOBILE') => {
-    const page = await getHomePage()
+    const page = (await getHomePage()) as string
     setDeviceType(currentDeviceType)
 
-    navigateTo(page)
+    console.log('page', page)
+    console.log('searchParams', searchParams)
+
+    navigateTo(page, searchParams)
   }
 
   /** 检查设备类型，如果设备类型发生变化，则跳转到对应的页面 */

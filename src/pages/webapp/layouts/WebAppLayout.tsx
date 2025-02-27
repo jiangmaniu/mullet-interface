@@ -9,6 +9,7 @@ import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
 import { isMainTabbar } from '@/pages/webapp/utils/navigator'
 import { checkPageShowTime } from '@/utils/business'
 import { message } from '@/utils/message'
+import mitt from '@/utils/mitt'
 import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useNetwork } from 'ahooks'
 import { lazy, useEffect, useMemo } from 'react'
@@ -108,6 +109,9 @@ function WebAppLayout() {
     if (token && user_id) {
       STORAGE_SET_TOKEN(token)
       STORAGE_SET_USER_INFO({ user_id })
+
+      // RN端设置token成功，触发一个事件
+      mitt.emit('tokenChange', token)
 
       setTimeout(() => {
         // 获取用户信息
