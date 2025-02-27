@@ -90,23 +90,30 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     loadingRef.current?.show()
 
     try {
-      let result: API.Response<any> | undefined
-      if (inputType === 'EMAIL') {
-        result = await sendCustomEmailCode({
-          email: values.email
-        })
-      } else if (inputType === 'PHONE') {
-        result = await sendCustomPhoneCode({
-          phone: values.phone,
-          phoneAreaCode: values.areaCode
-        })
-      }
-
-      if (result?.success) {
+      if (stores.global.verifyCodeDown > 0) {
         setPhone?.(values.phone || '')
         setAreaCode?.(values.areaCode || '')
         setEmail?.(values.email || '')
         setSection('forgotVerify')
+      } else {
+        let result: API.Response<any> | undefined
+        if (inputType === 'EMAIL') {
+          result = await sendCustomEmailCode({
+            email: values.email
+          })
+        } else if (inputType === 'PHONE') {
+          result = await sendCustomPhoneCode({
+            phone: values.phone,
+            phoneAreaCode: values.areaCode
+          })
+        }
+
+        if (result?.success) {
+          setPhone?.(values.phone || '')
+          setAreaCode?.(values.areaCode || '')
+          setEmail?.(values.email || '')
+          setSection('forgotVerify')
+        }
       }
     } catch (error: any) {
     } finally {
@@ -197,6 +204,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             <TextField
               value={phone}
               onChange={(val) => {
+                stores.global.verifyCodeDown = -1
                 setValue('phone', val?.trim())
                 setPhone?.(val?.trim())
                 trigger('phone')
