@@ -6,7 +6,6 @@ import { stores } from '@/context/mobxProvider'
 
 import { useTheme } from '@/context/themeProvider'
 import { getWithdrawalOrderDetail } from '@/services/api/wallet'
-import { formatNum } from '@/utils'
 import { colorToRGBA } from '@/utils/color'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
@@ -68,10 +67,10 @@ const WithdrawalWait = forwardRef(({ onSuccess, onDisabledChange }: WebviewCompo
     <div className="bg-secondary">
       <div className="bg-white w-full flex-1 flex flex-col items-center rounded-t-3xl px-[14px] text-center">
         <img src={`/img/chujin-usd.png`} className="w-[168px] h-[168px] mx-auto mt-[64px]" />
-        <div className=" text-[42px] leading-[46px] text-primary font-dingpro-medium mt-1">
+        {/* <div className=" text-[42px] leading-[46px] text-primary font-dingpro-medium mt-1">
           {formatNum(paymentInfo?.baseOrderAmount || 1000)}
           &nbsp; {paymentInfo?.currency || 'USD'}
-        </div>
+        </div> */}
         <div className=" text-sm font-normal mt-1">{intl.formatMessage({ id: 'mt.chujindengdai' })}</div>
         <div className=" text-[22px] leading-[32px] text-primary  mt-4">
           {intl.formatMessage({ id: 'mt.nindejiaoyizhengzaichulizhong2' })}
