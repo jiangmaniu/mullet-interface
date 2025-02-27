@@ -159,7 +159,7 @@ function WithdrawalProcess() {
       pageBgColorMode={step === 0 ? 'white' : 'gray'}
       fluidWidth
       backUrl="/withdrawal"
-      backTitle={<FormattedMessage id="mt.quanbushoukuanfangshi" />}
+      backTitle={<FormattedMessage id="mt.quanbuchujinfangshi" />}
     >
       {step === 0 && (
         <div className="text-primary font-bold text-[24px] mb-9">
@@ -171,7 +171,10 @@ function WithdrawalProcess() {
           <PageLoading />
         </div>
       )}
-      <div className={cn(step === 0 ? 'block' : 'hidden')}>
+      {/* <div className={cn(step === 0 ? 'block' : 'hidden')}>
+   
+      </div> */}
+      {step === 0 && (
         <Step1
           form={form}
           loading={loading}
@@ -180,7 +183,7 @@ function WithdrawalProcess() {
           handleSubmit={handleSubmit0}
           methodInfo={methodInfo}
         />
-      </div>
+      )}
       <div className="flex flex-col gap-21">
         {step === 1 && (
           <Step2

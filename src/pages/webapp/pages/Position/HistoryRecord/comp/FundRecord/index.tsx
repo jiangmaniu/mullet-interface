@@ -4,8 +4,9 @@ import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import Empty from '@/pages/webapp/components/Base/List/Empty'
+import End from '@/pages/webapp/components/Base/List/End'
+import GetMore from '@/pages/webapp/components/Base/List/GetMore'
 import { IlistItemProps } from '@/pages/webapp/components/Base/List/ListItem'
-import More from '@/pages/webapp/components/Base/List/More'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -213,7 +214,11 @@ function FundRecord() {
         </View>
         {datas.length > 0 ? (
           <View className={cn('pt-2')}>
-            <VirtualList itemKey="index" data={datas} extraRender={() => <View>{data.length < total ? <More /> : <></>}</View>}>
+            <VirtualList
+              itemKey="index"
+              data={datas}
+              extraRender={() => <View>{data.length < total ? <GetMore onClick={onEndReached} /> : <End />}</View>}
+            >
               {renderItem}
             </VirtualList>
           </View>

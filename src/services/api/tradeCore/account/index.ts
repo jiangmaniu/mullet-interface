@@ -110,3 +110,10 @@ export async function rechargeSimulate(body: Account.RechargeSimulateParams) {
     data: body
   })
 }
+
+// 获取浮动盈亏
+export async function getAccountProfit(params: { accountId: string }) {
+  return request<API.Response<any>>(`/api/trade-core/coreApi/account/count/accountProfit?${qs.stringify(params)}`, {
+    method: 'GET'
+  })
+}

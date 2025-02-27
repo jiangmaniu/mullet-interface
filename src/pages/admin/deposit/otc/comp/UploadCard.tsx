@@ -33,13 +33,13 @@ export default function ({ setImgs, imgs }: IProps) {
       'Blade-Auth': `${userInfo.token_type} ${userInfo.access_token}`
     },
     accept: 'image/png, image/jpeg, image/jpg',
-    beforeUpload: (file) => {
-      const isLt1MB = file.size / 1024 / 1024 <= 1
-      if (!isLt1MB) {
-        message.info(`${intl.formatMessage({ id: 'mt.kycUploadImgSizeTips' }, { size: 1 })}MB`)
-      }
-      return isLt1MB
-    },
+    // beforeUpload: (file) => {
+    //   const isLt1MB = file.size / 1024 / 1024 <= 1
+    //   if (!isLt1MB) {
+    //     message.info(`${intl.formatMessage({ id: 'mt.kycUploadImgSizeTips' }, { size: 1 })}MB`)
+    //   }
+    //   return isLt1MB
+    // },
     onChange(info) {
       console.log('info', info)
       const data = info?.file?.response?.data || {}
@@ -65,20 +65,20 @@ export default function ({ setImgs, imgs }: IProps) {
   return (
     <>
       <Dragger {...props}>
-        {url ? (
+        {/* {url ? (
           <div className="flex items-center justify-center">
             <img src={url} width={390} height={176} />
           </div>
-        ) : (
-          <div className="flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center bg-cover w-[390px] h-[176px]">
-              <img src="/img/upload-01.png" width={80} height={80} />
-              <span className="text-primary text-sm font-semibold">
-                <FormattedMessage id="mt.dianjishangchuantupian" />
-              </span>
-            </div>
+        ) : ( */}
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center bg-cover w-[390px] h-[176px]">
+            <img src="/img/upload-01.png" width={80} height={80} />
+            <span className="text-primary text-sm font-semibold">
+              <FormattedMessage id="mt.dianjishangchuantupian" />
+            </span>
           </div>
-        )}
+        </div>
+        {/* )} */}
       </Dragger>
       <div className="flex flex-row gap-[14px] mt-[15px]">
         {imgs.map((img, index) => (

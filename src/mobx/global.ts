@@ -23,11 +23,19 @@ export class GlobalStore {
       () => this.verifyCodeDown,
       (down) => {
         if (down >= 0) {
-          const time = setTimeout(() => {
+          this.verifyCodeDownTimer = setTimeout(() => {
             this.countDownVerifyCode(down)
           }, 1000)
           return () => {
-            clearTimeout(time)
+            if (this.verifyCodeDownTimer) {
+              clearTimeout(this.verifyCodeDownTimer as NodeJS.Timeout)
+              this.verifyCodeDownTimer = null
+            }
+          }
+        } else {
+          if (this.verifyCodeDownTimer) {
+            clearTimeout(this.verifyCodeDownTimer as NodeJS.Timeout)
+            this.verifyCodeDownTimer = null
           }
         }
       }
@@ -45,6 +53,7 @@ export class GlobalStore {
   @observable pageIsFocused = true // 页面是否处于激活状态，进入页面默认是true，离开页面变为false
   @observable sheetModalOpen = true // 记录SheetModal是否打开
   @observable verifyCodeDown = -1 // 验证码倒计时
+  @observable verifyCodeDownTimer = null as NodeJS.Timeout | null // 验证码倒计时定时器
   @observable env = {} as IPlatformConfig // 平台配置
 
   @observable lottieLoadingData = {} as any
@@ -88,7 +97,8 @@ export class GlobalStore {
     })
   }
 
-  @action countDownVerifyCode = async (down: number) => {
+  @action
+  countDownVerifyCode = async (down: number) => {
     this.verifyCodeDown = down - 1
   }
 

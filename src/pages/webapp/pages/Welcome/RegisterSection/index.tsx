@@ -12,6 +12,7 @@ import Icon from '@/components/Base/Iconfont'
 import { STORAGE_GET_ACCOUNT_PASSWORD, STORAGE_SET_ACCOUNT_PASSWORD } from '@/utils/storage'
 import type { TypeSection, WELCOME_STEP_TYPES } from '..'
 
+import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH, DEFAULT_AREA_CODE } from '@/constants'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
@@ -100,24 +101,32 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     loadingRef.current?.show()
 
     try {
-      let result: API.Response<any> | undefined
-      if (registerWay === 'EMAIL') {
-        result = await sendCustomEmailCode({
-          email: values.email
-        })
-      } else if (registerWay === 'PHONE') {
-        result = await sendCustomPhoneCode({
-          phone: values.phone,
-          phoneAreaCode: values.areaCode
-        })
-      }
-
-      if (result?.success) {
+      if (stores.global.verifyCodeDown > 0) {
         setPhone?.(values.phone || '')
         setAreaCode?.(values.areaCode || '')
         setEmail?.(values.email || '')
         setPassword(values.password || '')
         setSection('verify')
+      } else {
+        let result: API.Response<any> | undefined
+        if (registerWay === 'EMAIL') {
+          result = await sendCustomEmailCode({
+            email: values.email
+          })
+        } else if (registerWay === 'PHONE') {
+          result = await sendCustomPhoneCode({
+            phone: values.phone,
+            phoneAreaCode: values.areaCode
+          })
+        }
+
+        if (result?.success) {
+          setPhone?.(values.phone || '')
+          setAreaCode?.(values.areaCode || '')
+          setEmail?.(values.email || '')
+          setPassword(values.password || '')
+          setSection('verify')
+        }
       }
     } catch (error: any) {
     } finally {
@@ -228,7 +237,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           }}
         >
           <TextField
-            value={areaCodeItem ? `(+${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
+            value={areaCodeItem ? `${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
             label={t('pages.login.Residence Country')}
             height={50}
             readOnly
@@ -252,6 +261,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           <TextField
             value={email}
             onChange={(val) => {
+              stores.global.verifyCodeDown = -1
               setValue('email', val?.trim())
               trigger('email')
             }}
@@ -270,6 +280,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           <TextField
             value={phone}
             onChange={(val) => {
+              stores.global.verifyCodeDown = -1
               setValue('phone', val?.trim())
               setPhone?.(val?.trim())
               trigger('phone')
@@ -278,6 +289,14 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             placeholder={t('pages.login.Phone placeholder')}
             height={50}
             autoCapitalize="none"
+            LeftAccessory={() => (
+              <View className={cn('pl-[15px]')} onPress={() => selectCountryModalRef.current?.show()}>
+                <View className={cn('flex flex-row items-center gap-1')}>
+                  <Text>{areaCode ? `+${areaCode}` : t('components.select.PlacehodlerSim')}</Text>
+                  <Iconfont name="qiehuanzhanghu-xiala" size={24} />
+                </View>
+              </View>
+            )}
           />
         )}
         {errors.phone && <Text color="red">{errors.phone.message}</Text>}

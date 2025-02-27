@@ -32,9 +32,7 @@ export const depositExchangeRate = (methodInfo?: Wallet.fundsMethodPageListItem)
   const { exchangeRate, userExchangeDifferencePercentage } = methodInfo || {}
 
   // 匯率： 平台匯率 + 匯差百分比
-  const _exchangeRate = (exchangeRate || 1.0) * (1 + (userExchangeDifferencePercentage || 0) * 0.01)
-
-  return _exchangeRate
+  return (exchangeRate || 1.0) * (1 + (userExchangeDifferencePercentage || 0) * 0.01)
 }
 
 // 入金：實際到賬汇率换算
@@ -53,17 +51,23 @@ export const depositTransferCurr = (value: number, methodInfo?: Wallet.fundsMeth
   return formatNum(val, { precision: DEFAULT_CURRENCY_DECIMAL })
 }
 
+// 出金汇差
+export const withdrawExchangeRate = (methodInfo?: Wallet.fundsMethodPageListItem) => {
+  if (!methodInfo) return 0
+
+  const { exchangeRate, userExchangeDifferencePercentage } = methodInfo || {}
+
+  return (exchangeRate || 1.0) * (1 - (userExchangeDifferencePercentage || 0) * 0.01)
+}
+
 // 出金：實際到賬汇率换算
 export const withdrawCountTransferCurr = (value: number, methodInfo?: Wallet.fundsMethodPageListItem) => {
   if (!methodInfo) return 0
 
-  const { exchangeRate, userExchangeDifferencePercentage, userSingleLeastFee, userTradePercentageFee, userSingleFixedFee } =
-    methodInfo || {}
-
   let val = Number(value) || 0
 
   // 匯率： 平台匯率 + 匯差百分比
-  const _exchangeRate = (exchangeRate || 1.0) * (1 - (userExchangeDifferencePercentage || 0) * 0.01)
+  const _exchangeRate = withdrawExchangeRate(methodInfo)
 
   // 手續費：單筆最低手續費 或 入金金額 * 交易百分比手續費 + 單筆固定手續費
   const fee = countHandingFee(val, methodInfo)

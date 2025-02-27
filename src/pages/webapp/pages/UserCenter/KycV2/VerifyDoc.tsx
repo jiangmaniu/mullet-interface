@@ -12,13 +12,20 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const VerifyDoc = forwardRef(
-  ({ onSuccess, onDisabledChange }: { onSuccess: () => void; onDisabledChange: (disabled: boolean) => void }, ref: any) => {
+  (
+    {
+      onSuccess,
+      onDisabledChange,
+      file: defaultFile
+    }: { onSuccess: () => void; onDisabledChange: (disabled: boolean) => void; file?: any },
+    ref: any
+  ) => {
     const { cn, theme } = useTheme()
     const i18n = useI18n()
 
     const location = useLocation()
     // 获取 URL 中的查询参数（searchParams）
-    const [file, setFile] = useState<any>({})
+    const [file, setFile] = useState<any>(defaultFile)
 
     const uploadSheetModalRef = useRef<UploadSheetModalRef>(null)
     const [submitting, setSubmitting] = useState(false)
@@ -45,10 +52,6 @@ const VerifyDoc = forwardRef(
         })
     }
 
-    useImperativeHandle(ref, () => ({
-      onSubmit: handleSubmit(onSubmit)
-    }))
-
     /** 表单控制 */
     const schema = z.object({
       name: z.string().min(1, { message: i18n.t('pages.userCenter.qingshangchuanzhengjian') })
@@ -70,6 +73,14 @@ const VerifyDoc = forwardRef(
       setFile(val)
       val.name && setValue('name', val.name)
     }
+
+    useEffect(() => {
+      onChange(defaultFile)
+    }, [defaultFile])
+
+    useImperativeHandle(ref, () => ({
+      onSubmit: handleSubmit(onSubmit)
+    }))
 
     const { initialState } = useModel('@@initialState')
     const currentUser = initialState?.currentUser
@@ -104,7 +115,15 @@ const VerifyDoc = forwardRef(
             <View className="relative">
               <View
                 onPress={async () => {
-                  uploadSheetModalRef.current?.show()
+                  if (window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({
+                        type: 'takePhoto'
+                      })
+                    )
+                  } else {
+                    uploadSheetModalRef.current?.show()
+                  }
                 }}
                 className={cn('border border-dashed border-[#6A7073] rounded-lg overflow-hidden ')}
               >
@@ -123,7 +142,15 @@ const VerifyDoc = forwardRef(
           ) : (
             <View
               onPress={async () => {
-                uploadSheetModalRef.current?.show()
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(
+                    JSON.stringify({
+                      type: 'takePhoto'
+                    })
+                  )
+                } else {
+                  uploadSheetModalRef.current?.show()
+                }
               }}
               className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden h-[188px] px-[27px] py-[37px]')}
             >

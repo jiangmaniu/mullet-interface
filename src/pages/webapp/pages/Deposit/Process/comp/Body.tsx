@@ -8,7 +8,6 @@ import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, u
 import { stores, useStores } from '@/context/mobxProvider'
 import { generateDepositOrder, getDepositOrderDetail } from '@/services/api/wallet'
 
-import { useLoading } from '@/context/loadingProvider'
 import { useTheme } from '@/context/themeProvider'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { push } from '@/utils/navigator'
@@ -172,21 +171,6 @@ const DepositProcess = forwardRef(({ onDisabledChange }: WebviewComponentProps, 
 
   const { theme } = useTheme()
 
-  const { showLoading, hideLoading } = useLoading()
-  useEffect(() => {
-    if (methodInfo) {
-      showLoading()
-      getDepositOrderDetail({ channelId: methodInfo.id })
-        .then((res) => {
-          if (res.success && res.data?.id) {
-            push(`/app/deposit/otc/${res.data.id}`)
-          }
-        })
-        .finally(() => {
-          hideLoading()
-        })
-    }
-  }, [methodInfo])
   return (
     <BasicLayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary}>
       <div className="px-[14px]">

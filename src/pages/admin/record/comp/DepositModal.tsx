@@ -7,7 +7,6 @@ import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
 import { getEnv } from '@/env'
-import { push } from '@/utils/navigator'
 import { statusMap } from '..'
 
 type IProps = {
@@ -47,7 +46,7 @@ function DepositModal({ item }: IProps, ref: any) {
                 {/* @ts-ignore */}
                 {statusMap[item?.status]?.text}
               </div>
-
+              {/* 
               {item?.status === 'WAIT' && (
                 <div
                   className="text-sm font-normal underline text-yellow-700 italic mr-1"
@@ -57,7 +56,7 @@ function DepositModal({ item }: IProps, ref: any) {
                 >
                   <FormattedMessage id="mt.shangchuanpingzheng" />
                 </div>
-              )}
+              )} */}
             </div>
             <div className="text-xs text-secondary pt-1">
               <FormattedMessage id="mt.danhao" />:{item?.orderNo || '-'}

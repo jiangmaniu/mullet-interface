@@ -120,7 +120,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
               </span>
             </div>
             <div className="flex justify-between items-end flex-col flex-1 h-full">
-              {item?.status === 'WAIT' && (
+              {/* {item?.status === 'WAIT' && (
                 <div
                   className="text-xs font-normal underline text-yellow-700 italic mr-1"
                   onClick={() => {
@@ -129,7 +129,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
                 >
                   <FormattedMessage id="mt.shangchuanpingzheng" />
                 </div>
-              )}
+              )} */}
               <div className="flex flex-row gap-2.5">
                 <span className=" text-xs text-secondary">
                   <FormattedMessage id="mt.shouxufei" />

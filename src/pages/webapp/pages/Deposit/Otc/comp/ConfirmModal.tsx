@@ -24,6 +24,8 @@ function ConfirmModal(props: IProps, ref: any) {
       // }}
       title={<FormattedMessage id="mt.dingdanyichaoshi" />}
       footer={null}
+      closable={false}
+      maskClosable={false}
       ref={modalRef}
     >
       <Button

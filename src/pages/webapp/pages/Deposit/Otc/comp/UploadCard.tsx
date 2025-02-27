@@ -26,6 +26,7 @@ export default function ({ setImgs, imgs }: IProps) {
 
   // TODO: 上传图片 可能要适配 rn 端
   const props: UploadProps = {
+    disabled: imgs.length >= 3,
     name: 'file',
     multiple: false,
     showUploadList: false,
@@ -66,20 +67,20 @@ export default function ({ setImgs, imgs }: IProps) {
   return (
     <>
       <Dragger {...props}>
-        {url ? (
+        {/* {url ? (
           <div className="flex items-center justify-center flex-1">
             <img src={url} width={347} height={235} />
           </div>
-        ) : (
-          <div className="flex items-center justify-center">
-            <div className="flex flex-col items-center justify-center bg-cover w-[347px] h-[235px]">
-              <img src="/img/upload-01.png" width={72} height={72} />
-              <span className="text-primary text-sm font-semibold">
-                <FormattedMessage id="mt.dianjishangchuantupian" />
-              </span>
-            </div>
+        ) : ( */}
+        <div className="flex items-center justify-center">
+          <div className="flex flex-col items-center justify-center bg-cover  h-[235px]">
+            <img src="/img/upload-01.png" width={72} height={72} />
+            <span className="text-primary text-sm font-semibold">
+              <FormattedMessage id="mt.dianjishangchuantupian" />
+            </span>
           </div>
-        )}
+        </div>
+        {/* )} */}
       </Dragger>
       <div className="flex flex-row gap-[14px] mt-[15px]">
         {imgs.map((img, index) => (

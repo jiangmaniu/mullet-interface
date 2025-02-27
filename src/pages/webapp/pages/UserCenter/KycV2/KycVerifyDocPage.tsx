@@ -6,8 +6,8 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
-import { message } from '@/utils/message'
-import { onBack } from '@/utils/navigator'
+import { onBack, push } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { useRef, useState } from 'react'
@@ -49,7 +49,7 @@ export default function KycVerifyDocPage() {
             height={48}
             className={cn(' flex-1 w-full')}
             onClick={() => {
-              message.info('coming soon')
+              push(appendHideParamIfNeeded('/app/deposit'))
             }}
           >
             {i18n.t('pages.userCenter.qurujin')}

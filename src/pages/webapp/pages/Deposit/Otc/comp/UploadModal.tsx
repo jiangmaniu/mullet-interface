@@ -3,7 +3,8 @@ import Button from '@/pages/webapp/components/Base/Button'
 import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { submitDepositCertificate } from '@/services/api/wallet'
-import { push } from '@/utils/navigator'
+import { replace } from '@/utils/navigator'
+import { appendHideParamIfNeeded } from '@/utils/request'
 import { FormattedMessage, getIntl } from '@umijs/max'
 import { Image, message } from 'antd'
 import type { ForwardedRef } from 'react'
@@ -53,7 +54,7 @@ function UploadModal(props: IProps, ref: ForwardedRef<ModalRef>) {
       if (res.success) {
         message.info(getIntl().formatMessage({ id: 'common.submitSuccess' }))
         bottomSheetModalRef.current?.sheet?.dismiss()
-        push(`/app/deposit/wait/${props.id}`)
+        replace(appendHideParamIfNeeded(`/app/deposit/wait/${props.id}`))
       }
     })
   }

@@ -8,7 +8,7 @@ import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { FormattedMessage, getIntl } from '@umijs/max'
 import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
 import Body from './comp/Body'
 
@@ -33,6 +33,14 @@ function Deposit() {
     //   push(`/app/deposit/otc/${params?.id}?backUrl=/app/deposit/process/${params?.methodId}`)
     // }
   }
+
+  useEffect(() => {
+    window.ReactNativeWebView?.postMessage(
+      JSON.stringify({
+        type: 'closekefu'
+      })
+    )
+  }, [])
 
   return (
     <BasicLayout

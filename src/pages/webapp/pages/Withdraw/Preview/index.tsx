@@ -8,7 +8,7 @@ import { goKefu } from '@/utils/navigator'
 import { FormattedMessage, getIntl, useSearchParams } from '@umijs/max'
 import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
 import Body from './comp/Body'
 
@@ -30,6 +30,15 @@ function WithdrawPreview() {
   const [query] = useSearchParams()
 
   const backUrl = query.get('backUrl') as string
+
+  useEffect(() => {
+    window.ReactNativeWebView?.postMessage(
+      JSON.stringify({
+        type: 'kefu'
+      })
+    )
+  }, [])
+
   return (
     <BasicLayout
       bgColor="primary"

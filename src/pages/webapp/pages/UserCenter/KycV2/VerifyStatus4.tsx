@@ -22,6 +22,7 @@ export default function VerifyStatus4() {
   const currentUser = initialState?.currentUser
   const intl = useIntl()
 
+  const country = intl.locale === 'zh-TW' ? currentUser?.countryInfo?.nameTw : currentUser?.countryInfo?.nameEn
   return (
     <>
       <View className={cn('px-2 flex-1')}>
@@ -33,7 +34,7 @@ export default function VerifyStatus4() {
                 : `${currentUser?.firstName || 'firstName'} ${currentUser?.lastName || 'lastName'}`}
             </Text>
             <Text size="sm" color="secondary" className=" text-gray-500">
-              {t('pages.login.Residence Country')}: {currentUser?.country || 'country'}
+              {t('pages.login.Residence Country')}: {country || 'country'}
             </Text>
           </View>
           <View className="flex flex-col gap-2.5 items-start">

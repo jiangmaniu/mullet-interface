@@ -807,6 +807,8 @@ export default {
   'mt.ninyiwanchengchujirenzheng': '您已完成初級認證，可以選擇入金或者繼續高級認證（開通出金權限）',
   'mt.renzhengxingming': '認證姓名',
   'mt.chukanshili': '查看示例',
+  'mt.quanbuchujinfangshi': '全部出金方式',
+  'mt.jiazaigengduo': '加載更多',
   'mt.shezhixinxifubiaoti': '您的联系信息将用于账号管理、接收通知，请及时绑定以免错过重要通知。',
   'mt.anquanfubiaoti': '如您认为密码可能已经泄露，请及时更改密码。',
   'mt.bangdingyouxiangtishi': '绑定您的邮箱将用来接收通知信息。',

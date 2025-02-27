@@ -1,23 +1,29 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import Iconfont from '@/components/Base/Iconfont'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
+import { getAccountProfit } from '@/services/api/tradeCore/account'
 import { formatNum, toFixed } from '@/utils'
+import { observer } from 'mobx-react'
 
 type IProps = {
   form: FormInstance
 }
 
 /**转入表单项 */
-export default function TransferFormSelectItem({ form }: IProps) {
+function TransferFormSelectItem({ form }: IProps) {
   const [open, setOpen] = useState(false)
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')
+
+  // const { trade } = useStores()
+  // const { balance, availableMargin, totalProfit } = trade.getAccountBalance()
+  // TODO: 获取当前账户总浮动盈亏
 
   const currentUser = initialState?.currentUser
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
@@ -32,6 +38,20 @@ export default function TransferFormSelectItem({ form }: IProps) {
   const money = fromAccountInfo?.money || 0
   // 可用余额
   const availableMoney = Number(toFixed(money - occupyMargin))
+
+  const [totalProfit, setTotalProfit] = useState(0)
+  const m = useMemo(() => {
+    return Math.min(availableMoney, availableMoney + totalProfit)
+  }, [availableMoney, totalProfit])
+
+  useEffect(() => {
+    fromAccountInfo &&
+      getAccountProfit({ accountId: fromAccountInfo?.id }).then((res) => {
+        if (res.success) {
+          setTotalProfit(res.data)
+        }
+      })
+  }, [fromAccountInfo])
 
   return (
     <div>
@@ -52,7 +72,7 @@ export default function TransferFormSelectItem({ form }: IProps) {
               <SelectSuffixIcon opacity={0.5} />
               <div className="bg-gray-250 h-3 w-[1px] mr-3"></div>
               <div className="text-primary text-sm py-3 !font-dingpro-medium">
-                {formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} USD
+                {formatNum(m, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} USD
               </div>
             </>
           ),
@@ -114,3 +134,5 @@ export default function TransferFormSelectItem({ form }: IProps) {
     </div>
   )
 }
+
+export default observer(TransferFormSelectItem)
