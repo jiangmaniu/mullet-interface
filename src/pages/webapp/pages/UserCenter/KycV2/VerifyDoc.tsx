@@ -35,7 +35,7 @@ const VerifyDoc = forwardRef(
       // onSuccess()
       setSubmitting(true)
       submitSeniorAuth({
-        authImgsUrl: file.name
+        authImgsUrl: file?.name
       })
         .then(async (res) => {
           if (res.success) {
@@ -71,7 +71,7 @@ const VerifyDoc = forwardRef(
 
     const onChange = (val: any) => {
       setFile(val)
-      val.name && setValue('name', val.name)
+      val?.name && setValue('name', val.name)
     }
 
     useEffect(() => {
@@ -111,11 +111,11 @@ const VerifyDoc = forwardRef(
           <Text className={cn('text-sm font-medium text-primary mt-2.5')} weight="medium">
             {i18n.t('pages.userCenter.shagnchuanzhengjian')}
           </Text>
-          {file.link ? (
+          {file?.link ? (
             <View className="relative">
               <View
                 onPress={async () => {
-                  if (window.ReactNativeWebView) {
+                  if (window?.ReactNativeWebView) {
                     window.ReactNativeWebView.postMessage(
                       JSON.stringify({
                         type: 'takePhoto'
@@ -142,7 +142,7 @@ const VerifyDoc = forwardRef(
           ) : (
             <View
               onPress={async () => {
-                if (window.ReactNativeWebView) {
+                if (window?.ReactNativeWebView) {
                   window.ReactNativeWebView.postMessage(
                     JSON.stringify({
                       type: 'takePhoto'
