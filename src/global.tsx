@@ -93,3 +93,4 @@ if (pwa) {
 
 // 全局请求环境配置
 stores.global.getPlatformConfig()
+stores.global.getLottieLoadingData()

@@ -4,6 +4,8 @@ import { useIntl } from '@umijs/max'
 import Lottie from 'lottie-react'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
+import { useStores } from '@/context/mobxProvider'
+import { observer } from 'mobx-react'
 import Modal from '../../Modal'
 
 type IProps = {
@@ -11,23 +13,16 @@ type IProps = {
   height?: number
 }
 
-export default function Loading({ width = 400, height = 400 }: IProps) {
-  const [animationData, setAnimationData] = useState(null)
+function Loading({ width = 400, height = 400 }: IProps) {
   const lottieRef = useRef(null)
+  const { global } = useStores()
+  const animationData = global.lottieLoadingData
 
   useEffect(() => {
     if (lottieRef.current) {
       // @ts-ignore
       lottieRef.current?.setSpeed(1)
     }
-  }, [])
-
-  useEffect(() => {
-    fetch('/platform/lottie/loading.json')
-      .then((res) => res.json())
-      .then((data) => {
-        setAnimationData(data)
-      })
   }, [])
 
   return (
@@ -47,6 +42,8 @@ export default function Loading({ width = 400, height = 400 }: IProps) {
   )
 }
 
+export default observer(Loading)
+
 export type ModalLoadingRef = {
   show: (before?: () => void) => void
   close: (after?: () => void) => void
@@ -59,6 +56,7 @@ export const ModalLoading = forwardRef(
   ) => {
     const [isOpen, setIsOpen] = useState<any>(false)
     const intl = useIntl()
+    const [loadedEnd, setLoadedEnd] = useState(false)
 
     // 暴露给父组件的方法
     useImperativeHandle(ref, () => {
