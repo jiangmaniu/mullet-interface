@@ -59,7 +59,7 @@ const CountDown = observer(({ onSendCode, defaultSeconds }: { onSendCode: () => 
         </>
       ) : (
         <Text className={cn('text-start text-sm text-weak')}>
-          {t('pages.login.Please try again after seconds', { second: global.verifyCodeDown })}
+          {t('pages.login.Please try again after seconds', { second: Math.max(global.verifyCodeDown, 0) })}
         </Text>
       )}
     </View>
@@ -142,7 +142,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         // 等待两秒
         await new Promise((resolve) => setTimeout(resolve, 2000))
 
-        global.countDownVerifyCode(-1)
+        global.countDownVerifyCode(0)
         message.info(t('pages.login.Register success'))
         // setSection('login')
         // 自动登录跳转到账户列表选择页

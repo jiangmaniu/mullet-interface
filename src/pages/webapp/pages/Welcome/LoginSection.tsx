@@ -16,6 +16,7 @@ import {
 } from '@/utils/storage'
 import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 
+import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH, DEFAULT_AREA_CODE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
@@ -300,14 +301,14 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
               style={{
                 lineHeight: 18
               }}
-              // LeftAccessory={() => (
-              //   <View className={cn('pl-[15px]')} onPress={() => selectCountryModalRef.current?.show()}>
-              //     <View className={cn('flex flex-row items-center gap-1')}>
-              //       <Text>{areaCode ? `+${areaCode}` : t('components.select.PlacehodlerSim')}</Text>
-              //       <Iconfont name="qiehuanzhanghu-xiala" size={24} />
-              //     </View>
-              //   </View>
-              // )}
+              LeftAccessory={() => (
+                <View className={cn('pl-[15px]')} onPress={() => selectCountryModalRef.current?.show()}>
+                  <View className={cn('flex flex-row items-center gap-1')}>
+                    <Text>{areaCode ? `+${areaCode}` : t('components.select.PlacehodlerSim')}</Text>
+                    <Iconfont name="qiehuanzhanghu-xiala" size={24} />
+                  </View>
+                </View>
+              )}
             />
           )}
           {!!errors.phone && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.phone.message}</Text>}
