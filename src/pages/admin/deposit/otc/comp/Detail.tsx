@@ -24,7 +24,7 @@ import { observer } from 'mobx-react'
 dayjs.extend(duration)
 
 const Notice = observer(({ methodId }: { methodId: string }) => {
-  const methodInfo = stores.wallet.withdrawalMethods.find((item) => item.id === methodId)
+  const methodInfo = stores.wallet.depositMethods.find((item) => item.id === methodId)
   return (
     <div className="text-secondary text-xs w-[276px]">
       {methodInfo?.notice ? (
