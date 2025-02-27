@@ -3,7 +3,7 @@ import Header from '@/pages/webapp/components/Base/Header'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
-import { getIntl } from '@umijs/max'
+import { getIntl, useModel } from '@umijs/max'
 import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import { MethodList } from './comp/MethodList'
@@ -13,6 +13,13 @@ function Withdraw() {
   const i18n = useI18n()
 
   useTitle(getIntl().formatMessage({ id: 'menu.withdrawal' }))
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+
+  if (!currentUser?.id) {
+    return <></>
+  }
 
   return (
     <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>

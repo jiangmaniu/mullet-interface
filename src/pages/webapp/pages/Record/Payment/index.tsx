@@ -4,7 +4,7 @@ import Header from '@/pages/webapp/components/Base/Header'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
-import { getIntl, useIntl, useSearchParams } from '@umijs/max'
+import { getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { useTitle } from 'ahooks'
 import { Segmented } from 'antd'
 import { useEffect, useState } from 'react'
@@ -81,6 +81,13 @@ export default function PaymentRecord() {
   }, [type])
 
   useTitle(intl.formatMessage({ id: 'menu.recordPayment' }))
+
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+
+  if (!currentUser?.id) {
+    return <></>
+  }
 
   return (
     <Basiclayout
