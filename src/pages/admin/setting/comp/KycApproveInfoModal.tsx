@@ -1,4 +1,4 @@
-import { FormattedMessage, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 
 import Modal from '@/components/Admin/Modal'
@@ -11,6 +11,7 @@ type IProps = {
 
 function KycApproveInfoModal({ trigger }: IProps, ref: any) {
   const modalRef = useRef<any>()
+  const intl = useIntl()
   const { getCountryName } = useModel('areaList')
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
@@ -30,7 +31,9 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
         <div className="pl-3">
           {kycAuthInfo?.firstName && (
             <div className="text-base text-primary font-semibold">
-              {kycAuthInfo?.firstName}·{kycAuthInfo?.lastName}
+              {intl.locale === 'zh-TW'
+                ? `${currentUser?.lastName || 'lastName'}${currentUser?.firstName || 'firstName'}`
+                : `${currentUser?.firstName || 'firstName'} ${currentUser?.lastName || 'lastName'}`}
             </div>
           )}
           <div className="text-xs text-primary pt-2">
