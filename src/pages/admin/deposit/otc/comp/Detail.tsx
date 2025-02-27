@@ -16,7 +16,7 @@ import { cn } from '@/utils/cn'
 import { depositExchangeRate } from '@/utils/deposit'
 import { message } from '@/utils/message'
 import { goKefu, push } from '@/utils/navigator'
-import { Popconfirm } from 'antd'
+import { Image, Popconfirm } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { observer } from 'mobx-react'
@@ -206,6 +206,8 @@ const Detail = ({
     }
   }
 
+  const [forceUpdate, setForceUpdate] = useState(0)
+
   return (
     <div className="flex items-center flex-col justify-center w-full h-full">
       <CardContainer title={<FormattedMessage id="mt.dengdairujin" />} style={['w-[880px] ']} onChange={() => {}} defaultValue={undefined}>
@@ -235,7 +237,22 @@ const Detail = ({
                   <div className={cn('opacity-10 cursor-not-allowed', paymentInfo?.qrCode && 'opacity-100 cursor-pointer')}>
                     {/* <div ref={qrRef}> */}
                     <div className="w-[135px] h-[135px]">
-                      <img src={`${getEnv().imgDomain}${paymentInfo?.qrCode}`} alt="qrcode" style={{ width: '100%', height: '100%' }} />
+                      <Image
+                        key={forceUpdate}
+                        preview={{
+                          destroyOnClose: true,
+                          onVisibleChange: (visible) => {
+                            if (!visible) {
+                              // 解决点击预览图片后mask多次不销毁dom问题，避免mask挡住页面点不动
+                              setForceUpdate(forceUpdate + 1)
+                            }
+                          }
+                        }}
+                        width={'100%'}
+                        alt="qrcode"
+                        height={'100%'}
+                        src={`${getEnv().imgDomain}${paymentInfo?.qrCode}`}
+                      />
                     </div>
                     {/* </div> */}
                   </div>

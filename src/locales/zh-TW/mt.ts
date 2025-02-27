@@ -810,5 +810,6 @@ export default {
   'mt.shezhixinxifubiaoti': '您的联系信息将用于账号管理、接收通知，请及时绑定以免错过重要通知。',
   'mt.anquanfubiaoti': '如您认为密码可能已经泄露，请及时更改密码。',
   'mt.bangdingyouxiangtishi': '绑定您的邮箱将用来接收通知信息。',
-  'mt.bangdingshoujitishi': '绑定您的手机将用来接收通知信息。'
+  'mt.bangdingshoujitishi': '绑定您的手机将用来接收通知信息。',
+  'mt.bunengdayuxxm': '不能大于{size}M'
 }

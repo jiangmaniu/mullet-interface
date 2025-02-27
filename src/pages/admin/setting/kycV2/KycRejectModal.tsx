@@ -52,10 +52,10 @@ function KycRejectModal({ trigger, onSuccess }: IProps, ref: any) {
       ref={modalRef}
     >
       <div className="flex flex-col items-center gap-2 mb-5">
-        <span className=" text-xl font-bold">
+        <span className="text-xl font-bold">
           <FormattedMessage id="mt.shenfenrenzhengshibai" />
         </span>
-        <span className=" text-sm text-gray-500">
+        <span className=" text-sm text-gray-500 break-all">
           {status === 3 && remark ? remark : <FormattedMessage id="mt.nintijiaodeziliaobuquanqieyoucuowu" />}
         </span>
       </div>

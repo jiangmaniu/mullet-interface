@@ -144,7 +144,7 @@ function Deposit({ params, onSelectItem }: IProps) {
               {statusMap[item.status ?? 'FAIL']?.text || '[status]'}
             </div>
             <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
-              {formatNum(item.baseOrderAmount)} {item.baseCurrency}
+              {formatNum(item.baseOrderAmount, { precision: 2 })} {item.baseCurrency}
             </div>
           </div>
         </div>

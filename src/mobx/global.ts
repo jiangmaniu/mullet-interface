@@ -47,6 +47,8 @@ export class GlobalStore {
   @observable verifyCodeDown = -1 // 验证码倒计时
   @observable env = {} as IPlatformConfig // 平台配置
 
+  @observable lottieLoadingData = {} as any
+
   @observable lastUpdateTime = 0 // 最后一次更新时间(时间戳)
 
   setLastUpdateTime = (lastUpdateTime: number) => {
@@ -65,6 +67,15 @@ export class GlobalStore {
     this.setPlatformConfig(config)
 
     return config
+  }
+
+  @action
+  getLottieLoadingData = async () => {
+    const data = await fetch('/platform/lottie/loading.json')
+      .then((res) => res.json())
+      .then((data) => data)
+
+    this.lottieLoadingData = data
   }
 
   // 设置平台配置

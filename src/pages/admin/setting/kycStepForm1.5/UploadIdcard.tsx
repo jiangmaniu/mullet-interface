@@ -54,6 +54,15 @@ export default function ({ form }: IProps) {
     },
     onDrop(e) {
       console.log('Dropped files', e.dataTransfer.files)
+    },
+    beforeUpload(file) {
+      const isLt5M = file.size / 1024 / 1024 < 5
+      if (!isLt5M) {
+        message.info(intl.formatMessage({ id: 'mt.bunengdayuxxm' }, { size: 5 }))
+      }
+      // // 若返回 false 则停止上传
+      // // beforeUpload 返回 false 时，阻止了发送请求，但还是会加到列表中去，如果要在列表中也忽略，返回 Upload.LIST_IGNORE
+      return isLt5M || Upload.LIST_IGNORE
     }
   }
   return (

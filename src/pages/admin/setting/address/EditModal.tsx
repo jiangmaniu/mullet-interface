@@ -32,6 +32,7 @@ function EditModal({ item, onUpdateItem }: IProps, ref: any) {
       setLoading(true)
       onUpdateItem(values).finally(() => {
         setLoading(false)
+        modalRef.current.close()
       })
     })
   }

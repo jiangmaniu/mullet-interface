@@ -1,6 +1,7 @@
+import useWebviewPageSearchParams from '@/pages/webapp/hooks/useWebviewPageSearchParams'
 import { message } from '@/utils/message'
 import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
-import { useModel, useSearchParams } from '@umijs/max'
+import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { isAndroid, isIOS } from 'react-device-detect'
@@ -52,6 +53,8 @@ const Children = observer(
       )
     }
 
+    console.log('status===', status)
+
     return (
       <div className="px-[14px]">
         {status === '1' || retry ? (
@@ -72,7 +75,13 @@ const Children = observer(
 
 export default function KycWebviewPage() {
   const user = useModel('user')
-  const [searchParams] = useSearchParams()
+  const searchParams = useWebviewPageSearchParams()
+  // const [searchParams] = useSearchParams()
+
+  // useSearchParams获取不生效
+  // const token = searchParams.get('token') || ''
+  // const user_id = (searchParams.get('user_id') as string) || ''
+  // const status = searchParams.get('status') || ''
 
   const token = searchParams.get('token') || ''
   const user_id = (searchParams.get('user_id') as string) || ''
@@ -135,5 +144,5 @@ export default function KycWebviewPage() {
     }
   }, [])
 
-  return <Children status={status} ref={ref} />
+  return <Children status={String(status)} ref={ref} />
 }
