@@ -10,6 +10,7 @@ import { CardContainer } from '@/pages/admin/copyTrading/comp/CardContainer'
 import { formatNum, regPassword } from '@/utils'
 import { cn } from '@/utils/cn'
 
+import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useLang } from '@/context/languageProvider'
 import { sendCustomPhoneCode } from '@/services/api/user'
@@ -206,6 +207,25 @@ export const Step2 = ({
             form={form}
             className="flex flex-col gap-6"
           >
+            <ProFormText name="orderId" hidden />
+            <ProFormText name="methodId" hidden />
+            <ProFormText name="handlingFee" hidden />
+            <ProFormText name="currency" hidden />
+            <ProFormText name="type" hidden />
+            <ProFormText name="crypto" hidden />
+            <ProFormText name="chain" hidden />
+            <ProFormText name="name" hidden />
+            <ProFormText name="actualAmount" hidden />
+            <ProFormText name="symbol" hidden />
+            <ProFormText name="exchangeRate" hidden />
+            <ProFormText name="methodId" hidden />
+
+            <ProFormText name="formAccountId" hidden />
+            <ProFormText name="bankCard" hidden />
+            <ProFormText name="bankName" hidden />
+            <ProFormText name="toAccountId" hidden />
+            <ProFormText name="amount" hidden />
+
             <RawProFormText.Password
               name="password"
               initialValue=""

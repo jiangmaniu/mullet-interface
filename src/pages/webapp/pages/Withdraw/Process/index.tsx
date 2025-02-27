@@ -10,7 +10,7 @@ import { appendHideParamIfNeeded } from '@/utils/request'
 import { FormattedMessage, getIntl, useModel } from '@umijs/max'
 import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { WebviewComponentRef } from '../WebviewPage'
 import Body from './comp/Body'
 
@@ -41,6 +41,14 @@ function Deposit() {
     // console.log(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
     // push(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
   }
+
+  useEffect(() => {
+    window.ReactNativeWebView?.postMessage(
+      JSON.stringify({
+        type: 'closekefu'
+      })
+    )
+  }, [])
 
   return (
     <BasicLayout

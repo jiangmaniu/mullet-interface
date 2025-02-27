@@ -10,7 +10,7 @@ import { useTheme } from '@/context/themeProvider'
 import { getDepositOrderDetail } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
-import { push } from '@/utils/navigator'
+import { replace } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
@@ -113,9 +113,9 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
 
   const handleReset = () => {
     if (backUrl) {
-      push(appendHideParamIfNeeded(backUrl))
+      replace(appendHideParamIfNeeded(backUrl))
     } else {
-      push(appendHideParamIfNeeded('/app/deposit'))
+      replace(appendHideParamIfNeeded('/app/deposit'))
     }
   }
 

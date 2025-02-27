@@ -17,7 +17,14 @@ function ConfirmModal(props: IProps, ref: any) {
   })
 
   return (
-    <Modal width={430} title={<FormattedMessage id="mt.dingdanyichaoshi" />} footer={null} ref={modalRef}>
+    <Modal
+      width={430}
+      title={<FormattedMessage id="mt.dingdanyichaoshi" />}
+      footer={null}
+      ref={modalRef}
+      closable={false}
+      maskClosable={false}
+    >
       <Button
         type="primary"
         className="w-full"

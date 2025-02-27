@@ -10,7 +10,7 @@ import VerifyStatus3 from '../KycV2/VerifyStatus3'
 import VerifyStatus4 from '../KycV2/VerifyStatus4'
 
 const Children = observer(
-  forwardRef(({ status }: { status: string }, ref: any) => {
+  forwardRef(({ status, file = {} }: { status: string; file: any }, ref: any) => {
     const onSuccess = () => {
       // @ts-ignore
       window.ReactNativeWebView.postMessage(
@@ -54,7 +54,7 @@ const Children = observer(
     return (
       <div className="px-[14px]">
         {status === '1' || retry ? (
-          <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
+          <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} file={file} />
         ) : status === '2' ? (
           <VerifyStatus2 />
         ) : status === '3' ? (
@@ -101,11 +101,12 @@ export default function KycWebviewPage() {
   }, [token, user_id, status])
 
   const ref = useRef<any>(null)
+  const [file, setFile] = useState<any>({})
+  const [stop, setStop] = useState(false)
   useEffect(() => {
     const messageHandler = (e: any) => {
       try {
         const data = e?.data ? JSON.parse(e?.data) : undefined
-        console.log('监听消息', data)
 
         if (data?.action === 'submit') {
           ref.current?.onSubmit()
@@ -113,6 +114,11 @@ export default function KycWebviewPage() {
 
         if (data?.action === 'retry') {
           ref.current?.onRetry()
+        }
+
+        if (data?.action === 'upload' && !stop) {
+          setStop(true)
+          setFile(data?.value)
         }
       } catch (error) {
         // message.info(`监听消息错误: ${JSON.stringify(error)}`)
@@ -134,5 +140,5 @@ export default function KycWebviewPage() {
     }
   }, [])
 
-  return <Children status={status} ref={ref} />
+  return <Children status={status} ref={ref} file={file} />
 }
