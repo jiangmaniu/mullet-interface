@@ -30,10 +30,10 @@ import { STORAGE_GET_TOKEN } from './utils/storage'
 const isDev = process.env.NODE_ENV === 'development'
 const loginPath = '/user/login'
 
-if (process.env.NODE_ENV === 'development') {
-  // https://github.com/Tencent/vConsole
-  const vConsole = new VConsole()
-}
+// if (process.env.NODE_ENV === 'development') {
+// https://github.com/Tencent/vConsole
+const vConsole = new VConsole()
+// }
 
 // if ('serviceWorker' in navigator) {
 //   window.addEventListener('load', () => {
