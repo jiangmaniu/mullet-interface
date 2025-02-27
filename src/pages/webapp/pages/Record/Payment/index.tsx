@@ -80,14 +80,14 @@ export default function PaymentRecord() {
     }
   }, [type])
 
-  useTitle(intl.formatMessage({ id: 'menu.recordPayment' }))
-
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
 
   if (!currentUser?.id) {
     return <></>
   }
+
+  useTitle(intl.formatMessage({ id: 'menu.recordPayment' }))
 
   return (
     <Basiclayout

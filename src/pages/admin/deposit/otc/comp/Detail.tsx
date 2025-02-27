@@ -25,6 +25,7 @@ dayjs.extend(duration)
 
 const Notice = observer(({ methodId }: { methodId: string }) => {
   const methodInfo = stores.wallet.depositMethods.find((item) => item.id === methodId)
+  console.log('methodInfo', stores.wallet.depositMethods, methodId)
   return (
     <div className="text-secondary text-xs w-[276px]">
       {methodInfo?.notice ? (
@@ -81,6 +82,7 @@ const Detail = ({
     userName,
     exchangeRate,
     tradeAccountId,
+    channelNo,
     address,
     bankCard,
     bankName,
@@ -94,7 +96,7 @@ const Detail = ({
   const options = [
     {
       label: getIntl().formatMessage({ id: 'mt.zhifufangshi' }),
-      value: channelName
+      value: channelNo
     },
     {
       label: getIntl().formatMessage({ id: 'mt.rujinjine' }),
@@ -340,7 +342,7 @@ const Detail = ({
             <span className="text-primary text-sm font-semibold">
               <FormattedMessage id="mt.rujinxuzhi" />
             </span>
-            <Notice methodId={String(paymentInfo?.id)} />
+            <Notice methodId={String(paymentInfo?.channelId)} />
           </div>
         </div>
       </CardContainer>

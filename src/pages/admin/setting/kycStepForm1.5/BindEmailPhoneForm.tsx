@@ -4,7 +4,6 @@ import { Form } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
-import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
 import Hidden from '@/components/Base/Hidden'
 import FormCaptcha from '@/components/Form/Captcha'
@@ -169,7 +168,7 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
             <FormCaptcha
               name="email"
               label={intl.formatMessage({ id: 'common.dianziyouxiang' })}
-              fieldProps={{ placeholder: intl.formatMessage({ id: 'mt.shuruyouxiangyanzhengma' }), type: 'text' }}
+              fieldProps={{ placeholder: intl.formatMessage({ id: 'mt.shurudianziyouxiang' }), type: 'text' }}
               formItemProps={{ style: { marginBottom: 24 } }}
               onSend={async () => {
                 if (!email) {
@@ -239,24 +238,22 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
   }
 
   return (
-    <PageContainer pageBgColorMode="white" backTitle={<FormattedMessage id="mt.shezhi" />}>
-      <div className="flex justify-center">
-        {/* <div className="w-[596px] bg-white rounded-xl border border-gray-180 p-7"> */}
-        <div className="w-[596px] bg-white rounded-xl px-7">
-          <ProForm
-            onFinish={async (values: any) => {
-              console.log('values', values)
+    <div className="flex justify-center">
+      {/* <div className="w-[596px] bg-white rounded-xl border border-gray-180 p-7"> */}
+      <div className="w-full bg-white rounded-xl ">
+        <ProForm
+          onFinish={async (values: any) => {
+            console.log('values', values)
 
-              return
-            }}
-            submitter={false}
-            layout="vertical"
-            form={form}
-          >
-            {renderOneStep()}
-          </ProForm>
-        </div>
+            return
+          }}
+          submitter={false}
+          layout="vertical"
+          form={form}
+        >
+          {renderOneStep()}
+        </ProForm>
       </div>
-    </PageContainer>
+    </div>
   )
 }

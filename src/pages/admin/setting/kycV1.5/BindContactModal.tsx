@@ -34,7 +34,7 @@ function BindContactModal({ trigger }: IProps, ref: any) {
         stores.global.registerWay === 'EMAIL' ? <FormattedMessage id="mt.bangdingshouji" /> : <FormattedMessage id="mt.bangdingyouxiang" />
       }
       trigger={trigger}
-      width={596}
+      width={480}
       footer={null}
       ref={modalRef}
     >
