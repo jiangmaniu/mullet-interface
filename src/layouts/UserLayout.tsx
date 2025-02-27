@@ -42,7 +42,7 @@ export default function UserLayout() {
       </div>
       <div className="flex mb-7 justify-center">
         <div className="w-[1200px] flex flex-col items-center justify-center">
-          <div className="mb-5">
+          {/* <div className="mb-5">
             {links.map((item, idx) => {
               return (
                 <a target="_blank" key={idx} className="inline-block p-4 mr-5">
@@ -50,7 +50,7 @@ export default function UserLayout() {
                 </a>
               )
             })}
-          </div>
+          </div> */}
           <div className="text-center text-xs mb-2 text-gray-380">
             <FormattedMessage id="mt.fengxianjinggao" />
             :Digital asset trading is an emerging industry with bright prospects, but it also co

@@ -22,7 +22,7 @@ export default function VerifyStatus4() {
   const currentUser = initialState?.currentUser
   const intl = useIntl()
 
-  const country = intl.locale === 'zh-TW' ? currentUser?.countryInfo?.nameTw : currentUser?.countryInfo?.nameEn
+  const country = intl.locale === 'zh-TW' ? currentUser?.countryInfo?.nameCn : currentUser?.countryInfo?.nameEn
   return (
     <>
       <View className={cn('px-2 flex-1')}>
