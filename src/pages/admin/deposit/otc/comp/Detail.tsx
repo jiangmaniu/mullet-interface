@@ -82,6 +82,7 @@ const Detail = ({
     userName,
     exchangeRate,
     tradeAccountId,
+    channelNo,
     address,
     bankCard,
     bankName,
@@ -95,7 +96,7 @@ const Detail = ({
   const options = [
     {
       label: getIntl().formatMessage({ id: 'mt.zhifufangshi' }),
-      value: channelName
+      value: channelNo
     },
     {
       label: getIntl().formatMessage({ id: 'mt.rujinjine' }),

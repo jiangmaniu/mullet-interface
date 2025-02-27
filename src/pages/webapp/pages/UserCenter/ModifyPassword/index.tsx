@@ -121,8 +121,9 @@ export default () => {
 
           setSubmitLoading(true)
           const reqFn = isPhoneCheck ? forgetPasswordPhone : forgetPasswordEmail
+          const emailOrPhone = isPhoneCheck ? phone : email
           const res = await reqFn({
-            emailOrPhone: currentUser?.account as string,
+            emailOrPhone,
             newPassword: md5(newPassword),
             validateCode
           })
