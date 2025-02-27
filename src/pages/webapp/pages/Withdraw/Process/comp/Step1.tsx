@@ -8,7 +8,9 @@ import { formatNum } from '@/utils'
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
+import { getAccountProfit } from '@/services/api/tradeCore/account'
 import { observer } from 'mobx-react'
+import { useEffect, useState } from 'react'
 import TransferAmount from './TransferAmount'
 import TransferFormSelectItem from './TransferFormSelectItem'
 import TransferMethodSelectItem from './TransferMethodSelectItem'
@@ -47,6 +49,16 @@ const Step1 = ({
   const [searchParams] = useSearchParams()
   const tradeAccountId = searchParams.get('tradeAccountId') as string
 
+  const [totalProfit, setTotalProfit] = useState(0)
+  useEffect(() => {
+    fromAccountInfo &&
+      getAccountProfit({ accountId: fromAccountInfo?.id }).then((res) => {
+        if (res.success) {
+          setTotalProfit(res.data)
+        }
+      })
+  }, [fromAccountInfo])
+
   return (
     <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
       <div className="flex-1 form-item-divider-left flex-shrink ">
@@ -79,10 +91,10 @@ const Step1 = ({
           <ProFormText name="amount" hidden />
 
           <TransferMethodSelectItem form={form} methodInfo={methodInfo} />
-          <TransferFormSelectItem form={form} />
+          <TransferFormSelectItem form={form} totalProfit={totalProfit} />
           {methodInfo?.paymentType === 'OTC' ? <TransferToBankItem form={form} /> : <TransferToCryptoItem form={form} />}
 
-          <TransferAmount form={form} currentUser={currentUser} methodInfo={methodInfo} />
+          <TransferAmount form={form} currentUser={currentUser} methodInfo={methodInfo} totalProfit={totalProfit} />
 
           {/* <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit} disabled={disabled}>
             <div className="flex flex-row items-center gap-2">

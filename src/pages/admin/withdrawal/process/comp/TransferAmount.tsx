@@ -1,6 +1,6 @@
 import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
@@ -12,9 +12,10 @@ type IProps = {
   form: FormInstance
   currentUser?: User.UserInfo
   methodInfo?: Wallet.fundsMethodPageListItem
+  totalProfit: number
 }
 
-function TransferAmount({ form, currentUser, methodInfo }: IProps) {
+function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) {
   const intl = useIntl()
 
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
@@ -47,6 +48,9 @@ function TransferAmount({ form, currentUser, methodInfo }: IProps) {
     methodInfo?.singleAmountMax || 99999
   )} ${methodInfo?.baseCurrency}`
 
+  const m = useMemo(() => {
+    return Math.min(availableMoney, availableMoney + totalProfit)
+  }, [availableMoney, totalProfit])
   return (
     <div className="relative">
       <ProFormText
@@ -73,7 +77,7 @@ function TransferAmount({ form, currentUser, methodInfo }: IProps) {
                 return callback(tips)
               }
 
-              if (Number(value) > availableMoney) {
+              if (Number(value) > m) {
                 return callback(intl.formatMessage({ id: 'mt.yuebuzu' }))
               }
 
