@@ -49,7 +49,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
   )} ${methodInfo?.baseCurrency}`
 
   const m = useMemo(() => {
-    return Math.min(availableMoney, availableMoney + totalProfit)
+    return Math.max(Math.min(availableMoney, availableMoney + totalProfit), 0)
   }, [availableMoney, totalProfit])
   return (
     <div className="relative">

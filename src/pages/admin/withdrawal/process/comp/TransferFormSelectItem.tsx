@@ -40,7 +40,7 @@ function TransferFormSelectItem({ form, totalProfit }: IProps) {
   const availableMoney = Number(toFixed(money - occupyMargin))
 
   const m = useMemo(() => {
-    return Math.min(availableMoney, availableMoney + totalProfit)
+    return Math.max(Math.min(availableMoney, availableMoney + totalProfit), 0)
   }, [availableMoney, totalProfit])
 
   return (
