@@ -36,13 +36,12 @@ export default function User() {
 
     // 重新获取用户信息
     fetchUserInfo(true).then((res) => {
-      console.log('fetchUserInfo res', res)
-      const accountList = res?.accountList
-      console.log('accountList', accountList?.length)
+      const accountList = res?.accountList?.filter((item) => !item.isSimulate)
       if (accountList && accountList.length >= 1) {
         // 关闭其他页面，跳转主页面
         // replace('Main')
-        replace('/app/account/select?back=false')
+        // replace('/app/account/select?back=false')
+        replace('/app/quote?back=false')
       } else {
         replace('/app/account/create?back=false')
       }

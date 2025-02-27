@@ -151,9 +151,9 @@ function Login() {
         // 重新获取用户信息
         const currentUser = await fetchUserInfo()
         // @ts-ignore
-        const hasAccount = currentUser?.accountList?.length > 0
-        // const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
-        const jumpPath = ADMIN_HOME_PAGE // 直接跳转到个人中心
+        const hasAccount = currentUser?.accountList?.filter((item) => !item.isSimulate)?.length > 0
+        const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
+        // const jumpPath = ADMIN_HOME_PAGE // 直接跳转到个人中心
         setTimeout(() => {
           setLoading(false)
           push(jumpPath)
@@ -232,11 +232,11 @@ function Login() {
         // 重新获取用户信息
         const currentUser = await fetchUserInfo()
         // @ts-ignore
-        const hasAccount = currentUser?.accountList?.length > 0
+        const hasAccount = currentUser?.accountList?.filter((item) => !item.isSimulate)?.length > 0
         const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
-        // push(jumpPath)
+        push(jumpPath)
         // 直接跳转到账户选择页面
-        push(ADMIN_HOME_PAGE)
+        // push(ADMIN_HOME_PAGE)
       }
     }
   }

@@ -5,7 +5,7 @@ import Button from '@/components/Base/Button'
 import { useTheme } from '@/context/themeProvider'
 
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
-import { APP_MODAL_WIDTH } from '@/constants'
+import { ADMIN_HOME_PAGE, APP_MODAL_WIDTH, WEB_HOME_PAGE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
@@ -162,9 +162,14 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
           // 缓存用户信息
           setLocalUserInfo(result)
           // 重新获取用户信息
-          await fetchUserInfo()
+          const currentUser = await fetchUserInfo()
           // 跳转到账户选择页面
-          push('/app/account/select')
+          // push('/app/account/select')
+          const hasAccount = Number(currentUser?.accountList?.filter((item) => !item.isSimulate)?.length) > 0
+          const jumpPath = hasAccount ? WEB_HOME_PAGE : ADMIN_HOME_PAGE
+          setTimeout(() => {
+            push(jumpPath)
+          }, 200)
         }
       }
     } catch (error: any) {
