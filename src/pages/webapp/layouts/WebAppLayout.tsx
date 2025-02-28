@@ -11,14 +11,13 @@ import { isMainTabbar } from '@/pages/webapp/utils/navigator'
 import { checkPageShowTime } from '@/utils/business'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
-import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
+import { push } from '@/utils/navigator'
+import { STORAGE_GET_TOKEN, STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useNetwork } from 'ahooks'
-import { lazy, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
 import VConsole from 'vconsole'
 import AddPwaAppModal from '../components/AddPwaAppModal'
-
-const Tradingview = lazy(() => import('@/components/Web/Tradingview'))
 
 /**
  * webapp页面的布局-布局总入口
@@ -126,6 +125,13 @@ function WebAppLayout() {
       }, 100)
     }
   }, [token])
+
+  useEffect(() => {
+    // 统一跳转到登录页
+    if (!STORAGE_GET_TOKEN()) {
+      push('/app/login')
+    }
+  }, [])
 
   const renderContent = useMemo(() => {
     return (
