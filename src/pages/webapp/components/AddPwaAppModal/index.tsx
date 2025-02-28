@@ -5,8 +5,8 @@ import { getEnv } from '@/env'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { cn } from '@/utils/cn'
 import { getPathname } from '@/utils/navigator'
-import { STORAGE_GET_TOKEN, STORAGE_SET_SHOW_PWA_ADD_MODAL } from '@/utils/storage'
-import { FormattedMessage, useLocation } from '@umijs/max'
+import { STORAGE_GET_SHOW_PWA_ADD_MODAL, STORAGE_GET_TOKEN, STORAGE_SET_SHOW_PWA_ADD_MODAL } from '@/utils/storage'
+import { FormattedMessage, useLocation, useModel } from '@umijs/max'
 import { isAndroid, isChrome, isChromium, isEdge, isFirefox, isIOS, isSafari } from 'react-device-detect'
 import SheetModal from '../Base/SheetModal'
 
@@ -17,6 +17,8 @@ const AddPwaAppModal = () => {
   const { isPc } = useEnv()
   const { pathname } = useLocation()
   const { isPwaApp } = useEnv()
+  const { initialState } = useModel('@@initialState')
+  const { currentUser } = initialState || {}
   const isPopularBrowser = isSafari || isChrome || isChromium || isFirefox || isEdge // 主流浏览器
 
   const addScreenList = [
@@ -49,8 +51,9 @@ const AddPwaAppModal = () => {
   const [addSreenData, setAddSreenData] = useState(addScreenList[0])
 
   const init = async () => {
-    // let isFirst = STORAGE_GET_SHOW_PWA_ADD_MODAL() === true ? false : true
-    let showModal = isPopularBrowser && process.env.NODE_ENV === 'production' // 每次刷新页面都需要弹一次
+    // 登录成功弹一次，刷新页面不弹，退出登录在登录token变化在弹一次
+    let isFirst = STORAGE_GET_SHOW_PWA_ADD_MODAL()
+    let showModal = isPopularBrowser && isFirst
     // let showModal = isPopularBrowser // 每次刷新页面都需要弹一次
     let type = 'iphoneChrome'
     if (isIOS) {
@@ -72,8 +75,6 @@ const AddPwaAppModal = () => {
       showModal = false
     }
 
-    STORAGE_SET_SHOW_PWA_ADD_MODAL(false)
-
     setTimeout(() => {
       setIsAddSreenModal(showModal)
     }, 2000)
@@ -92,7 +93,7 @@ const AddPwaAppModal = () => {
 
   useEffect(() => {
     init()
-  }, [isPwaApp, isPopularBrowser])
+  }, [isPwaApp, isPopularBrowser, currentUser])
 
   const purePathname = getPathname(location.pathname)
   const token = STORAGE_GET_TOKEN()
@@ -103,6 +104,7 @@ const AddPwaAppModal = () => {
       open={!!isAddSreenModal && showModal}
       onDismiss={() => {
         setIsAddSreenModal(false)
+        STORAGE_SET_SHOW_PWA_ADD_MODAL(false)
       }}
       hiddenFooter
       height={'62%'}

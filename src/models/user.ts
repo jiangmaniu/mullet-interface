@@ -4,7 +4,7 @@ import { flushSync } from 'react-dom'
 import { stores } from '@/context/mobxProvider'
 import { isEmail } from '@/utils'
 import { replace } from '@/utils/navigator'
-import { setLocalUserInfo } from '@/utils/storage'
+import { STORAGE_SET_SHOW_PWA_ADD_MODAL, setLocalUserInfo } from '@/utils/storage'
 
 export default function User() {
   const { initialState, setInitialState } = useModel('@@initialState')
@@ -33,6 +33,9 @@ export default function User() {
   const handleLoginSuccess = async (result: User.UserInfo) => {
     // 缓存用户信息
     setLocalUserInfo(result)
+
+    // 标识弹窗
+    STORAGE_SET_SHOW_PWA_ADD_MODAL(true)
 
     // 重新获取用户信息
     fetchUserInfo(true).then((res) => {
