@@ -87,8 +87,7 @@ const Detail = ({
     bankCard,
     bankName,
     baseCurrency,
-    channelAccountAmount,
-    channelSettlementCurrency,
+    symbol,
     receiptAmount,
     channelNoValue
   } = paymentInfo
@@ -112,7 +111,7 @@ const Detail = ({
             {formatNum(depositExchangeRate(methodInfo), {
               precision: 4
             })}{' '}
-            {channelSettlementCurrency}
+            {symbol}
           </span>
         )
       }
@@ -307,7 +306,7 @@ const Detail = ({
                   <FormattedMessage id="mt.daizhifujine" />
                 </span>
 
-                <span className=" font-bold text-xl">{`${receiptAmount} ${channelSettlementCurrency}`}</span>
+                <span className=" font-bold text-xl">{`${receiptAmount} ${symbol}`}</span>
               </div>
               <span className=" text-secondary font-normal  text-xs">
                 <FormattedMessage id="mt.youyuhuilvbodong" />

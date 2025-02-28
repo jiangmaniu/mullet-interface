@@ -126,6 +126,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
     onCancel
   }))
 
+  //
   return (
     <div className="bg-gray-55">
       <div className="flex flex-col gap-1 items-center pt-9">
@@ -134,7 +135,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
         </span>
         <span className=" text-[42px] leading-[46px] font-dingpro-medium">
           {formatNum(paymentInfo?.receiptAmount, { precision: DEFAULT_CURRENCY_DECIMAL })}&nbsp;
-          {paymentInfo?.channelSettlementCurrency}
+          {paymentInfo?.symbol}
         </span>
         <span className=" text-sm font-medium mt-1">
           {/* <FormattedMessage id="mt.shijidaozhang" /> */}
@@ -151,7 +152,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
           <span className="text-primary">
             {`1 ${paymentInfo?.baseCurrency} ≈ ${formatNum(withdrawExchangeRate(methodInfo), {
               precision: DEFAULT_CURRENCY_DECIMAL
-            })} ${paymentInfo?.channelSettlementCurrency}`}
+            })} ${paymentInfo?.symbol}`}
           </span>
         </div>
       </div>
