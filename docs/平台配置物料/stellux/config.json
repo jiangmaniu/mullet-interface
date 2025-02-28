@@ -14,5 +14,6 @@
   "HIDE_ACCOUNT_TRANSFER": false,
   "HIDE_CREATE_ACCOUNT": false,
   "HIDE_ACCOUNT_RENAME": false,
+  "DEBUG": false,
   "salesmartlyJSUrl": ""
 }

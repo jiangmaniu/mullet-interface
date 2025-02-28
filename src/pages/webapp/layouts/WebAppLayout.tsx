@@ -8,10 +8,12 @@ import usePageVisibility from '@/hooks/usePageVisibility'
 import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
 import { isMainTabbar } from '@/pages/webapp/utils/navigator'
+import { isPCByWidth } from '@/utils'
 import { checkPageShowTime } from '@/utils/business'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
-import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
+import { onLogout } from '@/utils/navigator'
+import { STORAGE_GET_TOKEN, STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useNetwork } from 'ahooks'
 import { useEffect, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
@@ -122,6 +124,13 @@ function WebAppLayout() {
         // 获取用户信息
         fetchUserInfo()
       }, 100)
+    }
+  }, [token])
+
+  useEffect(() => {
+    // 全局拦截未登录跳转
+    if (!STORAGE_GET_TOKEN() && !isPCByWidth() && !token) {
+      onLogout()
     }
   }, [token])
 

@@ -1,3 +1,4 @@
+import { isPCByWidth } from '@/utils'
 import { onLogout } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { useEffect } from 'react'
@@ -15,7 +16,7 @@ interface IProps {
 export const Provider = ({ children }: IProps): JSX.Element => {
   useEffect(() => {
     // 全局拦截未登录跳转
-    if (!STORAGE_GET_TOKEN()) {
+    if (!STORAGE_GET_TOKEN() && isPCByWidth()) {
       onLogout()
     }
     stores.ws.initWorker()
