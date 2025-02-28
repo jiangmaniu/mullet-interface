@@ -12,9 +12,9 @@ import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { cancelDepositOrder } from '@/services/api/wallet'
+import { copyToClipboard } from '@/utils'
 import { cn } from '@/utils/cn'
 import { depositExchangeRate } from '@/utils/deposit'
-import { message } from '@/utils/message'
 import { goKefu, push } from '@/utils/navigator'
 import { Image, Popconfirm } from 'antd'
 import dayjs from 'dayjs'
@@ -290,14 +290,7 @@ const Detail = ({
                       width={18}
                       height={18}
                       onClick={() => {
-                        navigator.clipboard
-                          .writeText(item.value || '')
-                          .then(() => {
-                            message.info(getIntl().formatMessage({ id: 'mt.fuzhichenggong' }))
-                          })
-                          .catch(() => {
-                            message.info(getIntl().formatMessage({ id: 'mt.caozuoshibai' }))
-                          })
+                        copyToClipboard(item.value || '')
                       }}
                     />
                   </div>

@@ -5,13 +5,13 @@ import { QRCodeCanvas } from 'qrcode.react'
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import Button from '@/components/Base/Button'
 import { cn } from '@/utils/cn'
-import { message } from '@/utils/message'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 
 dayjs.extend(duration)
 
 import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
+import { copyToClipboard } from '@/utils'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 type IProps = {
@@ -155,9 +155,7 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
             size="small"
             style={{ height: '28px' }}
             onClick={() => {
-              navigator.clipboard.writeText(address).then(() => {
-                message.info(intl.formatMessage({ id: 'mt.fuzhichenggong' }))
-              })
+              copyToClipboard(address || '')
             }}
           >
             <FormattedMessage id="mt.fuzhi" />
