@@ -803,5 +803,6 @@ export default {
   'mt.anquanfubiaoti': 'Nếu bạn nghĩ rằng mật khẩu có thể đã bị rò rỉ, vui lòng thay đổi mật khẩu kịp thời.',
   'mt.bangdingyouxiangtishi': 'Liên kết email của bạn sẽ được sử dụng để nhận thông tin thông báo.',
   'mt.bangdingshoujitishi': 'Liên kết điện thoại của bạn sẽ được sử dụng để nhận thông tin thông báo.',
-  'mt.bunengdayuxxm': 'Không thể vượt quá {size}M'
+  'mt.bunengdayuxxm': 'Không thể vượt quá {size}M',
+  'mt.dianjicichujinxinshangchuan': 'Nhấp vào đây để tải lên'
 }

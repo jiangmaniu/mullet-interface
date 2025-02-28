@@ -76,7 +76,7 @@ export default function ({ setImgs, imgs }: IProps) {
           <div className="flex flex-col items-center justify-center bg-cover  h-[235px]">
             <img src="/img/upload-01.png" width={72} height={72} />
             <span className="text-primary text-sm font-semibold">
-              <FormattedMessage id="mt.dianjishangchuantupian" />
+              <FormattedMessage id="mt.dianjicichujinxinshangchuan" />
             </span>
           </div>
         </div>
