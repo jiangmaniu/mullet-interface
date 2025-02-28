@@ -151,6 +151,7 @@ export async function bindEmail(body: User.BindEmailParams) {
 export async function setUserLanguage(body: { language: any }) {
   return request<API.Response<any>>(`/api/trade-crm/crmApi/user/setLanguage?language=${body?.language || ''}`, {
     method: 'POST',
-    data: body
+    data: body,
+    needToken: true
   })
 }
