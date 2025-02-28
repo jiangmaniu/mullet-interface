@@ -23,7 +23,7 @@ interface IProps {
 }
 
 const CodeInput = (props: IProps) => {
-  const { value, onChange, inputWrapperStyle, height = 56, width = 56, rules, form, name, disabled } = props
+  const { value, onChange, inputWrapperStyle, height = 48, width = 48, rules, form, name, disabled } = props
   const i18n = useI18n()
   const { cn } = useTheme()
   const [isPhoneFocus, setIsPhoneFocus] = useState(false)
@@ -62,7 +62,7 @@ const CodeInput = (props: IProps) => {
         <View className={cn('flex flex-row items-start justify-start gap-1.5')}>
           <InputNumber
             ref={inputRef1}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[56px]', inputWrapperStyle)}
+            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -83,7 +83,7 @@ const CodeInput = (props: IProps) => {
           />
           <InputNumber
             ref={inputRef2}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[56px]', inputWrapperStyle)}
+            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -107,7 +107,7 @@ const CodeInput = (props: IProps) => {
           />
           <InputNumber
             ref={inputRef3}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[56px]', inputWrapperStyle)}
+            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -131,7 +131,7 @@ const CodeInput = (props: IProps) => {
           />
           <InputNumber
             ref={inputRef4}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[56px]', inputWrapperStyle)}
+            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -155,7 +155,7 @@ const CodeInput = (props: IProps) => {
           />
           <InputNumber
             ref={inputRef5}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[56px]', inputWrapperStyle)}
+            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -179,7 +179,7 @@ const CodeInput = (props: IProps) => {
           />
           <InputNumber
             ref={inputRef6}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[56px]', inputWrapperStyle)}
+            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
