@@ -98,8 +98,8 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
     // 设置语言
     setLng(currentLanguage)
     // 切换时不刷新页面
-    // setLocale(currentLanguage, false)
-    setLocale(currentLanguage, true) // 刷新页面，避免很多兼容问题
+    setLocale(currentLanguage, false)
+    // setLocale(currentLanguage, true) // 刷新页面，避免很多兼容问题
 
     // 重新刷新路由
     setTimeout(() => {

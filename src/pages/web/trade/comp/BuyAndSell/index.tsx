@@ -106,7 +106,7 @@ export default observer(
           <DisabledTradeView />
         </div>
       )
-    }, [orderType, isPc])
+    }, [orderType, isPc, intl.locale])
 
     return (
       <SwitchPcOrWapLayout

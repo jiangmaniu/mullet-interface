@@ -38,7 +38,7 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
   }
 
   return (
-    <View className={cn('flex-row items-center flex-1 justify-center gap-x-3')}>
+    <View className={cn('flex-row items-center flex-1 justify-center gap-x-3 relative')}>
       <Button
         type="danger"
         size="large"

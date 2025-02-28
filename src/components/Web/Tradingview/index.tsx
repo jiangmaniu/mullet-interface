@@ -12,6 +12,7 @@ import klineStore from '@/mobx/kline'
 import { cn } from '@/utils/cn'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
+import { useIntl } from '@umijs/max'
 import { useDebounceEffect, usePrevious } from 'ahooks'
 import { observer } from 'mobx-react'
 import { isAndroid } from 'react-device-detect'
@@ -28,6 +29,7 @@ const Tradingview = () => {
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
   const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
   const switchSymbolLoading = kline.switchSymbolLoading
+  const intl = useIntl()
 
   const { theme } = useTheme()
   const { isDark, mode } = theme
@@ -201,9 +203,11 @@ const Tradingview = () => {
   // 切换主题重载
   useEffect(() => {
     if (symbolName) {
+      setIsChartLoading(true)
+      setLoading(true)
       initChart()
     }
-  }, [theme])
+  }, [theme, intl.locale])
 
   // 监听切换品种 需要防抖避免用户重复切换导致k线显示问题
   useDebounceEffect(

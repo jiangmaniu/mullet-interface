@@ -2,7 +2,7 @@ import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
 import { Tabs } from 'antd-mobile'
 import { observer } from 'mobx-react'
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useMemo, useState, useTransition } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
@@ -22,7 +22,18 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const intl = useIntl()
 
-  const symbolCategory = trade.symbolCategory
+  // const symbolCategory = trade.symbolCategory
+
+  const symbolCategory = useMemo(() => {
+    return [
+      ...(isSux ? [{ key: '0', value: '0', label: intl.formatMessage({ id: 'common.All' }) }] : []),
+      { key: '10', value: '10', label: intl.formatMessage({ id: 'common.SymbolCategory.Crypto' }) },
+      { key: '20', value: '20', label: intl.formatMessage({ id: 'common.SymbolCategory.Commodities' }) },
+      { key: '30', value: '30', label: intl.formatMessage({ id: 'common.SymbolCategory.Forex' }) },
+      { key: '40', value: '40', label: intl.formatMessage({ id: 'common.SymbolCategory.Indices' }) },
+      ...(isSux ? [{ key: '50', value: '50', label: intl.formatMessage({ id: 'common.SymbolCategory.Stock' }) }] : [])
+    ]
+  }, [intl.locale])
 
   useEffect(() => {
     setCurrent(activeKey || DEFAULT_CURRENT)
