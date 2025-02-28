@@ -247,8 +247,7 @@ export default defineConfig({
   extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // https://umijs.org/docs/api/config#codesplitting
   codeSplitting: {
-    // jsStrategy: 'granularChunks',
-    jsStrategy: 'depPerChunk'
+    jsStrategy: 'granularChunks',
   },
   // 使用本地字体
   chainWebpack(config) {
