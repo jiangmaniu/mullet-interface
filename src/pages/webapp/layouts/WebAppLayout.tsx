@@ -11,8 +11,7 @@ import { isMainTabbar } from '@/pages/webapp/utils/navigator'
 import { checkPageShowTime } from '@/utils/business'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
-import { push } from '@/utils/navigator'
-import { STORAGE_GET_TOKEN, STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
+import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useNetwork } from 'ahooks'
 import { useEffect, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
@@ -125,13 +124,6 @@ function WebAppLayout() {
       }, 100)
     }
   }, [token])
-
-  useEffect(() => {
-    // 统一跳转到登录页
-    if (!STORAGE_GET_TOKEN()) {
-      push('/app/login')
-    }
-  }, [])
 
   const renderContent = useMemo(() => {
     return (
