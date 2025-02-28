@@ -115,7 +115,7 @@ class KlineStore {
     if (rounded > lastBarSec) {
       newLastBar = {
         time: rounded * 1000,
-        open: NP.round(ask, precision),
+        open: NP.round(lastBar.close, precision), // 开盘价等于上一个K线的收盘价
         high: NP.round(ask, precision),
         low: NP.round(ask, precision),
         close: NP.round(ask, precision)

@@ -13,7 +13,7 @@ import { getEnv } from '@/env'
 import { isPCByWidth } from '@/utils'
 import { getSymbolIcon, parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { push } from '@/utils/navigator'
+import { getPathname, push } from '@/utils/navigator'
 import { getIntl } from '@umijs/max'
 import { Toast } from 'antd-mobile'
 import klineStore from './kline'
@@ -180,6 +180,14 @@ class WSStore {
           //   position: 'top',
           //   duration: 3000
           // })
+
+          // 只在这些入口页面提示消息
+          const paths = ['/app/trade', '/app/position', '/app/quote/kline']
+          const pathname = getPathname(location.pathname)
+          if (!paths.includes(pathname)) {
+            return
+          }
+
           const fields = parseOrderMessage(info?.content || '')
           const symbolIcon = trade.symbolListAll.find((item) => item.symbol === fields.symbol)?.imgUrl
           Toast.show({

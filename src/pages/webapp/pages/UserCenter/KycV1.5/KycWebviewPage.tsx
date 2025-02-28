@@ -75,13 +75,6 @@ const Children = observer(
 export default function KycWebviewPage() {
   const user = useModel('user')
   const searchParams = useWebviewPageSearchParams()
-  // const [searchParams] = useSearchParams()
-
-  // useSearchParams获取不生效
-  // const token = searchParams.get('token') || ''
-  // const user_id = (searchParams.get('user_id') as string) || ''
-  // const status = searchParams.get('status') || ''
-
   const token = searchParams.get('token') || ''
   const user_id = (searchParams.get('user_id') as string) || ''
   const status = searchParams.get('status') || ''

@@ -8,7 +8,6 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { CONFIG_URL } from '@/constants/config'
-import VConsole from 'vconsole'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
@@ -29,11 +28,6 @@ import { STORAGE_GET_TOKEN } from './utils/storage'
 
 const isDev = process.env.NODE_ENV === 'development'
 const loginPath = '/user/login'
-
-if (process.env.NODE_ENV === 'development') {
-  // https://github.com/Tencent/vConsole
-  const vConsole = new VConsole()
-}
 
 // if ('serviceWorker' in navigator) {
 //   window.addEventListener('load', () => {
