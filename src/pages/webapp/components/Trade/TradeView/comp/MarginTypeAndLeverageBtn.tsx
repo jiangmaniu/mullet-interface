@@ -23,6 +23,7 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
   const { cn, theme } = useTheme()
   const { trade } = useStores()
   const quoteInfo = getCurrentQuote()
+  const enableIsolated = trade.currentAccountInfo.enableIsolated
   const prepaymentConf = quoteInfo?.prepaymentConf
   const mode = prepaymentConf?.mode
   const isFixedMargin = mode === 'fixed_margin' // 固定预付款
@@ -58,6 +59,7 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
         <View className={cn('flex-row gap-x-2 px-3 border-b border-gray-50 mb-2 pb-3 w-full')}>
           <View
             onClick={() => {
+              if (!enableIsolated) return
               // bottomSheetModalRef.current?.sheet?.dismiss()
               marginTypeModalRef.current?.show()
             }}
@@ -70,7 +72,9 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
               <Text color="primary" size="sm" weight="medium" className={cn('pr-1 px-5')}>
                 {marginTypeLabel}
               </Text>
-              <Iconfont name="quancangxiala" style={{ transform: 'rotate(90deg)' }} size={16} color={theme.isDark ? '#fff' : '#CFCFCF'} />
+              {enableIsolated && (
+                <Iconfont name="quancangxiala" style={{ transform: 'rotate(90deg)' }} size={16} color={theme.isDark ? '#fff' : '#CFCFCF'} />
+              )}
             </View>
           </View>
           <View
