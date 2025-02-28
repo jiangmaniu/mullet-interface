@@ -88,7 +88,7 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
         <div className="flex items-center bg-white flex-wrap gap-y-4 justify-betwee p-3 rounded-lg">
           <div className="flex flex-row-reverse justify-between w-full">
             <div className="text-end min-w-[120px] text-base  md:text-xl font-bold flex-1">
-              {formatNum(item.baseOrderAmount)} {item.baseCurrency}
+              {formatNum(item.baseOrderAmount, { precision: 2 })} {item.baseCurrency}
             </div>
             <div className="flex flew-row items-center gap-3 text-start min-w-[180px] flex-shrink-0">
               <div className=" bg-gray-50 w-10 h-10 rounded-full bg-secondary border border-gray-130 flex items-center justify-center">
