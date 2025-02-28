@@ -68,7 +68,7 @@ export const errorConfig: RequestConfig = {
         const errorInfo: IErrorInfo = error.info
         if (errorInfo) {
           const { message: errorMessage, code } = errorInfo
-          if (code === 401 || code === 500) {
+          if (code === 401) {
             // 登录失效，重新去登录
             return onLogout()
           } else {
