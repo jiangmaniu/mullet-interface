@@ -30,8 +30,6 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
   const currentUser = initialState?.currentUser
   const phone = currentUser?.userInfo?.phone as string
   const email = currentUser?.userInfo?.email as string
-  const account = currentUser?.account as string
-  const isKycAuth = currentUser?.isKycAuth
 
   const isPhoneCheck = phone
 

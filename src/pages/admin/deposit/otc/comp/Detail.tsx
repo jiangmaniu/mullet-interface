@@ -12,7 +12,7 @@ import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { cancelDepositOrder } from '@/services/api/wallet'
-import { copyToClipboard } from '@/utils'
+import { copyToClipboard, formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import { depositExchangeRate } from '@/utils/deposit'
 import { goKefu, push } from '@/utils/navigator'
@@ -108,7 +108,11 @@ const Detail = ({
       render: () => {
         return (
           <span>
-            1 {baseCurrency} ≈ {depositExchangeRate(methodInfo)} {channelSettlementCurrency}
+            1 {baseCurrency} ≈{' '}
+            {formatNum(depositExchangeRate(methodInfo), {
+              precision: 4
+            })}{' '}
+            {channelSettlementCurrency}
           </span>
         )
       }

@@ -46,8 +46,8 @@ export default () => {
   const email = currentUser?.userInfo?.email as string
   const account = currentUser?.account as string
   const isKycAuth = currentUser?.isKycAuth
-  const isPhoneCheck = phone && isKycAuth
-
+  // const isPhoneCheck = phone && isKycAuth
+  const isPhoneCheck = phone
   useTitle(t('mt.xiuggaimima'))
 
   const onSend = async () => {

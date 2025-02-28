@@ -3,6 +3,7 @@ import { observer } from 'mobx-react'
 
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import { getEnv } from '@/env'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import TabBottomBar from '@/pages/webapp/components/TabBottomBar'
@@ -14,6 +15,7 @@ import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useNetwork } from 'ahooks'
 import { lazy, useEffect, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
+import VConsole from 'vconsole'
 import AddPwaAppModal from '../components/AddPwaAppModal'
 
 const Tradingview = lazy(() => import('@/components/Web/Tradingview'))
@@ -33,6 +35,11 @@ function WebAppLayout() {
   const [searchParams] = useSearchParams()
   const token = searchParams.get('token')
   const user_id = searchParams.get('user_id')
+
+  if (process.env.NODE_ENV === 'development' || getEnv()?.DEBUG) {
+    // https://github.com/Tencent/vConsole
+    const vConsole = new VConsole()
+  }
 
   const isMainTab = isMainTabbar(pathname)
 
