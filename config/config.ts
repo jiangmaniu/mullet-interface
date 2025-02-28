@@ -352,7 +352,8 @@ export default defineConfig({
           test: /.js$|.html$|.css$|.otf$|.ttf$|.TTF|.woff2|.svg$/, // 压缩js，html，css文件
           deleteOriginalAssets: false, // 不删除源文件
           threshold: 1024 * 50, //  只压缩大小超过此50kb阈值的资源（单位为字节）
-          algorithm: 'gzip' // 使用gzip压缩
+          algorithm: 'brotliCompress', // 使用br算法压缩
+          filename: "[path][base].br",
         })
       )
     }
