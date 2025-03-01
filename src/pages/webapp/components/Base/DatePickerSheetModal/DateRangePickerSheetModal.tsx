@@ -74,6 +74,7 @@ const DateRangePickerSheetModal = ({ initialStartDate, initialEndDate, onConfirm
     <SheetModal
       title={t('Position.Please Select Date')}
       ref={bottomSheetModalRef}
+      dragOnContent={false}
       height={600}
       onConfirm={handleConfirm}
       confirmText={t('Position.Select Date')}

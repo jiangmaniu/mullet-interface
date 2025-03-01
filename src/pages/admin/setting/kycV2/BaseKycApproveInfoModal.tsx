@@ -6,6 +6,7 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
 import { DEFAULT_AREA_CODE } from '@/constants'
+import { useLang } from '@/context/languageProvider'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
 import { submitBaseAuth } from '@/services/api/crm/kycAuth'
@@ -74,6 +75,10 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
   const userInfo = currentUser?.userInfo
   const phone = userInfo?.phone
 
+  const { list } = useModel('areaList')
+  const { lng } = useLang()
+  const defaultAreaCode = list?.find((item) => item.areaCode === DEFAULT_AREA_CODE)
+
   return (
     <Modal
       styles={{
@@ -113,10 +118,14 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
         }}
         submitter={false}
         layout="vertical"
+        initialValues={{
+          phoneAreaCode: `+${DEFAULT_AREA_CODE}`,
+          country: defaultAreaCode?.abbr || '',
+          countryName: lng === 'zh-TW' ? defaultAreaCode?.nameCn : defaultAreaCode?.nameEn || ''
+        }}
         form={form}
       >
         <SelectCountryFormItem
-          initialValue={`+${DEFAULT_AREA_CODE}`}
           form={form}
           height={40}
           label={<span className="text-sm font-semibold text-primary">1.{intl.formatMessage({ id: 'mt.xuanzeguojia' })}</span>}

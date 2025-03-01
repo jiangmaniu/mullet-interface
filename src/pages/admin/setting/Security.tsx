@@ -30,7 +30,7 @@ export default function Security() {
   const isFinished = isKycAuth && email && phone // 验证是否完成
   let finishedStep = 0 // 已完成步数
 
-  const phoneAreaCode = currentUser?.countryInfo?.areaCode ? `+${currentUser?.countryInfo?.areaCode}` : ''
+  const phoneAreaCode = userInfo?.phoneAreaCode ? `+${userInfo?.phoneAreaCode}` : ''
 
   if (isFinished) {
     finishedStep = 2

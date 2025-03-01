@@ -4,7 +4,6 @@ import { FormInstance } from 'antd'
 import AreaCodeSelect, { AreaCodeItem } from '@/components/Form/AreaCodeSelect'
 
 import { useLang } from '@/context/languageProvider'
-import { useState } from 'react'
 import ProFormText from '../ProFormText'
 
 type IProps = {
@@ -36,14 +35,11 @@ export default function SelectCountryFormItem({ form, height = 49, placeholder, 
       }
     })
 
-  const [initialValue, setInitialValue] = useState('')
-
   return (
     <>
       <AreaCodeSelect
         name="countryName"
         form={form}
-        initialValue={initialValue}
         selectProps={{
           allowClear: false,
           fieldProps: { size: 'large' },

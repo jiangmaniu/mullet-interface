@@ -13,7 +13,6 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { getDepositOrderList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { FormattedMessage, useModel } from '@umijs/max'
-import { useTitle } from 'ahooks'
 import { PullToRefresh } from 'antd-mobile'
 import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
@@ -161,7 +160,6 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
   const [item, setItem] = useState<Wallet.depositOrderListItem | undefined>(undefined)
   const depositDetailModalRef = useRef<ModalRef>(null)
 
-  useTitle(i18n.t('menu.recordPayment'))
   return (
     <PullToRefresh onRefresh={onRefresh}>
       <View bgColor="secondary" className={cn('flex-1 min-h-[90vh]')}>
