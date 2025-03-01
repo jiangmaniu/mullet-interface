@@ -163,27 +163,31 @@ export default defineConfig({
     { src: '/scripts/sw.js', async: true }
   ],
 
-  // links: [{ rel: 'manifest', href: ENV?.manifest }],
+  // pwa配置
+  links: [
+    { rel: 'manifest', href: "/platform/manifest.json" },
+    { rel: 'shortcut icon', href: "/platform/favicon.ico" },
+  ],
 
   // seo
-  metas:
-    process.env.PLATFORM_SEO === '1'
+  metas: [
+    { name: 'apple-mobile-web-app-capable', content: 'yes' },
+    { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
+    { name: 'description', content: `Trading Platform` },
+    { name: 'format-detection', content: 'telephone=no' },
+    { name: 'mobile-web-app-capable', content: 'yes' },
+    { name: 'msapplication-tap-highlight', content: 'no' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
+    ...(
+      process.env.PLATFORM_SEO === '1'
       ? [
           { name: 'application-name', content: serverEnv?.name },
-          { name: 'apple-mobile-web-app-capable', content: 'yes' },
-          { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
           { name: 'apple-mobile-web-app-title', content: serverEnv?.name },
-          { name: 'description', content: `${serverEnv?.name} Trading Platform` },
-          { name: 'format-detection', content: 'telephone=no' },
-          { name: 'mobile-web-app-capable', content: 'yes' },
-          // { name: 'msapplication-config', content: '/icons/browserconfig.xml' },
-          // { name: 'msapplication-TileColor', content: '#183EFC' }, // 使用你的主题色
-          { name: 'msapplication-tap-highlight', content: 'no' },
-          // <meta name="viewport" content="width=device-width, initial-scale=1">
-          { name: 'viewport', content: 'width=device-width, initial-scale=1' }
-          // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
         ]
-      : [],
+      : []
+    )
+  ],
   // favicons: [
   //   // 完整地址
   //   // 'https://domain.com/favicon.ico'
