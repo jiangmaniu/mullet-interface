@@ -5,6 +5,7 @@ import { useTheme } from '@/context/themeProvider'
 
 import FormCaptcha from '@/components/Form/Captcha'
 import PwdTips from '@/components/PwdTips'
+import { useEnv } from '@/context/envProvider'
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import Header from '@/pages/webapp/components/Base/Header'
@@ -15,7 +16,7 @@ import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
 import { message } from '@/utils/message'
-import { goKefu, onLogout, push } from '@/utils/navigator'
+import { goKefu, onLogout } from '@/utils/navigator'
 import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { useTitle } from 'ahooks'
@@ -48,6 +49,9 @@ export default () => {
   const isKycAuth = currentUser?.isKycAuth
   // const isPhoneCheck = phone && isKycAuth
   const isPhoneCheck = phone
+
+  const { isRNWebview } = useEnv()
+
   useTitle(t('mt.xiuggaimima'))
 
   const onSend = async () => {
@@ -134,8 +138,11 @@ export default () => {
             message.info(intl.formatMessage({ id: 'common.opSuccess' }))
 
             setTimeout(() => {
-              push('/user/login')
-              onLogout()
+              if (isRNWebview) {
+                window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'login' }))
+              } else {
+                onLogout()
+              }
             }, 500)
           }
 

@@ -1,6 +1,3 @@
-import { isPCByWidth } from '@/utils'
-import { onLogout } from '@/utils/navigator'
-import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import { useEffect } from 'react'
 import { EnvProvider } from './envProvider'
 import { LanguageProvider } from './languageProvider'
@@ -15,10 +12,6 @@ interface IProps {
 
 export const Provider = ({ children }: IProps): JSX.Element => {
   useEffect(() => {
-    // 全局拦截未登录跳转
-    if (!STORAGE_GET_TOKEN() && isPCByWidth()) {
-      onLogout()
-    }
     stores.ws.initWorker()
     // 提前建立socket连接，加快首次进入页面行情连接速度
     stores.ws.connect()

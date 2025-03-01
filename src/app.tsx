@@ -11,6 +11,7 @@ import { CONFIG_URL } from '@/constants/config'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
+import Forbid from './components/Base/Forbid'
 import SwitchLanguage from './components/SwitchLanguage'
 import { DEFAULT_LOCALE, ICONFONT_URL, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from './constants'
 import { useEnv } from './context/envProvider'
@@ -170,7 +171,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     //     ]
     //   : [],
     // 自定义 403 页面
-    // unAccessible: <div>unAccessible</div>,
+    unAccessible: <Forbid />,
     // 增加一个 loading 的状态
     childrenRender: (children) => {
       // if (initialState?.loading) return <PageLoading />;
