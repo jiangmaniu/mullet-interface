@@ -349,20 +349,9 @@ export const rootContainer = (container: JSX.Element) => {
           {/* DNS预取回 */}
           <link rel="dns-prefetch" href={ENV?.imgDomain?.replace('/trade/', '')} />
 
-          {/* pwa配置 */}
-          <link ref="manifest" href="/platform/manifest.json" />
-          <link rel="shortcut icon" href="/platform/favicon.ico" />
-
           {/* meta标签 */}
           <meta name="application-name" content={ENV?.name} />
-          <meta name="apple-mobile-web-app-capable" content="yes" />
-          <meta name="apple-mobile-web-app-status-bar-style" content="default" />
           <meta name="apple-mobile-web-app-title" content={ENV?.name} />
-          <meta name="description" content="Trading Platform" />
-          <meta name="format-detection" content="telephone=no" />
-          <meta name="mobile-web-app-capable" content="yes" />
-          <meta name="msapplication-tap-highlight" content="no" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Helmet>
         <Provider>{container}</Provider>
         {/* 快速调试组件

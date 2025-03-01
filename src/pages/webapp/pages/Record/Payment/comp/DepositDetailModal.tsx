@@ -113,7 +113,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
           <div className={cn('grid grid-cols-2  mt-4 pb-4', item?.status === 'REJECT' && 'border-b border-gray-100')}>
             <div className="flex flex-col gap-1.5 items-start">
               <div className="text-end text-xl font-medium flex-1">
-                {formatNum(item?.receiptAmount)} {item?.symbol}
+                {formatNum(item?.receiptAmount, { precision: 2 })} {item?.symbol}
               </div>
               <span className=" text-xs text-secondary">
                 <FormattedMessage id="mt.zhuanrujine" />
@@ -135,7 +135,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
                   <FormattedMessage id="mt.shouxufei" />
                 </span>
                 <span className=" text-xs text-primary">
-                  {item?.baseHandlingFee} {item?.baseCurrency}
+                  {formatNum(item?.baseHandlingFee, { precision: 2 })} {item?.baseCurrency}
                 </span>
               </div>
             </div>
