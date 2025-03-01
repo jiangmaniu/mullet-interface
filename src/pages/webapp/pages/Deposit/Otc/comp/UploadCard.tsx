@@ -32,7 +32,8 @@ export default function ({ setImgs, imgs }: IProps) {
 
   // TODO: 上传图片 可能要适配 rn 端
   const props: UploadProps = {
-    disabled: imgs.length >= 3,
+    // 如果 rn 端在拍照，则禁止 瀏覽器上传功能
+    disabled: imgs.length >= 3 || !!window?.ReactNativeWebView,
     name: 'file',
     multiple: false,
     showUploadList: false,

@@ -19,8 +19,6 @@ const DateRangePickerSheetModal = ({ initialStartDate, initialEndDate, onConfirm
   const bottomSheetModalRef = useRef<SheetRef>(null)
   const [selectedStartDate, setSelectedStartDate] = useState<Date | undefined>(undefined)
   const [selectedEndDate, setSelectedEndDate] = useState<Date | undefined>(undefined)
-  const [isSelectingStartDate, setIsSelectingStartDate] = useState(true)
-  const [markedDates, setMarkedDates] = useState({})
 
   useImperativeHandle(ref, () => ({
     show: () => {
