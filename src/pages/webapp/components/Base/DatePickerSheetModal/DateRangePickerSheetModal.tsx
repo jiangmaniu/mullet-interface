@@ -1,8 +1,9 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import React, { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { CalendarPickerView } from 'antd-mobile'
+import dayjs from 'dayjs'
 import SheetModal, { ModalRef, SheetRef } from '../SheetModal'
 import { View } from '../View'
 
@@ -49,6 +50,10 @@ const DateRangePickerSheetModal = ({ initialStartDate, initialEndDate, onConfirm
     setSelectedEndDate(val?.[1])
   }
 
+  // Define min date (3 months ago) and max date (today)
+  const min = useMemo(() => dayjs().subtract(3, 'month').toDate(), [])
+  const max = useMemo(() => dayjs().toDate(), [])
+
   const children = (
     <View style={cn('px-[14px] py-5 w-full flex-1 ')}>
       {/* <Calendar markingType="period" markedDates={markedDates} onDayPress={handleDayPress} /> */}
@@ -63,7 +68,7 @@ const DateRangePickerSheetModal = ({ initialStartDate, initialEndDate, onConfirm
           }}
         /> */}
 
-      <CalendarPickerView title="" selectionMode="range" onChange={onChange} />
+      <CalendarPickerView title="" selectionMode="range" onChange={onChange} min={min} max={max} defaultValue={[max, max]} />
     </View>
   )
 
