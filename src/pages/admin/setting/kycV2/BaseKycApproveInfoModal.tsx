@@ -11,6 +11,7 @@ import { getEnv } from '@/env'
 import { submitBaseAuth } from '@/services/api/crm/kycAuth'
 import { ProForm } from '@ant-design/pro-components'
 import { Form, message } from 'antd'
+import { observer } from 'mobx-react'
 
 type IProps = {
   trigger?: JSX.Element
@@ -68,6 +69,11 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
     })
   }
 
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const userInfo = currentUser?.userInfo
+  const phone = userInfo?.phone
+
   return (
     <Modal
       styles={{
@@ -75,7 +81,7 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
           backgroundColor: theme.colors.backgroundColor.secondary
         }
       }}
-      contentStyle={{ padding: 20 }}
+      contentStyle={{ padding: 18 }}
       renderTitle={() => (
         <div className="h-[100px] w-60 relative">
           <FormattedMessage id="mt.kycrenzheng" />
@@ -87,6 +93,18 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
       footer={null}
       ref={modalRef}
     >
+      <div className="flex flex-col">
+        <span className="text-lg font-semibold text-primary">
+          <FormattedMessage id="mt.shenfenrenzheng" />
+        </span>
+        <span className="text-sm text-gray-500 mt-2">
+          <FormattedMessage id="mt.qingquebaoyixiazixunshibenren" />
+        </span>
+        <span className="text-base font-medium text-primary my-[22px]">
+          {intl.formatMessage({ id: 'common.shoujihaoma' })}:&nbsp;
+          {phone}
+        </span>
+      </div>
       <ProForm
         onFinish={async (values: any) => {
           console.log('values', values)
@@ -163,4 +181,4 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
   )
 }
 
-export default forwardRef(BaseKycApproveInfoModal)
+export default observer(forwardRef(BaseKycApproveInfoModal))

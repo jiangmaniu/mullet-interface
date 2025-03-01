@@ -814,5 +814,6 @@ export default {
   'mt.bangdingyouxiangtishi': '綁定您的郵箱將用來接收通知信息。',
   'mt.bangdingshoujitishi': '綁定您的手機將用來接收通知信息。',
   'mt.bunengdayuxxm': '不能大於{size}M',
-  'mt.dianjicichujinxinshangchuan': '點擊此處進行上傳'
+  'mt.dianjicichujinxinshangchuan': '點擊此處進行上傳',
+  'mt.qingquebaoyixiazixunshibenren': '請確保以下資訊是本人名下最新且有效的身份資訊。包括手機號碼，真實姓名和身份證號碼。'
 }
