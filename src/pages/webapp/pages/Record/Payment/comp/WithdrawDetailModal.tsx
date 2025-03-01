@@ -125,7 +125,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
           <div className={cn('flex flex-row justify-between items-end mt-4 pb-4', item?.status === 'REJECT' && 'border-b border-gray-100')}>
             <div className="flex flex-col gap-1.5">
               <div className="text-end text-xl font-medium flex-1">
-                {formatNum(item?.receiptAmount)} {item?.symbol}
+                {formatNum(item?.receiptAmount, { precision: 2 })} {item?.symbol}
               </div>
               <span className=" text-xs text-secondary">
                 <FormattedMessage id="mt.jine" />
@@ -136,7 +136,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
                 <FormattedMessage id="mt.shouxufei" />
               </span>
               <span className=" text-xs text-primary">
-                {item?.baseHandlingFee} {item?.baseCurrency}
+                {formatNum(item?.baseHandlingFee, { precision: 2 })} {item?.baseCurrency}
               </span>
             </div>
           </div>
