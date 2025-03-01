@@ -11,6 +11,7 @@ import ValidateCodeInput from '@/components/Form/ValidateCodeInput'
 import { submitKycAuth } from '@/services/api/crm/kycAuth'
 import { bindEmail, bindPhone } from '@/services/api/user'
 import { message } from '@/utils/message'
+import { goKefu } from '@/utils/navigator'
 
 export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
   const [step, setStep] = useState<'ONE' | 'TWO' | 'THREE' | 'FOUR'>('ONE') // 步骤
@@ -202,7 +203,7 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
           </Hidden>
         </div>
         <div className="mt-[60px]">
-          <div className="flex items-center justify-center flex-1">
+          <div className="flex items-center justify-center flex-1" onClick={goKefu}>
             <img src="/img/kefu.png" width={28} height={28} />
             <span className="text-sm text-primary cursor-pointer">
               <FormattedMessage id="mt.yanzhengshiyudaowenti" />?
