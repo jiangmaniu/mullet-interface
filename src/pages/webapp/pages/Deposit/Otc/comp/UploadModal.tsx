@@ -71,66 +71,48 @@ function UploadModal(props: IProps, ref: ForwardedRef<ModalRef>) {
   }))
 
   const [visible, setVisible] = useState(false)
-  const [isSheetOpen, setIsSheetOpen] = useState(false)
 
   const { cn } = useTheme()
   return (
-    <>
-      {isSheetOpen && (
-        <TransparentBackdrop
-          onClick={() => {
-            console.log('onClick')
-            bottomSheetModalRef.current?.sheet?.dismiss()
-          }}
-        />
-      )}
-      <SheetModal
-        ref={bottomSheetModalRef}
-        onOpenChange={(open) => {
-          setIsSheetOpen(open)
-        }}
-        blocking={false}
-        header={
-          <div className="w-full relative">
-            <div className={cn('leading-7 text-center font-pf-bold text-lg text-primary')}>{t('mt.shangchuanpinzheng')}</div>
+    <SheetModal
+      ref={bottomSheetModalRef}
+      header={
+        <div className="w-full relative">
+          <div className={cn('leading-7 text-center font-pf-bold text-lg text-primary')}>{t('mt.shangchuanpinzheng')}</div>
 
-            <span
-              className="text-blue text-sm font-normal underline cursor-pointer absolute right-4 top-1"
-              onClick={() => setVisible(true)}
+          <span className="text-blue text-sm font-normal underline cursor-pointer absolute right-4 top-1" onClick={() => setVisible(true)}>
+            <FormattedMessage id="mt.chukanshili" />
+          </span>
+        </div>
+      }
+      autoHeight
+      footer={
+        <Button type="primary" size="large" className="mt-2 mb-2.5" onClick={handleSubmit}>
+          {getIntl().formatMessage({ id: 'common.tijiao' })}
+        </Button>
+      }
+      children={
+        <div className="px-[14px]">
+          <Uploadcard setImgs={setImgs} imgs={imgs} />
+
+          <div className="hidden">
+            <Image.PreviewGroup
+              preview={{
+                visible,
+                scaleStep: 1,
+                onVisibleChange: (value) => {
+                  setVisible(value)
+                }
+              }}
             >
-              <FormattedMessage id="mt.chukanshili" />
-            </span>
+              <Image width={200} style={{ display: 'none' }} src={'/img/shili-01.jpeg'} />
+              <Image width={200} style={{ display: 'none' }} src={'/img/shili-02.png'} />
+              <Image width={200} style={{ display: 'none' }} src={'/img/shili-03.jpeg'} />
+            </Image.PreviewGroup>
           </div>
-        }
-        autoHeight
-        footer={
-          <Button type="primary" size="large" className="mt-2 mb-2.5" onClick={handleSubmit}>
-            {getIntl().formatMessage({ id: 'common.tijiao' })}
-          </Button>
-        }
-        children={
-          <div className="px-[14px]">
-            <Uploadcard setImgs={setImgs} imgs={imgs} />
-
-            <div className="hidden">
-              <Image.PreviewGroup
-                preview={{
-                  visible,
-                  scaleStep: 1,
-                  onVisibleChange: (value) => {
-                    setVisible(value)
-                  }
-                }}
-              >
-                <Image width={200} style={{ display: 'none' }} src={'/img/shili-01.jpeg'} />
-                <Image width={200} style={{ display: 'none' }} src={'/img/shili-02.png'} />
-                <Image width={200} style={{ display: 'none' }} src={'/img/shili-03.jpeg'} />
-              </Image.PreviewGroup>
-            </div>
-          </div>
-        }
-      />
-    </>
+        </div>
+      }
+    />
   )
 }
 

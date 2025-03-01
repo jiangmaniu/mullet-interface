@@ -81,6 +81,24 @@ type IProps = Partial<Props> & {
   header?: React.ReactNode
 }
 
+const TransparentBackdrop = ({ onClick }: { onClick: () => void }) => (
+  <div
+    className="bottom-sheet-backdrop"
+    onClick={onClick}
+    style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      zIndex: 3
+    }}
+  >
+    {/* 占位 */}
+  </div>
+)
+
 const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
   let {
     buttonBlock = true,
@@ -283,8 +301,17 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
     }
   })
 
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+
   return (
     <>
+      {visible && (
+        <TransparentBackdrop
+          onClick={() => {
+            close()
+          }}
+        />
+      )}
       <BottomSheet
         ref={sheetRef}
         onDismiss={() => {
@@ -311,6 +338,7 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
         scrollLocking
         expandOnContentDrag={dragOnContent}
         className={className}
+        blocking={false}
         {...res}
       >
         {/* 加loading避免安卓端键盘首次弹起 ，延迟渲染*/}

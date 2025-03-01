@@ -287,11 +287,11 @@ const Step2 = ({
               </Button>
             </div> */}
             </div>
-            <div className="-mt-[7px]">
+            {/* <div className="-mt-[7px]">
               <span className="  font-normal text-weak  text-xs ">
                 <FormattedMessage id="mt.youyuhuilvbodong" />
               </span>
-            </div>
+            </div> */}
           </ProForm>
         </div>
       </div>

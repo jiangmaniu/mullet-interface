@@ -10,6 +10,7 @@ import { useTheme } from '@/context/themeProvider'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { generateWithdrawOrder } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
+import { withdrawExchangeRate } from '@/utils/deposit'
 import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
@@ -146,7 +147,19 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
           <FormattedMessage id="mt.tixianjine" />
           &nbsp;{formatNum(amount, { precision: DEFAULT_CURRENCY_DECIMAL })}&nbsp;{currency}
         </span>
+        <div className="text-sm mt-3">
+          <span className=" text-secondary">
+            <FormattedMessage id="mt.cankaohuilv" />
+          </span>
+          &nbsp;
+          <span className="text-primary">
+            {`1 ${currency} ≈ ${formatNum(withdrawExchangeRate(methodInfo), {
+              precision: DEFAULT_CURRENCY_DECIMAL
+            })} ${symbol}`}
+          </span>
+        </div>
       </div>
+
       {loading && (
         <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0 z-10">
           <PageLoading />
