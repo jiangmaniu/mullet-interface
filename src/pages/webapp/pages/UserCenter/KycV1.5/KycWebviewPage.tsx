@@ -11,7 +11,7 @@ import VerifyStatus3 from '../KycV2/VerifyStatus3'
 import VerifyStatus4 from '../KycV2/VerifyStatus4'
 
 const Children = observer(
-  forwardRef(({ status, file = {}, injectUpload }: { status: string; file: any; injectUpload: () => Promise<void> }, ref: any) => {
+  forwardRef(({ status, file = {}, injectUpload }: { status: string; file: any; injectUpload?: () => Promise<void> }, ref: any) => {
     const onSuccess = () => {
       // @ts-ignore
       window.ReactNativeWebView.postMessage(
@@ -153,5 +153,6 @@ export default function KycWebviewPage() {
     }
   }, [messageHandler])
 
-  return <Children status={status} ref={ref} file={file} injectUpload={injectUpload} />
+  // return <Children status={status} ref={ref} file={file} injectUpload={injectUpload} />
+  return <Children status={status} ref={ref} file={file} />
 }

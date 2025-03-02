@@ -55,8 +55,8 @@ const UploadSheetModal = ({ onChange, multiple = false, count = 0 }: IProps, ref
     fileUpload(formData)
       .then((res) => {
         if (res.success && res.data) {
-          onChange?.(res.data)
           bottomSheetModalRef.current?.sheet?.dismiss()
+          onChange?.(res.data)
           return
         }
 
