@@ -813,5 +813,8 @@ export default {
   'mt.bunengdayuxxm': 'Cannot exceed {size}M',
   'mt.dianjicichujinxinshangchuan': 'Click here to upload',
   'mt.qingquebaoyixiazixunshibenren':
-    'Please ensure the following information is the latest and valid identity information of your name. Including your phone number, real name, and ID number.'
+    'Please ensure the following information is the latest and valid identity information of your name. Including your phone number, real name, and ID number.',
+  'mt.gaojirenzheng': 'Advanced Verification',
+  'mt.ninjiangzhifujine': 'The amount you will pay is',
+  'mt.shoukuanxinxi': 'Payment Information'
 }

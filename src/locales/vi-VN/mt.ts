@@ -806,5 +806,8 @@ export default {
   'mt.bunengdayuxxm': 'Không thể vượt quá {size}M',
   'mt.dianjicichujinxinshangchuan': 'Nhấp vào đây để tải lên',
   'mt.qingquebaoyixiazixunshibenren':
-    'Vui lòng đảm bảo thông tin sau đây là thông tin cá nhân của bạn. Bao gồm số điện thoại, tên thật và số CMND/CCCD.'
+    'Vui lòng đảm bảo thông tin sau đây là thông tin cá nhân của bạn. Bao gồm số điện thoại, tên thật và số CMND/CCCD.',
+  'mt.gaojirenzheng': 'Xác minh nâng cao',
+  'mt.ninjiangzhifujine': 'Số tiền bạn sẽ thanh toán là',
+  'mt.shoukuanxinxi': 'Thông tin thanh toán'
 }

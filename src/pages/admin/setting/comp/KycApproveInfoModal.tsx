@@ -4,6 +4,7 @@ import { forwardRef, useImperativeHandle, useRef } from 'react'
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
 import { getEnum } from '@/constants/enum'
+import { observer } from 'mobx-react'
 
 type IProps = {
   trigger?: JSX.Element
@@ -19,13 +20,27 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
   const countryName = getCountryName(currentUser?.country)
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const identificationType = kycAuthInfo?.identificationType as string
+  const isKycAuth = currentUser?.isKycAuth || false
 
   useImperativeHandle(ref, () => {
     return modalRef.current
   })
 
   return (
-    <Modal trigger={trigger} title={<FormattedMessage id="mt.shenfenxinxi" />} width={430} footer={null} ref={modalRef}>
+    <Modal
+      trigger={trigger}
+      title={
+        <div className="flex flex-row">
+          <FormattedMessage id="mt.shenfenxinxi" />
+          <div className="bg-[rgba(69, 164, 138, 0.1)] flex items-center justify-center py-1 px-1 rounded text-green text-xs font-medium pl-2">
+            <FormattedMessage id="mt.gaojirenzheng" />
+          </div>
+        </div>
+      }
+      width={430}
+      footer={null}
+      ref={modalRef}
+    >
       <div className="flex items-center">
         <img src="/img/default-avatar.png" width={40} height={40} />
         <div className="pl-3">
@@ -71,4 +86,4 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
   )
 }
 
-export default forwardRef(KycApproveInfoModal)
+export default observer(forwardRef(KycApproveInfoModal))

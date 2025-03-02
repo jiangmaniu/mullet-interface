@@ -46,7 +46,10 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
           // style: {
           //   border: 'none'
           // }
-          suffix: <div className="text-primary text-sm !font-dingpro-medium">{currency}</div>
+          suffix: <div className="text-primary text-sm !font-dingpro-medium">{currency}</div>,
+          onChange: (e) => {
+            console.log('e', e)
+          }
         }}
         placeholder={tips}
         rules={[
@@ -78,16 +81,19 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
 
       <div className="flex justify-between text-gray-500 text-xs mt-2">
         {/* <span>{methodInfo?.options?.limit?.desc}</span> */}
-        <span>
-          {`${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(methodInfo?.singleAmountMax || 99999)} ${
-            methodInfo?.baseCurrency
-          }`}
-        </span>
+        {amount && (
+          <div className="mt-[2px] text-xs">
+            <FormattedMessage id="mt.ninjiangzhifujine" /> &nbsp;
+            <span className="text-primary">
+              {amount ? depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem) : '0'} {methodInfo?.symbol}
+            </span>
+          </div>
+        )}
         {/* <span>
           ≈ {depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem)} {methodInfo?.symbol}
         </span> */}
       </div>
-      <div className="text-secondary text-sm mt-5 flex flex-row items-center justify-between gap-4">
+      {/* <div className="text-secondary text-sm mt-5 flex flex-row items-center justify-between gap-4">
         <span className="flex-shrink-0">
           <FormattedMessage id="mt.dairujinjine" />
         </span>
@@ -95,7 +101,7 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
         <span className="flex-shrink-0">
           {amount ? depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem) : '0'} {methodInfo?.symbol}
         </span>
-      </div>
+      </div> */}
     </div>
   )
 }

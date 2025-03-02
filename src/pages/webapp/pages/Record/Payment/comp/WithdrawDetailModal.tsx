@@ -142,7 +142,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
           </div>
 
           {item?.status === 'REJECT' && item?.remark && (
-            <div className="text-sm text-primary mt-4 px-2">
+            <div className="text-sm text-primary mt-4 px-2  whitespace-pre-wrap  break-all">
               <FormattedMessage id="mt.beizhu" />
               :&nbsp;{item?.remark}
             </div>

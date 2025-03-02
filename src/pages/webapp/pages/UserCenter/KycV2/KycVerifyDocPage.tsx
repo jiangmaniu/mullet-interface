@@ -41,24 +41,24 @@ export default function KycVerifyDocPage() {
       headerStyle={{ backgroundColor: theme.colors.backgroundColor.primary }}
       header={<Header title={i18n.t('pages.userCenter.gaojirenzheng')} />}
       fixedHeight
-      footer={
-        <View className={cn('grid grid-cols-2 gap-5 w-full mb-2.5')}>
-          <Button
-            type="primary"
-            loading={submitting}
-            height={48}
-            className={cn(' flex-1 w-full')}
-            onClick={() => {
-              push(appendHideParamIfNeeded('/app/deposit'))
-            }}
-          >
-            {i18n.t('pages.userCenter.qurujin')}
-          </Button>
-          <Button type="primary" loading={submitting} height={48} className={cn('w-full flex-1')} onClick={onSubmit} disabled={disabled}>
-            {i18n.t('pages.userCenter.tijiaoshenhe')}
-          </Button>
-        </View>
-      }
+      // footer={
+      //   <View className={cn('grid grid-cols-2 gap-5 w-full mb-2.5')}>
+      //     <Button
+      //       type="primary"
+      //       loading={submitting}
+      //       height={48}
+      //       className={cn(' flex-1 w-full')}
+      //       onClick={() => {
+      //         push(appendHideParamIfNeeded('/app/deposit'))
+      //       }}
+      //     >
+      //       {i18n.t('pages.userCenter.qurujin')}
+      //     </Button>
+      //     <Button type="primary" loading={submitting} height={48} className={cn('w-full flex-1')} onClick={onSubmit} disabled={disabled}>
+      //       {i18n.t('pages.userCenter.tijiaoshenhe')}
+      //     </Button>
+      //   </View>
+      // }
     >
       <View className="flex flex-col items-center">
         <img
@@ -92,6 +92,22 @@ export default function KycVerifyDocPage() {
             onDisabledChange={onDisabledChange}
           />
         </View>
+      </View>
+      <View className={cn('grid grid-cols-2 gap-5 w-full pb-2.5 px-[14px]')}>
+        <Button
+          type="primary"
+          loading={submitting}
+          height={48}
+          className={cn(' flex-1 w-full')}
+          onClick={() => {
+            push(appendHideParamIfNeeded('/app/deposit'))
+          }}
+        >
+          {i18n.t('pages.userCenter.qurujin')}
+        </Button>
+        <Button type="primary" loading={submitting} height={48} className={cn('w-full flex-1')} onClick={onSubmit} disabled={disabled}>
+          {i18n.t('pages.userCenter.tijiaoshenhe')}
+        </Button>
       </View>
     </BasicLayout>
   )
