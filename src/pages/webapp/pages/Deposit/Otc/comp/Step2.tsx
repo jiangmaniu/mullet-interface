@@ -7,6 +7,7 @@ import { copyToClipboard, formatNum } from '@/utils'
 
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { getEnv } from '@/env'
+import { QrcodeOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 
 const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wallet.GenerateDepositOrderDetailResult }) => {
@@ -178,8 +179,11 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
   //     }
   //   }, 600)
   // }, [])
+
+  const qrCodeSrc = `${getEnv().imgDomain}${paymentInfo?.qrCode}`
+
   return (
-    <div className="flex items-center justify-center w-full h-full flex-1 ">
+    <div className="flex items-center justify-center w-full h-full flex-1">
       <div className=" pt-4 bg-white w-full rounded-t-3xl flex-1">
         <div className="flex flex-row items-center gap-2 border-b w-full pb-[14px] px-5 border-b-gray-70 ">
           <span className=" text-sm text-secondary">
@@ -223,7 +227,7 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
                     <FormattedMessage id="mt.shoukuanerweima" />
                   </div>
                   <div className="w-[154px] h-[154px] bg-secondary mt-2 ">
-                    <img src={`${getEnv().imgDomain}${paymentInfo?.qrCode}`} alt="qrcode" style={{ width: '100%', height: '100%' }} />
+                    <img src={qrCodeSrc} alt="qrcode" style={{ width: '100%', height: '100%' }} />
                   </div>
 
                   <div className="flex flex-col-reverse justify-between h-full flex-1 gap-4 mt-3 text-center">
@@ -244,6 +248,22 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
               <span className="  font-normal text-weak  text-xs ">
                 <FormattedMessage id="mt.youyuhuilvbodong" />
               </span>
+              <div className="flex items-center justify-center mt-4">
+                <div
+                  className="flex px-3 flex-row items-center justify-center rounded-lg font-pf-bold font-medium border border-gray-70 h-[40px] text-center gap-x-1"
+                  onClick={() => {
+                    window.ReactNativeWebView.postMessage(
+                      JSON.stringify({
+                        type: 'saveImage',
+                        data: qrCodeSrc
+                      })
+                    )
+                  }}
+                >
+                  <QrcodeOutlined />
+                  <FormattedMessage id="mt.xiazaierweima" />
+                </div>
+              </div>
             </div>
           </ProForm>
         </div>
