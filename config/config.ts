@@ -298,7 +298,7 @@ export default defineConfig({
                 cacheName: 'seed-js',
                 expiration: {
                   maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
-                  maxAgeSeconds: 10 * 60 // 10 min
+                  maxAgeSeconds: 12 * 60 * 60 // 12hour
                 }
               }
             },
@@ -308,8 +308,8 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-css',
                 expiration: {
-                  maxEntries: 30, //最多缓存100个，超过的按照LRU原则删除
-                  maxAgeSeconds: 10 * 60 // 10 min
+                  maxEntries: 30, //最多缓存30个，超过的按照LRU原则删除
+                  maxAgeSeconds: 12 * 60 * 60 // 12hour
                 }
               }
             },
@@ -319,8 +319,8 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-image',
                 expiration: {
-                  maxEntries: 10, //最多缓存300个，超过的按照LRU原则删除
-                  maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
+                  maxEntries: 100, //最多缓存100个，超过的按照LRU原则删除
+                  maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
                 }
               }
             },
@@ -330,8 +330,8 @@ export default defineConfig({
               options: {
                 cacheName: 'seed-font',
                 expiration: {
-                  maxEntries: 4, //最多缓存30个，超过的按照LRU原则删除
-                  maxAgeSeconds: 1 * 24 * 60 * 60 // 1 days
+                  maxEntries: 4, //最多缓存4个，超过的按照LRU原则删除
+                  maxAgeSeconds: 7 * 24 * 60 * 60 // 7 days
                 }
               }
             },

@@ -118,6 +118,7 @@ const DateRangePickerSheetModal = ({ initialStartDate, initialEndDate, onConfirm
         monthsShown={1}
         showPopperArrow={false}
         calendarClassName="date-range-calendar"
+        // @ts-ignore
         dayClassName={(date) => (date.getDay() === 0 || date.getDay() === 6 ? 'weekend-day' : '')}
       />
     </View>

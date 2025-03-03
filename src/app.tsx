@@ -3,7 +3,7 @@ import { pcCssVars } from '@/theme/theme.config'
 import { Settings as LayoutSettings } from '@ant-design/pro-components'
 import { history, Link, Navigate, RunTimeLayoutConfig, useLocation, useModel } from '@umijs/max'
 import 'animate.css'
-import { ClickToComponent } from 'click-to-react-component'
+// import { ClickToComponent } from 'click-to-react-component'
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
@@ -359,7 +359,8 @@ export const rootContainer = (container: JSX.Element) => {
           按住 option + 单击，就会直接打开它的对应的组件的源码。
           如果按住 option + 右键单击，可以看到它的所有父级组件，然后选择一个组件打
         */}
-        <ClickToComponent />
+        {/* rn 低版本webviwe android 33以下不支持 有兼容问题 */}
+        {/* <ClickToComponent /> */}
       </>
     ),
     null,

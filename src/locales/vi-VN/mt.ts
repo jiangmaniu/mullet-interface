@@ -809,5 +809,6 @@ export default {
     'Vui lòng đảm bảo thông tin sau đây là thông tin cá nhân của bạn. Bao gồm số điện thoại, tên thật và số CMND/CCCD.',
   'mt.gaojirenzheng': 'Xác minh nâng cao',
   'mt.ninjiangzhifujine': 'Số tiền bạn sẽ thanh toán là',
-  'mt.shoukuanxinxi': 'Thông tin thanh toán'
+  'mt.shoukuanxinxi': 'Thông tin thanh toán',
+  'mt.xiazaierwerma': 'Tải xuống mã QR'
 }

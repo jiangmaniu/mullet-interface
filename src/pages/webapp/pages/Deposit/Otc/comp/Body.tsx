@@ -100,7 +100,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
   }))
 
   return (
-    <div className="bg-gray-55">
+    <div className="bg-gray-55 overflow-y-auto h-full">
       <div className="flex flex-col gap-1 items-center pt-9">
         <span className=" text-sm font-normal">
           <FormattedMessage id="mt.daizhifujine" />
