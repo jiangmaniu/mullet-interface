@@ -818,5 +818,6 @@ export default {
   'mt.qingquebaoyixiazixunshibenren': '請確保以下資訊是本人名下最新且有效的身份資訊。包括手機號碼，真實姓名和身份證號碼。',
   'mt.gaojirenzheng': '高級認證',
   'mt.ninjiangzhifujine': '您将支付的金额为',
-  'mt.shoukuanxinxi': '收款信息'
+  'mt.shoukuanxinxi': '收款信息',
+  'mt.xiazaierwerma': '下載二維碼'
 }
