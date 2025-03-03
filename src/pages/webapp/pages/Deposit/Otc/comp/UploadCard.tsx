@@ -5,10 +5,11 @@ import { FormattedMessage } from '@umijs/max'
 import type { UploadProps } from 'antd'
 import { Image, Upload } from 'antd'
 
+import { useLoading } from '@/context/loadingProvider'
 import { getEnv } from '@/env'
 import { message } from '@/utils/message'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { isAndroid, isIOS } from 'react-device-detect'
 
 const { Dragger } = Upload
@@ -30,10 +31,12 @@ export default function ({ setImgs, imgs }: IProps) {
     setImgs(newImgs)
   }
 
+  const { showLoading, hideLoading } = useLoading()
+
   // TODO: 上传图片 可能要适配 rn 端
   const props: UploadProps = {
     // 如果 rn 端在拍照，则禁止 瀏覽器上传功能
-    // disabled: imgs.length >= 3,
+    disabled: imgs.length >= 3 || !!window?.ReactNativeWebView,
     name: 'file',
     multiple: false,
     showUploadList: false,
@@ -43,17 +46,19 @@ export default function ({ setImgs, imgs }: IProps) {
     },
     accept: 'image/png, image/jpeg, image/jpg',
 
-    // beforeUpload: (file) => {
-    //   if (window?.ReactNativeWebView) {
-    //     window.ReactNativeWebView?.postMessage(
-    //       JSON.stringify({
-    //         type: 'takePhoto'
-    //       })
-    //     )
-    //     return false
-    //   }
-    //   return true
-    // },
+    beforeUpload: (file) => {
+      console.log('beforeUpload', file)
+      showLoading()
+      // if (window?.ReactNativeWebView) {
+      //   window.ReactNativeWebView?.postMessage(
+      //     JSON.stringify({
+      //       type: 'takePhoto'
+      //     })
+      //   )
+      //   return false
+      // }
+      // return true
+    },
     onChange(info) {
       console.log('info', info)
       const data = info?.file?.response?.data || {}
@@ -68,6 +73,7 @@ export default function ({ setImgs, imgs }: IProps) {
         console.log('error', info)
         message.info(`${info.file.name} file upload failed.`)
       }
+      hideLoading()
     },
     onDrop(e) {
       console.log('Dropped files', e.dataTransfer.files)
@@ -75,37 +81,64 @@ export default function ({ setImgs, imgs }: IProps) {
   }
 
   const [times, setTimes] = useState(0)
-  const messageHandler = useCallback(
-    (e: any) => {
+
+  // Stabilize the messageHandler function by using useRef for mutable values
+  const onDoneRef = useRef(onDone)
+  const timesRef = useRef(times)
+
+  // 当依赖项变化时更新引用
+  useEffect(() => {
+    onDoneRef.current = onDone
+    timesRef.current = times
+  }, [onDone, times])
+
+  // 定义messageHandler，不添加依赖项因为它使用引用
+  const messageHandler = useCallback(async (event: Event) => {
+    try {
+      // 使用守卫条件安全地解析消息数据
+      // 将事件转换为any类型以安全访问data属性
+      const eventData = (event as any)?.data
+      if (!eventData) return
+
+      let parsedData
       try {
-        const data = e?.data ? JSON.parse(e?.data) : undefined
-        console.log('======data====', data)
-        if (data?.action === 'upload' && data?.times === times) {
-          setTimes((prev) => prev + 1)
-          onDone(data?.value)
-          window.ReactNativeWebView?.postMessage(
-            // 給 rn 端发送消息，停止接收照片
-            JSON.stringify(JSON.stringify({ data, times }))
-          )
-        }
+        parsedData = JSON.parse(eventData)
       } catch (error) {
-        window.ReactNativeWebView?.postMessage(
-          // 給 rn 端发送消息，停止接收照片
-          JSON.stringify(JSON.stringify(error))
-        )
-        // message.info(`监听消息错误: ${JSON.stringify(error)}`)
+        // 如果第一次解析失败，可能不是JSON或已经被解析过
+        parsedData = eventData
       }
-    },
-    [onDone]
-  )
+
+      const data = typeof parsedData === 'string' ? JSON.parse(parsedData) : parsedData
+
+      // 只有在有有效数据且times匹配时才继续处理
+      if (data && data.value && data.times === timesRef.current) {
+        setTimes((prev) => prev + 1)
+        onDoneRef.current(data.value)
+
+        // 发送消息回React Native
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage(JSON.stringify(JSON.stringify({ data, times: timesRef.current })))
+        }
+      }
+    } catch (error) {
+      // 如果需要，将错误发送回React Native
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify(JSON.stringify(error)))
+      }
+      // 考虑正确记录错误而不是使用被注释掉的message
+      console.error('处理消息时出错:', error)
+    }
+  }, []) // 这里没有依赖项，因为我们使用引用
 
   useEffect(() => {
+    // 根据平台添加事件监听器
     if (isIOS) {
       window.addEventListener('message', messageHandler)
     } else if (isAndroid) {
       document.addEventListener('message', messageHandler)
     }
 
+    // 清理函数
     return () => {
       if (isIOS) {
         window.removeEventListener('message', messageHandler)
@@ -113,25 +146,25 @@ export default function ({ setImgs, imgs }: IProps) {
         document.removeEventListener('message', messageHandler)
       }
     }
-  }, [messageHandler])
+  }, [messageHandler]) // 只有messageHandler作为依赖项，现在它是稳定的
 
   return (
     <>
       <Dragger {...props}>
         <div
           className="flex items-center justify-center"
-          // onClick={(e) => {
-          //   // e.preventDefault()
-          //   if (window?.ReactNativeWebView) {
-          //     e.stopPropagation()
-          //     window.ReactNativeWebView?.postMessage(
-          //       JSON.stringify({
-          //         type: 'takePhoto',
-          //         times
-          //       })
-          //     )
-          //   }
-          // }}
+          onClick={(e) => {
+            // e.preventDefault()
+            if (window?.ReactNativeWebView) {
+              e.stopPropagation()
+              window.ReactNativeWebView?.postMessage(
+                JSON.stringify({
+                  type: 'takePhoto',
+                  times
+                })
+              )
+            }
+          }}
         >
           <div className="flex flex-col items-center justify-center bg-cover  h-[235px]">
             <img src="/img/upload-01.png" width={72} height={72} />
@@ -154,7 +187,6 @@ export default function ({ setImgs, imgs }: IProps) {
             >
               <img src="/img/shanchu.png" className="w-[24px] h-[24px]" />
             </div>
-            {/* <Iconfont name="danchuang-guanbi" className="text-secondary" size={18} /> */}
           </div>
         ))}
       </div>

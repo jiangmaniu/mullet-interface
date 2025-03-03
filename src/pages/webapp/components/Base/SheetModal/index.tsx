@@ -23,7 +23,6 @@ export interface SheetRef {
     present: (afterOpen?: () => void) => void
     dismiss: (beforeClose?: () => void) => void
   }
-  visible: boolean
 }
 
 type IProps = Partial<Props> & {
@@ -166,11 +165,13 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
   }, [visible, showLoading])
 
   const show = (afterOpen?: () => void) => {
+    console.log('showshowshow')
     setVisible(true)
 
     afterOpen?.()
   }
   const close = (beforeClose?: () => void) => {
+    console.log('closeclosecloseclose')
     beforeClose?.()
     onDismiss?.()
     setVisible(false)
@@ -182,8 +183,7 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
     sheet: {
       present: show,
       dismiss: close
-    },
-    visible
+    }
   }))
 
   const triggerDom = useMemo(() => {

@@ -1,16 +1,12 @@
-import { PageLoading } from '@ant-design/pro-components'
-import { FormattedMessage, getIntl, useIntl, useParams, useSearchParams } from '@umijs/max'
-import { Form } from 'antd'
+import { FormattedMessage, useIntl, useParams, useSearchParams } from '@umijs/max'
 import { forwardRef, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { stores } from '@/context/mobxProvider'
 
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
-import { useTheme } from '@/context/themeProvider'
 import { getDepositOrderDetail } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { depositExchangeRate } from '@/utils/deposit'
-import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
@@ -37,9 +33,6 @@ const Notice = observer(({ methodId }: { methodId: string }) => {
 })
 
 const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref) => {
-  const { theme } = useTheme()
-  const [form] = Form.useForm()
-
   const [paymentInfo, setPaymentInfo] = useState<Wallet.GenerateDepositOrderDetailResult>({})
 
   const methods = stores.wallet.depositMethods
@@ -55,27 +48,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
     }
   }, [methods, intl])
 
-  const [loading, setLoading] = useState(false)
-
   const methodInfo = useMemo(() => methods.find((item) => item.id === paymentInfo?.channelId), [paymentInfo, methods])
-
-  const handleSubmit1 = async (params: any) => {
-    console.log('params', params)
-
-    if (!params.password || !params.code) {
-      message.info(getIntl().formatMessage({ id: 'mt.qingshuruzhanghaomimayanzhengma' }))
-      return
-    }
-
-    form
-      .validateFields()
-      .then((values) => {
-        setLoading(true)
-      })
-      .catch((err) => {
-        console.log('err', err)
-      })
-  }
 
   const params = useParams()
   const id = params?.id as string
@@ -121,12 +94,11 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
   }
 
   useImperativeHandle(ref, () => ({
-    onSubmit: handleSubmit1,
+    onSubmit: () => {},
     onUpload,
     onCancel
   }))
 
-  //
   return (
     <div className="bg-gray-55">
       <div className="flex flex-col gap-1 items-center pt-9">
@@ -156,13 +128,8 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
           </span>
         </div>
       </div>
-      {loading && (
-        <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0 z-10">
-          <PageLoading />
-        </div>
-      )}
 
-      <Step2 loading={loading} paymentInfo={paymentInfo} />
+      <Step2 paymentInfo={paymentInfo} />
 
       <div className="flex flex-col justify-start items-start gap-4 flex-1 pt-2.5 px-[14px] mt-1.5 border-t border-[#f0f0f0] bg-white">
         <div className="text-primary text-sm font-semibold">

@@ -70,6 +70,12 @@ const Children = observer(
   })
 )
 
+// 添加正确的ref类型定义
+interface RefType {
+  onSubmit: () => void
+  onRetry: () => void
+}
+
 export default function KycWebviewPage() {
   const user = useModel('user')
   const searchParams = useWebviewPageSearchParams()
@@ -113,29 +119,64 @@ export default function KycWebviewPage() {
     )
   }
 
-  const messageHandler = useCallback(
-    (e: any) => {
+  // 使用useRef存储可变值，保持messageHandler的稳定性
+  const refRef = useRef<React.RefObject<RefType>>(ref)
+  const setFileRef = useRef(setFile)
+  const timesRef = useRef(times)
+  const setTimesRef = useRef(setTImes)
+
+  // 当依赖项变化时更新引用
+  useEffect(() => {
+    refRef.current = ref
+    setFileRef.current = setFile
+    timesRef.current = times
+    setTimesRef.current = setTImes
+  }, [ref, setFile, times, setTImes])
+
+  // 优化的messageHandler函数，使用稳定的引用而非闭包值
+  const messageHandler = useCallback(async (event: Event) => {
+    try {
+      // 使用守卫条件安全地解析消息数据
+      const eventData = (event as any)?.data
+      if (!eventData) return
+
+      // 安全地解析数据，处理各种格式
+      let parsedData
       try {
-        const data = e?.data ? JSON.parse(e?.data) : undefined
-
-        if (data?.action === 'submit') {
-          ref.current?.onSubmit()
-        }
-
-        if (data?.action === 'retry') {
-          ref.current?.onRetry()
-        }
-
-        if (data?.action === 'upload' && data?.times === times) {
-          setTImes((prev) => prev + 1)
-          setFile(data?.value)
-        }
+        parsedData = JSON.parse(eventData)
       } catch (error) {
-        // message.info(`监听消息错误: ${JSON.stringify(error)}`)
+        // 如果第一次解析失败，可能不是JSON或已经被解析过
+        parsedData = eventData
       }
-    },
-    [ref, times]
-  )
+
+      // 确保处理字符串格式的JSON数据
+      const data = typeof parsedData === 'string' ? JSON.parse(parsedData) : parsedData
+
+      console.log('data===', data)
+      // 根据消息类型分发到对应的处理函数
+      if (data) {
+        if (data.action === 'submit') {
+          refRef.current?.current?.onSubmit()
+        } else if (data.action === 'retry') {
+          refRef.current?.current?.onRetry()
+        } else if (data.action === 'upload' && data.times === timesRef.current) {
+          setTimesRef.current((prev) => prev + 1)
+          setFileRef.current(data.value)
+        }
+
+        // 可能需要回复消息
+        if (window.ReactNativeWebView && data.requireResponse) {
+          window.ReactNativeWebView.postMessage(JSON.stringify(JSON.stringify({ success: true, action: data.action })))
+        }
+      }
+    } catch (error) {
+      // 记录错误并可能发送到React Native
+      console.error('处理消息时出错:', error)
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(JSON.stringify(JSON.stringify({ error: true, message: (error as Error).message })))
+      }
+    }
+  }, []) // 空依赖数组，因为我们使用refs访问最新值
 
   useEffect(() => {
     if (isIOS) {
@@ -151,8 +192,8 @@ export default function KycWebviewPage() {
         document.removeEventListener('message', messageHandler)
       }
     }
-  }, [messageHandler])
+  }, [messageHandler]) // 只依赖稳定的messageHandler
 
-  // return <Children status={status} ref={ref} file={file} injectUpload={injectUpload} />
-  return <Children status={status} ref={ref} file={file} />
+  return <Children status={status} ref={ref} file={file} injectUpload={injectUpload} /> // 使用设备上传功能
+  // return <Children status={status} ref={ref} file={file} />  // 使用网页上传功能
 }
