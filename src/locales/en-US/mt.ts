@@ -811,5 +811,10 @@ export default {
   'mt.bangdingyouxiangtishi': 'Binding your email will be used to receive notification information.',
   'mt.bangdingshoujitishi': 'Binding your phone will be used to receive notification information.',
   'mt.bunengdayuxxm': 'Cannot exceed {size}M',
-  'mt.dianjicichujinxinshangchuan': 'Click here to upload'
+  'mt.dianjicichujinxinshangchuan': 'Click here to upload',
+  'mt.qingquebaoyixiazixunshibenren':
+    'Please ensure the following information is the latest and valid identity information of your name. Including your phone number, real name, and ID number.',
+  'mt.gaojirenzheng': 'Advanced Verification',
+  'mt.ninjiangzhifujine': 'The amount you will pay is',
+  'mt.shoukuanxinxi': 'Payment Information'
 }

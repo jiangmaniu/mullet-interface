@@ -112,6 +112,9 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
 
   return (
     <div
+      onClick={() => {
+        onPress(item, 'CLOSE_POSITION')
+      }}
       style={{ background: theme.colors.backgroundColor.primary }}
       className={cn('position-item rounded-xl p-3 pt-2 mb-[10px]')}
       ref={itemRef}

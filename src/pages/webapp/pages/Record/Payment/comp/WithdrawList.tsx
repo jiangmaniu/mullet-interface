@@ -19,7 +19,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import End from '@/pages/webapp/components/Base/List/End'
 import GetMore from '@/pages/webapp/components/Base/List/GetMore'
-import { useTitle } from 'ahooks'
 import { statusMap } from '..'
 import WithdrawDetailModal from './WithdrawDetailModal'
 
@@ -158,7 +157,6 @@ function WithdrawList() {
   const [item, setItem] = useState<Wallet.withdrawalOrderListItem | undefined>(undefined)
   const withdrawDetailModalRef = useRef<ModalRef>(null)
 
-  useTitle(i18n.t('menu.recordPayment'))
   return (
     <PullToRefresh onRefresh={onRefresh}>
       <View bgColor="secondary" className={cn('flex-1 min-h-[90vh]')}>

@@ -74,7 +74,7 @@ const Step2 = ({
         render: () => {
           return (
             <div className="flex items-center gap-2">
-              <span className="flex-shrink-0">
+              <span className="flex-shrink-0 max-w-[200px]">
                 {locale === 'zh-TW'
                   ? `${currentUser?.lastName}${currentUser?.firstName}`
                   : `${currentUser?.firstName} ${currentUser?.lastName}`}
@@ -104,7 +104,7 @@ const Step2 = ({
               render: () => {
                 return (
                   <div className="flex items-center gap-2">
-                    <span className="flex-shrink-0">{bankName}</span>
+                    <span className="flex-shrink-0 max-w-[200px]">{bankName}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
                       color="gray"
@@ -124,7 +124,7 @@ const Step2 = ({
               render: () => {
                 return (
                   <div className="flex items-center gap-2">
-                    <span className="flex-shrink-0">{bankCard}</span>
+                    <span className="flex-shrink-0 max-w-[200px]">{bankCard}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
                       color="gray"
@@ -232,13 +232,16 @@ const Step2 = ({
             <ProFormText name="bankCard" hidden />
             <ProFormText name="bankName" hidden />
             <div className="flex flex-col gap-6 mt-6">
+              <span className="text-primary font-medium text-sm">
+                <FormattedMessage id="mt.shoukuanxinxi" />
+              </span>
               {options
                 .filter((item) => item.value)
                 .map((item, index) => (
                   <div key={index} className="text-secondary text-sm flex flex-row items-center justify-between gap-4">
-                    <span className="flex-shrink-0">{item.label}</span>
+                    <span className="flex-shrink-0 ">{item.label}</span>
                     <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
-                    {item.render ? item.render() : <span className="flex-shrink-0">{item.value}</span>}
+                    {item.render ? item.render() : <span className="flex-shrink-0 max-w-[200px]">{item.value}</span>}
                   </div>
                 ))}
 

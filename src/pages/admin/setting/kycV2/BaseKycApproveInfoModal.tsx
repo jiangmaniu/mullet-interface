@@ -6,11 +6,13 @@ import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
 import { DEFAULT_AREA_CODE } from '@/constants'
+import { useLang } from '@/context/languageProvider'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
 import { submitBaseAuth } from '@/services/api/crm/kycAuth'
 import { ProForm } from '@ant-design/pro-components'
 import { Form, message } from 'antd'
+import { observer } from 'mobx-react'
 
 type IProps = {
   trigger?: JSX.Element
@@ -68,6 +70,15 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
     })
   }
 
+  const { initialState } = useModel('@@initialState')
+  const currentUser = initialState?.currentUser
+  const userInfo = currentUser?.userInfo
+  const phone = userInfo?.phone
+
+  const { list } = useModel('areaList')
+  const { lng } = useLang()
+  const defaultAreaCode = list?.find((item) => item.areaCode === DEFAULT_AREA_CODE)
+
   return (
     <Modal
       styles={{
@@ -75,7 +86,7 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
           backgroundColor: theme.colors.backgroundColor.secondary
         }
       }}
-      contentStyle={{ padding: 20 }}
+      contentStyle={{ padding: 18 }}
       renderTitle={() => (
         <div className="h-[100px] w-60 relative">
           <FormattedMessage id="mt.kycrenzheng" />
@@ -87,6 +98,18 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
       footer={null}
       ref={modalRef}
     >
+      <div className="flex flex-col">
+        <span className="text-lg font-semibold text-primary">
+          <FormattedMessage id="mt.shenfenrenzheng" />
+        </span>
+        <span className="text-sm text-gray-500 mt-2">
+          <FormattedMessage id="mt.qingquebaoyixiazixunshibenren" />
+        </span>
+        <span className="text-base font-medium text-primary my-[22px]">
+          {intl.formatMessage({ id: 'common.shoujihaoma' })}:&nbsp;
+          {phone}
+        </span>
+      </div>
       <ProForm
         onFinish={async (values: any) => {
           console.log('values', values)
@@ -95,10 +118,14 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
         }}
         submitter={false}
         layout="vertical"
+        initialValues={{
+          phoneAreaCode: `+${DEFAULT_AREA_CODE}`,
+          country: defaultAreaCode?.abbr || '',
+          countryName: lng === 'zh-TW' ? defaultAreaCode?.nameCn : defaultAreaCode?.nameEn || ''
+        }}
         form={form}
       >
         <SelectCountryFormItem
-          initialValue={`+${DEFAULT_AREA_CODE}`}
           form={form}
           height={40}
           label={<span className="text-sm font-semibold text-primary">1.{intl.formatMessage({ id: 'mt.xuanzeguojia' })}</span>}
@@ -163,4 +190,4 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
   )
 }
 
-export default forwardRef(BaseKycApproveInfoModal)
+export default observer(forwardRef(BaseKycApproveInfoModal))

@@ -33,7 +33,7 @@ export default function ({ setImgs, imgs }: IProps) {
   // TODO: 上传图片 可能要适配 rn 端
   const props: UploadProps = {
     // 如果 rn 端在拍照，则禁止 瀏覽器上传功能
-    disabled: imgs.length >= 3 || !!window?.ReactNativeWebView,
+    // disabled: imgs.length >= 3,
     name: 'file',
     multiple: false,
     showUploadList: false,
@@ -43,17 +43,17 @@ export default function ({ setImgs, imgs }: IProps) {
     },
     accept: 'image/png, image/jpeg, image/jpg',
 
-    beforeUpload: (file) => {
-      if (window?.ReactNativeWebView) {
-        window.ReactNativeWebView?.postMessage(
-          JSON.stringify({
-            type: 'takePhoto'
-          })
-        )
-        return false
-      }
-      return true
-    },
+    // beforeUpload: (file) => {
+    //   if (window?.ReactNativeWebView) {
+    //     window.ReactNativeWebView?.postMessage(
+    //       JSON.stringify({
+    //         type: 'takePhoto'
+    //       })
+    //     )
+    //     return false
+    //   }
+    //   return true
+    // },
     onChange(info) {
       console.log('info', info)
       const data = info?.file?.response?.data || {}
@@ -80,17 +80,19 @@ export default function ({ setImgs, imgs }: IProps) {
       try {
         const data = e?.data ? JSON.parse(e?.data) : undefined
         console.log('======data====', data)
-        if (data?.action === 'upload' && data.times === times) {
+        if (data?.action === 'upload' && data?.times === times) {
           setTimes((prev) => prev + 1)
           onDone(data?.value)
           window.ReactNativeWebView?.postMessage(
             // 給 rn 端发送消息，停止接收照片
-            JSON.stringify({
-              type: 'stopReceivePhoto'
-            })
+            JSON.stringify(JSON.stringify({ data, times }))
           )
         }
       } catch (error) {
+        window.ReactNativeWebView?.postMessage(
+          // 給 rn 端发送消息，停止接收照片
+          JSON.stringify(JSON.stringify(error))
+        )
         // message.info(`监听消息错误: ${JSON.stringify(error)}`)
       }
     },
@@ -118,18 +120,18 @@ export default function ({ setImgs, imgs }: IProps) {
       <Dragger {...props}>
         <div
           className="flex items-center justify-center"
-          onClick={(e) => {
-            // e.preventDefault()
-            if (window?.ReactNativeWebView) {
-              e.stopPropagation()
-              window.ReactNativeWebView?.postMessage(
-                JSON.stringify({
-                  type: 'takePhoto',
-                  times
-                })
-              )
-            }
-          }}
+          // onClick={(e) => {
+          //   // e.preventDefault()
+          //   if (window?.ReactNativeWebView) {
+          //     e.stopPropagation()
+          //     window.ReactNativeWebView?.postMessage(
+          //       JSON.stringify({
+          //         type: 'takePhoto',
+          //         times
+          //       })
+          //     )
+          //   }
+          // }}
         >
           <div className="flex flex-col items-center justify-center bg-cover  h-[235px]">
             <img src="/img/upload-01.png" width={72} height={72} />

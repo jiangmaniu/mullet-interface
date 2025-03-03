@@ -2,7 +2,7 @@ import useWebviewPageSearchParams from '@/pages/webapp/hooks/useWebviewPageSearc
 import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { isAndroid, isIOS } from 'react-device-detect'
 import VerifyDoc from '../KycV2/VerifyDoc'
 import VerifyMsg from '../KycV2/VerifyMsg'
@@ -11,7 +11,7 @@ import VerifyStatus3 from '../KycV2/VerifyStatus3'
 import VerifyStatus4 from '../KycV2/VerifyStatus4'
 
 const Children = observer(
-  forwardRef(({ status, file = {} }: { status: string; file: any }, ref: any) => {
+  forwardRef(({ status, file = {}, injectUpload }: { status: string; file: any; injectUpload?: () => Promise<void> }, ref: any) => {
     const onSuccess = () => {
       // @ts-ignore
       window.ReactNativeWebView.postMessage(
@@ -40,8 +40,6 @@ const Children = observer(
       }
     }))
 
-    const [disabled, setDisabled] = useState(true)
-
     const onDisabledChange = (disabled: boolean) => {
       // @ts-ignore
       window.ReactNativeWebView.postMessage(
@@ -57,7 +55,7 @@ const Children = observer(
     return (
       <div className="px-[14px]">
         {status === '1' || retry ? (
-          <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} file={file} />
+          <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} file={file} injectUpload={injectUpload} />
         ) : status === '2' ? (
           <VerifyStatus2 />
         ) : status === '3' ? (
@@ -104,9 +102,19 @@ export default function KycWebviewPage() {
 
   const ref = useRef<any>(null)
   const [file, setFile] = useState<any>({})
-  const [stop, setStop] = useState(false)
-  useEffect(() => {
-    const messageHandler = (e: any) => {
+  const [times, setTImes] = useState(0)
+
+  const injectUpload = async () => {
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        type: 'takePhoto',
+        times
+      })
+    )
+  }
+
+  const messageHandler = useCallback(
+    (e: any) => {
       try {
         const data = e?.data ? JSON.parse(e?.data) : undefined
 
@@ -118,15 +126,18 @@ export default function KycWebviewPage() {
           ref.current?.onRetry()
         }
 
-        if (data?.action === 'upload' && !stop) {
-          setStop(true)
+        if (data?.action === 'upload' && data?.times === times) {
+          setTImes((prev) => prev + 1)
           setFile(data?.value)
         }
       } catch (error) {
         // message.info(`监听消息错误: ${JSON.stringify(error)}`)
       }
-    }
+    },
+    [ref, times]
+  )
 
+  useEffect(() => {
     if (isIOS) {
       window.addEventListener('message', messageHandler)
     } else if (isAndroid) {
@@ -140,7 +151,8 @@ export default function KycWebviewPage() {
         document.removeEventListener('message', messageHandler)
       }
     }
-  }, [])
+  }, [messageHandler])
 
+  // return <Children status={status} ref={ref} file={file} injectUpload={injectUpload} />
   return <Children status={status} ref={ref} file={file} />
 }

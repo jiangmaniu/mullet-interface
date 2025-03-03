@@ -16,8 +16,9 @@ const VerifyDoc = forwardRef(
     {
       onSuccess,
       onDisabledChange,
-      file: defaultFile
-    }: { onSuccess: () => void; onDisabledChange: (disabled: boolean) => void; file?: any },
+      file: defaultFile,
+      injectUpload
+    }: { onSuccess: () => void; onDisabledChange: (disabled: boolean) => void; file?: any; injectUpload?: () => Promise<void> },
     ref: any
   ) => {
     const { cn, theme } = useTheme()
@@ -91,6 +92,10 @@ const VerifyDoc = forwardRef(
       onDisabledChange(disabled)
     }, [disabled])
 
+    const onUpload = async () => {
+      injectUpload ? injectUpload() : uploadSheetModalRef.current?.show()
+    }
+
     return (
       <View className={cn('px-2 flex flex-col gap-2 ')}>
         <Text className={cn('text-xl font-bold text-primary')} weight="bold">
@@ -113,20 +118,7 @@ const VerifyDoc = forwardRef(
           </Text>
           {file?.link ? (
             <View className="relative">
-              <View
-                onPress={async () => {
-                  if (window?.ReactNativeWebView) {
-                    window.ReactNativeWebView.postMessage(
-                      JSON.stringify({
-                        type: 'takePhoto'
-                      })
-                    )
-                  } else {
-                    uploadSheetModalRef.current?.show()
-                  }
-                }}
-                className={cn('border border-dashed border-[#6A7073] rounded-lg overflow-hidden ')}
-              >
+              <View onPress={onUpload} className={cn('border border-dashed border-[#6A7073] rounded-lg overflow-hidden ')}>
                 <img src={file.link} style={{ width: '100%', height: 188 }} />
               </View>
 
@@ -141,17 +133,7 @@ const VerifyDoc = forwardRef(
             </View>
           ) : (
             <View
-              onPress={async () => {
-                if (window?.ReactNativeWebView) {
-                  window.ReactNativeWebView.postMessage(
-                    JSON.stringify({
-                      type: 'takePhoto'
-                    })
-                  )
-                } else {
-                  uploadSheetModalRef.current?.show()
-                }
-              }}
+              onPress={onUpload}
               className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden h-[188px] px-[27px] py-[37px]')}
             >
               <View className="flex flex-col items-center justify-start -mt-2  ">

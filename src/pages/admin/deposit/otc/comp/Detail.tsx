@@ -16,10 +16,11 @@ import { copyToClipboard, formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import { depositExchangeRate } from '@/utils/deposit'
 import { goKefu, push } from '@/utils/navigator'
-import { Image, Popconfirm } from 'antd'
+import { Image } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import { observer } from 'mobx-react'
+import CancelModal from './CancelModal'
 
 dayjs.extend(duration)
 
@@ -213,34 +214,47 @@ const Detail = ({
 
   const [forceUpdate, setForceUpdate] = useState(0)
 
+  const cancelModalRef = useRef<any>()
+
   return (
     <div className="flex items-center flex-col justify-center w-full h-full">
-      <CardContainer title={<FormattedMessage id="mt.dengdairujin" />} style={['w-[880px] ']} onChange={() => {}} defaultValue={undefined}>
+      <CardContainer
+        title={<FormattedMessage id="mt.dengdairujin" />}
+        style={['w-[880px] shadow-md']}
+        onChange={() => {}}
+        defaultValue={undefined}
+      >
         <div className="flex flex-row gap-[60px]">
-          <div className="flex flex-col gap-6  flex-1 deposit-detail-container">
+          <div className="flex flex-col gap-6 flex-1 deposit-detail-container">
             {options
               .filter((item) => item.value)
               .map((item, index) => (
-                <div key={index} className="text-secondary text-sm flex flex-row items-center justify-between gap-4">
-                  <span className="flex-shrink-0">{item.label}</span>
+                <div
+                  key={index}
+                  className="text-secondary text-sm flex flex-row items-center justify-between gap-4 hover:bg-gray-50 p-2 rounded-md transition-all"
+                >
+                  <span className="flex-shrink-0 font-medium">{item.label}</span>
                   <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
                   <span className="flex-shrink-0">{item.render ? item.render() : item.value}</span>
                 </div>
               ))}
 
-            <div className=" font-medium text-sm flex flex-row items-center justify-between gap-4">
-              <span className="flex-shrink-0">{getIntl().formatMessage({ id: 'mt.fukuanxinxi' })}</span>
+            <div className="font-medium text-sm flex flex-row items-center justify-between gap-4 mt-2">
+              <span className="flex-shrink-0 text-primary">{getIntl().formatMessage({ id: 'mt.fukuanxinxi' })}</span>
             </div>
 
             {otcType !== 'bank' && (
-              <div className="flex flex-row items-end gap-8 font-normal ">
-                {/* <canvas id="canvas" className="w-[135px] h-[135px] bg-gray-150 rounded-lg flex items-center justify-center flex-shrink-0"></canvas> */}
+              <div className="flex flex-row items-end gap-8 font-normal">
                 <div>
                   <div className="text-sm text-primary font-medium mb-3">
                     <FormattedMessage id="mt.shoukuanerweima" />
                   </div>
-                  <div className={cn('opacity-10 cursor-not-allowed', paymentInfo?.qrCode && 'opacity-100 cursor-pointer')}>
-                    {/* <div ref={qrRef}> */}
+                  <div
+                    className={cn(
+                      'opacity-10 cursor-not-allowed rounded-lg overflow-hidden shadow-sm',
+                      paymentInfo?.qrCode && 'opacity-100 cursor-pointer'
+                    )}
+                  >
                     <div className="w-[135px] h-[135px]">
                       <Image
                         key={forceUpdate}
@@ -248,7 +262,6 @@ const Detail = ({
                           destroyOnClose: true,
                           onVisibleChange: (visible) => {
                             if (!visible) {
-                              // 解决点击预览图片后mask多次不销毁dom问题，避免mask挡住页面点不动
                               setForceUpdate(forceUpdate + 1)
                             }
                           }
@@ -259,12 +272,11 @@ const Detail = ({
                         src={`${getEnv().imgDomain}${paymentInfo?.qrCode}`}
                       />
                     </div>
-                    {/* </div> */}
                   </div>
                 </div>
                 <div className="flex flex-col-reverse justify-between h-full flex-1 gap-4 min-h-[132px]">
                   <div>
-                    <img src="/img/saomiao.svg" width={20} height={20} />
+                    <img src="/img/saomiao.svg" width={20} height={20} className="animate-pulse" />
                     <div className="text-xs text-secondary font-normal mt-4">
                       {otcType === 'wechat' ? (
                         <FormattedMessage id="mt.weixinsaomazhifu" />
@@ -282,8 +294,11 @@ const Detail = ({
             {options2
               .filter((item) => item.value)
               .map((item, index) => (
-                <div key={index} className="text-secondary text-sm flex flex-row items-center justify-between gap-4">
-                  <span className="flex-shrink-0">{item.label}</span>
+                <div
+                  key={index}
+                  className="text-secondary text-sm flex flex-row items-center justify-between gap-4 hover:bg-gray-50 p-2 rounded-md transition-all"
+                >
+                  <span className="flex-shrink-0 font-medium">{item.label}</span>
                   <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
                   <div className="flex items-center gap-2">
                     <span className="flex-shrink-0">{item.value}</span>
@@ -292,6 +307,7 @@ const Detail = ({
                       color="gray"
                       width={18}
                       height={18}
+                      className="hover:scale-110 transition-transform cursor-pointer"
                       onClick={() => {
                         copyToClipboard(item.value || '')
                       }}
@@ -301,41 +317,53 @@ const Detail = ({
               ))}
 
             <div>
-              <div className="flex flex-row items-center justify-between px-[18px] py-[22px] bg-secondary rounded-[10px]">
-                <span className=" font-medium text-sm">
+              <div className="flex flex-row items-center justify-between px-[18px] py-[22px] bg-secondary rounded-[10px] hover:shadow-md transition-shadow">
+                <span className="font-medium text-sm">
                   <FormattedMessage id="mt.daizhifujine" />
                 </span>
 
-                <span className=" font-bold text-xl">{`${receiptAmount} ${symbol}`}</span>
+                <span className="font-bold text-xl text-primary">{`${receiptAmount} ${symbol}`}</span>
               </div>
-              <span className=" text-secondary font-normal  text-xs">
+              <span className="text-secondary font-normal text-xs block mt-2 italic">
                 <FormattedMessage id="mt.youyuhuilvbodong" />
               </span>
             </div>
 
-            <div className="flex flex-row gap-2 items-center mt-2 ">
-              <Button type="primary" htmlType="submit" size="large" className="flex-1" onClick={handleSubmit} disabled={loading}>
-                <div className="flex flex-row items-center gap-2">
+            <div className="flex flex-row gap-2 items-center mt-2">
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                className="flex-1 hover:shadow-md transition-shadow"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                <div className="flex flex-row items-center justify-center gap-2">
                   <FormattedMessage id="mt.yifukuanshagnchuanpingzheng" />
                 </div>
               </Button>
-              <Popconfirm
+              {/* <Popconfirm
                 title={<FormattedMessage id="mt.quxiaodingdan" />}
                 onConfirm={cancelOrder}
                 okText={<FormattedMessage id="common.confirm" />}
                 cancelText={<FormattedMessage id="common.back" />}
+              > */}
+              <Button
+                type="default"
+                size="large"
+                className="hover:bg-gray-100 transition-colors"
+                onClick={() => cancelModalRef.current?.show()}
               >
-                <Button type="default" size="large">
-                  <FormattedMessage id="mt.quxiaodingdan" />
-                </Button>
-              </Popconfirm>
+                <FormattedMessage id="mt.quxiaodingdan" />
+              </Button>
+              {/* </Popconfirm> */}
             </div>
-            <span className="text-secondary text-xs -mt-2.5">
+            <span className="text-secondary text-xs -mt-2.5 italic">
               <FormattedMessage id="mt.qingzaishijianneiwanchengdingdanzhifu" values={{ time: dayjs.duration(duration).format('mm:ss') }} />
             </span>
           </div>
           <div>
-            <span className="text-primary text-sm font-semibold">
+            <span className="text-primary text-sm font-semibold block mb-3 border-l-4 border-primary pl-2">
               <FormattedMessage id="mt.rujinxuzhi" />
             </span>
             <Notice methodId={String(paymentInfo?.channelId)} />
@@ -343,12 +371,13 @@ const Detail = ({
         </div>
       </CardContainer>
 
-      <span className="flex flex-row items-center gap-3 mt-[26px] cursor-pointer" onClick={goKefu}>
-        <Iconfont name="kefu" size={24} />
+      <span className="flex flex-row items-center gap-3 mt-[26px] cursor-pointer hover:text-primary transition-colors" onClick={goKefu}>
+        <Iconfont name="kefu" size={24} className="animate-bounce" />
         <span>
           <FormattedMessage id="mt.rujinshiyudaowenti" />
         </span>
       </span>
+      <CancelModal ref={cancelModalRef} id={String(paymentInfo?.id)} />
     </div>
   )
 }

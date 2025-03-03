@@ -84,6 +84,7 @@
     "rc-virtual-list": "^3.14.8",
     "react": "^18.2.0",
     "react-countup": "^6.5.0",
+    "react-datepicker": "^8.1.0",
     "react-dev-inspector": "^1.8.4",
     "react-device-detect": "^2.2.3",
     "react-dom": "^18.2.0",
