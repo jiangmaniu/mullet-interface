@@ -86,8 +86,8 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
     sheet: {
       present: () => bottomSheetModalRef.current?.sheet?.present(),
       dismiss: close
-    },
-    visible: bottomSheetModalRef.current?.visible ?? false
+    }
+    // visible: bottomSheetModalRef.current?.visible ?? false
   }))
 
   // 标记价

@@ -391,13 +391,13 @@ export default [
       // 个人中心-验证状态
       {
         path: '/:lng/app/user-center/verify-status',
-        component: './webapp/pages/UserCenter/KycV1.5/KycVerifyStatusPage',
+        component: './webapp/pages/UserCenter/KycV2/KycVerifyStatusPage',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-验证状态
       {
         path: '/:lng/app/user-center/verify-information',
-        component: './webapp/pages/UserCenter/KycV1.5/KycVerifyInformationPage',
+        component: './webapp/pages/UserCenter/KycV2/KycVerifyInformationPage',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-认证信息
@@ -409,7 +409,7 @@ export default [
       // 个人中心- kyc 认证（webview）
       {
         path: '/:lng/app/user-center/kyc-webview-page',
-        component: './webapp/pages/UserCenter/KycV1.5/KycWebviewPage'
+        component: './webapp/pages/UserCenter/KycV2/KycWebviewPage'
       },
       // 入金 （h5 & webview）
       {

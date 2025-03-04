@@ -163,7 +163,7 @@ export default function WelcomeScreen() {
   const [disabled, setDisabled] = useState(false)
 
   const footers = {
-    login: getEnv().REGISTER_MODULE === '1' && <Footer setSection={setSection} />,
+    login: getEnv().REGISTER_MODULE && <Footer setSection={setSection} />,
     forgotPassword: <FooterForgotPassword handleSubmit={handleSubmit} disabled={disabled} />,
     resetPassword: <FooterResetPassword handleSubmit={handleSubmit} disabled={disabled} />
   }

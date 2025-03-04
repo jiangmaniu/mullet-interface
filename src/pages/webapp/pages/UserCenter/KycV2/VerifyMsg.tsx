@@ -234,29 +234,7 @@ const Messages = forwardRef(
             {errors.firstName && <Text color="red">{errors.firstName.message}</Text>}
           </View>
         </View>
-        {/* <Text className={cn('mb-1')}>{t('pages.userCenter.xuanzezhengjianleixing')}</Text> */}
-        {/* <Radio.Group
-        onChange={(e) => {
-          // @ts-ignore
-          handleSelectCodeType(e.target.value)
-        }}
-        value={identificationType}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-around',
-          gap: 8
-        }}
-      >
-        <Radio value="ID_CARD">
-          <Text className={cn('text-sm text-primary')}>{t('pages.userCenter.shenfenzheng')}</Text>
-        </Radio>
-        {getEnv().ID_CARD_ONLY !== '1' && (
-          <Radio value="PASSPORT">
-            <Text className={cn('text-sm text-primary')}>{t('pages.userCenter.hukoubenjuzhuzheng')}</Text>
-          </Radio>
-        )}
-      </Radio.Group> */}
+
         <TextField
           value={identificationCode}
           ref={identificationCodeInput}

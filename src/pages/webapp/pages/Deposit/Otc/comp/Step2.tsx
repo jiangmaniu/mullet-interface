@@ -1,4 +1,3 @@
-import { ProForm } from '@ant-design/pro-components'
 import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { useMemo, useState } from 'react'
 
@@ -10,7 +9,7 @@ import { getEnv } from '@/env'
 import { QrcodeOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 
-const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wallet.GenerateDepositOrderDetailResult }) => {
+const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetailResult }) => {
   const { locale } = useIntl()
 
   const {
@@ -198,15 +197,7 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
           </div>
         </div>
         <div className="px-[14px] pb-4">
-          <ProForm
-            onFinish={async (values: Account.TransferAccountParams) => {
-              return
-            }}
-            disabled={loading}
-            submitter={false}
-            layout="vertical"
-            className="flex flex-col gap-6"
-          >
+          <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-6 mt-6">
               <div className=" text-primary text-sm font-semibold">
                 <FormattedMessage id="mt.fukuanxinxi" />
@@ -265,7 +256,7 @@ const Step2 = ({ loading, paymentInfo }: { loading?: boolean; paymentInfo?: Wall
                 </div>
               </div>
             </div>
-          </ProForm>
+          </div>
         </div>
       </div>
     </div>

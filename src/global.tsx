@@ -1,4 +1,4 @@
-import { useIntl } from '@umijs/max'
+import { getIntl, useIntl } from '@umijs/max'
 import { Button, message, notification } from 'antd'
 import defaultSettings from '../config/defaultSettings'
 import { stores } from './context/mobxProvider'
@@ -92,5 +92,8 @@ if (pwa) {
 }
 
 // 全局请求环境配置
-stores.global.getPlatformConfig()
+
+stores.global.getPlatformConfig(() => {
+  message.info(getIntl().formatMessage({ id: 'common.huanjinpeizhiyichang' }))
+})
 stores.global.getLottieLoadingData()

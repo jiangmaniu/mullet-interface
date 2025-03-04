@@ -65,10 +65,19 @@ export class GlobalStore {
   }
 
   // 获取平台配置
-  getPlatformConfig = async () => {
-    const config = await fetch(location.origin + `/platform/config.json?t=${Date.now()}`)
-      .then((res) => res.json())
-      .then((data) => data)
+  getPlatformConfig = async (onError: () => void) => {
+    const config = await fetch(location.origin + `/platform/config.json?t=${Date.now()}`).then(async (res) => {
+      try {
+        return await res.json()
+      } catch (error) {
+        onError()
+        return {
+          error: true
+        }
+      }
+    })
+
+    if (config.error) return
 
     // 缓存配置到本地
     STORAGE_SET_PLATFORM_CONFIG(config)

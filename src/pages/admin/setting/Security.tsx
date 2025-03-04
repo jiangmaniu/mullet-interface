@@ -6,9 +6,9 @@ import { Button } from 'antd'
 import { useRef } from 'react'
 import KycApproveInfoModal from './comp/KycApproveInfoModal'
 import ModifyPasswordModal from './comp/ModifyPasswordModal'
-import BindContactModal from './kycV1.5/BindContactModal'
 import AdvanceKycApproveInfoModal from './kycV2/AdvanceKycApproveInfoModal'
 import BaseKycApproveInfoModal from './kycV2/BaseKycApproveInfoModal'
+import BindContactModal from './kycV2/BindContactModal'
 import KycRejectModal from './kycV2/KycRejectModal'
 import KycStatus from './kycV2/KycStatus'
 import KycWaitModal from './kycV2/KycWaitModal'
@@ -30,7 +30,7 @@ export default function Security() {
   const isFinished = isKycAuth && email && phone // 验证是否完成
   let finishedStep = 0 // 已完成步数
 
-  const phoneAreaCode = userInfo?.phoneAreaCode ? `+${userInfo?.phoneAreaCode}` : ''
+  const phoneAreaCode = userInfo?.phoneAreaCode ? userInfo?.phoneAreaCode : ''
 
   if (isFinished) {
     finishedStep = 2

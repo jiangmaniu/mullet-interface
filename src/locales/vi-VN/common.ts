@@ -110,6 +110,7 @@ export default {
   'common.Refreshing': 'Đang làm mới...',
   'common.Complete': 'Hoàn thành',
   'common.unset': 'Không được đặt',
-  'common.zhanbu': 'Không ngay lập tức'
+  'common.zhanbu': 'Không ngay lập tức',
+  'common.huanjinpeizhiyichang': 'Cấu hình môi trường bị lỗi, vui lòng liên hệ quản trị viên'
   // "======= 公共结束 ==========": "",
 }

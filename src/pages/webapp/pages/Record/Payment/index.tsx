@@ -64,7 +64,7 @@ export default function PaymentRecord() {
       label: intl.formatMessage({ id: 'mt.rujin' }),
       value: 'RUJIN'
     },
-    ...(!ENV?.HIDE_CREATE_ACCOUNT
+    ...(!getEnv()?.HIDE_ACCOUNT_TRANSFER
       ? [
           {
             label: intl.formatMessage({ id: 'mt.huazhuan' }),

@@ -112,6 +112,7 @@ export default {
   'common.unset': 'Unset',
   'common.shoujihao': 'Phone Number',
   'common.bangding': 'Bind',
-  'common.zhanbu': 'Not Now'
+  'common.zhanbu': 'Not Now',
+  'common.huanjinpeizhiyichang': 'Environment configuration exception, please contact the administrator'
   // "======= 公共结束 ==========": "",
 }

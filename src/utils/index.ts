@@ -5,6 +5,7 @@ import moment from 'moment'
 
 import { DATE } from '@/constants/date'
 
+import { isAndroid, isIOS } from 'react-device-detect'
 import { message } from './message'
 
 export function isMobileDevice(): boolean {
@@ -571,4 +572,71 @@ export const copyToClipboard = (text: string) => {
     message.info(getIntl().formatMessage({ id: 'mt.caozuoshibai' }))
   }
   document.body.removeChild(textarea)
+}
+
+/**
+ * 读取剪贴板内容，并在读取后清空剪贴板
+ * @param callback 读取成功后的回调函数
+ */
+export const readClipboard = (callback: (text: string) => void) => {
+  // 检查是否在 React Native WebView 环境中
+  if (window.ReactNativeWebView) {
+    // 尝试使用 React Native 的剪贴板 API
+    try {
+      // 发送消息给 React Native 请求剪贴板内容
+      // @ts-ignore
+      window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'READ_CLIPBOARD' }))
+
+      // 监听来自 React Native 的消息
+      const handleMessage = (event: MessageEvent) => {
+        try {
+          const data = JSON.parse(event.data)
+          if (data.action === 'CLIPBOARD_CONTENT') {
+            console.log('读取剪贴板内容', data)
+            const content = data.content || ''
+            callback(content)
+            // 清空剪贴板
+            // 移除事件监听器
+            if (isIOS) {
+              window.removeEventListener('message', handleMessage)
+            } else if (isAndroid) {
+              // @ts-ignore
+              document.removeEventListener('message', handleMessage)
+            } else {
+              window.removeEventListener('message', handleMessage)
+            }
+          }
+        } catch (e) {
+          console.error('Failed to parse clipboard data', e)
+        }
+      }
+
+      if (isIOS) {
+        window.addEventListener('message', handleMessage)
+      } else if (isAndroid) {
+        // @ts-ignore
+        document.addEventListener('message', handleMessage)
+      }
+    } catch (error) {
+      console.error('Failed to read clipboard in React Native WebView', error)
+    }
+  } else {
+    // 在普通 Web 环境中使用 navigator.clipboard API
+    if (navigator.clipboard && navigator.clipboard.readText) {
+      navigator.clipboard
+        .readText()
+        .then((text) => {
+          callback(text)
+          // 读取后清空剪贴板
+          navigator.clipboard.writeText('').catch((err) => {
+            console.error('Failed to clear clipboard contents: ', err)
+          })
+        })
+        .catch((err) => {
+          console.error('Failed to read clipboard contents: ', err)
+        })
+    } else {
+      console.warn('Clipboard API not available')
+    }
+  }
 }
