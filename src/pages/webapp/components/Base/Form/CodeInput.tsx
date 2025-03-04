@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { readClipboard } from '@/utils'
 import { Form } from 'antd'
 import { Rule } from 'antd/es/form'
 import { NamePath } from 'antd/es/form/interface'
@@ -27,14 +28,22 @@ const CodeInput = (props: IProps) => {
   const i18n = useI18n()
   const { cn } = useTheme()
   const [isPhoneFocus, setIsPhoneFocus] = useState(false)
-  const [code, setCode] = useState({
-    value1: '',
-    value2: '',
-    value3: '',
-    value4: '',
-    value5: '',
-    value6: ''
-  })
+  // const [code, setCode] = useState({
+  //   value1: '',
+  //   value2: '',
+  //   value3: '',
+  //   value4: '',
+  //   value5: '',
+  //   value6: ''
+  // })
+
+  const [code1, setCode1] = useState('')
+  const [code2, setCode2] = useState('')
+  const [code3, setCode3] = useState('')
+  const [code4, setCode4] = useState('')
+  const [code5, setCode5] = useState('')
+  const [code6, setCode6] = useState('')
+
   const inputRef1 = useRef<any>(null)
   const inputRef2 = useRef<any>(null)
   const inputRef3 = useRef<any>(null)
@@ -43,19 +52,26 @@ const CodeInput = (props: IProps) => {
   const inputRef6 = useRef<any>(null)
 
   useEffect(() => {
-    const codeValue = code.value1 + code.value2 + code.value3 + code.value4 + code.value5 + code.value6
+    const codeValue = code1 + code2 + code3 + code4 + code5 + code6
     if (codeValue) {
       onChange?.(codeValue)
       form?.setFieldValue?.(name, codeValue)
     }
-  }, [code])
+  }, [code1, code2, code3, code4, code5, code6])
 
-  const handleInput = (e: string, name: string) => {
-    setCode({
-      ...code,
-      [name]: e.trim()
+  const handlePaste = () => {
+    readClipboard((text) => {
+      if (text.length === 6) {
+        setCode6(text[5])
+        setCode5(text[4])
+        setCode4(text[3])
+        setCode3(text[2])
+        setCode2(text[1])
+        setCode1(text[0])
+      }
     })
   }
+
   return (
     <Form.Item noStyle name={name} rules={rules}>
       <View>
@@ -70,15 +86,20 @@ const CodeInput = (props: IProps) => {
             placeholder=""
             fixedTrigger="onChange"
             fontSize={20}
+            onFocus={(e) => {
+              handlePaste()
+              // 执行 e.target.select()
+              e.target.select()
+            }}
             onChange={(e: any) => {
-              handleInput(e, 'value1')
+              setCode1(e)
               if (e && e.length > 0) {
-                if (!inputRef2.current?.value) {
+                if (!code2) {
                   inputRef2.current?.focus()
                 }
               }
             }}
-            value={code.value1}
+            value={code1}
             disabled={disabled}
           />
           <InputNumber
@@ -92,9 +113,11 @@ const CodeInput = (props: IProps) => {
             fixedTrigger="onChange"
             fontSize={20}
             onChange={(e: any) => {
-              handleInput(e, 'value2')
+              setCode2(e)
               if (e && e.length > 0) {
-                inputRef3?.current?.focus()
+                if (!code3) {
+                  inputRef3?.current?.focus()
+                }
               }
             }}
             onKeyUp={(e: any) => {
@@ -102,7 +125,7 @@ const CodeInput = (props: IProps) => {
                 inputRef1?.current?.focus()
               }
             }}
-            value={code.value2}
+            value={code2}
             disabled={disabled}
           />
           <InputNumber
@@ -116,9 +139,11 @@ const CodeInput = (props: IProps) => {
             fixedTrigger="onChange"
             fontSize={20}
             onChange={(e: any) => {
-              handleInput(e, 'value3')
+              setCode3(e)
               if (e && e.length > 0) {
-                inputRef4?.current?.focus()
+                if (!code4) {
+                  inputRef4?.current?.focus()
+                }
               }
             }}
             onKeyUp={(e: any) => {
@@ -126,7 +151,7 @@ const CodeInput = (props: IProps) => {
                 inputRef2?.current?.focus()
               }
             }}
-            value={code.value3}
+            value={code3}
             disabled={disabled}
           />
           <InputNumber
@@ -140,9 +165,11 @@ const CodeInput = (props: IProps) => {
             fixedTrigger="onChange"
             fontSize={20}
             onChange={(e: any) => {
-              handleInput(e, 'value4')
+              setCode4(e)
               if (e && e.length > 0) {
-                inputRef5?.current?.focus()
+                if (!code5) {
+                  inputRef5?.current?.focus()
+                }
               }
             }}
             onKeyUp={(e: any) => {
@@ -150,7 +177,7 @@ const CodeInput = (props: IProps) => {
                 inputRef3?.current?.focus()
               }
             }}
-            value={code.value4}
+            value={code4}
             disabled={disabled}
           />
           <InputNumber
@@ -164,9 +191,11 @@ const CodeInput = (props: IProps) => {
             fixedTrigger="onChange"
             fontSize={20}
             onChange={(e: any) => {
-              handleInput(e, 'value5')
+              setCode5(e)
               if (e && e.length > 0) {
-                inputRef6?.current?.focus()
+                if (!code6) {
+                  inputRef6?.current?.focus()
+                }
               }
             }}
             onKeyUp={(e: any) => {
@@ -174,7 +203,7 @@ const CodeInput = (props: IProps) => {
                 inputRef4?.current?.focus()
               }
             }}
-            value={code.value5}
+            value={code5}
             disabled={disabled}
           />
           <InputNumber
@@ -188,17 +217,14 @@ const CodeInput = (props: IProps) => {
             fixedTrigger="onChange"
             fontSize={20}
             onChange={(e: any) => {
-              handleInput(e, 'value6')
-              if (e && e.length > 0) {
-                inputRef6?.current?.blur()
-              }
+              setCode6(e)
             }}
             onKeyUp={(e: any) => {
               if (e.key === 'Backspace') {
                 inputRef5?.current?.focus()
               }
             }}
-            value={code.value6}
+            value={code6}
             disabled={disabled}
           />
         </View>

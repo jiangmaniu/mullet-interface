@@ -4,6 +4,7 @@ import { forwardRef, useImperativeHandle, useRef } from 'react'
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
 import { getEnum } from '@/constants/enum'
+import { useTheme } from '@/context/themeProvider'
 import { observer } from 'mobx-react'
 
 type IProps = {
@@ -21,6 +22,7 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const identificationType = kycAuthInfo?.identificationType as string
   const isKycAuth = currentUser?.isKycAuth || false
+  const { theme } = useTheme()
 
   useImperativeHandle(ref, () => {
     return modalRef.current
@@ -28,22 +30,31 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
 
   return (
     <Modal
-      trigger={trigger}
-      title={
-        <div className="flex flex-row">
-          <FormattedMessage id="mt.shenfenxinxi" />
-          <div className="bg-[rgba(69, 164, 138, 0.1)] flex items-center justify-center py-1 px-1 rounded text-green text-xs font-medium pl-2">
-            <FormattedMessage id="mt.gaojirenzheng" />
+      styles={{
+        header: {
+          backgroundColor: theme.colors.backgroundColor.secondary
+        }
+      }}
+      contentStyle={{ padding: 18 }}
+      renderTitle={() => (
+        <div className="h-[100px] w-60 relative">
+          <div className="flex flex-row">
+            <FormattedMessage id="mt.shenfenxinxi" />{' '}
+            <div className="bg-[rgba(69, 164, 138, 0.1)] flex items-center justify-center py-1 px-1 rounded text-green text-xs font-medium pl-2">
+              <FormattedMessage id="mt.gaojirenzheng" />
+            </div>
           </div>
+          <img src="/img/kyc-i1.png" className="absolute top-0 right-0" width={102} height={102} />
         </div>
-      }
+      )}
+      trigger={trigger}
       width={430}
       footer={null}
       ref={modalRef}
     >
       <div className="flex items-center">
-        <img src="/img/default-avatar.png" width={40} height={40} />
-        <div className="pl-3">
+        {/* <img src="/img/default-avatar.png" width={40} height={40} /> */}
+        <div className="">
           {kycAuthInfo?.firstName && (
             <div className="text-base text-primary font-semibold">
               {intl.locale === 'zh-TW'
@@ -74,7 +85,7 @@ function KycApproveInfoModal({ trigger }: IProps, ref: any) {
       </div>
       <Button
         className="!h-[44px]"
-        type="primary"
+        type="default"
         block
         onClick={() => {
           modalRef?.current?.close()

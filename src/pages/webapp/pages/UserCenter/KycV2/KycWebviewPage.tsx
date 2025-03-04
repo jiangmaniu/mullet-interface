@@ -1,6 +1,9 @@
+import { useTheme } from '@/context/themeProvider'
+import Button from '@/pages/webapp/components/Base/Button'
+import { View } from '@/pages/webapp/components/Base/View'
 import useWebviewPageSearchParams from '@/pages/webapp/hooks/useWebviewPageSearchParams'
 import { STORAGE_SET_TOKEN, STORAGE_SET_USER_INFO } from '@/utils/storage'
-import { useModel } from '@umijs/max'
+import { useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { isAndroid, isIOS } from 'react-device-detect'
@@ -30,7 +33,7 @@ const Children = observer(
     useImperativeHandle(ref, () => ({
       onSubmit: () => {
         if (status === '0') {
-          ref0.current?.onSubmit()
+          // ref0.current?.onSubmit()
         } else if (status === '1') {
           ref1.current?.onSubmit()
         }
@@ -40,7 +43,10 @@ const Children = observer(
       }
     }))
 
+    const [disabled, setDisabled] = useState(false)
+
     const onDisabledChange = (disabled: boolean) => {
+      setDisabled(disabled)
       // @ts-ignore
       window.ReactNativeWebView.postMessage(
         JSON.stringify({
@@ -50,20 +56,92 @@ const Children = observer(
       )
     }
 
-    console.log('status===', status)
+    const intl = useIntl()
+    const { cn } = useTheme()
 
     return (
       <div className="px-[14px]">
         {status === '1' || retry ? (
-          <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} file={file} injectUpload={injectUpload} />
+          <>
+            <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} file={file} injectUpload={injectUpload} />
+
+            <View className={cn('grid grid-cols-2 gap-5 w-full pb-2.5 px-[14px]')}>
+              <Button
+                type="primary"
+                height={48}
+                className={cn(' flex-1 w-full')}
+                onClick={() => {
+                  window.ReactNativeWebView.postMessage(
+                    JSON.stringify({
+                      type: 'deposit'
+                    })
+                  )
+                }}
+              >
+                {intl.formatMessage({ id: 'pages.userCenter.qurujin' })}
+              </Button>
+              <Button
+                type="primary"
+                height={48}
+                className={cn('w-full flex-1')}
+                onClick={() => {
+                  ref1.current?.onSubmit()
+                }}
+                disabled={disabled}
+              >
+                {intl.formatMessage({ id: 'pages.userCenter.tijiaoshenhe' })}
+              </Button>
+            </View>
+          </>
         ) : status === '2' ? (
-          <VerifyStatus2 />
+          <>
+            <VerifyStatus2 />
+            <Button disabled={false} className="mb-2.5 mt-16 w-full  px-2 " height={48} onClick={onSuccess}>
+              {intl.formatMessage({ id: 'common.operate.Confirm' })}
+            </Button>
+          </>
         ) : status === '3' ? (
-          <VerifyStatus3 />
+          <>
+            <VerifyStatus3 />
+            <Button
+              type="danger"
+              disabled={false}
+              className="mb-2.5 mt-16 w-full"
+              height={48}
+              onClick={() => {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({
+                    type: 'retry'
+                  })
+                )
+              }}
+            >
+              {intl.formatMessage({ id: 'pages.userCenter.chongxinrenzheng' })}
+            </Button>
+          </>
         ) : status === '4' ? (
-          <VerifyStatus4 />
+          <>
+            <VerifyStatus4 />
+            <Button type="primary" disabled={false} className="mb-2.5 mt-16 w-full" height={48} onClick={onSuccess}>
+              {intl.formatMessage({ id: 'common.operate.Confirm' })}
+            </Button>
+          </>
         ) : (
-          <VerifyMsg ref={ref0} onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
+          <>
+            <VerifyMsg ref={ref0} onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
+            <Button
+              type="primary"
+              className="mb-2.5 mt-10 flex-1 mx-2"
+              loading={false}
+              height={48}
+              onClick={() => {
+                ref0.current?.onSubmit()
+              }}
+              disabled={disabled}
+            >
+              {intl.formatMessage({ id: 'common.operate.Confirm' })}
+            </Button>
+          </>
         )}
       </div>
     )

@@ -39,13 +39,13 @@ export default function KycVerifyMsgPage() {
       header={
         <Header style={{ backgroundColor: theme.colors.backgroundColor.secondary }} title={i18n.t('pages.userCenter.chujirenzheng')} />
       }
-      // fixedHeight
-      footerClassName="bg-white"
-      footer={
-        <Button type="primary" className="mb-2.5 my-5 flex-1 mx-2" loading={false} height={48} onClick={onSubmit} disabled={disabled}>
-          {i18n.t('common.operate.Confirm')}
-        </Button>
-      }
+      fixedHeight
+      // footerClassName="bg-white"
+      // footer={
+      //   <Button type="primary" className="mb-2.5 my-5 flex-1 mx-2" loading={false} height={48} onClick={onSubmit} disabled={disabled}>
+      //     {i18n.t('common.operate.Confirm')}
+      //   </Button>
+      // }
     >
       <View className="flex flex-col items-center">
         <img
@@ -56,7 +56,7 @@ export default function KycVerifyMsgPage() {
           className="my-[44px] mx-auto"
         />
       </View>
-      <View className=" rounded-t-[24px] bg-white w-full px-[14px] pt-[38px] pb-[100px]">
+      <View className=" rounded-t-[24px] bg-white w-full px-[14px] pt-[38px] pb-[50px]">
         <VerifyMsg
           ref={ref}
           onDisabledChange={onDisabledChange}
@@ -67,6 +67,9 @@ export default function KycVerifyMsgPage() {
             push('/app/user-center/verify-document')
           }}
         />
+        <Button type="primary" className="mb-2.5 mt-10 flex-1 mx-2" loading={false} height={48} onClick={onSubmit} disabled={disabled}>
+          {i18n.t('common.operate.Confirm')}
+        </Button>
       </View>
     </BasicLayout>
   )
