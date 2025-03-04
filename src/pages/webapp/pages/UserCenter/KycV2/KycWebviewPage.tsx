@@ -96,6 +96,7 @@ const Children = observer(
         ) : status === '2' ? (
           <>
             <VerifyStatus2 />
+
             <Button disabled={false} className="mb-2.5 mt-16 w-full  px-2 " height={48} onClick={onSuccess}>
               {intl.formatMessage({ id: 'common.operate.Confirm' })}
             </Button>
@@ -103,6 +104,7 @@ const Children = observer(
         ) : status === '3' ? (
           <>
             <VerifyStatus3 />
+
             <Button
               type="danger"
               disabled={false}
@@ -122,6 +124,7 @@ const Children = observer(
         ) : status === '4' ? (
           <>
             <VerifyStatus4 />
+
             <Button type="primary" disabled={false} className="mb-2.5 mt-16 w-full" height={48} onClick={onSuccess}>
               {intl.formatMessage({ id: 'common.operate.Confirm' })}
             </Button>
@@ -129,6 +132,7 @@ const Children = observer(
         ) : (
           <>
             <VerifyMsg ref={ref0} onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
+
             <Button
               type="primary"
               className="mb-2.5 mt-10 flex-1 mx-2"

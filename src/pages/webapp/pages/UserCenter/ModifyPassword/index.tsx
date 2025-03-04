@@ -57,7 +57,7 @@ export default () => {
   const onSend = async () => {
     let reqFn = isPhoneCheck ? sendPhoneCode : sendEmailCode
 
-    if (getEnv().SKIP_KYC_STEP_ONE === '1') {
+    if (getEnv().SKIP_KYC_STEP_ONE) {
       reqFn = stores.global.registerWay === 'PHONE' ? sendPhoneCode : sendEmailCode
     }
 
@@ -70,7 +70,7 @@ export default () => {
   const setSendLabelValue = useCallback(() => {
     let value = isPhoneCheck ? intl.formatMessage({ id: 'mt.shoujiyanzheng' }) : intl.formatMessage({ id: 'mt.yuanshiyouxiangyanzheng' })
 
-    if (getEnv().SKIP_KYC_STEP_ONE === '1') {
+    if (getEnv().SKIP_KYC_STEP_ONE) {
       value =
         stores.global.registerWay === 'PHONE'
           ? intl.formatMessage({ id: 'mt.shoujiyanzheng' })
