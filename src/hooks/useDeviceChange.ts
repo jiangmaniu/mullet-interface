@@ -28,12 +28,13 @@ export const useDeviceChange = () => {
     STORAGE_SET_DEVICE_TYPE(type)
   }
 
-  const jumpUrl = exposed.isPc ? WEB_HOME_PAGE : purePath || MOBILE_HOME_PAGE
+  const mobileUrl = exposed.isRNWebview ? purePath : MOBILE_HOME_PAGE // 支持响应式切换pc和移动端，RN端不用设置，否则RN跳转h5指定页面有问题
+  const jumpUrl = exposed.isPc ? WEB_HOME_PAGE : mobileUrl
   const loginUrl = exposed.isPc ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
 
   const getHomePage = async () => {
     let token = await STORAGE_GET_TOKEN()
-    if (!token) {
+    if (!token && exposed.isRNWebview) {
       // 处理RN端设置token异步问题
       return new Promise((resolve) => {
         mitt.on('tokenChange', (token) => {

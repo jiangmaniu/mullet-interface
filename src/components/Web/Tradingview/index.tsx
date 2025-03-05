@@ -92,6 +92,13 @@ const Tradingview = () => {
           }, 100)
         })
 
+      // 监听k线可视区域图表范围变化，可以在这里请求后台数据
+      // tvWidget
+      //   .activeChart().onVisibleRangeChanged().subscribe( null,({ from, to }) =>{
+      //     console.log('onVisibleRangeChanged:from', new Date(from * 1000).toTimeString())
+      //     console.log('onVisibleRangeChanged:to', new Date(to * 1000).toTimeString())
+      //   })
+
       // 默认显示MACD指标在k线底部
       if (showBottomMACD === 1) {
         tvWidget.activeChart().createStudy(

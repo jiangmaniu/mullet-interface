@@ -56,6 +56,7 @@ class KlineStore {
         const precision = symbolInfo.precision
         // 通过ws更新k线数据
         const newLastBar = this.updateBar(data, { resolution, precision, symbolInfo })
+
         if (newLastBar) {
           // 实时更新k线数据，通过datefeed subscribeBars提供的onRealtimeCallback方法更新
           this.activeSymbolInfo.onRealtimeCallback?.(newLastBar)
@@ -63,8 +64,34 @@ class KlineStore {
           runInAction(() => {
             this.lastbar = newLastBar
           })
+
+          this.refreshKline(resolution)
         }
       }
+    }
+  }
+
+  // 强制刷新k线数据
+  forceRefreshKlineData = () => {
+    // @ts-ignore
+    this.activeSymbolInfo.onResetCacheNeededCallback?.() // 重置缓存
+    setTimeout(() => {
+      this.tvWidget.activeChart().resetData() // 重置数据
+    }, 100)
+  }
+
+  refreshKline = (resolution: string) => {
+    // 每隔一分钟强制刷新k线数据，避免绘制错误，和后台数据同步校对一下
+    const now = Date.now() / 1000
+    const lastBarTime = this.lastbar.time / 1000
+    const seconds = Math.round(now - lastBarTime)
+
+    // 正好等于60s刷新一次
+    if (resolution === '1' && seconds === 60) {
+      // 强制刷新
+      setTimeout(() => {
+        this.forceRefreshKlineData()
+      }, 2000)
     }
   }
 
@@ -76,9 +103,9 @@ class KlineStore {
     const lastBar = this.lastbar
     if (!lastBar) return
     let resolution = currentSymbol.resolution
-    const oneMin = resolution === '1'
-    // 一分钟k线使用本地实时时间绘制
-    const serverTime = oneMin ? Date.now() / 1000 : socketData?.priceData?.id / 1000 // 服务器返回的时间戳
+
+    const refreshResolution = ['1'].includes(resolution) // 1/5/15分钟k线以当前时间为基准(服务器推送的时间会有几秒不等延迟)，其他以服务器时间为基准
+    const serverTime = refreshResolution ? Date.now() / 1000 : socketData?.priceData?.id / 1000 // 服务器返回的时间戳
 
     let rounded = serverTime
     const ask = socketData?.priceData?.buy // 卖价
@@ -113,13 +140,26 @@ class KlineStore {
     const lastBarSec = lastBar.time / 1000
 
     if (rounded > lastBarSec) {
+      const currentTime = rounded * 1000
+      const currentOpenPrice = NP.round(ask, precision) // 当前行情价格作为开盘价格
+      const lastBarOpenPrice = NP.round(lastBar.close, precision) // 上一根k线的收盘价格作为开盘价格
+
+      let open = 0
+      if (resolution === '1') {
+        // 1分钟K线 11:30收盘 13:30开盘 这种间隔大于1分钟的 则当前画的这根k线开盘价取这一刻的价格
+        // 如果是连续的则当前画的这根k线开盘价取上一根k线的收盘价
+        open = Math.abs(currentTime - lastBar.time) / 1000 === 60 ? lastBarOpenPrice : currentOpenPrice
+      } else {
+        open = currentOpenPrice
+      }
       newLastBar = {
-        time: rounded * 1000,
-        open: NP.round(lastBar.close, precision), // 开盘价等于上一个K线的收盘价
+        time: currentTime,
+        open,
         high: NP.round(ask, precision),
         low: NP.round(ask, precision),
         close: NP.round(ask, precision)
       }
+
       // log('新建k线', newLastBar)
     } else {
       newLastBar = {
@@ -131,6 +171,7 @@ class KlineStore {
       }
       // log('更新k线', newLastBar)
     }
+
     return newLastBar
   }
   /**

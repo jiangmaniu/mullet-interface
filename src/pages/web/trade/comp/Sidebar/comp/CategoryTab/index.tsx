@@ -39,9 +39,9 @@ function CategoryTabs({ onChange, activeKey }: IProps) {
     setCurrent(activeKey || DEFAULT_CURRENT)
   }, [activeKey])
 
-  useEffect(() => {
-    trade.getSymbolCategory()
-  }, [])
+  // useEffect(() => {
+  //   trade.getSymbolCategory()
+  // }, [])
 
   useEffect(() => {
     // 切换账户时，重置当前tab
