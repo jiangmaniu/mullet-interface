@@ -7,6 +7,7 @@ import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
 import { getEnv } from '@/env'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { statusMap } from '..'
 
 type IProps = {
@@ -23,6 +24,8 @@ function InfoModal({ item }: IProps, ref: any) {
   useImperativeHandle(ref, () => {
     return modalRef.current
   })
+
+  const synopsis = getAccountSynopsisByLng(accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis)
 
   return (
     <Modal
@@ -64,11 +67,9 @@ function InfoModal({ item }: IProps, ref: any) {
           </span>
           <div className="flex flex-row items-center gap-1 w-[150px] md:w-[196px] overflow-hidden flex-shrink ">
             <div className="flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-              {accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis?.abbr}
+              {synopsis?.abbr}
             </div>
-            <span className=" text-nowrap text-ellipsis overflow-hidden">
-              {accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis?.name}
-            </span>
+            <span className=" text-nowrap text-ellipsis overflow-hidden">{synopsis?.name}</span>
           </div>
         </div>
         <Iconfont name="zhixiang" width={20} color="black" height={20} />

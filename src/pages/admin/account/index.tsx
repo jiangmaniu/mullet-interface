@@ -20,6 +20,7 @@ import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
 
 import { getEnv } from '@/env'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import Header from './comp/Header'
 import RechargeSimulateModal from './comp/RechargeSimulateModal'
 import RenameAccountModal from './comp/RenameAccountModal'
@@ -137,6 +138,7 @@ function Account() {
       <div className="pt-6">
         {currentAccountList.map((item, idx) => {
           const isSimulate = item.isSimulate
+          const synopsis = getAccountSynopsisByLng(item.synopsis)
           return (
             <div className="flex items-center justify-between py-4 px-[20px] rounded-lg border-[0.5px] border-gray-200 mb-5" key={idx}>
               <div className="flex flex-col">
@@ -154,9 +156,9 @@ function Account() {
                       >
                         {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                       </div>
-                      {item.synopsis?.abbr && (
+                      {synopsis?.abbr && (
                         <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
-                          {item.synopsis?.abbr}
+                          {synopsis?.abbr}
                         </div>
                       )}
                       <div className="pl-[6px] flex items-center">

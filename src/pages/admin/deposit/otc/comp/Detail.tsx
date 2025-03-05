@@ -13,6 +13,7 @@ import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { cancelDepositOrder } from '@/services/api/wallet'
 import { copyToClipboard, formatNum } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { cn } from '@/utils/cn'
 import { depositExchangeRate } from '@/utils/deposit'
 import { goKefu, push } from '@/utils/navigator'
@@ -77,6 +78,8 @@ const Detail = ({
     return methods.find((item) => item.id === paymentInfo?.channelId)
   }, [methods, paymentInfo])
 
+  const synopsis = getAccountSynopsisByLng(fromAccountInfo?.synopsis)
+
   const {
     channelName,
     baseOrderAmount,
@@ -124,7 +127,7 @@ const Detail = ({
         return (
           <div className="flex flex-row items-center gap-2">
             <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
-              {fromAccountInfo?.synopsis?.abbr}
+              {synopsis?.abbr}
             </div>
             <span className="flex-shrink-0">{tradeAccountId}</span>
           </div>

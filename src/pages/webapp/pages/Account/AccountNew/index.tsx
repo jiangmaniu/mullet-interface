@@ -12,6 +12,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { AddAccount } from '@/services/api/tradeCore/account'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -189,6 +190,8 @@ function AccountNew() {
     }
   }, [accountList])
 
+  const synopsis = getAccountSynopsisByLng(selectedItem?.synopsis)
+
   return (
     <Basiclayout
       fixedHeight
@@ -261,7 +264,7 @@ function AccountNew() {
               {selectedItem?.groupName}
             </Text>
             <Text size="sm" weight="normal" color="weak" style={{ marginBottom: 10 }}>
-              {selectedItem?.synopsis?.remark}
+              {synopsis?.remark}
             </Text>
 
             <View className={cn('flex flex-row items-center justify-between gap-2')}>
@@ -271,11 +274,11 @@ function AccountNew() {
                   selectedItem?.isSimulate ? 'bg-green' : 'bg-brand'
                 )}
               >
-                <Text color="white">{selectedItem?.synopsis?.tag}</Text>
+                <Text color="white">{synopsis?.tag}</Text>
               </View>
-              {selectedItem?.synopsis?.abbr && (
+              {synopsis?.abbr && (
                 <View className={cn(' flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal')}>
-                  <Text color="white">{selectedItem?.synopsis?.abbr}</Text>
+                  <Text color="white">{synopsis?.abbr}</Text>
                 </View>
               )}
             </View>

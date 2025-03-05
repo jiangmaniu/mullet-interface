@@ -7,6 +7,7 @@ import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { formatNum, toFixed } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 
 type IProps = {
   form: FormInstance
@@ -102,24 +103,27 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
           }
         }
       ]}
-      options={accountList.map((item) => ({
-        ...item,
-        value: item.id,
-        label: (
-          <div className="flex justify-between w-full">
-            {item?.synopsis?.tag && (
-              <div className="flex px-1">
-                <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">
-                  {item?.synopsis?.tag}
+      options={accountList.map((item) => {
+        const synopsis = getAccountSynopsisByLng(item.synopsis)
+        return {
+          ...item,
+          value: item.id,
+          label: (
+            <div className="flex justify-between w-full">
+              {synopsis?.tag && (
+                <div className="flex px-1">
+                  <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">
+                    {synopsis?.tag}
+                  </div>
                 </div>
+              )}
+              <div className="flex-1 text-sm font-bold text-primary truncate">
+                {item.name} / {item?.id}
               </div>
-            )}
-            <div className="flex-1 text-sm font-bold text-primary truncate">
-              {item.name} / {item?.id}
             </div>
-          </div>
-        )
-      }))}
+          )
+        }
+      })}
     />
   )
 }

@@ -9,6 +9,7 @@ import PageContainer from '@/components/Admin/PageContainer'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { useStores } from '@/context/mobxProvider'
 import { AddAccount } from '@/services/api/tradeCore/account'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
@@ -32,6 +33,8 @@ function AddAccountComp() {
   const [searchParams] = useSearchParams()
   const searchKey = searchParams.get('key') || ''
 
+  const synopsis = getAccountSynopsisByLng(currentAccount.synopsis)
+
   useEffect(() => {
     if (!accountList.length) {
       trade.getAccountGroupList()
@@ -53,15 +56,13 @@ function AddAccountComp() {
               style={{ background: 'linear-gradient(180deg, #DCECFF 0%, #FFFFFF 100%)' }}
             >
               <div className="px-7 py-3">
-                <div className="text-primary font-semibold text-[20px] pb-2 truncate">
-                  {currentAccount.synopsis?.name || currentAccount?.groupName}
-                </div>
-                <div className="text-secondary text-sm line-clamp-3">{currentAccount.synopsis?.remark}</div>
+                <div className="text-primary font-semibold text-[20px] pb-2 truncate">{synopsis?.name || currentAccount?.groupName}</div>
+                <div className="text-secondary text-sm line-clamp-3">{synopsis?.remark}</div>
               </div>
             </div>
             <div className="h-[90px] px-7 py-3">
               <div className="flex items-center justify-between">
-                {(currentAccount.synopsis?.list || []).slice(0, 3).map((v, index) => (
+                {(synopsis?.list || []).slice(0, 3).map((v, index) => (
                   <div className="flex flex-col" key={index}>
                     <div className="text-primary text-lg font-semibold pb-[7px]">{v.content}</div>
                     <div className="text-primary text-sm">{v.title}</div>
@@ -93,7 +94,7 @@ function AddAccountComp() {
               }}
               submitter={false}
               layout="vertical"
-              initialValues={{ name: currentAccount.synopsis?.name }}
+              initialValues={{ name: synopsis?.name }}
             >
               <ProFormText
                 name="name"

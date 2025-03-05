@@ -3,6 +3,7 @@ import { observer } from 'mobx-react'
 import { useLayoutEffect, useMemo, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
 export type ITabTypes = {
@@ -98,11 +99,13 @@ const Tags = ({ code, format, size = 'medium', color = 'biaozhun', children, onC
     onClick?.()
   }
 
+  const synopsis = getAccountSynopsisByLng(item?.synopsis)
+
   return (
     <span onClick={handleClick} className={cn(innerClassName, className)}>
       {format && <FormattedMessage id={format.id} />}
       {children}
-      <span className="truncate">{useMemo(() => (item ? item.synopsis?.abbr || 'unset' : ''), [item])}</span>
+      <span className="truncate">{useMemo(() => (item ? synopsis?.abbr || 'unset' : ''), [item])}</span>
     </span>
   )
 }

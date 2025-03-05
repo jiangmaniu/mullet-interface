@@ -42,6 +42,10 @@ export async function getClientDetail(params: API.IdParam) {
       res.data.accountList = res.data.accountList.map((item) => {
         if (item.synopsis) {
           item.synopsis = JSON.parse(item.synopsis as any)
+          // 兼容旧数据
+          if (!Array.isArray(item.synopsis)) {
+            item.synopsis = []
+          }
         }
         return item
       })

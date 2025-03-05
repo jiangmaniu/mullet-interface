@@ -9,6 +9,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { formatNum } from '@/utils'
 
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { onBack } from '@/utils/navigator'
 import { goHome } from '../../utils/navigator'
 import Empty from '../Base/List/Empty'
@@ -27,6 +28,8 @@ const Item = ({
 }) => {
   const { cn, theme } = useTheme()
   const intl = useIntl()
+
+  const synopsis = getAccountSynopsisByLng(item.synopsis)
 
   return (
     <div
@@ -60,9 +63,9 @@ const Item = ({
                   : intl.formatMessage({ id: 'common.enum.accountType.REAL' })}
               </Text>
             </View>
-            {item.synopsis?.abbr && (
+            {synopsis?.abbr && (
               <View className={cn(' flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal')}>
-                <Text color="white">{item.synopsis?.abbr}</Text>
+                <Text color="white">{synopsis?.abbr}</Text>
               </View>
             )}
             <Text color="primary" size="sm" weight="light" className="max-w-[120px] inline-block truncate">

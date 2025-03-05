@@ -19,6 +19,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import End from '@/pages/webapp/components/Base/List/End'
 import GetMore from '@/pages/webapp/components/Base/List/GetMore'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { statusMap } from '..'
 import WithdrawDetailModal from './WithdrawDetailModal'
 
@@ -79,6 +80,7 @@ function WithdrawList() {
   const { theme } = useTheme()
 
   const renderItem = ({ item }: { item: Wallet.withdrawalOrderListItem }) => {
+    const synopsis = getAccountSynopsisByLng(accountList.find((v) => v.id === item.tradeAccountId)?.synopsis)
     return (
       <div className="flex flex-col gap-[6px] mb-5" onClick={() => onSelectItem(item)}>
         <div className=" text-xs font-medium text-gray-900 flex flex-row items-center gap-1">
@@ -111,7 +113,7 @@ function WithdrawList() {
             <div className=" flex flex-row gap-2.5 items-center justify-center pl-[2px] overflow-hidden">
               <div className="flex text-sm flex-row items-center gap-1 overflow-hidden  ">
                 <div className="flex h-4 min-w-[34px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
+                  {synopsis?.abbr}
                 </div>
                 <span className=" text-nowrap text-ellipsis overflow-hidden">
                   {/* {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.name} */}

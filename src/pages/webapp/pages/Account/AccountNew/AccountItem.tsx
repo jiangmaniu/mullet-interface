@@ -1,6 +1,7 @@
 import { useTheme } from '@/context/themeProvider'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
+import { getAccountSynopsisByLng } from '@/utils/business'
 
 const AccountItem = ({
   width,
@@ -16,6 +17,8 @@ const AccountItem = ({
   onPress: (item: AccountGroup.AccountGroupItem) => void
 }) => {
   const { cn } = useTheme()
+  const synopsis = getAccountSynopsisByLng(item?.synopsis)
+
   return (
     <View onPress={() => onPress(item)} className={cn(`flex-1 w-[${width}px] h-full h-[${height}px] `)}>
       <View
@@ -28,7 +31,7 @@ const AccountItem = ({
             {item.groupName}
           </Text>
           <Text size="sm" weight="normal" color="weak" style={{ marginBottom: 10 }}>
-            {item.synopsis?.remark}
+            {synopsis?.remark}
           </Text>
 
           <View className={cn('flex flex-row items-center justify-between gap-2')}>
@@ -38,11 +41,11 @@ const AccountItem = ({
                 item.isSimulate ? 'bg-green' : 'bg-brand'
               )}
             >
-              <Text color="white">{item.synopsis?.tag}</Text>
+              <Text color="white">{synopsis?.tag}</Text>
             </View>
-            {item.synopsis?.abbr && (
+            {synopsis?.abbr && (
               <View style={cn(' flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal')}>
-                <Text color="white">{item.synopsis?.abbr}</Text>
+                <Text color="white">{synopsis?.abbr}</Text>
               </View>
             )}
           </View>
@@ -53,7 +56,7 @@ const AccountItem = ({
           className={cn('w-full flex-1 flex-grow py-[24px] px-5 flex flex-col justify-between items-start rounded-b-2xl relative')}
         >
           <View className={cn('flex flex-row flex-wrap w-full gap-y-4')}>
-            {(item.synopsis?.list || []).slice(0, 3).map((v, index) => (
+            {(synopsis?.list || []).slice(0, 3).map((v, index) => (
               <View className={cn('flex flex-col items-start w-1/2 ')} key={index}>
                 <Text size="sm" color="weak">
                   {v.title}

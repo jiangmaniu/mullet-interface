@@ -17,6 +17,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Tooltip from '../AccountDetail/Tooltip'
 
 import Empty from '@/pages/webapp/components/Base/List/Empty'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import VirtualList from 'rc-virtual-list'
 
 const TransferDetailScreen = () => {
@@ -44,7 +45,8 @@ const TransferDetailScreen = () => {
   const accountList = currentUser?.accountList || []
 
   const getTag = (accountId: any) => {
-    return accountList.find((item) => item.id === accountId)?.synopsis?.abbr
+    const synopsis = getAccountSynopsisByLng(accountList.find((item) => item.id === accountId)?.synopsis)
+    return synopsis?.abbr
   }
 
   const getName = (accountId: any) => {

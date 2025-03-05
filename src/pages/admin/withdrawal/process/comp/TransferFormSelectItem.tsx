@@ -8,6 +8,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { formatNum, toFixed } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { observer } from 'mobx-react'
 
 type IProps = {
@@ -98,24 +99,27 @@ function TransferFormSelectItem({ form, totalProfit }: IProps) {
             }
           }
         ]}
-        options={accountList.map((item) => ({
-          ...item,
-          value: item.id,
-          label: (
-            <div className="flex justify-between w-full">
-              {item?.synopsis?.abbr && (
-                <div className="flex px-1">
-                  <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">
-                    {item?.synopsis?.abbr}
+        options={accountList.map((item) => {
+          const synopsis = getAccountSynopsisByLng(item.synopsis)
+          return {
+            ...item,
+            value: item.id,
+            label: (
+              <div className="flex justify-between w-full">
+                {synopsis?.abbr && (
+                  <div className="flex px-1">
+                    <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">
+                      {synopsis?.abbr}
+                    </div>
                   </div>
+                )}
+                <div className="flex-1 text-sm font-bold text-primary truncate">
+                  {item.name} / {item?.id}
                 </div>
-              )}
-              <div className="flex-1 text-sm font-bold text-primary truncate">
-                {item.name} / {item?.id}
               </div>
-            </div>
-          )
-        }))}
+            )
+          }
+        })}
       />
       <div className="text-xs text-secondary mt-2.5 flex items-center">
         <Iconfont name="user" width={20} height={20} color="#6A7073" />

@@ -12,6 +12,7 @@ import { formatNum, toFixed } from '@/utils'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { HeaderTheme } from '../Header/types'
 import Modal from '../Modal'
 
@@ -105,6 +106,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
           <div className="dark:!shadow-none shadow-sm xl:border dark:border-[--border-primary-color] xl:border-[#f3f3f3] rounded-b-xl rounded-tr-xl bg-primary xl:w-[360px] pt-3">
             <div className="max-h-[500px] overflow-y-auto px-3">
               {realAccountList.map((item, idx: number) => {
+                const synopsis = getAccountSynopsisByLng(item.synopsis)
                 return (
                   <div
                     key={item.id}
@@ -129,9 +131,9 @@ function UserCenterAccountDropdown({ theme }: IProps) {
                         >
                           <FormattedMessage id="mt.zhenshi" />
                         </div>
-                        {item.synopsis?.abbr && (
+                        {synopsis?.abbr && (
                           <div className="ml-[6px] max-w-[84px] flex h-[22px] min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white">
-                            <span className="truncate">{item.synopsis?.abbr}</span>
+                            <span className="truncate">{synopsis?.abbr}</span>
                           </div>
                         )}
                       </div>

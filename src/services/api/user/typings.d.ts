@@ -373,7 +373,7 @@ declare namespace User {
     /**禁用账户组交易 */
     enableTrade: boolean
     /**账户组描述 */
-    synopsis?: AccountGroup.SynopsisConf
+    synopsis?: AccountGroup.SynopsisConf[]
     /**账户组小数位 */
     currencyDecimal?: number
     /**账户组货币单位 */

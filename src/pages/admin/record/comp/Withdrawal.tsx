@@ -11,6 +11,7 @@ import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 
 import { getEnv } from '@/env'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { IParams } from '..'
 import { statusMap } from '../index'
 
@@ -122,82 +123,83 @@ function Withdrawal({ params, onSelectItem }: IProps) {
       className="px-4 home-custom-commision-list"
       ghost
       split={false}
-      renderItem={(item: Wallet.DepositRecord, index) => (
-        <div className="flex flex-col gap-2 mb-5 hover:shadow-sm cursor-pointer" onClick={() => onSelectItem?.(item)}>
-          <div className=" font-medium text-gray-900">{item.createTime} </div>
-          <div className="flex items-center flex-wrap gap-y-4 justify-between border border-gray-150 py-5 px-4 rounded-lg">
-            <div className="flex flew-row items-center gap-4 text-start min-w-[180px]">
-              <div className=" bg-gray-50 w-10 h-10 rounded-full border-gray-100 flex items-center justify-center">
-                <Iconfont name="chujin" color="gray" width={18} height={18} />
-              </div>
-              <div>
-                <div className="text-primary font-bold">
-                  <FormattedMessage id="mt.chujin" />
+      renderItem={(item: Wallet.DepositRecord, index) => {
+        const synopsis = getAccountSynopsisByLng(accountList.find((v) => v.id === item.tradeAccountId)?.synopsis)
+        return (
+          <div className="flex flex-col gap-2 mb-5 hover:shadow-sm cursor-pointer" onClick={() => onSelectItem?.(item)}>
+            <div className=" font-medium text-gray-900">{item.createTime} </div>
+            <div className="flex items-center flex-wrap gap-y-4 justify-between border border-gray-150 py-5 px-4 rounded-lg">
+              <div className="flex flew-row items-center gap-4 text-start min-w-[180px]">
+                <div className=" bg-gray-50 w-10 h-10 rounded-full border-gray-100 flex items-center justify-center">
+                  <Iconfont name="chujin" color="gray" width={18} height={18} />
                 </div>
-                <div className="text-weak text-xs">
-                  <FormattedMessage id="mt.danhao" />:{item.orderNo}
-                </div>
-              </div>
-            </div>
-            <div className=" flex flex-row gap-2 md:gap-3 items-center  justify-start flex-grow max-w-[500px]">
-              <div className="flex flex-row items-center gap-1  overflow-hidden flex-shrink justify-end ">
-                <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
-                </div>
-                <span className=" text-nowrap text-ellipsis overflow-hidden">
-                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.name}
-                </span>
-              </div>
-              <div>
-                <Iconfont name="zhixiang" width={14} color="black" height={14} />
-              </div>
-              <div className="text-end ">
-                {item.type === 'bank' ? (
-                  <span>{item.bank}</span>
-                ) : (
-                  <div className="flex flex-row items-center gap-1">
-                    {item?.channelIcon && (
-                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
-                    )}
-                    <span>{item.address}</span>
+                <div>
+                  <div className="text-primary font-bold">
+                    <FormattedMessage id="mt.chujin" />
                   </div>
+                  <div className="text-weak text-xs">
+                    <FormattedMessage id="mt.danhao" />:{item.orderNo}
+                  </div>
+                </div>
+              </div>
+              <div className=" flex flex-row gap-2 md:gap-3 items-center  justify-start flex-grow max-w-[500px]">
+                <div className="flex flex-row items-center gap-1  overflow-hidden flex-shrink justify-end ">
+                  <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
+                    {synopsis?.abbr}
+                  </div>
+                  <span className=" text-nowrap text-ellipsis overflow-hidden">{synopsis?.name}</span>
+                </div>
+                <div>
+                  <Iconfont name="zhixiang" width={14} color="black" height={14} />
+                </div>
+                <div className="text-end ">
+                  {item.type === 'bank' ? (
+                    <span>{item.bank}</span>
+                  ) : (
+                    <div className="flex flex-row items-center gap-1">
+                      {item?.channelIcon && (
+                        <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
+                      )}
+                      <span>{item.address}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="text-start min-w-[100px] flex flex-row gap-2" onClick={(e) => e.stopPropagation()}>
+                {/* @ts-ignore */}
+                <div className="text-sm flex items-center w-[80px] justify-center" style={{ color: statusMap[item.status]?.color }}>
+                  <span
+                    className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
+                    // @ts-ignore
+                    style={{ backgroundColor: statusMap[item.status]?.color || '#9C9C9C' }}
+                  >
+                    {/*  */}
+                  </span>
+                  {/* @ts-ignore */}
+                  {statusMap[item.status]?.text || '[status]'}
+                </div>
+                {item.status === 'beginning' && (
+                  <Popconfirm
+                    title=""
+                    description={getIntl().formatMessage({ id: 'mt.ningquedingchexiaochujinshenqing' })}
+                    onConfirm={() => {}}
+                    onCancel={() => {}}
+                    okText={getIntl().formatMessage({ id: 'mt.queding' })}
+                    cancelText={getIntl().formatMessage({ id: 'mt.quxiao' })}
+                  >
+                    <Button size="small" type="primary">
+                      {getIntl().formatMessage({ id: 'mt.chexiao' })}
+                    </Button>
+                  </Popconfirm>
                 )}
               </div>
-            </div>
-            <div className="text-start min-w-[100px] flex flex-row gap-2" onClick={(e) => e.stopPropagation()}>
-              {/* @ts-ignore */}
-              <div className="text-sm flex items-center w-[80px] justify-center" style={{ color: statusMap[item.status]?.color }}>
-                <span
-                  className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
-                  // @ts-ignore
-                  style={{ backgroundColor: statusMap[item.status]?.color || '#9C9C9C' }}
-                >
-                  {/*  */}
-                </span>
-                {/* @ts-ignore */}
-                {statusMap[item.status]?.text || '[status]'}
+              <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
+                {formatNum(item.orderAmount)} {item.baseCurrency}
               </div>
-              {item.status === 'beginning' && (
-                <Popconfirm
-                  title=""
-                  description={getIntl().formatMessage({ id: 'mt.ningquedingchexiaochujinshenqing' })}
-                  onConfirm={() => {}}
-                  onCancel={() => {}}
-                  okText={getIntl().formatMessage({ id: 'mt.queding' })}
-                  cancelText={getIntl().formatMessage({ id: 'mt.quxiao' })}
-                >
-                  <Button size="small" type="primary">
-                    {getIntl().formatMessage({ id: 'mt.chexiao' })}
-                  </Button>
-                </Popconfirm>
-              )}
-            </div>
-            <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
-              {formatNum(item.orderAmount)} {item.baseCurrency}
             </div>
           </div>
-        </div>
-      )}
+        )
+      }}
     />
   )
 }

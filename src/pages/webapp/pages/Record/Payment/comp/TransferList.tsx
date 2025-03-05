@@ -11,6 +11,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { getMoneyRecordsPageList } from '@/services/api/tradeCore/account'
 import { formatNum } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { useModel } from '@umijs/max'
 import { PullToRefresh } from 'antd-mobile'
 import dayjs from 'dayjs'
@@ -76,7 +77,8 @@ function DepositList() {
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
 
   const getTag = (accountId: any) => {
-    return accountList.find((item) => item.id === accountId)?.synopsis?.abbr
+    const synopsis = getAccountSynopsisByLng(accountList.find((item) => item.id === accountId)?.synopsis)
+    return synopsis?.abbr
   }
 
   const getName = (accountId: any) => {

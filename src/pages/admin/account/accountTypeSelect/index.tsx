@@ -1,7 +1,7 @@
 import { ArrowRightOutlined } from '@ant-design/icons'
 import { PageLoading } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useLocation, useModel } from '@umijs/max'
+import { FormattedMessage, useIntl, useLocation, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { observer } from 'mobx-react'
 import { useEffect, useLayoutEffect, useState } from 'react'
@@ -13,6 +13,7 @@ import Empty from '@/components/Base/Empty'
 import { useStores } from '@/context/mobxProvider'
 import { push } from '@/utils/navigator'
 
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { AccountTag } from '../../copyTrading/comp/AccountTag'
 import Header from '../comp/Header'
 
@@ -22,6 +23,7 @@ function AccountList() {
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState({} as AccountGroup.AccountGroupItem)
   const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL')
+  const intl = useIntl()
 
   const [currentAccountList, setCurrentAccountList] = useState<AccountGroup.AccountGroupItem[]>([])
 
@@ -93,6 +95,7 @@ function AccountList() {
         <div className="flex items-center gap-x-5">
           {(currentAccountList || []).map((item, idx) => {
             const isActive = item.id === current?.id
+            const synopsis = getAccountSynopsisByLng(item.synopsis)
             return (
               <div
                 className={classNames(
@@ -115,23 +118,23 @@ function AccountList() {
                 />
                 <div className="h-[60px] flex items-center justify-end">
                   {/* 标签 */}
-                  {item.synopsis?.tag && (
+                  {synopsis?.tag && (
                     <div className="flex items-center justify-end">
-                      <div className="text-white text-sm bg-brand rounded px-3 py-[3px] truncate max-w-[200px]">{item.synopsis?.tag}</div>
+                      <div className="text-white text-sm bg-brand rounded px-3 py-[3px] truncate max-w-[200px]">{synopsis?.tag}</div>
                     </div>
                   )}
                 </div>
                 <div>
-                  <div className="pb-[14px] text-primary text-[24px] font-bold truncate">{item.synopsis?.name || item?.groupName}</div>
+                  <div className="pb-[14px] text-primary text-[24px] font-bold truncate">{synopsis?.name || item?.groupName}</div>
                   <div className=" flex gap-2 items-center">
                     {' '}
-                    <div className="text-secondary text-sm line-clamp-2 break-all">{item.synopsis?.remark}</div>
+                    <div className="text-secondary text-sm line-clamp-2 break-all">{synopsis?.remark}</div>
                     <AccountTag code={item.groupCode} size="auto"></AccountTag>
                   </div>
                 </div>
                 <div className="border-b border-[#dadada40] my-5"></div>
                 <div>
-                  {(item.synopsis?.list || []).slice(0, 3).map((v, index) => (
+                  {(synopsis?.list || []).slice(0, 3).map((v, index) => (
                     <div className="flex items-center justify-between pb-7" key={index}>
                       <div className="text-base text-secondary truncate w-[140px]">{v.title}</div>
                       <div className="text-base text-primary font-semibold truncate w-[140px] text-end">{v.content}</div>

@@ -15,6 +15,7 @@ import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { HeaderTheme } from '../Header/types'
 import AccountListItem from './AccountListItem'
 
@@ -182,6 +183,7 @@ function TradeAccountDropdown({ theme }: IProps) {
               {accountArr.map((item, idx: number) => {
                 const isSimulate = item.isSimulate
                 const disabledTrade = !item?.enableConnect || item.status === 'DISABLED'
+                const synopsis = getAccountSynopsisByLng(item.synopsis)
                 return (
                   <div
                     onClick={() => {
@@ -234,9 +236,9 @@ function TradeAccountDropdown({ theme }: IProps) {
                           >
                             {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
                           </div>
-                          {item.synopsis?.abbr && (
+                          {synopsis?.abbr && (
                             <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white">
-                              {item.synopsis?.abbr}
+                              {synopsis?.abbr}
                             </div>
                           )}
                         </div>

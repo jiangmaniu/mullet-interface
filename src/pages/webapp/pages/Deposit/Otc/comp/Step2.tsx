@@ -6,6 +6,7 @@ import { copyToClipboard, formatNum } from '@/utils'
 
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { getEnv } from '@/env'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { QrcodeOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 
@@ -181,6 +182,8 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
 
   const qrCodeSrc = `${getEnv().imgDomain}${paymentInfo?.qrCode}`
 
+  const synopsis = getAccountSynopsisByLng(fromAccountInfo?.synopsis)
+
   return (
     <div className="flex items-center justify-center w-full h-full flex-1">
       <div className=" pt-4 bg-white w-full rounded-t-3xl flex-1">
@@ -191,7 +194,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
 
           <div className="flex flex-row items-center gap-1 text-sm">
             <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
-              {fromAccountInfo?.synopsis?.abbr}
+              {synopsis?.abbr}
             </div>
             <span className="flex-shrink-0">{tradeAccountId}</span>
           </div>

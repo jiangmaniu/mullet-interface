@@ -7,6 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { formatNum } from '@/utils'
 
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
 import SelectAccountModal, { SelectAccountModalRef } from './SelectAccountModal'
@@ -23,6 +24,8 @@ function SwitchAccount({ onSearch, showRightSearchIcon, isRemainAtCurrentPage }:
   const selectAccountModalRef = useRef<SelectAccountModalRef>(null)
   const { trade } = useStores()
 
+  const synopsis = getAccountSynopsisByLng(trade.currentAccountInfo.synopsis)
+
   return (
     <>
       <View className={cn('flex items-center mx-[14px] flex-row justify-between ')}>
@@ -31,7 +34,7 @@ function SwitchAccount({ onSearch, showRightSearchIcon, isRemainAtCurrentPage }:
             <>
               <View className={cn('rounded leading-4 px-[6px] py-[2px] mr-1 bg-gray')}>
                 <Text className={cn('text-xs')} color="white">
-                  {trade.currentAccountInfo.synopsis?.abbr}
+                  {synopsis?.abbr}
                 </Text>
               </View>
               <View

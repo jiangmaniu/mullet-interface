@@ -7,6 +7,7 @@ import { getDepositOrderList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 
 import { getEnv } from '@/env'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { cn } from '@/utils/cn'
 import { IParams, statusMap } from '..'
 
@@ -90,65 +91,66 @@ function Deposit({ params, onSelectItem }: IProps) {
       className="px-4 home-custom-commision-list"
       ghost
       split={false}
-      renderItem={(item: Wallet.depositOrderListItem, index) => (
-        <div className="flex flex-col gap-2 mb-5" onClick={() => onSelectItem?.(item)}>
-          <div className=" font-medium text-gray-900">{item.createTime} </div>
-          <div className="flex items-center flex-wrap gap-y-4 justify-between border border-gray-150 py-5 px-4 rounded-lg">
-            <div className="flex flew-row items-center gap-4 text-start min-w-[180px]">
-              <div className=" bg-gray-50 w-10 h-10 rounded-full border-gray-100 flex items-center justify-center">
-                <Iconfont name="rujin" color="gray" width={18} height={18} />
-              </div>
-              <div>
-                <div className="text-primary font-bold">
-                  <FormattedMessage id="mt.rujin" />
+      renderItem={(item: Wallet.depositOrderListItem, index) => {
+        const synopsis = getAccountSynopsisByLng(accountList.find((v) => v.id === item.tradeAccountId)?.synopsis)
+        return (
+          <div className="flex flex-col gap-2 mb-5" onClick={() => onSelectItem?.(item)}>
+            <div className=" font-medium text-gray-900">{item.createTime} </div>
+            <div className="flex items-center flex-wrap gap-y-4 justify-between border border-gray-150 py-5 px-4 rounded-lg">
+              <div className="flex flew-row items-center gap-4 text-start min-w-[180px]">
+                <div className=" bg-gray-50 w-10 h-10 rounded-full border-gray-100 flex items-center justify-center">
+                  <Iconfont name="rujin" color="gray" width={18} height={18} />
                 </div>
-                <div className="text-weak text-xs">
-                  <FormattedMessage id="mt.danhao" />:{item.orderNo}
+                <div>
+                  <div className="text-primary font-bold">
+                    <FormattedMessage id="mt.rujin" />
+                  </div>
+                  <div className="text-weak text-xs">
+                    <FormattedMessage id="mt.danhao" />:{item.orderNo}
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className=" flex flex-row gap-2 md:gap-3 items-center justify-start min-w-[300px]">
-              <div className=" text-sm font-medium flex flex-row items-center gap-1">
-                {item.type === 'bank' ? (
-                  <span>{item.bank}</span>
-                ) : (
-                  <>
-                    {item?.channelIcon && (
-                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
-                    )}
-                    <span> {item.channelRevealName || '[channelRevealName]'}</span>
-                  </>
-                )}
-              </div>
-              <div>
-                <Iconfont name="zhixiang" width={14} color="black" height={14} />
-              </div>
-              <div className="flex text-sm font-bold flex-row items-center gap-1  overflow-hidden  ">
-                <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
+              <div className=" flex flex-row gap-2 md:gap-3 items-center justify-start min-w-[300px]">
+                <div className=" text-sm font-medium flex flex-row items-center gap-1">
+                  {item.type === 'bank' ? (
+                    <span>{item.bank}</span>
+                  ) : (
+                    <>
+                      {item?.channelIcon && (
+                        <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
+                      )}
+                      <span> {item.channelRevealName || '[channelRevealName]'}</span>
+                    </>
+                  )}
                 </div>
-                <span className=" text-nowrap text-ellipsis overflow-hidden">
-                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.name}
-                </span>
+                <div>
+                  <Iconfont name="zhixiang" width={14} color="black" height={14} />
+                </div>
+                <div className="flex text-sm font-bold flex-row items-center gap-1  overflow-hidden  ">
+                  <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
+                    {synopsis?.abbr}
+                  </div>
+                  <span className=" text-nowrap text-ellipsis overflow-hidden">{synopsis?.name}</span>
+                </div>
               </div>
-            </div>
-            {/* <div className="text-start min-w-[100px]">{item.status || '[status]'}</div> */}
+              {/* <div className="text-start min-w-[100px]">{item.status || '[status]'}</div> */}
 
-            <div className="text-sm flex items-center w-[80px] justify-center" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
-              <span
-                className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
-                style={{ backgroundColor: statusMap[item.status ?? 'FAIL']?.color || '#9C9C9C' }}
-              >
-                {/* 占位 */}
-              </span>
-              {statusMap[item.status ?? 'FAIL']?.text || '[status]'}
-            </div>
-            <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
-              {formatNum(item.baseOrderAmount, { precision: 2 })} {item.baseCurrency}
+              <div className="text-sm flex items-center w-[80px] justify-center" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
+                <span
+                  className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
+                  style={{ backgroundColor: statusMap[item.status ?? 'FAIL']?.color || '#9C9C9C' }}
+                >
+                  {/* 占位 */}
+                </span>
+                {statusMap[item.status ?? 'FAIL']?.text || '[status]'}
+              </div>
+              <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
+                {formatNum(item.baseOrderAmount, { precision: 2 })} {item.baseCurrency}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )
+      }}
     />
   )
 }

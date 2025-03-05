@@ -12,6 +12,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { getDepositOrderList } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { PullToRefresh } from 'antd-mobile'
 import dayjs from 'dayjs'
@@ -78,6 +79,8 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
   const { theme } = useTheme()
 
   const renderItem = ({ item }: { item: Wallet.depositOrderListItem }) => {
+    const synopsis = getAccountSynopsisByLng(accountList.find((v) => v.id === item.tradeAccountId)?.synopsis)
+
     return (
       <div className="flex flex-col gap-[6px] mb-5" onClick={() => onSelectItem(item)}>
         <div className=" text-xs font-medium text-gray-900 flex flex-row items-center gap-1">
@@ -128,7 +131,7 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
 
               <div className="flex text-sm flex-row items-center gap-1 overflow-hidden  ">
                 <div className="flex h-4 min-w-[34px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-                  {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.abbr}
+                  {synopsis?.abbr}
                 </div>
                 <span className=" text-nowrap text-ellipsis overflow-hidden">
                   {/* {accountList.find((v) => v.id === item.tradeAccountId)?.synopsis?.name} */}

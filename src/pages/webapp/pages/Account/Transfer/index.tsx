@@ -13,6 +13,7 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum, formatStringWithEllipsis, toFixed } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useModel } from '@umijs/max'
@@ -158,6 +159,9 @@ function TransferScreen() {
     }
   }, [currentUser])
 
+  const formSynopsis = getAccountSynopsisByLng(from?.synopsis)
+  const toSynopsis = getAccountSynopsisByLng(to?.synopsis)
+
   return (
     <Basiclayout
       fixedHeight
@@ -211,10 +215,10 @@ function TransferScreen() {
               className={cn('flex flex-row items-center justify-between flex-1 w-full')}
             >
               <View className={cn('flex flex-row items-center gap-2')}>
-                {from?.synopsis?.tag && (
+                {formSynopsis?.tag && (
                   <View className={cn(' flex h-5 min-w-[20px] items-center px-1 justify-center rounded bg-black text-xs font-normal')}>
                     <Text color="white" size="xs">
-                      {from.synopsis?.tag}
+                      {formSynopsis?.tag}
                     </Text>
                   </View>
                 )}
@@ -236,10 +240,10 @@ function TransferScreen() {
             >
               {to ? (
                 <View className={cn('flex flex-row items-center gap-2 ')}>
-                  {to?.synopsis?.abbr && (
+                  {toSynopsis?.abbr && (
                     <View className={cn(' flex h-5 min-w-[20px] items-center px-1 justify-center rounded bg-black text-xs font-normal')}>
                       <Text color="white" size="xs">
-                        {to.synopsis?.abbr}
+                        {toSynopsis?.abbr}
                       </Text>
                     </View>
                   )}

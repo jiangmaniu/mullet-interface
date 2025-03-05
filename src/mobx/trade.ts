@@ -420,6 +420,7 @@ class TradeStore {
 
     const res = await getAccountGroupList()
     const accountList = (res?.data || []) as AccountGroup.AccountGroupItem[]
+
     runInAction(() => {
       this.accountGroupList = accountList
       this.accountGroupListLoading = false

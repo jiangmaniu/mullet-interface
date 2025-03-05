@@ -6,6 +6,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { observer } from 'mobx-react'
 import { ForwardedRef, forwardRef, useImperativeHandle, useRef } from 'react'
 
@@ -38,6 +39,8 @@ function CancelPendingOrderModal({ trigger, item }: IProps, ref: ForwardedRef<Ca
     },
     close
   }))
+
+  const synopsis = getAccountSynopsisByLng(currentAccountInfo?.synopsis)
 
   return (
     <SheetModal
@@ -79,7 +82,7 @@ function CancelPendingOrderModal({ trigger, item }: IProps, ref: ForwardedRef<Ca
               }}
             >
               <Text size="sm" color="secondary" weight="medium" leading="base">
-                {currentAccountInfo.synopsis?.abbr} {currentAccountInfo.accountGroupId}
+                {synopsis?.abbr} {currentAccountInfo.accountGroupId}
               </Text>
             </View>
           </View>

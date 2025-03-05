@@ -7,6 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { getMoneyRecordsPageList } from '@/services/api/tradeCore/account'
 import { formatNum } from '@/utils'
 
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { IParams } from '..'
 
 type IProps = {
@@ -20,7 +21,9 @@ function Transfer({ params }: IProps) {
   const accountList = initialState?.currentUser?.accountList || []
 
   const getTag = (accountId: any) => {
-    return accountList.find((item) => item.id === accountId)?.synopsis?.abbr
+    const synopsis = getAccountSynopsisByLng(accountList.find((item) => item.id === accountId)?.synopsis)
+
+    return synopsis?.abbr
   }
 
   const onQuery = async (params: IParams) => {

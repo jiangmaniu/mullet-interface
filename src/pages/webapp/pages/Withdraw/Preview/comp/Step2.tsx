@@ -9,6 +9,7 @@ import { copyToClipboard, formatNum } from '@/utils'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { observer } from 'mobx-react'
 
 const Step2 = ({
@@ -170,6 +171,7 @@ const Step2 = ({
   }, [values])
 
   const [query] = useSearchParams()
+  const synopsis = getAccountSynopsisByLng(fromAccountInfo?.synopsis)
 
   // const backUrl = query.get('backUrl') as string
   // const [invalid, setInvalid] = useState(false)
@@ -197,7 +199,7 @@ const Step2 = ({
 
           <div className="flex flex-row items-center gap-1 text-sm">
             <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
-              {fromAccountInfo?.synopsis?.abbr}
+              {synopsis?.abbr}
             </div>
             <span className="flex-shrink-0">{fromAccountId}</span>
           </div>

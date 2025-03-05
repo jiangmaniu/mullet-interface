@@ -4,6 +4,7 @@ import { getEnv } from '@/env'
 import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { cn } from '@/utils/cn'
 import { FormattedMessage, useModel } from '@umijs/max'
 import type { ForwardedRef } from 'react'
@@ -34,6 +35,8 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
+
+  const synopsis = getAccountSynopsisByLng(accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis)
 
   return (
     <SheetModal
@@ -92,7 +95,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
               </div>
               <div className="flex text-sm font-bold flex-row items-center gap-1 overflow-hidden flex-1 ">
                 <div className=" flex h-5 min-w-[34px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
-                  {accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis?.abbr}
+                  {synopsis?.abbr}
                 </div>
                 <span className=" text-nowrap text-ellipsis overflow-hidden">
                   {/* {accountList.find((v) => v.id === item?.tradeAccountId)?.synopsis?.name} */}

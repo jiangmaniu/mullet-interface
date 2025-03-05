@@ -11,7 +11,7 @@
   "SKIP_KYC_STEP_ONE": true,
   "ID_CARD_ONLY": true,
   "SHOW_QUOTE_CATEGORY_ALL_TAB": true,
-  "HIDE_ACCOUNT_TRANSFER": true,
+  "HIDE_ACCOUNT_TRANSFER": false,
   "HIDE_CREATE_ACCOUNT": false,
   "HIDE_ACCOUNT_RENAME": false,
   "DEBUG": false,

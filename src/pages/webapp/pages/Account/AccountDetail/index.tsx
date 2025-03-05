@@ -9,6 +9,7 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum, formatStringWithEllipsis } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { useNetwork } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
@@ -130,6 +131,8 @@ function AccountDetail() {
     _setVisible(index === visible ? -1 : index)
   }
 
+  const synopsis = getAccountSynopsisByLng(trade.currentAccountInfo.synopsis)
+
   return (
     <Basiclayout bgColor="secondary" className="px-[14px]" headerColor={theme.colors.backgroundColor.secondary}>
       <Header
@@ -204,14 +207,14 @@ function AccountDetail() {
         ))}
       </View>
 
-      {!!trade.currentAccountInfo.synopsis?.list?.length && (
+      {!!synopsis?.list?.length && (
         <View className="mt-3">
           <Text className={cn('mt-[18px] ml-[6px]')} size="sm" color="weak" weight="light">
             {t('pages.account.Account Attributes')}
           </Text>
           <View bgColor="primary" className={cn('px-3 py-4 mt-[10px] rounded-xl flex flex-col gap-2')}>
             <View className={cn('w-full flex flex-wrap flex-row')}>
-              {trade.currentAccountInfo.synopsis?.list?.map((i, index) => (
+              {synopsis?.list?.map((i, index) => (
                 <View
                   className={cn(
                     'flex flex-col gap-1',

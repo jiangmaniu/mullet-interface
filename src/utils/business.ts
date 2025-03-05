@@ -419,3 +419,15 @@ export const parseOrderMessage = (message: string) => {
 
   return result as MessageResult
 }
+
+/**
+ * 根据当前语言返回当前账户简介信息
+ * @param synopsis
+ * @returns
+ */
+export const getAccountSynopsisByLng = (synopsis: any) => {
+  const locale = getLocale()
+  // 没有找到设置的语言，则取第一项
+  const item = (synopsis || []).find((item: AccountGroup.SynopsisConf) => item.language === locale) || synopsis?.[0] || {}
+  return item as AccountGroup.SynopsisConf
+}

@@ -21,6 +21,10 @@ export async function getAccountGroupList() {
         if (synopsis && typeof synopsis === 'string') {
           // 解析账户介绍内容回显
           item.synopsis = JSON.parse(synopsis)
+          // 兼容旧数据
+          if (!Array.isArray(item.synopsis)) {
+            item.synopsis = []
+          }
         }
       })
     }
