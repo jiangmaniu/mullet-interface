@@ -10,6 +10,7 @@ import duration from 'dayjs/plugin/duration'
 
 dayjs.extend(duration)
 
+import Iconfont from '@/components/Base/Iconfont'
 import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
 import { copyToClipboard } from '@/utils'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
@@ -42,6 +43,16 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
     const canvas = qrRef.current?.querySelector('canvas')
     if (canvas) {
       const url = canvas.toDataURL('image/png') // 生成 Base64 图片
+
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'saveImage',
+            data: url
+          })
+        )
+        return
+      }
       const a = document.createElement('a')
       a.href = url
       a.download = 'qrcode.png' // 设置下载文件名
@@ -95,9 +106,9 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
 
   return (
     <div>
-      <div className="flex flex-row items-end gap-8">
+      <div className="flex flex-col items-center gap-5">
         {/* <canvas id="canvas" className="w-[135px] h-[135px] bg-gray-150 rounded-lg flex items-center justify-center flex-shrink-0"></canvas> */}
-        <div>
+        <div className="flex flex-col items-center ">
           <div className="text-sm text-primary font-medium mb-3">
             <FormattedMessage id="mt.chongbidizhierweima" />
           </div>
@@ -119,14 +130,14 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
             </div>
           </div>
         </div>
-        <div className="flex flex-col-reverse justify-between h-full flex-1 gap-4 min-h-[132px]">
+        <div className="flex flex-col justify-between h-full flex-1 gap-4 ">
           <div>
-            <img src="/img/saomiao.svg" width={20} height={20} />
-            <div className="text-xs text-secondary font-normal mt-4">
+            {/* <img src="/img/saomiao.svg" width={20} height={20} /> */}
+            <div className="text-xs text-weak font-normal mt-4 text-center w-[257px]">
               <FormattedMessage id="mt.qingzhuanzhangzhixiafangqukuailiandizhi" />
             </div>
           </div>
-          <div className={cn('text-2xl text-primary font-semibold hidden', address && 'block')}>
+          <div className={cn('text-sm text-center text-primary font-semibold hidden', address && 'block')}>
             <FormattedMessage id="mt.qingzaishijianzhineiwanchengzhuanzhang" values={{ value: dayjs.duration(duration).format('mm:ss') }} />
           </div>
         </div>
@@ -158,7 +169,8 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
               copyToClipboard(address || '')
             }}
           >
-            <FormattedMessage id="mt.fuzhi" />
+            {/* <FormattedMessage id="mt.fuzhi" /> */}
+            <Iconfont name="a-bianzu3beifen2" color="gray" width={18} height={18} className="mt-1" />
           </Button>
         )}
       </div>

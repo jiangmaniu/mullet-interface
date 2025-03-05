@@ -7,6 +7,7 @@ import { copyToClipboard, formatNum } from '@/utils'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { getEnv } from '@/env'
 import { getAccountSynopsisByLng } from '@/utils/business'
+import { onDownloadImg } from '@/utils/download'
 import { QrcodeOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 
@@ -183,6 +184,14 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
   const qrCodeSrc = `${getEnv().imgDomain}${paymentInfo?.qrCode}`
 
   const synopsis = getAccountSynopsisByLng(fromAccountInfo?.synopsis)
+  // const download = (url: string) => {
+  //   const a = document.createElement('a')
+  //   a.href = url
+  //   a.download = 'qrcode.png' // 设置下载文件名
+  //   document.body.appendChild(a)
+  //   a.click()
+  //   document.body.removeChild(a)
+  // }
 
   return (
     <div className="flex items-center justify-center w-full h-full flex-1">
@@ -246,12 +255,16 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
                 <div
                   className="flex px-3 flex-row items-center justify-center rounded-lg font-pf-bold font-medium border border-gray-70 h-[40px] text-center gap-x-1"
                   onClick={() => {
-                    window.ReactNativeWebView.postMessage(
-                      JSON.stringify({
-                        type: 'saveImage',
-                        data: qrCodeSrc
-                      })
-                    )
+                    if (window.ReactNativeWebView) {
+                      window.ReactNativeWebView.postMessage(
+                        JSON.stringify({
+                          type: 'saveImage',
+                          data: qrCodeSrc
+                        })
+                      )
+                      return
+                    }
+                    onDownloadImg([qrCodeSrc], 'qrcode.png')
                   }}
                 >
                   <QrcodeOutlined />

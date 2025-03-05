@@ -65,8 +65,6 @@ function DepositProcess() {
 
   const [step, setStep] = useState(0)
 
-  const [createTime, setCreateTime] = useState()
-
   // const [paymentInfo, setPaymentInfo] = useState<Wallet.GenerateDepositOrderResult>()
 
   const { showLoading, hideLoading } = useLoading()
@@ -80,6 +78,11 @@ function DepositProcess() {
         .then((res) => {
           if (res.success && res.data?.id) {
             setOrderId(res.data.id)
+            // TODO: 生成充值地址
+            form.setFieldValue('address', res.data?.address)
+            form.setFieldValue('createTime', res.data?.createTime)
+            form.setFieldValue('canncelOrderTime', res.data?.canncelOrderTime)
+
             continueModalRef.current?.show()
             setLoading(false)
             return
@@ -125,13 +128,18 @@ function DepositProcess() {
   }
 
   const handleGo = () => {
-    push(appendHideParamIfNeeded(`/deposit/otc/${orderId}?backUrl=/deposit/process/${methodId}`))
+    if (methodInfo?.paymentType === 'OTC') {
+      push(appendHideParamIfNeeded(`/deposit/otc/${orderId}?backUrl=/deposit/process/${methodId}`))
+    } else {
+      setStep(1)
+      continueModalRef.current?.close()
+    }
   }
 
   const handleReset = () => {
     form.setFieldValue('address', '')
-
     setStep(0)
+    confirmModalRef.current?.close()
   }
 
   const cryptoRef = useRef<any>()
@@ -152,16 +160,20 @@ function DepositProcess() {
 
   const [valid, setValid] = useState(false)
   useEffect(() => {
-    amount &&
-      form
-        .validateFields(['amount'])
-        .then((values) => {
-          setValid(true)
-        })
-        .catch((err) => {
-          setValid(false)
-        })
-  }, [amount])
+    if (methodInfo?.paymentType === 'OTC') {
+      amount &&
+        form
+          .validateFields(['amount'])
+          .then((values) => {
+            setValid(true)
+          })
+          .catch((err) => {
+            setValid(false)
+          })
+    } else {
+      setValid(true)
+    }
+  }, [methodInfo, amount])
 
   const disabled = loading || !methodId || !toAccountId || (methodInfo?.paymentType === 'OTC' && !amount) || !valid
 
