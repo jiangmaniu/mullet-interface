@@ -1,8 +1,9 @@
 // @ts-nocheck
+import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { ChartingLibraryWidgetOptions, DatafeedConfiguration, LibrarySymbolInfo } from '@/libs/charting_library'
+import { getSymbolIcon } from '@/utils/business'
 import mitt from '@/utils/mitt'
-import { request } from '@/utils/request'
 
 // https://www.tradingview.com/charting-library-docs/latest/tutorials/implement_datafeed_tutorial/Widget-Setup
 class DataFeedBase {
@@ -46,8 +47,22 @@ class DataFeedBase {
    */
   async resolveSymbol(symbolName, onSymbolResolvedCallback, onResolveErrorCallback, extension) {
     const ENV = getEnv()
-    const res = await request(`/api/trade-core/coreApi/public/symbol/detail?symbol=${symbolName}`).catch((e) => e)
-    const symbolInfo = res?.data || {}
+    // 减少接口请求
+    // const res = await request(`/api/trade-core/coreApi/public/symbol/detail?symbol=${symbolName}`).catch((e) => e)
+    // const symbolInfo = res?.data || {}
+    const info = stores.trade.getActiveSymbolInfo()
+    const symbolInfo = {
+      symbol: info.symbol,
+      alias: info.alias,
+      symbolGroupId: info.symbolGroupId,
+      dataSourceCode: info.dataSourceCode,
+      dataSourceSymbol: info.dataSourceSymbol,
+      symbolDecimal: info.symbolDecimal,
+      classify: info.classify,
+      imgUrl: getSymbolIcon(info.imgUrl),
+      remark: info.remark
+    }
+
     const currentSymbol = {
       ...symbolInfo,
       precision: symbolInfo?.symbolDecimal || 2,
