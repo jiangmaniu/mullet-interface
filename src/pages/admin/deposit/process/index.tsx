@@ -65,8 +65,6 @@ function DepositProcess() {
 
   const [step, setStep] = useState(0)
 
-  const [createTime, setCreateTime] = useState()
-
   // const [paymentInfo, setPaymentInfo] = useState<Wallet.GenerateDepositOrderResult>()
 
   const { showLoading, hideLoading } = useLoading()
@@ -152,16 +150,20 @@ function DepositProcess() {
 
   const [valid, setValid] = useState(false)
   useEffect(() => {
-    amount &&
-      form
-        .validateFields(['amount'])
-        .then((values) => {
-          setValid(true)
-        })
-        .catch((err) => {
-          setValid(false)
-        })
-  }, [amount])
+    if (methodInfo?.paymentType === 'OTC') {
+      amount &&
+        form
+          .validateFields(['amount'])
+          .then((values) => {
+            setValid(true)
+          })
+          .catch((err) => {
+            setValid(false)
+          })
+    } else {
+      setValid(true)
+    }
+  }, [methodInfo, amount])
 
   const disabled = loading || !methodId || !toAccountId || (methodInfo?.paymentType === 'OTC' && !amount) || !valid
 
