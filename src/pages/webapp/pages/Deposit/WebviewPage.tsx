@@ -7,6 +7,7 @@ export type WebviewComponentRef = {
   onSubmit: () => void
   onUpload: () => void
   onCancel: () => void
+  download: () => void
 }
 
 export default function WebviewPage() {

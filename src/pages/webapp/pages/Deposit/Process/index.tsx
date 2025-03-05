@@ -42,6 +42,12 @@ function Deposit() {
     )
   }, [])
 
+  const [step, setStep] = useState(0)
+
+  const handleDownload = () => {
+    ref.current?.download()
+  }
+
   return (
     <BasicLayout
       bgColor="primary"
@@ -49,15 +55,34 @@ function Deposit() {
       fixedHeight
       header={<Header onBack={() => navigateTo('/app/user-center')} />}
       footer={
-        <Button type="primary" size="large" className="mt-2 mb-2.5" onClick={handleSubmit} disabled={disabled}>
-          <div className="flex flex-row items-center gap-2 text-reverse text-base">
-            <FormattedMessage id="mt.jixu" />
-            <Iconfont name="anniu-gengduo" color="white" width={18} height={18} />
-          </div>
-        </Button>
+        <>
+          {step === 0 && (
+            <Button type="primary" size="large" className="mt-2 mb-2.5" onClick={handleSubmit} disabled={disabled}>
+              <div className="flex flex-row items-center gap-2 text-reverse text-base">
+                <FormattedMessage id="mt.jixu" />
+                <Iconfont name="anniu-gengduo" color="white" width={18} height={18} />
+              </div>
+            </Button>
+          )}
+          {step === 1 && (
+            <Button
+              type="primary"
+              size="large"
+              className="mt-2 mb-2.5"
+              onClick={() => {
+                handleDownload()
+              }}
+            >
+              <div className="flex flex-row items-center gap-2 text-reverse ">
+                <Iconfont name="a-bianzu19" color="white" width={18} height={18} />
+                <FormattedMessage id="mt.xiazaierweima" />
+              </div>
+            </Button>
+          )}
+        </>
       }
     >
-      <Body ref={ref} onDisabledChange={onDisabledChange} onSuccess={onSuccess} />
+      <Body ref={ref} onDisabledChange={onDisabledChange} onSuccess={onSuccess} step={step} setStep={setStep} />
     </BasicLayout>
   )
 }
