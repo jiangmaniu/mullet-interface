@@ -181,9 +181,10 @@ class KlineStore {
    * @param from 开始时间戳
    * @param to 结束时间戳
    * @param countBack
+   * @param firstDataRequest 首次请求
    * @returns
    */
-  getHttpHistoryBars = async (symbolInfo, resolution, from, to, countBack) => {
+  getHttpHistoryBars = async (symbolInfo, resolution, from, to, countBack, firstDataRequest) => {
     const ENV = getEnv()
     const precision = symbolInfo.precision
     const klineType =
@@ -222,6 +223,7 @@ class KlineStore {
         params: {
           symbol: symbolInfo.dataSourceSymbol, // 数据源品种
           dataSourceCode: symbolInfo.dataSourceCode, // 数据源code
+          first: firstDataRequest, // 标识是否首次请求
           current: 1,
           size: isPCByWidth() ? 500 : 200, // 条数
           klineType, // 时间类型
@@ -276,7 +278,7 @@ class KlineStore {
 
     // 首次请求
     if (firstDataRequest) {
-      this.getHttpHistoryBars(symbolInfo, resolution, from, to, countBack).then((bars) => {
+      this.getHttpHistoryBars(symbolInfo, resolution, from, to, countBack, firstDataRequest).then((bars) => {
         if (bars?.length) {
           this.datafeedBarCallbackObj.onHistoryCallback(bars, { noData: false })
           runInAction(() => {
@@ -290,7 +292,7 @@ class KlineStore {
         }
       })
     } else {
-      this.getHttpHistoryBars(symbolInfo, resolution, from, this.lastBarTime, countBack).then((bars) => {
+      this.getHttpHistoryBars(symbolInfo, resolution, from, this.lastBarTime, countBack, firstDataRequest).then((bars) => {
         if (bars?.length) {
           // if (this.lastBarTime === bars[0]?.time / 1000 - 8 * 60 * 60) {
           if (this.lastBarTime === bars[0]?.time / 1000) {
