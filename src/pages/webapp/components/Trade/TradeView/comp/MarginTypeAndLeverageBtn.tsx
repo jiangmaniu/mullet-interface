@@ -59,7 +59,7 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
         <View className={cn('flex-row gap-x-2 px-3 border-b border-gray-50 mb-2 pb-3 w-full')}>
           <View
             onClick={() => {
-              if (!enableIsolated) return
+              if (!enableIsolated || disabledBtn) return
               // bottomSheetModalRef.current?.sheet?.dismiss()
               marginTypeModalRef.current?.show()
             }}
@@ -72,7 +72,7 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
               <Text color="primary" size="sm" weight="medium" className={cn('pr-1 px-5')}>
                 {marginTypeLabel}
               </Text>
-              {enableIsolated && (
+              {enableIsolated && !disabledBtn && (
                 <Iconfont name="quancangxiala" style={{ transform: 'rotate(90deg)' }} size={16} color={theme.isDark ? '#fff' : '#CFCFCF'} />
               )}
             </View>
@@ -104,16 +104,17 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
       <View className={cn('flex-row gap-x-1 px-3')}>
         <View
           onClick={() => {
+            if (!enableIsolated || disabledBtn) return
             // bottomSheetModalRef.current?.sheet?.dismiss()
             marginTypeModalRef.current?.show()
           }}
           disabled={disabledBtn}
         >
-          <View className={cn('rounded flex-row py-1 px-2 items-center justify-center')}>
+          <View className={cn('flex-row py-1 px-2 items-center justify-center bg-gray-50 rounded')}>
             <Text color="primary" size="sm" weight="medium" className={cn('pr-1')}>
               {marginTypeLabel}
             </Text>
-            <Iconfont name="quancangxiala" size={16} color={theme.isDark ? '#fff' : '#CFCFCF'} />
+            {enableIsolated && !disabledBtn && <Iconfont name="quancangxiala" size={16} color={theme.isDark ? '#fff' : '#CFCFCF'} />}
           </View>
         </View>
         <View
