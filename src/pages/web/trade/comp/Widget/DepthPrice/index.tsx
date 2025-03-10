@@ -25,6 +25,8 @@ function DeepPrice() {
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
   const bids = toJS(depth?.bids || [])
 
+  const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName)
+
   const modeList: Array<{ key: ModeType; icon: string }> = [
     {
       key: 'BUY_SELL',
@@ -188,7 +190,7 @@ function DeepPrice() {
     )
   }, [mode])
 
-  if (!asks.length && !bids.length) return
+  if ((!asks.length && !bids.length) || symbolInfo.symbolConf?.depthOfMarket === 0) return
 
   return (
     <div className={cn('w-[260px] h-[700px] overflow-hidden relative bg-primary', className)}>
