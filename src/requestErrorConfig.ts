@@ -147,12 +147,6 @@ export const errorConfig: RequestConfig = {
         headers['Blade-Auth'] = `${userInfo?.token_type || 'Bearer'} ${token}`
       }
 
-      // get请求加密
-      if (config.params && config.cryptoData) {
-        const data = crypto.encrypt(JSON.stringify(config.params))
-        config.params = { data }
-      }
-
       // POST接口
       if (config.method === 'post') {
         // 启用接口防重放
