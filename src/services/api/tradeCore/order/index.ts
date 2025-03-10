@@ -27,7 +27,8 @@ const formatOrderResult = (res: any) => {
 export async function createOrder(body: Order.CreateOrder) {
   return request<API.Response<Order.CreateOrderResponse>>(`/api/trade-core/coreApi/orders/createOrder`, {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
@@ -47,7 +48,8 @@ export async function getOrderMargin(body: Order.CreateOrder) {
 export async function modifyPendingOrder(body: Order.UpdatePendingOrderParams) {
   return request<API.Response>('/api/trade-core/coreApi/orders/orderEdit', {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
@@ -55,7 +57,8 @@ export async function modifyPendingOrder(body: Order.UpdatePendingOrderParams) {
 export async function cancelOrder(body: API.IdParam) {
   return request<API.Response>(`/api/trade-core/coreApi/orders/orderCancel?${qs.stringify(body)}`, {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
@@ -63,7 +66,8 @@ export async function cancelOrder(body: API.IdParam) {
 export async function modifyStopProfitLoss(body: Order.ModifyStopProfitLossParams) {
   return request<API.Response>(`/api/trade-core/coreApi/orders/stopProfitLoss`, {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
@@ -122,7 +126,8 @@ export async function getTradeRecordsPage(params?: Order.TradeRecordsPageListPar
 export async function addMargin(body: Order.AddMarginParams) {
   return request<API.Response>('/api/trade-core/coreApi/orders/addMargin', {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
@@ -130,6 +135,7 @@ export async function addMargin(body: Order.AddMarginParams) {
 export async function extractMargin(body: Order.ExtractMarginParams) {
   return request<API.Response>('/api/trade-core/coreApi/orders/extractMargin', {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }

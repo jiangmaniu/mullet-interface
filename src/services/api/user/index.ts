@@ -52,6 +52,7 @@ export async function sendCustomEmailCode(body: { email?: string }) {
   return request<API.Response<any>>(`/api/trade-crm/crmClient/validateCode/customEmail?${stringify(body)}`, {
     method: 'POST',
     needToken: false,
+    replayProtection: true,
     data: body
   })
 }
@@ -68,6 +69,7 @@ export async function sendCustomPhoneCode(body: { phone?: string; phoneAreaCode?
   return request<API.Response<any>>(`/api/trade-crm/crmClient/validateCode/customPhone?${stringify(body)}`, {
     method: 'POST',
     needToken: false,
+    replayProtection: true,
     data: body
   })
 }

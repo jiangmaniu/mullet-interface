@@ -16,7 +16,8 @@ export async function getFundsMethodPageList(params?: Wallet.fundsMethodPageList
 export async function generateDepositOrder(body: Wallet.GenerateDepositOrderParams) {
   return request<API.Response<Wallet.GenerateDepositOrderResult>>('/api/trade-payment/paymentClient/deposit/create', {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
@@ -34,7 +35,8 @@ export async function cancelDepositOrder(body: { id: string }) {
 export async function submitDepositCertificate(body: { id: string; certificateUrl: string }) {
   return request<API.Response<any>>('/api/trade-payment/paymentClient/deposit/submitCertificate', {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
@@ -129,7 +131,8 @@ export async function getWithdrawalAddressList(params?: API.PageParam) {
 export async function generateWithdrawOrder(body: Wallet.GenerateWithdrawOrderParams) {
   return request<API.Response<any>>('/api/trade-payment/paymentClient/withdrawl/create', {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
@@ -138,7 +141,8 @@ export async function generateWithdrawOrder(body: Wallet.GenerateWithdrawOrderPa
 export async function modifyWithdrawalAddress(body: { id: string; remark: string }) {
   return request<API.Response<any>>('/api/trade-payment/paymentClient/withdrawalAddress/modify', {
     method: 'POST',
-    data: body
+    data: body,
+    replayProtection: true
   })
 }
 
