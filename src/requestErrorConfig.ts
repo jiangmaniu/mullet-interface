@@ -178,16 +178,23 @@ export const errorConfig: RequestConfig = {
           // 随机数
           headers['nonce'] = nonce
         }
-        // 启用接口加密请求参数传输
-        if (config.cryptoData) {
-          // console.log('加密前的请求参数', config.data)
-          // 对接口使用AES堆成加密请求参数
-          config.data = crypto.encrypt(JSON.stringify(config.data))
-          // console.log('加密后的请求参数', config.data)
-          // console.log('解密后的请求参数', JSON.parse(crypto.decrypt(config.data)))
+      }
+
+      // 启用接口加密请求参数传输
+      if (config.cryptoData) {
+        // console.log('加密前的请求参数', config.data)
+        // 对接口使用AES堆成加密请求参数
+        if (config.params) {
+          const data = crypto.encrypt(JSON.stringify(config.params))
+          config.params = { data }
+        }
+        if (config.data) {
           // 标记text请求
           config.text = true
+          config.data = crypto.encrypt(JSON.stringify(config.data))
         }
+        // console.log('加密后的请求参数', config.data)
+        // console.log('解密后的请求参数', JSON.parse(crypto.decrypt(config.data)))
       }
 
       // headers中配置text请求
