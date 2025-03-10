@@ -353,7 +353,7 @@ declare namespace Symbol {
     /**
      * 常规-市场深度
      */
-    depthOfMarket?: string
+    depthOfMarket?: number
     /**
      * 启用库存费
      */

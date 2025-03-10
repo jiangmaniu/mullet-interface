@@ -410,7 +410,8 @@ class WSStore {
   subscribeDepth = (cancel?: boolean) => {
     const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
 
-    if (!symbolInfo?.symbol) return
+    // 深度为0 不需要订阅深度
+    if (!symbolInfo?.symbol || symbolInfo.symbolConf?.depthOfMarket === 0) return
 
     this.sendWorkerMessage({
       type: 'SUBSCRIBE_DEPTH',
