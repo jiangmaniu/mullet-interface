@@ -219,7 +219,7 @@ class KlineStore {
       if (!to) {
         return this.bars
       }
-      const res = await request('/api/trade-market/marketApi/public/symbol/klineList', {
+      const res = await request('/api/trade-market/marketApi/public/symbol/optimizeKlineList', {
         params: {
           symbol: symbolInfo.dataSourceSymbol, // 数据源品种
           dataSourceCode: symbolInfo.dataSourceCode, // 数据源code
@@ -241,14 +241,16 @@ class KlineStore {
       if (list?.length) {
         const bars = list
           .map((item) => {
-            const timeStamp = item.klineTime * 1000
+            // 时间,开,高,低,收
+            const [klineTime, open, high, low, close] = (item || '').split(',')
+            const timeStamp = Number(klineTime) * 1000
             return {
               ...item,
-              open: NP.round(item.open, precision),
-              close: NP.round(item.close, precision),
-              high: NP.round(item.high, precision),
-              low: NP.round(item.low, precision),
-              // volume: NP.round(item.vol, precision),
+              open: NP.round(open, precision),
+              close: NP.round(close, precision),
+              high: NP.round(high, precision),
+              low: NP.round(low, precision),
+              // volume: NP.round(vol, precision),
               time: timeStamp,
               mytime: dayjs(timeStamp).format('YYYY-MM-DD HH:mm:ss')
             }

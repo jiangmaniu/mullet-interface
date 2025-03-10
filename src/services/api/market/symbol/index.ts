@@ -8,6 +8,17 @@ export async function getSymbolKlineList(params?: API.PageParam) {
   })
 }
 
+// 产品K线数据-分页-new
+export async function getSymbolKlineOptimizeList(params?: API.PageParam) {
+  return request<API.Response<API.PageResult<MarketSymbol.SymbolKlineOptimizeListItem>>>(
+    '/api/trade-market/marketApi/public/symbol/optimizeKlineList',
+    {
+      method: 'GET',
+      params
+    }
+  )
+}
+
 // 产品实时报价-分页 成交报价
 export async function getSymbolPriceList(params?: API.PageParam & { priceValueId: any }) {
   return request<API.Response<API.PageResult<MarketSymbol.SymbolPriceListItem>>>('/api/trade-market/marketApi/symbol/priceList', {

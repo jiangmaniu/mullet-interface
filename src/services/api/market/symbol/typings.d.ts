@@ -50,6 +50,29 @@ declare namespace MarketSymbol {
      */
     vol?: number
   }
+  // 产品K线数据-分页-优化
+  type SymbolKlineOptimizeListItem = {
+    /**
+     * K线时间
+     */
+    klineTime?: number
+    /**
+     * 本阶段收盘价
+     */
+    close?: number
+    /**
+     * 本阶段最高价
+     */
+    high?: number
+    /**
+     * 本阶段最低价
+     */
+    low?: number
+    /**
+     * 本阶段开盘价
+     */
+    open?: number
+  }
   // 产品实时报价-分页 成交报价
   type SymbolPriceListItem = {
     /**
