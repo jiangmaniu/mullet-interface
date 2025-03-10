@@ -49,7 +49,7 @@ export const Timer = ({
   }
 
   useEffect(() => {
-    if (address) {
+    if (createDate && canncelOrderTime) {
       setTimer()
     }
 
@@ -59,7 +59,7 @@ export const Timer = ({
         timer.current = null
       }
     }
-  }, [address])
+  }, [createDate, canncelOrderTime])
 
   return (
     <div className={cn('text-secondary text-xs')}>
