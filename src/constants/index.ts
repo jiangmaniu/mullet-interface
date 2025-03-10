@@ -85,3 +85,6 @@ export const PAYMENT_ORDER_TIMEOUT = 30 * 60 * 1000
 
 // 註冊方式
 export const DEFAULT_REGISTER_WAY = 'PHONE' // PHONE | EMAIL
+
+// 接口防重放appKey
+export const REPLAY_PROTECTION_APP_KEY = 'KblZBTQ5t7TLYsif5SVs7fcJbpUj7igu'

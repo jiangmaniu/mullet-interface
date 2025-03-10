@@ -5,11 +5,13 @@ import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
 import { md5 } from 'js-md5'
+import { stringify } from 'qs'
+import { REPLAY_PROTECTION_APP_KEY } from './constants'
 import { getLocaleForBackend } from './constants/enum'
 import { getEnv } from './env'
 import { getUid } from './utils'
 import crypto from './utils/crypto'
-import { sortObjectByKey } from './utils/helpers'
+import { deleteEmptyProperty, sortObjectByKey } from './utils/helpers'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
 
@@ -157,13 +159,16 @@ export const errorConfig: RequestConfig = {
         if (config.replayProtection) {
           const timestamp = Date.now()
           const nonce = getUid()
-          const stringifyBodyparams = JSON.stringify({
-            // 业务参数排序
-            ...sortObjectByKey(config.data),
-            timestamp,
-            nonce,
-            appkey: 'KblZBTQ5t7TLYsif5SVs7fcJbpUj7igu' // @TODO 和后台约定的接口防重放的appkey
-          })
+          const stringifyBodyparams = stringify(
+            {
+              // 业务参数排序
+              ...sortObjectByKey(deleteEmptyProperty(config.data)),
+              timestamp,
+              nonce,
+              appkey: REPLAY_PROTECTION_APP_KEY // 和后台约定的接口防重放的appkey
+            },
+            { encode: false }
+          )
           // console.log('stringifyBodyparams', stringifyBodyparams)
           // console.log('md5', md5(stringifyBodyparams))
           // md5签名
