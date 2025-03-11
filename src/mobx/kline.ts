@@ -65,7 +65,7 @@ class KlineStore {
             this.lastbar = newLastBar
           })
 
-          this.refreshKline(resolution)
+          // this.refreshKline(resolution)
         }
       }
     }
@@ -105,7 +105,8 @@ class KlineStore {
     let resolution = currentSymbol.resolution
 
     const refreshResolution = ['1'].includes(resolution) // 1/5/15分钟k线以当前时间为基准(服务器推送的时间会有几秒不等延迟)，其他以服务器时间为基准
-    const serverTime = refreshResolution ? Date.now() / 1000 : socketData?.priceData?.id / 1000 // 服务器返回的时间戳
+    // const serverTime = refreshResolution ? Date.now() / 1000 : socketData?.priceData?.id / 1000 // 服务器返回的时间戳
+    const serverTime = socketData?.priceData?.id / 1000 // 服务器返回的时间戳
 
     let rounded = serverTime
     const ask = socketData?.priceData?.buy // 卖价

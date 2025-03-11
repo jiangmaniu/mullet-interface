@@ -11,12 +11,11 @@ import Button from '@/components/Base/Button'
 import { PAYMENT_ORDER_TIMEOUT } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
-import { cancelDepositOrder } from '@/services/api/wallet'
 import { copyToClipboard, formatNum } from '@/utils'
 import { getAccountSynopsisByLng } from '@/utils/business'
 import { cn } from '@/utils/cn'
 import { depositExchangeRate } from '@/utils/deposit'
-import { goKefu, push } from '@/utils/navigator'
+import { goKefu } from '@/utils/navigator'
 import { Image } from 'antd'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
@@ -93,7 +92,8 @@ const Detail = ({
     baseCurrency,
     symbol,
     receiptAmount,
-    channelNoValue
+    channelNoValue,
+    createTime
   } = paymentInfo
 
   const options = [
@@ -165,11 +165,11 @@ const Detail = ({
 
   const createDate = useMemo(() => {
     try {
-      return dayjs(paymentInfo?.createTime)
+      return dayjs(createTime)
     } catch (error) {
       return dayjs()
     }
-  }, [paymentInfo?.createTime])
+  }, [createTime])
 
   const canncelOrderTime = paymentInfo?.canncelOrderTime
 
@@ -193,7 +193,7 @@ const Detail = ({
   }
 
   useEffect(() => {
-    if (address) {
+    if (createDate && canncelOrderTime) {
       setTimer()
     }
 
@@ -203,17 +203,7 @@ const Detail = ({
         timer.current = null
       }
     }
-  }, [address])
-
-  const cancelOrder = () => {
-    if (paymentInfo?.id) {
-      cancelDepositOrder({ id: String(paymentInfo?.id) }).then((res) => {
-        if (res.success) {
-          push('/deposit')
-        }
-      })
-    }
-  }
+  }, [createDate, canncelOrderTime])
 
   const [forceUpdate, setForceUpdate] = useState(0)
 
