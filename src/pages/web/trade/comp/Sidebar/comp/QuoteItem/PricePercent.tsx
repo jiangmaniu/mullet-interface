@@ -7,7 +7,7 @@ import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   symbol: string
@@ -18,6 +18,7 @@ function PricePercent({ symbol }: IProps) {
   const { trade, ws, kline } = useStores()
   const { theme } = useTheme()
   const { isDark, up: upColor, down: downColor } = theme
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const res = getCurrentQuote(symbol)
   const bid = res.bid // 卖价
   const ask = res.ask // 买价

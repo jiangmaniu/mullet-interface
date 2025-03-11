@@ -12,7 +12,7 @@ import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import mitt from '@/utils/mitt'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   item: Account.TradeSymbolListItem
@@ -30,6 +30,7 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   const { isDark } = theme
   const { trade, ws, kline } = useStores()
   const symbol = item.symbol
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const res = getCurrentQuote(symbol)
   const bid = res.bid // 卖价
   const per: any = res.percent

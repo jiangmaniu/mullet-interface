@@ -14,5 +14,6 @@ export default {
   'menu.depositOtcWait': 'Chờ nạp tiền',
   'menu.depositOtcProcess': 'Quy trình nạp tiền',
   'menu.depositOtcPreview': 'Xem trước nạp tiền',
-  'menu.recordPayment': 'Ghi lại thanh toán'
+  'menu.recordPayment': 'Ghi lại thanh toán',
+  'menu.trade': 'Giao dịch'
 }

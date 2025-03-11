@@ -13,7 +13,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { formatTimeStr } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   style?: React.CSSProperties
@@ -27,6 +27,7 @@ function Futures({ trigger, style }: IProps) {
   const { theme } = useTheme()
   const { symbols } = ws as any
   const symbol = trade.activeSymbolName
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
   const symbolConf = quoteInfo?.symbolConf
   const prepaymentConf = quoteInfo?.prepaymentConf

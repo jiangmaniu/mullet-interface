@@ -11,7 +11,7 @@ import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 function FloatTradeBox() {
   const { isMobileOrIpad } = useEnv()
@@ -23,6 +23,7 @@ function FloatTradeBox() {
   const isDragging = useRef(false)
   const token = STORAGE_GET_TOKEN()
   const { trade } = useStores()
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
   const symbolConf = quoteInfo?.symbolConf
   const vmin = symbolConf?.minTrade || 0.1

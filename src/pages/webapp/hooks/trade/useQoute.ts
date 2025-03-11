@@ -1,6 +1,6 @@
 import { useStores } from '@/context/mobxProvider'
 import { getPrecisionByNumber, toFixed } from '@/utils'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useMemo } from 'react'
 
 export default function useQuote() {
@@ -36,6 +36,7 @@ export default function useQuote() {
 
   const symbol = useMemo(() => symbolRMI || activeSymbolName, [activeSymbolName, symbolRMI])
 
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote(symbol)
   // const prevQuoteInfo = useRef<any>(quoteInfo) // 缓存上一次的行情信息
 

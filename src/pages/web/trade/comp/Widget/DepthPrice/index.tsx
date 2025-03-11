@@ -9,7 +9,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
+import { getCurrentDepth, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 
@@ -19,6 +19,7 @@ function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const depth = getCurrentDepth(trade.activeSymbolName)
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quote = getCurrentQuote()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
   const asks = toJS(depth?.asks || []).reverse()

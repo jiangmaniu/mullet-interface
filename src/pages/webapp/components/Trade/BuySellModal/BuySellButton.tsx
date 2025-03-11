@@ -4,7 +4,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum } from '@/utils'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Button from '../../Base/Button'
@@ -26,6 +26,7 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
   const { buySell, setBuySell, orderQuickPlaceOrderChecked } = trade
   const isShowModal = position === 'modal'
 
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
   const hasQuote = quoteInfo.hasQuote
 

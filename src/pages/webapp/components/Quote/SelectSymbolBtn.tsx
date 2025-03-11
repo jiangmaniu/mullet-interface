@@ -4,7 +4,7 @@ import { observer } from 'mobx-react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import { useRef } from 'react'
 import { Text } from '../Base/Text'
@@ -25,6 +25,7 @@ const TriggerDom = observer(({ showQuotePercent, onClick }: IProps) => {
   const { trade } = useStores()
   const symbolInfo = trade.symbolListAll.find((item) => item.symbol === trade.activeSymbolName)
   const { activeSymbolName, symbolListAll } = trade
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
   const bid = quoteInfo.bid
   const per: any = quoteInfo.percent

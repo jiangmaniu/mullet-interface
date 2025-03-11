@@ -9,7 +9,7 @@ import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   type?: string
@@ -31,6 +31,7 @@ export default observer(
     const [width, setWidth] = useState<any>(0)
     const [loading, setLoading] = useState(true)
 
+    const getCurrentQuote = useGetCurrentQuoteCallback()
     const quoteInfo = getCurrentQuote()
 
     useEffect(() => {

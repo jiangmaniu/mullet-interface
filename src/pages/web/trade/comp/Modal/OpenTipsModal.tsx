@@ -15,7 +15,7 @@ import { useStores } from '@/context/mobxProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 // 平仓、挂单成功提示
 export default observer((props, ref) => {
@@ -40,6 +40,7 @@ export default observer((props, ref) => {
   const isClosed = !!data.tradePrice // 是否是平仓
 
   const symbol = data.symbol
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote(symbol)
   const d = quoteInfo.digits
   const orderVolume = data.orderVolume || 0

@@ -6,7 +6,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum, toFixed } from '@/utils'
-import { calcYieldRate, covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import { calcYieldRate, covertProfit, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
@@ -117,6 +117,7 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
   }, [rawItem, covertProfit])
 
   const symbol = item?.symbol
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote(symbol)
   // 标记价
   const currentPrice = useMemo(

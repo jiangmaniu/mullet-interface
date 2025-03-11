@@ -7,7 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { toFixed } from '@/utils'
 import { formatTimeStr } from '@/utils/business'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import SheetModal, { SheetRef } from '../Base/SheetModal'
 import { Text } from '../Base/Text'
@@ -42,6 +42,7 @@ function FuturesModal({ trigger }: IProps, ref: ForwardedRef<FuturesModalRef>) {
   const intl = useIntl()
   const { trade, ws } = useStores()
   const symbol = trade.activeSymbolName
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
   const symbolConf = quoteInfo?.symbolConf
   const prepaymentConf = quoteInfo?.prepaymentConf

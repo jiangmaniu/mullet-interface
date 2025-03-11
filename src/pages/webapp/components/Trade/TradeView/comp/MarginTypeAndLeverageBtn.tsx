@@ -5,7 +5,7 @@ import { forwardRef, useRef } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import { Text } from '../../../Base/Text'
 import { View } from '../../../Base/View'
@@ -22,6 +22,7 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
   const intl = useIntl()
   const { cn, theme } = useTheme()
   const { trade } = useStores()
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
   const enableIsolated = trade.currentAccountInfo.enableIsolated
   const prepaymentConf = quoteInfo?.prepaymentConf

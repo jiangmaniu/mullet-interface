@@ -4,7 +4,7 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useMemo, useRef, useStat
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import useMargin from '@/pages/webapp/hooks/trade/useMargin'
 import CheckBox from '../../../Base/CheckBox'
@@ -31,7 +31,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
   const { buySell, orderVolume, marginType } = trade
   const isBuy = buySell === 'BUY'
   const [open, setOpen] = useState(false)
-
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
   const prepaymentConf = quoteInfo?.prepaymentConf
   const mode = prepaymentConf?.mode

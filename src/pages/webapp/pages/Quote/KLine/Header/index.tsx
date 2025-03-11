@@ -8,11 +8,12 @@ import { View } from '@/pages/webapp/components/Base/View'
 import FuturesModal from '@/pages/webapp/components/Quote/FuturesModal'
 import SelectSymbolBtn from '@/pages/webapp/components/Quote/SelectSymbolBtn'
 import { formatNum } from '@/utils'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 function Header() {
   const { cn, theme } = useTheme()
   const intl = useIntl()
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const res: any = getCurrentQuote()
 
   return (

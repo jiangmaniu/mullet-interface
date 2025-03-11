@@ -4,7 +4,7 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } from 
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import useDisabled from '@/pages/webapp/hooks/trade/useDisabled'
 import useSubmitOrder from '@/pages/webapp/hooks/trade/useSubmitOrder'
@@ -30,6 +30,7 @@ const Content = observer(({ close }: { close: () => void }) => {
   const { trade } = useStores()
   const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
   const symbol = symbolInfo.symbol
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote(symbol)
   const bid = quoteInfo.bid // 卖价
   const ask = quoteInfo.ask // 买价

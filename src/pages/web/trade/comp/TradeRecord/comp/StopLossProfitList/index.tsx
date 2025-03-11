@@ -12,7 +12,7 @@ import useStyle from '@/hooks/useStyle'
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import PendingOrderCancelModal from '../../../Modal/PendingOrderCancelModal'
 
@@ -198,6 +198,8 @@ function StopLossProfitList({ style, parentPopup, showActiveSymbol }: IProps) {
       }
     }
   ]
+
+  const getCurrentQuote = useGetCurrentQuoteCallback()
 
   const dataSource = list.map((v) => {
     const symbol = v.symbol as string
