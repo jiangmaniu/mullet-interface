@@ -74,6 +74,9 @@ export const KEY_DEVICE_TYPE = NAMESPACE + '_' + 'device_type'
 // 平台配置文件
 export const KEY_PLATFORM_CONFIG = NAMESPACE + '_' + 'platform_config'
 
+// tradingview当前选择的分辨率 1/5/15...
+export const KEY_TRADINGVIEW_RESOLUTION = NAMESPACE + '_' + 'tradingview_resolution'
+
 // APP 弹窗宽度
 export const APP_MODAL_WIDTH = 320
 

@@ -21,6 +21,7 @@ import {
   KEY_TOKEN,
   KEY_TRADE_PAGE_SHOW_TIME,
   KEY_TRADE_THEME,
+  KEY_TRADINGVIEW_RESOLUTION,
   KEY_USER_CONF_INFO,
   KEY_USER_INFO
 } from '@/constants'
@@ -120,6 +121,11 @@ export const STORAGE_REMOVE_DEVICE_TYPE = storageRemove(KEY_DEVICE_TYPE)
 // 平台配置
 export const STORAGE_GET_PLATFORM_CONFIG = genStorageGet(KEY_PLATFORM_CONFIG)
 export const STORAGE_SET_PLATFORM_CONFIG = genStorageSet(KEY_PLATFORM_CONFIG)
+
+// tradingview当前选择的分辨率 1/5/15..
+export const STORAGE_GET_TRADINGVIEW_RESOLUTION = genStorageGet(KEY_TRADINGVIEW_RESOLUTION)
+export const STORAGE_SET_TRADINGVIEW_RESOLUTION = genStorageSet(KEY_TRADINGVIEW_RESOLUTION)
+export const STORAGE_REMOVE_TRADINGVIEW_RESOLUTION = storageRemove(KEY_TRADINGVIEW_RESOLUTION)
 
 // =================================================
 
