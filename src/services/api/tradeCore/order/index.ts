@@ -28,8 +28,7 @@ export async function createOrder(body: Order.CreateOrder) {
   return request<API.Response<Order.CreateOrderResponse>>(`/api/trade-core/coreApi/orders/createOrder`, {
     method: 'POST',
     data: body,
-    replayProtection: true,
-    cryptoData: true
+    replayProtection: true
   })
 }
 
@@ -50,8 +49,7 @@ export async function modifyPendingOrder(body: Order.UpdatePendingOrderParams) {
   return request<API.Response>('/api/trade-core/coreApi/orders/orderEdit', {
     method: 'POST',
     data: body,
-    replayProtection: true,
-    cryptoData: true
+    replayProtection: true
   })
 }
 
@@ -69,8 +67,7 @@ export async function modifyStopProfitLoss(body: Order.ModifyStopProfitLossParam
   return request<API.Response>(`/api/trade-core/coreApi/orders/stopProfitLoss`, {
     method: 'POST',
     data: body,
-    replayProtection: true,
-    cryptoData: true
+    replayProtection: true
   })
 }
 
@@ -130,8 +127,7 @@ export async function addMargin(body: Order.AddMarginParams) {
   return request<API.Response>('/api/trade-core/coreApi/orders/addMargin', {
     method: 'POST',
     data: body,
-    replayProtection: true,
-    cryptoData: true
+    replayProtection: true
   })
 }
 
@@ -140,7 +136,6 @@ export async function extractMargin(body: Order.ExtractMarginParams) {
   return request<API.Response>('/api/trade-core/coreApi/orders/extractMargin', {
     method: 'POST',
     data: body,
-    replayProtection: true,
-    cryptoData: true
+    replayProtection: true
   })
 }
