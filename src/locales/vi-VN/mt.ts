@@ -810,5 +810,11 @@ export default {
   'mt.gaojirenzheng': 'Xác minh nâng cao',
   'mt.ninjiangzhifujine': 'Số tiền bạn sẽ thanh toán là',
   'mt.shoukuanxinxi': 'Thông tin thanh toán',
-  'mt.xiazaierwerma': 'Tải xuống mã QR'
+  'mt.xiazaierwerma': 'Tải xuống mã QR',
+  'mt.shoujihao': 'Số điện thoại',
+  'mt.youxiang': 'Email',
+  'mt.xxtiao': '{count} mục',
+  'mt.bangding': 'Liên kết',
+  'mt.weibangding': 'Chưa liên kết',
+  'mt.mima': 'Mật khẩu'
 }

@@ -817,5 +817,12 @@ export default {
   'mt.gaojirenzheng': 'Advanced Verification',
   'mt.ninjiangzhifujine': 'The amount you will pay is',
   'mt.shoukuanxinxi': 'Payment Information',
-  'mt.xiazaierwerma': 'Download QR code'
+  'mt.xiazaierwerma': 'Download QR code',
+  'mt.shoujihao': 'Phone Number',
+  'mt.youxiang': 'Email',
+  'mt.xxtiao': '{count} items',
+  'mt.bangding': 'Bind',
+  'mt.weibangding': 'UnBind',
+  'mt.mima': 'Password',
+  'mt.xiuggaimima': 'Change Password'
 }
