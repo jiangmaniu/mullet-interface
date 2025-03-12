@@ -175,6 +175,10 @@ export default function ({ setImgs, imgs }: IProps) {
         </div>
         {/* )} */}
       </Dragger>
+
+      <span className="text-xs text-red-500">
+        <FormattedMessage id="mt.shangchuanzhaopianbuyaochaoguo" values={{ value: '5MB' }} />
+      </span>
       <div className="flex flex-row gap-[14px] mt-[15px]">
         {imgs.map((img, index) => (
           <div className="w-[86px] h-[86px] bg-gray-120 rounded-lg relative img-preview" key={index}>

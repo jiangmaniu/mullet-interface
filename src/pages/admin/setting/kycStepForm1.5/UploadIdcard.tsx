@@ -36,6 +36,7 @@ export default function ({ form }: IProps) {
     //   }
     //   return isLt1MB
     // },
+
     onChange(info) {
       console.log('info', info)
       const data = info?.file?.response?.data || {}

@@ -816,5 +816,6 @@ export default {
   'mt.xxtiao': '{count} mục',
   'mt.bangding': 'Liên kết',
   'mt.weibangding': 'Chưa liên kết',
-  'mt.mima': 'Mật khẩu'
+  'mt.mima': 'Mật khẩu',
+  'mt.shangchuanzhaopianbuyaochaoguo': 'Không được vượt quá {value}'
 }
