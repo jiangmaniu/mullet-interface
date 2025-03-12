@@ -7,7 +7,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { formatNum } from '@/utils'
-import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
+import { getCurrentDepth, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import { useLang } from '@/context/languageProvider'
 import { Text } from '../Base/Text'
@@ -21,6 +21,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
   const { orderType, setOrderPrice: _setOrderPrice } = trade
 
   const showAll = mode !== 'BUY_SELL'
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quote = getCurrentQuote()
   const depth = getCurrentDepth()
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
@@ -77,6 +78,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
   const { orderType, setOrderPrice: _setOrderPrice } = trade
 
   const showAll = mode !== 'BUY_SELL'
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quote = getCurrentQuote()
   const depth = getCurrentDepth()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
@@ -133,6 +135,7 @@ function Depth() {
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
 
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quote = getCurrentQuote()
 
   const depth = getCurrentDepth()

@@ -9,7 +9,7 @@ import useFocusEffect from '@/pages/webapp/hooks/useFocusEffect'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { ForwardedRef, forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
@@ -24,6 +24,7 @@ type IProps = {
 }
 
 const CurrentPrice = observer(({ buySell, symbol }: any) => {
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote(symbol)
 
   const currentPrice = useMemo(() => {

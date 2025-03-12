@@ -1,12 +1,10 @@
-import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useMemo } from 'react'
 
-import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import useQuoteColor from '@/pages/webapp/hooks/useQuoteColor'
 import { formatNum } from '@/utils'
-import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
+import { getCurrentDepth } from '@/utils/wsUtil'
 
 import { Text } from '../../../Base/Text'
 import { View } from '../../../Base/View'
@@ -76,9 +74,6 @@ const BuySellPrice = observer(() => {
 /** 交易头部区域 */
 function Header() {
   const { cn, theme } = useTheme()
-  const intl = useIntl()
-  const { trade } = useStores()
-  const quoteInfo = getCurrentQuote()
 
   const depth = getCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])

@@ -1,6 +1,7 @@
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
-import { useEffect, useState } from 'react'
+import { useDebounceFn } from 'ahooks'
+import { useCallback, useEffect, useState } from 'react'
 import useOrderParams from './useOrderParams'
 
 export default function useMargin() {
@@ -12,14 +13,22 @@ export default function useMargin() {
   const [expectedMargin, setExpectedMargin] = useState<any>('')
 
   // TODO: 不是 orderParams 变化就请求，这里需要优化
-  useEffect(() => {
-    if (orderParams.orderVolume && Number(orderParams.orderVolume) > 0) {
+  const getExpectedMargin = useCallback(() => {
+    if (!orderParams.orderVolume) return
+    if (orderParams.limitPrice && Number(orderParams.limitPrice) <= 0) return
+
+    if (Number(orderParams.orderVolume) > 0) {
       trade.calcMargin(orderParams).then((res: any) => {
         setExpectedMargin(formatNum(res, { precision: accountGroupPrecision }))
       })
     }
   }, [orderParams])
 
-  console.log('expectedMargin', expectedMargin)
+  const { run: debouncedGetExpectedMargin } = useDebounceFn(getExpectedMargin, {
+    wait: 200
+  })
+
+  useEffect(debouncedGetExpectedMargin, [debouncedGetExpectedMargin])
+
   return expectedMargin
 }

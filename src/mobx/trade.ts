@@ -569,57 +569,56 @@ class TradeStore {
    * @param item 持仓单item
    * @returns
    */
-  @action
-  getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
-    const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
-    // const quote = getCurrentQuote()
-    // const conf = item?.conf || quote?.symbolConf // 品种配置信息
-    // const buySell = this.buySell
-    const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
-    // 全仓保证金率：全仓净值/占用 = 保证金率
-    // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
-    // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
-    // 净值=账户余额+库存费+手续费+浮动盈亏
-    const currentAccountInfo = this.currentAccountInfo
-    let { balance } = this.getAccountBalance()
+  // @action
+  // getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
+  //   const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
+  //   // const conf = item?.conf || quote?.symbolConf // 品种配置信息
+  //   // const buySell = this.buySell
+  //   const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
+  //   // 全仓保证金率：全仓净值/占用 = 保证金率
+  //   // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
+  //   // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
+  //   // 净值=账户余额+库存费+手续费+浮动盈亏
+  //   const currentAccountInfo = this.currentAccountInfo
+  //   let { balance } = this.getAccountBalance()
 
-    let marginRate = 0
-    let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
-    const positionList = this.positionList // 注意这里外部传递过来的list是处理过汇率 浮动盈亏的
-    let compelCloseRatio = positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
-    compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
-    if (isCrossMargin) {
-      // 全仓占用的保证金
-      const occupyMargin = Number(toFixed(Number(currentAccountInfo.margin || 0), 2))
-      // 判断是否存在全仓单
-      const hasCrossMarginOrder = positionList.some((item) => item.marginType === 'CROSS_MARGIN')
-      if (hasCrossMarginOrder) {
-        // 逐仓保证金信息
-        const marginInfo = this.calcIsolatedMarginRateInfo(this.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN'))
-        // 全仓净值：全仓净值 - 逐仓净值
-        const crossBalance = Number(toFixed(balance - marginInfo.balance, 2))
-        balance = crossBalance
-        marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
-        margin = Number(occupyMargin * compelCloseRatio)
+  //   let marginRate = 0
+  //   let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
+  //   const positionList = this.positionList // 注意这里外部传递过来的list是处理过汇率 浮动盈亏的
+  //   let compelCloseRatio = positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
+  //   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
+  //   if (isCrossMargin) {
+  //     // 全仓占用的保证金
+  //     const occupyMargin = Number(toFixed(Number(currentAccountInfo.margin || 0), 2))
+  //     // 判断是否存在全仓单
+  //     const hasCrossMarginOrder = positionList.some((item) => item.marginType === 'CROSS_MARGIN')
+  //     if (hasCrossMarginOrder) {
+  //       // 逐仓保证金信息
+  //       const marginInfo = this.calcIsolatedMarginRateInfo(this.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN'))
+  //       // 全仓净值：全仓净值 - 逐仓净值
+  //       const crossBalance = Number(toFixed(balance - marginInfo.balance, 2))
+  //       balance = crossBalance
+  //       marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
+  //       margin = Number(occupyMargin * compelCloseRatio)
 
-        // console.log('逐仓净值', marginInfo.balance)
-        // console.log('计算后的全仓净值', balance)
-        // console.log('全仓occupyMargin', occupyMargin)
-        // console.log('marginRate', marginRate)
-      }
-    } else {
-      let filterPositionList = [item] as Order.BgaOrderPageListItem[]
-      // 逐仓模式保证金
-      const marginInfo = this.calcIsolatedMarginRateInfo(filterPositionList)
-      return marginInfo
-    }
+  //       // console.log('逐仓净值', marginInfo.balance)
+  //       // console.log('计算后的全仓净值', balance)
+  //       // console.log('全仓occupyMargin', occupyMargin)
+  //       // console.log('marginRate', marginRate)
+  //     }
+  //   } else {
+  //     let filterPositionList = [item] as Order.BgaOrderPageListItem[]
+  //     // 逐仓模式保证金
+  //     const marginInfo = this.calcIsolatedMarginRateInfo(filterPositionList)
+  //     return marginInfo
+  //   }
 
-    return {
-      marginRate,
-      margin,
-      balance
-    }
-  }
+  //   return {
+  //     marginRate,
+  //     margin,
+  //     balance
+  //   }
+  // }
 
   // 计算当前账户总的浮动盈亏
   @action
@@ -713,7 +712,7 @@ class TradeStore {
         // 1. 持仓列表品种
         symbols.forEach((item) => {
           if (item?.conf) {
-            ws.subscribeExchangeRateQuote(item.conf)
+            ws.subscribeExchangeRateQuote(item.conf, item.symbol)
           }
         })
         // 2. 当前选中品种
@@ -752,7 +751,7 @@ class TradeStore {
         // 动态订阅汇率品种行情，用于计算下单时保证金等
         symbols.forEach((item) => {
           if (item?.conf) {
-            ws.subscribeExchangeRateQuote(item.conf)
+            ws.subscribeExchangeRateQuote(item.conf, item.symbol)
           }
         })
       })
@@ -790,7 +789,7 @@ class TradeStore {
         // 动态订阅汇率品种行情，用于计算下单时保证金等
         symbols.forEach((item) => {
           if (item?.conf) {
-            ws.subscribeExchangeRateQuote(item.conf)
+            ws.subscribeExchangeRateQuote(item.conf, item.symbol)
           }
         })
       })

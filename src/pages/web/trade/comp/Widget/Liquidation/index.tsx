@@ -12,7 +12,6 @@ import { gray } from '@/theme/theme.config'
 import { formatNum, uniqueObjectArray } from '@/utils'
 import { getSymbolIcon } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
 
 import Gauge from './Gauge'
 
@@ -24,7 +23,6 @@ function Liquidation() {
   const { isDark } = theme
   const activeSymbolName = trade.activeSymbolName
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
-  const quoteInfo = getCurrentQuote() // 保留，取值触发更新
   const currentAccountInfo = trade.currentAccountInfo
   const positionList = trade.positionList
 

@@ -105,15 +105,23 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
             <div ref={qrRef}>
               <QRCodeCanvas
                 value={address}
-                size={135}
+                size={180}
                 fgColor="#000000"
                 bgColor="#ffffff"
-                level="L"
+                level="H"
                 imageSettings={{
                   src: '/img/saomiao.svg',
-                  height: 35, // 设置 logo 大小
-                  width: 35,
-                  excavate: true // 设置是否挖空二维码的中间部分
+                  height: 30,
+                  width: 30,
+                  excavate: true,
+                  x: undefined,
+                  y: undefined
+                }}
+                style={{
+                  margin: '10px auto',
+                  padding: '8px',
+                  backgroundColor: '#ffffff',
+                  borderRadius: '8px'
                 }}
               />
             </div>

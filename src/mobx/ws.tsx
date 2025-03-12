@@ -5,11 +5,12 @@ import { action, configure, makeObservable, observable, toJS } from 'mobx'
 import { stores } from '@/context/mobxProvider'
 import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { getCurrentQuoteV2 } from '@/utils/wsUtil'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { getEnum } from '@/constants/enum'
 import { getEnv } from '@/env'
+import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
 import { isPCByWidth } from '@/utils'
 import { getSymbolIcon, parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
 import { cn } from '@/utils/cn'
@@ -253,7 +254,7 @@ class WSStore {
           })
         }
         // 刷新消息列表
-        stores.global.getUnreadMessageCount()
+        MessageStore.getUnreadMessageCount()
         // console.log('消息通知', data)
         break
       // 同步计算的结果返回
@@ -375,8 +376,9 @@ class WSStore {
   }
 
   // 动态订阅汇率品种行情
-  subscribeExchangeRateQuote = (symbolConf?: Symbol.SymbolConf) => {
-    const quote = getCurrentQuote()
+  subscribeExchangeRateQuote = (symbolConf?: Symbol.SymbolConf, symbolName?: string) => {
+    const activeSymbolName = symbolName || trade.activeSymbolName
+    const quote = getCurrentQuoteV2(this.quotes, activeSymbolName, trade.symbolMapAll)
     // 如果不传，使用当前激活的品种配置
     const conf = symbolConf || quote?.symbolConf
     if (!conf) return
@@ -391,8 +393,6 @@ class WSStore {
     const symbolInfo = allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName]
 
     if (!symbolInfo) return
-
-    // console.log('---订阅汇率品种行情:', symbolInfo.symbol)
 
     const toSend = new Map<string, boolean>()
     toSend.set(

@@ -15,5 +15,6 @@ export default {
   'menu.depositOtcWait': 'Deposit Waiting',
   'menu.depositOtcProcess': 'Deposit Process',
   'menu.depositOtcPreview': 'Deposit Preview',
-  'menu.recordPayment': 'Record Payment'
+  'menu.recordPayment': 'Record Payment',
+  'menu.trade': 'Trade'
 }

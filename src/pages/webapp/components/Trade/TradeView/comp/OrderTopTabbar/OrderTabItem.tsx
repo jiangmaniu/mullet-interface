@@ -30,9 +30,7 @@ function OrderTabItem({ position }: IProps) {
   const { trade } = useStores()
   const {
     orderType,
-    orderSpslChecked,
-    setOrderQuickPlaceOrderChecked,
-    orderQuickPlaceOrderChecked,
+    orderVolume,
     setOrderVolume,
     setOrderPrice,
     maxOpenVolume // 最大可开仓量
@@ -55,8 +53,10 @@ function OrderTabItem({ position }: IProps) {
 
   // 切换品种、买卖重置内容
   useEffect(() => {
+    if (Number(orderVolume) === vmin) return
+    console.log('OrderTabItem useEffect', vmin, typeof vmin)
     setOrderVolume(vmin)
-  }, [vmin])
+  }, [orderVolume, vmin])
 
   useEffect(() => {
     !isMarketOrder && setOrderPrice(getInitPriceValue())

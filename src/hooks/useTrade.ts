@@ -8,7 +8,7 @@ import { ITradeTabsOrderType, RecordModalItem } from '@/mobx/trade'
 import { formatNum, getPrecisionByNumber, toFixed, toNegativeOrEmpty } from '@/utils'
 import { add } from '@/utils/float'
 import { message } from '@/utils/message'
-import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
+import { calcExchangeRate, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   /** 市价订单 */
@@ -109,6 +109,7 @@ export default function useTrade(props?: IProps) {
 
   const prevQuoteInfo = useRef<any>() // 缓存上一次的行情信息
 
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quote = getCurrentQuote(symbol)
 
   useEffect(() => {

@@ -4,7 +4,7 @@ import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 
 type IProps = {
@@ -18,7 +18,7 @@ export default function useQuoteColor(props?: IProps) {
   const { isPc } = useEnv()
   const { up: upColor, down: downColor, isDark } = theme
   const symbol = item?.symbol || trade.activeSymbolName
-
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const res = getCurrentQuote(symbol)
 
   const { bid, ask, percent: per } = useMemo(() => res, [res])

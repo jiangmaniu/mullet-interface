@@ -11,7 +11,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { cn } from '@/utils/cn'
 import { goKefu } from '@/utils/navigator'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 // 底部浮动条
 function Footer() {
@@ -25,6 +25,8 @@ function Footer() {
   const disConnected = !isOnline || readyState === 3
   const scroll = useScroll(document)
   const isRefreshRef = useRef(false)
+
+  const getCurrentQuote = useGetCurrentQuoteCallback()
 
   const handleRefresh = () => {
     // 行情重新建立新的连接

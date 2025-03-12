@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import InputNumber from '@/components/Base/InputNumber'
 import Slider from '@/components/Web/Slider'
 import { useStores } from '@/context/mobxProvider'
-import { getCurrentQuote } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   onChange?: (value: any) => void
@@ -18,6 +18,7 @@ function LevelAge({ onChange }: IProps) {
   const [value, setValue] = useState<any>(1)
   const leverageMultiple = trade.leverageMultiple
 
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
   const symbolConf = quoteInfo?.symbolConf
   const prepaymentConf = symbolConf?.prepaymentConf

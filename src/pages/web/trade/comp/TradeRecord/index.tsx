@@ -12,7 +12,6 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { IRecordTabKey } from '@/mobx/trade'
 import { formatNum, toFixed } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentQuote } from '@/utils/wsUtil'
 
 import OpenTipsModal from '../Modal/OpenTipsModal'
 import FundRecordList from './comp/FundRecordList'
@@ -38,7 +37,6 @@ function TradeRecord({ trigger }: IProps) {
   const pendingList = trade.pendingList
   const stopLossProfitList = trade.stopLossProfitList
   const tabKey = trade.recordTabKey
-  const quoteInfo = getCurrentQuote() // 保留，取值才会触发mobx更新
 
   const activeSymbolName = trade.activeSymbolName
   const currentPositionList = showActiveSymbol ? tradeList?.filter((v: any) => v.symbol === activeSymbolName) : tradeList

@@ -9,7 +9,6 @@ import { useModel } from '@umijs/max'
 import Button from '../../components/Base/Button'
 import Header from '../../components/Base/Header'
 import ListItem, { IlistItemProps } from '../../components/Base/List/ListItem'
-import { SheetRef } from '../../components/Base/SheetModal'
 import Switch from '../../components/Base/Switch'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
@@ -61,23 +60,13 @@ const PositionConfirmSwitch = observer(() => {
 })
 
 function UserCenter() {
-  const popupRef = useRef<SheetRef>(null)
   const { t, locale } = useI18n()
   const { cn, theme } = useTheme()
   const messageStore = useLocalObservable(() => MessageStore)
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const kycAuthInfo = currentUser?.kycAuth?.[0]
-  const kycStatus = kycAuthInfo?.status as API.ApproveStatus
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
-
-  useFocusEffect(
-    useCallback(() => {
-      // 获取未读消息数量
-      MessageStore.getUnreadMessageCount()
-    }, [])
-  )
 
   const renderList = (listData: IlistItemProps[], title?: string, margin = true) => {
     return (
@@ -166,7 +155,7 @@ function UserCenter() {
     modalConfirmRef.current?.show()
   }
 
-  const updateGap = 1 * 5 * 1000 // 打開該頁面的時候主動刷新用戶信息，間隔：30秒
+  const updateGap = 30 * 1000 // 打開該頁面的時候主動刷新用戶信息，間隔：30秒
   const user = useModel('user')
   useFocusEffect(
     useCallback(() => {

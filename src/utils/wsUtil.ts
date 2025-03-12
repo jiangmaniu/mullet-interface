@@ -4,6 +4,8 @@ import { TRADE_BUY_SELL } from '@/constants/enum'
 import { stores } from '@/context/mobxProvider'
 import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 
+import { IQuoteItem } from '@/mobx/ws.types'
+import { useCallback } from 'react'
 import { toFixed } from '.'
 import { multiply, subtract } from './float'
 
@@ -328,55 +330,55 @@ type IExpectedMargin = {
  * @param param0
  * @returns
  */
-export const calcExpectedMargin = (obj: IExpectedMargin) => {
-  let { buySell, orderType, orderVolume, price } = obj
-  const { trade } = stores
-  const quote = getCurrentQuote()
+// export const calcExpectedMargin = (obj: IExpectedMargin) => {
+//   let { buySell, orderType, orderVolume, price } = obj
+//   const { trade } = stores
+//   const quote = getCurrentQuote()
 
-  orderVolume = Number(orderVolume || 0) // 手数
+//   orderVolume = Number(orderVolume || 0) // 手数
 
-  const conf = quote?.symbolConf
-  const prepaymentConf = quote?.prepaymentConf
-  const contractSize = Number(conf?.contractSize || 0) // 合约大小
-  const isCrossMargin = trade.marginType === 'CROSS_MARGIN' // 全仓
-  const currentPrice = buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid // 现价
+//   const conf = quote?.symbolConf
+//   const prepaymentConf = quote?.prepaymentConf
+//   const contractSize = Number(conf?.contractSize || 0) // 合约大小
+//   const isCrossMargin = trade.marginType === 'CROSS_MARGIN' // 全仓
+//   const currentPrice = buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid // 现价
 
-  let compelCloseRatio = trade?.currentAccountInfo?.compelCloseRatio || 0 // 强平比例
-  compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
+//   let compelCloseRatio = trade?.currentAccountInfo?.compelCloseRatio || 0 // 强平比例
+//   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
 
-  price = Number(orderType === 'MARKET_ORDER' ? currentPrice : price) // 区分市价单和限价单价格
+//   price = Number(orderType === 'MARKET_ORDER' ? currentPrice : price) // 区分市价单和限价单价格
 
-  // 交易品种选择外汇类型，计算预付款不需要加上价格。设置价格为1
-  if (conf?.calculationType === 'FOREIGN_CURRENCY') {
-    price = 1
-  }
+//   // 交易品种选择外汇类型，计算预付款不需要加上价格。设置价格为1
+//   if (conf?.calculationType === 'FOREIGN_CURRENCY') {
+//     price = 1
+//   }
 
-  let leverage = 1
-  if (prepaymentConf?.mode === 'fixed_leverage') {
-    // 固定杠杆
-    leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple)
-  } else if (prepaymentConf?.mode === 'float_leverage') {
-    // 浮动杠杆，获取用户设置的值
-    leverage = trade.leverageMultiple
-  }
+//   let leverage = 1
+//   if (prepaymentConf?.mode === 'fixed_leverage') {
+//     // 固定杠杆
+//     leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple)
+//   } else if (prepaymentConf?.mode === 'float_leverage') {
+//     // 浮动杠杆，获取用户设置的值
+//     leverage = trade.leverageMultiple
+//   }
 
-  let expectedMargin = 0 // 预估保证金
+//   let expectedMargin = 0 // 预估保证金
 
-  // 固定预付款模式：占用保证金 = 固定预付款 * 手数
-  if (prepaymentConf?.mode === 'fixed_margin') {
-    expectedMargin = (prepaymentConf.fixed_margin?.initial_margin || 0) * orderVolume
-  } else {
-    // 杠杆模式：占用保证金 = 合约大小 * 手数 * 价格(买或卖) / 杠杆
-    expectedMargin = (contractSize * orderVolume * price) / leverage
-  }
+//   // 固定预付款模式：占用保证金 = 固定预付款 * 手数
+//   if (prepaymentConf?.mode === 'fixed_margin') {
+//     expectedMargin = (prepaymentConf.fixed_margin?.initial_margin || 0) * orderVolume
+//   } else {
+//     // 杠杆模式：占用保证金 = 合约大小 * 手数 * 价格(买或卖) / 杠杆
+//     expectedMargin = (contractSize * orderVolume * price) / leverage
+//   }
 
-  // 转化汇率
-  return calcExchangeRate({
-    value: expectedMargin,
-    unit: conf?.prepaymentCurrency,
-    buySell
-  })
-}
+//   // 转化汇率
+//   return calcExchangeRate({
+//     value: expectedMargin,
+//     unit: conf?.prepaymentCurrency,
+//     buySell
+//   })
+// }
 
 /**
  * 计算可开仓手数
@@ -539,27 +541,85 @@ export function getCurrentQuote(currentSymbolName?: string) {
   return result
 }
 
-// function hasQuoteChanged(cachedData: any): boolean {
-//   const { ws, trade } = stores
-//   const { quotes } = ws
+export function getCurrentQuoteV2(
+  quotes: Map<string, IQuoteItem>,
+  currentSymbolName: string,
+  symbolMap: { [key: string]: Account.TradeSymbolListItem }
+) {
+  let symbol = currentSymbolName // 后台自定义的品种名称，symbol是唯一的, || trade.activeSymbolName 改成外部传入
 
-//   // 获取最新数据源key
-//   const dataSourceKey = cachedData.dataSourceKey
-//   const currentQuote = quotes.get(dataSourceKey)
+  const currentSymbol = symbolMap?.[symbol] || {}
+  // 当前品种的详细信息
+  const dataSourceKey = `${currentSymbol?.dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
+  const currentQuote = quotes.get(dataSourceKey) // 行情信息
 
-//   // 如果没有最新行情，认为数据已变化
-//   if (!currentQuote?.priceData) {
-//     return true
-//   }
+  const dataSourceSymbol = currentSymbol?.dataSourceSymbol
+  const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
+  const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf as Symbol.PrepaymentConf // 当前品种预付款配置
+  const transactionFeeConf = currentSymbol?.symbolConf?.transactionFeeConf as Symbol.TransactionFeeConf // 当前品种手续费配置
+  const holdingCostConf = currentSymbol?.symbolConf?.holdingCostConf as Symbol.HoldingCostConf // 当前品种手续费配置
+  const spreadConf = currentSymbol?.symbolConf?.spreadConf as Symbol.SpreadConf // 当前品种点差配置
+  const tradeTimeConf = currentSymbol?.symbolConf?.tradeTimeConf as Symbol.TradeTimeConf // 当前品种交易时间配置
+  const quotationConf = currentSymbol?.symbolConf?.quotationConf as Symbol.QuotationConf // 当前品种交易时间配置
+  const symbolNewTicker = currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
+  const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
+  const quoteTimeStamp = currentQuote?.priceData?.id || symbolNewPrice?.id // 行情时间戳
 
-//   // 比较关键价格数据
-//   const newBuy = currentQuote?.priceData?.buy
-//   const newSell = currentQuote?.priceData?.sell
+  const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
+  let ask = toFixed(Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0), digits, false) // ask是买价，切记ask买价一般都比bid卖价高
+  let bid = toFixed(Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0), digits, false) // bid是卖价
+  const open = Number(symbolNewTicker?.open || 0) // 开盘价
+  const high = Math.max.apply(Math, [Number(symbolNewTicker?.high || 0), bid]) // 拿当前价格跟首次返回的比
+  const low = Math.min.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
+  const close = Number(bid || symbolNewTicker?.close || 0) // 使用卖价作为最新的收盘价格
+  const percent = bid && open ? (((bid - open) / open) * 100).toFixed(2) : 0
 
-//   return (
-//     // 比较买卖价
-//     newBuy !== cachedData.currentQuote?.priceData?.buy ||
-//     newSell !== cachedData.currentQuote?.priceData?.sell ||
-//     cachedData.symbol !== trade.activeSymbolName
-//   )
-// }
+  // 买卖点差
+  const spread = Math.abs(multiply(Math.abs(Number(subtract(bid, ask))), Math.pow(10, digits)) as number)
+
+  const result = {
+    symbol, // 用于展示的symbol自定义名称
+    dataSourceSymbol, // 数据源品种
+    dataSourceKey, // 获取行情源的key
+    digits,
+    currentQuote,
+    quoteTimeStamp,
+    currentSymbol, // 当前品种信息
+    symbolConf, // 全部品种配置
+    prepaymentConf, // 预付款配置
+    transactionFeeConf, // 手续费配置
+    holdingCostConf, // 库存费配置
+    spreadConf, // 点差配置
+    tradeTimeConf, // 交易时间配置
+    quotationConf, // 报价配置
+    symbolNewTicker, // 高开低收
+    symbolNewPrice, // 第一口报价信息
+    percent, //涨幅百分比
+    quotes,
+    consize: Number(symbolConf?.contractSize || 0),
+    ask,
+    bid,
+    high: toFixed(high, digits, false), //高
+    low: toFixed(low, digits, false), //低
+    open: toFixed(open, digits, false), //开
+    close: toFixed(close, digits, false), //收
+    spread, // 买卖点差
+    bidDiff: currentQuote?.bidDiff || 0,
+    askDiff: currentQuote?.askDiff || 0,
+    hasQuote: !!currentQuote?.priceData?.buy // 是否存在行情
+  }
+
+  return result
+}
+
+// getCurrentQuote useCallback by stores.ws.quotes
+export const useGetCurrentQuoteCallback = () => {
+  const { trade, ws } = stores
+  const symbolMap = trade.symbolMapAll
+  const activeSymbolName = trade.activeSymbolName
+
+  return useCallback(
+    (currentSymbolName?: string) => getCurrentQuoteV2(ws.quotes, currentSymbolName ?? activeSymbolName, symbolMap),
+    [ws.quotes, activeSymbolName, symbolMap]
+  )
+}

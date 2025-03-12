@@ -1,11 +1,14 @@
 import { DEFAULT_REGISTER_WAY } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import serverConf from '@/env/server'
+import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
 import { getRegisterWay } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
-import { getMyMessageList, getUnReadMessageCount } from '@/services/api/message'
+import { getMyMessageList } from '@/services/api/message'
 import { onLogout } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_SET_PLATFORM_CONFIG, STORAGE_SET_USER_INFO } from '@/utils/storage'
+import { getIntl } from '@umijs/max'
+import { message } from 'antd'
 import { action, makeAutoObservable, observable, reaction, runInAction } from 'mobx'
 import PLATFORM_DEFAULT_CONFIG from '../../public/platform/config.json'
 
@@ -172,7 +175,7 @@ export class GlobalStore {
       // 刷新账户信息
       if (refreshAccount !== false) {
         // 初始化交易配置，在登录后才执行
-        await stores.trade.init()
+        // console.log('fetchUserInfo init')
 
         // 初始化设置默认当前账号信息
         const localAccountId = stores.trade.currentAccountInfo?.id
@@ -185,6 +188,9 @@ export class GlobalStore {
           stores.trade.setCurrentAccountInfo(clientInfo.accountList?.find((item) => item.id === localAccountId) as User.AccountItem)
         } else {
           stores.trade.getSymbolList()
+
+          // setCurrentAccountInfo 中会执行init
+          await stores.trade.init()
         }
       }
 
@@ -228,23 +234,19 @@ export class GlobalStore {
     })
   }
 
-  // 获取未读消息数量
-  getUnreadMessageCount = async () => {
-    const res = await getUnReadMessageCount()
-    const count = res.data || 0
-
-    runInAction(() => {
-      this.unReadCount = count
-    })
-  }
-
   // ========== 全局页面初始化执行 ================
 
   init = () => {
+    this.getPlatformConfig(() => {
+      message.info(getIntl().formatMessage({ id: 'common.huanjinpeizhiyichang' }))
+    })
+    this.getLottieLoadingData()
+
     this.getRegisterWay()
 
     if (STORAGE_GET_TOKEN()) {
-      this.getUnreadMessageCount()
+      MessageStore.getUnreadMessageCount()
+
       this.getMessageList()
     }
   }

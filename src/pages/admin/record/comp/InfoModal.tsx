@@ -117,7 +117,7 @@ function InfoModal({ item }: IProps, ref: any) {
             &nbsp;
           </span>
           <div className="text-sm text-primary">
-            {formatNum(item?.baseHandlingFee)} {item?.baseCurrency}
+            {formatNum(item?.handlingFee)} {item?.baseCurrency}
           </div>
         </div>
       </div>

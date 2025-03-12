@@ -10,7 +10,7 @@ import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
-import { covertProfit, getCurrentQuote } from '@/utils/wsUtil'
+import { covertProfit, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
@@ -65,6 +65,7 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
   }, [rawItem, covertProfit])
 
   const symbol = item?.symbol
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote(symbol)
 
   const profit = useMemo(() => {

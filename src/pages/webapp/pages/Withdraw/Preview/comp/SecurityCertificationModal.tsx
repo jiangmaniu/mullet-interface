@@ -30,7 +30,15 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
       bottomSheetModalRef.current?.sheet?.present()
     },
     close: () => {
-      bottomSheetModalRef.current?.sheet?.dismiss()
+      bottomSheetModalRef.current?.sheet?.dismiss(() => {
+        // if (window.ReactNativeWebView) {
+        //   window.ReactNativeWebView.postMessage(
+        //     JSON.stringify({
+        //       type: 'unUseCode'
+        //     })
+        //   )
+        // }
+      })
     }
   }))
 
@@ -44,6 +52,7 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
   const [sended, setSended] = useState(false)
 
+  const codeInputRef = useRef<any>()
   const handleGetVerificationCode = async () => {
     if (sendTime > 0) return
 
@@ -59,6 +68,7 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
       .then((res) => {
         res.success && setSendTime(60)
         setSended(true)
+        // codeInputRef.current?.focus()
       })
       .catch((err) => {
         console.log('err', err)
@@ -169,7 +179,21 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
               }
             >
               <div className="flex items-center flex-wrap gap-6">
-                <CodeInput form={form} name="code" disabled={!sended} width={50} height={50} />
+                <CodeInput
+                  form={form}
+                  name="code"
+                  disabled={!sended}
+                  width={50}
+                  height={50}
+                  ref={codeInputRef}
+                  onFocus={() => {
+                    // if (window.ReactNativeWebView) {
+                    //   setTimeout(() => {
+                    //     window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'useCode' }))
+                    //   }, 100)
+                    // }
+                  }}
+                />
               </div>
             </ProForm.Item>
             {sended && (

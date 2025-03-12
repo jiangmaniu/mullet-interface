@@ -9,7 +9,7 @@ import { useStores } from '@/context/mobxProvider'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentDepth, getCurrentQuote } from '@/utils/wsUtil'
+import { getCurrentDepth, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import Sidebar from '../Sidebar'
 
@@ -29,6 +29,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const depth = getCurrentDepth(trade.activeSymbolName)
   const hasDepth = Number(depth?.asks?.length) > 0 && Number(depth?.bids?.length) > 0
 
+  const getCurrentQuote = useGetCurrentQuoteCallback()
   const res: any = getCurrentQuote()
   const color = res.percent > 0 ? 'text-green' : 'text-red'
 

@@ -22,7 +22,7 @@ export default defineConfig({
   plugins: [require.resolve('./plugins/prefetch.ts')],
 
   // 只设置 dev 阶段的 sourcemap
-  devtool: process.env.NODE_ENV === 'development' ? 'eval' : false,
+  devtool: process.env.NODE_ENV === 'development' ? 'source-map' : false,
 
   /**
    * @name 兼容性设置
@@ -165,8 +165,8 @@ export default defineConfig({
 
   // pwa配置
   links: [
-    { rel: 'manifest', href: "/platform/manifest.json" },
-    { rel: 'shortcut icon', href: "/platform/favicon.ico" },
+    { rel: 'manifest', href: '/platform/manifest.json' },
+    { rel: 'shortcut icon', href: '/platform/favicon.ico' }
   ],
 
   // seo
@@ -179,14 +179,12 @@ export default defineConfig({
     { name: 'msapplication-tap-highlight', content: 'no' },
     { name: 'viewport', content: 'width=device-width, initial-scale=1' },
     // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
-    ...(
-      process.env.PLATFORM_SEO === '1'
+    ...(process.env.PLATFORM_SEO === '1'
       ? [
           { name: 'application-name', content: serverEnv?.name },
-          { name: 'apple-mobile-web-app-title', content: serverEnv?.name },
+          { name: 'apple-mobile-web-app-title', content: serverEnv?.name }
         ]
-      : []
-    )
+      : [])
   ],
   // favicons: [
   //   // 完整地址
@@ -251,7 +249,7 @@ export default defineConfig({
   extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // https://umijs.org/docs/api/config#codesplitting
   codeSplitting: {
-    jsStrategy: 'granularChunks',
+    jsStrategy: 'granularChunks'
   },
   // 使用本地字体
   chainWebpack(config) {
@@ -357,7 +355,7 @@ export default defineConfig({
           deleteOriginalAssets: false, // 不删除源文件
           threshold: 1024 * 50, //  只压缩大小超过此50kb阈值的资源（单位为字节）
           algorithm: 'brotliCompress', // 使用br算法压缩
-          filename: "[path][base].br",
+          filename: '[path][base].br'
         })
       )
     }
