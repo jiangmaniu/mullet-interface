@@ -52,7 +52,6 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
   }, [isFixedMargin, isFixedLeverage, isFloatLeverage, trade.leverageMultiple])
 
   const symbolInfo = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
-  // const { expectedMargin } = useTrade()
 
   // 接口计算预估保证金
   const expectedMargin = useMargin()

@@ -18,6 +18,7 @@ import Tooltip from '../AccountDetail/Tooltip'
 
 import Empty from '@/pages/webapp/components/Base/List/Empty'
 import { getAccountSynopsisByLng } from '@/utils/business'
+import { PullToRefresh } from 'antd-mobile'
 import VirtualList from 'rc-virtual-list'
 
 const TransferDetailScreen = () => {
@@ -32,7 +33,6 @@ const TransferDetailScreen = () => {
   const [current, setCurrent] = useState(1)
   const [size, setSize] = useState(10)
   const [total, setTotal] = useState(0)
-  const [refreshing, setRefreshing] = useState(true)
   const [startTime, setStartTime] = useState<Date | undefined>(undefined)
   const [endTime, setEndTime] = useState<Date | undefined>(undefined)
 
@@ -53,7 +53,7 @@ const TransferDetailScreen = () => {
     return accountList.find((item) => item.id === accountId)?.name
   }
 
-  const getDatas = () => {
+  const getDatas = useCallback(() => {
     // 分页加载数据async
     getMoneyRecordsPageList({
       current,
@@ -62,39 +62,14 @@ const TransferDetailScreen = () => {
       accountId: stores.trade.currentAccountInfo?.id,
       startTime: startTime ? dayjs(startTime).format('YYYY-MM-DD 00:00:00') : undefined,
       endTime: endTime ? dayjs(endTime).format('YYYY-MM-DD 23:59:59') : undefined
+    }).then((res) => {
+      if (res.success && res.data?.records) {
+        const uniqueRecords = res.data.records.filter((record) => !data.some((existingRecord) => existingRecord.id === record.id))
+        setData((prevData) => prevData.concat(uniqueRecords))
+        setTotal(Number(res.data.total))
+      }
     })
-      .then((res) => {
-        if (res.success && res.data?.records) {
-          const uniqueRecords = res.data.records.filter((record) => !data.some((existingRecord) => existingRecord.id === record.id))
-          setData((prevData) => prevData.concat(uniqueRecords))
-          setTotal(Number(res.data.total))
-        }
-      })
-      .finally(() => {
-        setRefreshing(false)
-      })
-  }
-
-  useEffect(getDatas, [current, size, refreshing, stores.trade.currentAccountInfo]) // Adding dependencies to useEffect
-
-  useEffect(() => {
-    if (startTime && endTime && startTime > endTime) {
-      setStartTime(endTime)
-      return
-    }
-
-    if (startTime && endTime) {
-      setData([])
-      setTotal(0)
-      setTimeout(() => {
-        if (current === 1) {
-          getDatas()
-        } else {
-          setCurrent(1)
-        }
-      }, 10)
-    }
-  }, [startTime, endTime])
+  }, [current, size, stores.trade.currentAccountInfo])
 
   // 加载更多
   const onEndReached = useCallback(() => {
@@ -104,11 +79,17 @@ const TransferDetailScreen = () => {
   }, [data.length, total])
 
   const onRefresh = async () => {
-    setRefreshing(true)
     setData([])
     setTotal(0)
     setCurrent(1)
+    getDatas()
   }
+
+  useEffect(() => {
+    if ((startTime && endTime) || (!startTime && !endTime)) {
+      onRefresh()
+    }
+  }, [startTime, endTime])
 
   const renderItem = ({ item }: any) => {
     console.log('item', item)
@@ -180,13 +161,13 @@ const TransferDetailScreen = () => {
   return (
     <Basiclayout
       scrollY
-      style={{ paddingLeft: 14, paddingRight: 14 }}
+      // style={{ paddingLeft: 14, paddingRight: 14 }}
       bgColor="secondary"
       headerColor={theme.colors.backgroundColor.secondary}
     >
       <Header title={t('app.pageTitle.Transfer Records')} back />
 
-      <View className={cn('flex flex-row justify-between items-center pt-3 ')}>
+      <View className={cn('flex flex-row justify-between items-center pt-3 px-[14px]')}>
         <View className={cn('flex flex-row items-center gap-2')}>
           <View onPress={() => datePickerRef.current?.show()}>
             <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px]')}>
@@ -223,15 +204,19 @@ const TransferDetailScreen = () => {
         hasMore={data.length < total}
       /> */}
 
-      {datas.length > 0 ? (
-        <VirtualList itemKey="index" data={datas}>
-          {renderItem}
-        </VirtualList>
-      ) : (
-        <div className="h-[376px] flex items-center justify-center">
-          <Empty />
-        </div>
-      )}
+      <View className={cn('px-[14px]')}>
+        <PullToRefresh onRefresh={onRefresh}>
+          {datas.length > 0 ? (
+            <VirtualList itemKey="index" data={datas}>
+              {renderItem}
+            </VirtualList>
+          ) : (
+            <div className="h-[376px] flex items-center justify-center">
+              <Empty />
+            </div>
+          )}
+        </PullToRefresh>
+      </View>
       <DateRangePickerSheetModal ref={datePickerRef} onConfirm={onDateRangeConfirm} />
     </Basiclayout>
   )

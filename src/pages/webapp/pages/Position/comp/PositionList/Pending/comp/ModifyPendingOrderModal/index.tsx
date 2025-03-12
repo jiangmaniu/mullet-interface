@@ -45,22 +45,6 @@ function ModifyPendingOrderModal({ tabKey, trigger, item }: IProps, ref: Forward
     close
   }))
 
-  // const {
-  //   setOrderPrice,
-  //   setOrderVolume,
-  //   slFlag,
-  //   spFlag,
-  //   orderVolume,
-  //   price: limitPrice,
-  //   setSp,
-  //   setSl,
-  //   stopLoss,
-  //   takeProfit,
-  //   disabledBtn
-  // } = useTrade({
-  //   limitStopItem: item
-  // })
-
   const { orderVolume, orderPrice: limitPrice } = useQuote()
   const { slFlag, spFlag, spValuePrice, slValuePrice } = useSpSl()
   const { disabledBtn } = useDisabled()
@@ -108,17 +92,8 @@ function ModifyPendingOrderModal({ tabKey, trigger, item }: IProps, ref: Forward
       height={'65%'}
       trigger={trigger}
       onOpenChange={(open) => {
-        if (open) {
-          // setOrderPrice(item.limitPrice || '')
-          // setOrderVolume(item.orderVolume || '')
-          // setSp(item.takeProfit || '')
-          // setSl(item.stopLoss || '')
-        } else {
+        if (!open) {
           // 关闭弹窗
-          // setOrderPrice('')
-          // setSp('')
-          // setSl('')
-          // setOrderVolume('')
           // 重置内容
           trade.setRecordModalItem({} as RecordModalItem)
         }

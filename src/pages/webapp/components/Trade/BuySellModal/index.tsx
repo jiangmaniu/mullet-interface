@@ -70,7 +70,6 @@ const Content = observer(({ close }: { close: () => void }) => {
 const Footer = observer(({ close }: { close: () => void }) => {
   const { theme, cn } = useTheme()
   const intl = useIntl()
-  // const { disabledBtn, disabledTrade, onSubmitOrder, onCheckSubmit } = useTrade()
   const { disabledBtn, disabledTrade } = useDisabled()
   const { onSubmitOrder, onCheckSubmit } = useSubmitOrder()
   const { trade } = useStores()
