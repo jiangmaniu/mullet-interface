@@ -246,7 +246,6 @@ class KlineStore {
             const [klineTime, open, high, low, close] = (item || '').split(',')
             const timeStamp = Number(klineTime) * 1000
             return {
-              ...item,
               open: NP.round(open, precision),
               close: NP.round(close, precision),
               high: NP.round(high, precision),
