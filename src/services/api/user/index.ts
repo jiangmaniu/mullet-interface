@@ -53,7 +53,6 @@ export async function sendCustomEmailCode(body: { email?: string }) {
     method: 'POST',
     needToken: false,
     replayProtection: true,
-    cryptoData: true,
     data: body
   })
 }
@@ -71,7 +70,6 @@ export async function sendCustomPhoneCode(body: { phone?: string; phoneAreaCode?
     method: 'POST',
     needToken: false,
     replayProtection: true,
-    cryptoData: true,
     data: body
   })
 }
@@ -89,8 +87,7 @@ export async function registerSubmitPhone(body: User.RegisterParams) {
     method: 'POST',
     needToken: false,
     data: body,
-    replayProtection: true,
-    cryptoData: true
+    replayProtection: true
   })
 }
 

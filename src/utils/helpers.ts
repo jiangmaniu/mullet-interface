@@ -46,3 +46,13 @@ export function sortObjectByKey(obj: any) {
 
   return sortedObj // 返回排序后的对象
 }
+
+/**格式化对象中的value为数组的字段 */
+export const formatObjArrToStr = (obj: any) => {
+  Object.keys(obj).forEach((key) => {
+    if (Array.isArray(obj[key])) {
+      obj[key] = JSON.stringify(obj[key])
+    }
+  })
+  return obj
+}

@@ -35,7 +35,6 @@ export async function UpdateAccount(body: Account.SubmitAccount) {
   return request<API.Response>('/api/trade-core/coreApi/account/update', {
     method: 'POST',
     data: body
-    // cryptoData: true
   })
 }
 

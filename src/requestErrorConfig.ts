@@ -11,7 +11,7 @@ import { getLocaleForBackend } from './constants/enum'
 import { getEnv } from './env'
 import { getUid } from './utils'
 import crypto from './utils/crypto'
-import { deleteEmptyProperty, sortObjectByKey } from './utils/helpers'
+import { deleteEmptyProperty, formatObjArrToStr, sortObjectByKey } from './utils/helpers'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
 
@@ -156,7 +156,7 @@ export const errorConfig: RequestConfig = {
           const stringifyBodyparams = stringify(
             {
               // 业务参数排序
-              ...sortObjectByKey(deleteEmptyProperty(config.data)),
+              ...formatObjArrToStr(sortObjectByKey(deleteEmptyProperty(config.data))),
               timestamp,
               nonce,
               appkey: REPLAY_PROTECTION_APP_KEY // 和后台约定的接口防重放的appkey
