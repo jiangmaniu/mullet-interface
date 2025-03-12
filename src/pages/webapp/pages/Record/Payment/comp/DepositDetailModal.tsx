@@ -122,7 +122,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
                 <FormattedMessage id="mt.zhuanrujine" />
               </span>
             </div>
-            <div className="flex justify-between items-end flex-col flex-1 h-full">
+            <div className="flex items-end flex-col justify-end flex-1 h-full self-end">
               {/* {item?.status === 'WAIT' && (
                 <div
                   className="text-xs font-normal underline text-yellow-700 italic mr-1"

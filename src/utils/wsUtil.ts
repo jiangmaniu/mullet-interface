@@ -328,55 +328,55 @@ type IExpectedMargin = {
  * @param param0
  * @returns
  */
-export const calcExpectedMargin = (obj: IExpectedMargin) => {
-  let { buySell, orderType, orderVolume, price } = obj
-  const { trade } = stores
-  const quote = getCurrentQuote()
+// export const calcExpectedMargin = (obj: IExpectedMargin) => {
+//   let { buySell, orderType, orderVolume, price } = obj
+//   const { trade } = stores
+//   const quote = getCurrentQuote()
 
-  orderVolume = Number(orderVolume || 0) // 手数
+//   orderVolume = Number(orderVolume || 0) // 手数
 
-  const conf = quote?.symbolConf
-  const prepaymentConf = quote?.prepaymentConf
-  const contractSize = Number(conf?.contractSize || 0) // 合约大小
-  const isCrossMargin = trade.marginType === 'CROSS_MARGIN' // 全仓
-  const currentPrice = buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid // 现价
+//   const conf = quote?.symbolConf
+//   const prepaymentConf = quote?.prepaymentConf
+//   const contractSize = Number(conf?.contractSize || 0) // 合约大小
+//   const isCrossMargin = trade.marginType === 'CROSS_MARGIN' // 全仓
+//   const currentPrice = buySell === TRADE_BUY_SELL.BUY ? quote?.ask : quote?.bid // 现价
 
-  let compelCloseRatio = trade?.currentAccountInfo?.compelCloseRatio || 0 // 强平比例
-  compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
+//   let compelCloseRatio = trade?.currentAccountInfo?.compelCloseRatio || 0 // 强平比例
+//   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
 
-  price = Number(orderType === 'MARKET_ORDER' ? currentPrice : price) // 区分市价单和限价单价格
+//   price = Number(orderType === 'MARKET_ORDER' ? currentPrice : price) // 区分市价单和限价单价格
 
-  // 交易品种选择外汇类型，计算预付款不需要加上价格。设置价格为1
-  if (conf?.calculationType === 'FOREIGN_CURRENCY') {
-    price = 1
-  }
+//   // 交易品种选择外汇类型，计算预付款不需要加上价格。设置价格为1
+//   if (conf?.calculationType === 'FOREIGN_CURRENCY') {
+//     price = 1
+//   }
 
-  let leverage = 1
-  if (prepaymentConf?.mode === 'fixed_leverage') {
-    // 固定杠杆
-    leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple)
-  } else if (prepaymentConf?.mode === 'float_leverage') {
-    // 浮动杠杆，获取用户设置的值
-    leverage = trade.leverageMultiple
-  }
+//   let leverage = 1
+//   if (prepaymentConf?.mode === 'fixed_leverage') {
+//     // 固定杠杆
+//     leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple)
+//   } else if (prepaymentConf?.mode === 'float_leverage') {
+//     // 浮动杠杆，获取用户设置的值
+//     leverage = trade.leverageMultiple
+//   }
 
-  let expectedMargin = 0 // 预估保证金
+//   let expectedMargin = 0 // 预估保证金
 
-  // 固定预付款模式：占用保证金 = 固定预付款 * 手数
-  if (prepaymentConf?.mode === 'fixed_margin') {
-    expectedMargin = (prepaymentConf.fixed_margin?.initial_margin || 0) * orderVolume
-  } else {
-    // 杠杆模式：占用保证金 = 合约大小 * 手数 * 价格(买或卖) / 杠杆
-    expectedMargin = (contractSize * orderVolume * price) / leverage
-  }
+//   // 固定预付款模式：占用保证金 = 固定预付款 * 手数
+//   if (prepaymentConf?.mode === 'fixed_margin') {
+//     expectedMargin = (prepaymentConf.fixed_margin?.initial_margin || 0) * orderVolume
+//   } else {
+//     // 杠杆模式：占用保证金 = 合约大小 * 手数 * 价格(买或卖) / 杠杆
+//     expectedMargin = (contractSize * orderVolume * price) / leverage
+//   }
 
-  // 转化汇率
-  return calcExchangeRate({
-    value: expectedMargin,
-    unit: conf?.prepaymentCurrency,
-    buySell
-  })
-}
+//   // 转化汇率
+//   return calcExchangeRate({
+//     value: expectedMargin,
+//     unit: conf?.prepaymentCurrency,
+//     buySell
+//   })
+// }
 
 /**
  * 计算可开仓手数

@@ -20,7 +20,6 @@ export const BottomButton = observer(() => {
   const intl = useIntl()
   const { trade } = useStores()
   const isBuy = trade.isBuy
-  // const { disabledBtn, disabledTrade, onSubmitOrder, onCheckSubmit, orderVolume } = useTrade()
   const { orderVolume } = trade
   const { disabledTrade } = useDisabled()
   const { onSubmitOrder, onCheckSubmit } = useSubmitOrder()

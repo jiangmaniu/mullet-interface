@@ -10,6 +10,7 @@ import { getCurrentQuote } from '@/utils/wsUtil'
 import Iconfont from '@/components/Base/Iconfont'
 import { getEnum } from '@/constants/enum'
 import { getEnv } from '@/env'
+import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
 import { isPCByWidth } from '@/utils'
 import { getSymbolIcon, parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
 import { cn } from '@/utils/cn'
@@ -253,7 +254,7 @@ class WSStore {
           })
         }
         // 刷新消息列表
-        stores.global.getUnreadMessageCount()
+        MessageStore.getUnreadMessageCount()
         // console.log('消息通知', data)
         break
       // 同步计算的结果返回
