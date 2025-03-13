@@ -24,6 +24,9 @@ export default function User() {
         }))
       })
     }
+
+    // 记录最后一次更新时间
+    setLastUpdateTime(Date.now().valueOf())
     return userInfo
   }
 

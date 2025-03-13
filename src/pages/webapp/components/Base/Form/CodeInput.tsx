@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import { useTheme } from '@/context/themeProvider'
-import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { readClipboard } from '@/utils'
 import { Form } from 'antd'
 import { Rule } from 'antd/es/form'
@@ -21,21 +20,13 @@ interface IProps {
   form?: FormInstance
   name?: NamePath
   disabled?: boolean
+  onFocus?: () => void
 }
 
-const CodeInput = (props: IProps) => {
-  const { value, onChange, inputWrapperStyle, height = 48, width = 48, rules, form, name, disabled } = props
-  const i18n = useI18n()
+const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
+  const { onChange, inputWrapperStyle, height = 48, width = 48, rules, form, name, disabled, onFocus } = props
+
   const { cn } = useTheme()
-  const [isPhoneFocus, setIsPhoneFocus] = useState(false)
-  // const [code, setCode] = useState({
-  //   value1: '',
-  //   value2: '',
-  //   value3: '',
-  //   value4: '',
-  //   value5: '',
-  //   value6: ''
-  // })
 
   const [code1, setCode1] = useState('')
   const [code2, setCode2] = useState('')
@@ -72,6 +63,12 @@ const CodeInput = (props: IProps) => {
     })
   }
 
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      // inputRef1.current?.select()
+    }
+  }))
+
   return (
     <Form.Item noStyle name={name} rules={rules}>
       <View>
@@ -88,8 +85,8 @@ const CodeInput = (props: IProps) => {
             fontSize={20}
             onFocus={(e) => {
               handlePaste()
-              // 执行 e.target.select()
               e.target.select()
+              onFocus?.()
             }}
             onChange={(e: any) => {
               setCode1(e)
@@ -231,6 +228,6 @@ const CodeInput = (props: IProps) => {
       </View>
     </Form.Item>
   )
-}
+})
 
 export default CodeInput

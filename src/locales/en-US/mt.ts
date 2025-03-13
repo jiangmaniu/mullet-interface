@@ -824,5 +824,6 @@ export default {
   'mt.bangding': 'Bind',
   'mt.weibangding': 'UnBind',
   'mt.mima': 'Password',
-  'mt.xiuggaimima': 'Change Password'
+  'mt.xiuggaimima': 'Change Password',
+  'mt.shangchuanzhaopianbuyaochaoguo': 'Upload images cannot exceed {value}'
 }

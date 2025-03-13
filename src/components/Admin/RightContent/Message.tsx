@@ -13,6 +13,7 @@ import { getMyMessageInfo, readAllMessage } from '@/services/api/message'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
+import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
 import { HeaderTheme } from '../Header/types'
 
 type IProps = {
@@ -43,13 +44,13 @@ function Message({ theme }: IProps) {
   const handleReadAll = async () => {
     await readAllMessage()
     global.getMessageList(true)
-    global.getUnreadMessageCount()
+    MessageStore.getUnreadMessageCount()
   }
 
   const handleClickItem = async (id: any) => {
     const res = await getMyMessageInfo({ id })
     if (res.success) {
-      global.getUnreadMessageCount()
+      MessageStore.getUnreadMessageCount()
       global.messageList = global.messageList.map((item) => {
         if (item.id === id) {
           item.isRead = 'READ'

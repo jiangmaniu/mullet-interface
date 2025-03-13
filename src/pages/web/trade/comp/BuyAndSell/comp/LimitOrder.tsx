@@ -160,14 +160,6 @@ export default observer(
       type: isBuy ? ORDER_TYPE.LIMIT_BUY_ORDER : ORDER_TYPE.LIMIT_SELL_ORDER // 订单类型
     } as Order.CreateOrder
 
-    // useEffect(() => {
-    //   if (orderType === 2) {
-    //     trade.calcMargin(orderParams).then((res: any) => {
-    //       setMargin(res)
-    //     })
-    //   }
-    // }, [isBuy, count, sl, sp, marginType, symbol, orderType, price, trade.leverageMultiple])
-
     const onFinish = async () => {
       // sl_scope, sp_scope
       if (!token) {

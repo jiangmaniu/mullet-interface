@@ -60,7 +60,7 @@ const UploadSheetModal = ({ onChange, multiple = false, count = 0 }: IProps, ref
           return
         }
 
-        message.info(res.msg || i18n.t('msg.error.Upload Failed'))
+        message.info(res.message || i18n.t('msg.error.Upload Failed'))
       })
       .catch((err) => {
         message.info(err?.Message || i18n.t('msg.error.Upload Failed'))
