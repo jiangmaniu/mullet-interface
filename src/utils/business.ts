@@ -428,6 +428,9 @@ export const parseOrderMessage = (message: string) => {
 export const getAccountSynopsisByLng = (synopsis: any) => {
   const locale = getLocale()
   // 没有找到设置的语言，则取第一项
-  const item = (synopsis || []).find((item: AccountGroup.SynopsisConf) => item.language === locale) || synopsis?.[0] || {}
+  const item =
+    Array.isArray(synopsis) && synopsis.length
+      ? synopsis.find((item: AccountGroup.SynopsisConf) => item.language === locale) || synopsis?.[0] || {}
+      : {}
   return item as AccountGroup.SynopsisConf
 }
