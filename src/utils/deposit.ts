@@ -66,7 +66,7 @@ export const withdrawCountTransferCurr = (value: number, methodInfo?: Wallet.fun
 
   let val = Number(value) || 0
 
-  // 匯率： 平台匯率 + 匯差百分比
+  // 匯率： 平台匯率 - 匯差百分比
   const _exchangeRate = withdrawExchangeRate(methodInfo)
 
   // 手續費：單筆最低手續費 或 入金金額 * 交易百分比手續費 + 單筆固定手續費
