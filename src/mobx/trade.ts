@@ -1117,7 +1117,7 @@ class TradeStore {
 
     if (tabKey === 'POSITION') {
       // 持仓
-      this.getPositionList(true)
+      this.getPositionList(false)
     } else if (tabKey === 'PENDING') {
       // 挂单
       this.getPendingList()
@@ -1253,7 +1253,7 @@ class TradeStore {
     const res = await modifyStopProfitLoss(params)
     if (res.success) {
       // 更新持仓列表
-      this.getPositionList(true)
+      this.getPositionList(false)
       // 更新止盈止损列表
       // this.getStopLossProfitList()
 
