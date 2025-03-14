@@ -819,5 +819,6 @@ export default {
   'mt.gaojirenzheng': '高級認證',
   'mt.ninjiangzhifujine': '您将支付的金额为',
   'mt.shoukuanxinxi': '收款信息',
-  'mt.xiazaierwerma': '下載二維碼'
+  'mt.xiazaierwerma': '下載二維碼',
+  'mt.shangchuanzhaopianbuyaochaoguo': '上傳圖片不得超過{value}'
 }

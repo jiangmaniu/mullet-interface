@@ -61,7 +61,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
 
     if (success) {
       modalRef?.current?.close()
-      trade.getPositionList(true)
+      trade.getPositionList()
       // 刷新账户信息
       await fetchUserInfo(true)
       message.info(intl.formatMessage({ id: 'common.opSuccess' }))

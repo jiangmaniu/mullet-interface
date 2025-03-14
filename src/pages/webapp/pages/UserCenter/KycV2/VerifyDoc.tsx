@@ -109,8 +109,8 @@ const VerifyDoc = forwardRef(
             <Text size="base" weight="medium">
               {i18n.t('pages.userCenter.renzhengxingming')}:&nbsp;
               {i18n.locale === 'zh-TW'
-                ? `${currentUser?.lastName || 'lastName'}${currentUser?.firstName || 'firstName'}`
-                : `${currentUser?.firstName || 'firstName'} ${currentUser?.lastName || 'lastName'}`}
+                ? `${currentUser?.lastName || ''}${currentUser?.firstName || ''}`
+                : `${currentUser?.firstName || ''} ${currentUser?.lastName || ''}`}
             </Text>
           </View>
           <Text className={cn('text-sm font-medium text-primary mt-2.5')} weight="medium">
@@ -144,6 +144,11 @@ const VerifyDoc = forwardRef(
               </View>
             </View>
           )}
+          <Text className={cn('text-xs text-red-500')} color="red">
+            {i18n.t('mt.shangchuanzhaopianbuyaochaoguo', {
+              value: '5MB'
+            })}
+          </Text>
         </View>
 
         <UploadSheetModal ref={uploadSheetModalRef} onChange={onChange} />
