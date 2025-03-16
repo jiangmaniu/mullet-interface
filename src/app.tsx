@@ -8,9 +8,11 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 
 import { CONFIG_URL } from '@/constants/config'
+import { beforeCaptureSetUserInfo } from '@/utils/sentry'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
 import { HeaderRightContent } from './components/Admin/RightContent'
+import Button from './components/Base/Button'
 import Forbid from './components/Base/Forbid'
 import SwitchLanguage from './components/SwitchLanguage'
 import { DEFAULT_LOCALE, ICONFONT_URL, MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from './constants'
@@ -324,6 +326,8 @@ export function onRouteChange({ location, clientRoutes, routes, action, basename
   // }
 
   handleJumpMobile()
+
+  beforeCaptureSetUserInfo()
 }
 
 export const rootContainer = (container: JSX.Element) => {
@@ -366,4 +370,34 @@ export const rootContainer = (container: JSX.Element) => {
     null,
     container
   )
+}
+
+// sentry运行时配置 https://github.com/alitajs/umi-plugin-sentry
+export const sentry = {
+  showDialog: true,
+  // @ts-ignore
+  fallback: ({ error, componentStack, resetError }) => (
+    <div style={{ padding: 20 }}>
+      <div>You have encountered an error</div>
+      <div>{error.toString()}</div>
+      <div>{componentStack}</div>
+      <Button
+        onClick={() => {
+          resetError()
+        }}
+        type="primary"
+        style={{ marginTop: 20 }}
+      >
+        Click here to reset!
+      </Button>
+    </div>
+  ),
+  onError: (e: any) => {
+    console.error('sentry onError', e)
+  },
+  beforeCapture: (scope: any) => {
+    console.log('sentry beforeCapture', scope)
+
+    beforeCaptureSetUserInfo()
+  }
 }

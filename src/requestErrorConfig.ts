@@ -1,5 +1,6 @@
 ﻿import { RequestConfig } from '@umijs/max'
 import { Base64 } from 'js-base64'
+import { Sentry } from 'umi'
 
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
@@ -62,6 +63,11 @@ export const errorConfig: RequestConfig = {
     // 错误接收及处理
     // 第一个参数是 catch 到的 error，第二个参数则是 request 的 opts
     errorHandler: (error: any, opts: any) => {
+      // 主动捕获上报错误
+      if (process.env.NODE_ENV === 'production') {
+        Sentry.captureException(error)
+      }
+
       // console.log('==errorHandler==', JSON.stringify(error))
       if (opts?.skipErrorHandler) throw error
       // 我们的 errorThrower 抛出的错误。

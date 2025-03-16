@@ -150,7 +150,7 @@ declare namespace User {
     countryInfo?: {
       id: string
       /**简称 AN */
-      abbr: 'AN'
+      abbr: string
       /**英文名字 eg.NETHERLANDS ANTILLES */
       nameEn: string
       /**中文名字  eg.荷属安的列斯群岛*/
@@ -175,7 +175,6 @@ declare namespace User {
   }
   // 客户用户信息
   type ClientUserInfo = {
-    lastLoginIp?: string
     /**
      * 账号
      */
@@ -272,8 +271,12 @@ declare namespace User {
      * 用户平台
      */
     userType?: number
-    /**最后登录 */
+    /**最后登录时间 */
     lastLoginTime?: string
+    /**最后登录具体地址 */
+    lastLoginAddress?: string
+    /**最后登录IP */
+    lastLoginIp?: string
     /**用户设置的语言 */
     language: string
   }

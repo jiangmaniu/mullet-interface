@@ -43,6 +43,10 @@
     "@ant-design/use-emotion-css": "1.0.4",
     "@gorhom/bottom-sheet": "^5.0.6",
     "@hookform/resolvers": "^3.9.1",
+    "@sentry/browser": "^9.5.0",
+    "@sentry/cli": "^2.42.3",
+    "@sentry/react": "^9.5.0",
+    "@sentry/tracing": "^7.120.3",
     "@types/lodash-es": "^4.17.12",
     "@umijs/max": "^4.0.52",
     "@umijs/route-utils": "^2.2.2",
@@ -103,9 +107,11 @@
     "zod": "^3.24.1"
   },
   "devDependencies": {
+    "@alitajs/sentry": "^2.0.0",
     "@ant-design/pro-cli": "^2.1.5",
     "@commitlint/cli": "^17.8.0",
     "@commitlint/config-conventional": "^17.8.0",
+    "@sentry/webpack-plugin": "^3.2.2",
     "@testing-library/react": "^13.4.0",
     "@types/big.js": "^6.2.2",
     "@types/classnames": "^2.3.1",

@@ -8,6 +8,7 @@ import serverEnv from '../src/env/server'
 import defaultSettings from './defaultSettings'
 import proxy from './proxy'
 import routes from './routes'
+import dayjs from 'dayjs'
 const { REACT_APP_ENV = 'dev' } = process.env
 
 export default defineConfig({
@@ -19,7 +20,34 @@ export default defineConfig({
    */
   hash: true,
 
-  plugins: [require.resolve('./plugins/prefetch.ts')],
+  plugins: [
+    require.resolve('./plugins/prefetch.ts'),
+    '@alitajs/sentry'
+  ],
+
+  sentry: {
+    // 参数 https://github.com/getsentry/sentry-javascript/blob/0c4fdf60fe1394dd453093fc7ecf6d95ccee070f/packages/types/src/options.ts#L10
+    dsn: process.env.SENTRY_DSN,
+    // 控制上报的频率
+    tracesSampleRate: '1.0',
+    development: false, // 启用开发环境的 sentry 调试
+    sourceMap: {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      // 版本将上传到 https://poetry-m4.sentry.io/settings/projects/sux-client/source-maps/
+      release: {
+        // sourcemap版本号
+        name: dayjs().format('YYYY-MM-DD HH:mm:ss')
+      },
+      // https://docs.sentry.io/platforms/javascript/sourcemaps/uploading/webpack/
+      sourcemaps: {
+        // assets: `${distDir}/**/*`,
+        // 上传后，删除dist下的.map文件
+        filesToDeleteAfterUpload: ['dist//*.map']
+      },
+    }
+  },
 
   // 只设置 dev 阶段的 sourcemap
   devtool: process.env.NODE_ENV === 'development' ? 'source-map' : false,
@@ -246,7 +274,7 @@ export default defineConfig({
         : {})
     },
   // 配置额外的 babel 插件。可传入插件地址或插件函数。
-  extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
+  // extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // https://umijs.org/docs/api/config#codesplitting
   codeSplitting: {
     jsStrategy: 'granularChunks'

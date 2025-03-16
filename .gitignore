@@ -42,4 +42,7 @@ build
 
 # .docker-volumes/nginx/html
 .docker-volumes/nginx/log
-.env.local
+# .env.local
+
+# Sentry Config File
+.sentryclirc

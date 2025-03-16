@@ -9,12 +9,13 @@
     "noEmit": true,
     "jsx": "preserve",
     "esModuleInterop": true,
-    "sourceMap": false,
+    "sourceMap": true,
     "baseUrl": "./",
     "skipLibCheck": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
+
     "paths": {
       "react": ["./node_modules/@types/react"],
       "@/*": ["./src/*"],
@@ -22,7 +23,14 @@
       "@@test/*": ["./src/.umi-test/*"],
       "public/*": ["./public/*"]
     },
-    "plugins": [{ "name": "typescript-plugin-css-modules" }]
+
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "inlineSources": true,
+
+    // Set `sourceRoot` to  "/" to strip the build path prefix
+    // from generated source code references.
+    // This improves issue grouping in Sentry.
+    "sourceRoot": "/"
   },
   "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "config/plugins/prefetch.ts"]
 }
