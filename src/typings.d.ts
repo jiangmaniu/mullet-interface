@@ -68,5 +68,11 @@ declare namespace NodeJS {
     BASE_URL: string
     /**图片域名 */
     IMG_DOMAIN: string
+    /**git commit hash值 */
+    COMMITHASH: string
+    /**git分支名 */
+    BRANCH: string
+    /**git提交时间 */
+    LASTCOMMITDATETIME: string
   }
 }

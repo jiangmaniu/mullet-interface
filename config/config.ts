@@ -11,6 +11,14 @@ import routes from './routes'
 import dayjs from 'dayjs'
 const { REACT_APP_ENV = 'dev' } = process.env
 
+import { GitRevisionPlugin } from 'git-revision-webpack-plugin'
+
+const gitRevisionPlugin = new GitRevisionPlugin({
+  // https://www.npmjs.com/package/git-revision-webpack-plugin#configuration
+  branch: true,
+  commithashCommand: 'rev-parse --short HEAD' // 获取commit SHA的命令
+})
+
 export default defineConfig({
   base: '/',
   /**
@@ -30,7 +38,7 @@ export default defineConfig({
     dsn: process.env.SENTRY_DSN,
     // 控制上报的频率
     tracesSampleRate: '1.0',
-    development: false, // 启用开发环境的 sentry 调试
+    development: true, // 启用开发环境的 sentry 调试
     sourceMap: {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
@@ -41,6 +49,7 @@ export default defineConfig({
         name: dayjs().format('YYYY-MM-DD HH:mm:ss')
       },
       // https://docs.sentry.io/platforms/javascript/sourcemaps/uploading/webpack/
+      // 打包阶段才会主动上传，测试环境没有上传sourcemap
       sourcemaps: {
         // assets: `${distDir}/**/*`,
         // 上传后，删除dist下的.map文件
@@ -258,6 +267,10 @@ export default defineConfig({
     // 开发环境使用环境变量，生产环境使用配置文件
     {
       'process.env.PLATFORM_SEO': process.env.PLATFORM_SEO,
+      // git版本信息，用于sentry日志上报
+      'process.env.COMMITHASH': gitRevisionPlugin.commithash(),
+      'process.env.BRANCH': gitRevisionPlugin.branch(),
+      'process.env.LASTCOMMITDATETIME': dayjs(gitRevisionPlugin.lastcommitdatetime() as string).format('YYYY-MM-DD HH:mm:ss'),
       ...(process.env.NODE_ENV === 'development' || process.env.PLATFORM_SEO === '1'
         ? {
             'process.env.BASE_URL': process.env.BASE_URL,
@@ -387,5 +400,7 @@ export default defineConfig({
         })
       )
     }
+
+    config.plugin("git-version").use(GitRevisionPlugin,[])
   }
 })

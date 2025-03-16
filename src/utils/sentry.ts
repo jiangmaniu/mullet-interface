@@ -25,6 +25,12 @@ export const beforeCaptureSetUserInfo = () => {
     })
     // 设置自定义标签
     // https://docs.sentry.io/platforms/javascript/enriching-events/tags/
+    // 设置git提交信息
+    Sentry?.setTag?.('COMMITHASH', process.env.COMMITHASH)
+    Sentry?.setTag?.('BRANCH', process.env.BRANCH)
+    Sentry?.setTag?.('LASTCOMMITDATETIME', process.env.LASTCOMMITDATETIME)
+
+    // 设置用户信息
     Sentry?.setTag?.('account', currentUser?.userInfo?.account)
     Sentry?.setTag?.('userId', currentUser?.userInfo?.id)
     Sentry?.setTag?.('lastLoginAddress', currentUser?.userInfo?.lastLoginAddress)
