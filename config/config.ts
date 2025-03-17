@@ -38,7 +38,7 @@ export default defineConfig({
     dsn: process.env.SENTRY_DSN,
     // 控制上报的频率
     tracesSampleRate: '1.0',
-    development: true, // 启用开发环境的 sentry 调试
+    development: false, // 启用开发环境的 sentry 调试
     sourceMap: {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
