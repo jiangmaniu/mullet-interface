@@ -39,15 +39,15 @@ export const beforeCaptureSetUserInfo = () => {
     Sentry?.setTag?.('phone', `${currentUser?.userInfo?.phoneAreaCode} ${currentUser?.userInfo?.phone}`)
     Sentry?.setTag?.('pageLocale', getLocale())
 
-    Sentry?.addBreadcrumb?.({
-      category: 'blade-auth',
-      message: `bearer ${token}`,
-      level: 'info'
-    })
-    Sentry?.addBreadcrumb?.({
-      category: 'userInfo',
-      message: JSON.stringify(currentUser),
-      level: 'info'
-    })
+    // Sentry?.addBreadcrumb?.({
+    //   category: 'blade-auth',
+    //   message: `bearer ${token}`,
+    //   level: 'info'
+    // })
+    // Sentry?.addBreadcrumb?.({
+    //   category: 'userInfo',
+    //   message: JSON.stringify(currentUser),
+    //   level: 'info'
+    // })
   }
 }
