@@ -10,6 +10,7 @@ export const beforeCaptureSetUserInfo = () => {
   // setTag 设置标签 设置完可以在后台看到对应的分类标签
   // 保存用户token上报
   if (token) {
+    const { access_token, refresh_token, ...userInfo } = currentUser || {}
     const username = currentUser?.firstName ? `${currentUser?.lastName}.${currentUser?.firstName}` : currentUser?.userInfo?.name || 'unknow'
 
     // setUser 设置用户 比如在用户登陆授权之后，全程跟踪用户发生的错误
@@ -44,10 +45,10 @@ export const beforeCaptureSetUserInfo = () => {
     //   message: `bearer ${token}`,
     //   level: 'info'
     // })
-    // Sentry?.addBreadcrumb?.({
-    //   category: 'userInfo',
-    //   message: JSON.stringify(currentUser),
-    //   level: 'info'
-    // })
+    Sentry?.addBreadcrumb?.({
+      category: 'userInfo',
+      message: JSON.stringify(userInfo),
+      level: 'info'
+    })
   }
 }
