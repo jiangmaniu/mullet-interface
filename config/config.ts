@@ -12,7 +12,6 @@ import dayjs from 'dayjs'
 const { REACT_APP_ENV = 'dev' } = process.env
 
 import { GitRevisionPlugin } from 'git-revision-webpack-plugin'
-import { BrowserOptions } from "@sentry/browser";
 
 const gitRevisionPlugin = new GitRevisionPlugin({
   // https://www.npmjs.com/package/git-revision-webpack-plugin#configuration
@@ -39,8 +38,6 @@ export default defineConfig({
     dsn: process.env.SENTRY_DSN,
     // 控制上报的频率
     tracesSampleRate: '1.0',
-    // @ts-ignore
-    attachScreenshot: true,
     development: false, // 启用开发环境的 sentry 调试
     sourceMap: {
       org: process.env.SENTRY_ORG,
