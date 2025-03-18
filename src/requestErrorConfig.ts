@@ -5,14 +5,8 @@ import { Sentry } from 'umi'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
-import { md5 } from 'js-md5'
-import { stringify } from 'qs'
-import { REPLAY_PROTECTION_APP_KEY } from './constants'
 import { getLocaleForBackend } from './constants/enum'
 import { getEnv } from './env'
-import { getUid } from './utils'
-import crypto from './utils/crypto'
-import { deleteEmptyProperty, formatObjArrToStr, sortObjectByKey } from './utils/helpers'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
 import { beforeCaptureSetUserInfo } from './utils/sentry'
@@ -158,48 +152,48 @@ export const errorConfig: RequestConfig = {
       }
 
       // POST接口
-      if (config.method === 'post') {
-        // 启用接口防重放
-        if (config.replayProtection) {
-          const timestamp = Date.now()
-          const nonce = getUid()
-          const stringifyBodyparams = stringify(
-            {
-              // 业务参数排序
-              ...formatObjArrToStr(sortObjectByKey(deleteEmptyProperty(config.data))),
-              timestamp,
-              nonce,
-              appkey: REPLAY_PROTECTION_APP_KEY // 和后台约定的接口防重放的appkey
-            },
-            { encode: false }
-          )
-          // console.log('stringifyBodyparams', stringifyBodyparams)
-          // console.log('md5', md5(stringifyBodyparams))
-          // md5签名
-          headers['sign'] = md5(stringifyBodyparams)
-          // 时间戳
-          headers['timestamp'] = timestamp
-          // 随机数
-          headers['nonce'] = nonce
-        }
-      }
+      // if (config.method === 'post') {
+      //   // 启用接口防重放
+      //   if (config.replayProtection) {
+      //     const timestamp = Date.now()
+      //     const nonce = getUid()
+      //     const stringifyBodyparams = stringify(
+      //       {
+      //         // 业务参数排序
+      //         ...formatObjArrToStr(sortObjectByKey(deleteEmptyProperty(config.data))),
+      //         timestamp,
+      //         nonce,
+      //         appkey: REPLAY_PROTECTION_APP_KEY // 和后台约定的接口防重放的appkey
+      //       },
+      //       { encode: false }
+      //     )
+      //     // console.log('stringifyBodyparams', stringifyBodyparams)
+      //     // console.log('md5', md5(stringifyBodyparams))
+      //     // md5签名
+      //     headers['sign'] = md5(stringifyBodyparams)
+      //     // 时间戳
+      //     headers['timestamp'] = timestamp
+      //     // 随机数
+      //     headers['nonce'] = nonce
+      //   }
+      // }
 
-      // 启用接口加密请求参数传输
-      if (config.cryptoData) {
-        // console.log('加密前的请求参数', config.data)
-        // 对接口使用AES堆成加密请求参数
-        if (config.params) {
-          const data = crypto.encrypt(JSON.stringify(config.params))
-          config.params = { data }
-        }
-        if (config.data) {
-          // 标记text请求
-          config.text = true
-          config.data = crypto.encrypt(JSON.stringify(config.data))
-        }
-        // console.log('加密后的请求参数', config.data)
-        // console.log('解密后的请求参数', JSON.parse(crypto.decrypt(config.data)))
-      }
+      // // 启用接口加密请求参数传输
+      // if (config.cryptoData) {
+      //   // console.log('加密前的请求参数', config.data)
+      //   // 对接口使用AES堆成加密请求参数
+      //   if (config.params) {
+      //     const data = crypto.encrypt(JSON.stringify(config.params))
+      //     config.params = { data }
+      //   }
+      //   if (config.data) {
+      //     // 标记text请求
+      //     config.text = true
+      //     config.data = crypto.encrypt(JSON.stringify(config.data))
+      //   }
+      //   // console.log('加密后的请求参数', config.data)
+      //   // console.log('解密后的请求参数', JSON.parse(crypto.decrypt(config.data)))
+      // }
 
       // headers中配置text请求
       if (config.text === true) {
@@ -229,12 +223,12 @@ export const errorConfig: RequestConfig = {
 
       // 解析加密报文
       // @ts-ignore
-      if (response.config.cryptoData) {
-        // @ts-ignore
-        const d = JSON.parse(crypto.decryptAES(response.data, crypto.aesKey))
-        // @ts-ignore
-        response.data = d
-      }
+      // if (response.config.cryptoData) {
+      //   // @ts-ignore
+      //   const d = JSON.parse(crypto.decryptAES(response.data, crypto.aesKey))
+      //   // @ts-ignore
+      //   response.data = d
+      // }
 
       return response
     }
