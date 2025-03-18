@@ -231,12 +231,13 @@ export default [
     access: 'canAdmin', // 权限配置
     component: './admin/setting'
   },
-  {
-    path: '/:lng/setting/kyc',
-    access: 'canAdmin', // 权限配置
-    component: './admin/setting/kycStepForm',
-    hideInMenu: true
-  },
+  // 旧版本 kyc 认证
+  // {
+  //   path: '/:lng/setting/kyc',
+  //   access: 'canAdmin', // 权限配置
+  //   component: './admin/setting/kycStepForm',
+  //   hideInMenu: true
+  // },
 
   // ======================== 移动端页面路由 start ======================
   {

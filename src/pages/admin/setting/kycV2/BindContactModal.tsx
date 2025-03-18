@@ -4,7 +4,7 @@ import { forwardRef, useImperativeHandle, useRef } from 'react'
 import Modal from '@/components/Admin/Modal'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import BindEmailPhoneForm from '../kycStepForm1.5/BindEmailPhoneForm'
+import BindEmailPhoneForm from '../kycStepForm/BindEmailPhoneForm'
 
 type IProps = {
   trigger?: JSX.Element

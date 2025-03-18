@@ -3,7 +3,7 @@ import { forwardRef, useImperativeHandle, useRef } from 'react'
 
 import Modal from '@/components/Admin/Modal'
 import { useTheme } from '@/context/themeProvider'
-import KycStepThreeForm from '../kycStepForm1.5/KycStepThreeForm'
+import KycStepThreeForm from '../kycStepForm/KycStepThreeForm'
 
 type IProps = {
   trigger?: JSX.Element
