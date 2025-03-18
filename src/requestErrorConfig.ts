@@ -15,6 +15,7 @@ import crypto from './utils/crypto'
 import { deleteEmptyProperty, formatObjArrToStr, sortObjectByKey } from './utils/helpers'
 import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
+import { beforeCaptureSetUserInfo } from './utils/sentry'
 
 type IErrorInfo = {
   code: number
@@ -65,7 +66,10 @@ export const errorConfig: RequestConfig = {
     errorHandler: (error: any, opts: any) => {
       // 主动捕获上报错误
       if (process.env.NODE_ENV === 'production') {
-        Sentry.captureException(error)
+        beforeCaptureSetUserInfo()
+        setTimeout(() => {
+          Sentry.captureException(error)
+        }, 100)
       }
 
       // console.log('==errorHandler==', JSON.stringify(error))
