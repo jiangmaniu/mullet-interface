@@ -3,7 +3,7 @@ import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { isInStandaloneMode } from '@/utils/device'
 import mitt from '@/utils/mitt'
 import { getPathname } from '@/utils/navigator'
-import { STORAGE_GET_DEVICE_TYPE, STORAGE_GET_TOKEN, STORAGE_SET_DEVICE_TYPE } from '@/utils/storage'
+import { STORAGE_GET_DEVICE_TYPE, STORAGE_GET_TOKEN, STORAGE_SET_DEVICE_TYPE, STORAGE_SET_TRADINGVIEW_RESOLUTION } from '@/utils/storage'
 import { useBreakpoint } from '@ant-design/pro-components'
 import qs from 'qs'
 import { useEffect } from 'react'
@@ -51,8 +51,8 @@ export const useDeviceChange = () => {
     const page = (await getHomePage()) as string
     setDeviceType(currentDeviceType)
 
-    console.log('page', page)
-    console.log('searchParams', searchParams)
+    // 切换k线分辨率周期，PC端15分钟，移动端1分钟
+    STORAGE_SET_TRADINGVIEW_RESOLUTION(currentDeviceType === 'PC' ? '15' : '1')
 
     navigateTo(page, searchParams)
   }

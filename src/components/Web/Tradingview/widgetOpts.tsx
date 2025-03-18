@@ -6,6 +6,7 @@ const fullZero = (value: number | string) => String(value).padStart(2, '0')
 
 import { getEnv } from '@/env'
 import { isPCByWidth } from '@/utils'
+import { STORAGE_GET_TRADINGVIEW_RESOLUTION } from '@/utils/storage'
 import { defaultInterval, ThemeConst } from './constant'
 import DataFeedBase from './datafeed'
 
@@ -99,7 +100,7 @@ export default function getWidgetOpts(
     // )
   }
 
-  const interval = isPCByWidth() ? defaultInterval : '1'
+  const interval = STORAGE_GET_TRADINGVIEW_RESOLUTION() || (isPCByWidth() ? defaultInterval : '1')
 
   const widgetOptions: ChartingLibraryWidgetOptions = {
     // debug: process.env.NODE_ENV === 'development', // 调试模式
