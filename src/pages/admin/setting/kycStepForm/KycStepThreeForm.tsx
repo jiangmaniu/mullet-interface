@@ -68,6 +68,9 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
           <div className="flex items-center justify-center">
             <div className="w-[488px] h-[236px]">
               <UploadIdcard form={form} />
+              <span className="text-xs text-red-500">
+                <FormattedMessage id="mt.shangchuanzhaopianbuyaochaoguo" values={{ value: '5MB' }} />
+              </span>
             </div>
           </div>
         </div>

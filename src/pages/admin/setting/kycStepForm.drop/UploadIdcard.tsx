@@ -5,6 +5,7 @@ import { Upload } from 'antd'
 import { FormInstance } from 'antd/lib'
 import { useState } from 'react'
 
+import Button from '@/components/Base/Button'
 import { message } from '@/utils/message'
 import { STORAGE_GET_USER_INFO } from '@/utils/storage'
 
@@ -55,52 +56,31 @@ export default function ({ form }: IProps) {
     },
     onDrop(e) {
       console.log('Dropped files', e.dataTransfer.files)
-    },
-    beforeUpload(file) {
-      const isLt5M = file.size / 1024 / 1024 < 5
-      if (!isLt5M) {
-        message.info(intl.formatMessage({ id: 'mt.bunengdayuxxm' }, { size: 5 }))
-      }
-      // // 若返回 false 则停止上传
-      // // beforeUpload 返回 false 时，阻止了发送请求，但还是会加到列表中去，如果要在列表中也忽略，返回 Upload.LIST_IGNORE
-      return isLt5M || Upload.LIST_IGNORE
     }
   }
   return (
     <>
-      <div className="relative">
-        <Dragger {...props}>
-          {url ? (
-            <div className="flex items-center justify-center">
-              <img src={url} width={488} height={236} />
+      <Dragger {...props}>
+        {url ? (
+          <div className="flex items-center justify-center">
+            <img src={url} width={230} height={114} />
+          </div>
+        ) : (
+          <div className="flex items-center justify-center">
+            <div className="bg-[url(/img/idcard-bg.png)] bg-cover w-[230px] h-[114px] px-8 py-7">
+              <span className="text-primary text-sm font-semibold">
+                <FormattedMessage id="mt.dianjishangchuantupian" />
+              </span>
+              <Button className="!h-[30px] px-5 text-sm mt-5 !rounded-[22px]" type="primary">
+                <FormattedMessage id="common.shangchuan" />
+              </Button>
             </div>
-          ) : (
-            <div className="flex items-center flex-col justify-center">
-              <div className="flex flex-col items-center justify-center bg-cover w-[390px] h-[176px]">
-                <img src="/img/upload-01.png" width={80} height={80} />
-                <span className="text-primary text-sm font-semibold">
-                  <FormattedMessage id="mt.dianjishangchuantupian" />
-                </span>
-              </div>
-            </div>
-          )}
-        </Dragger>
-
-        {url && (
-          <div
-            onClick={() => {
-              setUrl('')
-              setFileName('')
-            }}
-            className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] z-100 rounded-full cursor-pointer guanbi"
-          >
-            <img src="/img/shanchu.png" className="w-full h-full" />
           </div>
         )}
-      </div>
-      {/* <div className="text-secondary text-xs mt-2">
+      </Dragger>
+      <div className="text-secondary text-xs mt-2">
         <FormattedMessage id="mt.kycUploadTips" />
-      </div> */}
+      </div>
       {/* 隐藏表单项提交 */}
       <ProFormText name="authImgsUrl" hidden />
     </>

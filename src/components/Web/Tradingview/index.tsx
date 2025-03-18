@@ -10,6 +10,7 @@ import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import klineStore from '@/mobx/kline'
 import { cn } from '@/utils/cn'
+import { STORAGE_SET_TRADINGVIEW_RESOLUTION } from '@/utils/storage'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
@@ -90,6 +91,9 @@ const Tradingview = () => {
             // Force the chart to re-request data. Before calling this function the onResetCacheNeededCallback callback from IDatafeedChartApi.subscribeBars should be called.
             tvWidget.activeChart().resetData() // 重置数据
           }, 100)
+
+          // 记录当前切换的分辨率
+          STORAGE_SET_TRADINGVIEW_RESOLUTION(interval)
         })
 
       // 监听k线可视区域图表范围变化，可以在这里请求后台数据
