@@ -6,7 +6,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { stores } from '@/context/mobxProvider'
 
 import { observer } from 'mobx-react'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import BaseKycApproveInfoModal from '../setting/kycV2/BaseKycApproveInfoModal'
 import DepositMethod from './comp'
 
@@ -15,14 +15,19 @@ const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
 
   const methods = stores.wallet.depositMethods
 
+  const depositMethodInitialized = stores.wallet.depositMethodInitialized
+  const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
+
   useLayoutEffect(() => {
-    if (methods.length === 0) {
+    const now = Date.now().valueOf()
+    if (prevIntl !== intl.locale || now - depositMethodInitialized > 1000 * 30) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
       stores.wallet.getDepositMethods({ language })
 
+      setPrevIntl(intl.locale)
       return
     }
-  }, [methods, intl])
+  }, [depositMethodInitialized, intl.locale])
 
   const [searchParams] = useSearchParams()
   const tradeAccountId = searchParams.get('tradeAccountId') as string

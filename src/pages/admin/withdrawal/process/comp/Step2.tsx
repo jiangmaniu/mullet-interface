@@ -2,7 +2,7 @@ import { ProForm, ProFormText as RawProFormText } from '@ant-design/pro-componen
 import { FormattedMessage, getIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
 import { FormInstance } from 'antd/lib'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 // import CodeInput from '@/components/Base/CodeInput'
 import Iconfont from '@/components/Base/Iconfont'
@@ -54,77 +54,75 @@ export const Step2 = ({
   const lng = useLang()
   const name = lng.isTW ? `${currentUser?.lastName}${currentUser?.firstName}` : `${currentUser?.firstName} ${currentUser?.lastName}`
 
-  const options = useMemo(() => {
-    return [
-      {
-        label: getIntl().formatMessage({ id: 'mt.bizhong' }),
-        value: currency
-      },
-      {
-        label: getIntl().formatMessage({ id: 'mt.lianmingcheng' }),
-        value: chain
-      },
-      ...(type === 'CHAIN'
-        ? [
-            {
-              label: getIntl().formatMessage({ id: 'mt.tibidizhi' }),
-              value: toAccountId
-            }
-          ]
-        : []),
-      {
-        label: getIntl().formatMessage({ id: 'mt.xingming' }),
-        value: name
-      },
-      {
-        label: getIntl().formatMessage({ id: 'mt.yinghangmingcheng' }),
-        value: bankName
-      },
-      ...(type === 'OTC'
-        ? [
-            {
-              label: getIntl().formatMessage({ id: 'mt.yinghangzhanghu' }),
-              value: bankCard
-            }
-          ]
-        : []),
-      {
-        label: getIntl().formatMessage({ id: 'mt.tixianjine' }),
-        value: `${formatNum(amount, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${currency}`
-      },
-      {
-        label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
-        value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${currency}`
-      },
-      ...(type === 'CHAIN'
-        ? [
-            {
-              label: getIntl().formatMessage({ id: 'mt.shijidaozhang' }),
-              value: `${formatNum(amount - handlingFee, {
-                precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
-              })} ${currency}`
-            }
-          ]
-        : [
-            {
-              label: getIntl().formatMessage({ id: 'mt.pingtaihuilv' }),
-              value: `${formatNum(withdrawExchangeRate(methodInfo), {
-                precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
-              })}`
-            },
-            {
-              label: getIntl().formatMessage({ id: 'mt.daozhangusd' }),
-              value: `${formatNum(amount - handlingFee, {
-                precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
-              })} ${currency}`
-            },
-            {
-              label: getIntl().formatMessage({ id: 'mt.daozhanghuansuan' }, { value: symbol }),
-              value: `${actualAmount} ${symbol}`
-            }
-          ])
-    ]
-  }, [currency, chain, type, toAccountId, name, bankName, amount, handlingFee])
+  const options = [
+    {
+      label: getIntl().formatMessage({ id: 'mt.bizhong' }),
+      value: currency
+    },
+    {
+      label: getIntl().formatMessage({ id: 'mt.lianmingcheng' }),
+      value: chain
+    },
+    ...(type === 'CHAIN'
+      ? [
+          {
+            label: getIntl().formatMessage({ id: 'mt.tibidizhi' }),
+            value: toAccountId
+          }
+        ]
+      : []),
+    {
+      label: getIntl().formatMessage({ id: 'mt.xingming' }),
+      value: name
+    },
+    {
+      label: getIntl().formatMessage({ id: 'mt.yinghangmingcheng' }),
+      value: bankName
+    },
+    ...(type === 'OTC'
+      ? [
+          {
+            label: getIntl().formatMessage({ id: 'mt.yinghangzhanghu' }),
+            value: bankCard
+          }
+        ]
+      : []),
+    {
+      label: getIntl().formatMessage({ id: 'mt.tixianjine' }),
+      value: `${formatNum(amount, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${currency}`
+    },
+    {
+      label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
+      value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${currency}`
+    },
+    ...(type === 'CHAIN'
+      ? [
+          {
+            label: getIntl().formatMessage({ id: 'mt.shijidaozhang' }),
+            value: `${formatNum(amount - handlingFee, {
+              precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
+            })} ${currency}`
+          }
+        ]
+      : [
+          {
+            label: getIntl().formatMessage({ id: 'mt.pingtaihuilv' }),
+            value: `${formatNum(withdrawExchangeRate(methodInfo), {
+              precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
+            })}`
+          },
+          {
+            label: getIntl().formatMessage({ id: 'mt.daozhangusd' }),
+            value: `${formatNum(amount - handlingFee, {
+              precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
+            })} ${currency}`
+          },
+          {
+            label: getIntl().formatMessage({ id: 'mt.daozhanghuansuan' }, { value: symbol }),
+            value: `${actualAmount} ${symbol}`
+          }
+        ])
+  ]
 
   const [sendTime, setSendTime] = useState(0)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)

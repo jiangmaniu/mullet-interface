@@ -15,7 +15,6 @@ type IProps = {
   onDeleteItem: (item: Wallet.WithdrawalAddress) => void
 }
 
-// 入金记录
 function CryptoAddress({ params, onSelectItem, onDeleteItem }: IProps, ref: any) {
   const { initialState } = useModel('@@initialState')
   const accountList = initialState?.currentUser?.accountList || []

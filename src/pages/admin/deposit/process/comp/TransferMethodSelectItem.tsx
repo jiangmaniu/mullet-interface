@@ -23,13 +23,20 @@ function TransferMethodSelectItem({ form, tips }: IProps) {
   const methodId = Form.useWatch('methodId', form) // 转入
 
   const methods = stores.wallet.depositMethods
+
+  const depositMethodInitialized = stores.wallet.depositMethodInitialized
+  const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
+
   useLayoutEffect(() => {
-    if (methods.length === 0) {
+    const now = Date.now().valueOf()
+    if (prevIntl !== intl.locale || now - depositMethodInitialized > 1000 * 30) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
       stores.wallet.getDepositMethods({ language })
+
+      setPrevIntl(intl.locale)
       return
     }
-  }, [methods, intl])
+  }, [depositMethodInitialized, intl.locale])
 
   return (
     <div>
