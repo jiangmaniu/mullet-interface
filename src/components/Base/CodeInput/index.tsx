@@ -27,7 +27,10 @@ export default function CodeInput({
       '.ant-otp-input': {
         width,
         height,
-        fontSize: '22px !important'
+        fontSize: '22px !important',
+        '&::selection': {
+          background: 'transparent'
+        }
       },
       '.ant-input-outlined:hover': {
         borderColor: '#110E23 !important'

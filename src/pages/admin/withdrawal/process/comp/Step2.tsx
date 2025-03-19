@@ -1,18 +1,20 @@
 import { ProForm, ProFormText as RawProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, getIntl, useModel } from '@umijs/max'
-import { Button, Form } from 'antd'
+import { Form } from 'antd'
 import { FormInstance } from 'antd/lib'
 import { useEffect, useMemo, useState } from 'react'
 
-import CodeInput from '@/components/Base/CodeInput'
+// import CodeInput from '@/components/Base/CodeInput'
 import Iconfont from '@/components/Base/Iconfont'
 import { CardContainer } from '@/pages/admin/copyTrading/comp/CardContainer'
 import { formatNum, regPassword } from '@/utils'
 import { cn } from '@/utils/cn'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
+import Button from '@/components/Base/Button'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useLang } from '@/context/languageProvider'
+import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
 import { sendCustomPhoneCode } from '@/services/api/user'
 import { withdrawExchangeRate } from '@/utils/deposit'
 import { message } from '@/utils/message'
@@ -249,7 +251,14 @@ export const Step2 = ({
               )}
             >
               <div className="flex items-center flex-wrap gap-6">
-                <CodeInput form={form} name="code" disabled={disabled} rules={[{ required: true }, { len: 6 }]} />
+                <CodeInput
+                  form={form}
+                  inputWrapperStyle={['!size-[42px]']}
+                  height={42}
+                  name="code"
+                  disabled={disabled}
+                  rules={[{ required: true }, { len: 6 }]}
+                />
                 <span className={cn('text-primary', sendTime === 0 ? 'cursor-pointer' : '')} onClick={handleGetVerificationCode}>
                   {sendTime === 0 && <FormattedMessage id="mt.huodeyanzhengma" />}
                   {sendTime > 0 && `${sendTime}s`}
@@ -267,7 +276,15 @@ export const Step2 = ({
               >
                 <img src="/img/uc/arrow-left.png" width={32} height={32} />
               </Button> */}
-              <Button type="primary" htmlType="submit" size="large" className="flex-1" onClick={handleSubmit} disabled={!submitable}>
+              <Button
+                height={46}
+                type="primary"
+                htmlType="submit"
+                size="large"
+                className="flex-1"
+                onClick={handleSubmit}
+                disabled={!submitable}
+              >
                 <div className="flex flex-row items-center gap-2">
                   <FormattedMessage id="mt.tixian" />
                   <Iconfont name="zhixiang" color="white" width={18} height={18} />

@@ -1,12 +1,13 @@
 import { ProForm } from '@ant-design/pro-components'
 import { FormattedMessage, useParams, useSearchParams } from '@umijs/max'
-import { Button, Form } from 'antd'
+import { Form } from 'antd'
 import { FormInstance } from 'antd/lib'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { formatNum } from '@/utils'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
+import Button from '@/components/Base/Button'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { getAccountProfit } from '@/services/api/tradeCore/account'
@@ -122,7 +123,7 @@ const Step1 = ({
 
           <TransferAmount form={form} currentUser={currentUser} methodInfo={methodInfo} totalProfit={totalProfit} />
 
-          <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit} disabled={disabled}>
+          <Button height={46} type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit} disabled={disabled}>
             <div className="flex flex-row items-center gap-2">
               <FormattedMessage id="mt.tixian" />
               <Iconfont name="zhixiang" color="white" width={18} height={18} />
