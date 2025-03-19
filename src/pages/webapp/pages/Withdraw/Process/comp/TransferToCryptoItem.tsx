@@ -32,7 +32,7 @@ function TransferToCryptoItem({ form }: IProps) {
       setInitialed(true)
       return
     }
-  }, [widthdrawAddress, intl, initialed])
+  }, [widthdrawAddress, initialed])
 
   return (
     <div className="relative">

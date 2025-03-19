@@ -63,15 +63,20 @@ const Detail = ({
 
   const methods = stores.wallet.depositMethods
   const intl = useIntl()
+
+  const depositMethodInitialized = stores.wallet.depositMethodInitialized
   const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
+
   useLayoutEffect(() => {
-    if (methods.length === 0 || prevIntl !== intl.locale) {
+    const now = Date.now().valueOf()
+    if (prevIntl !== intl.locale || now - depositMethodInitialized > 1000 * 30) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
       stores.wallet.getDepositMethods({ language })
+
       setPrevIntl(intl.locale)
       return
     }
-  }, [methods, intl])
+  }, [depositMethodInitialized, intl.locale])
 
   const methodInfo = useMemo(() => {
     return methods.find((item) => item.id === paymentInfo?.channelId)
@@ -93,7 +98,8 @@ const Detail = ({
     symbol,
     receiptAmount,
     channelNoValue,
-    createTime
+    createTime,
+    baseHandlingFee
   } = paymentInfo
 
   const options = [
@@ -105,6 +111,14 @@ const Detail = ({
       label: getIntl().formatMessage({ id: 'mt.rujinjine' }),
       value: `${baseOrderAmount} ${baseCurrency}`
     },
+    ...(baseHandlingFee
+      ? [
+          {
+            label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
+            value: `${baseHandlingFee} ${baseCurrency}`
+          }
+        ]
+      : []),
     {
       label: getIntl().formatMessage({ id: 'mt.cankaohuilv' }),
       value: exchangeRate,

@@ -139,7 +139,7 @@ function WithdrawDetailModal({ item }: IProps, ref: ForwardedRef<ModalRef>) {
                 <FormattedMessage id="mt.shouxufei" />
               </span>
               <span className=" text-xs text-primary">
-                {formatNum(item?.handlingFee, { precision: 2 })} {item?.baseCurrency}
+                {formatNum(item?.baseHandlingFee, { precision: 2 })} {item?.baseCurrency}
               </span>
             </div>
           </div>

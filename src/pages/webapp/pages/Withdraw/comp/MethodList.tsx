@@ -1,21 +1,26 @@
 import { stores } from '@/context/mobxProvider'
 import { useIntl, useModel, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useLayoutEffect } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import WithdrawMethod from './WithdrawMethod'
 export const MethodList = observer(() => {
   const intl = useIntl()
 
   const methods = stores.wallet.withdrawalMethods
 
+  const withdrawalMethodInitialized = stores.wallet.withdrawalMethodInitialized
+  const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
+
   useLayoutEffect(() => {
-    if (methods.length === 0) {
+    const now = Date.now().valueOf()
+    if (prevIntl !== intl.locale || now - withdrawalMethodInitialized > 1000 * 30) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
       stores.wallet.getWithdrawalMethods({ language })
 
+      setPrevIntl(intl.locale)
       return
     }
-  }, [methods, intl])
+  }, [withdrawalMethodInitialized, intl.locale])
 
   const [searchParams] = useSearchParams()
   const tradeAccountId = searchParams.get('tradeAccountId') as string

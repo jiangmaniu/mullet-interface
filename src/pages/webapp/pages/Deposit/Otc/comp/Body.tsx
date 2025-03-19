@@ -38,15 +38,19 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
   const methods = stores.wallet.depositMethods
   const intl = useIntl()
 
+  const depositMethodInitialized = stores.wallet.depositMethodInitialized
   const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
+
   useLayoutEffect(() => {
-    if (methods.length === 0 || prevIntl !== intl.locale) {
+    const now = Date.now().valueOf()
+    if (prevIntl !== intl.locale || now - depositMethodInitialized > 1000 * 30) {
       const language = intl.locale.replace('-', '').replace('_', '').toUpperCase() as Wallet.Language
       stores.wallet.getDepositMethods({ language })
+
       setPrevIntl(intl.locale)
       return
     }
-  }, [methods, intl])
+  }, [depositMethodInitialized, intl.locale])
 
   const methodInfo = useMemo(() => methods.find((item) => item.id === paymentInfo?.channelId), [paymentInfo, methods])
 
@@ -127,6 +131,17 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
             })} ${paymentInfo?.symbol}`}
           </span>
         </div>
+        {paymentInfo?.baseHandlingFee && (
+          <div className="text-sm">
+            <span className=" text-secondary">
+              <FormattedMessage id="mt.shouxufei" />
+            </span>
+            &nbsp;
+            <span className="text-primary">
+              {`${formatNum(paymentInfo?.baseHandlingFee, { precision: DEFAULT_CURRENCY_DECIMAL })} ${paymentInfo?.baseCurrency}`}
+            </span>
+          </div>
+        )}
       </div>
 
       <Step2 paymentInfo={paymentInfo} />
