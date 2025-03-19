@@ -707,7 +707,7 @@ export default {
   // ========== 其他组件相关 结束 ==========
 
   // 20250212
-  'mt.kyczhuangtai': 'KYC Status',
+  'mt.kyczhuangtai': 'KYC',
   'mt.xinxi': 'Information',
   'mt.zhanghuguanlitips2': 'Used to assist you log in to {name}. Please change your password if you suspect your password has been leaked.',
   'mt.anquan': 'Security',

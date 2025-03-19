@@ -194,7 +194,7 @@ export const Step2 = ({
               <div key={index} className="text-secondary text-sm flex flex-row items-center justify-between gap-4">
                 <span className="flex-shrink-0">{item.label}</span>
                 <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
-                <span className="flex-shrink-0">{item.value}</span>
+                <span className="flex-shrink-0 text-primary font-pf-medium">{item.value}</span>
               </div>
             ))}
 
@@ -229,7 +229,7 @@ export const Step2 = ({
             <RawProFormText.Password
               name="password"
               initialValue=""
-              fieldProps={{ type: 'password', allowClear: false }}
+              fieldProps={{ type: 'password', allowClear: false, style: { height: 42 } }}
               label={getIntl().formatMessage({ id: 'mt.zhanghaomima' })}
               placeholder={getIntl().formatMessage({ id: 'mt.qingshuruzhanghaomima' })}
               rules={[
@@ -250,12 +250,9 @@ export const Step2 = ({
             >
               <div className="flex items-center flex-wrap gap-6">
                 <CodeInput form={form} name="code" disabled={disabled} rules={[{ required: true }, { len: 6 }]} />
-                <span
-                  className={cn('text-primary ', sendTime > 0 ? 'cursor-pointer hover:underline' : '')}
-                  onClick={handleGetVerificationCode}
-                >
-                  <FormattedMessage id="mt.huodeyanzhengma" />
-                  {sendTime > 0 && ` (${sendTime}s)`}
+                <span className={cn('text-primary', sendTime === 0 ? 'cursor-pointer' : '')} onClick={handleGetVerificationCode}>
+                  {sendTime === 0 && <FormattedMessage id="mt.huodeyanzhengma" />}
+                  {sendTime > 0 && `${sendTime}s`}
                 </span>
               </div>
             </ProForm.Item>

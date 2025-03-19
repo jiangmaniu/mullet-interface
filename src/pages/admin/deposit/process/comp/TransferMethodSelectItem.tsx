@@ -63,7 +63,7 @@ function TransferMethodSelectItem({ form, tips }: IProps) {
                 onClick={() => {
                   setOpen(false)
                 }}
-                className={classNames('cursor-pointer rounded-lg border  border-gray-250 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
+                className={classNames('cursor-pointer rounded-lg border  border-gray-150 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
                   'bg-[#f5f5f5]': item.channelId === methodId
                 })}
               >
@@ -89,7 +89,7 @@ function TransferMethodSelectItem({ form, tips }: IProps) {
           // ...item,
           value: item.channelId,
           label: (
-            <div className="flex justify-start w-full gap-2">
+            <div className="flex justify-start items-center w-full gap-2">
               <img src={`${getEnv().imgDomain}${item.channelIcon}`} alt="" className="w-5 h-5 rounded-full overflow-hidden bg-gray" />
               <div className="flex-1 text-sm font-bold text-primary truncate">
                 {item.channelRevealName}&nbsp;({item.channelNo})

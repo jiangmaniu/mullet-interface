@@ -51,44 +51,55 @@ function UploadModal(props: IProps, ref: any) {
   }
 
   const [visible, setVisible] = useState(false)
+  const [forceUpdate, setForceUpdate] = useState(0)
 
   return (
-    <Modal
-      width={500}
-      afterOpenChange={(open) => {
-        // props.handleReset()
-      }}
-      title={
-        <span className="">
-          <FormattedMessage id="mt.shangchuanpinzheng" />
+    <>
+      <Modal
+        width={500}
+        afterOpenChange={(open) => {
+          // props.handleReset()
+        }}
+        title={
+          <span className="">
+            <FormattedMessage id="mt.shangchuanpinzheng" />
 
-          <span className="text-red-500 text-sm font-normal underline cursor-pointer ml-4" onClick={() => setVisible(true)}>
-            <FormattedMessage id="mt.chukanshili" />
+            <span className="text-red-500 text-sm font-normal underline cursor-pointer ml-4" onClick={() => setVisible(true)}>
+              <FormattedMessage id="mt.chukanshili" />
+            </span>
           </span>
-        </span>
-      }
-      footer={null}
-      ref={modalRef}
-    >
-      <UploadIdcard setImgs={setImgs} imgs={imgs} />
-      <Button size="large" type="primary" className="mt-5 w-full" onClick={handleSubmit}>
-        <FormattedMessage id="common.tijiao" />
-      </Button>
+        }
+        footer={null}
+        ref={modalRef}
+        contentStyle={{ paddingTop: 0, paddingBottom: 18 }}
+        titleStyle={{ paddingBottom: 0 }}
+      >
+        <UploadIdcard setImgs={setImgs} imgs={imgs} />
 
+        <Button size="large" type="primary" className="mt-2 w-full" onClick={handleSubmit}>
+          <FormattedMessage id="common.tijiao" />
+        </Button>
+      </Modal>
       <Image.PreviewGroup
         preview={{
           visible,
           scaleStep: 1,
+          destroyOnClose: true,
           onVisibleChange: (value) => {
             setVisible(value)
+            if (!value) {
+              // @hack 修复点击mask不销毁组件
+              setForceUpdate(forceUpdate + 1)
+            }
           }
         }}
+        key={forceUpdate}
       >
         <Image width={200} style={{ display: 'none' }} src={'/img/shili-01.jpeg'} />
         <Image width={200} style={{ display: 'none' }} src={'/img/shili-02.png'} />
         <Image width={200} style={{ display: 'none' }} src={'/img/shili-03.jpeg'} />
       </Image.PreviewGroup>
-    </Modal>
+    </>
   )
 }
 

@@ -61,7 +61,6 @@ function KycWaitModal({ trigger, onClose }: IProps, ref: any) {
       </div>
       <Button
         className="!h-[44px]"
-        type="primary"
         block
         onClick={() => {
           modalRef?.current?.close()

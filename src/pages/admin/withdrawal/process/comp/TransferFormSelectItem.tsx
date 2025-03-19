@@ -77,7 +77,7 @@ function TransferFormSelectItem({ form, totalProfit }: IProps) {
                 onClick={() => {
                   setOpen(false)
                 }}
-                className={classNames('cursor-pointer rounded-lg border border-gray-250 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
+                className={classNames('cursor-pointer rounded-lg border border-gray-150 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
                   'bg-[#f5f5f5]': item.id === fromAccountInfo
                 })}
               >

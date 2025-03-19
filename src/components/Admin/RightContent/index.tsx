@@ -12,6 +12,7 @@ import { useEnv } from '@/context/envProvider'
 import { goKefu, push } from '@/utils/navigator'
 
 import Button from '@/components/Base/Button'
+import { useTheme } from '@/context/themeProvider'
 import { HeaderTheme } from '../Header/types'
 import AccountDropdown from './AccountDropdown'
 import Message from './Message'
@@ -89,6 +90,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const { pathname } = useLocation()
   const isTradePage = pathname.indexOf('/trade') !== -1
   const isBaseAuth = currentUser?.isBaseAuth
+  const themeConfig = useTheme()
 
   const realAccountList = accountList.filter((item) => !item.isSimulate)
 
@@ -104,8 +106,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
           >
             <div className="flex flex-row gap-1.5 items-center">
-              <Iconfont name="rujin1" width={20} height={20} />
-              <span className=" w-[1px] h-[18px] bg-[#ddd]"></span>
+              <Iconfont name="rujin1" width={20} height={20} color={themeConfig.theme.isDark ? '#fff' : ''} />
+              <span className=" w-[1px] h-[18px] bg-[#ddd] dark:bg-gray-570"></span>
               <FormattedMessage id="mt.rujin" />
             </div>
           </Button>

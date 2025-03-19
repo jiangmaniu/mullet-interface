@@ -27,7 +27,7 @@ export default function WithdrawMethod({
   return (
     <div
       className={cn(
-        'rounded-lg flex flex-col bg-white border border-gray-70',
+        'rounded-lg flex flex-col bg-white border border-gray-150',
         status !== 'locked' ? 'cursor-pointer hover:shadow-[0px_0px_12px_0px_rgba(0,0,0,0.1)]' : 'filter grayscale-50 opacity-50'
       )}
       onClick={() => {

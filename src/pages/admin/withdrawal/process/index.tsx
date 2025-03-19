@@ -1,6 +1,6 @@
 import './index.less'
 
-import { PageLoading, useIntl } from '@ant-design/pro-components'
+import { useIntl } from '@ant-design/pro-components'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { Form } from 'antd'
 import { useLayoutEffect, useMemo, useState } from 'react'
@@ -166,13 +166,13 @@ function WithdrawalProcess() {
           <FormattedMessage id="mt.chujin" />
         </div>
       )}
-      {loading && (
+      {/* {loading && (
         <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0 z-10">
           <PageLoading />
         </div>
-      )}
+      )} */}
       {/* <div className={cn(step === 0 ? 'block' : 'hidden')}>
-   
+
       </div> */}
       {step === 0 && (
         <Step1

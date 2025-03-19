@@ -87,10 +87,10 @@ function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true, 
 
   return (
     <div className="px-10 pt-5 flex-1" style={style}>
-      <div className="text-primary font-semibold text-[24px] pb-3">
+      <div className="text-primary font-semibold text-[22px] pb-3">
         {isEmail ? <FormattedMessage id="mt.chakanyouxianghuoquyanzhengma" /> : <FormattedMessage id="mt.chakanshoujihuoquyanzhengma" />}
       </div>
-      <div className="text-secondary text-base pb-5">
+      <div className="text-secondary text-sm pb-5">
         {isEmail ? (
           <FormattedMessage id="mt.yanzhengmafasongzhi" values={{ email: params.emailOrPhone }} />
         ) : (

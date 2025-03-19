@@ -254,8 +254,7 @@
 // }
 
 // 修改默认按钮悬停效果
-.ant-btn-default {
-  background-color: var(--btn-default-bg) !important;
+.ant-btn-default:not(:disabled) {
   &:hover {
     color: var(--color-text-primary) !important;
     background-color: var(--btn-default-bg) !important;

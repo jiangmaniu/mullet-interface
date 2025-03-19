@@ -60,6 +60,9 @@ export default function ({ setImgs, imgs }: IProps) {
     },
     onDrop(e) {
       console.log('Dropped files', e.dataTransfer.files)
+    },
+    style: {
+      background: '#fff'
     }
   }
   return (
@@ -83,7 +86,14 @@ export default function ({ setImgs, imgs }: IProps) {
       <div className="flex flex-row gap-[14px] mt-[15px]">
         {imgs.map((img, index) => (
           <div className="w-[86px] h-[86px] bg-gray-120 rounded-lg relative img-preview" key={index}>
-            <Image src={`${getEnv().imgDomain}${img}`} width={86} height={86} />
+            <Image
+              preview={{
+                destroyOnClose: true
+              }}
+              src={`${getEnv().imgDomain}${img}`}
+              width={86}
+              height={86}
+            />
             <div
               onClick={() => {
                 setImgs(imgs.filter((_, i) => i !== index))

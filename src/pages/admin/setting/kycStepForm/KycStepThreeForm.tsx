@@ -23,6 +23,8 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
 
+  const authImgsUrl = Form.useWatch('authImgsUrl', form)
+
   useEffect(() => {
     // 手机、邮箱已绑定，直接跳过
     if (userInfo?.phone && userInfo?.email && kycStatus !== 'TODO') {
@@ -77,17 +79,23 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
         <div className="flex flex-row items-center gap-4">
           <Button
             type="primary"
-            style={{ height: 46, marginTop: 70 }}
+            style={{ height: 46, marginTop: 10 }}
             block
             onClick={() => {
               push('/deposit')
             }}
-            loading={submitLoading}
           >
             <FormattedMessage id="mt.qurujin" />
           </Button>
 
-          <Button style={{ height: 46, marginTop: 70 }} block onClick={handleSubmit} loading={submitLoading}>
+          <Button
+            type={authImgsUrl ? 'primary' : 'default'}
+            style={{ height: 46, marginTop: 10 }}
+            block
+            onClick={handleSubmit}
+            disabled={!authImgsUrl}
+            loading={submitLoading}
+          >
             <FormattedMessage id="common.tijiao" />
           </Button>
         </div>

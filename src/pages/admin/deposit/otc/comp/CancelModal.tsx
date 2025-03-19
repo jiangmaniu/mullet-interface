@@ -3,8 +3,8 @@ import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 
 import Modal from '@/components/Admin/Modal'
 
+import Button from '@/components/Base/Button'
 import { useTheme } from '@/context/themeProvider'
-import Button from '@/pages/webapp/components/Base/Button'
 import { cancelDepositOrder } from '@/services/api/wallet'
 import { replace } from '@/utils/navigator'
 
@@ -61,17 +61,17 @@ function CancelModal({ id }: IProps, ref: any) {
       )}
       footer={
         <div className="flex flex-row gap-2 justify-end">
-          <Button type="danger" className=" text-white" containerStyle={{ flex: 1 }} onClick={cancelOrder}>
+          <Button type="primary" className="text-white !bg-red w-full" onClick={cancelOrder}>
             <FormattedMessage id="common.confirm" />
           </Button>
-          <Button containerStyle={{ flex: 1 }} onClick={() => modalRef.current?.close()}>
+          <Button type="default" onClick={() => modalRef.current?.close()} className="w-full">
             <FormattedMessage id="common.zhanbu" />
           </Button>
         </div>
       }
       ref={modalRef}
     >
-      <div className="text-sm text-secondary pt-6 pb-9 text-center bg-white w-full">
+      <div className="text-sm text-secondary text-center bg-white w-full">
         <FormattedMessage id="mt.qingquebaoninbinweijinxingzhuanzhang" />
         <br />
         <FormattedMessage id="mt.duociquxiao" />

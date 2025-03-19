@@ -73,7 +73,19 @@ export default function TransferToBankItem({ form }: IProps) {
         name="bankCard"
         label={<FormattedMessage id="mt.yinghangzhanghu" />}
         rules={[
-          { required: true, message: intl.formatMessage({ id: 'common.qingshuru' }) + intl.formatMessage({ id: 'mt.yinghangzhanghu' }) }
+          {
+            required: true,
+            // message: intl.formatMessage({ id: 'common.qingshuru' }) + intl.formatMessage({ id: 'mt.yinghangzhanghu' }),
+            validator(rule, value, callback) {
+              if (!value) {
+                return Promise.reject(intl.formatMessage({ id: 'common.qingshuru' }) + intl.formatMessage({ id: 'mt.yinghangzhanghu' }))
+              } else if (value && !/^[0-9]+$/.test(value)) {
+                return Promise.reject(intl.formatMessage({ id: 'mt.qingshurushuzi' }))
+              } else {
+                return Promise.resolve()
+              }
+            }
+          }
         ]}
       >
         <AutoComplete

@@ -77,9 +77,11 @@ export default function Security() {
     {
       title: <FormattedMessage id="common.dianziyouxiang" />,
       value: email || (
-        <span className=" underline cursor-pointer">
-          <FormattedMessage id="common.bangding" />
-        </span>
+        <Button type="text">
+          <span className="cursor-pointer font-semibold text-sm">
+            <FormattedMessage id="common.bangding" />
+          </span>
+        </Button>
       ),
       onClick: () => {
         const checked = stores.global.registerWay === 'EMAIL' ? phone : email

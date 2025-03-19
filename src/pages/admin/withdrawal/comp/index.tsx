@@ -26,7 +26,7 @@ export default function WithdrawalMethod({
   return (
     <div
       className={cn(
-        ' border border-gray-250 rounded-lg flex flex-col',
+        ' border border-gray-150 rounded-lg flex flex-col',
         status !== 'locked' ? 'cursor-pointer hover:shadow-[0px_0px_12px_0px_rgba(0,0,0,0.1)]' : 'filter grayscale-50 opacity-50'
       )}
       onClick={() => {
@@ -45,7 +45,7 @@ export default function WithdrawalMethod({
           {status === 'locked' && <Iconfont name="geren-suo" width={16} height={16} color="black" />}
         </div>
       </div>
-      <div className="pl-[14px] pr-[18px] py-4 border-t border-gray-250 flex flex-col gap-[10px]">
+      <div className="pl-[14px] pr-[18px] py-4 border-t border-gray-150 flex flex-col gap-[10px]">
         {explanation &&
           Object.entries(explanation).map(([key, value]) => (
             <div className="flex flex-row items-center justify-start gap-[18px]" key={key}>

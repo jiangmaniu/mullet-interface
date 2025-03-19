@@ -48,6 +48,9 @@ const TransferOTC = observer(({ form, methodInfo }: IProps) => {
           // style: {
           //   border: 'none'
           // },
+          style: {
+            height: 50
+          },
           suffix: <div className="text-primary text-sm !font-dingpro-medium">{currency}</div>
         }}
         placeholder={tips}

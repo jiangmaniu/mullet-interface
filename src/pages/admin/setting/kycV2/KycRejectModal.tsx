@@ -60,9 +60,8 @@ function KycRejectModal({ trigger, onSuccess }: IProps, ref: any) {
         </span>
       </div>
       <Button
-        className="!h-[44px]"
+        className="!h-[44px] !bg-red"
         type="primary"
-        danger
         block
         onClick={() => {
           modalRef?.current?.close()

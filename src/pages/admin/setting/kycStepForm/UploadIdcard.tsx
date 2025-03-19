@@ -20,6 +20,7 @@ export default function ({ form }: IProps) {
   const intl = useIntl()
 
   const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
+
   const props: UploadProps = {
     name: 'file',
     multiple: false,
@@ -64,6 +65,9 @@ export default function ({ form }: IProps) {
       // // 若返回 false 则停止上传
       // // beforeUpload 返回 false 时，阻止了发送请求，但还是会加到列表中去，如果要在列表中也忽略，返回 Upload.LIST_IGNORE
       return isLt5M || Upload.LIST_IGNORE
+    },
+    style: {
+      background: '#fff'
     }
   }
   return (
@@ -72,7 +76,7 @@ export default function ({ form }: IProps) {
         <Dragger {...props}>
           {url ? (
             <div className="flex items-center justify-center">
-              <img src={url} width={488} height={236} />
+              <img src={url} width="auto" height={180} />
             </div>
           ) : (
             <div className="flex items-center flex-col justify-center">
@@ -91,6 +95,7 @@ export default function ({ form }: IProps) {
             onClick={() => {
               setUrl('')
               setFileName('')
+              form.setFieldValue('authImgsUrl', '')
             }}
             className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] z-100 rounded-full cursor-pointer guanbi"
           >

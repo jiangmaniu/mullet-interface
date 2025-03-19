@@ -1,8 +1,8 @@
 import './index.less'
 
-import { PageLoading, ProForm, ProFormText } from '@ant-design/pro-components'
+import { ProForm, ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel, useParams, useSearchParams } from '@umijs/max'
-import { Button, Form } from 'antd'
+import { Form } from 'antd'
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
@@ -10,6 +10,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { stores, useStores } from '@/context/mobxProvider'
 import { generateDepositOrder, getDepositOrderDetail } from '@/services/api/wallet'
 
+import Button from '@/components/Base/Button'
 import { useLoading } from '@/context/loadingProvider'
 import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
@@ -73,7 +74,7 @@ function DepositProcess() {
   const handleSubmit0 = async () => {
     form.validateFields().then((values) => {
       setLoading(true)
-      showLoading()
+      // showLoading()
       getDepositOrderDetail({ channelId: values.methodId })
         .then((res) => {
           if (res.success && res.data?.id) {
@@ -182,11 +183,11 @@ function DepositProcess() {
       <div className="text-primary font-bold text-[24px] mb-9">
         <FormattedMessage id="mt.rujin" />
       </div>
-      {loading && (
+      {/* {loading && (
         <div className=" flex justify-center items-center h-full w-full absolute top-0 left-0">
           <PageLoading />
         </div>
-      )}
+      )} */}
       <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
         <div className="flex-1 form-item-divider-left flex-shrink  min-w-[566px] max-w-[700px]">
           <ProForm
@@ -214,7 +215,15 @@ function DepositProcess() {
             {methodInfo?.paymentType === 'OTC' && <TransferOTC form={form} methodInfo={methodInfo} />}
 
             {step === 0 && (
-              <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit0} disabled={disabled}>
+              <Button
+                height={46}
+                type="primary"
+                htmlType="submit"
+                size="large"
+                className="mt-2"
+                onClick={handleSubmit0}
+                disabled={disabled}
+              >
                 <div className="flex flex-row items-center gap-2">
                   <FormattedMessage id="mt.jixu" />
                   <Iconfont name="zhixiang" color="white" width={18} height={18} />
@@ -233,6 +242,7 @@ function DepositProcess() {
                   setStep(2)
                   handleDownload()
                 }}
+                height={46}
               >
                 <div className="flex flex-row items-center gap-2">
                   <Iconfont name="a-bianzu19" color="white" width={18} height={18} />
@@ -248,6 +258,7 @@ function DepositProcess() {
                 onClick={() => {
                   push(`/record?key=deposit`)
                 }}
+                height={46}
               >
                 <div className="flex flex-row items-center gap-2">
                   <FormattedMessage id="mt.chakanjindu" />

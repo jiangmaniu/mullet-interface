@@ -88,7 +88,7 @@ const Step1 = ({
 
   return (
     <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
-      <div className="flex-1 form-item-divider-left flex-shrink min-w-[566px] max-w-[700px]">
+      <div className="form-item-divider-left flex-shrink w-[500px] max-w-[700px]">
         <ProForm
           onFinish={async (values: Account.TransferAccountParams) => {
             return

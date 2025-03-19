@@ -5,9 +5,9 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { stores } from '@/context/mobxProvider'
 
-import { push } from '@/utils/navigator'
 import { observer } from 'mobx-react'
-import { useLayoutEffect } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
+import BaseKycApproveInfoModal from '../setting/kycV2/BaseKycApproveInfoModal'
 import DepositMethod from './comp'
 
 const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
@@ -44,6 +44,15 @@ function Deposit() {
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
   const isBaseAuth = currentUser?.isBaseAuth || false
+  const { fetchUserInfo } = useModel('user')
+  const baseModal = useRef<any>()
+  const advanceModal = useRef<any>()
+  const kycWaitModal = useRef<any>()
+
+  useEffect(() => {
+    // 刷新用户信息
+    fetchUserInfo(false)
+  }, [])
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
@@ -63,7 +72,8 @@ function Deposit() {
             <Button
               type="primary"
               onClick={() => {
-                push('/setting')
+                // push('/setting')
+                baseModal.current?.show()
               }}
             >
               {intl.formatMessage({ id: 'mt.wanshangerenziliao' })}
@@ -79,6 +89,22 @@ function Deposit() {
           <Methods kycStatus={isBaseAuth} />
         </div>
       </div>
+
+      {/* 基础认证弹窗 */}
+      <BaseKycApproveInfoModal
+        ref={baseModal}
+        onSuccess={() => {
+          advanceModal.current?.show()
+        }}
+      />
+      {/* 高级认证弹窗 */}
+      {/* <AdvanceKycApproveInfoModal
+        ref={advanceModal}
+        onSuccess={() => {
+          kycWaitModal.current?.show()
+        }}
+      />
+      <KycWaitModal ref={kycWaitModal} /> */}
     </PageContainer>
   )
 }

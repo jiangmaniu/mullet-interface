@@ -697,7 +697,7 @@ export default {
   // ========== 其他组件相关 结束 ==========
 
   // 20250212
-  'mt.kyczhuangtai': 'KYC 狀態',
+  'mt.kyczhuangtai': 'KYC',
   'mt.xinxi': '信息',
   'mt.zhanghuguanlitips2': '用於登錄{name}的輔助信息。注意自己的信息安全。',
   'mt.anquan': '安全',

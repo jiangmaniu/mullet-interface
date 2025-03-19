@@ -5,9 +5,14 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { stores } from '@/context/mobxProvider'
 
-import { push } from '@/utils/navigator'
+import useKycStatusInfo from '@/pages/webapp/hooks/useKycStatusInfo'
 import { observer } from 'mobx-react'
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import KycApproveInfoModal from '../setting/comp/KycApproveInfoModal'
+import AdvanceKycApproveInfoModal from '../setting/kycV2/AdvanceKycApproveInfoModal'
+import BaseKycApproveInfoModal from '../setting/kycV2/BaseKycApproveInfoModal'
+import KycRejectModal from '../setting/kycV2/KycRejectModal'
+import KycWaitModal from '../setting/kycV2/KycWaitModal'
 import WithdrawalMethod from './comp'
 
 const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
@@ -46,6 +51,35 @@ function Withdrawal() {
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
   const isKycAuth = currentUser?.isKycAuth
+  const isBaseAuth = currentUser?.isBaseAuth
+  const { fetchUserInfo } = useModel('user')
+  const baseModal = useRef<any>()
+  const advanceModal = useRef<any>()
+  const kycRejectModal = useRef<any>()
+  const kycWaitModal = useRef<any>()
+  const kycSuccModalRef = useRef<any>()
+
+  const { status, operation } = useKycStatusInfo()
+
+  useEffect(() => {
+    // 刷新用户信息
+    fetchUserInfo(false)
+  }, [])
+
+  const handleKycStatusClick = (status: number) => {
+    // TODO
+    if (status === 0) {
+      baseModal.current?.show()
+    } else if (status === 4) {
+      kycSuccModalRef.current?.show()
+    } else if (status === 1) {
+      advanceModal.current?.show()
+    } else if (status === 3) {
+      kycRejectModal.current?.show()
+    } else if (status === 2) {
+      kycWaitModal.current?.show()
+    }
+  }
 
   return (
     <PageContainer pageBgColorMode="white" fluidWidth>
@@ -65,10 +99,11 @@ function Withdrawal() {
             <Button
               type="primary"
               onClick={() => {
-                push('/setting')
+                // push('/setting')
+                handleKycStatusClick(status)
               }}
             >
-              {intl.formatMessage({ id: 'mt.wanshangerenziliao' })}
+              {operation}
             </Button>
           </div>
         )}
@@ -84,6 +119,28 @@ function Withdrawal() {
           <Methods kycStatus={isKycAuth || false} />
         </div>
       </div>
+      {/* 基础认证弹窗 */}
+      <BaseKycApproveInfoModal
+        ref={baseModal}
+        onSuccess={() => {
+          advanceModal.current?.show()
+        }}
+      />
+      {/* 高级认证弹窗 */}
+      <AdvanceKycApproveInfoModal
+        ref={advanceModal}
+        onSuccess={() => {
+          kycWaitModal.current?.show()
+        }}
+      />
+      <KycWaitModal ref={kycWaitModal} />
+      <KycApproveInfoModal ref={kycSuccModalRef} />
+      <KycRejectModal
+        ref={kycRejectModal}
+        onSuccess={() => {
+          advanceModal.current?.show()
+        }}
+      />
     </PageContainer>
   )
 }

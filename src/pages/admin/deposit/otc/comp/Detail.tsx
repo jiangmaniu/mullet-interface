@@ -228,7 +228,7 @@ const Detail = ({
                 >
                   <span className="flex-shrink-0 font-medium">{item.label}</span>
                   <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
-                  <span className="flex-shrink-0">{item.render ? item.render() : item.value}</span>
+                  <span className="flex-shrink-0 text-primary font-pf-medium">{item.render ? item.render() : item.value}</span>
                 </div>
               ))}
 
@@ -294,7 +294,7 @@ const Detail = ({
                   <span className="flex-shrink-0 font-medium">{item.label}</span>
                   <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
                   <div className="flex items-center gap-2">
-                    <span className="flex-shrink-0">{item.value}</span>
+                    <span className="flex-shrink-0 text-primary font-pf-medium">{item.value}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
                       color="gray"
@@ -327,9 +327,10 @@ const Detail = ({
                 type="primary"
                 htmlType="submit"
                 size="large"
-                className="flex-1 hover:shadow-md transition-shadow"
+                className="flex-1 hover:shadow-md transition-shadow !text-sm"
                 onClick={handleSubmit}
                 disabled={loading}
+                height={46}
               >
                 <div className="flex flex-row items-center justify-center gap-2">
                   <FormattedMessage id="mt.yifukuanshagnchuanpingzheng" />
@@ -344,8 +345,9 @@ const Detail = ({
               <Button
                 type="default"
                 size="large"
-                className="hover:bg-gray-100 transition-colors"
+                className="hover:bg-gray-100 transition-colors !text-sm"
                 onClick={() => cancelModalRef.current?.show()}
+                height={46}
               >
                 <FormattedMessage id="mt.quxiaodingdan" />
               </Button>

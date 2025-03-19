@@ -1,3 +1,4 @@
+import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { getKycStatus } from '@/pages/webapp/hooks/useKycStatusInfo'
 import { cn } from '@/utils/cn'
@@ -36,7 +37,7 @@ const KycStatus = ({ onClick }: { onClick: (status: number) => void }) => {
       label: <FormattedMessage id="mt.shenhezhong" />,
       desc: <FormattedMessage id="mt.qingnaixindenghoushenhe" />,
       operation: <FormattedMessage id="mt.chakanjindu" />,
-      color: 'text-yellow-500'
+      color: 'text-[#f8b400]'
     },
     {
       label: <FormattedMessage id="mt.gaojirenzhengbeijujue" />,
@@ -55,7 +56,7 @@ const KycStatus = ({ onClick }: { onClick: (status: number) => void }) => {
   return (
     <div className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
       <div className="flex items-center gap-5">
-        <img src={`/img/kyc-status-${status}.png`} width={70} height={70} className="w-[70px] h-[70px]" />
+        <img src={`/img/kyc-status-2.png`} width={70} height={70} className="w-[70px] h-[70px]" />
         <div className="flex flex-col items-start justify-start gap-1.5">
           <span className=" text-sm ">
             <FormattedMessage id="mt.yanzhengzhuangtai" />
@@ -64,15 +65,17 @@ const KycStatus = ({ onClick }: { onClick: (status: number) => void }) => {
           <span className=" text-xs text-gray-600 ">{statusLabels[status].desc}</span>
         </div>
       </div>
-      <div
-        className="flex cursor-pointer items-center gap-2"
-        onClick={() => {
-          onClick(status)
-        }}
-      >
-        <span className=" text-base font-medium ">{statusLabels[status].operation}</span>
-        <Iconfont name="jinru" size={20} />
-      </div>
+      <Button type="text">
+        <div
+          className="flex cursor-pointer items-center gap-2"
+          onClick={() => {
+            onClick(status)
+          }}
+        >
+          <span className=" text-base font-semibold">{statusLabels[status].operation}</span>
+          <Iconfont name="jinru" size={20} />
+        </div>
+      </Button>
     </div>
   )
 }
