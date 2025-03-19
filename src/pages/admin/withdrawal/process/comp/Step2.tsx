@@ -55,7 +55,7 @@ export const Step2 = ({
   const options = [
     {
       label: getIntl().formatMessage({ id: 'mt.bizhong' }),
-      value: currency
+      value: symbol
     },
     {
       label: getIntl().formatMessage({ id: 'mt.lianmingcheng' }),
@@ -99,7 +99,7 @@ export const Step2 = ({
             label: getIntl().formatMessage({ id: 'mt.shijidaozhang' }),
             value: `${formatNum(amount - handlingFee, {
               precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL
-            })} ${currency}`
+            })} ${symbol}`
           }
         ]
       : [

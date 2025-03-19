@@ -24,16 +24,14 @@ function TransferToCryptoItem({ form }: IProps) {
   }
 
   const widthdrawAddress = stores.wallet.withdrawalAddress
-  const searchList = widthdrawAddress.filter((item) => item.label?.includes(searchValue))
+  const withdrawalAddressInitialized = stores.wallet.withdrawalAddressInitialized
 
-  const [initialed, setInitialed] = useState(false)
   useLayoutEffect(() => {
-    if (!initialed && widthdrawAddress.length === 0) {
+    const now = Date.now().valueOf()
+    if (now - withdrawalAddressInitialized > 1000 * 30) {
       stores.wallet.getWithdrawalAddressList()
-      setInitialed(true)
-      return
     }
-  }, [widthdrawAddress, intl, initialed])
+  }, [widthdrawAddress, withdrawalAddressInitialized])
 
   const [bankList, setBankList] = useState<{ value: string; label: string }[]>([])
 

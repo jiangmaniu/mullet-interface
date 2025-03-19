@@ -11,6 +11,7 @@ export class WalletStore {
   @observable withdrawalMethods = [] as Wallet.fundsMethodPageListItem[] // 提现方式
   @observable withdrawalMethodInitialized = 0 // 提现方式是否初始化
   @observable withdrawalAddress = [] as Wallet.WithdrawalAddress[] // 提现地址
+  @observable withdrawalAddressInitialized = 0 // 提现地址是否初始化
 
   // 从后端同步支付方式
   getDepositMethods = async ({ language = 'ZHTW' }: { language?: Wallet.Language }) => {
@@ -40,6 +41,7 @@ export class WalletStore {
     runInAction(() => {
       if (res.data) {
         this.withdrawalAddress = res.data.records
+        this.withdrawalAddressInitialized = Date.now().valueOf()
       }
     })
   }
