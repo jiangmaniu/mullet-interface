@@ -8,6 +8,7 @@ import { cn } from '@/utils/cn'
 
 import { getEnv } from '@/env'
 import { getAccountSynopsisByLng } from '@/utils/business'
+import { FieldTimeOutlined } from '@ant-design/icons'
 import { statusMap } from '..'
 
 type IProps = {
@@ -59,7 +60,10 @@ function InfoModal({ item }: IProps, ref: any) {
       footer={null}
       ref={modalRef}
     >
-      <span className=" text-sm text-primary">{item?.createTime}</span>
+      <span className=" text-sm text-primary">
+        <FieldTimeOutlined />
+        <span className="pl-1">{item?.createTime}</span>
+      </span>
       <div className="flex flex-row items-center justify-between flex-wrap gap-4 mt-[14px] text-sm">
         <div className="flex flex-col items-start gap-1">
           <span className="text-sm text-secondary">
