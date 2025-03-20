@@ -93,7 +93,7 @@ function DepositModal({ item }: IProps, ref: any) {
             <div className="flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white ">
               {synopsis?.abbr}
             </div>
-            <span className=" text-nowrap text-ellipsis overflow-hidden">{synopsis?.name}</span>
+            <span className="text-nowrap text-ellipsis overflow-hidden">{item?.tradeAccountId}</span>
           </div>
         </div>
       </div>

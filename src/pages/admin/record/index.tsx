@@ -12,6 +12,7 @@ import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import PageContainer from '@/components/Admin/PageContainer'
 
 import { getEnv } from '@/env'
+import { FieldTimeOutlined } from '@ant-design/icons'
 import Deposit from './comp/Deposit'
 import DepositModal from './comp/DepositModal'
 import InfoModal from './comp/InfoModal'
@@ -141,10 +142,11 @@ export default function Record() {
                 })
               }
             }}
-            width={150}
+            style={{ paddingRight: 8 }}
           />
           <ProFormDateRangePicker
             fieldProps={{
+              prefix: <FieldTimeOutlined style={{ fontSize: 16, color: 'rgba(0,0,0,0.25)' }} />,
               onChange: (value) => {
                 const startTime = value ? dayjs(value[0]).format('YYYY-MM-DD') + ' 00:00:00' : undefined
                 const endTime = value ? dayjs(value[1]).format('YYYY-MM-DD') + ' 23:59:59' : undefined
