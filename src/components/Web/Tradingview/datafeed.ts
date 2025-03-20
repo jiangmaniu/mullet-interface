@@ -4,6 +4,7 @@ import { getEnv } from '@/env'
 import { ChartingLibraryWidgetOptions, DatafeedConfiguration, LibrarySymbolInfo } from '@/libs/charting_library'
 import { getSymbolIcon } from '@/utils/business'
 import mitt from '@/utils/mitt'
+import { STORAGE_GET_TRADINGVIEW_RESOLUTION } from '@/utils/storage'
 
 // https://www.tradingview.com/charting-library-docs/latest/tutorials/implement_datafeed_tutorial/Widget-Setup
 class DataFeedBase {
@@ -46,6 +47,8 @@ class DataFeedBase {
    * @param {*Function} onResolveErrorCallback   失败回调
    */
   async resolveSymbol(symbolName, onSymbolResolvedCallback, onResolveErrorCallback, extension) {
+    const resolution = String(STORAGE_GET_TRADINGVIEW_RESOLUTION() || '')
+
     const ENV = getEnv()
     // 减少接口请求
     // const res = await request(`/api/trade-core/coreApi/public/symbol/detail?symbol=${symbolName}`).catch((e) => e)
@@ -111,8 +114,9 @@ class DataFeedBase {
       // 在线验证写法是否正确：http://tradingview.github.io/checksession.html
       // Mo-Fr 00:00-24:00 或 Su-Sa 00:00-24:00 表示交易所在一周七天的全天（24小时）都有交易，并且在非交易时间段也显示数据
       session: '0000-0000|0000-0000:1234567;1',
-      // 该交易品种的时区
-      timezone: 'Asia/Shanghai' // 交易所的时区 @TODO 后期做时区处理本地化
+      // 该交易品种的时区 数据库中存的全部都是零时区的数据
+      // timezone: 'Etc/UTC' // 交易所的时区 @TODO 后期做时区处理本地化
+      timezone: ['D', 'W', 'M', 'Y'].some((item) => resolution.endsWith(item)) ? 'Etc/UTC' : 'Asia/Shanghai' // 交易所的时区
     } as LibrarySymbolInfo
 
     setTimeout(() => {
