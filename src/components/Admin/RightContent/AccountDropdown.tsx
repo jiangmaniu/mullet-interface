@@ -80,29 +80,47 @@ function AccountDropdown({ theme }: IProps) {
           items: [
             {
               label: (
-                <div className="py-1">
+                <div className="py-2 pl-1">
                   <FormattedMessage id="mt.zhanghu" />
                 </div>
               ),
-              icon: <Iconfont name="zhanghu" width={20} height={20} color={'var(--color-text-primary)'} />,
+              icon: <Iconfont name="geren-zhanghu" width={24} height={24} color={'var(--color-text-primary)'} />,
               key: 'account'
             },
             {
               label: (
-                <div className="py-1">
+                <div className="py-2 pl-1">
+                  <FormattedMessage id="mt.rujin" />
+                </div>
+              ),
+              icon: <Iconfont name="geren-rujin" width={24} height={24} color={'var(--color-text-primary)'} />,
+              key: 'deposit'
+            },
+            {
+              label: (
+                <div className="py-2 pl-1">
+                  <FormattedMessage id="mt.chujin" />
+                </div>
+              ),
+              icon: <Iconfont name="geren-chujin" width={24} height={24} color={'var(--color-text-primary)'} />,
+              key: 'withdrawal'
+            },
+            {
+              label: (
+                <div className="py-2 pl-1">
                   <FormattedMessage id="mt.churujinjilu" />
                 </div>
               ),
-              icon: <Iconfont name="geren-churujinjilu" width={20} height={20} color={'var(--color-text-primary)'} />,
+              icon: <Iconfont name="geren-churujinjilu" width={24} height={24} color={'var(--color-text-primary)'} />,
               key: 'record'
             },
             {
               label: (
-                <div className="py-1">
+                <div className="py-2 pl-1">
                   <FormattedMessage id="mt.shezhi" />
                 </div>
               ),
-              icon: <Iconfont name="geren-shezhi" width={20} height={20} color={'var(--color-text-primary)'} />,
+              icon: <Iconfont name="geren-shezhi" width={24} height={24} color={'var(--color-text-primary)'} />,
               key: 'setting'
             }
           ]

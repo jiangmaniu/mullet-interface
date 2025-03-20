@@ -33,7 +33,7 @@ const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
   const tradeAccountId = searchParams.get('tradeAccountId') as string
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:gap-[38px] md:gap-[24px] gap-[16px]">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-y-[26px] gap-x-[34px] w-[80%]">
       {methods.map((item: Wallet.fundsMethodPageListItem) => (
         <DepositMethod item={item} key={item.title} status={kycStatus ? 'unlocked' : 'locked'} tradeAccountId={tradeAccountId} />
       ))}

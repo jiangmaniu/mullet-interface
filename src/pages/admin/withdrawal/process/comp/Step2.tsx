@@ -285,7 +285,7 @@ export const Step2 = ({
               >
                 <div className="flex flex-row items-center gap-2">
                   <FormattedMessage id="mt.tixian" />
-                  <Iconfont name="zhixiang" color="white" width={18} height={18} />
+                  <Iconfont name="zhixiang" color={disabled ? '#9BA6AD' : 'white'} width={18} height={18} />
                 </div>
               </Button>
             </div>

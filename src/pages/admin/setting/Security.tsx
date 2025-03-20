@@ -78,7 +78,7 @@ export default function Security() {
       title: <FormattedMessage id="common.dianziyouxiang" />,
       value: email || (
         <Button type="text">
-          <span className="cursor-pointer font-semibold text-sm">
+          <span className="cursor-pointer font-semibold text-base">
             <FormattedMessage id="common.bangding" />
           </span>
         </Button>
@@ -162,7 +162,7 @@ export default function Security() {
           <ModifyPasswordModal
             trigger={
               <Button type="text">
-                <span className="text-primary text-sm font-semibold cursor-pointer">
+                <span className="text-primary text-base font-semibold cursor-pointer">
                   <FormattedMessage id="mt.xiugaimima" />
                 </span>
               </Button>
