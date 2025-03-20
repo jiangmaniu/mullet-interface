@@ -59,7 +59,8 @@ export default defineConfig({
   },
 
   // 只设置 dev 阶段的 sourcemap
-  devtool: process.env.NODE_ENV === 'development' ? 'source-map' : false,
+  // devtool: process.env.NODE_ENV === 'development' ? 'source-map' : false,
+  devtool: 'source-map', // 启用sourcemap 结合 sentry 上传后会自动删除dist下的.map文件
 
   /**
    * @name 兼容性设置
