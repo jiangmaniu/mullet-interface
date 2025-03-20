@@ -209,15 +209,6 @@ const Tradingview = () => {
   }
 
   useEffect(() => {
-    kline.destroyed()
-
-    return () => {
-      // 退出时销毁实例
-      kline.destroyed()
-    }
-  }, [isMobileOrIpad, isPc])
-
-  useEffect(() => {
     if (!symbolName || kline.tvWidget) return
     setIsChartLoading(true)
     setLoading(true)
@@ -259,7 +250,7 @@ const Tradingview = () => {
   usePageVisibility(
     () => {
       console.log('页面回到前台')
-      if (symbolName) {
+      if (symbolName && kline.tvWidget) {
         // @ts-ignore
         klineStore.activeSymbolInfo?.onResetCacheNeededCallback?.() // 重置缓存
         setTimeout(() => {
