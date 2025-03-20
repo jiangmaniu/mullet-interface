@@ -5,6 +5,7 @@ import { useLayoutEffect, useState } from 'react'
 
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { stores } from '@/context/mobxProvider'
+import { getWithdrawalAddressList } from '@/services/api/wallet'
 import { push } from '@/utils/navigator'
 import { observer } from 'mobx-react'
 
@@ -23,16 +24,36 @@ function TransferToCryptoItem({ form }: IProps) {
   }
 
   const widthdrawAddress = stores.wallet.withdrawalAddress
-  const searchList = widthdrawAddress.filter((item) => item.label?.includes(searchValue))
+  const withdrawalAddressInitialized = stores.wallet.withdrawalAddressInitialized
 
-  const [initialed, setInitialed] = useState(false)
   useLayoutEffect(() => {
-    if (!initialed && widthdrawAddress.length === 0) {
+    const now = Date.now().valueOf()
+    if (now - withdrawalAddressInitialized > 1000 * 30) {
       stores.wallet.getWithdrawalAddressList()
-      setInitialed(true)
-      return
     }
-  }, [widthdrawAddress, initialed])
+  }, [widthdrawAddress, withdrawalAddressInitialized])
+
+  const [bankList, setBankList] = useState<{ value: string; label: string }[]>([])
+
+  useLayoutEffect(() => {
+    getWithdrawalAddressList({
+      current: 1,
+      size: 1000
+    }).then((res) => {
+      if (res.success) {
+        const list = res.data?.records || []
+
+        setBankList(
+          list.map((i) => ({
+            value: i.address,
+            label: i.address
+          }))
+        )
+      }
+    })
+  }, [])
+
+  const [open, setOpen] = useState(false)
 
   return (
     <div className="relative">
@@ -58,36 +79,59 @@ function TransferToCryptoItem({ form }: IProps) {
           }
         ]}
       >
-        <AutoComplete
+        <div
           style={{
-            height: '38px'
-          }}
-          onChange={(value) => {
-            form.setFieldValue('toAccountId', value)
-          }}
-          options={searchList} // 设置自动完成的选项
-          onSearch={handleSearch} // 监听搜索事件
-          placeholder={intl.formatMessage({ id: 'mt.shurudizhi' })}
-        />
-      </ProForm.Item>
-      <div className="absolute bottom-[2px] right-2 flex flex-row items-center gap-2 z-10">
-        <SelectSuffixIcon opacity={0.5} />
-        <div className="bg-gray-250 h-3 w-[1px] "></div>
-        <span
-          className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
-          onClick={() => {
-            // @ts-ignore
-            if (window.ReactNativeWebView) {
-              // @ts-ignore
-              window.ReactNativeWebView.postMessage('dizhiguanli')
-            } else {
-              push('/app/wallet-address')
-            }
+            position: 'relative',
+            width: '100%',
+            border: '1px solid #d9d9d9',
+            borderRadius: '9px'
           }}
         >
-          <FormattedMessage id="mt.dizhiguanli" />
-        </span>
-      </div>
+          <AutoComplete
+            style={{
+              height: '38px',
+              width: '256px',
+              textOverflow: 'ellipsis'
+            }}
+            className="custom-autocomplete"
+            open={open}
+            onDropdownVisibleChange={(value) => {
+              setOpen(value)
+            }}
+            onChange={(value) => {
+              form.setFieldValue('toAccountId', value)
+            }}
+            options={bankList} // 设置自动完成的选项
+            onSearch={handleSearch} // 监听搜索事件
+            placeholder={intl.formatMessage({ id: 'mt.shurudizhi' })}
+          />
+
+          <div className="absolute bottom-[3px] right-2 flex flex-row items-center gap-2 z-10">
+            <div
+              onClick={() => {
+                setOpen(true)
+              }}
+            >
+              <SelectSuffixIcon opacity={0.5} />
+            </div>
+            <div className="bg-gray-250 h-3 w-[1px] "></div>
+            <span
+              className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
+              onClick={() => {
+                // @ts-ignore
+                if (window.ReactNativeWebView) {
+                  // @ts-ignore
+                  window.ReactNativeWebView.postMessage('dizhiguanli')
+                } else {
+                  push('/app/wallet-address')
+                }
+              }}
+            >
+              <FormattedMessage id="mt.dizhiguanli" />
+            </span>
+          </div>
+        </div>
+      </ProForm.Item>
     </div>
   )
 }
