@@ -161,7 +161,7 @@ function WithdrawalProcess() {
   return (
     <PageContainer
       pageBgColorMode={step === 0 ? 'white' : 'gray'}
-      fluidWidth
+      backStyle={{ justifyContent: 'flex-start' }}
       backUrl="/withdrawal"
       backTitle={<FormattedMessage id="mt.quanbuchujinfangshi" />}
     >

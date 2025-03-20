@@ -185,7 +185,12 @@ function DepositProcess() {
   const disabled = loading || !methodId || !toAccountId || (methodInfo?.paymentType === 'OTC' && !amount) || !valid
 
   return (
-    <PageContainer pageBgColorMode="white" fluidWidth backUrl="/deposit" backTitle={<FormattedMessage id="mt.quanbuzhifufangshi" />}>
+    <PageContainer
+      pageBgColorMode="white"
+      backStyle={{ justifyContent: 'flex-start' }}
+      backUrl="/deposit"
+      backTitle={<FormattedMessage id="mt.quanbuzhifufangshi" />}
+    >
       <div className="text-primary font-bold text-[24px] mb-9">
         <FormattedMessage id="mt.rujin" />
       </div>
