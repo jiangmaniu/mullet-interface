@@ -101,7 +101,7 @@ class KlineStore {
     let newLastBar
     const precision = currentSymbol.precision
     const lastBar = this.lastbar
-    if (!lastBar) return
+    if (!lastBar.time) return
     let resolution = currentSymbol.resolution
 
     const refreshResolution = ['1'].includes(resolution) // 1/5/15分钟k线以当前时间为基准(服务器推送的时间会有几秒不等延迟)，其他以服务器时间为基准
@@ -151,7 +151,7 @@ class KlineStore {
         // 如果是连续的则当前画的这根k线开盘价取上一根k线的收盘价
         open = Math.abs(currentTime - lastBar.time) / 1000 === 60 ? lastBarOpenPrice : currentOpenPrice
       } else {
-        open = currentOpenPrice
+        open = NP.round(lastBar.open, precision)
       }
       newLastBar = {
         time: currentTime,
@@ -221,6 +221,7 @@ class KlineStore {
         return this.bars
       }
       const res = await request('/api/trade-market/marketApi/public/symbol/optimizeKlineList', {
+        // const res = await request('/api/trade-market/marketApi/public/symbol/klineList', {
         params: {
           symbol: symbolInfo.dataSourceSymbol, // 数据源品种
           dataSourceCode: symbolInfo.dataSourceCode, // 数据源code
@@ -244,6 +245,7 @@ class KlineStore {
           .map((item) => {
             // 时间,开,高,低,收
             const [klineTime, open, high, low, close] = (item || '').split(',')
+            // 加上8小时转成北京时间
             const timeStamp = Number(klineTime) * 1000
             return {
               open: NP.round(open, precision),
@@ -256,9 +258,8 @@ class KlineStore {
             }
           })
           .reverse() // 反转数据，按时间从大到小排序
-
         runInAction(() => {
-          this.bars = [...this.bars, ...bars]
+          this.bars = bars
         })
         return bars
       } else {

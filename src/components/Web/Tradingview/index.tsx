@@ -85,16 +85,31 @@ const Tradingview = () => {
         .onIntervalChanged()
         .subscribe(null, (interval, timeframeObj) => {
           console.log('interval', interval, timeframeObj)
+
+          // 记录当前切换的分辨率
+          STORAGE_SET_TRADINGVIEW_RESOLUTION(interval)
+
+          // 除了分钟 小时的k线 其他都设置为上海时区，否则时区显示错误
+          if (['D', 'W', 'M', 'Y'].some((item) => interval.endsWith(item))) {
+            tvWidget.activeChart().getTimezoneApi().setTimezone('Etc/UTC')
+          } else {
+            tvWidget.activeChart().getTimezoneApi().setTimezone('Asia/Shanghai')
+          }
+
           // @ts-ignore
           klineStore.activeSymbolInfo.onResetCacheNeededCallback?.() // 重置缓存
           setTimeout(() => {
             // Force the chart to re-request data. Before calling this function the onResetCacheNeededCallback callback from IDatafeedChartApi.subscribeBars should be called.
             tvWidget.activeChart().resetData() // 重置数据
           }, 100)
-
-          // 记录当前切换的分辨率
-          STORAGE_SET_TRADINGVIEW_RESOLUTION(interval)
         })
+
+      // 监听时区切换
+      tvWidget
+        .activeChart()
+        .getTimezoneApi()
+        .onTimezoneChanged()
+        .subscribe(null, (timezone: any) => console.log(`New timezone: ${timezone}`), true)
 
       // 监听k线可视区域图表范围变化，可以在这里请求后台数据
       // tvWidget
