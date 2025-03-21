@@ -640,10 +640,10 @@ export default function useTrade(props?: IProps) {
     maxOpenVolumeRef.current = maxOpenVolume
   }, [maxOpenVolume])
 
-  useEffect(() => {
-    // 后台设置的最小手数
-    setOrderVolume(vmin)
-  }, [vmin])
+  // useEffect(() => {
+  //   // 后台设置的最小手数
+  //   setOrderVolume(vmin)
+  // }, [vmin])
 
   // 提交订单之前校验
   const onCheckSubmit = () => {

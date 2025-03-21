@@ -56,7 +56,8 @@ const KycStatus = ({ onClick }: { onClick: (status: number) => void }) => {
   return (
     <div className="border border-gray-150 rounded-[7px] py-[22px] px-[26px] flex items-center justify-between">
       <div className="flex items-center gap-5">
-        <img src={`/img/kyc-status-2.png`} width={70} height={70} className="w-[70px] h-[70px]" />
+        {/* <img src={`/img/kyc-status-2.png`} width={70} height={70} className="w-[70px] h-[70px]" /> */}
+        <img src={`/img/kyc-status-${status}.png`} width={70} height={70} className="w-[70px] h-[70px]" />
         <div className="flex flex-col items-start justify-start gap-1.5">
           <span className=" text-sm ">
             <FormattedMessage id="mt.yanzhengzhuangtai" />
