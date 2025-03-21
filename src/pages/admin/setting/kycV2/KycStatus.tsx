@@ -62,8 +62,8 @@ const KycStatus = ({ onClick }: { onClick: (status: number) => void }) => {
           <span className=" text-sm ">
             <FormattedMessage id="mt.yanzhengzhuangtai" />
           </span>
-          <span className={cn('text-sm font-semibold', statusLabels[status].color)}>{statusLabels[status].label}</span>
-          <span className=" text-xs text-gray-600 ">{statusLabels[status].desc}</span>
+          <span className={cn('text-lg font-semibold', statusLabels[status].color)}>{statusLabels[status].label}</span>
+          <span className="text-xs text-gray-600 ">{statusLabels[status].desc}</span>
         </div>
       </div>
       <Button type="text">
@@ -74,7 +74,7 @@ const KycStatus = ({ onClick }: { onClick: (status: number) => void }) => {
           }}
         >
           <span className=" text-base font-semibold">{statusLabels[status].operation}</span>
-          <Iconfont name="jinru" size={20} />
+          <Iconfont name="go" size={20} />
         </div>
       </Button>
     </div>

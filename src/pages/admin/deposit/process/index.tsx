@@ -185,7 +185,12 @@ function DepositProcess() {
   const disabled = loading || !methodId || !toAccountId || (methodInfo?.paymentType === 'OTC' && !amount) || !valid
 
   return (
-    <PageContainer pageBgColorMode="white" fluidWidth backUrl="/deposit" backTitle={<FormattedMessage id="mt.quanbuzhifufangshi" />}>
+    <PageContainer
+      pageBgColorMode="white"
+      backStyle={{ justifyContent: 'flex-start' }}
+      backUrl="/deposit"
+      backTitle={<FormattedMessage id="mt.quanbuzhifufangshi" />}
+    >
       <div className="text-primary font-bold text-[24px] mb-9">
         <FormattedMessage id="mt.rujin" />
       </div>
@@ -195,7 +200,7 @@ function DepositProcess() {
         </div>
       )} */}
       <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">
-        <div className="flex-1 form-item-divider-left flex-shrink  min-w-[566px] max-w-[700px]">
+        <div className="form-item-divider-left flex-shrink  w-[500px] max-w-[700px]">
           <ProForm
             onFinish={async (values: Account.TransferAccountParams) => {
               return
@@ -232,7 +237,7 @@ function DepositProcess() {
               >
                 <div className="flex flex-row items-center gap-2">
                   <FormattedMessage id="mt.jixu" />
-                  <Iconfont name="zhixiang" color="white" width={18} height={18} />
+                  <Iconfont name="zhixiang" color={disabled ? '#9BA6AD' : 'white'} width={18} height={18} />
                 </div>
               </Button>
             )}

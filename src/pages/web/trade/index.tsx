@@ -123,9 +123,6 @@ export default observer(() => {
 
       // ws没有返回token失效状态，需要查询一次用户信息，看当前登录态是否失效，避免长时间没有操作情况
       fetchUserInfo(true)
-
-      // 重置tradingview实例
-      kline.destroyed()
     },
     () => {
       // 用户从前台切换到后台时执行的操作

@@ -54,7 +54,7 @@
     "@wangeditor/editor-for-react": "^1.0.6",
     "ahooks": "^3.7.8",
     "animate.css": "^4.1.1",
-    "antd": "^5.18.3",
+    "antd": "^5.24.4",
     "antd-mobile": "^5.33.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "big.js": "^6.2.2",

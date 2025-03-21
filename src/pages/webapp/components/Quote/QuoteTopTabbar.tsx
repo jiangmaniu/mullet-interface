@@ -145,6 +145,7 @@ function QuoteTopTabbar(
   const [activeTabValue, setActiveTabValue] = useState<string>('')
   const [activeIndex, setActiveIndex] = useState<number>(0)
   const swiperRef = useRef<SwiperRef>(null)
+  const { global } = useStores()
 
   const tabList = getTabList()
 
@@ -185,7 +186,7 @@ function QuoteTopTabbar(
             swiperRef.current?.swipeTo(index as number)
           }}
           position="PAGE"
-          className="sticky top-[48px] z-[1] bg-secondary border-t border-weak"
+          className={cn('sticky top-[48px] z-[1] bg-secondary border-t border-weak', global.sheetModalOpen && '!z-[0]')}
         />
       )}
       <Swiper

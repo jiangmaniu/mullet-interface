@@ -126,7 +126,7 @@ const Step1 = ({
           <Button height={46} type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit} disabled={disabled}>
             <div className="flex flex-row items-center gap-2">
               <FormattedMessage id="mt.tixian" />
-              <Iconfont name="zhixiang" color="white" width={18} height={18} />
+              <Iconfont name="zhixiang" color={disabled ? '#9BA6AD' : 'white'} width={18} height={18} />
             </div>
           </Button>
           <div className="text-secondary text-sm flex flex-row items-center justify-between gap-4">
