@@ -17,10 +17,10 @@ import { observer } from 'mobx-react'
 import VirtualList from 'rc-virtual-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
+import { statusMap } from '@/pages/admin/record'
 import End from '@/pages/webapp/components/Base/List/End'
 import GetMore from '@/pages/webapp/components/Base/List/GetMore'
 import { getAccountSynopsisByLng } from '@/utils/business'
-import { statusMap } from '..'
 import WithdrawDetailModal from './WithdrawDetailModal'
 
 /**

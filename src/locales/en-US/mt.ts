@@ -749,6 +749,7 @@ export default {
   'mt.rujinshenqingchenggong': 'Deposit application successful, customer service is reviewing...',
   'mt.chakandingdan': 'View Order',
   'mt.rujinshiyudaowenti': 'Encountered an issue during deposit?',
+  'mt.chujinshiyudaowenti': 'Encountered an issue during withdrawal?',
   'mt.shoukuanerweima': 'Payment QR Code',
   'mt.weixinsaomazhifu': 'WeChat QR code payment, please ensure the payment merchant information is consistent',
   'mt.zhifubaosaomazhifu': 'Alipay QR code payment, please ensure the payment merchant information is consistent',

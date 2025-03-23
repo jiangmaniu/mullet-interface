@@ -744,6 +744,7 @@ export default {
   'mt.rujinshenqingchenggong': 'Đơn nạp thành công, hỗ trợ đang xử lý...',
   'mt.chakandingdan': 'Xem đơn hàng',
   'mt.rujinshiyudaowenti': 'Gặp phải vấn đề trong quá trình nạp tiền?',
+  'mt.chujinshiyudaowenti': 'Gặp phải vấn đề trong quá trình rút tiền?',
   'mt.shoukuanerweima': 'Mã QR thanh toán',
   'mt.weixinsaomazhifu': 'Thanh toán bằng QR code, vui lòng đảm bảo thông tin người nhận phù hợp',
   'mt.zhifubaosaomazhifu': 'Thanh toán bằng QR code, vui lòng đảm bảo thông tin người nhận phù hợp',

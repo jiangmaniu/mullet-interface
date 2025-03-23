@@ -50,6 +50,7 @@ export default {
   'mt.chujinxuzhi': 'Withdrawal notice',
   'mt.bizhong': 'Currency',
   'mt.lianmingcheng': 'Chain name',
+  'mt.daizhifu': 'Pending payment',
   'mt.tongguo': 'Pass',
   'mt.daishenghe': 'Pending review',
   'mt.ningquedingchexiaochujinshenqing': 'Are you sure you want to cancel the withdrawal application?',

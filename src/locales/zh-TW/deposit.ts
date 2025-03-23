@@ -50,6 +50,7 @@ export default {
   'mt.chujinxuzhi': '出金須知',
   'mt.bizhong': '幣種',
   'mt.lianmingcheng': '鏈名稱',
+  'mt.daizhifu': '待支付',
   'mt.tongguo': '通過',
   'mt.daishenghe': '待審核',
   'mt.ningquedingchexiaochujinshenqing': '您確定要撤銷出金申請嗎？',

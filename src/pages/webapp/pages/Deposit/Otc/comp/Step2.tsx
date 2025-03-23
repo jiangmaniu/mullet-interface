@@ -251,26 +251,29 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
               <span className="  font-normal text-weak  text-xs ">
                 <FormattedMessage id="mt.youyuhuilvbodong" />
               </span>
-              <div className="flex items-center justify-center mt-4">
-                <div
-                  className="flex px-3 flex-row items-center justify-center rounded-lg font-pf-bold font-medium border border-gray-70 h-[40px] text-center gap-x-1"
-                  onClick={() => {
-                    if (window.ReactNativeWebView) {
-                      window.ReactNativeWebView.postMessage(
-                        JSON.stringify({
-                          type: 'saveImage',
-                          data: qrCodeSrc
-                        })
-                      )
-                      return
-                    }
-                    onDownloadImg([qrCodeSrc], 'qrcode.png')
-                  }}
-                >
-                  <QrcodeOutlined />
-                  <FormattedMessage id="mt.xiazaierweima" />
+
+              {paymentType === 'OTC' && otcType !== 'bank' && (
+                <div className="flex items-center justify-center mt-4">
+                  <div
+                    className="flex px-3 flex-row items-center justify-center rounded-lg font-pf-bold font-medium border border-gray-70 h-[40px] text-center gap-x-1"
+                    onClick={() => {
+                      if (window.ReactNativeWebView) {
+                        window.ReactNativeWebView.postMessage(
+                          JSON.stringify({
+                            type: 'saveImage',
+                            data: qrCodeSrc
+                          })
+                        )
+                        return
+                      }
+                      onDownloadImg([qrCodeSrc], 'qrcode.png')
+                    }}
+                  >
+                    <QrcodeOutlined />
+                    <FormattedMessage id="mt.xiazaierweima" />
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
         </div>

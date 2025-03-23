@@ -1,6 +1,7 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import { statusMap } from '@/pages/admin/record'
 import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
@@ -9,7 +10,6 @@ import { cn } from '@/utils/cn'
 import { FormattedMessage, useModel } from '@umijs/max'
 import type { ForwardedRef } from 'react'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { statusMap } from '..'
 
 type IProps = {
   item: Wallet.withdrawalOrderListItem | undefined

@@ -9,7 +9,7 @@ import { formatNum } from '@/utils'
 import { getEnv } from '@/env'
 import { getAccountSynopsisByLng } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { IParams, statusMap } from '..'
+import { IParams, statusMapDeposit } from '..'
 
 type IProps = {
   params: IParams
@@ -135,14 +135,17 @@ function Deposit({ params, onSelectItem }: IProps) {
               </div>
               {/* <div className="text-start min-w-[100px]">{item.status || '[status]'}</div> */}
 
-              <div className="text-sm flex items-center w-[80px] justify-center" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
+              <div
+                className="text-sm flex items-center w-[80px] justify-center"
+                style={{ color: statusMapDeposit[item.status ?? 'FAIL']?.color }}
+              >
                 <span
                   className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item.status === 'WAIT' && 'animate-pulse')}
-                  style={{ backgroundColor: statusMap[item.status ?? 'FAIL']?.color || '#9C9C9C' }}
+                  style={{ backgroundColor: statusMapDeposit[item.status ?? 'FAIL']?.color || '#9C9C9C' }}
                 >
                   {/* 占位 */}
                 </span>
-                {statusMap[item.status ?? 'FAIL']?.text || '[status]'}
+                {statusMapDeposit[item.status ?? 'FAIL']?.text || '[status]'}
               </div>
               <div className="text-end min-w-[180px] text-base  md:text-xl font-bold">
                 {formatNum(item.baseOrderAmount, { precision: 2 })} {item.baseCurrency}

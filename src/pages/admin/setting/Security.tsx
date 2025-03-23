@@ -72,7 +72,23 @@ export default function Security() {
     },
     {
       title: <FormattedMessage id="common.shoujihao" />,
-      value: phoneAreaCode + ' ' + phone
+      value: phone ? (
+        '+' + phoneAreaCode + ' ' + phone
+      ) : (
+        <Button type="text">
+          <span className="cursor-pointer font-semibold text-base">
+            <FormattedMessage id="common.bangding" />
+          </span>
+        </Button>
+      ),
+      onClick: () => {
+        if (phone) {
+          return
+        }
+
+        const checked = stores.global.registerWay === 'EMAIL' ? phone : email
+        !checked && bindModal.current?.show()
+      }
     },
     {
       title: <FormattedMessage id="common.dianziyouxiang" />,
@@ -84,6 +100,10 @@ export default function Security() {
         </Button>
       ),
       onClick: () => {
+        if (email) {
+          return
+        }
+
         const checked = stores.global.registerWay === 'EMAIL' ? phone : email
         !checked && bindModal.current?.show()
       }
@@ -96,6 +116,16 @@ export default function Security() {
   const kycRejectModal = useRef<any>()
   const kycWaitModal = useRef<any>()
   const handleKycStatusClick = (status: number) => {
+    if (!phone) {
+      bindModal.current?.show()
+      return
+    }
+
+    if (!email) {
+      bindModal.current?.show()
+      return
+    }
+
     // TODO
     if (status === 0) {
       baseModal.current?.show()

@@ -202,7 +202,7 @@ function WithdrawalProcess() {
         <div className={cn(step === 2 ? 'block' : 'hidden')}>
           <Step3 handleSubmit={handleSubmit2} />
         </div>
-        <div className={cn('w-[340px] md:w-[536px] max-w-full', step === 1 || step === 2 ? 'block' : 'hidden')}>
+        <div className={cn('w-[340px] md:w-[536px] max-w-full', step === 1 ? 'block' : 'hidden')}>
           <span className="text-primary text-sm font-semibold">
             <FormattedMessage id="mt.chujinxuzhi" />
           </span>
