@@ -14,6 +14,8 @@
     "dev:stellux:dev": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/stellux/.env.stellux.dev max dev",
     "dev:stellux:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/stellux/.env.stellux.prod max dev",
     "dev:stellux:test": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/stellux/.env.stellux.test max dev",
+    "build:stellux:prod": "npm run build && cp -r ./docs/平台配置物料/stellux/** ./dist/platform",
+    "build:lynfoo:prod": "npm run build && cp -r ./docs/平台配置物料/lynfoo/** ./dist/platform",
     "i18n-remove": "pro i18n-remove --locale=zh-CN --write",
     "postinstall": "max setup",
     "lint": "npm run lint:js && npm run lint:prettier && npm run tsc",
