@@ -6,6 +6,8 @@ import useQuoteColor from '@/pages/webapp/hooks/useQuoteColor'
 import { formatNum } from '@/utils'
 import { getCurrentDepth } from '@/utils/wsUtil'
 
+import { useIntl } from '@umijs/max'
+import CustomArrowButton from '../../../Base/CustomArrowButton'
 import { Text } from '../../../Base/Text'
 import { View } from '../../../Base/View'
 import BuySellButton from '../../BuySellModal/BuySellButton'
@@ -74,11 +76,27 @@ const BuySellPrice = observer(() => {
 /** 交易头部区域 */
 function Header() {
   const { cn, theme } = useTheme()
+  const intl = useIntl()
 
   const depth = getCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
 
-  if (hasDepth) return <></>
+  if (hasDepth) {
+    return (
+      <View className={cn('flex-row justify-between items-center pl-3')}>
+        <View className={cn('flex-1 flex-row')}>
+          <CustomArrowButton
+            leftText={intl.formatMessage({ id: 'mt.kaikong' })}
+            rightText={intl.formatMessage({ id: 'mt.kaiduo' })}
+            // onChange={(key) => {
+            //   trade.setBuySell(key === 'left' ? 'SELL' : 'BUY')
+            // }}
+          />
+        </View>
+        <MarginTypeAndLeverageBtn />
+      </View>
+    )
+  }
 
   return (
     <View className={cn('mt-3')}>

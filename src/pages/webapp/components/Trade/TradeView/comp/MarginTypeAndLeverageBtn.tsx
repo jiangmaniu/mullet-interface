@@ -86,7 +86,7 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
           >
             <View
               className={cn(
-                'flex-row py-1 px-2 items-center justify-center border-[0.5px] rounded-[6px]',
+                'flex-row py-1 px-2 items-center justify-center border-[0.5px] border-gray-130 rounded-[6px]',
                 !isFloatLeverage && 'bg-gray-130 border-[transparent]'
               )}
             >
