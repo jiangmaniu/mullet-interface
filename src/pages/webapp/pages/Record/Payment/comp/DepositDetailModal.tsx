@@ -1,6 +1,7 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import { statusMapDeposit } from '@/pages/admin/record'
 import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
@@ -9,7 +10,6 @@ import { cn } from '@/utils/cn'
 import { FormattedMessage, useModel } from '@umijs/max'
 import type { ForwardedRef } from 'react'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { statusMap } from '..'
 
 type IProps = {
   item: Wallet.depositOrderListItem | undefined
@@ -61,14 +61,14 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
               </div>
             </div>
             <div className="flex flex-col items-end gap-1">
-              <div className="text-sm font-normal flex items-center " style={{ color: statusMap[item?.status ?? 'FAIL']?.color }}>
+              <div className="text-sm font-normal flex items-center " style={{ color: statusMapDeposit[item?.status ?? 'FAIL']?.color }}>
                 <span
                   className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item?.status === 'WAIT' && 'animate-pulse')}
-                  style={{ backgroundColor: statusMap[item?.status ?? 'FAIL']?.color || '#9C9C9C' }}
+                  style={{ backgroundColor: statusMapDeposit[item?.status ?? 'FAIL']?.color || '#9C9C9C' }}
                 >
                   {/* 占位 */}
                 </span>
-                {statusMap[item?.status ?? 'FAIL']?.text || '[status]'}
+                {statusMapDeposit[item?.status ?? 'FAIL']?.text || '[status]'}
               </div>
             </div>
           </div>

@@ -50,6 +50,7 @@ export default {
   'mt.chujinxuzhi': 'Thông báo rút tiền',
   'mt.bizhong': 'Tiền tệ',
   'mt.lianmingcheng': 'Tên chuỗi',
+  'mt.daizhifu': 'Đang chờ thanh toán',
   'mt.tongguo': 'Thông qua',
   'mt.daishenghe': 'Đang chờ xem xét',
   'mt.ningquedingchexiaochujinshenqing': 'Bạn có chắc chắn muốn hủy yêu cầu rút tiền không?',

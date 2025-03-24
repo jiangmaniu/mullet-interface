@@ -41,7 +41,30 @@ type IStatusMap = {
 
 export const statusMap: IStatusMap = {
   WAIT: {
-    text: getIntl().formatMessage({ id: 'mt.daishenghe' }),
+    text: getIntl().formatMessage({ id: 'mt.daishenhe' }),
+    color: '#9C9C9C'
+  },
+  SUCCESS: {
+    text: getIntl().formatMessage({ id: 'mt.tongguo' }),
+    color: '#45A48A'
+  },
+  RECEIPT: {
+    text: getIntl().formatMessage({ id: 'mt.yidaozhang' }),
+    color: '#45A48A'
+  },
+  REJECT: {
+    text: getIntl().formatMessage({ id: 'mt.shenheshibai' }),
+    color: '#C54747'
+  },
+  FAIL: {
+    text: getIntl().formatMessage({ id: 'mt.shibai' }),
+    color: '#C54747'
+  }
+}
+
+export const statusMapDeposit: IStatusMap = {
+  WAIT: {
+    text: getIntl().formatMessage({ id: 'mt.daizhifu' }),
     color: '#9C9C9C'
   },
   SUCCESS: {

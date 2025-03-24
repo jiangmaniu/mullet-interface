@@ -26,7 +26,7 @@ export const Step3 = ({ handleSubmit }: { handleSubmit: () => void }) => {
             <span className="flex flex-row items-center gap-1 cursor-pointer mt-5" onClick={goKefu}>
               <Iconfont name="kefu" size={24} />
               <span className="font-extrabold">
-                <FormattedMessage id="mt.rujinshiyudaowenti" />
+                <FormattedMessage id="mt.chujinshiyudaowenti" />
               </span>
             </span>
           </div>

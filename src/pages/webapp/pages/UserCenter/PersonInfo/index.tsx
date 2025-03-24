@@ -7,7 +7,7 @@ import { useLocation, useModel } from '@umijs/max'
 import { useRequest, useTitle } from 'ahooks'
 import Header from '../../../components/Base/Header'
 import ListItem, { IlistItemProps } from '../../../components/Base/List/ListItem'
-import { SheetRef } from '../../../components/Base/SheetModal'
+import { ModalRef, SheetRef } from '../../../components/Base/SheetModal'
 import { View } from '../../../components/Base/View'
 import { useI18n } from '../../../hooks/useI18n'
 import BasicLayout from '../../../layouts/BasicLayout'
@@ -35,6 +35,14 @@ function UserCenter() {
     queryAddr()
     queryBank()
   }, [])
+
+  const bindPhone = params?.get('bindPhone') === 'true' ? true : false
+  const bindPhoneRef = useRef<ModalRef>(null)
+  useEffect(() => {
+    if (bindPhone) {
+      bindPhoneRef.current?.show()
+    }
+  }, [bindPhone])
 
   const renderList = (listData: IlistItemProps[], title?: string, margin = true) => {
     return (
@@ -97,7 +105,7 @@ function UserCenter() {
           +{currentUser?.userInfo?.phoneAreaCode?.replace('+', '') || ''} {currentUser?.userInfo?.phone || '-'}
         </>
       ) : (
-        <BindPhoneModal trigger={<span>{t('mt.bangding')}</span>} />
+        <span onClick={() => bindPhoneRef.current?.show()}>{t('mt.bangding')}</span>
       ),
       hiddenRightIcon: !!currentUser?.userInfo?.phone,
       styles: {
@@ -170,6 +178,7 @@ function UserCenter() {
         <View style={{ height: 8 }} />
         {renderList(address, t('mt.dizhi'), false)}
       </View>
+      <BindPhoneModal ref={bindPhoneRef} />
     </BasicLayout>
   )
 }

@@ -4,47 +4,13 @@ import Header from '@/pages/webapp/components/Base/Header'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
-import { getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
+import { useIntl, useModel, useSearchParams } from '@umijs/max'
 import { useTitle } from 'ahooks'
 import { Segmented } from 'antd'
 import { useEffect, useState } from 'react'
 import DepositList from './comp/DepositList'
 import TransferList from './comp/TransferList'
 import WithdrawList from './comp/WithdrawList'
-
-export type IStatusMap = {
-  [key in Wallet.IWithdrawalOrderStatus]: {
-    text: string
-    color: string
-    options?: {
-      text: string
-      fn: () => void
-    }
-  }
-}
-
-export const statusMap: IStatusMap = {
-  WAIT: {
-    text: getIntl().formatMessage({ id: 'mt.daishenghe' }),
-    color: '#9C9C9C'
-  },
-  SUCCESS: {
-    text: getIntl().formatMessage({ id: 'mt.tongguo' }),
-    color: '#45A48A'
-  },
-  RECEIPT: {
-    text: getIntl().formatMessage({ id: 'mt.yidaozhang' }),
-    color: '#45A48A'
-  },
-  REJECT: {
-    text: getIntl().formatMessage({ id: 'mt.shenheshibai' }),
-    color: '#C54747'
-  },
-  FAIL: {
-    text: getIntl().formatMessage({ id: 'mt.shibai' }),
-    color: '#C54747'
-  }
-}
 
 export default function PaymentRecord() {
   const { theme } = useTheme()

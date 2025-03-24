@@ -8,7 +8,7 @@ import { cn } from '@/utils/cn'
 
 import { getEnv } from '@/env'
 import { getAccountSynopsisByLng } from '@/utils/business'
-import { statusMap } from '..'
+import { statusMapDeposit } from '..'
 
 type IProps = {
   trigger?: JSX.Element
@@ -38,16 +38,16 @@ function DepositModal({ item }: IProps, ref: any) {
             <div className="text-lg text-primary font-semibold flex flex-row items-center gap-3">
               {item?.type}
               {/* @ts-ignore */}
-              <div className="text-sm flex items-center" style={{ color: statusMap[item?.status]?.color }}>
+              <div className="text-sm flex items-center" style={{ color: statusMapDeposit[item?.status]?.color }}>
                 <span
                   className={cn('w-[6px] h-[6px] rounded-full mr-1 mt-[1px]', item?.status === 'WAIT' && 'animate-pulse')}
                   // @ts-ignore
-                  style={{ backgroundColor: statusMap[item?.status]?.color }}
+                  style={{ backgroundColor: statusMapDeposit[item?.status]?.color }}
                 >
                   {/*  */}
                 </span>
                 {/* @ts-ignore */}
-                {statusMap[item?.status]?.text}
+                {statusMapDeposit[item?.status]?.text}
               </div>
               {/*
               {item?.status === 'WAIT' && (

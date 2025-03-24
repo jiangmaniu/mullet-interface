@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoadingRef } from '@/components/Base/Lottie/Loading'
@@ -56,10 +56,11 @@ const CountDown = observer(({ phone, onSendCode }: { phone?: string; onSendCode:
 })
 
 type IProps = {
-  trigger: JSX.Element
+  trigger?: JSX.Element
+  open?: boolean
 }
 
-function BindPhoneModal(props: IProps) {
+const BindPhoneModal = forwardRef((props: IProps, ref: React.Ref<ModalRef>) => {
   const i18n = useI18n()
   const { cn, theme } = useTheme()
   const { t } = useI18n()
@@ -186,6 +187,15 @@ function BindPhoneModal(props: IProps) {
     getCountryList()
   }, [])
 
+  useImperativeHandle(ref, () => ({
+    show: () => {
+      bottomSheetModalRef.current?.sheet.present()
+    },
+    close: () => {
+      bottomSheetModalRef.current?.sheet.dismiss()
+    }
+  }))
+
   return (
     <>
       <SheetModal
@@ -193,6 +203,7 @@ function BindPhoneModal(props: IProps) {
         autoHeight
         title={intl.formatMessage({ id: 'mt.bangdingshouji' })}
         trigger={props.trigger}
+        open={props.open}
         children={
           <div className="mx-4">
             <TextField
@@ -259,6 +270,6 @@ function BindPhoneModal(props: IProps) {
       />
     </>
   )
-}
+})
 
 export default observer(BindPhoneModal)

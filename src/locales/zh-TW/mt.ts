@@ -737,6 +737,7 @@ export default {
   'mt.rujinshenqingchenggong': '入金申請成功，客服正在加緊審核中...',
   'mt.chakandingdan': '查看訂單',
   'mt.rujinshiyudaowenti': '入金時遇到問題？',
+  'mt.chujinshiyudaowenti': '出金時遇到問題？',
   'mt.shoukuanerweima': '收款二維碼',
   'mt.weixinsaomazhifu': '微信掃碼支付，請確保收款商家信息一致',
   'mt.zhifubaosaomazhifu': '支付寶掃碼支付，請確保收款商家信息一致',

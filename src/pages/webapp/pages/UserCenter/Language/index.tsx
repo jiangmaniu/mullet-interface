@@ -11,7 +11,7 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { setUserLanguage } from '@/services/api/user'
-import { onBack, push } from '@/utils/navigator'
+import { onBack } from '@/utils/navigator'
 import { observer } from 'mobx-react'
 import { useMemo, useState } from 'react'
 
@@ -29,7 +29,7 @@ export const LngList = ({ list }: { list: IlistItemProps[] }) => {
     }
     setLng(item.value as ILanguage)
 
-    push('/app/user-center')
+    // push('/app/user-center')
 
     // 调用接口设置语言保存到后台同步到不同终端
     await setUserLanguage({ language: item.value as ILanguage })

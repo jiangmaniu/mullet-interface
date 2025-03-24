@@ -31,25 +31,6 @@ type IStatusMap = {
   }
 }
 
-// export const statusMap: IStatusMap = {
-//   beginning: {
-//     text: getIntl().formatMessage({ id: 'mt.daishenghe' }),
-//     color: '#9C9C9C'
-//   },
-//   pending: {
-//     text: getIntl().formatMessage({ id: 'mt.shenhezhong' }),
-//     color: '#FF9700'
-//   },
-//   finished: {
-//     text: getIntl().formatMessage({ id: 'mt.tongguo' }),
-//     color: '#45A48A'
-//   },
-//   failed: {
-//     text: getIntl().formatMessage({ id: 'mt.shenheshibai' }),
-//     color: '#C54747'
-//   }
-// }
-
 export default function Addresss() {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser

@@ -2,6 +2,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import { statusMapDeposit } from '@/pages/admin/record'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import Empty from '@/pages/webapp/components/Base/List/Empty'
 import End from '@/pages/webapp/components/Base/List/End'
@@ -19,7 +20,6 @@ import dayjs from 'dayjs'
 import { observer } from 'mobx-react'
 import VirtualList from 'rc-virtual-list'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { statusMap } from '..'
 import DepositDetailModal from './DepositDetailModal'
 
 /**
@@ -102,8 +102,8 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
                 </div> */}
                 <div className="text-primary font-bold flex items-center">
                   <FormattedMessage id="mt.rujin" />
-                  <span className=" text-xs font-normal" style={{ color: statusMap[item.status ?? 'FAIL']?.color }}>
-                    &nbsp;·&nbsp;{statusMap[item.status ?? 'FAIL']?.text || '[status]'}
+                  <span className=" text-xs font-normal" style={{ color: statusMapDeposit[item.status ?? 'FAIL']?.color }}>
+                    &nbsp;·&nbsp;{statusMapDeposit[item.status ?? 'FAIL']?.text || '[status]'}
                   </span>
                 </div>
                 <div className="text-weak text-xs overflow-visible whitespace-nowrap text-nowrap">
