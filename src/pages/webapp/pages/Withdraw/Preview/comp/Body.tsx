@@ -126,7 +126,7 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
             if (res.success) {
               replace(appendHideParamIfNeeded(`/app/withdraw/wait/${res.data.id}`))
             } else {
-              message.info(res.data.msg)
+              message.info(res.message)
             }
           })
           .finally(() => {
