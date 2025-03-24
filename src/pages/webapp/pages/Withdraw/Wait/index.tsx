@@ -24,9 +24,6 @@ function WithdrawPreview() {
   }
 
   const ref = useRef<WebviewComponentRef>(null)
-  const handleSubmit = () => {
-    ref.current?.onSubmit()
-  }
 
   const onSuccess = (values?: any) => {
     push('/app/withdraw/preview', values)
