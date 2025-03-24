@@ -95,13 +95,20 @@ function HistoryPositionList() {
                         row_key: item.id,
                         row_type: 'order', // 弹窗类型标识
                         direction: getEnum().Enum.TradeBuySell[item.buySell as string]?.text, // 交易方向
-                        price: item.limitPrice ? formatNum(item.limitPrice, { precision: 2 }) : <FormattedMessage id="mt.shijia" />, // 委托单：请求价
+                        price: item.limitPrice ? (
+                          formatNum(item.limitPrice, { precision: item.symbolDecimal || 2, isTruncateDecimal: false })
+                        ) : (
+                          <FormattedMessage id="mt.shijia" />
+                        ), // 委托单：请求价
                         // 第三层：成交单
                         children: (item.tradeRecordsInfo || []).map((v) => {
                           return {
                             ...v,
                             direction: getEnum().Enum.OrderInOut[v.inOut as string]?.text, // 交易方向
-                            price: formatNum(v.inOut === 'IN' ? v.startPrice : v.tradePrice, { precision: 2 }), // 成交单：成交价
+                            price: formatNum(v.inOut === 'IN' ? v.startPrice : v.tradePrice, {
+                              precision: item.symbolDecimal || 2,
+                              isTruncateDecimal: false
+                            }), // 成交单：成交价
                             row_type: 'close', // 弹窗类型标识
                             row_key: v.id
                           }
