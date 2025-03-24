@@ -279,6 +279,8 @@ class KlineStore {
     const { symbolInfo, resolution, firstDataRequest, from, to, countBack } = obj
     this.datafeedBarCallbackObj = obj
 
+    if (typeof this.datafeedBarCallbackObj?.onHistoryCallback !== 'function') return
+
     // 首次请求
     if (firstDataRequest) {
       this.getHttpHistoryBars(symbolInfo, resolution, from, to, countBack, firstDataRequest).then((bars) => {
