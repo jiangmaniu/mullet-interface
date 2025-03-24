@@ -245,6 +245,7 @@ export default {
   'mt.zhiyunxianjiamaichudan': 'Lệnh bán giới hạn dừng',
   'mt.weituozhong': 'Đang chờ',
   'mt.shibai': 'Thất bại',
+  'mt.tixianzhong': 'Đang rút tiền',
   'mt.yichengjiao': 'Đã khớp',
   'mt.yicexiao': 'Đã khớp',
   'mt.daicexiao': 'Đang chờ hủy',

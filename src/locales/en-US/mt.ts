@@ -245,6 +245,7 @@ export default {
   'mt.zhiyunxianjiamaichudan': 'Stop-Limit Sell Order',
   'mt.weituozhong': 'Pending',
   'mt.shibai': 'Failed',
+  'mt.tixianzhong': 'Withdrawal in Progress',
   'mt.yichengjiao': 'Traded',
   'mt.yicexiao': 'Cancelled',
   'mt.daicexiao': 'Pending Cancellation',

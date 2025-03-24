@@ -59,6 +59,10 @@ export const statusMap: IStatusMap = {
   FAIL: {
     text: getIntl().formatMessage({ id: 'mt.shibai' }),
     color: '#C54747'
+  },
+  WITHDRAW: {
+    text: getIntl().formatMessage({ id: 'mt.tixianzhong' }),
+    color: '#C49002'
   }
 }
 
@@ -82,6 +86,10 @@ export const statusMapDeposit: IStatusMap = {
   FAIL: {
     text: getIntl().formatMessage({ id: 'mt.shibai' }),
     color: '#C54747'
+  },
+  WITHDRAW: {
+    text: getIntl().formatMessage({ id: 'mt.tixianzhong' }),
+    color: '#C49002'
   }
 }
 

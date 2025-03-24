@@ -21,7 +21,7 @@ declare namespace Wallet {
   /**
    * 订单状态
    */
-  type IWithdrawalOrderStatus = 'RECEIPT' | 'WAIT' | 'SUCCESS' | 'REJECT' | 'FAIL' // 出金订单状态: 收款 / 等待回调
+  type IWithdrawalOrderStatus = 'RECEIPT' | 'WAIT' | 'SUCCESS' | 'REJECT' | 'FAIL' | 'WITHDRAW' // 出金订单状态: 收款 / 等待回调
 
   type IMethodOption = {
     // 图标
