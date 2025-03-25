@@ -1,3 +1,4 @@
+import updateVersion from '@/hooks/updateVersion'
 import { useEffect } from 'react'
 import { EnvProvider } from './envProvider'
 import { LanguageProvider } from './languageProvider'
@@ -11,6 +12,8 @@ interface IProps {
 }
 
 export const Provider = ({ children }: IProps): JSX.Element => {
+  updateVersion()
+
   useEffect(() => {
     stores.ws.initWorker()
     // 提前建立socket连接，加快首次进入页面行情连接速度

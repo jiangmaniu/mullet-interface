@@ -819,5 +819,7 @@ export default {
   'mt.bangding': 'Liên kết',
   'mt.weibangding': 'Chưa liên kết',
   'mt.mima': 'Mật khẩu',
-  'mt.shangchuanzhaopianbuyaochaoguo': 'Không được vượt quá {value}'
+  'mt.shangchuanzhaopianbuyaochaoguo': 'Không được vượt quá {value}',
+  'mt.banbengengxin': 'Cập nhật phiên bản',
+  'mt.banbengengxintips': 'Đã phát hiện phiên bản mới, vui lòng làm mới trang'
 }
