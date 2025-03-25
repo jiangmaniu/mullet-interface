@@ -4,11 +4,11 @@ import classNames from 'classnames'
 import { useMemo, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
-import Iconfont from '@/components/Base/Iconfont'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { formatNum, toFixed } from '@/utils'
 import { getAccountSynopsisByLng } from '@/utils/business'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 type IProps = {
   form: FormInstance
@@ -72,7 +72,7 @@ export default function TransferFormSelectItem({ form, totalProfit }: IProps) {
                 onClick={() => {
                   setOpen(false)
                 }}
-                className={classNames('cursor-pointer rounded-lg border border-gray-250 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
+                className={classNames('cursor-pointer rounded-lg border border-gray-150 pb-[6px] pt-[11px] hover:bg-[#f5f5f5]', {
                   'bg-[#f5f5f5]': item.id === fromAccountInfo
                 })}
               >
@@ -117,7 +117,7 @@ export default function TransferFormSelectItem({ form, totalProfit }: IProps) {
         })}
       />
       <div className="text-xs text-secondary mt-2.5 flex items-center">
-        <Iconfont name="user" width={20} height={20} color="#6A7073" />
+        <InfoCircleOutlined style={{ color: '#6A7073', fontSize: 14, marginRight: 4 }} />
         <FormattedMessage id="mt.yizhanghuhuobihuiru" />
       </div>
     </div>

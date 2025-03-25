@@ -27,7 +27,7 @@ export default function DepositMethod({
   return (
     <div
       className={cn(
-        'rounded-lg flex flex-col bg-white border border-gray-70',
+        'rounded-xl flex flex-col bg-white',
         status !== 'locked' ? 'cursor-pointer hover:shadow-[0px_0px_12px_0px_rgba(0,0,0,0.1)]' : 'filter grayscale-50 opacity-50'
       )}
       onClick={() => {
@@ -45,7 +45,7 @@ export default function DepositMethod({
           {status === 'locked' && <Iconfont name="geren-suo" width={20} height={20} color="black" />}
         </div>
       </div>
-      <div className="px-4 py-2 border-t border-gray-70 flex flex-col gap-1">
+      <div className="px-4 py-3 border-t border-gray-70 flex flex-col gap-1">
         {explanation &&
           Object.entries(explanation).map(([key, value]) => (
             <div className="flex flex-row items-center justify-between gap-[18px]" key={key}>

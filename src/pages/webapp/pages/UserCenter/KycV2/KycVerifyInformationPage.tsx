@@ -45,7 +45,7 @@ export default function KycVerifyDocPage() {
         }}
       >
         <View className="mb-3 mx-[22px]">
-          <Text size="sm" weight="light" className="text-center " color="green">
+          <Text size="sm" weight="medium" className="text-center " color="green">
             {i18n.t('pages.userCenter.yigaojirenzheng')}
           </Text>
         </View>

@@ -46,6 +46,9 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
           // style: {
           //   border: 'none'
           // }
+          style: {
+            height: 50
+          },
           suffix: <div className="text-primary text-sm !font-dingpro-medium">{currency}</div>,
           onChange: (e) => {
             console.log('e', e)

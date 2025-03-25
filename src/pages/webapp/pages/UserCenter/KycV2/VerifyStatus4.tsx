@@ -33,15 +33,15 @@ export default function VerifyStatus4() {
                 ? `${currentUser?.lastName || 'lastName'}${currentUser?.firstName || 'firstName'}`
                 : `${currentUser?.firstName || 'firstName'} ${currentUser?.lastName || 'lastName'}`}
             </Text>
-            <Text size="sm" color="secondary" className=" text-gray-500">
+            <Text size="sm" color="weak">
               {t('pages.login.Residence Country')}: {country || 'country'}
             </Text>
           </View>
           <View className="flex flex-col gap-2.5 items-start">
-            <Text size="sm" color="secondary" className=" text-gray-500">
+            <Text size="sm" color="weak">
               {t('pages.userCenter.zhengjianleixing')}
             </Text>
-            <Text size="base" weight="medium" className=" text-gray-500">
+            <Text size="base" weight="medium">
               {currentUser?.identificationType === 'ID_CARD'
                 ? t('pages.userCenter.shenfenzheng')
                 : t('pages.userCenter.hukoubenjuzhuzheng')}
@@ -49,10 +49,10 @@ export default function VerifyStatus4() {
           </View>
 
           <View className="flex flex-col gap-2.5 items-start">
-            <Text size="sm" color="secondary" className=" text-gray-500">
+            <Text size="sm" color="weak">
               {t('pages.userCenter.zhengjianhao')}
             </Text>
-            <Text size="base" weight="medium" className=" text-gray-500">
+            <Text size="base" weight="medium">
               {currentUser?.identificationCode || 'identificationCode'}
             </Text>
           </View>

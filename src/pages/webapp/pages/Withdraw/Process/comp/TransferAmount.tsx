@@ -64,7 +64,19 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
           </span>
         }
         fieldProps={{
-          allowClear: false
+          style: {
+            height: 50
+          },
+          allowClear: false,
+          suffix: (
+            <div className="flex flex-row items-center gap-2 z-10">
+              <div className="text-primary text-sm cursor-pointer hover:underline z-10 leading-8" onClick={handleSetAll}>
+                <FormattedMessage id="common.all" />
+              </div>
+              <div className="bg-gray-250 h-3 w-[1px] self-center"></div>
+              <div className="text-primary text-sm font-pf-bold leading-8">{methodInfo?.baseCurrency || '--'}</div>
+            </div>
+          )
         }}
         name="amount"
         placeholder={tips}
@@ -94,13 +106,6 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
           }
         ]}
       />
-      <div className="absolute top-[34px] right-2 flex flex-row items-center gap-2 z-10">
-        <div className="text-primary text-sm cursor-pointer hover:underline z-10 leading-8" onClick={handleSetAll}>
-          <FormattedMessage id="common.all" />
-        </div>
-        <div className="bg-gray-250 h-3 w-[1px] self-center"></div>
-        <div className="text-primary text-sm font-pf-bold leading-8">{methodInfo?.baseCurrency || '--'}</div>
-      </div>
     </div>
   )
 }
