@@ -241,6 +241,7 @@ export default {
   'mt.zhiyunxianjiamaichudan': '止损限价卖出单',
   'mt.weituozhong': '委托中',
   'mt.shibai': '失败',
+  'mt.tixianzhong': '提现中',
   'mt.yichengjiao': '已成交',
   'mt.yicexiao': '已撤销',
   'mt.daicexiao': '待撤销',

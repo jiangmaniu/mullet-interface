@@ -14,8 +14,9 @@ import ProFormText from '@/components/Admin/Form/ProFormText'
 import Button from '@/components/Base/Button'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useLang } from '@/context/languageProvider'
+import { stores } from '@/context/mobxProvider'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
-import { sendCustomPhoneCode } from '@/services/api/user'
+import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { withdrawExchangeRate } from '@/utils/deposit'
 import { message } from '@/utils/message'
 
@@ -126,18 +127,27 @@ export const Step2 = ({
 
   const [sendTime, setSendTime] = useState(0)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
+  const registerWay = stores.global.registerWay
 
   const handleGetVerificationCode = async () => {
     if (sendTime > 0) return
 
-    if (!currentUser?.userInfo?.phone) {
+    if (registerWay === 'PHONE' && !currentUser?.userInfo?.phone) {
       message.info(getIntl().formatMessage({ id: 'mt.qingxianwanshankycrenzheng' }))
       return
     }
 
-    sendCustomPhoneCode({
+    if (registerWay === 'EMAIL' && !currentUser?.userInfo?.email) {
+      message.info(getIntl().formatMessage({ id: 'mt.qingxianwanshankycrenzheng' }))
+      return
+    }
+
+    const fn = registerWay === 'PHONE' && currentUser?.userInfo?.phone ? sendCustomPhoneCode : sendCustomEmailCode
+
+    fn({
       phone: currentUser?.userInfo?.phone,
-      phoneAreaCode: currentUser?.userInfo?.phoneAreaCode
+      phoneAreaCode: currentUser?.userInfo?.phoneAreaCode,
+      email: currentUser?.userInfo?.email
     })
       .then((res) => {
         res.success && setSendTime(60)
@@ -245,7 +255,12 @@ export const Step2 = ({
                 {
                   id: 'mt.qingshurushoudaodeyanzhengma'
                 },
-                { value: `${currentUser?.userInfo?.phoneAreaCode}${currentUser?.userInfo?.phone}` }
+                {
+                  value:
+                    registerWay === 'PHONE'
+                      ? `${currentUser?.userInfo?.phoneAreaCode}${currentUser?.userInfo?.phone}`
+                      : currentUser?.userInfo?.email
+                }
               )}
             >
               <div className="flex items-center flex-wrap gap-6">
