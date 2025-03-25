@@ -99,7 +99,7 @@ export default function Record() {
   const searchKey = searchParams.get('key') as ITabKey
 
   useEffect(() => {
-    setParams({ ...params, tradeAccountId: accountList?.[0]?.id })
+    setParams({ ...params, tradeAccountId: '' })
   }, [accountList])
 
   useEffect(() => {
@@ -152,7 +152,10 @@ export default function Record() {
         />
         <div className={classNames('flex items-center gap-x-3', filterClassName)}>
           <ProFormSelect
-            options={accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))}
+            options={[
+              { value: '', label: <FormattedMessage id="common.all" /> },
+              ...accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))
+            ]}
             placeholder={intl.formatMessage({ id: 'mt.xuanzezhanghu' })}
             fieldProps={{
               value: params.tradeAccountId,
