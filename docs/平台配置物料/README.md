@@ -13,7 +13,7 @@
   // 网站名称(必填)
   "name": "Stellux",
   // 客户ID (必填)
-  "CLIENT_ID": "StelluxTrader-client",
+  "CLIENT_ID": "trade-pc-client",
   // 客户秘钥 (必填)
   "CLIENT_SECRET": "stellux_trader_client_secret",
   // 识别码 (必填) 在manager端新增填入 /zh-TW/customer-group

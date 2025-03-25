@@ -16,7 +16,12 @@ export type TabbarActiveKey = '/app/quote' | '/app/trade' | '/app/position' | '/
 
 export type DeviceType = 'PC' | 'MOBILE'
 
-export type IPlatformConfig = Partial<typeof PLATFORM_DEFAULT_CONFIG>
+export type IPlatformConfig = Partial<typeof PLATFORM_DEFAULT_CONFIG> & {
+  // 客户端ID
+  CLIENT_ID: string
+  // 秘钥
+  CLIENT_SECRET: string
+}
 
 export class GlobalStore {
   constructor() {

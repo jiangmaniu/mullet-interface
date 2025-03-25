@@ -135,16 +135,17 @@ export const errorConfig: RequestConfig = {
       const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
       const token = config.token || STORAGE_GET_TOKEN() || ''
       const env = getEnv()
+      const CLIENT_ID = env.CLIENT_ID
+      const CLIENT_SECRET = env.CLIENT_SECRET
       const headers: any = {
         'Content-Type': 'x-www-form-urlencoded',
         Language: getLocaleForBackend(),
         'Tenant-Id': '000000', // 默认的租户ID
         ...config.headers
       }
-
       if (config.authorization !== false) {
         // 客户端认证
-        headers['Authorization'] = `Basic ${Base64.encode(`${env.CLIENT_ID}:${env.CLIENT_SECRET}`)}`
+        headers['Authorization'] = `Basic ${Base64.encode(`${CLIENT_ID}:${CLIENT_SECRET}`)}`
       }
 
       if (token) {

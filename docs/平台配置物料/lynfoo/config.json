@@ -1,8 +1,10 @@
 {
   "name": "Lynfoo",
   "websiteUrl": "www.lynfoo.io",
-  "CLIENT_ID": "WpTrader-client",
-  "CLIENT_SECRET": "wp_trader_client_secret",
+  "CLIENT_ID_PC": "trade-pc-client",
+  "CLIENT_SECRET_PC": "trade-pc-client-secret",
+  "CLIENT_ID_H5": "trade-h5-client",
+  "CLIENT_SECRET_H5": "trade-h5-client-secret",
   "REGISTER_APP_CODE": "123456",
   "ws": "wss://websocket.lynfoocn.com:443/websocketServer",
   "imgDomain": "https://file.lynfoocn.com/trade/",
