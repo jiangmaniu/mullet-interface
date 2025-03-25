@@ -20,8 +20,10 @@ const devConf = {
   ws: process.env.WS_URL, // websocket地址
   imgDomain: process.env.IMG_DOMAIN, // 图片地址
   BASE_URL: process.env.BASE_URL, // 接口地址
-  CLIENT_ID: process.env.CLIENT_ID, // 客户端ID
-  CLIENT_SECRET: process.env.CLIENT_SECRET // 客户端密钥
+  CLIENT_ID: process.env.CLIENT_ID, // 客户端ID-pc
+  CLIENT_SECRET: process.env.CLIENT_SECRET, // 客户端密钥-pc
+  CLIENT_ID_H5: process.env.CLIENT_ID_H5, // 客户端ID-h5
+  CLIENT_SECRET_H5: process.env.CLIENT_SECRET_H5 // 客户端密钥-h5
 }
 
 const conf = process.env.NODE_ENV === 'production' ? seoConf : devConf
