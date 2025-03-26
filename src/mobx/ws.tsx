@@ -470,7 +470,8 @@ class WSStore {
   // 检查socket是否连接，如果未连接，则重新连接
   checkSocketReady = (fn?: () => void) => {
     if (this.readyState !== 1) {
-      this.reconnect(fn)
+      // this.reconnect(fn)
+      this.connect(fn)
     } else {
       fn?.()
     }
