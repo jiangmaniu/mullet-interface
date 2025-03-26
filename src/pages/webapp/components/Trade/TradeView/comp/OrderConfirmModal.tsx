@@ -46,7 +46,7 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
     } else if (isFixedLeverage) {
       return `${prepaymentConf?.fixed_leverage?.leverage_multiple}X`
     } else if (isFloatLeverage) {
-      return `${trade.leverageMultiple || 2}X`
+      return `${trade.leverageMultiple || 1}X`
     }
     return ''
   }, [isFixedMargin, isFixedLeverage, isFloatLeverage, trade.leverageMultiple])

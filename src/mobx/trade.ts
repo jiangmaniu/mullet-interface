@@ -126,7 +126,7 @@ class TradeStore {
   @observable buySell: API.TradeBuySell = 'BUY' // 交易区买卖类型
   @observable isBuy = true // 交易区买卖类型
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
-  @observable leverageMultiple = 2 // 浮动杠杆倍数，默认1
+  @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
   @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
   @observable orderQuickPlaceOrderChecked = true // 快速下单默认选择
   @observable orderConfirmChecked = true // 下单二次确认弹窗

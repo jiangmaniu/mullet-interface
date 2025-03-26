@@ -46,7 +46,7 @@ function LevelAgeModal(props: any, ref: ForwardedRef<LevelAgeModalRef>) {
   }))
 
   useEffect(() => {
-    const initValue = String(leverageMultiple || 2)
+    const initValue = String(leverageMultiple || 1)
     setValue(initValue)
   }, [leverageMultiple])
 

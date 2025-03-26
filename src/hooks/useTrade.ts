@@ -169,7 +169,7 @@ export default function useTrade(props?: IProps) {
   }, [quoteInfo, inputing, prevQuoteInfo])
 
   // 输入时取最后一次行情缓存计算
-  const leverageMultiple = quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 2 : undefined
+  const leverageMultiple = quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined
 
   const stopl = useMemo(() => Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d), [symbolConf, d]) // 交易-限价和停损级别
   const maxOpenVolume = trade.leverageMultipleMaxOpenVolume || trade.maxOpenVolume // 最大可开手数

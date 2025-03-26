@@ -129,9 +129,9 @@ export default function useQuote() {
   // 输入时取最后一次行情缓存计算
   const leverageMultiple = useMemo(() => {
     // if (typing) {
-    //   return prevQuoteInfo.current?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 2 : undefined
+    //   return prevQuoteInfo.current?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined
     // }
-    return quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 2 : undefined
+    return quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined
   }, [quoteInfo, trade.leverageMultiple])
 
   // 如果有 recordModalItem 则取 recordModalItem 的 orderType，否则取 trade 的 orderType

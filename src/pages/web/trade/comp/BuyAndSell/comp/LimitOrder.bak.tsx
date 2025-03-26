@@ -153,7 +153,7 @@ export default observer(
       stopLoss: sl ? parseFloat(sl) : undefined,
       takeProfit: sp ? parseFloat(sp) : undefined,
       // 浮动杠杆默认1
-      leverageMultiple: quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 2 : undefined,
+      leverageMultiple: quoteInfo?.prepaymentConf?.mode === 'float_leverage' ? trade.leverageMultiple || 1 : undefined,
       tradeAccountId: trade.currentAccountInfo?.id,
       marginType,
       limitPrice: priceValue,

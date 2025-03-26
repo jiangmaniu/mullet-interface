@@ -43,7 +43,7 @@ function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
   } else if (isFixedLeverage) {
     leverage = `${prepaymentConf?.fixed_leverage?.leverage_multiple}X`
   } else if (isFloatLeverage) {
-    leverage = `${trade.leverageMultiple || 2}X`
+    leverage = `${trade.leverageMultiple || 1}X`
   }
 
   const marginTypeLabel =
