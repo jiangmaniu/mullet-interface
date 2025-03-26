@@ -78,7 +78,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
         render: () => {
           return (
             <div className="flex items-center gap-2">
-              <span className="flex-shrink-0">{userName}</span>
+              <span className="flex-shrink-0 font-medium text-primary">{userName}</span>
               <Iconfont
                 name="a-bianzu3beifen2"
                 color="gray"
@@ -100,7 +100,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
               render: () => {
                 return (
                   <div className="flex items-center gap-2">
-                    <span className="flex-shrink-0">{bankName}</span>
+                    <span className="flex-shrink-0 font-medium text-primary">{bankName}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
                       color="gray"
@@ -120,7 +120,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
               render: () => {
                 return (
                   <div className="flex items-center gap-2">
-                    <span className="flex-shrink-0">{bankCard}</span>
+                    <span className="flex-shrink-0 font-medium text-primary">{bankCard}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
                       color="gray"
@@ -196,11 +196,10 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
   return (
     <div className="flex items-center justify-center w-full h-full flex-1">
       <div className=" pt-4 bg-white w-full rounded-t-3xl flex-1">
-        <div className="flex flex-row items-center gap-2 border-b w-full pb-[14px] px-5 border-b-gray-70 ">
+        <div className="flex flex-row items-center gap-1 border-b w-full pb-[14px] px-5 border-b-gray-70 ">
           <span className=" text-sm text-secondary">
             <FormattedMessage id="mt.rujinzhanghu" />
           </span>
-
           <div className="flex flex-row items-center gap-1 text-sm">
             <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
               {synopsis?.abbr}
@@ -211,7 +210,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
         <div className="px-[14px] pb-4">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-6 mt-6">
-              <div className=" text-primary text-sm font-semibold">
+              <div className=" text-primary text-base font-semibold">
                 <FormattedMessage id="mt.fukuanxinxi" />
               </div>
               {options
@@ -219,8 +218,8 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
                 .map((item, index) => (
                   <div key={index} className="text-secondary text-sm flex flex-row items-center justify-between gap-4">
                     <span className="flex-shrink-0">{item.label}</span>
-                    <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
-                    {item.render ? item.render() : <span className="flex-shrink-0">{item.value}</span>}
+                    {/* <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div> */}
+                    {item.render ? item.render() : <span className="flex-shrink-0 font-medium text-primary">{item.value}</span>}
                   </div>
                 ))}
 

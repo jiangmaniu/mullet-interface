@@ -30,7 +30,7 @@ const Notice = observer(({ methodId }: { methodId: string }) => {
   return (
     <div className="text-secondary text-xs w-[276px]">
       {methodInfo?.notice ? (
-        <p className="leading-7" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
+        <p className="leading-6" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
       ) : (
         <div className="text-xs text-gray-400">
           <FormattedMessage id="mt.zanwuneirong" />
@@ -247,7 +247,7 @@ const Detail = ({
               ))}
 
             <div className="font-medium text-sm flex flex-row items-center justify-between gap-4 mt-2">
-              <span className="flex-shrink-0 text-primary">{getIntl().formatMessage({ id: 'mt.fukuanxinxi' })}</span>
+              <span className="flex-shrink-0 text-primary text-base">{getIntl().formatMessage({ id: 'mt.fukuanxinxi' })}</span>
             </div>
 
             {otcType !== 'bank' && (
@@ -372,7 +372,7 @@ const Detail = ({
             </span>
           </div>
           <div>
-            <span className="text-primary text-sm font-semibold block mb-3 border-l-4 border-primary pl-2">
+            <span className="text-primary text-base font-semibold block mb-3 border-l-4 border-primary pl-2">
               <FormattedMessage id="mt.rujinxuzhi" />
             </span>
             <Notice methodId={String(paymentInfo?.channelId)} />

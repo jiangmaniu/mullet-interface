@@ -81,7 +81,7 @@ function TransferWechat({ form, handleTimeout }: IProps, ref: any) {
       <div className="flex flex-row items-end gap-8 font-normal ">
         {/* <canvas id="canvas" className="w-[135px] h-[135px] bg-gray-150 rounded-lg flex items-center justify-center flex-shrink-0"></canvas> */}
         <div>
-          <div className="text-sm text-primary font-medium my-[22px]">
+          <div className="text-base text-primary font-medium my-[22px]">
             <FormattedMessage id="mt.fukuanxinxi" />
           </div>
           <div className="text-sm text-primary font-medium mb-3">

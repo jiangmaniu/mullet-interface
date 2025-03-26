@@ -155,12 +155,12 @@ const Step1 = ({
         </ProForm>
       </div>
       <div className="flex flex-col justify-start items-start gap-4">
-        <div className="text-primary text-sm font-semibold">
+        <div className="text-primary text-base font-semibold">
           <FormattedMessage id="mt.chujinxuzhi" />
         </div>
         <div className="text-secondary text-xs">
           {methodInfo?.notice ? (
-            <p className="leading-7" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
+            <p className="leading-6" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
           ) : (
             <div className="text-xs text-gray-400">
               <FormattedMessage id="mt.zanwuneirong" />
