@@ -35,7 +35,7 @@ export default function KycFailModal({ trigger }: IProps) {
           block
           onClick={() => {
             modalRef?.current?.close()
-            push('/setting/kyc')
+            push('/setting')
           }}
         >
           <FormattedMessage id="mt.chongxinrenzheng" />

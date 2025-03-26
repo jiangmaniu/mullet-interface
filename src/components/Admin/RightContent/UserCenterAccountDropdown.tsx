@@ -151,7 +151,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
                           onFinish={() => {
                             // 关闭弹窗
                             setAccountBoxOpen(false)
-                            push('/setting/kyc')
+                            push('/setting')
 
                             return true
                           }}
