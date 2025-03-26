@@ -444,7 +444,8 @@ class TradeStore {
     this.reloadAfterAccountChange()
 
     // 根据accountId切换本地设置的自选、打开的品种列表、激活的品种名称
-    this.init()
+    // console.log('切换账号', info)
+    // this.init()
   }
 
   @action
