@@ -76,8 +76,10 @@ type IProps = Partial<Props> & {
   autoHeight?: boolean
 
   emotionClassName?: any
-
+  /**自定义头部 */
   header?: React.ReactNode
+  /**头部样式 */
+  headerStyle?: React.CSSProperties
 }
 
 const TransparentBackdrop = ({ onClick }: { onClick: () => void }) => (
@@ -127,6 +129,7 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
     closeOnConfirm = true,
     showLoading = false,
     emotionClassName: _className = {},
+    headerStyle,
     header,
     ...res
   } = props
@@ -277,7 +280,8 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
     return {
       'div[data-rsbs-header]': {
         boxShadow: 'none !important',
-        paddingInline: '0 !important'
+        paddingInline: '0 !important',
+        ...headerStyle
       },
       'div[data-rsbs-footer]': {
         boxShadow: 'none !important',
