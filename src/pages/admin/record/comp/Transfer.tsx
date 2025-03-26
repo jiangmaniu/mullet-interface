@@ -27,9 +27,10 @@ function Transfer({ params }: IProps) {
   }
 
   const onQuery = async (params: IParams) => {
-    if (!params.accountId) return
-    // @ts-ignore TODO： ts check 待驗證
-    const data = await getMoneyRecordsPageList({ current: 1, size: 10, type: 'TRANSFER', ...params })
+    const { tradeAccountId, firstTradeAccount, ...rest } = params || {}
+    const accountId = tradeAccountId || firstTradeAccount
+    if (!accountId) return
+    const data = await getMoneyRecordsPageList({ current: 1, size: 10, type: 'TRANSFER', accountId, ...rest })
 
     const res = data.data
     const total = res?.total
