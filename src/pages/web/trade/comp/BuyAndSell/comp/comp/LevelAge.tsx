@@ -48,9 +48,16 @@ function LevelAge({ onChange }: IProps) {
         rootClassName="!z-50 mt-3"
         classNames={{ input: 'text-center' }}
         value={value}
-        onChange={(v) => {
-          setValue(v)
-          onChange?.(v)
+        onChange={(v: any) => {
+          let value = v
+          if (value > maxLever) {
+            value = maxLever
+          }
+          if (value < minLever) {
+            value = minLever
+          }
+          setValue(value)
+          onChange?.(value)
         }}
         max={maxLever}
         min={minLever}

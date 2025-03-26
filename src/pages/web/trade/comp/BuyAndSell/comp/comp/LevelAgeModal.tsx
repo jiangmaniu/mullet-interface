@@ -24,6 +24,8 @@ function LevelAgeModal({ trigger }: IProps) {
 
   const currentSymbol = trade.getActiveSymbolInfo(trade.activeSymbolName, trade.symbolListAll)
   const prepaymentConf = currentSymbol?.symbolConf?.prepaymentConf
+  const minLever = Number(prepaymentConf?.float_leverage?.min_lever || 1)
+  const maxLever = Number(prepaymentConf?.float_leverage?.max_lever || 30)
 
   // const maxOpenLeverage = Math.max.apply(Math, [
   //   ...(prepaymentConf?.float_leverage?.lever_grade || []).map((item) => item?.bag_nominal_value)
@@ -98,6 +100,7 @@ function LevelAgeModal({ trigger }: IProps) {
             trade.setLeverageMultiple(current)
             // trade.setLeverageMultipleMaxOpenVolume(maxOpenLeverage)
           }}
+          disabled={current < minLever || current > maxLever || !current}
         >
           <FormattedMessage id="common.queren" />
         </Button>

@@ -79,6 +79,7 @@ function LevelAgeModal(props: any, ref: ForwardedRef<LevelAgeModalRef>) {
       }}
       ref={bottomSheetModalRef}
       height="50%"
+      disabled={value < minLever || value > maxLever || !value}
     >
       <View className={cn('w-full')}>
         <View className={cn('mx-7 mb-6 items-center justify-center')}>
