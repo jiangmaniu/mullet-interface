@@ -303,7 +303,7 @@ function Account() {
                                 width={380}
                                 okText={<FormattedMessage id="mt.qurenzheng" />}
                                 onFinish={() => {
-                                  push('/setting/kyc')
+                                  push('/setting')
                                 }}
                               >
                                 <div className="text-base text-primary">

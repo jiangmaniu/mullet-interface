@@ -14,7 +14,7 @@ export const getEnv = () => {
   }
 
   // 区分pc和h5秘钥
-  env.CLIENT_ID = isPCByWidth() ? env.CLIENT_ID_PC : env.CLIENT_SECRET_H5
+  env.CLIENT_ID = isPCByWidth() ? env.CLIENT_ID_PC : env.CLIENT_ID_H5
   env.CLIENT_SECRET = isPCByWidth() ? env.CLIENT_SECRET_PC : env.CLIENT_SECRET_H5
 
   return env as IPlatformConfig

@@ -102,14 +102,14 @@ export default function TransferToFormSelectItem({ form }: IProps) {
             label: (
               <div className="flex justify-between w-full">
                 {synopsis?.abbr && (
-                  <div className="flex px-1">
+                  <div className="flex">
                     <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">
                       {synopsis?.abbr}
                     </div>
                   </div>
                 )}
-                <div className="flex-1 text-sm font-bold text-primary truncate">
-                  {item.name} / {item?.id}
+                <div className="flex-1 text-sm font-bold text-primary truncate flex items-center gap-x-1">
+                  <span>{item.name}</span> <span className="text-weak">#{item?.id}</span>
                 </div>
               </div>
             )

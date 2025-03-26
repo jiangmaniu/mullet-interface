@@ -6,7 +6,7 @@ import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@
 import { Segmented } from 'antd'
 import classNames from 'classnames'
 import dayjs from 'dayjs'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import PageContainer from '@/components/Admin/PageContainer'
@@ -24,6 +24,7 @@ export type IParams = {
   endTime?: string
   tradeAccountId?: any
   accountId?: any
+  firstTradeAccount?: any
 }
 
 type ITabKey = 'deposit' | 'withdrawal' | 'transfer'
@@ -107,7 +108,7 @@ export default function Record() {
   const searchKey = searchParams.get('key') as ITabKey
 
   useEffect(() => {
-    setParams({ ...params, tradeAccountId: '' })
+    setParams({ ...params, tradeAccountId: '', firstTradeAccount: accountList[0]?.id })
   }, [accountList])
 
   useEffect(() => {
@@ -159,25 +160,29 @@ export default function Record() {
           block
         />
         <div className={classNames('flex items-center gap-x-3', filterClassName)}>
-          <ProFormSelect
-            options={[
-              { value: '', label: <FormattedMessage id="common.all" /> },
-              ...accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))
-            ]}
-            placeholder={intl.formatMessage({ id: 'mt.xuanzezhanghu' })}
-            fieldProps={{
-              value: params.tradeAccountId,
-              allowClear: false,
-              size: 'middle',
-              onChange: (value: any) => {
-                setParams({
-                  ...params,
-                  tradeAccountId: value
-                })
-              }
-            }}
-            style={{ paddingRight: 8 }}
-          />
+          {useMemo(() => {
+            return (
+              <ProFormSelect
+                options={[
+                  ...(tabKey === 'transfer' ? [] : [{ value: '', label: <FormattedMessage id="common.all" /> }]),
+                  ...accountList.filter((item) => !item.isSimulate).map((item) => ({ ...item, value: item.id, label: item.name }))
+                ]}
+                placeholder={intl.formatMessage({ id: 'mt.xuanzezhanghu' })}
+                fieldProps={{
+                  value: tabKey === 'transfer' ? params.tradeAccountId || params.firstTradeAccount : params.tradeAccountId,
+                  allowClear: false,
+                  size: 'middle',
+                  onChange: (value: any) => {
+                    setParams({
+                      ...params,
+                      tradeAccountId: value
+                    })
+                  }
+                }}
+                style={{ paddingRight: 8 }}
+              />
+            )
+          }, [accountList.length, params, tabKey])}
           <ProFormDateRangePicker
             fieldProps={{
               prefix: <FieldTimeOutlined style={{ fontSize: 16, color: 'rgba(0,0,0,0.25)' }} />,
