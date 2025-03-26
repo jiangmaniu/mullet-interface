@@ -19,6 +19,9 @@ function Header({ title, onBack, back = true, left, ...res }: IProps) {
   const { isRNWebview } = useEnv()
   const className = useEmotionCss(({ token }) => {
     return {
+      '&': {
+        background: '#fff'
+      },
       '.adm-nav-bar-back-arrow': {
         display: 'flex',
         alignItems: 'center'

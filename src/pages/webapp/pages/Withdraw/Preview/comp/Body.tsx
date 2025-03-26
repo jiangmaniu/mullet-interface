@@ -173,12 +173,12 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
       <Step2 form={form} loading={loading} methodInfo={methodInfo} />
 
       <div className="flex flex-col justify-start items-start gap-4 flex-1 pt-2.5 px-[14px] mt-1.5 border-t border-[#f0f0f0] bg-white">
-        <div className="text-primary text-sm font-semibold">
+        <div className="text-primary text-base font-semibold">
           <FormattedMessage id="mt.chujinxuzhi" />
         </div>
         <div className="text-secondary text-xs">
           {methodInfo?.notice ? (
-            <p className="leading-7" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
+            <p className="leading-6" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
           ) : (
             <div className="text-xs text-gray-400">
               <FormattedMessage id="mt.zanwuneirong" />
