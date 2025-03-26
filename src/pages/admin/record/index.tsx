@@ -182,7 +182,7 @@ export default function Record() {
                 style={{ paddingRight: 8 }}
               />
             )
-          }, [accountList.length, params])}
+          }, [accountList.length, params, tabKey])}
           <ProFormDateRangePicker
             fieldProps={{
               prefix: <FieldTimeOutlined style={{ fontSize: 16, color: 'rgba(0,0,0,0.25)' }} />,
