@@ -135,7 +135,7 @@ function TransferMethodSelectItem({ form, disabled, methodInfo }: IProps) {
               value: item.channelId,
               label: (
                 <div className="flex justify-between w-full gap-2">
-                  <img src={`${getEnv().imgDomain}${item.channelIcon}`} alt="" className="w-5 h-5 rounded-full bg-gray" />
+                  <img src={`${getEnv().imgDomain}${item.channelIcon}`} alt="" className="w-5 h-5 rounded-full" />
                   <div className="flex-1 text-sm text-primary truncate">
                     {item.channelRevealName}&nbsp;({item.channelNo})
                   </div>

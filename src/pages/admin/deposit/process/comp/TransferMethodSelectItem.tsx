@@ -97,7 +97,7 @@ function TransferMethodSelectItem({ form, tips }: IProps) {
           value: item.channelId,
           label: (
             <div className="flex justify-start items-center w-full gap-2">
-              <img src={`${getEnv().imgDomain}${item.channelIcon}`} alt="" className="w-5 h-5 rounded-full overflow-hidden bg-gray" />
+              <img src={`${getEnv().imgDomain}${item.channelIcon}`} alt="" className="w-5 h-5 rounded-full overflow-hidden" />
               <div className="flex-1 text-sm font-bold text-primary truncate">
                 {item.channelRevealName}&nbsp;({item.channelNo})
               </div>
