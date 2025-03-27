@@ -96,6 +96,9 @@ function TransferMethodSelectItem({ form, disabled, methodInfo }: IProps) {
             placeholder={intl.formatMessage({ id: 'mt.xuanzechujinfangshi' })}
             allowClear={false}
             fieldProps={{
+              style: {
+                height: 44
+              },
               open,
               onDropdownVisibleChange: (visible) => setOpen(visible),
 
@@ -146,7 +149,7 @@ function TransferMethodSelectItem({ form, disabled, methodInfo }: IProps) {
           />
         </div>
         {type === 'OTC' && (
-          <div className="text-sm text-primary font-medium w-[116px] h-[42px] rounded-lg border-gray-250 border flex items-center justify-center">
+          <div className="text-sm text-primary font-medium w-[116px] h-[44px] rounded-lg border-gray-250 border flex items-center justify-center">
             {currencyList.find((item) => item.value === methodInfo?.symbol)?.title}
           </div>
         )}

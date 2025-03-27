@@ -150,7 +150,10 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
               fieldProps={{
                 type: 'password',
                 allowClear: false,
-                size: 'large'
+                size: 'large',
+                style: {
+                  height: 44
+                }
               }}
               label={getIntl().formatMessage({ id: 'mt.zhanghaomima' })}
               placeholder={getIntl().formatMessage({ id: 'mt.qingshuruzhanghaomima' })}
@@ -197,7 +200,7 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
               </div>
             </ProForm.Item>
             {sended && (
-              <div className="text-weak text-xs mt-2.5">
+              <div className="text-weak text-xs ">
                 {getIntl().formatMessage({ id: 'mt.weishoudaoyanzhengma' })}
                 {sendTime > 0 ? (
                   getIntl().formatMessage({ id: 'mt.qingzaixxmiaohouchongshi' }, { count: sendTime })

@@ -67,6 +67,7 @@ function UserCenter() {
   const currentUser = initialState?.currentUser
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
+  const phone = currentUser?.userInfo?.phone || ''
 
   const renderList = (listData: IlistItemProps[], title?: string, margin = true) => {
     return (
@@ -179,7 +180,9 @@ function UserCenter() {
       title: t('mt.rujin'),
       href: '/app/deposit',
       onClick: () => {
-        if (isBaseAuth) {
+        if (!phone) {
+          navigateTo('/app/person-info?back=true&bindPhone=true')
+        } else if (isBaseAuth) {
           navigateTo('/app/deposit')
         } else {
           kycTipsModalRef.current?.show()
@@ -191,7 +194,9 @@ function UserCenter() {
       title: t('mt.chujin'),
       href: '/app/withdraw',
       onClick: () => {
-        if (isKycAuth) {
+        if (!phone) {
+          navigateTo('/app/person-info?back=true&bindPhone=true')
+        } else if (isKycAuth) {
           navigateTo('/app/withdraw')
         } else {
           kycTipsModalRef.current?.show()
@@ -217,6 +222,9 @@ function UserCenter() {
       <Header
         // sideMinWidth={130}
         back
+        style={{
+          backgroundColor: theme.colors.backgroundColor.secondary
+        }}
         left={
           <Text size="xl" font="pf-bold" color="primary">
             {t('app.pageTitle.Personal Center')}

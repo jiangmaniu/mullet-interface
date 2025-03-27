@@ -94,6 +94,9 @@ export default function TransferToBankItem({ form }: IProps) {
       <ProFormItem name="bankName" label={<FormattedMessage id="mt.yinhangmingcheng" />}>
         <AutoComplete
           size="large"
+          style={{
+            height: 44
+          }}
           className="fix-select-search-input"
           options={bankList}
           placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmincheng' })}
@@ -106,6 +109,9 @@ export default function TransferToBankItem({ form }: IProps) {
       <ProFormItem name="bankCard" label={<FormattedMessage id="mt.yinghangzhanghu" />}>
         <AutoComplete
           size="large"
+          style={{
+            height: 44
+          }}
           className="fix-select-search-input"
           options={cardList}
           placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmingcheng' })}

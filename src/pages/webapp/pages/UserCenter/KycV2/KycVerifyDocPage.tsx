@@ -64,9 +64,9 @@ export default function KycVerifyDocPage() {
         <img
           src={require('/public/img/webapp/kyc-bg-0.png')}
           alt="kyc-verify-information"
-          width="146"
-          height="146"
-          className="my-[44px] mx-auto"
+          width="102"
+          height="102"
+          className="my-[30px] mx-auto"
         />
       </View>
       <View
@@ -81,7 +81,7 @@ export default function KycVerifyDocPage() {
             {i18n.t('pages.userCenter.yichujirenzheng')}
           </Text>
         </View>
-        <View className=" rounded-t-[24px] bg-white w-full px-[14px] pt-[38px]">
+        <View className="rounded-t-[24px] bg-white w-full px-[12px] pt-[22px]">
           <VerifyDoc
             ref={ref}
             onSuccess={async () => {
@@ -93,7 +93,7 @@ export default function KycVerifyDocPage() {
           />
         </View>
       </View>
-      <View className={cn('grid grid-cols-2 gap-5 w-full pb-2.5 px-[14px]')}>
+      <View className={cn('grid grid-cols-2 gap-5 w-full pb-2.5 px-[12px]')}>
         <Button
           type="primary"
           loading={submitting}

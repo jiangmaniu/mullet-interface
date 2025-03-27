@@ -128,7 +128,7 @@ function WithdrawList() {
                     <div className="text-ellipsis">{item.bank}</div>
                   ) : (
                     <div className="flex flex-row items-center gap-1 overflow-hidden">
-                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-[22px] h-[22px] bg-gray-100 rounded-full" />
+                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-[22px] h-[22px] rounded-full" />
                       <div className="text-ellipsis overflow-hidden w-full"> {item.address || '[channelRevealName]'}</div>
                     </div>
                   )}

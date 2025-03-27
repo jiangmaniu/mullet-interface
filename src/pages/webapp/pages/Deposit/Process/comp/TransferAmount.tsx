@@ -9,7 +9,7 @@ type IProps = {
   methodInfo?: Wallet.fundsMethodPageListItem
 }
 
-export default function TransferOTC({ form, methodInfo }: IProps) {
+export default function TransferAmount({ form, methodInfo }: IProps) {
   const intl = useIntl()
 
   const currency = Form.useWatch('currency', form)
@@ -29,9 +29,7 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
   // // 可用余额
   // const availableMoney = Number(toFixed(money - occupyMargin))
 
-  const tips = `${getIntl().formatMessage({ id: 'mt.rujinxianzhi' })} ${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(
-    methodInfo?.singleAmountMax || 99999
-  )} ${methodInfo?.baseCurrency}`
+  const tips = `${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(methodInfo?.singleAmountMax || 99999)}`
 
   return (
     <div className="flex flex-col ">
@@ -42,6 +40,7 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
       <ProFormText
         name="amount"
         fieldProps={{
+          className: 'extra-large',
           size: 'large',
           // style: {
           //   border: 'none'
@@ -65,7 +64,7 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
               }
 
               if (Number(value) < (methodInfo?.singleAmountMin || 0)) {
-                return callback(tips)
+                return callback(`${getIntl().formatMessage({ id: 'mt.rujinxianzhi' })} ${tips} ${methodInfo?.baseCurrency}`)
               }
 
               // if (Number(value) > availableMoney) {
@@ -73,7 +72,7 @@ export default function TransferOTC({ form, methodInfo }: IProps) {
               // }
 
               if (Number(value) > (methodInfo?.singleAmountMax || 99999)) {
-                return callback(tips)
+                return callback(`${getIntl().formatMessage({ id: 'mt.rujinxianzhi' })} ${tips} ${methodInfo?.baseCurrency}`)
               }
 
               return callback()

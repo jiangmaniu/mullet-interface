@@ -10,7 +10,7 @@ type IProps = {
   methodInfo?: Wallet.fundsMethodPageListItem
 }
 
-const TransferOTC = observer(({ form, methodInfo }: IProps) => {
+const TransferAmount = observer(({ form, methodInfo }: IProps) => {
   const intl = useIntl()
 
   const currency = Form.useWatch('currency', form)
@@ -30,9 +30,7 @@ const TransferOTC = observer(({ form, methodInfo }: IProps) => {
   // // 可用余额
   // const availableMoney = Number(toFixed(money - occupyMargin))
 
-  const tips = `${getIntl().formatMessage({ id: 'mt.rujinxianzhi' })} ${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(
-    methodInfo?.singleAmountMax || 99999
-  )} ${methodInfo?.baseCurrency}`
+  const tips = `${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(methodInfo?.singleAmountMax || 99999)}`
 
   return (
     <div className="flex flex-col ">
@@ -64,7 +62,7 @@ const TransferOTC = observer(({ form, methodInfo }: IProps) => {
               }
 
               if (Number(value) < (methodInfo?.singleAmountMin || 0)) {
-                return callback(tips)
+                return callback(`${getIntl().formatMessage({ id: 'mt.rujinxianzhi' })} ${tips} ${methodInfo?.baseCurrency}`)
               }
 
               // if (Number(value) > availableMoney) {
@@ -72,7 +70,7 @@ const TransferOTC = observer(({ form, methodInfo }: IProps) => {
               // }
 
               if (Number(value) > (methodInfo?.singleAmountMax || 99999)) {
-                return callback(tips)
+                return callback(`${getIntl().formatMessage({ id: 'mt.rujinxianzhi' })} ${tips} ${methodInfo?.baseCurrency}`)
               }
 
               return callback()
@@ -91,11 +89,7 @@ const TransferOTC = observer(({ form, methodInfo }: IProps) => {
       </div> */}
       <div className="flex justify-between text-gray-500 text-xs mt-2">
         {/* <span>{methodInfo?.options?.limit?.desc}</span> */}
-        <span>
-          {`${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(methodInfo?.singleAmountMax || 99999)} ${
-            methodInfo?.baseCurrency
-          }`}
-        </span>
+        <span>{`${tips} ${methodInfo?.baseCurrency}`}</span>
         {/* <span>
           ≈ {depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem)} {methodInfo?.symbol}
         </span> */}
@@ -113,4 +107,4 @@ const TransferOTC = observer(({ form, methodInfo }: IProps) => {
   )
 })
 
-export default TransferOTC
+export default TransferAmount

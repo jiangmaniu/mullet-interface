@@ -51,7 +51,7 @@ function WithdrawPreview() {
       }
     >
       <Header
-        className="bg-primary"
+        className="bg-secondary"
         onBack={() => navigateTo(backUrl)}
         right={
           <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={goKefu}>

@@ -1,6 +1,6 @@
 import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
@@ -32,15 +32,10 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
     return Math.max(Math.min(availableMoney, availableMoney + totalProfit), 0)
   }, [availableMoney, totalProfit])
 
-  const handleSetAll = () => {
-    const amount = formatNum(availableMoney, {
-      precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL,
-      raw: true
-    })
-
-    form.setFieldValue('amount', amount)
+  const handleSetAll = useCallback(() => {
+    form.setFieldValue('amount', formatNum(m, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL, raw: true }))
     form.validateFields(['amount'])
-  }
+  }, [form, m])
 
   const amount = Form.useWatch('amount', form)
 
@@ -51,9 +46,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
     form.setFieldValue('actualAmount', withdrawCountTransferCurr(amount, methodInfo))
   }, [amount])
 
-  const tips = `${getIntl().formatMessage({ id: 'mt.chujinxianzhi' })} ${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(
-    methodInfo?.singleAmountMax || 99999
-  )} ${methodInfo?.baseCurrency}`
+  const tips = `${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(methodInfo?.singleAmountMax || 99999)}`
 
   return (
     <div className="relative">
@@ -64,6 +57,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
           </span>
         }
         fieldProps={{
+          className: 'extra-large',
           style: {
             height: 50
           },
@@ -90,7 +84,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
               }
 
               if (Number(value) < (methodInfo?.singleAmountMin || 0)) {
-                return callback(tips)
+                return callback(`${getIntl().formatMessage({ id: 'mt.chujinxianzhi' })} ${tips} ${methodInfo?.baseCurrency}`)
               }
 
               if (Number(value) > m) {
@@ -98,7 +92,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
               }
 
               if (Number(value) > (methodInfo?.singleAmountMax || 99999)) {
-                return callback(tips)
+                return callback(`${getIntl().formatMessage({ id: 'mt.chujinxianzhi' })} ${tips} ${methodInfo?.baseCurrency}`)
               }
 
               return callback()

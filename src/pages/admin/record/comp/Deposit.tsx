@@ -116,9 +116,7 @@ function Deposit({ params, onSelectItem }: IProps) {
                     <span>{item.bank}</span>
                   ) : (
                     <>
-                      {item?.channelIcon && (
-                        <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 bg-gray-100 rounded-full" />
-                      )}
+                      {item?.channelIcon && <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-6 h-6 rounded-full" />}
                       <span> {item.channelRevealName || '[channelRevealName]'}</span>
                     </>
                   )}

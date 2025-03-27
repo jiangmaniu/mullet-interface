@@ -75,7 +75,7 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
         <View className={cn('flex flex-row items-start justify-start gap-1.5')}>
           <InputNumber
             ref={inputRef1}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
+            className={cn(`text-[22px] leading-[28px] p-0 size-[${height}px]`, inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -101,7 +101,7 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
           />
           <InputNumber
             ref={inputRef2}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
+            className={cn(`text-[22px] leading-[28px] p-0 size-[${height}px]`, inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -127,7 +127,7 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
           />
           <InputNumber
             ref={inputRef3}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
+            className={cn(`text-[22px] leading-[28px] p-0 size-[${height}px]`, inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -153,7 +153,7 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
           />
           <InputNumber
             ref={inputRef4}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
+            className={cn(`text-[22px] leading-[28px] p-0 size-[${height}px]`, inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -179,7 +179,7 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
           />
           <InputNumber
             ref={inputRef5}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
+            className={cn(`text-[22px] leading-[28px] p-0 size-[${height}px]`, inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}
@@ -205,7 +205,7 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
           />
           <InputNumber
             ref={inputRef6}
-            className={cn(' text-[22px] leading-[28px] p-0 size-[48px]', inputWrapperStyle)}
+            className={cn(`text-[22px] leading-[28px] p-0 size-[${height}px]`, inputWrapperStyle)}
             height={height}
             maxLength={1}
             controls={false}

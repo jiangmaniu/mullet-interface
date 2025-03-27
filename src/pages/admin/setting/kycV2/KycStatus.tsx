@@ -15,10 +15,11 @@ const KycStatus = ({ onClick }: { onClick: (status: number) => void }) => {
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
+  const phone = currentUser?.userInfo?.phone || ''
 
   const status = useMemo(() => {
-    return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
-  }, [kycStatus, isBaseAuth, isKycAuth])
+    return getKycStatus(kycStatus, isBaseAuth, isKycAuth, phone)
+  }, [kycStatus, isBaseAuth, isKycAuth, phone])
 
   const statusLabels = [
     {

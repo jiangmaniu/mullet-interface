@@ -167,7 +167,13 @@ function UserCenter() {
 
   return (
     <BasicLayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
-      <Header back={back} title={t('mt.gerenxinxi')} />
+      <Header
+        style={{
+          backgroundColor: theme.colors.backgroundColor.secondary
+        }}
+        back={back}
+        title={t('mt.gerenxinxi')}
+      />
       <View style={{ paddingInline: 14, flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: 60, marginTop: 10 }}>
         <View className="bg-white mb-6 rounded-xl px-2">
           <HeaderInfo />
