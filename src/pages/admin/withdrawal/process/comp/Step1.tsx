@@ -158,7 +158,7 @@ const Step1 = ({
         <div className="text-primary text-base font-semibold">
           <FormattedMessage id="mt.chujinxuzhi" />
         </div>
-        <div className="text-secondary text-xs">
+        <div className="text-weak text-xs">
           {methodInfo?.notice ? (
             <p className="leading-6" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
           ) : (

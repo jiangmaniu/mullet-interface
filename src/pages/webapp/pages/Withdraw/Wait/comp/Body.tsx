@@ -75,7 +75,7 @@ const WithdrawalWait = forwardRef(({ onSuccess, onDisabledChange }: WebviewCompo
           &nbsp; {paymentInfo?.currency || 'USD'}
         </div> */}
         <div className=" text-sm font-normal mt-1">{intl.formatMessage({ id: 'mt.chujindengdai' })}</div>
-        <div className=" text-[22px] leading-[32px] text-primary  mt-4">
+        <div className=" text-[22px] leading-[32px] text-primary  mt-4 font-medium">
           {intl.formatMessage({ id: 'mt.nindejiaoyizhengzaichulizhong2' })}
         </div>
         <div className=" text-base text-secondary mt-[3px]">{intl.formatMessage({ id: 'mt.chujinshenqingchenggong' })}</div>

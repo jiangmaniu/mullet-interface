@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
+import { cn } from '@/utils/cn'
 import { observer } from 'mobx-react'
 
 type IProps = {
@@ -82,7 +83,7 @@ function TransferMethodSelectItem({ form, disabled, methodInfo }: IProps) {
   return (
     <div>
       <div className="flex flex-row gap-2 items-end">
-        <div className="flex-1">
+        <div className={cn('flex-1')}>
           <ProFormSelect
             label={
               <span className="text-sm text-primary font-medium">

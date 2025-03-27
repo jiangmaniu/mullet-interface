@@ -9,6 +9,7 @@ import { useLoading } from '@/context/loadingProvider'
 import { getEnv } from '@/env'
 import { message } from '@/utils/message'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
+import { InfoCircleOutlined } from '@ant-design/icons'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { isAndroid, isIOS } from 'react-device-detect'
 
@@ -167,8 +168,8 @@ export default function ({ setImgs, imgs }: IProps) {
           }}
         >
           <div className="flex flex-col items-center justify-center bg-cover  h-[235px]">
-            <img src="/img/upload-01.png" width={72} height={72} />
-            <span className="text-primary text-sm font-semibold">
+            <img src="/img/upload-01.png" width={84} height={84} />
+            <span className="text-primary text-sm">
               <FormattedMessage id="mt.dianjicichujinxinshangchuan" />
             </span>
           </div>
@@ -176,7 +177,8 @@ export default function ({ setImgs, imgs }: IProps) {
         {/* )} */}
       </Dragger>
 
-      <span className="text-xs text-red-500">
+      <span className="text-xs text-weak">
+        <InfoCircleOutlined style={{ fontSize: 12, marginRight: 4 }} />
         <FormattedMessage id="mt.shangchuanzhaopianbuyaochaoguo" values={{ value: '5MB' }} />
       </span>
       <div className="flex flex-row gap-[14px] mt-[15px]">

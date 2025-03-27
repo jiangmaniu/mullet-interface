@@ -118,7 +118,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
           &nbsp;{formatNum(paymentInfo?.baseOrderAmount, { precision: DEFAULT_CURRENCY_DECIMAL })}&nbsp;{paymentInfo?.baseCurrency}
         </span>
       </div>
-      <div className="flex flex-col gap-1 items-center pt-10 pb-7">
+      <div className="flex flex-col gap-1 items-center pt-6 pb-7">
         <Timer paymentInfo={paymentInfo} handleTimeout={handleTimeout} address={paymentInfo?.address || ''} />
         <div className="text-sm mt-3">
           <span className=" text-secondary">
@@ -150,7 +150,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
         <div className="text-primary text-base font-semibold">
           <FormattedMessage id="mt.rujinxuzhi" />
         </div>
-        <div className="text-secondary text-xs">
+        <div className="text-weak text-xs">
           {methodInfo?.notice ? (
             <p className="leading-6" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
           ) : (

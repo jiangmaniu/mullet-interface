@@ -20,7 +20,7 @@ import { Step3 } from './comp/Step3'
 const Notice = observer(({ methodId }: { methodId: string }) => {
   const methodInfo = stores.wallet.withdrawalMethods.find((item) => item.id === methodId)
   return (
-    <div className="text-secondary text-xs">
+    <div className="text-weak text-xs">
       {methodInfo?.notice ? (
         <p className="leading-6" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
       ) : (
