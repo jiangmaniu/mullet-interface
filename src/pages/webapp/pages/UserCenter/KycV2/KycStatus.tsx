@@ -14,7 +14,9 @@ const KycStatus = () => {
   const status = kycInfo?.status
 
   const onClick = () => {
-    if (status === 1) {
+    if (status === -1) {
+      navigateTo('/app/person-info?back=true&bindPhone=true')
+    } else if (status === 1) {
       // 初级审核通过，待申请高级认证
       navigateTo('/app/user-center/verify-document')
     } else if (status === 2) {

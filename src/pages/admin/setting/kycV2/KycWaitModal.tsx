@@ -19,11 +19,11 @@ function KycWaitModal({ trigger, onClose }: IProps, ref: any) {
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
-  const remark = kycAuthInfo?.remark
+  const phone = currentUser?.userInfo?.phone || ''
 
   const status = useMemo(() => {
-    return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
-  }, [kycStatus, isBaseAuth, isKycAuth])
+    return getKycStatus(kycStatus, isBaseAuth, isKycAuth, phone)
+  }, [kycStatus, isBaseAuth, isKycAuth, phone])
 
   useImperativeHandle(ref, () => {
     return modalRef.current
