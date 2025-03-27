@@ -51,9 +51,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
     form.setFieldValue('actualAmount', withdrawCountTransferCurr(amount, methodInfo))
   }, [amount])
 
-  const tips = `${getIntl().formatMessage({ id: 'mt.chujinxianzhi' })} ${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(
-    methodInfo?.singleAmountMax || 99999
-  )} ${methodInfo?.baseCurrency}`
+  const tips = `${formatNum(methodInfo?.singleAmountMin || 0)} - ${formatNum(methodInfo?.singleAmountMax || 99999)}`
 
   return (
     <div className="relative">
@@ -64,6 +62,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
           </span>
         }
         fieldProps={{
+          className: 'extra-large',
           style: {
             height: 50
           },
@@ -90,7 +89,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
               }
 
               if (Number(value) < (methodInfo?.singleAmountMin || 0)) {
-                return callback(tips)
+                return callback(`${getIntl().formatMessage({ id: 'mt.chujinxianzhi' })} ${tips} ${methodInfo?.baseCurrency}`)
               }
 
               if (Number(value) > m) {
@@ -98,7 +97,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
               }
 
               if (Number(value) > (methodInfo?.singleAmountMax || 99999)) {
-                return callback(tips)
+                return callback(`${getIntl().formatMessage({ id: 'mt.chujinxianzhi' })} ${tips} ${methodInfo?.baseCurrency}`)
               }
 
               return callback()

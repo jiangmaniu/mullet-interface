@@ -16,9 +16,9 @@ import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
 import ConfirmModal from './ConfirmModal'
 import ContinueModal from './ContinueModal'
-import TransferCrypto from './TranserCrypto'
+import TransferAmount from './TransferAmount'
+import TransferCrypto from './TransferCrypto'
 import TransferMethodSelectItem from './TransferMethodSelectItem'
-import TransferOTC from './TransferOTC'
 import TransferToFormSelectItem from './TransferToFormSelectItem'
 
 const DepositProcess = forwardRef(
@@ -222,7 +222,7 @@ const DepositProcess = forwardRef(
                 {methodInfo?.paymentType === 'CHAIN' && step === 1 && (
                   <TransferCrypto form={form} handleTimeout={handleTimeout} ref={cryptoRef} />
                 )}
-                {methodInfo?.paymentType === 'OTC' && <TransferOTC form={form} methodInfo={methodInfo} />}
+                {methodInfo?.paymentType === 'OTC' && <TransferAmount form={form} methodInfo={methodInfo} />}
 
                 {/* {step === 0 && (
                 <Button type="primary" htmlType="submit" size="large" className="mt-2" onClick={handleSubmit0} disabled={disabled}>

@@ -51,6 +51,9 @@ export default function TransferFormSelectItem({ form, totalProfit }: IProps) {
         placeholder={intl.formatMessage({ id: 'mt.xuanzezhuanchuzhanghu' })}
         allowClear={false}
         fieldProps={{
+          style: {
+            height: 44
+          },
           open,
           onDropdownVisibleChange: (visible) => setOpen(visible),
           suffixIcon: (

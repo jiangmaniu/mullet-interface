@@ -18,8 +18,8 @@ import { observer } from 'mobx-react'
 import ConfirmModal from './comp/ConfirmModal'
 import ContinueModal from './comp/ContinueModal'
 import TransferCrypto from './comp/TranserCrypto'
+import TransferAmount from './comp/TransferAmount'
 import TransferMethodSelectItem from './comp/TransferMethodSelectItem'
-import TransferOTC from './comp/TransferOTC'
 import TransferToFormSelectItem from './comp/TransferToFormSelectItem'
 
 function DepositProcess() {
@@ -223,7 +223,7 @@ function DepositProcess() {
             <TransferToFormSelectItem form={form} />
             {/* {methodInfo?.type === 'crypto' && <TransferCrypto form={form} />} */}
             {methodInfo?.paymentType === 'CHAIN' && <TransferCrypto form={form} handleTimeout={handleTimeout} ref={cryptoRef} />}
-            {methodInfo?.paymentType === 'OTC' && <TransferOTC form={form} methodInfo={methodInfo} />}
+            {methodInfo?.paymentType === 'OTC' && <TransferAmount form={form} methodInfo={methodInfo} />}
 
             {step === 0 && (
               <Button

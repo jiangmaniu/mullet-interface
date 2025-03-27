@@ -49,6 +49,9 @@ function TransferMethodSelectItem({ form, tips }: IProps) {
         placeholder={intl.formatMessage({ id: 'mt.xuanzezhifufangshi' })}
         allowClear={false}
         fieldProps={{
+          style: {
+            height: 44
+          },
           open,
           onDropdownVisibleChange: (visible) => setOpen(visible),
           suffixIcon: (

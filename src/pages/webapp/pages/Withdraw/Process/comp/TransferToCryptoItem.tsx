@@ -89,7 +89,7 @@ function TransferToCryptoItem({ form }: IProps) {
         >
           <AutoComplete
             style={{
-              height: '38px',
+              height: '44px',
               width: '256px',
               textOverflow: 'ellipsis'
             }}
@@ -106,7 +106,7 @@ function TransferToCryptoItem({ form }: IProps) {
             placeholder={intl.formatMessage({ id: 'mt.shurudizhi' })}
           />
 
-          <div className="absolute bottom-[3px] right-2 flex flex-row items-center gap-2 z-10">
+          <div className="absolute bottom-[5px] right-2 flex flex-row items-center gap-2 z-10">
             <div
               onClick={() => {
                 setOpen(true)
