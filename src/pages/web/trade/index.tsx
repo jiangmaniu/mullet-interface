@@ -86,8 +86,6 @@ export default observer(() => {
     if (isOnline) {
       // 重新建立新连接
       ws.connect()
-      // 重置tradingview实例
-      kline.destroyed()
     }
 
     return () => {
@@ -99,9 +97,6 @@ export default observer(() => {
 
       // 关闭ws连接
       ws.close()
-
-      // 重置tradingview实例
-      kline.destroyed()
     }
   }, [isOnline])
 

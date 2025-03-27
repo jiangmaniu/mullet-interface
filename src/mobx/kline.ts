@@ -37,10 +37,16 @@ class KlineStore {
   @observable lastbar = {} // 最后一条k线数据
   @observable datafeedBarCallbackObj = {} // 记录getbars回调的参数
   @observable lastBarTime = '' // 记录最后一次时间，用于作为请求k线的截止时间
+  @observable isChartLoading = true // 图表是否加载中，直到完成
 
   @action
   setSwitchSymbolLoading = (flag: boolean) => {
     this.switchSymbolLoading = flag
+  }
+
+  @action
+  setIsChartLoading = (flag: boolean) => {
+    this.isChartLoading = flag
   }
 
   @action
@@ -277,9 +283,10 @@ class KlineStore {
   getDataFeedBarCallback = (obj = {}) => {
     const ENV = getEnv()
     const { symbolInfo, resolution, firstDataRequest, from, to, countBack } = obj
-    this.datafeedBarCallbackObj = obj
 
-    if (typeof this.datafeedBarCallbackObj?.onHistoryCallback !== 'function') return
+    runInAction(() => {
+      this.datafeedBarCallbackObj = obj
+    })
 
     // 首次请求
     if (firstDataRequest) {
@@ -338,19 +345,28 @@ class KlineStore {
   }
 
   // 重置实例
+  @action
   destroyed = () => {
+    // 等待图表加载完成再关闭,否则销毁实例会导致之前未加载完成的实例报错
+    if (this.isChartLoading) {
+      return
+    }
     if (this.tvWidget) {
       this.tvWidget.remove?.()
       // 重置tradingview实例，否则报错
-      this.tvWidget = null as any
+      runInAction(() => {
+        this.tvWidget = null as any
+      })
     }
 
     // 重置变量，避免重置了k线，内存还占用
-    this.bars = []
-    this.activeSymbolInfo = {}
-    this.lastbar = {}
-    this.datafeedBarCallbackObj = {}
-    this.lastBarTime = ''
+    runInAction(() => {
+      this.bars = []
+      this.activeSymbolInfo = {}
+      this.lastbar = {}
+      this.datafeedBarCallbackObj = {}
+      this.lastBarTime = ''
+    })
     window.tvWidget = null
 
     // 取消事件订阅
