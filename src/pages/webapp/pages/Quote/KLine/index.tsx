@@ -58,6 +58,13 @@ function KLine() {
 
   const params = qs.parse(location.search, { ignoreQueryPrefix: true })
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     // 再次请求最新数据。覆盖缓存数据
+  //     stores.kline.forceRefreshKlineData()
+  //   }, 150)
+  // }, [])
+
   return (
     <Basiclayout
       bgColor="primary"
