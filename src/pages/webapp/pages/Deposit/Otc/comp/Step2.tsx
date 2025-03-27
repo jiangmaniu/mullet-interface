@@ -8,7 +8,7 @@ import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { getEnv } from '@/env'
 import { getAccountSynopsisByLng } from '@/utils/business'
 import { onDownloadImg } from '@/utils/download'
-import { QrcodeOutlined } from '@ant-design/icons'
+import { InfoCircleOutlined, QrcodeOutlined } from '@ant-design/icons'
 import { observer } from 'mobx-react'
 
 const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetailResult }) => {
@@ -228,7 +228,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
                   <div className="text-sm text-primary font-medium ">
                     <FormattedMessage id="mt.shoukuanerweima" />
                   </div>
-                  <div className="w-[154px] h-[154px] bg-secondary mt-2 ">
+                  <div className="w-[154px] h-[154px] bg-secondary mt-3 ">
                     <img src={qrCodeSrc} alt="qrcode" style={{ width: '100%', height: '100%' }} />
                   </div>
 
@@ -247,9 +247,10 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
               )}
             </div>
             <div className="-mt-[7px]">
-              <span className="  font-normal text-weak  text-xs ">
+              <div className="  font-normal text-weak  text-xs text-center">
+                <InfoCircleOutlined style={{ fontSize: 12, marginRight: 4 }} />
                 <FormattedMessage id="mt.youyuhuilvbodong" />
-              </span>
+              </div>
 
               {paymentType === 'OTC' && otcType !== 'bank' && (
                 <div className="flex items-center justify-center mt-4">

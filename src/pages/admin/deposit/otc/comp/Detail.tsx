@@ -28,7 +28,7 @@ const Notice = observer(({ methodId }: { methodId: string }) => {
   const methodInfo = stores.wallet.depositMethods.find((item) => item.id === methodId)
   console.log('methodInfo', stores.wallet.depositMethods, methodId)
   return (
-    <div className="text-secondary text-xs w-[276px]">
+    <div className="text-weak text-xs w-[276px]">
       {methodInfo?.notice ? (
         <p className="leading-6" dangerouslySetInnerHTML={{ __html: methodInfo?.notice?.replace(/\n/g, '<br>') }} />
       ) : (

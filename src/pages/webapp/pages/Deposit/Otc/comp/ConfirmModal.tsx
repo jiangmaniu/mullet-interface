@@ -1,8 +1,7 @@
-import { FormattedMessage } from '@umijs/max'
+import { useIntl } from '@umijs/max'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 
-import Modal from '@/components/Admin/Modal'
-import Button from '@/components/Base/Button'
+import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 
 type IProps = {
   trigger?: JSX.Element
@@ -11,33 +10,41 @@ type IProps = {
 
 function ConfirmModal(props: IProps, ref: any) {
   const modalRef = useRef<any>()
+  const bottomSheetModalRef = useRef<SheetRef>(null)
+  const intl = useIntl()
 
-  useImperativeHandle(ref, () => {
-    return modalRef.current
-  })
+  const close = () => {
+    bottomSheetModalRef.current?.sheet?.dismiss()
+  }
+
+  useImperativeHandle(ref, () => ({
+    show: () => {
+      bottomSheetModalRef.current?.sheet?.present()
+    },
+    close
+  }))
 
   return (
-    <Modal
-      width={430}
-      // afterOpenChange={(open) => {
-      //   !open && props.handleReset()
-      // }}
-      title={<FormattedMessage id="mt.dingdanyichaoshi" />}
-      footer={null}
-      closable={false}
-      maskClosable={false}
-      ref={modalRef}
-    >
-      <Button
-        type="primary"
-        className="w-full"
-        onClick={() => {
-          props.handleReset()
-        }}
-      >
-        <FormattedMessage id="common.queren" />
-      </Button>
-    </Modal>
+    <SheetModal
+      ref={bottomSheetModalRef}
+      autoHeight
+      header={
+        <div className="w-full flex flex-col items-center justify-center bg-gray-50 pt-5 pb-[70px] rounded-t-[20px]">
+          <div className="leading-7 text-center font-pf-bold text-lg text-primary">{intl.formatMessage({ id: 'common.wenxintishi' })}</div>
+          <div className="h-[100px] w-60 relative flex justify-center py-4">
+            <img src="/img/quxiaodingdan.png" style={{ width: 136, height: 136 }} />
+          </div>
+        </div>
+      }
+      headerStyle={{
+        paddingTop: 0
+      }}
+      children={
+        <div className="px-3">
+          <div className="text-sm text-primary text-center pt-4 pb-2">{intl.formatMessage({ id: 'mt.dingdanyichaoshi' })}</div>
+        </div>
+      }
+    />
   )
 }
 
