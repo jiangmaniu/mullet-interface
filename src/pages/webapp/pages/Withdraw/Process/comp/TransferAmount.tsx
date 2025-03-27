@@ -1,6 +1,6 @@
 import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
-import { useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
@@ -32,15 +32,10 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
     return Math.max(Math.min(availableMoney, availableMoney + totalProfit), 0)
   }, [availableMoney, totalProfit])
 
-  const handleSetAll = () => {
-    const amount = formatNum(availableMoney, {
-      precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL,
-      raw: true
-    })
-
-    form.setFieldValue('amount', amount)
+  const handleSetAll = useCallback(() => {
+    form.setFieldValue('amount', formatNum(m, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL, raw: true }))
     form.validateFields(['amount'])
-  }
+  }, [form, m])
 
   const amount = Form.useWatch('amount', form)
 
