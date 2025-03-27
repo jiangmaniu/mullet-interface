@@ -28,7 +28,8 @@ const Tradingview = () => {
   const symbolName = trade.activeSymbolName
   const previousSymbolName = usePrevious(symbolName)
   const [loading, setLoading] = useState(true) // 控制图表延迟一会加载，避免闪烁
-  const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
+  // const [isChartLoading, setIsChartLoading] = useState(true) // 图表是否加载中，直到完成
+  const { isChartLoading, setIsChartLoading } = kline
   const switchSymbolLoading = kline.switchSymbolLoading
   const intl = useIntl()
 
@@ -216,6 +217,13 @@ const Tradingview = () => {
     // 初始化图表实例
     initChart()
   }, [params, kline.tvWidget])
+
+  useEffect(() => {
+    return () => {
+      // 重置tradingview实例
+      kline.destroyed()
+    }
+  }, [])
 
   // 切换主题重载
   useEffect(() => {
