@@ -64,8 +64,6 @@ export class GlobalStore {
   @observable verifyCodeDownTimer = null as NodeJS.Timeout | null // 验证码倒计时定时器
   @observable env = {} as IPlatformConfig // 平台配置
 
-  @observable lottieLoadingData = {} as any
-
   @observable lastUpdateTime = 0 // 最后一次更新时间(时间戳)
 
   setLastUpdateTime = (lastUpdateTime: number) => {
@@ -93,15 +91,6 @@ export class GlobalStore {
     this.setPlatformConfig(config)
 
     return config
-  }
-
-  @action
-  getLottieLoadingData = async () => {
-    const data = await fetch('/platform/lottie/loading.json')
-      .then((res) => res.json())
-      .then((data) => data)
-
-    this.lottieLoadingData = data
   }
 
   // 设置平台配置
@@ -248,7 +237,6 @@ export class GlobalStore {
     this.getPlatformConfig(() => {
       message.info(getIntl().formatMessage({ id: 'common.huanjinpeizhiyichang' }))
     })
-    this.getLottieLoadingData()
 
     this.getRegisterWay()
 
