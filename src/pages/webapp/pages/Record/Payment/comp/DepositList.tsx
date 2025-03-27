@@ -120,7 +120,7 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
                     <span>{item.bank}</span>
                   ) : (
                     <div className="flex flex-row items-center gap-1">
-                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-[22px] h-[22px] bg-gray-100 rounded-full" />
+                      <img src={`${getEnv().imgDomain}${item.channelIcon}`} className="w-[22px] h-[22px] rounded-full" />
                       <span> {item.channelRevealName || '[channelRevealName]'}</span>
                     </div>
                   )}

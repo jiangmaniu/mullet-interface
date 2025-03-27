@@ -148,7 +148,7 @@ const Messages = forwardRef(
     }))
 
     return (
-      <View className={cn('flex flex-col mt-3 gap-[11px]')}>
+      <View className={cn('flex flex-col mt-1 gap-[11px]')}>
         <TextField
           ref={areacodeRef}
           value={areaCodeItem ? `(${areaCodeItem.areaCode}) ${locale === 'zh-TW' ? areaCodeItem?.nameCn : areaCodeItem?.nameEn}` : ''}
@@ -282,7 +282,7 @@ const VerifyDoc = forwardRef(
         <Text className={cn('text-xs text-weak')} color="weak">
           {i18n.t('pages.userCenter.qingquebaoyixiazixunshibenrenmingxia')}
         </Text>
-        <View className={cn('flex flex-col mt-3 gap-[11px]')}>
+        <View className={cn('flex flex-col mt-2 gap-[11px]')}>
           <View className={cn('flex flex-row gap-2')}>
             <Text size="base" weight="medium">
               {i18n.t('common.shoujihaoma')}:&nbsp;

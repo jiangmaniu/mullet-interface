@@ -51,12 +51,12 @@ export default function KycVerifyMsgPage() {
         <img
           src={require('/public/img/webapp/kyc-bg-0.png')}
           alt="kyc-verify-information"
-          width="146"
-          height="146"
-          className="my-[44px] mx-auto"
+          width="102"
+          height="102"
+          className="my-[30px] mx-auto"
         />
       </View>
-      <View className=" rounded-t-[24px] bg-white w-full px-[14px] pt-[38px] pb-[50px]">
+      <View className=" rounded-t-[24px] bg-white w-full px-[12px] pt-[22px] pb-[50px]">
         <VerifyMsg
           ref={ref}
           onDisabledChange={onDisabledChange}

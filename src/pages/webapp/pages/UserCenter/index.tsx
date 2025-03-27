@@ -222,6 +222,9 @@ function UserCenter() {
       <Header
         // sideMinWidth={130}
         back
+        style={{
+          backgroundColor: theme.colors.backgroundColor.secondary
+        }}
         left={
           <Text size="xl" font="pf-bold" color="primary">
             {t('app.pageTitle.Personal Center')}

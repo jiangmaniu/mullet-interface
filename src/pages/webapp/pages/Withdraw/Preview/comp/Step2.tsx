@@ -82,7 +82,7 @@ const Step2 = ({
               </span>
               <Iconfont
                 name="a-bianzu3beifen2"
-                color="gray"
+                color="black"
                 width={18}
                 height={18}
                 onClick={() => {
@@ -108,7 +108,7 @@ const Step2 = ({
                     <span className="flex-shrink-0 max-w-[200px]">{bankName}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
-                      color="gray"
+                      color="black"
                       width={18}
                       height={18}
                       onClick={() => {
@@ -128,7 +128,7 @@ const Step2 = ({
                     <span className="flex-shrink-0 max-w-[200px]">{bankCard}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
-                      color="gray"
+                      color="black"
                       width={18}
                       height={18}
                       onClick={() => {
@@ -242,8 +242,12 @@ const Step2 = ({
                 .map((item, index) => (
                   <div key={index} className="text-secondary text-sm flex flex-row items-center justify-between gap-4">
                     <span className="flex-shrink-0 ">{item.label}</span>
-                    <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div>
-                    {item.render ? item.render() : <span className="flex-shrink-0 max-w-[200px]">{item.value}</span>}
+                    {/* <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div> */}
+                    {item.render ? (
+                      item.render()
+                    ) : (
+                      <span className="flex-shrink-0 max-w-[200px] font-medium text-primary">{item.value}</span>
+                    )}
                   </div>
                 ))}
 

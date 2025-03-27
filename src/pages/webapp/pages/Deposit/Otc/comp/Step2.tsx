@@ -81,7 +81,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
               <span className="flex-shrink-0 font-medium text-primary">{userName}</span>
               <Iconfont
                 name="a-bianzu3beifen2"
-                color="gray"
+                color="black"
                 width={18}
                 height={18}
                 onClick={() => {
@@ -103,7 +103,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
                     <span className="flex-shrink-0 font-medium text-primary">{bankName}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
-                      color="gray"
+                      color="black"
                       width={18}
                       height={18}
                       onClick={() => {
@@ -123,7 +123,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
                     <span className="flex-shrink-0 font-medium text-primary">{bankCard}</span>
                     <Iconfont
                       name="a-bianzu3beifen2"
-                      color="gray"
+                      color="black"
                       width={18}
                       height={18}
                       onClick={() => {
