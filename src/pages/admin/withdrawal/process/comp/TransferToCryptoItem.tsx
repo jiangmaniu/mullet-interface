@@ -87,21 +87,23 @@ function TransferToCryptoItem({ form }: IProps) {
           options={bankList} // 设置自动完成的选项
           onSearch={handleSearch} // 监听搜索事件
           placeholder={intl.formatMessage({ id: 'mt.shurudizhi' })}
+          suffixIcon={
+            <div className="flex flex-row items-center gap-2 z-10">
+              <SelectSuffixIcon opacity={0.5} />
+              <div className="bg-gray-250 h-3 w-[1px] "></div>
+              <span
+                className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
+                onClick={() => {
+                  // message.info('敬请期待')
+                  push('/setting?key=address&subkey=cryptoAddress')
+                }}
+              >
+                <FormattedMessage id="mt.dizhiguanli" />
+              </span>
+            </div>
+          }
         />
       </ProForm.Item>
-      <div className="absolute top-[36px] right-2 flex flex-row items-center gap-2 z-10">
-        <SelectSuffixIcon opacity={0.5} />
-        <div className="bg-gray-250 h-3 w-[1px] "></div>
-        <span
-          className="text-primary text-sm font-pf-bold leading-8 hover:underline cursor-pointer"
-          onClick={() => {
-            // message.info('敬请期待')
-            push('/setting?key=address&subkey=cryptoAddress')
-          }}
-        >
-          <FormattedMessage id="mt.dizhiguanli" />
-        </span>
-      </div>
     </div>
   )
 }
