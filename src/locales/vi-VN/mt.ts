@@ -821,5 +821,6 @@ export default {
   'mt.mima': 'Mật khẩu',
   'mt.shangchuanzhaopianbuyaochaoguo': 'Không được vượt quá {value}',
   'mt.banbengengxin': 'Cập nhật phiên bản',
-  'mt.banbengengxintips': 'Đã phát hiện phiên bản mới, vui lòng làm mới trang'
+  'mt.banbengengxintips': 'Đã phát hiện phiên bản mới, vui lòng làm mới trang',
+  'mt.tixiantuihui': 'Hoàn trả rút tiền'
 }

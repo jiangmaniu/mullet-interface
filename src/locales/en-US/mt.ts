@@ -829,5 +829,6 @@ export default {
   'mt.xiuggaimima': 'Change Password',
   'mt.shangchuanzhaopianbuyaochaoguo': 'Upload images cannot exceed {value}',
   'mt.banbengengxin': 'Version Update',
-  'mt.banbengengxintips': 'A new version has been detected, please refresh the page'
+  'mt.banbengengxintips': 'A new version has been detected, please refresh the page',
+  'mt.tixiantuihui': 'Withdrawal Return'
 }
