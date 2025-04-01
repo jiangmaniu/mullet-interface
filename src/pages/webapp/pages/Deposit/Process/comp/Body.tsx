@@ -3,7 +3,7 @@ import './index.less'
 import { PageLoading, ProForm, ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel, useParams, useSearchParams } from '@umijs/max'
 import { Form } from 'antd'
-import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import { stores, useStores } from '@/context/mobxProvider'
 
@@ -14,8 +14,10 @@ import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
+import CompleteModal from './CompleteModal'
 import ConfirmModal from './ConfirmModal'
 import ContinueModal from './ContinueModal'
+import FailModal from './FailModal'
 import TransferAmount from './TransferAmount'
 import TransferCrypto from './TransferCrypto'
 import TransferMethodSelectItem from './TransferMethodSelectItem'
@@ -65,7 +67,7 @@ const DepositProcess = forwardRef(
 
     const { initialState } = useModel('@@initialState')
     const currentUser = initialState?.currentUser
-    const { trade } = useStores()
+    const { trade, ws } = useStores()
     const { currentAccountInfo } = trade
 
     const [orderId, setOrderId] = useState(-1)
@@ -98,6 +100,7 @@ const DepositProcess = forwardRef(
                   return
                 }
 
+                setOrderId(res.data?.id || -1)
                 // TODO: 生成充值地址
                 form.setFieldValue('address', res.data?.address)
                 form.setFieldValue('createTime', res.data?.createTime)
@@ -122,6 +125,9 @@ const DepositProcess = forwardRef(
 
     const confirmModalRef = useRef<any>()
     const continueModalRef = useRef<any>()
+    const completeModalRef = useRef<any>()
+    const failModalRef = useRef<any>()
+
     const handleTimeout = () => {
       setStep(0)
       confirmModalRef.current?.show()
@@ -186,6 +192,42 @@ const DepositProcess = forwardRef(
     }, [disabled])
 
     const { theme } = useTheme()
+
+    const resolveMsg = useCallback(
+      (data: CustomEvent) => {
+        try {
+          const res = JSON.parse(data.detail.data)
+          const msgType = data.detail.msgType
+
+          if (msgType === 'DEPOSIT' && res?.orderNo === String(orderId)) {
+            if (res?.status === 'SUCCESS') {
+              // 弹窗提示支付成功并跳转
+              console.log('支付成功')
+              completeModalRef.current?.show()
+            } else if (res?.status === 'FAIL') {
+              // 弹窗提示支付失敗
+              console.log('支付失败')
+              setStep(0)
+              failModalRef.current?.show()
+            }
+          }
+        } catch (error) {}
+      },
+      [orderId]
+    )
+
+    useLayoutEffect(() => {
+      ws.subscribeNotify(false)
+
+      // @ts-ignore
+      window.addEventListener('RESOLVE_MSG', resolveMsg)
+
+      return () => {
+        ws.subscribeNotify(true)
+        // @ts-ignore
+        window.removeEventListener('RESOLVE_MSG', resolveMsg)
+      }
+    }, [resolveMsg])
 
     return (
       <BasicLayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary}>
@@ -284,6 +326,8 @@ const DepositProcess = forwardRef(
           </div>
           <ConfirmModal ref={confirmModalRef} handleReset={handleReset} />
           <ContinueModal ref={continueModalRef} handleGo={handleGo} />
+          <CompleteModal ref={completeModalRef} />
+          <FailModal ref={failModalRef} />
         </div>
       </BasicLayout>
     )

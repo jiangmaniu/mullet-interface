@@ -14,6 +14,8 @@ export type WorkerType =
   | 'SUBSCRIBE_TRADE'
   /**订阅系统消息推送 */
   | 'SUBSCRIBE_MESSAGE'
+  /**订阅需要响应处理的消息 */
+  | 'SUBSCRIBE_NOTIFY'
   /**返回品种数据 */
   | 'SYMBOL_RES'
   /**返回深度数据 */
@@ -37,6 +39,8 @@ export type WorkerType =
   | 'SYNC_ALL_SYMBOL_LIST'
   /**同步交易区操作类型 */
   | 'SYNC_TRADE_ACTIONS'
+  /** 需要响应的消息 */
+  | 'RESOLVE_MSG'
 
 // 消息类型
 export enum MessageType {
@@ -47,7 +51,9 @@ export enum MessageType {
   /**行情 */
   trade = 'trade',
   /**消息 */
-  notice = 'notice'
+  notice = 'notice',
+  /** 需要响应的消息 */
+  msg = 'msg'
 }
 
 // 行情价格

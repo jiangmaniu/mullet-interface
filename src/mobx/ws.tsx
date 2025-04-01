@@ -125,6 +125,17 @@ class WSStore {
     }
   }
 
+  resolveMsg(data: Record<string, string>) {
+    // 广播一个 event RESOLVE
+    const resolveMsgEvent = new CustomEvent('RESOLVE_MSG', {
+      detail: {
+        ...data
+      }
+    })
+
+    window.dispatchEvent(resolveMsgEvent)
+  }
+
   // 接收worker线程消息
   handleWorkerMessage = (event: MessageEvent, resolve?: () => void) => {
     const { data } = event.data
@@ -265,6 +276,9 @@ class WSStore {
         stores.trade.expectedMargin = data?.expectedMargin
         stores.trade.maxOpenVolume = data?.maxOpenVolume
         break
+      case 'RESOLVE_MSG':
+        this.resolveMsg(data)
+        break
       case 'CLOSE':
         break
     }
@@ -346,6 +360,14 @@ class WSStore {
         cancel,
         list: symbolList
       }
+    })
+  }
+
+  // 订阅需要响应处理的消息
+  subscribeNotify = (cancel: boolean) => {
+    this.sendWorkerMessage({
+      type: 'SUBSCRIBE_NOTIFY',
+      data: { cancel }
     })
   }
 

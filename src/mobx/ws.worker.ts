@@ -86,6 +86,10 @@ self.addEventListener('message', (event) => {
     case 'SUBSCRIBE_MESSAGE':
       subscribeMessage(data)
       break
+    // 订阅需要响应处理的消息
+    case 'SUBSCRIBE_NOTIFY':
+      subscribeNotify(data)
+      break
     // ========== 处理同步数据 =========
     // 当前激活品种名称
     case 'SYNC_ACTIVE_SYMBOL_NAME':
@@ -299,6 +303,12 @@ function handleMessageCallback(d: any) {
           data
         })
         break
+      case MessageType.msg:
+        sendMessage({
+          type: 'RESOLVE_MSG',
+          data
+        })
+        break
     }
   } catch (e) {
     console.error('Handle message error:', e)
@@ -405,6 +415,17 @@ function subscribeMessage({ cancel }: { cancel?: boolean }) {
   })
   send({
     topic: `/000000/user/${userInfo?.user_id}`,
+    cancel
+  })
+}
+
+// 订阅中消息（目前只订阅支付响应消息：20250327）
+function subscribeNotify({ cancel }: { cancel?: boolean }) {
+  if (!userInfo?.user_id) return
+
+  console.log('=========订阅响应消息', `/000000/msg/${userInfo?.user_id}`, cancel)
+  send({
+    topic: `/000000/msg/${userInfo?.user_id}`,
     cancel
   })
 }

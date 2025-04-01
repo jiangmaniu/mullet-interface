@@ -73,5 +73,7 @@ export default {
   'mt.xiugai': 'Modify',
   'mt.querenshanchugaidizhima': 'Are you sure you want to delete this address?',
   'mt.tishi': 'Tips',
-  'mt.rujinwangluo': 'Deposit network'
+  'mt.rujinwangluo': 'Deposit network',
+  'mt.yiwanchengzhifu': 'Detected payment completed, view record',
+  'mt.zhifushibai': 'Detected payment failed, please try again'
 }

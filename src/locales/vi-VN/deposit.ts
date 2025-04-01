@@ -73,5 +73,7 @@ export default {
   'mt.xiugai': 'Chỉnh sửa',
   'mt.querenshanchugaidizhima': 'Bạn có chắc chắn muốn xóa địa chỉ này không?',
   'mt.tishi': 'Mẹo',
-  'mt.rujinwangluo': 'Mạng lưới nạp tiền'
+  'mt.rujinwangluo': 'Mạng lưới nạp tiền',
+  'mt.yiwanchengzhifu': 'Đã hoàn thành thanh toán, xem lịch sử',
+  'mt.zhifushibai': 'Thanh toán thất bại, vui lòng thử lại'
 }

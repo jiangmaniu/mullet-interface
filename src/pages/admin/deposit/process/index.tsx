@@ -3,7 +3,7 @@ import './index.less'
 import { ProForm, ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel, useParams, useSearchParams } from '@umijs/max'
 import { Form } from 'antd'
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import Iconfont from '@/components/Base/Iconfont'
@@ -15,8 +15,10 @@ import { useLoading } from '@/context/loadingProvider'
 import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
+import CompleteModal from './comp/CompleteModal'
 import ConfirmModal from './comp/ConfirmModal'
 import ContinueModal from './comp/ContinueModal'
+import FailModal from './comp/FailModal'
 import TransferCrypto from './comp/TranserCrypto'
 import TransferAmount from './comp/TransferAmount'
 import TransferMethodSelectItem from './comp/TransferMethodSelectItem'
@@ -67,7 +69,7 @@ function DepositProcess() {
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const { trade } = useStores()
+  const { trade, ws } = useStores()
   const { currentAccountInfo } = trade
 
   const [step, setStep] = useState(0)
@@ -107,6 +109,8 @@ function DepositProcess() {
                   return
                 }
 
+                setOrderId(res.data?.id || -1)
+
                 // TODO: 生成充值地址
                 form.setFieldValue('address', res.data?.address)
                 form.setFieldValue('createTime', res.data?.createTime)
@@ -129,6 +133,9 @@ function DepositProcess() {
 
   const confirmModalRef = useRef<any>()
   const continueModalRef = useRef<any>()
+  const completeModalRef = useRef<any>()
+  const failModalRef = useRef<any>()
+
   const handleTimeout = () => {
     setStep(0)
     confirmModalRef.current?.show()
@@ -183,6 +190,39 @@ function DepositProcess() {
   }, [methodInfo, amount])
 
   const disabled = loading || !methodId || !toAccountId || (methodInfo?.paymentType === 'OTC' && !amount) || !valid
+
+  const resolveMsg = useCallback(
+    (data: CustomEvent) => {
+      try {
+        const res = JSON.parse(data.detail.data)
+        const msgType = data.detail.msgType
+
+        if (msgType === 'DEPOSIT' && res?.orderNo === String(orderId)) {
+          if (res?.status === 'SUCCESS') {
+            // 弹窗提示支付成功并跳转
+            completeModalRef.current?.show()
+          } else if (res?.status === 'FAIL') {
+            // 弹窗提示支付失敗
+            failModalRef.current?.show()
+          }
+        }
+      } catch (error) {}
+    },
+    [orderId]
+  )
+
+  useLayoutEffect(() => {
+    ws.subscribeNotify(false)
+
+    // @ts-ignore
+    window.addEventListener('RESOLVE_MSG', resolveMsg)
+
+    return () => {
+      ws.subscribeNotify(true)
+      // @ts-ignore
+      window.removeEventListener('RESOLVE_MSG', resolveMsg)
+    }
+  }, [resolveMsg])
 
   return (
     <PageContainer
@@ -295,6 +335,8 @@ function DepositProcess() {
       </div>
       <ConfirmModal ref={confirmModalRef} handleReset={handleReset} />
       <ContinueModal ref={continueModalRef} handleGo={handleGo} />
+      <CompleteModal ref={completeModalRef} />
+      <FailModal ref={failModalRef} handleReset={handleReset} />
     </PageContainer>
   )
 }

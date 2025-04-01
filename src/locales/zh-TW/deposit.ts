@@ -73,5 +73,7 @@ export default {
   'mt.xiugai': '修改',
   'mt.querenshanchugaidizhima': '確認刪除該地址嗎？',
   'mt.tishi': '提示',
-  'mt.rujinwangluo': '入金網路'
+  'mt.rujinwangluo': '入金網路',
+  'mt.yiwanchengzhifu': '檢測到支付已完成，查看記錄',
+  'mt.zhifushibai': '檢測到支付失敗，請重試'
 }
