@@ -62,8 +62,3 @@
   - `icon-512x512.png`
 - `platform/img` 按图片格式和大小替换图片即可
 - `platform/favicon.ico` 网站ico图标
-
-1. 修改Lottie动画json文件
-
-`platform/lottie/loading.json`
-

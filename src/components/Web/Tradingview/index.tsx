@@ -90,19 +90,14 @@ const Tradingview = () => {
           // 记录当前切换的分辨率
           STORAGE_SET_TRADINGVIEW_RESOLUTION(interval)
 
-          // 除了分钟 小时的k线 其他都设置为上海时区，否则时区显示错误
+          // 除了分钟 小时的k线 其他都设置为上海时区，否则时区显示错误，绘制天以上周期的k线时间不对
           if (['D', 'W', 'M', 'Y'].some((item) => interval.endsWith(item))) {
             tvWidget.activeChart().getTimezoneApi().setTimezone('Etc/UTC')
           } else {
             tvWidget.activeChart().getTimezoneApi().setTimezone('Asia/Shanghai')
           }
-
-          // @ts-ignore
-          klineStore.activeSymbolInfo.onResetCacheNeededCallback?.() // 重置缓存
-          setTimeout(() => {
-            // Force the chart to re-request data. Before calling this function the onResetCacheNeededCallback callback from IDatafeedChartApi.subscribeBars should be called.
-            tvWidget.activeChart().resetData() // 重置数据
-          }, 100)
+          // 重置数据，请求历史数据
+          klineStore.forceRefreshKlineData()
         })
 
       // 监听时区切换
@@ -260,11 +255,12 @@ const Tradingview = () => {
       console.log('页面回到前台')
       if (symbolName && kline.tvWidget) {
         // @ts-ignore
-        klineStore.activeSymbolInfo?.onResetCacheNeededCallback?.() // 重置缓存
-        setTimeout(() => {
-          // 刷新k线
-          setSymbol(symbolName, kline.tvWidget)
-        }, 100)
+        // klineStore.activeSymbolInfo?.onResetCacheNeededCallback?.() // 重置缓存
+        // setTimeout(() => {
+        //   // 刷新k线
+        //   setSymbol(symbolName, kline.tvWidget)
+        // }, 100)
+        klineStore.forceRefreshKlineData()
       }
     },
     () => {

@@ -10,6 +10,7 @@ import { request } from '@/utils/request'
 
 import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
+import { STORAGE_GET_TRADINGVIEW_RESOLUTION } from '@/utils/storage'
 import { IQuoteItem } from './ws.types'
 
 NP.enableBoundaryChecking(false)
@@ -38,6 +39,7 @@ class KlineStore {
   @observable datafeedBarCallbackObj = {} // 记录getbars回调的参数
   @observable lastBarTime = '' // 记录最后一次时间，用于作为请求k线的截止时间
   @observable isChartLoading = true // 图表是否加载中，直到完成
+  @observable klineDataCacheMap = new Map<string, MarketSymbol.SymbolKlineOptimizeListItem>() // k线数据map
 
   @action
   setSwitchSymbolLoading = (flag: boolean) => {
@@ -47,6 +49,57 @@ class KlineStore {
   @action
   setIsChartLoading = (flag: boolean) => {
     this.isChartLoading = flag
+  }
+
+  // 获取当前激活品种的kline缓存KEY
+  getActiveSymbolCacheKey = () => {
+    const resolution = STORAGE_GET_TRADINGVIEW_RESOLUTION() || '1'
+    const cacheKey = `${stores.trade.activeSymbolName}-${resolution}`
+    return cacheKey
+  }
+
+  // 获取当前激活品种的kline缓存数据
+  getActiveSymbolKlineData = () => {
+    const cacheKey = this.getActiveSymbolCacheKey()
+    return this.klineDataCacheMap.get(cacheKey)
+  }
+
+  // 重置当前品种的k线历史数据缓存
+  resetKlineCacheData = () => {
+    const cacheKey = this.getActiveSymbolCacheKey()
+    // 重置数据
+    this.klineDataCacheMap.set(cacheKey, undefined)
+  }
+
+  // 强制刷新k线数据
+  forceRefreshKlineData = () => {
+    if (!isPCByWidth()) {
+      // 重置数据
+      this.resetKlineCacheData()
+    }
+
+    if (!this.tvWidget) return
+
+    // @ts-ignore
+    this.activeSymbolInfo.onResetCacheNeededCallback?.() // 重置缓存
+    setTimeout(() => {
+      this.tvWidget.activeChart().resetData() // 重置数据
+    }, 100)
+  }
+
+  refreshKline = (resolution: string) => {
+    // 每隔一分钟强制刷新k线数据，避免绘制错误，和后台数据同步校对一下
+    const now = Date.now() / 1000
+    const lastBarTime = this.lastbar.time / 1000
+    const seconds = Math.round(now - lastBarTime)
+
+    // 正好等于60s刷新一次
+    if (resolution === '1' && seconds === 60) {
+      // 强制刷新
+      setTimeout(() => {
+        this.forceRefreshKlineData()
+      }, 2000)
+    }
   }
 
   @action
@@ -74,30 +127,6 @@ class KlineStore {
           // this.refreshKline(resolution)
         }
       }
-    }
-  }
-
-  // 强制刷新k线数据
-  forceRefreshKlineData = () => {
-    // @ts-ignore
-    this.activeSymbolInfo.onResetCacheNeededCallback?.() // 重置缓存
-    setTimeout(() => {
-      this.tvWidget.activeChart().resetData() // 重置数据
-    }, 100)
-  }
-
-  refreshKline = (resolution: string) => {
-    // 每隔一分钟强制刷新k线数据，避免绘制错误，和后台数据同步校对一下
-    const now = Date.now() / 1000
-    const lastBarTime = this.lastbar.time / 1000
-    const seconds = Math.round(now - lastBarTime)
-
-    // 正好等于60s刷新一次
-    if (resolution === '1' && seconds === 60) {
-      // 强制刷新
-      setTimeout(() => {
-        this.forceRefreshKlineData()
-      }, 2000)
     }
   }
 
@@ -226,6 +255,10 @@ class KlineStore {
       if (!to) {
         return this.bars
       }
+      // const cacheData = this.getActiveSymbolKlineData()
+      // if (cacheData && firstDataRequest) {
+      //   return cacheData
+      // }
       const res = await request('/api/trade-market/marketApi/public/symbol/optimizeKlineList', {
         // const res = await request('/api/trade-market/marketApi/public/symbol/klineList', {
         params: {
@@ -267,6 +300,9 @@ class KlineStore {
         runInAction(() => {
           this.bars = bars
         })
+
+        firstDataRequest && this.klineDataCacheMap.set(cacheKey, bars)
+
         return bars
       } else {
         return []
@@ -348,7 +384,7 @@ class KlineStore {
   @action
   destroyed = () => {
     // 等待图表加载完成再关闭,否则销毁实例会导致之前未加载完成的实例报错
-    if (this.isChartLoading) {
+    if (this.isChartLoading || !isPCByWidth()) {
       return
     }
     if (this.tvWidget) {

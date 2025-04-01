@@ -184,7 +184,8 @@ export const Enums = {
     ZERO: { key: 'common.enum.BalanceType.ZERO' },
     FOLLOW_PROFIT: { key: 'common.enum.BalanceType.FOLLOW_PROFIT' },
     HANDLING_FEES: { key: 'common.enum.BalanceType.HANDLING_FEES' },
-    INTEREST_FEES: { key: 'common.enum.BalanceType.INTEREST_FEES' }
+    INTEREST_FEES: { key: 'common.enum.BalanceType.INTEREST_FEES' },
+    BACK: { key: 'mt.tixiantuihui' }
   }
 }
 
@@ -269,7 +270,8 @@ export const getEnum = () => {
       ZERO: { text: intl.formatMessage({ id: 'mt.guiling' }) },
       FOLLOW_PROFIT: { text: intl.formatMessage({ id: 'common.gendanfenrun' }) },
       HANDLING_FEES: { text: intl.formatMessage({ id: 'mt.shouxufei' }) },
-      INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) }
+      INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) },
+      BACK: { text: intl.formatMessage({ id: 'mt.tixiantuihui' }) }
     },
     // 可用预付款
     UsableAdvanceCharge: {

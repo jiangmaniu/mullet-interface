@@ -4,9 +4,9 @@ import { useIntl } from '@umijs/max'
 import Lottie from 'lottie-react'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
-import { useStores } from '@/context/mobxProvider'
 import { observer } from 'mobx-react'
 import Modal from '../../Modal'
+import animationData from './loading.json'
 
 type IProps = {
   width?: number
@@ -15,8 +15,6 @@ type IProps = {
 
 function Loading({ width = 400, height = 400 }: IProps) {
   const lottieRef = useRef(null)
-  const { global } = useStores()
-  const animationData = global.lottieLoadingData
 
   useEffect(() => {
     if (lottieRef.current) {
@@ -33,7 +31,7 @@ function Loading({ width = 400, height = 400 }: IProps) {
           renderer="svg"
           autoplay={true}
           loop={true}
-          assetsPath="/img/animation/"
+          assetsPath="/platform/img/lottie/"
           style={{ width, height }}
           lottieRef={lottieRef}
         />
