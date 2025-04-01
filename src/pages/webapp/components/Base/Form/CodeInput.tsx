@@ -28,12 +28,7 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
 
   const { cn } = useTheme()
 
-  const [code1, setCode1] = useState('')
-  const [code2, setCode2] = useState('')
-  const [code3, setCode3] = useState('')
-  const [code4, setCode4] = useState('')
-  const [code5, setCode5] = useState('')
-  const [code6, setCode6] = useState('')
+  const [codes, setCodes] = useState<string[]>(['', '', '', '', '', ''])
 
   const inputRef1 = useRef<any>(null)
   const inputRef2 = useRef<any>(null)
@@ -43,22 +38,18 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
   const inputRef6 = useRef<any>(null)
 
   useEffect(() => {
-    const codeValue = code1 + code2 + code3 + code4 + code5 + code6
+    const codeValue = codes.join('')
     if (codeValue) {
       onChange?.(codeValue)
+      console.log('codeValue', codeValue)
       form?.setFieldValue?.(name, codeValue)
     }
-  }, [code1, code2, code3, code4, code5, code6])
+  }, [codes])
 
   const handlePaste = () => {
     readClipboard((text) => {
       if (text.length === 6) {
-        setCode6(text[5])
-        setCode5(text[4])
-        setCode4(text[3])
-        setCode3(text[2])
-        setCode2(text[1])
-        setCode1(text[0])
+        setCodes(text.split(''))
       }
     })
   }
@@ -68,6 +59,54 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
       // inputRef1.current?.select()
     }
   }))
+
+  const handleCodeChange = (index: number, value: string) => {
+    const newCodes = [...codes]
+    newCodes[index] = value
+    setCodes(newCodes)
+
+    if (value && value.length > 0) {
+      switch (index) {
+        case 0:
+          if (!codes[1]) inputRef2.current?.focus()
+          break
+        case 1:
+          if (!codes[2]) inputRef3.current?.focus()
+          break
+        case 2:
+          if (!codes[3]) inputRef4.current?.focus()
+          break
+        case 3:
+          if (!codes[4]) inputRef5.current?.focus()
+          break
+        case 4:
+          if (!codes[5]) inputRef6.current?.focus()
+          break
+      }
+    }
+  }
+
+  const handleKeyUp = (index: number, e: any) => {
+    if (e.key === 'Backspace') {
+      switch (index) {
+        case 1:
+          inputRef1.current?.focus()
+          break
+        case 2:
+          inputRef2.current?.focus()
+          break
+        case 3:
+          inputRef3.current?.focus()
+          break
+        case 4:
+          inputRef4.current?.focus()
+          break
+        case 5:
+          inputRef5.current?.focus()
+          break
+      }
+    }
+  }
 
   return (
     <Form.Item noStyle name={name} rules={rules}>
@@ -88,15 +127,9 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
               e.target.select()
               onFocus?.()
             }}
-            onChange={(e: any) => {
-              setCode1(e)
-              if (e && e.length > 0) {
-                if (!code2) {
-                  inputRef2.current?.focus()
-                }
-              }
-            }}
-            value={code1}
+            onChange={(e: any) => handleCodeChange(0, e)}
+            onKeyUp={(e: any) => handleKeyUp(0, e)}
+            value={codes[0]}
             disabled={disabled}
           />
           <InputNumber
@@ -109,20 +142,9 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
             placeholder=""
             fixedTrigger="onChange"
             fontSize={20}
-            onChange={(e: any) => {
-              setCode2(e)
-              if (e && e.length > 0) {
-                if (!code3) {
-                  inputRef3?.current?.focus()
-                }
-              }
-            }}
-            onKeyUp={(e: any) => {
-              if (e.key === 'Backspace') {
-                inputRef1?.current?.focus()
-              }
-            }}
-            value={code2}
+            onChange={(e: any) => handleCodeChange(1, e)}
+            onKeyUp={(e: any) => handleKeyUp(1, e)}
+            value={codes[1]}
             disabled={disabled}
           />
           <InputNumber
@@ -135,20 +157,9 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
             placeholder=""
             fixedTrigger="onChange"
             fontSize={20}
-            onChange={(e: any) => {
-              setCode3(e)
-              if (e && e.length > 0) {
-                if (!code4) {
-                  inputRef4?.current?.focus()
-                }
-              }
-            }}
-            onKeyUp={(e: any) => {
-              if (e.key === 'Backspace') {
-                inputRef2?.current?.focus()
-              }
-            }}
-            value={code3}
+            onChange={(e: any) => handleCodeChange(2, e)}
+            onKeyUp={(e: any) => handleKeyUp(2, e)}
+            value={codes[2]}
             disabled={disabled}
           />
           <InputNumber
@@ -161,20 +172,9 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
             placeholder=""
             fixedTrigger="onChange"
             fontSize={20}
-            onChange={(e: any) => {
-              setCode4(e)
-              if (e && e.length > 0) {
-                if (!code5) {
-                  inputRef5?.current?.focus()
-                }
-              }
-            }}
-            onKeyUp={(e: any) => {
-              if (e.key === 'Backspace') {
-                inputRef3?.current?.focus()
-              }
-            }}
-            value={code4}
+            onChange={(e: any) => handleCodeChange(3, e)}
+            onKeyUp={(e: any) => handleKeyUp(3, e)}
+            value={codes[3]}
             disabled={disabled}
           />
           <InputNumber
@@ -187,20 +187,9 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
             placeholder=""
             fixedTrigger="onChange"
             fontSize={20}
-            onChange={(e: any) => {
-              setCode5(e)
-              if (e && e.length > 0) {
-                if (!code6) {
-                  inputRef6?.current?.focus()
-                }
-              }
-            }}
-            onKeyUp={(e: any) => {
-              if (e.key === 'Backspace') {
-                inputRef4?.current?.focus()
-              }
-            }}
-            value={code5}
+            onChange={(e: any) => handleCodeChange(4, e)}
+            onKeyUp={(e: any) => handleKeyUp(4, e)}
+            value={codes[4]}
             disabled={disabled}
           />
           <InputNumber
@@ -213,15 +202,9 @@ const CodeInput = forwardRef((props: IProps, ref: ForwardedRef<any>) => {
             placeholder=""
             fixedTrigger="onChange"
             fontSize={20}
-            onChange={(e: any) => {
-              setCode6(e)
-            }}
-            onKeyUp={(e: any) => {
-              if (e.key === 'Backspace') {
-                inputRef5?.current?.focus()
-              }
-            }}
-            value={code6}
+            onChange={(e: any) => handleCodeChange(5, e)}
+            onKeyUp={(e: any) => handleKeyUp(5, e)}
+            value={codes[5]}
             disabled={disabled}
           />
         </View>
