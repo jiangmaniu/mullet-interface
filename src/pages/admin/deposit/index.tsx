@@ -8,6 +8,7 @@ import { stores } from '@/context/mobxProvider'
 import { observer } from 'mobx-react'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import BaseKycApproveInfoModal from '../setting/kycV2/BaseKycApproveInfoModal'
+import BindContactModal from '../setting/kycV2/BindContactModal'
 import DepositMethod from './comp'
 
 const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
@@ -49,8 +50,10 @@ function Deposit() {
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus // kyc状态
   const isBaseAuth = currentUser?.isBaseAuth || false
+  const phone = currentUser?.userInfo?.phone || ''
   const { fetchUserInfo } = useModel('user')
   const baseModal = useRef<any>()
+  const bindModal = useRef<any>()
   const advanceModal = useRef<any>()
   const kycWaitModal = useRef<any>()
 
@@ -77,7 +80,11 @@ function Deposit() {
             <Button
               type="primary"
               onClick={() => {
-                // push('/setting')
+                if (!phone) {
+                  bindModal.current?.show()
+                  return
+                }
+
                 baseModal.current?.show()
               }}
             >
@@ -102,6 +109,9 @@ function Deposit() {
           advanceModal.current?.show()
         }}
       />
+
+      <BindContactModal ref={bindModal} />
+
       {/* 高级认证弹窗 */}
       {/* <AdvanceKycApproveInfoModal
         ref={advanceModal}

@@ -12,9 +12,10 @@ const KycStatus = () => {
 
   const kycInfo = useKycStatusInfo()
   const status = kycInfo?.status
+  const phone = kycInfo?.phone
 
   const onClick = () => {
-    if (status === -1) {
+    if (!phone) {
       navigateTo('/app/person-info?back=true&bindPhone=true')
     } else if (status === 1) {
       // 初级审核通过，待申请高级认证

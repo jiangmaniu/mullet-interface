@@ -11,6 +11,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import KycApproveInfoModal from '../setting/comp/KycApproveInfoModal'
 import AdvanceKycApproveInfoModal from '../setting/kycV2/AdvanceKycApproveInfoModal'
 import BaseKycApproveInfoModal from '../setting/kycV2/BaseKycApproveInfoModal'
+import BindContactModal from '../setting/kycV2/BindContactModal'
 import KycRejectModal from '../setting/kycV2/KycRejectModal'
 import KycWaitModal from '../setting/kycV2/KycWaitModal'
 import WithdrawalMethod from './comp'
@@ -62,7 +63,8 @@ function Withdrawal() {
   const kycWaitModal = useRef<any>()
   const kycSuccModalRef = useRef<any>()
 
-  const { status, operation } = useKycStatusInfo()
+  const { status, operation, phone } = useKycStatusInfo()
+  const bindModal = useRef<any>()
 
   useEffect(() => {
     // 刷新用户信息
@@ -70,6 +72,11 @@ function Withdrawal() {
   }, [])
 
   const handleKycStatusClick = (status: number) => {
+    if (!phone) {
+      bindModal.current?.show()
+      return
+    }
+
     // TODO
     if (status === 0) {
       baseModal.current?.show()
@@ -144,6 +151,8 @@ function Withdrawal() {
           advanceModal.current?.show()
         }}
       />
+
+      <BindContactModal ref={bindModal} />
     </PageContainer>
   )
 }

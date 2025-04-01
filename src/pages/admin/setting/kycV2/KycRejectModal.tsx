@@ -20,11 +20,10 @@ function KycRejectModal({ trigger, onSuccess }: IProps, ref: any) {
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
   const remark = kycAuthInfo?.remark
-  const phone = currentUser?.userInfo?.phone || ''
 
   const status = useMemo(() => {
-    return getKycStatus(kycStatus, isBaseAuth, isKycAuth, phone)
-  }, [kycStatus, isBaseAuth, isKycAuth, phone])
+    return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
+  }, [kycStatus, isBaseAuth, isKycAuth])
 
   useImperativeHandle(ref, () => {
     return modalRef.current

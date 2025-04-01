@@ -25,8 +25,8 @@ function KycVerifyDocPage() {
   const phone = currentUser?.userInfo?.phone || ''
 
   const status = useMemo(() => {
-    return getKycStatus(kycStatus, isBaseAuth, isKycAuth, phone)
-  }, [kycStatus, isBaseAuth, isKycAuth, phone])
+    return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
+  }, [kycStatus, isBaseAuth, isKycAuth])
 
   const onSuccess = () => {
     onBack()

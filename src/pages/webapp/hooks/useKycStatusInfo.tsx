@@ -10,12 +10,13 @@ type StatusItem = {
 
 type RetProps = StatusItem & {
   status: number
+  phone?: string
 }
 
-export const getKycStatus = (kycStatus: API.ApproveStatus, isBaseAuth: boolean, isKycAuth: boolean, phone: string) => {
-  if (!phone) {
-    return -1 // 未绑定手机号
-  }
+export const getKycStatus = (kycStatus: API.ApproveStatus, isBaseAuth: boolean, isKycAuth: boolean) => {
+  // if (!phone) {
+  //   return -1 // 未绑定手机号
+  // }
   if (isBaseAuth && isKycAuth) {
     return 4 // 审核通过
   } else if (isBaseAuth && !isKycAuth && kycStatus !== 'TODO' && kycStatus !== 'CANCEL' && kycStatus !== 'DISALLOW') {
@@ -41,8 +42,8 @@ export default function useKycStatusInfo() {
   const phone = currentUser?.userInfo?.phone || ''
 
   const status = useMemo(() => {
-    return getKycStatus(kycStatus, isBaseAuth, isKycAuth, phone)
-  }, [kycStatus, isBaseAuth, isKycAuth, phone])
+    return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
+  }, [kycStatus, isBaseAuth, isKycAuth])
 
   const statusLabels = [
     {
@@ -79,6 +80,7 @@ export default function useKycStatusInfo() {
 
   return {
     ...statusLabels[status],
-    status
+    status,
+    phone
   } as RetProps
 }

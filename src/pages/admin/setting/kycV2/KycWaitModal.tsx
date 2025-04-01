@@ -1,10 +1,9 @@
 import { FormattedMessage, useModel } from '@umijs/max'
-import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
+import { forwardRef, useImperativeHandle, useRef } from 'react'
 
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
 import { useTheme } from '@/context/themeProvider'
-import { getKycStatus } from '@/pages/webapp/hooks/useKycStatusInfo'
 
 type IProps = {
   trigger?: JSX.Element
@@ -19,11 +18,6 @@ function KycWaitModal({ trigger, onClose }: IProps, ref: any) {
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
-  const phone = currentUser?.userInfo?.phone || ''
-
-  const status = useMemo(() => {
-    return getKycStatus(kycStatus, isBaseAuth, isKycAuth, phone)
-  }, [kycStatus, isBaseAuth, isKycAuth, phone])
 
   useImperativeHandle(ref, () => {
     return modalRef.current
