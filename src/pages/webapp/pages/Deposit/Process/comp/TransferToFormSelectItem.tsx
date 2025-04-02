@@ -112,7 +112,8 @@ export default function TransferToFormSelectItem({ form }: IProps) {
                   </div>
                 )}
                 <div className="flex-1 text-sm font-bold text-primary truncate flex items-center gap-x-1">
-                  <span>{item.name}</span> <span className="text-weak">#{item?.id}</span>
+                  <span>{item.name}</span>
+                  {/* <span className="text-weak">#{item?.id}</span> */}
                 </div>
               </div>
             )

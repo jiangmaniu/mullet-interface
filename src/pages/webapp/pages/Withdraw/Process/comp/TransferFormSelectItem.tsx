@@ -112,7 +112,8 @@ export default function TransferFormSelectItem({ form, totalProfit }: IProps) {
                   </div>
                 )}
                 <div className="flex-1 text-sm font-bold text-primary truncate">
-                  {item.name} / {item?.id}
+                  {item.name}
+                  {/* / {item?.id} */}
                 </div>
               </div>
             )

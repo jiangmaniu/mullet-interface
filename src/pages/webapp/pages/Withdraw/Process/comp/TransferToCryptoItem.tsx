@@ -89,7 +89,7 @@ function TransferToCryptoItem({ form }: IProps) {
         >
           <AutoComplete
             style={{
-              height: '44px',
+              height: '42px',
               width: '256px',
               textOverflow: 'ellipsis'
             }}
