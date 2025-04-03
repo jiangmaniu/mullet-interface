@@ -7,6 +7,7 @@ export default {
   'menu.copyTrading': 'Copy Trading',
   'menu.setting': 'Settings',
   'menu.depositWaiting': 'Deposit Waiting',
+  'menu.depositWait': 'Deposit Wait',
   'menu.withdrawalWaiting': 'Withdrawal Waiting',
   'menu.withdrawalProcess': 'Withdrawal Process',
   'menu.withdrawalPreview': 'Withdrawal Preview',
