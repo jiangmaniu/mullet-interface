@@ -301,8 +301,6 @@ class KlineStore {
           this.bars = bars
         })
 
-        firstDataRequest && this.klineDataCacheMap.set(cacheKey, bars)
-
         return bars
       } else {
         return []
