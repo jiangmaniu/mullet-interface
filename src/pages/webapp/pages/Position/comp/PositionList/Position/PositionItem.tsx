@@ -113,7 +113,7 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
 
   return (
     <div
-      onClick={() => {
+      onClick={(e) => {
         onPress(item, 'CLOSE_POSITION')
       }}
       style={{ background: theme.colors.backgroundColor.primary }}
@@ -230,24 +230,24 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
         >
           {t('pages.trade.Spsl')}
         </Button>
-        <Button
-          size="xs"
-          containerClassName={cn('flex-1')}
-          loading={loading4}
-          onClick={() => {
+        <div
+          onClick={(e) => {
+            e.stopPropagation()
             onPress(item, 'CLOSE_MARKET_POSITION', () => {
               if (trade.positionConfirmChecked) {
                 setLoading4(true)
-
                 setTimeout(() => {
                   setLoading4(false)
                 }, 2000)
               }
             })
           }}
+          className="flex-1 h-full"
         >
-          {t('pages.position.Market Price Close Position Btn')}
-        </Button>
+          <Button size="xs" containerClassName={cn('flex-1')} loading={loading4}>
+            {t('pages.position.Market Price Close Position Btn')}
+          </Button>
+        </div>
       </View>
     </div>
   )
