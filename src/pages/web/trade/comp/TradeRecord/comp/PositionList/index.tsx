@@ -20,6 +20,7 @@ import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
 import { useTheme } from '@/context/themeProvider'
+import usePageVisibility from '@/hooks/usePageVisibility'
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 import CurrentPrice from './comp/CurrentPrice'
 import MarginRate from './comp/MarginRate'
@@ -576,11 +577,22 @@ function Position({ style, parentPopup }: IProps) {
     }
   }
 
+  const [forceUpdateKey, setForceUpdateKey] = useState(0)
+
+  usePageVisibility(
+    () => {
+      setForceUpdateKey((prev) => prev + 1)
+    },
+    () => {
+      //
+    }
+  )
+
   return (
     <>
       {/* 加上loading避免右侧闪动问题 */}
       <Spin spinning={loading} style={{ background: 'var(--bg-primary)' }}>
-        <div onScrollCapture={handleScrollTable}>
+        <div onScrollCapture={handleScrollTable} key={forceUpdateKey}>
           <StandardTable
             columns={getColumns('oneLevel')}
             key={trade.currentAccountInfo.id}
