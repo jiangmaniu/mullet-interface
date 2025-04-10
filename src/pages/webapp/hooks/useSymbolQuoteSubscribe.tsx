@@ -35,7 +35,8 @@ export default function useSymbolQuoteSubscribe({ visible }: IProps) {
           // 打开行情订阅
           ws.openSymbol({
             // 构建参数
-            symbols: ws.makeWsSymbolBySemi(trade.symbolListAll)
+            symbols: ws.makeWsSymbolBySemi(trade.symbolListAll),
+            cover: true
           })
         })
       })
