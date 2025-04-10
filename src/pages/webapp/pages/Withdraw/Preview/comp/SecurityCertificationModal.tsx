@@ -4,7 +4,7 @@ import Button from '@/pages/webapp/components/Base/Button'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
 import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { sendCustomPhoneCode } from '@/services/api/user'
+import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
 import { ProForm, ProFormText } from '@ant-design/pro-components'
 import { getIntl, useModel } from '@umijs/max'
@@ -61,10 +61,20 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
       return
     }
 
-    sendCustomPhoneCode({
-      phone: currentUser?.userInfo?.phone,
-      phoneAreaCode: currentUser?.userInfo?.phoneAreaCode
-    })
+    const reqFn = registerWay === 'PHONE' ? sendCustomPhoneCode : sendCustomEmailCode
+    const reqParams: any = {}
+    // const { emailOrPhone, phoneAreaCode } = values || params || {}
+    // 邮箱
+    if (registerWay === 'EMAIL') {
+      reqParams.email = currentUser?.userInfo?.email
+    }
+    // 手机
+    if (registerWay === 'PHONE') {
+      reqParams.phone = currentUser?.userInfo?.phone
+      reqParams.phoneAreaCode = currentUser?.userInfo?.phoneAreaCode
+    }
+
+    reqFn(reqParams)
       .then((res) => {
         res.success && setSendTime(60)
         setSended(true)
