@@ -1,9 +1,10 @@
-import { FormattedMessage, getIntl } from '@umijs/max'
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
+import { validateNonEmptyFields } from '@/utils/form'
 import { ProForm } from '@ant-design/pro-components'
 import { Form } from 'antd'
 
@@ -36,6 +37,12 @@ function EditBankModal({ item, onUpdateItem }: IProps, ref: any) {
         })
     })
   }
+
+  const intl = useIntl()
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <Modal

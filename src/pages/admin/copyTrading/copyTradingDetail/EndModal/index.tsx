@@ -5,6 +5,8 @@ import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form, message } from 'antd'
 
 import Button from '@/components/Base/Button'
+import { validateNonEmptyFields } from '@/utils/form'
+import { useEffect } from 'react'
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -27,6 +29,10 @@ export default ({ id, trigger, onSuccess, onConfirm, open, onOpenChange }: IProp
   const [form] = Form.useForm<{ name: string; company: string }>()
   const intl = useIntl()
   const title = intl.formatMessage({ id: 'mt.gendanpeizhi' })
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div>

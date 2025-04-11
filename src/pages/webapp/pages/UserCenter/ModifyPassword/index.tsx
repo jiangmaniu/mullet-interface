@@ -15,6 +15,7 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { goKefu, onLogout } from '@/utils/navigator'
 import { ProFormText } from '@ant-design/pro-components'
@@ -83,6 +84,10 @@ export default () => {
   useEffect(() => {
     setSendLabelValue()
   }, [setSendLabelValue])
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <Basiclayout

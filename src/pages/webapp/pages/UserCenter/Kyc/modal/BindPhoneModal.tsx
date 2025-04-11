@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import { forwardRef, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { ModalLoadingRef } from '@/components/Base/Lottie/Loading'
@@ -13,6 +13,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { getAreaCode } from '@/services/api/common'
 import { bindPhone, sendCustomPhoneCode } from '@/services/api/user'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useIntl, useModel } from '@umijs/max'
@@ -28,7 +29,7 @@ interface FormData {
 }
 
 const CountDown = observer(({ phone, onSendCode }: { phone?: string; onSendCode: () => void }) => {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { cn } = useTheme()
   const { global } = useStores()
 
@@ -63,7 +64,7 @@ type IProps = {
 const BindPhoneModal = forwardRef((props: IProps, ref: React.Ref<ModalRef>) => {
   const i18n = useI18n()
   const { cn, theme } = useTheme()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { global } = useStores()
   const bottomSheetModalRef = useRef<SheetRef>(null)
   const user = useModel('user')
@@ -92,6 +93,10 @@ const BindPhoneModal = forwardRef((props: IProps, ref: React.Ref<ModalRef>) => {
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const phone = watch('phone')
   const areaCode = watch('areaCode')

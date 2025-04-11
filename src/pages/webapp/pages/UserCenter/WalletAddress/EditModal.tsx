@@ -5,6 +5,7 @@ import ProFormText from '@/components/Admin/Form/ProFormText'
 import { useEnv } from '@/context/envProvider'
 import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { modifyWithdrawalAddress } from '@/services/api/wallet'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { ProForm } from '@ant-design/pro-components'
 import { Form } from 'antd'
@@ -60,6 +61,10 @@ function EditModal({ reload }: IProps, ref: any) {
       channelName: item.channelName
     })
   }, [item])
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <SheetModal

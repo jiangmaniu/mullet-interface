@@ -1,13 +1,14 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { Button, Form } from 'antd'
 import { observer } from 'mobx-react'
-import { forwardRef, useMemo } from 'react'
+import { forwardRef, useEffect, useMemo } from 'react'
 
 import InputNumber from '@/components/Base/InputNumber'
 import { useStores } from '@/context/mobxProvider'
 
 import Checkbox from '@/components/Base/Checkbox'
 import useTrade from '@/hooks/useTrade'
+import { validateNonEmptyFields } from '@/utils/form'
 import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import BuyAndSellBtnGroup from '../../../BuyAndSellBtnGroup'
@@ -112,6 +113,10 @@ export default observer(
     const renderVolume = useMemo(() => {
       return <OrderVolume />
     }, [])
+
+    useEffect(() => {
+      validateNonEmptyFields(form)
+    }, [intl.locale])
 
     return (
       <Form form={form}>

@@ -11,6 +11,7 @@ import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 import { md5 } from 'js-md5'
@@ -62,6 +63,10 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
   useEffect(() => {
     setSendLabelValue()
   }, [setSendLabelValue])
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <Modal

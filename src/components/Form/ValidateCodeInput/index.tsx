@@ -1,11 +1,12 @@
-import { FormattedMessage } from '@umijs/max'
+import { FormattedMessage, useIntl } from '@umijs/max'
 import { useCountDown } from 'ahooks'
 import { FormInstance } from 'antd'
 import { NamePath } from 'antd/es/form/interface'
-import { forwardRef, useImperativeHandle, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import CodeInput from '@/components/Base/CodeInput'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
+import { validateNonEmptyFields } from '@/utils/form'
 
 export type Params = {
   /**手机或邮箱 */
@@ -84,6 +85,12 @@ function ValidateCodeInput({ sendType, form, style, name, showReSendBtn = true, 
       }
     }
   })
+
+  const intl = useIntl()
+
+  useEffect(() => {
+    form && validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div className="px-10 pt-5 flex-1" style={style}>

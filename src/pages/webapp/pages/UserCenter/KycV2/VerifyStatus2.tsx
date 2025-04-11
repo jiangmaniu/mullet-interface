@@ -2,26 +2,33 @@ import { useTheme } from '@/context/themeProvider'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 const VerifyStatus2 = () => {
   const { cn } = useTheme()
   const i18n = useI18n()
-  const { t } = i18n
+  const { t, locale } = i18n
 
   const schema = z.object({})
 
   const {
     handleSubmit,
     setValue,
-    formState: { errors }
+    formState: { errors },
+    trigger
   } = useForm<{ name: string }>({
     defaultValues: {},
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   return (
     <>

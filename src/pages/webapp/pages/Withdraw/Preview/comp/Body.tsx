@@ -11,6 +11,7 @@ import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { generateWithdrawOrder } from '@/services/api/wallet'
 import { formatNum } from '@/utils'
 import { withdrawExchangeRate } from '@/utils/deposit'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
@@ -137,6 +138,10 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
         console.log('err', err)
       })
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div className="bg-gray-55">

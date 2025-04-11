@@ -1,5 +1,5 @@
 import { ProForm, ProFormText as RawProFormText } from '@ant-design/pro-components'
-import { FormattedMessage, getIntl, useModel } from '@umijs/max'
+import { FormattedMessage, getIntl, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
 import { FormInstance } from 'antd/lib'
 import { useEffect, useState } from 'react'
@@ -18,6 +18,7 @@ import { stores } from '@/context/mobxProvider'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { withdrawExchangeRate } from '@/utils/deposit'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 
 export const Step2 = ({
@@ -193,6 +194,11 @@ export const Step2 = ({
   }, [password, code])
 
   const submitable = valid && !loading
+
+  const intl = useIntl()
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div className="flex items-center justify-center w-full h-full mt-10 ">

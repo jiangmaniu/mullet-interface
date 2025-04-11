@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { useEnv } from '@/context/envProvider'
@@ -13,6 +13,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { bindEmail, sendCustomEmailCode } from '@/services/api/user'
 import { regEmail } from '@/utils'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useIntl, useModel } from '@umijs/max'
@@ -59,7 +60,7 @@ type IProps = {
 function BindEmailModal(props: IProps) {
   const i18n = useI18n()
   const { cn, theme } = useTheme()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { global } = useStores()
   const intl = useIntl()
   const bottomSheetModalRef = useRef<SheetRef>(null)
@@ -91,6 +92,10 @@ function BindEmailModal(props: IProps) {
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const email = watch('email')
   const code = watch('code')

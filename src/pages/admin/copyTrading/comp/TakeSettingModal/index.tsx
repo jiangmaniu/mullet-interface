@@ -3,13 +3,14 @@ import './style.less'
 import { ModalForm } from '@ant-design/pro-components'
 import { getIntl, useIntl } from '@umijs/max'
 import { Form, Tabs, TabsProps } from 'antd'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { setTradeFollowLeadSettings } from '@/services/api/tradeFollow/lead'
 import { message } from '@/utils/message'
 
+import { validateNonEmptyFields } from '@/utils/form'
 import { AvatarUpload } from '../../apply/AvatarUpload'
 import BaseInformation from './BaseInformation'
 import TakerParams from './TakerParams'
@@ -91,6 +92,10 @@ export default ({ info, trigger, open, onOpenChange, onConfirm }: IProps) => {
         onOpenChange?.(false)
       })
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div>

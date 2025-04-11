@@ -10,6 +10,7 @@ import { stores, useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { generateDepositOrder, getDepositOrderDetail } from '@/services/api/wallet'
+import { validateNonEmptyFields } from '@/utils/form'
 import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
@@ -228,6 +229,10 @@ const DepositProcess = forwardRef(
         window.removeEventListener('RESOLVE_MSG', resolveMsg)
       }
     }, [resolveMsg])
+
+    useEffect(() => {
+      validateNonEmptyFields(form)
+    }, [intl.locale])
 
     return (
       <BasicLayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary}>

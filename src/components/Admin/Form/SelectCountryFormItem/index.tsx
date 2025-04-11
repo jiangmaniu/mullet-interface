@@ -1,9 +1,9 @@
-import { useIntl, useModel } from '@umijs/max'
+import { useIntl } from '@umijs/max'
 import { FormInstance } from 'antd'
 
-import AreaCodeSelect, { AreaCodeItem } from '@/components/Form/AreaCodeSelect'
+import AreaCodeSelect from '@/components/Form/AreaCodeSelect'
 
-import { useLang } from '@/context/languageProvider'
+import { useEffect, useState } from 'react'
 import ProFormText from '../ProFormText'
 
 type IProps = {
@@ -11,29 +11,25 @@ type IProps = {
   height?: number
   placeholder?: string
   label?: React.ReactNode
-  initialValue?: string
+  defaultAreaCode?: Common.AreaCodeItem
 }
 
-export default function SelectCountryFormItem({ form, height = 49, placeholder, label, initialValue: _initialValue }: IProps) {
+export default function SelectCountryFormItem({ form, height = 49, placeholder, label, defaultAreaCode }: IProps) {
   const intl = useIntl()
-  const { lng } = useLang()
-  const isZh = lng === 'zh-TW'
 
-  const { list } = useModel('areaList')
+  const [option, setOption] = useState<any>(null)
 
-  const options = list
-    ?.filter((item) => item.areaCode !== '0')
-    ?.map((v: AreaCodeItem) => {
-      const areaNameZh = v.nameCn
-      const areaName = v.nameEn
-      const label = isZh ? areaNameZh : areaName || areaNameZh
-      return {
-        ...v,
-        label,
-        value: v.id,
-        areaCode: `+${v.areaCode}`
-      }
-    })
+  useEffect(() => {
+    // validateNonEmptyFields(form)
+    if (option?.['data-item']) {
+      const label = intl.locale === 'zh-TW' ? option['data-item'].nameCn : option['data-item'].nameEn
+      form.setFieldValue('countryName', label)
+      form.setFieldValue('country', option['data-item']?.abbr) // 国家简称
+    } else if (defaultAreaCode) {
+      form.setFieldValue('countryName', intl.locale === 'zh-TW' ? defaultAreaCode?.nameCn : defaultAreaCode?.nameEn || '')
+      form.setFieldValue('country', defaultAreaCode?.abbr || '')
+    }
+  }, [intl.locale, option, defaultAreaCode])
 
   return (
     <>
@@ -48,8 +44,9 @@ export default function SelectCountryFormItem({ form, height = 49, placeholder, 
           label: label || intl.formatMessage({ id: 'mt.juzhuguojiadiqu' })
         }}
         onChange={(value, option) => {
-          form.setFieldValue('countryName', option['data-item']?.label)
-          form.setFieldValue('country', option['data-item']?.abbr) // 国家简称
+          setOption(option)
+          // form.setFieldValue('countryName', option['data-item']?.label)
+          // form.setFieldValue('country', option['data-item']?.abbr) // 国家简称
         }}
       />
       {/* 隐藏表单提交 */}

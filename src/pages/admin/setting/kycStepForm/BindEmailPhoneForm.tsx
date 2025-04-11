@@ -10,6 +10,7 @@ import FormCaptcha from '@/components/Form/Captcha'
 import ValidateCodeInput from '@/components/Form/ValidateCodeInput'
 import { submitKycAuth } from '@/services/api/crm/kycAuth'
 import { bindEmail, bindPhone } from '@/services/api/user'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { goKefu } from '@/utils/navigator'
 
@@ -128,6 +129,10 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
       props?.onSuccess?.()
     }
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   const renderOneStep = () => {
     return (

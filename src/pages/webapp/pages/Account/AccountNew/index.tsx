@@ -13,12 +13,13 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { AddAccount } from '@/services/api/tradeCore/account'
 import { getAccountSynopsisByLng } from '@/utils/business'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import AccountCarousel from './AccountCarousel'
@@ -45,7 +46,7 @@ const CurrentServer = observer(() => {
 
 function AccountNew() {
   const { cn, theme } = useTheme()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
 
   const [disabled, setDisabled] = useState(false)
 
@@ -114,6 +115,10 @@ function AccountNew() {
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const name = watch('name')
 

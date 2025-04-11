@@ -12,6 +12,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import SelectRounded from '@/components/Base/SelectRounded'
 import { tradeFollowLeadProfitSharing, tradeFollowLeadProfitSharingDetail } from '@/services/api/tradeFollow/lead'
 
+import { validateNonEmptyFields } from '@/utils/form'
 import { orders } from './mock'
 import ModalItem from './ModalItem'
 import ModalItemDetail from './ModalItemDetail'
@@ -128,6 +129,10 @@ export default ({
         message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
       })
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <ModalForm<{

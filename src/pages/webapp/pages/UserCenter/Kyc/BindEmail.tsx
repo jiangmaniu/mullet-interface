@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import { ModalLoadingRef } from '@/components/Base/Lottie/Loading'
@@ -15,6 +15,7 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { bindEmail, sendCustomEmailCode } from '@/services/api/user'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
@@ -53,7 +54,7 @@ const CountDown = observer(({ email, onSendCode }: { email?: string; onSendCode:
 function BindEmail() {
   const i18n = useI18n()
   const { cn, theme } = useTheme()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { global } = useStores()
 
   const { screenSize } = useEnv()
@@ -80,6 +81,10 @@ function BindEmail() {
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const email = watch('email')
   const code = watch('code')

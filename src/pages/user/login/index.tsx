@@ -23,6 +23,7 @@ import { useStores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { PrivacyPolicyService } from '@/pages/webapp/pages/Welcome/RegisterSection/PrivacyPolicyService'
 import { regEmail, regPassword } from '@/utils'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { observer } from 'mobx-react'
 import RegisterValidateCode, { IValidateCodeType } from '../comp/RegisterValidateCode'
@@ -247,6 +248,10 @@ function Login() {
 
     const defaultAreaCode = list?.find((item) => item.areaCode === DEFAULT_AREA_CODE)
 
+    useEffect(() => {
+      validateNonEmptyFields(form)
+    }, [lng])
+
     return (
       <div
         className={classNames('flex items-center justify-center mt-10 flex-1 h-full', rootClassName)}
@@ -285,9 +290,7 @@ function Login() {
             }}
             form={form}
             initialValues={{
-              phoneAreaCode: `+${DEFAULT_AREA_CODE}`,
-              country: defaultAreaCode?.abbr || '',
-              countryName: lng === 'zh-TW' ? defaultAreaCode?.nameCn : defaultAreaCode?.nameEn || ''
+              phoneAreaCode: `+${DEFAULT_AREA_CODE}`
             }}
             actions={
               <>
@@ -315,9 +318,9 @@ function Login() {
               onChange={(key: any) => {
                 setTabActiveKey(key)
 
-                if (key === 'LOGIN') {
-                  form.validateFields(['password'])
-                }
+                // if (key === 'LOGIN') {
+                //   form.validateFields(['password'])
+                // }
               }}
               centered
               tabBarGutter={130}
@@ -349,7 +352,7 @@ function Login() {
         </div> */}
 
             {/* 选择国家地区 */}
-            {!isLoginTab && <SelectCountryFormItem form={form} />}
+            {!isLoginTab && <SelectCountryFormItem form={form} defaultAreaCode={defaultAreaCode} />}
 
             {/* 电子邮箱 */}
             {isEmailTab && (

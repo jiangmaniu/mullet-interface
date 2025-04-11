@@ -4,6 +4,7 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { submitSeniorAuth } from '@/services/api/crm/kycAuth'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useModel } from '@umijs/max'
@@ -23,7 +24,7 @@ const VerifyDoc = forwardRef(
   ) => {
     const { cn, theme } = useTheme()
     const i18n = useI18n()
-
+    const { t, locale } = i18n
     const location = useLocation()
     // 获取 URL 中的查询参数（searchParams）
     const [file, setFile] = useState<any>(defaultFile)
@@ -61,7 +62,8 @@ const VerifyDoc = forwardRef(
     const {
       handleSubmit,
       setValue,
-      formState: { errors }
+      formState: { errors },
+      trigger
     } = useForm<{ name: string }>({
       defaultValues: {
         name: ''
@@ -69,6 +71,10 @@ const VerifyDoc = forwardRef(
       mode: 'all',
       resolver: zodResolver(schema)
     })
+
+    useEffect(() => {
+      validateNonEmptyFieldsRHF(errors, trigger)
+    }, [locale])
 
     const onChange = (val: any) => {
       setFile(val)

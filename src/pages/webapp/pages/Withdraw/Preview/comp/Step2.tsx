@@ -10,6 +10,7 @@ import { copyToClipboard, formatNum } from '@/utils'
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { getAccountSynopsisByLng } from '@/utils/business'
+import { validateNonEmptyFields } from '@/utils/form'
 import { observer } from 'mobx-react'
 
 const Step2 = ({
@@ -189,6 +190,12 @@ const Step2 = ({
   //     }
   //   }, 600)
   // }, [])
+
+  const intl = useIntl()
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
+
   return (
     <div className="flex items-center justify-center w-full h-full mt-10 flex-1 ">
       <div className=" pt-4 bg-white w-full rounded-t-3xl flex-1">

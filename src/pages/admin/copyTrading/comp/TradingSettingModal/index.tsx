@@ -12,6 +12,7 @@ import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 
+import { validateNonEmptyFields } from '@/utils/form'
 import AccountSelector from './AccountSelector'
 import FixedAmount from './FixedAmount'
 import FixedRatio from './FixedRatio'
@@ -197,6 +198,10 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
       }
     }
   }, [form, trader, readonly])
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div>

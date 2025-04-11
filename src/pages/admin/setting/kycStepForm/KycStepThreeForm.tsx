@@ -7,6 +7,7 @@ import Button from '@/components/Base/Button'
 import { submitSeniorAuth } from '@/services/api/crm/kycAuth'
 import { message } from '@/utils/message'
 
+import { validateNonEmptyFields } from '@/utils/form'
 import { push } from '@/utils/navigator'
 import UploadIdcard from './UploadIdcard'
 
@@ -59,6 +60,10 @@ export default function KycStepForm({ onSuccess }: { onSuccess: () => void }) {
       onSuccess?.()
     }
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   const renderThreeStep = () => {
     return (

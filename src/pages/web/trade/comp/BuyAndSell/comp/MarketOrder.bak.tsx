@@ -13,6 +13,7 @@ import { STORAGE_GET_TOKEN } from '@/utils/storage'
 import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
 import { cn } from '@/utils/cn'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 import { MinusCircleOutlined } from '@ant-design/icons'
@@ -252,6 +253,10 @@ export default observer(
         </Checkbox>
       )
     }, [checkedSpSl])
+
+    useEffect(() => {
+      validateNonEmptyFields(form)
+    }, [intl.locale])
 
     return (
       <Form form={form}>

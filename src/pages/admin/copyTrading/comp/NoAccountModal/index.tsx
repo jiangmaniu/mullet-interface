@@ -3,9 +3,10 @@ import './style.less'
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form, message } from 'antd'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
+import { validateNonEmptyFields } from '@/utils/form'
 import { push } from '@/utils/navigator'
 
 const waitTime = (time = 100) => {
@@ -40,6 +41,10 @@ export default ({ trigger, open, onSuccess, onConfirm, onOpenChange, params }: I
     disabled: intl.formatMessage({ id: 'mt.qupingcang' }),
     abled: intl.formatMessage({ id: 'mt.jieshudaidan' })
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div>

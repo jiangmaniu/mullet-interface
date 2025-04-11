@@ -3,7 +3,7 @@ import './index.less'
 import { useIntl } from '@ant-design/pro-components'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useLayoutEffect, useMemo, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 
 import PageContainer from '@/components/Admin/PageContainer'
 import { stores } from '@/context/mobxProvider'
@@ -11,6 +11,7 @@ import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
 import { generateWithdrawOrder } from '@/services/api/wallet'
+import { validateNonEmptyFields } from '@/utils/form'
 import { md5 } from 'js-md5'
 import { observer } from 'mobx-react'
 import Step1 from './comp/Step1'
@@ -157,6 +158,10 @@ function WithdrawalProcess() {
   const [loading, setLoading] = useState(false)
 
   const methodInfo = useMemo(() => methods.find((item) => item.id === methodId), [methodId, methods])
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <PageContainer

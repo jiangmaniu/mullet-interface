@@ -7,6 +7,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { getAreaCode } from '@/services/api/common'
 import { submitBaseAuth } from '@/services/api/crm/kycAuth'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useModel } from '@umijs/max'
@@ -58,6 +59,10 @@ const Messages = forwardRef(
       mode: 'all',
       resolver: zodResolver(schema)
     })
+
+    useEffect(() => {
+      validateNonEmptyFieldsRHF(errors, trigger)
+    }, [locale])
 
     const areaCode = watch('areaCode')
     const firstName = watch('firstName')

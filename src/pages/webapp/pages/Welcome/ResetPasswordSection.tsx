@@ -16,6 +16,7 @@ import { APP_MODAL_WIDTH } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { forgetPasswordEmail, forgetPasswordPhone } from '@/services/api/user'
 import { cn } from '@/utils/cn'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { md5 } from 'js-md5'
 import { TextField } from '../../components/Base/Form/TextField'
 import { View } from '../../components/Base/View'
@@ -53,7 +54,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   }: Props,
   ref
 ) => {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { cn } = useTheme()
 
   useLayoutEffect(() => {
@@ -179,6 +180,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const newPassword = watch('newPassword')
 

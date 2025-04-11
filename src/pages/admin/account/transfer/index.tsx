@@ -3,7 +3,7 @@ import { ProForm } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { Button, Form } from 'antd'
 import { observer } from 'mobx-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import ProFormDigit from '@/components/Admin/Form/ProFormDigit'
 import PageContainer from '@/components/Admin/PageContainer'
@@ -14,6 +14,7 @@ import { formatNum, toFixed } from '@/utils'
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 
+import { validateNonEmptyFields } from '@/utils/form'
 import TransferFromFormSelectItem from './comp/TransferFromFormSelectItem'
 import TransferToFormSelectItem from './comp/TransferToFormSelectItem'
 
@@ -100,6 +101,10 @@ function TransferAccount() {
       )
     }
   ]
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   const renderOneStep = () => {
     return (

@@ -22,6 +22,7 @@ import { APP_MODAL_WIDTH, DEFAULT_AREA_CODE } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import { login } from '@/services/api/user'
 import { regMobile } from '@/utils'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { useModel } from '@umijs/max'
 import { Checkbox } from 'antd'
 import { md5 } from 'js-md5'
@@ -72,7 +73,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   }: Props,
   ref
 ) => {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { cn, theme } = useTheme()
   const user = useModel('user')
 
@@ -195,6 +196,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     resolver: zodResolver(schema)
   })
 
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
+
   const tenanId = watch('tenanId')
   const tenanName = watch('tenanName')
   const email = watch('email')
@@ -286,7 +291,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
               autoComplete="password"
             />
           )}
-          {!!errors.email && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.email.message}</Text>}
+          {!!errors.email && <Text className={cn('text-sm !text-red-500 -mt-2')}>{errors.email.message}</Text>}
           {registerWay === 'PHONE' && (
             <TextField
               value={phone}
@@ -317,7 +322,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
               )}
             />
           )}
-          {!!errors.phone && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.phone.message}</Text>}
+          {!!errors.phone && <Text className={cn('text-sm !text-red-500 -mt-2')}>{errors.phone.message}</Text>}
           {/* {!!errors.areaCode && <Text className={cn('text-sm !text-red-500 mt-1')}>{errors.areaCode.message}</Text>} */}
 
           <TextField
@@ -349,7 +354,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             type={isAuthPasswordHidden}
             RightAccessory={PasswordRightAccessory}
           />
-          {errors.password && <Text color="red">{errors.password.message}</Text>}
+          {errors.password && <Text className={cn('text-sm !text-red-500 -mt-2')}>{errors.password.message}</Text>}
           <Checkbox
             checked={remember}
             onChange={(event) => {

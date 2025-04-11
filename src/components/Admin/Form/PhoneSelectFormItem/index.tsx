@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import AreaCodeSelect from '@/components/Form/AreaCodeSelect'
 import { DEFAULT_AREA_CODE } from '@/constants'
 import { regMobile } from '@/utils'
+import { validateNonEmptyFields } from '@/utils/form'
 
 type IProps = {
   names: string[]
@@ -88,6 +89,10 @@ export default function PhoneSelectFormItem({
       }
     }
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <Form.Item

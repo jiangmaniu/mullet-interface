@@ -1,5 +1,5 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem'
@@ -10,6 +10,7 @@ import { useLang } from '@/context/languageProvider'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
 import { submitBaseAuth } from '@/services/api/crm/kycAuth'
+import { validateNonEmptyFields } from '@/utils/form'
 import { ProForm } from '@ant-design/pro-components'
 import { Form, message } from 'antd'
 import { observer } from 'mobx-react'
@@ -79,6 +80,10 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
   const { lng } = useLang()
   const defaultAreaCode = list?.find((item) => item.areaCode === DEFAULT_AREA_CODE)
 
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
+
   return (
     <Modal
       styles={{
@@ -119,15 +124,14 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
         submitter={false}
         layout="vertical"
         initialValues={{
-          phoneAreaCode: `+${DEFAULT_AREA_CODE}`,
-          country: defaultAreaCode?.abbr || '',
-          countryName: lng === 'zh-TW' ? defaultAreaCode?.nameCn : defaultAreaCode?.nameEn || ''
+          phoneAreaCode: `+${DEFAULT_AREA_CODE}`
         }}
         form={form}
       >
         <SelectCountryFormItem
           form={form}
           height={40}
+          defaultAreaCode={defaultAreaCode}
           label={<span className="text-sm font-semibold text-primary">1.{intl.formatMessage({ id: 'mt.xuanzeguojia' })}</span>}
         />
         <div className="grid grid-cols-2 gap-x-[18px] my-[22px]">

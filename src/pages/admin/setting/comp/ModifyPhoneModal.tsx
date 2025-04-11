@@ -1,12 +1,13 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Modal from '@/components/Admin/ModalForm'
 import Button from '@/components/Base/Button'
 import FormCaptcha from '@/components/Form/Captcha'
 import { editPhone, sendCustomPhoneCode, sendPhoneCode } from '@/services/api/user'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { goKefu } from '@/utils/navigator'
 
@@ -23,6 +24,10 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
   const [form] = Form.useForm()
   const currentUser = initialState?.currentUser
   const phone = currentUser?.userInfo?.phone
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <Modal

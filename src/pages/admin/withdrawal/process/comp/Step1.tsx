@@ -1,4 +1,4 @@
-import { ProForm } from '@ant-design/pro-components'
+import { ProForm, useIntl } from '@ant-design/pro-components'
 import { FormattedMessage, useParams, useSearchParams } from '@umijs/max'
 import { Form } from 'antd'
 import { FormInstance } from 'antd/lib'
@@ -12,6 +12,7 @@ import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { getAccountProfit } from '@/services/api/tradeCore/account'
 import { cn } from '@/utils/cn'
+import { validateNonEmptyFields } from '@/utils/form'
 import { observer } from 'mobx-react'
 import { useEffect, useState } from 'react'
 import TransferAmount from './TransferAmount'
@@ -86,6 +87,11 @@ const Step1 = ({
         }
       })
   }, [fromAccountInfo])
+
+  const intl = useIntl()
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div className="flex md:flex-row flex-col justify-start gap-10 md:gap-20 flex-1 ">

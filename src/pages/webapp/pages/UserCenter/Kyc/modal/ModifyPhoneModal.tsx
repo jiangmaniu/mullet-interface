@@ -1,6 +1,6 @@
 import { useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import Iconfont from '@/components/Base/Iconfont'
@@ -12,6 +12,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { editPhone, sendCustomPhoneCode, sendPhoneCode } from '@/services/api/user'
 import { regMobile } from '@/utils'
 import { cn } from '@/utils/cn'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 import { ProForm } from '@ant-design/pro-components'
 import type { ModalRef } from '../comp/SelectCountryModal'
@@ -66,6 +67,10 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
   }
 
   const areaCode = Form.useWatch('phoneAreaCode', form)
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   const renderForm = () => {
     return (

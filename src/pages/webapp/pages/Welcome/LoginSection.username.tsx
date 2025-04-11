@@ -19,6 +19,7 @@ import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
 import { login } from '@/services/api/user'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { useModel } from '@umijs/max'
 import { Checkbox } from 'antd'
 import { md5 } from 'js-md5'
@@ -47,7 +48,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   { setSection, tenanId: tenanIdProps, setTenanId, tenanName: tenanNameProps, setTenanName, startAnimation }: Props,
   ref
 ) => {
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { cn, theme } = useTheme()
   const user = useModel('user')
 
@@ -160,6 +161,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const tenanId = watch('tenanId')
   const tenanName = watch('tenanName')

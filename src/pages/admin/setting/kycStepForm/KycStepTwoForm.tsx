@@ -11,6 +11,7 @@ import { submitBaseAuth } from '@/services/api/crm/kycAuth'
 
 import { DEFAULT_AREA_CODE } from '@/constants'
 import { getEnv } from '@/env'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 
 export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void }) {
@@ -83,13 +84,16 @@ export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void })
     })
   }
 
+  const { list } = useModel('areaList')
+  const defaultAreaCode = list?.find((item) => item.areaCode === DEFAULT_AREA_CODE)
+
   const renderTwoStep = () => {
     return (
       <div>
         <SelectCountryFormItem
           form={form}
           height={40}
-          initialValue={`+${DEFAULT_AREA_CODE}`}
+          defaultAreaCode={defaultAreaCode}
           label={<span className="text-sm font-semibold text-primary">1.{intl.formatMessage({ id: 'mt.xuanzeguojia' })}</span>}
         />
         <div className="grid grid-cols-2 gap-x-[18px] my-[22px]">
@@ -167,6 +171,10 @@ export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void })
       </>
     )
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <PageContainer pageBgColorMode="white" backTitle={<FormattedMessage id="mt.shezhi" />}>

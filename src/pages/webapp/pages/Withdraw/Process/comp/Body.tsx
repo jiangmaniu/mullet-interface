@@ -9,6 +9,7 @@ import { stores } from '@/context/mobxProvider'
 
 import { useTheme } from '@/context/themeProvider'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
+import { validateNonEmptyFields } from '@/utils/form'
 import { observer } from 'mobx-react'
 import { WebviewComponentProps } from '../../WebviewPage'
 import Step1 from './Step1'
@@ -105,6 +106,10 @@ const WithdrawalProcess = forwardRef(({ onSuccess, onDisabledChange }: WebviewCo
       onDisabledChange?.(false)
     }
   }, [disabled])
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <BasicLayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary}>

@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import { tradeFollowInProgressBag } from '@/services/api/tradeFollow/lead'
+import { validateNonEmptyFields } from '@/utils/form'
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {
@@ -48,6 +49,10 @@ export default ({ id, trigger, onSuccess, onConfirm, open, onOpenChange }: IProp
     disabled: intl.formatMessage({ id: 'mt.qupingcang' }),
     abled: intl.formatMessage({ id: 'mt.jieshudaidan' })
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div>

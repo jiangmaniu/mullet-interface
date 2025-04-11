@@ -6,8 +6,9 @@ import SheetModal, { ModalRef, SheetRef } from '@/pages/webapp/components/Base/S
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
+import { validateNonEmptyFields } from '@/utils/form'
 import { ProForm, ProFormText } from '@ant-design/pro-components'
-import { getIntl, useModel } from '@umijs/max'
+import { getIntl, useIntl, useModel } from '@umijs/max'
 import { message } from 'antd'
 import { Form } from 'antd/lib'
 import type { ForwardedRef } from 'react'
@@ -133,6 +134,11 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
 
   const disabled = !password || !code || loading
   const [invalid, setInvalid] = useState(true)
+
+  const intl = useIntl()
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <SheetModal

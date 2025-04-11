@@ -21,6 +21,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { regEmail } from '@/utils'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import SelectCountryModal, { ModalRef } from '../../UserCenter/Kyc/comp/SelectCountryModal'
@@ -171,7 +172,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     setValue,
     watch,
     trigger,
-    formState: { errors }
+    formState: { errors },
+    getValues
   } = useForm<FormData>({
     defaultValues: async () => ({
       email: emailProps || (await STORAGE_GET_ACCOUNT_PASSWORD('email')) || '',
@@ -183,6 +185,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     resolver: zodResolver(schema)
   })
 
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
+
   const password = watch('password')
   const areaCode = watch('areaCode')
   const email = watch('email')
@@ -192,7 +198,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     /** 如果 remember 为 true，则账号密码变更时，将账号密码存储到本地 */
     const update = async () => {
       const stores = await STORAGE_GET_ACCOUNT_PASSWORD()
-      if (stores.remember) {
+      if (stores?.remember) {
         STORAGE_SET_ACCOUNT_PASSWORD({
           tenanId: stores.tenanId,
           tenanName: stores.tenanName,
@@ -275,7 +281,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             // onSubmitEditing={() => authPasswordInput.current?.focus()}
           />
         )}
-        {errors.email && <Text color="red">{errors.email.message}</Text>}
+        {errors.email && <Text className={cn('text-sm !text-red-500 -mt-2')}>{errors.email.message}</Text>}
         {registerWay === 'PHONE' && (
           <TextField
             value={phone}

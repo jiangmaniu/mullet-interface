@@ -12,6 +12,7 @@ import { generateDepositOrder, getDepositOrderDetail } from '@/services/api/wall
 
 import Button from '@/components/Base/Button'
 import { useLoading } from '@/context/loadingProvider'
+import { validateNonEmptyFields } from '@/utils/form'
 import { push } from '@/utils/navigator'
 import { appendHideParamIfNeeded } from '@/utils/request'
 import { observer } from 'mobx-react'
@@ -223,6 +224,10 @@ function DepositProcess() {
       window.removeEventListener('RESOLVE_MSG', resolveMsg)
     }
   }, [resolveMsg])
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <PageContainer

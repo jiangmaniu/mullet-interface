@@ -1,11 +1,12 @@
 import { ProForm, ProFormText } from '@ant-design/pro-components'
 import { useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import FormCaptcha from '@/components/Form/Captcha'
 import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { editEmail, sendCustomEmailCode, sendEmailCode } from '@/services/api/user'
+import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
 
 type IProps = {
@@ -106,6 +107,10 @@ export default function ModifyEmailModal({ trigger }: IProps) {
       </ProForm>
     )
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <SheetModal

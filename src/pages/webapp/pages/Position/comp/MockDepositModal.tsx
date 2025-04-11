@@ -9,11 +9,12 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { rechargeSimulate } from '@/services/api/tradeCore/account'
 import { formatNum } from '@/utils'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { ForwardedRef, forwardRef, useImperativeHandle, useRef, useState } from 'react'
+import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -22,7 +23,7 @@ type IProps = {}
 /** 选择账户弹窗 */
 function MockDepositModal(props: IProps, ref: ForwardedRef<ModalRef>) {
   const { cn, theme } = useTheme()
-  const { t } = useI18n()
+  const { t, locale } = useI18n()
   const { trade } = useStores()
   const { fetchUserInfo } = useModel('user')
   const currentAccountInfo = trade.currentAccountInfo
@@ -59,6 +60,10 @@ function MockDepositModal(props: IProps, ref: ForwardedRef<ModalRef>) {
       disabled: false
     })
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const disabled = watch('disabled')
 

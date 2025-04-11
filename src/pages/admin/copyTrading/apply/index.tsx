@@ -14,6 +14,7 @@ import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
 
 import { getEnv } from '@/env'
+import { validateNonEmptyFields } from '@/utils/form'
 import { AvatarUpload } from './AvatarUpload'
 import ContractUpload from './ContractUpload'
 
@@ -144,6 +145,10 @@ export default function Apply() {
       })
     return false
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div

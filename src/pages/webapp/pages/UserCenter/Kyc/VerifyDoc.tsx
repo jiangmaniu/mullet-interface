@@ -8,17 +8,19 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { submitKycAuth } from '@/services/api/crm/kycAuth'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { replace } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useModel } from '@umijs/max'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import StepBox from './comp/StepBox'
 export default function VerifyDoc() {
   const { cn, theme } = useTheme()
   const i18n = useI18n()
+  const { t, locale } = useI18n()
   const user = useModel('user')
 
   const { screenSize } = useEnv()
@@ -86,6 +88,10 @@ export default function VerifyDoc() {
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const onChange = (val: any) => {
     setFile(val)

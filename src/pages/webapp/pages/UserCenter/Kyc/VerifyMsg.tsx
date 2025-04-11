@@ -10,9 +10,10 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { getAreaCode } from '@/services/api/common'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Radio } from 'antd'
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import type { ModalRef } from './comp/SelectCountryModal'
@@ -74,6 +75,10 @@ export default function VerifyMsg() {
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const areaCode = watch('areaCode')
   const country = watch('country')

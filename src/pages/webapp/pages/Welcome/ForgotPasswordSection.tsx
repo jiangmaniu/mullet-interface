@@ -16,6 +16,7 @@ import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH, DEFAULT_AREA_CODE } from '@/constants'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { cn } from '@/utils/cn'
+import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { STORAGE_GET_ACCOUNT_PASSWORD } from '@/utils/storage'
 import { useModel } from '@umijs/max'
 import { TextField } from '../../components/Base/Form/TextField'
@@ -151,6 +152,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     mode: 'all',
     resolver: zodResolver(schema)
   })
+
+  useEffect(() => {
+    validateNonEmptyFieldsRHF(errors, trigger)
+  }, [locale])
 
   const areaCode = watch('areaCode')
   const email = watch('email')

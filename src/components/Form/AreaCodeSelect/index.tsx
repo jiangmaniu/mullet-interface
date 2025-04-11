@@ -88,6 +88,24 @@ export default function AreaCodeSelect({
     setLangKey((prevKey) => prevKey + 1) // 切换语言时更新 key
   }, [])
 
+  const [option, setOption] = useState<any>(null)
+  const handleChange = (option = {}) => {
+    // @ts-ignore
+    const val = option.areaCode
+
+    // console.log('val', val)
+    // console.log('option', option)
+
+    // @ts-ignore
+    form.setFieldsValue({ [name]: val }) // 表单重新正确的赋值，避免option中value值影响
+
+    onChange?.(val, option)
+  }
+
+  useEffect(() => {
+    option && handleChange(option)
+  }, [intl.locale, option])
+
   return (
     <SwitchPcOrWapLayout
       pcComponent={
@@ -102,16 +120,17 @@ export default function AreaCodeSelect({
           initialValue={initialValue}
           // @ts-ignore
           onChange={(value, option = {}) => {
+            setOption(option)
             // @ts-ignore
-            const val = option.areaCode
+            // const val = option.areaCode
 
-            console.log('val', val)
-            console.log('option', option)
+            // console.log('val', val)
+            // console.log('option', option)
 
-            // @ts-ignore
-            form.setFieldsValue({ [name]: val }) // 表单重新正确的赋值，避免option中value值影响
+            // // @ts-ignore
+            // form.setFieldsValue({ [name]: val }) // 表单重新正确的赋值，避免option中value值影响
 
-            onChange?.(val, option)
+            // onChange?.(val, option)
           }}
           {...selectProps}
           // @ts-ignore

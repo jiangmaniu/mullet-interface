@@ -2,7 +2,7 @@ import { ProFormText } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
 import { Form } from 'antd'
 import { observer } from 'mobx-react'
-import { forwardRef, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
 import Button from '@/components/Base/Button'
@@ -14,6 +14,7 @@ import { regEmail, regPassword } from '@/utils'
 import { message } from '@/utils/message'
 import { goLogin } from '@/utils/navigator'
 
+import { validateNonEmptyFields } from '@/utils/form'
 import { md5 } from 'js-md5'
 import ValidateCodeInput from '../../../../components/Form/ValidateCodeInput'
 
@@ -83,6 +84,10 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
       setStep('FOUR')
     }
   }
+
+  useEffect(() => {
+    validateNonEmptyFields(form)
+  }, [intl.locale])
 
   return (
     <div className="flex items-center flex-col justify-center mt-[100px]">
