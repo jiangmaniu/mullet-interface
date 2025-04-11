@@ -62,7 +62,7 @@ function AccountHeader() {
                   </Text>
                 </View>
                 <Text size="lg" font="pf-bold" color="primary">
-                  {formatStringWithEllipsis(currentAccountSynopsis.name || currentAccountInfo?.name || '', 20)}
+                  {formatStringWithEllipsis(currentAccountInfo?.name || '', 20)}
                 </Text>
                 <Iconfont name="qiehuanzhanghu-xiala" size={24} />
               </View>

@@ -226,7 +226,7 @@ function TradeAccountDropdown({ theme }: IProps) {
                     <div className="flex justify-between">
                       <div className="flex">
                         <div className="flex-1 text-sm font-bold text-primary">
-                          {synopsis.name || item.name}
+                          {item.name}
                           {/* / {hiddenCenterPartStr(item?.id, 4)} */}
                         </div>
                         <div className="ml-[10px] flex px-1">
@@ -287,7 +287,7 @@ function TradeAccountDropdown({ theme }: IProps) {
                 iconDownColor === 'white' ? 'text-zinc-100' : 'text-gray-500'
               )}
             >
-              {currentAccountSynopsis.name || currentAccountInfo?.name}
+              {currentAccountInfo?.name}
             </span>
           </div>
         </div>

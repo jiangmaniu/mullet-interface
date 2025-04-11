@@ -148,7 +148,7 @@ function AccountDetail() {
         <View className={cn('flex flex-row items-center gap-1 ')}>
           <Text size="lg" weight="bold" color="primary">
             {/*  */}
-            {formatStringWithEllipsis(currentAccountSynopsis.name || currentAccountInfo?.name || '', 20)}
+            {formatStringWithEllipsis(currentAccountInfo?.name || '', 20)}
           </Text>
         </View>
         <View className={cn('flex flex-row items-center justify-start gap-2')}>

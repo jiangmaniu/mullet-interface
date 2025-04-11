@@ -44,7 +44,7 @@ function SwitchAccount({ onSearch, showRightSearchIcon, isRemainAtCurrentPage }:
                 }}
               >
                 <Text size="base" color="primary" font="pf-bold" className={cn('max-w-[210px] mr-1 truncate')}>
-                  {synopsis.name || trade.currentAccountInfo.name}
+                  {trade.currentAccountInfo.name}
                 </Text>
                 <Iconfont name="qiehuanzhanghu-xiala" size={20} />
               </View>

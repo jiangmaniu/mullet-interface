@@ -42,7 +42,7 @@ const Item = ({
     >
       <View className={cn('flex flex-row justify-between items-center')}>
         <Text color="primary" size="lg" font="pf-bold" className={cn('max-w-[190px] pr-1 truncate')}>
-          {synopsis.name || item.name}
+          {item.name}
         </Text>
         <Text color="primary" size="xl" font="dingpro-medium">
           {!Number(item.money) ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal ?? DEFAULT_CURRENCY_DECIMAL })}
