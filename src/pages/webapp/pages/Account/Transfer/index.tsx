@@ -223,7 +223,7 @@ function TransferScreen() {
                   </View>
                 )}
                 <Text color="primary" size="sm" weight="medium">
-                  {formatStringWithEllipsis(from?.name ?? '', 16)}
+                  {formatStringWithEllipsis(formSynopsis.name || from?.name || '', 16)}
                 </Text>
               </View>
               <Iconfont name="huazhuan-xuanze" size={20} color={theme.colors.textColor.weak} />
@@ -248,7 +248,7 @@ function TransferScreen() {
                     </View>
                   )}
                   <Text color="primary" size="sm" weight="medium">
-                    {formatStringWithEllipsis(to?.name ?? '', 16)}
+                    {formatStringWithEllipsis(toSynopsis.name || to?.name || '', 16)}
                   </Text>
                 </View>
               ) : (

@@ -28,7 +28,7 @@ const AccountItem = ({
       >
         <View className={cn(' px-5 py-[19px] flex flex-col items-start justify-start')}>
           <Text size="lg" weight="bold" color="primary">
-            {item.groupName}
+            {synopsis.name || item.groupName}
           </Text>
           <Text size="sm" weight="normal" color="weak" style={{ marginBottom: 10 }}>
             {synopsis?.remark}

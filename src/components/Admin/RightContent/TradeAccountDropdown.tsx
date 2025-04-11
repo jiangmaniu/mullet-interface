@@ -86,6 +86,8 @@ function TradeAccountDropdown({ theme }: IProps) {
     }
   })
 
+  const currentAccountSynopsis = getAccountSynopsisByLng(currentAccountInfo.synopsis)
+
   return (
     <Dropdown
       placement="topLeft"
