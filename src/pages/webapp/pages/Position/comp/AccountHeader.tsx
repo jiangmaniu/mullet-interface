@@ -10,6 +10,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum, formatStringWithEllipsis } from '@/utils'
+import { getAccountSynopsisByLng } from '@/utils/business'
 import { observer } from 'mobx-react'
 import { useMemo, useRef } from 'react'
 import MockDepositModal from './MockDepositModal'
@@ -28,6 +29,8 @@ function AccountHeader() {
   const precision = currentAccountInfo.currencyDecimal ?? DEFAULT_CURRENCY_DECIMAL
 
   const advancePaymentRatio = useMemo(() => (occupyMargin > 0 && balance > 0 ? (balance / occupyMargin) * 100 : 0), [occupyMargin, balance])
+
+  const currentAccountSynopsis = getAccountSynopsisByLng(currentAccountInfo.synopsis)
 
   return (
     <View
@@ -59,7 +62,7 @@ function AccountHeader() {
                   </Text>
                 </View>
                 <Text size="lg" font="pf-bold" color="primary">
-                  {formatStringWithEllipsis(currentAccountInfo?.name || '', 20)}
+                  {formatStringWithEllipsis(currentAccountSynopsis.name || currentAccountInfo?.name || '', 20)}
                 </Text>
                 <Iconfont name="qiehuanzhanghu-xiala" size={24} />
               </View>

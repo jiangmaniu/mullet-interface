@@ -139,7 +139,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
                       </div>
                     </div>
                     <div className="flex-1 text-sm text-secondary leading-3">
-                      {item.name} #{item?.id}
+                      {synopsis.name || item.name} #{item?.id}
                     </div>
                     <div className="flex items-center gap-x-3 mt-3">
                       {!isKycAuth && (

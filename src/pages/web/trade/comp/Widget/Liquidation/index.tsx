@@ -98,7 +98,7 @@ function Liquidation() {
       },
       ...list
     ]
-  }, [isolatedMarginList.length])
+  }, [isolatedMarginList.length, intl.locale])
 
   const selectClassName = useEmotionCss(({ token }) => {
     return {

@@ -47,7 +47,7 @@ function OrderVolume() {
         disabled={disabled}
       />
     )
-  }, [disabled, countPrecision, vmin, vmax, vmaxShow, orderVolume, isBuy, onAdd, onMinus])
+  }, [disabled, countPrecision, vmin, vmax, vmaxShow, orderVolume, isBuy, onAdd, onMinus, intl.locale])
 
   return <>{renderVolume}</>
 }

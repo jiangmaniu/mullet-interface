@@ -145,7 +145,7 @@ function Account() {
                 <div className="flex flex-col">
                   <div className="flex items-center">
                     <div className="text-sm font-bold text-primary">
-                      {item.name} / {item.id}
+                      {synopsis.name || item.name} / {item.id}
                     </div>
                     <div className="ml-[10px] flex px-1 items-center">
                       <div
