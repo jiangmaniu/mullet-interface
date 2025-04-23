@@ -11,6 +11,7 @@
     "clearPlatformFiles": "node scripts/clearPlatform.js",
     "cz": "git add . && git-cz",
     "dev:lynfoo:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/.env.lynfoo.prod max dev",
+    "dev:stellux:local": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/stellux/.env.stellux.local max dev",
     "dev:stellux:dev": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/stellux/.env.stellux.dev max dev",
     "dev:stellux:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/stellux/.env.stellux.prod max dev",
     "dev:stellux:test": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/stellux/.env.stellux.test max dev",

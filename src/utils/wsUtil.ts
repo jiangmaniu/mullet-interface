@@ -71,9 +71,11 @@ export const calcExchangeRate = ({ value, unit, buySell }: IExchangeRateParams) 
     const mulName = (unit + 'USD').toUpperCase() // 如 NZDUSD
 
     // 使用汇率品种的dataSourceCode去获取行情
-    const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.dataSourceCode
-    const divNameKey = `${dataSourceCode}/${divName}`
-    const mulNameKey = `${dataSourceCode}/${mulName}`
+    // const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.dataSourceCode
+    const symbol = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.symbol
+    const accountGroupId = trade.currentAccountInfo?.accountGroupId
+    const divNameKey = symbol ? `${accountGroupId}/${divName}` : ''
+    const mulNameKey = symbol ? `${accountGroupId}/${mulName}` : ''
 
     const divNameQuote = toJS(quotes.get(divNameKey))
     const mulNameQuote = toJS(quotes.get(mulNameKey))
@@ -444,9 +446,9 @@ export function getCurrentDepth(currentSymbolName?: string) {
   const symbol = currentSymbolName || trade.activeSymbolName
   // const { dataSourceCode } = trade.getActiveSymbolInfo(symbol, trade.symbolListAll)
 
-  const { dataSourceCode } = trade.symbolMapAll?.[symbol] || {}
+  const { dataSourceCode, accountGroupId } = trade.symbolMapAll?.[symbol] || {}
 
-  const dataSourceKey = `${dataSourceCode}/${symbol}`
+  const dataSourceKey = `${accountGroupId}/${symbol}`
 
   const currentDepth = depth.get(dataSourceKey)
 
@@ -478,7 +480,8 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const currentSymbol = trade.symbolMapAll?.[symbol] || {}
   const dataSourceSymbol = currentSymbol?.dataSourceSymbol
   const dataSourceCode = currentSymbol?.dataSourceCode
-  const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
+  const accountGroupId = currentSymbol?.accountGroupId
+  const dataSourceKey = `${accountGroupId}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
 
   const currentQuote = quotes.get(dataSourceKey) // 行情信息
   const symbolConf = currentSymbol?.symbolConf as Symbol.SymbolConf // 当前品种配置
@@ -488,7 +491,7 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const spreadConf = currentSymbol?.symbolConf?.spreadConf as Symbol.SpreadConf // 当前品种点差配置
   const tradeTimeConf = currentSymbol?.symbolConf?.tradeTimeConf as Symbol.TradeTimeConf // 当前品种交易时间配置
   const quotationConf = currentSymbol?.symbolConf?.quotationConf as Symbol.QuotationConf // 当前品种交易时间配置
-  const symbolNewTicker = currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
+  const symbolNewTicker = stores.trade.tradeSymbolTickerMap[symbol] || currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
   const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
   const quoteTimeStamp = currentQuote?.priceData?.id || symbolNewPrice?.id // 行情时间戳
 
@@ -549,8 +552,10 @@ export function getCurrentQuoteV2(
   let symbol = currentSymbolName // 后台自定义的品种名称，symbol是唯一的, || trade.activeSymbolName 改成外部传入
 
   const currentSymbol = symbolMap?.[symbol] || {}
+  const dataSourceCode = currentSymbol?.dataSourceCode
+  const accountGroupId = currentSymbol?.accountGroupId
   // 当前品种的详细信息
-  const dataSourceKey = `${currentSymbol?.dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
+  const dataSourceKey = Number(accountGroupId) ? `${accountGroupId}/${symbol}` : `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
   const currentQuote = quotes.get(dataSourceKey) // 行情信息
 
   const dataSourceSymbol = currentSymbol?.dataSourceSymbol
@@ -561,7 +566,7 @@ export function getCurrentQuoteV2(
   const spreadConf = currentSymbol?.symbolConf?.spreadConf as Symbol.SpreadConf // 当前品种点差配置
   const tradeTimeConf = currentSymbol?.symbolConf?.tradeTimeConf as Symbol.TradeTimeConf // 当前品种交易时间配置
   const quotationConf = currentSymbol?.symbolConf?.quotationConf as Symbol.QuotationConf // 当前品种交易时间配置
-  const symbolNewTicker = currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
+  const symbolNewTicker = stores.trade.tradeSymbolTickerMap[symbol] || currentSymbol.symbolNewTicker // 高开低收价格信息，只加载一次，不会实时跳动，需要使用ws的覆盖
   const symbolNewPrice = currentSymbol.symbolNewPrice // 第一口报价信息，只加载一次，不会实时跳动，需要使用ws的覆盖
   const quoteTimeStamp = currentQuote?.priceData?.id || symbolNewPrice?.id // 行情时间戳
 

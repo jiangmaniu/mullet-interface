@@ -51,7 +51,7 @@ class DataFeedBase {
 
     const ENV = getEnv()
     // 减少接口请求
-    // const res = await request(`/api/trade-core/coreApi/public/symbol/detail?symbol=${symbolName}`).catch((e) => e)
+    // const res = await request(`/api/trade-core/coreApi/symbols/symbol/detail?symbol=${symbolName}`).catch((e) => e)
     // const symbolInfo = res?.data || {}
     const info = stores.trade.getActiveSymbolInfo()
     const symbolInfo = {
@@ -60,6 +60,7 @@ class DataFeedBase {
       symbolGroupId: info.symbolGroupId,
       dataSourceCode: info.dataSourceCode,
       dataSourceSymbol: info.dataSourceSymbol,
+      accountGroupId: info.accountGroupId,
       symbolDecimal: info.symbolDecimal,
       classify: info.classify,
       imgUrl: getSymbolIcon(info.imgUrl),

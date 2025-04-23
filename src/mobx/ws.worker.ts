@@ -341,7 +341,11 @@ function batchSubscribeSymbol({
 }: {
   cancel?: boolean
   needAccountGroupId?: boolean
-  list?: Array<{ accountGroupId?: any; symbol: string; dataSourceCode?: any }>
+  list?: Array<{
+    accountGroupId?: any
+    symbol: string
+    // dataSourceCode?: any
+  }>
 } = {}) {
   const symbolList = list
   if (!symbolList.length) return
@@ -349,10 +353,11 @@ function batchSubscribeSymbol({
   // 一次性订阅
   const topics = symbolList
     .map((item) => {
-      const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
+      // const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
       const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
       // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
-      return item.accountGroupId ? topicAccount : topicNoAccount
+      // return item.accountGroupId ? topicAccount : topicNoAccount
+      return topicAccount
     })
     .join(',')
 
@@ -366,10 +371,11 @@ function batchSubscribeSymbol({
 function subscribeDepth({ cancel, symbolInfo }: { cancel?: boolean; symbolInfo: Account.TradeSymbolListItem }) {
   if (!symbolInfo?.symbol) return
 
-  const topicNoAccount = `/000000/depth/${symbolInfo.dataSourceCode}/${symbolInfo.symbol}`
+  // const topicNoAccount = `/000000/depth/${symbolInfo.dataSourceCode}/${symbolInfo.symbol}`
   const topicAccount = `/000000/depth/${symbolInfo.symbol}/${symbolInfo?.accountGroupId}`
   // 区分带账户组id和不带账户组情况
-  const topic = symbolInfo?.accountGroupId ? topicAccount : topicNoAccount
+  // const topic = symbolInfo?.accountGroupId ? topicAccount : topicNoAccount
+  const topic = topicAccount
 
   if (subscribeDepthTimer) clearTimeout(subscribeDepthTimer)
   subscribeDepthTimer = setTimeout(() => {
@@ -468,10 +474,11 @@ function updateDepthData() {
   }
 }
 
-function batchUpdateDepthDataByNumber(data: any) {
+function batchUpdateDepthDataByNumber(data: IDepth) {
   const [dataSourceCode, dataSourceSymbol] = (data.dataSource || '').split('-').filter((v: any) => v)
   const sbl = data.symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
-  const dataSourceKey = `${dataSourceCode}/${sbl}` // 数据源 + 品种名称
+  // 账户组 + 品种名称作为唯一标识
+  const dataSourceKey = Number(data.accountGroupId) ? `${data.accountGroupId}/${sbl}` : `${dataSourceCode}/${sbl}`
   depthCache.set(dataSourceKey, data)
 
   // 如果缓存太大，强制发送
@@ -545,10 +552,12 @@ function updateQuoteData() {
   }
 }
 
-function batchUpdateQuoteDataByNumber(data: any) {
+function batchUpdateQuoteDataByNumber(data: IQuoteItem) {
   const [dataSourceCode, dataSourceSymbol] = (data.dataSource || '').split('-').filter((v: any) => v)
   const sbl = data.symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
-  const dataSourceKey = `${dataSourceCode}/${sbl}` // 数据源 + 品种名称
+  // 1.数据源 + 品种名称作为唯一标识 通过该方式订阅的没有账户组 const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
+  // 2.账户组 + 品种名称作为唯一标识 通过该方式订阅的有账户组 const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
+  const dataSourceKey = Number(data.accountGroupId) ? `${data.accountGroupId}/${sbl}` : `${dataSourceCode}/${sbl}`
   quotesCache.set(dataSourceKey, data)
 
   // 加快首次渲染时间
@@ -680,9 +689,11 @@ function calcExchangeRate({ value, unit, buySell }: IExchangeRateParams) {
     const mulName = (unit + 'USD').toUpperCase() // 如 NZDUSD
 
     // 使用汇率品种的dataSourceCode去获取行情
-    const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.dataSourceCode
-    const divNameKey = `${dataSourceCode}/${divName}`
-    const mulNameKey = `${dataSourceCode}/${mulName}`
+    // const dataSourceCode = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.dataSourceCode
+    const symbol = (allSimpleSymbolsMap[divName] || allSimpleSymbolsMap[mulName] || {})?.symbol
+    const accountGroupId = currentAccountInfo?.accountGroupId
+    const divNameKey = symbol ? `${accountGroupId}/${divName}` : ''
+    const mulNameKey = symbol ? `${accountGroupId}/${mulName}` : ''
 
     const divNameQuote = quotes.get(divNameKey)
     const mulNameQuote = quotes.get(mulNameKey)
@@ -1049,7 +1060,9 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const currentSymbol = getActiveSymbolInfo(symbol)
   const dataSourceSymbol = currentSymbol?.dataSourceSymbol
   const dataSourceCode = currentSymbol?.dataSourceCode
-  const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
+  const accountGroupId = currentSymbol?.accountGroupId
+  // const dataSourceKey = `${dataSourceCode}/${symbol}` // 获取行情的KEY，数据源+品种名称去获取
+  const dataSourceKey = `${accountGroupId}/${symbol}` // 获取行情的KEY，账户组ID+品种名称去获取
 
   const currentQuote = quotes.get(dataSourceKey) // 行情信息
   const symbolConf = currentSymbol.symbolConf // 当前品种配置
@@ -1086,7 +1099,7 @@ function getActiveSymbolInfo(currentSymbolName?: string) {
 // 获取深度的key
 function getDatasourceKey() {
   const info = getActiveSymbolInfo()
-  return `${info.dataSourceCode}/${info.symbol}`
+  return `${info.accountGroupId}/${info.symbol}`
 }
 
 /**

@@ -37,3 +37,11 @@ export async function getSymbolPriceInfo(params: { dataSourceCode: any; dataSour
     }
   )
 }
+
+// 点击品种获取产品最新Ticker 高开低收信息
+export async function getSymbolTicker(params: { symbol: any }) {
+  return request<API.Response<MarketSymbol.SymbolNewTicker>>(`/api/trade-market/marketApi/kline/symbol/newTicker/${params.symbol}`, {
+    method: 'GET',
+    params
+  })
+}

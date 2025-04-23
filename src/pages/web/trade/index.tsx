@@ -102,6 +102,9 @@ export default observer(() => {
 
   useEffect(() => {
     onSubscribeExchangeRateQuote()
+
+    // 查询当前品种的ticker 高开低收信息
+    trade.queryTradeSymbolTicker(trade.activeSymbolName)
   }, [trade.activeSymbolName])
 
   usePageVisibility(

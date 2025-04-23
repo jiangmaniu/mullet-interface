@@ -453,7 +453,5 @@ declare namespace Symbol {
   type AllSymbolItem = {
     id: string
     symbol: string
-    dataSourceCode: string
-    dataSourceSymbol: string
   }
 }
