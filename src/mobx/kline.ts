@@ -192,7 +192,7 @@ class KlineStore {
       }
       newLastBar = {
         time: currentTime,
-        open,
+        open: lastBarOpenPrice, // 直接使用上一根的价格作为开盘价，每次刷新k线历史列表，后台都会统计最新的价格返回
         high: NP.round(ask, precision),
         low: NP.round(ask, precision),
         close: NP.round(ask, precision)
