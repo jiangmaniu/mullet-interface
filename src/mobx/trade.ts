@@ -439,7 +439,7 @@ class TradeStore {
   // 设置当前切换的账户信息
   @action
   setCurrentAccountInfo = (info: User.AccountItem) => {
-    this.currentAccountInfo = info
+    this.currentAccountInfo = info || {}
 
     // 缓存当前账号
     STORAGE_SET_CONF_INFO(info, `currentAccountInfo`)
