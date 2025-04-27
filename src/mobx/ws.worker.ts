@@ -894,11 +894,12 @@ function calcPositionListSymbol() {
     }
 
     const profit = covertProfit(item) as number // 浮动盈亏
-    const yieldRate = calcYieldRate(item, precision, profit) // 收益率
+    const calcProfit = Number(profit) + Number(item.handlingFees || 0) + Number(item.interestFees || 0)
+    const yieldRate = calcYieldRate(item, precision, calcProfit) // 收益率
     const marginRateInfo = getMarginRateInfo(item)
     // 缓存全部的计算结果返回主线程在持仓单使用
     positionListSymbolCalcInfo.set(item.id, {
-      profit,
+      profit: calcProfit,
       yieldRate,
       marginRateInfo
     })
