@@ -181,6 +181,7 @@ class WSStore {
         const info = data as MessagePopupInfo
         const content = removeOrderMessageFieldNames(info?.content || '')
         if (isPCByWidth()) {
+          if (location.pathname.indexOf('/trade') === -1) return
           notification.info({
             message: <span className="text-primary font-medium">{info?.title}</span>,
             description: <span className="text-secondary">{content}</span>,
