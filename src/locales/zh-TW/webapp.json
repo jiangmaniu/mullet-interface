@@ -460,6 +460,8 @@
       "Trade Time": "交易時間",
       "Opening Price": "開倉價格",
       "Closing Price": "平倉價格",
+      "Opening Average Price": "開倉均價",
+      "Closing Average Price": "平倉均價",
       "Inventory Fee": "庫存費",
       "Take Profit Price": "止盈價格",
       "Stop Loss Price": "止損價格",

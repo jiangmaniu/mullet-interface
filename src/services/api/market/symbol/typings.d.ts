@@ -104,4 +104,31 @@ declare namespace MarketSymbol {
      */
     symbol?: string
   }
+  // 获取当前交易品种最新Ticker 高开低收信息
+  type SymbolNewTicker = {
+    /**
+     * 最新价
+     */
+    close?: number
+    /**
+     * 最高价
+     */
+    high?: number
+    /**
+     * 最低价
+     */
+    low?: number
+    /**
+     * 开盘价
+     */
+    open?: number
+    /**
+     * 交易品种
+     */
+    symbol?: string
+    /**
+     * 响应生成时间点
+     */
+    time?: number
+  }
 }

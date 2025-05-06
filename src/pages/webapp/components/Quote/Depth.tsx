@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { formatNum } from '@/utils'
+import { formatNum, getPrecisionByNumber } from '@/utils'
 import { getCurrentDepth, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import { useLang } from '@/context/languageProvider'
@@ -45,6 +45,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
           // const total = item.price * item.amount
           const pencent = (item.amount / maxAmount) * 100
           const digits = quote.digits
+          const amountDigits = getPrecisionByNumber(item.amount)
           return (
             <View key={idx} onClick={() => setOrderPrice(item.price)} className="relative">
               <View style={cn('mb-[3px] flex-row items-center py-[3px] pr-1 justify-between h-5')} key={idx}>
@@ -52,7 +53,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
                   {formatNum(item.price, { precision: digits })}
                 </Text>
                 <Text color="primary" size="xs" font="dingpro-medium" style={cn('leading-[15px]')}>
-                  {formatNum(item.amount)}
+                  {amountDigits >= 8 ? formatNum(item.amount, { precision: 8 }) : formatNum(item.amount)}
                 </Text>
               </View>
               <View
@@ -101,6 +102,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
           // const total = item.price * item.amount
           const pencent = (item.amount / maxAmount) * 100
           const digits = quote.digits
+          const amountDigits = getPrecisionByNumber(item.amount)
           return (
             <View key={idx} onClick={() => setOrderPrice(item.price)} className="relative">
               <View style={cn('mb-[3px] flex-row items-center py-[3px] pr-1 justify-between h-5')} key={idx}>
@@ -108,7 +110,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
                   {formatNum(item.price, { precision: digits })}
                 </Text>
                 <Text color="primary" size="xs" font="dingpro-medium" style={cn('leading-[15px]')}>
-                  {formatNum(item.amount)}
+                  {amountDigits >= 8 ? formatNum(item.amount, { precision: 8 }) : formatNum(item.amount)}
                 </Text>
               </View>
               <View

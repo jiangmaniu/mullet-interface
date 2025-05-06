@@ -36,6 +36,7 @@ import {
 import { covertProfit } from '@/utils/wsUtil'
 
 import { getEnv } from '@/env'
+import { getSymbolTicker } from '@/services/api/market/symbol'
 import { getSymbolIsHoliday } from '@/services/api/tradeCore/holiday'
 import klineStore from './kline'
 import ws, { SymbolWSItem } from './ws'
@@ -173,6 +174,8 @@ class TradeStore {
 
   @observable historySearchList = [] as string[] // APP历史搜索记录
   @observable holidaySymbolMap = {} as any // 假期品种map true是正常交易 false是假期内暂停交易
+
+  @observable tradeSymbolTickerMap = {} as Record<string, MarketSymbol.SymbolNewTicker> // 品种列表页面侧边栏 当前品种的ticker 高开低收
 
   // 初始化加载
   @action
@@ -436,7 +439,7 @@ class TradeStore {
   // 设置当前切换的账户信息
   @action
   setCurrentAccountInfo = (info: User.AccountItem) => {
-    this.currentAccountInfo = info
+    this.currentAccountInfo = info || {}
 
     // 缓存当前账号
     STORAGE_SET_CONF_INFO(info, `currentAccountInfo`)
@@ -690,7 +693,7 @@ class TradeStore {
           JSON.stringify({
             accountGroupId: item?.accountGroupId,
             symbol: item.symbol,
-            dataSourceCode: item.dataSourceCode,
+            // dataSourceCode: item.dataSourceCode,
             conf: {
               profitCurrency: item.conf?.profitCurrency
             }
@@ -731,7 +734,7 @@ class TradeStore {
           JSON.stringify({
             accountGroupId: item?.accountGroupId,
             symbol: item.symbol,
-            dataSourceCode: item.dataSourceCode,
+            // dataSourceCode: item.dataSourceCode,
             conf: {
               profitCurrency: item.conf?.profitCurrency
             }
@@ -769,7 +772,7 @@ class TradeStore {
           JSON.stringify({
             accountGroupId: accountGroupId,
             symbol: item.symbol,
-            dataSourceCode: item.dataSourceCode,
+            // dataSourceCode: item.dataSourceCode,
             conf: {
               profitCurrency: item.conf?.profitCurrency
             }
@@ -1090,6 +1093,19 @@ class TradeStore {
       // 判断品种是否在假期内
       this.getSymbolIsHoliday()
     }
+  }
+
+  // new 选择品种后，查询品种的高开低收信息
+  @action
+  queryTradeSymbolTicker = async (symbol: string) => {
+    const res = await getSymbolTicker({ symbol })
+    const data = (res?.data || {}) as MarketSymbol.SymbolNewTicker
+    runInAction(() => {
+      this.tradeSymbolTickerMap = {
+        ...this.tradeSymbolTickerMap,
+        [symbol]: data
+      }
+    })
   }
 
   @action

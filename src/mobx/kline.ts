@@ -107,8 +107,10 @@ class KlineStore {
     const symbolInfo = this.activeSymbolInfo.symbolInfo
     if (symbolInfo && quotes.size) {
       const symbol = symbolInfo.name
-      const dataSourceCode = symbolInfo.dataSourceCode
-      const data = quotes.get(`${dataSourceCode}/${symbol}`)
+      // const dataSourceCode = symbolInfo.dataSourceCode
+      // const data = quotes.get(`${dataSourceCode}/${symbol}`)
+      const accountGroupId = symbolInfo.accountGroupId
+      const data = quotes.get(`${accountGroupId}/${symbol}`)
       // 只更新当前激活的品种
       if (data && data.symbol === symbol && symbol === stores.trade.activeSymbolName) {
         const resolution = this.activeSymbolInfo.resolution
@@ -190,7 +192,7 @@ class KlineStore {
       }
       newLastBar = {
         time: currentTime,
-        open,
+        open: currentOpenPrice, // 使用当前行情价格作为开盘价
         high: NP.round(ask, precision),
         low: NP.round(ask, precision),
         close: NP.round(ask, precision)
@@ -259,17 +261,15 @@ class KlineStore {
       // if (cacheData && firstDataRequest) {
       //   return cacheData
       // }
-      const res = await request('/api/trade-market/marketApi/public/symbol/optimizeKlineList', {
-        // const res = await request('/api/trade-market/marketApi/public/symbol/klineList', {
+      const res = await request('/api/trade-market/marketApi/kline/symbol/klineList', {
         params: {
-          symbol: symbolInfo.dataSourceSymbol, // 数据源品种
-          dataSourceCode: symbolInfo.dataSourceCode, // 数据源code
+          symbol: symbolInfo.symbol, // 品种
           first: firstDataRequest, // 标识是否首次请求
           current: 1,
           size: isPCByWidth() ? 500 : 200, // 条数
           klineType, // 时间类型
           // klineTime: to + 8 * 60 * 60 // 查询截止时间之前的k线数据
-          klineTime: to // 数据库存的都是零时区的，查询参数也必须是零时区
+          klineTime: to * 1000 // 数据库存的都是零时区的，查询参数也必须是零时区
         }
       })
         .catch((e) => e)
@@ -278,14 +278,13 @@ class KlineStore {
             this.loading = false
           })
         })
-      const list = res?.data?.records || []
+      const list = res?.data || []
       if (list?.length) {
         const bars = list
           .map((item) => {
             // 时间,开,高,低,收
             const [klineTime, open, high, low, close] = (item || '').split(',')
-            // 加上8小时转成北京时间
-            const timeStamp = Number(klineTime) * 1000
+            const timeStamp = Number(klineTime)
             return {
               open: NP.round(open, precision),
               close: NP.round(close, precision),

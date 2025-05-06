@@ -36,7 +36,8 @@ function Footer() {
   }
 
   useEffect(() => {
-    setOpenTips(!isOnline || readyState === 3)
+    // readyState 0 表示连接中 3 表示连接失败
+    setOpenTips(!isOnline || readyState === 3 || readyState === 0)
   }, [isOnline, readyState])
 
   useEffect(() => {

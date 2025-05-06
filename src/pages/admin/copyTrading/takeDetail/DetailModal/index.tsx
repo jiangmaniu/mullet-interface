@@ -3,7 +3,7 @@ import './style.less'
 import { LeftOutlined } from '@ant-design/icons'
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
-import { Form, message, Radio } from 'antd'
+import { Form, Radio, message } from 'antd'
 import dayjs from 'dayjs'
 import { Key, useEffect, useMemo, useState } from 'react'
 
@@ -13,9 +13,9 @@ import SelectRounded from '@/components/Base/SelectRounded'
 import { tradeFollowLeadProfitSharing, tradeFollowLeadProfitSharingDetail } from '@/services/api/tradeFollow/lead'
 
 import { validateNonEmptyFields } from '@/utils/form'
-import { orders } from './mock'
 import ModalItem from './ModalItem'
 import ModalItemDetail from './ModalItemDetail'
+import { orders } from './mock'
 
 const waitTime = (time = 100) => {
   return new Promise((resolve) => {

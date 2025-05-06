@@ -33,8 +33,15 @@ export type IReadyState =
   /**3 WebSocket 连接已经关闭，连接断开，无法再发送或接收消息 */
   | 'CLOSED'
 
-export type SymbolWSItem = { accountGroupId?: any; symbol: string; dataSourceCode?: any }
-export type SymbolWSItemSemi = { symbol: string; dataSourceCode?: string }
+export type SymbolWSItem = {
+  accountGroupId?: any
+  symbol: string
+  // dataSourceCode?: any
+}
+export type SymbolWSItemSemi = {
+  symbol: string
+  // dataSourceCode?: string
+}
 
 // 禁用 MobX 严格模式
 configure({ enforceActions: 'never' })
@@ -174,6 +181,7 @@ class WSStore {
         const info = data as MessagePopupInfo
         const content = removeOrderMessageFieldNames(info?.content || '')
         if (isPCByWidth()) {
+          if (location.pathname.indexOf('/trade') === -1) return
           notification.info({
             message: <span className="text-primary font-medium">{info?.title}</span>,
             description: <span className="text-secondary">{content}</span>,
@@ -475,8 +483,8 @@ class WSStore {
   makeWsSymbol = (symbols: string[], _accountGroupId?: string) => {
     const symbolMap = trade.symbolMapAll
     const symbolSemis = symbols.map((symbol) => ({
-      symbol,
-      dataSourceCode: symbolMap?.[symbol]?.dataSourceCode
+      symbol
+      // dataSourceCode: symbolMap?.[symbol]?.dataSourceCode
     })) as SymbolWSItemSemi[]
 
     const accountGroupId = _accountGroupId || trade.currentAccountInfo.accountGroupId
@@ -501,15 +509,16 @@ class WSStore {
 
   /** 符号转字符串(唯一识别) */
   symbolToString = (symbol: SymbolWSItem) => {
-    return `${symbol.symbol}-${symbol.accountGroupId}-${symbol.dataSourceCode}`
+    // return `${symbol.symbol}-${symbol.accountGroupId}-${symbol.dataSourceCode}`
+    return `${symbol.symbol}-${symbol.accountGroupId}`
   }
 
   stringToSymbol = (str: string) => {
     const [symbol, accountGroupId, dataSourceCode] = str.split('-')
     return {
       symbol: symbol === 'undefined' ? undefined : symbol,
-      accountGroupId: accountGroupId === 'undefined' ? undefined : accountGroupId,
-      dataSourceCode: dataSourceCode === 'undefined' ? undefined : dataSourceCode
+      accountGroupId: accountGroupId === 'undefined' ? undefined : accountGroupId
+      // dataSourceCode: dataSourceCode === 'undefined' ? undefined : dataSourceCode
     }
   }
 

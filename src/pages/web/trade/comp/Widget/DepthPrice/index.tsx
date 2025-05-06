@@ -7,7 +7,7 @@ import { useMemo, useState, useTransition } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
-import { formatNum } from '@/utils'
+import { formatNum, getPrecisionByNumber } from '@/utils'
 import { cn } from '@/utils/cn'
 import { getCurrentDepth, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
@@ -86,6 +86,7 @@ function DeepPrice() {
         const total = item.price * item.amount
         const pencent = (item.amount / maxAmount) * 100
         const digits = quote.digits
+        const amountDigits = getPrecisionByNumber(item.amount)
         return (
           <div key={idx} className="relative overflow-hidden" style={{ animation: '0.2s ease-out 0s 1 normal none running none' }}>
             <Row className="flex items-center h-6 px-3 relative z-[2]">
@@ -93,7 +94,7 @@ function DeepPrice() {
                 {formatNum(item.price, { precision: digits })}
               </Col>
               <Col span={8} className="!text-xs text-primary text-left font-dingpro-medium">
-                {formatNum(item.amount)}
+                {amountDigits >= 8 ? formatNum(item.amount, { precision: 8 }) : formatNum(item.amount)}
               </Col>
               <Col span={8} className="!text-xs text-primary text-right font-dingpro-medium">
                 {formatNum(total, { precision: digits })}
@@ -142,6 +143,7 @@ function DeepPrice() {
             const total = item.price * item.amount
             const pencent = (item.amount / maxAmount) * 100
             const digits = quote.digits
+            const amountDigits = getPrecisionByNumber(item.amount)
             return (
               <div key={idx} className="relative overflow-hidden" style={{ animation: '0.2s ease-out 0s 1 normal none running none' }}>
                 <Row className="flex items-center h-6 px-3 relative z-[2]">
@@ -149,7 +151,7 @@ function DeepPrice() {
                     {formatNum(item.price, { precision: digits })}
                   </Col>
                   <Col span={8} className="!text-xs text-primary text-left font-dingpro-medium">
-                    {formatNum(item.amount)}
+                    {amountDigits >= 8 ? formatNum(item.amount, { precision: 8 }) : formatNum(item.amount)}
                   </Col>
                   <Col span={8} className="!text-xs text-primary text-right font-dingpro-medium">
                     {formatNum(total, { precision: digits })}
