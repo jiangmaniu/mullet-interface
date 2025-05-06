@@ -627,7 +627,7 @@ class TradeStore {
   // 计算当前账户总的浮动盈亏
   @action
   getCurrentAccountFloatProfit = (list: Order.BgaOrderPageListItem[]) => {
-    const currencyDecimal = this.currentAccountInfo.currencyDecimal
+    const precision = this.currentAccountInfo.currencyDecimal
     // const data = cloneDeep(list)
     const data = list
     // 持仓总浮动盈亏
@@ -637,7 +637,7 @@ class TradeStore {
         const profit = covertProfit(item) // 浮动盈亏
         // item.profit = profit
         // 先截取在计算，否则跟页面上截取后的值累加对不上
-        totalProfit += Number(toFixed(Number(profit || 0), currencyDecimal))
+        totalProfit += Number(toFixed(profit, precision))
       })
     }
     return totalProfit

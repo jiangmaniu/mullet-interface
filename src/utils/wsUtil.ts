@@ -146,7 +146,7 @@ export const calcOrderMarginExchangeRate = ({
  * @param positionItem 持仓item
  * @returns
  */
-export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
+export function covertProfit(positionItem: Order.BgaOrderPageListItem, includeFee?: boolean) {
   const symbol = positionItem?.symbol
   if (!symbol) return
   const quoteInfo = getCurrentQuote(symbol)
@@ -173,6 +173,10 @@ export function covertProfit(positionItem: Order.BgaOrderPageListItem) {
     unit,
     buySell: positionItem.buySell
   })
+
+  if (includeFee) {
+    profit = Number(profit) + Number(positionItem.handlingFees || 0) + Number(positionItem.interestFees || 0)
+  }
 
   // 返回转化后的 profit
   return Number(toFixed(profit))
