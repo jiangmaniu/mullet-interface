@@ -6,7 +6,7 @@ import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum, toFixed } from '@/utils'
-import { calcYieldRate, covertProfit, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { calcYieldRate, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
@@ -92,6 +92,10 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
   const [formData, setFormData] = useState({} as IFormValues)
   const tabbarRef = useRef<any>(null)
 
+  // 使用worker计算的值
+  const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
+  const calcInfo = positionListSymbolCalcInfo.get(rawItem.id)
+
   /**
    * 在组件内部管理 item 状态变化，避免重渲染
    * item 根据  covertProfit 变化
@@ -104,8 +108,6 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
     // rawItem.profit = covertProfit(rawItem) as number // 浮动盈亏
 
     // 使用worker计算的值
-    const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
-    const calcInfo = positionListSymbolCalcInfo.get(rawItem.id)
     rawItem.profit = calcInfo?.profit || 0
 
     // 全仓使用基础保证金
@@ -114,7 +116,7 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
     }
 
     return rawItem
-  }, [rawItem, covertProfit])
+  }, [rawItem, calcInfo])
 
   const symbol = item?.symbol
   const getCurrentQuote = useGetCurrentQuoteCallback()

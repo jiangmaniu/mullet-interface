@@ -10,7 +10,7 @@ import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
-import { covertProfit, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
@@ -22,7 +22,7 @@ type IProps = {
 }
 
 // 利润组件
-export const ModalProfit = ({ profit, precision }: { profit: number | undefined; precision?: number }) => {
+export const ModalProfit = observer(({ profit, precision }: { profit: number | undefined; precision?: number }) => {
   const profitFormat = Number(profit) ? formatNum(profit, { precision }) : profit || '-'
 
   return (
@@ -30,7 +30,7 @@ export const ModalProfit = ({ profit, precision }: { profit: number | undefined;
       {Number(profit) > 0 ? '+' + profitFormat : profitFormat} {SOURCE_CURRENCY}
     </Text>
   )
-}
+})
 
 /** 市价平仓确认弹窗 */
 function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, ref: ForwardedRef<SheetRef>) {
@@ -39,6 +39,10 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
   const { trade } = useStores()
   const { fetchUserInfo } = useModel('user')
   const precision = trade.currentAccountInfo.currencyDecimal
+
+  // 使用worker计算的值
+  const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
+  const calcInfo = positionListSymbolCalcInfo.get(rawItem.id)
 
   /**
    * 在组件内部管理 item 状态变化，避免重渲染
@@ -52,8 +56,6 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
     // rawItem.profit = covertProfit(rawItem) as number // 浮动盈亏
 
     // 使用worker计算的值
-    const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
-    const calcInfo = positionListSymbolCalcInfo.get(rawItem.id)
     rawItem.profit = calcInfo?.profit || 0
 
     // 全仓使用基础保证金
@@ -62,7 +64,7 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
     }
 
     return rawItem
-  }, [rawItem, covertProfit])
+  }, [rawItem, calcInfo])
 
   const symbol = item?.symbol
   const getCurrentQuote = useGetCurrentQuoteCallback()

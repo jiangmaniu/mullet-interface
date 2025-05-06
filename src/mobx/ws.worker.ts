@@ -589,34 +589,26 @@ function getAccountBalance() {
   const currencyDecimal = currentAccountInfo.currencyDecimal
 
   // 账户余额
-  const money = Number(toFixed(currentAccountInfo.money || 0, currencyDecimal))
+  const money = Number(currentAccountInfo.money || 0)
   // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
   const occupyMargin = Number(
     toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0), currencyDecimal)
   )
   // 可用保证金
-  let availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
+  let availableMargin = Number(money || 0) - Number(occupyMargin || 0)
   // 持仓总浮动盈亏: 需要订阅持仓中所有类型
-  const totalOrderProfit = Number(toFixed(getCurrentAccountFloatProfit(positionList), currencyDecimal))
+  // const totalOrderProfit = Number(getCurrentAccountFloatProfit(positionList))
+  const totalProfit = Number(getCurrentAccountFloatProfit(positionList))
   // 持仓单总的库存费
-  const totalInterestFees = Number(
-    toFixed(
-      positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.interestFees), currencyDecimal)), 0) || 0,
-      currencyDecimal
-    )
-  )
+  // const totalInterestFees = positionList.reduce((total, next) => total + Number(next.interestFees || 0), 0) || 0
   // 持仓单总的手续费
-  const totalHandlingFees = Number(
-    toFixed(
-      positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.handlingFees), currencyDecimal)), 0) || 0,
-      currencyDecimal
-    )
-  )
+  // const totalHandlingFees = positionList.reduce((total, next) => total + Number(next.handlingFees || 0), 0) || 0
   // 净值 = 账户余额 + 库存费 + 手续费 + 浮动盈亏
-  const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
+  // const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
+  const balance = Number(Number(currentAccountInfo.money || 0) + totalProfit)
 
   // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 + 所有订单的手续费
-  const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
+  // const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
 
   // console.log('totalInterestFees', totalInterestFees)
   // console.log('totalHandlingFees', totalHandlingFees)
@@ -632,25 +624,26 @@ function getAccountBalance() {
 
   return {
     occupyMargin,
-    availableMargin,
+    availableMargin: toFixed(availableMargin, currencyDecimal),
     balance,
-    totalProfit,
-    money
+    totalProfit: toFixed(totalProfit, currencyDecimal),
+    money: toFixed(money, currencyDecimal)
   }
 }
 
 // 计算当前账户总的浮动盈亏
 function getCurrentAccountFloatProfit(data: any) {
-  const currencyDecimal = currentAccountInfo?.currencyDecimal || 2
+  const precision = currentAccountInfo?.currencyDecimal || 2
 
   // 持仓总浮动盈亏
   let totalProfit = 0
   if (positionList.length) {
     positionList.forEach((item: Order.BgaOrderPageListItem) => {
-      const profit = covertProfit(item) // 浮动盈亏
+      const profit = covertProfit(item, true) // 浮动盈亏
       // item.profit = profit
+      // totalProfit += Number(profit || 0)
       // 先截取在计算，否则跟页面上截取后的值累加对不上
-      totalProfit += Number(toFixed(Number(profit || 0), currencyDecimal))
+      totalProfit += Number(profit || 0)
     })
   }
   return totalProfit
@@ -734,8 +727,9 @@ function calcExchangeRate({ value, unit, buySell }: IExchangeRateParams) {
  * @param positionItem 持仓item
  * @returns
  */
-function covertProfit(positionItem: Order.BgaOrderPageListItem) {
+function covertProfit(positionItem: Order.BgaOrderPageListItem, includeFee?: boolean) {
   const symbol = positionItem?.symbol
+  const precision = currentAccountInfo?.currencyDecimal || 2
   if (!symbol) return
   const quoteInfo = getCurrentQuote(symbol)
   const symbolConf = positionItem?.conf
@@ -757,8 +751,13 @@ function covertProfit(positionItem: Order.BgaOrderPageListItem) {
     buySell: positionItem.buySell
   })
 
+  // 浮动盈亏 包含手续费 + 库存费
+  if (includeFee) {
+    profit = Number(profit) + Number(positionItem.handlingFees || 0) + Number(positionItem.interestFees || 0)
+  }
+
   // 返回转化后的 profit
-  return Number(toFixed(profit))
+  return Number(toFixed(profit || 0, precision))
 }
 
 // 计算收益率
@@ -779,17 +778,18 @@ function calcIsolatedMarginRateInfo(filterPositionList: Order.BgaOrderPageListIt
   let interestFees = 0 // 订单总的库存费
   let profit = 0 // 订单总的浮动盈亏
   filterPositionList.map((item) => {
-    const orderProfit = covertProfit(item) as any
+    const orderProfit = covertProfit(item, true) as any
     orderMargin += Number(item.orderMargin || 0)
-    handlingFees += Number(item.handlingFees || 0)
-    interestFees += Number(item.interestFees || 0)
+    // handlingFees += Number(item.handlingFees || 0)
+    // interestFees += Number(item.interestFees || 0)
     if (orderProfit) {
       profit += orderProfit
     }
   })
 
   // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费 + 手续费 + 浮动盈亏
-  const isolatedBalance = Number(orderMargin + Number(interestFees || 0) + Number(handlingFees || 0) + Number(profit || 0))
+  // const isolatedBalance = Number(orderMargin + Number(interestFees || 0) + Number(handlingFees || 0) + Number(profit || 0))
+  const isolatedBalance = Number(orderMargin + Number(profit || 0))
   // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
   const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
   const margin = Number(orderMargin * (compelCloseRatio / 100))
@@ -882,7 +882,7 @@ function calcRightWidgetSelectMarginInfo() {
     }
     if (filterPositionList.length) {
       filterPositionList.forEach((item: any) => {
-        const profit = covertProfit(item) as number // 浮动盈亏
+        const profit = covertProfit(item, true) as number // 浮动盈亏
         item.profit = profit
       })
     }
@@ -904,13 +904,13 @@ function calcPositionListSymbol() {
       item.orderMargin = item.orderBaseMargin
     }
 
-    const profit = covertProfit(item) as number // 浮动盈亏
-    const calcProfit = Number(profit) + Number(item.handlingFees || 0) + Number(item.interestFees || 0)
-    const yieldRate = calcYieldRate(item, precision, calcProfit) // 收益率
+    const profit = covertProfit(item, true) as number // 浮动盈亏
+    // const calcProfit = Number(profit) + Number(item.handlingFees || 0) + Number(item.interestFees || 0)
+    const yieldRate = calcYieldRate(item, precision, profit) // 收益率
     const marginRateInfo = getMarginRateInfo(item)
     // 缓存全部的计算结果返回主线程在持仓单使用
     positionListSymbolCalcInfo.set(item.id, {
-      profit: calcProfit,
+      profit,
       yieldRate,
       marginRateInfo
     })
