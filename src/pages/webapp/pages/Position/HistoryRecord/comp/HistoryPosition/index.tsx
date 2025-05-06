@@ -90,7 +90,7 @@ function HistoryPosition() {
       )
     },
     {
-      label: t('pages.position.Opening Price'),
+      label: t('pages.position.Opening Average Price'),
       value: item.startPrice,
       format: (val: string | number | undefined) => (
         <Text color="primary" size="sm" weight="medium">
@@ -101,7 +101,7 @@ function HistoryPosition() {
       )
     },
     {
-      label: t('pages.position.Closing Price'),
+      label: t('pages.position.Closing Average Price'),
       // @ts-ignore
       value: item.closePrice,
       format: (val: string | number | undefined) => (

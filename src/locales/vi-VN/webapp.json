@@ -458,6 +458,8 @@
       "Trade Time": "Thời gian giao dịch",
       "Opening Price": "Giá mở cửa",
       "Closing Price": "Giá đóng cửa",
+      "Opening Average Price": "Giá mở cửa trung bình",
+      "Closing Average Price": "Giá đóng cửa trung bình",
       "Inventory Fee": "Phí lưu kho",
       "Take Profit Price": "Giá chốt lời",
       "Stop Loss Price": "Giá dừng lỗ",
