@@ -8,6 +8,7 @@ import { SUPPORTED_LANGUAGES } from '@/constants/enum'
 import { isPCByWidth } from '.'
 import {
   STORAGE_GET_TOKEN,
+  STORAGE_GET_USER_INFO,
   STORAGE_REMOVE_TOKEN,
   STORAGE_REMOVE_USER_INFO,
   STORAGE_SET_CONF_INFO,
@@ -24,6 +25,8 @@ export const onLogout = async (noRequestLogout?: boolean) => {
   //   await logout().catch((e) => e)
   // }
 
+  const userInfo = await STORAGE_GET_USER_INFO()
+  const userType = userInfo?.userInfo?.userType
   STORAGE_REMOVE_TOKEN()
   STORAGE_REMOVE_USER_INFO()
   STORAGE_SET_CONF_INFO('', 'currentAccountInfo') // 重置当前选择的账户
@@ -44,12 +47,13 @@ export const onLogout = async (noRequestLogout?: boolean) => {
   const redirect = urlParams.get('redirect')
   // Note: There may be security issues, please note
   if (window.location.pathname !== loginUrl && !redirect) {
-    history.replace({
-      pathname: loginUrl,
-      search: stringify({
-        redirect: pathname + search
-      })
-    })
+    // 不能直接用 histroy.replace，会导致语言类型丢失从而重定向
+    replace(
+      `${loginUrl}?${stringify({
+        // redirect: pathname + search,
+        userType
+      })}`
+    )
   }
 }
 
