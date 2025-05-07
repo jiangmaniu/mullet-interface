@@ -113,11 +113,11 @@ export const getPathname = (path?: string) => {
  * @param path 页面路径
  * @returns
  */
-export const replacePathnameLng = (path: string, lang?: string) => {
+export const replacePathnameLng = (path: string, lang?: string, search?: string) => {
   const lng = lang || localStorage.getItem('umi_locale') || DEFAULT_LOCALE
   const pathname = getPathname(path)
 
-  return `/${lng}${pathname}`
+  return search ? `/${lng}${pathname}${search}` : `/${lng}${pathname}`
 }
 
 /**
