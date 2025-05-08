@@ -65,10 +65,15 @@ class KlineStore {
   }
 
   // 重置当前品种的k线历史数据缓存
+  @action
   resetKlineCacheData = () => {
     const cacheKey = this.getActiveSymbolCacheKey()
     // 重置数据
     this.klineDataCacheMap.set(cacheKey, undefined)
+    runInAction(() => {
+      // 重置上一个k线，否则长时间切换到后台在切回来有缓存
+      this.lastbar = {}
+    })
   }
 
   // 强制刷新k线数据
@@ -146,7 +151,7 @@ class KlineStore {
     const serverTime = socketData?.priceData?.id / 1000 // 服务器返回的时间戳
 
     let rounded = serverTime
-    const ask = socketData?.priceData?.buy // 卖价
+    const bid = socketData?.priceData?.buy // 买盘卖价（相对于买价是低价） 没有加点差的价格 历史k线也是没有加点差的
 
     if (!resolution) return
 
@@ -179,7 +184,7 @@ class KlineStore {
 
     if (rounded > lastBarSec) {
       const currentTime = rounded * 1000
-      const currentOpenPrice = NP.round(ask, precision) // 当前行情价格作为开盘价格
+      const currentOpenPrice = NP.round(bid, precision) // 当前行情价格作为开盘价格
       const lastBarOpenPrice = NP.round(lastBar.close, precision) // 上一根k线的收盘价格作为开盘价格
 
       let open = 0
@@ -193,9 +198,9 @@ class KlineStore {
       newLastBar = {
         time: currentTime,
         open: currentOpenPrice, // 使用当前行情价格作为开盘价
-        high: NP.round(ask, precision),
-        low: NP.round(ask, precision),
-        close: NP.round(ask, precision)
+        high: NP.round(bid, precision),
+        low: NP.round(bid, precision),
+        close: NP.round(bid, precision)
       }
 
       // log('新建k线', newLastBar)
@@ -203,9 +208,9 @@ class KlineStore {
       newLastBar = {
         time: lastBar.time,
         open: lastBar.open,
-        high: NP.round(Math.max(lastBar.high, ask), precision),
-        low: NP.round(Math.min(lastBar.low, ask), precision),
-        close: NP.round(ask, precision)
+        high: NP.round(Math.max(lastBar.high, bid), precision),
+        low: NP.round(Math.min(lastBar.low, bid), precision),
+        close: NP.round(bid, precision)
       }
       // log('更新k线', newLastBar)
     }

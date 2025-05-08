@@ -500,8 +500,10 @@ export function getCurrentQuote(currentSymbolName?: string) {
   const quoteTimeStamp = currentQuote?.priceData?.id || symbolNewPrice?.id // 行情时间戳
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
-  let ask = toFixed(Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0), digits, false) // ask是买价，切记ask买价一般都比bid卖价高
-  let bid = toFixed(Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0), digits, false) // bid是卖价
+  // ask是买价，切记ask买价一般都比bid卖价高：卖盘买价（相对于卖价是高价） 加了点差的价格
+  let ask = toFixed(Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0), digits, false)
+  // bid是卖价：买盘卖价（相对于买价是低价） 没有加点差的价格
+  let bid = toFixed(Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0), digits, false)
   const open = Number(symbolNewTicker?.open || 0) // 开盘价
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.high || 0), bid]) // 拿当前价格跟首次返回的比
   const low = Math.min.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
@@ -575,8 +577,10 @@ export function getCurrentQuoteV2(
   const quoteTimeStamp = currentQuote?.priceData?.id || symbolNewPrice?.id // 行情时间戳
 
   const digits = Number(currentSymbol?.symbolDecimal || 2) // 小数位，默认2
-  let ask = toFixed(Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0), digits, false) // ask是买价，切记ask买价一般都比bid卖价高
-  let bid = toFixed(Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0), digits, false) // bid是卖价
+  // ask是买价，切记ask买价一般都比bid卖价高：卖盘买价（相对于卖价是高价） 加了点差的价格
+  let ask = toFixed(Number(currentQuote?.priceData?.sell || symbolNewPrice?.sell || 0), digits, false)
+  // bid是卖价：买盘卖价（相对于买价是低价） 没有加点差的价格
+  let bid = toFixed(Number(currentQuote?.priceData?.buy || symbolNewPrice?.buy || 0), digits, false)
   const open = Number(symbolNewTicker?.open || 0) // 开盘价
   const high = Math.max.apply(Math, [Number(symbolNewTicker?.high || 0), bid]) // 拿当前价格跟首次返回的比
   const low = Math.min.apply(Math, [Number(symbolNewTicker?.low || 0), bid]) // 拿当前价格跟首次返回的比
