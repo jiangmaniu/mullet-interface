@@ -1,11 +1,11 @@
 /* eslint-disable simple-import-sort/imports */
 import { LoginForm, ProFormText } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form } from 'antd'
 import classNames from 'classnames'
 import { md5 } from 'js-md5'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 import PhoneSelectFormItem from '@/components/Admin/Form/PhoneSelectFormItem'
@@ -37,41 +37,14 @@ function Login() {
   const [tabActiveKey, setTabActiveKey] = useState<ITabType>('LOGIN') // 登录、注册
   const [form] = Form.useForm()
   const ENV = getEnv()
-  const [isEmailTab, setIsEmailTab] = useState(true) // 邮箱和手机选项切换
+
+  const [isEmailTab, setIsEmailTab] = useState(false) // 邮箱和手机选项切换
   const [loading, setLoading] = useState(false)
   const [showValidateCodeInput, setShowValidateCodeInput] = useState(false) // 打开验证码输入框
   const [validateCodeType, setValidateCodeType] = useState<IValidateCodeType>('REGISTER') // 验证码类型 忘记密码、注册
 
   const isLoginTab = tabActiveKey === 'LOGIN'
-
-  const [query] = useSearchParams()
-  const userType = query.get('userType') as string
-  const registerWay = userType && userType === '5' ? 'PHONE' : global.registerWay
-  const tabs = useMemo(
-    () => [
-      {
-        key: 'LOGIN',
-        label: (
-          <span className="text-primary font-medium text-lg">
-            <FormattedMessage id="mt.denglu" />
-          </span>
-        )
-      },
-      ...(userType === '5'
-        ? []
-        : [
-            {
-              key: 'REGISTER',
-              label: (
-                <span className="text-secondary text-lg font-medium hover:text-primary">
-                  <FormattedMessage id="mt.kailixinzhanghu" />
-                </span>
-              )
-            }
-          ])
-    ],
-    [userType]
-  )
+  const registerWay = 'PHONE'
 
   const username = Form.useWatch('username', form)
   const password = Form.useWatch('password', form)
@@ -90,11 +63,6 @@ function Login() {
   useEffect(() => {
     handleCaptcha()
   }, [])
-
-  useEffect(() => {
-    // 确定用哪种方式登录或注册
-    setIsEmailTab(registerWay === 'EMAIL')
-  }, [registerWay])
 
   const className = useEmotionCss(({ token }) => {
     return {
@@ -352,7 +320,16 @@ function Login() {
               centered
               tabBarGutter={130}
               hiddenBottomLine
-              items={tabs}
+              items={[
+                {
+                  key: 'LOGIN',
+                  label: (
+                    <span className="text-primary font-medium text-lg">
+                      <FormattedMessage id="mt.denglu" />
+                    </span>
+                  )
+                }
+              ]}
             />
             {/* <div className="flex items-center justify-between w-full pb-2">
           <span>{!isEmailTab ? <FormattedMessage id="common.shoujihaoma" /> : <FormattedMessage id="common.dianziyouxiang" />}</span>

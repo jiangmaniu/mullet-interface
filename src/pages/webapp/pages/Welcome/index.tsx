@@ -10,7 +10,7 @@ import { getEnv } from '@/env'
 import { getAreaCode } from '@/services/api/common'
 import { replace } from '@/utils/navigator'
 import { capitalizeFirstLetter } from '@/utils/str'
-import { useLocation } from '@umijs/max'
+import { useLocation, useSearchParams } from '@umijs/max'
 import { MenuProps } from 'antd'
 import Header from '../../components/Base/Header'
 import { ModalRef } from '../../components/Base/SheetModal'
@@ -162,8 +162,11 @@ export default function WelcomeScreen() {
 
   const [disabled, setDisabled] = useState(false)
 
+  const [query] = useSearchParams()
+  const userType = query.get('userType') as string
+
   const footers = {
-    login: getEnv().REGISTER_MODULE && <Footer setSection={setSection} />,
+    login: getEnv().REGISTER_MODULE && userType !== '5' && <Footer setSection={setSection} />,
     forgotPassword: <FooterForgotPassword handleSubmit={handleSubmit} disabled={disabled} />,
     resetPassword: <FooterResetPassword handleSubmit={handleSubmit} disabled={disabled} />
   }

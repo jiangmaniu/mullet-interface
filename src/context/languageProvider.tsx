@@ -103,7 +103,7 @@ export const LanguageProvider = ({ children }: IProps): JSX.Element => {
 
     // 重新刷新路由
     setTimeout(() => {
-      history.replace(`${replacePathnameLng(location.pathname, currentLanguage)}`)
+      history.replace(`${replacePathnameLng(location.pathname, currentLanguage, location.search)}`)
     })
 
     // 设置antd-mobile

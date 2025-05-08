@@ -49,9 +49,9 @@ export const handleJumpMobile = () => {
       }
 
       // 已经登录过，进入登录页面跳转到首页
-      if (['/app/login', '/user/login'].some((path) => purePathname.startsWith(path))) {
-        activeTabbarPath = MOBILE_HOME_PAGE
-      }
+      // if (['/app/login', '/user/login'].some((path) => purePathname.startsWith(path))) {
+      //   activeTabbarPath = MOBILE_HOME_PAGE
+      // }
     } else {
       if (purePathname.startsWith('/user/login')) {
         activeTabbarPath = MOBILE_LOGIN_PAGE

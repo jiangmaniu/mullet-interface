@@ -23,7 +23,7 @@ import { stores } from '@/context/mobxProvider'
 import { login } from '@/services/api/user'
 import { regMobile } from '@/utils'
 import { validateNonEmptyFieldsRHF } from '@/utils/form'
-import { useModel } from '@umijs/max'
+import { useModel, useSearchParams } from '@umijs/max'
 import { Checkbox } from 'antd'
 import { md5 } from 'js-md5'
 import { TextField } from '../../components/Base/Form/TextField'
@@ -76,6 +76,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const { t, locale } = useI18n()
   const { cn, theme } = useTheme()
   const user = useModel('user')
+
+  const [query] = useSearchParams()
+  const userType = query.get('userType') as string
+  const registerWay = userType === '5' ? 'PHONE' : stores.global.registerWay
 
   useLayoutEffect(() => {
     startAnimation?.(24)
@@ -154,8 +158,6 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   // 拦截平台/系统返回操作
   // useGoBackHandler(goback, [])
-
-  const registerWay = stores.global.registerWay
 
   /** 表单控制 */
   const schema = z.object({
@@ -390,6 +392,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 export const Footer = ({ setSection }: { setSection: (section: WELCOME_STEP_TYPES) => void }) => {
   const { cn, theme } = useTheme()
   const { t } = useI18n()
+
   return (
     <View className={cn('flex flex-col justify-center items-center gap-1.5 mb-10')}>
       <Button
