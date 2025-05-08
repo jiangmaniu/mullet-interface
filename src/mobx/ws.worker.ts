@@ -895,7 +895,7 @@ function calcRightWidgetSelectMarginInfo() {
 function calcPositionListSymbol() {
   const positionListSymbolCalcInfo = new Map<string, IPositionListSymbolCalcInfo>()
   const precision = currentAccountInfo.currencyDecimal || 2
-
+  let totalProfit = 0
   for (let item of positionList) {
     const isCrossMargin = item.marginType === 'CROSS_MARGIN'
 
@@ -905,6 +905,7 @@ function calcPositionListSymbol() {
     }
 
     const profit = covertProfit(item, true) as number // 浮动盈亏
+    totalProfit += Number(profit)
     // const calcProfit = Number(profit) + Number(item.handlingFees || 0) + Number(item.interestFees || 0)
     const yieldRate = calcYieldRate(item, precision, profit) // 收益率
     const marginRateInfo = getMarginRateInfo(item)
@@ -915,7 +916,10 @@ function calcPositionListSymbol() {
       marginRateInfo
     })
   }
-  return positionListSymbolCalcInfo
+  return {
+    positionListSymbolCalcInfo,
+    totalProfit: toFixed(totalProfit, precision)
+  }
 }
 
 /**
@@ -1030,7 +1034,7 @@ function getMaxOpenVolume() {
 function syncCalcData() {
   if (!quotes.size) return
   const accountBalanceInfo = getAccountBalance()
-  const positionListSymbolCalcInfo = calcPositionListSymbol() // 持仓单计算缓存
+  const { positionListSymbolCalcInfo, totalProfit: positionListTotalProfit } = calcPositionListSymbol() // 持仓单计算缓存
   const rightWidgetSelectMarginInfo = calcRightWidgetSelectMarginInfo() // 右下角选择的保证金信息
   const expectedMargin = calcExpectedMargin() // 预估保证金
   const maxOpenVolume = getMaxOpenVolume() // 最大可开仓手数
@@ -1040,6 +1044,7 @@ function syncCalcData() {
     data: {
       accountBalanceInfo,
       positionListSymbolCalcInfo,
+      positionListTotalProfit,
       rightWidgetSelectMarginInfo,
       expectedMargin,
       maxOpenVolume
