@@ -1,7 +1,7 @@
 // @ts-nocheck
 import { isPCByWidth } from '@/utils'
 import dayjs from 'dayjs'
-import { action, makeAutoObservable, observable, runInAction } from 'mobx'
+import { action, makeAutoObservable, observable, runInAction, toJS } from 'mobx'
 import NP from 'number-precision'
 
 import { IChartingLibraryWidget } from '@/libs/charting_library'
@@ -116,22 +116,31 @@ class KlineStore {
       // const data = quotes.get(`${dataSourceCode}/${symbol}`)
       const accountGroupId = symbolInfo.accountGroupId
       const data = quotes.get(`${accountGroupId}/${symbol}`)
+      const klineList = toJS(data?.klineList || [])
       // 只更新当前激活的品种
       if (data && data.symbol === symbol && symbol === stores.trade.activeSymbolName) {
         const resolution = this.activeSymbolInfo.resolution
         const precision = symbolInfo.precision
-        // 通过ws更新k线数据
-        const newLastBar = this.updateBar(data, { resolution, precision, symbolInfo })
+        for (const rawItem of klineList) {
+          // 兼容结构
+          const item = {
+            priceData: {
+              buy: rawItem?.price,
+              id: rawItem?.id
+            }
+          }
+          // 通过ws更新k线数据
+          const newLastBar = this.updateBar(item, { resolution, precision, symbolInfo })
+          if (newLastBar) {
+            // 实时更新k线数据，通过datefeed subscribeBars提供的onRealtimeCallback方法更新
+            this.activeSymbolInfo.onRealtimeCallback?.(newLastBar)
+            // 更新最后一条k线
+            runInAction(() => {
+              this.lastbar = newLastBar
+            })
 
-        if (newLastBar) {
-          // 实时更新k线数据，通过datefeed subscribeBars提供的onRealtimeCallback方法更新
-          this.activeSymbolInfo.onRealtimeCallback?.(newLastBar)
-          // 更新最后一条k线
-          runInAction(() => {
-            this.lastbar = newLastBar
-          })
-
-          // this.refreshKline(resolution)
+            // this.refreshKline(resolution)
+          }
         }
       }
     }

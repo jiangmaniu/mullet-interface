@@ -1,5 +1,6 @@
 import ReconnectingWebSocket from 'reconnecting-websocket'
 
+import { groupBy } from 'lodash'
 import {
   IDepth,
   IExpectedMargin,
@@ -42,8 +43,8 @@ let tradeActions = {
 let socket: any = null
 let heartbeatInterval: any = null
 let heartbeatTimeout = 20000 // 心跳间隔，单位毫秒
-let quotesCache = new Map<string, IQuoteItem>() // 行情缓存区
-let depthCache = new Map<string, IDepth>() // 深度缓存区
+let quotesCache = [] as any[] // 行情缓存区
+let depthCache = [] as any[] // 深度缓存区
 let quotes = new Map<string, IQuoteItem>() // 当前行情
 let depth = new Map<string, IDepth>() // 当前深度
 
@@ -52,8 +53,8 @@ let lastQuoteUpdateTime = 0
 let lastDepthUpdateTime = 0
 const THROTTLE_QUOTE_INTERVAL = 300
 const THROTTLE_QUOTE_MOBILE_INTERVAL = 300
-const THROTTLE_DEPTH_INTERVAL = 300
-const MAX_CACHE_SIZE = 80 // 设置最大缓存限制
+const THROTTLE_DEPTH_INTERVAL = 200
+const MAX_CACHE_SIZE = 150 // 设置最大缓存限制
 let quoteCount = 0 // 首次加载用到
 
 // ============ 接收主线程消息 start ==============
@@ -213,9 +214,17 @@ function parseQuoteBodyData(body: string) {
   const quoteItem = {} as IQuoteItem
   if (body && typeof body === 'string') {
     const [id, buy, buySize, sell, sellSize, dataSource, symbol, accountGroupId] = body.split(',')
-    const [dataSourceCode, dataSourceSymbol] = String(dataSource || '').split('-')
-    quoteItem.symbol = symbol === '0' ? dataSourceSymbol : symbol // 兼容没有使用账户组订阅情况
+    const [dataSourceCode, dataSourceSymbol] = String(dataSource || '')
+      .split('-')
+      .filter((v: any) => v)
+    const sbl = symbol === '0' ? dataSourceSymbol : symbol // 兼容没有使用账户组订阅情况
+    // 1.数据源 + 品种名称作为唯一标识 通过该方式订阅的没有账户组 const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
+    // 2.账户组 + 品种名称作为唯一标识 通过该方式订阅的有账户组 const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
+    const dataSourceKey = Number(accountGroupId) ? `${accountGroupId}/${sbl}` : `${dataSourceCode}/${sbl}`
+
+    quoteItem.symbol = sbl
     quoteItem.dataSource = dataSource
+    quoteItem.dataSourceKey = dataSourceKey
     quoteItem.accountGroupId = accountGroupId
     quoteItem.priceData = {
       sellSize: Number(sellSize || 0),
@@ -238,8 +247,13 @@ function parseDepthBodyData(body: string) {
   const depthData = {} as IDepth
   if (body && typeof body === 'string') {
     const [asks, bids, dataSource, symbol, accountGroupId, ts] = body.split(',')
+    const [dataSourceCode, dataSourceSymbol] = (dataSource || '').split('-').filter((v: any) => v)
+    const sbl = symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
+    // 账户组 + 品种名称作为唯一标识
+    const dataSourceKey = Number(accountGroupId) ? `${accountGroupId}/${sbl}` : `${dataSourceCode}/${sbl}`
     depthData.symbol = symbol
     depthData.dataSource = dataSource
+    depthData.dataSourceKey = dataSourceKey
     depthData.accountGroupId = accountGroupId
     depthData.ts = Number(ts || 0)
     depthData.asks = asks
@@ -280,13 +294,15 @@ function handleMessageCallback(d: any) {
     switch (messageId) {
       // 行情
       case MessageType.symbol:
-        const quoteBody = parseQuoteBodyData(data)
-        batchUpdateQuoteDataByNumber(quoteBody)
+        // const quoteBody = parseQuoteBodyData(data)
+        // 先收集起来再解析
+        batchUpdateQuoteData(data)
         break
       // 深度报价
       case MessageType.depth:
-        const depthBody = parseDepthBodyData(data)
-        batchUpdateDepthDataByNumber(depthBody)
+        // const depthBody = parseDepthBodyData(data)
+        // 先收集起来再解析
+        batchUpdateDepthData(data)
         break
       // 交易信息：账户余额变动、持仓列表、挂单列表
       case MessageType.trade:
@@ -440,8 +456,10 @@ function subscribeNotify({ cancel }: { cancel?: boolean }) {
 
 // ================ 更新深度 start ================
 function updateDepthData() {
-  if (depthCache.size) {
-    depthCache.forEach((item: IDepth, dataSourceKey) => {
+  if (depthCache.length) {
+    depthCache.forEach((str) => {
+      const item = parseDepthBodyData(str)
+      const dataSourceKey = item.dataSourceKey
       if (dataSourceKey) {
         if (typeof item.asks === 'string') {
           item.asks = item.asks ? JSON.parse(item.asks) : []
@@ -469,28 +487,26 @@ function updateDepthData() {
       })
     }
 
-    depthCache.clear()
+    depthCache = []
     lastDepthUpdateTime = performance.now()
   }
 }
 
-function batchUpdateDepthDataByNumber(data: IDepth) {
-  const [dataSourceCode, dataSourceSymbol] = (data.dataSource || '').split('-').filter((v: any) => v)
-  const sbl = data.symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
-  // 账户组 + 品种名称作为唯一标识
-  const dataSourceKey = Number(data.accountGroupId) ? `${data.accountGroupId}/${sbl}` : `${dataSourceCode}/${sbl}`
-  depthCache.set(dataSourceKey, data)
+function batchUpdateDepthData(data: string) {
+  if (data && typeof data === 'string') {
+    depthCache.push(data)
 
-  // 如果缓存太大，强制发送
-  if (depthCache.size >= MAX_CACHE_SIZE) {
-    updateDepthData()
-    return
-  }
-
-  const now = performance.now()
-  if (now - lastDepthUpdateTime >= THROTTLE_DEPTH_INTERVAL) {
-    if (depthCache.size > 0) {
+    // 如果缓存太大，强制发送
+    if (depthCache.length >= MAX_CACHE_SIZE) {
       updateDepthData()
+      return
+    }
+
+    const now = performance.now()
+    if (now - lastDepthUpdateTime >= THROTTLE_DEPTH_INTERVAL) {
+      if (depthCache.length > 0) {
+        updateDepthData()
+      }
     }
   }
 }
@@ -499,13 +515,29 @@ function batchUpdateDepthDataByNumber(data: IDepth) {
 
 // ================ 更新行情数据 开始 ================
 function updateQuoteData() {
-  if (quotesCache.size) {
+  if (quotesCache.length) {
     // 存储有变化的行情数据
     const changedQuotes = new Map<string, IQuoteItem>()
-
-    quotesCache.forEach((item: IQuoteItem, dataSourceKey) => {
+    // 批量解析字符串数据
+    const quotesCacheItems = quotesCache.map((str) => parseQuoteBodyData(str))
+    // 按symbol分组
+    const symbolMap = groupBy(quotesCacheItems, 'symbol')
+    quotesCacheItems.forEach((item: IQuoteItem) => {
+      const dataSourceKey = item.dataSourceKey
       if (!dataSourceKey) return
       const quoteData = quotes.get(dataSourceKey)
+
+      // 价格数据去重
+      let klineList = uniqueObjectArray(
+        (symbolMap[item.symbol] || []).map((item) => {
+          return {
+            price: item.priceData?.buy,
+            id: item.priceData?.id
+          }
+        }),
+        'price'
+      )
+
       // 如果之前的行情存在，则对比增量更新
       if (quoteData) {
         const prevSell = quoteData?.priceData?.sell || 0
@@ -524,13 +556,22 @@ function updateQuoteData() {
 
         // 增量更新有变化的数据
         if (flag && (buy !== prevBuy || sell !== prevSell)) {
-          changedQuotes.set(dataSourceKey, item)
+          const changedQuoteItem = {
+            ...item,
+            // 储存原始数据 ，用于K线图播放走一遍全部报价，避免数据过滤丢失绘制的k线跟后台历史数据不一样
+            klineList
+          }
+          changedQuotes.set(dataSourceKey, changedQuoteItem)
           quotes.set(dataSourceKey, item)
         }
       } else {
         // 新增行情
+        const changedQuoteItem = {
+          ...item,
+          klineList
+        }
         quotes.set(dataSourceKey, item)
-        changedQuotes.set(dataSourceKey, item)
+        changedQuotes.set(dataSourceKey, changedQuoteItem)
       }
     })
 
@@ -546,38 +587,35 @@ function updateQuoteData() {
       syncCalcData()
     }
 
-    quotesCache.clear()
+    quotesCache = []
     changedQuotes.clear()
     lastQuoteUpdateTime = performance.now()
   }
 }
 
-function batchUpdateQuoteDataByNumber(data: IQuoteItem) {
-  const [dataSourceCode, dataSourceSymbol] = (data.dataSource || '').split('-').filter((v: any) => v)
-  const sbl = data.symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
-  // 1.数据源 + 品种名称作为唯一标识 通过该方式订阅的没有账户组 const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
-  // 2.账户组 + 品种名称作为唯一标识 通过该方式订阅的有账户组 const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
-  const dataSourceKey = Number(data.accountGroupId) ? `${data.accountGroupId}/${sbl}` : `${dataSourceCode}/${sbl}`
-  quotesCache.set(dataSourceKey, data)
+function batchUpdateQuoteData(data: string) {
+  if (data && typeof data === 'string') {
+    quotesCache.push(data)
 
-  // 加快首次渲染时间
-  if (quoteCount < 50) {
-    updateQuoteData()
-    quoteCount++
-    return
-  }
-
-  // 如果缓存太大，强制发送
-  if (quotesCache.size >= MAX_CACHE_SIZE) {
-    updateQuoteData()
-    return
-  }
-
-  const now = performance.now()
-  const interval = userConf.isMobile ? THROTTLE_QUOTE_MOBILE_INTERVAL : THROTTLE_QUOTE_INTERVAL
-  if (now - lastQuoteUpdateTime >= interval) {
-    if (quotesCache.size > 0) {
+    // 加快首次渲染时间
+    if (quoteCount < 50) {
       updateQuoteData()
+      quoteCount++
+      return
+    }
+
+    // 如果缓存太大，强制发送
+    if (quotesCache.length >= MAX_CACHE_SIZE) {
+      updateQuoteData()
+      return
+    }
+
+    const now = performance.now()
+    const interval = userConf.isMobile ? THROTTLE_QUOTE_MOBILE_INTERVAL : THROTTLE_QUOTE_INTERVAL
+    if (now - lastQuoteUpdateTime >= interval) {
+      if (quotesCache.length > 0) {
+        updateQuoteData()
+      }
     }
   }
 }
@@ -1147,5 +1185,24 @@ function truncateDecimal(number: any, digits?: number) {
   const truncatedStr = numStr.substring(0, decimalIndex + precision + 1)
   // 转换回数字
   return parseFloat(truncatedStr)
+}
+
+/**
+ * 对象数组去重
+ * @param arr 数组
+ * @param key 对象的key唯一
+ * @returns
+ */
+function uniqueObjectArray(arr: any, key: string) {
+  if (!arr?.length) return []
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = i + 1; j < arr.length; j++) {
+      if (arr[i][key] === arr[j][key]) {
+        arr.splice(j, 1)
+        j--
+      }
+    }
+  }
+  return arr
 }
 // =========  公共方法 end ============

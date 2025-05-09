@@ -84,6 +84,20 @@ export type IQuoteItem = {
   bidDiff?: number
   /**前端计算的 买价 上一口报价和下一口报价对比 */
   askDiff?: number
+  /**k线原始数据 */
+  klineList?: Array<Omit<IKlinePriceItem, 'symbol'>>
+  /**获取行情数据的key */
+  dataSourceKey?: string
+}
+
+// k线图原始数据
+export type IKlinePriceItem = {
+  /**品种名称 */
+  symbol: string
+  /**价格 买盘卖价（低价） 没有点差的价格 */
+  price: number
+  /**13位时间戳 */
+  id: number
 }
 
 // 深度
@@ -102,6 +116,8 @@ export type IDepth = {
   ts?: number
   /**账户组id */
   accountGroupId?: string
+  /**获取行情数据的key */
+  dataSourceKey?: string
 }
 
 // 消息推送模版
