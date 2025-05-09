@@ -171,6 +171,7 @@ class TradeStore {
   @observable rightWidgetSelectMarginInfo = {} as MarginReteInfo // 右下角选择的保证金信息
   @observable expectedMargin = 0 // 预估保证金
   @observable maxOpenVolume = 0 // 最大可开手数
+  @observable positionListTotalProfit = 0 // 持仓单总浮动盈亏
 
   @observable historySearchList = [] as string[] // APP历史搜索记录
   @observable holidaySymbolMap = {} as any // 假期品种map true是正常交易 false是假期内暂停交易

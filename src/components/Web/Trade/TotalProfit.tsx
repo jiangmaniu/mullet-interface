@@ -8,6 +8,7 @@ import { useStores } from '@/context/mobxProvider'
 function TotalProfit() {
   const { trade } = useStores()
   const totalProfit = trade.accountBalanceInfo.totalProfit
+  const positionListTotalProfit = trade.positionListTotalProfit
 
   return (
     <AccountListItem
