@@ -6,7 +6,6 @@ import Button from '@/components/Base/Button'
 import ValidateCodeInput, { ISendType, Params } from '@/components/Form/ValidateCodeInput'
 import { message } from '@/utils/message'
 
-import { validateNonEmptyFields } from '@/utils/form'
 import ResetPwd from '../ResetPwd'
 
 export type IValidateCodeType = 'RESET_PWD' | 'REGISTER'
@@ -29,6 +28,7 @@ function RegisterValidateCode({ onBack, onConfirm, sendType, type, open }: IProp
   const validateCodeInputRef = useRef<any>()
   const [form] = Form.useForm()
   const intl = useIntl()
+  //
 
   useImperativeHandle(ref, () => {
     return {
@@ -48,10 +48,6 @@ function RegisterValidateCode({ onBack, onConfirm, sendType, type, open }: IProp
   if (type === 'RESET_PWD') {
     return <ResetPwd sendType={sendType} onBack={onBack} />
   }
-
-  useEffect(() => {
-    validateNonEmptyFields(form)
-  }, [intl.locale])
 
   return (
     <>

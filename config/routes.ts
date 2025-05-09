@@ -91,10 +91,6 @@ export default [
         component: './user/login'
       },
       {
-        path: '/:lng/user/login/phone',
-        component: './user/login/index.phone'
-      },
-      {
         path: '/:lng/user/forget',
         component: './user/forgetPassword'
       }

@@ -422,29 +422,6 @@ function Login() {
                 <PwdTips pwd={password} ref={pwdTipsRef} />
               </div>
             )}
-            {/* {isLoginTab && (
-              <div className="flex items-center gap-2">
-                <ProFormText
-                  name="captchaCode"
-                  fieldProps={{
-                    size: 'large'
-                  }}
-                  label={intl.formatMessage({ id: 'mt.tuxingyanzhengma' })}
-                  placeholder={intl.formatMessage({ id: 'mt.shuruyanzhengma' })}
-                  required={false}
-                  rules={[
-                    {
-                      required: true,
-                      message: intl.formatMessage({ id: 'mt.shuruyanzhengma' })
-                    }
-                  ]}
-                  formItemProps={{ style: { width: '100%' } }}
-                />
-                <div className="border-gray-220 border rounded-lg cursor-pointer w-auto overflow-hidden h-[49px]" onClick={handleCaptcha}>
-                  <img src={captchaInfo.image} className="w-full h-full" />
-                </div>
-              </div>
-            )} */}
           </LoginForm>
         )}
 
