@@ -70,13 +70,10 @@ class KlineStore {
     const cacheKey = this.getActiveSymbolCacheKey()
     // 重置数据
     this.klineDataCacheMap.set(cacheKey, undefined)
-    runInAction(() => {
-      // 重置上一个k线，否则长时间切换到后台在切回来有缓存
-      this.lastbar = {}
-    })
   }
 
   // 强制刷新k线数据
+  @action
   forceRefreshKlineData = () => {
     if (!isPCByWidth()) {
       // 重置数据
@@ -395,7 +392,7 @@ class KlineStore {
   @action
   destroyed = () => {
     // 等待图表加载完成再关闭,否则销毁实例会导致之前未加载完成的实例报错
-    if (this.isChartLoading || !isPCByWidth()) {
+    if (this.isChartLoading) {
       return
     }
     if (this.tvWidget) {

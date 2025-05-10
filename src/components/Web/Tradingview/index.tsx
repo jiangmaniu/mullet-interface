@@ -7,7 +7,6 @@ import { useStores } from '@/context/mobxProvider'
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
-import usePageVisibility from '@/hooks/usePageVisibility'
 import klineStore from '@/mobx/kline'
 import { cn } from '@/utils/cn'
 import { STORAGE_SET_TRADINGVIEW_RESOLUTION } from '@/utils/storage'
@@ -213,13 +212,6 @@ const Tradingview = () => {
     initChart()
   }, [params, kline.tvWidget])
 
-  useEffect(() => {
-    return () => {
-      // 重置tradingview实例
-      kline.destroyed()
-    }
-  }, [])
-
   // 切换主题重载
   useEffect(() => {
     if (symbolName) {
@@ -237,34 +229,14 @@ const Tradingview = () => {
       if (kline.tvWidget) {
         kline.tvWidget.onChartReady(() => {
           kline.setSwitchSymbolLoading(false)
-          if (symbolName !== previousSymbolName) {
-            // 实例已经初始化，直接切换品种
-            setSymbol(symbolName, kline.tvWidget)
-          }
+          // 实例已经初始化，直接切换品种
+          setSymbol(symbolName, kline.tvWidget)
         })
       }
     },
     [symbolName, switchSymbolLoading],
     {
       wait: 700
-    }
-  )
-
-  usePageVisibility(
-    () => {
-      console.log('页面回到前台')
-      if (symbolName && kline.tvWidget) {
-        // @ts-ignore
-        // klineStore.activeSymbolInfo?.onResetCacheNeededCallback?.() // 重置缓存
-        // setTimeout(() => {
-        //   // 刷新k线
-        //   setSymbol(symbolName, kline.tvWidget)
-        // }, 100)
-        klineStore.forceRefreshKlineData()
-      }
-    },
-    () => {
-      console.log('页面切换到后台')
     }
   )
 

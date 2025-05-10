@@ -364,11 +364,12 @@ export function formatSymbolList(symbolList: any) {
   return result
 }
 
-export const checkPageShowTime = () => {
+export const checkPageShowTime = (duration?: number) => {
+  const time = duration || 2 * 60 * 1000
   // 记录上次进入时间
   const updateTime = STORAGE_GET_TRADE_PAGE_SHOW_TIME()
   // 缓存时间大于5分钟、初次载入
-  if ((updateTime && Date.now() - updateTime > 5 * 60 * 1000) || !updateTime) {
+  if ((updateTime && Date.now() - updateTime > time) || !updateTime) {
     STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
     return true
   }
