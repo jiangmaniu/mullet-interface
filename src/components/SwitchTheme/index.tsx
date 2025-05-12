@@ -27,9 +27,6 @@ function SwitchTheme() {
     setMode(themeMode)
     // 设置交易页面主题，因为交易页面主题不是全局的，所以需要单独设置
     STORAGE_SET_TRADE_THEME(themeMode)
-
-    // 重置tradingview实例
-    kline.destroyed()
   }
 
   return (

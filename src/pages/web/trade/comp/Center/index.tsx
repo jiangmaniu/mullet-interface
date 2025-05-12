@@ -4,9 +4,9 @@ import { useState, useTransition } from 'react'
 
 import Tabs from '@/components/Base/Tabs'
 
+import TradingviewWrapper from '@/components/Web/Tradingview/wrapper'
 import Futures from '../Futures'
 import HeaderStatisInfo from '../HeaderStatisInfo'
-import TradingView from '../TradingView'
 
 // pc端中间区域部分
 const Center = () => {
@@ -33,7 +33,7 @@ const Center = () => {
         marginBottom={0}
       />
       <HeaderStatisInfo />
-      {tabKey === 1 && <TradingView />}
+      {tabKey === 1 && <TradingviewWrapper />}
       {tabKey === 2 && <Futures />}
     </div>
   )

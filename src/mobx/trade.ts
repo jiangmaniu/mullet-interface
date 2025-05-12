@@ -805,7 +805,9 @@ class TradeStore {
   @action
   switchSymbol = (symbol: string) => {
     // 切换k线时如果处于loading状态，在切换其他则不可以点击，等切换成功后再点击，否则会出现跳空问题
-    if (klineStore.switchSymbolLoading) return
+    if (klineStore.switchSymbolLoading) {
+      return
+    }
     // 记录打开的symbol
     this.setOpenSymbolNameList(symbol)
     // 设置当前当前的symbol

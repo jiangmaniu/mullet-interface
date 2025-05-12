@@ -49,6 +49,11 @@ function QuoteItem({ item, popupRef }: IProps, ref: any) {
       <div
         className={cn('relative pl-1 border-b border-gray-100 dark:border-gray-630')}
         onClick={() => {
+          // 如果正在切换品种，则不允许再次点击
+          if (kline.switchSymbolLoading) {
+            return
+          }
+
           startTransition(() => {
             // 切换品种
             trade.switchSymbol(symbol)
@@ -63,6 +68,7 @@ function QuoteItem({ item, popupRef }: IProps, ref: any) {
           className={cn('flex cursor-pointer items-center rounded pl-2 py-[5px] hover:bg-[var(--list-hover-primary-bg)] relative', {
             'bg-[var(--list-hover-primary-bg)]': isActive,
             [activeClassName]: isActive
+            // 'opacity-50 cursor-not-allowed': kline.switchSymbolLoading
           })}
         >
           <Col span={8} className="!flex items-center">

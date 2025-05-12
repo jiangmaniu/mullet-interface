@@ -133,10 +133,7 @@ export default observer(() => {
       ws.closeWorker?.()
 
       // 避免k线多次刷新
-      if (!checkPageShowTime()) return
-
-      // 重置tradingview实例
-      kline.destroyed()
+      // if (!checkPageShowTime()) return
     }
   )
 

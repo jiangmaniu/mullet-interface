@@ -1,27 +1,26 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { ChartStyle, LanguageCode, ThemeName, widget } from '@/libs/charting_library'
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 
 import { getTradingViewLng } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useTheme } from '@/context/themeProvider'
-import usePageVisibility from '@/hooks/usePageVisibility'
 import klineStore from '@/mobx/kline'
 import { cn } from '@/utils/cn'
 import { STORAGE_SET_TRADINGVIEW_RESOLUTION } from '@/utils/storage'
 import { LoadingOutlined } from '@ant-design/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'
-import { useDebounceEffect, usePrevious } from 'ahooks'
+import { usePrevious } from 'ahooks'
 import { observer } from 'mobx-react'
 import { isAndroid } from 'react-device-detect'
 import { STORAGE_GET_CHART_PROPS, STORAGE_REMOVE_CHART_PROPS, ThemeConst } from './constant'
 import { ColorType, applyOverrides, createWatermarkLogo, setCSSCustomProperty, setChartStyleProperties, setSymbol } from './widgetMethods'
 import getWidgetOpts from './widgetOpts'
 
-const Tradingview = () => {
+const Tradingview = (props: any, ref: any) => {
   const chartContainerRef = useRef<HTMLDivElement>() as React.MutableRefObject<HTMLInputElement>
   const { kline, trade } = useStores()
   const { isMobile, isIpad, isMobileOrIpad, isPc, isPwaApp } = useEnv()
@@ -204,69 +203,43 @@ const Tradingview = () => {
     window.tvWidget = tvWidget
   }
 
-  useEffect(() => {
-    if (!symbolName || kline.tvWidget) return
+  const reload = () => {
     setIsChartLoading(true)
     setLoading(true)
-
     // 初始化图表实例
     initChart()
-  }, [params, kline.tvWidget])
+  }
+
+  useImperativeHandle(ref, () => {
+    return {
+      reload
+    }
+  })
 
   useEffect(() => {
-    return () => {
-      // 重置tradingview实例
-      kline.destroyed()
-    }
-  }, [])
+    if (!symbolName || kline.tvWidget) return
+    reload()
+  }, [params, kline.tvWidget])
 
   // 切换主题重载
   useEffect(() => {
     if (symbolName) {
-      setIsChartLoading(true)
-      setLoading(true)
-      initChart()
+      reload()
     }
   }, [theme, intl.locale])
 
-  // 监听切换品种 需要防抖避免用户重复切换导致k线显示问题
-  useDebounceEffect(
-    () => {
-      if (!symbolName || switchSymbolLoading) return
-      // 实例存在
-      if (kline.tvWidget) {
-        kline.tvWidget.onChartReady(() => {
-          kline.setSwitchSymbolLoading(false)
-          if (symbolName !== previousSymbolName) {
-            // 实例已经初始化，直接切换品种
-            setSymbol(symbolName, kline.tvWidget)
-          }
-        })
-      }
-    },
-    [symbolName, switchSymbolLoading],
-    {
-      wait: 700
-    }
-  )
+  // 监听切换品种
+  useEffect(() => {
+    if (!symbolName || switchSymbolLoading || !kline.tvWidget) return
 
-  usePageVisibility(
-    () => {
-      console.log('页面回到前台')
-      if (symbolName && kline.tvWidget) {
-        // @ts-ignore
-        // klineStore.activeSymbolInfo?.onResetCacheNeededCallback?.() // 重置缓存
-        // setTimeout(() => {
-        //   // 刷新k线
-        //   setSymbol(symbolName, kline.tvWidget)
-        // }, 100)
-        klineStore.forceRefreshKlineData()
-      }
-    },
-    () => {
-      console.log('页面切换到后台')
-    }
-  )
+    // 立即设置loading状态
+    kline.setSwitchSymbolLoading(true)
+
+    // 实例已经初始化，直接切换品种
+    kline.tvWidget.onChartReady(() => {
+      setSymbol(symbolName, kline.tvWidget)
+    })
+  }, [symbolName])
 
   const className = useEmotionCss(({ token }) => {
     return {
@@ -295,4 +268,4 @@ const Tradingview = () => {
   )
 }
 
-export default observer(Tradingview)
+export default observer(forwardRef(Tradingview))
