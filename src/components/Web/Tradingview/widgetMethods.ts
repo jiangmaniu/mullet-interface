@@ -9,13 +9,13 @@ import { getTradingviewThemeCssVar } from './theme'
 // 动态设置品种
 export const setSymbol = (symbol, tvWidget: IChartingLibraryWidget) => {
   if (!symbol) return
-  stores.kline.setSwitchSymbolLoading(true)
-
   tvWidget?.activeChart?.()?.resetData?.()
   tvWidget?.activeChart?.()?.setSymbol?.(symbol, {
     dataReady: () => {
-      // console.log('切换品种成功')
-      stores.kline.setSwitchSymbolLoading(false)
+      console.log('切换品种成功')
+      setTimeout(() => {
+        stores.kline.setSwitchSymbolLoading(false)
+      }, 100)
     }
   })
 }
