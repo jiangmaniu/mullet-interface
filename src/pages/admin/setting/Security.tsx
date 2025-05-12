@@ -1,4 +1,3 @@
-import { stores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import { push } from '@/utils/navigator'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
@@ -87,8 +86,9 @@ export default function Security() {
           return
         }
 
-        const checked = stores.global.registerWay === 'EMAIL' ? phone : email
-        !checked && bindModal.current?.show()
+        // const checked = stores.global.registerWay === 'EMAIL' ? phone : email
+        // !checked &&
+        bindModal.current?.show()
       }
     },
     {
@@ -105,8 +105,9 @@ export default function Security() {
           return
         }
 
-        const checked = stores.global.registerWay === 'EMAIL' ? phone : email
-        !checked && bindModal.current?.show()
+        // const checked = stores.global.registerWay === 'EMAIL' ? phone : email
+        // !checked &&
+        bindModal.current?.show()
       }
     }
   ]
