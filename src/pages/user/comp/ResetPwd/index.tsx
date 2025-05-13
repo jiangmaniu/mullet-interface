@@ -1,5 +1,5 @@
 import { ProFormText } from '@ant-design/pro-components'
-import { FormattedMessage, useIntl } from '@umijs/max'
+import { FormattedMessage, useIntl, useSearchParams } from '@umijs/max'
 import { Form } from 'antd'
 import { observer } from 'mobx-react'
 import { forwardRef, useEffect, useRef, useState } from 'react'
@@ -39,7 +39,11 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
   const [step, setStep] = useState<'ONE' | 'TWO' | 'THREE' | 'FOUR'>('ONE') // 表单步骤
   const [form] = Form.useForm()
   const intl = useIntl()
-  const registerWay = global.registerWay
+
+  const [query] = useSearchParams()
+  const registerType = query.get('registerType') as string
+  const registerWay = registerType ?? global.registerWay
+
   const isEmailTab = registerWay === 'EMAIL'
   const pwdTipsRef = useRef<any>()
   const newPassword = Form.useWatch('newPassword', form)
@@ -143,9 +147,7 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                 <Button
                   style={{ height: 48, width: 120 }}
                   onClick={() => {
-                    // 返回登录页
-                    goLogin()
-                    onBack?.()
+                    onBack ? onBack() : goLogin()
                   }}
                 >
                   <FormattedMessage id="common.back" />

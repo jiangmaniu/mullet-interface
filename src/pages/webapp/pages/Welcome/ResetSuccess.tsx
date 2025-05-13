@@ -7,7 +7,9 @@ import Icon from '@/components/Base/Iconfont'
 import type { TypeSection } from '.'
 
 import { useEnv } from '@/context/envProvider'
+import { stores } from '@/context/mobxProvider'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
+import { useSearchParams } from '@umijs/max'
 import Button from '../../components/Base/Button'
 import Header from '../../components/Base/Header'
 import { Text } from '../../components/Base/Text'
@@ -26,10 +28,14 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (_, ref) => {
 
   const { screenSize } = useEnv()
 
+  const [query] = useSearchParams()
+  const registerType = query.get('registerType') as string
+  const registerWay = registerType ?? stores.global.registerWay
+
   /** 拦截系统返回操作 */
   const gobackHandler = () => {
     navigateTo('/app/login', {
-      section: 'login'
+      registerType: registerWay
     })
     return true
   }

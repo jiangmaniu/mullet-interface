@@ -8,7 +8,6 @@ import { default as Icon, default as Iconfont } from '@/components/Base/Iconfont
 import { DEFAULT_AREA_CODE } from '@/constants'
 import { getEnv } from '@/env'
 import { getAreaCode } from '@/services/api/common'
-import { replace } from '@/utils/navigator'
 import { capitalizeFirstLetter } from '@/utils/str'
 import { useLocation, useSearchParams } from '@umijs/max'
 import { MenuProps } from 'antd'
@@ -69,17 +68,17 @@ export default function WelcomeScreen() {
   const { cn, theme } = useTheme()
   const { t, loadLocale, locale } = useI18n()
   const location = useLocation()
-  const hash = location.hash.replace('#', '')
+  // const hash = location.hash.replace('#', '')
 
-  const _section = ['login', 'register', 'verify', 'forgotPassword', 'forgotVerify', 'resetPassword'].includes(hash) ? hash : 'login'
+  // const _section = ['login', 'register', 'verify', 'forgotPassword', 'forgotVerify', 'resetPassword'].includes(hash) ? hash : 'login'
 
   // TODO: 缓存
   // const current = useCurrentAccount()
 
-  const [section, _setSection] = useState<WELCOME_STEP_TYPES>(_section as WELCOME_STEP_TYPES)
+  const [section, _setSection] = useState<WELCOME_STEP_TYPES>('login')
 
   const setSection = (section: WELCOME_STEP_TYPES) => {
-    replace('/app/login#' + section)
+    // replace('/app/login#' + section + (search ? `${search}` : ''))
     _setSection(section)
   }
 
@@ -163,10 +162,10 @@ export default function WelcomeScreen() {
   const [disabled, setDisabled] = useState(false)
 
   const [query] = useSearchParams()
-  const userType = query.get('userType') as string
+  const registerType = query.get('registerType') as string
 
   const footers = {
-    login: getEnv().REGISTER_MODULE && userType !== '5' && <Footer setSection={setSection} />,
+    login: getEnv().REGISTER_MODULE && !registerType && <Footer setSection={setSection} />,
     forgotPassword: <FooterForgotPassword handleSubmit={handleSubmit} disabled={disabled} />,
     resetPassword: <FooterResetPassword handleSubmit={handleSubmit} disabled={disabled} />
   }

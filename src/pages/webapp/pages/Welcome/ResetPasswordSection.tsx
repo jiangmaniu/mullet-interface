@@ -17,6 +17,7 @@ import { stores } from '@/context/mobxProvider'
 import { forgetPasswordEmail, forgetPasswordPhone } from '@/services/api/user'
 import { cn } from '@/utils/cn'
 import { validateNonEmptyFieldsRHF } from '@/utils/form'
+import { useSearchParams } from '@umijs/max'
 import { md5 } from 'js-md5'
 import { TextField } from '../../components/Base/Form/TextField'
 import { View } from '../../components/Base/View'
@@ -107,7 +108,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         updatePassword()
-        navigateTo('/app/reset-success')
+        navigateTo('/app/reset-success', {
+          registerType: registerWay
+        })
         // setSection('login')
       }
       console.log('result', result)
@@ -128,7 +131,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   // 拦截平台/系统返回操作
   // useGoBackHandler(goback, [])
 
-  const registerWay = stores.global.registerWay
+  const [query] = useSearchParams()
+  const registerType = query.get('registerType') as string
+  const registerWay = registerType ?? stores.global.registerWay
 
   /** 表单控制 */
   const schema = z.object({

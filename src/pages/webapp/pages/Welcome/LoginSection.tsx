@@ -78,8 +78,8 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
   const user = useModel('user')
 
   const [query] = useSearchParams()
-  const userType = query.get('userType') as string
-  const registerWay = userType === '5' ? 'PHONE' : stores.global.registerWay
+  const registerType = query.get('registerType') as string
+  const registerWay = registerType ?? stores.global.registerWay
 
   useLayoutEffect(() => {
     startAnimation?.(24)
@@ -146,13 +146,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   /** 拦截系统返回操作 */
   const goback = () => {
-    // confirm(t('msg.confirm.Cancel login?'), t('msg.title.Cancel login'), () => {
-    //   setSection('server')
-    // })
-    // setSection('server')
-
     return true
   }
+
   // 将属性暴露给父元素
   useImperativeHandle(ref, () => ({ goback }))
 

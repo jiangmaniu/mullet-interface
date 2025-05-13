@@ -45,8 +45,9 @@ function Login() {
   const isLoginTab = tabActiveKey === 'LOGIN'
 
   const [query] = useSearchParams()
-  const userType = query.get('userType') as string
-  const registerWay = userType && userType === '5' ? 'PHONE' : global.registerWay
+  const registerType = query.get('registerType') as string
+  const registerWay = registerType ?? global.registerWay
+
   const tabs = useMemo(
     () => [
       {
@@ -57,7 +58,7 @@ function Login() {
           </span>
         )
       },
-      ...(userType === '5'
+      ...(registerType
         ? []
         : [
             {
@@ -70,7 +71,7 @@ function Login() {
             }
           ])
     ],
-    [userType]
+    [registerType]
   )
 
   const username = Form.useWatch('username', form)
