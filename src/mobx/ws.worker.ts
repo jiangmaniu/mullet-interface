@@ -1050,14 +1050,14 @@ function getMaxOpenVolume() {
       // 固定杠杆：可用 /（价格*合约大小*手数x/固定杠杆）
       // 手数x = 可用 * 固定杠杆 / (价格*合约大小)*汇率
       const fixed_leverage = Number(prepaymentConf?.fixed_leverage?.leverage_multiple || 0)
-      if (fixed_leverage) {
+      if (fixed_leverage && exchangeValue) {
         volume = (availableMargin * fixed_leverage) / exchangeValue
       }
     } else if (mode === 'float_leverage') {
       // 浮动杠杆：可用 /（价格*合约大小*手数x/浮动杠杆）
       // 手数x = 可用 * 固定杠杆 / (价格*合约大小)*汇率
       const float_leverage = Number(tradeActions.leverageMultiple || 1)
-      if (float_leverage) {
+      if (float_leverage && exchangeValue) {
         volume = (availableMargin * float_leverage) / exchangeValue
       }
     }
