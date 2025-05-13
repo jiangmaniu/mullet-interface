@@ -67,9 +67,10 @@ const Tradingview = (props: any, ref: any) => {
     const widgetOptions = getWidgetOpts(params, chartContainerRef.current, datafeedParams)
     const tvWidget = new widget(widgetOptions)
 
+    // 延迟400ms设置loading状态，避免图表闪烁
     setTimeout(() => {
       setLoading(false)
-    }, 200)
+    }, 400)
 
     tvWidget.onChartReady(async () => {
       setIsChartLoading(false)
