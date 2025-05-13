@@ -18,7 +18,7 @@ import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { cn } from '@/utils/cn'
 import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { STORAGE_GET_ACCOUNT_PASSWORD } from '@/utils/storage'
-import { useModel } from '@umijs/max'
+import { useModel, useSearchParams } from '@umijs/max'
 import { TextField } from '../../components/Base/Form/TextField'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
@@ -65,7 +65,11 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     startAnimation?.(24)
   }, [])
 
-  const [inputType, setInputType] = useState<API.RegisterWay>(stores.global.registerWay)
+  const [query] = useSearchParams()
+  const registerType = query.get('registerType') as string
+  const registerWay = registerType ?? stores.global.registerWay
+
+  const [inputType, setInputType] = useState<API.RegisterWay>(registerWay as API.RegisterWay)
 
   const [isAuthPasswordHidden, setIsAuthPasswordHidden] = useState('password')
   const PasswordRightAccessory = useMemo(

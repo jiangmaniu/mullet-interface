@@ -6,7 +6,7 @@ import { useTheme } from '@/context/themeProvider'
 
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { ADMIN_HOME_PAGE, APP_MODAL_WIDTH, WEB_HOME_PAGE } from '@/constants'
-import { useStores } from '@/context/mobxProvider'
+import { stores, useStores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -16,7 +16,7 @@ import { login, registerSubmitEmail, registerSubmitPhone, sendCustomEmailCode, s
 import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
-import { useModel } from '@umijs/max'
+import { useModel, useSearchParams } from '@umijs/max'
 import { md5 } from 'js-md5'
 import { observer } from 'mobx-react'
 import type { TypeSection, WELCOME_STEP_TYPES } from '..'
@@ -101,6 +101,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   const areaCodeItem = countryList.find((item) => item.areaCode === areaCode)
 
+  const [query] = useSearchParams()
+  const registerType = query.get('registerType') as string
+  const registerWay = registerType ?? stores.global.registerWay
+
   // 登录
   const onSubmit = async () => {
     // const loging = dialog(<LottieLoading tips={t('pages.login.Registering')} />)
@@ -121,11 +125,11 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         password: md5(password),
         validateCode: Number(code)
       }
-      const isPhoneRegister = global.registerWay === 'PHONE' && phone
+      const isPhoneRegister = registerWay === 'PHONE' && phone
 
       let result: API.Response<any> | undefined
       setIsRegistering(true)
-      if (global.registerWay === 'EMAIL' && email) {
+      if (registerWay === 'EMAIL' && email) {
         result = await registerSubmitEmail({
           emailOrPhone: email,
           ...body
@@ -219,7 +223,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             {t('pages.login.Please enter the sixdigit verification code')}
           </Text>
           <Text className={cn('text-start text-sm !text-secondary mt-1.5')}>
-            {t('pages.login.Verification code sent to', { email: global.registerWay === 'PHONE' ? `+${areaCode}${phone}` : email })}
+            {t('pages.login.Verification code sent to', { email: registerWay === 'PHONE' ? `+${areaCode}${phone}` : email })}
           </Text>
           <View className={cn('flex flex-col  mt-[18px]')}>
             <CodeInput value={code} onChange={setCode} />

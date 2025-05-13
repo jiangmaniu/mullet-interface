@@ -8,8 +8,9 @@ import type { TypeSection, WELCOME_STEP_TYPES } from '.'
 
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { APP_MODAL_WIDTH } from '@/constants'
-import { useStores } from '@/context/mobxProvider'
+import { stores, useStores } from '@/context/mobxProvider'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
+import { useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
 import CodeInput from '../../components/Base/Form/CodeInput'
 import { Text } from '../../components/Base/Text'
@@ -148,6 +149,10 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
     }
   }
 
+  const [query] = useSearchParams()
+  const registerType = query.get('registerType') as string
+  const registerWay = registerType ?? stores.global.registerWay
+
   return (
     <View className={cn('flex-1 flex flex-col justify-between mb-12')}>
       <View className={cn('flex-1 flex flex-col items-center justify-center  ')}>
@@ -156,7 +161,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
             {t('pages.login.Please enter the sixdigit verification code')}
           </Text>
           <Text className={cn('text-start text-sm !text-secondary mt-1.5')}>
-            {t('pages.login.Verification code sent to', { email: global.registerWay === 'PHONE' ? `+${areaCode}${phone}` : email })}
+            {t('pages.login.Verification code sent to', { email: registerWay === 'PHONE' ? `+${areaCode}${phone}` : email })}
           </Text>
           <View className={cn('flex flex-col gap-6 mt-[18px]')}>
             <CodeInput
