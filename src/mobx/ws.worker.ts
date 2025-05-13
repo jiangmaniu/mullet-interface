@@ -1031,7 +1031,7 @@ function getMaxOpenVolume() {
   const getExchangeValue = (value: number) => {
     return calcExchangeRate({
       value,
-      unit: quote?.symbolConf?.prepaymentCurrency,
+      unit: quote?.symbolConf?.profitCurrency,
       buySell
     })
   }
