@@ -204,7 +204,9 @@ function TradeAccountDropdown({ theme }: IProps) {
                        * 尽量避免在 stores 之外直接调用 batchSubscribeSymbol 方法
                        * 关闭 ws 连接时，统一使用 debounceBatchCloseSymbol 方法
                        */
-                      ws.debounceBatchCloseSymbol()
+                      // ws.debounceBatchCloseSymbol()
+                      // 直接关闭行情，重新连接新的
+                      ws.close()
 
                       setTimeout(() => {
                         trade.setCurrentAccountInfo(item)

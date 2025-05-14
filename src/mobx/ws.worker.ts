@@ -248,7 +248,7 @@ function parseDepthBodyData(body: string) {
   if (body && typeof body === 'string') {
     const [asks, bids, dataSource, symbol, accountGroupId, ts] = body.split(',')
     const [dataSourceCode, dataSourceSymbol] = (dataSource || '').split('-').filter((v: any) => v)
-    const sbl = symbol || dataSourceSymbol // 如果有symbol，说明是通过账户组订阅的品种行情
+    const sbl = symbol === '0' ? dataSourceSymbol : symbol // 兼容没有使用账户组订阅情况
     // 账户组 + 品种名称作为唯一标识
     const dataSourceKey = Number(accountGroupId) ? `${accountGroupId}/${sbl}` : `${dataSourceCode}/${sbl}`
     depthData.symbol = symbol

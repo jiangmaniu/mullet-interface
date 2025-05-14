@@ -458,7 +458,7 @@ class TradeStore {
 
     // 需要刷新k线，否则切换不同账号加载的品种不一样
     push('/trade')
-    klineStore.destroyed() // 非交易页面跳转需要重置trandview实例，否则报错
+    // klineStore.destroyed() // 非交易页面跳转需要重置trandview实例，否则报错
 
     setTimeout(() => {
       // 停止动画播放

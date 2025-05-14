@@ -1,6 +1,6 @@
 import { notification } from 'antd'
 import { debounce } from 'lodash'
-import { action, configure, makeObservable, observable, toJS } from 'mobx'
+import { action, configure, makeObservable, observable, runInAction, toJS } from 'mobx'
 
 import { stores } from '@/context/mobxProvider'
 import { formaOrderList } from '@/services/api/tradeCore/order'
@@ -627,10 +627,13 @@ class WSStore {
     // 账户余额变动
     if (type === 'ACCOUNT') {
       const accountInfo = data.account || {}
-      trade.currentAccountInfo = {
-        ...trade.currentAccountInfo,
-        ...accountInfo
-      }
+      runInAction(() => {
+        trade.currentAccountInfo = {
+          ...trade.currentAccountInfo,
+          ...accountInfo
+        }
+      })
+      console.log('账户余额变动', trade.currentAccountInfo)
     }
     // 持仓列表
     else if (type === 'MARKET_ORDER') {

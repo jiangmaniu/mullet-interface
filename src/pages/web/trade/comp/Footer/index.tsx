@@ -19,7 +19,7 @@ function Footer() {
   const { isDark } = theme
   const networkState = useNetwork()
   const { ws, trade, kline } = useStores()
-  const readyState = ws.socket?.readyState || ws.readyState || 0
+  let readyState = ws.socket?.readyState || ws.readyState || 0
   const isOnline = networkState.online
   const [openTips, setOpenTips] = useState<any>(false)
   const disConnected = !isOnline || readyState === 3
@@ -37,8 +37,8 @@ function Footer() {
 
   useEffect(() => {
     // readyState 0 表示连接中 3 表示连接失败
-    setOpenTips(!isOnline || readyState === 3 || readyState === 0)
-  }, [isOnline, readyState])
+    setOpenTips(!isOnline || readyState === 3)
+  }, [isOnline])
 
   useEffect(() => {
     if (scroll?.top > 100) {
