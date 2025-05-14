@@ -23,7 +23,12 @@ function AvailableMargin() {
   }, [count])
 
   return (
-    <AccountListItem value={availableMargin} label={<FormattedMessage id="mt.keyong" />} tips={<FormattedMessage id="mt.keyongtips" />} />
+    <AccountListItem
+      key={count}
+      value={availableMargin}
+      label={<FormattedMessage id="mt.keyong" />}
+      tips={<FormattedMessage id="mt.keyongtips" />}
+    />
   )
 }
 

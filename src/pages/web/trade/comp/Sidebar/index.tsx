@@ -73,6 +73,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
 
   useEffect(() => {
     setSearchValue('')
+    setCategoryTabKey(defaultClassify)
   }, [trade.currentAccountInfo])
 
   useEffect(() => {

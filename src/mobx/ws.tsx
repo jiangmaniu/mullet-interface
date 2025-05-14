@@ -634,6 +634,8 @@ class WSStore {
         }
       })
       console.log('账户余额变动', trade.currentAccountInfo)
+      console.log('余额money', trade.currentAccountInfo.money)
+      console.log('占用保证金margin', trade.currentAccountInfo.margin)
     }
     // 持仓列表
     else if (type === 'MARKET_ORDER') {

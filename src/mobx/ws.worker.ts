@@ -7,6 +7,7 @@ import {
   IMessage,
   IPositionListSymbolCalcInfo,
   IQuoteItem,
+  ITradeType,
   MarginReteInfo,
   MessageType,
   WorkerType
@@ -306,11 +307,22 @@ function handleMessageCallback(d: any) {
         break
       // 交易信息：账户余额变动、持仓列表、挂单列表
       case MessageType.trade:
+        const type = data.type as ITradeType
         // console.log('交易信息变动', data)
         sendMessage({
           type: 'TRADE_RES',
           data
         })
+        if (type === 'ACCOUNT') {
+          const accountInfo = data.account || {}
+          currentAccountInfo = {
+            ...currentAccountInfo,
+            ...accountInfo
+          }
+          console.log('worker 当前账户余额变动 TRADE_RES', currentAccountInfo)
+          // 在同步账户余额变动时，需要同步计算数据
+          syncCalcData()
+        }
         break
       case MessageType.notice:
         // console.log('消息通知', data)
@@ -1031,7 +1043,8 @@ function getMaxOpenVolume() {
   const getExchangeValue = (value: number) => {
     return calcExchangeRate({
       value,
-      unit: quote?.symbolConf?.profitCurrency,
+      // 计算保证金使用预付款货币单位
+      unit: quote?.symbolConf?.prepaymentCurrency,
       buySell
     })
   }
