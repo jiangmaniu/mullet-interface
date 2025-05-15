@@ -1,6 +1,7 @@
 import { useStores } from '@/context/mobxProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import { checkPageShowTime } from '@/utils/business'
+import { STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 import { PageLoading } from '@ant-design/pro-components'
 import { useNetwork } from 'ahooks'
 import { observer } from 'mobx-react'
@@ -59,7 +60,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
 
   useEffect(() => {
     // 记录初始化的时间
-    checkPageShowTime(1 * 60 * 1000)
+    STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
 
     return () => {
       // 重置tradingview实例
@@ -86,6 +87,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
     () => {
       // console.log('页面切换到后台')
       kline.lastbar = {}
+      STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
     }
   )
 
