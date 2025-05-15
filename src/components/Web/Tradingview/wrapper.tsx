@@ -58,6 +58,9 @@ const TradingviewWrapper = ({ style }: IProps) => {
   }, [switchSymbolLoading])
 
   useEffect(() => {
+    // 记录初始化的时间
+    checkPageShowTime(1 * 60 * 1000)
+
     return () => {
       // 重置tradingview实例
       kline.destroyed()
