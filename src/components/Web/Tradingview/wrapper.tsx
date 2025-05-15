@@ -15,7 +15,7 @@ const TradingViewComp = lazy(() => import('./index'))
 
 // 交易图表组件加载容器
 const TradingviewWrapper = ({ style }: IProps) => {
-  const { kline } = useStores()
+  const { kline, ws } = useStores()
   const [forceUpdateKey, setForceUpdateKey] = useState(0)
   const switchSymbolLoading = kline.switchSymbolLoading
   const loadingTimerRef = useRef<NodeJS.Timeout>()
@@ -89,6 +89,8 @@ const TradingviewWrapper = ({ style }: IProps) => {
       // console.log('页面切换到后台')
       // STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
       kline.destroyed()
+      // 清空ws的quotes
+      ws.quotes = new Map()
     }
   )
 
