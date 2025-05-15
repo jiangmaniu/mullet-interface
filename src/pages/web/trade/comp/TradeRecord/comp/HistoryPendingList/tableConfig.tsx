@@ -129,6 +129,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       ellipsis: false,
       copyable: false,
       fieldProps: {
+        precision: 2,
         placeholder: ''
       },
       formItemProps: {

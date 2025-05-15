@@ -105,6 +105,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       ellipsis: false,
       copyable: false,
       fieldProps: {
+        precision: 2,
         placeholder: ''
       },
       formItemProps: {

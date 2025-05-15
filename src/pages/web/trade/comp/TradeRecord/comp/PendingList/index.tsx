@@ -132,6 +132,7 @@ function PendingList({ style, parentPopup }: IProps) {
       ellipsis: false,
       copyable: false,
       fieldProps: {
+        precision: 2,
         placeholder: ''
       },
       formItemProps: {

@@ -67,6 +67,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
       fieldProps: {
+        precision: 2,
         placeholder: ''
       },
       formItemProps: {

@@ -154,7 +154,7 @@ function Position({ style, parentPopup }: IProps) {
         align: 'left',
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
-          return <span className="!text-[13px] text-primary">{text}</span>
+          return <span className="!text-[13px] text-primary">{formatNum(text, { precision: 2 })}</span>
         }
       },
       {
