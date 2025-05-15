@@ -77,20 +77,28 @@ const TradingviewWrapper = ({ style }: IProps) => {
       const shouldForceUpdate = checkPageShowTime(1 * 60 * 1000)
       // console.log('页面回到前台')
       // setForceUpdateKey(shouldForceUpdate ? forceUpdateKey + 1 : forceUpdateKey)
-      setForceUpdateKey(forceUpdateKey + 1)
+      // setForceUpdateKey(forceUpdateKey + 1)
 
       // if (kline.tvWidget && !shouldForceUpdate) {
       //   kline.tvWidget.onChartReady(() => {
       //     kline.forceRefreshKlineData()
       //   })
       // }
+
+      if (kline.tvWidget) {
+        // 不需要重载k线实例
+        kline.tvWidget.onChartReady(() => {
+          kline.forceRefreshKlineData()
+        })
+      }
     },
     () => {
       // console.log('页面切换到后台')
       // STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
-      kline.destroyed()
-      // 清空ws的quotes
+      // kline.destroyed()
+      // 清空ws的quotes缓存，否则绘制有问题
       ws.quotes = new Map()
+      kline.lastbar = {}
     }
   )
 
@@ -104,7 +112,8 @@ const TradingviewWrapper = ({ style }: IProps) => {
         }
       >
         {/* 通过key强制刷新组件 */}
-        <TradingViewComp key={forceUpdateKey} />
+        {/* <TradingViewComp key={forceUpdateKey} /> */}
+        <TradingViewComp />
       </Suspense>
     </div>
   )
