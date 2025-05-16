@@ -113,7 +113,10 @@ class KlineStore {
       // const data = quotes.get(`${dataSourceCode}/${symbol}`)
       const accountGroupId = symbolInfo.accountGroupId
       const data = quotes.get(`${accountGroupId}/${symbol}`)
-      const klineList = toJS(data?.klineList || [])
+      // 追加当前行情的最新一条跟页面显示的保持一致
+      const klineList = [...toJS(data?.klineList || []), { id: data?.priceData?.id, price: data?.priceData?.buy }].filter(
+        (item) => item.price
+      )
       // 只更新当前激活的品种
       if (data && data.symbol === symbol && symbol === stores.trade.activeSymbolName) {
         const resolution = this.activeSymbolInfo.resolution
