@@ -1,0 +1,17 @@
+---
+description:
+globs: src/**/*.tsx
+alwaysApply: false
+---
+# React 组件开发规范
+
+- 优先使用函数组件和Hooks
+- 组件文件结构：
+  - 类型定义
+  - 常量声明
+  - 组件实现
+  - 样式定义
+- Props使用type定义类型
+- 使用React.memo优化渲染性能
+- 函数使用useCallback优化
+- 组件重复渲染使用useMemo优化
