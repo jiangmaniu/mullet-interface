@@ -75,7 +75,6 @@ class WSStore {
     if (!token) return
 
     this.initWorker(resolve)
-
     if (this.readyState !== 1) {
       // 向worker线程发送连接指令
       this.initConnectTimer = setTimeout(
@@ -101,8 +100,13 @@ class WSStore {
     this.sendWorkerMessage({
       type: 'CLOSE'
     })
+    this.closeWorker()
     if (this.initConnectTimer) clearTimeout(this.initConnectTimer)
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer)
+    this.resetData()
+  }
+
+  resetData = () => {
     // 清空行情缓存
     this.quotes = new Map()
     // 清空深度缓存
@@ -505,7 +509,6 @@ class WSStore {
   // 检查socket是否连接，如果未连接，则重新连接
   checkSocketReady = (fn?: () => void) => {
     if (this.readyState !== 1) {
-      // this.reconnect(fn)
       this.connect(fn)
     } else {
       fn?.()

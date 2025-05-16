@@ -24,7 +24,7 @@ const Item = ({
 }: {
   item: User.AccountItem
   currentAccountInfo: User.AccountItem
-  onClick: () => void
+  onClick: (e?: React.MouseEvent<HTMLDivElement>) => void
 }) => {
   const { cn, theme } = useTheme()
   const intl = useIntl()
@@ -138,7 +138,7 @@ const _AccoutList = ({
 }: IProps) => {
   const intl = useIntl()
   const { theme, cn } = useTheme()
-  const { trade } = useStores()
+  const { trade, ws } = useStores()
   const { initialState } = useModel('@@initialState')
   const { fetchUserInfo } = useModel('user')
   const currentUser = initialState?.currentUser
@@ -146,6 +146,10 @@ const _AccoutList = ({
   const currentAccountInfo = trade.currentAccountInfo
 
   const handlePress = (item: User.AccountItem) => {
+    if (item.id !== currentAccountInfo.id) {
+      // 切换账户组清空行情信息，每个账户组都不一样需要重置一遍
+      ws.resetData()
+    }
     if (onItem) {
       onItem(item)
       return

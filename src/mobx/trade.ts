@@ -456,6 +456,7 @@ class TradeStore {
   jumpTrade = () => {
     // 切换账户组关闭行情，重新连接，每个账户组行情不一样
     ws.close()
+    ws.initWorker()
     this.setSwitchAccountLoading(true)
 
     // 需要刷新k线，否则切换不同账号加载的品种不一样
@@ -1082,18 +1083,13 @@ class TradeStore {
       })
 
       // 获取品种后，动态订阅品种
-      if (ws.readyState === 1) {
-        // TODO: 这里需要优化，如果切换之后是持仓页面或交易页面，只需要订阅当前品种和持仓列表品种
-        setTimeout(() => {
-          ws.checkSocketReady(() => {
-            // 打开行情订阅
-            ws.openSymbol({
-              // 构建参数
-              symbols: ws.makeWsSymbolBySemi(this.symbolListAll)
-            })
-          })
-        }, 400)
-      }
+      ws.checkSocketReady(() => {
+        // 打开行情订阅
+        ws.openSymbol({
+          // 构建参数
+          symbols: ws.makeWsSymbolBySemi(this.symbolListAll)
+        })
+      })
 
       // 判断品种是否在假期内
       this.getSymbolIsHoliday()
@@ -1172,8 +1168,10 @@ class TradeStore {
         this.positionList = data
       })
 
-      // 动态订阅汇率品种行情, 初始化持仓列表时，不主动取消其他历史订阅
-      this.subscribePositionSymbol({ cover })
+      // h5 动态订阅汇率品种行情, 初始化持仓列表时，不主动取消其他历史订阅
+      if (!isPCByWidth()) {
+        this.subscribePositionSymbol({ cover })
+      }
     }
     return res
   }
@@ -1209,7 +1207,9 @@ class TradeStore {
       })
 
       // 动态订阅汇率品种行情, 初始化持仓列表时，不主动取消其他历史订阅
-      this.subscribePendingSymbol({ cover: false })
+      if (!isPCByWidth()) {
+        this.subscribePendingSymbol({ cover: false })
+      }
     }
   }
   // 查询止盈止损列表

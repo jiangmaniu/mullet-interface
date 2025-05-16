@@ -13,7 +13,7 @@ import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
-import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
+import { STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 
 import { checkPageShowTime } from '@/utils/business'
 import BuyAndSell from './comp/BuyAndSell'
@@ -89,12 +89,6 @@ export default observer(() => {
     }
 
     return () => {
-      // 取消订阅深度报价
-      ws.subscribeDepth(true)
-
-      // 关闭worker
-      ws.closeWorker?.()
-
       // 关闭ws连接
       ws.close()
     }
@@ -116,7 +110,7 @@ export default observer(() => {
 
       onSubscribeExchangeRateQuote()
 
-      // 避免k线多次刷新
+      // 避免多次刷新
       if (!checkPageShowTime()) return
 
       // ws没有返回token失效状态，需要查询一次用户信息，看当前登录态是否失效，避免长时间没有操作情况
@@ -129,11 +123,8 @@ export default observer(() => {
 
       // 关闭ws
       ws.close()
-      // 关闭worker
-      ws.closeWorker?.()
 
-      // 避免k线多次刷新
-      // if (!checkPageShowTime()) return
+      STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
     }
   )
 

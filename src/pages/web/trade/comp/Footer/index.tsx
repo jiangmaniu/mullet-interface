@@ -30,7 +30,7 @@ function Footer() {
 
   const handleRefresh = () => {
     // 行情重新建立新的连接
-    ws.reconnect()
+    ws.connect()
     // 重置tradingview实例
     kline.destroyed()
   }
