@@ -37,97 +37,114 @@ function HistoryPositionList() {
     }
   })
 
+  const handleScrollTable = (e: any) => {
+    const rootTableBody = document.querySelector('.ant-table-body')
+    const items = Array.from(document.querySelectorAll('.ant-table-content'))
+    // 拖动任意表格 联动多表格滚动条
+    items.forEach((item) => {
+      item.scrollLeft = e.target.scrollLeft
+    })
+
+    // 联动最外层表格滚动条
+    if (rootTableBody) {
+      rootTableBody.scrollLeft = e.target.scrollLeft
+    }
+  }
+
   return (
-    <StandardTable
-      columns={getColumns(currencyDecimal)}
-      // ghost
-      showOptionColumn={false}
-      stripe={false}
-      hasTableBordered
-      hideSearch
-      cardBordered={false}
-      bordered={false}
-      cardProps={{
-        bodyStyle: { padding: 0 },
-        headStyle: { borderRadius: 0 },
-        className: ''
-      }}
-      className={cn(recordListClassName, className)}
-      size="middle"
-      params={{ accountId: trade.currentAccountInfo.id, symbol }}
-      action={{
-        // @ts-ignore
-        query: (params) => getBgaOrderPage({ ...params, status: 'FINISH', orderByField: 'finishTime', orderBy: 'DESC' })
-      }}
-      pageSize={6}
-      expandable={{
-        columnWidth: 30,
-        expandedRowRender: (record) => (
-          <>
-            <StandardTable
-              columns={getExpandColumns()}
-              key={trade.currentAccountInfo.id}
-              ghost
-              showOptionColumn={false}
-              stripe={false}
-              hasTableBordered
-              hideSearch
-              cardBordered={false}
-              bordered={false}
-              className={recordListClassName}
-              cardProps={{
-                bodyStyle: { padding: 0 },
-                headStyle: { borderRadius: 0 },
-                className: ''
-              }}
-              pagination={false}
-              size="middle"
-              params={{ accountId: trade.currentAccountInfo.id, symbol }}
-              action={{
-                // @ts-ignore
-                query: (params) =>
-                  getOrderAllDetail({ id: record.id }).then((res) => {
-                    const info = res.data
-                    // 第二层：委托单
-                    const data = (info?.ordersInfo || []).map((item) => {
+    <div onScrollCapture={handleScrollTable}>
+      <StandardTable
+        columns={getColumns(currencyDecimal)}
+        // ghost
+        showOptionColumn={false}
+        stripe={false}
+        hasTableBordered
+        hideSearch
+        cardBordered={false}
+        bordered={false}
+        cardProps={{
+          bodyStyle: { padding: 0 },
+          headStyle: { borderRadius: 0 },
+          className: ''
+        }}
+        className={cn(recordListClassName, className)}
+        size="middle"
+        params={{ accountId: trade.currentAccountInfo.id, symbol }}
+        action={{
+          // @ts-ignore
+          query: (params) => getBgaOrderPage({ ...params, status: 'FINISH', orderByField: 'finishTime', orderBy: 'DESC' })
+        }}
+        pageSize={6}
+        expandable={{
+          // showExpandColumn: false,
+          expandRowByClick: true, // 点击行展开
+          expandedRowRender: (record) => (
+            <>
+              <StandardTable
+                columns={getExpandColumns()}
+                key={trade.currentAccountInfo.id}
+                ghost
+                showOptionColumn={false}
+                stripe={false}
+                hasTableBordered
+                hideSearch
+                cardBordered={false}
+                bordered={false}
+                className={recordListClassName}
+                cardProps={{
+                  bodyStyle: { padding: 0 },
+                  headStyle: { borderRadius: 0 },
+                  className: ''
+                }}
+                pagination={false}
+                size="small"
+                params={{ accountId: trade.currentAccountInfo.id, symbol }}
+                action={{
+                  // @ts-ignore
+                  query: (params) =>
+                    getOrderAllDetail({ id: record.id }).then((res) => {
+                      const info = res.data
+                      // 第二层：委托单
+                      const data = (info?.ordersInfo || []).map((item) => {
+                        return {
+                          ...item,
+                          row_key: item.id,
+                          row_type: 'order', // 弹窗类型标识
+                          direction: getEnum().Enum.TradeBuySell[item.buySell as string]?.text, // 交易方向
+                          price: item.limitPrice ? (
+                            formatNum(item.limitPrice, { precision: item.symbolDecimal || 2, isTruncateDecimal: false })
+                          ) : (
+                            <FormattedMessage id="mt.shijia" />
+                          ), // 委托单：请求价
+                          // 第三层：成交单
+                          children: (item.tradeRecordsInfo || []).map((v) => {
+                            return {
+                              ...v,
+                              direction: getEnum().Enum.OrderInOut[v.inOut as string]?.text, // 交易方向
+                              price: formatNum(v.inOut === 'IN' ? v.startPrice : v.tradePrice, {
+                                precision: item.symbolDecimal || 2,
+                                isTruncateDecimal: false
+                              }), // 成交单：成交价
+                              row_type: 'close', // 弹窗类型标识
+                              row_key: v.id
+                            }
+                          })
+                        }
+                      })
                       return {
-                        ...item,
-                        row_key: item.id,
-                        row_type: 'order', // 弹窗类型标识
-                        direction: getEnum().Enum.TradeBuySell[item.buySell as string]?.text, // 交易方向
-                        price: item.limitPrice ? (
-                          formatNum(item.limitPrice, { precision: item.symbolDecimal || 2, isTruncateDecimal: false })
-                        ) : (
-                          <FormattedMessage id="mt.shijia" />
-                        ), // 委托单：请求价
-                        // 第三层：成交单
-                        children: (item.tradeRecordsInfo || []).map((v) => {
-                          return {
-                            ...v,
-                            direction: getEnum().Enum.OrderInOut[v.inOut as string]?.text, // 交易方向
-                            price: formatNum(v.inOut === 'IN' ? v.startPrice : v.tradePrice, {
-                              precision: item.symbolDecimal || 2,
-                              isTruncateDecimal: false
-                            }), // 成交单：成交价
-                            row_type: 'close', // 弹窗类型标识
-                            row_key: v.id
-                          }
-                        })
+                        total: 1,
+                        data: removeEmptyChildren(data),
+                        success: true
                       }
                     })
-                    return {
-                      total: 1,
-                      data: removeEmptyChildren(data),
-                      success: true
-                    }
-                  })
-              }}
-            />
-          </>
-        )
-        // rowExpandable: (record) => record.symbol !== 'BTC'
-      }}
-    />
+                }}
+              />
+            </>
+          )
+          // rowExpandable: (record) => record.symbol !== 'BTC'
+        }}
+      />
+    </div>
   )
 }
 

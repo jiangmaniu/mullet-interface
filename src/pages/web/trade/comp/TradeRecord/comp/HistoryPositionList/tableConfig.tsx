@@ -51,7 +51,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
       title: <FormattedMessage id="mt.chicangdanhao" />,
       dataIndex: 'id',
       hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
+      ellipsis: true,
       copyable: false,
       fieldProps: {
         placeholder: ''
@@ -230,7 +230,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: isZh ? 120 : 140,
+      width: 120,
       renderText(text, record, index, action) {
         let profit: any = record.profit
         const flag = Number(profit) > 0
