@@ -75,7 +75,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
   usePageVisibility(
     () => {
       const shouldForceUpdate = checkPageShowTime(1 * 60 * 1000)
-      // console.log('页面回到前台')
+      console.log('Tradingview页面回到前台')
       // setForceUpdateKey(shouldForceUpdate ? forceUpdateKey + 1 : forceUpdateKey)
       // setForceUpdateKey(forceUpdateKey + 1)
 
@@ -93,7 +93,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
       }
     },
     () => {
-      // console.log('页面切换到后台')
+      console.log('Tradingview页面切换到后台')
       // STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
       // kline.destroyed()
       // 清空ws的quotes缓存，否则绘制有问题

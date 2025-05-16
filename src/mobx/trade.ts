@@ -454,6 +454,8 @@ class TradeStore {
 
   @action
   jumpTrade = () => {
+    // 切换账户组关闭行情，重新连接，每个账户组行情不一样
+    ws.close()
     this.setSwitchAccountLoading(true)
 
     // 需要刷新k线，否则切换不同账号加载的品种不一样
