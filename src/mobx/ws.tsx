@@ -65,6 +65,8 @@ class WSStore {
   toOpenSymbols = new Map<string, boolean>() // 即将打开的符号
   toCloseSymbols = new Map<string, boolean>() // 即将关闭的符号
 
+  @observable isConnectingDebounce = false // 是否正在创建连接，防抖
+
   // ========== 连接相关 start ==========
   @action
   async connect(resolve?: () => void) {
@@ -73,6 +75,11 @@ class WSStore {
     const userInfo = (await STORAGE_GET_USER_INFO()) as User.UserInfo
     const websocketUrl = ENV?.ws
     if (!token) return
+
+    if (this.isConnectingDebounce) return
+    this.isConnectingDebounce = true
+
+    console.log('connect')
 
     this.initWorker(resolve)
     if (this.readyState !== 1) {
@@ -137,6 +144,11 @@ class WSStore {
     this.worker = this.worker || new Worker(new URL('./ws.worker.ts', import.meta.url))
     this.worker.onmessage = (event: MessageEvent) => {
       this.handleWorkerMessage(event, resolve)
+
+      setTimeout(() => {
+        // 防止多次建立新的连接，确保刷新页面只有一次连接
+        this.isConnectingDebounce = false
+      }, 1000)
     }
   }
 
