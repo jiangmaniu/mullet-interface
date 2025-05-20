@@ -30,13 +30,19 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (_, ref) => {
 
   const [query] = useSearchParams()
   const registerType = query.get('registerType') as string
-  const registerWay = registerType ?? stores.global.registerWay
+  const userType = query.get('userType') as string
+  const oneWay = registerType || userType === '5'
+  const registerWay = oneWay ? registerType ?? stores.global.registerWay : ''
 
   /** 拦截系统返回操作 */
   const gobackHandler = () => {
-    navigateTo('/app/login', {
-      registerType: registerWay
-    })
+    const params = {} as any
+
+    if (oneWay) {
+      params.registerType = registerWay
+    }
+
+    navigateTo('/app/login', params)
     return true
   }
   // 将属性暴露给父元素

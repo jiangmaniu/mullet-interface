@@ -47,7 +47,10 @@ function Login() {
 
   const [query] = useSearchParams()
   const registerType = query.get('registerType') as string
+  const userType = query.get('userType') as string
   const registerWay = registerType ?? global.registerWay
+
+  const oneWay = registerType || userType === '5'
 
   const tabs = useMemo(
     () => [
@@ -59,7 +62,7 @@ function Login() {
           </span>
         )
       },
-      ...(registerType
+      ...(oneWay
         ? []
         : [
             {
@@ -72,7 +75,7 @@ function Login() {
             }
           ])
     ],
-    [registerType]
+    [oneWay]
   )
 
   const username = Form.useWatch('username', form)
@@ -446,7 +449,7 @@ function Login() {
     )
   }
 
-  registerType && useTitle(getIntl().formatMessage({ id: 'mt.denglu' }))
+  oneWay && useTitle(getIntl().formatMessage({ id: 'mt.denglu' }))
 
   return (
     <>
