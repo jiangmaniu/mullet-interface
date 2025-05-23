@@ -51,7 +51,7 @@ const TransferAmount = observer(({ form, methodInfo }: IProps) => {
           },
           suffix: <div className="text-primary text-sm !font-dingpro-medium">{currency}</div>
         }}
-        placeholder={tips}
+        placeholder="0.00"
         rules={[
           {
             required: true,

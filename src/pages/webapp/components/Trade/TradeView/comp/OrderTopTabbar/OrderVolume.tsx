@@ -88,7 +88,7 @@ function OrderVolume({ isFull }: IProps) {
               size="xs"
               key={item}
               containerClassName={cn('flex-1')}
-              height={24}
+              height={28}
               isDebounce={false}
               className={cn('p-0')}
               style={{

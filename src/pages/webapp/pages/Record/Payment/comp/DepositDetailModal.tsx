@@ -52,7 +52,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
                 <Iconfont name="rujin" color="gray" width={18} height={18} />
               </div>
               <div className="w-[100px]">
-                <div className="text-primary font-bold">
+                <div className="text-primary font-bold text-base">
                   <FormattedMessage id="mt.rujin" />
                 </div>
                 <div className="text-weak text-xs overflow-visible whitespace-nowrap text-nowrap">
@@ -80,7 +80,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
 
           <div className="flex flex-row items-end justify-start gap-7 mt-6 pb-4 border-b border-gray-100">
             <div className="flex flex-col gap-2">
-              <div className=" text-secondary text-xs font-normal">
+              <div className=" text-weak text-xs font-normal">
                 <FormattedMessage id="mt.dakuanwangluo" />
               </div>
               <div className="text-end text-sm font-medium flex-1 flex flex-row items-center justify-start flex-shrink gap-1">
@@ -99,7 +99,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
 
             <Iconfont name="go" width={20} color="black" height={20} />
             <div className="flex flex-col gap-2">
-              <div className=" text-secondary text-xs font-normal">
+              <div className=" text-weak text-xs font-normal">
                 <FormattedMessage id="mt.shoukuanzhanghu" />
               </div>
               <div className="flex text-sm font-bold flex-row items-center gap-1 overflow-hidden flex-1 ">
@@ -118,7 +118,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
               <div className="text-end text-xl font-medium flex-1">
                 {formatNum(item?.receiptAmount, { precision: 2 })} {item?.symbol}
               </div>
-              <span className=" text-xs text-secondary">
+              <span className=" text-xs text-weak">
                 <FormattedMessage id="mt.zhuanrujine" />
               </span>
             </div>
@@ -134,7 +134,7 @@ function DepositDetailModal({ item, onUpload }: IProps, ref: ForwardedRef<ModalR
                 </div>
               )} */}
               <div className="flex flex-row gap-2.5">
-                <span className=" text-xs text-secondary">
+                <span className=" text-xs text-weak">
                   <FormattedMessage id="mt.shouxufei" />
                 </span>
                 <span className=" text-xs text-primary">

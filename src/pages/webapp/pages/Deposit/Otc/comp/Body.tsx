@@ -121,7 +121,7 @@ const DepositOtc = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref)
       <div className="flex flex-col gap-1 items-center pt-6 pb-7">
         <Timer paymentInfo={paymentInfo} handleTimeout={handleTimeout} address={paymentInfo?.address || ''} />
         <div className="text-sm mt-3">
-          <span className=" text-secondary">
+          <span className=" text-weak">
             <FormattedMessage id="mt.cankaohuilv" />
           </span>
           &nbsp;

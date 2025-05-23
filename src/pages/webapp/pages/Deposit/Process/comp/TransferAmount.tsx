@@ -53,7 +53,7 @@ export default function TransferAmount({ form, methodInfo }: IProps) {
             console.log('e', e)
           }
         }}
-        placeholder={tips}
+        placeholder="0.00"
         rules={[
           {
             required: true,
