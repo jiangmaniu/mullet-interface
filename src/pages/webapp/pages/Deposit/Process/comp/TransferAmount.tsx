@@ -48,7 +48,7 @@ export default function TransferAmount({ form, methodInfo }: IProps) {
           style: {
             height: 52
           },
-          suffix: <div className="text-primary text-sm !font-bold">{currency}</div>,
+          suffix: <div className="text-primary text-sm font-bold">{currency}</div>,
           onChange: (e) => {
             console.log('e', e)
           }
