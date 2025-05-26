@@ -600,7 +600,7 @@ declare namespace Wallet {
     /**
      * 渠道ID
      */
-    channelId?: number
+    channelId: number
     /**
      * 支付通道编号
      */

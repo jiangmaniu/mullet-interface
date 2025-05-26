@@ -59,7 +59,7 @@ function TransferAmount({ form, currentUser, methodInfo, totalProfit }: IProps) 
         fieldProps={{
           className: 'extra-large',
           style: {
-            height: 50
+            height: 52
           },
           allowClear: false,
           suffix: (
