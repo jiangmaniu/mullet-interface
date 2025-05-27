@@ -6,12 +6,11 @@ import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePicker
 import Empty from '@/pages/webapp/components/Base/List/Empty'
 import End from '@/pages/webapp/components/Base/List/End'
 import GetMore from '@/pages/webapp/components/Base/List/GetMore'
-import { IlistItemProps } from '@/pages/webapp/components/Base/List/ListItem'
 import { ModalRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
-import FilterModal, { FilterModalRef } from '@/pages/webapp/components/settings/FilterModal'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { getTradeRecordsPage } from '@/services/api/tradeCore/order'
 import { formatNum } from '@/utils'
 import { PullToRefresh } from 'antd-mobile'
@@ -56,7 +55,6 @@ function HistoryClose() {
   const onEndReached = useCallback(() => {
     if (data.length < total) {
       setCurrent(current + 1)
-      getDatas()
     }
   }, [data.length, total])
 
@@ -64,8 +62,9 @@ function HistoryClose() {
     setData([])
     setTotal(0)
     setCurrent(1)
-    getDatas()
   }
+
+  useEffect(getDatas, [getDatas])
 
   useEffect(() => {
     if ((startTime && endTime) || (!startTime && !endTime)) {
@@ -178,26 +177,15 @@ function HistoryClose() {
   }
 
   // 过滤品种
-  const filterModalRef = useRef<FilterModalRef>(null)
-  const dateRangePickerRef = useRef<ModalRef>(null)
-  const [filterSymbol, setFilterSymbol] = useState<string>('') // 当前筛选项
-  const symbolActive = (title: string) => title === filterSymbol
-  const symbolClick = async (title: string) => {
-    title === filterSymbol ? setFilterSymbol('') : setFilterSymbol(title)
-    filterModalRef.current?.close()
-  }
-  const symbolFilters = useMemo(() => {
-    // 可选项列表
-    const uniqueSymbols = new Set(data.map((item) => item.symbol))
-    return Array.from(uniqueSymbols).map((i) => {
-      const title = i || ''
-      return {
-        title,
-        onPress: () => symbolClick(title),
-        active: symbolActive(title)
-      } as IlistItemProps
+  const filterSymbol = stores.search.getFilterSymbol()
+  const onSymbolFilter = () => {
+    navigateTo('/app/quote/search', {
+      filter: true,
+      redirect: '/app/position/record?tab=HistoryClose'
     })
-  }, [data, filterSymbol])
+  }
+
+  const dateRangePickerRef = useRef<ModalRef>(null)
 
   const datas = useMemo(() => {
     return data
@@ -218,9 +206,9 @@ function HistoryClose() {
       <View bgColor="primary" className={cn(' flex-1 rounded-t-3xl bg-white min-h-[90vh]')}>
         <View className={cn('flex flex-row justify-between items-center px-3 pt-[14px]')}>
           <View className={cn('flex flex-row items-center gap-2')}>
-            <View onPress={() => filterModalRef.current?.show()}>
-              <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px]')}>
-                <Text size="sm">{i18n.t('pages.position.Filter Symbol')}</Text>
+            <View onPress={onSymbolFilter}>
+              <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px] min-w-[80px]')}>
+                <Text size="sm">{filterSymbol ? filterSymbol : i18n.t('pages.position.Filter Symbol')}</Text>
                 <Iconfont name="zhanghu-gengduo" size={20} />
               </View>
             </View>
@@ -250,7 +238,7 @@ function HistoryClose() {
         </View>
         {datas.length > 0 ? (
           <VirtualList
-            itemKey="index"
+            itemKey="id"
             data={datas}
             extraRender={() => <View>{data.length < total ? <GetMore onClick={onEndReached} /> : <End />}</View>}
           >
@@ -261,7 +249,6 @@ function HistoryClose() {
             <Empty />
           </View>
         )}
-        <FilterModal key="symbol" ref={filterModalRef} data={symbolFilters} />
         <DateRangePickerSheetModal ref={dateRangePickerRef} onConfirm={onDateRangeConfirm} />
       </View>
     </PullToRefresh>

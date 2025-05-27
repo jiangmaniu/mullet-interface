@@ -1,5 +1,6 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { SOURCE_CURRENCY } from '@/constants'
+import { getEnum } from '@/constants/enum'
 import { stores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
@@ -53,7 +54,6 @@ function FundRecord() {
   const onEndReached = useCallback(() => {
     if (data.length < total) {
       setCurrent(current + 1)
-      getDatas()
     }
   }, [data.length, total])
 
@@ -61,8 +61,9 @@ function FundRecord() {
     setData([])
     setTotal(0)
     setCurrent(1)
-    getDatas()
   }
+
+  useEffect(getDatas, [getDatas])
 
   useEffect(() => {
     if ((startTime && endTime) || (!startTime && !endTime)) {
@@ -149,13 +150,15 @@ function FundRecord() {
     title === filterType ? setFilterType('') : setFilterType(title as API.MoneyType)
     filterModalRef2.current?.close()
   }
+
   const typeFilters = useMemo(() => {
     // 可选项列表
     const uniqueTypes = new Set(data.map((item) => item.type))
-    return Array.from(uniqueTypes).map((i) => {
-      const title = i || ''
+    // return Array.from(uniqueTypes).map((i) => {
+    return Object.entries(getEnum().Enum.CustomerBalanceRecordType).map(([key, value]) => {
+      const title = key || ''
       return {
-        title: i,
+        title: value.text,
         onPress: () => typeClick(title),
         active: typeActive(title)
       } as IlistItemProps
@@ -183,8 +186,10 @@ function FundRecord() {
         <View className={cn('flex flex-row justify-between items-center pt-[14px] ')}>
           <View className={cn('flex flex-row items-center gap-2')}>
             <View onPress={() => filterModalRef2.current?.show()}>
-              <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px]')}>
-                <Text size="sm">{i18n.t('pages.position.Filter Type')}</Text>
+              <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px] min-w-[80px]')}>
+                <Text size="sm">
+                  {filterType ? i18n.t(getEnum().Enum.CustomerBalanceRecordType?.[filterType]?.text) : i18n.t('pages.position.Filter Type')}
+                </Text>
                 <Iconfont name="zhanghu-gengduo" size={20} />
               </View>
             </View>
@@ -215,7 +220,7 @@ function FundRecord() {
         {datas.length > 0 ? (
           <View className={cn('pt-2')}>
             <VirtualList
-              itemKey="index"
+              itemKey="id"
               data={datas}
               extraRender={() => <View>{data.length < total ? <GetMore onClick={onEndReached} /> : <End />}</View>}
             >

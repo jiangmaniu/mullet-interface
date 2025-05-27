@@ -1,4 +1,5 @@
-import { useStores } from '@/context/mobxProvider'
+import Iconfont from '@/components/Base/Iconfont'
+import { stores, useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import Search from '@/pages/webapp/components/Base/Search'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -8,17 +9,30 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatSymbolList } from '@/utils/business'
+import { replace } from '@/utils/navigator'
+import { useLocation } from '@umijs/max'
 import { throttle } from 'lodash'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const SearchList = observer(({ keyword }: { keyword: string }) => {
-  const i18n = useI18n()
   const { cn, theme } = useTheme()
   const { trade } = useStores()
   const { symbolListAll } = trade
   const sectionRef = useRef<any>(null)
   const [currentLetterIndex, setCurrentLetterIndex] = useState<any>('')
+
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const isFilter = !!(params?.get('filter') ?? false)
+  const redirect = params?.get('redirect') ?? '/app/position/record'
+
+  const filterSymbol = stores.search.getFilterSymbol()
+  const symbolActive = (title: string) => isFilter && title === filterSymbol
+  const symbolClick = async (title: string) => {
+    stores.search.setFilterSymbol(title === filterSymbol ? '' : title)
+    replace(redirect)
+  }
 
   const getGroupData = (data: any) => {
     return formatSymbolList(data)
@@ -125,20 +139,34 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
               {item.data.map((symbol: any) => (
                 <View key={symbol} className="py-2">
                   <View
-                    className={cn('flex-row gap-x-3 items-center pl-4 pr-[100px]')}
+                    className={cn(' flex flex-row justify-between items-center pl-4 pr-[28px]')}
+                    style={{
+                      backgroundColor: symbolActive(symbol) ? '#efefef' : 'transparent'
+                    }}
                     onClick={() => {
-                      // 切换品种
-                      trade.switchSymbol(symbol)
-                      // 跳转到k线页面
-                      navigateTo('/app/quote/kline', {
-                        redirect: '/app/quote/search'
-                      })
+                      if (isFilter) {
+                        symbolClick(symbol)
+                      } else {
+                        // 切换品种
+                        trade.switchSymbol(symbol)
+                        // 跳转到k线页面
+                        navigateTo('/app/quote/kline', {
+                          redirect: '/app/quote/search'
+                        })
+                      }
                     }}
                   >
-                    <SymbolIcon src={getSymbolIcon(symbol)} />
-                    <Text size="sm" weight="medium" leading="xl">
-                      {symbol}
-                    </Text>
+                    <div className="flex flex-row gap-x-3 items-center">
+                      <SymbolIcon src={getSymbolIcon(symbol)} />
+                      <Text size="sm" weight="medium" leading="xl">
+                        {symbol}
+                      </Text>
+                    </div>
+                    {symbolActive(symbol) && (
+                      <View style={cn(' ml-2')}>
+                        <Iconfont name="danchuang-xuanzhong" size={26} />
+                      </View>
+                    )}
                   </View>
                 </View>
               ))}
@@ -204,6 +232,11 @@ function SymbolSearch() {
     }
   }
 
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const isFilter = params?.get('filter') ?? false
+  const redirect = params?.get('redirect') ?? '/app/position/record'
+
   return (
     <Basiclayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary} scrollY>
       <View className={cn('flex-row items-center gap-x-4 px-4 fixed top-0 w-full bg-white z-10')}>
@@ -220,7 +253,11 @@ function SymbolSearch() {
         </View>
         <View
           onPress={() => {
-            navigateTo('/app/quote')
+            if (isFilter) {
+              replace(redirect)
+            } else {
+              navigateTo('/app/quote')
+            }
           }}
         >
           <Text size="sm" color="secondary">
@@ -247,7 +284,7 @@ function SymbolSearch() {
                     key={idx}
                     onPress={() => {
                       // 点击搜索tag 存在品种列表才能跳转
-                      if (symbolListAll.some((v) => v.symbol === item)) {
+                      if (!isFilter && symbolListAll.some((v) => v.symbol === item)) {
                         // 切换品种
                         trade.switchSymbol(item)
                         navigateTo('/app/quote/kline', {
