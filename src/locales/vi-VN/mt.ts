@@ -822,5 +822,10 @@ export default {
   'mt.shangchuanzhaopianbuyaochaoguo': 'Không được vượt quá {value}',
   'mt.banbengengxin': 'Cập nhật phiên bản',
   'mt.banbengengxintips': 'Đã phát hiện phiên bản mới, vui lòng làm mới trang',
-  'mt.tixiantuihui': 'Hoàn trả rút tiền'
+  'mt.tixiantuihui': 'Hoàn trả rút tiền',
+  'mt.qiehuan': 'Chuyển đổi',
+  'mt.zidingyi': 'Tùy chỉnh',
+  'mt.sangeyue': '3 tháng',
+  'mt.liugeyue': '6 tháng',
+  'mt.jinzhichixuanzejinliugeyue': 'Chỉ hỗ trợ chọn 6 tháng gần nhất'
 }

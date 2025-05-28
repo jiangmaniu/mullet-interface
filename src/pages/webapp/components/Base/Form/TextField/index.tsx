@@ -123,6 +123,8 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
   const input = useRef<InputRef>(null)
   const [inputValue, setInputValue] = useState<any>('')
 
+  const { borderColor, ...$inputWrapperStyle } = $inputWrapperStyleOverride || {}
+
   const [isFocus, setFocus] = useState(false)
   const innerDisabled = disabled || status === 'disabled'
 
@@ -184,7 +186,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
         className={cn('flex flex-row items-center overflow-hidden h-full w-full border rounded-[8px]')}
         style={mergeCss(
           {
-            borderColor: isFocus ? theme.colors.Input.activeBorderColor : theme.colors.Input.borderColor,
+            borderColor: isFocus ? theme.colors.Input.activeBorderColor : borderColor || theme.colors.Input.borderColor,
             backgroundColor: theme.colors.Input.bgColor
           },
           status === 'error' ? { borderColor: theme.colors.red.DEFAULT } : {},
@@ -192,7 +194,7 @@ export const TextField = forwardRef((props: TextFieldProps, ref: Ref<InputRef | 
           // { paddingInlineEnd: RightAccessory ? 0 : 20 },
           { backgroundColor: innerDisabled ? theme.colors.Input.disabledBg : theme.colors.Input.bgColor },
           innerDisabled ? { borderWidth: 0 } : {},
-          { ...($inputWrapperStyleOverride || {}) }
+          { ...($inputWrapperStyle || {}) }
         )}
       >
         {!!LeftAccessory && (

@@ -826,5 +826,9 @@ export default {
   'mt.banbengengxin': '版本更新',
   'mt.banbengengxintips': '检测到有新版本发布,请刷新页面',
   'mt.tixiantuihui': '提现退回',
-  'mt.qiehuan': '切换'
+  'mt.qiehuan': '切换',
+  'mt.zidingyi': '自定义',
+  'mt.sangeyue': '3个月',
+  'mt.liugeyue': '6个月',
+  'mt.jinzhichixuanzejinliugeyue': '僅支持選擇最近6個月'
 }
