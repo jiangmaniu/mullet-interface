@@ -11,6 +11,7 @@ import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
+import { useSwitchSymbol } from '@/pages/webapp/hooks/useSwitchSymbol'
 import PricePercent from './PricePercent'
 
 type IProps = {
@@ -29,6 +30,7 @@ function QuoteItem({ item, popupRef }: IProps, ref: any) {
   const { trade, ws, kline } = useStores()
   const symbol = item.symbol
   const isActive = trade.activeSymbolName === symbol
+  const { switchSymbol } = useSwitchSymbol()
 
   const activeClassName = useEmotionCss(({ token }) => {
     return {
@@ -56,7 +58,7 @@ function QuoteItem({ item, popupRef }: IProps, ref: any) {
 
           startTransition(() => {
             // 切换品种
-            trade.switchSymbol(symbol)
+            switchSymbol(symbol)
 
             if (isMobileOrIpad) {
               popupRef.current?.close()

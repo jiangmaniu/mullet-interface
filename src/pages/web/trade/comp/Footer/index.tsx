@@ -9,6 +9,7 @@ import Marquee from 'react-fast-marquee'
 import SignalIcon from '@/components/Base/Svg/SignalIcon'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useSwitchSymbol } from '@/pages/webapp/hooks/useSwitchSymbol'
 import { cn } from '@/utils/cn'
 import { goKefu } from '@/utils/navigator'
 import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
@@ -19,6 +20,7 @@ function Footer() {
   const { isDark } = theme
   const networkState = useNetwork()
   const { ws, trade, kline } = useStores()
+  const { switchSymbol } = useSwitchSymbol()
   let readyState = ws.socket?.readyState || ws.readyState || 0
   const isOnline = networkState.online
   const [openTips, setOpenTips] = useState<any>(false)
@@ -145,7 +147,7 @@ function Footer() {
                   className="flex cursor-pointer items-center"
                   onClick={() => {
                     // 切换品种
-                    trade.switchSymbol(item.symbol)
+                    switchSymbol(item.symbol)
                   }}
                 >
                   <div className="text-wrap text-xs font-medium text-primary py-1">{item.alias}</div>

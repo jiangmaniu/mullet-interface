@@ -6,6 +6,7 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { useSwitchSymbol } from '@/pages/webapp/hooks/useSwitchSymbol'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatSymbolList } from '@/utils/business'
@@ -18,6 +19,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 const SearchList = observer(({ keyword }: { keyword: string }) => {
   const { cn, theme } = useTheme()
   const { trade } = useStores()
+  const { switchSymbol } = useSwitchSymbol()
   const { symbolListAll } = trade
   const sectionRef = useRef<any>(null)
   const [currentLetterIndex, setCurrentLetterIndex] = useState<any>('')
@@ -148,7 +150,7 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
                         symbolClick(symbol)
                       } else {
                         // 切换品种
-                        trade.switchSymbol(symbol)
+                        switchSymbol(symbol)
                         // 跳转到k线页面
                         navigateTo('/app/quote/kline', {
                           redirect: '/app/quote/search'
@@ -217,18 +219,15 @@ function SymbolSearch() {
   const { cn, theme } = useTheme()
   const [keyword, setKeyword] = useState('')
   const { trade } = useStores()
+  const { switchSymbol } = useSwitchSymbol()
   const { symbolListAll } = trade
 
   const { setHistorySearch, removeHistorySearch, historySearchList } = trade
 
-  const handleSearchChange = (value: string) => {
-    setKeyword(value)
-  }
-
-  const handleSearchEnd = () => {
+  const onEndEditing = (value: string | undefined) => {
     // 设置缓存
-    if (keyword) {
-      setHistorySearch(keyword)
+    if (value) {
+      setHistorySearch(value)
     }
   }
 
@@ -245,9 +244,13 @@ function SymbolSearch() {
             iconPosition="left"
             inputWrapperStyle={{ backgroundColor: theme.colors.gray[50] }}
             style={{ height: 40, borderWidth: 0, borderRadius: 8 }}
-            onChange={handleSearchChange}
-            onBlur={handleSearchEnd}
-            onEnterPress={handleSearchEnd}
+            onChange={setKeyword}
+            onBlur={() => {
+              onEndEditing(keyword)
+            }}
+            onEnterPress={() => {
+              onEndEditing(keyword)
+            }}
             value={keyword}
           />
         </View>
@@ -284,15 +287,15 @@ function SymbolSearch() {
                     key={idx}
                     onPress={() => {
                       // 点击搜索tag 存在品种列表才能跳转
+
+                      setKeyword(item)
+                      setHistorySearch(item)
                       if (!isFilter && symbolListAll.some((v) => v.symbol === item)) {
                         // 切换品种
-                        trade.switchSymbol(item)
+                        switchSymbol(item)
                         navigateTo('/app/quote/kline', {
                           redirect: '/app/quote/search'
                         })
-                      } else {
-                        handleSearchChange(item)
-                        setHistorySearch(item)
                       }
                     }}
                   >
