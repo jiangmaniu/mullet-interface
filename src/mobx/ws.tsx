@@ -189,9 +189,16 @@ class WSStore {
         this.receiveTradeMessage(data)
         break
       case 'MESSAGE_RES':
+        // 刷新消息未读数量
+        MessageStore.getUnreadMessageCount()
         // 更新消息通知
         const info = data as MessagePopupInfo
         const content = removeOrderMessageFieldNames(info?.content || '')
+        console.log('更新消息通知', info)
+
+        // 公告消息不弹窗
+        if (info?.type === 'GROUP') return
+
         if (isPCByWidth()) {
           if (location.pathname.indexOf('/trade') === -1) return
           notification.info({
@@ -284,8 +291,6 @@ class WSStore {
             maskClassName: 'webapp-custom-message animate__animated animate__bounceInDown'
           })
         }
-        // 刷新消息列表
-        MessageStore.getUnreadMessageCount()
         // console.log('消息通知', data)
         break
       // 同步计算的结果返回

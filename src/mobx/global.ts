@@ -53,7 +53,6 @@ export class GlobalStore {
   @observable messageList = [] as Message.MessageItem[] // 消息列表
   @observable messageCurrent = 1 // 消息列表页码
   @observable messageTotalCount = 1 // 总页码
-  @observable unReadCount = 0 // 未读消息数量
   @observable tabBarActiveKey: TabbarActiveKey = '/app/quote'
   @observable lastDeviceType: DeviceType = 'PC' // 设置最后一次切换pc、mobile端设备类型
   @observable lastPcJumpPathname = '' // 记录最后一次PC端跳转的路径-方便响应式变化恢复到之前的地址
@@ -210,15 +209,14 @@ export class GlobalStore {
 
   // 获取消息列表
   @action
-  getMessageList = async (isRefresh = false) => {
+  getMessageList = async (isRefresh = false, type?: 'GROUP' | 'SINGLE') => {
     const hasMore = !isRefresh && this.messageCurrent <= this.messageTotalCount
     if (hasMore) {
       this.messageCurrent += 1
     } else {
       this.messageCurrent = 1
     }
-
-    const res = await getMyMessageList({ size: 10, current: this.messageCurrent })
+    const res = await getMyMessageList({ size: 10, current: this.messageCurrent, type: type || 'SINGLE' })
     const list = (res.data?.records || []) as Message.MessageItem[]
 
     runInAction(() => {

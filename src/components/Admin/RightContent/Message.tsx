@@ -1,7 +1,7 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage } from '@umijs/max'
 import { Badge, Dropdown } from 'antd'
-import { observer } from 'mobx-react'
+import { observer, useLocalObservable } from 'mobx-react'
 import VirtualList from 'rc-virtual-list'
 
 import Empty from '@/components/Base/Empty'
@@ -13,7 +13,9 @@ import { getMyMessageInfo, readAllMessage } from '@/services/api/message'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
+import Tabs from '@/components/Base/Tabs'
 import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
+import { useState } from 'react'
 import { HeaderTheme } from '../Header/types'
 
 type IProps = {
@@ -21,12 +23,28 @@ type IProps = {
   theme?: HeaderTheme
 }
 
+type ITabKey = 'NOTICE' | 'ANNOUNCEMENT'
+
 function Message({ theme }: IProps) {
   const { global } = useStores()
   const { isMobileOrIpad } = useEnv()
   const themeConfig = useTheme()
   const isDark = themeConfig.theme.isDark
-  const { unReadCount, messageList } = global
+  const { messageList } = global
+  const [activeKey, setActiveKey] = useState<ITabKey>('NOTICE')
+  const messageStore = useLocalObservable(() => MessageStore)
+  const unReadCount = messageStore.unReadCount
+
+  const tabItems = [
+    {
+      key: 'NOTICE',
+      label: <FormattedMessage id="mt.zhanneixin" />
+    },
+    {
+      key: 'ANNOUNCEMENT',
+      label: <FormattedMessage id="mt.gonggao" />
+    }
+  ]
 
   const className = useEmotionCss(({ token }) => {
     return {
@@ -41,9 +59,14 @@ function Message({ theme }: IProps) {
     }
   })
 
+  const getMessage = (isRefresh?: boolean, key?: ITabKey) => {
+    const tabKey = key || activeKey
+    global.getMessageList(isRefresh, tabKey === 'NOTICE' ? 'SINGLE' : 'GROUP')
+  }
+
   const handleReadAll = async () => {
     await readAllMessage()
-    global.getMessageList(true)
+    getMessage(true)
     MessageStore.getUnreadMessageCount()
   }
 
@@ -65,7 +88,7 @@ function Message({ theme }: IProps) {
   const onScroll = (e: React.UIEvent<HTMLElement, UIEvent>) => {
     // Refer to: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#problems_and_solutions
     if (Math.abs(e.currentTarget.scrollHeight - e.currentTarget.scrollTop - ContainerHeight) <= 1) {
-      global.getMessageList()
+      getMessage(false)
     }
   }
 
@@ -74,12 +97,25 @@ function Message({ theme }: IProps) {
       dropdownRender={(originNode) => {
         return (
           <div className="bg-white w-[320px] rounded-xl dark:!shadow-none border shadow-sm dark:border-[--dropdown-border-color] border-[#f3f3f3] dark:bg-[--dropdown-bg]">
+            <Tabs
+              items={tabItems}
+              onChange={(key) => {
+                setActiveKey(key as ITabKey)
+                getMessage(true, key as ITabKey)
+              }}
+              tabBarGutter={46}
+              tabBarStyle={{ paddingLeft: 27 }}
+              size="small"
+              activeKey={activeKey}
+              marginBottom={0}
+            />
+
             {messageList.length > 0 ? (
               <>
                 <div className="flex items-center justify-between p-5">
-                  <span className="text-lg text-primary font-semibold">
-                    <FormattedMessage id="mt.zhanneixin" />
-                  </span>
+                  {/* <span className="text-lg text-primary font-semibold">
+                    {activeKey === 'NOTICE' ? <FormattedMessage id="mt.zhanneixin" /> : <FormattedMessage id="mt.gonggao" />}
+                  </span> */}
                   {/* <span
                 className="text-sm text-gray-550 cursor-pointer hover:text-gray"
                 onClick={() => {
@@ -156,7 +192,7 @@ function Message({ theme }: IProps) {
       }}
       onOpenChange={(open) => {
         if (open) {
-          global.getMessageList(true)
+          getMessage(true)
         }
       }}
       // align={{ offset: [0, -15] }}

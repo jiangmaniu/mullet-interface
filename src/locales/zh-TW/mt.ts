@@ -830,5 +830,6 @@ export default {
   'mt.zidingyi': '自定義',
   'mt.sangeyue': '3個月',
   'mt.liugeyue': '6個月',
-  'mt.jinzhichixuanzejinliugeyue': '僅支持選擇最近6個月'
+  'mt.jinzhichixuanzejinliugeyue': '僅支持選擇最近6個月',
+  'mt.gonggao': '公告'
 }
