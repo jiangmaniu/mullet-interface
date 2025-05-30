@@ -26,10 +26,7 @@ export default function WithdrawMethod({
 
   return (
     <div
-      className={cn(
-        'rounded-xl flex flex-col bg-white',
-        status !== 'locked' ? 'cursor-pointer hover:shadow-[0px_0px_12px_0px_rgba(0,0,0,0.1)]' : 'filter grayscale-50 opacity-50'
-      )}
+      className={cn('rounded-xl flex flex-col bg-white', status !== 'locked' ? 'cursor-pointer' : 'filter grayscale-50 opacity-50')}
       onClick={() => {
         if (status === 'unlocked') {
           push(appendHideParamIfNeeded(`/app/withdraw/process/${item.id}` + (tradeAccountId ? `?tradeAccountId=${tradeAccountId}` : '')))

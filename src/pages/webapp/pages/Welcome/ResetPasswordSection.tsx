@@ -108,9 +108,14 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         updatePassword()
-        navigateTo('/app/reset-success', {
-          registerType: registerWay
-        })
+
+        const params = {} as any
+
+        if (oneWay) {
+          params.registerType = registerWay
+        }
+
+        navigateTo('/app/reset-success', params)
         // setSection('login')
       }
       console.log('result', result)
@@ -133,7 +138,9 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
   const [query] = useSearchParams()
   const registerType = query.get('registerType') as string
+  const userType = query.get('userType') as string
   const registerWay = registerType ?? stores.global.registerWay
+  const oneWay = registerType || userType === '5'
 
   /** 表单控制 */
   const schema = z.object({

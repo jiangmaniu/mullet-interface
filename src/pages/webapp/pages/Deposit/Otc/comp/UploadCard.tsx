@@ -5,6 +5,7 @@ import { FormattedMessage } from '@umijs/max'
 import type { UploadProps } from 'antd'
 import { Image, Upload } from 'antd'
 
+import { useEnv } from '@/context/envProvider'
 import { useLoading } from '@/context/loadingProvider'
 import { getEnv } from '@/env'
 import { message } from '@/utils/message'
@@ -149,11 +150,18 @@ export default function ({ setImgs, imgs }: IProps) {
     }
   }, [messageHandler]) // 只有messageHandler作为依赖项，现在它是稳定的
 
+  const { isMobileOrIpad } = useEnv()
+
   return (
     <>
-      <Dragger {...props}>
+      <Dragger
+        {...props}
+        style={{
+          backgroundColor: 'white'
+        }}
+      >
         <div
-          className="flex items-center justify-center"
+          className="flex items-center justify-center "
           onClick={(e) => {
             // e.preventDefault()
             if (window?.ReactNativeWebView) {
@@ -167,9 +175,9 @@ export default function ({ setImgs, imgs }: IProps) {
             }
           }}
         >
-          <div className="flex flex-col items-center justify-center bg-cover  h-[235px]">
-            <img src="/img/upload-01.png" width={84} height={84} />
-            <span className="text-primary text-sm">
+          <div className="flex flex-col items-center justify-center bg-cover  h-[200px]">
+            <img src="/img/upload-01.png" width={72} height={72} />
+            <span className="text-primary text-sm font-medium">
               <FormattedMessage id="mt.dianjicichujinxinshangchuan" />
             </span>
           </div>
@@ -183,13 +191,15 @@ export default function ({ setImgs, imgs }: IProps) {
       </span>
       <div className="flex flex-row gap-[14px] mt-[15px]">
         {imgs.map((img, index) => (
-          <div className="w-[86px] h-[86px] bg-gray-120 rounded-lg relative img-preview" key={index}>
-            <Image src={`${getEnv().imgDomain}${img}`} width={86} height={86} />
+          <div className=" w-[102px] h-[102px] md:w-[86px] md:h-[86px] bg-gray-120 relative img-preview" key={index}>
+            <div className="w-full h-full overflow-hidden rounded-lg">
+              <Image src={`${getEnv().imgDomain}${img}`} width={isMobileOrIpad ? 102 : 86} height={isMobileOrIpad ? 102 : 86} />
+            </div>
             <div
               onClick={() => {
                 setImgs(imgs.filter((_, i) => i !== index))
               }}
-              className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] rounded-full cursor-pointer guanbi"
+              className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] rounded-full cursor-pointer guanbi z-10"
             >
               <img src="/img/shanchu.png" className="w-[24px] h-[24px]" />
             </div>

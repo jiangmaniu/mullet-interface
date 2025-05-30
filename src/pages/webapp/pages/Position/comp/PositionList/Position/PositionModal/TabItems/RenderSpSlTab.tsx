@@ -27,10 +27,10 @@ const RenderSpSlTab = forwardRef((props: IProps, ref: ForwardedRef<RenderTabRef>
     const msg = t('pages.trade.SpSl Set Error')
 
     try {
-      if (!stopLoss || !takeProfit) {
-        message.info(msg)
-        return
-      }
+      // if (!stopLoss || !takeProfit) {
+      //   message.info(msg)
+      //   return
+      // }
 
       const params = {
         bagOrderId: item?.id,

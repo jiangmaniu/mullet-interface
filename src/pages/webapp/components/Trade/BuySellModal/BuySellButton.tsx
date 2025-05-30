@@ -6,6 +6,7 @@ import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum } from '@/utils'
 import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
+import useQuote from '@/pages/webapp/hooks/trade/useQoute'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Button from '../../Base/Button'
 import { Text } from '../../Base/Text'
@@ -23,8 +24,10 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
   const { cn } = useTheme()
   const { trade } = useStores()
   const { t } = useI18n()
-  const { buySell, setBuySell, orderQuickPlaceOrderChecked } = trade
+  const { buySell, setBuySell, orderQuickPlaceOrderChecked, setOrderVolume } = trade
   const isShowModal = position === 'modal'
+
+  const { vmin } = useQuote() // 行情相关：价格、小数位、买卖方向
 
   const getCurrentQuote = useGetCurrentQuoteCallback()
   const quoteInfo = getCurrentQuote()
@@ -45,6 +48,7 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
         size="large"
         containerClassName={cn('flex-1')}
         onClick={() => {
+          setOrderVolume(vmin)
           setBuySell('SELL')
           setTimeout(() => {
             if (!orderQuickPlaceOrderChecked) {
@@ -73,6 +77,7 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
         size="large"
         containerClassName={cn('flex-1')}
         onClick={() => {
+          setOrderVolume(vmin)
           setBuySell('BUY')
           setTimeout(() => {
             if (!orderQuickPlaceOrderChecked) {

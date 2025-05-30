@@ -40,10 +40,12 @@ function CancelModal({ id, backUrl }: IProps, ref: ForwardedRef<ModalRef>) {
     }
   }
 
+  const Title: React.ReactNode = <span className="font-medium">{t('mt.quxiaodingdan')}</span>
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      title={t('mt.quxiaodingdan')}
+      // @ts-ignore
+      title={Title}
       autoHeight
       emotionClassName={{
         'div[data-rsbs-header]': {
@@ -73,9 +75,9 @@ function CancelModal({ id, backUrl }: IProps, ref: ForwardedRef<ModalRef>) {
           <img
             src="/img/quxiaodingdan.png"
             alt="quxiaodingdan"
-            style={{ width: 136, height: 136, margin: '0 auto', marginBottom: 30, marginTop: 26 }}
+            style={{ width: 136, height: 136, margin: '0 auto', marginBottom: 0, marginTop: 26 }}
           />
-          <div className="text-sm text-secondary pt-6 pb-9 text-center bg-white w-full">
+          <div className="text-sm text-secondary pt-6 pb-5 text-center bg-white w-full">
             <FormattedMessage id="mt.qingquebaoninbinweijinxingzhuanzhang" />
             <br />
             <FormattedMessage id="mt.duociquxiao" />

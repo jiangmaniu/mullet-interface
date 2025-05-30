@@ -47,7 +47,8 @@ export default function TransferToFormSelectItem({ form }: IProps) {
         fieldProps={{
           open,
           style: {
-            height: 44
+            height: 44,
+            borderRadius: 8
           },
           onDropdownVisibleChange: (visible) => setOpen(visible),
           suffixIcon: (

@@ -89,7 +89,7 @@ function WithdrawList() {
         </div>
         <div className="flex items-center bg-white flex-wrap gap-y-4 justify-betwee p-3 rounded-lg">
           <div className="flex flex-row-reverse justify-between w-full">
-            <div className="text-end text-base  md:text-xl font-bold ">
+            <div className="text-end text-base  md:text-xl font-pf-bold ">
               {formatNum(item.baseOrderAmount, { precision: 2 })} {item.baseCurrency}
             </div>
             <div className="flex flew-row items-center gap-3 text-start overflow-visible flex-shrink-0">

@@ -264,14 +264,14 @@ export const getEnum = () => {
       WITHDRAWAL: { text: intl.formatMessage({ id: 'mt.tixian' }) },
       MARGIN: { text: intl.formatMessage({ id: 'mt.baozhengjin' }) },
       PROFIT: { text: intl.formatMessage({ id: 'mt.yingkui' }) },
-      GIFT: { text: intl.formatMessage({ id: 'mt.zengjin' }) },
+      // GIFT: { text: intl.formatMessage({ id: 'mt.zengjin' }) },
       BALANCE: { text: intl.formatMessage({ id: 'mt.jieyu' }) },
       TRANSFER: { text: intl.formatMessage({ id: 'common.zhuanzhang' }) },
-      ZERO: { text: intl.formatMessage({ id: 'mt.guiling' }) },
-      FOLLOW_PROFIT: { text: intl.formatMessage({ id: 'common.gendanfenrun' }) },
+      // ZERO: { text: intl.formatMessage({ id: 'mt.guiling' }) },
+      // FOLLOW_PROFIT: { text: intl.formatMessage({ id: 'common.gendanfenrun' }) },
       HANDLING_FEES: { text: intl.formatMessage({ id: 'mt.shouxufei' }) },
-      INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) },
-      BACK: { text: intl.formatMessage({ id: 'mt.tixiantuihui' }) }
+      INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) }
+      // BACK: { text: intl.formatMessage({ id: 'mt.tixiantuihui' }) }
     },
     // 可用预付款
     UsableAdvanceCharge: {

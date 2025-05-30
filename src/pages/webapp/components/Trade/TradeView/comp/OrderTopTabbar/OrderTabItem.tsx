@@ -51,12 +51,13 @@ function OrderTabItem({ position }: IProps) {
   const depth = getCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
 
+  // fix-20250528：在切换品种，切换买卖的动作中执行，否则会出现买入手数无法编辑的问题
   // 切换品种、买卖重置内容
-  useEffect(() => {
-    if (Number(orderVolume) === vmin) return
-    console.log('OrderTabItem useEffect', vmin, typeof vmin)
-    setOrderVolume(vmin)
-  }, [orderVolume, vmin])
+  // useEffect(() => {
+  //   if (Number(orderVolume) === vmin) return
+  //   console.log('OrderTabItem useEffect', vmin, typeof vmin)
+  //   setOrderVolume(vmin)
+  // }, [orderVolume, vmin])
 
   useEffect(() => {
     !isMarketOrder && setOrderPrice(getInitPriceValue())

@@ -4,6 +4,8 @@ import Tabs from '@/pages/webapp/components/Base/Tabs'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
+import { push } from '@/utils/navigator'
+import { useLocation } from '@umijs/max'
 import { useMemo, useState } from 'react'
 import FundRecord from './comp/FundRecord'
 import HistoryClose from './comp/HistoryClose'
@@ -73,7 +75,12 @@ export default function HistoryRecordTopTabbar() {
     }
   ]
 
-  const [tabKey, setTabKey] = useState<'HistoryPending' | 'HistoryClose' | 'HistoryPosition' | 'FundRecord'>('HistoryPending')
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const _tabKey = params.get('tab') as 'HistoryPending' | 'HistoryClose' | 'HistoryPosition' | 'FundRecord'
+  console.log('🚀 ~ _tabKey:', _tabKey)
+
+  const [tabKey, setTabKey] = useState<'HistoryPending' | 'HistoryClose' | 'HistoryPosition' | 'FundRecord'>(_tabKey || 'HistoryPending')
 
   const onChange = (key: string) => {
     setTabKey(key as 'HistoryPending' | 'HistoryClose' | 'HistoryPosition' | 'FundRecord')
@@ -90,9 +97,18 @@ export default function HistoryRecordTopTabbar() {
           <Header
             style={{ paddingLeft: 14, paddingRight: 14, backgroundColor: theme.colors.backgroundColor.secondary }}
             title={i18n.t('app.pageTitle.HistoryRecord')}
-            back={true}
+            // back={true}
+            onBack={() => {
+              push('/app/position')
+            }}
           />
-          <Tabs stretch style={{ backgroundColor: theme.colors.backgroundColor.secondary }} items={items} onChange={onChange} />
+          <Tabs
+            stretch
+            style={{ backgroundColor: theme.colors.backgroundColor.secondary }}
+            items={items}
+            onChange={onChange}
+            defaultActiveKey={tabKey}
+          />
         </div>
       }
     >

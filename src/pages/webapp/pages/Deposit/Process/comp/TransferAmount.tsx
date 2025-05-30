@@ -46,9 +46,9 @@ export default function TransferAmount({ form, methodInfo }: IProps) {
           //   border: 'none'
           // }
           style: {
-            height: 50
+            height: 52
           },
-          suffix: <div className="text-primary text-sm !font-dingpro-medium">{currency}</div>,
+          suffix: <div className="text-primary text-sm font-bold">{currency}</div>,
           onChange: (e) => {
             console.log('e', e)
           }
@@ -83,14 +83,14 @@ export default function TransferAmount({ form, methodInfo }: IProps) {
 
       <div className="flex justify-between text-gray-500 text-xs mt-2">
         {/* <span>{methodInfo?.options?.limit?.desc}</span> */}
-        {amount && (
-          <div className="mt-[2px] text-xs">
-            <FormattedMessage id="mt.ninjiangzhifujine" /> &nbsp;
-            <span className="text-primary">
-              {amount ? depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem) : '0'} {methodInfo?.symbol}
-            </span>
-          </div>
-        )}
+
+        <div className="mt-[2px] text-xs">
+          <FormattedMessage id="mt.ninjiangzhifujine" /> &nbsp;
+          <span className="text-primary">
+            {amount ? depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem) : '0'} {methodInfo?.symbol}
+          </span>
+        </div>
+
         {/* <span>
           ≈ {depositTransferCurr(amount, methodInfo as Wallet.fundsMethodPageListItem)} {methodInfo?.symbol}
         </span> */}

@@ -223,11 +223,13 @@ class TradeStore {
   // 设置历史搜索记录
   @action
   setHistorySearch = (value: string) => {
-    this.historySearchList.unshift(value)
+    let newList = this.historySearchList.filter((item) => item !== value)
+    newList.unshift(value)
     // 只保留最新15条
-    if (this.historySearchList.length > 15) {
-      this.historySearchList = this.historySearchList.slice(0, 15)
+    if (newList.length > 15) {
+      newList = newList.slice(0, 15)
     }
+    this.historySearchList = newList
     STORAGE_SET_HISTORY_SEARCH(this.historySearchList)
   }
   // 清空搜索记录

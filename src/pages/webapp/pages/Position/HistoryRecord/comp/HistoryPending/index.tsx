@@ -15,6 +15,7 @@ import dayjs from 'dayjs'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import CoinHeader, { ISymbolItem } from '../../../comp/CoinHeader'
 
+import { getEnum } from '@/constants/enum'
 import DateRangePickerSheetModal from '@/pages/webapp/components/Base/DatePickerSheetModal/DateRangePickerSheetModal'
 import Empty from '@/pages/webapp/components/Base/List/Empty'
 import End from '@/pages/webapp/components/Base/List/End'
@@ -53,13 +54,12 @@ function HistoryPending() {
         setTotal(Number(res.data.total))
       }
     })
-  }, [current, size, stores.trade.currentAccountInfo?.id, stores.trade.showActiveSymbol, stores.trade.activeSymbolName])
+  }, [current, stores.trade.currentAccountInfo?.id, stores.trade.showActiveSymbol, stores.trade.activeSymbolName])
 
   // 加载更多
   const onEndReached = useCallback(() => {
     if (data.length < total) {
       setCurrent(current + 1)
-      getDatas()
     }
   }, [data.length, total])
 
@@ -67,8 +67,9 @@ function HistoryPending() {
     setData([])
     setTotal(0)
     setCurrent(1)
-    getDatas()
   }
+
+  useEffect(getDatas, [getDatas])
 
   useEffect(() => {
     if ((startTime && endTime) || (!startTime && !endTime)) {
@@ -185,8 +186,8 @@ function HistoryPending() {
               <View className={cn('flex flex-row items-center')}>
                 <Text size="sm" weight="medium">
                   {/* 状态 */}
-                  {item.status}
-                  {/* {i18n.t(`${Enums.OrderStatus?.[item.status!]?.key}`) || '-'} */}
+                  {/* {item.status} */}
+                  {getEnum().Enum.OrderStatus?.[item.status!]?.text || '-'}
                 </Text>
                 <Iconfont name="hangqing-xiaoanniu-gengduo" size={20} />
               </View>
@@ -202,25 +203,34 @@ function HistoryPending() {
   }
 
   // 过滤品种
-  const filterModalRef = useRef<FilterModalRef>(null)
-  const [filterSymbol, setFilterSymbol] = useState<string>('') // 当前筛选项
-  const symbolActive = (title: string) => title === filterSymbol
-  const symbolClick = async (title: string) => {
-    title === filterSymbol ? setFilterSymbol('') : setFilterSymbol(title)
-    filterModalRef.current?.close()
-  }
-  const symbolFilters = useMemo(() => {
-    // 可选项列表
-    const uniqueSymbols = new Set(data.map((item) => item.symbol))
-    return Array.from(uniqueSymbols).map((i) => {
-      const title = i || ''
-      return {
-        title,
-        onPress: () => symbolClick(title),
-        active: symbolActive(title)
-      } as IlistItemProps
+  // const filterModalRef = useRef<FilterModalRef>(null)
+  // const [filterSymbol, setFilterSymbol] = useState<string>('') // 当前筛选项
+  // const symbolActive = (title: string) => title === filterSymbol
+  // const symbolClick = async (title: string) => {
+  //   title === filterSymbol ? setFilterSymbol('') : setFilterSymbol(title)
+  //   filterModalRef.current?.close()
+  // }
+  // const symbolFilters = useMemo(() => {
+  //   // 可选项列表
+  //   const uniqueSymbols = new Set(data.map((item) => item.symbol))
+  //   return Array.from(uniqueSymbols).map((i) => {
+  //     const title = i || ''
+  //     return {
+  //       title,
+  //       onPress: () => symbolClick(title),
+  //       active: symbolActive(title)
+  //     } as IlistItemProps
+  //   })
+  // }, [data, filterSymbol])
+
+  // 过滤品种
+  const filterSymbol = stores.search.getFilterSymbol()
+  const onSymbolFilter = () => {
+    navigateTo('/app/quote/search', {
+      filter: true,
+      redirect: '/app/position/record?tab=HistoryPending'
     })
-  }, [data, filterSymbol])
+  }
 
   // 过滤类型
   const filterModalRef2 = useRef<FilterModalRef>(null)
@@ -233,12 +243,13 @@ function HistoryPending() {
   const typeFilters = useMemo(() => {
     // 可选项列表
     const uniqueTypes = new Set(data.map((item) => item.status))
-    return Array.from(uniqueTypes).map((i) => {
-      const title = i || ''
+    // return Array.from(uniqueTypes).map((i) => {
+    return Object.entries(getEnum().Enum.OrderStatus).map(([key, value]) => {
+      const title = key || ''
       return {
-        title: i,
-        onPress: () => typeClick(title),
-        active: typeActive(title)
+        title: value.text,
+        onPress: () => typeClick(key as API.OrderStatus | ''),
+        active: typeActive(key as API.OrderStatus | '')
       } as IlistItemProps
     })
   }, [data, filterType])
@@ -264,15 +275,17 @@ function HistoryPending() {
       <View bgColor="primary" className={cn('flex-1 rounded-t-3xl bg-white min-h-[90vh]')}>
         <View className={cn('flex flex-row justify-between items-center px-3 pt-[14px]')}>
           <View className={cn('flex flex-row items-center gap-2')}>
-            <View onPress={() => filterModalRef.current?.show()}>
-              <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px]')}>
-                <Text size="sm">{i18n.t('pages.position.Filter Symbol')}</Text>
+            <View onPress={onSymbolFilter}>
+              <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px] min-w-[80px]')}>
+                <Text size="sm">{filterSymbol ? filterSymbol : i18n.t('pages.position.Filter Symbol')}</Text>
                 <Iconfont name="zhanghu-gengduo" size={20} />
               </View>
             </View>
             <View onPress={() => filterModalRef2.current?.show()}>
               <View bgColor="secondary" className={cn('flex flex-row items-center justify-center rounded-md p-[4px]')}>
-                <Text size="sm">{i18n.t('pages.position.Filter Type')}</Text>
+                <Text size="sm">
+                  {filterType ? i18n.t(getEnum().Enum.OrderStatus?.[filterType]?.text) : i18n.t('pages.position.Filter Type')}
+                </Text>
                 <Iconfont name="zhanghu-gengduo" size={20} />
               </View>
             </View>
@@ -302,7 +315,7 @@ function HistoryPending() {
 
         {datas.length > 0 ? (
           <VirtualList
-            itemKey="index"
+            itemKey="id"
             data={datas}
             extraRender={() => <View>{data.length < total ? <GetMore onClick={onEndReached} /> : <End />}</View>}
           >
@@ -314,7 +327,6 @@ function HistoryPending() {
           </View>
         )}
 
-        <FilterModal key="symbol" ref={filterModalRef} data={symbolFilters} />
         <FilterModal key="type" ref={filterModalRef2} data={typeFilters} />
         <DateRangePickerSheetModal ref={dateRangePickerRef} onConfirm={onDateRangeConfirm} />
       </View>

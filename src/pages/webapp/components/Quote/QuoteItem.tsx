@@ -10,6 +10,7 @@ import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import { useInViewport } from 'ahooks'
 import useQuoteColor from '../../hooks/useQuoteColor'
+import { useSwitchSymbol } from '../../hooks/useSwitchSymbol'
 import { navigateTo } from '../../utils/navigator'
 import { Text } from '../Base/Text'
 import { View } from '../Base/View'
@@ -28,6 +29,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
   const { cn, theme } = useTheme()
   const { up: upColor, down: downColor, isDark } = theme
   const { trade, ws } = useStores()
+  const { switchSymbol } = useSwitchSymbol()
   const symbol = item?.symbol
   const itemRef = useRef<HTMLDivElement>(null)
   const [inViewport] = useInViewport(itemRef)
@@ -46,7 +48,7 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
 
   const handleJump = () => {
     // 1. 切换品种
-    trade.switchSymbol(symbol)
+    switchSymbol(symbol)
 
     // 2. 订阅当前选中及持仓列表品种的行情
     trade.subscribeCurrentAndPositionSymbol({ cover: true })

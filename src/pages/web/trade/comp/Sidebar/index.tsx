@@ -19,6 +19,7 @@ import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
 import { getEnv } from '@/env'
+import { useSwitchSymbol } from '@/pages/webapp/hooks/useSwitchSymbol'
 import CategoryTabs from './comp/CategoryTab'
 import QuoteItem from './comp/QuoteItem'
 
@@ -31,6 +32,7 @@ type IProps = {
 const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const ENV = getEnv()
   const { global, trade } = useStores()
+  const { switchSymbol } = useSwitchSymbol()
   const { isMobileOrIpad, breakPoint, screenSize } = useEnv()
   const intl = useIntl()
   const [searchValue, setSearchValue] = useState('')
@@ -373,7 +375,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
                       })}
                       onClick={() => {
                         // 切换品种
-                        trade.switchSymbol(symbol)
+                        switchSymbol(symbol)
                       }}
                     >
                       <SymbolIcon src={item?.imgUrl} width={28} height={28} symbol={symbol} showMarketCloseIcon />

@@ -91,9 +91,9 @@ export default () => {
 
   return (
     <Basiclayout
-      bgColor="secondary"
+      // bgColor="secondary"
       headerColor={theme.colors.backgroundColor.secondary}
-      footerStyle={{ background: theme.colors.backgroundColor.secondary, marginBottom: 20 }}
+      footerStyle={{ paddingBottom: 20, width: '100%' }}
       footer={
         <div>
           {/* @TODO 客服接入 */}

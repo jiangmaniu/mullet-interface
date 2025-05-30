@@ -78,9 +78,9 @@ function UploadModal(props: IProps, ref: ForwardedRef<ModalRef>) {
       ref={bottomSheetModalRef}
       header={
         <div className="w-full relative">
-          <div className={cn('leading-7 text-center font-pf-bold text-lg text-primary')}>{t('mt.shangchuanpinzheng')}</div>
+          <div className={cn('leading-7 text-center font-medium text-lg text-primary')}>{t('mt.shangchuanpinzheng')}</div>
 
-          <span className="text-blue text-sm font-normal underline cursor-pointer absolute right-4 top-1" onClick={() => setVisible(true)}>
+          <span className="text-blue text-base font-normal cursor-pointer absolute right-4 top-1" onClick={() => setVisible(true)}>
             <FormattedMessage id="mt.chukanshili" />
           </span>
         </div>

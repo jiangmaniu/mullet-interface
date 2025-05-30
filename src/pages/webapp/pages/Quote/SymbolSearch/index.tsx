@@ -1,24 +1,40 @@
-import { useStores } from '@/context/mobxProvider'
+import Iconfont from '@/components/Base/Iconfont'
+import { stores, useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import Search from '@/pages/webapp/components/Base/Search'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
+import { useSwitchSymbol } from '@/pages/webapp/hooks/useSwitchSymbol'
 import Basiclayout from '@/pages/webapp/layouts/BasicLayout'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatSymbolList } from '@/utils/business'
-import { debounce, throttle } from 'lodash'
+import { replace } from '@/utils/navigator'
+import { useLocation } from '@umijs/max'
+import { throttle } from 'lodash'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const SearchList = observer(({ keyword }: { keyword: string }) => {
-  const i18n = useI18n()
   const { cn, theme } = useTheme()
   const { trade } = useStores()
+  const { switchSymbol } = useSwitchSymbol()
   const { symbolListAll } = trade
   const sectionRef = useRef<any>(null)
   const [currentLetterIndex, setCurrentLetterIndex] = useState<any>('')
+
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const isFilter = !!(params?.get('filter') ?? false)
+  const redirect = params?.get('redirect') ?? '/app/position/record'
+
+  const filterSymbol = stores.search.getFilterSymbol()
+  const symbolActive = (title: string) => isFilter && title === filterSymbol
+  const symbolClick = async (title: string) => {
+    stores.search.setFilterSymbol(title === filterSymbol ? '' : title)
+    replace(redirect)
+  }
 
   const getGroupData = (data: any) => {
     return formatSymbolList(data)
@@ -104,8 +120,10 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
     }
   }, [list.length]) // 依赖list长度变化重新添加监听
 
+  const { historySearchList } = trade
+
   return (
-    <div ref={containerRef} className={cn('flex-1 relative mt-[70px] pb-8')}>
+    <div ref={containerRef} className={cn('flex-1 relative pb-8 mt-[70px]', { 'mt-[25px]': historySearchList.length > 0 })}>
       {/* <View style={cn('my-3 ml-2')}>
         <Text size="base" color="primary" weight="medium">
           {t('pages.quote.Symbol List')}
@@ -123,20 +141,34 @@ const SearchList = observer(({ keyword }: { keyword: string }) => {
               {item.data.map((symbol: any) => (
                 <View key={symbol} className="py-2">
                   <View
-                    className={cn('flex-row gap-x-3 items-center pl-4 pr-[100px]')}
+                    className={cn(' flex flex-row justify-between items-center pl-4 pr-[28px]')}
+                    style={{
+                      backgroundColor: symbolActive(symbol) ? '#efefef' : 'transparent'
+                    }}
                     onClick={() => {
-                      // 切换品种
-                      trade.switchSymbol(symbol)
-                      // 跳转到k线页面
-                      navigateTo('/app/quote/kline', {
-                        redirect: '/app/quote/search'
-                      })
+                      if (isFilter) {
+                        symbolClick(symbol)
+                      } else {
+                        // 切换品种
+                        switchSymbol(symbol)
+                        // 跳转到k线页面
+                        navigateTo('/app/quote/kline', {
+                          redirect: '/app/quote/search'
+                        })
+                      }
                     }}
                   >
-                    <SymbolIcon src={getSymbolIcon(symbol)} />
-                    <Text size="sm" weight="medium" leading="xl">
-                      {symbol}
-                    </Text>
+                    <div className="flex flex-row gap-x-3 items-center">
+                      <SymbolIcon src={getSymbolIcon(symbol)} />
+                      <Text size="sm" weight="medium" leading="xl">
+                        {symbol}
+                      </Text>
+                    </div>
+                    {symbolActive(symbol) && (
+                      <View style={cn(' ml-2')}>
+                        <Iconfont name="danchuang-xuanzhong" size={26} />
+                      </View>
+                    )}
                   </View>
                 </View>
               ))}
@@ -187,16 +219,22 @@ function SymbolSearch() {
   const { cn, theme } = useTheme()
   const [keyword, setKeyword] = useState('')
   const { trade } = useStores()
+  const { switchSymbol } = useSwitchSymbol()
   const { symbolListAll } = trade
 
-  const handleSearchChange = debounce((value: string) => {
-    console.log('handleSearchChange', value)
-    setKeyword(value)
+  const { setHistorySearch, removeHistorySearch, historySearchList } = trade
+
+  const onEndEditing = (value: string | undefined) => {
     // 设置缓存
-    // if (value) {
-    //   setHistorySearch(value)
-    // }
-  }, 500)
+    if (value) {
+      setHistorySearch(value)
+    }
+  }
+
+  const location = useLocation()
+  const params = new URLSearchParams(location.search)
+  const isFilter = params?.get('filter') ?? false
+  const redirect = params?.get('redirect') ?? '/app/position/record'
 
   return (
     <Basiclayout bgColor="primary" headerColor={theme.colors.backgroundColor.primary} scrollY>
@@ -206,12 +244,23 @@ function SymbolSearch() {
             iconPosition="left"
             inputWrapperStyle={{ backgroundColor: theme.colors.gray[50] }}
             style={{ height: 40, borderWidth: 0, borderRadius: 8 }}
-            onChange={handleSearchChange}
+            onChange={setKeyword}
+            onBlur={() => {
+              onEndEditing(keyword)
+            }}
+            onEnterPress={() => {
+              onEndEditing(keyword)
+            }}
+            value={keyword}
           />
         </View>
         <View
           onPress={() => {
-            navigateTo('/app/quote')
+            if (isFilter) {
+              replace(redirect)
+            } else {
+              navigateTo('/app/quote')
+            }
           }}
         >
           <Text size="sm" color="secondary">
@@ -220,44 +269,51 @@ function SymbolSearch() {
         </View>
       </View>
       {/* @TODO 暂时不做 切换不同账户组 搜索的品种可能不存在 导致点击品种导航有问题 */}
-      {/* <View className={cn('mx-4')}>
+      <View className={cn('mx-4')}>
         {historySearchList.length > 0 && (
           <>
-            <View className={cn('flex-row mt-7 items-center justify-between')}>
+            <View className={cn('flex-row mt-[64px] items-center justify-between')}>
               <Text weight="medium" size="base">
                 {t('pages.quote.History Search')}
               </Text>
-              <LinkPressable onPress={removeHistorySearch}>
+              <View onPress={removeHistorySearch}>
                 <img src={'/img/webapp/clear-search-history.png'} style={{ width: 20, height: 20 }} />
-              </LinkPressable>
+              </View>
             </View>
             <View className={cn('mb-7 mt-5 items-start flex-row gap-3 flex-wrap')}>
               {historySearchList.slice(0, 10).map((item, idx) => {
                 return (
-                  <LinkPressable
+                  <View
                     key={idx}
                     onPress={() => {
                       // 点击搜索tag 存在品种列表才能跳转
-                      if (symbolListAll.some((v) => v.symbol === item)) {
-                        navigation.navigate('KLine')
+
+                      setKeyword(item)
+                      setHistorySearch(item)
+                      if (!isFilter && symbolListAll.some((v) => v.symbol === item)) {
+                        // 切换品种
+                        switchSymbol(item)
+                        navigateTo('/app/quote/kline', {
+                          redirect: '/app/quote/search'
+                        })
                       }
                     }}
                   >
                     <View
-                      className={cn('rounded min-w-[60px] px-3 py-1 items-center justify-center', )}
+                      className={cn('rounded min-w-[60px] px-3 py-1 items-center justify-center')}
                       style={{ backgroundColor: theme.colors.gray[50] }}
                     >
                       <Text size="base" color="primary">
                         {item}
                       </Text>
                     </View>
-                  </LinkPressable>
+                  </View>
                 )
               })}
             </View>
           </>
         )}
-      </View> */}
+      </View>
       {/* 搜索列表 */}
       <SearchList keyword={keyword} />
     </Basiclayout>

@@ -1,7 +1,7 @@
 /* eslint-disable simple-import-sort/imports */
 import { LoginForm, ProFormText } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
+import { FormattedMessage, getIntl, useIntl, useModel, useSearchParams } from '@umijs/max'
 import { Form } from 'antd'
 import classNames from 'classnames'
 import { md5 } from 'js-md5'
@@ -25,6 +25,7 @@ import { PrivacyPolicyService } from '@/pages/webapp/pages/Welcome/RegisterSecti
 import { regEmail, regPassword } from '@/utils'
 import { validateNonEmptyFields } from '@/utils/form'
 import { message } from '@/utils/message'
+import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import RegisterValidateCode, { IValidateCodeType } from '../comp/RegisterValidateCode'
 
@@ -46,7 +47,9 @@ function Login() {
 
   const [query] = useSearchParams()
   const registerType = query.get('registerType') as string
+  const userType = query.get('userType') as string
   const registerWay = registerType ?? global.registerWay
+  const oneWay = registerType || userType === '5'
 
   useEffect(() => {
     const activeKey = query.get('activeKey') as string
@@ -65,7 +68,7 @@ function Login() {
           </span>
         )
       },
-      ...(registerType
+      ...(oneWay
         ? []
         : [
             {
@@ -78,7 +81,7 @@ function Login() {
             }
           ])
     ],
-    [registerType]
+    [oneWay]
   )
 
   const username = Form.useWatch('username', form)
@@ -451,6 +454,8 @@ function Login() {
       </div>
     )
   }
+
+  oneWay && useTitle(getIntl().formatMessage({ id: 'mt.denglu' }))
 
   return (
     <>

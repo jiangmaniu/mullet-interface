@@ -30,7 +30,8 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
     tradeAccountId,
     channelNo,
     userName,
-    channelNoValue
+    channelNoValue,
+    baseHandlingFee
   } = paymentInfo || {}
 
   const otcType = useMemo(() => {
@@ -136,10 +137,10 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
             }
           ]
         : []),
-      // {
-      //   label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
-      //   value: `${formatNum(handlingFee, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${baseCurrency}`
-      // },
+      {
+        label: getIntl().formatMessage({ id: 'mt.shouxufei' }),
+        value: `${formatNum(baseHandlingFee, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} ${baseCurrency}`
+      },
       ...(paymentType === 'CHAIN'
         ? [
             {
@@ -216,7 +217,7 @@ const Step2 = ({ paymentInfo }: { paymentInfo?: Wallet.GenerateDepositOrderDetai
               {options
                 .filter((item) => item.value)
                 .map((item, index) => (
-                  <div key={index} className="text-secondary text-sm flex flex-row items-center justify-between gap-4">
+                  <div key={index} className="text-secondary text-[15px] leading-[18px] flex flex-row items-center justify-between gap-4">
                     <span className="flex-shrink-0">{item.label}</span>
                     {/* <div className="flex-1 overflow-hidden flex-grow w-full h-1 border-dashed border-b border-gray-250"></div> */}
                     {item.render ? item.render() : <span className="flex-shrink-0 font-medium text-primary">{item.value}</span>}

@@ -163,9 +163,11 @@ export default function WelcomeScreen() {
 
   const [query] = useSearchParams()
   const registerType = query.get('registerType') as string
+  const userType = query.get('userType') as string
+  const oneWay = registerType || userType === '5'
 
   const footers = {
-    login: getEnv().REGISTER_MODULE && !registerType && <Footer setSection={setSection} />,
+    login: getEnv().REGISTER_MODULE && !oneWay && <Footer setSection={setSection} />,
     forgotPassword: <FooterForgotPassword handleSubmit={handleSubmit} disabled={disabled} />,
     resetPassword: <FooterResetPassword handleSubmit={handleSubmit} disabled={disabled} />
   }

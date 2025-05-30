@@ -66,6 +66,7 @@ export default function useQuote() {
   // const orderVolume = useMemo(() => orderVolumeRMI || trade.orderVolume, [orderVolumeRMI, trade.orderVolume])
 
   const orderVolume = useMemo(() => {
+    console.log('orderVolume', orderVolumeT, orderVolumeRMI)
     if (orderVolumeT) {
       return orderVolumeT
     }

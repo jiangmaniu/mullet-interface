@@ -830,5 +830,10 @@ export default {
   'mt.shangchuanzhaopianbuyaochaoguo': 'Upload images cannot exceed {value}',
   'mt.banbengengxin': 'Version Update',
   'mt.banbengengxintips': 'A new version has been detected, please refresh the page',
-  'mt.tixiantuihui': 'Withdrawal Return'
+  'mt.tixiantuihui': 'Withdrawal Return',
+  'mt.qiehuan': 'Switch',
+  'mt.zidingyi': 'Custom',
+  'mt.sangeyue': '3 Months',
+  'mt.liugeyue': '6 Months',
+  'mt.jinzhichixuanzejinliugeyue': 'Only supports selecting the last 6 months'
 }

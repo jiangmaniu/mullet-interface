@@ -46,7 +46,7 @@ function WithdrawPreview() {
           className="bg-secondary"
           onBack={() => navigateTo(backUrl || '/app/deposit')}
           right={
-            <div className="flex-1 text-sm flex flex-row justify-end gap-1.5 pr-[2px]" onClick={goKefu}>
+            <div className="flex-1 text-sm font-medium flex flex-row justify-end gap-1.5 pr-[2px]" onClick={goKefu}>
               <Iconfont name="chat" width={20} height={20} />
               <FormattedMessage id="mt.lianxikefu" />
             </div>
