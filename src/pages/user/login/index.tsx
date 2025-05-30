@@ -48,6 +48,13 @@ function Login() {
   const registerType = query.get('registerType') as string
   const registerWay = registerType ?? global.registerWay
 
+  useEffect(() => {
+    const activeKey = query.get('activeKey') as string
+    if (activeKey) {
+      setTabActiveKey(activeKey as ITabType)
+    }
+  }, [query])
+
   const tabs = useMemo(
     () => [
       {
