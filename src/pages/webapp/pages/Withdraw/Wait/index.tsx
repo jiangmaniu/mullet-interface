@@ -62,7 +62,7 @@ function WithdrawPreview() {
             size="large"
             className=" w-[88px] text-center"
             onClick={() => {
-              replace(appendHideParamIfNeeded(`/app/record/payment?type=RUJIN`))
+              replace(appendHideParamIfNeeded(`/app/record/payment?type=CHUJIN`))
             }}
           >
             {getIntl().formatMessage({ id: 'mt.chakandingdan' })}

@@ -835,5 +835,6 @@ export default {
   'mt.zidingyi': 'Custom',
   'mt.sangeyue': '3 Months',
   'mt.liugeyue': '6 Months',
-  'mt.jinzhichixuanzejinliugeyue': 'Only supports selecting the last 6 months'
+  'mt.jinzhichixuanzejinliugeyue': 'Only supports selecting the last 6 months',
+  'mt.authorizing': 'Authorizing'
 }
