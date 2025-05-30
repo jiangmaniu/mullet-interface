@@ -827,5 +827,6 @@ export default {
   'mt.zidingyi': 'Tùy chỉnh',
   'mt.sangeyue': '3 tháng',
   'mt.liugeyue': '6 tháng',
-  'mt.jinzhichixuanzejinliugeyue': 'Chỉ hỗ trợ chọn 6 tháng gần nhất'
+  'mt.jinzhichixuanzejinliugeyue': 'Chỉ hỗ trợ chọn 6 tháng gần nhất',
+  'mt.gonggao': 'Thông báo'
 }

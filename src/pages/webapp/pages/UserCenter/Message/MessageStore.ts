@@ -12,6 +12,8 @@ interface IListData {
   current: number
   /** 每页大小 */
   size: number
+  /** 加载中 */
+  loading: boolean
 }
 class MessageStore {
   constructor() {
@@ -22,7 +24,8 @@ class MessageStore {
     hasMore: false,
     refreshing: false,
     current: 1,
-    size: 10
+    size: 10,
+    loading: false
   }
   @observable info = {} as Message.MessageItem
   @observable infoLoading = false
@@ -33,7 +36,7 @@ class MessageStore {
     this.listData.current = 1
   }
   @action
-  getList = async (loadMore?: boolean) => {
+  getList = async (loadMore?: boolean, type?: 'GROUP' | 'SINGLE') => {
     if (this.listData.refreshing) {
       return
     }
@@ -42,9 +45,11 @@ class MessageStore {
       this.listData.current += 1
     }
     try {
+      this.listData.loading = true
       const response = await getMyMessageList({
         current: this.listData.current,
-        size: this.listData.size
+        size: this.listData.size,
+        type
       })
       if (response.success) {
         const data = response.data
@@ -53,6 +58,7 @@ class MessageStore {
         runInAction(() => {
           this.listData.list = loadMore ? this.listData.list.concat(list) : list
           this.listData.hasMore = this.listData.current < totalPage
+          this.listData.loading = false
         })
       }
     } finally {

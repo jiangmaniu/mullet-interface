@@ -3,7 +3,12 @@ import { request } from '@/utils/request'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
 
 // 获取我接收的消息列表
-export async function getMyMessageList(params?: API.PageParam) {
+export async function getMyMessageList(
+  params?: API.PageParam & {
+    /**公告、站内信模板通知 */
+    type?: 'GROUP' | 'SINGLE'
+  }
+) {
   return request<API.Response<API.PageResult<Message.MessageItem>>>('/api/blade-message/message/my/list', {
     method: 'GET',
     params

@@ -128,7 +128,7 @@ export type MessagePopupInfo = {
   isAll: string
   /**标题 */
   title: string
-  type: string
+  type: any
   /**用户id */
   userId: number
   /**内容 */
