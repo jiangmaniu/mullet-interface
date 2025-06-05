@@ -6,6 +6,7 @@
   "imgDomain": "https://file.lynfoocn.com/trade/",
   "websiteURL": "https://client.lynfoocn.com",
   "remoteConfigUrl": "https://client.lynfoocn.com/platform/app.json",
+  "locationApi": "https://api.ipdatacloud.com/v2/query?key=4d6e45c57a5811ef9c5f00163e167ffb",
   "NAMESPACE": "lynfoo",
   "CLIENT_ID": "trade-app-client",
   "CLIENT_SECRET": "trade-app-client-secret",

@@ -181,14 +181,14 @@ declare namespace Symbol {
   type QuotationConf = {
     /**普通过滤级别 */
     ordinary: number
-    /**过滤 */
-    filter: number
+    /**过滤次数 */
+    filterNum: number
     /**丢弃过滤级别 */
     discard: number
     /**最小点差 */
-    min: number
+    minSpread: number
     /**最大点差 */
-    max: number
+    maxSpread: number
   }
 
   // 库存费配置（JSON）
