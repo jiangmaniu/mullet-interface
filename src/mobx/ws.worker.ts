@@ -828,7 +828,7 @@ function calcIsolatedMarginRateInfo(filterPositionList: Order.BgaOrderPageListIt
   let interestFees = 0 // 订单总的库存费
   let profit = 0 // 订单总的浮动盈亏
   filterPositionList.map((item) => {
-    const orderProfit = covertProfit(item, true) as any
+    const orderProfit = covertProfit(item, false) as any
     orderMargin += Number(item.orderMargin || 0)
     // handlingFees += Number(item.handlingFees || 0)
     // interestFees += Number(item.interestFees || 0)
@@ -932,7 +932,7 @@ function calcRightWidgetSelectMarginInfo() {
     }
     if (filterPositionList.length) {
       filterPositionList.forEach((item: any) => {
-        const profit = covertProfit(item, true) as number // 浮动盈亏
+        const profit = covertProfit(item, false) as number // 浮动盈亏
         item.profit = profit
       })
     }
@@ -954,7 +954,7 @@ function calcPositionListSymbol() {
       item.orderMargin = item.orderBaseMargin
     }
 
-    const profit = covertProfit(item, true) as number // 浮动盈亏
+    const profit = covertProfit(item, false) as number // 浮动盈亏
     totalProfit += Number(profit)
     // const calcProfit = Number(profit) + Number(item.handlingFees || 0) + Number(item.interestFees || 0)
     const yieldRate = calcYieldRate(item, precision, profit) // 收益率
