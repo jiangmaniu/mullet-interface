@@ -270,6 +270,11 @@ export default [
         component: './webapp/pages/UserCenter',
         access: 'canAdmin' // 权限配置
       },
+      /* ------------------------------- 授权验证 ------------------------------- */
+      {
+        path: '/:lng/app/authorization',
+        component: './webapp/pages/Authorization'
+      },
       /* ------------------------------- 登录/注册/忘记密码 ------------------------------- */
       {
         path: '/:lng/app/login',
