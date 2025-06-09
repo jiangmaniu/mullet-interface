@@ -1,6 +1,6 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { useMemo, useRef, useState } from 'react'
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import Modal from '@/components/Base/Modal'
@@ -16,13 +16,13 @@ import { IPositionItem } from '../..'
 import MarginInput from './MarginInput'
 
 type IProps = {
-  trigger: JSX.Element
+  trigger?: JSX.Element
   info: IPositionItem
   onClose?: () => void
 }
 
 // 追加、提取保证金
-function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
+function AddOrExtractMarginModal({ trigger, info, onClose }: IProps, ref: any) {
   const intl = useIntl()
   const { theme } = useTheme()
   const { isDark } = theme
@@ -32,6 +32,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
   const modalRef = useRef<any>()
   const marginInputRef = useRef<any>()
   const { fetchUserInfo } = useModel('user')
+  const [open, setOpen] = useState(false)
 
   const [activeKey, setActiveKey] = useState<'ADD' | 'MINUS'>('ADD')
   const isAdd = activeKey === 'ADD'
@@ -39,6 +40,21 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
   const orderMargin = info?.orderMargin || 0 // 订单追加的保证金
   const orderBaseMargin = info?.orderBaseMargin || 0 // 订单基础保证金，减少的保证金不能低于基础保证金
   const avaMargin = Number(isAdd ? availableMargin : toFixed(orderMargin - orderBaseMargin, getPrecisionByNumber(orderMargin))) // 增加、减少保证金的可用额度
+
+  console.log('open', open)
+
+  const show = () => {
+    setOpen(true)
+  }
+
+  const close = () => {
+    setOpen(false)
+  }
+
+  useImperativeHandle(ref, () => ({
+    show,
+    close
+  }))
 
   const forceClosePrice = inputValue
     ? calcForceClosePrice({
@@ -65,6 +81,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
       // 刷新账户信息
       await fetchUserInfo(true)
       message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+      close()
     }
   }
 
@@ -91,7 +108,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
 
   return (
     <Modal
-      trigger={trigger}
+      open={open}
       styles={{
         content: { padding: 0 }
       }}
@@ -100,9 +117,10 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
       centered
       onCancel={() => {
         modalRef?.current?.close?.()
-        onClose?.()
+        close()
       }}
       afterClose={() => {
+        close()
         onClose?.()
       }}
       ref={modalRef}
@@ -118,14 +136,18 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
 
         <div className="relative px-[18px]">
           <div className="py-4">
-            <MarginInput
-              onChange={(value) => {
-                setInputValue(value)
-              }}
-              isAdd={isAdd}
-              availableMargin={avaMargin}
-              ref={marginInputRef}
-            />
+            {useMemo(() => {
+              return (
+                <MarginInput
+                  onChange={(value) => {
+                    setInputValue(value)
+                  }}
+                  isAdd={isAdd}
+                  availableMargin={avaMargin}
+                  ref={marginInputRef}
+                />
+              )
+            }, [isAdd, avaMargin])}
             <div className="pt-5">
               <div className="pb-1">
                 <img src="/img/lingxing-2.png" width={8} height={8} />
@@ -156,4 +178,4 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps) {
   )
 }
 
-export default observer(AddOrExtractMarginModal)
+export default observer(forwardRef(AddOrExtractMarginModal))
