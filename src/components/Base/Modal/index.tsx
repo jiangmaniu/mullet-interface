@@ -6,9 +6,11 @@ type IProps = {
   open?: boolean
   onClose?: () => void
   trigger?: JSX.Element
+  /** 当modal打开状态发生变化时触发 */
+  onOpenChange?: (open: boolean) => void
 } & ModalProps
 
-export default forwardRef(({ children, open, onClose, trigger, ...res }: IProps, ref) => {
+export default forwardRef(({ children, open, onClose, trigger, onOpenChange, ...res }: IProps, ref) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const close = () => {
@@ -21,6 +23,7 @@ export default forwardRef(({ children, open, onClose, trigger, ...res }: IProps,
 
   useEffect(() => {
     setIsOpen(!!open)
+    onOpenChange?.(!!open)
   }, [open])
 
   // useEffect(() => {

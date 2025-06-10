@@ -47,7 +47,7 @@ function Position({ style, parentPopup }: IProps) {
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
   const intl = useIntl()
-  const [modalInfo, setModalInfo] = useState({} as IPositionItem)
+  const [modalInfo, setModalInfo] = useState<any>({} as IPositionItem)
   const { recordListClassName } = useStyle()
   const showActiveSymbol = trade.showActiveSymbol
 
@@ -55,6 +55,7 @@ function Position({ style, parentPopup }: IProps) {
 
   const closePositionRef = useRef<any>(null)
   const stopLossProfitRef = useRef<any>(null)
+  const addOrExtractMarginRef = useRef<any>(null)
   const [pageNum, setPageNum] = useState(1)
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
   const expandedRowKeysRef = useRef<any>([])
@@ -261,14 +262,15 @@ function Position({ style, parentPopup }: IProps) {
               {record.marginType === 'ISOLATED_MARGIN' && (
                 <div className="pl-[6px]">
                   {/* 追加、提取保证金 */}
-                  <AddOrExtractMarginModal
-                    trigger={
-                      <div className="cursor-pointer">
-                        <img src="/img/edit-icon.png" width={30} height={30} />
-                      </div>
-                    }
-                    info={record}
-                  />
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setModalInfo(record)
+                      addOrExtractMarginRef.current?.show()
+                    }}
+                  >
+                    <img src="/img/edit-icon.png" width={30} height={30} />
+                  </div>
                 </div>
               )}
             </div>
@@ -706,6 +708,8 @@ function Position({ style, parentPopup }: IProps) {
       <ClosePositionConfirmModal ref={closePositionRef} />
       {/* 设置止损止盈弹窗 */}
       <SetStopLossProfitModal ref={stopLossProfitRef} />
+      {/* 追加、提取保证金弹窗 */}
+      <AddOrExtractMarginModal ref={addOrExtractMarginRef} info={modalInfo} onClose={() => setModalInfo({})} />
     </>
   )
 }

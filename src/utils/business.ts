@@ -204,7 +204,7 @@ export const formatMultipleValue = (fields: string[], obj: any) => {
   if (!fields?.length) return
   const result: any = {}
   fields.forEach((key) => {
-    result[key] = obj[key]?.split(',') || []
+    result[key] = Array.isArray(obj[key]) ? obj[key] : (obj[key] || '').split(',') || []
   })
   return {
     ...obj,
