@@ -13,6 +13,7 @@ import { goKefu, push } from '@/utils/navigator'
 
 import Button from '@/components/Base/Button'
 import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 import { HeaderTheme } from '../Header/types'
 import AccountDropdown from './AccountDropdown'
 import Message from './Message'
@@ -91,6 +92,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const isTradePage = pathname.indexOf('/trade') !== -1
   const isBaseAuth = currentUser?.isBaseAuth
   const themeConfig = useTheme()
+  const env = getEnv()
 
   const realAccountList = accountList.filter((item) => !item.isSimulate)
 
@@ -160,7 +162,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
         <AccountDropdown theme={theme} />
       </div>
       {isTradePage && <SwitchTheme />}
-      <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />
+      {!env.HIDE_SWITCH_LANGUAGE && <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />}
     </div>
   )
 })

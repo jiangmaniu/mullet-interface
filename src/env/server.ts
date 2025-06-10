@@ -9,7 +9,6 @@ const seoConf =
     ? {
         // 按需把public/platform/config.json配置同步过来，需要在.env-conf 中配置
         name: process.env.name,
-        platform: process.env.platform,
         desc: process.env.desc
       }
     : {}
