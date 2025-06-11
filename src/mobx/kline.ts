@@ -305,7 +305,9 @@ class KlineStore {
               high: NP.round(high, precision),
               low: NP.round(low, precision),
               // volume: NP.round(vol, precision),
-              time: timeStamp,
+              // 月线数据需要加8小时 否则时间会显示上个月，少一个月
+              time: resolution.includes('M') ? timeStamp + 8 * 60 * 60 * 1000 : timeStamp,
+              klineTime,
               mytime: dayjs(timeStamp).format('YYYY-MM-DD HH:mm:ss')
             }
           })
@@ -313,6 +315,8 @@ class KlineStore {
         runInAction(() => {
           this.bars = bars
         })
+
+        console.log('bars', bars)
 
         return bars
       } else {
