@@ -581,6 +581,9 @@
       "womenhuijinkuaishenhe": "我們會盡快審核您的身份認證，請耐心等待, 如有疑問請聯繫客服",
       "shunliwancheng": "順利完成!",
       "ningxianzaikeyirujinbingkaishijiaoyi": "您已成功完成實名認證，現在可以進行入金交易",
+      "yemianjianghuizidongtiaozhuan": "頁面將自動關閉，如未關閉請手動關閉",
+      "canshuyichang": "參數異常",
+      "renzhengchenggong": "認證成功",
       "shenfenrenzhengshenheweitongguo": "實名認證審核未通過",
       "shenfenrenzhengshenheweitongguotips": "請重新上傳證件照片，或聯繫客服",
       "qingchongxinjinxingrenzheng": "請重新進行認證，或聯繫客服",
@@ -630,7 +633,12 @@
       "qurujin": "去入金",
       "tijiaoshenhe": "提交審核",
       "yigaojirenzheng": "已高級認證 (支持入金出金)",
-      "yichujirenzheng": "您已完成初級認證，可以選擇入金或者繼續高級認證 (開通出金權限)"
+      "yichujirenzheng": "您已完成初級認證，可以選擇入金或者繼續高級認證 (開通出金權限)",
+      "kaishirenlianshibie": "開始人臉識別",
+      "weiquebaonindezijinanquan": "為了確保您的資金安全，我們將需要對您提交的身份資訊進 行人臉核對，完成識別後即可開立出金權限。",
+      "quebao1": "1.請確保是提交身份證信息本人；",
+      "quebao2": "2.請確保光線充足、無遮擋；",
+      "quebao3": "3.請按照頁面提示操作。"
     },
 
     "============== 個人中心 結束 ==============": "",

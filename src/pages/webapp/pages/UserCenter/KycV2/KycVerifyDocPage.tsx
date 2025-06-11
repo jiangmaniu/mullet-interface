@@ -1,5 +1,6 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 import Button from '@/pages/webapp/components/Base/Button'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -31,6 +32,8 @@ export default function KycVerifyDocPage() {
     ref.current?.onSubmit()
     setSubmitting(false)
   }
+
+  const KYC_FACE = !!getEnv()?.KYC_FACE || false
 
   return (
     <BasicLayout
@@ -84,10 +87,16 @@ export default function KycVerifyDocPage() {
         <View className="rounded-t-[24px] bg-white w-full px-[12px] pt-[22px]">
           <VerifyDoc
             ref={ref}
-            onSuccess={async () => {
-              // 刷新用户信息
-              await user.fetchUserInfo()
-              onBack()
+            onSuccess={async (data: any) => {
+              console.log('data', data)
+              console.log('KYC_FACE', KYC_FACE)
+              if (KYC_FACE) {
+                window.location.href = data.url
+              } else {
+                // 刷新用户信息
+                await user.fetchUserInfo()
+                onBack()
+              }
             }}
             onDisabledChange={onDisabledChange}
           />
@@ -105,9 +114,15 @@ export default function KycVerifyDocPage() {
         >
           {i18n.t('pages.userCenter.qurujin')}
         </Button>
-        <Button type="primary" loading={submitting} height={48} className={cn('w-full flex-1')} onClick={onSubmit} disabled={disabled}>
-          {i18n.t('pages.userCenter.tijiaoshenhe')}
-        </Button>
+        {KYC_FACE ? (
+          <Button type="default" loading={submitting} height={48} className={cn('w-full flex-1')} onClick={onSubmit}>
+            {i18n.t('pages.userCenter.kaishirenlianshibie')}
+          </Button>
+        ) : (
+          <Button type="primary" loading={submitting} height={48} className={cn('w-full flex-1')} onClick={onSubmit} disabled={disabled}>
+            {i18n.t('pages.userCenter.tijiaoshenhe')}
+          </Button>
+        )}
       </View>
     </BasicLayout>
   )

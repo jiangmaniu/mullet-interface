@@ -1,9 +1,10 @@
 import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 import UploadSheetModal, { UploadSheetModalRef } from '@/pages/webapp/components/Account/UploadSheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { submitSeniorAuth } from '@/services/api/crm/kycAuth'
+import { submitFaceAuth, submitSeniorAuth } from '@/services/api/crm/kycAuth'
 import { validateNonEmptyFieldsRHF } from '@/utils/form'
 import { message } from '@/utils/message'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -12,6 +13,75 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+const UploadFace = ({ file, onUpload, setFile }: { file: any; onUpload: () => void; setFile: (file: any) => void }) => {
+  const { cn, theme } = useTheme()
+  const i18n = useI18n()
+
+  return (
+    <View className={cn('flex h-[188px] items-center justify-center  ')}>
+      <View onPress={onUpload} className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden px-[20px] py-[25px]')}>
+        <View className="flex flex-row items-center justify-start gap-[28px]">
+          <img src="/img/webapp/face.png" width={100} height={100} />
+          <View className="flex flex-col items-start justify-start gap-2">
+            <Text style={{ color: '#222' }} size="xs">
+              {i18n.t('pages.userCenter.quebao1')}
+            </Text>
+            <Text style={{ color: '#222' }} size="xs">
+              {i18n.t('pages.userCenter.quebao2')}
+            </Text>
+            <Text style={{ color: '#222' }} size="xs">
+              {i18n.t('pages.userCenter.quebao3')}
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  )
+}
+
+const UploadFIle = ({ file, onUpload, setFile }: { file: any; onUpload: () => void; setFile: (file: any) => void }) => {
+  const { cn, theme } = useTheme()
+  const i18n = useI18n()
+
+  return (
+    <>
+      {file?.link ? (
+        <View className="relative">
+          <View onPress={onUpload} className={cn('border border-dashed border-[#6A7073] rounded-lg overflow-hidden ')}>
+            <img src={file.link} style={{ width: '100%', height: 188 }} />
+          </View>
+
+          <div
+            onClick={() => {
+              setFile({})
+            }}
+            className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] z-100 rounded-full cursor-pointer guanbi"
+          >
+            <img src="/img/shanchu.png" className="w-full h-full" />
+          </div>
+        </View>
+      ) : (
+        <View
+          onPress={onUpload}
+          className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden h-[188px] px-[27px] py-[37px]')}
+        >
+          <View className="flex flex-col items-center justify-start -mt-2  ">
+            <img src="/img/idcard-bg2.png" width={100} height={100} />
+            <Text style={{ fontWeight: '500', color: theme.colors.textColor.primary }} size="sm">
+              {i18n.t('pages.userCenter.clickUploadIDCard')}
+            </Text>
+          </View>
+        </View>
+      )}
+      <Text className={cn('text-xs text-red-500')} color="red">
+        {i18n.t('mt.shangchuanzhaopianbuyaochaoguo', {
+          value: '5MB'
+        })}
+      </Text>
+    </>
+  )
+}
+
 const VerifyDoc = forwardRef(
   (
     {
@@ -19,7 +89,7 @@ const VerifyDoc = forwardRef(
       onDisabledChange,
       file: defaultFile,
       injectUpload
-    }: { onSuccess: () => void; onDisabledChange: (disabled: boolean) => void; file?: any; injectUpload?: () => Promise<void> },
+    }: { onSuccess: (data?: any) => void; onDisabledChange: (disabled: boolean) => void; file?: any; injectUpload?: () => Promise<void> },
     ref: any
   ) => {
     const { cn, theme } = useTheme()
@@ -29,10 +99,15 @@ const VerifyDoc = forwardRef(
     // 获取 URL 中的查询参数（searchParams）
     const [file, setFile] = useState<any>(defaultFile)
 
+    const KYC_FACE = !!getEnv()?.KYC_FACE || false
+
     const uploadSheetModalRef = useRef<UploadSheetModalRef>(null)
     const [submitting, setSubmitting] = useState(false)
 
-    const onSubmit = () => {
+    const { initialState } = useModel('@@initialState')
+    const currentUser = initialState?.currentUser
+
+    const onFileSubmit = () => {
       // message.info(i18n.t('common.operate.Op Success'))
       // onSuccess()
       setSubmitting(true)
@@ -54,9 +129,41 @@ const VerifyDoc = forwardRef(
         })
     }
 
+    const onFaceSubmit = () => {
+      setSubmitting(true)
+      const name = `${currentUser?.lastName || ''}${currentUser?.firstName || ''}`
+      const idCard = currentUser?.identificationCode || ''
+      const redirectUrl = `${getEnv()?.domain}/${i18n.locale}/app/user-center/verify-status-face`
+      submitFaceAuth({
+        idCard,
+        name,
+        redirectUrl
+      })
+        .then(async (res) => {
+          if (res.success) {
+            onSuccess(res.data)
+            return
+          }
+        })
+        .catch((err) => {
+          message.info(err.message)
+        })
+        .finally(() => {
+          setSubmitting(false)
+        })
+    }
+
+    const onSubmit = () => {
+      if (KYC_FACE) {
+        onFaceSubmit()
+      } else {
+        onFileSubmit()
+      }
+    }
+
     /** 表单控制 */
     const schema = z.object({
-      name: z.string().min(1, { message: i18n.t('pages.userCenter.qingshangchuanzhengjian') })
+      name: KYC_FACE ? z.string().optional() : z.string().min(1, { message: i18n.t('pages.userCenter.qingshangchuanzhengjian') })
     })
 
     const {
@@ -89,9 +196,6 @@ const VerifyDoc = forwardRef(
       onSubmit: handleSubmit(onSubmit)
     }))
 
-    const { initialState } = useModel('@@initialState')
-    const currentUser = initialState?.currentUser
-
     const disabled = !file?.link
 
     useEffect(() => {
@@ -105,10 +209,10 @@ const VerifyDoc = forwardRef(
     return (
       <View className={cn('px-2 flex flex-col gap-2 ')}>
         <Text className={cn('text-xl font-bold text-primary')} weight="bold">
-          {i18n.t('pages.userCenter.pinzhengrenzheng')}
+          {KYC_FACE ? i18n.t('pages.userCenter.renlianshibie') : i18n.t('pages.userCenter.pinzhengrenzheng')}
         </Text>
         <Text className={cn('text-xs text-weak')} color="weak">
-          {i18n.t('pages.userCenter.shagnchuanzhaopianbixuqingxi')}
+          {KYC_FACE ? i18n.t('pages.userCenter.weiquebaonindezijinanquan') : i18n.t('pages.userCenter.shagnchuanzhaopianbixuqingxi')}
         </Text>
         <View className={cn('flex flex-col mt-3 gap-[11px] mb-[50px]')}>
           <View className={cn('flex flex-row gap-2')}>
@@ -122,42 +226,15 @@ const VerifyDoc = forwardRef(
           <Text className={cn('text-sm font-medium text-primary mt-2.5')} weight="medium">
             {i18n.t('pages.userCenter.shagnchuanzhengjian')}
           </Text>
-          {file?.link ? (
-            <View className="relative">
-              <View onPress={onUpload} className={cn('border border-dashed border-[#6A7073] rounded-lg overflow-hidden ')}>
-                <img src={file.link} style={{ width: '100%', height: 188 }} />
-              </View>
-
-              <div
-                onClick={() => {
-                  setFile({})
-                }}
-                className="absolute -top-2.5 -right-2.5 bg-secondary h-[24px] w-[24px] z-100 rounded-full cursor-pointer guanbi"
-              >
-                <img src="/img/shanchu.png" className="w-full h-full" />
-              </div>
-            </View>
+          {KYC_FACE ? (
+            <UploadFace file={file} onUpload={onUpload} setFile={setFile} />
           ) : (
-            <View
-              onPress={onUpload}
-              className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden h-[188px] px-[27px] py-[37px]')}
-            >
-              <View className="flex flex-col items-center justify-start -mt-2  ">
-                <img src="/img/idcard-bg2.png" width={100} height={100} />
-                <Text style={{ fontWeight: '500', color: theme.colors.textColor.primary }} size="sm">
-                  {i18n.t('pages.userCenter.clickUploadIDCard')}
-                </Text>
-              </View>
-            </View>
+            <UploadFIle file={file} onUpload={onUpload} setFile={setFile} />
           )}
-          <Text className={cn('text-xs text-red-500')} color="red">
-            {i18n.t('mt.shangchuanzhaopianbuyaochaoguo', {
-              value: '5MB'
-            })}
-          </Text>
         </View>
 
         <UploadSheetModal ref={uploadSheetModalRef} onChange={onChange} />
+
         {/* <View className={cn('grid grid-cols-2 gap-5 w-full mt-12')}>
         <Button type="primary" loading={submitting} height={48} className={cn(' flex-1 w-full')} onClick={onDeposit}>
           {i18n.t('pages.userCenter.qurujin')}

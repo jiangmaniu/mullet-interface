@@ -8,6 +8,7 @@
   "REGISTER_APP_CODE": "123456",
   "ws": "wss://websocket.stellux.io/websocketServer",
   "imgDomain": "https://file.stellux.io/trade/",
+  "domain": "https://client.stellux.io",
   "REGISTER_MODULE": true,
   "SKIP_KYC_STEP_ONE": true,
   "ID_CARD_ONLY": true,
@@ -17,5 +18,6 @@
   "HIDE_ACCOUNT_RENAME": false,
   "DEBUG": false,
   "HIDE_SWITCH_LANGUAGE": false,
-  "salesmartlyJSUrl": "https://plugin-code.salesmartly.com/js/project_247867_254558_1739880055.js"
+  "salesmartlyJSUrl": "https://plugin-code.salesmartly.com/js/project_247867_254558_1739880055.js",
+  "KYC_FACE": true
 }
