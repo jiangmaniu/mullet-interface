@@ -21,7 +21,7 @@ const Children = observer(
       ref: any
     ) => {
       const onSuccess = (data?: any) => {
-        if (KYC_FACE) {
+        if (status === '1' && KYC_FACE) {
           // 人臉核身
           // @ts-ignore
           window.ReactNativeWebView?.postMessage(
