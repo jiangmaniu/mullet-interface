@@ -4,10 +4,12 @@ import { useRef, useState } from 'react'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 
+import { useTitle } from 'ahooks'
 import SwitchAccount from '../../components/Account/SwitchAccount'
 import { View } from '../../components/Base/View'
 import QuoteTopTabbar from '../../components/Quote/QuoteTopTabbar'
 import SelectSymbolModal, { SelectSymbolModalRef } from '../../components/Quote/SelectSymbolModal'
+import { useI18n } from '../../hooks/useI18n'
 import Basiclayout from '../../layouts/BasicLayout'
 import { navigateTo } from '../../utils/navigator'
 
@@ -16,6 +18,9 @@ function Quote() {
   const { trade } = useStores()
   const selectSymbolModalRef = useRef<SelectSymbolModalRef>(null)
   const [quoteVisible, setQuoteVisible] = useState(true)
+  const { t } = useI18n()
+
+  useTitle(t('app.pageTitle.Quote'))
 
   return (
     <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>

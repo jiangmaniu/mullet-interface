@@ -9,6 +9,8 @@
     "pageTitle": {
       "Account": "Account",
       "Personal Center": "Personal Center",
+      "Trade": "Trade",
+      "Quote": "Quote",
       "Language": "Language",
       "About": "About",
       "Setting": "Settings",
@@ -579,6 +581,7 @@
       "shenfenrenzhengshenhezhong": "Identity verification in progress",
       "womenhuijinkuaishenhe": "We will verify your identity as soon as possible, please be patient. If you have any questions, please contact customer service",
       "shunliwancheng": "Successfully Completed!",
+      "fanhuiyonghuzhongxin": "Returning to user center",
       "ningxianzaikeyirujinbingkaishijiaoyi": "You have successfully completed identity verification, you can now proceed with deposit transactions",
       "yemianjianghuizidongtiaozhuan": "The page will automatically close. If it does not close, please close it manually",
       "canshuyichang": "Parameter exception",

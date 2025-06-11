@@ -1,14 +1,19 @@
 import { observer } from 'mobx-react'
 
 import { useTheme } from '@/context/themeProvider'
+import { useTitle } from 'ahooks'
 import SwitchAccount from '../../components/Account/SwitchAccount'
 import { View } from '../../components/Base/View'
 import SelectSymbolBtn from '../../components/Quote/SelectSymbolBtn'
 import TradeView, { BottomButton } from '../../components/Trade/TradeView'
+import { useI18n } from '../../hooks/useI18n'
 import Basiclayout from '../../layouts/BasicLayout'
 
 function Trade() {
   const { cn, theme } = useTheme()
+  const { t } = useI18n()
+
+  useTitle(t('app.pageTitle.Trade'))
 
   return (
     <Basiclayout

@@ -9,6 +9,8 @@
     "pageTitle": {
       "Account": "賬戶",
       "Personal Center": "個人中心",
+      "Trade": "交易",
+      "Quote": "行情",
       "Language": "語言",
       "About": "關於",
       "Setting": "設置",
@@ -580,6 +582,7 @@
       "shenfenrenzhengshenhezhong": "身份認證審核中",
       "womenhuijinkuaishenhe": "我們會盡快審核您的身份認證，請耐心等待, 如有疑問請聯繫客服",
       "shunliwancheng": "順利完成!",
+      "fanhuiyonghuzhongxin": "正在返回用戶中心",
       "ningxianzaikeyirujinbingkaishijiaoyi": "您已成功完成實名認證，現在可以進行入金交易",
       "yemianjianghuizidongtiaozhuan": "頁面將自動關閉，如未關閉請手動關閉",
       "canshuyichang": "參數異常",

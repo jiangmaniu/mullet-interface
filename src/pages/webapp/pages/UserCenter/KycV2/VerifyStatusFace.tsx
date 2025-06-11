@@ -17,7 +17,7 @@ const VerifyStatusFace = () => {
   const [searchParams] = useSearchParams()
   const bizToken = searchParams.get('BizToken') || ''
 
-  useTitle(t('pages.userCenter.renzhengchenggong'))
+  useTitle(t('pages.userCenter.fanhuiyonghuzhongxin'))
 
   useEffect(() => {
     if (bizToken) {
@@ -38,7 +38,7 @@ const VerifyStatusFace = () => {
             } else {
               push('/app/user-center')
             }
-          }, 1000)
+          }, 1200)
         })
         .catch((err) => {
           message.info(t('pages.userCenter.canshuyichang'))
@@ -55,9 +55,9 @@ const VerifyStatusFace = () => {
         <img src={'/img/shunliwancheng.png'} className={cn('w-[184px] h-[184px]')} />
         <View className="flex flex-col gap-2.5 items-center">
           <Text size="lg" weight="bold">
-            {t('pages.userCenter.shunliwancheng')}
+            {t('pages.userCenter.fanhuiyonghuzhongxin')}
           </Text>
-          <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.userCenter.ningxianzaikeyirujinbingkaishijiaoyi')}</Text>
+          {/* <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.userCenter.ningxianzaikeyirujinbingkaishijiaoyi')}</Text> */}
           <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.userCenter.yemianjianghuizidongtiaozhuan')}</Text>
         </View>
       </View>
