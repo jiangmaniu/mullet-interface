@@ -7,7 +7,7 @@ import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 import { useSearchParams } from '@umijs/max'
 import { useTitle } from 'ahooks'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 const VerifyStatusFace = () => {
   const { cn } = useTheme()
@@ -19,10 +19,13 @@ const VerifyStatusFace = () => {
 
   useTitle(t('pages.userCenter.fanhuiyonghuzhongxin'))
 
+  const [status, setStatus] = useState(false)
   useEffect(() => {
     if (bizToken) {
       submitFaceAuthSuccess({ bizToken })
         .then((res) => {
+          if (!res.success) setStatus(false)
+
           setTimeout(() => {
             if (window.ReactNativeWebView) {
               window.ReactNativeWebView?.postMessage(
@@ -38,24 +41,29 @@ const VerifyStatusFace = () => {
             } else {
               push('/app/user-center')
             }
-          }, 1200)
+          }, 1500)
         })
         .catch((err) => {
           message.info(t('pages.userCenter.canshuyichang'))
         })
-    } else {
-      message.info(t('pages.userCenter.canshuyichang'))
     }
+    //  else {
+    //   message.info(t('pages.userCenter.canshuyichang'))
+    // }
   }, [bizToken])
 
   return (
     <>
       {/* <View className={cn('flex-1 flex flex-col justify-between')}> */}
       <View className="flex-1 flex flex-col gap-[35px] items-center mt-[80px] px-2 ">
-        <img src={'/img/shunliwancheng.png'} className={cn('w-[184px] h-[184px]')} />
+        {status ? (
+          <img src={'/img/shunliwancheng.png'} className={cn('w-[184px] h-[184px]')} />
+        ) : (
+          <img src={'/img/shenheweitongguo.png'} className={cn('w-[184px] h-[184px]')} />
+        )}
         <View className="flex flex-col gap-2.5 items-center">
           <Text size="lg" weight="bold">
-            {t('pages.userCenter.fanhuiyonghuzhongxin')}
+            {status ? t('pages.userCenter.fanhuiyonghuzhongxin') : t('pages.userCenter.qingchongxinrenzheng')}
           </Text>
           {/* <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.userCenter.ningxianzaikeyirujinbingkaishijiaoyi')}</Text> */}
           <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.userCenter.yemianjianghuizidongtiaozhuan')}</Text>
