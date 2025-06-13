@@ -105,7 +105,7 @@ function TradeView() {
         height: 'calc(100vh - 200px)'
       }}
     >
-      <div className={cn('flex-1 pb-0 overflow-y-auto')}>
+      <div className={cn('flex-1 pb-8 overflow-y-auto')}>
         <Header />
         <View className={cn('flex-1 flex-row')}>
           <View className={cn('flex-1')}>

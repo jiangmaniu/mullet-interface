@@ -4,6 +4,7 @@ import { useCallback, useRef } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 import { goKefu, onLogout } from '@/utils/navigator'
 import { useModel } from '@umijs/max'
 import { useTitle } from 'ahooks'
@@ -69,6 +70,7 @@ function UserCenter() {
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
   const phone = currentUser?.userInfo?.phone || ''
+  const ENV = getEnv()
 
   useTitle(t('app.pageTitle.Personal Center'))
 
@@ -274,7 +276,7 @@ function UserCenter() {
 
         {renderList(preferenceSetting, t('pages.userCenter.Trading Preferences'))}
         <View style={{ height: 8 }} />
-        {renderList(commonSetting, t('pages.userCenter.System Settings'), false)}
+        {!ENV.HIDE_SWITCH_LANGUAGE && renderList(commonSetting, t('pages.userCenter.System Settings'), false)}
 
         <Button
           type="gray"

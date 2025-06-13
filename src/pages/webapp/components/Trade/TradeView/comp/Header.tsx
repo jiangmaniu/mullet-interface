@@ -83,7 +83,7 @@ function Header() {
 
   if (hasDepth) {
     return (
-      <View className={cn('flex-row justify-between items-center pl-3')}>
+      <View className={cn('flex-row justify-between items-center pl-3 pt-3')}>
         <View className={cn('flex-1 flex-row')}>
           <CustomArrowButton
             leftText={intl.formatMessage({ id: 'mt.kaikong' })}
