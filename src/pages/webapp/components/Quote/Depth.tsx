@@ -53,7 +53,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
                   {formatNum(item.price, { precision: digits })}
                 </Text>
                 <Text color="primary" size="xs" font="dingpro-medium" style={cn('leading-[15px]')}>
-                  {amountDigits >= 8 ? formatNum(item.amount, { precision: 8 }) : formatNum(item.amount)}
+                  {amountDigits >= 6 ? formatNum(item.amount, { precision: 6 }) : formatNum(item.amount)}
                 </Text>
               </View>
               <View
@@ -110,7 +110,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
                   {formatNum(item.price, { precision: digits })}
                 </Text>
                 <Text color="primary" size="xs" font="dingpro-medium" style={cn('leading-[15px]')}>
-                  {amountDigits >= 8 ? formatNum(item.amount, { precision: 8 }) : formatNum(item.amount)}
+                  {amountDigits >= 6 ? formatNum(item.amount, { precision: 6 }) : formatNum(item.amount)}
                 </Text>
               </View>
               <View
