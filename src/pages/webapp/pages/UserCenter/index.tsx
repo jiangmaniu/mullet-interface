@@ -6,6 +6,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { goKefu, onLogout } from '@/utils/navigator'
 import { useModel } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import Button from '../../components/Base/Button'
 import Header from '../../components/Base/Header'
 import ListItem, { IlistItemProps } from '../../components/Base/List/ListItem'
@@ -68,6 +69,8 @@ function UserCenter() {
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
   const phone = currentUser?.userInfo?.phone || ''
+
+  useTitle(t('app.pageTitle.Personal Center'))
 
   const renderList = (listData: IlistItemProps[], title?: string, margin = true) => {
     return (

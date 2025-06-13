@@ -1,4 +1,5 @@
 import { useTheme } from '@/context/themeProvider'
+import { getEnv } from '@/env'
 import Button from '@/pages/webapp/components/Base/Button'
 import { View } from '@/pages/webapp/components/Base/View'
 import useWebviewPageSearchParams from '@/pages/webapp/hooks/useWebviewPageSearchParams'
@@ -14,142 +15,173 @@ import VerifyStatus3 from '../KycV2/VerifyStatus3'
 import VerifyStatus4 from '../KycV2/VerifyStatus4'
 
 const Children = observer(
-  forwardRef(({ status, file = {}, injectUpload }: { status: string; file: any; injectUpload?: () => Promise<void> }, ref: any) => {
-    const onSuccess = () => {
-      // @ts-ignore
-      window.ReactNativeWebView.postMessage(
-        JSON.stringify({
-          type: 'success',
-          status
-        })
-      )
-    }
-
-    const ref1 = useRef<any>(null)
-    const ref0 = useRef<any>(null)
-
-    const [retry, setRetry] = useState(false)
-
-    useImperativeHandle(ref, () => ({
-      onSubmit: () => {
-        if (status === '0') {
-          // ref0.current?.onSubmit()
-        } else if (status === '1') {
-          ref1.current?.onSubmit()
+  forwardRef(
+    (
+      { status, file = {}, injectUpload, KYC_FACE }: { status: string; file: any; injectUpload?: () => Promise<void>; KYC_FACE: boolean },
+      ref: any
+    ) => {
+      const onSuccess = (data?: any) => {
+        if (status === '1' && KYC_FACE) {
+          // 人臉核身
+          // @ts-ignore
+          window.ReactNativeWebView?.postMessage(
+            JSON.stringify({
+              type: 'faceAuth',
+              url: data?.url
+            })
+          )
+        } else {
+          // 证件审核
+          // @ts-ignore
+          window.ReactNativeWebView?.postMessage(
+            JSON.stringify({
+              type: 'success',
+              status
+            })
+          )
         }
-      },
-      onRetry: () => {
-        setRetry(true)
       }
-    }))
 
-    const [disabled, setDisabled] = useState(false)
+      const ref1 = useRef<any>(null)
+      const ref0 = useRef<any>(null)
 
-    const onDisabledChange = (disabled: boolean) => {
-      setDisabled(disabled)
-      // @ts-ignore
-      window.ReactNativeWebView.postMessage(
-        JSON.stringify({
-          type: 'disabled',
-          disabled
-        })
-      )
-    }
+      const [retry, setRetry] = useState(false)
 
-    const intl = useIntl()
-    const { cn } = useTheme()
+      useImperativeHandle(ref, () => ({
+        onSubmit: () => {
+          if (status === '0') {
+            // ref0.current?.onSubmit()
+          } else if (status === '1') {
+            ref1.current?.onSubmit()
+          }
+        },
+        onRetry: () => {
+          setRetry(true)
+        }
+      }))
 
-    return (
-      <div className="px-[14px]">
-        {status === '1' || retry ? (
-          <>
-            <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} file={file} injectUpload={injectUpload} />
+      const [disabled, setDisabled] = useState(false)
 
-            <View className={cn('grid grid-cols-2 gap-5 w-full pb-2.5 px-[14px]')}>
+      const onDisabledChange = (disabled: boolean) => {
+        setDisabled(disabled)
+        // @ts-ignore
+        window.ReactNativeWebView?.postMessage(
+          JSON.stringify({
+            type: 'disabled',
+            disabled
+          })
+        )
+      }
+
+      const intl = useIntl()
+      const { cn } = useTheme()
+
+      return (
+        <div className="px-[14px]">
+          {status === '1' || retry ? (
+            <>
+              <VerifyDoc ref={ref1} onSuccess={onSuccess} onDisabledChange={onDisabledChange} file={file} injectUpload={injectUpload} />
+
+              <View className={cn('grid grid-cols-2 gap-5 w-full pb-2.5 px-[14px]')}>
+                <Button
+                  type="primary"
+                  height={48}
+                  className={cn(' flex-1 w-full')}
+                  onClick={() => {
+                    window.ReactNativeWebView?.postMessage(
+                      JSON.stringify({
+                        type: 'deposit'
+                      })
+                    )
+                  }}
+                >
+                  {intl.formatMessage({ id: 'pages.userCenter.qurujin' })}
+                </Button>
+
+                {KYC_FACE ? (
+                  <Button
+                    type="default"
+                    height={48}
+                    className={cn('w-full flex-1')}
+                    onClick={() => {
+                      ref1.current?.onSubmit()
+                    }}
+                  >
+                    {intl.formatMessage({ id: 'pages.userCenter.kaishirenlianshibie' })}
+                  </Button>
+                ) : (
+                  <Button
+                    type="primary"
+                    height={48}
+                    className={cn('w-full flex-1')}
+                    onClick={() => {
+                      ref1.current?.onSubmit()
+                    }}
+                    disabled={disabled}
+                  >
+                    {intl.formatMessage({ id: 'pages.userCenter.tijiaoshenhe' })}
+                  </Button>
+                )}
+              </View>
+            </>
+          ) : status === '2' ? (
+            <>
+              <VerifyStatus2 />
+
+              <Button disabled={false} className="mb-2.5 mt-16 w-full  px-2 " height={48} onClick={onSuccess}>
+                {intl.formatMessage({ id: 'common.operate.Confirm' })}
+              </Button>
+            </>
+          ) : status === '3' ? (
+            <>
+              <VerifyStatus3 />
+
               <Button
-                type="primary"
+                type="danger"
+                disabled={false}
+                className="mb-2.5 mt-16 w-full"
                 height={48}
-                className={cn(' flex-1 w-full')}
                 onClick={() => {
-                  window.ReactNativeWebView.postMessage(
+                  window.ReactNativeWebView?.postMessage(
                     JSON.stringify({
-                      type: 'deposit'
+                      type: 'retry'
                     })
                   )
                 }}
               >
-                {intl.formatMessage({ id: 'pages.userCenter.qurujin' })}
+                {intl.formatMessage({ id: 'pages.userCenter.chongxinrenzheng' })}
               </Button>
+            </>
+          ) : status === '4' ? (
+            <>
+              <VerifyStatus4 />
+
+              <Button type="primary" disabled={false} className="mb-2.5 mt-16 w-full" height={48} onClick={onSuccess}>
+                {intl.formatMessage({ id: 'common.operate.Confirm' })}
+              </Button>
+            </>
+          ) : (
+            <>
+              <VerifyMsg ref={ref0} onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
+
               <Button
                 type="primary"
+                className="mb-2.5 mt-10 flex-1 mx-2"
+                loading={false}
                 height={48}
-                className={cn('w-full flex-1')}
                 onClick={() => {
-                  ref1.current?.onSubmit()
+                  ref0.current?.onSubmit()
                 }}
                 disabled={disabled}
               >
-                {intl.formatMessage({ id: 'pages.userCenter.tijiaoshenhe' })}
+                {intl.formatMessage({ id: 'common.operate.Confirm' })}
               </Button>
-            </View>
-          </>
-        ) : status === '2' ? (
-          <>
-            <VerifyStatus2 />
-
-            <Button disabled={false} className="mb-2.5 mt-16 w-full  px-2 " height={48} onClick={onSuccess}>
-              {intl.formatMessage({ id: 'common.operate.Confirm' })}
-            </Button>
-          </>
-        ) : status === '3' ? (
-          <>
-            <VerifyStatus3 />
-
-            <Button
-              type="danger"
-              disabled={false}
-              className="mb-2.5 mt-16 w-full"
-              height={48}
-              onClick={() => {
-                window.ReactNativeWebView.postMessage(
-                  JSON.stringify({
-                    type: 'retry'
-                  })
-                )
-              }}
-            >
-              {intl.formatMessage({ id: 'pages.userCenter.chongxinrenzheng' })}
-            </Button>
-          </>
-        ) : status === '4' ? (
-          <>
-            <VerifyStatus4 />
-
-            <Button type="primary" disabled={false} className="mb-2.5 mt-16 w-full" height={48} onClick={onSuccess}>
-              {intl.formatMessage({ id: 'common.operate.Confirm' })}
-            </Button>
-          </>
-        ) : (
-          <>
-            <VerifyMsg ref={ref0} onSuccess={onSuccess} onDisabledChange={onDisabledChange} />
-
-            <Button
-              type="primary"
-              className="mb-2.5 mt-10 flex-1 mx-2"
-              loading={false}
-              height={48}
-              onClick={() => {
-                ref0.current?.onSubmit()
-              }}
-              disabled={disabled}
-            >
-              {intl.formatMessage({ id: 'common.operate.Confirm' })}
-            </Button>
-          </>
-        )}
-      </div>
-    )
-  })
+            </>
+          )}
+        </div>
+      )
+    }
+  )
 )
 
 // 添加正确的ref类型定义
@@ -164,6 +196,7 @@ export default function KycWebviewPage() {
   const token = searchParams.get('token') || ''
   const user_id = (searchParams.get('user_id') as string) || ''
   const status = searchParams.get('status') || ''
+  const KYC_FACE = !!searchParams.get('KYC_FACE') || !!getEnv()?.KYC_FACE || false
 
   useLayoutEffect(() => {
     const setTokenToStorage = async () => {
@@ -174,7 +207,7 @@ export default function KycWebviewPage() {
         await user.fetchUserInfo()
       } catch (error) {
         // @ts-ignore
-        window.ReactNativeWebView.postMessage(
+        window.ReactNativeWebView?.postMessage(
           JSON.stringify({
             type: 'error',
             error: JSON.stringify(error)
@@ -193,7 +226,7 @@ export default function KycWebviewPage() {
   const [times, setTImes] = useState(0)
 
   const injectUpload = async () => {
-    window.ReactNativeWebView.postMessage(
+    window.ReactNativeWebView?.postMessage(
       JSON.stringify({
         type: 'takePhoto',
         times
@@ -248,14 +281,14 @@ export default function KycWebviewPage() {
 
         // 可能需要回复消息
         if (window.ReactNativeWebView && data.requireResponse) {
-          window.ReactNativeWebView.postMessage(JSON.stringify(JSON.stringify({ success: true, action: data.action })))
+          window.ReactNativeWebView?.postMessage(JSON.stringify(JSON.stringify({ success: true, action: data.action })))
         }
       }
     } catch (error) {
       // 记录错误并可能发送到React Native
       console.error('处理消息时出错:', error)
       if (window.ReactNativeWebView) {
-        window.ReactNativeWebView.postMessage(JSON.stringify(JSON.stringify({ error: true, message: (error as Error).message })))
+        window.ReactNativeWebView?.postMessage(JSON.stringify(JSON.stringify({ error: true, message: (error as Error).message })))
       }
     }
   }, []) // 空依赖数组，因为我们使用refs访问最新值
@@ -276,6 +309,6 @@ export default function KycWebviewPage() {
     }
   }, [messageHandler]) // 只依赖稳定的messageHandler
 
-  return <Children status={status} ref={ref} file={file} injectUpload={injectUpload} /> // 使用设备上传功能
+  return <Children status={status} ref={ref} file={file} injectUpload={injectUpload} KYC_FACE={KYC_FACE} /> // 使用设备上传功能
   // return <Children status={status} ref={ref} file={file} />  // 使用网页上传功能
 }

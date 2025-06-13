@@ -19,7 +19,7 @@ import { replace } from '@/utils/navigator'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import AccountCarousel from './AccountCarousel'
@@ -188,12 +188,14 @@ function AccountNew() {
     }
   }
 
-  const accountList = useMemo(() => stores.trade.accountGroupList, [stores.trade.accountGroupList])
+  const accountList = stores.trade.accountGroupList
+  const [init, setInit] = useState(false)
   React.useLayoutEffect(() => {
-    if (!accountList.length) {
+    if (!accountList.length && !init) {
       stores.trade.getAccountGroupList()
+      setInit(true)
     }
-  }, [accountList])
+  }, [accountList, init])
 
   const synopsis = getAccountSynopsisByLng(selectedItem?.synopsis)
 

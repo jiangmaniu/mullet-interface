@@ -18,6 +18,23 @@ export async function submitSeniorAuth(body: { authImgsUrl: string }) {
   })
 }
 
+// 人臉核身
+export async function submitFaceAuth(body: { idCard: string; name: string; redirectUrl: string }) {
+  return request<API.Response>(`/api/trade-crm/crmClient/face/getFaceAuthUrl`, {
+    method: 'POST',
+    data: body
+  })
+}
+
+// 人臉核身-认证成功
+export async function submitFaceAuthSuccess(body: { bizToken: string }) {
+  return request<API.Response>(`/api/trade-crm/crmClient/face/updateFaceResult`, {
+    method: 'POST',
+    data: body,
+    noMessage: true
+  })
+}
+
 // KYC身份认证-提交审核
 export async function submitKycAuth(body: KycAuth.SubmitKycAuthParams) {
   return request<API.Response>('/api/trade-crm/crmClient/user/kycAuth', {

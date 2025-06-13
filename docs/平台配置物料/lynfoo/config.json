@@ -8,6 +8,7 @@
   "REGISTER_APP_CODE": "123456",
   "ws": "wss://websocket.lynfoocn.com:443/websocketServer",
   "imgDomain": "https://file.lynfoocn.com/trade/",
+  "domain": "https://client.lynfoocn.com",
   "REGISTER_MODULE": true,
   "SKIP_KYC_STEP_ONE": true,
   "ID_CARD_ONLY": true,
@@ -16,5 +17,6 @@
   "HIDE_CREATE_ACCOUNT": true,
   "HIDE_ACCOUNT_RENAME": true,
   "DEBUG": false,
-  "salesmartlyJSUrl": "https://plugin-code.salesmartly.com/js/project_247867_254558_1739880055.js"
+  "salesmartlyJSUrl": "https://plugin-code.salesmartly.com/js/project_247867_254558_1739880055.js",
+  "KYC_FACE": false
 }

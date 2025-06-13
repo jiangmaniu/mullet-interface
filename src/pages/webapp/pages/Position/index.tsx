@@ -1,5 +1,6 @@
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useTitle } from 'ahooks'
 import { observer } from 'mobx-react'
 import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
@@ -16,6 +17,8 @@ const Position = () => {
   const currentAccountInfo = trade.currentAccountInfo
 
   const isFocused = useIsFocused()
+
+  useTitle(t('app.pageTitle.Position'))
 
   return (
     <Basiclayout bgColor="secondary" headerColor={currentAccountInfo.isSimulate ? '#FFDDD4' : theme.colors.backgroundColor.secondary}>

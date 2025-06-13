@@ -417,6 +417,11 @@ export default [
         path: '/:lng/app/user-center/kyc-webview-page',
         component: './webapp/pages/UserCenter/KycV2/KycWebviewPage'
       },
+      // 个人中心- 人臉核身状态
+      {
+        path: '/:lng/app/user-center/verify-status-face',
+        component: './webapp/pages/UserCenter/KycV2/VerifyStatusFace'
+      },
       // 入金 （h5 & webview）
       {
         path: '/:lng/app/deposit',
