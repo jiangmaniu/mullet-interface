@@ -3,7 +3,6 @@ import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { submitFaceAuthSuccess } from '@/services/api/crm/kycAuth'
-import { message } from '@/utils/message'
 import { push } from '@/utils/navigator'
 import { useSearchParams } from '@umijs/max'
 import { useTitle } from 'ahooks'
@@ -19,37 +18,40 @@ const VerifyStatusFace = () => {
 
   useTitle(t('pages.userCenter.fanhuiyonghuzhongxin'))
 
-  const [status, setStatus] = useState(false)
+  const [status, setStatus] = useState(true)
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     if (bizToken) {
-      submitFaceAuthSuccess({ bizToken })
-        .then((res) => {
-          if (!res.success) setStatus(false)
+      setLoading(true)
 
-          setTimeout(() => {
-            if (window.ReactNativeWebView) {
-              window.ReactNativeWebView?.postMessage(
-                JSON.stringify({
-                  type: 'fetchUserInfo'
-                })
-              )
-              window.ReactNativeWebView?.postMessage(
-                JSON.stringify({
-                  type: 'back'
-                })
-              )
-            } else {
-              push('/app/user-center')
-            }
-          }, 1500)
-        })
-        .catch((err) => {
-          message.info(t('pages.userCenter.canshuyichang'))
-        })
+      setTimeout(() => {
+        submitFaceAuthSuccess({ bizToken })
+          .then((res) => {
+            setLoading(false)
+            if (!res.success) setStatus(false)
+
+            setTimeout(() => {
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView?.postMessage(
+                  JSON.stringify({
+                    type: 'fetchUserInfo'
+                  })
+                )
+                window.ReactNativeWebView?.postMessage(
+                  JSON.stringify({
+                    type: 'back'
+                  })
+                )
+              } else {
+                push('/app/user-center')
+              }
+            }, 1500)
+          })
+          .catch((err) => {
+            setLoading(false)
+          })
+      }, 1200)
     }
-    //  else {
-    //   message.info(t('pages.userCenter.canshuyichang'))
-    // }
   }, [bizToken])
 
   return (
@@ -63,10 +65,15 @@ const VerifyStatusFace = () => {
         )}
         <View className="flex flex-col gap-2.5 items-center">
           <Text size="lg" weight="bold">
-            {status ? t('pages.userCenter.fanhuiyonghuzhongxin') : t('pages.userCenter.qingchongxinrenzheng')}
+            {status
+              ? loading
+                ? t('pages.userCenter.zhengzaichaxunrenzhengjieguo')
+                : t('pages.userCenter.fanhuiyonghuzhongxin')
+              : t('pages.userCenter.qingchongxinrenzheng')}
           </Text>
-          {/* <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.userCenter.ningxianzaikeyirujinbingkaishijiaoyi')}</Text> */}
-          <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.userCenter.yemianjianghuizidongtiaozhuan')}</Text>
+          {!loading && (
+            <Text className={cn('text-sm text-gray-500 text-center')}>{t('pages.userCenter.yemianjianghuizidongtiaozhuan')}</Text>
+          )}
         </View>
       </View>
 

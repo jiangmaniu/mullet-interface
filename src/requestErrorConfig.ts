@@ -69,7 +69,7 @@ export const errorConfig: RequestConfig = {
             return onLogout()
           } else {
             // 业务错误统一提示
-            errorMessage && message.info(errorMessage)
+            errorMessage && !opts?.noMessage && message.info(errorMessage)
           }
         }
       } else if (error.response) {

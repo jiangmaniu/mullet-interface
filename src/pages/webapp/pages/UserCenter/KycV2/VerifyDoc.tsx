@@ -19,7 +19,7 @@ const UploadFace = ({ file, onUpload, setFile }: { file: any; onUpload: () => vo
 
   return (
     <View className={cn('flex h-[188px] items-center justify-center  ')}>
-      <View onPress={onUpload} className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden px-[20px] py-[25px]')}>
+      <View className={cn(' border border-dashed border-[#6A7073]  rounded-lg overflow-hidden px-[20px] py-[25px]')}>
         <View className="flex flex-row items-center justify-start gap-[28px]">
           <img src="/img/webapp/face.png" width={100} height={100} />
           <View className="flex flex-col items-start justify-start gap-2">
@@ -223,13 +223,16 @@ const VerifyDoc = forwardRef(
                 : `${currentUser?.firstName || ''} ${currentUser?.lastName || ''}`}
             </Text>
           </View>
-          <Text className={cn('text-sm font-medium text-primary mt-2.5')} weight="medium">
-            {i18n.t('pages.userCenter.shagnchuanzhengjian')}
-          </Text>
+
           {KYC_FACE ? (
             <UploadFace file={file} onUpload={onUpload} setFile={setFile} />
           ) : (
-            <UploadFIle file={file} onUpload={onUpload} setFile={setFile} />
+            <>
+              <Text className={cn('text-sm font-medium text-primary mt-2.5')} weight="medium">
+                {i18n.t('pages.userCenter.shagnchuanzhengjian')}
+              </Text>
+              <UploadFIle file={file} onUpload={onUpload} setFile={setFile} />
+            </>
           )}
         </View>
 

@@ -30,7 +30,8 @@ export async function submitFaceAuth(body: { idCard: string; name: string; redir
 export async function submitFaceAuthSuccess(body: { bizToken: string }) {
   return request<API.Response>(`/api/trade-crm/crmClient/face/updateFaceResult`, {
     method: 'POST',
-    data: body
+    data: body,
+    noMessage: true
   })
 }
 
