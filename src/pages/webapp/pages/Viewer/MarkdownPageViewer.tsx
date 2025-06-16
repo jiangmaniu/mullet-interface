@@ -2,6 +2,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import MarkdownViewer from '@/components/Base/Viewer/MarkdownViewer'
 import { useTheme } from '@/context/themeProvider'
 import { useLocation } from '@umijs/max'
+import { useTitle } from 'ahooks'
 import Header from '../../components/Base/Header'
 import Basiclayout from '../../layouts/BasicLayout'
 
@@ -11,6 +12,8 @@ export default function MarkdownPageViewer() {
   const params = new URLSearchParams(location.search)
   const title = params?.get('title')
   const markdownFilePath = params?.get('markdownFilePath') || ''
+
+  useTitle(title || '')
 
   return (
     <Basiclayout
