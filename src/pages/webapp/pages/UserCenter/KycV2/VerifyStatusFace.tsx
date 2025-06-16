@@ -8,6 +8,7 @@ import { useSearchParams } from '@umijs/max'
 import { useTitle } from 'ahooks'
 import { useEffect, useState } from 'react'
 
+/** 人脸识别回调页面，无论成功失败都进入此页面 */
 const VerifyStatusFace = () => {
   const { cn } = useTheme()
   const i18n = useI18n()

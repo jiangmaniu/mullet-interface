@@ -14,6 +14,7 @@ import VerifyStatus2 from '../KycV2/VerifyStatus2'
 import VerifyStatus3 from '../KycV2/VerifyStatus3'
 import VerifyStatus4 from '../KycV2/VerifyStatus4'
 
+/** rn 版本所有逻辑，webview 版本所有逻辑 */
 const Children = observer(
   forwardRef(
     (

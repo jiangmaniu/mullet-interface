@@ -88,8 +88,6 @@ export default function KycVerifyDocPage() {
           <VerifyDoc
             ref={ref}
             onSuccess={async (data: any) => {
-              console.log('data', data)
-              console.log('KYC_FACE', KYC_FACE)
               if (KYC_FACE) {
                 window.location.href = data.url
               } else {
