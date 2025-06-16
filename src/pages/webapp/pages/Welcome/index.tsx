@@ -307,9 +307,13 @@ export default function WelcomeScreen() {
             </>
           }
           right={
-            <div onClick={() => lngSelectModalRef.current?.show()}>
-              <Iconfont name="geren-yuyan" size={30} />
-            </div>
+            <>
+              {!ENV.HIDE_SWITCH_LANGUAGE && (
+                <div onClick={() => lngSelectModalRef.current?.show()}>
+                  <Iconfont name="geren-yuyan" size={30} />
+                </div>
+              )}
+            </>
           }
         />
       }
