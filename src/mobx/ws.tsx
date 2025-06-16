@@ -197,7 +197,7 @@ class WSStore {
         console.log('更新消息通知', info)
 
         // 公告消息不弹窗
-        if (info?.type === 'GROUP') return
+        // if (info?.type === 'GROUP') return
 
         if (isPCByWidth()) {
           if (location.pathname.indexOf('/trade') === -1) return
