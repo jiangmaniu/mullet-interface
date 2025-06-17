@@ -133,6 +133,7 @@ function Message() {
       <Tabs
         items={tabItems}
         onChange={(key) => {
+          resetPage()
           setActiveKey(key as ITabKey)
           getMessage(false, key as ITabKey)
         }}

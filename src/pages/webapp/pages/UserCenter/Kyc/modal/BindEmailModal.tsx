@@ -166,7 +166,8 @@ function BindEmailModal(props: IProps) {
   return (
     <SheetModal
       ref={bottomSheetModalRef}
-      autoHeight
+      // autoHeight
+      height={500}
       title={intl.formatMessage({ id: 'mt.bangdingyouxiang' })}
       trigger={props.trigger}
       disabled={disabled}
