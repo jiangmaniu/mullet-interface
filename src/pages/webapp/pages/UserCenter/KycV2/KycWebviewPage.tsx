@@ -101,7 +101,7 @@ const Children = observer(
 
                 {KYC_FACE ? (
                   <Button
-                    type="default"
+                    type="danger"
                     height={48}
                     className={cn('w-full flex-1')}
                     onClick={() => {

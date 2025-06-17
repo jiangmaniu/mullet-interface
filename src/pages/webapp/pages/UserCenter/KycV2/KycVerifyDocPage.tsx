@@ -113,7 +113,7 @@ export default function KycVerifyDocPage() {
           {i18n.t('pages.userCenter.qurujin')}
         </Button>
         {KYC_FACE ? (
-          <Button type="default" loading={submitting} height={48} className={cn('w-full flex-1')} onClick={onSubmit}>
+          <Button type="danger" loading={submitting} height={48} className={cn('w-full flex-1')} onClick={onSubmit}>
             {i18n.t('pages.userCenter.kaishirenlianshibie')}
           </Button>
         ) : (
