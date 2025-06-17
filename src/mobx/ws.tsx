@@ -8,14 +8,11 @@ import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuoteV2 } from '@/utils/wsUtil'
 
 import Iconfont from '@/components/Base/Iconfont'
-import { getEnum } from '@/constants/enum'
 import { getEnv } from '@/env'
 import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
 import { isPCByWidth } from '@/utils'
-import { getSymbolIcon, parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
-import { cn } from '@/utils/cn'
-import { getPathname, push } from '@/utils/navigator'
-import { getIntl } from '@umijs/max'
+import { parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
+import { getPathname } from '@/utils/navigator'
 import { Toast } from 'antd-mobile'
 import klineStore from './kline'
 import trade from './trade'
@@ -219,9 +216,8 @@ class WSStore {
           //   position: 'top',
           //   duration: 3000
           // })
-
           // 只在这些入口页面提示消息
-          const paths = ['/app/trade', '/app/position', '/app/quote/kline']
+          const paths = ['/app/quote', '/app/trade', '/app/position', '/app/quote/kline', '/app/user-center']
           const pathname = getPathname(location.pathname)
           if (!paths.includes(pathname)) {
             return
@@ -235,35 +231,37 @@ class WSStore {
                 className="w-full flex items-center flex-col"
                 onClick={() => {
                   Toast.clear()
-                  push('/app/position')
+                  // push('/app/position')
                 }}
               >
                 <div className="flex items-center w-full justify-between px-[14px] py-[6px] bg-gray-50">
                   <div className="flex items-center">
                     <Iconfont size={18} name="chengjiaotongzhi" />
                     <span className="pl-1 text-primary text-xs font-pf-medium">
-                      {getIntl().formatMessage({ id: 'mt.dingdanchengjiao' })}
+                      {/* {getIntl().formatMessage({ id: 'mt.xiaoxitongzhi' })} */}
+                      {info?.title}
                     </span>
                   </div>
-                  <Iconfont size={18} name="anniu-gengduo" />
+                  {/* <Iconfont size={18} name="anniu-gengduo" /> */}
                 </div>
                 <div className="px-[14px] py-[10px] flex items-center justify-between w-full">
                   <div className="flex flex-col">
                     <div className="flex items-center">
-                      <div className="flex items-center">
+                      {/* <div className="flex items-center">
                         <img src={getSymbolIcon(symbolIcon)} width={20} height={20} alt="" className="rounded-full" />
                         <span className="text-primary font-semibold text-base pl-1">{fields.symbol}</span>
-                      </div>
-                      <span className={cn('text-base font-pf-medium pl-2', fields.tradeDirection === 'BUY' ? 'text-green' : 'text-red')}>
-                        {fields.tradeDirection === 'BUY'
+                      </div> */}
+                      {/* <span className={cn('text-base font-pf-medium pl-2', fields.tradeDirection === 'BUY' ? 'text-green' : 'text-red')}> */}
+                      {/* {fields.tradeDirection === 'BUY'
                           ? getIntl().formatMessage({ id: 'mt.mairu' })
-                          : getIntl().formatMessage({ id: 'mt.maichu' })}{' '}
-                        {/* @TODO 暂时没有杠杆支持 */}
-                        {/* 20X */}
-                      </span>
+                          : getIntl().formatMessage({ id: 'mt.maichu' })}{' '} */}
+                      {/* @TODO 暂时没有杠杆支持 */}
+                      {/* 20X */}
+                      {/* </span> */}
+                      {info?.content}
                     </div>
                     {/* @TODO 暂时没有保证金类型、订单类型 */}
-                    {(fields.marginType || fields.orderType) && (
+                    {/* {(fields.marginType || fields.orderType) && (
                       <div className="flex items-center pt-1">
                         <span className="text-primary text-xs">
                           {fields.marginType === 'CROSS_MARGIN'
@@ -277,17 +275,17 @@ class WSStore {
                           </>
                         )}
                       </div>
-                    )}
+                    )} */}
                   </div>
-                  <div className="text-primary text-base font-pf-medium">
+                  {/* <div className="text-primary text-base font-pf-medium">
                     {getIntl().formatMessage({ id: 'mt.chengjiao' })} {fields.tradeVolume}
                     {getIntl().formatMessage({ id: 'mt.lot' })}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ),
             position: 'top',
-            duration: 4000,
+            duration: 5000,
             maskClassName: 'webapp-custom-message animate__animated animate__bounceInDown'
           })
         }

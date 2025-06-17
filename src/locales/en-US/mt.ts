@@ -837,5 +837,6 @@ export default {
   'mt.liugeyue': '6 Months',
   'mt.jinzhichixuanzejinliugeyue': 'Only supports selecting the last 6 months',
   'mt.authorizing': 'Authorizing',
-  'mt.gonggao': 'Announcement'
+  'mt.gonggao': 'Announcement',
+  'mt.xiaoxitongzhi': 'Message Notification'
 }

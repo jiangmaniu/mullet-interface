@@ -67,7 +67,7 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
       >
         {t('mt.kaikong')} {hasQuote ? formatNum(quoteInfo.bid) : '--'}
       </Button>
-      <View className={cn('h-[18px] items-center justify-center bg-gray-85 px-1 rounded-[6px] z-[1] min-w-[36px] absolute dark:bg-white')}>
+      <View className={cn('h-[18px] items-center justify-center bg-gray-85 px-1 rounded-[6px] z-[0] min-w-[36px] absolute dark:bg-white')}>
         <Text color="primary" size="sm">
           {quoteInfo.spread || 0}
         </Text>

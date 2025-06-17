@@ -832,5 +832,6 @@ export default {
   'mt.liugeyue': '6個月',
   'mt.jinzhichixuanzejinliugeyue': '僅支持選擇最近6個月',
   'mt.authorizing': '授權驗證中',
-  'mt.gonggao': '公告'
+  'mt.gonggao': '公告',
+  'mt.xiaoxitongzhi': '消息通知'
 }
