@@ -4,10 +4,10 @@
   "CLIENT_ID": "trade-app-client",
   "CLIENT_SECRET": "trade-app-client-secret",
   "REGISTER_APP_CODE": "123456",
-  "ServiceTerm": "/platform/docs/serviceTerm.md",
-  "PrivacyAgreement": "/platform/docs/privacyAgreement.md",
-  "FilingInfomation": "/platform/docs/filingInfomation.md",
-  "AboutUs": "/platform/docs/aboutUs.md",
+  "ServiceTerm": "/platform/docs/serviceTerm.html",
+  "PrivacyAgreement": "/platform/docs/privacyAgreement.html",
+  "BeiAnPage": "/platform/docs/beian.html",
+  "AboutUs": "/platform/docs/aboutUs.html",
   "REGISTER_MODULE": true,
   "SERVER_LIST": false,
   "HIDE_CREATE_ACCOUNT": false,
@@ -30,6 +30,5 @@
   "ws": "wss://websocket.qawfadwd.xyz/websocketServer",
   "imgDomain": "https://file.qawfadwd.xyz/trade/",
   "websiteURL": "https://client.qawfadwd.xyz",
-  "agreementUrl": "https://client.qawfadwd.xyz/platform/docs/app-private.html",
   "remoteConfigUrl": "/platform/app.json"
 }
