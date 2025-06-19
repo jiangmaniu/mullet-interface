@@ -99,7 +99,7 @@ function TransferWechat({ form, handleTimeout }: IProps, ref: any) {
           <div>
             <img src="/img/saomiao.svg" width={20} height={20} />
             <div className="text-xs text-secondary font-normal mt-4">
-              <FormattedMessage id="mt.qingzhuanzhangzhixiafangqukuailiandizhi" />
+              <FormattedMessage id="mt.rujinzhuanzhanghoutishi" />
             </div>
           </div>
           <div className={cn('text-2xl text-primary font-semibold hidden', qrcode && 'block')}>

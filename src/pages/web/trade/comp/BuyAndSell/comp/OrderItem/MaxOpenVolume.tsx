@@ -1,10 +1,11 @@
 import { observer } from 'mobx-react'
 
-import useTrade from '@/hooks/useTrade'
+import useMaxOpenVolume from '@/hooks/useMaxOpenVolume'
 
 // 可开手数
 function MaxOpenVolume() {
-  const { maxOpenVolume } = useTrade()
+  // const { maxOpenVolume } = useTrade()
+  const maxOpenVolume = useMaxOpenVolume()
   return Number(maxOpenVolume) < 0 ? '--' : maxOpenVolume
 }
 

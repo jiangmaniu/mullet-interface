@@ -142,7 +142,7 @@ function TransferCrypto({ form, handleTimeout }: IProps, ref: any) {
           <div>
             {/* <img src="/img/saomiao.svg" width={20} height={20} /> */}
             <div className="text-xs text-weak font-normal mt-4 text-center w-[257px]">
-              <FormattedMessage id="mt.qingzhuanzhangzhixiafangqukuailiandizhi" />
+              <FormattedMessage id="mt.rujinzhuanzhanghoutishi" />
             </div>
           </div>
           <div className={cn('text-sm text-center text-primary font-semibold hidden', address && 'block')}>

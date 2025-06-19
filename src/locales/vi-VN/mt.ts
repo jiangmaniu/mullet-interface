@@ -829,5 +829,7 @@ export default {
   'mt.liugeyue': '6 tháng',
   'mt.jinzhichixuanzejinliugeyue': 'Chỉ hỗ trợ chọn 6 tháng gần nhất',
   'mt.gonggao': 'Thông báo',
-  'mt.xiaoxitongzhi': 'Thông báo'
+  'mt.xiaoxitongzhi': 'Thông báo',
+  'mt.rujinzhuanzhanghoutishi':
+    'Sau khi chuyển khoản, vui lòng kiểm tra trạng thái nạp tiền trong tài sản. Nếu có vấn đề, vui lòng liên hệ ngay với dịch vụ khách hàng trực tuyến.'
 }

@@ -30,37 +30,36 @@ export default defineConfig({
 
   plugins: [
     require.resolve('./plugins/prefetch.ts'),
-    '@alitajs/sentry'
+    // '@alitajs/sentry'
   ],
 
-  sentry: {
-    // 参数 https://github.com/getsentry/sentry-javascript/blob/0c4fdf60fe1394dd453093fc7ecf6d95ccee070f/packages/types/src/options.ts#L10
-    dsn: process.env.SENTRY_DSN,
-    // 控制上报的频率
-    tracesSampleRate: '1.0',
-    development: false, // 启用开发环境的 sentry 调试
-    sourceMap: {
-      org: process.env.SENTRY_ORG,
-      project: process.env.SENTRY_PROJECT,
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      // 版本将上传到 https://poetry-m4.sentry.io/settings/projects/sux-client/source-maps/
-      release: {
-        // sourcemap版本号
-        name: dayjs().format('YYYY-MM-DD HH:mm:ss')
-      },
-      // https://docs.sentry.io/platforms/javascript/sourcemaps/uploading/webpack/
-      // 打包阶段才会主动上传，测试环境没有上传sourcemap
-      sourcemaps: {
-        // assets: `${distDir}/**/*`,
-        // 上传后，删除dist下的.map文件
-        filesToDeleteAfterUpload: ['dist//*.map']
-      },
-    }
-  },
-
+  // sentry: {
+  //   // 参数 https://github.com/getsentry/sentry-javascript/blob/0c4fdf60fe1394dd453093fc7ecf6d95ccee070f/packages/types/src/options.ts#L10
+  //   dsn: process.env.SENTRY_DSN,
+  //   // 控制上报的频率
+  //   tracesSampleRate: '1.0',
+  //   development: false, // 启用开发环境的 sentry 调试
+  //   sourceMap: {
+  //     org: process.env.SENTRY_ORG,
+  //     project: process.env.SENTRY_PROJECT,
+  //     authToken: process.env.SENTRY_AUTH_TOKEN,
+  //     // 版本将上传到 https://poetry-m4.sentry.io/settings/projects/sux-client/source-maps/
+  //     release: {
+  //       // sourcemap版本号
+  //       name: dayjs().format('YYYY-MM-DD HH:mm:ss')
+  //     },
+  //     // https://docs.sentry.io/platforms/javascript/sourcemaps/uploading/webpack/
+  //     // 打包阶段才会主动上传，测试环境没有上传sourcemap
+  //     sourcemaps: {
+  //       // assets: `${distDir}/**/*`,
+  //       // 上传后，删除dist下的.map文件
+  //       filesToDeleteAfterUpload: ['dist//*.map']
+  //     },
+  //   }
+  // },
+  devtool: process.env.NODE_ENV === 'development' ? 'eval' : false,
   // 只设置 dev 阶段的 sourcemap
-  // devtool: process.env.NODE_ENV === 'development' ? 'source-map' : false,
-  devtool: process.env.NODE_ENV === 'development' ?  'source-map' : 'eval' , // 启用sourcemap 结合 sentry 上传后会自动删除dist下的.map文件
+  // devtool: process.env.NODE_ENV === 'development' ?  'source-map' : 'eval' , // 启用sourcemap 结合 sentry 上传后会自动删除dist下的.map文件
 
   /**
    * @name 兼容性设置

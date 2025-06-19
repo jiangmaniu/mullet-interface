@@ -838,5 +838,7 @@ export default {
   'mt.jinzhichixuanzejinliugeyue': 'Only supports selecting the last 6 months',
   'mt.authorizing': 'Authorizing',
   'mt.gonggao': 'Announcement',
-  'mt.xiaoxitongzhi': 'Message Notification'
+  'mt.xiaoxitongzhi': 'Message Notification',
+  'mt.rujinzhuanzhanghoutishi':
+    'After transfer, please check the deposit status in the assets. If you have any questions, please contact the online customer service in time.'
 }

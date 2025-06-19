@@ -372,31 +372,31 @@ export const rootContainer = (container: JSX.Element) => {
 }
 
 // sentry运行时配置 https://github.com/alitajs/umi-plugin-sentry
-export const sentry = {
-  showDialog: false,
-  // @ts-ignore
-  // fallback: ({ error, componentStack, resetError }) => (
-  //   <div style={{ padding: 20 }}>
-  //     <div>You have encountered an error</div>
-  //     <div>{error.toString()}</div>
-  //     <div>{componentStack}</div>
-  //     <Button
-  //       onClick={() => {
-  //         resetError()
-  //       }}
-  //       type="primary"
-  //       style={{ marginTop: 20 }}
-  //     >
-  //       Click here to reset!
-  //     </Button>
-  //   </div>
-  // ),
-  onError: (e: any) => {
-    console.error('sentry onError', e)
-  },
-  beforeCapture: (scope: any) => {
-    console.log('sentry beforeCapture', scope)
+// export const sentry = {
+//   showDialog: false,
+//   // @ts-ignore
+//   // fallback: ({ error, componentStack, resetError }) => (
+//   //   <div style={{ padding: 20 }}>
+//   //     <div>You have encountered an error</div>
+//   //     <div>{error.toString()}</div>
+//   //     <div>{componentStack}</div>
+//   //     <Button
+//   //       onClick={() => {
+//   //         resetError()
+//   //       }}
+//   //       type="primary"
+//   //       style={{ marginTop: 20 }}
+//   //     >
+//   //       Click here to reset!
+//   //     </Button>
+//   //   </div>
+//   // ),
+//   onError: (e: any) => {
+//     console.error('sentry onError', e)
+//   },
+//   beforeCapture: (scope: any) => {
+//     console.log('sentry beforeCapture', scope)
 
-    beforeCaptureSetUserInfo()
-  }
-}
+//     beforeCaptureSetUserInfo()
+//   }
+// }

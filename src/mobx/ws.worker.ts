@@ -824,12 +824,14 @@ function calcYieldRate(item: Order.BgaOrderPageListItem, precision: any, profitV
 function calcIsolatedMarginRateInfo(filterPositionList: Order.BgaOrderPageListItem[]) {
   let compelCloseRatio = currentAccountInfo.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
   let orderMargin = 0 // 订单总的保证金
+  let orderBaseMargin = 0 // 基础保证金
   let handlingFees = 0 // 订单总的手续费
   let interestFees = 0 // 订单总的库存费
   let profit = 0 // 订单总的浮动盈亏
   filterPositionList.map((item) => {
     const orderProfit = covertProfit(item, false) as any
     orderMargin += Number(item.orderMargin || 0)
+    orderBaseMargin += Number(item.orderBaseMargin || 0)
     // handlingFees += Number(item.handlingFees || 0)
     // interestFees += Number(item.interestFees || 0)
     if (orderProfit) {
@@ -841,7 +843,9 @@ function calcIsolatedMarginRateInfo(filterPositionList: Order.BgaOrderPageListIt
   // const isolatedBalance = Number(orderMargin + Number(interestFees || 0) + Number(handlingFees || 0) + Number(profit || 0))
   const isolatedBalance = Number(orderMargin + Number(profit || 0))
   // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
-  const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
+  // const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
+  // 新公式：逐仓保证金率 = 订单净值(订单保证金+浮动盈亏) / 基础保证金。
+  const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderBaseMargin) * 100) : 0
   const margin = Number(orderMargin * (compelCloseRatio / 100))
   const balance = toFixed(isolatedBalance, 2)
 

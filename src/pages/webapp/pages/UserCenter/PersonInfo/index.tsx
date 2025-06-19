@@ -125,7 +125,7 @@ function UserCenter() {
       // ),
       // 只能绑定，不能修改
       subText: currentUser?.userInfo?.email ? currentUser?.userInfo?.email : <BindEmailModal trigger={<span>{t('mt.bangding')}</span>} />,
-      hiddenRightIcon: !!currentUser?.userInfo?.phone,
+      hiddenRightIcon: !!currentUser?.userInfo?.email,
       styles: {
         subTextStyle: {
           color: !currentUser?.userInfo?.email ? 'var(--color-primary)' : 'var(--color-text-weak)'

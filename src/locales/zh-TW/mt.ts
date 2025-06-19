@@ -833,5 +833,6 @@ export default {
   'mt.jinzhichixuanzejinliugeyue': '僅支持選擇最近6個月',
   'mt.authorizing': '授權驗證中',
   'mt.gonggao': '公告',
-  'mt.xiaoxitongzhi': '消息通知'
+  'mt.xiaoxitongzhi': '消息通知',
+  'mt.rujinzhuanzhanghoutishi': '转账后请返回资产中查看到账情况，如有疑问请及时联系在线客服'
 }
