@@ -278,7 +278,6 @@ export default defineConfig({
             'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN,
             'process.env.CLIENT_ID': process.env.CLIENT_ID,
             'process.env.CLIENT_SECRET': process.env.CLIENT_SECRET,
-            'process.env.REGISTER_APP_CODE': process.env.REGISTER_APP_CODE,
             // seo配置-按需把public/platform/config.json配置同步过来，需要在.env-conf 中配置
             'process.env.name': process.env.name,
             'process.env.desc': process.env.desc

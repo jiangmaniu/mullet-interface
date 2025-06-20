@@ -10,7 +10,6 @@
   "NAMESPACE": "lynfoo",
   "CLIENT_ID": "trade-app-client",
   "CLIENT_SECRET": "trade-app-client-secret",
-  "REGISTER_APP_CODE": "123456",
   "ServiceTerm": "/platform/docs/serviceTerm.md",
   "PrivacyAgreement": "/platform/docs/privacyAgreement.md",
   "REGISTER_MODULE": true,

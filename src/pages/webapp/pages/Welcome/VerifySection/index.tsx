@@ -6,6 +6,7 @@ import { useTheme } from '@/context/themeProvider'
 
 import { ModalLoading, ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { ADMIN_HOME_PAGE, APP_MODAL_WIDTH, WEB_HOME_PAGE } from '@/constants'
+import { getAppRegisterCode } from '@/constants/config'
 import { stores, useStores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
 import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
@@ -120,7 +121,7 @@ const _Section: ForwardRefRenderFunction<TypeSection, Props> = (
 
     try {
       const body = {
-        code: ENV.REGISTER_APP_CODE as string,
+        code: getAppRegisterCode(),
         country: areaCodeItem?.abbr,
         password: md5(password),
         validateCode: Number(code)

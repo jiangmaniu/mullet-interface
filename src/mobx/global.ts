@@ -2,11 +2,17 @@ import { DEFAULT_REGISTER_WAY } from '@/constants'
 import { stores } from '@/context/mobxProvider'
 import serverConf from '@/env/server'
 import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
-import { getRegisterWay } from '@/services/api/common'
+import { getRegisterWay, getRegisterWayByBusinessLine } from '@/services/api/common'
 import { getClientDetail } from '@/services/api/crm/customer'
 import { getMyMessageList } from '@/services/api/message'
 import { onLogout } from '@/utils/navigator'
-import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO, STORAGE_SET_PLATFORM_CONFIG, STORAGE_SET_USER_INFO } from '@/utils/storage'
+import {
+  STORAGE_GET_REGISTER_CODE,
+  STORAGE_GET_TOKEN,
+  STORAGE_GET_USER_INFO,
+  STORAGE_SET_PLATFORM_CONFIG,
+  STORAGE_SET_USER_INFO
+} from '@/utils/storage'
 import { getIntl } from '@umijs/max'
 import { message } from 'antd'
 import { action, makeAutoObservable, observable, reaction, runInAction } from 'mobx'
@@ -199,6 +205,19 @@ export class GlobalStore {
 
   // 获取该应用支持的注册方式，目前只支持一种，不支持同时切换手机、邮箱注册
   getRegisterWay = async () => {
+    const code = STORAGE_GET_REGISTER_CODE()
+    // 如果地址上存在注册码
+    if (code) {
+      // 根据业务线来获取注册方式
+      const res = await getRegisterWayByBusinessLine(code)
+      if (res.success) {
+        const registerWay = res.data?.registerWay as API.RegisterWay
+        this.registerWay = registerWay
+
+        // 如果存在不进行下一步查询全局的注册方式
+        if (registerWay) return
+      }
+    }
     const res = await getRegisterWay()
     runInAction(() => {
       if (res.data) {

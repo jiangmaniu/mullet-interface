@@ -240,4 +240,20 @@ declare namespace API {
     | 'CROSS_MARGIN'
     /**逐仓 */
     | 'ISOLATED_MARGIN'
+
+  // 注册方式 根据业务线识别码
+  type RegisterWayByBusinessLine = {
+    id: string
+    accountGroupId: string
+    groupName: string
+    code: string
+    kycAuth: string
+    registerWay: RegisterWay
+    payWay: string
+    withdrawalWay: string
+    withdrawalLimitCount: string
+    withdrawalLimitMoney: string
+    withdrawalLimitCycle: string
+    remark: string
+  }
 }

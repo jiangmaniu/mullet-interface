@@ -29,6 +29,14 @@ export async function getRegisterWay() {
   })
 }
 
+// 查询注册方式 根据业务线识别码
+export async function getRegisterWayByBusinessLine(code: string) {
+  return request<API.Response<API.RegisterWayByBusinessLine>>(`/api/trade-crm/crmClient/public/clientGroup/${code}`, {
+    method: 'GET',
+    needToken: false
+  })
+}
+
 // 查询交易品种分类列表
 export async function getTradeSymbolCategory() {
   return request<API.Response<API.KEYVALUE[]>>('/api/trade-crm/crmClient/public/dictBiz/symbol_classify', {

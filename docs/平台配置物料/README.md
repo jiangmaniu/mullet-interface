@@ -20,8 +20,6 @@
   "CLIENT_ID_H5": "trade-h5-client",
   // 客户秘钥 (必填)-h5
   "CLIENT_SECRET_H5": "trade-h5-client-secret",
-  // 识别码 (必填) 在manager端新增填入 /zh-TW/customer-group
-  "REGISTER_APP_CODE": "123456",
   // websocket地址 (必填)
   "ws": "wss://websocket.stellux.io/websocketServer",
   // 图片域名前缀地址 (必填)

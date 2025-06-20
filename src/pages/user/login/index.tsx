@@ -18,6 +18,7 @@ import { setLocalUserInfo } from '@/utils/storage'
 import SelectCountryFormItem from '@/components/Admin/Form/SelectCountryFormItem'
 import Loading from '@/components/Base/Lottie/Loading'
 import PwdTips from '@/components/PwdTips'
+import { getAppRegisterCode } from '@/constants/config'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { getEnv } from '@/env'
@@ -238,7 +239,7 @@ function Login() {
       validateCode: values.validateCode,
       password: md5(values.password as string),
       country: values.country,
-      code: ENV.REGISTER_APP_CODE,
+      code: getAppRegisterCode(),
       phoneAreaCode: values.phoneAreaCode
     } as User.RegisterParams
 
