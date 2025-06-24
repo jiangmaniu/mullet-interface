@@ -831,5 +831,11 @@ export default {
   'mt.gonggao': 'Thông báo',
   'mt.xiaoxitongzhi': 'Thông báo',
   'mt.rujinzhuanzhanghoutishi':
-    'Sau khi chuyển khoản, vui lòng kiểm tra trạng thái nạp tiền trong tài sản. Nếu có vấn đề, vui lòng liên hệ ngay với dịch vụ khách hàng trực tuyến.'
+    'Sau khi chuyển khoản, vui lòng kiểm tra trạng thái nạp tiền trong tài sản. Nếu có vấn đề, vui lòng liên hệ ngay với dịch vụ khách hàng trực tuyến.',
+  xiadanquerentips: 'Mở lệnh cần xác nhận',
+  pingcangquerentips: 'Mở lệnh thị trường cần xác nhận',
+  'mt.erciqueren': 'Xác nhận lại',
+  'mt.shouchonghuodong': 'Hoạt động nạp tiền đầu tiên',
+  'mt.xiadanshijian': 'Thời gian đặt lệnh',
+  'mt.gengduoshezhi': 'Cài đặt'
 }

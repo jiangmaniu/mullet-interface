@@ -18,6 +18,8 @@ import useFocusEffect from '../../hooks/useFocusEffect'
 import { useI18n } from '../../hooks/useI18n'
 import BasicLayout from '../../layouts/BasicLayout'
 import { navigateTo } from '../../utils/navigator'
+import BindEmailModal from './Kyc/modal/BindEmailModal'
+import BindPhoneModal from './Kyc/modal/BindPhoneModal'
 import KycStatus from './KycV2/KycStatus'
 import MessageStore from './Message/MessageStore'
 import Account from './comp/Account'
@@ -70,7 +72,11 @@ function UserCenter() {
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
   const phone = currentUser?.userInfo?.phone || ''
+  const email = currentUser?.userInfo?.email || ''
   const ENV = getEnv()
+
+  const bindPhoneRef = useRef<any>(null)
+  const bindEmailRef = useRef<any>(null)
 
   useTitle(t('app.pageTitle.Personal Center'))
 
@@ -118,7 +124,7 @@ function UserCenter() {
     {
       icon: 'geren-xiadanqueren',
       title: t('pages.userCenter.Order Confirmation'),
-      subTitle: t('pages.userCenter.Order Confirmation tips'),
+      subTitle: t('mt.xiadanquerentips'),
       renderExtraElement: () => {
         // switch
         return <OrderConfirmSwitch />
@@ -127,7 +133,7 @@ function UserCenter() {
     {
       icon: 'geren-pingcangqueren',
       title: t('pages.userCenter.Close Position Confirmation'),
-      subTitle: t('pages.userCenter.Close Position Confirmation tips'),
+      subTitle: t('mt.pingcangquerentips'),
       renderExtraElement: () => {
         // switch
         return <PositionConfirmSwitch />
@@ -186,7 +192,12 @@ function UserCenter() {
       href: '/app/deposit',
       onClick: () => {
         if (!phone) {
-          navigateTo('/app/person-info?back=true&bindPhone=true')
+          // navigateTo('/app/person-info?back=true&bindPhone=true')
+          // 绑定手机号弹窗
+          bindPhoneRef.current.show()
+        } else if (!email) {
+          // 绑定邮箱弹窗
+          bindEmailRef.current.show()
         } else if (isBaseAuth) {
           navigateTo('/app/deposit')
         } else {
@@ -290,6 +301,12 @@ function UserCenter() {
         </Button>
       </View>
       <KycTipsModal ref={kycTipsModalRef} />
+
+      {/* 绑定手机号弹窗 */}
+      <BindPhoneModal ref={bindPhoneRef} />
+      {/* 绑定邮箱弹窗 */}
+      <BindEmailModal ref={bindEmailRef} />
+
       <ModalConfirm
         ref={modalConfirmRef}
         title={t('common.operate.Logout')}

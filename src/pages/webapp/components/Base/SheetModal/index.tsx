@@ -177,8 +177,11 @@ const SheetModal = (props: IProps, ref: ForwardedRef<SheetRef>) => {
     console.log('closeclosecloseclose')
     beforeClose?.()
     onDismiss?.()
-    setVisible(false)
-    setLoading(true)
+    setLoading(false)
+
+    setTimeout(() => {
+      setVisible(false)
+    }, 100)
   }
 
   // 将属性暴露给父元素

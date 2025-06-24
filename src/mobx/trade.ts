@@ -129,9 +129,9 @@ class TradeStore {
   @observable orderType: ITradeTabsOrderType = 'MARKET_ORDER' // 交易区订单类型
   @observable leverageMultiple = 1 // 浮动杠杆倍数，默认1
   @observable leverageMultipleMaxOpenVolume = 0 // 浮动杠杆模式点击弹窗确认后，最大可开仓量，显示在可开的位置
-  @observable orderQuickPlaceOrderChecked = true // 快速下单默认选择
+  @observable orderQuickPlaceOrderChecked = false // 快速下单默认选择
   @observable orderConfirmChecked = true // 下单二次确认弹窗
-  @observable positionConfirmChecked = false // 平仓二次确认弹窗
+  @observable positionConfirmChecked = true // 平仓二次确认弹窗
   @observable orderVolume = '0.01' // 交易区下单数量
   @observable orderVolumeTag = '' // 手数标签快速选择
   @observable orderSpslChecked = false // 是否选中止盈止损
@@ -191,9 +191,11 @@ class TradeStore {
     this.getPositionList()
 
     const localOrderQuickPlaceOrderChecked = await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()
-    this.orderQuickPlaceOrderChecked = localOrderQuickPlaceOrderChecked !== null ? localOrderQuickPlaceOrderChecked : true
-    this.orderConfirmChecked = (await STORAGE_GET_ORDER_CONFIRM_CHECKED()) || false
-    this.positionConfirmChecked = (await STORAGE_GET_POSITION_CONFIRM_CHECKED()) || false
+    const localOrderConfirmChecked = await STORAGE_GET_ORDER_CONFIRM_CHECKED()
+    const localPositionConfirmChecked = await STORAGE_GET_POSITION_CONFIRM_CHECKED()
+    this.orderQuickPlaceOrderChecked = localOrderQuickPlaceOrderChecked !== null ? localOrderQuickPlaceOrderChecked : false
+    this.orderConfirmChecked = localOrderConfirmChecked !== null ? localOrderConfirmChecked : true
+    this.positionConfirmChecked = localPositionConfirmChecked !== null ? localPositionConfirmChecked : true
     this.historySearchList = (await STORAGE_GET_HISTORY_SEARCH()) || []
   }
 

@@ -167,13 +167,13 @@ function PositionList() {
 
   const onMarketClose = () => {
     if (trade.positionConfirmChecked) {
-      submitPosition()
-    } else {
       showLoading({
         color: theme.colors.textColor.primary
       })
       marketCloseModalRef.current?.sheet?.present()
       hideLoading()
+    } else {
+      submitPosition()
     }
   }
 

@@ -136,7 +136,7 @@ function AccountDetail() {
   const synopsis = getAccountSynopsisByLng(trade.currentAccountInfo.synopsis)
 
   return (
-    <Basiclayout bgColor="secondary" className="px-[14px]" headerColor={theme.colors.backgroundColor.secondary}>
+    <Basiclayout bgColor="secondary" headerColor={theme.colors.backgroundColor.secondary}>
       <Header
         title={t('app.pageTitle.Account Detail')}
         onBack={() => {
@@ -144,99 +144,101 @@ function AccountDetail() {
         }}
       />
 
-      <View bgColor="primary" className={cn('px-3 py-4 mt-5 rounded-xl flex flex-col gap-2')}>
-        <View className={cn('flex flex-row items-center gap-1 ')}>
-          <Text size="lg" weight="bold" color="primary">
-            {/*  */}
-            {formatStringWithEllipsis(currentAccountInfo?.name || '', 20)}
-          </Text>
-        </View>
-        <View className={cn('flex flex-row items-center justify-start gap-2')}>
-          <View
-            className={cn(
-              'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal ',
-              currentAccountInfo.isSimulate ? 'bg-[#AD41FF]' : 'bg-brand'
-            )}
-          >
-            <Text color="white">
-              {currentAccountInfo.isSimulate ? t('common.enum.accountType.DEMO') : t('common.enum.accountType.REAL')}
+      <View className="mx-4">
+        <View bgColor="primary" className={cn('px-3 py-4 mt-5 rounded-xl flex flex-col gap-2')}>
+          <View className={cn('flex flex-row items-center gap-1 ')}>
+            <Text size="lg" weight="bold" color="primary">
+              {/*  */}
+              {formatStringWithEllipsis(currentAccountInfo?.name || '', 20)}
             </Text>
           </View>
-          <Text size="sm" weight="normal" color="primary">
-            #{currentAccountInfo.id}
-          </Text>
-        </View>
-      </View>
-      <View bgColor="primary" className={cn('px-3 py-4 mt-4 rounded-xl flex flex-col gap-6')}>
-        {items.map((i, idx) => (
-          <View key={idx} className={cn('flex flex-row justify-between items-center w-full gap-2 h-5')}>
-            <SimpleTooltip content={i.tips} setVisible={setVisible} index={idx} visible={visible === idx}>
-              <View className={cn('flex flex-row items-center gap-1 h-full flex-shrink-0 flex-grow')}>
-                <Text color="primary" size="sm" weight="light">
-                  {i.label}
-                </Text>
-                <img
-                  src={'/img/webapp/icons/tips.png'}
-                  width={16}
-                  height={16}
-                  style={{
-                    width: 16,
-                    height: 16
-                  }}
-                />
-              </View>
-            </SimpleTooltip>
-            <View className={cn('flex flex-row gap-1 flex-1 overflow-hidden')}>
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
-              <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+          <View className={cn('flex flex-row items-center justify-start gap-2')}>
+            <View
+              className={cn(
+                'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal ',
+                currentAccountInfo.isSimulate ? 'bg-[#AD41FF]' : 'bg-brand'
+              )}
+            >
+              <Text color="white">
+                {currentAccountInfo.isSimulate ? t('common.enum.accountType.DEMO') : t('common.enum.accountType.REAL')}
+              </Text>
             </View>
-
-            {i.value}
+            <Text size="sm" weight="normal" color="primary">
+              #{currentAccountInfo.id}
+            </Text>
           </View>
-        ))}
-      </View>
-
-      {!!synopsis?.list?.length && (
-        <View className="mt-3">
-          <Text className={cn('mt-[18px] ml-[6px]')} size="sm" color="weak" weight="light">
-            {t('pages.account.Account Attributes')}
-          </Text>
-          <View bgColor="primary" className={cn('px-3 py-4 mt-[10px] rounded-xl flex flex-col gap-2')}>
-            <View className={cn('w-full flex flex-wrap flex-row')}>
-              {synopsis?.list?.map((i, index) => (
-                <View
-                  className={cn(
-                    'flex flex-col gap-1',
-                    index % 3 === 2 ? 'items-end flex-1' : index % 3 === 1 ? 'items-center ml-2' : 'items-start w-1/3',
-                    'p-2'
-                  )}
-                  key={i.title}
-                >
+        </View>
+        <View bgColor="primary" className={cn('px-3 py-4 mt-4 rounded-xl flex flex-col gap-6')}>
+          {items.map((i, idx) => (
+            <View key={idx} className={cn('flex flex-row justify-between items-center w-full gap-2 h-5')}>
+              <SimpleTooltip content={i.tips} setVisible={setVisible} index={idx} visible={visible === idx}>
+                <View className={cn('flex flex-row items-center gap-1 h-full flex-shrink-0 flex-grow')}>
                   <Text color="primary" size="sm" weight="light">
-                    {i.content}
+                    {i.label}
                   </Text>
-                  <Text color="weak" size="xs" weight="light">
-                    {i.title}
-                  </Text>
+                  <img
+                    src={'/img/webapp/icons/tips.png'}
+                    width={16}
+                    height={16}
+                    style={{
+                      width: 16,
+                      height: 16
+                    }}
+                  />
                 </View>
-              ))}
+              </SimpleTooltip>
+              <View className={cn('flex flex-row gap-1 flex-1 overflow-hidden')}>
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+                <View style={{ width: 6, height: 1.5, borderRadius: 2, backgroundColor: '#F0F0F0', marginRight: 2 }} />
+              </View>
+
+              {i.value}
+            </View>
+          ))}
+        </View>
+
+        {!!synopsis?.list?.length && (
+          <View className="mt-3">
+            <Text className={cn('mt-[18px] ml-[6px]')} size="sm" color="weak" weight="light">
+              {t('pages.account.Account Attributes')}
+            </Text>
+            <View bgColor="primary" className={cn('px-3 py-4 mt-[10px] rounded-xl flex flex-col gap-2')}>
+              <View className={cn('w-full flex flex-wrap flex-row')}>
+                {synopsis?.list?.map((i, index) => (
+                  <View
+                    className={cn(
+                      'flex flex-col gap-1',
+                      index % 3 === 2 ? 'items-end flex-1' : index % 3 === 1 ? 'items-center ml-2' : 'items-start w-1/3',
+                      'p-2'
+                    )}
+                    key={i.title}
+                  >
+                    <Text color="primary" size="sm" weight="light">
+                      {i.content}
+                    </Text>
+                    <Text color="weak" size="xs" weight="light">
+                      {i.title}
+                    </Text>
+                  </View>
+                ))}
+              </View>
             </View>
           </View>
-        </View>
-      )}
+        )}
+      </View>
     </Basiclayout>
   )
 }

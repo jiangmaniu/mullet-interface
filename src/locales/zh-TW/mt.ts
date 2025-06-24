@@ -834,5 +834,11 @@ export default {
   'mt.authorizing': '授權驗證中',
   'mt.gonggao': '公告',
   'mt.xiaoxitongzhi': '消息通知',
-  'mt.rujinzhuanzhanghoutishi': '转账后请返回资产中查看到账情况，如有疑问请及时联系在线客服'
+  'mt.rujinzhuanzhanghoutishi': '转账后请返回资产中查看到账情况，如有疑问请及时联系在线客服',
+  'mt.xiadanquerentips': '打开后下单需要二次确认',
+  'mt.pingcangquerentips': '打开后市价平仓需要二次确认',
+  'mt.erciqueren': '二次确认',
+  'mt.shouchonghuodong': '首充活动',
+  'mt.xiadanshijian': '下單時間',
+  'mt.gengduoshezhi': '更多設置'
 }

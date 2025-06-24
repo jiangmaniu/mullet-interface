@@ -8,7 +8,7 @@ import BasicLayout from '@/pages/webapp/layouts/BasicLayout'
 import { colorToRGBA } from '@/utils/color'
 import { onBack } from '@/utils/navigator'
 import classNames from 'classnames'
-import VerifyStatus4 from '../KycV2/VerifyStatus4'
+import VerifyStatus4 from './VerifyStatus4'
 export default function KycVerifyDocPage() {
   const { cn, theme } = useTheme()
   const i18n = useI18n()

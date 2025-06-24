@@ -26,7 +26,7 @@ export type PositionModalRef = {
   visible: boolean | undefined
 }
 
-const ListItem = ({
+export const ListItem = ({
   label,
   value,
   align,

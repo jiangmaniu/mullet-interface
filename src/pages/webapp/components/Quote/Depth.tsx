@@ -27,7 +27,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
   const bids = toJS(depth?.bids || [])
 
-  const list = showAll ? bids : bids.slice(0, 10)
+  const list = showAll ? bids.slice(0, 20) : bids.slice(0, 10)
   const maxAmount = Math.max(...list.map((item) => item.amount))
 
   const setOrderPrice = useCallback(
@@ -84,7 +84,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
   const depth = getCurrentDepth()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
   const asks = toJS(depth?.asks || []).reverse()
-  const list = showAll ? asks : asks.slice(-10) // 获取倒数10条数据
+  const list = showAll ? asks.slice(-20) : asks.slice(-10) // 获取倒数10条数据
   const maxAmount = Math.max(...list.map((item) => item.amount))
 
   const setOrderPrice = useCallback(

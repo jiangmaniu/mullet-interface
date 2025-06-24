@@ -145,8 +145,8 @@ function OrderConfirmModal({ trigger, onConfirm }: IProps, ref: ForwardedRef<Ord
                 console.log('checked', checked)
                 trade.setOrderConfirmChecked(checked)
               }}
-              // checked
-              label={intl.formatMessage({ id: 'pages.trade.Order Comfirm No Tip Checked' })}
+              checked={trade.orderConfirmChecked}
+              label={intl.formatMessage({ id: 'mt.erciqueren' })}
             />
           </View>
         </View>

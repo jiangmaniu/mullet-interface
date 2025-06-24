@@ -840,5 +840,11 @@ export default {
   'mt.gonggao': 'Announcement',
   'mt.xiaoxitongzhi': 'Message Notification',
   'mt.rujinzhuanzhanghoutishi':
-    'After transfer, please check the deposit status in the assets. If you have any questions, please contact the online customer service in time.'
+    'After transfer, please check the deposit status in the assets. If you have any questions, please contact the online customer service in time.',
+  'mt.xiadanquerentips': 'Open order confirmation',
+  'mt.pingcangquerentips': 'Market price close confirmation',
+  'mt.erciqueren': 'Confirmation',
+  'mt.shouchonghuodong': 'First Deposit Activity',
+  'mt.xiadanshijian': 'Order Time',
+  'mt.gengduoshezhi': 'More Settings'
 }

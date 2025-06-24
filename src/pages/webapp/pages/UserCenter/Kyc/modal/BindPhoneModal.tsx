@@ -207,8 +207,8 @@ const BindPhoneModal = forwardRef((props: IProps, ref: React.Ref<ModalRef>) => {
         ref={bottomSheetModalRef}
         autoHeight
         title={intl.formatMessage({ id: 'mt.bangdingshouji' })}
-        trigger={props.trigger}
-        open={props.open}
+        // trigger={props.trigger}
+        // open={props.open}
         children={
           <div className="mx-4">
             <TextField

@@ -1,19 +1,18 @@
-import Iconfont from '@/components/Base/Iconfont'
-import { SOURCE_CURRENCY } from '@/constants'
-import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import CurrentPrice from '@/pages/web/trade/comp/TradeRecord/comp/PositionList/comp/CurrentPrice'
+import MarginRate from '@/pages/web/trade/comp/TradeRecord/comp/PositionList/comp/MarginRate'
 import Button from '@/pages/webapp/components/Base/Button'
-import ActivityIndicator from '@/pages/webapp/components/Base/Loading/ActivityIndicator'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
-import { formatNum } from '@/utils'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { formatNum, toFixed } from '@/utils'
+import { cn } from '@/utils/cn'
 import { useInViewport } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
+import { ListItem } from './PositionModal/PositionContent'
 import { Params } from './PositionModal/TopTabbar/types'
 
 type IProps = {
@@ -42,23 +41,6 @@ const Profit = observer(({ precision, item }: { precision?: number; item: Order.
   )
 })
 
-// CurrentPrice 组件用于隔离当前价格渲染
-const CurrentPrice = observer(({ buySell, symbol }: { buySell: string; symbol?: string }) => {
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote(symbol)
-  // 标记价
-  const currentPrice = buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
-
-  return (
-    <>
-      {/* <Text size="xs" weight="medium" color={quoteInfo?.bidDiff > 0 ? 'green' : 'red'}> */}
-      <Text size="xs" weight="medium">
-        {currentPrice || '--'}
-      </Text>
-    </>
-  )
-})
-
 // 添加检查元素是否在视口内的函数
 const isElementInViewport = (el: HTMLElement) => {
   const rect = el.getBoundingClientRect()
@@ -69,6 +51,48 @@ const isElementInViewport = (el: HTMLElement) => {
     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
   )
 }
+
+const MarginRateComp = observer(({ item }: { item: Order.BgaOrderPageListItem }) => {
+  const { t } = useI18n()
+  const { trade } = useStores()
+
+  return <ListItem label={t('mt.baozhengjinlv')} align="end" value={<MarginRate item={item} />} />
+})
+
+const ProfitYieldRate = observer(({ item }: { item: Order.BgaOrderPageListItem }) => {
+  const { t } = useI18n()
+  const { trade } = useStores()
+  const precision = trade.currentAccountInfo.currencyDecimal
+  const calcInfo = trade.positionListSymbolCalcInfo.get(item.id)
+  const profit = calcInfo?.profit
+  let yieldRate = calcInfo?.yieldRate
+
+  return (
+    <View className={cn('flex-row items-center justify-between w-full')}>
+      <View className={cn('items-start flex-col gap-y-1')}>
+        <Text color="secondary" size="xs">
+          {t('mt.fudongyingkui')}(USD)
+        </Text>
+        <Text size="xl" weight="medium" font="dingpro-medium" color={Number(profit) ? (Number(profit) > 0 ? 'green' : 'red') : 'weak'}>
+          {Number(profit) ? (Number(profit) > 0 ? '+' + formatNum(profit, { precision }) : '0.00') : '0.00'}
+        </Text>
+      </View>
+      <View className={cn('items-end flex-col gap-y-1')}>
+        <Text color="secondary" size="xs">
+          {t('mt.shouyilv')}
+        </Text>
+        <Text
+          size="xl"
+          weight="medium"
+          font="dingpro-medium"
+          color={parseInt(yieldRate) ? (parseInt(yieldRate) > 0 ? 'green' : 'red') : 'weak'}
+        >
+          {yieldRate ? yieldRate : '0.00%'}
+        </Text>
+      </View>
+    </View>
+  )
+})
 
 // 持仓Item
 function PositionItem({ item, modalVisible = false, onPress }: IProps) {
@@ -123,118 +147,104 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
       // data-visible={isVisible}
       data-inviewport={inViewport}
     >
-      <View className={cn('flex-row items-center justify-between')}>
-        <View className={cn('items-center flex-row flex-1')}>
-          <SymbolIcon width={30} height={30} src={item.imgUrl} />
-          <View className={cn('flex flex-col flex-1')}>
-            {/* 第一行 */}
-            <View className={cn('pl-2 flex flex-row justify-between flex-1 relative top-[3px]')}>
-              <View className={cn('flex-row items-center')}>
-                <Text size="base" color="primary" font="pf-bold" className={cn('pr-1')}>
-                  {item.alias || symbol}
-                </Text>
-                <Text size="sm" color={item.buySell === 'BUY' ? 'green' : 'red'} weight="medium">
-                  {item.buySell === 'BUY' ? t('common.enum.TradeBuySell.BUY') : t('common.enum.TradeBuySell.SELL')}{' '}
-                  {item.leverageMultiple ? `${item.leverageMultiple}X ` : ''}
-                  {item.orderVolume}
+      <View style={cn('flex-row items-center justify-between')}>
+        <View style={cn('flex-row items-center')}>
+          <SymbolIcon width={32} height={32} src={item?.imgUrl} />
+          <View style={cn('pl-2')}>
+            <Text size="base" color="primary" weight="medium" style={cn('pr-1')}>
+              {item?.alias || item?.symbol}
+            </Text>
+            <View style={cn('flex-row items-center gap-x-[6px]')}>
+              <View
+                className={cn('flex-row items-center rounded p-[1px]')}
+                style={{
+                  borderWidth: 1,
+                  backgroundColor: item.buySell === 'BUY' ? 'rgba(69,164,138,0.2)' : 'rgba(235, 72, 72, 0.2)',
+                  borderColor: item.buySell === 'BUY' ? theme.colors.green.DEFAULT : theme.colors.red.DEFAULT
+                }}
+              >
+                <Text size="xs" style={cn('text-center')} color={item.buySell === 'BUY' ? 'green' : 'red'}>
+                  {item?.buySell === 'BUY' ? t('common.enum.TradeBuySell.BUY') : t('common.enum.TradeBuySell.SELL')}{' '}
                 </Text>
               </View>
-              <View>
-                {!!visible && !modalVisible ? (
-                  <Profit item={item} precision={precision} />
-                ) : (
-                  <ActivityIndicator size={18} color={theme.colors.textColor.primary} />
-                )}
-              </View>
-            </View>
-            {/* 第二行 */}
-            <View className={cn('pl-2 flex flex-row justify-between items-center')}>
-              <View className={cn('flex-row items-center')}>
-                <Text size="xs" className={cn('leading-4')}>
-                  {item.marginType === 'CROSS_MARGIN'
+              <View
+                className={cn('flex-row items-center rounded p-[1px]')}
+                style={{
+                  borderWidth: 1,
+                  borderColor: '#B4B4B4'
+                }}
+              >
+                <Text size="xs" style={cn('text-center')}>
+                  {item?.marginType === 'CROSS_MARGIN'
                     ? t('common.enum.MarginType.CROSS_MARGIN')
                     : t('common.enum.MarginType.ISOLATED_MARGIN')}
+                  {item?.leverageMultiple ? `${item?.leverageMultiple}X ` : ''}
                 </Text>
-                <View className={cn('h-2 w-[1px] mx-[6px]')} style={{ backgroundColor: theme.colors.Divider.heavy }} />
-                <Text size="xs" weight="medium">
-                  {formatNum(item.startPrice, { precision: item.symbolDecimal })}
-                </Text>
-                <View className={cn('px-1')}>
-                  <Iconfont name="hangqing-biandong" size={14} />
-                </View>
-                {!!visible && !modalVisible && <CurrentPrice buySell={item.buySell || ''} symbol={symbol} />}
-                {(item.takeProfit || item.stopLoss) && (
-                  <View className={cn('flex-row items-center ml-1')}>
-                    <View
-                      className={cn('rounded-tl rounded-bl w-[17px] h-[14px] items-center justify-center')}
-                      style={{
-                        backgroundColor: theme.colors.green.DEFAULT
-                      }}
-                    >
-                      <Text size="xxs" weight="medium" leading="xs" color="white">
-                        TP
-                      </Text>
-                    </View>
-                    <View
-                      className={cn('rounded-tr rounded-br w-[17px] h-[14px] items-center justify-center')}
-                      style={{
-                        backgroundColor: theme.colors.red.DEFAULT
-                      }}
-                    >
-                      <Text size="xxs" weight="medium" leading="xs" color="white">
-                        SL
-                      </Text>
-                    </View>
+              </View>
+              {(item?.takeProfit || item?.stopLoss) && (
+                <View style={cn('flex-row items-center')}>
+                  <View
+                    className={cn('rounded-tl rounded-bl w-[17px] h-[14px] items-center justify-center')}
+                    style={{
+                      backgroundColor: theme.colors.green.DEFAULT
+                    }}
+                  >
+                    <Text size="xxs" weight="medium" leading="xs" color="white">
+                      TP
+                    </Text>
                   </View>
-                )}
-              </View>
-              <View className={cn('justify-end flex-grow')}>
-                <Text size="xs" leading="sm">
-                  {SOURCE_CURRENCY}
-                </Text>
-              </View>
+                  <View
+                    className={cn('rounded-tr rounded-br w-[17px] h-[14px] items-center justify-center')}
+                    style={{
+                      backgroundColor: theme.colors.red.DEFAULT
+                    }}
+                  >
+                    <Text size="xxs" weight="medium" leading="xs" color="white">
+                      SL
+                    </Text>
+                  </View>
+                </View>
+              )}
             </View>
           </View>
         </View>
+        <img src="/img/right-icon.png" className={cn('size-5')} />
+      </View>
+      <View style={cn('flex-row my-3')}>
+        <ProfitYieldRate item={item} />
+      </View>
+      <View className={cn('flex-row justify-between items-center')}>
+        <ListItem label={t('pages.position.Open Position Volume')} value={formatNum(item?.orderVolume, { precision })} />
+        <ListItem label={t('mt.baozhengjin')} align="center" value={formatNum(item?.orderMargin, { precision })} />
+        {/* 保证金率 */}
+        <MarginRateComp item={item} />
+      </View>
+      <View className={cn('flex-row justify-between items-center')}>
+        <ListItem
+          label={t('pages.position.Open Position Price')}
+          align="start"
+          value={toFixed(item?.startPrice, item?.symbolDecimal, false)}
+        />
+        {/* 标记价 */}
+        <ListItem label={t('mt.biaojijia')} align="center" value={<CurrentPrice item={item} />} />
+        <ListItem label={t('pages.trade.Fee')} align="end" value={formatNum(item?.handlingFees, { precision, isTruncateDecimal: false })} />
       </View>
       <View className={cn('flex flex-row items-center gap-x-2 mt-[13px]')}>
-        {item.marginType === 'ISOLATED_MARGIN' && (
-          <Button
-            size="xs"
-            containerClassName={cn('flex-1 flex-nowrap h-full')}
-            className={cn('flex-1 px-1')}
-            onClick={() => {
-              onPress(item, 'MARGIN')
-            }}
-          >
-            {t('Position.Adjust margin')}
-          </Button>
-        )}
         <Button
           size="xs"
           containerClassName={cn('flex-1 h-full')}
-          className={cn('flex-1')}
-          onClick={() => {
-            onPress(item, 'CLOSE_POSITION')
-          }}
-        >
-          {t('pages.position.Part Close Positon Btn')}
-        </Button>
-        <Button
-          size="xs"
-          containerClassName={cn('flex-1 h-full')}
-          className={cn('flex-1')}
+          className={cn('bg-[#F3F5F6]')}
           onClick={() => {
             onPress(item, 'SPSL')
           }}
         >
-          {t('pages.trade.Spsl')}
+          {t('mt.gengduoshezhi')}
         </Button>
         <div
           onClick={(e) => {
             e.stopPropagation()
             onPress(item, 'CLOSE_MARKET_POSITION', () => {
-              if (trade.positionConfirmChecked) {
+              if (!trade.positionConfirmChecked) {
                 setLoading4(true)
                 setTimeout(() => {
                   setLoading4(false)
@@ -244,7 +254,7 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
           }}
           className="flex-1 h-full"
         >
-          <Button size="xs" containerClassName={cn('flex-1')} loading={loading4}>
+          <Button size="xs" className={cn('bg-[#F3F5F6]')} containerClassName={cn('flex-1')} loading={loading4}>
             {t('pages.position.Market Price Close Position Btn')}
           </Button>
         </div>

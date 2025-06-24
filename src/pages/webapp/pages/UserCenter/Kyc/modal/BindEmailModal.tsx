@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react'
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import { ModalLoadingRef } from '@/components/Base/Lottie/Loading'
 import { useEnv } from '@/context/envProvider'
@@ -54,10 +54,10 @@ const CountDown = observer(({ email, onSendCode }: { email?: string; onSendCode:
 })
 
 type IProps = {
-  trigger: JSX.Element
+  trigger?: JSX.Element
 }
 
-function BindEmailModal(props: IProps) {
+function BindEmailModal(props: IProps, ref: any) {
   const i18n = useI18n()
   const { cn, theme } = useTheme()
   const { t, locale } = useI18n()
@@ -66,6 +66,15 @@ function BindEmailModal(props: IProps) {
   const bottomSheetModalRef = useRef<SheetRef>(null)
   const { screenSize } = useEnv()
   const user = useModel('user')
+
+  useImperativeHandle(ref, () => ({
+    show: () => {
+      bottomSheetModalRef.current?.sheet.present()
+    },
+    close: () => {
+      bottomSheetModalRef.current?.sheet.dismiss()
+    }
+  }))
 
   const schema = z.object({
     email: z
@@ -122,7 +131,7 @@ function BindEmailModal(props: IProps) {
         message.info(t('pages.userCenter.bingdingchenggong'))
 
         // 刷新用户信息
-        user.fetchUserInfo()
+        user.fetchUserInfo(true)
       }
     } catch (error: any) {
     } finally {
@@ -168,8 +177,8 @@ function BindEmailModal(props: IProps) {
       ref={bottomSheetModalRef}
       autoHeight
       title={intl.formatMessage({ id: 'mt.bangdingyouxiang' })}
-      trigger={props.trigger}
-      disabled={disabled}
+      // trigger={props.trigger}
+      // disabled={disabled}
       children={
         <div className="mx-4">
           <TextField
@@ -219,4 +228,4 @@ function BindEmailModal(props: IProps) {
   )
 }
 
-export default observer(BindEmailModal)
+export default observer(forwardRef(BindEmailModal))

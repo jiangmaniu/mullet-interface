@@ -402,8 +402,8 @@ export default [
       },
       // 个人中心-验证状态
       {
-        path: '/:lng/app/user-center/verify-information',
-        component: './webapp/pages/UserCenter/KycV2/KycVerifyInformationPage',
+        path: '/:lng/app/user-center/verify-success',
+        component: './webapp/pages/UserCenter/KycV2/KycVerifySuccessPage',
         access: 'canAdmin' // 权限配置
       },
       // 个人中心-认证信息

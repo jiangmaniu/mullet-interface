@@ -206,6 +206,17 @@ declare namespace API {
 
   //  注册方式
   type RegisterWay = 'PHONE' | 'EMAIL'
+  // KYC授权类型
+  type KycAuthType =
+    /**无认证 */
+    | 'NOT'
+    /**上传信息审核 */
+    | 'UPLOAD_INFO_AUTH'
+    /**腾讯三要素审核 */
+    | 'TENCENT_THREE_AUTH'
+    /**腾讯人脸审核 */
+    | 'TENCENT_FACE_AUTH'
+
   // 产品数据源状态
   type SymbolDataSourceStatus =
     /**未知 */

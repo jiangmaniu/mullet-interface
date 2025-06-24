@@ -4,19 +4,31 @@ import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import useKycStatusInfo from '@/pages/webapp/hooks/useKycStatusInfo'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { observer } from 'mobx-react'
+import { useRef } from 'react'
 import { View } from '../../../components/Base/View'
+import BindEmailModal from '../Kyc/modal/BindEmailModal'
+import BindPhoneModal from '../Kyc/modal/BindPhoneModal'
 
 const KycStatus = () => {
   const { cn, theme } = useTheme()
   const { t } = useI18n()
 
+  const bindPhoneRef = useRef<any>(null)
+  const bindEmailRef = useRef<any>(null)
+
   const kycInfo = useKycStatusInfo()
   const status = kycInfo?.status
   const phone = kycInfo?.phone
+  const email = kycInfo?.email
 
   const onClick = () => {
     if (!phone) {
-      navigateTo('/app/person-info?back=true&bindPhone=true')
+      // navigateTo('/app/person-info?back=true&bindPhone=true')
+      // 绑定手机号弹窗
+      bindPhoneRef.current?.show()
+    } else if (!email) {
+      // 绑定邮箱弹窗
+      bindEmailRef.current.show()
     } else if (status === 1) {
       // 初级审核通过，待申请高级认证
       navigateTo('/app/user-center/verify-document')
@@ -27,7 +39,7 @@ const KycStatus = () => {
       // 初级审核已通过，高级认证不通过
       navigateTo('/app/user-center/verify-status')
     } else if (status === 4) {
-      navigateTo('/app/user-center/verify-information')
+      navigateTo('/app/user-center/verify-success')
       // 审核通过
     } else {
       // 初始
@@ -53,6 +65,11 @@ const KycStatus = () => {
         <span className=" text-sm font-medium ">{kycInfo?.operation}</span>
         <Iconfont name="huazhuanjilu-zhixiang" size={20} />
       </div>
+
+      {/* 绑定手机号弹窗 */}
+      <BindPhoneModal ref={bindPhoneRef} />
+      {/* 绑定邮箱弹窗 */}
+      <BindEmailModal ref={bindEmailRef} />
     </View>
   )
 }

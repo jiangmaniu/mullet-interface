@@ -270,7 +270,9 @@ export const getEnum = () => {
       // ZERO: { text: intl.formatMessage({ id: 'mt.guiling' }) },
       // FOLLOW_PROFIT: { text: intl.formatMessage({ id: 'common.gendanfenrun' }) },
       HANDLING_FEES: { text: intl.formatMessage({ id: 'mt.shouxufei' }) },
-      INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) }
+      INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) },
+      FEE: { text: intl.formatMessage({ id: 'mt.shouxufei' }) },
+      ACTIVITY: { text: intl.formatMessage({ id: 'mt.shouchonghuodong' }) }
       // BACK: { text: intl.formatMessage({ id: 'mt.tixiantuihui' }) }
     },
     // 可用预付款

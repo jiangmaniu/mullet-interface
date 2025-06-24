@@ -96,11 +96,11 @@ const Footer = observer(({ close }: { close: () => void }) => {
 
     // 提醒弹窗
     if (trade.orderConfirmChecked) {
-      // 直接下单，不在二次确认
-      handleSubmitOrder()
-    } else {
       // 弹窗再次确认下单
       orderConfirmModal.current?.show()
+    } else {
+      // 直接下单，不在二次确认
+      handleSubmitOrder()
     }
   }
 

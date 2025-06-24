@@ -33,7 +33,8 @@ export async function getRegisterWay() {
 export async function getRegisterWayByBusinessLine(code: string) {
   return request<API.Response<API.RegisterWayByBusinessLine>>(`/api/trade-crm/crmClient/public/clientGroup/${code}`, {
     method: 'GET',
-    needToken: false
+    needToken: false,
+    skipErrorHandler: true
   })
 }
 

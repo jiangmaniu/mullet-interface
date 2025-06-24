@@ -202,7 +202,7 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
                 trade.setPositionConfirmChecked(checked)
               }}
               checked={trade.positionConfirmChecked}
-              label={t('pages.trade.Order Comfirm No Tip Checked')}
+              label={t('mt.erciqueren')}
             />
           </View>
         </View>

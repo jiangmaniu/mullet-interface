@@ -11,6 +11,7 @@ type StatusItem = {
 type RetProps = StatusItem & {
   status: number
   phone?: string
+  email?: string
 }
 
 export const getKycStatus = (kycStatus: API.ApproveStatus, isBaseAuth: boolean, isKycAuth: boolean) => {
@@ -40,6 +41,7 @@ export default function useKycStatusInfo() {
   const isBaseAuth = currentUser?.isBaseAuth || false
   const isKycAuth = currentUser?.isKycAuth || false
   const phone = currentUser?.userInfo?.phone || ''
+  const email = currentUser?.userInfo?.email || ''
 
   const status = useMemo(() => {
     return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
@@ -81,6 +83,7 @@ export default function useKycStatusInfo() {
   return {
     ...statusLabels[status],
     status,
-    phone
+    phone,
+    email
   } as RetProps
 }
