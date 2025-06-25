@@ -41,7 +41,7 @@ export default function useMaxOpenVolume(props?: IProps) {
 
   useDebounceEffect(
     () => {
-      setMaxOpenVolume(formatNum(availableMargin / expectedMargin, { precision: accountGroupPrecision }))
+      setMaxOpenVolume(formatNum(expectedMargin ? availableMargin / expectedMargin : 0, { precision: accountGroupPrecision }))
     },
     [expectedMargin, availableMargin],
     {
