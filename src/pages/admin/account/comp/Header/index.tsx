@@ -2,7 +2,7 @@ import { FormattedMessage, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
-import useKycStatusInfo from '@/pages/webapp/hooks/useKycStatusInfo'
+import useKycAuth from '@/hooks/useKycAuth'
 import { hiddenCenterPartStr } from '@/utils'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
@@ -15,7 +15,7 @@ function Header() {
 
   const currentAccountInfo = trade.currentAccountInfo
 
-  const kycInfo = useKycStatusInfo()
+  const kycInfo = useKycAuth()
 
   return (
     <div className="flex items-center">
@@ -39,14 +39,16 @@ function Header() {
             <FormattedMessage id="mt.weirenzheng" />2
           </span>
         )} */}
-        <div
-          className="flex flex-col items-start justify-start ml-3 cursor-pointer"
-          onClick={() => {
-            push('/setting')
-          }}
-        >
-          <span className={cn('text-xs font-pf-medium', kycInfo?.color)}>{kycInfo?.label}</span>
-        </div>
+        {!kycInfo.notKycAuth && (
+          <div
+            className="flex flex-col items-start justify-start ml-3 cursor-pointer"
+            onClick={() => {
+              push('/setting')
+            }}
+          >
+            <span className={cn('text-xs font-pf-medium', kycInfo?.color)}>{kycInfo?.label}</span>
+          </div>
+        )}
       </div>
     </div>
   )

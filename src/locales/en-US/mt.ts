@@ -846,5 +846,8 @@ export default {
   'mt.erciqueren': 'Confirmation',
   'mt.shouchonghuodong': 'First Deposit Activity',
   'mt.xiadanshijian': 'Order Time',
-  'mt.gengduoshezhi': 'More Settings'
+  'mt.gengduoshezhi': 'More Settings',
+  'mt.renlianshibietishitips1': 'Please ensure the submitted identity information is your own',
+  'mt.renlianshibietishitips2': 'Please perform face recognition on APP/H5',
+  'mt.wozhidaole': 'I know'
 }

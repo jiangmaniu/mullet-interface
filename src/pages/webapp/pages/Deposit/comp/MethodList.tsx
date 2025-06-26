@@ -1,4 +1,5 @@
 import { stores } from '@/context/mobxProvider'
+import useKycAuth from '@/hooks/useKycAuth'
 import { useIntl, useModel, useSearchParams } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useLayoutEffect, useState } from 'react'
@@ -29,12 +30,18 @@ export const MethodList = observer(() => {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const isBaseAuth = currentUser?.isBaseAuth || false
+  const { notKycAuth, kycAuthType } = useKycAuth()
 
   return (
     <div className="flex flex-col gap-3">
       <span className=" font-bold text-xl pl-2.5 pb-[5px]">{intl.formatMessage({ id: 'mt.xuanzerujinfangshi' })}</span>
       {methods.map((item: Wallet.fundsMethodPageListItem, index: number) => (
-        <DepositMethod item={item} key={index} status={isBaseAuth ? 'unlocked' : 'locked'} tradeAccountId={tradeAccountId} />
+        <DepositMethod
+          item={item}
+          key={index}
+          status={notKycAuth ? 'unlocked' : isBaseAuth ? 'unlocked' : 'locked'}
+          tradeAccountId={tradeAccountId}
+        />
       ))}
     </div>
   )

@@ -138,6 +138,7 @@ declare namespace Customer {
       deptId: string
       postId: string
     }
+    isBaseAuth?: boolean
     children?: User.AccountItem[]
     accountList?: User.AccountItem[]
     // 业务线信息

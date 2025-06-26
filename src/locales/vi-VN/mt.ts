@@ -837,5 +837,8 @@ export default {
   'mt.erciqueren': 'Xác nhận lại',
   'mt.shouchonghuodong': 'Hoạt động nạp tiền đầu tiên',
   'mt.xiadanshijian': 'Thời gian đặt lệnh',
-  'mt.gengduoshezhi': 'Cài đặt'
+  'mt.gengduoshezhi': 'Cài đặt',
+  'mt.renlianshibietishitips1': 'Vui lòng đảm bảo thông tin xác minh là của bạn',
+  'mt.renlianshibietishitips2': 'Vui lòng thực hiện xác thực khuôn mặt trên ứng dụng/H5',
+  'mt.wozhidaole': 'Tôi đã hiểu'
 }

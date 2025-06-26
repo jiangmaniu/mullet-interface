@@ -45,7 +45,7 @@ function AdvanceKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
       footer={null}
       ref={modalRef}
     >
-      <KycStepThreeForm onSuccess={handleSubmit} />
+      <KycStepThreeForm onSuccess={handleSubmit} onClose={() => modalRef.current?.close()} />
     </Modal>
   )
 }

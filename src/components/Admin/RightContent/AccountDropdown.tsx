@@ -7,6 +7,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { copyContent, hiddenCenterPartStr } from '@/utils'
 import { onLogout, push } from '@/utils/navigator'
 
+import useKycAuth from '@/hooks/useKycAuth'
 import { HeaderTheme } from '../Header/types'
 
 type IProps = {
@@ -18,6 +19,7 @@ type IProps = {
 function AccountDropdown({ theme }: IProps) {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
+  const { notKycAuth } = useKycAuth()
 
   return (
     <ConfigProvider
@@ -47,15 +49,19 @@ function AccountDropdown({ theme }: IProps) {
                         <CopyOutlined style={{ fontSize: 14 }} />
                       </span>
                     </span>
-                    {currentUser?.isKycAuth && (
-                      <span className="text-green text-xs pt-[6px]">
-                        <FormattedMessage id="mt.yirenzheng" />
-                      </span>
-                    )}
-                    {!currentUser?.isKycAuth && (
-                      <span className="text-red text-xs pt-[6px]">
-                        <FormattedMessage id="mt.weirenzheng" />
-                      </span>
+                    {!notKycAuth && (
+                      <>
+                        {currentUser?.isKycAuth && (
+                          <span className="text-green text-xs pt-[6px]">
+                            <FormattedMessage id="mt.yirenzheng" />
+                          </span>
+                        )}
+                        {!currentUser?.isKycAuth && (
+                          <span className="text-red text-xs pt-[6px]">
+                            <FormattedMessage id="mt.weirenzheng" />
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>

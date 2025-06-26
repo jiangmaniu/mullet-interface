@@ -5,7 +5,7 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { stores } from '@/context/mobxProvider'
 
-import useKycStatusInfo from '@/pages/webapp/hooks/useKycStatusInfo'
+import useKycAuth from '@/hooks/useKycAuth'
 import { observer } from 'mobx-react'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import KycApproveInfoModal from '../setting/comp/KycApproveInfoModal'
@@ -24,6 +24,8 @@ const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
   const withdrawalMethodInitialized = stores.wallet.withdrawalMethodInitialized
   const [prevIntl, setPrevIntl] = useState(intl.locale) // 防止重复请求
 
+  const { notKycAuth } = useKycAuth()
+
   useLayoutEffect(() => {
     const now = Date.now().valueOf()
     if (prevIntl !== intl.locale || now - withdrawalMethodInitialized > 1000 * 30) {
@@ -41,7 +43,12 @@ const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-y-[26px] gap-x-[34px] w-[80%]">
       {methods.map((item: Wallet.fundsMethodPageListItem) => (
-        <WithdrawalMethod item={item} key={item.title} status={kycStatus ? 'unlocked' : 'locked'} tradeAccountId={tradeAccountId} />
+        <WithdrawalMethod
+          item={item}
+          key={item.title}
+          status={notKycAuth ? 'unlocked' : kycStatus ? 'unlocked' : 'locked'}
+          tradeAccountId={tradeAccountId}
+        />
       ))}
     </div>
   )
@@ -62,8 +69,8 @@ function Withdrawal() {
   const kycRejectModal = useRef<any>()
   const kycWaitModal = useRef<any>()
   const kycSuccModalRef = useRef<any>()
-
-  const { status, operation, phone } = useKycStatusInfo()
+  const { notKycAuth } = useKycAuth()
+  const { status, operation, phone } = useKycAuth()
   const bindModal = useRef<any>()
 
   useEffect(() => {
@@ -97,7 +104,7 @@ function Withdrawal() {
         <FormattedMessage id="mt.chujin" />
       </div>
       <div className="flex flex-col gap-8 ">
-        {!isKycAuth && (
+        {!isKycAuth && !notKycAuth && (
           <div className=" border border-gray-150 rounded-lg px-5 py-4 flex justify-between">
             <div className="flex flex-row items-center gap-[18px]">
               <Iconfont name="renzheng" width={40} height={40} />

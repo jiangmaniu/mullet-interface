@@ -172,6 +172,57 @@ declare namespace User {
     firstName?: string
     /** 證件號 */
     identificationCode?: string
+    // 业务线信息
+    clientGroup?: {
+      /**
+       * 账户组ID
+       */
+      accountGroupId?: string
+      /**
+       * 识别码
+       */
+      code?: string
+      /**
+       * 组名称
+       */
+      groupName?: string
+      /**
+       * 主健ID
+       */
+      id?: number
+      /**
+       * KYC认证
+       */
+      kycAuth?: API.KycAuthType
+      /**
+       * 支付方式
+       */
+      payWay?: string
+      /**
+       * 注册方式
+       */
+      registerWay?: API.RegisterWay
+      /**
+       * 备注
+       */
+      remark?: string
+      /**
+       * 出金申请次数
+       */
+      withdrawalLimitCount?: number
+      /**
+       * 出金判断周期
+       */
+      withdrawalLimitCycle?: number
+      /**
+       * 出金金额（累计）
+       */
+      withdrawalLimitMoney?: number
+      /**
+       * 出金方式
+       */
+      withdrawalWay?: string
+    }
   }
   // 客户用户信息
   type ClientUserInfo = {

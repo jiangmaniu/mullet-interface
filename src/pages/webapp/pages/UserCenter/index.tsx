@@ -5,6 +5,7 @@ import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import useKycAuth from '@/hooks/useKycAuth'
 import { goKefu, onLogout } from '@/utils/navigator'
 import { useModel } from '@umijs/max'
 import { useTitle } from 'ahooks'
@@ -16,6 +17,7 @@ import { Text } from '../../components/Base/Text'
 import { View } from '../../components/Base/View'
 import useFocusEffect from '../../hooks/useFocusEffect'
 import { useI18n } from '../../hooks/useI18n'
+import useKycJumpLink from '../../hooks/useKycJumpLink'
 import BasicLayout from '../../layouts/BasicLayout'
 import { navigateTo } from '../../utils/navigator'
 import BindEmailModal from './Kyc/modal/BindEmailModal'
@@ -74,6 +76,7 @@ function UserCenter() {
   const phone = currentUser?.userInfo?.phone || ''
   const email = currentUser?.userInfo?.email || ''
   const ENV = getEnv()
+  const { notKycAuth, kycAuthType } = useKycAuth()
 
   const bindPhoneRef = useRef<any>(null)
   const bindEmailRef = useRef<any>(null)
@@ -167,7 +170,7 @@ function UserCenter() {
     modalConfirmRef.current?.show()
   }
 
-  const updateGap = 30 * 1000 // 打開該頁面的時候主動刷新用戶信息，間隔：30秒
+  const updateGap = 10 * 1000 // 打開該頁面的時候主動刷新用戶信息，間隔：10秒
   const user = useModel('user')
   useFocusEffect(
     useCallback(() => {
@@ -184,6 +187,45 @@ function UserCenter() {
 
   const kycTipsModalRef = useRef<any>(null)
 
+  const { jumpLink } = useKycJumpLink()
+
+  const checkAuth = (key: 'deposit' | 'withdraw') => {
+    if (!phone) {
+      // navigateTo('/app/person-info?back=true&bindPhone=true')
+      // 绑定手机号弹窗
+      bindPhoneRef.current.show()
+      return
+    }
+    if (!email) {
+      // 绑定邮箱弹窗
+      bindEmailRef.current.show()
+      return
+    }
+    // 不需要认证
+    if (notKycAuth) {
+      navigateTo(key === 'deposit' ? '/app/deposit' : '/app/withdraw')
+      return
+    }
+    // 未完成基础认证
+    if (!isBaseAuth) {
+      navigateTo(jumpLink)
+      return
+    }
+    // 基础认证通过或者
+    if (isBaseAuth && key === 'deposit') {
+      navigateTo('/app/deposit')
+      return
+    }
+    if (key === 'withdraw') {
+      if (!isKycAuth) {
+        navigateTo(jumpLink)
+      } else {
+        // 全部认证完成 去出金
+        navigateTo('/app/withdraw')
+      }
+    }
+  }
+
   // 快捷入口
   const quickEntry = [
     {
@@ -191,18 +233,7 @@ function UserCenter() {
       title: t('mt.rujin'),
       href: '/app/deposit',
       onClick: () => {
-        if (!phone) {
-          // navigateTo('/app/person-info?back=true&bindPhone=true')
-          // 绑定手机号弹窗
-          bindPhoneRef.current.show()
-        } else if (!email) {
-          // 绑定邮箱弹窗
-          bindEmailRef.current.show()
-        } else if (isBaseAuth) {
-          navigateTo('/app/deposit')
-        } else {
-          kycTipsModalRef.current?.show()
-        }
+        checkAuth('deposit')
       }
     },
     {
@@ -210,13 +241,7 @@ function UserCenter() {
       title: t('mt.chujin'),
       href: '/app/withdraw',
       onClick: () => {
-        if (!phone) {
-          navigateTo('/app/person-info?back=true&bindPhone=true')
-        } else if (isKycAuth) {
-          navigateTo('/app/withdraw')
-        } else {
-          kycTipsModalRef.current?.show()
-        }
+        checkAuth('withdraw')
       }
     },
     {
@@ -262,7 +287,7 @@ function UserCenter() {
       <View style={{ paddingInline: 14, flex: 1, display: 'flex', flexDirection: 'column', paddingBottom: 60 }}>
         <Account />
 
-        <KycStatus />
+        {!notKycAuth && <KycStatus />}
 
         <View className={cn('grid grid-cols-4 items-start w-full px-[12px] mt-2.5 mb-7 gap-8 ')}>
           {quickEntry.map((item) => {

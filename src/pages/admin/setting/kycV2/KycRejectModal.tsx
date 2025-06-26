@@ -4,7 +4,7 @@ import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import Modal from '@/components/Admin/Modal'
 import Button from '@/components/Base/Button'
 import { useTheme } from '@/context/themeProvider'
-import { getKycStatus } from '@/pages/webapp/hooks/useKycStatusInfo'
+import { getKycStatus } from '@/hooks/useKycAuth'
 
 type IProps = {
   trigger?: JSX.Element

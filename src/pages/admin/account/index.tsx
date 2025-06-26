@@ -20,6 +20,7 @@ import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
 
 import { getEnv } from '@/env'
+import useKycAuth from '@/hooks/useKycAuth'
 import { getAccountSynopsisByLng } from '@/utils/business'
 import Header from './comp/Header'
 import RechargeSimulateModal from './comp/RechargeSimulateModal'
@@ -51,6 +52,10 @@ function Account() {
   const accountList = currentUser?.accountList || []
   const isKycAuth = currentUser?.isKycAuth
   const precision = trade.currentAccountInfo.currencyDecimal
+
+  const transferModalRef = useRef<any>(null)
+
+  const { notKycAuth } = useKycAuth()
 
   const [countDown] = useCountDown({
     leftTime,
@@ -280,7 +285,11 @@ function Account() {
                       onClick: (event: MenuInfo) => {
                         const { key } = event
                         console.log('key', key)
-                        if (key === 'transfer' && isKycAuth) {
+                        if (key === 'transfer') {
+                          if (!isKycAuth && !notKycAuth) {
+                            transferModalRef.current.show()
+                            return
+                          }
                           push(`/account/transfer?from=${item.id}`)
                         } else if (key === 'rename') {
                           setModalInfo(item)
@@ -293,23 +302,9 @@ function Account() {
                           !ENV.HIDE_ACCOUNT_TRANSFER && {
                             key: 'transfer',
                             label: (
-                              <Modal
-                                trigger={
-                                  <span className="text-sm text-secondary hover:text-primary">
-                                    <FormattedMessage id="common.zhuanzhang" />
-                                  </span>
-                                }
-                                title={<FormattedMessage id="common.wenxintishi" />}
-                                width={380}
-                                okText={<FormattedMessage id="mt.qurenzheng" />}
-                                onFinish={() => {
-                                  push('/setting')
-                                }}
-                              >
-                                <div className="text-base text-primary">
-                                  <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
-                                </div>
-                              </Modal>
+                              <span className="text-sm text-secondary hover:text-primary">
+                                <FormattedMessage id="common.zhuanzhang" />
+                              </span>
                             )
                           },
                         // @ts-ignore
@@ -344,6 +339,19 @@ function Account() {
         {currentAccountList.length === 0 && <Empty />}
       </div>
       <RenameAccountModal ref={modalRef} info={modalInfo} />
+      <Modal
+        title={<FormattedMessage id="common.wenxintishi" />}
+        width={380}
+        okText={<FormattedMessage id="mt.qurenzheng" />}
+        onFinish={() => {
+          push('/setting')
+        }}
+        ref={transferModalRef}
+      >
+        <div className="text-base text-primary">
+          <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
+        </div>
+      </Modal>
     </PageContainer>
   )
 }

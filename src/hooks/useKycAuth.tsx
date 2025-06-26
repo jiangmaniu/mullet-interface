@@ -12,8 +12,17 @@ type RetProps = StatusItem & {
   status: number
   phone?: string
   email?: string
+  /**kyc授权方式 控制页面展示 */
+  kycAuthType?: API.KycAuthType
+  /**kyc认证流程全部通过 */
+  isKycAuth?: boolean
+  /**是否完成基础kyc认证 填写姓名身份证号码 */
+  isBaseAuth?: boolean
+  /**不需要授权 */
+  notKycAuth?: boolean
 }
 
+// 自定义状态
 export const getKycStatus = (kycStatus: API.ApproveStatus, isBaseAuth: boolean, isKycAuth: boolean) => {
   // if (!phone) {
   //   return -1 // 未绑定手机号
@@ -32,16 +41,18 @@ export const getKycStatus = (kycStatus: API.ApproveStatus, isBaseAuth: boolean, 
 }
 
 // kyc状态信息
-export default function useKycStatusInfo() {
+export default function useKycAuth() {
   const { initialState } = useModel('@@initialState')
 
   const currentUser = initialState?.currentUser
   const kycAuthInfo = currentUser?.kycAuth?.[0]
   const kycStatus = kycAuthInfo?.status as API.ApproveStatus
   const isBaseAuth = currentUser?.isBaseAuth || false
-  const isKycAuth = currentUser?.isKycAuth || false
+  const isKycAuth = currentUser?.isKycAuth || false // true kyc全部流程通过
   const phone = currentUser?.userInfo?.phone || ''
   const email = currentUser?.userInfo?.email || ''
+
+  const kycAuthType = currentUser?.clientGroup?.kycAuth // 授权方式
 
   const status = useMemo(() => {
     return getKycStatus(kycStatus, isBaseAuth, isKycAuth)
@@ -84,6 +95,11 @@ export default function useKycStatusInfo() {
     ...statusLabels[status],
     status,
     phone,
-    email
+    email,
+    kycAuthType,
+    isKycAuth,
+    isBaseAuth,
+    // 不需要授权
+    notKycAuth: kycAuthType && kycAuthType === 'NOT'
   } as RetProps
 }

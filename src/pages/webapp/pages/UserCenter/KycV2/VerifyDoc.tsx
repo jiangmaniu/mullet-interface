@@ -1,5 +1,6 @@
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import useKycAuth from '@/hooks/useKycAuth'
 import UploadSheetModal, { UploadSheetModalRef } from '@/pages/webapp/components/Account/UploadSheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
@@ -98,8 +99,8 @@ const VerifyDoc = forwardRef(
     const location = useLocation()
     // 获取 URL 中的查询参数（searchParams）
     const [file, setFile] = useState<any>(defaultFile)
-
-    const KYC_FACE = !!getEnv()?.KYC_FACE || false
+    const { kycAuthType } = useKycAuth()
+    const KYC_FACE = !!getEnv()?.KYC_FACE || kycAuthType === 'TENCENT_FACE_AUTH' // 开启人脸识别
 
     const uploadSheetModalRef = useRef<UploadSheetModalRef>(null)
     const [submitting, setSubmitting] = useState(false)

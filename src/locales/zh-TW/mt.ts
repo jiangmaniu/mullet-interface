@@ -840,5 +840,8 @@ export default {
   'mt.erciqueren': '二次确认',
   'mt.shouchonghuodong': '首充活动',
   'mt.xiadanshijian': '下單時間',
-  'mt.gengduoshezhi': '更多設置'
+  'mt.gengduoshezhi': '更多設置',
+  'mt.renlianshibietishitips1': '請確保是提交身份證信息本人',
+  'mt.renlianshibietishitips2': '请在APP/H5端进行人脸识别',
+  'mt.wozhidaole': '我知道了'
 }

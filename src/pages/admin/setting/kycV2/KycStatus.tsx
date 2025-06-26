@@ -1,6 +1,6 @@
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
-import { getKycStatus } from '@/pages/webapp/hooks/useKycStatusInfo'
+import { getKycStatus } from '@/hooks/useKycAuth'
 import { cn } from '@/utils/cn'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'

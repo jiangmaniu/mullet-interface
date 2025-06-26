@@ -1,6 +1,7 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import useKycAuth from '@/hooks/useKycAuth'
 import Button from '@/pages/webapp/components/Base/Button'
 import Header from '@/pages/webapp/components/Base/Header'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -33,7 +34,8 @@ export default function KycVerifyDocPage() {
     setSubmitting(false)
   }
 
-  const KYC_FACE = !!getEnv()?.KYC_FACE || false
+  const { kycAuthType } = useKycAuth()
+  const KYC_FACE = !!getEnv()?.KYC_FACE || kycAuthType === 'TENCENT_FACE_AUTH' // 开启人脸识别
 
   return (
     <BasicLayout

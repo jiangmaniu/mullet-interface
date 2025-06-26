@@ -5,15 +5,16 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { stores } from '@/context/mobxProvider'
 
+import useKycAuth from '@/hooks/useKycAuth'
 import { observer } from 'mobx-react'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import BaseKycApproveInfoModal from '../setting/kycV2/BaseKycApproveInfoModal'
 import BindContactModal from '../setting/kycV2/BindContactModal'
 import DepositMethod from './comp'
 
-const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
+const Methods = observer(({ kycStatus }: { kycStatus?: boolean }) => {
   const intl = useIntl()
-
+  const { notKycAuth, isKycAuth } = useKycAuth()
   const methods = stores.wallet.depositMethods
 
   const depositMethodInitialized = stores.wallet.depositMethodInitialized
@@ -36,7 +37,12 @@ const Methods = observer(({ kycStatus }: { kycStatus: boolean }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-y-[26px] gap-x-[34px] w-[80%]">
       {methods.map((item: Wallet.fundsMethodPageListItem) => (
-        <DepositMethod item={item} key={item.title} status={kycStatus ? 'unlocked' : 'locked'} tradeAccountId={tradeAccountId} />
+        <DepositMethod
+          item={item}
+          key={item.title}
+          status={notKycAuth ? 'unlocked' : kycStatus ? 'unlocked' : 'locked'}
+          tradeAccountId={tradeAccountId}
+        />
       ))}
     </div>
   )
@@ -56,6 +62,7 @@ function Deposit() {
   const bindModal = useRef<any>()
   const advanceModal = useRef<any>()
   const kycWaitModal = useRef<any>()
+  const { notKycAuth, isKycAuth } = useKycAuth()
 
   useEffect(() => {
     // 刷新用户信息
@@ -68,7 +75,7 @@ function Deposit() {
         <FormattedMessage id="mt.rujin" />
       </div>
       <div className="flex flex-col gap-8 ">
-        {!isBaseAuth && (
+        {!isBaseAuth && !notKycAuth && (
           <div className=" border border-gray-150 rounded-lg px-5 py-4 flex justify-between">
             <div className="flex flex-row items-center gap-[18px]">
               <Iconfont name="renzheng" width={40} height={40} />
