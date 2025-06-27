@@ -67,6 +67,8 @@ const ProfitYieldRate = observer(({ item }: { item: Order.BgaOrderPageListItem }
   const profit = calcInfo?.profit
   let yieldRate = calcInfo?.yieldRate
 
+  const formatProfit = formatNum(profit, { precision })
+
   return (
     <View className={cn('flex-row items-center justify-between w-full')}>
       <View className={cn('items-start flex-col gap-y-1')}>
@@ -74,7 +76,7 @@ const ProfitYieldRate = observer(({ item }: { item: Order.BgaOrderPageListItem }
           {t('mt.fudongyingkui')}(USD)
         </Text>
         <Text size="xl" weight="medium" font="dingpro-medium" color={Number(profit) ? (Number(profit) > 0 ? 'green' : 'red') : 'weak'}>
-          {Number(profit) ? (Number(profit) > 0 ? '+' + formatNum(profit, { precision }) : '0.00') : '0.00'}
+          {Number(profit) ? (Number(profit) > 0 ? '+' + formatProfit : formatProfit) : '0.00'}
         </Text>
       </View>
       <View className={cn('items-end flex-col gap-y-1')}>
@@ -215,7 +217,12 @@ function PositionItem({ item, modalVisible = false, onPress }: IProps) {
       </View>
       <View className={cn('flex-row justify-between items-center')}>
         <ListItem label={t('pages.position.Open Position Volume')} value={formatNum(item?.orderVolume, { precision })} />
-        <ListItem label={t('mt.baozhengjin')} align="center" value={formatNum(item?.orderMargin, { precision })} />
+        {/* 全仓使用基础保证金 */}
+        <ListItem
+          label={t('mt.baozhengjin')}
+          align="center"
+          value={formatNum(item?.marginType === 'CROSS_MARGIN' ? item?.orderBaseMargin : item?.orderMargin, { precision })}
+        />
         {/* 保证金率 */}
         <MarginRateComp item={item} />
       </View>
