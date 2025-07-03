@@ -166,7 +166,11 @@ export const formatNum = (value: any, opts?: IOpt) => {
     return '0.00'
   }
   const val = value || '0.00'
-  const precision = opts?.precision || String(value).split('.')?.[1]?.length || 2
+  let precision = opts?.precision || String(value).split('.')?.[1]?.length || 2
+  // 防止精度过大
+  if (precision >= 10) {
+    precision = 10
+  }
   const truncateValue = isTruncateDecimal ? truncateDecimal(val, precision) : val // 截取小数点，不四舍五入
 
   if (raw) {

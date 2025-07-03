@@ -76,8 +76,8 @@ function Withdrawal({ params, onSelectItem }: IProps) {
   const onQuery = async (params: IParams) => {
     // if (!params.tradeAccountId) return
     const data = await getWithdrawalOrderList({
-      // current: 1,
-      // size: 10,
+      current: 1,
+      size: 9999,
       startTime: params.startTime,
       endTime: params.endTime,
       tradeAccountId: params.tradeAccountId as string

@@ -627,7 +627,10 @@
       "qurujin": "Đi nạp tiền",
       "tijiaoshenhe": "Gửi xác thực",
       "yigaojirenzheng": "Xác thực cao cấp (Hỗ trợ nạp/rút tiền)",
-      "yichujirenzheng": "Bạn đã hoàn tất xác thực cơ bản, có thể chọn nạp tiền hoặc tiếp tục xác thực cao cấp (mở quyền rút tiền)"
+      "yichujirenzheng": "Bạn đã hoàn tất xác thực cơ bản, có thể chọn nạp tiền hoặc tiếp tục xác thực cao cấp (mở quyền rút tiền)",
+      "zhengzaichaxunrenzhengjieguo": "Đang kiểm tra kết quả xác thực",
+      "fanhuiyonghuzhongxin": "Đang quay lại tài khoản",
+      "qingchongxinrenzheng": "Vui lòng thử lại, hoặc liên hệ dịch vụ khách hàng"
     },
 
     "============== 个人中心 结束 ==============": "",

@@ -181,7 +181,7 @@ function SecurityCertificationModal({ title, onSubmit }: IProps, ref: ForwardedR
                 }
               ]}
             />
-            <div className=" text-xl text-primary mt-4 mb-2.5">{getIntl().formatMessage({ id: 'mt.chakanduanxin' })}</div>
+            <div className=" text-xl text-primary mt-4 mb-2.5">{getIntl().formatMessage({ id: 'mt.huoquyanzhengma' })}</div>
             <ProForm.Item
               label={
                 <span className="text-weak text-xs">

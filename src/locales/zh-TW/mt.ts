@@ -797,7 +797,6 @@ export default {
   'mt.duociquxiao': '多次取消入金後當天無法再進行入金。',
   'mt.rujindengdai': '入金等待',
   'mt.chujindengdai': '出金等待',
-  'mt.dingdanyichaoshi': '訂單已超時',
   'mt.zhuceshijian': '註冊時間',
   'mt.gerenziliao': '個人資料',
   'mt.shangchuanpingzheng': '上傳憑證',
@@ -843,5 +842,6 @@ export default {
   'mt.gengduoshezhi': '更多設置',
   'mt.renlianshibietishitips1': '請確保是提交身份證信息本人',
   'mt.renlianshibietishitips2': '请在APP/H5端进行人脸识别',
-  'mt.wozhidaole': '我知道了'
+  'mt.wozhidaole': '我知道了',
+  'mt.dingdanyichaoshi': '訂單已超時，請重新創建訂單'
 }

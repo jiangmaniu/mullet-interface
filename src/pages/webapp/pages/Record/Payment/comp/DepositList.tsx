@@ -36,7 +36,7 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
   const [startTime, setStartTime] = useState<string | undefined>(undefined)
   const [endTime, setEndTime] = useState<string | undefined>(undefined)
 
-  const getDatas = useCallback(() => {
+  const initData = (isRefresh = false) => {
     getDepositOrderList({
       current: current,
       size: size,
@@ -45,17 +45,18 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
       endTime
     }).then((res) => {
       if (res.success && res?.data && res?.data?.records) {
-        setData((prev) => prev.concat((res.data?.records || []) as Wallet.depositOrderListItem[]))
+        const list = res.data?.records || []
+        const listData = isRefresh ? list : data.concat(list)
+        setData(listData)
         setTotal(Number(res.data.total))
       }
     })
-  }, [current, size, stores.trade.currentAccountInfo?.id, startTime, endTime])
+  }
 
   // 加载更多
   const onEndReached = useCallback(() => {
     if (data.length < total) {
       setCurrent(current + 1)
-      getDatas()
     }
   }, [data.length, total])
 
@@ -63,14 +64,16 @@ function DepositList({ onUpload }: { onUpload: (item: Wallet.depositOrderListIte
     setData([])
     setTotal(0)
     setCurrent(1)
-    getDatas()
+    initData(true)
   }
 
   useEffect(() => {
-    if ((startTime && endTime) || (!startTime && !endTime)) {
-      onRefresh()
-    }
+    onRefresh()
   }, [startTime, endTime])
+
+  useEffect(() => {
+    initData()
+  }, [current])
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser

@@ -34,28 +34,28 @@ function DepositList() {
   const [startTime, setStartTime] = useState<string | undefined>(undefined)
   const [endTime, setEndTime] = useState<string | undefined>(undefined)
 
-  const getDatas = useCallback(() => {
+  const initData = (isRefresh = false) => {
     getMoneyRecordsPageList({
       current,
-      size,
+      size: 9999,
       type: 'TRANSFER',
       accountId: stores.trade.currentAccountInfo?.id,
       startTime: startTime ? dayjs(startTime).format('YYYY-MM-DD 00:00:00') : undefined,
       endTime: endTime ? dayjs(endTime).format('YYYY-MM-DD 23:59:59') : undefined
     }).then((res) => {
       if (res.success && res.data?.records) {
-        const uniqueRecords = res.data.records.filter((record) => !data.some((existingRecord) => existingRecord.id === record.id))
-        setData((prevData) => prevData.concat(uniqueRecords))
+        const list = res.data?.records || []
+        const listData = isRefresh ? list : data.concat(list)
+        setData(listData)
         setTotal(Number(res.data.total))
       }
     })
-  }, [current, size, stores.trade.currentAccountInfo?.id, startTime, endTime])
+  }
 
   // 加载更多
   const onEndReached = useCallback(() => {
     if (data.length < total) {
       setCurrent(current + 1)
-      getDatas()
     }
   }, [data.length, total])
 
@@ -63,14 +63,16 @@ function DepositList() {
     setData([])
     setTotal(0)
     setCurrent(1)
-    getDatas()
+    initData(true)
   }
 
   useEffect(() => {
-    if ((startTime && endTime) || (!startTime && !endTime)) {
-      onRefresh()
-    }
+    onRefresh()
   }, [startTime, endTime])
+
+  useEffect(() => {
+    initData()
+  }, [current])
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser

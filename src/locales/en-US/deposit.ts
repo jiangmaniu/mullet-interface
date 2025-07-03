@@ -4,7 +4,7 @@ export default {
   'mt.shoucichujin': 'to proceed with your first withdrawal.',
   'mt.wanshangerenziliao': 'Complete personal information',
   'mt.rujinfangshi': 'Deposit method',
-  'mt.renzhenghoukaiqi': 'Open after certification',
+  'mt.renzhenghoukaiqi': 'Available after verification',
   'mt.quanbuzhifufangshi': 'All payment methods',
   'mt.rujinxuzhi': 'Deposit notice',
   'mt.xuanzezhifufangshi': 'Please select a payment method',
