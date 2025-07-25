@@ -63,7 +63,7 @@ export default forwardRef(({ children, open, onClose, trigger, onOpenChange, ...
   return (
     <>
       {isOpen && (
-        <AntdModal destroyOnClose open={isOpen} onCancel={close} onClose={close} wrapClassName="custom-modal" maskClosable={false} {...res}>
+        <AntdModal destroyOnClose open={isOpen} onCancel={close} wrapClassName="custom-modal" maskClosable={false} {...res}>
           {children}
         </AntdModal>
       )}

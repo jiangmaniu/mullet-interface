@@ -43,7 +43,7 @@ declare namespace User {
     tenanId?: string
     /**登录传的类型，账户密码登录传account */
     type?: 'account'
-    grant_type?: 'captcha' | 'password' | 'refresh_token'
+    grant_type?: 'captcha' | 'password' | 'refresh_token' | 'privy_token'
     /**验证码 */
     captchaCode?: string
     scope?: 'all'

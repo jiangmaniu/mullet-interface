@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { ProFormText } from '@ant-design/pro-components'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { useIntl } from '@umijs/max'

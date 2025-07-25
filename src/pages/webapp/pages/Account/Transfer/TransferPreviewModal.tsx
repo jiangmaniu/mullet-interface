@@ -15,7 +15,7 @@ import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'reac
 type IProps = {
   from: User.AccountItem
   to: User.AccountItem
-  amount: string
+  amount: any
 }
 
 /** 选择账户弹窗 */

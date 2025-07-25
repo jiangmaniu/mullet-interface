@@ -6,6 +6,7 @@ import { stores } from '@/context/mobxProvider'
 
 import { SUPPORTED_LANGUAGES } from '@/constants/enum'
 import { isPCByWidth } from '.'
+import { privyLogout } from './privy'
 import {
   STORAGE_GET_TOKEN,
   STORAGE_GET_USER_INFO,
@@ -21,9 +22,11 @@ import {
  * @param requestLogout 不请求退出接口
  */
 export const onLogout = async (noRequestLogout?: boolean) => {
-  // if (!noRequestLogout) {
-  //   await logout().catch((e) => e)
-  // }
+  if (!noRequestLogout) {
+    // await logout().catch((e) => e)
+    // 退出privy 服务端session登录
+    await privyLogout().catch((e) => e)
+  }
 
   const userInfo = await STORAGE_GET_USER_INFO()
   const userType = userInfo?.userInfo?.userType
@@ -39,6 +42,12 @@ export const onLogout = async (noRequestLogout?: boolean) => {
 
   const isPc = isPCByWidth()
   const loginUrl = isPc ? WEB_LOGIN_PAGE : MOBILE_LOGIN_PAGE
+
+  // 刷新页面，否则通过接口请求退出的登录态没有同步
+  if (!noRequestLogout) {
+    window.location.href = loginUrl
+    return
+  }
 
   // 退出登录，并且将当前的 url 保存
   const { search, pathname } = window.location

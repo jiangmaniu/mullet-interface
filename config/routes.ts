@@ -231,6 +231,49 @@ export default [
     access: 'canAdmin', // 权限配置
     component: './admin/setting'
   },
+  // ==== web3 demo ====
+  {
+    path: '/:lng/privy',
+    name: 'privyDemo',
+    component: './web3Demo/privyDemo',
+    layout: false
+  },
+  {
+    path: '/:lng/sol-demo',
+    name: 'solDemo',
+    component: './web3Demo/solDemo',
+    layout: false
+  },
+  {
+    path: '/:lng/sol-learn',
+    name: 'solLearn',
+    component: './web3Demo/solLearn',
+    layout: false
+  },
+  {
+    path: '/:lng/counter-wallet-pda-seed',
+    name: 'counterConnectWalletIdlPdaSeed',
+    component: './web3Demo/counterConnectWalletIdlPdaSeed',
+    layout: false
+  },
+  {
+    path: '/:lng/counter-wallet-pda-unseed',
+    name: 'counterConnectWalletIdlNotPdaSeed',
+    component: './web3Demo/counterConnectWalletIdlNotPdaSeed',
+    layout: false
+  },
+  {
+    path: '/:lng/privy-test',
+    name: 'privyPractice',
+    component: './web3Demo/privyPractice',
+    layout: false
+  },
+  {
+    path: '/:lng/vote-pda-seed',
+    name: 'votePdaSeed',
+    component: './web3Demo/votePdaSeed',
+    layout: false
+  },
   // 旧版本 kyc 认证
   // {
   //   path: '/:lng/setting/kyc',

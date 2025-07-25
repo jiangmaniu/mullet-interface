@@ -4,6 +4,7 @@ import { Base64 } from 'js-base64'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
+import { getAccessToken } from '@privy-io/react-auth'
 import { getLocaleForBackend } from './constants/enum'
 import { getEnv } from './env'
 import { message } from './utils/message'
@@ -56,8 +57,13 @@ export const errorConfig: RequestConfig = {
     // 错误接收及处理
     // 第一个参数是 catch 到的 error，第二个参数则是 request 的 opts
     errorHandler: (error: any, opts: any) => {
-      // console.log('==errorHandler==', JSON.stringify(error))
-      if (opts?.skipErrorHandler) throw error
+      if (opts?.skipErrorHandler) {
+        if (error?.response?.data?.code === 401 || error?.response?.status === 401) {
+          // 重新去登录
+          onLogout()
+        }
+        throw error
+      }
       // 我们的 errorThrower 抛出的错误。
       // 业务接口错误处理
       if (error.name === 'MtServiceError') {
@@ -73,6 +79,7 @@ export const errorConfig: RequestConfig = {
           }
         }
       } else if (error.response) {
+        console.log('==error.response status==', error.response?.status)
         // Axios 的错误
         // 请求成功发出且服务器也响应了状态码，但状态代码超出了 2xx 的范围
         const { status, data } = error.response
@@ -120,7 +127,10 @@ export const errorConfig: RequestConfig = {
   // 请求拦截器
   // https://github.com/umijs/umi-request#interceptor
   requestInterceptors: [
-    (config: IRequestOptions) => {
+    async (config: IRequestOptions) => {
+      // https://docs.privy.io/authentication/user-authentication/access-tokens
+      const privyAccessToken = await getAccessToken()
+      // console.log('privy accessToken', privyAccessToken);
       // 请求之前添加token
       const userInfo = STORAGE_GET_USER_INFO() as User.UserInfo
       const token = config.token || STORAGE_GET_TOKEN() || ''
@@ -132,6 +142,10 @@ export const errorConfig: RequestConfig = {
         Language: getLocaleForBackend(),
         'Tenant-Id': '000000', // 默认的租户ID
         ...config.headers
+      }
+      if (privyAccessToken) {
+        // 使用Privy的token
+        headers['privy-token'] = privyAccessToken
       }
       if (config.authorization !== false) {
         // 客户端认证

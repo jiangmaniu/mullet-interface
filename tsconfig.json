@@ -25,12 +25,12 @@
     },
 
     "plugins": [{ "name": "typescript-plugin-css-modules" }],
-    "inlineSources": true,
+    // "inlineSources": true,
 
     // Set `sourceRoot` to  "/" to strip the build path prefix
     // from generated source code references.
     // This improves issue grouping in Sentry.
-    "sourceRoot": "/"
+    // "sourceRoot": "/"
   },
   "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "config/plugins/prefetch.ts"]
 }

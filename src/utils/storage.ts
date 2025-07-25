@@ -4,6 +4,7 @@ import lodashSet from 'lodash/set'
 import {
   KEY_ACCOUNT_PASSWORD,
   KEY_ACTIVE_SYMBOL_NAME,
+  KEY_CLUSTER,
   KEY_DEVICE_TYPE,
   KEY_FAVORITE,
   KEY_HISTORY_SEARCH,
@@ -132,6 +133,11 @@ export const STORAGE_REMOVE_TRADINGVIEW_RESOLUTION = storageRemove(KEY_TRADINGVI
 export const STORAGE_GET_REGISTER_CODE = genStorageGet(KEY_REGISTER_CODE)
 export const STORAGE_SET_REGISTER_CODE = genStorageSet(KEY_REGISTER_CODE)
 export const STORAGE_REMOVE_REGISTER_CODE = storageRemove(KEY_REGISTER_CODE)
+
+// 当前选择的Cluster节点
+export const STORAGE_GET_CLUSTER = genStorageGet(KEY_CLUSTER)
+export const STORAGE_SET_CLUSTER = genStorageSet(KEY_CLUSTER)
+export const STORAGE_REMOVE_CLUSTER = storageRemove(KEY_CLUSTER)
 
 // =================================================
 

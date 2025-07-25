@@ -1,11 +1,13 @@
 import updateVersion from '@/hooks/updateVersion'
 import { STORAGE_SET_REGISTER_CODE } from '@/utils/storage'
 import { useEffect } from 'react'
+import { ClusterProvider } from './clusterProvider'
 import { EnvProvider } from './envProvider'
 import { LanguageProvider } from './languageProvider'
 import { LoadingProvider } from './loadingProvider'
 import { StoresProvider, stores } from './mobxProvider'
 import { NotificationProvider } from './notification'
+import { PrivyProvider } from './privyProvider'
 import { ThemeProvider } from './themeProvider'
 
 interface IProps {
@@ -32,16 +34,20 @@ export const Provider = ({ children }: IProps): JSX.Element => {
   }, [code])
 
   return (
-    <NotificationProvider>
-      <LoadingProvider>
-        <StoresProvider>
-          <EnvProvider>
-            <ThemeProvider>
-              <LanguageProvider>{children}</LanguageProvider>
-            </ThemeProvider>
-          </EnvProvider>
-        </StoresProvider>
-      </LoadingProvider>
-    </NotificationProvider>
+    <ClusterProvider>
+      <PrivyProvider>
+        <NotificationProvider>
+          <LoadingProvider>
+            <StoresProvider>
+              <EnvProvider>
+                <ThemeProvider>
+                  <LanguageProvider>{children}</LanguageProvider>
+                </ThemeProvider>
+              </EnvProvider>
+            </StoresProvider>
+          </LoadingProvider>
+        </NotificationProvider>
+      </PrivyProvider>
+    </ClusterProvider>
   )
 }

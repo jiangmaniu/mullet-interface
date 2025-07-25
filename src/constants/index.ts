@@ -80,6 +80,9 @@ export const KEY_TRADINGVIEW_RESOLUTION = NAMESPACE + '_' + 'tradingview_resolut
 // 注册码
 export const KEY_REGISTER_CODE = NAMESPACE + '_' + 'register_code'
 
+// 当前选择的Cluster节点
+export const KEY_CLUSTER = NAMESPACE + '_' + 'solana_cluster'
+
 // APP 弹窗宽度
 export const APP_MODAL_WIDTH = 320
 

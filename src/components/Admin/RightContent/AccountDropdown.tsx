@@ -8,6 +8,7 @@ import { copyContent, hiddenCenterPartStr } from '@/utils'
 import { onLogout, push } from '@/utils/navigator'
 
 import useKycAuth from '@/hooks/useKycAuth'
+import { usePrivy } from '@privy-io/react-auth'
 import { HeaderTheme } from '../Header/types'
 
 type IProps = {
@@ -20,6 +21,7 @@ function AccountDropdown({ theme }: IProps) {
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
   const { notKycAuth } = useKycAuth()
+  const { logout } = usePrivy()
 
   return (
     <ConfigProvider
@@ -67,8 +69,9 @@ function AccountDropdown({ theme }: IProps) {
                 </div>
                 <div
                   className="cursor-pointer"
-                  onClick={() => {
-                    onLogout()
+                  onClick={async () => {
+                    await logout()
+                    onLogout(true)
                   }}
                 >
                   <img width={22} height={22} src="/img/logout-icon.png" />
