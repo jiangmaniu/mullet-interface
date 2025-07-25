@@ -207,7 +207,8 @@ export default function SolDemo() {
       }),
       ComputeBudgetProgram.setComputeUnitPrice({
         // @ts-ignore
-        microLamports: 1n
+        // microLamports: 1n
+        microLamports: 1
       }),
       transferInstruction
     ]
@@ -234,7 +235,8 @@ export default function SolDemo() {
 
     const computeUnitPriceInstruction = ComputeBudgetProgram.setComputeUnitPrice({
       // @ts-ignore
-      microLamports: 1n
+      microLamports: 1
+      // microLamports: 1n
     })
 
     // Build transaction with all instructions
