@@ -48,6 +48,10 @@ export default function Login() {
         }, 100)
         // 直接跳转到账户选择页面
         // push(ADMIN_HOME_PAGE)
+      } else {
+        // 退出privy登录
+        logout()
+        setShowJumpingLoader(false)
       }
     }
   }
@@ -57,6 +61,7 @@ export default function Login() {
     logout()
     // 清除stellux登录的缓存
     onLogout()
+    setShowJumpingLoader(false)
   }
 
   const { login: onPrivyLogin } = useLogin({

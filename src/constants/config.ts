@@ -6,8 +6,8 @@ import { STORAGE_GET_REGISTER_CODE } from '@/utils/storage'
 export const CONFIG_URL = '/platform/config.js'
 
 // https://dashboard.privy.io 聚合钱包配置
-export const PRIVY_APP_ID = 'cmca93bzn02d1jr0nik736ppe'
-export const PRIVY_CLIENT_ID = 'client-WY6N2LhbC3ukhZuMTzuGVtvyouxs2gsPrLQkjY6Sr1Qfs'
+export const PRIVY_APP_ID = 'cmbzwhjss024vl80oyqt6ege9'
+export const PRIVY_CLIENT_ID = 'client-WY6ME6viJ5LPg8qjzwjdh7MzPpZWJfPv1yBeGEmz9o1Qk'
 
 export const getAppRegisterCode = () => {
   const code = STORAGE_GET_REGISTER_CODE()
