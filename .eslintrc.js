@@ -37,6 +37,7 @@ module.exports = {
     '@typescript-eslint/ban-types': 'off',
     'prefer-rest-params': 'off',
     'react/no-string-refs': 'off',
-    'guard-for-in': 'off'
+    'guard-for-in': 'off',
+    'react/button-has-type': 'off'
   }
 }

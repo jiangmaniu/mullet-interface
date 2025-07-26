@@ -1,5 +1,6 @@
 import { PRIVY_APP_ID, PRIVY_CLIENT_ID } from '@/constants/config'
-import { getAccessToken } from '@privy-io/react-auth'
+import { ConnectedSolanaWallet, getAccessToken } from '@privy-io/react-auth'
+import { PublicKey } from '@solana/web3.js'
 import Cookies from 'js-cookie'
 import pkg from '../../package.json'
 
@@ -47,5 +48,22 @@ export async function privyLogout() {
   } catch (error) {
     console.error('退出失败:', error)
     return false
+  }
+}
+
+// 创建一个适配器，让 Privy 钱包兼容 Anchor 的 Wallet 接口
+export class PrivyWalletAdapterForAnchor {
+  constructor(private privyWallet: ConnectedSolanaWallet) {}
+
+  get publicKey(): PublicKey {
+    return new PublicKey(this.privyWallet?.address)
+  }
+  async signTransaction(tx: any): Promise<any> {
+    // 这里需要根据 Privy 的实际 API 来实现签名
+    return await this.privyWallet.signTransaction(tx)
+  }
+  async signAllTransactions(txs: any[]): Promise<any[]> {
+    // 批量签名交易
+    return await this.privyWallet.signAllTransactions(txs)
   }
 }

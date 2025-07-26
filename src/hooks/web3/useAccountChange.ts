@@ -1,6 +1,6 @@
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { useEffect, useState } from 'react'
-import usePrivyConnection from './usePrivyConnection'
+import useConnection from './useConnection'
 
 type IProps = {
   address: PublicKey | string
@@ -20,7 +20,7 @@ type UpdatedAccountInfo = {
 // 监听账户变化 会有延迟
 export default function useAccountChange(props?: IProps) {
   const address = props?.address as PublicKey
-  const { connection } = usePrivyConnection()
+  const { connection } = useConnection()
   const [updatedAccountInfo, setUpdatedAccountInfo] = useState({} as UpdatedAccountInfo)
 
   useEffect(() => {

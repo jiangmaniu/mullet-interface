@@ -1,7 +1,7 @@
 import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
 import { useEffect, useState } from 'react'
 import useAccountChange from './useAccountChange'
-import usePrivyConnection from './usePrivyConnection'
+import useConnection from './useConnection'
 
 type IProps = {
   address: PublicKey | string
@@ -10,7 +10,7 @@ type IProps = {
 // 获取账户的余额
 export default function useAccountBalance(props?: IProps) {
   const address = props?.address as PublicKey
-  const { connection } = usePrivyConnection()
+  const { connection } = useConnection()
   const [balance, setBalance] = useState<number>(0)
 
   const getBalance = async () => {

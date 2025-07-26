@@ -1,7 +1,7 @@
 import Button from '@/components/Base/Button'
 import { useCluster } from '@/context/clusterProvider'
 import useAccountBalance from '@/hooks/web3/useAccountBalance'
-import usePrivyConnection from '@/hooks/web3/usePrivyConnection'
+import useConnection from '@/hooks/web3/useConnection'
 import {
   useLinkAccount,
   useLogin,
@@ -186,7 +186,7 @@ const TradeDemo = observer(() => {
   // 配置连接到正确的 Solana 网络
   // const connection = new Connection("https://api.mainnet-beta.solana.com");
   // const connection = new Connection(clusterApiUrl('devnet'));
-  const { connection, cluster } = usePrivyConnection()
+  const { connection, cluster } = useConnection()
   const { clusters, setCluster } = useCluster()
   // ===== 发送交易配置 =====
 

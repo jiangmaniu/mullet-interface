@@ -257,6 +257,12 @@ export default [
     layout: false
   },
   {
+    path: '/:lng/counter-wallet-pda-seed-privy',
+    name: 'counterConnectWalletIdlPdaSeedPrivy',
+    component: './web3Demo/counterConnectWalletIdlPdaSeedPrivy',
+    layout: false
+  },
+  {
     path: '/:lng/counter-wallet-pda-unseed',
     name: 'counterConnectWalletIdlNotPdaSeed',
     component: './web3Demo/counterConnectWalletIdlNotPdaSeed',
@@ -270,17 +276,10 @@ export default [
   },
   {
     path: '/:lng/vote-pda-seed',
-    name: 'votePdaSeed',
-    component: './web3Demo/votePdaSeed',
+    name: 'voteWalletPdaSeed',
+    component: './web3Demo/voteWalletPdaSeed',
     layout: false
   },
-  // 旧版本 kyc 认证
-  // {
-  //   path: '/:lng/setting/kyc',
-  //   access: 'canAdmin', // 权限配置
-  //   component: './admin/setting/kycStepForm',
-  //   hideInMenu: true
-  // },
 
   // ======================== 移动端页面路由 start ======================
   {
