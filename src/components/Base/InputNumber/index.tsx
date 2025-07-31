@@ -39,6 +39,7 @@ type IProps = {
   /**是否展示加减号 */
   showAddMinus?: boolean
   addonBefore?: React.ReactNode
+  addonAfter?: React.ReactNode
   width?: number
   /**自动聚焦表单 */
   autoFocus?: boolean
@@ -88,6 +89,7 @@ function InputNumber(props: IProps) {
     showAddMinus = true,
     placeholder = intl.formatMessage({ id: 'common.qingshuru' }),
     addonBefore,
+    addonAfter,
     width,
     autoFocus = true,
     showFloatTips = true,
@@ -318,7 +320,7 @@ function InputNumber(props: IProps) {
                 onBlur?.()
               },
               autoComplete: 'off',
-              addonAfter: unit && <span className="text-xs font-normal text-weak">{unit}</span>,
+              addonAfter: addonAfter ? addonAfter : unit && <span className="text-xs font-normal text-weak">{unit}</span>,
               // @ts-ignore
               styles: { border: 'none', input: { height } },
               className: `custom-inputnumber ${classNames?.input}`, // @hack处理 样式在globals.scss中添加

@@ -849,5 +849,15 @@ export default {
   'mt.gengduoshezhi': 'More Settings',
   'mt.renlianshibietishitips1': 'Please ensure the submitted identity information is your own',
   'mt.renlianshibietishitips2': 'Please perform face recognition on APP/H5',
-  'mt.wozhidaole': 'I know'
+  'mt.wozhidaole': 'I know',
+  'mt.zuidazhi': 'Maximum',
+  'mt.mubiaodizhi': 'Target Address',
+  'mt.rujindizhi': 'Deposit Address',
+  'mt.zhuanzhangchenggong': 'Transfer successful',
+  'mt.zhuanzhangshibai': 'Transfer failed',
+  'mt.zhuanruzhuanchudizhibunengxiangtong': 'The deposit and withdrawal addresses cannot be the same',
+  'mt.lianjieqianbao': 'Connect',
+  'mt.tuichu': 'Logout',
+  'mt.wenxintishi': 'Reminder',
+  'mt.rujinyiquerenyuejianggengxin': 'Deposit confirmed, balance will be updated in the next block'
 }

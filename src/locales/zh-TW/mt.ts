@@ -843,5 +843,15 @@ export default {
   'mt.renlianshibietishitips1': '請確保是提交身份證信息本人',
   'mt.renlianshibietishitips2': '请在APP/H5端进行人脸识别',
   'mt.wozhidaole': '我知道了',
-  'mt.dingdanyichaoshi': '訂單已超時，請重新創建訂單'
+  'mt.dingdanyichaoshi': '訂單已超時，請重新創建訂單',
+  'mt.zuidazhi': '最大值',
+  'mt.mubiaodizhi': '目标地址',
+  'mt.rujindizhi': '入金地址',
+  'mt.zhuanzhangchenggong': '转账成功',
+  'mt.zhuanzhangshibai': '转账失败',
+  'mt.zhuanruzhuanchudizhibunengxiangtong': '转入转出地址不能相同',
+  'mt.lianjieqianbao': '连接钱包',
+  'mt.tuichu': '退出',
+  'mt.wenxintishi': '温馨提示',
+  'mt.rujinyiquerenyuejianggengxin': '入金已确认,余额将在下一个区块更新'
 }

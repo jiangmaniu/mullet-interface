@@ -5,7 +5,6 @@ import { observer } from 'mobx-react'
 import { useEffect, useRef } from 'react'
 
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
-import { ADMIN_HOME_PAGE } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
@@ -43,11 +42,11 @@ export default observer(() => {
   // 同步数据到worker线程
   useSyncDataToWorker()
 
-  useEffect(() => {
-    if (!currentUser?.accountList?.length) {
-      push(ADMIN_HOME_PAGE)
-    }
-  }, [currentUser])
+  // useEffect(() => {
+  //   if (!currentUser?.accountList?.length) {
+  //     push(ADMIN_HOME_PAGE)
+  //   }
+  // }, [currentUser])
 
   useEffect(() => {
     // 设置交易页面主题变量为全局主题

@@ -27,15 +27,18 @@ export const PrivyProvider = ({ children }: IProps) => {
           appearance: {
             showWalletLoginFirst: false,
             walletChainType: 'solana-only',
+            landingHeader: '',
             walletList: [
               // 浏览器自动检测
               'detected_solana_wallets',
               // 按顺序展示 将会覆盖浏览器自动检测的
               'phantom',
               'backpack',
-              'okx_wallet'
+              'okx_wallet',
+              'solflare'
             ]
           },
+          // solanaClusters: [{ name: 'mainnet-beta', rpcUrl: PRIVY_SOLANA_RPC }],
           // loginMethods: ["wallet", "email"],
           externalWallets: {
             solana: {

@@ -840,5 +840,15 @@ export default {
   'mt.gengduoshezhi': 'Cài đặt',
   'mt.renlianshibietishitips1': 'Vui lòng đảm bảo thông tin xác minh là của bạn',
   'mt.renlianshibietishitips2': 'Vui lòng thực hiện xác thực khuôn mặt trên ứng dụng/H5',
-  'mt.wozhidaole': 'Tôi đã hiểu'
+  'mt.wozhidaole': 'Tôi đã hiểu',
+  'mt.zuidazhi': 'Tối đa',
+  'mt.mubiaodizhi': 'Địa chỉ mục tiêu',
+  'mt.rujindizhi': 'Địa chỉ nạp tiền',
+  'mt.zhuanzhangchenggong': 'Chuyển khoản thành công',
+  'mt.zhuanzhangshibai': 'Chuyển khoản thất bại',
+  'mt.zhuanruzhuanchudizhibunengxiangtong': 'Địa chỉ nạp và rút không được giống nhau',
+  'mt.lianjieqianbao': 'Kết nối ví',
+  'mt.tuichu': 'Đăng xuất',
+  'mt.wenxintishi': 'Lưu ý',
+  'mt.rujinyiquerenyuejianggengxin': 'Nạp tiền đã được xác nhận, số dư sẽ được cập nhật trong khối tiếp theo'
 }

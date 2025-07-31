@@ -280,6 +280,35 @@ export default [
     component: './web3Demo/voteWalletPdaSeed',
     layout: false
   },
+  // 区块链浏览器
+  {
+    path: '/:lng/explorer-test/tx/list',
+    name: 'recordHistoryTxList',
+    component: './web3Demo/explorerRecord/TxList',
+    layout: false
+  },
+  // 交易详情
+  {
+    path: '/:lng/explorer-test/tx/:signature',
+    name: 'recordHistoryTxList',
+    component: './web3Demo/explorerRecord/TxDetail',
+    layout: false
+  },
+  // 地址列表
+  {
+    path: '/:lng/explorer-test/address/:address',
+    name: 'recordAddressList',
+    component: './web3Demo/explorerRecord/AddressList',
+    layout: false
+  },
+  // 区块详情
+  {
+    path: '/:lng/explorer-test/block/:block',
+    name: 'recordBlockList',
+    component: './web3Demo/explorerRecord/BlockDetail',
+    layout: false
+  },
+
 
   // ======================== 移动端页面路由 start ======================
   {

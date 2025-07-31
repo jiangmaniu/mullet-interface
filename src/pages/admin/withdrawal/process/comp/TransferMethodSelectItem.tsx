@@ -77,7 +77,7 @@ function TransferMethodSelectItem({ form, disabled, methodInfo }: IProps) {
       //   form.setFieldValue('bankName', methodInfo?.options?.bankName?.value)
       // }
     }
-  }, [form, methodInfo])
+  }, [form, methodInfo?.paymentType, methodInfo?.baseCurrency, methodInfo?.symbol, methodInfo?.exchangeRate])
 
   return (
     <div>

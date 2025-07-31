@@ -3,7 +3,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, SelectLang as UmiSelectLang, useLocation, useModel } from '@umijs/max'
 import { Tooltip } from 'antd'
 import { observer } from 'mobx-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import SwitchLanguage from '@/components/SwitchLanguage'
@@ -12,8 +12,13 @@ import { useEnv } from '@/context/envProvider'
 import { goKefu, push } from '@/utils/navigator'
 
 import Button from '@/components/Base/Button'
+import WalletButton from '@/components/Wallet/WalletButton'
+import DepositModal from '@/components/Web/DepositWithdrawModal/DepositModal'
+import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
+import useHasPrivyWalletConnected from '@/hooks/web3/useHasPrivyWalletConnected'
+import { usePrivy } from '@privy-io/react-auth'
 import { HeaderTheme } from '../Header/types'
 import AccountDropdown from './AccountDropdown'
 import Message from './Message'
@@ -93,8 +98,14 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const isBaseAuth = currentUser?.isBaseAuth
   const themeConfig = useTheme()
   const env = getEnv()
-
+  const { connectWallet } = usePrivy()
   const realAccountList = accountList.filter((item) => !item.isSimulate)
+
+  const withdrawModalRef = useRef<any>(null)
+  const depositModalRef = useRef<any>(null)
+
+  // 排除内嵌钱包登录（邮箱等账号登录）
+  const { hasPrivyWalletConnected } = useHasPrivyWalletConnected()
 
   return (
     <div className="flex items-center">
@@ -114,6 +125,34 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             </div>
           </Button>
         )}
+        <Button
+          onClick={() => {
+            depositModalRef.current?.show()
+          }}
+          type="default"
+          disabled={!hasPrivyWalletConnected}
+        >
+          <div className="flex flex-row gap-1.5 items-center">
+            <Iconfont name="rujin1" width={20} height={20} color={themeConfig.theme.isDark ? '#fff' : ''} />
+            <span className=" w-[1px] h-[18px] bg-[#ddd] dark:bg-gray-570"></span>
+            <FormattedMessage id="mt.rujin" />
+          </div>
+        </Button>
+        <Button
+          onClick={() => {
+            withdrawModalRef?.current.show()
+          }}
+          type="default"
+        >
+          <div className="flex flex-row gap-1.5 items-center">
+            <Iconfont name="chujin" width={20} height={20} color={themeConfig.theme.isDark ? '#fff' : ''} />
+            <span className=" w-[1px] h-[18px] bg-[#ddd] dark:bg-gray-570"></span>
+            <FormattedMessage id="mt.chujin" />
+          </div>
+        </Button>
+        {/* 钱包地址选择 */}
+        <WalletButton />
+
         {/* 交易页面账户信息下拉dropdown */}
         {isTradePage && <TradeAccountDropdown theme={theme} />}
         {/* 个人中心账户信息下拉dropdown */}
@@ -163,6 +202,10 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       </div>
       {isTradePage && <SwitchTheme />}
       {!env.HIDE_SWITCH_LANGUAGE && <SwitchLanguage isAdmin={isAdmin} theme={theme} isTrade={isTrade} />}
+
+      {/* 出入金弹窗 */}
+      <WithdrawModal ref={withdrawModalRef} />
+      <DepositModal ref={depositModalRef} />
     </div>
   )
 })

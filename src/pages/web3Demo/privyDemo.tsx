@@ -3,6 +3,7 @@ import { useCluster } from '@/context/clusterProvider'
 import useAccountBalance from '@/hooks/web3/useAccountBalance'
 import useConnection from '@/hooks/web3/useConnection'
 import {
+  useConnectWallet,
   useLinkAccount,
   useLogin,
   useLoginWithEmail,
@@ -175,9 +176,18 @@ const MfaEnrollmentButton = () => {
 const TradeDemo = observer(() => {
   const { ready, authenticated, logout, user, getAccessToken } = usePrivy()
 
+  const { login } = useLogin()
   const { wallets } = useSolanaWallets()
   const { signMessage } = useSignMessage()
-  const { connectWallet, connectOrCreateWallet } = usePrivy()
+  const { connectOrCreateWallet } = usePrivy()
+  const { connectWallet } = useConnectWallet({
+    onSuccess: ({ wallet }) => {
+      console.log('connectWallet wallet', wallet)
+    },
+    onError: (error) => {
+      console.log('connectWallet error', error)
+    }
+  })
   const wallet = user?.wallet
   const address = wallet?.address ? new PublicKey(wallet?.address) : ''
   // ===== 发送交易配置 =====
@@ -215,6 +225,7 @@ const TradeDemo = observer(() => {
 
   // Send a transaction 发送交易方式1
   const onSendTransaction1 = async () => {
+    console.log('发送交易方式1', wallets)
     const wallet = wallets[0]
     // @ts-ignore
     const payer = new PublicKey(wallet?.address)
@@ -222,7 +233,7 @@ const TradeDemo = observer(() => {
     const transaction = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: payer,
-        toPubkey: new PublicKey('3b2b7EdUnoq9i5DDK2Gt8FtrnZEMUJ7XAYVDAioY5bdQ'),
+        toPubkey: new PublicKey('GQqPhCcUw7P3sKpxvVCpSxUnazHapPJ2jz9UqGyS6YxG'),
         lamports: 0.2 * LAMPORTS_PER_SOL // 1 SOL = 10^9 lamports
       })
     )
@@ -255,7 +266,7 @@ const TradeDemo = observer(() => {
     // 1. 构建交易
     const { transaction, latestBlockhash } = await createTransaction({
       publicKey: new PublicKey(wallet?.address),
-      destination: new PublicKey('3b2b7EdUnoq9i5DDK2Gt8FtrnZEMUJ7XAYVDAioY5bdQ'),
+      destination: new PublicKey('GQqPhCcUw7P3sKpxvVCpSxUnazHapPJ2jz9UqGyS6YxG'),
       amount: 0.2, // 1 SOL = 10^9 lamports
       connection
     })
@@ -299,11 +310,11 @@ const TradeDemo = observer(() => {
 
   const onConnectWallet = async () => {
     // 该方法的功能与 Privy 的方法完全相同login，只是当用户连接他们的外部钱包时，不会自动提示他们通过签署消息来验证该钱包
-    // Privy 的connectOrCreate界面目前仅支持 EVM 网络上的外部和嵌入式钱包。
+    // 📢注意： Privy 的connectOrCreate界面目前仅支持 EVM 网络上的外部和嵌入式钱包。
     // await connectOrCreateWallet();
     // https://docs.privy.io/recipes/react/configuring-external-connectors#solana
     // 可以传入特定的钱包列表
-    await connectWallet({ walletList: ['phantom', 'metamask'] })
+    await connectWallet()
   }
 
   const { refreshUser } = useUser()

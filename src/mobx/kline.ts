@@ -316,7 +316,7 @@ class KlineStore {
           this.bars = bars
         })
 
-        console.log('bars', bars)
+        // console.log('bars', bars)
 
         return bars
       } else {

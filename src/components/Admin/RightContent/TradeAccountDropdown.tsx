@@ -36,13 +36,13 @@ function TradeAccountDropdown({ theme }: IProps) {
   const isDark = themeConfig.theme.isDark
   const [accountBoxOpen, setAccountBoxOpen] = useState(false)
   const currentUser = initialState?.currentUser
-  const accountList = currentUser?.accountList || []
 
   useEffect(() => {
+    const accountList = currentUser?.accountList || []
     // 切换真实模拟账户列表
     const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
     setCurrentAccountList(list)
-  }, [accountTabActiveKey, accountList])
+  }, [accountTabActiveKey, currentUser?.accountList])
 
   // 排除当前选择的账户
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
