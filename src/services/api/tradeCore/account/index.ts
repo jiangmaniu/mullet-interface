@@ -110,6 +110,14 @@ export async function rechargeSimulate(body: Account.RechargeSimulateParams) {
   })
 }
 
+// 交易账户-出金
+export async function withdrawByAddress(body: Account.WithdrawByAddressParams) {
+  return request<API.Response>('/api/trade-core/coreApi/account/withdraw', {
+    method: 'POST',
+    data: body
+  })
+}
+
 // 获取浮动盈亏
 export async function getAccountProfit(params: { accountId: string }) {
   return request<API.Response<any>>(`/api/trade-core/coreApi/account/count/accountProfit?${qs.stringify(params)}`, {

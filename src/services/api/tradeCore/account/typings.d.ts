@@ -151,6 +151,10 @@ declare namespace Account {
       toAccountId: string
       money: string
     }
+    /**
+     * 交易签名
+     */
+    signature?: string
   }
   // 交易账户-分页-参数
   type AccountPageListParams = {
@@ -337,5 +341,24 @@ declare namespace Account {
      * 类型
      */
     type: API.MoneyType
+  }
+  // 交易账户-出金
+  type WithdrawByAddressParams = {
+    /**
+     * 交易账户ID
+     */
+    accountId: string
+    /**
+     * 金额
+     */
+    money: number
+    /**
+     * 备注
+     */
+    remark?: string
+    /**
+     * 出金地址
+     */
+    withdrawAddress: string
   }
 }

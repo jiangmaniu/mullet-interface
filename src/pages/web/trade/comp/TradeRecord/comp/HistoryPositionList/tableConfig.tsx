@@ -2,6 +2,7 @@ import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
+import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { getEnum } from '@/constants/enum'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
@@ -213,6 +214,20 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
         label: '' // 去掉form label
       },
       width: 150
+    },
+    {
+      title: <FormattedMessage id="mt.dizhi" />,
+      dataIndex: 'pdaAddress',
+      hideInSearch: true, // 在 table的查询表单 中隐藏
+      ellipsis: false,
+      width: 150,
+      renderText(text, record, index, action) {
+        return (
+          <span className="!text-[13px] text-primary">
+            <ExplorerLink path={`address/${record.pdaAddress}`} address={record.pdaAddress} />
+          </span>
+        )
+      }
     },
     {
       title: (

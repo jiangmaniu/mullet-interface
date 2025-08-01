@@ -46,7 +46,12 @@ export const PrivyProvider = ({ children }: IProps) => {
             }
           },
           embeddedWallets: {
-            createOnLogin: 'users-without-wallets'
+            solana: {
+              createOnLogin: 'users-without-wallets'
+            },
+            ethereum: {
+              createOnLogin: 'off'
+            }
           }
         }}
       >

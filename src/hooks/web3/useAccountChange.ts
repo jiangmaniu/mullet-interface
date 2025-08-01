@@ -4,6 +4,8 @@ import useConnection from './useConnection'
 
 type IProps = {
   address: PublicKey | string
+  /**更新回调 */
+  onUpdateCallback?: (updatedAccountInfo: UpdatedAccountInfo) => void
 }
 
 type UpdatedAccountInfo = {
@@ -25,8 +27,8 @@ export default function useAccountChange(props?: IProps) {
 
   useEffect(() => {
     if (!connection || !address) return
-    // 注册订阅，感受一下什么叫躺着赚钱
-    const subscriptionId = connection.onAccountChange(address, (updatedAccountInfo, context) => {
+    // 注册订阅
+    const subscriptionId = connection.onAccountChange(new PublicKey(address), (updatedAccountInfo, context) => {
       // console.log(`账户${address}发生变化！`)
       // console.log("最新SOL余额:", updatedAccountInfo.lamports / LAMPORTS_PER_SOL)
       // console.log("上下文信息:", context)
@@ -35,6 +37,8 @@ export default function useAccountChange(props?: IProps) {
         ...updatedAccountInfo,
         balance: updatedAccountInfo.lamports / LAMPORTS_PER_SOL
       } as UpdatedAccountInfo)
+
+      props?.onUpdateCallback?.(updatedAccountInfo as UpdatedAccountInfo)
     })
 
     return () => {

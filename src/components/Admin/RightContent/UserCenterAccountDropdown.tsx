@@ -14,7 +14,6 @@ import { push } from '@/utils/navigator'
 
 import { getAccountSynopsisByLng } from '@/utils/business'
 import { HeaderTheme } from '../Header/types'
-import Modal from '../Modal'
 
 type IProps = {
   theme: HeaderTheme
@@ -47,10 +46,10 @@ function UserCenterAccountDropdown({ theme }: IProps) {
       onClick={() => {
         // 关闭弹窗
         setAccountBoxOpen(false)
-        if (isKycAuth) {
-          authModalRef.current?.close?.()
-          push(`/account/transfer?from=${item.id}`)
-        }
+        // if (isKycAuth) {
+        // authModalRef.current?.close?.()
+        push(`/account/transfer?from=${item.id}`)
+        // }
       }}
     >
       <FormattedMessage id="common.zhuanzhang" />
@@ -142,7 +141,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
                       {item.name} #{item?.id}
                     </div>
                     <div className="flex items-center gap-x-3 mt-3">
-                      {!isKycAuth && (
+                      {/* {!isKycAuth && (
                         <Modal
                           trigger={renderTransferDom(item)}
                           title={<FormattedMessage id="common.wenxintishi" />}
@@ -161,8 +160,9 @@ function UserCenterAccountDropdown({ theme }: IProps) {
                             <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
                           </div>
                         </Modal>
-                      )}
-                      {isKycAuth && renderTransferDom(item)}
+                      )} */}
+                      {/* {isKycAuth && renderTransferDom(item)} */}
+                      {renderTransferDom(item)}
 
                       {/* <Button
                     className="!ml-0 text-sm !h-[32px] !px-[10px]"

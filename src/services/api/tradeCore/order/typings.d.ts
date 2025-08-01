@@ -535,6 +535,10 @@ declare namespace Order {
     limitPrice?: number
     /** 账户组ID */
     accountGroupId?: string
+    /**
+     * PDA地址
+     */
+    pdaAddress?: string
   }
   // 成交记录-分页-参数
   type TradeRecordsPageListParams = {
@@ -564,9 +568,17 @@ declare namespace Order {
      * 订单ID
      */
     orderId?: string
+    /**
+     * PDA地址
+     */
+    pdaAddress?: string
   }
   // 成交记录-分页-列表
   type TradeRecordsPageListItem = {
+    /**
+     * 交易签名
+     */
+    signature?: string
     /**
      * 交易账户ID
      */

@@ -859,5 +859,15 @@ export default {
   'mt.lianjieqianbao': 'Connect',
   'mt.tuichu': 'Logout',
   'mt.wenxintishi': 'Reminder',
-  'mt.rujinyiquerenyuejianggengxin': 'Deposit confirmed, balance will be updated in the next block'
+  'mt.rujinyiquerenyuejianggengxin': 'Deposit confirmed, balance will be updated in the next block',
+  'mt.pdaTokenAddressTips': 'PDA Address',
+  'mt.jiaoyiqianming': 'Signature',
+  'mt.qingshurujine': 'Please enter the amount',
+  'mt.qianmingjiaoyi': 'Signature Transaction',
+  'mt.qianmingjiaoyitishi': 'You need to sign this transaction in your wallet',
+  'mt.qianbaoyuebuzu': 'Wallet balance is insufficient',
+  'mt.zhuanchudizhi': 'Withdrawal Address',
+  'mt.zhuanruzhizhi': 'Deposit Address',
+  'mt.zhuanruzhizhitips': 'Please transfer funds to the above address through an external wallet or other ways',
+  'mt.zhuanruzhizhiweikong': 'Deposit address cannot be empty'
 }

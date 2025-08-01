@@ -15,9 +15,9 @@ import Button from '@/components/Base/Button'
 import WalletButton from '@/components/Wallet/WalletButton'
 import DepositModal from '@/components/Web/DepositWithdrawModal/DepositModal'
 import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
+import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
-import useHasPrivyWalletConnected from '@/hooks/web3/useHasPrivyWalletConnected'
 import { usePrivy } from '@privy-io/react-auth'
 import { HeaderTheme } from '../Header/types'
 import AccountDropdown from './AccountDropdown'
@@ -103,14 +103,13 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
 
   const withdrawModalRef = useRef<any>(null)
   const depositModalRef = useRef<any>(null)
-
-  // 排除内嵌钱包登录（邮箱等账号登录）
-  const { hasPrivyWalletConnected } = useHasPrivyWalletConnected()
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
 
   return (
     <div className="flex items-center">
       <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
-        {isBaseAuth && (
+        {/* {isBaseAuth && (
           <Button
             onClick={() => {
               push(`/deposit`)
@@ -124,13 +123,13 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
               <FormattedMessage id="mt.rujin" />
             </div>
           </Button>
-        )}
+        )} */}
         <Button
           onClick={() => {
             depositModalRef.current?.show()
           }}
           type="default"
-          disabled={!hasPrivyWalletConnected}
+          // disabled={!currentAccountInfo?.pdaTokenAddress}
         >
           <div className="flex flex-row gap-1.5 items-center">
             <Iconfont name="rujin1" width={20} height={20} color={themeConfig.theme.isDark ? '#fff' : ''} />

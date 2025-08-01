@@ -1,7 +1,7 @@
-import { usePrivy } from '@privy-io/react-auth'
 import { PublicKey } from '@solana/web3.js'
 import { useCallback, useState } from 'react'
 import useConnection from './useConnection'
+import usePrivyInfo from './usePrivyInfo'
 
 type IProps = {
   // 钱包地址
@@ -14,8 +14,8 @@ export function useGetSignatures(props?: IProps) {
   const [signaturesList, setSignaturesList] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<Error | null>(null)
-  const { user } = usePrivy()
-  const address = props?.address || user?.wallet?.address || ''
+  const { wallet } = usePrivyInfo()
+  const address = props?.address || wallet?.address || ''
 
   const fetchSignaturesList = useCallback(async () => {
     if (!address || !connection) return

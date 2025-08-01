@@ -1,12 +1,3 @@
-import { PlusCircleOutlined } from '@ant-design/icons'
-import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
-import { useCountDown } from 'ahooks'
-import { Segmented, Tooltip } from 'antd'
-import classNames from 'classnames'
-import { observer } from 'mobx-react'
-import { MenuInfo } from 'rc-menu/lib/interface'
-import { useEffect, useRef, useState } from 'react'
-
 import Modal from '@/components/Admin/Modal'
 import PageContainer from '@/components/Admin/PageContainer'
 import Button from '@/components/Base/Button'
@@ -18,7 +9,18 @@ import { useTheme } from '@/context/themeProvider'
 import { formatNum } from '@/utils'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_THEME } from '@/utils/storage'
+import { PlusCircleOutlined } from '@ant-design/icons'
+import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
+import { useCountDown } from 'ahooks'
+import { Segmented, Tooltip } from 'antd'
+import classNames from 'classnames'
+import { observer } from 'mobx-react'
+import { MenuInfo } from 'rc-menu/lib/interface'
+import { useEffect, useRef, useState } from 'react'
 
+import Address from '@/components/Wallet/Address'
+import DepositModal from '@/components/Web/DepositWithdrawModal/DepositModal'
+import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
 import { getEnv } from '@/env'
 import useKycAuth from '@/hooks/useKycAuth'
 import { getAccountSynopsisByLng } from '@/utils/business'
@@ -101,6 +103,9 @@ function Account() {
       setAccountTabActiveKey(searchKey.toUpperCase())
     }
   }, [searchKey])
+
+  const withdrawModalRef = useRef<any>(null)
+  const depositModalRef = useRef<any>(null)
 
   return (
     <PageContainer pageBgColorMode="white" renderHeader={() => <Header />}>
@@ -207,6 +212,9 @@ function Account() {
                     </div>
                   </div>
                 </div>
+                <div className="flex items-center gap-x-2">
+                  <Address copyable address={item.pdaTokenAddress} />
+                </div>
                 <div className="flex items-baseline">
                   <span className="text-[30px] !font-dingpro-medium text-primary">
                     {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal })) : '∗∗∗∗'}
@@ -218,7 +226,7 @@ function Account() {
                 <Tooltip
                   overlayClassName="tooltipBoxDeposit"
                   zIndex={100}
-                  open={Number(item.money) <= 0 && countDownSeconds > 0}
+                  open={Number(item.money) <= 0 && countDownSeconds > 0 && !!item.pdaTokenAddress}
                   placement={isPc ? 'left' : 'bottomRight'}
                   title={
                     <div className="contentBox">
@@ -243,8 +251,10 @@ function Account() {
                       {/* @TODO 真实账户暂时不支持入金 */}
                       <Button
                         onClick={() => {
-                          push(`/deposit?tradeAccountId=${item.id}`)
+                          // push(`/deposit?tradeAccountId=${item.id}`)
+                          depositModalRef.current.show(item)
                         }}
+                        disabled={!item.pdaTokenAddress}
                         style={{ height: 46, width: 108 }}
                         icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
                       >
@@ -257,7 +267,8 @@ function Account() {
                 {!isSimulate && (
                   <Button
                     onClick={() => {
-                      push(`/withdrawal?tradeAccountId=${item.id}`)
+                      // push(`/withdrawal?tradeAccountId=${item.id}`)
+                      withdrawModalRef.current.show(item)
                     }}
                     style={{ height: 46, width: 108 }}
                     icon={<img src="/img/chujin_icon.png" width={20} height={20} />}
@@ -352,6 +363,9 @@ function Account() {
           <FormattedMessage id="mt.qingxianwanshankycrenzheng" />
         </div>
       </Modal>
+      {/* 出入金弹窗 */}
+      <WithdrawModal ref={withdrawModalRef} />
+      <DepositModal ref={depositModalRef} />
     </PageContainer>
   )
 }

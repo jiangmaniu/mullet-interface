@@ -1,6 +1,6 @@
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useModel } from '@umijs/max'
-import { Dropdown, Segmented } from 'antd'
+import { Dropdown, Segmented, Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useEffect, useMemo, useState } from 'react'
 
@@ -16,6 +16,8 @@ import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
 import { getAccountSynopsisByLng } from '@/utils/business'
+import { InfoCircleOutlined } from '@ant-design/icons'
+import { Address } from '@ant-design/web3'
 import { HeaderTheme } from '../Header/types'
 import AccountListItem from './AccountListItem'
 
@@ -113,6 +115,26 @@ function TradeAccountDropdown({ theme }: IProps) {
               label={<FormattedMessage id="mt.zhanyong" />}
               tips={<FormattedMessage id="mt.zhanyongtips" />}
             />
+            {currentAccountInfo.pdaTokenAddress && (
+              <div className="flex items-center justify-between gap-x-2">
+                <span className="text-sm text-primary">
+                  <FormattedMessage id="mt.dizhi" />
+                  <Tooltip overlayClassName="max-w-[300px]" placement="top" title={<FormattedMessage id="mt.pdaTokenAddressTips" />}>
+                    <span className="ml-[5px] text-weak">
+                      <InfoCircleOutlined style={{ fontSize: 12 }} />
+                    </span>
+                  </Tooltip>
+                </span>
+                <Address
+                  ellipsis={{
+                    headClip: 8,
+                    tailClip: 6
+                  }}
+                  copyable
+                  address={currentAccountInfo.pdaTokenAddress}
+                />
+              </div>
+            )}
           </div>
           {/* @TODO 暂时不做 */}
           {/* <div className="mb-[13px] px-[18px]">
@@ -248,13 +270,14 @@ function TradeAccountDropdown({ theme }: IProps) {
                         </div>
                       </div>
                     </div>
-                    <div className="mt-1">
+                    <div className="mt-1 flex items-center justify-between">
                       <div>
                         <span className="text-[20px] text-primary !font-dingpro-regular">
                           {Number(item.money) ? formatNum(item.money, { precision: item.currencyDecimal || 2 }) : '0.00'}
                         </span>{' '}
                         <span className="ml-1 text-sm font-normal text-secondary">USD</span>
                       </div>
+                      {/* <span>{formatAddress(item.pdaTokenAddress)}</span> */}
                     </div>
                   </div>
                 )

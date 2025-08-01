@@ -853,5 +853,15 @@ export default {
   'mt.lianjieqianbao': '连接钱包',
   'mt.tuichu': '退出',
   'mt.wenxintishi': '温馨提示',
-  'mt.rujinyiquerenyuejianggengxin': '入金已确认,余额将在下一个区块更新'
+  'mt.rujinyiquerenyuejianggengxin': '入金已确认,余额将在下一个区块更新',
+  'mt.pdaTokenAddressTips': 'PDA地址',
+  'mt.jiaoyiqianming': '交易签名',
+  'mt.qingshurujine': '请输入金额',
+  'mt.qianmingjiaoyi': '签名交易',
+  'mt.qianmingjiaoyitishi': '您需要在钱包中签署此交易',
+  'mt.qianbaoyuebuzu': '钱包余额不足',
+  'mt.zhuanchudizhi': '转出地址',
+  'mt.zhuanruzhizhi': '转入地址',
+  'mt.zhuanruzhizhitips': '请通过外部钱包等方式把钱转入到以上地址',
+  'mt.zhuanruzhizhiweikong': '转入地址不能为空'
 }

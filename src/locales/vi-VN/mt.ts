@@ -850,5 +850,15 @@ export default {
   'mt.lianjieqianbao': 'Kết nối ví',
   'mt.tuichu': 'Đăng xuất',
   'mt.wenxintishi': 'Lưu ý',
-  'mt.rujinyiquerenyuejianggengxin': 'Nạp tiền đã được xác nhận, số dư sẽ được cập nhật trong khối tiếp theo'
+  'mt.rujinyiquerenyuejianggengxin': 'Nạp tiền đã được xác nhận, số dư sẽ được cập nhật trong khối tiếp theo',
+  'mt.pdaTokenAddressTips': 'Địa chỉ PDA',
+  'mt.jiaoyiqianming': 'Chữ ký',
+  'mt.qingshurujine': 'Vui lòng nhập số tiền',
+  'mt.qianmingjiaoyi': 'Giao dịch chữ ký',
+  'mt.qianmingjiaoyitishi': 'Bạn cần ký giao dịch trong ví của mình',
+  'mt.qianbaoyuebuzu': 'Số dư ví không đủ',
+  'mt.zhuanchudizhi': 'Địa chỉ rút tiền',
+  'mt.zhuanruzhizhi': 'Địa chỉ nạp tiền',
+  'mt.zhuanruzhizhitips': 'Vui lòng chuyển tiền qua ví ngoài hoặc các cách khác để nạp tiền',
+  'mt.zhuanruzhizhiweikong': 'Địa chỉ nạp tiền không được để trống'
 }

@@ -19,6 +19,7 @@ import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
 
+import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
 import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
@@ -332,6 +333,21 @@ function Position({ style, parentPopup }: IProps) {
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
           return <span className="!text-[13px] text-primary">{record.id}</span>
+        }
+      },
+      {
+        title: <FormattedMessage id="mt.dizhi" />,
+        dataIndex: 'pdaAddress',
+        hideInSearch: true, // 在 table的查询表单 中隐藏
+        ellipsis: false,
+        width: 150,
+        renderText(text, record, index, action) {
+          if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
+          return (
+            <span className="!text-[13px] text-primary">
+              <ExplorerLink path={`address/${record.pdaAddress}`} address={record.pdaAddress} />
+            </span>
+          )
         }
       },
       {

@@ -1,25 +1,26 @@
 import { useCluster } from '@/context/clusterProvider'
 import { message } from '@/utils/message'
-import { usePrivy, useSolanaWallets } from '@privy-io/react-auth'
+import { useSolanaWallets } from '@privy-io/react-auth'
 import { useSendTransaction } from '@privy-io/react-auth/solana'
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionSignature } from '@solana/web3.js'
 import { useIntl } from '@umijs/max'
 import { useState } from 'react'
 import useConnection from './useConnection'
 import useNotice from './useNotice'
+import usePrivyInfo from './usePrivyInfo'
 
 type TransferProps = {
   // 转入目标地址
   toAddress: string
   amount: number
+  onBeforeTransfer?: () => void
 }
 
 // 转账
 export default function useTransfer() {
   const intl = useIntl()
   const { connection, connected } = useConnection()
-  const { user } = usePrivy()
-  const wallet = user?.wallet
+  const { wallet } = usePrivyInfo()
   const { wallets } = useSolanaWallets()
   const fromAddress = wallet?.address as string
   const { sendTransaction } = useSendTransaction()
@@ -58,7 +59,7 @@ export default function useTransfer() {
     }
   }
 
-  const onTransfer = async ({ toAddress, amount }: TransferProps) => {
+  const onTransfer = async ({ toAddress, amount, onBeforeTransfer }: TransferProps) => {
     if (!connected || !wallet?.address || wallets.length === 0) {
       message.info('Please connect wallet first')
       return
@@ -74,6 +75,11 @@ export default function useTransfer() {
 
       console.log('balance: ', balance / LAMPORTS_PER_SOL)
 
+      if (!toAddress) {
+        message.info(intl.formatMessage({ id: 'mt.zhuanruzhizhiweikong' }))
+        return
+      }
+
       if (balance < lamports) {
         message.info(intl.formatMessage({ id: 'mt.yuebuzu' }))
         setError(true)
@@ -84,6 +90,9 @@ export default function useTransfer() {
         message.info(intl.formatMessage({ id: 'mt.zhuanruzhuanchudizhibunengxiangtong' }))
         return
       }
+
+      // 转账之前回调
+      onBeforeTransfer?.()
 
       setTransferLoading(true)
       const payer = new PublicKey(fromAddress)
@@ -126,6 +135,7 @@ export default function useTransfer() {
       const isConfirmed = await confirmTransactionStatus(signature)
       console.log('交易确认状态:', isConfirmed)
       setTransferSuccess(true)
+      setError(false)
       setTimeout(() => {
         setTransferSuccess(false)
         showNotice({
@@ -144,7 +154,6 @@ export default function useTransfer() {
       console.log('转账失败:', error)
     } finally {
       setTransferLoading(false)
-      setError(false)
     }
   }
 

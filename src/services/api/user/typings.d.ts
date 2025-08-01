@@ -436,6 +436,30 @@ declare namespace User {
     usableAdvanceCharge?: API.UsableAdvanceCharge
     /** 跟单状态 */
     followStatus?: number
+    /** pda代币地址 */
+    pdaTokenAddress?: any
+    /** Solana网络RPC */
+    networkRpc?: string
+    /**
+     * Solana网络WS
+     */
+    networkWs?: string
+    /**
+     * Solana网络别名
+     */
+    networkAlias?: string
+    /**
+     * 智能合约ID
+     */
+    programId?: string
+    /**
+     * Mint代币地址
+     */
+    mintAddress?: any
+    /**
+     * Mint代币小数位
+     */
+    mintDecimals?: number
   }
 
   // 区域列表

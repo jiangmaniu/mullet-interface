@@ -1,7 +1,7 @@
 import Button from '@/components/Base/Button'
 import { useCluster } from '@/context/clusterProvider'
-import useAccountBalance from '@/hooks/web3/useAccountBalance'
 import useConnection from '@/hooks/web3/useConnection'
+import useWalletAccountBalance from '@/hooks/web3/useWalletAccountBalance'
 import {
   useConnectWallet,
   useLinkAccount,
@@ -196,8 +196,8 @@ const TradeDemo = observer(() => {
   // 配置连接到正确的 Solana 网络
   // const connection = new Connection("https://api.mainnet-beta.solana.com");
   // const connection = new Connection(clusterApiUrl('devnet'));
-  const { connection, cluster } = useConnection()
-  const { clusters, setCluster } = useCluster()
+  const { connection } = useConnection()
+  const { clusters, setCluster, cluster } = useCluster()
   // ===== 发送交易配置 =====
 
   // ===== 交易签名配置 =====
@@ -330,7 +330,7 @@ const TradeDemo = observer(() => {
   }
 
   // 获取钱包余额
-  const { balance, getBalance } = useAccountBalance({ address })
+  const { balance, getBalance } = useWalletAccountBalance({ address })
 
   const { exportWallet } = useSolanaWallets()
 
