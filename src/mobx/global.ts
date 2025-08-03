@@ -200,7 +200,6 @@ export class GlobalStore {
     } catch (error) {
       onLogout()
     }
-    return undefined
   }
 
   // 获取该应用支持的注册方式，目前只支持一种，不支持同时切换手机、邮箱注册

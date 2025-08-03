@@ -38,8 +38,6 @@ function Deposit() {
 
   const onSuccess = (params?: any) => {
     push(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
-    // console.log(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
-    // push(appendHideParamIfNeeded(`/app/withdraw/preview?backUrl=/app/withdraw/process/${params?.methodId}`), params)
   }
 
   useEffect(() => {

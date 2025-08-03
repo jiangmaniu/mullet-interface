@@ -66,13 +66,7 @@ export default function KycVerifyDocPage() {
       // }
     >
       <View className="flex flex-col items-center">
-        <img
-          src={require('/public/img/webapp/kyc-bg-0.png')}
-          alt="kyc-verify-information"
-          width="102"
-          height="102"
-          className="my-[30px] mx-auto"
-        />
+        <img src={'/img/webapp/kyc-bg-0.png'} alt="kyc-verify-information" width="102" height="102" className="my-[30px] mx-auto" />
       </View>
       <View
         className={classNames('rounded-t-[24px] w-full pt-[14px]')}

@@ -700,5 +700,14 @@
   "Common": {
     "From": "From",
     "To": "To"
+  },
+  "addScreen": {
+    "headerTitle": "Add to Home Screen",
+    "install": "Install",
+    "iphoneChromeTips1": "Click the share button in the upper right corner.",
+    "iphoneChromeTips2": "Scroll and click Add to Home Screen in the pop-up menu",
+    "iphoneSafariTips1": "Click the share button in the middle of the bottom of the screen.",
+    "androidChromeTips1": "Click the More button in the upper right corner of the browser",
+    "androidChromeTips2": "Find Add to Home Screen in the options"
   }
 }

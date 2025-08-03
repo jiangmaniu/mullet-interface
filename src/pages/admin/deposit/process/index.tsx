@@ -60,12 +60,10 @@ function DepositProcess() {
   }, [methodId, methods])
 
   useEffect(() => {
-    if (form && methodInfo) {
-      // form.setFieldValue('address', methodInfo?.address)
-      // 20241202：默认选择 USD, 目前只有 USD 币种；
-      form.setFieldValue('currency', 'USD')
-      console.log('methodInfo', methodInfo)
-    }
+    // form.setFieldValue('address', methodInfo?.address)
+    // 20241202：默认选择 USD, 目前只有 USD 币种；
+    form.setFieldValue('currency', 'USD')
+    console.log('methodInfo', methodInfo)
   }, [form, methodInfo])
 
   const { initialState } = useModel('@@initialState')

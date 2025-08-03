@@ -14,7 +14,7 @@ type IProps = {
 }
 
 // 挂单列表Item
-function PendingItem({ item }: IProps) {
+function PendingItem({ item }: IProps, ref: any) {
   const { cn, theme } = useTheme()
   const { t } = useI18n()
 

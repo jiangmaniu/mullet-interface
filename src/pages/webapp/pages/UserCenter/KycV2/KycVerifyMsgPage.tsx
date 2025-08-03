@@ -48,13 +48,7 @@ export default function KycVerifyMsgPage() {
       // }
     >
       <View className="flex flex-col items-center">
-        <img
-          src={require('/public/img/webapp/kyc-bg-0.png')}
-          alt="kyc-verify-information"
-          width="102"
-          height="102"
-          className="my-[30px] mx-auto"
-        />
+        <img src={'/img/webapp/kyc-bg-0.png'} alt="kyc-verify-information" width="102" height="102" className="my-[30px] mx-auto" />
       </View>
       <View className=" rounded-t-[24px] bg-white w-full px-[12px] pt-[22px] pb-[50px]">
         <VerifyMsg

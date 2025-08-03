@@ -34,10 +34,14 @@ function WebAppLayout() {
   const token = searchParams.get('token')
   const user_id = searchParams.get('user_id')
 
-  if (process.env.NODE_ENV === 'development' || getEnv()?.DEBUG) {
-    // https://github.com/Tencent/vConsole
-    const vConsole = new VConsole()
-  }
+  const DEBUG = process.env.NODE_ENV === 'development' || getEnv()?.DEBUG
+
+  useEffect(() => {
+    if (DEBUG) {
+      // https://github.com/Tencent/vConsole
+      const vConsole = new VConsole()
+    }
+  }, [DEBUG])
 
   const isMainTab = isMainTabbar(pathname)
 

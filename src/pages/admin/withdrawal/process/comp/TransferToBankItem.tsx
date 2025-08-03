@@ -63,9 +63,9 @@ export default function TransferToBankItem({ form }: IProps) {
           className="fix-select-search-input"
           options={bankList}
           placeholder={intl.formatMessage({ id: 'mt.qingshuruyinhangmincheng' })}
-          onChange={(value) => {
-            form.setFieldValue('bankName', value)
-          }}
+          // onChange={(value) => {
+          //   form.setFieldValue('bankName', value)
+          // }}
         />
       </ProFormItem>
 

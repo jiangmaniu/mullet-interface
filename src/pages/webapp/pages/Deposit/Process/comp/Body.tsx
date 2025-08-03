@@ -59,12 +59,10 @@ const DepositProcess = forwardRef(
     }, [methodId, methods])
 
     useEffect(() => {
-      if (form && methodInfo) {
-        // form.setFieldValue('address', methodInfo?.address)
-        // 20241202：默认选择 USD, 目前只有 USD 币种；
-        form.setFieldValue('currency', 'USD')
-      }
-    }, [form, methodInfo])
+      // form.setFieldValue('address', methodInfo?.address)
+      // 20241202：默认选择 USD, 目前只有 USD 币种；
+      form.setFieldValue('currency', 'USD')
+    }, [form])
 
     const { initialState } = useModel('@@initialState')
     const currentUser = initialState?.currentUser

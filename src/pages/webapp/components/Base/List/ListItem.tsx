@@ -1,4 +1,4 @@
-import React, { isValidElement } from 'react'
+import React, { Fragment, isValidElement } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
@@ -81,9 +81,9 @@ const ListItem: React.FC<IlistItemProps> = ({
           {!!subTitle && <Text style={{ fontSize: '10px', lineHeight: '12px', color: theme.colors.textColor.weak }}>{subTitle}</Text>}
         </View>
         {isValidElement(renderExtraElement?.()) ? (
-          renderExtraElement?.()
+          <Fragment key="extra-element">{renderExtraElement?.()}</Fragment>
         ) : (
-          <View style={{ flexDirection: 'row', alignItems: 'center', ...styles?.subTextStyle }}>
+          <View key="default-content" style={{ flexDirection: 'row', alignItems: 'center', ...styles?.subTextStyle }}>
             {!!subText && (
               <Text style={{ fontSize: '14px', color: theme.colors.textColor.weak, marginRight: 11, ...styles?.subTextStyle }}>
                 {subText}

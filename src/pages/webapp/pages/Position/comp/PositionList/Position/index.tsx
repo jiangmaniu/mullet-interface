@@ -15,26 +15,24 @@ import { useModel } from '@umijs/max'
 import { useNetwork } from 'ahooks'
 import { debounce } from 'lodash'
 import { observer } from 'mobx-react'
-import { forwardRef, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import PositionItem from './PositionItem'
 import MarketCloseConfirmModal from './PositionModal/MarketCloseConfirmModal'
 import PositionContent from './PositionModal/PositionContent'
 import TopTabbar from './PositionModal/TopTabbar'
 import { Params } from './PositionModal/TopTabbar/types'
 
-const RenderItem = forwardRef(
-  ({
-    item,
-    onPress
-  }: {
-    item: Order.BgaOrderPageListItem
-    onPress: (item: Order.BgaOrderPageListItem, tabKey: Params['tabKey'], cb?: () => void) => Promise<void>
-  }) => {
-    // item 是否在滚动条中的可视范围内
-    // 弹窗打开的时候，不渲染item
-    return <PositionItem item={item} modalVisible={false} onPress={onPress} />
-  }
-)
+const RenderItem = ({
+  item,
+  onPress
+}: {
+  item: Order.BgaOrderPageListItem
+  onPress: (item: Order.BgaOrderPageListItem, tabKey: Params['tabKey'], cb?: () => void) => Promise<void>
+}) => {
+  // item 是否在滚动条中的可视范围内
+  // 弹窗打开的时候，不渲染item
+  return <PositionItem item={item} modalVisible={false} onPress={onPress} />
+}
 
 /**
  * 持仓单列表

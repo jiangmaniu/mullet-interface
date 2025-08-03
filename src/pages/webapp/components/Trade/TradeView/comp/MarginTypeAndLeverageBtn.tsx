@@ -18,7 +18,7 @@ type IProps = {
 }
 
 /** 保证金类型、杠杆选择按钮 */
-function MarginTypeAndLeverageBtn({ noDepth }: IProps) {
+function MarginTypeAndLeverageBtn({ noDepth }: IProps, ref: any) {
   const intl = useIntl()
   const { cn, theme } = useTheme()
   const { trade } = useStores()

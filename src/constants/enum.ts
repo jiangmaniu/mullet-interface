@@ -128,7 +128,7 @@ export const Enums = {
     STOP_LOSS_ORDER: { value: 20, key: 'common.enum.OrderType.STOP_LOSS_ORDER' },
     TAKE_PROFIT_ORDER: {
       value: 30,
-      key: 'common.enum.OrderType.TAKE_PROFIT_ORDERR'
+      key: 'common.enum.OrderType.TAKE_PROFIT_ORDER'
     },
     LIMIT_BUY_ORDER: { value: 40, key: 'common.enum.OrderType.LIMIT_BUY_ORDER' },
     LIMIT_SELL_ORDER: { value: 50, key: 'common.enum.OrderType.LIMIT_SELL_ORDER' },

@@ -165,11 +165,10 @@ const Step2 = ({
   }, [currency, chain, type, name, bankName, amount, handlingFee])
 
   const location = useLocation()
-  const values = (location.state || {}) as Wallet.fundsMethodPageListItem
-
-  useEffect(() => {
-    console.log('values', values)
-  }, [values])
+  const [searchParams] = useSearchParams()
+  // const values = (location.state || {}) as Wallet.fundsMethodPageListItem
+  const values = Object.fromEntries(searchParams) as Wallet.fundsMethodPageListItem
+  console.log('searchParams', searchParams)
 
   const [query] = useSearchParams()
   const synopsis = getAccountSynopsisByLng(fromAccountInfo?.synopsis)
