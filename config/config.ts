@@ -286,7 +286,8 @@ export default defineConfig({
         : {})
     },
   // 配置额外的 babel 插件。可传入插件地址或插件函数。
-  extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
+  // @TODO 暂时关闭
+  // extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // https://umijs.org/docs/api/config#codesplitting
   codeSplitting: {
     jsStrategy: 'granularChunks'

@@ -15,9 +15,9 @@ export default function usePrivyInfo() {
   // 是否有外部钱包 solana类型的
   const hasExternalWallet = wallet?.connectorType && wallet?.connectorType !== 'embedded' && wallet?.chainType === 'solana'
 
-  console.log('user', user)
-  console.log('foundWallet', foundWallet)
-  console.log('当前钱包地址', address)
+  console.log('user：', user)
+  console.log('foundWallet：', foundWallet)
+  console.log('useSolanaWallets：', wallets)
 
   return {
     hasEmbeddedWallet,
