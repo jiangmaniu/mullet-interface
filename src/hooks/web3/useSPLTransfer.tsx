@@ -1,4 +1,4 @@
-import { useCluster } from '@/context/clusterProvider'
+import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useStores } from '@/context/mobxProvider'
 import { message } from '@/utils/message'
 import { useSolanaWallets } from '@privy-io/react-auth'
@@ -35,7 +35,6 @@ export default function useSPLTransfer() {
   const { wallets } = useSolanaWallets()
   const fromAddress = wallet?.address as string
   const { sendTransaction } = useSendTransaction()
-  const { getExplorerUrl } = useCluster()
   const [transferLoading, setTransferLoading] = useState(false)
   const [transferSuccess, setTransferSuccess] = useState(false)
   const { showNotice } = useNotice()
@@ -177,7 +176,6 @@ export default function useSPLTransfer() {
       }
 
       console.log('USDC转账成功！交易哈希:', signature)
-      console.log(getExplorerUrl(`tx/${signature}`))
 
       console.log('正在确认交易...')
       const isConfirmed = await confirmTransactionStatus(signature)
@@ -192,9 +190,7 @@ export default function useSPLTransfer() {
           content: (
             <span>
               {intl.formatMessage({ id: 'mt.rujinyiquerenyuejianggengxin' })}
-              <a href={getExplorerUrl(`tx/${signature}`)} target="_blank" className="ml-1 !text-brand" rel="noopener noreferrer">
-                Explorer Link
-              </a>
+              <ExplorerLink path={`tx/${signature}`} copyable address={signature} label={'Explorer Link'} />
             </span>
           )
         })
