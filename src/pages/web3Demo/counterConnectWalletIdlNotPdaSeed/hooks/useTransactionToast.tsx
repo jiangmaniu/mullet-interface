@@ -1,4 +1,4 @@
-import { useCluster } from '@/context/clusterProvider'
+import { useCluster } from '@/pages/web3Demo/context/clusterProvider'
 import { toast } from 'sonner'
 
 export function ExplorerLink({ path, label, className }: { path: string; label: string; className?: string }) {

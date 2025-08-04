@@ -1,3 +1,4 @@
+import { ClusterProvider } from '../context/clusterProvider'
 import { CounterCard } from './components/counter/CounterCard'
 import { SolanaProvider } from './components/counter/provider/Solana'
 import { Toaster } from './components/ui/sonner'
@@ -14,26 +15,28 @@ export default function CounterConnectWalletIdlPdaSeed() {
       </div>
 
       <div className="relative z-10">
-        <SolanaProvider>
-          <CounterCard />
-          <Toaster
-            position="bottom-right"
-            theme="dark"
-            closeButton
-            richColors={false}
-            toastOptions={{
-              style: {
-                background: '#171717',
-                color: 'white',
-                border: '1px solid rgba(75, 85, 99, 0.3)',
-                borderRadius: '0.5rem',
-                padding: '0.75rem 1rem',
-                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)'
-              },
-              className: 'toast-container'
-            }}
-          />
-        </SolanaProvider>
+        <ClusterProvider>
+          <SolanaProvider>
+            <CounterCard />
+            <Toaster
+              position="bottom-right"
+              theme="dark"
+              closeButton
+              richColors={false}
+              toastOptions={{
+                style: {
+                  background: '#171717',
+                  color: 'white',
+                  border: '1px solid rgba(75, 85, 99, 0.3)',
+                  borderRadius: '0.5rem',
+                  padding: '0.75rem 1rem',
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)'
+                },
+                className: 'toast-container'
+              }}
+            />
+          </SolanaProvider>
+        </ClusterProvider>
       </div>
 
       <footer className="mt-20 text-center text-sm text-gray-500 relative z-10">

@@ -4,7 +4,7 @@ import { RefreshCw } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import Button from '@/components/Base/Button'
-import { useCluster } from '@/context/clusterProvider'
+import { useCluster } from '@/pages/web3Demo/context/clusterProvider'
 import { ellipsify } from '@/utils'
 import { AppAlert } from '../app/app-alert'
 import { AppModal } from '../app/app-modal'

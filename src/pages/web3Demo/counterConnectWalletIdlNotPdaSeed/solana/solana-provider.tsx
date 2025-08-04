@@ -1,6 +1,6 @@
 'use client'
 
-import { useCluster } from '@/context/clusterProvider'
+import { useCluster } from '@/pages/web3Demo/context/clusterProvider'
 import { WalletError } from '@solana/wallet-adapter-base'
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react'
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui'

@@ -1,5 +1,5 @@
 import Button from '@/components/Base/Button'
-import { useCluster } from '@/context/clusterProvider'
+import { useCluster } from '@/pages/web3Demo/context/clusterProvider'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 
 export function ExplorerLink({ path, label, className }: { path: string; label: string; className?: string }) {

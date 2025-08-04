@@ -1,7 +1,7 @@
 import Button from '@/components/Base/Button'
-import { useCluster } from '@/context/clusterProvider'
 import useConnection from '@/hooks/web3/useConnection'
 import useWalletAccountBalance from '@/hooks/web3/useSoLWalletAccountBalance'
+import { useCluster } from '@/pages/web3Demo/context/clusterProvider'
 import {
   useConnectWallet,
   useLinkAccount,

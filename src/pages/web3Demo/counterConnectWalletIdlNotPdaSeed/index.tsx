@@ -2,6 +2,7 @@ import Button from '@/components/Base/Button'
 import { useConnection, useWallet } from '@solana/wallet-adapter-react'
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import bs58 from 'bs58'
+import { ClusterProvider } from '../context/clusterProvider'
 import AccountDetailFeature from './components/account/account-detail-feature'
 import { AppLayout } from './components/app/app-layout'
 import CounterFeature from './components/counter/counter-feature'
@@ -11,7 +12,7 @@ const links: { label: string; path: string }[] = []
 // 不是pda种子形式 的counter 使用钱包去控制counter的计数器状态
 export default function CounterConnectWalletIdlNotPdaSeed() {
   return (
-    <div>
+    <ClusterProvider>
       <SolanaProvider>
         <AppLayout links={links}>
           <AccountDetailFeature />
@@ -23,7 +24,7 @@ export default function CounterConnectWalletIdlNotPdaSeed() {
           </div>
         </AppLayout>
       </SolanaProvider>
-    </div>
+    </ClusterProvider>
   )
 }
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useCluster } from '@/context/clusterProvider'
+import { useCluster } from '@/pages/web3Demo/context/clusterProvider'
 import { useConnection } from '@solana/wallet-adapter-react'
 import { Cluster, Keypair, PublicKey } from '@solana/web3.js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
