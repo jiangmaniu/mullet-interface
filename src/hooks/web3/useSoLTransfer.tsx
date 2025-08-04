@@ -139,8 +139,8 @@ export default function useSoLTransfer() {
           title: intl.formatMessage({ id: 'mt.zhuanzhangchenggong' }),
           content: (
             <span>
-              {intl.formatMessage({ id: 'mt.rujinyiquerenyuejianggengxin' })}
-              <ExplorerLink path={`tx/${signature}`} copyable address={signature} label={'Explorer Link'} />
+              <span className="mr-2">{intl.formatMessage({ id: 'mt.rujinyiquerenyuejianggengxin' })}</span>
+              <ExplorerLink path={`tx/${signature}`} address={signature} label={'Explorer Link'} />
             </span>
           )
         })
