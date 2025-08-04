@@ -134,8 +134,8 @@ export default observer(
               >
                 <Input size="large" className="!h-[38px]" placeholder={intl.formatMessage({ id: 'mt.mubiaodizhi' })} />
               </Form.Item>
-              <Form.Item className="!mt-5" label={intl.formatMessage({ id: 'mt.chujinzhanghu' })} name="accountId">
-                <Input size="large" className="!h-[38px]" placeholder={intl.formatMessage({ id: 'mt.chujinzhanghu' })} disabled />
+              <Form.Item className="!mt-5" label={intl.formatMessage({ id: 'mt.dangqianzhanghu' })} name="accountId">
+                <Input size="large" className="!h-[38px]" placeholder={intl.formatMessage({ id: 'mt.dangqianzhanghu' })} disabled />
               </Form.Item>
               <Button type="primary" htmlType="submit" block className="mt-8" loading={submitLoading}>
                 {intl.formatMessage({ id: 'mt.queding' })}

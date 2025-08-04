@@ -864,5 +864,6 @@ export default {
   'mt.zhuanruzhizhi': '转入地址',
   'mt.zhuanruzhizhitips': '请通过外部钱包等方式把钱转入到以上地址',
   'mt.zhuanruzhizhiweikong': '转入地址不能为空',
-  'mt.tiaozhuanzhong': '跳转中'
+  'mt.tiaozhuanzhong': '跳转中',
+  'mt.dangqianzhanghu': '当前账户'
 }
