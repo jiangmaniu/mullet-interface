@@ -6,7 +6,7 @@ import { onLogout, push } from '@/utils/navigator'
 import { setLocalUserInfo } from '@/utils/storage'
 import { PageLoading } from '@ant-design/pro-components'
 import { useLogin, usePrivy } from '@privy-io/react-auth'
-import { useModel } from '@umijs/max'
+import { FormattedMessage, useModel } from '@umijs/max'
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 
@@ -97,7 +97,10 @@ export default function Login() {
       {showJumpingLoader && (
         <div className="flex flex-col items-center gap-x-1">
           <JumpingLoader />
-          <span>跳转中...</span>
+          <span>
+            <FormattedMessage id="mt.tiaozhuanzhong" />
+            ...
+          </span>
         </div>
       )}
     </div>

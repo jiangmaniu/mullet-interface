@@ -869,5 +869,6 @@ export default {
   'mt.zhuanchudizhi': 'Withdrawal Address',
   'mt.zhuanruzhizhi': 'Deposit Address',
   'mt.zhuanruzhizhitips': 'Please transfer funds to the above address through an external wallet or other ways',
-  'mt.zhuanruzhizhiweikong': 'Deposit address cannot be empty'
+  'mt.zhuanruzhizhiweikong': 'Deposit address cannot be empty',
+  'mt.tiaozhuanzhong': 'Jumping'
 }

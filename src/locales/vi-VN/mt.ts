@@ -860,5 +860,6 @@ export default {
   'mt.zhuanchudizhi': 'Địa chỉ rút tiền',
   'mt.zhuanruzhizhi': 'Địa chỉ nạp tiền',
   'mt.zhuanruzhizhitips': 'Vui lòng chuyển tiền qua ví ngoài hoặc các cách khác để nạp tiền',
-  'mt.zhuanruzhizhiweikong': 'Địa chỉ nạp tiền không được để trống'
+  'mt.zhuanruzhizhiweikong': 'Địa chỉ nạp tiền không được để trống',
+  'mt.tiaozhuanzhong': 'Đang chuyển hướng'
 }
