@@ -3,6 +3,7 @@ import { copyContent } from '@/utils'
 import { cn } from '@/utils/cn'
 import { formatAddress } from '@/utils/web3'
 import { CopyOutlined, LinkOutlined } from '@ant-design/icons'
+import { Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 
 type IProps = {
@@ -32,7 +33,13 @@ const ExplorerLink = ({ path, address, className, cluster = '', copyable = false
         className={cn(`!text-brand`, className)}
       >
         <LinkOutlined className="mr-1" />
-        {isFormatAddress ? formatAddress(address) : address}
+        {isFormatAddress ? (
+          <Tooltip title={address} placement="top">
+            {formatAddress(address)}
+          </Tooltip>
+        ) : (
+          address
+        )}
       </a>
       {copyable && <CopyOutlined className="cursor-pointer text-primary ml-2" onClick={() => copyContent(address)} />}
     </span>
