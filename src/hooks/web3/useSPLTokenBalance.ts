@@ -41,6 +41,7 @@ export default function useSPLTokenBalance(props?: IProps) {
       // 根据decimals计算真实余额
       const tokenBalance = Number(tokenAccount.amount) / Math.pow(10, decimals)
       setBalance(tokenBalance)
+      console.log('tokenBalance', tokenBalance)
       return tokenBalance
     } catch (err) {
       console.error('获取代币余额失败:', err)

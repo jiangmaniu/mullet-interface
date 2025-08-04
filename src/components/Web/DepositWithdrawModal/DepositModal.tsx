@@ -7,6 +7,7 @@ import InputNumber from '@/components/Base/InputNumber'
 import JumpingLoader from '@/components/Base/JumpingLoader'
 import Modal from '@/components/Base/Modal'
 import Address from '@/components/Wallet/Address'
+import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useStores } from '@/context/mobxProvider'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import useSPLTokenBalance from '@/hooks/web3/useSPLTokenBalance'
@@ -25,7 +26,7 @@ export default observer(
     const [accountItem, setAccountItem] = useState({} as User.AccountItem)
     const { trade } = useStores()
     const { hasEmbeddedWallet, address, hasExternalWallet, foundWallet } = usePrivyInfo()
-    const { balance: walletBalance } = useSPLTokenBalance()
+    const { balance: walletBalance, getTokenBalance } = useSPLTokenBalance()
 
     const close = () => {
       setOpen(false)
@@ -35,6 +36,7 @@ export default observer(
 
     const show = (item?: User.AccountItem) => {
       setOpen(true)
+      getTokenBalance()
       const rawItem = item || trade.currentAccountInfo
       if (rawItem) {
         setAccountItem(rawItem)
@@ -132,7 +134,7 @@ export default observer(
                 <Form.Item label={intl.formatMessage({ id: 'mt.zhuanchudizhi' })}>
                   <div className="rounded-md bg-gray-50 dark:bg-[#21262A] p-2 mt-1 flex items-center">
                     {foundWallet?.meta?.icon && <img src={foundWallet?.meta?.icon} alt="" className="w-4 h-4 mr-1" />}
-                    <Address ellipsis={undefined} copyable address={address} />
+                    <ExplorerLink path={`address/${address}`} copyable address={address} isFormatAddress={false} />
                   </div>
                 </Form.Item>
                 <div className="flex items-center justify-center">
@@ -152,7 +154,12 @@ export default observer(
                 >
                   <div className="rounded-md bg-gray-50 dark:bg-[#21262A] p-2 mt-1">
                     {/* @TODO 暂时用pda的地址 后期可能先转入privy钱包 再转pda */}
-                    <Address ellipsis={undefined} copyable address={accountItem.pdaTokenAddress || '--'} />
+                    <ExplorerLink
+                      path={`address/${accountItem.pdaTokenAddress}`}
+                      copyable
+                      address={accountItem.pdaTokenAddress}
+                      isFormatAddress={false}
+                    />
                   </div>
                 </Form.Item>
 

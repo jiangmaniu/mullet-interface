@@ -15,9 +15,9 @@ import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
+import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { getAccountSynopsisByLng } from '@/utils/business'
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { Address } from '@ant-design/web3'
 import { HeaderTheme } from '../Header/types'
 import AccountListItem from './AccountListItem'
 
@@ -125,11 +125,8 @@ function TradeAccountDropdown({ theme }: IProps) {
                     </span>
                   </Tooltip>
                 </span>
-                <Address
-                  ellipsis={{
-                    headClip: 8,
-                    tailClip: 6
-                  }}
+                <ExplorerLink
+                  path={`address/${currentAccountInfo.pdaTokenAddress}`}
                   copyable
                   address={currentAccountInfo.pdaTokenAddress}
                 />
