@@ -73,29 +73,3 @@ export default function useSPLTokenBalance(props?: IProps) {
     error
   }
 }
-
-// 常用代币的mint地址和配置
-export const TOKEN_CONFIGS = {
-  USDC: {
-    'mainnet-beta': {
-      mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
-      decimals: 6
-    },
-    devnet: {
-      mint: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
-      decimals: 6
-    }
-  },
-  USDT: {
-    'mainnet-beta': {
-      mint: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-      decimals: 6
-    }
-  },
-  RAY: {
-    'mainnet-beta': {
-      mint: '4k3Dyjzvzp8eMZWUXbBCjEvwSkkk59S5iCNLY3QrkX6R',
-      decimals: 6
-    }
-  }
-}

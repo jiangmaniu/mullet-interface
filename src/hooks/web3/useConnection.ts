@@ -16,7 +16,7 @@ export default function useConnection(): RetutrnConnectType {
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
   const cluster = currentAccountInfo.networkAlias || ''
-  const endpoint = currentAccountInfo.networkRpc || ''
+  const endpoint = currentAccountInfo.networkRpc || 'https://api.mainnet-beta.solana.com'
   // const endpoint = 'https://api.devnet.solana.com' // @TODO 测试环境
 
   const connection = useMemo(() => {
