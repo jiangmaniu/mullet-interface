@@ -18,7 +18,7 @@ import { observer } from 'mobx-react'
 import { MenuInfo } from 'rc-menu/lib/interface'
 import { useEffect, useRef, useState } from 'react'
 
-import Address from '@/components/Wallet/Address'
+import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import DepositModal from '@/components/Web/DepositWithdrawModal/DepositModal'
 import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
 import { getEnv } from '@/env'
@@ -213,7 +213,7 @@ function Account() {
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
-                  <Address copyable address={item.pdaTokenAddress} />
+                  <ExplorerLink path={`address/${item.pdaTokenAddress}`} copyable address={item.pdaTokenAddress} />
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-[30px] !font-dingpro-medium text-primary">

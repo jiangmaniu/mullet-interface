@@ -6,7 +6,6 @@ import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
 import JumpingLoader from '@/components/Base/JumpingLoader'
 import Modal from '@/components/Base/Modal'
-import Address from '@/components/Wallet/Address'
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useStores } from '@/context/mobxProvider'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
@@ -179,7 +178,7 @@ export default observer(
                 </div>
                 <div className="rounded-md bg-gray-50 dark:bg-[#21262A] p-2 mt-1">
                   {/* 暂时展示pda地址，后期改为privy地址，然后监听privy地址 转到pda地址 @TODO */}
-                  <Address ellipsis={undefined} copyable address={address} />
+                  <ExplorerLink path={`address/${address}`} copyable address={address} isFormatAddress={false} />
                 </div>
                 {/* 提示 */}
                 <div className="text-xs mt-2 text-weak flex items-center">
