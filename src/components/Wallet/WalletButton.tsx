@@ -9,7 +9,7 @@ import Button from '../Base/Button'
 
 // 钱包地址选择器
 export default function WalletButton() {
-  const { user, connected, foundWallet, address, hasExternalWallet } = usePrivyInfo()
+  const { user, connected, foundWallet, address, hasExternalWallet, reconnectWallet, connectWallet } = usePrivyInfo()
   const { login } = useLogin()
   // 排除内嵌钱包登录（邮箱等账号登录）
 
@@ -19,6 +19,18 @@ export default function WalletButton() {
     //   await logout()
     // }
     // await login({ loginMethods: ['wallet'] })
+  }
+
+  const handleReconnectWallet = async () => {
+    await connectWallet()
+  }
+
+  if (reconnectWallet) {
+    return (
+      <Button type="default" onClick={handleReconnectWallet}>
+        <FormattedMessage id="mt.lianjieqianbao" />
+      </Button>
+    )
   }
 
   return (
