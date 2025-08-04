@@ -1,7 +1,7 @@
 import { useStores } from '@/context/mobxProvider'
 import useAccountChange from './useAccountChange'
 import usePrivyInfo from './usePrivyInfo'
-import useTransfer from './useTransfer'
+import useTransfer from './useSoLTransfer'
 
 // 监听邮箱方式登录的情况下 privy 嵌入钱包地址余额变化，转账到PDA账户地址上
 export default function usePrivyEmbeddedWalletChangeTransferToPdaAddr() {

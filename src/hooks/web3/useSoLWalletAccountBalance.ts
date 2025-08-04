@@ -8,8 +8,9 @@ type IProps = {
   address: PublicKey | string
 }
 
+// SOL余额：使用 connection.getBalance() 获取原生代币余额
 // 获取钱包账户的余额
-export default function useWalletAccountBalance(props?: IProps) {
+export default function useSoLWalletAccountBalance(props?: IProps) {
   const { address: addressPrivy } = usePrivyInfo()
   const address = props?.address || addressPrivy
   const { connection } = useConnection()

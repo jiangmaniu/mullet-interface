@@ -9,8 +9,8 @@ import Modal from '@/components/Base/Modal'
 import Address from '@/components/Wallet/Address'
 import { useStores } from '@/context/mobxProvider'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
-import useTransfer from '@/hooks/web3/useTransfer'
-import useWalletAccountBalance from '@/hooks/web3/useWalletAccountBalance'
+import useSPLTokenBalance from '@/hooks/web3/useSPLTokenBalance'
+import useSPLTransfer from '@/hooks/web3/useSPLTransfer'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Form, Tooltip } from 'antd'
 
@@ -19,15 +19,13 @@ export default observer(
   forwardRef((props, ref) => {
     const intl = useIntl()
     const [open, setOpen] = useState(false)
-    const { onTransfer, transferSuccess, error, setError } = useTransfer()
+    const { onTransfer, transferSuccess, error, setError } = useSPLTransfer()
     const [showLoadingModal, setShowLoadingModal] = useState(false)
     const [form] = Form.useForm()
     const [accountItem, setAccountItem] = useState({} as User.AccountItem)
     const { trade } = useStores()
     const { hasEmbeddedWallet, address, hasExternalWallet, foundWallet } = usePrivyInfo()
-    const { balance: walletBalance } = useWalletAccountBalance()
-
-    console.log('walletBalance', walletBalance)
+    const { balance: walletBalance } = useSPLTokenBalance()
 
     const close = () => {
       setOpen(false)
@@ -120,7 +118,7 @@ export default observer(
                             onClick={() => form.setFieldValue('amount', walletBalance)}
                             className="text-xs cursor-pointer hover:text-brand text-primary"
                           >
-                            {intl.formatMessage({ id: 'mt.zuidazhi' })} {walletBalance} SOL
+                            {intl.formatMessage({ id: 'mt.zuidazhi' })} {walletBalance} USDC
                           </span>
                         )}
                       </>
