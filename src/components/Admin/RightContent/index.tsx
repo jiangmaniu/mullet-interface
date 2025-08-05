@@ -98,7 +98,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const isBaseAuth = currentUser?.isBaseAuth
   const themeConfig = useTheme()
   const env = getEnv()
-  const { foundWallet } = usePrivyInfo()
+  const { hasWallet } = usePrivyInfo()
   const realAccountList = accountList.filter((item) => !item.isSimulate)
 
   const withdrawModalRef = useRef<any>(null)
@@ -129,7 +129,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             depositModalRef.current?.show()
           }}
           type="default"
-          disabled={!foundWallet || !currentAccountInfo?.pdaTokenAddress}
+          disabled={!hasWallet || !currentAccountInfo?.pdaTokenAddress}
         >
           <div className="flex flex-row gap-1.5 items-center">
             <Iconfont name="rujin1" width={20} height={20} color={themeConfig.theme.isDark ? '#fff' : ''} />

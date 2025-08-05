@@ -30,6 +30,7 @@ export default function usePrivyInfo() {
     wallets,
     connectWallet,
     reconnectWallet: !foundWallet, // 是否需要重新连接钱包
+    hasWallet: !!foundWallet,
     connected: authenticated && ready
   }
 }
