@@ -439,26 +439,6 @@ export const getMaxOpenVolume = ({ buySell }: { buySell: API.TradeBuySell }) => 
 }
 
 /**
- * 获取当前激活打开的品种深度报价
- * @param {*} currentSymbol 当前传入的symbolName
- * @returns
- */
-export function getCurrentDepth(currentSymbolName?: string) {
-  const { ws, trade } = stores
-  const { depth } = ws
-  const symbol = currentSymbolName || trade.activeSymbolName
-  // const { dataSourceCode } = trade.getActiveSymbolInfo(symbol, trade.symbolListAll)
-
-  const { dataSourceCode, accountGroupId } = trade.symbolMapAll?.[symbol] || {}
-
-  const dataSourceKey = `${accountGroupId}/${symbol}`
-
-  const currentDepth = depth.get(dataSourceKey)
-
-  return currentDepth
-}
-
-/**
  * 获取当前激活打开的品种行情，高开低收，涨幅百分比
  * @param {*} currentSymbol 当前传入的symbolName
  * @returns

@@ -4,8 +4,8 @@ import { useMemo } from 'react'
 import { useTheme } from '@/context/themeProvider'
 import useQuoteColor from '@/pages/webapp/hooks/useQuoteColor'
 import { formatNum } from '@/utils'
-import { getCurrentDepth } from '@/utils/wsUtil'
 
+import useCurrentDepth from '@/hooks/useCurrentDepth'
 import { useIntl } from '@umijs/max'
 import CustomArrowButton from '../../../Base/CustomArrowButton'
 import { Text } from '../../../Base/Text'
@@ -17,7 +17,7 @@ const BuySellPrice = observer(() => {
   const { cn, theme } = useTheme()
   const { askColor, bidColor, quoteWrapperClassName, bid, ask, low, high, spread } = useQuoteColor()
 
-  const depth = getCurrentDepth()
+  const depth = useCurrentDepth()
   const hasDepth = useMemo(() => Number(depth?.asks?.length || 0) > 0 && Number(depth?.bids?.length || 0) > 0, [depth])
 
   if (hasDepth) return <></>
@@ -78,7 +78,7 @@ function Header() {
   const { cn, theme } = useTheme()
   const intl = useIntl()
 
-  const depth = getCurrentDepth()
+  const depth = useCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
 
   if (hasDepth) {

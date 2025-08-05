@@ -10,8 +10,8 @@ import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentDepth } from '@/utils/wsUtil'
 
+import useCurrentDepth from '@/hooks/useCurrentDepth'
 import Sidebar from '../Sidebar'
 
 type IProps = {
@@ -27,11 +27,11 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const symbolInfo = (trade.openSymbolNameList || []).find((item) => item?.symbol === symbol)
   const isMarketOpen = trade.isMarketOpen(symbol)
 
-  const depth = getCurrentDepth(trade.activeSymbolName)
+  const depth = useCurrentDepth(trade.activeSymbolName)
   const hasDepth = Number(depth?.asks?.length) > 0 && Number(depth?.bids?.length) > 0
 
-  const res: any = useCurrentQuote(symbol)
-  const color = res.percent > 0 ? 'text-green' : 'text-red'
+  const res = useCurrentQuote()
+  const color = res?.percent && Number(res.percent) > 0 ? 'text-green' : 'text-red'
 
   const openSidebarRef = useRef<any>()
   useClickOutside([openSidebarRef], () => {
@@ -118,14 +118,14 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
               </div>
             </div>
             <div className="flex items-center xxl:pl-3 xl:pl-7 !pt-[2px] xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
-              {res.hasQuote && (
+              {res?.hasQuote && (
                 <>
-                  <span className={cn('!font-dingpro-medium text-xl', res.percent > 0 ? 'text-green' : 'text-red')}>
+                  <span className={cn('!font-dingpro-medium text-xl', res.percent && Number(res.percent) > 0 ? 'text-green' : 'text-red')}>
                     {formatNum(res.bid)}
                   </span>
                   {isMarketOpen && (
                     <span className={cn('pl-2 text-base !font-dingpro-medium', color)}>
-                      {res.percent > 0 ? `+${res.percent}%` : `${res.percent}%`}
+                      {res.percent && Number(res.percent) > 0 ? `+${res.percent}%` : `${res.percent}%`}
                     </span>
                   )}
                   {!isMarketOpen && (
@@ -142,25 +142,25 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
               <span className="text-xs text-weak">
                 <FormattedMessage id="mt.kaipanjiage" />
               </span>
-              <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.open)}</span>
+              <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res?.open)}</span>
             </div>
             <div className="flex flex-col">
               <span className="text-xs text-weak">
                 <FormattedMessage id="mt.shoupanjiage" />
               </span>
-              <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.close)}</span>
+              <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res?.close)}</span>
             </div>
             <div className="flex flex-col">
               <span className="text-xs text-weak">
                 <FormattedMessage id="mt.24xiaoshizuigao" />
               </span>
-              <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.high)}</span>
+              <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res?.high)}</span>
             </div>
             <div className="flex flex-col">
               <span className="text-xs text-weak">
                 <FormattedMessage id="mt.24xiaoshizuidi" />
               </span>
-              <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res.low)}</span>
+              <span className="!font-dingpro-medium text-sm text-primary">{formatNum(res?.low)}</span>
             </div>
           </div>
         </div>

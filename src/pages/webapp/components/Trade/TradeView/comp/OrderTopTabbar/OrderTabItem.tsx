@@ -6,11 +6,11 @@ import { useEffect, useMemo } from 'react'
 import { SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import useCurrentDepth from '@/hooks/useCurrentDepth'
 import { TextField } from '@/pages/webapp/components/Base/Form/TextField'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import { formatNum } from '@/utils'
-import { getCurrentDepth } from '@/utils/wsUtil'
 
 import useMargin from '@/hooks/useMargin'
 import useQuote from '@/pages/webapp/hooks/trade/useQoute'
@@ -48,7 +48,7 @@ function OrderTabItem({ position }: IProps) {
   // 接口计算预估保证金
   const expectedMargin = useMargin()
 
-  const depth = getCurrentDepth()
+  const depth = useCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
 
   // fix-20250528：在切换品种，切换买卖的动作中执行，否则会出现买入手数无法编辑的问题

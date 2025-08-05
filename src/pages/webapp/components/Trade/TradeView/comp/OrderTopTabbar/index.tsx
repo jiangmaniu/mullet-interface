@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react'
 import { useStores } from '@/context/mobxProvider'
 import Tabs from '@/pages/webapp/components/Base/Tabs'
 
-import { getCurrentDepth } from '@/utils/wsUtil'
+import useCurrentDepth from '@/hooks/useCurrentDepth'
 import { observer } from 'mobx-react'
 import OrderTabItem from './OrderTabItem'
 
@@ -23,7 +23,7 @@ function OrderTopTabbar({ position = 'PAGE' }: IProps) {
   const intl = useIntl()
   const { trade } = useStores()
 
-  const depth = getCurrentDepth()
+  const depth = useCurrentDepth()
   const hasDepth = depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0
 
   const handleReset = useCallback(() => {

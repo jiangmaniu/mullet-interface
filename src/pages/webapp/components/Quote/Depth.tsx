@@ -6,9 +6,9 @@ import { useCallback, useMemo, useState } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import useCurrentDepth from '@/hooks/useCurrentDepth'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum, getPrecisionByNumber } from '@/utils'
-import { getCurrentDepth } from '@/utils/wsUtil'
 
 import { useLang } from '@/context/languageProvider'
 import { Text } from '../Base/Text'
@@ -23,7 +23,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
 
   const showAll = mode !== 'BUY_SELL'
   const quote = useCurrentQuote(trade.activeSymbolName)
-  const depth = getCurrentDepth()
+  const depth = useCurrentDepth(trade.activeSymbolName)
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
   const bids = toJS(depth?.bids || [])
 
@@ -80,7 +80,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
 
   const showAll = mode !== 'BUY_SELL'
   const quote = useCurrentQuote(trade.activeSymbolName)
-  const depth = getCurrentDepth()
+  const depth = useCurrentDepth()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
   const asks = toJS(depth?.asks || []).reverse()
   const list = showAll ? asks.slice(-20) : asks.slice(-10) // 获取倒数10条数据
@@ -139,7 +139,7 @@ function Depth() {
 
   const quote = useCurrentQuote(trade.activeSymbolName)
 
-  const depth = getCurrentDepth()
+  const depth = useCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
 
   const modeList: Array<{ key: ModeType; icon: string }> = [

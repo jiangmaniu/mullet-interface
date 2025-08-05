@@ -4,10 +4,10 @@ import { useMemo } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import useCurrentDepth from '@/hooks/useCurrentDepth'
 import Switch from '@/pages/webapp/components/Base/Switch'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
-import { getCurrentDepth } from '@/utils/wsUtil'
 
 import FullModeSpSl from './FullModeSpSl'
 import NonFullModeSpSl from './NonFullModeSpSl'
@@ -46,7 +46,7 @@ const FullMode = observer(() => {
 
 /** 止盈止损设置 */
 function SetSpSl({ isFull }: IProps) {
-  const depth = getCurrentDepth()
+  const depth = useCurrentDepth()
   const hasDepth = useMemo(
     () => Number(depth?.asks?.length) > 0 && Number(depth?.bids?.length) > 0,
     [depth?.asks?.length, depth?.bids?.length]
