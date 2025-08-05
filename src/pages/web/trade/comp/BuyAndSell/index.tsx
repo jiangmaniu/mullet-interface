@@ -12,13 +12,12 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { ITradeTabsOrderType } from '@/mobx/trade'
 import { cn } from '@/utils/cn'
 
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import OrderItem from './comp/OrderItem'
 
 const DisabledTradeView = observer(() => {
   const { trade } = useStores()
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quote = getCurrentQuote()
+  const quote = useCurrentQuote(trade.activeSymbolName)
 
   return <>{trade.disabledTradeAction() && <div className="absolute top-0 left-0 w-full h-full z-[30] cursor-not-allowed"></div>}</>
 })

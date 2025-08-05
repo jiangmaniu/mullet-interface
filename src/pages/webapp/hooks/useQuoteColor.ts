@@ -3,8 +3,8 @@ import { useMemo } from 'react'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { gray } from '@/theme/theme.config'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 
 type IProps = {
@@ -18,15 +18,14 @@ export default function useQuoteColor(props?: IProps) {
   const { isPc } = useEnv()
   const { up: upColor, down: downColor, isDark } = theme
   const symbol = item?.symbol || trade.activeSymbolName
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const res = getCurrentQuote(symbol)
+  const res = useCurrentQuote(symbol)
 
-  const { bid, ask, percent: per } = useMemo(() => res, [res])
+  const { bid, ask, percent: per } = useMemo(() => (res || {}) as any, [res])
 
   let bidColor = ''
   let askColor = ''
 
-  if (res.hasQuote && res.quotes?.size > 0) {
+  if (res?.hasQuote && res?.quotes?.size > 0) {
     // 涨跌额涨跌幅是0显示灰色
     if (res?.askDiff === 0) {
       askColor = 'same'
@@ -144,8 +143,8 @@ export default function useQuoteColor(props?: IProps) {
     bid,
     ask,
     per,
-    low: res.low,
-    high: res.high,
-    spread: res.spread
+    low: res?.low,
+    high: res?.high,
+    spread: res?.spread
   }
 }

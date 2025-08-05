@@ -9,11 +9,11 @@ import Popup from '@/components/Base/Popup'
 import { transferWeekDay } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { formatTimeStr } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   style?: React.CSSProperties
@@ -27,8 +27,7 @@ function Futures({ trigger, style }: IProps) {
   const { theme } = useTheme()
   const { symbols } = ws as any
   const symbol = trade.activeSymbolName
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote()
+  const quoteInfo = useCurrentQuote(symbol)
   const symbolConf = quoteInfo?.symbolConf
   const prepaymentConf = quoteInfo?.prepaymentConf
   const holdingCostConf = quoteInfo?.holdingCostConf

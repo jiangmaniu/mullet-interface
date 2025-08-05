@@ -6,8 +6,9 @@ import { useCallback, useMemo, useState } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum, getPrecisionByNumber } from '@/utils'
-import { getCurrentDepth, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { getCurrentDepth } from '@/utils/wsUtil'
 
 import { useLang } from '@/context/languageProvider'
 import { Text } from '../Base/Text'
@@ -21,8 +22,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
   const { orderType, setOrderPrice: _setOrderPrice } = trade
 
   const showAll = mode !== 'BUY_SELL'
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quote = getCurrentQuote()
+  const quote = useCurrentQuote(trade.activeSymbolName)
   const depth = getCurrentDepth()
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
   const bids = toJS(depth?.bids || [])
@@ -44,7 +44,7 @@ const RenderBuyList = observer(({ mode }: { mode: ModeType }) => {
         .map((item, idx) => {
           // const total = item.price * item.amount
           const pencent = (item.amount / maxAmount) * 100
-          const digits = quote.digits
+          const digits = quote?.digits
           const amountDigits = getPrecisionByNumber(item.amount)
           return (
             <View key={idx} onClick={() => setOrderPrice(item.price)} className="relative">
@@ -79,8 +79,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
   const { orderType, setOrderPrice: _setOrderPrice } = trade
 
   const showAll = mode !== 'BUY_SELL'
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quote = getCurrentQuote()
+  const quote = useCurrentQuote(trade.activeSymbolName)
   const depth = getCurrentDepth()
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
   const asks = toJS(depth?.asks || []).reverse()
@@ -101,7 +100,7 @@ const RenderSellList = observer(({ mode }: { mode: ModeType }) => {
         .map((item, idx) => {
           // const total = item.price * item.amount
           const pencent = (item.amount / maxAmount) * 100
-          const digits = quote.digits
+          const digits = quote?.digits
           const amountDigits = getPrecisionByNumber(item.amount)
           return (
             <View key={idx} onClick={() => setOrderPrice(item.price)} className="relative">
@@ -136,9 +135,9 @@ function Depth() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
+  const { trade } = useStores()
 
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quote = getCurrentQuote()
+  const quote = useCurrentQuote(trade.activeSymbolName)
 
   const depth = getCurrentDepth()
   const hasDepth = useMemo(() => depth?.asks?.length && depth?.asks.length > 0 && depth?.bids?.length && depth?.bids.length > 0, [depth])
@@ -160,7 +159,7 @@ function Depth() {
 
   const SellPrice = (
     <Text font="dingpro-medium" size="base" color="red" className={cn('leading-4')}>
-      {formatNum(quote.bid)}
+      {formatNum(quote?.bid)}
     </Text>
   )
 

@@ -8,11 +8,11 @@ import FavoriteIcon from '@/components/Web/FavoriteIcon'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import mitt from '@/utils/mitt'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   item: Account.TradeSymbolListItem
@@ -30,10 +30,9 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
   const { isDark } = theme
   const { trade, ws, kline } = useStores()
   const symbol = item.symbol
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const res = getCurrentQuote(symbol)
-  const bid = res.bid // 卖价
-  const per: any = res.percent
+  const res = useCurrentQuote(symbol)
+  const bid = res?.bid // 卖价
+  const per: any = res?.percent
 
   const activeClassName = useEmotionCss(({ token }) => {
     return {
@@ -98,8 +97,8 @@ function QuoteItem({ item, isActive, popupRef }: IProps) {
             </Tooltip>
           </Col>
           <Col span={12} className="flex flex-col items-end">
-            <div className="!font-dingpro-medium text-sx text-primary text-right">{res.hasQuote ? formatNum(bid) : '--'}</div>
-            {res.hasQuote && (
+            <div className="!font-dingpro-medium text-sx text-primary text-right">{res?.hasQuote ? formatNum(bid) : '--'}</div>
+            {res?.hasQuote && (
               <div className={cn('text-right !font-dingpro-medium text-xs', per > 0 ? 'text-green dark:text-green-600' : 'text-red')}>
                 {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
               </div>

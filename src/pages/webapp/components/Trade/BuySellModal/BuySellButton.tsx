@@ -2,9 +2,9 @@ import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { formatNum } from '@/utils'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import useQuote from '@/pages/webapp/hooks/trade/useQoute'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
@@ -29,9 +29,8 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
 
   const { vmin } = useQuote() // 行情相关：价格、小数位、买卖方向
 
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote()
-  const hasQuote = quoteInfo.hasQuote
+  const quoteInfo = useCurrentQuote(trade.activeSymbolName)
+  const hasQuote = !!quoteInfo?.hasQuote
 
   const showBuySellModal = () => {
     onShow?.()
@@ -65,11 +64,11 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
         className={cn('rounded-[6px]', isShowModal && buySell === 'BUY' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'BUY' && '!text-weak')}
       >
-        {t('mt.kaikong')} {hasQuote ? formatNum(quoteInfo.bid) : '--'}
+        {t('mt.kaikong')} {hasQuote ? formatNum(quoteInfo?.bid) : '--'}
       </Button>
       <View className={cn('h-[18px] items-center justify-center bg-gray-85 px-1 rounded-[6px] z-[0] min-w-[36px] absolute dark:bg-white')}>
         <Text color="primary" size="sm">
-          {quoteInfo.spread || 0}
+          {quoteInfo?.spread || 0}
         </Text>
       </View>
       <Button
@@ -94,7 +93,7 @@ function BuySellButton({ position = 'footer', onShow, btnHeight = 40 }: IProps) 
         className={cn('rounded-[6px]', isShowModal && buySell === 'SELL' && 'bg-gray-80')}
         textClassName={cn('font-dingpro-medium', isShowModal && buySell === 'SELL' && '!text-weak')}
       >
-        {t('mt.kaiduo')} {formatNum(quoteInfo.ask)}
+        {t('mt.kaiduo')} {formatNum(quoteInfo?.ask)}
       </Button>
     </View>
   )

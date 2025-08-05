@@ -3,18 +3,17 @@ import { observer } from 'mobx-react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import FuturesModal from '@/pages/webapp/components/Quote/FuturesModal'
 import SelectSymbolBtn from '@/pages/webapp/components/Quote/SelectSymbolBtn'
 import { formatNum } from '@/utils'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 function Header() {
   const { cn, theme } = useTheme()
   const intl = useIntl()
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const res: any = getCurrentQuote()
+  const res: any = useCurrentQuote()
 
   return (
     <View className={cn('px-4')}>

@@ -7,9 +7,9 @@ import Sell from '@/components/Base/Svg/Sell'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   type?: string
@@ -31,8 +31,7 @@ export default observer(
     const [width, setWidth] = useState<any>(0)
     const [loading, setLoading] = useState(true)
 
-    const getCurrentQuote = useGetCurrentQuoteCallback()
-    const quoteInfo = getCurrentQuote()
+    const quoteInfo = useCurrentQuote(trade.activeSymbolName)
 
     useEffect(() => {
       setTimeout(() => {
@@ -66,7 +65,7 @@ export default observer(
       setWidth(w)
     }, [breakPoint, type])
 
-    const hasQuote = quoteInfo.hasQuote
+    const hasQuote = !!quoteInfo?.hasQuote
 
     return (
       <>
@@ -92,14 +91,14 @@ export default observer(
                 <div
                   className={cn('!font-dingpro-medium text-base max-xl:hidden', disabled ? 'var(--btn-disabled-text-color)' : sellColor)}
                 >
-                  {formatNum(quoteInfo.bid)}
+                  {formatNum(quoteInfo?.bid)}
                 </div>
               </div>
             )}
           </Sell>
         </div>
         <div className="absolute left-[50%] top-[50%] z-[90] min-w-[30px] !font-dingpro-medium translate-x-[-50%] translate-y-[-50%] rounded-[6px] bg-white px-[6px] py-[3px] text-center text-xs text-primary dark:text-black">
-          {quoteInfo.spread || 0}
+          {quoteInfo?.spread || 0}
         </div>
         <div
           className="relative flex cursor-pointer flex-col items-center py-[5px]"
@@ -122,7 +121,7 @@ export default observer(
                   <FormattedMessage id="mt.mairuzuoduo" />
                 </div>
                 <div className={cn('!font-dingpro-medium text-base max-xl:hidden', disabled ? 'var(--btn-disabled-text-color)' : buyColor)}>
-                  {formatNum(quoteInfo.ask)}
+                  {formatNum(quoteInfo?.ask)}
                 </div>
               </div>
             )}

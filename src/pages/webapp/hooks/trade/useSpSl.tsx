@@ -46,7 +46,7 @@ export default function useSpSl() {
   const isPosition = useMemo(() => !!recordModalItem?.id, [recordModalItem]) // 打开持仓单的时候会设置 recordModalItem， 有 recordModalItem 视为是【查看持仓单】
 
   // 输入时取最后一次行情缓存计算
-  const consize = quoteInfo?.consize
+  const consize = quoteInfo?.consize || 2
 
   const stopl = useMemo(() => Number(symbolConf?.limitStopLevel || 1) * Math.pow(10, -d), [symbolConf, d]) // 交易-限价和停损级别
 

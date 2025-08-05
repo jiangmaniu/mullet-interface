@@ -4,10 +4,10 @@ import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   symbol: string
@@ -18,16 +18,15 @@ function PricePercent({ symbol }: IProps) {
   const { trade, ws, kline } = useStores()
   const { theme } = useTheme()
   const { isDark, up: upColor, down: downColor } = theme
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const res = getCurrentQuote(symbol)
-  const bid = res.bid // 卖价
-  const ask = res.ask // 买价
-  const per: any = res.percent
+  const res = useCurrentQuote(symbol)
+  const bid = res?.bid // 卖价
+  const ask = res?.ask // 买价
+  const per: any = res?.percent
 
   let bidColor = ''
   let askColor = ''
 
-  if (res.hasQuote && res.quotes?.size > 0) {
+  if (res?.hasQuote && res?.quotes?.size > 0) {
     // 涨跌额涨跌幅是0显示灰色
     if (res?.askDiff === 0) {
       askColor = 'same'
@@ -171,7 +170,7 @@ function PricePercent({ symbol }: IProps) {
         )}
       </Col>
       <Col span={4} className="flex flex-col items-end pr-2">
-        {res.bid ? (
+        {res?.bid ? (
           <div className={cn('text-right text-xs font-dingpro-medium', per > 0 ? 'text-green' : 'text-red')}>
             {bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
           </div>

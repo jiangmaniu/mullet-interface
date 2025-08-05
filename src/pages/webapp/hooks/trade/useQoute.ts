@@ -1,6 +1,6 @@
 import { useStores } from '@/context/mobxProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { getPrecisionByNumber, toFixed } from '@/utils'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useMemo } from 'react'
 
 export default function useQuote() {
@@ -36,8 +36,7 @@ export default function useQuote() {
 
   const symbol = useMemo(() => symbolRMI || activeSymbolName, [activeSymbolName, symbolRMI])
 
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote(symbol)
+  const quoteInfo = useCurrentQuote(symbol)
   // const prevQuoteInfo = useRef<any>(quoteInfo) // 缓存上一次的行情信息
 
   // useEffect(() => {
@@ -51,7 +50,7 @@ export default function useQuote() {
     // if (typing) {
     //   return symbolConfRMI || prevQuoteInfo.current?.symbolConf
     // }
-    return symbolConfRMI || quoteInfo.symbolConf
+    return symbolConfRMI || quoteInfo?.symbolConf
   }, [symbolConfRMI, quoteInfo])
 
   // 输入时取最后一次行情缓存计算
@@ -59,7 +58,7 @@ export default function useQuote() {
     // if (typing) {
     //   return dRMI || prevQuoteInfo.current?.digits
     // }
-    return dRMI || quoteInfo?.digits
+    return dRMI || quoteInfo?.digits || 2
   }, [dRMI, quoteInfo]) // 小数位
 
   // const orderVolume = useMemo(() => orderVolumeRMI || trade.orderVolume, [orderVolumeRMI, trade.orderVolume])

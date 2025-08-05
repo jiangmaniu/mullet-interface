@@ -7,11 +7,11 @@ import { useEffect, useRef, useState } from 'react'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
 import { goLogin } from '@/utils/navigator'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 function FloatTradeBox() {
   const { isMobileOrIpad } = useEnv()
@@ -23,8 +23,7 @@ function FloatTradeBox() {
   const isDragging = useRef(false)
   const token = STORAGE_GET_TOKEN()
   const { trade } = useStores()
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote()
+  const quoteInfo = useCurrentQuote(trade.activeSymbolName)
   const symbolConf = quoteInfo?.symbolConf
   const vmin = symbolConf?.minTrade || 0.1
   const vmax = symbolConf?.maxTrade || 20
@@ -126,7 +125,7 @@ function FloatTradeBox() {
     const isBuy = type === TRADE_BUY_SELL.BUY
     // 下单
     let params = {
-      symbol: quoteInfo.symbol,
+      symbol: quoteInfo?.symbol,
       buySell: isBuy ? TRADE_BUY_SELL.BUY : TRADE_BUY_SELL.SELL, // 订单方向
       orderVolume: count,
       tradeAccountId: trade.currentAccountInfo?.id,
@@ -168,7 +167,7 @@ function FloatTradeBox() {
             <div className="select-none text-white text-xs">
               <FormattedMessage id="mt.maichuzuokong" />
             </div>
-            <div className="text-white !font-dingpro-medium text-base select-none">{formatNum(quoteInfo.bid)}</div>
+            <div className="text-white !font-dingpro-medium text-base select-none">{formatNum(quoteInfo?.bid)}</div>
           </div>
           <div className="flex flex-col h-[56px] px-3 items-center justify-center w-[105px]">
             <div className="text-primary text-xs select-none">
@@ -193,7 +192,7 @@ function FloatTradeBox() {
             <div className="select-none text-white text-xs">
               <FormattedMessage id="mt.mairuzuoduo" />
             </div>
-            <div className="text-white !font-dingpro-medium text-base select-none">{formatNum(quoteInfo.ask)}</div>
+            <div className="text-white !font-dingpro-medium text-base select-none">{formatNum(quoteInfo?.ask)}</div>
           </div>
           <div className="px-[2px] cursor-pointer" onClick={() => setOpen(false)}>
             <img width="14" height="28" src="/img/close.png" />

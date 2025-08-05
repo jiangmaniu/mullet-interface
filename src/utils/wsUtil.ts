@@ -5,7 +5,6 @@ import { stores } from '@/context/mobxProvider'
 import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
 
 import { IQuoteItem } from '@/mobx/ws.types'
-import { useCallback } from 'react'
 import { toFixed } from '.'
 import { multiply, subtract } from './float'
 
@@ -623,16 +622,4 @@ export function getCurrentQuoteV2(
   }
 
   return result
-}
-
-// getCurrentQuote useCallback by stores.ws.quotes
-export const useGetCurrentQuoteCallback = () => {
-  const { trade, ws } = stores
-  const symbolMap = trade.symbolMapAll
-  const activeSymbolName = trade.activeSymbolName
-
-  return useCallback(
-    (currentSymbolName?: string) => getCurrentQuoteV2(ws.quotes, currentSymbolName ?? activeSymbolName, symbolMap),
-    [ws.quotes, activeSymbolName, symbolMap]
-  )
 }

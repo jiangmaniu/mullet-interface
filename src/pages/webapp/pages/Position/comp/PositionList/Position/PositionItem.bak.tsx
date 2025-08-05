@@ -3,6 +3,7 @@ import { SOURCE_CURRENCY } from '@/constants'
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import Button from '@/pages/webapp/components/Base/Button'
 import ActivityIndicator from '@/pages/webapp/components/Base/Loading/ActivityIndicator'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -10,7 +11,6 @@ import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useInViewport } from 'ahooks'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
@@ -44,8 +44,7 @@ const Profit = observer(({ precision, item }: { precision?: number; item: Order.
 
 // CurrentPrice 组件用于隔离当前价格渲染
 const CurrentPrice = observer(({ buySell, symbol }: { buySell: string; symbol?: string }) => {
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote(symbol)
+  const quoteInfo = useCurrentQuote(symbol)
   // 标记价
   const currentPrice = buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask // 价格需要取反方向的
 

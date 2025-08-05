@@ -2,6 +2,7 @@ import { SOURCE_CURRENCY } from '@/constants'
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import CheckBox from '@/pages/webapp/components/Base/CheckBox'
 import SheetModal, { SheetRef } from '@/pages/webapp/components/Base/SheetModal'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -10,7 +11,6 @@ import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum } from '@/utils'
 import { message } from '@/utils/message'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { ForwardedRef, forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react'
@@ -67,8 +67,7 @@ function MarketCloseConfirmModal({ trigger, item: rawItem, onClose }: IProps, re
   }, [rawItem, calcInfo])
 
   const symbol = item?.symbol
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote(symbol)
+  const quoteInfo = useCurrentQuote(symbol)
 
   const profit = useMemo(() => {
     return item?.profit as number // 浮动盈亏

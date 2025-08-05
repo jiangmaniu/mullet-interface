@@ -1,12 +1,13 @@
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { ColorType, Text } from '@/pages/webapp/components/Base/Text'
 import { View } from '@/pages/webapp/components/Base/View'
 import SymbolIcon from '@/pages/webapp/components/Quote/SymbolIcon'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { formatNum, toFixed } from '@/utils'
-import { calcYieldRate, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { calcYieldRate } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
@@ -119,8 +120,7 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
   }, [rawItem, calcInfo])
 
   const symbol = item?.symbol
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote(symbol)
+  const quoteInfo = useCurrentQuote(symbol)
   // 标记价
   const currentPrice = useMemo(
     () => (item?.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask), // 价格需要取反方向的
@@ -189,7 +189,7 @@ const PositionContent = ({ item: rawItem, children }: IProps) => {
               />
               <ListItem
                 label={t('pages.position.Current Market Price')}
-                valueColor={quoteInfo?.bidDiff > 0 ? 'green' : 'red'}
+                valueColor={quoteInfo?.bidDiff && quoteInfo?.bidDiff > 0 ? 'green' : 'red'}
                 value={formatNum(currentPrice, { precision: item?.symbolDecimal })}
                 align="end"
               />

@@ -2,9 +2,9 @@ import { observer } from 'mobx-react'
 import { useMemo } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { getSymbolIcon } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 type IProps = {
   /**图片地址 */
@@ -31,9 +31,8 @@ type IProps = {
 function SymbolIcon({ src, width = 26, height = 26, style, className, symbol, showMarketCloseIcon, closeIconStyle }: IProps) {
   const { trade } = useStores()
   const isMarketOpen = trade.isMarketOpen(symbol)
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quote = getCurrentQuote()
-  const hasQuote = quote.hasQuote
+  const quote = useCurrentQuote(symbol)
+  const hasQuote = !!quote?.hasQuote
 
   const renderIcon = useMemo(() => {
     return (

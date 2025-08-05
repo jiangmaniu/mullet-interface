@@ -10,9 +10,8 @@ import SignalIcon from '@/components/Base/Svg/SignalIcon'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { useSwitchSymbol } from '@/pages/webapp/hooks/useSwitchSymbol'
-import { cn } from '@/utils/cn'
 import { goKefu } from '@/utils/navigator'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import PriceItem from './PriceItem'
 
 // 底部浮动条
 function Footer() {
@@ -27,8 +26,6 @@ function Footer() {
   const disConnected = !isOnline || readyState === 3
   const scroll = useScroll(document)
   const isRefreshRef = useRef(false)
-
-  const getCurrentQuote = useGetCurrentQuoteCallback()
 
   const handleRefresh = () => {
     // 行情重新建立新的连接
@@ -137,10 +134,6 @@ function Footer() {
       <div className="flex h-full flex-1 items-center overflow-x-auto overflow-y-hidden">
         <Marquee pauseOnHover speed={30} gradient={isDark ? false : true}>
           {trade.symbolListAll.map((item, idx) => {
-            const res = getCurrentQuote(item.symbol)
-            const per: any = res.percent
-            const bid = res.bid
-
             return (
               <div key={idx} className="h-full w-[160px] flex items-center justify-center border-r border-r-gray-200 dark:border-gray-700">
                 <div
@@ -151,10 +144,7 @@ function Footer() {
                   }}
                 >
                   <div className="text-wrap text-xs font-medium text-primary py-1">{item.alias}</div>
-                  <div className={cn('px-[3px] text-xs font-medium', per > 0 ? 'text-green' : 'text-red')}>
-                    {res.bid ? (per > 0 ? `+${per}%` : `${per}%`) : '--'}
-                  </div>
-                  <div className="px-[3px] text-xs font-medium text-weak">{bid}</div>
+                  <PriceItem symbol={item.symbol} />
                 </div>
               </div>
             )

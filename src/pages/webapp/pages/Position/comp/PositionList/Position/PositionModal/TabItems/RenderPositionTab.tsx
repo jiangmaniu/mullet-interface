@@ -1,6 +1,7 @@
 import { ORDER_TYPE, TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import InputNumber from '@/pages/webapp/components/Base/Form/InputNumber'
 import Slider from '@/pages/webapp/components/Base/Slider'
 import { Text } from '@/pages/webapp/components/Base/Text'
@@ -9,7 +10,6 @@ import useFocusEffect from '@/pages/webapp/hooks/useFocusEffect'
 import { useI18n } from '@/pages/webapp/hooks/useI18n'
 import { toFixed } from '@/utils'
 import { message } from '@/utils/message'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { ForwardedRef, forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
@@ -24,8 +24,7 @@ type IProps = {
 }
 
 const CurrentPrice = observer(({ buySell, symbol }: any) => {
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote(symbol)
+  const quoteInfo = useCurrentQuote(symbol)
 
   const currentPrice = useMemo(() => {
     // 标记价

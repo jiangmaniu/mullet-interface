@@ -5,8 +5,8 @@ import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import { useInViewport } from 'ahooks'
 import useQuoteColor from '../../hooks/useQuoteColor'
@@ -33,8 +33,8 @@ function QuoteItem({ item, onItem, tabKey }: IProps, ref: any) {
   const symbol = item?.symbol
   const itemRef = useRef<HTMLDivElement>(null)
   const [inViewport] = useInViewport(itemRef)
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const res = (inViewport ? getCurrentQuote(symbol) : {}) as any
+  const quote = useCurrentQuote(symbol)
+  const res = (inViewport ? quote : {}) as any
   // const bid = res.bid // 卖价
   // const ask = res.ask // 买价
   // const per: any = res.percent

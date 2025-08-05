@@ -12,10 +12,10 @@ import { ORDER_TYPE } from '@/constants/enum'
 import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { groupBy, toFixed } from '@/utils'
 import { cn } from '@/utils/cn'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 // 平仓、挂单成功提示
 export default observer((props, ref) => {
@@ -40,9 +40,8 @@ export default observer((props, ref) => {
   const isClosed = !!data.tradePrice // 是否是平仓
 
   const symbol = data.symbol
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote(symbol)
-  const d = quoteInfo.digits
+  const quoteInfo = useCurrentQuote(symbol)
+  const d = quoteInfo?.digits
   const orderVolume = data.orderVolume || 0
   const vol = {
     label: isClosed ? <FormattedMessage id="mt.pingcangshoushu" /> : <FormattedMessage id="mt.kaicangshoushu" />,

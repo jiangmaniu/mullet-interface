@@ -7,9 +7,10 @@ import { useMemo, useState, useTransition } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum, getPrecisionByNumber } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentDepth, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { getCurrentDepth } from '@/utils/wsUtil'
 
 type ModeType = 'BUY_SELL' | 'BUY' | 'SELL'
 
@@ -19,8 +20,7 @@ function DeepPrice() {
   const [mode, setMode] = useState<ModeType>('BUY_SELL')
   const [isPending, startTransition] = useTransition() // 切换内容，不阻塞渲染，提高整体响应性
   const depth = getCurrentDepth(trade.activeSymbolName)
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quote = getCurrentQuote()
+  const quote = useCurrentQuote(trade.activeSymbolName)
   // asks 从下往上对应（倒数第一个 是买一） 作为卖盘展示在上面， 倒过来 从大到小（倒过来后，从后往前截取12条）(买价 卖盘)
   const asks = toJS(depth?.asks || []).reverse()
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
@@ -64,8 +64,8 @@ function DeepPrice() {
       <div className="flex items-center justify-between">
         <div>
           {/* 当前行情卖价 */}
-          <span className={cn('text-lg pr-[10px] font-pf-bold', quote.bidDiff > 0 ? 'text-green' : 'text-red')}>
-            {formatNum(quote.bid)}
+          <span className={cn('text-lg pr-[10px] font-pf-bold', quote?.bidDiff && quote?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+            {formatNum(quote?.bid)}
           </span>
         </div>
         {/* 更多打开一个页面交互没有 */}
@@ -85,7 +85,7 @@ function DeepPrice() {
       .map((item, idx: number) => {
         const total = item.price * item.amount
         const pencent = (item.amount / maxAmount) * 100
-        const digits = quote.digits
+        const digits = quote?.digits
         const amountDigits = getPrecisionByNumber(item.amount)
         return (
           <div key={idx} className="relative overflow-hidden" style={{ animation: '0.2s ease-out 0s 1 normal none running none' }}>
@@ -142,7 +142,7 @@ function DeepPrice() {
           .map((item: any, idx: number) => {
             const total = item.price * item.amount
             const pencent = (item.amount / maxAmount) * 100
-            const digits = quote.digits
+            const digits = quote?.digits
             const amountDigits = getPrecisionByNumber(item.amount)
             return (
               <div key={idx} className="relative overflow-hidden" style={{ animation: '0.2s ease-out 0s 1 normal none running none' }}>

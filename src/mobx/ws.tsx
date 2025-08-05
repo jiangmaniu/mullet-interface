@@ -204,8 +204,8 @@ class WSStore {
             placement: 'bottomRight',
             style: {
               background: 'var(--dropdown-bg)'
-            },
-            showProgress: true
+            }
+            // showProgress: true
           })
         } else {
           // Toast.show({

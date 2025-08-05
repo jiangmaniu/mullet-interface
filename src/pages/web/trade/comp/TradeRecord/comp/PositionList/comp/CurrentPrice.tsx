@@ -2,9 +2,9 @@ import { observer } from 'mobx-react'
 
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import { IPendingItem } from '../../PendingList'
 
@@ -17,8 +17,7 @@ function CurrentPrice({ item }: IProps) {
   if (!item.symbol) return null
   const { trade } = useStores()
   const symbol = item.symbol
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote(symbol)
+  const quoteInfo = useCurrentQuote(symbol)
   // 市价当前价格-价格需要取反方向的
   const marketCurrentPrice = item.buySell === TRADE_BUY_SELL.BUY ? quoteInfo?.bid : quoteInfo?.ask
   // 限价当前价格
@@ -30,7 +29,7 @@ function CurrentPrice({ item }: IProps) {
   return (
     <>
       {currentPrice ? (
-        <span className={cn('!text-[13px]', quoteInfo?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+        <span className={cn('!text-[13px]', quoteInfo?.bidDiff && quoteInfo?.bidDiff > 0 ? 'text-green' : 'text-red')}>
           {formatNum(currentPrice, { precision: item.symbolDecimal })}
         </span>
       ) : (

@@ -5,7 +5,7 @@ import { ForwardedRef, forwardRef, useEffect, useImperativeHandle, useMemo, useR
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 
 import InputNumber from '../../../Base/Form/InputNumber'
 import SheetModal, { SheetRef } from '../../../Base/SheetModal'
@@ -24,8 +24,7 @@ function LevelAgeModal(props: any, ref: ForwardedRef<LevelAgeModalRef>) {
   const { trade } = useStores()
   const { cn, theme } = useTheme()
   const { leverageMultiple } = trade
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote()
+  const quoteInfo = useCurrentQuote(trade.activeSymbolName)
   const symbolConf = quoteInfo?.symbolConf
   const prepaymentConf = symbolConf?.prepaymentConf
   const minLever = prepaymentConf?.float_leverage?.min_lever || 1

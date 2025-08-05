@@ -5,9 +5,9 @@ import { ForwardedRef, forwardRef, useImperativeHandle, useRef } from 'react'
 import { transferWeekDay } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { toFixed } from '@/utils'
 import { formatTimeStr } from '@/utils/business'
-import { useGetCurrentQuoteCallback } from '@/utils/wsUtil'
 
 import SheetModal, { SheetRef } from '../Base/SheetModal'
 import { Text } from '../Base/Text'
@@ -42,8 +42,7 @@ function FuturesModal({ trigger }: IProps, ref: ForwardedRef<FuturesModalRef>) {
   const intl = useIntl()
   const { trade, ws } = useStores()
   const symbol = trade.activeSymbolName
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const quoteInfo = getCurrentQuote()
+  const quoteInfo = useCurrentQuote(symbol)
   const symbolConf = quoteInfo?.symbolConf
   const prepaymentConf = quoteInfo?.prepaymentConf
   const holdingCostConf = quoteInfo?.holdingCostConf

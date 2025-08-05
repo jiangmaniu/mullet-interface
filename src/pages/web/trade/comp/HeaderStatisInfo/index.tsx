@@ -6,10 +6,11 @@ import SymbolIcon from '@/components/Base/SymbolIcon'
 import FavoriteIcon from '@/components/Web/FavoriteIcon'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import useClickOutside from '@/hooks/useOnClickOutside'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-import { getCurrentDepth, useGetCurrentQuoteCallback } from '@/utils/wsUtil'
+import { getCurrentDepth } from '@/utils/wsUtil'
 
 import Sidebar from '../Sidebar'
 
@@ -29,8 +30,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
   const depth = getCurrentDepth(trade.activeSymbolName)
   const hasDepth = Number(depth?.asks?.length) > 0 && Number(depth?.bids?.length) > 0
 
-  const getCurrentQuote = useGetCurrentQuoteCallback()
-  const res: any = getCurrentQuote()
+  const res: any = useCurrentQuote(symbol)
   const color = res.percent > 0 ? 'text-green' : 'text-red'
 
   const openSidebarRef = useRef<any>()
