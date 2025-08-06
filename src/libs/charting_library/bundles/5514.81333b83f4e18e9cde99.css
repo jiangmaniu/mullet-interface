@@ -1,0 +1,76 @@
+.tv-circle-logo-PsAlMQQF {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--themed-color-circle-logo-letter, #fff);
+  font-weight: 700;
+  font-style: normal;
+  border-radius: 50%;
+}
+html.theme-dark .tv-circle-logo-PsAlMQQF {
+  color: var(--themed-color-circle-logo-letter, #5d606b);
+}
+.tv-circle-logo-PsAlMQQF:not(img) {
+  background-color: var(--themed-color-circle-logo-background, #e0e3eb);
+}
+html.theme-dark .tv-circle-logo-PsAlMQQF:not(img) {
+  background-color: var(--themed-color-circle-logo-background, #2a2e39);
+}
+.tv-circle-logo--xxxsmall-PsAlMQQF {
+  width: 18px;
+  height: 18px;
+  font-size: 11px;
+  line-height: 16px;
+}
+.tv-circle-logo--xxsmall-PsAlMQQF {
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  line-height: 16px;
+}
+.tv-circle-logo--xsmall-PsAlMQQF {
+  width: 24px;
+  height: 24px;
+  font-size: 11px;
+  line-height: 16px;
+}
+.tv-circle-logo--small-PsAlMQQF {
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  line-height: 16px;
+}
+.tv-circle-logo--medium-PsAlMQQF {
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  line-height: 16px;
+}
+.tv-circle-logo--large-PsAlMQQF {
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+  line-height: 32px;
+}
+.tv-circle-logo--xlarge-PsAlMQQF {
+  width: 56px;
+  height: 56px;
+  font-size: 40px;
+  line-height: 40px;
+}
+.tv-circle-logo--xxlarge-PsAlMQQF {
+  width: 112px;
+  height: 112px;
+  font-size: 80px;
+  line-height: 80px;
+}
+.tv-circle-logo--xxxlarge-PsAlMQQF {
+  width: 168px;
+  height: 168px;
+  font-size: 160px;
+  line-height: 160px;
+}
+.tv-circle-logo--visually-hidden-PsAlMQQF {
+  position: absolute;
+  opacity: 0;
+}

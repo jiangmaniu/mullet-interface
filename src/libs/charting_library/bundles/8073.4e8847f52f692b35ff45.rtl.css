@@ -1,0 +1,90 @@
+.loader-UL6iwcBa {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  margin: 0 auto;
+  font-size: 0;
+  white-space: nowrap;
+  text-align: center;
+  opacity: 1;
+  transition: opacity 0.35s ease;
+}
+.loader-UL6iwcBa.static-UL6iwcBa {
+  position: static;
+  display: block;
+}
+.loader-UL6iwcBa:after {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  content: ' ';
+}
+.loader-UL6iwcBa .item-UL6iwcBa {
+  display: inline-block;
+  vertical-align: middle;
+  background-color: var(--ui-lib-loader-color, var(--ui-lib-loader-color-default));
+  border-radius: 100%;
+  opacity: 1;
+  --ui-lib-loader-color-default: currentColor;
+}
+.loader-UL6iwcBa .item-UL6iwcBa:first-child {
+  animation: tv-button-loader-UL6iwcBa 1s infinite;
+  animation-delay: 0.1s;
+}
+.loader-UL6iwcBa .item-UL6iwcBa:nth-child(2) {
+  animation: tv-button-loader-UL6iwcBa 1s infinite;
+  animation-delay: 0.3s;
+}
+.loader-UL6iwcBa .item-UL6iwcBa:nth-child(3) {
+  animation: tv-button-loader-UL6iwcBa 1s ease infinite;
+  animation-delay: 0.45s;
+}
+.loader-UL6iwcBa .item-UL6iwcBa,
+.loader-UL6iwcBa .item-UL6iwcBa.medium-UL6iwcBa {
+  width: 6px;
+  height: 6px;
+}
+.loader-UL6iwcBa .item-UL6iwcBa.medium-UL6iwcBa:not(:last-child),
+.loader-UL6iwcBa .item-UL6iwcBa:not(:last-child) {
+  margin-inline-end: 4px;
+}
+.loader-UL6iwcBa .item-UL6iwcBa.small-UL6iwcBa {
+  width: 4px;
+  height: 4px;
+}
+.loader-UL6iwcBa .item-UL6iwcBa.small-UL6iwcBa:not(:last-child) {
+  margin-inline-end: 3px;
+}
+.loader-UL6iwcBa .item-UL6iwcBa.black-UL6iwcBa {
+  --ui-lib-loader-color-default: var(--themed-color-default-gray, #6a6d78);
+}
+html.theme-dark .loader-UL6iwcBa .item-UL6iwcBa.black-UL6iwcBa {
+  --ui-lib-loader-color-default: var(--themed-color-default-gray, #868993);
+}
+.loader-UL6iwcBa .item-UL6iwcBa.white-UL6iwcBa {
+  --ui-lib-loader-color-default: #fff;
+}
+.loader-UL6iwcBa .item-UL6iwcBa.gray-UL6iwcBa {
+  --ui-lib-loader-color-default: #b2b5be;
+}
+.loader-UL6iwcBa .item-UL6iwcBa.primary-UL6iwcBa {
+  --ui-lib-loader-color-default: var(--themed-color-text-primary, #131722);
+}
+html.theme-dark .loader-UL6iwcBa .item-UL6iwcBa.primary-UL6iwcBa {
+  --ui-lib-loader-color-default: var(--themed-color-text-primary, #d1d4dc);
+}
+@keyframes tv-button-loader-UL6iwcBa {
+  0%,
+  to {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.4;
+  }
+  30% {
+    opacity: 0.2;
+  }
+}

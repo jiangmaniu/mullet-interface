@@ -21,6 +21,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
   const loadingTimerRef = useRef<NodeJS.Timeout>()
   const networkState = useNetwork()
   const isOnline = networkState.online
+  const tradingViewRef = useRef<any>(null)
 
   // 监听switchSymbolLoading状态，如果超过10s则强制刷新
   useEffect(() => {
@@ -85,20 +86,26 @@ const TradingviewWrapper = ({ style }: IProps) => {
       //   })
       // }
 
-      if (kline.tvWidget) {
-        // 不需要重载k线实例
-        kline.tvWidget.onChartReady(() => {
-          kline.forceRefreshKlineData()
-        })
-      }
+      // 刷新整个图表，否则v28版本图表短暂闪烁
+      tradingViewRef.current?.reload?.()
+
+      // 不用刷新图表
+      // if (kline.tvWidget) {
+      //   // 不需要重载k线实例
+      //   kline.tvWidget.onChartReady(() => {
+      //     kline.forceRefreshKlineData()
+      //   })
+      // }
     },
     () => {
       console.log('Tradingview页面切换到后台')
       // STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
-      // kline.destroyed()
       // 清空ws的quotes缓存，否则绘制有问题
-      ws.quotes = new Map()
+      ws.quotes.clear()
       kline.lastbar = {}
+
+      // 销毁图表实例
+      kline.destroyed()
     }
   )
 
@@ -113,7 +120,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
       >
         {/* 通过key强制刷新组件 */}
         {/* <TradingViewComp key={forceUpdateKey} /> */}
-        <TradingViewComp />
+        <TradingViewComp ref={tradingViewRef} />
       </Suspense>
     </div>
   )

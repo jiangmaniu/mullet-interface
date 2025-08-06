@@ -177,6 +177,7 @@ export default function getWidgetOpts(
       // 	}
       // },
       // 鼠标悬浮在柱子上显示的日期
+      // @ts-ignore
       dateFormatter: {
         // utc时间
         format(date: Date) {
