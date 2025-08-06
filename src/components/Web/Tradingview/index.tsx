@@ -212,7 +212,7 @@ const Tradingview = (props: any, ref: any) => {
 
     // 记录k线实例
     kline.setTvWidget(tvWidget)
-    window.tvWidget = tvWidget
+    // window.tvWidget = tvWidget
   }, [])
 
   const reload = useCallback(() => {

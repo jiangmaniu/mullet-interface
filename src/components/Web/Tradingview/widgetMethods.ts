@@ -150,7 +150,7 @@ export function applyOverrides(props: {
   //   overrides['paneProperties.backgroundGradientStartColor'] = props.bgGradientStartColor
   //   overrides['paneProperties.backgroundGradientEndColor'] = props.bgGradientEndColor
   // }
-  tvWidget.applyOverrides(overrides)
+  props.tvWidget.applyOverrides(overrides)
 }
 
 // 设置自定义颜色-主题色
