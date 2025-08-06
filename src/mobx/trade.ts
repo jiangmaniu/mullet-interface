@@ -178,6 +178,8 @@ class TradeStore {
 
   @observable tradeSymbolTickerMap = {} as Record<string, MarketSymbol.SymbolNewTicker> // 品种列表页面侧边栏 当前品种的ticker 高开低收
 
+  timeoutTimers = [] as NodeJS.Timeout[] // 定时器
+
   // 初始化加载
   @action
   init = async () => {
@@ -197,6 +199,14 @@ class TradeStore {
     this.orderConfirmChecked = localOrderConfirmChecked !== null ? localOrderConfirmChecked : true
     this.positionConfirmChecked = localPositionConfirmChecked !== null ? localPositionConfirmChecked : true
     this.historySearchList = (await STORAGE_GET_HISTORY_SEARCH()) || []
+  }
+
+  // 关闭定时器
+  closeTimer = () => {
+    this.timeoutTimers.forEach((timer) => {
+      clearTimeout(timer)
+    })
+    this.timeoutTimers = []
   }
 
   // 右下角爆仓选择逐仓、全仓切换
@@ -467,10 +477,12 @@ class TradeStore {
     push('/trade')
     // klineStore.destroyed() // 非交易页面跳转需要重置trandview实例，否则报错
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       // 停止动画播放
       this.setSwitchAccountLoading(false)
     }, 2000)
+
+    this.timeoutTimers.push(timer)
   }
 
   // 获取当前账户账户余额、保证金信息
@@ -710,7 +722,7 @@ class TradeStore {
       )
     ).map((str) => JSON.parse(str))
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       ws.checkSocketReady(() => {
         console.log('订阅当前选中及持仓列表品种的行情', cover ? '【并取消其他历史订阅】' : '', [activeSymbolInfo, ...symbols])
         // 打开行情订阅
@@ -731,6 +743,8 @@ class TradeStore {
         ws.subscribeExchangeRateQuote()
       })
     })
+
+    this.timeoutTimers.push(timer)
   }
 
   @action
@@ -751,7 +765,7 @@ class TradeStore {
       )
     ).map((str) => JSON.parse(str))
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       ws.checkSocketReady(() => {
         console.log('订阅当前持仓列表品种的行情', cover ? '【并取消其他历史订阅】' : '', symbols)
         // 打开行情订阅
@@ -768,6 +782,8 @@ class TradeStore {
         })
       })
     })
+
+    this.timeoutTimers.push(timer)
   }
 
   @action
@@ -789,7 +805,7 @@ class TradeStore {
       )
     ).map((str) => JSON.parse(str))
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       ws.checkSocketReady(() => {
         console.log('订阅当前挂单列表品种的行情', cover ? '【并取消其他历史订阅】' : '', symbols)
         // 打开行情订阅
@@ -806,6 +822,8 @@ class TradeStore {
         })
       })
     })
+
+    this.timeoutTimers.push(timer)
   }
 
   // 切换交易品种
@@ -870,12 +888,14 @@ class TradeStore {
     ws.subscribeDepth(true)
     this.activeSymbolName = key
 
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       // STORAGE_SET_ACTIVE_SYMBOL_NAME(key)
       STORAGE_SET_CONF_INFO(key, `${this.currentAccountInfo?.id}.activeSymbolName`)
       // 重新订阅深度
       ws.subscribeDepth()
     }, 50)
+
+    this.timeoutTimers.push(timer)
   }
 
   // 更新本地缓存的symbol列表
@@ -1044,22 +1064,24 @@ class TradeStore {
       this.symbolMapAll = keyBy(cacheSymbolList, 'symbol') // 存一份 map
 
       runInAction(() => {
-        setTimeout(
+        const timer = setTimeout(
           () => {
             this.symbolListLoading = false
           },
           isPc ? 0 : 800
         )
+        this.timeoutTimers.push(timer)
       })
     }
     const res = await getTradeSymbolList({ ...params, accountId }).catch((e) => e)
     runInAction(() => {
-      setTimeout(
+      const timer = setTimeout(
         () => {
           this.symbolListLoading = false
         },
         isPc ? 0 : 800
       )
+      this.timeoutTimers.push(timer)
     })
     if (res.success) {
       const symbolList = (res.data || []) as Account.TradeSymbolListItem[]
@@ -1161,9 +1183,10 @@ class TradeStore {
     const res = await getBgaOrderPage({ current: 1, size: 999, status: 'BAG', accountId: this.currentAccountInfo?.id })
 
     runInAction(() => {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         this.positionListLoading = false
       }, 300)
+      this.timeoutTimers.push(timer)
     })
 
     if (res.success) {
@@ -1200,9 +1223,10 @@ class TradeStore {
     })
 
     runInAction(() => {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         this.pendingListLoading = false
       }, 300)
+      this.timeoutTimers.push(timer)
     })
 
     if (res.success) {

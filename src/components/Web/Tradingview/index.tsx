@@ -1,6 +1,6 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { ChartStyle, LanguageCode, ThemeName, widget } from '@/libs/charting_library'
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 
@@ -52,7 +52,18 @@ const Tradingview = (props: any, ref: any) => {
   const bgGradientStartColor = '#161A1E' // 背景渐变色
   const bgGradientEndColor = '#161A1E'
 
-  const initChart = () => {
+  const loadingTimer = useRef<any>(null)
+
+  const cleanUp = () => {
+    // 页面卸载时清理 store
+    kline.destroyed()
+    clearTimeout(loadingTimer.current)
+  }
+
+  const initChart = useCallback(() => {
+    // 先清理之前的实例
+    cleanUp()
+
     const showBottomMACD = 1 // 1 展示 2 隐藏
     const chartType = 1 as ChartStyle
     const theme = params.theme
@@ -68,7 +79,7 @@ const Tradingview = (props: any, ref: any) => {
     const tvWidget = new widget(widgetOptions)
 
     // 延迟400ms设置loading状态，避免图表闪烁
-    setTimeout(() => {
+    loadingTimer.current = setTimeout(() => {
       setLoading(false)
     }, 400)
 
@@ -202,14 +213,14 @@ const Tradingview = (props: any, ref: any) => {
     // 记录k线实例
     kline.setTvWidget(tvWidget)
     window.tvWidget = tvWidget
-  }
+  }, [])
 
-  const reload = () => {
+  const reload = useCallback(() => {
     setIsChartLoading(true)
     setLoading(true)
     // 初始化图表实例
     initChart()
-  }
+  }, [initChart])
 
   useImperativeHandle(ref, () => {
     return {
@@ -228,6 +239,12 @@ const Tradingview = (props: any, ref: any) => {
       reload()
     }
   }, [theme, intl.locale])
+
+  useEffect(() => {
+    return () => {
+      cleanUp()
+    }
+  }, [])
 
   // 监听切换品种
   useEffect(() => {

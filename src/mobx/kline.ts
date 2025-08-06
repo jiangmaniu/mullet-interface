@@ -400,6 +400,7 @@ class KlineStore {
   destroyed = () => {
     // 等待图表加载完成再关闭,否则销毁实例会导致之前未加载完成的实例报错
     if (this.isChartLoading) {
+      console.log('⏳ 图表仍在加载中，延迟销毁')
       return
     }
     if (this.tvWidget) {

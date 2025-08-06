@@ -103,13 +103,14 @@ class WSStore {
     if (this.initConnectTimer) clearTimeout(this.initConnectTimer)
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer)
     this.resetData()
+    stores.trade.closeTimer()
   }
 
   resetData = () => {
     // 清空行情缓存
-    this.quotes = new Map()
+    this.quotes.clear()
     // 清空深度缓存
-    this.depth = new Map()
+    this.depth.clear()
     // 清空发送队列
     this.sendingSymbols.clear()
   }
