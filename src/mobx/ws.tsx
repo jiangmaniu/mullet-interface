@@ -295,12 +295,14 @@ class WSStore {
         break
       // 同步计算的结果返回
       case 'SYNC_CALCA_RES':
-        stores.trade.accountBalanceInfo = data?.accountBalanceInfo
-        stores.trade.positionListSymbolCalcInfo = data?.positionListSymbolCalcInfo
-        stores.trade.rightWidgetSelectMarginInfo = data?.rightWidgetSelectMarginInfo
-        stores.trade.expectedMargin = data?.expectedMargin
-        stores.trade.maxOpenVolume = data?.maxOpenVolume
-        stores.trade.positionListTotalProfit = data?.positionListTotalProfit
+        runInAction(() => {
+          stores.trade.accountBalanceInfo = data?.accountBalanceInfo
+          stores.trade.positionListSymbolCalcInfo = data?.positionListSymbolCalcInfo
+          stores.trade.rightWidgetSelectMarginInfo = data?.rightWidgetSelectMarginInfo
+          stores.trade.expectedMargin = data?.expectedMargin
+          stores.trade.maxOpenVolume = data?.maxOpenVolume
+          stores.trade.positionListTotalProfit = data?.positionListTotalProfit
+        })
         break
       case 'RESOLVE_MSG':
         this.resolveMsg(data)
