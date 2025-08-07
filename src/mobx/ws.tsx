@@ -154,6 +154,7 @@ class WSStore {
   }
 
   // 接收worker线程消息
+  @action
   handleWorkerMessage = (event: MessageEvent, resolve?: () => void) => {
     const { data } = event.data
     const type = event.data?.type as WorkerType
@@ -161,26 +162,32 @@ class WSStore {
     switch (type) {
       case 'CONNECT_SUCCESS':
         this.handleOpenCallback()
-        this.readyState = data?.readyState
+        runInAction(() => {
+          this.readyState = data?.readyState
+        })
         resolve?.()
         break
       case 'SYMBOL_RES':
         // 增量更新行情
-        if (data && data.size) {
-          data.forEach((item: IQuoteItem, dataSourceKey: string) => {
-            this.quotes.set(dataSourceKey, item)
-          })
-          // 更新k线数据
-          klineStore.updateKlineData(this.quotes)
-        }
+        runInAction(() => {
+          if (data && data.size) {
+            data.forEach((item: IQuoteItem, dataSourceKey: string) => {
+              this.quotes.set(dataSourceKey, item)
+            })
+            // 更新k线数据
+            klineStore.updateKlineData(this.quotes)
+          }
+        })
         break
       case 'DEPTH_RES':
         // 更新深度
-        if (data && data.size) {
-          data.forEach((item: IDepth, dataSourceKey: string) => {
-            this.depth.set(dataSourceKey, item)
-          })
-        }
+        runInAction(() => {
+          if (data && data.size) {
+            data.forEach((item: IDepth, dataSourceKey: string) => {
+              this.depth.set(dataSourceKey, item)
+            })
+          }
+        })
         break
       case 'TRADE_RES':
         // 更新交易信息
@@ -658,12 +665,16 @@ class WSStore {
     // 持仓列表
     else if (type === 'MARKET_ORDER') {
       const positionList = data.bagOrderList || []
-      trade.positionList = formaOrderList(positionList)
+      runInAction(() => {
+        trade.positionList = formaOrderList(positionList)
+      })
     }
     // 挂单列表
     else if (type === 'LIMIT_ORDER') {
       const pendingList = data.limiteOrderList || []
-      trade.pendingList = formaOrderList(pendingList)
+      runInAction(() => {
+        trade.pendingList = formaOrderList(pendingList)
+      })
     }
     // 历史成交记录,用不到
     else if (type === 'TRADING') {
