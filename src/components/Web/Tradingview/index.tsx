@@ -212,15 +212,14 @@ const Tradingview = (props: any, ref: any) => {
 
     // 记录k线实例
     kline.setTvWidget(tvWidget)
-    // window.tvWidget = tvWidget
-  }, [])
+  }, [theme, intl.locale])
 
   const reload = useCallback(() => {
     setIsChartLoading(true)
     setLoading(true)
     // 初始化图表实例
     initChart()
-  }, [initChart])
+  }, [initChart, theme, intl.locale])
 
   useImperativeHandle(ref, () => {
     return {
