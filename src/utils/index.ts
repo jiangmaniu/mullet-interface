@@ -419,16 +419,21 @@ export const copyContent = (cotVal: any, title = getIntl().formatMessage({ id: '
  */
 export function toFixed(val: any, num = 2, isTruncateDecimal = true) {
   let value = val || 0
+  let precision = num
+  // 防止精度过大
+  if (precision >= 10) {
+    precision = 10
+  }
   value = parseFloat(value)
   if (isNaN(value)) {
     value = 0
   }
   // 截取小数点展示
   if (isTruncateDecimal) {
-    return truncateDecimal(value, num)
+    return truncateDecimal(value, precision)
   }
   // 四舍五入
-  return value.toFixed(num)
+  return value.toFixed(precision)
 }
 
 /**
