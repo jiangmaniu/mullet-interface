@@ -40,6 +40,12 @@ class KlineStore {
   @observable lastBarTime = '' // 记录最后一次时间，用于作为请求k线的截止时间
   @observable isChartLoading = true // 图表是否加载中，直到完成
   @observable klineDataCacheMap = new Map<string, MarketSymbol.SymbolKlineOptimizeListItem>() // k线数据map
+  @observable refreshKlineCount = 0 // 强制刷新k线计数器
+
+  @action
+  setRefreshKlineCount = () => {
+    this.refreshKlineCount = this.refreshKlineCount + 1
+  }
 
   @action
   setSwitchSymbolLoading = (flag: boolean) => {

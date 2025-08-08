@@ -30,8 +30,8 @@ function Footer() {
   const handleRefresh = () => {
     // 行情重新建立新的连接
     ws.connect()
-    // 重置tradingview实例
-    kline.destroyed()
+    // 强制刷新tradingview实例
+    kline.setRefreshKlineCount()
   }
 
   useEffect(() => {

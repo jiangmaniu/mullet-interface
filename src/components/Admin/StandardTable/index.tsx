@@ -18,14 +18,13 @@ import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { FormInstance, Popconfirm, TablePaginationConfig, message } from 'antd'
 import { type TableProps as RcTableProps } from 'antd/es/table/InternalTable'
 import moment from 'moment'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { IconFontButton } from '@/components/Base/Button'
 import DeleteConfirmModal from '@/components/Base/DeleteConfirmModal'
 import Empty from '@/components/Base/Empty'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
 import { useLang } from '@/context/languageProvider'
-
 import { IThemeMode, useTheme } from '@/context/themeProvider'
 import { formatNum, isTruthy } from '@/utils'
 import { cn } from '@/utils/cn'
@@ -115,7 +114,7 @@ interface IProps<T, U> extends ProTableProps<T, U> {
   theme?: IThemeMode
 }
 
-export default <T extends Record<string, any>, U extends ParamsType = ParamsType>({
+export default function OptimizedTable<T extends Record<string, any>, U extends ParamsType = ParamsType>({
   columns = [],
   pageSize = 10,
   pagination = {},
@@ -154,141 +153,166 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
   dataSource,
   theme,
   ...res
-}: IProps<T, U>) => {
-  const proTableOptions: ProTableProps<T, U> = { search: false }
+}: IProps<T, U>) {
   const intl = useIntl()
-  const dateRangeRef = useRef(null)
+  const dateRangeRef = useRef<any>(null)
   const [loading, setLoading] = useState(false)
   const formRef = useRef<ProFormInstance>()
   const [tableColumns, setTableColumns] = useState<ProColumns<T>[]>([])
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
   const actionRef = useRef<ActionType>(null)
-  // 记录列表request请求结果
-  const [requestResult, setRequestResult] = useState({} as { total: number; data: T[]; success: boolean })
+
+  // 记录列表request请求结果 - 使用useCallback优化
+  const [requestResult, setRequestResult] = useState<{ total: number; data: T[]; success: boolean }>({
+    total: 0,
+    data: [],
+    success: true
+  })
+
   const { setHasProList, hasProList } = useModel('global')
   const [showExportWhenData, setShowExportWhenData] = useState(false)
   const themeConfig = useTheme()
   const themeMode = theme || themeConfig.theme.mode
   const isDark = themeMode === 'dark'
+  const [showQueryBtn, setShowQueryBtn] = useState(false)
 
-  const [showQueryBtn, setShowQueryBtn] = useState(false) // 避免切换页面，表单项没渲染出来，先出现查询按钮，页面闪动
+  // 使用useCallback优化函数引用
+  const handleExport = useCallback(
+    async (searchConfig: Omit<BaseQueryFilterProps, 'submitter' | 'isForm'>) => {
+      const values = searchConfig?.form?.getFieldsValue()
+      return onExport?.(values)
+    },
+    [onExport]
+  )
 
-  const handleExport = async (searchConfig: Omit<BaseQueryFilterProps, 'submitter' | 'isForm'>) => {
-    const values = searchConfig?.form?.getFieldsValue()
-    return onExport?.(values)
-  }
+  // 使用useCallback优化删除确认函数
+  const onDeleteConfirm = useCallback(
+    async (record: any) => {
+      if (onDelete) {
+        onDelete(record)
+      } else {
+        await action?.del?.({ id: record.id })
+        actionRef.current?.reload()
+        message.success(intl.formatMessage({ id: 'common.deleteSuccess' }))
+      }
+    },
+    [onDelete, action, intl]
+  )
 
+  // 优化实例获取逻辑
   useEffect(() => {
-    setTimeout(() => {
+    if (getInstance && formRef.current && actionRef.current) {
+      getInstance({
+        form: formRef.current,
+        action: actionRef.current as ActionType
+      })
+    }
+  }, [getInstance])
+
+  // 优化请求结果处理
+  useEffect(() => {
+    if (getRequestResult && requestResult.data.length > 0) {
+      getRequestResult(requestResult)
+    }
+  }, [getRequestResult, requestResult])
+
+  // 优化数据源处理
+  useEffect(() => {
+    const hasData = dataSource?.length > 0
+    setHasProList(hasData)
+  }, [dataSource, setHasProList])
+
+  // 修复定时器清理问题
+  useEffect(() => {
+    const timer = setTimeout(() => {
       setShowQueryBtn(true)
     }, 100)
+
+    return () => {
+      clearTimeout(timer) // 清理定时器
+    }
   }, [])
 
-  useEffect(() => {
-    getInstance?.({
-      form: formRef.current,
-      action: actionRef.current as ActionType
-    })
-  }, [formRef.current])
+  // 使用useMemo优化proTableOptions
+  const proTableOptions: ProTableProps<T, U> = useMemo(() => {
+    const options: ProTableProps<T, U> = { search: false }
 
-  useEffect(() => {
-    getRequestResult?.(requestResult)
-  }, [requestResult])
-
-  useEffect(() => {
-    setHasProList(dataSource?.length > 0)
-  }, [dataSource])
-
-  // 格式化参数
-  // antd form 的配置
-  if (!hideForm) {
-    // 配合 label 属性使用，表示是否显示 label 后面的冒号
-    // 标签宽度设置为0
-    proTableOptions.form = {
-      // 设置默认配置
-      colon: false, // 配合 label 属性使用，表示是否显示 label 后面的冒号
-      labelWidth: 0, // 文字标签宽
-      ...form
+    if (!hideForm) {
+      options.form = {
+        colon: false,
+        labelWidth: 0,
+        ...form
+      }
     }
-  }
-  if (!hideSearch) {
-    const getExportBtn = (searchConfig: Omit<BaseQueryFilterProps, 'submitter' | 'isForm'>) => (
-      <Export onClick={() => handleExport(searchConfig)} key="export" />
-    )
-    // table顶部的搜索表单配置
-    proTableOptions.search = {
-      // 设置默认配置
-      searchGutter: 12, // 查询表单Item项栅格间隔,
-      span: 4, // 控制搜索表单的宽 col ant-col-5
-      // 控制 查询、重置按钮距离左侧的距离
-      submitterColSpanProps: { span: showExportBtn ? 4 : 2, offset: 0, ...((search && search.submitterColSpanProps) || {}) },
-      // @ts-ignore
-      optionRender: (searchConfig, props, dom) => {
-        return [
-          <div key="action" className="flex items-center">
-            {showQueryBtn && (
-              <div className="flex items-center gap-3">
-                {/* {dom.reverse()} */}
-                <IconFontButton
-                  type="primary"
-                  icon="sousuo"
-                  loading={loading}
-                  onClick={() => {
-                    searchConfig?.form?.submit()
-                  }}
-                  style={{ paddingLeft: 10 }}
-                >
-                  {intl.formatMessage({ id: 'common.search' })}
-                </IconFontButton>
-                <IconFontButton
-                  icon="qingli"
-                  onClick={() => {
-                    searchConfig?.form?.resetFields()
-                    searchConfig?.form?.submit()
-                  }}
-                  style={{ paddingLeft: 10 }}
-                >
-                  {intl.formatMessage({ id: 'common.reset' })}
-                </IconFontButton>
-                {showExportWhenData && showExportBtn && getExportBtn(searchConfig)}
-              </div>
-            )}
-          </div>
-        ]
-      },
-      style: { background: 'var(--bg-base-gray)', padding: 0 },
-      ...search
-    }
-    if (showOnlyExportBtn) {
-      proTableOptions.search = {
-        ...proTableOptions.search,
+
+    if (!hideSearch) {
+      const getExportBtn = (searchConfig: Omit<BaseQueryFilterProps, 'submitter' | 'isForm'>) => (
+        <Export onClick={() => handleExport(searchConfig)} key="export" />
+      )
+
+      options.search = {
+        searchGutter: 12,
+        span: 4,
         submitterColSpanProps: {
-          span: 1,
-          offset: 0
+          span: showExportBtn ? 4 : 2,
+          offset: 0,
+          ...((search && search.submitterColSpanProps) || {})
         },
+        // @ts-ignore
         optionRender: (searchConfig, props, dom) => {
-          return [getExportBtn(searchConfig)]
+          return [
+            <div key="action" className="flex items-center">
+              {showQueryBtn && (
+                <div className="flex items-center gap-3">
+                  <IconFontButton
+                    type="primary"
+                    icon="sousuo"
+                    loading={loading}
+                    onClick={() => searchConfig?.form?.submit()}
+                    style={{ paddingLeft: 10 }}
+                  >
+                    {intl.formatMessage({ id: 'common.search' })}
+                  </IconFontButton>
+                  <IconFontButton
+                    icon="qingli"
+                    onClick={() => {
+                      searchConfig?.form?.resetFields()
+                      searchConfig?.form?.submit()
+                    }}
+                    style={{ paddingLeft: 10 }}
+                  >
+                    {intl.formatMessage({ id: 'common.reset' })}
+                  </IconFontButton>
+                  {showExportWhenData && showExportBtn && getExportBtn(searchConfig)}
+                </div>
+              )}
+            </div>
+          ]
+        },
+        style: { background: 'var(--bg-base-gray)', padding: 0 },
+        ...search
+      }
+
+      if (showOnlyExportBtn) {
+        options.search = {
+          ...options.search,
+          submitterColSpanProps: { span: 1, offset: 0 },
+          optionRender: (searchConfig) => [getExportBtn(searchConfig)]
         }
       }
     }
-  }
 
-  const onDeleteConfirm = async (record: any) => {
-    if (onDelete) {
-      onDelete(record)
-    } else {
-      await action?.del?.({ id: record.id })
-      // 删除重构刷新列表
-      actionRef.current?.reload()
-      message.success(intl.formatMessage({ id: 'common.deleteSuccess' }))
-    }
-  }
+    return options
+  }, [hideForm, hideSearch, form, search, showExportBtn, showOnlyExportBtn, handleExport, showQueryBtn, loading, intl, showExportWhenData])
 
-  useEffect(() => {
+  // 优化列处理逻辑，使用useMemo缓存
+  const processedColumns = useMemo(() => {
+    const processedCols = [...columns]
+
     // 显示操作项
-    if (showOptionColumn && !columns.some((v) => v.key === 'option')) {
-      columns.push({
+    if (showOptionColumn && !processedCols.some((v) => v.key === 'option')) {
+      processedCols.push({
         title: <FormattedMessage id="common.op" />,
         key: 'option',
         fixed: 'right',
@@ -305,13 +329,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
                   (renderEditBtn ? (
                     renderEditBtn(record)
                   ) : (
-                    <a
-                      key="editable"
-                      onClick={async () => {
-                        onEditItem?.(record)
-                      }}
-                      className="!text-primary text-sm font-medium"
-                    >
+                    <a key="editable" onClick={() => onEditItem?.(record)} className="!text-primary text-sm font-medium">
                       <FormattedMessage id="common.bianji" />
                     </a>
                   ))}
@@ -325,23 +343,18 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
                           </a>
                         }
                         text={() => setDeleteModalText?.(record)}
-                        onConfirm={() => {
-                          onDeleteConfirm(record)
-                        }}
+                        onConfirm={() => onDeleteConfirm(record)}
                       />
                     )}
                     {!showDeleteModal && (
                       <Popconfirm
                         title={intl.formatMessage({ id: 'common.confirmDelete' })}
-                        onConfirm={() => {
-                          onDeleteConfirm(record)
-                        }}
+                        onConfirm={() => onDeleteConfirm(record)}
                         key="delete"
                       >
                         <a className="!text-primary font-medium text-sm ml-6">
                           <FormattedMessage id="common.delete" />
                         </a>
-                        {/* <LoadingOutlined /> */}
                       </Popconfirm>
                     )}
                   </>
@@ -354,23 +367,16 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       })
     }
 
-    columns.forEach((v) => {
+    processedCols.forEach((v) => {
       // 格式化小数位
-      // @ts-ignore
-      const precision = v.fieldProps?.precision
+      const precision = (v.fieldProps as any)?.precision
       if (isTruthy(precision)) {
-        v.renderText = (text, record, index, action) => {
-          return <span className="text-primary">{formatNum(text, { precision })}</span>
-        }
-      }
-      if (!v.valueType && (v.className || '')?.indexOf('!px-5') === -1) {
-        v.className = cn('!px-5', v.className) // 统一修改单元格间距
+        v.renderText = (text) => <span className="text-primary">{formatNum(text, { precision })}</span>
       }
 
-      // 多语言 统一修改单元格宽度
-      // if (!isZh) {
-      //   v.width = v.width ? Number(v.width) + 10 : v.width
-      // }
+      if (!v.valueType && (v.className || '')?.indexOf('!px-5') === -1) {
+        v.className = cn('!px-5', v.className)
+      }
 
       if (v.valueType === 'select') {
         v.fieldProps = {
@@ -379,38 +385,51 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           suffixIcon: <SelectSuffixIcon opacity={0.4} />
         }
       }
+
       // 统一限制时间选择
       if (v.valueType === 'dateRange') {
         v.fieldProps = {
           ...v.fieldProps,
           onCalendarChange: (value: any) => {
-            console.log('val', value)
             dateRangeRef.current = value
           },
-          // 监听日期选择面板打开状态
           onOpenChange: (open: boolean) => {
             const dates = dateRangeRef.current
-            setTimeout(() => {
-              if (!open && dates && Math.abs(moment(dates?.[0]).diff(dates?.[1], 'days')) > 91) {
-                // 当天在内和之前90天
-                dateRangeRef.current = null
-                // 重置日期表单
-                formRef.current?.resetFields(['dates'])
-
-                message.warning(intl.formatMessage({ id: 'mt.shijianbunengdayusangeyue' }))
-              }
-            }, 300)
+            if (!open && dates && Math.abs(moment(dates?.[0]).diff(dates?.[1], 'days')) > 91) {
+              dateRangeRef.current = null
+              formRef.current?.resetFields(['dates'])
+              message.warning(intl.formatMessage({ id: 'mt.shijianbunengdayusangeyue' }))
+            }
           }
         }
       }
     })
-    setTableColumns(columns)
-  }, [columns.length])
 
-  // @ts-ignore
+    return processedCols
+  }, [
+    columns,
+    showOptionColumn,
+    opColumnWidth,
+    renderOptionColumn,
+    hiddenEditBtn,
+    hiddenDeleteBtn,
+    renderEditBtn,
+    onEditItem,
+    showDeleteModal,
+    setDeleteModalText,
+    onDeleteConfirm,
+    intl,
+    getOpColumnItems
+  ])
+
+  // 设置处理后的列
+  useEffect(() => {
+    setTableColumns(processedColumns)
+  }, [processedColumns])
+
+  // 使用useMemo优化样式类
   const classNameWrapper = useEmotionCss(({ token }) => {
     return {
-      // 表格圆角
       '.ant-table-content': {
         borderTopLeftRadius: `${isDark ? 0 : 12}px !important`,
         borderTopRightRadius: `${isDark ? 0 : 12}px !important`,
@@ -427,7 +446,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         '&::-webkit-scrollbar-track': {
           boxShadow: 'none',
           borderRadius: 0,
-          background: `${isDark ? '#17171c' : '#fff'}  !important`
+          background: `${isDark ? '#17171c' : '#fff'} !important`
         },
         '&::-webkit-scrollbar-thumb:hover': {
           background: 'rgba(0, 0, 0, 0.4) !important',
@@ -435,17 +454,9 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           boxShadow: 'inset 0 0 5px rgba(239, 239, 239, 1)'
         }
       },
-      '.ant-table .ant-table-content': {
-        scrollbarWidth: 'thin',
-        scrollbarColor: 'var(--scrollbar-color)'
-      },
-      '.ant-table:hover .ant-table-content': {
-        scrollbarColor: 'var(--scrollbar-hover-color)'
-      },
       '.ant-form': {
         background: `${searchFormBgColor || 'rgb(248, 248, 248)'} !important`
       },
-      // 设置表头圆角样式
       '.ant-table-container table > thead > tr:first-child > *:first-child': {
         borderTopLeftRadius: `${isDark ? 0 : 12}px !important`
       },
@@ -456,14 +467,6 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
         paddingTop: '12px !important',
         paddingBottom: '12px !important'
       },
-      '.ant-table-footer': {
-        background: 'transparent !important'
-      },
-      // 去掉表头列之间的分割线
-      '.ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before':
-        {
-          width: '0 !important'
-        },
       '.ant-pagination': {
         marginRight: '0 !important',
         marginTop: '0 !important',
@@ -473,6 +476,7 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
       }
     }
   })
+
   const darkClassName = useEmotionCss(({ token }) => {
     return {
       '.ant-table-thead > tr > th': {
@@ -486,16 +490,67 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
     }
   })
 
+  // 优化请求函数
+  const handleRequest = useCallback(
+    async (params: U = {} as U, sort: any, filter: any) => {
+      const queryParams: any = { ...params }
+
+      if (Object.keys(sort).length) {
+        Object.keys(sort).forEach((key) => {
+          queryParams.orderBy = sort[key] === 'ascend' ? 'ASC' : 'DESC'
+          queryParams.orderByField = key
+        })
+      }
+
+      const res = (await action?.query(queryParams)) as any
+      const records = res?.data?.records || []
+      const isArray = Array.isArray(res?.data)
+      const dataList = isArray ? res.data : records
+      const total = isArray ? dataList.length : res?.data?.total
+
+      const result = {
+        data: res?.data?.length ? res.data : dataList,
+        success: res?.success,
+        total: res?.total ? res.total : total
+      }
+
+      setHasProList(result.data?.length > 0)
+      setRequestResult(result)
+
+      return result
+    },
+    [action, setHasProList]
+  )
+
+  const handleBeforeSearchSubmit = useCallback((params: any) => {
+    setLoading(true)
+    return params
+  }, [])
+
+  const handlePostData = useCallback((data: T[]) => {
+    setShowExportWhenData(data?.length > 0)
+    setLoading(false)
+    return data
+  }, [])
+
+  const handleRowClassName = useCallback(
+    (record: T, i: number) => {
+      if (stripe) {
+        return i % 2 === 1 ? 'table-even' : 'table-odd'
+      }
+      return ''
+    },
+    [stripe]
+  )
+
   return (
     <ProTable<T, U>
       cardBordered={false}
       columns={tableColumns}
       actionRef={actionRef}
       rowKey="id"
-      // false则不显示table工具栏
       // @ts-ignore
       options={!hideOptions ? { ...options } : false}
-      // 表格默认的 size
       defaultSize="middle"
       dateFormatter="string"
       pagination={
@@ -504,131 +559,30 @@ export default <T extends Record<string, any>, U extends ParamsType = ParamsType
           : {
               showSizeChanger: false,
               defaultPageSize: pageSize,
-              hideOnSinglePage: true, // 在没有数据或只有一页数据时隐藏分页栏
+              hideOnSinglePage: true,
               size: 'default',
               ...pagination
             }
       }
-      locale={{ emptyText: !requestResult?.data?.length && !dataSource?.length ? <Empty /> : <div className="h-[200px]"></div> }}
-      // 幽灵模式，是否取消表格区域的 padding
+      locale={{
+        emptyText: !requestResult?.data?.length && !dataSource?.length ? <Empty /> : <div className="h-[200px]"></div>
+      }}
       ghost={false}
       scroll={{ x: 1200, ...scroll }}
-      request={async (
-        // params:{pageSize,current} ，这两个参数是 antd 的规范。ProTable 会根据列来生成一个 Form，用于筛选列表数据，最后的值会根据通过 request 的第一个参数返回
-        params = {} as U,
-        sort,
-        filter
-      ) => {
-        const queryParams: any = {
-          ...params
-        }
-        if (Object.keys(sort).length) {
-          Object.keys(sort).forEach((key) => {
-            // 排序方式
-            queryParams.orderBy = sort[key] === 'ascend' ? 'ASC' : 'DESC'
-            // 排序字段
-            queryParams.orderByField = key
-          })
-        }
-        console.log(sort, filter)
-
-        // 这里需要返回一个 Promise,在返回之前你可以进行数据转化、如果需要转化参数可以在这里进行修改
-        const res = (await action?.query(queryParams)) as any
-
-        const records = res?.data?.records || []
-        const isArray = Array.isArray(res?.data)
-        const dataList = isArray ? res.data : records
-        const total = isArray ? dataList.length : res?.data?.total
-
-        const result = {
-          data: res?.data?.length ? res.data : dataList,
-          success: res?.success,
-          total: res?.total ? res.total : total
-        }
-        setHasProList(result.data?.length > 0)
-
-        setRequestResult(result)
-
-        return result
-        // return request<{
-        //   data: AgentReport.UserCloseReportListItem[]
-        // }>('https://proapi.azurewebsites.net/github/issues', {
-        //   params
-        // })
-        // const msg = await myQuery({
-        //   page: params.current,
-        //   pageSize: params.pageSize,
-        // });
-        // return {
-        //   data: msg.result,
-        //   // success 请返回 true，
-        //   // 不然 table 会停止解析数据，即使有数据
-        //   success: boolean,
-        //   // 不传会使用 data 的长度，如果是分页一定要传
-        //   total: number,
-        // };
-      }}
-      // 搜索前参数统一处理入口
-      beforeSearchSubmit={(params) => {
-        console.log('params', params)
-        setLoading(true)
-        return params
-      }}
-      postData={(data: T[]) => {
-        setShowExportWhenData(data?.length > 0)
-        setLoading(false)
-        return data
-      }}
+      request={handleRequest}
+      beforeSearchSubmit={handleBeforeSearchSubmit}
+      postData={handlePostData}
       cardProps={{
         bodyStyle: { padding: '16px', ...bodyStyle },
         className: '!rounded-2xl border border-gray-150',
         headStyle: { borderRadius: '12px 12px 0px 0px', ...headStyle },
         ...cardProps
       }}
-      rowClassName={(record, i) => {
-        if (stripe) {
-          // 添加斑马线
-          return i % 2 === 1 ? 'table-even' : 'table-odd'
-        }
-        return ''
-      }}
-      // 自定义渲染搜索表单区域，不满足需求考虑重写搜索表单
-      // searchFormRender={(props) => {
-      //   return (
-      //     <Form
-      //       onFinish={(value) => {
-      //         console.log('values', value)
-      //       }}
-      //       className="!mb-3"
-      //     >
-      //       <div className="flex items-center justify-between">
-      //         <div className="flex items-center gap-3">
-      //           <Form.Item className="w-[200px]" name="test1">
-      //             <ProFormSelect options={[{ value: 'test1', label: '测试1' }]} />
-      //           </Form.Item>
-      //           <Form.Item className="w-[200px]" name="test2">
-      //             <ProFormSelect options={[{ value: 'test2', label: '测试2' }]} />
-      //           </Form.Item>
-      //           <Form.Item className="w-[200px]" name="test3">
-      //             <ProFormSelect options={[{ value: 'test3', label: '测试3' }]} />
-      //           </Form.Item>
-      //           <div className="flex items-center gap-3">
-      //             <Button type="primary" htmlType="submit">
-      //               查询
-      //             </Button>
-      //             <Button>重置</Button>
-      //           </div>
-      //         </div>
-      //         <div>客户数量：9001</div>
-      //       </div>
-      //     </Form>
-      //   )
-      // }}
+      rowClassName={handleRowClassName}
       className={cn(
         'standard-table',
         classNameWrapper,
-        { 'no-table-bordered': !hasTableBordered, [className as string]: true },
-        className,
+        { 'no-table-bordered': !hasTableBordered, [className as string]: className },
         isDark ? darkClassName : ''
       )}
       formRef={formRef}

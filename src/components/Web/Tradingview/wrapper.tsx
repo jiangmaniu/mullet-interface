@@ -22,6 +22,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
   const networkState = useNetwork()
   const isOnline = networkState.online
   const tradingViewRef = useRef<any>(null)
+  const [pageVisible, setPageVisible] = useState(true)
 
   // 监听switchSymbolLoading状态，如果超过10s则强制刷新
   useEffect(() => {
@@ -62,11 +63,6 @@ const TradingviewWrapper = ({ style }: IProps) => {
   useEffect(() => {
     // 记录初始化的时间
     STORAGE_SET_TRADE_PAGE_SHOW_TIME(Date.now())
-
-    return () => {
-      // 重置tradingview实例
-      kline.destroyed()
-    }
   }, [])
 
   useEffect(() => {
@@ -75,6 +71,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
 
   usePageVisibility(
     () => {
+      setPageVisible(true)
       const shouldForceUpdate = checkPageShowTime(1 * 60 * 1000)
       console.log('Tradingview页面回到前台')
       // setForceUpdateKey(shouldForceUpdate ? forceUpdateKey + 1 : forceUpdateKey)
@@ -85,7 +82,6 @@ const TradingviewWrapper = ({ style }: IProps) => {
       //     kline.forceRefreshKlineData()
       //   })
       // }
-
       // 刷新整个图表，否则v28版本图表短暂闪烁
       tradingViewRef.current?.reload?.()
 
@@ -105,23 +101,24 @@ const TradingviewWrapper = ({ style }: IProps) => {
       kline.lastbar = {}
 
       // 销毁图表实例
-      kline.destroyed()
+      tradingViewRef.current?.clean?.()
+      setPageVisible(false)
     }
   )
 
   return (
     <div style={{ ...style }}>
-      <Suspense
-        fallback={
-          <div className="h-screen flex items-center justify-center">
-            <PageLoading />
-          </div>
-        }
-      >
-        {/* 通过key强制刷新组件 */}
-        {/* <TradingViewComp key={forceUpdateKey} /> */}
-        <TradingViewComp ref={tradingViewRef} />
-      </Suspense>
+      {pageVisible && (
+        <Suspense
+          fallback={
+            <div className="h-screen flex items-center justify-center">
+              <PageLoading />
+            </div>
+          }
+        >
+          <TradingViewComp ref={tradingViewRef} />
+        </Suspense>
+      )}
     </div>
   )
 }

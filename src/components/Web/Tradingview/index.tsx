@@ -1,6 +1,6 @@
 // eslint-disable-next-line simple-import-sort/imports
 import { ChartStyle, LanguageCode, ThemeName, widget } from '@/libs/charting_library'
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 import { useStores } from '@/context/mobxProvider'
 
@@ -31,6 +31,7 @@ const Tradingview = (props: any, ref: any) => {
   const { isChartLoading, setIsChartLoading } = kline
   const switchSymbolLoading = kline.switchSymbolLoading
   const intl = useIntl()
+  const [tvWidget, setTvWidget] = useState<any>(null)
 
   const { theme } = useTheme()
   const { isDark, mode } = theme
@@ -41,28 +42,37 @@ const Tradingview = (props: any, ref: any) => {
   }
 
   const themeMode = (mode || 'light') as ThemeName
-  const params = {
-    symbol: symbolName as string, // 品种名称
-    locale: (getTradingViewLng() || 'en') as LanguageCode, // 英文 en 繁体zh_TW 印尼id_ID
-    theme: themeMode,
-    colorType: 1 as ColorType, // 1绿涨红跌 2红涨绿跌
-    isMobile: !isPc
-  }
+  const params = useMemo(() => {
+    return {
+      symbol: symbolName as string, // 品种名称
+      locale: (getTradingViewLng() || 'en') as LanguageCode, // 英文 en 繁体zh_TW 印尼id_ID
+      theme: themeMode,
+      colorType: 1 as ColorType, // 1绿涨红跌 2红涨绿跌
+      isMobile: !isPc
+    }
+  }, [symbolName, themeMode, isPc])
 
   const bgGradientStartColor = '#161A1E' // 背景渐变色
   const bgGradientEndColor = '#161A1E'
 
   const loadingTimer = useRef<any>(null)
 
-  const cleanUp = () => {
+  // 清理函数
+  const clean = () => {
     // 页面卸载时清理 store
     kline.destroyed()
     clearTimeout(loadingTimer.current)
+    // 清除定时器
+    if (loadingTimer.current) {
+      clearTimeout(loadingTimer.current)
+      loadingTimer.current = null
+    }
+    setTvWidget(null)
   }
 
   const initChart = useCallback(() => {
     // 先清理之前的实例
-    cleanUp()
+    clean()
 
     const showBottomMACD = 1 // 1 展示 2 隐藏
     const chartType = 1 as ChartStyle
@@ -90,33 +100,6 @@ const Tradingview = (props: any, ref: any) => {
       // 动态设置css变量
       setCSSCustomProperty({ tvWidget, theme })
       // setSymbol(symbolName, tvWidget)
-
-      // 监听分时等时间周期变化，请求请求历史k线数据，重置缓存
-      tvWidget
-        .activeChart()
-        .onIntervalChanged()
-        .subscribe(null, (interval, timeframeObj) => {
-          console.log('interval', interval, timeframeObj)
-
-          // 记录当前切换的分辨率
-          STORAGE_SET_TRADINGVIEW_RESOLUTION(interval)
-
-          // 除了分钟 小时的k线 其他都设置为上海时区，否则时区显示错误，绘制天以上周期的k线时间不对
-          if (['D', 'W', 'M', 'Y'].some((item) => interval.endsWith(item))) {
-            tvWidget.activeChart().getTimezoneApi().setTimezone('Etc/UTC')
-          } else {
-            tvWidget.activeChart().getTimezoneApi().setTimezone('Asia/Shanghai')
-          }
-          // 重置数据，请求历史数据
-          klineStore.forceRefreshKlineData()
-        })
-
-      // 监听时区切换
-      tvWidget
-        .activeChart()
-        .getTimezoneApi()
-        .onTimezoneChanged()
-        .subscribe(null, (timezone: any) => console.log(`New timezone: ${timezone}`), true)
 
       // 监听k线可视区域图表范围变化，可以在这里请求后台数据
       // tvWidget
@@ -214,6 +197,47 @@ const Tradingview = (props: any, ref: any) => {
     kline.setTvWidget(tvWidget)
   }, [theme, intl.locale])
 
+  useEffect(() => {
+    if (!tvWidget) return
+
+    const onIntervalChangedCallback = (interval: any, timeframeObj: any) => {
+      console.log('interval', interval, timeframeObj)
+
+      // 记录当前切换的分辨率
+      STORAGE_SET_TRADINGVIEW_RESOLUTION(interval)
+
+      // 除了分钟 小时的k线 其他都设置为上海时区，否则时区显示错误，绘制天以上周期的k线时间不对
+      if (['D', 'W', 'M', 'Y'].some((item) => interval.endsWith(item))) {
+        tvWidget.activeChart().getTimezoneApi().setTimezone('Etc/UTC')
+      } else {
+        tvWidget.activeChart().getTimezoneApi().setTimezone('Asia/Shanghai')
+      }
+      // 重置数据，请求历史数据
+      klineStore.forceRefreshKlineData()
+    }
+
+    const onTimezoneChangedCallback = (timezone: any) => {
+      console.log('timezone', timezone)
+    }
+
+    tvWidget.onChartReady(() => {
+      // 监听分时等时间周期变化，请求请求历史k线数据，重置缓存
+      tvWidget.activeChart().onIntervalChanged().subscribe(null, onIntervalChangedCallback)
+
+      // 监听时区切换
+      tvWidget.activeChart().getTimezoneApi().onTimezoneChanged().subscribe(null, onTimezoneChangedCallback, true)
+    })
+
+    return () => {
+      // 移除所有事件监听器
+      const activeChart = tvWidget.activeChart()
+      if (activeChart) {
+        activeChart.onIntervalChanged().unsubscribeAll(onIntervalChangedCallback)
+        activeChart.getTimezoneApi().onTimezoneChanged().unsubscribeAll(onTimezoneChangedCallback)
+      }
+    }
+  }, [tvWidget])
+
   const reload = useCallback(() => {
     setIsChartLoading(true)
     setLoading(true)
@@ -223,7 +247,8 @@ const Tradingview = (props: any, ref: any) => {
 
   useImperativeHandle(ref, () => {
     return {
-      reload
+      reload,
+      clean
     }
   })
 
@@ -241,7 +266,7 @@ const Tradingview = (props: any, ref: any) => {
 
   useEffect(() => {
     return () => {
-      cleanUp()
+      clean()
     }
   }, [])
 
