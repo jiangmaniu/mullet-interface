@@ -244,19 +244,16 @@ class TradeStore {
   @action
   setSycCalcRes = (data: any) => {
     runInAction(() => {
-      // 有变化才更新
-      if (this.accountBalanceInfo?.money && data?.accountBalanceInfo?.money !== this.accountBalanceInfo?.money) {
-        this.accountBalanceInfo = data?.accountBalanceInfo
-      }
-      if (this.maxOpenVolume && data?.maxOpenVolume !== this.maxOpenVolume) {
+      if (data?.maxOpenVolume && data?.maxOpenVolume !== this.maxOpenVolume) {
         this.maxOpenVolume = data?.maxOpenVolume
       }
       if (this.positionListTotalProfit && data?.positionListTotalProfit !== this.positionListTotalProfit) {
         this.positionListTotalProfit = data?.positionListTotalProfit
       }
-      if (this.expectedMargin && data?.expectedMargin !== this.expectedMargin) {
+      if (data?.expectedMargin && data?.expectedMargin !== this.expectedMargin) {
         this.expectedMargin = data?.expectedMargin
       }
+      this.accountBalanceInfo = data?.accountBalanceInfo
       this.positionListSymbolCalcInfo = data?.positionListSymbolCalcInfo
       this.rightWidgetSelectMarginInfo = data?.rightWidgetSelectMarginInfo
     })
