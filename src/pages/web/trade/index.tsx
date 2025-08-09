@@ -25,8 +25,6 @@ import DepthPrice from './comp/Widget/DepthPrice'
 import Liquidation from './comp/Widget/Liquidation'
 
 export default observer(() => {
-  useTitle(getIntl().formatMessage({ id: 'menu.trade' }))
-
   const sidebarRef = useRef()
   const buyAndSellRef = useRef<any>(null)
   const { ws, trade, kline } = useStores()
@@ -38,6 +36,8 @@ export default observer(() => {
 
   const networkState = useNetwork()
   const isOnline = networkState.online
+
+  useTitle(`${trade.activeSymbolName} | ${getIntl().formatMessage({ id: 'menu.trade' })}`)
 
   // 同步数据到worker线程
   useSyncDataToWorker()

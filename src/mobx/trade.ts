@@ -15,7 +15,7 @@ import {
   modifyStopProfitLoss
 } from '@/services/api/tradeCore/order'
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
-import { isPCByWidth, toFixed } from '@/utils'
+import { isPCByWidth } from '@/utils'
 import { message } from '@/utils/message'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
@@ -33,7 +33,6 @@ import {
   STORAGE_SET_POSITION_CONFIRM_CHECKED,
   STORAGE_SET_QUICK_PLACE_ORDER_CHECKED
 } from '@/utils/storage'
-import { covertProfit } from '@/utils/wsUtil'
 
 import { getEnv } from '@/env'
 import { getSymbolTicker } from '@/services/api/market/symbol'
@@ -178,7 +177,16 @@ class TradeStore {
 
   @observable tradeSymbolTickerMap = {} as Record<string, MarketSymbol.SymbolNewTicker> // 品种列表页面侧边栏 当前品种的ticker 高开低收
 
-  timeoutTimers = [] as NodeJS.Timeout[] // 定时器
+  positionListLoadingTimer: any = null // 持仓列表loading定时器
+  pendingListLoadingTimer: any = null // 挂单列表loading定时器
+  setSwitchAccountLoadingTimer: any = null // 切换账户loading定时器
+  checkSocketReadyTimer1: any = null // 检查socket连接定时器
+  checkSocketReadyTimer2: any = null // 检查socket连接定时器
+  checkSocketReadyTimer3: any = null // 检查socket连接定时器
+  setActiveSymbolNameTimer: any = null // 设置激活品种定时器
+  getSymbolListTimer1: any = null
+  getSymbolListTimer2: any = null
+  timeoutTimers: Array<NodeJS.Timeout> = []
 
   // 初始化加载
   @action
@@ -195,10 +203,12 @@ class TradeStore {
     const localOrderQuickPlaceOrderChecked = await STORAGE_GET_QUICK_PLACE_ORDER_CHECKED()
     const localOrderConfirmChecked = await STORAGE_GET_ORDER_CONFIRM_CHECKED()
     const localPositionConfirmChecked = await STORAGE_GET_POSITION_CONFIRM_CHECKED()
-    this.orderQuickPlaceOrderChecked = localOrderQuickPlaceOrderChecked !== null ? localOrderQuickPlaceOrderChecked : false
-    this.orderConfirmChecked = localOrderConfirmChecked !== null ? localOrderConfirmChecked : true
-    this.positionConfirmChecked = localPositionConfirmChecked !== null ? localPositionConfirmChecked : true
-    this.historySearchList = (await STORAGE_GET_HISTORY_SEARCH()) || []
+    runInAction(() => {
+      this.orderQuickPlaceOrderChecked = localOrderQuickPlaceOrderChecked !== null ? localOrderQuickPlaceOrderChecked : false
+      this.orderConfirmChecked = localOrderConfirmChecked !== null ? localOrderConfirmChecked : true
+      this.positionConfirmChecked = localPositionConfirmChecked !== null ? localPositionConfirmChecked : true
+      this.historySearchList = STORAGE_GET_HISTORY_SEARCH() || []
+    })
   }
 
   // 关闭定时器
@@ -228,6 +238,28 @@ class TradeStore {
   @action
   setTradePageActive = (value: boolean) => {
     this.tradePageActive = value
+  }
+
+  // 同步worker计算结果
+  @action
+  setSycCalcRes = (data: any) => {
+    runInAction(() => {
+      // 有变化才更新
+      if (this.accountBalanceInfo?.money && data?.accountBalanceInfo?.money !== this.accountBalanceInfo?.money) {
+        this.accountBalanceInfo = data?.accountBalanceInfo
+      }
+      if (this.maxOpenVolume && data?.maxOpenVolume !== this.maxOpenVolume) {
+        this.maxOpenVolume = data?.maxOpenVolume
+      }
+      if (this.positionListTotalProfit && data?.positionListTotalProfit !== this.positionListTotalProfit) {
+        this.positionListTotalProfit = data?.positionListTotalProfit
+      }
+      if (this.expectedMargin && data?.expectedMargin !== this.expectedMargin) {
+        this.expectedMargin = data?.expectedMargin
+      }
+      this.positionListSymbolCalcInfo = data?.positionListSymbolCalcInfo
+      this.rightWidgetSelectMarginInfo = data?.rightWidgetSelectMarginInfo
+    })
   }
 
   // =========== APP品种历史搜索记录 ==========
@@ -475,192 +507,18 @@ class TradeStore {
 
     // 需要刷新k线，否则切换不同账号加载的品种不一样
     push('/trade')
-    // klineStore.destroyed() // 非交易页面跳转需要重置trandview实例，否则报错
 
     const timer = setTimeout(() => {
       // 停止动画播放
       this.setSwitchAccountLoading(false)
     }, 2000)
-
     this.timeoutTimers.push(timer)
   }
-
-  // 获取当前账户账户余额、保证金信息
-  // @action
-  // getAccountBalance = () => {
-  //   const currentAccountInfo = this.currentAccountInfo
-  //   const currencyDecimal = currentAccountInfo.currencyDecimal
-
-  //   // 账户余额
-  //   const money = Number(toFixed(currentAccountInfo.money || 0, currencyDecimal))
-  //   // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
-  //   const occupyMargin = Number(
-  //     toFixed(Number(currentAccountInfo?.margin || 0) + Number(currentAccountInfo?.isolatedMargin || 0), currencyDecimal)
-  //   )
-  //   // 可用保证金
-  //   let availableMargin = Number(toFixed(money - occupyMargin, currencyDecimal))
-  //   // 持仓总浮动盈亏
-  //   const totalOrderProfit = Number(toFixed(this.getCurrentAccountFloatProfit(this.positionList), currencyDecimal))
-  //   // 持仓单总的库存费
-  //   const totalInterestFees = Number(
-  //     toFixed(
-  //       this.positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.interestFees), currencyDecimal)), 0) || 0,
-  //       currencyDecimal
-  //     )
-  //   )
-  //   // 持仓单总的手续费
-  //   const totalHandlingFees = Number(
-  //     toFixed(
-  //       this.positionList.reduce((total, next) => Number(total) + Number(toFixed(Number(next.handlingFees), currencyDecimal)), 0) || 0,
-  //       currencyDecimal
-  //     )
-  //   )
-  //   // 净值 = 账户余额 + 库存费 + 手续费 + 浮动盈亏
-  //   const balance = Number(Number(currentAccountInfo.money || 0) + totalInterestFees + totalHandlingFees + totalOrderProfit)
-
-  //   // 账户总盈亏 = 所有订单的盈亏 + 所有订单的库存费 + 所有订单的手续费
-  //   const totalProfit = totalOrderProfit + totalInterestFees + totalHandlingFees
-
-  //   // console.log('totalInterestFees', totalInterestFees)
-  //   // console.log('totalHandlingFees', totalHandlingFees)
-  //   // console.log('totalOrderProfit', totalOrderProfit)
-  //   // console.log('totalProfit', totalProfit)
-
-  //   // 账户组设置“可用计算未实现盈亏”时
-  //   // 新可用预付款=原来的可用预付款+账户的持仓盈亏
-  //   if (currentAccountInfo?.usableAdvanceCharge === 'PROFIT_LOSS') {
-  //     availableMargin = availableMargin + totalProfit
-  //   }
-  //   return {
-  //     occupyMargin,
-  //     availableMargin,
-  //     balance,
-  //     totalProfit,
-  //     currentAccountInfo,
-  //     money
-  //   }
-  // }
 
   // 使用从worker计算同步的数据
   @action
   getAccountBalance = () => {
     return this.accountBalanceInfo
-  }
-
-  // 计算逐仓保证金信息
-  @action
-  calcIsolatedMarginRateInfo = (filterPositionList: Order.BgaOrderPageListItem[]) => {
-    let compelCloseRatio = this.currentAccountInfo.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
-    let orderMargin = 0 // 订单总的保证金
-    let handlingFees = 0 // 订单总的手续费
-    let interestFees = 0 // 订单总的库存费
-    let profit = 0 // 订单总的浮动盈亏
-    filterPositionList.map((item) => {
-      const orderProfit = covertProfit(item) as any
-      orderMargin += Number(item.orderMargin || 0)
-      handlingFees += Number(item.handlingFees || 0)
-      interestFees += Number(item.interestFees || 0)
-      if (orderProfit) {
-        profit += orderProfit
-      }
-    })
-
-    // 逐仓净值=账户余额（单笔或多笔交易保证金）+ 库存费 + 手续费 + 浮动盈亏
-    const isolatedBalance = Number(orderMargin + Number(interestFees || 0) + Number(handlingFees || 0) + Number(profit || 0))
-    // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
-    const marginRate = orderMargin && isolatedBalance ? toFixed((isolatedBalance / orderMargin) * 100) : 0
-    const margin = Number(orderMargin * (compelCloseRatio / 100))
-    const balance = toFixed(isolatedBalance, 2)
-
-    // console.log('orderMargin', orderMargin)
-    // console.log('compelCloseRatio', compelCloseRatio)
-    // console.log('维持保证金margin', margin)
-
-    return {
-      marginRate,
-      margin,
-      balance
-    }
-  }
-
-  /**
-   *
-   * @param item
-   * @returns
-   */
-  /**
-   * 计算全仓/逐仓：保证金率、维持保证金
-   * @param item 持仓单item
-   * @returns
-   */
-  // @action
-  // getMarginRateInfo = (item?: Order.BgaOrderPageListItem) => {
-  //   const currentLiquidationSelectBgaId = this.currentLiquidationSelectBgaId
-  //   // const conf = item?.conf || quote?.symbolConf // 品种配置信息
-  //   // const buySell = this.buySell
-  //   const isCrossMargin = item?.marginType === 'CROSS_MARGIN' || (!item && currentLiquidationSelectBgaId === 'CROSS_MARGIN') // 全仓
-  //   // 全仓保证金率：全仓净值/占用 = 保证金率
-  //   // 全仓净值 = 全仓净值 - 逐仓单净值(单笔或多笔)
-  //   // 逐仓保证金率：当前逐仓净值 / 当前逐仓订单占用 = 保证金率
-  //   // 净值=账户余额+库存费+手续费+浮动盈亏
-  //   const currentAccountInfo = this.currentAccountInfo
-  //   let { balance } = this.getAccountBalance()
-
-  //   let marginRate = 0
-  //   let margin = 0 // 维持保证金 = 占用保证金 * 强制平仓比例
-  //   const positionList = this.positionList // 注意这里外部传递过来的list是处理过汇率 浮动盈亏的
-  //   let compelCloseRatio = positionList?.[0]?.compelCloseRatio || 0 // 强制平仓比例(订单列表都是一样的，同一个账户组)
-  //   compelCloseRatio = compelCloseRatio ? compelCloseRatio / 100 : 0
-  //   if (isCrossMargin) {
-  //     // 全仓占用的保证金
-  //     const occupyMargin = Number(toFixed(Number(currentAccountInfo.margin || 0), 2))
-  //     // 判断是否存在全仓单
-  //     const hasCrossMarginOrder = positionList.some((item) => item.marginType === 'CROSS_MARGIN')
-  //     if (hasCrossMarginOrder) {
-  //       // 逐仓保证金信息
-  //       const marginInfo = this.calcIsolatedMarginRateInfo(this.positionList.filter((item) => item.marginType === 'ISOLATED_MARGIN'))
-  //       // 全仓净值：全仓净值 - 逐仓净值
-  //       const crossBalance = Number(toFixed(balance - marginInfo.balance, 2))
-  //       balance = crossBalance
-  //       marginRate = occupyMargin ? toFixed((balance / occupyMargin) * 100) : 0
-  //       margin = Number(occupyMargin * compelCloseRatio)
-
-  //       // console.log('逐仓净值', marginInfo.balance)
-  //       // console.log('计算后的全仓净值', balance)
-  //       // console.log('全仓occupyMargin', occupyMargin)
-  //       // console.log('marginRate', marginRate)
-  //     }
-  //   } else {
-  //     let filterPositionList = [item] as Order.BgaOrderPageListItem[]
-  //     // 逐仓模式保证金
-  //     const marginInfo = this.calcIsolatedMarginRateInfo(filterPositionList)
-  //     return marginInfo
-  //   }
-
-  //   return {
-  //     marginRate,
-  //     margin,
-  //     balance
-  //   }
-  // }
-
-  // 计算当前账户总的浮动盈亏
-  @action
-  getCurrentAccountFloatProfit = (list: Order.BgaOrderPageListItem[]) => {
-    const precision = this.currentAccountInfo.currencyDecimal
-    // const data = cloneDeep(list)
-    const data = list
-    // 持仓总浮动盈亏
-    let totalProfit = 0
-    if (data.length) {
-      data.forEach((item: Order.BgaOrderPageListItem) => {
-        const profit = covertProfit(item) // 浮动盈亏
-        // item.profit = profit
-        // 先截取在计算，否则跟页面上截取后的值累加对不上
-        totalProfit += Number(toFixed(profit, precision))
-      })
-    }
-    return totalProfit
   }
 
   // 调用接口计算保证金
@@ -743,7 +601,6 @@ class TradeStore {
         ws.subscribeExchangeRateQuote()
       })
     })
-
     this.timeoutTimers.push(timer)
   }
 
@@ -782,7 +639,6 @@ class TradeStore {
         })
       })
     })
-
     this.timeoutTimers.push(timer)
   }
 
@@ -822,7 +678,6 @@ class TradeStore {
         })
       })
     })
-
     this.timeoutTimers.push(timer)
   }
 
@@ -894,7 +749,6 @@ class TradeStore {
       // 重新订阅深度
       ws.subscribeDepth()
     }, 50)
-
     this.timeoutTimers.push(timer)
   }
 

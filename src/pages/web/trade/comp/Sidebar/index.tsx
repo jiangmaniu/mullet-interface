@@ -4,17 +4,15 @@ import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Col, Input, Row, Skeleton } from 'antd'
 import { observer } from 'mobx-react'
 import VirtualList from 'rc-virtual-list'
-import React, { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 
 import Empty from '@/components/Base/Empty'
 import Iconfont from '@/components/Base/Iconfont'
-import Popup from '@/components/Base/Popup'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import Tabs from '@/components/Base/Tabs'
 import { useEnv } from '@/context/envProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
-import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
@@ -45,7 +43,9 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   const { isDark } = theme
   const searchInputRef = useRef<any>()
   const defaultClassify = ENV.SHOW_QUOTE_CATEGORY_ALL_TAB ? '0' : '10'
-  const symbolList = trade.symbolListAll.filter((item) => (categoryTabKey === '0' ? true : item.classify === categoryTabKey)) // 全部品种列表
+  const symbolList = useMemo(() => {
+    return trade.symbolListAll.filter((item) => (categoryTabKey === '0' ? true : item.classify === categoryTabKey)) // 全部品种列表
+  }, [categoryTabKey, trade.symbolListAll])
 
   const [loading, setLoading] = useState(true)
 
@@ -104,7 +104,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     { key: 'CATEGORY', label: <FormattedMessage id="mt.pinlei" /> }
   ]
 
-  const getList = () => {
+  const getList = useCallback(() => {
     // 搜索列表
     if (searchValue) return list
 
@@ -115,7 +115,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
 
     // 列表
     return symbolList
-  }
+  }, [searchValue, list, activeKey, symbolList, trade.favoriteList])
 
   const SearchIcon = <Iconfont name="sousuo" width={24} height={24} color={isDark ? '#fff' : gray['600']} />
 
@@ -141,7 +141,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
     </div>
   )
 
-  const renderContent = () => {
+  const renderContent = useMemo(() => {
     const list: any = getList()
     const ContainerHeight = !showFixSidebar ? 340 : 531
 
@@ -232,7 +232,7 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
         </div>
       </>
     )
-  }
+  }, [loading, activeKey, showFixSidebar, getList])
 
   const openSidebar = () => {
     setOpenTradeSidebar(!openTradeSidebar)
@@ -314,95 +314,70 @@ const Sidebar = forwardRef(({ style, showFixSidebar = true }: IProps, ref) => {
   })
 
   return (
-    <SwitchPcOrWapLayout
-      pcComponent={
-        <>
-          {/* 展开侧边栏视图 */}
-          {(openTradeSidebar || !showFixSidebar) && (
-            <div
-              className={cn('w-[364px] flex-shrink-0 relative bg-primary', !showFixSidebar ? 'max-h-[600px]' : 'h-[700px]', {
-                [borderClassName]: showFixSidebar
-              })}
-              style={style}
-            >
-              {renderTabs}
-              {renderSearch()}
-              {renderCategoryTabs()}
-              <div className="flex justify-between flex-col">{renderContent()}</div>
-            </div>
-          )}
-          {/* 收起侧边栏视图 */}
-          {!openTradeSidebar && showFixSidebar && (
-            <div className={cn('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
-              <div
-                className="border-b border-gray-60 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"
-                onClick={openSidebar}
-              >
-                <Iconfont
-                  name="shouqi"
-                  height={24}
-                  width={24}
-                  color={isDark ? '#fff' : gray['900']}
-                  style={{ transform: 'rotate(180deg)' }}
-                />
-              </div>
-              <div
-                className="py-4 cursor-pointer"
-                onClick={() => {
-                  openSidebar()
-                  setTimeout(() => {
-                    searchInputRef.current?.focus()
-                  }, 300)
-                }}
-              >
-                {SearchIcon}
-              </div>
-              <div
-                className="flex flex-col items-center w-full relative overflow-y-auto pt-3"
-                style={{
-                  scrollbarColor: 'var(--scrollbar-hover-color)',
-                  scrollbarWidth: 'thin'
-                }}
-              >
-                {symbolList.map((item, idx) => {
-                  const symbol = item.symbol
-                  const isActive = trade.activeSymbolName === symbol
-                  return (
-                    <div
-                      key={idx}
-                      className={cn('mb-4 cursor-pointer w-[38px] h-[38px] flex items-center justify-center', {
-                        [activeClassName]: isActive
-                      })}
-                      onClick={() => {
-                        // 切换品种
-                        switchSymbol(symbol)
-                      }}
-                    >
-                      <SymbolIcon src={item?.imgUrl} width={28} height={28} symbol={symbol} showMarketCloseIcon />
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-          )}
-        </>
-      }
-      wapComponent={
-        <Popup
-          title={activeKey === 'CATEGORY' ? <FormattedMessage id="mt.zixuan" /> : <FormattedMessage id="mt.pinlei" />}
-          ref={popupRef}
-          position="bottom"
-          height="80vh"
+    <>
+      {/* 展开侧边栏视图 */}
+      {(openTradeSidebar || !showFixSidebar) && (
+        <div
+          className={cn('w-[364px] flex-shrink-0 relative bg-primary', !showFixSidebar ? 'max-h-[600px]' : 'h-[700px]', {
+            [borderClassName]: showFixSidebar
+          })}
+          style={style}
         >
-          <div>
-            {renderSearch()}
-            {!searchValue && <div className="pt-2">{renderTabs}</div>}
-            {activeKey === 'CATEGORY' && renderCategoryTabs()}
-            {renderContent()}
+          {renderTabs}
+          {renderSearch()}
+          {renderCategoryTabs()}
+          <div className="flex justify-between flex-col">{renderContent}</div>
+        </div>
+      )}
+      {/* 收起侧边栏视图 */}
+      {!openTradeSidebar && showFixSidebar && (
+        <div className={cn('h-[700px] w-[60px] bg-primary flex flex-col items-center relative', borderClassName)}>
+          <div
+            className="border-b border-gray-60 dark:border-[var(--border-primary-color)] pb-[2px] pt-[11px] text-center w-full cursor-pointer"
+            onClick={openSidebar}
+          >
+            <Iconfont name="shouqi" height={24} width={24} color={isDark ? '#fff' : gray['900']} style={{ transform: 'rotate(180deg)' }} />
           </div>
-        </Popup>
-      }
-    />
+          <div
+            className="py-4 cursor-pointer"
+            onClick={() => {
+              openSidebar()
+              setTimeout(() => {
+                searchInputRef.current?.focus()
+              }, 300)
+            }}
+          >
+            {SearchIcon}
+          </div>
+          <div
+            className="flex flex-col items-center w-full relative overflow-y-auto pt-3"
+            style={{
+              scrollbarColor: 'var(--scrollbar-hover-color)',
+              scrollbarWidth: 'thin'
+            }}
+          >
+            {symbolList.map((item, idx) => {
+              const symbol = item.symbol
+              const isActive = trade.activeSymbolName === symbol
+              return (
+                <div
+                  key={idx}
+                  className={cn('mb-4 cursor-pointer w-[38px] h-[38px] flex items-center justify-center', {
+                    [activeClassName]: isActive
+                  })}
+                  onClick={() => {
+                    // 切换品种
+                    switchSymbol(symbol)
+                  }}
+                >
+                  <SymbolIcon src={item?.imgUrl} width={28} height={28} symbol={symbol} showMarketCloseIcon />
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+    </>
   )
 })
 

@@ -13,6 +13,7 @@ import { IRecordTabKey } from '@/mobx/trade'
 import { formatNum, toFixed } from '@/utils'
 import { cn } from '@/utils/cn'
 
+import useCurrentAccountFloatProfit from '@/hooks/useCurrentAccountFloatProfit'
 import OpenTipsModal from '../Modal/OpenTipsModal'
 import FundRecordList from './comp/FundRecordList'
 import HistoryCloseList from './comp/HistoryCloseList'
@@ -58,7 +59,7 @@ function TradeRecord({ trigger }: IProps) {
   }, [trade.currentAccountInfo?.id])
 
   // 当前筛选列表的持仓总浮动盈亏
-  const totalProfit = trade.getCurrentAccountFloatProfit(currentPositionList)
+  const totalProfit = useCurrentAccountFloatProfit({ list: currentPositionList })
   const totalProfitShow = formatNum(toFixed(totalProfit))
 
   const tabItems: { key: IRecordTabKey; label: any }[] = [

@@ -1,4 +1,3 @@
-import { notification } from 'antd'
 import { debounce } from 'lodash'
 import { action, configure, makeObservable, observable, runInAction, toJS } from 'mobx'
 
@@ -7,13 +6,9 @@ import { formaOrderList } from '@/services/api/tradeCore/order'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuoteV2 } from '@/utils/wsUtil'
 
-import Iconfont from '@/components/Base/Iconfont'
 import { getEnv } from '@/env'
-import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
 import { isPCByWidth } from '@/utils'
-import { parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
-import { getPathname } from '@/utils/navigator'
-import { Toast } from 'antd-mobile'
+import mitt from '@/utils/mitt'
 import klineStore from './kline'
 import trade from './trade'
 import { IDepth, IQuoteItem, ITradeType, MessagePopupInfo, WorkerType } from './ws.types'
@@ -194,122 +189,13 @@ class WSStore {
         this.receiveTradeMessage(data)
         break
       case 'MESSAGE_RES':
-        // 刷新消息未读数量
-        MessageStore.getUnreadMessageCount()
-        // 更新消息通知
-        const info = data as MessagePopupInfo
-        const content = removeOrderMessageFieldNames(info?.content || '')
-        console.log('更新消息通知', info)
-
-        // 公告消息不弹窗
-        // if (info?.type === 'GROUP') return
-
-        if (isPCByWidth()) {
-          if (location.pathname.indexOf('/trade') === -1) return
-          notification.info({
-            message: <span className="text-primary font-medium">{info?.title}</span>,
-            description: <span className="text-secondary">{content}</span>,
-            placement: 'bottomRight',
-            style: {
-              background: 'var(--dropdown-bg)'
-            }
-            // showProgress: true
-          })
-        } else {
-          // Toast.show({
-          //   content: (
-          //     <div className="toast-container">
-          //       {info?.title}：{content}
-          //     </div>
-          //   ),
-          //   position: 'top',
-          //   duration: 3000
-          // })
-          // 只在这些入口页面提示消息
-          const paths = ['/app/quote', '/app/trade', '/app/position', '/app/quote/kline', '/app/user-center']
-          const pathname = getPathname(location.pathname)
-          if (!paths.includes(pathname)) {
-            return
-          }
-
-          const fields = parseOrderMessage(info?.content || '')
-          const symbolIcon = trade.symbolListAll.find((item) => item.symbol === fields.symbol)?.imgUrl
-          Toast.show({
-            content: (
-              <div
-                className="w-full flex items-center flex-col"
-                onClick={() => {
-                  Toast.clear()
-                  // push('/app/position')
-                }}
-              >
-                <div className="flex items-center w-full justify-between px-[14px] py-[6px] bg-gray-50">
-                  <div className="flex items-center">
-                    <Iconfont size={18} name="chengjiaotongzhi" />
-                    <span className="pl-1 text-primary text-xs font-pf-medium">
-                      {/* {getIntl().formatMessage({ id: 'mt.xiaoxitongzhi' })} */}
-                      {info?.title}
-                    </span>
-                  </div>
-                  {/* <Iconfont size={18} name="anniu-gengduo" /> */}
-                </div>
-                <div className="px-[14px] py-[10px] flex items-center justify-between w-full">
-                  <div className="flex flex-col">
-                    <div className="flex items-center">
-                      {/* <div className="flex items-center">
-                        <img src={getSymbolIcon(symbolIcon)} width={20} height={20} alt="" className="rounded-full" />
-                        <span className="text-primary font-semibold text-base pl-1">{fields.symbol}</span>
-                      </div> */}
-                      {/* <span className={cn('text-base font-pf-medium pl-2', fields.tradeDirection === 'BUY' ? 'text-green' : 'text-red')}> */}
-                      {/* {fields.tradeDirection === 'BUY'
-                          ? getIntl().formatMessage({ id: 'mt.mairu' })
-                          : getIntl().formatMessage({ id: 'mt.maichu' })}{' '} */}
-                      {/* @TODO 暂时没有杠杆支持 */}
-                      {/* 20X */}
-                      {/* </span> */}
-                      {info?.content}
-                    </div>
-                    {/* @TODO 暂时没有保证金类型、订单类型 */}
-                    {/* {(fields.marginType || fields.orderType) && (
-                      <div className="flex items-center pt-1">
-                        <span className="text-primary text-xs">
-                          {fields.marginType === 'CROSS_MARGIN'
-                            ? getIntl().formatMessage({ id: 'mt.quancang' })
-                            : getIntl().formatMessage({ id: 'mt.zhucang' })}
-                        </span>
-                        {fields.orderType && (
-                          <>
-                            <span className="mx-1 bg-gray-500 w-[1px] h-2"></span>
-                            <span className="text-primary text-xs">{getEnum().Enum.OrderType[fields.orderType]?.text}</span>
-                          </>
-                        )}
-                      </div>
-                    )} */}
-                  </div>
-                  {/* <div className="text-primary text-base font-pf-medium">
-                    {getIntl().formatMessage({ id: 'mt.chengjiao' })} {fields.tradeVolume}
-                    {getIntl().formatMessage({ id: 'mt.lot' })}
-                  </div> */}
-                </div>
-              </div>
-            ),
-            position: 'top',
-            duration: 5000,
-            maskClassName: 'webapp-custom-message animate__animated animate__bounceInDown'
-          })
-        }
+        // 派发一个消息事件
+        mitt.emit('ws-message-popup', data as MessagePopupInfo)
         // console.log('消息通知', data)
         break
       // 同步计算的结果返回
       case 'SYNC_CALCA_RES':
-        runInAction(() => {
-          stores.trade.accountBalanceInfo = data?.accountBalanceInfo
-          stores.trade.positionListSymbolCalcInfo = data?.positionListSymbolCalcInfo
-          stores.trade.rightWidgetSelectMarginInfo = data?.rightWidgetSelectMarginInfo
-          stores.trade.expectedMargin = data?.expectedMargin
-          stores.trade.maxOpenVolume = data?.maxOpenVolume
-          stores.trade.positionListTotalProfit = data?.positionListTotalProfit
-        })
+        stores.trade.setSycCalcRes(data)
         break
       case 'RESOLVE_MSG':
         this.resolveMsg(data)
@@ -625,7 +511,6 @@ class WSStore {
   }
 
   // 封装一个延迟执行的取消订阅方法
-
   debounceBatchCloseSymbol = debounce(
     ({}: // list = []
     {

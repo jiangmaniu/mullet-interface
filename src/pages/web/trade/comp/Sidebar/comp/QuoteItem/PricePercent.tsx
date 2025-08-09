@@ -4,20 +4,20 @@ import { gray } from '@/theme/theme.config'
 import { formatNum } from '@/utils'
 import { Col } from 'antd'
 import { observer } from 'mobx-react'
-import { Fragment } from 'react'
+import { Fragment, useEffect, useRef } from 'react'
 
 type IProps = {
   symbol: string
 }
 
-// 使用key强制React重新创建组件，减少渲染次数
-function KeyBasedPricePercent({ symbol }: IProps) {
+function OptimizedPricePercent({ symbol }: IProps) {
   const { theme } = useTheme()
   const { isDark, up: upColor, down: downColor } = theme
   const res = useCurrentQuote(symbol)
 
-  // 使用数据变化作为key，强制React重新创建
-  const componentKey = `${res?.bid}-${res?.ask}-${res?.percent}-${res?.bidDiff}-${res?.askDiff}`
+  // 使用ref来控制动画，而不是重创建DOM
+  const bidRef = useRef<HTMLDivElement>(null)
+  const askRef = useRef<HTMLDivElement>(null)
 
   // 计算状态
   let bidColor: 'up' | 'down' | 'same' = 'same'
@@ -27,6 +27,24 @@ function KeyBasedPricePercent({ symbol }: IProps) {
     bidColor = res?.bidDiff === 0 ? 'same' : res?.bidDiff > 0 ? 'up' : 'down'
     askColor = res?.askDiff === 0 ? 'same' : res?.askDiff > 0 ? 'up' : 'down'
   }
+
+  // 使用effect来触发动画，而不是通过重创建组件
+  useEffect(() => {
+    if (bidRef.current && bidColor !== 'same') {
+      bidRef.current.style.animation = 'none'
+      // 强制重排
+      bidRef.current.offsetHeight
+      bidRef.current.style.animation = `flash${bidColor === 'up' ? 'Up' : 'Down'} 800ms ease-out`
+    }
+  }, [res?.bidDiff, bidColor])
+
+  useEffect(() => {
+    if (askRef.current && askColor !== 'same') {
+      askRef.current.style.animation = 'none'
+      askRef.current.offsetHeight
+      askRef.current.style.animation = `flash${askColor === 'up' ? 'Up' : 'Down'} 800ms ease-out`
+    }
+  }, [res?.askDiff, askColor])
 
   const getBoxStyle = (colorType: 'up' | 'down' | 'same') => {
     const baseStyle = {
@@ -47,15 +65,13 @@ function KeyBasedPricePercent({ symbol }: IProps) {
         return {
           ...baseStyle,
           backgroundColor: upColor,
-          color: 'white',
-          animation: 'flashUp 800ms ease-out'
+          color: 'white'
         }
       case 'down':
         return {
           ...baseStyle,
           backgroundColor: downColor,
-          color: 'white',
-          animation: 'flashDown 800ms ease-out'
+          color: 'white'
         }
       default:
         return {
@@ -68,12 +84,16 @@ function KeyBasedPricePercent({ symbol }: IProps) {
   }
 
   return (
-    <Fragment key={componentKey}>
+    <Fragment>
       <Col className="flex pl-2" span={6}>
-        <div style={getBoxStyle(bidColor)}>{res?.bid ? formatNum(res.bid) : '--'}</div>
+        <div ref={bidRef} style={getBoxStyle(bidColor)}>
+          {res?.bid ? formatNum(res.bid) : '--'}
+        </div>
       </Col>
       <Col className="flex" span={6}>
-        <div style={getBoxStyle(askColor)}>{res?.ask ? formatNum(res.ask) : '--'}</div>
+        <div ref={askRef} style={getBoxStyle(askColor)}>
+          {res?.ask ? formatNum(res.ask) : '--'}
+        </div>
       </Col>
       <Col span={4} className="flex flex-col items-end pr-2">
         <div
@@ -91,4 +111,4 @@ function KeyBasedPricePercent({ symbol }: IProps) {
   )
 }
 
-export default observer(KeyBasedPricePercent)
+export default observer(OptimizedPricePercent)

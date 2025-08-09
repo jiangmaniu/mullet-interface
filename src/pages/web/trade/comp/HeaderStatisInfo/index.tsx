@@ -59,6 +59,20 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
     )
   }, [symbol])
 
+  const renderSidebar = useMemo(() => {
+    return (
+      <div
+        className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-br-xl border-x border-b border-[#f3f3f3] dark:border-[var(--border-primary-color)] dark:overflow-hidden bg-white dark:!shadow-none"
+        style={{
+          boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
+          display: showSidebar && !openTradeSidebar ? 'block' : 'none'
+        }}
+      >
+        <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
+      </div>
+    )
+  }, [showSidebar, openTradeSidebar])
+
   return (
     <>
       <div className="flex items-center justify-between px-[10px] py-2 border-b border-[var(--divider-line-color)]">
@@ -107,15 +121,7 @@ function HeaderStatisInfo({ sidebarRef }: IProps) {
                 )}
               </div>
 
-              <div
-                className="absolute z-[100] left-0 top-[50px] rounded-b-xl rounded-br-xl border-x border-b border-[#f3f3f3] dark:border-[var(--border-primary-color)] dark:overflow-hidden bg-white dark:!shadow-none"
-                style={{
-                  boxShadow: '0px 2px 10px 10px rgba(227, 227, 227, 0.1)',
-                  display: showSidebar && !openTradeSidebar ? 'block' : 'none'
-                }}
-              >
-                <Sidebar style={{ minWidth: 400 }} showFixSidebar={false} />
-              </div>
+              {renderSidebar}
             </div>
             <div className="flex items-center xxl:pl-3 xl:pl-7 !pt-[2px] xl:relative xl:top-[-6px] xl:left-[10px] xxl:top-0 xxl:left-0">
               {res?.hasQuote && (

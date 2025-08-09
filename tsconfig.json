@@ -5,6 +5,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "importHelpers": true,
+    "removeComments": true,
     "strict": true,
     "noEmit": true,
     "jsx": "preserve",
@@ -32,5 +33,6 @@
     // This improves issue grouping in Sentry.
     // "sourceRoot": "/"
   },
-  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "config/plugins/prefetch.ts"]
+  "include": ["./**/*.d.ts", "./**/*.ts", "./**/*.tsx", "config/plugins/prefetch.ts"],
+  "exclude": ["node_modules", "dist", "public"]
 }

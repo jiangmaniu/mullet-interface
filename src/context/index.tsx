@@ -1,4 +1,5 @@
 import updateVersion from '@/hooks/updateVersion'
+import useReceiveWsMessage from '@/hooks/useReceiveWsMessage'
 import { STORAGE_SET_REGISTER_CODE } from '@/utils/storage'
 import { useEffect } from 'react'
 import { EnvProvider } from './envProvider'
@@ -17,6 +18,7 @@ export const Provider = ({ children }: IProps): JSX.Element => {
   const searchParams = new URLSearchParams(window.location.search)
   const code = searchParams.get('code')
 
+  useReceiveWsMessage()
   updateVersion()
 
   useEffect(() => {
