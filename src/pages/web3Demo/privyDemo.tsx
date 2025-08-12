@@ -358,7 +358,7 @@ const TradeDemo = observer(() => {
       <div>当前节点：{JSON.stringify(cluster)}</div>
       <div>
         切换节点：
-        {clusters.map((item, idx) => (
+        {(clusters || []).map((item, idx) => (
           <Button type={item.name === cluster.name ? 'primary' : 'default'} onClick={() => setCluster(item)} key={idx}>
             {item.name}
           </Button>
