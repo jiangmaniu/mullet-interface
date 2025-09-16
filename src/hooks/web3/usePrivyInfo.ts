@@ -1,10 +1,12 @@
-import { useConnectWallet, usePrivy, useSolanaWallets } from '@privy-io/react-auth'
+import { useConnectWallet, usePrivy } from '@privy-io/react-auth'
+import { useConnectedStandardWallets } from '@privy-io/react-auth/solana'
 
 // 统一获取privy信息，并处理导出
 export default function usePrivyInfo() {
   const { user, authenticated, ready } = usePrivy()
-  const { wallets } = useSolanaWallets()
+  const { wallets } = useConnectedStandardWallets()
   const { connectWallet } = useConnectWallet()
+
   const wallet = user?.wallet
   const address = wallet?.address || ''
   const foundWallet = wallets.find((w) => w.address === address) // 钱包实例

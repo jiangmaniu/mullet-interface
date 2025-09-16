@@ -4,6 +4,7 @@ import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
+import { push } from '@/utils/navigator'
 import Logo from '../../Admin/Header/Logo'
 import { HeaderRightContent } from '../../Admin/RightContent'
 
@@ -38,6 +39,14 @@ export default function Header() {
             {/* <div className="flex-1 h-full">
               <HeaderTabsView />
             </div> */}
+            <div className="flex items-center gap-x-4">
+              <div onClick={() => push('/mxlp')} className="cursor-pointer">
+                MXLP
+              </div>
+              <div onClick={() => push('/vault')} className="cursor-pointer">
+                Vault
+              </div>
+            </div>
             <div className="min-w-[565px] h-full box-border flex-1">
               <div className="h-full">
                 <div className="flex items-center justify-end h-full">

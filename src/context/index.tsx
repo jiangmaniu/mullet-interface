@@ -1,3 +1,4 @@
+import { Providers } from '@/components/providers'
 import updateVersion from '@/hooks/updateVersion'
 import useReceiveWsMessage from '@/hooks/useReceiveWsMessage'
 import { STORAGE_SET_REGISTER_CODE } from '@/utils/storage'
@@ -35,18 +36,20 @@ export const Provider = ({ children }: IProps): JSX.Element => {
   }, [code])
 
   return (
-    <PrivyProvider>
-      <NotificationProvider>
-        <LoadingProvider>
-          <StoresProvider>
-            <EnvProvider>
-              <ThemeProvider>
-                <LanguageProvider>{children}</LanguageProvider>
-              </ThemeProvider>
-            </EnvProvider>
-          </StoresProvider>
-        </LoadingProvider>
-      </NotificationProvider>
-    </PrivyProvider>
+    <Providers>
+      <PrivyProvider>
+        <NotificationProvider>
+          <LoadingProvider>
+            <StoresProvider>
+              <EnvProvider>
+                <ThemeProvider>
+                  <LanguageProvider>{children}</LanguageProvider>
+                </ThemeProvider>
+              </EnvProvider>
+            </StoresProvider>
+          </LoadingProvider>
+        </NotificationProvider>
+      </PrivyProvider>
+    </Providers>
   )
 }

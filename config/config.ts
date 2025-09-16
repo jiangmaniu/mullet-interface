@@ -58,9 +58,9 @@ export default defineConfig({
   //     },
   //   }
   // },
-  devtool: process.env.NODE_ENV === 'development' ? 'eval' : false,
+  // devtool: process.env.NODE_ENV === 'development' ? 'eval' : false,
   // 只设置 dev 阶段的 sourcemap
-  // devtool: process.env.NODE_ENV === 'development' ?  'source-map' : 'eval' , // 启用sourcemap 结合 sentry 上传后会自动删除dist下的.map文件
+  devtool: process.env.NODE_ENV === 'development' ? 'source-map' : 'eval', // 启用sourcemap 结合 sentry 上传后会自动删除dist下的.map文件
 
   /**
    * @name 兼容性设置
@@ -219,9 +219,9 @@ export default defineConfig({
     // { name: 'theme-color', content: '#183EFC' } // 使用你的主题色
     ...(process.env.PLATFORM_SEO === '1'
       ? [
-          { name: 'application-name', content: serverEnv?.name },
-          { name: 'apple-mobile-web-app-title', content: serverEnv?.name }
-        ]
+        { name: 'application-name', content: serverEnv?.name },
+        { name: 'apple-mobile-web-app-title', content: serverEnv?.name }
+      ]
       : [])
   ],
   // favicons: [
@@ -265,26 +265,26 @@ export default defineConfig({
   // 将 node 的环境变量注入 define 配置中，可以在浏览器window.xx获取
   // 不在通过这种方式，通过public/platform/config.js 获取
   define:
-    // 开发环境使用环境变量，生产环境使用配置文件
-    {
-      'process.env.PLATFORM_SEO': process.env.PLATFORM_SEO,
-      // git版本信息，用于sentry日志上报
-      'process.env.COMMITHASH': gitRevisionPlugin.commithash(),
-      'process.env.BRANCH': gitRevisionPlugin.branch(),
-      'process.env.LASTCOMMITDATETIME': dayjs(gitRevisionPlugin.lastcommitdatetime() as string).format('YYYY-MM-DD HH:mm:ss'),
-      ...(process.env.NODE_ENV === 'development' || process.env.PLATFORM_SEO === '1'
-        ? {
-            'process.env.BASE_URL': process.env.BASE_URL,
-            'process.env.WS_URL': process.env.WS_URL,
-            'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN,
-            'process.env.CLIENT_ID': process.env.CLIENT_ID,
-            'process.env.CLIENT_SECRET': process.env.CLIENT_SECRET,
-            // seo配置-按需把public/platform/config.json配置同步过来，需要在.env-conf 中配置
-            'process.env.name': process.env.name,
-            'process.env.desc': process.env.desc
-          }
-        : {})
-    },
+  // 开发环境使用环境变量，生产环境使用配置文件
+  {
+    'process.env.PLATFORM_SEO': process.env.PLATFORM_SEO,
+    // git版本信息，用于sentry日志上报
+    'process.env.COMMITHASH': gitRevisionPlugin.commithash(),
+    'process.env.BRANCH': gitRevisionPlugin.branch(),
+    'process.env.LASTCOMMITDATETIME': dayjs(gitRevisionPlugin.lastcommitdatetime() as string).format('YYYY-MM-DD HH:mm:ss'),
+    ...(process.env.NODE_ENV === 'development' || process.env.PLATFORM_SEO === '1'
+      ? {
+        'process.env.BASE_URL': process.env.BASE_URL,
+        'process.env.WS_URL': process.env.WS_URL,
+        'process.env.IMG_DOMAIN': process.env.IMG_DOMAIN,
+        'process.env.CLIENT_ID': process.env.CLIENT_ID,
+        'process.env.CLIENT_SECRET': process.env.CLIENT_SECRET,
+        // seo配置-按需把public/platform/config.json配置同步过来，需要在.env-conf 中配置
+        'process.env.name': process.env.name,
+        'process.env.desc': process.env.desc
+      }
+      : {})
+  },
   // 配置额外的 babel 插件。可传入插件地址或插件函数。
   extraBabelPlugins: process.env.NODE_ENV === 'production' ? ['transform-remove-console'] : [],
   // https://umijs.org/docs/api/config#codesplitting
@@ -400,6 +400,6 @@ export default defineConfig({
       )
     }
 
-    config.plugin("git-version").use(GitRevisionPlugin,[])
+    config.plugin("git-version").use(GitRevisionPlugin, [])
   }
 })

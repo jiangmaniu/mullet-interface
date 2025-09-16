@@ -55,7 +55,6 @@ export async function getInitialState(): Promise<{
 }> {
   // 未登录初始化全局配置
   await stores.global.init()
-
   // 如果不是登录页面，执行
   const { location } = history
   const fetchUserInfo = stores.global.fetchUserInfo

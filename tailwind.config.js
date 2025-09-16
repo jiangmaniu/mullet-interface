@@ -1,3 +1,5 @@
+import tailwindcssScrollbar from 'tailwind-scrollbar'
+import tailwindcssAnimate from 'tailwindcss-animate'
 import TailwindcssTheme from './src/theme/theme.tailwind'
 
 /** @type {import('tailwindcss').Config} */
@@ -8,5 +10,6 @@ module.exports = {
   // 解决Antd和tailwind样式冲突问题(Button背景透明)
   corePlugins: {
     preflight: false
-  }
+  },
+  plugins: [tailwindcssScrollbar({ nocompatible: true }), tailwindcssAnimate]
 }

@@ -10,6 +10,7 @@ import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useStores } from '@/context/mobxProvider'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import useSPLTokenBalance from '@/hooks/web3/useSPLTokenBalance'
+// import { useSPLTransferPDA } from '@/hooks/web3/useSPLTransferOfKit'
 import useSPLTransfer from '@/hooks/web3/useSPLTransfer'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Form, Tooltip } from 'antd'
@@ -19,6 +20,7 @@ export default observer(
   forwardRef((props, ref) => {
     const intl = useIntl()
     const [open, setOpen] = useState(false)
+    // const { onTransfer, transferSuccess, error, setError } = useSPLTransferPDA()
     const { onTransfer, transferSuccess, error, setError } = useSPLTransfer()
     const [showLoadingModal, setShowLoadingModal] = useState(false)
     const [form] = Form.useForm()

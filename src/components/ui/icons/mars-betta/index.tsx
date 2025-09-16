@@ -1,0 +1,3 @@
+const MBIcons = {}
+
+export { MBIcons }

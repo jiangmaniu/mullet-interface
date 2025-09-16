@@ -21,6 +21,7 @@ yarn-error.log
 
 
 # visual studio code
+.VSCodeCounter
 .history
 *.log
 functions/*
