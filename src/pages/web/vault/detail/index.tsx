@@ -1,12 +1,14 @@
+import { TextCopyButton } from '@/components/button/copy-button'
 import { GeneralTooltip } from '@/components/tooltip'
-import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
+import { renderFallback } from '@/utils/format/fallback'
 import { formatAddress } from '@/utils/web3'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import VaultDetailCharts from './_comps/charts'
 import VaultDetailInfo from './_comps/info'
 import VaultDetailIOPanel from './_comps/io'
 import VaultDetailRecords from './_comps/records'
+import { useVaultDetail } from './_hooks/useVaultDetail'
 
 export default function VaultDetail() {
   return (
@@ -39,6 +41,7 @@ export default function VaultDetail() {
 }
 
 function VaultDetailTitle() {
+  const { vaultDetail } = useVaultDetail()
   const titleClassName = useEmotionCss(() => ({
     fontFamily: 'HarmonyOS Sans SC',
     fontSize: '24px',
@@ -61,13 +64,11 @@ function VaultDetailTitle() {
   }))
   return (
     <div className="py-5">
-      <div className={titleClassName}>Party Risk</div>
+      <div className={titleClassName}>{renderFallback(vaultDetail?.followPoolName)}</div>
 
       <div className="flex gap-2.5 items-center">
-        <div className={addressClassName}>{formatAddress('0x0291...3f43')}</div>
-        <Button variant="ghost" size="icon">
-          <Icons.lucide.Copy className="w-4 h-4" />
-        </Button>
+        <div className={addressClassName}>{renderFallback(formatAddress(vaultDetail?.pdaAddress))}</div>
+        {vaultDetail?.pdaAddress && <TextCopyButton text={vaultDetail?.pdaAddress} />}
       </div>
     </div>
   )

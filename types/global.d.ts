@@ -1,3 +1,5 @@
+import { createSolanaRpc } from '@solana/kit'
+
 declare global {
   type Nilable<T> = T | undefined | null
 
@@ -26,6 +28,8 @@ declare global {
     : U[K]
     : T[K]
   }
+
+  type RpcClient = ReturnType<typeof createSolanaRpc>
 }
 
 export { }

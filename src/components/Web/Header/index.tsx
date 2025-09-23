@@ -40,8 +40,8 @@ export default function Header() {
               <HeaderTabsView />
             </div> */}
             <div className="flex items-center gap-x-4">
-              <div onClick={() => push('/mxlp')} className="cursor-pointer">
-                MXLP
+              <div onClick={() => push('/lp')} className="cursor-pointer">
+                MTLP
               </div>
               <div onClick={() => push('/vault')} className="cursor-pointer">
                 Vault

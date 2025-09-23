@@ -28,6 +28,7 @@ function UserCenterAccountDropdown({ theme }: IProps) {
   const isDark = themeConfig.theme.isDark
   const [accountBoxOpen, setAccountBoxOpen] = useState(false)
   const currentUser = initialState?.currentUser
+  console.log('initialState', initialState)
   const accountList = currentUser?.accountList || []
   const realAccountList = accountList.filter((item) => !item.isSimulate)
   const isKycAuth = currentUser?.isKycAuth

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { cn } from '@/utils/cn'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
-import { useState } from 'react'
+import { show } from '@ebay/nice-modal-react'
 import { CreateVaultModal } from './create-vault-modal'
 
 export function VaultOverview() {
@@ -40,7 +40,7 @@ export function VaultOverview() {
     }
   })
 
-  const [createVaultModalOpen, setCreateVaultModalOpen] = useState(false)
+  const CreateVaultModalId = 'NiceModal_CreateVault'
 
   return (
     <div className={cn([contentClassName, 'bg-[#0A0C27] py-[35px] px-[30px] flex justify-between'])}>
@@ -50,8 +50,8 @@ export function VaultOverview() {
       </div>
 
       <div>
-        <Button onClick={() => setCreateVaultModalOpen(true)}>创建金库</Button>
-        <CreateVaultModal open={createVaultModalOpen} onOpenChange={setCreateVaultModalOpen} />
+        <Button onClick={() => show(CreateVaultModalId)}>创建金库</Button>
+        <CreateVaultModal id={CreateVaultModalId} />
       </div>
     </div>
   )

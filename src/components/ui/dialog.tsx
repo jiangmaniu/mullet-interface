@@ -49,9 +49,9 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          'group fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-32px)] max-w-[512px] -translate-x-1/2 -translate-y-1/2 rounded-[4px] bg-white shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.10),0px_8px_8px_-4px_rgba(16,24,40,0.04)] duration-200 sm:rounded-[20px]',
-          'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 ',
-          'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-top-[48%]',
+          // 'group fixed left-1/2 top-1/2 z-50 grid w-[calc(100%-32px)] max-w-[512px] -translate-x-1/2 -translate-y-1/2 rounded-[4px] bg-white shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.10),0px_8px_8px_-4px_rgba(16,24,40,0.04)] duration-200 sm:rounded-[20px]',
+          // 'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
+          // 'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%]',
           className
         )}
         {...props}

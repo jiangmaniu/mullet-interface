@@ -79,15 +79,15 @@ export default [
         component: './web/trade'
       },
       {
-        path: '/:lng/mxlp',
-        component: './web/mxlp'
+        path: '/:lng/lp',
+        component: './web/lp'
       },
       {
         path: '/:lng/vault',
         component: './web/vault'
       },
       {
-        path: '/:lng/vault/:id',
+        path: '/:lng/vault/:vaultId',
         component: './web/vault/detail'
       }
 

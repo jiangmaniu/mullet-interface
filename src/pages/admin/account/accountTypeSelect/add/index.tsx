@@ -26,6 +26,7 @@ function AddAccountComp() {
 
   const accountList = trade.accountGroupList
   const params = useParams()
+
   const accountGroupId = params?.accountId as string
   const currentAccount = (accountList.find((item) => item?.id === accountGroupId) || {}) as AccountGroup.AccountGroupItem
   const password = Form.useWatch('password', form)

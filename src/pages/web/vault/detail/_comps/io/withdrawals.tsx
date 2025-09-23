@@ -1,29 +1,133 @@
+import { NumberInput } from '@/components/input/number-input'
 import { Button } from '@/components/ui/button'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Icons } from '@/components/ui/icons'
+import SliderTooltip from '@/components/ui/slider-tooltip'
+import { BNumber } from '@/utils/b-number'
 import { cn } from '@/utils/cn'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { omit } from 'lodash-es'
+import { useForm } from 'react-hook-form'
+import z from 'zod'
 
 export default function VaultDetailWithdrawals() {
+  const formSchema = z.object({
+    amountPercent: z.string()
+    // .refine(
+    //   (val) => {
+    //     return BNumber.from(val).lt(MIN_DEPOSIT_AMOUNT)
+    //   },
+    //   {
+    //     message: `最低每笔存入${MIN_DEPOSIT_AMOUNT}USDC`
+    //   }
+    // )
+    // .refine(
+    //   (val) => {
+    //     return BNumber.from(val).gt(mainAccount?.money)
+    //   },
+    //   {
+    //     message: `最大存入${mainAccount?.money}USDC`
+    //   }
+    // )
+  })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { amountPercent: '' }
+  })
+
+  const vaultNetValue = 11100
+
+  const amountPercent = form.watch('amountPercent')
+  const estimatedWithdrawalAmount = BNumber.from(amountPercent).div(100).multipliedBy(vaultNetValue)
+
+  const onSubmitWithdrawals = async (data: z.infer<typeof formSchema>) => {
+    console.log('data', data)
+
+    await new Promise((resolve) => setTimeout(resolve, 10000))
+  }
+
   return (
     <div>
-      <div className="flex text-[12px] justify-between">
-        <div className="text-[#9FA0B0]">您的金库净值</div>
-        <div className=" text-white">≈0.00 USDC</div>
-      </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmitWithdrawals)}>
+          <div className="flex text-[12px] justify-between">
+            <div className="text-[#9FA0B0]">您的金库净值</div>
+            <div className=" text-white">≈{BNumber.toFormatNumber(vaultNetValue, { unit: 'USDC' })}</div>
+          </div>
 
-      <div className="mt-4">
-        <AmountInputPanel />
-      </div>
+          <div className="mt-4">
+            <FormField
+              control={form.control}
+              name={'amountPercent'}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex-1 space-y-2">
+                      <NumberInput
+                        placeholder="金额"
+                        min={0}
+                        max={100}
+                        decimalScale={0}
+                        onValueChange={({ value }) => {
+                          field.onChange(value)
+                        }}
+                        RightContent={'%'}
+                        {...omit(field, 'onChange')}
+                      />
 
-      <div className="flex text-[12px] mt-[14px] justify-between">
-        <div className="text-[#9FA0B0]">预计提取金额</div>
-        <div className=" text-white">≈0.00 USDC</div>
-      </div>
+                      <FormMessage />
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
-      <div className="mt-[30px]">
-        <Button block>立即取现</Button>
-      </div>
+          <div className="mt-4">
+            <FormField
+              control={form.control}
+              name={'amountPercent'}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex-1 space-y-2">
+                      <SliderTooltip
+                        min={0}
+                        step={1}
+                        max={100}
+                        {...field}
+                        showTooltip={true}
+                        tooltipFormat={([value]) => {
+                          return <div className="text-white">{value}%</div>
+                        }}
+                        interval={100 / 5}
+                        value={[BNumber.from(field.value).toNumber()]}
+                        onValueChange={(val) => {
+                          field.onChange(val[0])
+                        }}
+                      />
+                      <FormMessage />
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
 
+          <div className="flex text-[12px] mt-[14px] justify-between">
+            <div className="text-[#9FA0B0]">预计提取金额</div>
+            <div className=" text-white">≈{BNumber.toFormatNumber(estimatedWithdrawalAmount, { unit: 'USDC' })}</div>
+          </div>
+
+          <div className="mt-[30px]">
+            <Button block type="submit">
+              立即取现
+            </Button>
+          </div>
+        </form>
+      </Form>
       <div className="mt-[30px] items-start gap-2.5 flex">
         <Icons.lucide.Info className="text-[#FF8F34] size-4" />
 

@@ -9,9 +9,9 @@ import { Icons } from './icons'
 const buttonVariants = cva(
   [
     'inline-flex items-center gap-1 justify-center transition-[colors_transform] text-[14px] whitespace-nowrap font-medium ring-offset-background ',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-    `data-[disabled='true']:cursor-not-allowed data-[disabled='true']:opacity-35`,
-    'active:scale-95'
+    'active:scale-95',
+    'focus-visible:outline-focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+    `data-[disabled='true']:cursor-not-allowed data-[disabled='true']:opacity-35`
   ],
   {
     variants: {
@@ -19,7 +19,7 @@ const buttonVariants = cva(
         primary: [
           'text-[#0A0C27] bg-[#EED94C]',
           'hover:bg-[#FDFF84] hover:outline-none hover:ring-3 hover:ring-[#FDFF84]',
-          'focus:bg-[#FDFF84] focus:outline-none focus:ring-3 focus:ring-[#FDFF84]'
+          'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
         ],
 
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
@@ -27,7 +27,7 @@ const buttonVariants = cva(
         secondary: [
           'border border-[#0A0C27] bg-[#0A0C27] ',
           'hover:bg-[#FDFF84] hover:outline-none hover:ring-3 hover:ring-[#FDFF84]',
-          'focus:bg-[#FDFF84] focus:outline-none focus:ring-3 focus:ring-[#FDFF84]'
+          'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
         ],
         ghost: 'hover:bg-[#FDFF84] bg-transparent text-[#EED94C] hover:text-[#0A0C27]',
         // link: 'relative after:absolute after:bg-primary after:bottom-2 after:h-[1px] after:w-2/3 after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300',
@@ -110,11 +110,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps & IconProps>(
         disabled={disabled || loading}
         {...props}
       >
-        {(LeftIcon || loading) && (
-          <div>{LeftIcon ? LeftIcon : loading ? <Icons.lucide.Spinner className="size-4 animate-spin" /> : null}</div>
-        )}
+        {(LeftIcon || loading) && <>{LeftIcon ? LeftIcon : loading ? <Icons.lucide.Spinner className="size-4 animate-spin" /> : null}</>}
         <Slottable>{children}</Slottable>
-        {RightIcon && <div>{RightIcon}</div>}
+        {RightIcon && <>{RightIcon}</>}
       </Comp>
     )
 

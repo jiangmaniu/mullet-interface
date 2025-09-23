@@ -1,10 +1,13 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useState } from 'react'
+import { useVaultDetail } from '../../_hooks/useVaultDetail'
 import VaultDetailDeposits from './deposits'
 import { VaultOwnerAction } from './owner-action'
 import VaultDetailWithdrawals from './withdrawals'
 
 export default function VaultDetailIOPanel() {
+  const { vaultDetail } = useVaultDetail()
+
   enum TabEnum {
     Deposit,
     Withdrawal
@@ -34,9 +37,11 @@ export default function VaultDetailIOPanel() {
             </TabsTrigger>
           ))}
 
-          <div className="ml-auto">
-            <VaultOwnerAction />
-          </div>
+          {vaultDetail?.isOwner && (
+            <div className="ml-auto">
+              <VaultOwnerAction />
+            </div>
+          )}
         </TabsList>
 
         <div className="p-[30px] ">

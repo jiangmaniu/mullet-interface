@@ -391,6 +391,8 @@ export interface R {
 
 /** TwrRecordVO */
 export interface TwrRecordVO {
+  /** 净值回报率 */
+  navReturnRate?: number;
   /** 盈亏 */
   profit?: number;
   /** TWR */
@@ -753,6 +755,58 @@ export interface AccountPage {
   userPhone?: string;
   /** 用户手机国际区号 */
   userPhoneAreaCode?: string;
+}
+
+/**
+ * Account对象
+ * 交易账户
+ */
+export interface Account {
+  /**
+   * 账户组ID
+   * @format int64
+   */
+  accountGroupId?: number;
+  /**
+   * 客户ID
+   * @format int64
+   */
+  clientId?: number;
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /** 货币单位 */
+  currencyUnit?: string;
+  /**
+   * 主键
+   * @format int64
+   */
+  id?: number;
+  /** 启用交易 */
+  isTrade?: boolean;
+  /** 逐仓保证金 */
+  isolatedMargin?: number;
+  /**
+   * 最近访问
+   * @format date-time
+   */
+  lastVisitedTime?: string;
+  /** 保证金 */
+  margin?: number;
+  /** 余额 */
+  money?: number;
+  /** 名称 */
+  name?: string;
+  /** PDA代币账户 */
+  pdaTokenAddress?: string;
+  /** 备注 */
+  remark?: string;
+  /** 状态 */
+  status?: AccountStatusEnum;
+  /** 账户类型 */
+  type?: AccountTypeEnum;
 }
 
 /**
@@ -1719,6 +1773,8 @@ export interface PoolManage {
    * @format date-time
    */
   createTime?: string;
+  /** 跟单账户 */
+  followAccount?: Account;
   /**
    * 跟单账户ID
    * @format int64
@@ -3630,6 +3686,12 @@ export type AccountPageStatusEnum = "DISABLED" | "ENABLE";
 
 /** 账户类型 */
 export type AccountPageTypeEnum = "MAIN" | "SIMULATE" | "FOLLOW";
+
+/** 状态 */
+export type AccountStatusEnum = "DISABLED" | "ENABLE";
+
+/** 账户类型 */
+export type AccountTypeEnum = "MAIN" | "SIMULATE" | "FOLLOW";
 
 /** 订单方向 */
 export type BagOrderBuySellEnum = "BUY" | "SELL" | "BUY_OR_SELL";
@@ -5696,6 +5758,31 @@ export namespace Public {
   /**
    * @description 传入
    * @tags 公开接口接口
+   * @name GetPublicLpRedeemapply
+   * @summary Lp池MXLP代币赎回申请
+   * @request GET:/coreApi/public/lp/redeemApply
+   * @secure
+   */
+  export namespace GetPublicLpRedeemapply {
+    export type RequestParams = {};
+    export type RequestQuery = {
+      /** address */
+      address: string;
+      /** applySignature */
+      applySignature?: string;
+      /** mxlpPrice */
+      mxlpPrice: number;
+      /** redeemMxlp */
+      redeemMxlp: number;
+    };
+    export type RequestBody = never;
+    export type RequestHeaders = {};
+    export type ResponseBody = RBoolean;
+  }
+
+  /**
+   * @description 传入
+   * @tags 公开接口接口
    * @name GetPublicSymbolHoliday
    * @summary 判断品种是否是假期
    * @request GET:/coreApi/public/symbol/holiday
@@ -6298,18 +6385,18 @@ export class HttpClient<SecurityDataType = unknown> {
       const data = !responseFormat
         ? r
         : await response[responseFormat]()
-          .then((data) => {
-            if (r.ok) {
-              r.data = data;
-            } else {
-              r.error = data;
-            }
-            return r;
-          })
-          .catch((e) => {
-            r.error = e;
-            return r;
-          });
+            .then((data) => {
+              if (r.ok) {
+                r.data = data;
+              } else {
+                r.error = data;
+              }
+              return r;
+            })
+            .catch((e) => {
+              r.error = e;
+              return r;
+            });
 
       if (cancelToken) {
         this.abortControllers.delete(cancelToken);
@@ -8277,6 +8364,36 @@ export class TradeCoreApi<SecurityDataType extends unknown> {
       }),
   };
   public = {
+    /**
+     * @description 传入
+     *
+     * @tags 公开接口接口
+     * @name GetPublicLpRedeemapply
+     * @summary Lp池MXLP代币赎回申请
+     * @request GET:/coreApi/public/lp/redeemApply
+     * @secure
+     */
+    getPublicLpRedeemapply: (
+      query: {
+        /** address */
+        address: string;
+        /** applySignature */
+        applySignature?: string;
+        /** mxlpPrice */
+        mxlpPrice: number;
+        /** redeemMxlp */
+        redeemMxlp: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.http.request<RBoolean, void>({
+        path: `/coreApi/public/lp/redeemApply`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
     /**
      * @description 传入
      *

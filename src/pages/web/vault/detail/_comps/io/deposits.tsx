@@ -1,62 +1,140 @@
+import { NumberInput } from '@/components/input/number-input'
 import { Button } from '@/components/ui/button'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Icons } from '@/components/ui/icons'
-import { cn } from '@/utils/cn'
-import { useEmotionCss } from '@ant-design/use-emotion-css'
+import { toast } from '@/components/ui/toast'
+import { useMainAccount } from '@/hooks/user/use-main-account'
+import { getTradeCoreApiInstance } from '@/services/api/trade-core/instance'
+import { FollowShares } from '@/services/api/trade-core/instance/gen'
+import { BNumber } from '@/utils/b-number'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useModel } from '@umijs/max'
+import { useForm } from 'react-hook-form'
+import z from 'zod'
+import { useVaultDetail } from '../../_hooks/useVaultDetail'
+
+const MIN_DEPOSIT_AMOUNT = 5
+const DEPOSIT_LOCK_PERIOD = 1 // 天
 
 export default function VaultDetailDeposits() {
+  const { vaultDetail } = useVaultDetail()
+  const mainAccount = useMainAccount()
+  const { fetchUserInfo } = useModel('user')
+
+  const formSchema = z.object({
+    amount: z
+      .string()
+      .refine(
+        (val) => {
+          return BNumber.from(val).gte(MIN_DEPOSIT_AMOUNT)
+        },
+        {
+          message: `最低每笔存入${MIN_DEPOSIT_AMOUNT}USDC`
+        }
+      )
+      .refine(
+        (val) => {
+          return BNumber.from(val).lte(mainAccount?.money)
+        },
+        {
+          message: `最大存入${mainAccount?.money}USDC`
+        }
+      )
+  })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { amount: '' }
+  })
+
+  const onSubmitDeposit = async (data: z.infer<typeof formSchema>) => {
+    try {
+      if (!vaultDetail) {
+        throw new Error('金库信息不存在')
+      }
+
+      if (vaultDetail?.status === 'CLOSE') {
+        throw new Error('金库已关闭')
+      }
+
+      if (!mainAccount) {
+        throw new Error('主账户不存在')
+      }
+
+      const bodyData: FollowShares.PostFollowSharesPurchaseShares.RequestBody = {
+        purchaseMoney: Number(data.amount),
+        followManageId: vaultDetail.id,
+        tradeAccountId: mainAccount.id
+      }
+      const tradeCoreApi = getTradeCoreApiInstance()
+      const rs = await tradeCoreApi.followShares.postFollowSharesPurchaseShares(bodyData)
+
+      await fetchUserInfo()
+
+      if (rs.data.success) {
+        toast.success('存款成功')
+        form.reset()
+      }
+    } catch (error) {
+      console.error(error)
+      toast.error(error instanceof Error ? error.message : '存款失败')
+    }
+  }
+
   return (
     <div>
-      <div className="flex text-[12px] justify-between">
-        <div className="text-[#9FA0B0]">您的交易账户余额</div>
-        <div className=" text-white">0.00 USDC</div>
-      </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmitDeposit)}>
+          <div className="flex text-[12px] justify-between">
+            <div className="text-[#9FA0B0]">您的交易账户余额</div>
+            <div className=" text-white">
+              {BNumber.toFormatNumber(mainAccount?.money, {
+                unit: 'USDC'
+              })}
+            </div>
+          </div>
 
-      <div className="mt-4">
-        <AmountInputPanel />
-      </div>
+          <div className="mt-4">
+            <FormField
+              control={form.control}
+              name={'amount'}
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <div className="flex-1 space-y-2">
+                      <NumberInput
+                        placeholder="金额"
+                        min={MIN_DEPOSIT_AMOUNT}
+                        max={mainAccount?.money}
+                        onValueChange={({ value }, { source }) => {
+                          field.onChange(value)
+                        }}
+                        {...field}
+                      />
 
-      <div className="mt-[30px]">
-        <Button block>立即存款</Button>
-      </div>
+                      <FormMessage />
+                    </div>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="mt-[30px]">
+            <Button block type="submit" loading={form.formState.isSubmitting}>
+              立即存款
+            </Button>
+          </div>
+        </form>
+      </Form>
 
       <div className="mt-[30px] items-center  gap-2.5 flex">
         <Icons.lucide.Info className="text-[#FF8F34] size-4" />
 
-        <span className="text-[12px] text-[#9E9E9E] leading-normal">最低每笔存入5USDC，每次存款后锁定期为1天。</span>
+        <span className="text-[12px] text-[#9E9E9E] leading-normal">
+          最低每笔存入{MIN_DEPOSIT_AMOUNT}USDC，每次存款后锁定期为{DEPOSIT_LOCK_PERIOD}天。
+        </span>
       </div>
-    </div>
-  )
-}
-function AmountInputPanel() {
-  const searchInputContainerClassName = useEmotionCss(() => {
-    return {
-      height: '34px',
-      'border-radius': '8px',
-      opacity: '1',
-      background: '#0A0C27',
-      'box-sizing': 'border-box',
-      border: '1px solid #3B3D52'
-    }
-  })
-
-  const searchInputClassName = useEmotionCss(() => {
-    return {
-      'font-family': 'HarmonyOS Sans SC',
-      'font-size': '14px',
-      'font-weight': 'normal',
-      'line-height': 'normal',
-      'letter-spacing': '0em',
-      'font-variation-settings': 'opsz auto',
-      'font-feature-settings': 'kern on',
-      color: '#FFFFFF'
-    }
-  })
-
-  return (
-    <div className={cn([searchInputContainerClassName, 'flex gap-1.5 w-full items-center p-2.5'])}>
-      <input className={cn([searchInputClassName, 'flex-1 bg-transparent outline-none placeholder:text-[#767783]'])} placeholder="金额" />
-
-      <div className="text-white text-[14px]">USDC</div>
     </div>
   )
 }

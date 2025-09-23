@@ -114,7 +114,7 @@ export function PopularVaultTable() {
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
-                className="cursor-pointer hover:bg-gray-500"
+                className="cursor-pointer hover:bg-[#ccc]/5"
                 onClick={() => {
                   push(`/vault/${row.original.id}`)
                 }}

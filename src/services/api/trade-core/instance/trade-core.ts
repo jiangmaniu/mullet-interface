@@ -36,7 +36,7 @@ export const getTradeCoreApiInstance = () => {
       const CLIENT_ID = env.CLIENT_ID
       const CLIENT_SECRET = env.CLIENT_SECRET
       const headers: RequestInit['headers'] = {
-        'Content-Type': 'x-www-form-urlencoded',
+        // 'Content-Type': 'x-www-form-urlencoded',
         Language: getLocaleForBackend(),
         'Tenant-Id': '000000', // 默认的租户ID
       }
