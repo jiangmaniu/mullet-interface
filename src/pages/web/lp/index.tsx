@@ -1,5 +1,4 @@
 import { GeneralTooltip } from '@/components/tooltip'
-import { Button } from '@/components/ui/button'
 import { Icons } from '@/components/ui/icons'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import VaultDetailCharts from './_comps/charts'
@@ -64,9 +63,6 @@ function VaultDetailTitle() {
 
       <div className="flex gap-2.5 items-center">
         <div className={addressClassName}>目前个人存入额度为 0.00 USDC，超出的存入额度将不会有稳定币收益。</div>
-        <Button variant="ghost" size="icon">
-          <Icons.lucide.Copy className="w-4 h-4" />
-        </Button>
       </div>
     </div>
   )

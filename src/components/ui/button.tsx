@@ -23,10 +23,14 @@ const buttonVariants = cva(
         ],
 
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
-        outline: 'border border-[#3B3D52] text-white bg-transparent hover:bg-[#181E5A]',
+        outline: [
+          'border border-[#3B3D52] text-white bg-transparent hover:bg-[#181E5A]',
+          'hover:bg-[#FDFF84] hover:text-[#0A0C27] hover:outline-none hover:ring-3 hover:ring-[#FDFF84]',
+          'focus-visible:bg-[#FDFF84]  focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
+        ],
         secondary: [
           'border border-[#0A0C27] bg-[#0A0C27] ',
-          'hover:bg-[#FDFF84] hover:outline-none hover:ring-3 hover:ring-[#FDFF84]',
+          'hover:bg-[#FDFF84] hover:text-[#0A0C27] hover:outline-none hover:ring-3 hover:ring-[#FDFF84]',
           'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
         ],
         ghost: 'hover:bg-[#FDFF84] bg-transparent text-[#EED94C] hover:text-[#0A0C27]',

@@ -12,13 +12,13 @@ export function useVaultDetail() {
   const { getPoolDetailApiOptions } = useGetPoolDetailApiOptions({
     id: Number(vaultId)
   })
-  const { data: vaultDetail, ...rest } = useQuery({
+  const queryResult = useQuery({
     ...getPoolDetailApiOptions,
     select: (data) => {
       if (data) {
         return {
           ...data,
-          isOwner: mainAccount?.id === data?.mainAccountId
+          isOwner: mainAccount?.id.toString() === data?.mainAccountId?.toString()
         }
       }
 
@@ -26,5 +26,5 @@ export function useVaultDetail() {
     }
   })
 
-  return { vaultDetail, ...rest }
+  return { vaultDetail: queryResult.data, queryResult }
 }

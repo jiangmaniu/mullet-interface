@@ -5,7 +5,7 @@ export function useMainAccount() {
 
   const currentUser = initialState?.currentUser
   const accountList = currentUser?.accountList || []
-  const mainAccount = accountList.filter((item) => !item.isSimulate)[0]
-
+  const mainAccount = accountList.filter((item) => !item.isSimulate && item.name === "Standard Account")[0]
+  console.log(accountList)
   return mainAccount
 }

@@ -34,8 +34,6 @@ export async function fetchAnchorAccount<T extends Record<string, any> = Record<
     programAddress: programId,
   })
 
-  debugger
-
   // 获取账户数据
   const accountInfo = await rpc.getAccountInfo(pda).send();
   if (!accountInfo?.value?.data) {

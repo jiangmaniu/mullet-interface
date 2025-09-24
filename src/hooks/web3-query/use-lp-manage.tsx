@@ -38,8 +38,7 @@ async function getLpTokenManage({ program, programAddress, seed }: GetLpTokenMan
     return info
   } catch (error) {
     console.error(error)
-    debugger
-    return undefined
+    return null
   }
 }
 

@@ -16,6 +16,12 @@ const SliderTooltip = React.forwardRef<React.ComponentRef<typeof SliderPrimitive
     const numberOfMarks = Math.floor(props.max ?? 100 / innerInterval) + 1
     const marks = Array.from({ length: numberOfMarks }, (_, i) => i * innerInterval)
 
+    React.useEffect(() => {
+      if (props.value) {
+        setValue(props.value)
+      }
+    }, [props.value])
+
     function tickIndex(value: number): number {
       // Calculate the index based on the value
       return Math.floor(value / innerInterval)
