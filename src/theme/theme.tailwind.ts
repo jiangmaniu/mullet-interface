@@ -176,11 +176,16 @@ export default {
       'fade-in-down': {
         '0%': { opacity: '0', transform: 'translateY(-16px)' },
         '100%': { opacity: '1', transform: 'translateY(0)' }
+      },
+      'border-beam': {
+        '0%': { 'offset-distance': '0%' },
+        '100%': { 'offset-distance': '100%' }
       }
     },
     animation: {
       'fade-out-up': 'fade-out-up 0.25s ease-in-out forwards',
-      'fade-in-down': 'fade-in-down 0.25s ease-in-out forwards'
+      'fade-in-down': 'fade-in-down 0.25s ease-in-out forwards',
+      'border-beam': 'border-beam calc(var(--duration) * 1s) infinite linear'
     }
   }
 }

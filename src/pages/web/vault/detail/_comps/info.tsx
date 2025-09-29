@@ -1,5 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { BNumber } from '@/utils/b-number'
 import { useState } from 'react'
+import { useVaultDetail } from '../_hooks/use-vault-detail'
 
 export default function VaultDetailInfo() {
   enum TabEnum {
@@ -63,22 +65,37 @@ export default function VaultDetailInfo() {
 }
 
 function VaultPerformance() {
+  const { vaultDetail } = useVaultDetail()
   const options = [
     {
       label: '总盈亏金额',
-      content: <div className="text-[#2EBC84]">$1,319,548.61</div>
+      content: (
+        <div className="text-[#2EBC84]">
+          {BNumber.toFormatNumber(vaultDetail?.totalProfit, {
+            unit: 'USDC',
+            volScale: 2
+          })}
+        </div>
+      )
     },
     {
       label: '最大回撤',
-      content: <div className="">48.90%</div>
+      content: <div className="">{BNumber.toFormatPercent(vaultDetail?.maxDrawdown)}</div>
     },
     {
       label: '成交量',
-      content: <div className="">$0.00</div>
+      content: (
+        <div className="">
+          {BNumber.toFormatNumber(vaultDetail?.totalAmount, {
+            unit: 'USDC',
+            volScale: 2
+          })}
+        </div>
+      )
     },
     {
       label: '利润分享',
-      content: <div className="">10.00%</div>
+      content: <div className="">{BNumber.toFormatPercent(vaultDetail?.authorityProfitSharing)}</div>
     }
   ]
   return (
@@ -102,18 +119,39 @@ function VaultPerformance() {
 }
 
 function YourPerformance() {
+  const { vaultDetail } = useVaultDetail()
   const options = [
     {
       label: '总盈亏金额',
-      content: <div className="text-[#2EBC84]">$1,319,548.61</div>
+      content: (
+        <div className="text-[#2EBC84]">
+          {BNumber.toFormatNumber(vaultDetail?.accountFollowShares?.followProfit, {
+            unit: 'USDC',
+            volScale: 2
+          })}
+        </div>
+      )
     },
     {
       label: '累计回报',
-      content: <div className="">48.90%</div>
+      content: (
+        <div className="">
+          {BNumber.toFormatNumber(undefined, {
+            unit: 'USDC',
+            volScale: 2
+          })}
+        </div>
+      )
     },
     {
       label: '份额',
-      content: <div className="">44.10%</div>
+      content: (
+        <div className="">
+          {BNumber.toFormatNumber(vaultDetail?.accountFollowShares?.followShares, {
+            volScale: 2
+          })}
+        </div>
+      )
     }
   ]
   return (
@@ -129,7 +167,11 @@ function YourPerformance() {
       </div>
       <div className="flex flex-col gap-[14px]">
         {options.map((item, index) => {
-          return <div className="text-white">{item.content}</div>
+          return (
+            <div key={index} className="text-white">
+              {item.content}
+            </div>
+          )
         })}
       </div>
     </div>

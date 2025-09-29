@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useState } from 'react'
-import { useVaultDetail } from '../../_hooks/useVaultDetail'
+import { useVaultDetail } from '../../_hooks/use-vault-detail'
 import VaultDetailDeposits from './deposits'
 import { VaultOwnerAction } from './owner-action'
 import VaultDetailWithdrawals from './withdrawals'

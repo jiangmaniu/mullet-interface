@@ -1,13 +1,16 @@
+import { SecondaryConfirmationGlobalModalProps } from '@/components/providers/nice-modal-provider/global-modal'
 import { useNiceModal } from '@/components/providers/nice-modal-provider/hooks'
 import { GLOBAL_MODAL_ID } from '@/components/providers/nice-modal-provider/register'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Icons } from '@/components/ui/icons'
+import { toast } from '@/components/ui/toast'
 import { useStores } from '@/context/mobxProvider'
+import { usePoolCloseVaultApiMutation } from '@/services/api/trade-core/hooks/follow-manage/pool-vault-close'
 import { cn } from '@/utils/cn'
 import { useModel } from '@umijs/max'
 import { useState } from 'react'
-import { useVaultDetail } from '../../../_hooks/useVaultDetail'
+import { useVaultDetail } from '../../../_hooks/use-vault-detail'
 import { DistributeModal } from './distribute-modal'
 
 export const VaultOwnerAction = () => {
@@ -61,7 +64,7 @@ function VaultTrade() {
 
 function WithdrawAndClosePosition() {
   const { vaultDetail } = useVaultDetail()
-  const confirmModal = useNiceModal(GLOBAL_MODAL_ID.SecondaryConfirmation)
+  const confirmModal = useNiceModal<SecondaryConfirmationGlobalModalProps>(GLOBAL_MODAL_ID.SecondaryConfirmation)
 
   const handleSwitchRedeemCloseOrder = () => {
     if (vaultDetail) {
@@ -73,7 +76,7 @@ function WithdrawAndClosePosition() {
         confirm: {
           label: '确定',
           cb: () => {
-            console.log(1)
+            toast.info('尽请期待')
           }
         },
         cancel: {
@@ -94,19 +97,27 @@ function WithdrawAndClosePosition() {
 const CloseVault = () => {
   const { vaultDetail } = useVaultDetail()
   const isCloseVault = !!vaultDetail && vaultDetail?.status === 'CLOSE'
-  const confirmModal = useNiceModal(GLOBAL_MODAL_ID.SecondaryConfirmation)
+  const { mutateAsync: closeVault } = usePoolCloseVaultApiMutation()
+  const confirmModal = useNiceModal<SecondaryConfirmationGlobalModalProps>(GLOBAL_MODAL_ID.SecondaryConfirmation)
 
   const handleCloseVault = () => {
     if (vaultDetail) {
       confirmModal.show({
         title: '关闭仓库',
         message: '您确认要关闭金库？此操作将会结束金库订单并按比例分发所有资金，并且无法再启用此金库。',
-
         confirm: {
           label: '确定',
-
-          cb: () => {
-            console.log(1)
+          cb: async () => {
+            await closeVault(
+              {
+                followManageId: vaultDetail.id
+              },
+              {
+                onSuccess: () => {
+                  toast.success('关闭成功')
+                }
+              }
+            )
           }
         },
         cancel: {

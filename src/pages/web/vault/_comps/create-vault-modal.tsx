@@ -1,4 +1,5 @@
 import { NumberInput } from '@/components/input/number-input'
+import { NumberInputSourceType } from '@/components/input/number-input-primitive'
 import { useNiceModal } from '@/components/providers/nice-modal-provider/hooks'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
@@ -127,12 +128,13 @@ export const CreateVaultModal = create((props: React.ComponentProps<typeof Modal
                         <div className="flex-1 space-y-2">
                           <NumberInput
                             placeholder="存款金额"
+                            allowNegative={false}
                             // min={MIN_DEPOSIT_AMOUNT}
                             // max={mainAccount?.money}
-                            onValueChange={(...args: any[]) => {
-                              console.log(args)
-                              const [{ value }] = args
-                              field.onChange(value)
+                            onValueChange={({ value }, { source }) => {
+                              if (source === NumberInputSourceType.EVENT) {
+                                field.onChange(value)
+                              }
                             }}
                             {...omit(field, 'onChange')}
                           />

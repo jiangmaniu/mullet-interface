@@ -6,7 +6,8 @@ import { generateApi } from 'swagger-typescript-api'
 
 export function generateTradeCoreApi({ env = 'development' }: { env?: string } = {}) {
   console.log(env)
-  const url = `http://192.168.5.203:8000/trade-core/v2/api-docs`
+  // const url = `http://192.168.5.203:8000/trade-core/v2/api-docs`
+  const url = `http://172.31.27.8:8000/trade-core/v2/api-docs`
 
   if (!url) {
     throw new Error('Could not find api json document url')
@@ -16,8 +17,8 @@ export function generateTradeCoreApi({ env = 'development' }: { env?: string } =
 
   const x = generateApi({
     fileName: 'gen.ts',
-    // input: resolve(process.cwd(), './scripts/services/genApi/shop-api-docs.json'),
-    url,
+    input: resolve(process.cwd(), './scripts/services/genApi/trade-core.json'),
+    // url,
     apiClassName: 'TradeCoreApi',
     singleHttpClient: true,
     output: resolve(process.cwd(), './src/services/api/trade-core/instance'),

@@ -12,6 +12,7 @@ export const VaultBalanceCharts = () => {
       return new Promise<EChartsOption>((resolve) => {
         setTimeout(() => {
           resolve({
+            backgroundColor: 'transparent',
             tooltip: {
               trigger: 'axis'
             },
@@ -19,6 +20,7 @@ export const VaultBalanceCharts = () => {
               left: '3%',
               right: '4%',
               bottom: '3%',
+              top: '3%',
               containLabel: true
             },
             xAxis: {

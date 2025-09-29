@@ -11,5 +11,34 @@ module.exports = {
   corePlugins: {
     preflight: false
   },
-  plugins: [tailwindcssScrollbar({ nocompatible: true }), tailwindcssAnimate]
+  plugins: [
+    tailwindcssScrollbar({ nocompatible: true }),
+    tailwindcssAnimate,
+    function ({ addUtilities, addBase }) {
+      addBase({
+        '@keyframes dot-blink': {
+          '0%, 100%': { content: '"."' },
+          '33%': { content: '".."' },
+          '66%': { content: '"..."' }
+        }
+      })
+
+      const newUtilities = {
+        '.ellipsis-blink': {
+          position: 'relative',
+          paddingRight: '15px'
+        },
+        '.ellipsis-blink::after': {
+          content: '"."',
+          position: 'absolute',
+          display: 'inline-block',
+          float: 'right',
+          marginLeft: '1px',
+          animation: 'dot-blink 2.4s infinite'
+        }
+      }
+
+      addUtilities(newUtilities)
+    }
+  ]
 }

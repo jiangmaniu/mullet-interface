@@ -1,47 +1,25 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useState } from 'react'
+import { VaultDepositRecords } from './deposit-records'
+import { VaultWithdrawalRecords } from './withdrawal-records'
 
 export default function VaultDetailRecords() {
   enum TabEnum {
-    Balances,
-    Positions,
-    TransactionHistory,
-    FundingFeeHistory,
-    DepositsAndWithdrawals,
-    Depositor
+    DepositRecords,
+    WithdrawalRecords
   }
-  const [tab, setTab] = useState<TabEnum>(TabEnum.Balances)
+  const [tab, setTab] = useState<TabEnum>(TabEnum.DepositRecords)
 
   const options = [
     {
-      label: 'Balances',
-      value: TabEnum.Balances,
-      content: <div>Balance</div>
+      label: '存款记录',
+      value: TabEnum.DepositRecords,
+      content: <VaultDepositRecords />
     },
     {
-      label: 'Position',
-      value: TabEnum.Positions,
-      content: <div>Position</div>
-    },
-    {
-      label: 'Transaction History',
-      value: TabEnum.TransactionHistory,
-      content: <div>Transaction History</div>
-    },
-    {
-      label: 'Funding Fee History',
-      value: TabEnum.FundingFeeHistory,
-      content: <div>Funding Fee History</div>
-    },
-    {
-      label: 'Deposits And Withdrawals',
-      value: TabEnum.DepositsAndWithdrawals,
-      content: <div>Deposits And Withdrawals</div>
-    },
-    {
-      label: 'Depositor',
-      value: TabEnum.Depositor,
-      content: <div>Depositor</div>
+      label: '取现记录',
+      value: TabEnum.WithdrawalRecords,
+      content: <VaultWithdrawalRecords />
     }
   ]
 

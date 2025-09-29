@@ -1,4 +1,8 @@
 import { NumberInput } from '@/components/input/number-input'
+import { NumberInputSourceType } from '@/components/input/number-input-primitive'
+import { TransactionStatusTrackingGlobalModalProps } from '@/components/providers/nice-modal-provider/global-modal'
+import { useNiceModal } from '@/components/providers/nice-modal-provider/hooks'
+import { GLOBAL_MODAL_ID } from '@/components/providers/nice-modal-provider/register'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Icons } from '@/components/ui/icons'
@@ -8,8 +12,11 @@ import { useLpPoolPrice } from '@/hooks/lp/use-lp-price'
 import { useUserWallet } from '@/hooks/user/use-wallet-user'
 import { useATATokenBalance } from '@/hooks/web3-query/use-ata-balance'
 import { useLpSwapProgram } from '@/hooks/web3/use-anchor-program'
+import useConnection from '@/hooks/web3/useConnection'
 import { vaultAccountAddress } from '@/libs/web3/constans/address'
+import { waitTransactionConfirm } from '@/libs/web3/helpers/tx'
 import { BNumber } from '@/utils/b-number'
+import { formatAddress } from '@/utils/web3'
 import { BN } from '@coral-xyz/anchor'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { getAssociatedTokenAddress, getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -58,6 +65,14 @@ export default function VaultDetailDeposits() {
   const price = useLpPoolPrice(usdcMintAddress)
   const usdcAmount = BNumber.from(form.watch('amount'))
   const LpMintAmount = usdcAmount?.div(price)
+  const { connection } = useConnection()
+  const transactionStatusTrackingDialog = useNiceModal<TransactionStatusTrackingGlobalModalProps>(
+    GLOBAL_MODAL_ID.TransactionStatusTracking,
+    {
+      title: '存款申请',
+      description: `正在申请 ${BNumber.toFormatNumber(usdcAmount, { volScale: 2, unit: 'USDC' })} 存款`
+    }
+  )
 
   const { getSignProgram } = useLpSwapProgram()
   const onSubmitDeposit = async (data: z.infer<typeof formSchema>) => {
@@ -80,18 +95,45 @@ export default function VaultDetailDeposits() {
         TOKEN_PROGRAM_ID
       )
 
+      transactionStatusTrackingDialog.show()
+
       const program = getSignProgram()
-      const tx = await program.methods
-        .purchaseMxlp(new BN(amountBigInt.toString()))
-        .accounts({
-          usdcMint: usdcMintPublicKey,
-          lpVault: lpVault,
-          purchaseUsdcAccount: purchaseUsdcAccount,
-          tokenProgram: TOKEN_PROGRAM_ID
+      let tx: string
+      try {
+        tx = await program.methods
+          .purchaseMxlp(new BN(amountBigInt.toString()))
+          .accounts({
+            usdcMint: usdcMintPublicKey,
+            lpVault: lpVault,
+            purchaseUsdcAccount: purchaseUsdcAccount,
+            tokenProgram: TOKEN_PROGRAM_ID
+          })
+          .rpc()
+      } catch (error) {
+        transactionStatusTrackingDialog.show({
+          isError: true
         })
-        .rpc()
-      console.log(tx)
-      debugger
+        throw error
+      }
+
+      transactionStatusTrackingDialog.show({
+        txHash: tx
+      })
+
+      const txResponse = await waitTransactionConfirm(connection, tx)
+
+      if (txResponse) {
+        toast.success('存款成功', {
+          description: (
+            <div>
+              查看交易：
+              <a href={`https://solscan.io/tx/${tx}?cluster=devnet`} target="_blank" rel="noreferrer" className="text-blue-400" title={tx}>
+                {formatAddress(tx)}
+              </a>
+            </div>
+          )
+        })
+      }
     } catch (error: any) {
       console.error(error)
       toast.error(error?.message)
@@ -119,8 +161,10 @@ export default function VaultDetailDeposits() {
                         placeholder="金额"
                         RightContent={'USDC'}
                         max={BNumber.from(balance)?.toString()}
-                        onValueChange={({ value }) => {
-                          field.onChange(value)
+                        onValueChange={({ value }, { source }) => {
+                          if (source === NumberInputSourceType.EVENT) {
+                            field.onChange(value)
+                          }
                         }}
                         {...field}
                       />

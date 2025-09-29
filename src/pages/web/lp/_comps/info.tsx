@@ -94,7 +94,11 @@ function VaultPerformance() {
       </div>
       <div className="flex flex-col gap-[14px]">
         {options.map((item, index) => {
-          return <div className="text-white">{item.content}</div>
+          return (
+            <div key={index} className="text-white">
+              {item.content}
+            </div>
+          )
         })}
       </div>
     </div>
@@ -129,7 +133,11 @@ function YourPerformance() {
       </div>
       <div className="flex flex-col gap-[14px]">
         {options.map((item, index) => {
-          return <div className="text-white">{item.content}</div>
+          return (
+            <div key={index} className="text-white">
+              {item.content}
+            </div>
+          )
         })}
       </div>
     </div>

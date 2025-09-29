@@ -1,5 +1,5 @@
 import { cn } from '@/utils/cn'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '../ui/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog'
 import { Icons } from '../ui/icons'
@@ -14,9 +14,11 @@ type Props = {
         className?: string
         label?: React.ReactNode
         cb?: () => any
+        loading?: boolean
       }
     | false
   confirm?: {
+    loading?: boolean
     className?: string
     label?: React.ReactNode
     cb?: () => any
@@ -27,6 +29,22 @@ export const SecondaryConfirmationDialog = (props: Props) => {
   const { isOpen, onClose } = props
   const [confirmLoading, setConfirmLoading] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
+  const [isHandleComfirn, setIsHandleComfirn] = useState(false)
+  const [isHandleCancel, setIsHandleCancel] = useState(false)
+
+  useEffect(() => {
+    if (isHandleComfirn && !props.confirm?.loading) {
+      onClose?.()
+      setIsHandleComfirn(false)
+    }
+  }, [props.confirm?.loading, isHandleComfirn])
+
+  useEffect(() => {
+    if (isHandleCancel && props.cancel !== false && !props.cancel?.loading) {
+      onClose?.()
+      setIsHandleCancel(false)
+    }
+  }, [props.cancel, isHandleCancel])
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -36,8 +54,12 @@ export const SecondaryConfirmationDialog = (props: Props) => {
             {props.title && <div className={cn('')}> {props.title}</div>}
 
             <DialogClose asChild>
-              <Button variant="ghost" size={'icon'}>
-                <Icons.lucide.Close className="size-6" />
+              <Button
+                variant="ghost"
+                disabled={props.confirm?.loading ?? (confirmLoading || (props.cancel !== false && props.cancel?.loading)) ?? cancelLoading}
+                size={'icon'}
+              >
+                <Icons.lucide.Close className="size-4" />
                 <span className="sr-only">Close</span>
               </Button>
             </DialogClose>
@@ -51,7 +73,8 @@ export const SecondaryConfirmationDialog = (props: Props) => {
             <>
               <Button
                 variant="outline"
-                loading={cancelLoading}
+                disabled={props.confirm?.loading ?? confirmLoading}
+                loading={props.cancel?.loading ?? cancelLoading}
                 className={cn('flex-1', props.cancel?.className)}
                 onClick={async () => {
                   if (props.cancel === false) {
@@ -62,7 +85,11 @@ export const SecondaryConfirmationDialog = (props: Props) => {
 
                   try {
                     await Promise.resolve(props.cancel?.cb?.())
-                    onClose?.()
+                    if (!props.cancel?.loading) {
+                      onClose?.()
+                    } else {
+                      setIsHandleCancel(true)
+                    }
                   } finally {
                     setCancelLoading(false)
                   }
@@ -76,14 +103,19 @@ export const SecondaryConfirmationDialog = (props: Props) => {
           {props.confirm && (
             <>
               <Button
-                loading={confirmLoading}
+                loading={props.confirm?.loading ?? confirmLoading}
+                disabled={props.confirm?.loading ?? confirmLoading}
                 className={cn('flex-1', props.confirm?.className)}
                 onClick={async () => {
                   setConfirmLoading(true)
 
                   try {
                     await Promise.resolve(props.confirm?.cb?.())
-                    onClose?.()
+                    if (!props.confirm?.loading) {
+                      onClose?.()
+                    } else {
+                      setIsHandleComfirn(true)
+                    }
                   } finally {
                     setConfirmLoading(false)
                   }

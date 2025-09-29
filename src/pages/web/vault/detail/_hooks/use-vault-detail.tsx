@@ -10,7 +10,8 @@ export function useVaultDetail() {
   const mainAccount = useMainAccount()
 
   const { getPoolDetailApiOptions } = useGetPoolDetailApiOptions({
-    id: Number(vaultId)
+    followManageId: Number(vaultId),
+    tradeAccountId: mainAccount?.id
   })
   const queryResult = useQuery({
     ...getPoolDetailApiOptions,

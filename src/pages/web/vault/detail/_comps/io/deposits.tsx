@@ -4,14 +4,15 @@ import { Form, FormControl, FormField, FormItem, FormMessage } from '@/component
 import { Icons } from '@/components/ui/icons'
 import { toast } from '@/components/ui/toast'
 import { useMainAccount } from '@/hooks/user/use-main-account'
-import { getTradeCoreApiInstance } from '@/services/api/trade-core/instance'
+import { usePurchaseSharesApiMutation } from '@/services/api/trade-core/hooks/follow-shares/purchase-shares'
 import { FollowShares } from '@/services/api/trade-core/instance/gen'
 import { BNumber } from '@/utils/b-number'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useModel } from '@umijs/max'
+import { omit } from 'lodash-es'
 import { useForm } from 'react-hook-form'
 import z from 'zod'
-import { useVaultDetail } from '../../_hooks/useVaultDetail'
+import { useVaultDetail } from '../../_hooks/use-vault-detail'
 
 const MIN_DEPOSIT_AMOUNT = 5
 const DEPOSIT_LOCK_PERIOD = 1 // 天
@@ -47,6 +48,7 @@ export default function VaultDetailDeposits() {
     defaultValues: { amount: '' }
   })
 
+  const { mutate: purchaseShares, isPending } = usePurchaseSharesApiMutation()
   const onSubmitDeposit = async (data: z.infer<typeof formSchema>) => {
     try {
       if (!vaultDetail) {
@@ -66,15 +68,20 @@ export default function VaultDetailDeposits() {
         followManageId: vaultDetail.id,
         tradeAccountId: mainAccount.id
       }
-      const tradeCoreApi = getTradeCoreApiInstance()
-      const rs = await tradeCoreApi.followShares.postFollowSharesPurchaseShares(bodyData)
+      purchaseShares(bodyData, {
+        onSuccess: async (data) => {
+          if (data?.success) {
+            await fetchUserInfo()
 
-      await fetchUserInfo()
-
-      if (rs.data.success) {
-        toast.success('存款成功')
-        form.reset()
-      }
+            toast.success('存款成功')
+            form.reset()
+          }
+        },
+        onError: (error) => {
+          console.error(error)
+          toast.error(error instanceof Error ? error.message : '存款失败')
+        }
+      })
     } catch (error) {
       console.error(error)
       toast.error(error instanceof Error ? error.message : '存款失败')
@@ -89,6 +96,7 @@ export default function VaultDetailDeposits() {
             <div className="text-[#9FA0B0]">您的交易账户余额</div>
             <div className=" text-white">
               {BNumber.toFormatNumber(mainAccount?.money, {
+                volScale: 2,
                 unit: 'USDC'
               })}
             </div>
@@ -105,11 +113,13 @@ export default function VaultDetailDeposits() {
                       <NumberInput
                         placeholder="金额"
                         min={MIN_DEPOSIT_AMOUNT}
+                        decimalScale={2}
+                        allowNegative={false}
                         max={mainAccount?.money}
                         onValueChange={({ value }, { source }) => {
                           field.onChange(value)
                         }}
-                        {...field}
+                        {...omit(field, ['onChange'])}
                       />
 
                       <FormMessage />
@@ -121,7 +131,7 @@ export default function VaultDetailDeposits() {
           </div>
 
           <div className="mt-[30px]">
-            <Button block type="submit" loading={form.formState.isSubmitting}>
+            <Button block type="submit" loading={isPending}>
               立即存款
             </Button>
           </div>

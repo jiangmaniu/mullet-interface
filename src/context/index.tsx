@@ -8,7 +8,6 @@ import { LanguageProvider } from './languageProvider'
 import { LoadingProvider } from './loadingProvider'
 import { StoresProvider, stores } from './mobxProvider'
 import { NotificationProvider } from './notification'
-import { PrivyProvider } from './privyProvider'
 import { ThemeProvider } from './themeProvider'
 
 interface IProps {
@@ -37,19 +36,17 @@ export const Provider = ({ children }: IProps): JSX.Element => {
 
   return (
     <Providers>
-      <PrivyProvider>
-        <NotificationProvider>
-          <LoadingProvider>
-            <StoresProvider>
-              <EnvProvider>
-                <ThemeProvider>
-                  <LanguageProvider>{children}</LanguageProvider>
-                </ThemeProvider>
-              </EnvProvider>
-            </StoresProvider>
-          </LoadingProvider>
-        </NotificationProvider>
-      </PrivyProvider>
+      <NotificationProvider>
+        <LoadingProvider>
+          <StoresProvider>
+            <EnvProvider>
+              <ThemeProvider>
+                <LanguageProvider>{children}</LanguageProvider>
+              </ThemeProvider>
+            </EnvProvider>
+          </StoresProvider>
+        </LoadingProvider>
+      </NotificationProvider>
     </Providers>
   )
 }

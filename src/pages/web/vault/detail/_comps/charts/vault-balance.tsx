@@ -1,10 +1,13 @@
 import { echarts, EChartsOption } from '@/libs/echarts'
 import { useQuery } from '@tanstack/react-query'
 import { useCallback, useEffect, useRef } from 'react'
+import { useVaultChartsDataList, VaultChartsTimeIntervalEnum } from '../../_hooks/use-vault-charts-data-list'
 
-export const VaultBalanceCharts = () => {
+export const VaultBalanceCharts = ({ timeInterval }: { timeInterval: VaultChartsTimeIntervalEnum }) => {
   const echartsRef = useRef<echarts.ECharts | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  const { queryResult } = useVaultChartsDataList({ timeInterval })
 
   const { data, isLoading, isSuccess } = useQuery({
     queryKey: ['vault-pnl-charts'],
@@ -12,6 +15,7 @@ export const VaultBalanceCharts = () => {
       return new Promise<EChartsOption>((resolve) => {
         setTimeout(() => {
           resolve({
+            backgroundColor: 'transparent',
             tooltip: {
               trigger: 'axis'
             },
@@ -19,6 +23,7 @@ export const VaultBalanceCharts = () => {
               left: '3%',
               right: '4%',
               bottom: '3%',
+              top: '3%',
               containLabel: true
             },
             xAxis: {
@@ -59,7 +64,12 @@ export const VaultBalanceCharts = () => {
     initEchartsInstance()
 
     if (isLoading) {
-      echartsRef.current?.showLoading()
+      echartsRef.current?.showLoading('default', {
+        text: '加载中...',
+        color: '#EED94C', // 动画圆圈颜色
+        textColor: '#EED94C', // 文本颜色
+        maskColor: 'transparent' // 透明背景
+      })
     } else {
       echartsRef.current?.hideLoading()
     }

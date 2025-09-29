@@ -43,7 +43,7 @@ function WebLayout() {
       {/* <Footer /> */}
 
       <div className={`flex items-end fixed inset-0 -z-40 ${bgClassName}`}>
-        <img src="/img/new/common/bg.svg" alt="bg" className="" />
+        <img src="/img/new/common/bg.svg" alt="bg" className="h-full object-cover" />
       </div>
     </div>
   )

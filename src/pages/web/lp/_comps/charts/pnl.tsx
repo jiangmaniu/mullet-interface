@@ -12,6 +12,7 @@ export const VaultPNLCharts = () => {
       return new Promise<EChartsOption>((resolve) => {
         setTimeout(() => {
           resolve({
+            backgroundColor: 'transparent',
             tooltip: {
               trigger: 'axis'
             },
@@ -19,6 +20,7 @@ export const VaultPNLCharts = () => {
               left: '3%',
               right: '4%',
               bottom: '3%',
+              top: '3%',
               containLabel: true
             },
             xAxis: {
@@ -32,6 +34,7 @@ export const VaultPNLCharts = () => {
               {
                 name: 'Step Start',
                 type: 'line',
+                step: 'start',
                 data: [120, 132, 101, 134, 90, 230, 210]
               }
             ]
@@ -58,7 +61,12 @@ export const VaultPNLCharts = () => {
     initEchartsInstance()
 
     if (isLoading) {
-      echartsRef.current?.showLoading()
+      echartsRef.current?.showLoading('default', {
+        text: '加载中...',
+        color: '#EED94C', // 动画圆圈颜色
+        textColor: '##EED94C', // 文本颜色
+        maskColor: 'transparent' // 透明背景
+      })
     } else {
       echartsRef.current?.hideLoading()
     }

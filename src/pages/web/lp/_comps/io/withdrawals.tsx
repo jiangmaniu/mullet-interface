@@ -1,4 +1,8 @@
 import { NumberInput } from '@/components/input/number-input'
+import { NumberInputSourceType } from '@/components/input/number-input-primitive'
+import { TransactionStatusTrackingGlobalModalProps } from '@/components/providers/nice-modal-provider/global-modal'
+import { useNiceModal } from '@/components/providers/nice-modal-provider/hooks'
+import { GLOBAL_MODAL_ID } from '@/components/providers/nice-modal-provider/register'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Icons } from '@/components/ui/icons'
@@ -8,9 +12,12 @@ import { useLpPoolPrice } from '@/hooks/lp/use-lp-price'
 import { useUserWallet } from '@/hooks/user/use-wallet-user'
 import { useATATokenBalance } from '@/hooks/web3-query/use-ata-balance'
 import { useLpSwapProgram } from '@/hooks/web3/use-anchor-program'
+import useConnection from '@/hooks/web3/useConnection'
 import { poolProgramAddress } from '@/libs/web3/constans/address'
 import { PoolSeed } from '@/libs/web3/constans/enum'
+import { waitTransactionConfirm } from '@/libs/web3/helpers/tx'
 import { BNumber } from '@/utils/b-number'
+import { formatAddress } from '@/utils/web3'
 import { BN } from '@coral-xyz/anchor'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { getAssociatedTokenAddress, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -32,24 +39,14 @@ export default function VaultDetailWithdrawals() {
   })
 
   const formSchema = z.object({
-    amount: z
-      .string()
-      // .refine(
-      //   (val) => {
-      //     return BNumber.from(val).gte(MIN_DEPOSIT_AMOUNT)
-      //   },
-      //   {
-      //     message: `最低每笔存入${MIN_DEPOSIT_AMOUNT}USDC`
-      //   }
-      // )
-      .refine(
-        (val) => {
-          return BNumber.from(val).lte(lpBalance)
-        },
-        {
-          message: `最大取现${BNumber.toFormatNumber(lpBalance)} MTLP`
-        }
-      )
+    amount: z.string().refine(
+      (val) => {
+        return BNumber.from(val).lte(lpBalance)
+      },
+      {
+        message: `最大取现${BNumber.toFormatNumber(lpBalance)} MTLP`
+      }
+    )
   })
 
   const { getSignProgram } = useLpSwapProgram()
@@ -62,6 +59,14 @@ export default function VaultDetailWithdrawals() {
   const price = useLpPoolPrice(usdcMintAddress)
   const lpAmount = BNumber.from(form.watch('amount'))
   const usdcAmount = lpAmount?.multipliedBy(price)
+  const { connection } = useConnection()
+  const transactionStatusTrackingDialog = useNiceModal<TransactionStatusTrackingGlobalModalProps>(
+    GLOBAL_MODAL_ID.TransactionStatusTracking,
+    {
+      title: '提款申请',
+      description: `正在申请 ${BNumber.toFormatNumber(usdcAmount, { volScale: 2, unit: 'USDC' })} 提款`
+    }
+  )
 
   const onSubmitWithdrawals = async (data: z.infer<typeof formSchema>) => {
     try {
@@ -76,14 +81,40 @@ export default function VaultDetailWithdrawals() {
 
       const redeemMxlpAccount = await getAssociatedTokenAddress(lpMintAddress, userWalletPublicKey, false, TOKEN_PROGRAM_ID)
 
-      const tx = await program.methods
-        .redeemMxlp(new BN(amountBigInt.toString()))
-        .accounts({
-          redeemMxlpAccount: redeemMxlpAccount,
-          tokenProgram: TOKEN_PROGRAM_ID
+      transactionStatusTrackingDialog.show()
+
+      let tx: string
+      try {
+        tx = await program.methods
+          .redeemMxlp(new BN(amountBigInt.toString()))
+          .accounts({
+            redeemMxlpAccount: redeemMxlpAccount,
+            tokenProgram: TOKEN_PROGRAM_ID
+          })
+          .rpc()
+      } catch (error) {
+        transactionStatusTrackingDialog.show({
+          isError: true
         })
-        .rpc()
-      console.log(tx)
+        throw error
+      }
+
+      transactionStatusTrackingDialog.show({ txHash: tx })
+
+      const txResponse = await waitTransactionConfirm(connection, tx)
+
+      if (txResponse) {
+        toast.success('交易已确认，等待审核', {
+          description: (
+            <div>
+              查看交易哈希
+              <a href={`https://solscan.io/tx/${tx}?cluster=devnet`} target="_blank" rel="noreferrer" className="text-blue-400" title={tx}>
+                {formatAddress(tx)}
+              </a>
+            </div>
+          )
+        })
+      }
     } catch (error: any) {
       console.error(error)
       toast.error(error?.message)
@@ -113,8 +144,10 @@ export default function VaultDetailWithdrawals() {
                         RightContent={'MTLP'}
                         max={BNumber.from(lpBalance)?.toString()}
                         decimalScale={2}
-                        onValueChange={({ value }) => {
-                          field.onChange(value)
+                        onValueChange={({ value }, { source }) => {
+                          if (source === NumberInputSourceType.EVENT) {
+                            field.onChange(value)
+                          }
                         }}
                         {...field}
                       />

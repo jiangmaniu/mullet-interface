@@ -617,6 +617,52 @@ export interface AccountManage1 {
    * @format int64
    */
   followAccountId?: number;
+  /**
+   * 跟单管理ID
+   * @format int64
+   */
+  followManageId?: number;
+  /** 跟单盈亏 */
+  followProfit?: number;
+  /** 跟单份额 */
+  followShares?: number;
+  /** 跟单总金额 */
+  followTotalMoney?: number;
+  /** 跟单总份额 */
+  followTotalShares?: number;
+  /**
+   * 主键
+   * @format int64
+   */
+  id?: number;
+  /** PDA地址 */
+  pdaAddress?: string;
+  /** 备注 */
+  remark?: string;
+  /** 状态 */
+  status?: AccountManage1StatusEnum;
+  /**
+   * 交易账户ID
+   * @format int64
+   */
+  tradeAccountId?: number;
+}
+
+/**
+ * AccountManage对象_2
+ * 跟单账户
+ */
+export interface AccountManage2 {
+  /**
+   * 创建时间
+   * @format date-time
+   */
+  createTime?: string;
+  /**
+   * 跟单账户ID
+   * @format int64
+   */
+  followAccountId?: number;
   /** 跟单管理信息 */
   followManage?: PoolManage1;
   /**
@@ -642,7 +688,7 @@ export interface AccountManage1 {
   /** 备注 */
   remark?: string;
   /** 状态 */
-  status?: AccountManage1StatusEnum;
+  status?: AccountManage2StatusEnum;
   /**
    * 交易账户ID
    * @format int64
@@ -1136,7 +1182,7 @@ export interface IPageAccountManage {
   current?: number;
   /** @format int64 */
   pages?: number;
-  records?: AccountManage[];
+  records?: AccountManage1[];
   /** @format int64 */
   size?: number;
   /** @format int64 */
@@ -1760,6 +1806,8 @@ export interface Orders2 {
  * 跟单池管理
  */
 export interface PoolManage {
+  /** 账户份额 */
+  accountFollowShares?: AccountManage;
   /** APR */
   apr?: number;
   /** 管理员最小占比(%) */
@@ -1896,7 +1944,7 @@ export interface RAccountManage {
    */
   code: number;
   /** 承载数据 */
-  data?: AccountManage1;
+  data?: AccountManage2;
   /** 返回消息 */
   msg: string;
   /** 是否成功 */
@@ -3675,6 +3723,9 @@ export type AccountManageStatusEnum = "NORMAL" | "CANCEL";
 /** 状态 */
 export type AccountManage1StatusEnum = "NORMAL" | "CANCEL";
 
+/** 状态 */
+export type AccountManage2StatusEnum = "NORMAL" | "CANCEL";
+
 /** 资金划转 */
 export type AccountPageFundTransferEnum = "ALLOWABLE" | "PROHIBIT";
 
@@ -4835,10 +4886,15 @@ export namespace FollowManage {
     export type RequestParams = {};
     export type RequestQuery = {
       /**
-       * 主键id
+       * 跟单管理id
        * @format int64
        */
-      id: number;
+      followManageId: number;
+      /**
+       * 交易账户id
+       * @format int64
+       */
+      tradeAccountId: number;
     };
     export type RequestBody = never;
     export type RequestHeaders = {};
@@ -6207,7 +6263,7 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "//192.168.5.203:8000/trade-core";
+  public baseUrl: string = "//172.31.27.8/trade-core";
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
@@ -6413,7 +6469,7 @@ export class HttpClient<SecurityDataType = unknown> {
  * @version 3.3.1.RELEASE
  * @license Powered By BladeX (https://bladex.cn)
  * @termsOfService https://bladex.cn
- * @baseUrl //192.168.5.203:8000/trade-core
+ * @baseUrl //172.31.27.8/trade-core
  * @contact 翼宿 <bladejava@qq.com> (https://gitee.com/smallc)
  *
  * BladeX 接口文档系统
@@ -7276,10 +7332,15 @@ export class TradeCoreApi<SecurityDataType extends unknown> {
     getFollowmanagePooldetail: (
       query: {
         /**
-         * 主键id
+         * 跟单管理id
          * @format int64
          */
-        id: number;
+        followManageId: number;
+        /**
+         * 交易账户id
+         * @format int64
+         */
+        tradeAccountId: number;
       },
       params: RequestParams = {},
     ) =>
