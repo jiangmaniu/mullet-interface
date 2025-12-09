@@ -1,3 +1,4 @@
+
 declare namespace User {
   // 用户基本信息
   export type UserInfo = {
@@ -460,6 +461,8 @@ declare namespace User {
      * Mint代币小数位
      */
     mintDecimals?: number
+
+    type?: "MAIN" | "SIMULATE" | "FOLLOW";
   }
 
   // 区域列表

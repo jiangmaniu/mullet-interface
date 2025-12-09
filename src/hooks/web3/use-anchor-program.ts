@@ -18,7 +18,6 @@ export function useAnchorProgram<T extends Idl>(idl: any, connection?: Connectio
   const { signTransaction: signTransactionPrivy } = useStandardSignTransaction()
 
   const getWalletAdapter = useCallback(() => {
-
     if (!activeWallet) return
     const walletAdapter = {
       publicKey: new PublicKey(activeWallet.address),

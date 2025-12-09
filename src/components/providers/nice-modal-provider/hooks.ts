@@ -14,7 +14,6 @@ export function useNiceModal(...args: any[]): any {
   const handler = modal(...args)
 
   const initialProps = args && args[1]
-  console.log('args', args)
 
   const show = (...showArgs: Parameters<NiceModalHandler['show']>) => {
     const [params] = showArgs

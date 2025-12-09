@@ -9,6 +9,7 @@
     "build:lynfoo:prod": "npm run build && cp -r ./docs/平台配置物料/lynfoo/** ./dist/platform",
     "build:lynfoo:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/.env.lynfoo.prod max build",
     "build:mrgold:prod": "npm run build && cp -r ./docs/平台配置物料/mrgold/** ./dist/platform",
+    "build:stellux:dev": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/stellux/.env.stellux.dev max build",
     "build:stellux:prod": "npm run build && cp -r ./docs/平台配置物料/stellux/** ./dist/platform",
     "build:stellux:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/stellux/.env.stellux.prod max build",
     "clearPlatformFiles": "node scripts/clearPlatform.js",

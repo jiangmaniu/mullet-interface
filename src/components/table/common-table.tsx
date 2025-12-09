@@ -2,14 +2,16 @@ import type { Row, Table as TableType } from '@tanstack/react-table'
 import * as React from 'react'
 
 import * as Table from '@/components/ui/table'
+import { TableCell, TableRow } from '@/components/ui/table'
 import { cn } from '@/utils/cn'
-import { Icons } from '../ui/icons'
+import { Skeleton } from '../ui/skeleton'
 
 type TableBodyProps<TData> = Omit<React.ComponentPropsWithoutRef<typeof Table.TableBody>, 'children'> & {
   loadingFallback?: () => React.ReactNode
   emptyResultFallback?: () => React.ReactNode
   emptyResultDescription?: React.ReactNode
   loading?: boolean
+  loadingRowCount?: number
   children?: (row: Row<TData>) => React.ReactNode
   table: TableType<TData>
   getRowKey?: (row: Row<TData>) => React.Key | null | undefined
@@ -20,7 +22,8 @@ export const CommonTableBody = <TData,>({
   loadingFallback,
   loading,
   emptyResultFallback,
-  emptyResultDescription = 'No results.',
+  loadingRowCount,
+  emptyResultDescription = '暂无数据',
   children,
   getRowKey,
   className,
@@ -31,23 +34,42 @@ export const CommonTableBody = <TData,>({
   const LoadingContent =
     loadingFallback ??
     (() => {
+      const count = loadingRowCount ?? table.getState().pagination.pageSize ?? 1
       return (
-        <tr className="h-full">
-          <td colSpan={table.getAllColumns().length}>
+        <>
+          {Array.from({ length: count }).map((_, index) => {
+            return (
+              <TableRow className="h-full" key={index}>
+                {/* <td colSpan={table.getAllColumns().length}>
             <div
               className={cn('inset-0 z-10 flex h-full w-full flex-col gap-medium bg-base-white p-medium py-large text-center', {
-                absolute: table.getRowModel().rows.length
+                absolute:!!table.getRowModel().rows.length
               })}
             >
-              {/* <Skeleton className="h-4 w-1/2 shrink-0" />
+            {/ * <Skeleton className="h-4 w-1/2 shrink-0" />
                   <Skeleton className="h-4 shrink-0" />
                   <Skeleton className="h-4 w-3/4 shrink-0" />
-                  <Skeleton className="h-4 shrink-0" /> */}
+                  <Skeleton className="h-4 shrink-0" /> * /}
 
+            <Icons.lucide.Spinner className="size-6 animate-spin" />
+            </div>
+
+            <div className="flex justify-center items-center">
               <Icons.lucide.Spinner className="size-6 animate-spin" />
             </div>
-          </td>
-        </tr>
+          </td> */}
+
+                {table.getAllColumns().map((column) => {
+                  return (
+                    <TableCell key={column.id}>
+                      <Skeleton key={column.id} className="h-7 w-2/3 bg-[#131534] shrink-0" />
+                    </TableCell>
+                  )
+                })}
+              </TableRow>
+            )
+          })}
+        </>
       )
     })
 

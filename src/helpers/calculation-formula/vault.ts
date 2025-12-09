@@ -19,28 +19,22 @@ export function calculateVaultAvailableBalance({
 }
 
 /**
- * 计算 vault 份额单价 (（余额-保证金-逐仓保证金）+ 实时盈亏 ）/ 总份额
+ * 计算 vault 份额单价 (余额+ 实时盈亏 ）/ 总份额
  * @param balance 余额
- * @param isolatedMargin 逐仓保证金
- * @param margin 保证金
  * @param share 份额
  * @param pnl 实时盈亏
  * @returns 可用余额
  */
 export function calculateVaultSharePrice({
   balance,
-  isolatedMargin,
   share,
-  margin,
   pnl
 }: {
   balance?: BNumberValue
-  isolatedMargin?: BNumberValue
-  margin?: BNumberValue
   share?: BNumberValue
   pnl?: BNumberValue
 }) {
-  if (isNil(balance) || isNil(isolatedMargin) || isNil(margin) || isNil(share) || isNil(pnl)) {
+  if (isNil(balance) || isNil(share) || isNil(pnl)) {
     return undefined
   }
 
@@ -49,19 +43,8 @@ export function calculateVaultSharePrice({
   }
 
   const price = BNumber.from(balance)
-    .minus(margin)
-    .minus(isolatedMargin)
     .plus(pnl)
     .div(share)
-
-  console.log({
-    balance,
-    isolatedMargin,
-    share,
-    margin,
-    pnl,
-    price: price.toString()
-  })
 
   return price
 }

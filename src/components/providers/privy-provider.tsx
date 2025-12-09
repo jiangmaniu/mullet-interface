@@ -1,7 +1,6 @@
 import { PRIVY_APP_ID, PRIVY_CLIENT_ID } from '@/constants/config'
 import { PrivyProvider as PrivyProviderComp } from '@privy-io/react-auth'
 import { toSolanaWalletConnectors } from '@privy-io/react-auth/solana'
-import { clusterApiUrl } from '@solana/web3.js'
 import { createContext, useContext } from 'react'
 
 interface IProps {
@@ -15,8 +14,6 @@ const Context = createContext<ProviderType>({} as ProviderType)
 // https://demo.privy.io
 export const PrivyProvider = ({ children }: IProps) => {
   const exposed = {}
-
-  const endpoint = clusterApiUrl('devnet')
 
   return (
     <Context.Provider value={exposed}>

@@ -16,13 +16,15 @@ export default function VaultDetailCharts() {
 
   const options = [
     {
-      label: 'PNL',
+      // label: 'PNL',
+      label: '盈亏',
       value: TabEnum.PNL,
       content: <VaultPNLCharts timeInterval={timeInterval} />
     },
 
     {
-      label: 'Vault Balance',
+      // label: 'Vault Balance',
+      label: '金库余额',
       value: TabEnum.VaultBalance,
       content: <VaultBalanceCharts timeInterval={timeInterval} />
     }
@@ -41,15 +43,15 @@ export default function VaultDetailCharts() {
           <div className="flex gap-5 ml-auto">
             {[
               {
-                label: '24H',
+                label: '24小时',
                 value: VaultChartsTimeIntervalEnum.HOUR24
               },
               {
-                label: '30D',
+                label: '30天',
                 value: VaultChartsTimeIntervalEnum.DAY30
               },
               {
-                label: 'ALL',
+                label: '全部',
                 value: VaultChartsTimeIntervalEnum.ALL_TIME
               }
             ].map((item) => {

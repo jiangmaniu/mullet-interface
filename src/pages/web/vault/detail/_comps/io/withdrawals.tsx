@@ -8,8 +8,6 @@ import { toast } from '@/components/ui/toast'
 import { useMainAccount } from '@/hooks/user/use-main-account'
 import { useRedeemSharesApiMutation } from '@/services/api/trade-core/hooks/follow-shares/redeem-shares'
 import { BNumber } from '@/utils/b-number'
-import { cn } from '@/utils/cn'
-import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useModel } from '@umijs/max'
 import { omit } from 'lodash-es'
@@ -18,6 +16,7 @@ import z from 'zod'
 import { useVaultAccountNetValue } from '../../_hooks/use-vault-account-net-value'
 import { useVaultDetail } from '../../_hooks/use-vault-detail'
 import { useVaultSharePrice } from '../../_hooks/use-vault-share-price'
+import { useVaultWithdrawTime } from '../../_hooks/use-vault-withdraw-time'
 
 export default function VaultDetailWithdrawals() {
   const formSchema = z.object({
@@ -39,6 +38,10 @@ export default function VaultDetailWithdrawals() {
   const { vaultDetail } = useVaultDetail()
   const mainAccount = useMainAccount()
 
+  const { canWithdraw, remainingTime, canWithdrawTime } = useVaultWithdrawTime({
+    lastVisitedTime: vaultDetail?.followAccount?.lastVisitedTime
+  })
+
   const { mutate: redeemShares, isPending } = useRedeemSharesApiMutation()
   const onSubmitWithdrawals = async (data: z.infer<typeof formSchema>) => {
     try {
@@ -53,6 +56,10 @@ export default function VaultDetailWithdrawals() {
       if (vaultDetail?.status === 'CLOSE') {
         throw new Error('金库已关闭')
       }
+
+      // if (!canWithdraw) {
+      //   throw new Error('尚未到达可提取时间')
+      // }
 
       const estimatedWithdrawalShares = BNumber.from(estimatedWithdrawalAmount)?.div(sharePrice)
 
@@ -162,7 +169,13 @@ export default function VaultDetailWithdrawals() {
           </div>
 
           <div className="mt-[30px]">
-            <Button block type="submit" loading={isPending}>
+            <Button
+              block
+              type="submit"
+              loading={isPending}
+              // disabled={!canWithdraw && !!remainingTime}
+            >
+              {/* {!canWithdraw && !!remainingTime ? remainingTime : <>立即取现</>} */}
               立即取现
             </Button>
           </div>
@@ -173,44 +186,11 @@ export default function VaultDetailWithdrawals() {
 
         <div className="text-[#9E9E9E] text-[12px]">
           <div>
-            您的存款可以在 <span className="text-[#FF8F34]">2025/9/17 00:52:17</span> 之后提取。
+            您的存款可以在 <span className="text-[#FF8F34]">{canWithdrawTime}</span> 之后提取。
           </div>
           <div>操作取款后会将资金划转到您的交易账户。</div>
         </div>
       </div>
-    </div>
-  )
-}
-function AmountInputPanel() {
-  const searchInputContainerClassName = useEmotionCss(() => {
-    return {
-      height: '34px',
-      'border-radius': '8px',
-      opacity: '1',
-      background: '#0A0C27',
-      'box-sizing': 'border-box',
-      border: '1px solid #3B3D52'
-    }
-  })
-
-  const searchInputClassName = useEmotionCss(() => {
-    return {
-      'font-family': 'HarmonyOS Sans SC',
-      'font-size': '14px',
-      'font-weight': 'normal',
-      'line-height': 'normal',
-      'letter-spacing': '0em',
-      'font-variation-settings': 'opsz auto',
-      'font-feature-settings': 'kern on',
-      color: '#FFFFFF'
-    }
-  })
-
-  return (
-    <div className={cn([searchInputContainerClassName, 'flex gap-1.5 w-full items-center p-2.5'])}>
-      <input className={cn([searchInputClassName, 'flex-1 bg-transparent outline-none placeholder:text-[#767783]'])} placeholder="金额" />
-
-      <div className="text-white text-[14px]">USDC</div>
     </div>
   )
 }

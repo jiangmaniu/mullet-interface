@@ -13,13 +13,15 @@ export default function VaultDetailCharts() {
 
   const options = [
     {
-      label: 'PNL',
+      // label: 'PNL',
+      label: '盈亏',
       value: TabEnum.PNL,
       content: <VaultPNLCharts />
     },
 
     {
-      label: 'Vault Balance',
+      // label: 'Vault Balance',
+      label: '金库余额',
       value: TabEnum.VaultBalance,
       content: <VaultBalanceCharts />
     }

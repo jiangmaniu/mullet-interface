@@ -1,55 +1,63 @@
+import { CommonTableBody } from '@/components/table/common-table'
 import { TablePagination } from '@/components/table/table-pagination'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { PoolManageWrapper, useGetPoolPageListApiOptions } from '@/services/api/trade-core/hooks/follow-manage/pool-list'
+import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useStores } from '@/context/mobxProvider'
+import { useGetVaultListApiOptions, VaultListItemWrapper } from '@/services/api/trade-core/hooks/follow-manage/vault-page-list'
+import { BNumber } from '@/utils/b-number'
 import { cn } from '@/utils/cn'
+import { renderFallback } from '@/utils/format/fallback'
 import { push } from '@/utils/navigator'
 import { formatAddress } from '@/utils/web3'
 import { useQuery } from '@tanstack/react-query'
 import { ColumnDef, flexRender, getCoreRowModel, PaginationState, useReactTable } from '@tanstack/react-table'
-import { useState } from 'react'
+import dayjs from 'dayjs'
+import { isNil, isUndefined } from 'lodash-es'
+import { useEffect, useState } from 'react'
+import { useVaultListContext } from './list'
 
-export const vaultTablecolumns: ColumnDef<PoolManageWrapper>[] = [
+export const vaultListTableColumns: ColumnDef<VaultListItemWrapper>[] = [
   {
     accessorKey: 'name',
     header: () => '金库',
     cell: ({ row }) => {
-      return <div>{row.original.followPoolName}</div>
+      return <div>{row.original.vaultName}</div>
     }
   },
   {
     accessorKey: '创建者',
     header: () => '创建者',
     cell: ({ row }) => {
-      return <div className={cn('')}>{formatAddress(row.original.pdaAddress) || '-'}</div>
+      return <div className={cn('')}>{renderFallback(formatAddress(row.original.creator), { verify: !isNil(row.original.creator) })}</div>
     }
   },
   {
     accessorKey: '年利率',
     header: () => '年利率',
     cell: ({ row }) => {
-      return <div className={cn('')}> {row.original.apr}</div>
+      return <div className={cn('')}> {BNumber.toFormatPercent(row.original.interestRate)}</div>
     }
   },
   {
     accessorKey: 'tvl',
     header: () => 'TVL(总锁定价值)',
     cell: ({ row }) => {
-      return <div className={cn('')}>{row.original.totalPurchaseMoney}</div>
+      return <div className={cn('')}>{BNumber.toFormatNumber(row.original.tvl)}</div>
     }
   },
 
   {
-    accessorKey: 'balance',
+    accessorKey: 'mySharesValue',
     header: () => '您的存款',
     cell: ({ row }) => {
-      return <div className="">{/* {row.original.liquidity} */}-</div>
+      return <div className="">{BNumber.toFormatNumber(row.original.mySharesValue)}</div>
     }
   },
   {
     accessorKey: 'day',
     header: () => '时间(天)',
     cell: ({ row }) => {
-      return <div className="">{/* {row.original.feeApy} */}</div>
+      const diffDay = dayjs().diff(dayjs(row.original.createTime), 'day')
+      return <div className="">{renderFallback(`${diffDay}天`, { verify: !isUndefined(diffDay) })}</div>
     }
   },
 
@@ -65,23 +73,34 @@ export const vaultTablecolumns: ColumnDef<PoolManageWrapper>[] = [
 const TABLE_COMMON_PAGE_SIZE = 10
 
 export function PopularVaultTable() {
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
+  const { debouncedSearchParam } = useVaultListContext()
+
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: TABLE_COMMON_PAGE_SIZE
   })
 
-  const { getPoolPageListApiOptions } = useGetPoolPageListApiOptions({
+  // 当搜索参数变化时，重置分页到第一页
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }))
+  }, [debouncedSearchParam])
+
+  const { getVaultListApiOptions } = useGetVaultListApiOptions({
     current: pagination.pageIndex + 1,
-    size: pagination.pageSize
+    size: pagination.pageSize,
+    searchParam: debouncedSearchParam,
+    myTradeAccountId: currentAccountInfo.id
   })
 
-  const { data: pageData } = useQuery(getPoolPageListApiOptions)
+  const { data: pageData, isLoading } = useQuery(getVaultListApiOptions)
   console.log(pageData)
 
   const data = pageData?.records || []
   const table = useReactTable({
     data,
-    columns: vaultTablecolumns,
+    columns: vaultListTableColumns,
     pageCount: pageData?.pages,
     rowCount: pageData?.records?.length,
     getCoreRowModel: getCoreRowModel(),
@@ -108,9 +127,10 @@ export function PopularVaultTable() {
             </TableRow>
           ))}
         </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
+
+        <CommonTableBody table={table} loading={isLoading}>
+          {(row) => {
+            return (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && 'selected'}
@@ -123,15 +143,9 @@ export function PopularVaultTable() {
                   <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                 ))}
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={vaultTablecolumns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
+            )
+          }}
+        </CommonTableBody>
       </Table>
 
       <TablePagination className="py-4" table={table} pageData={pageData} />

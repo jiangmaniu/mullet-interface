@@ -10,28 +10,28 @@ import { useState } from 'react'
 export const vaultTransactionHistoryTablecolumns: ColumnDef<PoolManageWrapper>[] = [
   {
     accessorKey: 'name',
-    header: () => '金库',
+    header: () => '品类',
     cell: ({ row }) => {
       return <div>{row.original.followPoolName}</div>
     }
   },
   {
     accessorKey: '订单ID',
-    header: () => '订单ID',
+    header: () => '成交数量',
     cell: ({ row }) => {
       return <div className={cn('')}>{formatAddress(row.original.pdaAddress) || '-'}</div>
     }
   },
   {
     accessorKey: '年利率',
-    header: () => '数量(USDC)',
+    header: () => '成交价',
     cell: ({ row }) => {
       return <div className={cn('')}> {row.original.apr}</div>
     }
   },
   {
     accessorKey: 'tvl',
-    header: () => '类型',
+    header: () => '订单类型',
     cell: ({ row }) => {
       return <div className={cn('')}>{row.original.totalPurchaseMoney}</div>
     }
@@ -39,14 +39,35 @@ export const vaultTransactionHistoryTablecolumns: ColumnDef<PoolManageWrapper>[]
 
   {
     accessorKey: 'balance',
-    header: () => '状态',
+    header: () => '保证金类型',
     cell: ({ row }) => {
       return <div className="">{/* {row.original.liquidity} */}-</div>
     }
   },
   {
     accessorKey: 'day',
-    header: () => '存款时间',
+    header: () => '订单编号',
+    cell: ({ row }) => {
+      return <div className="">{/* {row.original.feeApy} */}</div>
+    }
+  },
+  {
+    accessorKey: 'day',
+    header: () => '订单时间',
+    cell: ({ row }) => {
+      return <div className="">{/* {row.original.feeApy} */}</div>
+    }
+  },
+  {
+    accessorKey: 'day',
+    header: () => '资金费率',
+    cell: ({ row }) => {
+      return <div className="">{/* {row.original.feeApy} */}</div>
+    }
+  },
+  {
+    accessorKey: 'day',
+    header: () => '盈亏',
     cell: ({ row }) => {
       return <div className="">{/* {row.original.feeApy} */}</div>
     }

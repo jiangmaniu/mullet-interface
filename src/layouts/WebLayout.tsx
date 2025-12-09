@@ -33,6 +33,7 @@ function WebLayout() {
   return (
     <div className="">
       <Header />
+      123123
       <div
       // className={classNames('pt-24 pb-24 max-myxl:pb-14 min-h-screen mx-auto', {
       //   'myxl:w-[1300px]': pathname !== '/'
@@ -41,7 +42,6 @@ function WebLayout() {
         <Outlet />
       </div>
       {/* <Footer /> */}
-
       <div className={`flex items-end fixed inset-0 -z-40 ${bgClassName}`}>
         <img src="/img/new/common/bg.svg" alt="bg" className="h-full object-cover" />
       </div>

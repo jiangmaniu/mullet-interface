@@ -58,10 +58,10 @@ const noticeKeyConfig = {
 
 // declare function BuildModuleCacheKeyFnType<T extends KeyConfig>(config: T): CacheKeyHelperType<T>;
 // const t = BuildModuleCacheKeyFnType(noticeKeyConfig);
-const t = buildQueriesCacheKey(noticeKeyConfig);
-const t1 = t.notices.toKey();
-const t2 = t.notices.list.toKey();
-const t3 = t.notices.list.all.toKeyWithArgs(1, { keyword: '', isFavorite: false });
-const t4 = t.notices.list.favorite.toKey();
-const t5 = t.notices.list.favorite.toKeyWithArgs(1, { keyword: '', isFavorite: false });
-const t6 = t.notices.detail.toKey();
+// const t = buildQueriesCacheKey(noticeKeyConfig);
+// const t1 = t.notices.toKey();
+// const t2 = t.notices.list.toKey();
+// const t3 = t.notices.list.all.toKeyWithArgs(1, { keyword: '', isFavorite: false });
+// const t4 = t.notices.list.favorite.toKey();
+// const t5 = t.notices.list.favorite.toKeyWithArgs(1, { keyword: '', isFavorite: false });
+// const t6 = t.notices.detail.toKey();

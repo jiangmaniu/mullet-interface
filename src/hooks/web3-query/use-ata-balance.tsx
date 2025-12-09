@@ -1,3 +1,4 @@
+import { web3QueryQueriesKey } from '@/libs/web3/constans/queries-eache-key'
 import { BNumber } from '@/utils/b-number'
 import { fetchMint, fetchToken, findAssociatedTokenPda, TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022'
 import { address, createSolanaRpc } from '@solana/kit'
@@ -49,7 +50,7 @@ async function getATATokenBalance(rpcClient: ReturnType<typeof createSolanaRpc>,
   }
 }
 
-interface ATATokenBalanceOptionsQuery {
+export interface ATATokenBalanceOptionsQuery {
   rpc?: RpcClient
   ownerAddress?: string
   mintAddress?: string
@@ -58,7 +59,7 @@ interface ATATokenBalanceOptionsQuery {
 export const useATATokenBalanceOptions = ({ rpc, ownerAddress, mintAddress }: ATATokenBalanceOptionsQuery) => {
   const { rpc: rpcFallback } = useConnection()
   const ataTokenBalanceOptions = queryOptions({
-    queryKey: ['web3-query', 'balance', 'ata', { ownerAddress, mintAddress }],
+    queryKey: web3QueryQueriesKey.sol.balance.ata.toKeyWithArgs({ ownerAddress, mintAddress }),
     enabled: !!ownerAddress && !!mintAddress,
     queryFn: async () => {
       const balance = await getATATokenBalance(rpc ?? rpcFallback, ownerAddress, mintAddress)

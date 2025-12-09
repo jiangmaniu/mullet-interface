@@ -10,28 +10,28 @@ import { useState } from 'react'
 const vaultDepositorTablecolumns: ColumnDef<PoolManageWrapper>[] = [
   {
     accessorKey: 'name',
-    header: () => '金库',
+    header: () => '存款人',
     cell: ({ row }) => {
       return <div>{row.original.followPoolName}</div>
     }
   },
   {
     accessorKey: '订单ID',
-    header: () => '订单ID',
+    header: () => '金库余额',
     cell: ({ row }) => {
       return <div className={cn('')}>{formatAddress(row.original.pdaAddress) || '-'}</div>
     }
   },
   {
     accessorKey: '年利率',
-    header: () => '数量(USDC)',
+    header: () => '未实现盈亏',
     cell: ({ row }) => {
       return <div className={cn('')}> {row.original.apr}</div>
     }
   },
   {
     accessorKey: 'tvl',
-    header: () => '类型',
+    header: () => '总盈亏金额',
     cell: ({ row }) => {
       return <div className={cn('')}>{row.original.totalPurchaseMoney}</div>
     }
@@ -46,7 +46,7 @@ const vaultDepositorTablecolumns: ColumnDef<PoolManageWrapper>[] = [
   },
   {
     accessorKey: 'day',
-    header: () => '存款时间',
+    header: () => '关注天数',
     cell: ({ row }) => {
       return <div className="">{/* {row.original.feeApy} */}</div>
     }

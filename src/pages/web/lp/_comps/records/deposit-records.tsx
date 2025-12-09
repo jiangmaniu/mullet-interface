@@ -1,5 +1,4 @@
 import { CommonTableBody } from '@/components/table/common-table'
-import { TablePagination } from '@/components/table/table-pagination'
 import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { PoolManageWrapper, useGetPoolPageListApiOptions } from '@/services/api/trade-core/hooks/follow-manage/pool-list'
 import { cn } from '@/utils/cn'
@@ -68,7 +67,7 @@ export const VaultDepositRecords = () => {
   const { data: pageData } = useQuery(getPoolPageListApiOptions)
   console.log(pageData)
 
-  const data = pageData?.records || []
+  const data = []
   const table = useReactTable({
     data,
     columns: vaultTablecolumns,
@@ -111,7 +110,7 @@ export const VaultDepositRecords = () => {
         </CommonTableBody>
       </Table>
 
-      <TablePagination className="py-4" table={table} pageData={pageData} />
+      {/* <TablePagination className="py-4" table={table} pageData={pageData} /> */}
     </div>
   )
 }

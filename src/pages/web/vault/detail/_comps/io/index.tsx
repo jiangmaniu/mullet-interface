@@ -16,12 +16,15 @@ export default function VaultDetailIOPanel() {
 
   const options = [
     {
-      label: 'Deposit',
+      // label: 'Deposit',
+
+      label: '存款',
       value: TabEnum.Deposit,
       content: <VaultDetailDeposits />
     },
     {
-      label: 'Withdrawal',
+      // label: 'Withdrawal',
+      label: '取现',
       value: TabEnum.Withdrawal,
       content: <VaultDetailWithdrawals />
     }

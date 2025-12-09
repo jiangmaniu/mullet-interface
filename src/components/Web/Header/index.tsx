@@ -4,7 +4,7 @@ import { useTheme } from '@/context/themeProvider'
 import { gray } from '@/theme/theme.config'
 import { cn } from '@/utils/cn'
 
-import { push } from '@/utils/navigator'
+import { HeaderNav } from '@/components/Admin/Header/nav'
 import Logo from '../../Admin/Header/Logo'
 import { HeaderRightContent } from '../../Admin/RightContent'
 
@@ -28,25 +28,20 @@ export default function Header() {
         style={{ background: isDark ? gray[675] : '#fff' }}
       >
         <div className="px-4 h-[66px] relative flex items-center">
-          <div className={cn('flex items-center', !openTradeSidebar ? 'w-[200px]' : 'w-[284px]')}>
+          <div className={cn('flex items-center', !openTradeSidebar ? 'w-[200px]' : 'w-[300px]')}>
             <div className="flex items-center">
               <a className="flex items-center m-h-[22px] h-full">
                 <Logo {...logoProps} />
               </a>
             </div>
+
+            <HeaderNav />
           </div>
           <div className="flex items-center flex-1">
             {/* <div className="flex-1 h-full">
               <HeaderTabsView />
             </div> */}
-            <div className="flex items-center gap-x-4">
-              <div onClick={() => push('/lp')} className="cursor-pointer">
-                MTLP
-              </div>
-              <div onClick={() => push('/vault')} className="cursor-pointer">
-                Vault
-              </div>
-            </div>
+
             <div className="min-w-[565px] h-full box-border flex-1">
               <div className="h-full">
                 <div className="flex items-center justify-end h-full">

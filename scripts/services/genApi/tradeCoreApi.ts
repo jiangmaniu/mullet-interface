@@ -17,8 +17,8 @@ export function generateTradeCoreApi({ env = 'development' }: { env?: string } =
 
   const x = generateApi({
     fileName: 'gen.ts',
-    input: resolve(process.cwd(), './scripts/services/genApi/trade-core.json'),
-    // url,
+    // input: resolve(process.cwd(), './scripts/services/genApi/trade-core.json'),
+    url,
     apiClassName: 'TradeCoreApi',
     singleHttpClient: true,
     output: resolve(process.cwd(), './src/services/api/trade-core/instance'),

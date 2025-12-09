@@ -1,3 +1,4 @@
+import { useSolExploreUrl } from '@/hooks/web3/use-sol-explore-url'
 import useConnection from '@/hooks/web3/useConnection'
 import { waitTransactionConfirm } from '@/libs/web3/helpers/tx'
 import { cn } from '@/utils/cn'
@@ -68,12 +69,7 @@ export const TransactionStatusTrackingDialog = ({
         throw new Error('txHash is required')
       }
 
-      return new Promise((resolve, reject) => {
-        setTimeout(async () => {
-          await waitTransactionConfirm(activeConnection, txHash!)
-          resolve(true)
-        }, 10000000000)
-      })
+      return waitTransactionConfirm(activeConnection, txHash!)
     }
   })
 
@@ -94,6 +90,8 @@ export const TransactionStatusTrackingDialog = ({
       setStatus('pending')
     }
   }, [isSuccess, isError, props.isError, isPending, isConfirming])
+
+  const { getSolExplorerUrl } = useSolExploreUrl()
 
   const renderContent = () => {
     return (
@@ -148,7 +146,7 @@ export const TransactionStatusTrackingDialog = ({
 
             <div>
               {txHash ? (
-                <a href={`https://solscan.io/tx/${txHash}`} className="text-[#1C66FF]" target="_blank">
+                <a href={getSolExplorerUrl(txHash)} className="text-[#1C66FF]" target="_blank">
                   {formatAddress(txHash)}
                 </a>
               ) : (

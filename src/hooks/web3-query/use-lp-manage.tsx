@@ -1,3 +1,4 @@
+import { web3QueryQueriesKey } from '@/libs/web3/constans/queries-eache-key'
 import { calculateLpPoolShare } from '@/libs/web3/helpers/calculation-formula'
 import { BNumber } from '@/utils/b-number'
 import { PublicKey } from '@solana/web3.js'
@@ -48,7 +49,7 @@ export const useLpTokenManageOptions = ({ program, programAddress, seed }: LpTok
   const { connection: connectionFallback } = useConnection()
   const { program: lpSwapProgram } = useLpSwapProgram(connectionFallback)
   const lpTokenManageOptions = queryOptions({
-    queryKey: ['web3-query', 'manage', 'mxlp', { programAddress, seed }],
+    queryKey: web3QueryQueriesKey.sol.manage.lp.toKeyWithArgs({ programAddress, seed }),
     enabled: !!programAddress && !!seed,
     queryFn: async () => {
       const balance = await getLpTokenManage({ program: program ?? lpSwapProgram, programAddress, seed })

@@ -7,6 +7,7 @@ import { toast } from '@/components/ui/toast'
 import { usePoolVaultDivvyApiMutation } from '@/services/api/trade-core/hooks/follow-manage/pool-vault-divvy'
 import { BNumber } from '@/utils/b-number'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useModel } from '@umijs/max'
 import { omit } from 'lodash-es'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -17,6 +18,7 @@ import { useVaultDetail } from '../../../_hooks/use-vault-detail'
 export const DistributeModal = (props: React.ComponentProps<typeof Modal>) => {
   const availableBalance = useVaultAvailableBalance()
   const { vaultDetail } = useVaultDetail()
+  const { fetchUserInfo } = useModel('user')
   const formSchema = z.object({
     amount: z.string()
   })
@@ -41,9 +43,14 @@ export const DistributeModal = (props: React.ComponentProps<typeof Modal>) => {
         divvyMoney: BNumber.from(data.amount).toNumber()
       },
       {
-        onSuccess: () => {
+        onSuccess: async () => {
           toast.success('分发成功')
           props.onOpenChange?.(false)
+
+          await fetchUserInfo()
+        },
+        onError: (error) => {
+          toast.error(error instanceof Error ? error.message : '分发失败')
         }
       }
     )

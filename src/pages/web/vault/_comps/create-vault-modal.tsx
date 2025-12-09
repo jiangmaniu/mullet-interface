@@ -7,30 +7,38 @@ import { Input } from '@/components/ui/input'
 import { Modal, ModalContent, ModalHeader, ModalTitle } from '@/components/ui/modal'
 import { Textarea } from '@/components/ui/textarea'
 import { useMainAccount } from '@/hooks/user/use-main-account'
-import { getTradeCoreApiInstance } from '@/services/api/trade-core/instance'
+import { usePoolCreateVaultApiMutation } from '@/services/api/trade-core/hooks/follow-manage/pool-vault-create'
+import { BNumber } from '@/utils/b-number'
 import { create } from '@ebay/nice-modal-react'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useModel } from '@umijs/max'
 import { omit } from 'lodash-es'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import z from 'zod'
+
+const MIN_DEPOSIT_AMOUNT = 100
+const PROFIT_SHARING_RATIO = 0.1
+const CREATE_FEE = 100
+const MIN_LIQUIDITY_RATIO = 0.05
 
 export const CreateVaultModal = create((props: React.ComponentProps<typeof Modal>) => {
   const mainAccount = useMainAccount()
   const modal = useNiceModal()
 
   const formSchema = z.object({
-    name: z.string(),
-    amount: z.string(),
+    name: z.string().min(1, { message: '请输入金库名称' }),
+    amount: z.string().refine(
+      (val) => {
+        return BNumber.from(val).gte(MIN_DEPOSIT_AMOUNT)
+      },
+      {
+        message: `最低每笔存入${MIN_DEPOSIT_AMOUNT}USDC`
+      }
+    ),
     remark: z.string()
-    // .refine(
-    //   (val) => {
-    //     return BNumber.from(val).gte(MIN_DEPOSIT_AMOUNT)
-    //   },
-    //   {
-    //     message: `最低每笔存入${MIN_DEPOSIT_AMOUNT}USDC`
-    //   }
-    // )
+
     // .refine(
     //   (val) => {
     //     return BNumber.from(val).lte(mainAccount?.money)
@@ -46,23 +54,41 @@ export const CreateVaultModal = create((props: React.ComponentProps<typeof Modal
     defaultValues: { name: '', amount: '', remark: '' }
   })
 
+  useEffect(() => {
+    if (modal.visible) {
+      form.reset()
+    }
+  }, [mainAccount])
+
+  const { mutate: createVault, isPending } = usePoolCreateVaultApiMutation()
+  const { fetchUserInfo } = useModel('user')
+
   const handleSubmitCreateVault = async (data: z.infer<typeof formSchema>) => {
     try {
       console.log('data', data)
-      const tradeCareApi = getTradeCoreApiInstance()
-
-      const rs = await tradeCareApi.followManage.postFollowManageCreatePool({
-        followPoolName: data.name,
-        initialMoney: Number(data.amount),
-        mainAccountId: mainAccount?.id,
-        redeemCloseOrder: true,
-        remark: data.remark
-      })
-
-      if (rs.data.success) {
-        toast.success('创建金库成功')
-        props?.onOpenChange?.(false)
-      }
+      createVault(
+        {
+          followPoolName: data.name,
+          initialMoney: Number(data.amount),
+          mainAccountId: mainAccount?.id,
+          redeemCloseOrder: true,
+          remark: data.remark
+        },
+        {
+          onSuccess: async (data) => {
+            if (data?.success) {
+              toast.success('存款成功')
+              form.reset()
+              modal.hide()
+              await fetchUserInfo()
+            }
+          },
+          onError: (error) => {
+            console.error(error)
+            toast.error(error instanceof Error ? error.message : '存款失败')
+          }
+        }
+      )
     } catch (error) {
       console.log('error', error)
     }
@@ -129,8 +155,8 @@ export const CreateVaultModal = create((props: React.ComponentProps<typeof Modal
                           <NumberInput
                             placeholder="存款金额"
                             allowNegative={false}
-                            // min={MIN_DEPOSIT_AMOUNT}
-                            // max={mainAccount?.money}
+                            min={MIN_DEPOSIT_AMOUNT}
+                            max={mainAccount?.money}
                             onValueChange={({ value }, { source }) => {
                               if (source === NumberInputSourceType.EVENT) {
                                 field.onChange(value)
@@ -149,17 +175,22 @@ export const CreateVaultModal = create((props: React.ComponentProps<typeof Modal
 
               <div className="mt-2.5 text-[12px] flex justify-between">
                 <div className="text-[#9FA0B0]">交易账户可用余额</div>
-                <div className="text-white">56321.52 USDC</div>
+                <div className="text-white">
+                  {BNumber.toFormatNumber(mainAccount?.money, {
+                    volScale: 2,
+                    unit: 'USDC'
+                  })}
+                </div>
               </div>
 
               <div className="mt-5 text-[12px] text-[#9FA0B0]">
-                <div>首次创建金库您存入至少100USDC。</div>
-                <div>作为创建者，您必须在金库中保持超过5%的流动性。</div>
-                <div>金库创建费用为100USDC，金库关闭时不会退还。</div>
-                <div>创建者通过管理金库将会获得10%的利润分享。</div>
+                <div>首次创建金库您存入至少{BNumber.toFormatNumber(MIN_DEPOSIT_AMOUNT, { volScale: 2, unit: 'USDC' })}。</div>
+                <div>作为创建者，您必须在金库中保持超过{BNumber.toFormatPercent(MIN_LIQUIDITY_RATIO)}的流动性。</div>
+                <div>金库创建费用为{BNumber.toFormatNumber(CREATE_FEE, { volScale: 2, unit: 'USDC' })}，金库关闭时不会退还。</div>
+                <div>创建者通过管理金库将会获得{BNumber.toFormatPercent(PROFIT_SHARING_RATIO, { volScale: 2 })}的利润分享。</div>
               </div>
 
-              <Button block type="submit" className="mt-5" loading={form.formState.isSubmitting}>
+              <Button block type="submit" className="mt-5" loading={form.formState.isSubmitting || isPending}>
                 确定
               </Button>
             </div>

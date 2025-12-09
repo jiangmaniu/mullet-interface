@@ -9,33 +9,38 @@ import { Icons } from './icons'
 const buttonVariants = cva(
   [
     'inline-flex items-center gap-1 justify-center transition-[colors_transform] text-[14px] whitespace-nowrap font-medium ring-offset-background ',
-    'active:scale-95',
+    'enabled:active:scale-95',
     'focus-visible:outline-focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-    `data-[disabled='true']:cursor-not-allowed data-[disabled='true']:opacity-35`
+    `data-[disabled='true']:cursor-not-allowed data-[disabled='true']:opacity-35`,
+    `disabled:cursor-not-allowed disabled:opacity-35`
   ],
   {
     variants: {
       variant: {
         primary: [
           'text-[#0A0C27] bg-[#EED94C]',
-          'hover:bg-[#FDFF84] hover:outline-none hover:ring-3 hover:ring-[#FDFF84]',
+          'enabled:hover:bg-[#FDFF84] enabled:hover:outline-none enabled:hover:ring-3 enabled:hover:ring-[#FDFF84]',
           'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
         ],
 
-        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+        destructive: 'bg-destructive text-destructive-foreground enabled:hover:bg-destructive/90',
         outline: [
-          'border border-[#3B3D52] text-white bg-transparent hover:bg-[#181E5A]',
-          'hover:bg-[#FDFF84] hover:text-[#0A0C27] hover:outline-none hover:ring-3 hover:ring-[#FDFF84]',
+          'border border-[#3B3D52] text-white bg-transparent enabled:hover:bg-[#181E5A]',
+          'enabled:hover:bg-[#FDFF84] enabled:hover:text-[#0A0C27] enabled:hover:outline-none enabled:hover:ring-3 enabled:hover:ring-[#FDFF84]',
           'focus-visible:bg-[#FDFF84]  focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
         ],
         secondary: [
           'border border-[#0A0C27] bg-[#0A0C27] ',
-          'hover:bg-[#FDFF84] hover:text-[#0A0C27] hover:outline-none hover:ring-3 hover:ring-[#FDFF84]',
+          'enabled:hover:bg-[#FDFF84] enabled:hover:text-[#0A0C27] enabled:hover:outline-none enabled:hover:ring-3 enabled:hover:ring-[#FDFF84]',
           'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
         ],
-        ghost: 'hover:bg-[#FDFF84] bg-transparent text-[#EED94C] hover:text-[#0A0C27]',
+        ghost: 'enabled:hover:bg-[#FDFF84] bg-transparent text-[#EED94C] enabled:hover:text-[#0A0C27]',
         // link: 'relative after:absolute after:bg-primary after:bottom-2 after:h-[1px] after:w-2/3 after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300',
-        link: ['text-[#EED94C]! font-semibold leading-none text-xs', 'hover:bg-[#FDFF84]', 'hover:text-interactive-link-focus']
+        link: [
+          'text-[#EED94C]! font-semibold leading-none text-xs',
+          'enabled:hover:bg-[#FDFF84]',
+          'enabled:hover:text-interactive-link-focus'
+        ]
       },
       size: {
         middle: 'min-h-8 py-3xs px-s box-border rounded-small leading-6 font-semibold',

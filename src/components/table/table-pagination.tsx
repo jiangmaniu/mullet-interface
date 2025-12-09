@@ -24,7 +24,7 @@ export const TablePagination = <TData extends RowData>({
   const pageCount = getPageCount()
   const currentPageIndex = getState().pagination.pageIndex
 
-  if (getPageCount() === 0) {
+  if (pageCount <= 1) {
     return null
   }
 

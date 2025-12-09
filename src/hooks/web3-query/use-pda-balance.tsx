@@ -1,3 +1,4 @@
+import { web3QueryQueriesKey } from '@/libs/web3/constans/queries-eache-key'
 import { BNumber } from '@/utils/b-number'
 import { fetchMint, fetchToken } from '@solana-program/token-2022'
 import { address, getProgramDerivedAddress } from '@solana/kit'
@@ -50,7 +51,7 @@ type PDATokenBalanceOptionsQuery = Partial<GetPDATokenBalanceParams>
 export const usePDATokenBalanceOptions = ({ rpcClient, programAddress, seed, mintAddress }: PDATokenBalanceOptionsQuery) => {
   const { rpc: rpcFallback } = useConnection()
   const pdaTokenBalanceOptions = queryOptions({
-    queryKey: ['web3-query', 'balance', 'pda', { programAddress, seed, mintAddress }],
+    queryKey: web3QueryQueriesKey.sol.balance.pda.toKeyWithArgs({ programAddress, seed, mintAddress }),
     enabled: !!programAddress && !!mintAddress,
     queryFn: async () => {
       const balance = await getPDATokenBalance({ rpcClient: rpcClient ?? rpcFallback, programAddress, seed, mintAddress })

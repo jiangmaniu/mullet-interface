@@ -3,6 +3,7 @@ import { NumberInputSourceType } from '@/components/input/number-input-primitive
 import { TransactionStatusTrackingGlobalModalProps } from '@/components/providers/nice-modal-provider/global-modal'
 import { useNiceModal } from '@/components/providers/nice-modal-provider/hooks'
 import { GLOBAL_MODAL_ID } from '@/components/providers/nice-modal-provider/register'
+import { getQueryClient } from '@/components/providers/react-query-provider/get-query-client'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Icons } from '@/components/ui/icons'
@@ -10,11 +11,14 @@ import { toast } from '@/components/ui/toast'
 import { useStores } from '@/context/mobxProvider'
 import { useLpPoolPrice } from '@/hooks/lp/use-lp-price'
 import { useUserWallet } from '@/hooks/user/use-wallet-user'
-import { useATATokenBalance } from '@/hooks/web3-query/use-ata-balance'
+import { ATATokenBalanceOptionsQuery, useATATokenBalance } from '@/hooks/web3-query/use-ata-balance'
+import { useSolanaErrorHandler } from '@/hooks/web3/error-handler/use-solana-error-handler'
 import { useLpSwapProgram } from '@/hooks/web3/use-anchor-program'
+import { useSolExploreUrl } from '@/hooks/web3/use-sol-explore-url'
 import useConnection from '@/hooks/web3/useConnection'
 import { poolProgramAddress } from '@/libs/web3/constans/address'
 import { PoolSeed } from '@/libs/web3/constans/enum'
+import { web3QueryQueriesKey } from '@/libs/web3/constans/queries-eache-key'
 import { waitTransactionConfirm } from '@/libs/web3/helpers/tx'
 import { BNumber } from '@/utils/b-number'
 import { formatAddress } from '@/utils/web3'
@@ -33,10 +37,11 @@ export default function VaultDetailWithdrawals() {
 
   const [lpMintAddress] = PublicKey.findProgramAddressSync([Buffer.from(PoolSeed.LPMint)], new PublicKey(poolProgramAddress))
 
-  const { data: lpBalance } = useATATokenBalance({
+  const lpBalanceQuery: ATATokenBalanceOptionsQuery = {
     ownerAddress: userWallet?.address,
     mintAddress: lpMintAddress.toString()
-  })
+  }
+  const { data: lpBalance } = useATATokenBalance(lpBalanceQuery)
 
   const formSchema = z.object({
     amount: z.string().refine(
@@ -49,17 +54,19 @@ export default function VaultDetailWithdrawals() {
     )
   })
 
-  const { getSignProgram } = useLpSwapProgram()
+  const { getSignProgram, program } = useLpSwapProgram()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { amount: '' }
   })
 
-  const price = useLpPoolPrice(usdcMintAddress)
+  const { price, updatePrice } = useLpPoolPrice(usdcMintAddress)
   const lpAmount = BNumber.from(form.watch('amount'))
   const usdcAmount = lpAmount?.multipliedBy(price)
   const { connection } = useConnection()
+  const { getSolExplorerUrl } = useSolExploreUrl()
+
   const transactionStatusTrackingDialog = useNiceModal<TransactionStatusTrackingGlobalModalProps>(
     GLOBAL_MODAL_ID.TransactionStatusTracking,
     {
@@ -68,13 +75,17 @@ export default function VaultDetailWithdrawals() {
     }
   )
 
+  const { handleSolanaError } = useSolanaErrorHandler(program.idl)
+
   const onSubmitWithdrawals = async (data: z.infer<typeof formSchema>) => {
     try {
       if (!userWallet?.address) {
         throw new Error('请先连接钱包')
       }
 
-      const amountBigInt = BNumber.from(data.amount).multipliedBy(10 ** 6)
+      const amountBigInt = BNumber.from(data.amount)
+        .multipliedBy(10 ** 6)
+        .integerValue()
       const program = getSignProgram()
 
       const userWalletPublicKey = new PublicKey(userWallet?.address)
@@ -96,6 +107,7 @@ export default function VaultDetailWithdrawals() {
         transactionStatusTrackingDialog.show({
           isError: true
         })
+
         throw error
       }
 
@@ -104,11 +116,19 @@ export default function VaultDetailWithdrawals() {
       const txResponse = await waitTransactionConfirm(connection, tx)
 
       if (txResponse) {
+        form.reset()
+
+        updatePrice()
+        const queryClient = getQueryClient()
+        queryClient.invalidateQueries({
+          queryKey: web3QueryQueriesKey.sol.balance.ata.toKeyWithArgs(lpBalanceQuery)
+        })
+
         toast.success('交易已确认，等待审核', {
           description: (
             <div>
               查看交易哈希
-              <a href={`https://solscan.io/tx/${tx}?cluster=devnet`} target="_blank" rel="noreferrer" className="text-blue-400" title={tx}>
+              <a href={getSolExplorerUrl(tx)} target="_blank" rel="noreferrer" className="text-blue-400" title={tx}>
                 {formatAddress(tx)}
               </a>
             </div>
@@ -117,7 +137,8 @@ export default function VaultDetailWithdrawals() {
       }
     } catch (error: any) {
       console.error(error)
-      toast.error(error?.message)
+
+      handleSolanaError(error)
     }
   }
 

@@ -11,6 +11,7 @@ import { CONFIG_URL } from '@/constants/config'
 import { beforeCaptureSetUserInfo } from '@/utils/sentry'
 import defaultSettings from '../config/defaultSettings'
 import Logo from './components/Admin/Header/Logo'
+import { HeaderNav } from './components/Admin/Header/nav'
 import { HeaderRightContent } from './components/Admin/RightContent'
 import Forbid from './components/Base/Forbid'
 import SwitchLanguage from './components/SwitchLanguage'
@@ -104,7 +105,12 @@ export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) =
     // headerTitleRender: () => <div>headerTitleRender</div>,
     // 在 layout 底部渲染一个块
     // menuFooterRender: () => <div>菜单底部区域</div>,
-    logo: <Logo />,
+    logo: (
+      <div className="flex gap-2">
+        <Logo />
+        <HeaderNav />
+      </div>
+    ),
     title: '',
     // layout 的内容区 style
     contentStyle: {

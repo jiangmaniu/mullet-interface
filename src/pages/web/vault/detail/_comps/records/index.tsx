@@ -1,11 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useState } from 'react'
-// import { VaultBalanceRecords } from './balance-records'
-// import { VaultDepositorRecords } from './depositor-records'
-// import { VaultDepositsAndWithdrawalsRecords } from './deposits-and-withdrawals-records'
-// import { VaultFundingFeeHistoryRecords } from './funding-fee-history-records'
-// import { VaultPositionRecords } from './position-records'
-// import { VaultTransactionHistoryRecords } from './transaction-history-redords'
+import { VaultBalanceRecords } from './balance-records'
+import { VaultDepositorRecords } from './depositor-records'
+import { VaultDepositsAndWithdrawalsRecords } from './deposits-and-withdrawals-records'
+import { VaultPositionRecords } from './position-records'
+import { VaultTransactionHistoryRecords } from './transaction-history-redords'
 
 export default function VaultDetailRecords() {
   enum TabEnum {
@@ -53,34 +52,46 @@ export default function VaultDetailRecords() {
 
   const options = [
     {
-      label: 'Balances',
+      // label: 'Balances',
+      label: '余额',
       value: TabEnum.Balances,
-      content: <div>Balance</div>
+      // content: <div>Balance</div>,
+      content: <VaultBalanceRecords />
     },
     {
-      label: 'Position',
+      // label: 'Position',
+      label: '仓位',
       value: TabEnum.Positions,
-      content: <div>Position</div>
+      // content: <div>Position</div>
+      content: <VaultPositionRecords />
     },
     {
-      label: 'Transaction History',
+      // label: 'Transaction History',
+      label: '交易历史',
       value: TabEnum.TransactionHistory,
-      content: <div>Transaction History</div>
+      // content: <div>Transaction History</div>
+      content: <VaultTransactionHistoryRecords />
     },
+    // {
+    //   // label: 'Funding Fee History',
+    //   label: '资金费率历史',
+    //   value: TabEnum.FundingFeeHistory,
+    //   // content: <div>Funding Fee History</div>
+    //   content: <VaultFundingFeeHistoryRecords />
+    // },
     {
-      label: 'Funding Fee History',
-      value: TabEnum.FundingFeeHistory,
-      content: <div>Funding Fee History</div>
-    },
-    {
-      label: 'Deposits And Withdrawals',
+      // label: 'Deposits And Withdrawals',
+      label: '存款和取款',
       value: TabEnum.DepositsAndWithdrawals,
-      content: <div>Deposits And Withdrawals</div>
+      // content: <div>Deposits And Withdrawals</div>
+      content: <VaultDepositsAndWithdrawalsRecords />
     },
     {
-      label: 'Depositor',
+      // label: 'Depositor',
+      label: '存款人',
       value: TabEnum.Depositor,
-      content: <div>Depositor</div>
+      // content: <div>Depositor</div>
+      content: <VaultDepositorRecords />
     }
   ]
 

@@ -12,7 +12,6 @@ import { useEnv } from '@/context/envProvider'
 import { goKefu, push } from '@/utils/navigator'
 
 import Button from '@/components/Base/Button'
-import WalletButton from '@/components/Wallet/WalletButton'
 import DepositModal from '@/components/Web/DepositWithdrawModal/DepositModal'
 import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
 import { useStores } from '@/context/mobxProvider'
@@ -150,7 +149,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
           </div>
         </Button>
         {/* 钱包地址选择 */}
-        <WalletButton />
+        {/* <WalletButton /> */}
 
         {/* 交易页面账户信息下拉dropdown */}
         {isTradePage && <TradeAccountDropdown theme={theme} />}

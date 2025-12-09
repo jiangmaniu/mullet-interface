@@ -4,9 +4,11 @@ import { getTradeCoreApiInstance } from '../../instance'
 import { FollowManage, PoolManage } from '../../instance/gen'
 import { PageDataResponse } from '../../type'
 import { tradeCoreApiQueriesKey } from '../../queries-eache-key'
+import dayjs from 'dayjs'
+import { TimeParseEnum } from '@/utils/dayjs'
 
 export type PoolManageWrapper = Prettify<
-  DeepOverride<Omit<PoolManage, 'id' | 'details' | 'status'>, object> & Required<Pick<PoolManage, 'id'>> & {}
+  DeepOverride<Omit<PoolManage, 'id' | 'details' | 'status'>, object> & Required<Pick<PoolManage, 'id'>> & { createTime: number }
 >
 
 export type GetPoolPageListRequestQuery = FollowManage.GetFollowmanagePoollist.RequestQuery
@@ -21,8 +23,11 @@ export const useGetPoolPageListApiOptions = (query?: GetPoolPageListRequestQuery
 
       if (rs.data.data) {
         const list = (rs.data.data.records || []).map((item) => {
+          const createTime = dayjs(item.createTime, TimeParseEnum.default).valueOf()
           return {
-            ...item
+
+            ...item,
+            createTime,
           }
         })
 

@@ -14,7 +14,8 @@ export default function VaultDetailInfo() {
 
   const options = [
     {
-      label: 'About',
+      // label: 'About',
+      label: '关于',
       value: TabEnum.About,
       content: (
         <div>
@@ -27,13 +28,15 @@ export default function VaultDetailInfo() {
     },
 
     {
-      label: 'Vault Performance',
+      // label: 'Vault Performance',
+      label: '金库表现',
       value: TabEnum.VaultPerformance,
       content: <VaultPerformance />
     },
 
     {
-      label: 'Your Performance',
+      // label: 'Your Performance',
+      label: '你的表现',
       value: TabEnum.YourPerformance,
       content: <YourPerformance />
     }

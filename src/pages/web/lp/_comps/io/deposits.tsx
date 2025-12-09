@@ -3,6 +3,7 @@ import { NumberInputSourceType } from '@/components/input/number-input-primitive
 import { TransactionStatusTrackingGlobalModalProps } from '@/components/providers/nice-modal-provider/global-modal'
 import { useNiceModal } from '@/components/providers/nice-modal-provider/hooks'
 import { GLOBAL_MODAL_ID } from '@/components/providers/nice-modal-provider/register'
+import { getQueryClient } from '@/components/providers/react-query-provider/get-query-client'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Icons } from '@/components/ui/icons'
@@ -12,8 +13,10 @@ import { useLpPoolPrice } from '@/hooks/lp/use-lp-price'
 import { useUserWallet } from '@/hooks/user/use-wallet-user'
 import { useATATokenBalance } from '@/hooks/web3-query/use-ata-balance'
 import { useLpSwapProgram } from '@/hooks/web3/use-anchor-program'
+import { useSolExploreUrl } from '@/hooks/web3/use-sol-explore-url'
 import useConnection from '@/hooks/web3/useConnection'
 import { vaultAccountAddress } from '@/libs/web3/constans/address'
+import { web3QueryQueriesKey } from '@/libs/web3/constans/queries-eache-key'
 import { waitTransactionConfirm } from '@/libs/web3/helpers/tx'
 import { BNumber } from '@/utils/b-number'
 import { formatAddress } from '@/utils/web3'
@@ -31,11 +34,12 @@ export default function VaultDetailDeposits() {
 
   const userWallet = useUserWallet()
 
-  const { data: balance } = useATATokenBalance({
+  const { data: balance, refetch: refetchBalance } = useATATokenBalance({
     ownerAddress: userWallet?.address,
     mintAddress: usdcMintAddress
   })
 
+  const { getSolExplorerUrl } = useSolExploreUrl()
   const formSchema = z.object({
     amount: z
       .string()
@@ -62,7 +66,7 @@ export default function VaultDetailDeposits() {
     defaultValues: { amount: '' }
   })
 
-  const price = useLpPoolPrice(usdcMintAddress)
+  const { price, updatePrice } = useLpPoolPrice(usdcMintAddress)
   const usdcAmount = BNumber.from(form.watch('amount'))
   const LpMintAmount = usdcAmount?.div(price)
   const { connection } = useConnection()
@@ -80,8 +84,9 @@ export default function VaultDetailDeposits() {
       if (!userWallet?.address) {
         throw new Error('请先连接钱包')
       }
-
-      const amountBigInt = BNumber.from(data.amount).multipliedBy(10 ** 6)
+      const amountBigInt = BNumber.from(data.amount)
+        .multipliedBy(10 ** 6)
+        .integerValue()
 
       const userWalletPublicKey = new PublicKey(userWallet?.address)
       const usdcMintPublicKey = new PublicKey(usdcMintAddress)
@@ -95,7 +100,10 @@ export default function VaultDetailDeposits() {
         TOKEN_PROGRAM_ID
       )
 
-      transactionStatusTrackingDialog.show()
+      transactionStatusTrackingDialog.show({
+        title: '存款申请',
+        description: `正在申请 ${BNumber.toFormatNumber(usdcAmount, { volScale: 2, unit: 'USDC' })} 存款`
+      })
 
       const program = getSignProgram()
       let tx: string
@@ -111,23 +119,35 @@ export default function VaultDetailDeposits() {
           .rpc()
       } catch (error) {
         transactionStatusTrackingDialog.show({
+          // title: '存款申请',
+          // description: `正在申请 ${BNumber.toFormatNumber(usdcAmount, { volScale: 2, unit: 'USDC' })} 存款`,
           isError: true
         })
         throw error
       }
 
       transactionStatusTrackingDialog.show({
+        // title: '存款申请',
+        // description: `正在申请 ${BNumber.toFormatNumber(usdcAmount, { volScale: 2, unit: 'USDC' })} 存款`,
         txHash: tx
       })
 
       const txResponse = await waitTransactionConfirm(connection, tx)
 
       if (txResponse) {
+        form.reset()
+
+        updatePrice()
+        const queryClient = getQueryClient()
+        queryClient.invalidateQueries({
+          queryKey: web3QueryQueriesKey.sol.balance.ata.toKeyWithArgs({ ownerAddress: userWallet?.address, mintAddress: usdcMintAddress })
+        })
+
         toast.success('存款成功', {
           description: (
             <div>
               查看交易：
-              <a href={`https://solscan.io/tx/${tx}?cluster=devnet`} target="_blank" rel="noreferrer" className="text-blue-400" title={tx}>
+              <a href={getSolExplorerUrl(tx)} target="_blank" rel="noreferrer" className="text-blue-400" title={tx}>
                 {formatAddress(tx)}
               </a>
             </div>
@@ -135,7 +155,7 @@ export default function VaultDetailDeposits() {
         })
       }
     } catch (error: any) {
-      console.error(error)
+      console.error('💥 Deposit failed:', error)
       toast.error(error?.message)
     }
   }
