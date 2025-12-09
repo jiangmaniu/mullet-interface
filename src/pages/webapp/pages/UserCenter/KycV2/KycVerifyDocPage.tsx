@@ -13,7 +13,7 @@ import { appendHideParamIfNeeded } from '@/utils/request'
 import { useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { useRef, useState } from 'react'
-import VerifyDoc from '../KycV2/VerifyDoc'
+import VerifyDoc from './VerifyDoc'
 export default function KycVerifyDocPage() {
   const { cn, theme } = useTheme()
   const i18n = useI18n()

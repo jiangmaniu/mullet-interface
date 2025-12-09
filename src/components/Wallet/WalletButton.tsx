@@ -42,7 +42,7 @@ export default function WalletButton() {
             onClick: async (e) => {
               const { key } = e
               if (key === 'logout') {
-                // 先退出钱包，不会退出stellux的登录体系，再重新连接钱包
+                // 先退出钱包，不会退出mullet的登录体系，再重新连接钱包
                 // await logout()
 
                 // 暂时先退出登录页面，后期再优化

@@ -59,7 +59,7 @@ export default function Login() {
   const handleLogout = () => {
     // 退出privy登录session等信息
     logout()
-    // 清除stellux登录的缓存
+    // 清除mullet登录的缓存
     onLogout()
     setShowJumpingLoader(false)
   }
