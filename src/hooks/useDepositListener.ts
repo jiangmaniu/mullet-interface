@@ -38,7 +38,7 @@ interface UseDepositListenerOptions {
  * ```
  */
 export function useDepositListener(options: UseDepositListenerOptions = {}) {
-  const { enabled = false, pollInterval = 5000, chains = ['TRON', 'Ethereum', 'Solana'] } = options
+  const { enabled = false, pollInterval = 5000, chains = ['Tron', 'Ethereum', 'Solana'] } = options
 
   const { wallets } = useWallets()
   const [deposit, setDeposit] = useState<DepositDetection | null>(null)
