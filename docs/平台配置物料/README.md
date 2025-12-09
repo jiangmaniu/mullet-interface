@@ -11,7 +11,7 @@
 ```json
 {
   // 网站名称(必填)
-  "name": "Stellux",
+  "name": "Mullet",
   // 客户ID (必填)-pc
   "CLIENT_ID_PC": "trade-pc-client",
   // 客户秘钥 (必填)-pc
@@ -21,9 +21,9 @@
   // 客户秘钥 (必填)-h5
   "CLIENT_SECRET_H5": "trade-h5-client-secret",
   // websocket地址 (必填)
-  "ws": "wss://websocket.stellux.io/websocketServer",
+  "ws": "wss://websocket.mullet.io/websocketServer",
   // 图片域名前缀地址 (必填)
-  "imgDomain": "https://file.stellux.io/trade/",
+  "imgDomain": "https://file.mullet.io/trade/",
   // 控制是否打开注册模块 (选填)
   "REGISTER_MODULE": true,
   // KYC 证件类型是否只显示身份证 (选填)
@@ -47,9 +47,9 @@
 
 ```json
 // 应用名称
-"name": "Stellux",
+"name": "Mullet",
 // 简短名称
-"short_name": "Stellux",
+"short_name": "Mullet",
 ```
 
 3. 按图片文件类型规则修改图片

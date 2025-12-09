@@ -1,42 +1,42 @@
 ## Node 版本
 
-> v20.10.0
+> v24.x (Node LTS)
 
-全局安装 `yarn`
+全局安装 `pnpm`
 
 ```bash
-npm i -g yarn
+npm i -g pnpm
 ```
 
 ## 安装依赖
 
 ```
-yarn install
+pnpm install
 ```
 
 ## 本地开发启动
 
 **环境变量**
 
-- `.env-conf/stellux` stellux 平台环境变量
+- `.env-conf/mullet` mullet 平台环境变量
 - `.env-conf/.env.lynfoo.prod` lynfoo 平台环境变量
 
 ```bash
-# stellux
+# mullet
 # 开发阶段的环境
-"dev:stellux:dev": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/stellux/.env.stellux.dev max dev",
+"dev:mullet:dev": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/mullet/.env.mullet.dev max dev",
 # 测试阶段的环境
-"dev:stellux:test": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/stellux/.env.stellux.test max dev",
+"dev:mullet:test": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/mullet/.env.mullet.test max dev",
 # 线上阶段的环境
-"dev:stellux:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/stellux/.env.stellux.prod max dev",
+"dev:mullet:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/mullet/.env.mullet.prod max dev",
 # lynfoo 线上阶段的环境
 "dev:lynfoo:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .en-conf/.env.lynfoo.prod max dev",
 
 # 启动本地mock服务，用于快速没有服务的情况下联调接口字段 配置根目录下 mock/xx 来使用
-yarn start:mock
+pnpm start:mock
 ```
 
-## 项目 SEO 化按不同平台打包(暂时不考虑)
+## 项目 SEO 化按不同平台打包
 
 目前为了打一个 docker 镜像包通用全部客户，从`public/platform/config.json`中读取不同平台配置，如果需要做 seo 在使用这样方式打包
 
@@ -45,7 +45,7 @@ yarn start:mock
 
 ```bash
 "build:lynfoo:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .en-conf/.env.lynfoo.prod max build",
-"build:stellux:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .en-conf/stellux/.env.stellux.prod max build",
+"build:mullet:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .en-conf/mullet/.env.mullet.prod max build",
 ```
 
 > 打包时按需注入环境变量到代码中，在页面中可以访问 process.env.xx 的值

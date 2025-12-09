@@ -9,8 +9,8 @@ import { onBack } from '@/utils/navigator'
 import { useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { useMemo } from 'react'
-import VerifyStatus2 from '../KycV2/VerifyStatus2'
-import VerifyStatus3 from '../KycV2/VerifyStatus3'
+import VerifyStatus2 from './VerifyStatus2'
+import VerifyStatus3 from './VerifyStatus3'
 function KycVerifyDocPage() {
   const { cn, theme } = useTheme()
   const i18n = useI18n()

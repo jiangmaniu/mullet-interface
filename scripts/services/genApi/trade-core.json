@@ -70,15 +70,11 @@
   "paths": {
     "/coreApi/account/count": {
       "get": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-统计",
         "description": "传入id",
         "operationId": "countUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountId",
@@ -128,19 +124,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -149,14 +139,10 @@
     },
     "/coreApi/account/count/accountProfit": {
       "get": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-盈亏",
         "operationId": "accountProfitUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountId",
@@ -206,19 +192,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -227,15 +207,11 @@
     },
     "/coreApi/account/detail": {
       "get": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-详情",
         "description": "传入id",
         "operationId": "detailUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -285,19 +261,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -306,15 +276,11 @@
     },
     "/coreApi/account/list": {
       "get": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-分页",
         "description": "传入account",
         "operationId": "listUsingGET_1",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountGroupId",
@@ -375,10 +341,7 @@
             "description": "订单模式",
             "required": false,
             "type": "string",
-            "enum": [
-              "NETTING",
-              "LOCKED_POSITION"
-            ]
+            "enum": ["NETTING", "LOCKED_POSITION"]
           },
           {
             "name": "size",
@@ -427,19 +390,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -448,15 +405,11 @@
     },
     "/coreApi/account/moneyRecords": {
       "get": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "资金变更记录-分页",
         "description": "传入moneyRecords",
         "operationId": "listUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountId",
@@ -565,19 +518,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -586,18 +533,12 @@
     },
     "/coreApi/account/recharge": {
       "post": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-充值",
         "description": "传入id",
         "operationId": "rechargeUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -654,19 +595,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -675,18 +610,12 @@
     },
     "/coreApi/account/rechargeSimulate": {
       "post": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-模拟入金",
         "description": "传入id",
         "operationId": "rechargeSimulateUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -743,19 +672,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -764,18 +687,12 @@
     },
     "/coreApi/account/remove": {
       "post": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-删除",
         "description": "传入id",
         "operationId": "removeUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -830,19 +747,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -851,18 +762,12 @@
     },
     "/coreApi/account/save": {
       "post": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-新增",
         "description": "传入account",
         "operationId": "saveUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -919,19 +824,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -940,15 +839,11 @@
     },
     "/coreApi/account/tradeSymbolList": {
       "get": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-品种及配置List",
         "description": "传入",
         "operationId": "tradeSymbolListUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountId",
@@ -1018,19 +913,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1039,18 +928,12 @@
     },
     "/coreApi/account/transfer": {
       "post": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-资金划转",
         "description": "传入id",
         "operationId": "transferUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -1107,19 +990,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1128,18 +1005,12 @@
     },
     "/coreApi/account/update": {
       "post": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-修改",
         "description": "传入account",
         "operationId": "updateUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -1196,19 +1067,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1217,18 +1082,12 @@
     },
     "/coreApi/account/withdraw": {
       "post": {
-        "tags": [
-          "交易账户接口"
-        ],
+        "tags": ["交易账户接口"],
         "summary": "交易账户-出金",
         "description": "传入id",
         "operationId": "withdrawUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -1285,19 +1144,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1306,18 +1159,12 @@
     },
     "/coreApi/accountGroup/add": {
       "post": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组-新增",
         "description": "传入accountGroup",
         "operationId": "addUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -1374,19 +1221,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1395,18 +1236,12 @@
     },
     "/coreApi/accountGroup/clone": {
       "post": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组-克隆",
         "description": "传入id",
         "operationId": "cloneUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -1463,19 +1298,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1484,15 +1313,11 @@
     },
     "/coreApi/accountGroup/conf/detail": {
       "get": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组关联产品配置-详情",
         "description": "传入id",
         "operationId": "confDetailUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -1542,19 +1367,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1563,18 +1382,12 @@
     },
     "/coreApi/accountGroup/conf/edit": {
       "post": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组关联产品配置-修改",
         "description": "传入symbolConf",
         "operationId": "confEditUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -1631,19 +1444,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1652,15 +1459,11 @@
     },
     "/coreApi/accountGroup/detail": {
       "get": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组-详情",
         "description": "传入id",
         "operationId": "detailUsingGET_1",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -1710,19 +1513,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1731,15 +1528,11 @@
     },
     "/coreApi/accountGroup/list": {
       "get": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组-分页",
         "description": "传入accountGroup",
         "operationId": "listUsingGET_2",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "current",
@@ -1796,19 +1589,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1817,18 +1604,12 @@
     },
     "/coreApi/accountGroup/remove": {
       "post": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组-删除",
         "description": "传入id",
         "operationId": "removeUsingPOST_1",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -1884,19 +1665,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1905,15 +1680,11 @@
     },
     "/coreApi/accountGroup/symbol/delete": {
       "get": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组关联产品-删除",
         "description": "传入id",
         "operationId": "symbolDeleteUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -1963,19 +1734,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -1984,15 +1749,11 @@
     },
     "/coreApi/accountGroup/symbol/list": {
       "get": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组关联产品-分页",
         "description": "传入accountGroupSymbols",
         "operationId": "symbolListUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountGroupId",
@@ -2058,19 +1819,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2079,18 +1834,12 @@
     },
     "/coreApi/accountGroup/symbol/save": {
       "post": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组关联产品-新增/修改",
         "description": "传入accountGroupSymbols",
         "operationId": "symbolSaveUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -2147,19 +1896,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2168,15 +1911,11 @@
     },
     "/coreApi/accountGroup/symbol/switch": {
       "get": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组关联产品-默认/自定义开关",
         "description": "传入id和isDefault",
         "operationId": "symbolSwitchUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -2234,19 +1973,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2255,18 +1988,12 @@
     },
     "/coreApi/accountGroup/update": {
       "post": {
-        "tags": [
-          "交易账户组接口"
-        ],
+        "tags": ["交易账户组接口"],
         "summary": "交易账户组-修改",
         "description": "传入accountGroup",
         "operationId": "updateUsingPOST_1",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -2323,19 +2050,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2344,18 +2065,12 @@
     },
     "/coreApi/delayUser/add": {
       "post": {
-        "tags": [
-          "交易延迟用户记录接口"
-        ],
+        "tags": ["交易延迟用户记录接口"],
         "summary": "新增",
         "description": "传入delayUser",
         "operationId": "addUsingPOST_1",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountEmailPhone",
@@ -2410,19 +2125,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2431,15 +2140,11 @@
     },
     "/coreApi/delayUser/page": {
       "get": {
-        "tags": [
-          "交易延迟用户记录接口"
-        ],
+        "tags": ["交易延迟用户记录接口"],
         "summary": "分页",
         "description": "传入delayUser",
         "operationId": "pageUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "current",
@@ -2503,19 +2208,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2524,18 +2223,12 @@
     },
     "/coreApi/delayUser/remove": {
       "post": {
-        "tags": [
-          "交易延迟用户记录接口"
-        ],
+        "tags": ["交易延迟用户记录接口"],
         "summary": "删除",
         "description": "传入ids",
         "operationId": "removeUsingPOST_2",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "ids",
@@ -2590,19 +2283,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2611,15 +2298,11 @@
     },
     "/coreApi/followManage/accountShares": {
       "get": {
-        "tags": [
-          "跟单池接口"
-        ],
+        "tags": ["跟单池接口"],
         "summary": "跟单金库存款账户列表",
         "description": "传入followManageId",
         "operationId": "accountListUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "current",
@@ -2685,19 +2368,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2706,18 +2383,12 @@
     },
     "/coreApi/followManage/createPool": {
       "post": {
-        "tags": [
-          "跟单池接口"
-        ],
+        "tags": ["跟单池接口"],
         "summary": "创建跟单池",
         "description": "传入followManageCreate",
         "operationId": "createPoolUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -2774,19 +2445,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2795,15 +2460,11 @@
     },
     "/coreApi/followManage/poolDetail": {
       "get": {
-        "tags": [
-          "跟单池接口"
-        ],
+        "tags": ["跟单池接口"],
         "summary": "跟单池详情",
         "description": "传入跟单金库ID",
         "operationId": "poolDetailUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "followManageId",
@@ -2862,19 +2523,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2883,15 +2538,11 @@
     },
     "/coreApi/followManage/poolList": {
       "get": {
-        "tags": [
-          "跟单池接口"
-        ],
+        "tags": ["跟单池接口"],
         "summary": "跟单金库列表",
         "description": "传入poolManage",
         "operationId": "poolListUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "current",
@@ -2956,19 +2607,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -2977,15 +2622,11 @@
     },
     "/coreApi/followManage/sharesRecordList": {
       "get": {
-        "tags": [
-          "跟单池接口"
-        ],
+        "tags": ["跟单池接口"],
         "summary": "存款和提款列表",
         "description": "传入followManageId",
         "operationId": "sharesRecordListUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "current",
@@ -3011,13 +2652,7 @@
             "required": false,
             "type": "string",
             "allowEmptyValue": false,
-            "enum": [
-              "INITIALIZE",
-              "PURCHASE_SHARES",
-              "REDEEM_SHARES",
-              "DIVVY",
-              "CLOSE"
-            ]
+            "enum": ["INITIALIZE", "PURCHASE_SHARES", "REDEEM_SHARES", "DIVVY", "CLOSE"]
           },
           {
             "name": "size",
@@ -3075,19 +2710,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3096,15 +2725,11 @@
     },
     "/coreApi/followManage/twrRecordList": {
       "get": {
-        "tags": [
-          "跟单池接口"
-        ],
+        "tags": ["跟单池接口"],
         "summary": "跟单TWR列表",
         "description": "传入twrRecord",
         "operationId": "twrRecordListUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "followManageId",
@@ -3122,11 +2747,7 @@
             "required": true,
             "type": "string",
             "allowEmptyValue": false,
-            "enum": [
-              "HOUR24",
-              "DAY30",
-              "ALL_TIME"
-            ]
+            "enum": ["HOUR24", "DAY30", "ALL_TIME"]
           }
         ],
         "responses": {
@@ -3167,19 +2788,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3188,18 +2803,12 @@
     },
     "/coreApi/followManage/vaultClose": {
       "post": {
-        "tags": [
-          "跟单池接口"
-        ],
+        "tags": ["跟单池接口"],
         "summary": "金库关闭",
         "description": "传入followManageId",
         "operationId": "vaultCloseUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "followManageId",
@@ -3255,19 +2864,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3276,18 +2879,12 @@
     },
     "/coreApi/followManage/vaultDivvy": {
       "post": {
-        "tags": [
-          "跟单池接口"
-        ],
+        "tags": ["跟单池接口"],
         "summary": "金库分发",
         "description": "传入poolManage",
         "operationId": "vaultDivvyUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -3344,19 +2941,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3365,15 +2956,11 @@
     },
     "/coreApi/followShares/followList": {
       "get": {
-        "tags": [
-          "跟单账户接口"
-        ],
+        "tags": ["跟单账户接口"],
         "summary": "账户跟单列表",
         "description": "传入tradeAccountId",
         "operationId": "followListUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "current",
@@ -3439,19 +3026,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3460,18 +3041,12 @@
     },
     "/coreApi/followShares/purchaseShares": {
       "post": {
-        "tags": [
-          "跟单账户接口"
-        ],
+        "tags": ["跟单账户接口"],
         "summary": "存款申购",
         "description": "传入followPurchaseShares",
         "operationId": "purchaseSharesUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -3528,19 +3103,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3549,18 +3118,12 @@
     },
     "/coreApi/followShares/redeemShares": {
       "post": {
-        "tags": [
-          "跟单账户接口"
-        ],
+        "tags": ["跟单账户接口"],
         "summary": "取款赎回",
         "description": "传入followRedeemShares",
         "operationId": "RredeemSharesUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -3617,19 +3180,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3638,15 +3195,11 @@
     },
     "/coreApi/followShares/sharesDetail": {
       "get": {
-        "tags": [
-          "跟单账户接口"
-        ],
+        "tags": ["跟单账户接口"],
         "summary": "账户跟单详情",
         "description": "账户跟单份额详情",
         "operationId": "sharesDetailUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "followSharesId",
@@ -3696,19 +3249,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3717,15 +3264,11 @@
     },
     "/coreApi/holiday/detail": {
       "get": {
-        "tags": [
-          "假期日历接口"
-        ],
+        "tags": ["假期日历接口"],
         "summary": "假期日历-详情",
         "description": "传入holiday",
         "operationId": "detailUsingGET_2",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -3775,19 +3318,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3796,15 +3333,11 @@
     },
     "/coreApi/holiday/list": {
       "get": {
-        "tags": [
-          "假期日历接口"
-        ],
+        "tags": ["假期日历接口"],
         "summary": "假期日历-分页",
         "description": "传入holiday",
         "operationId": "listUsingGET_3",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "current",
@@ -3861,19 +3394,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3882,18 +3409,12 @@
     },
     "/coreApi/holiday/remove": {
       "post": {
-        "tags": [
-          "假期日历接口"
-        ],
+        "tags": ["假期日历接口"],
         "summary": "假期日历-删除",
         "description": "传入ids",
         "operationId": "removeUsingPOST_3",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "ids",
@@ -3948,19 +3469,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -3969,18 +3484,12 @@
     },
     "/coreApi/holiday/submit": {
       "post": {
-        "tags": [
-          "假期日历接口"
-        ],
+        "tags": ["假期日历接口"],
         "summary": "假期日历-新增或修改",
         "description": "传入holiday",
         "operationId": "submitUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -4037,19 +3546,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4058,15 +3561,11 @@
     },
     "/coreApi/holiday/symbolIsHoliday": {
       "get": {
-        "tags": [
-          "假期日历接口"
-        ],
+        "tags": ["假期日历接口"],
         "summary": "假期日历-判断品种当前是否在假期",
         "description": "传入symbols",
         "operationId": "symbolIsHolidayUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "symbols",
@@ -4115,19 +3614,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4136,18 +3629,12 @@
     },
     "/coreApi/lbPool/add": {
       "post": {
-        "tags": [
-          "LB池接口"
-        ],
+        "tags": ["LB池接口"],
         "summary": "新增",
         "description": "传入lbPool",
         "operationId": "addUsingPOST_2",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -4204,19 +3691,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4225,15 +3706,11 @@
     },
     "/coreApi/lbPool/detail": {
       "get": {
-        "tags": [
-          "LB池接口"
-        ],
+        "tags": ["LB池接口"],
         "summary": "详情",
         "description": "传入lbPool",
         "operationId": "detailUsingGET_3",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -4283,19 +3760,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4304,18 +3775,12 @@
     },
     "/coreApi/lbPool/init": {
       "post": {
-        "tags": [
-          "LB池接口"
-        ],
+        "tags": ["LB池接口"],
         "summary": "初始化链上账户",
         "description": "传入lbPool",
         "operationId": "initUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -4371,19 +3836,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4392,15 +3851,11 @@
     },
     "/coreApi/lbPool/list": {
       "get": {
-        "tags": [
-          "LB池接口"
-        ],
+        "tags": ["LB池接口"],
         "summary": "分页",
         "description": "传入lbPool",
         "operationId": "listUsingGET_4",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "current",
@@ -4457,19 +3912,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4478,18 +3927,12 @@
     },
     "/coreApi/lbPool/remove": {
       "post": {
-        "tags": [
-          "LB池接口"
-        ],
+        "tags": ["LB池接口"],
         "summary": "删除",
         "description": "传入ids",
         "operationId": "removeUsingPOST_4",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -4545,19 +3988,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4566,18 +4003,12 @@
     },
     "/coreApi/lbPool/symbol-group": {
       "post": {
-        "tags": [
-          "LB池接口"
-        ],
+        "tags": ["LB池接口"],
         "summary": "交易品种-账户组配置",
         "description": "传入ids",
         "operationId": "symbolGroupUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "responses": {
           "200": {
             "description": "OK",
@@ -4622,19 +4053,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4643,18 +4068,12 @@
     },
     "/coreApi/lbPool/update": {
       "post": {
-        "tags": [
-          "LB池接口"
-        ],
+        "tags": ["LB池接口"],
         "summary": "修改",
         "description": "传入lbPool",
         "operationId": "updateUsingPOST_2",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -4711,19 +4130,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4732,18 +4145,12 @@
     },
     "/coreApi/orders/addMargin": {
       "post": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "持仓订单-追加逐仓保证金",
         "description": "传入orders",
         "operationId": "addMarginUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -4800,19 +4207,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4821,15 +4222,11 @@
     },
     "/coreApi/orders/allDetail": {
       "get": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "持仓订单-全部详情",
         "description": "传入持仓单ID",
         "operationId": "allDetailUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -4879,19 +4276,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -4900,15 +4291,11 @@
     },
     "/coreApi/orders/bgaOrderPage": {
       "get": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "持仓订单-分页",
         "description": "传入bagOrder",
         "operationId": "pageUsingGET_1",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountId",
@@ -4940,11 +4327,7 @@
             "description": "订单方向",
             "required": false,
             "type": "string",
-            "enum": [
-              "BUY",
-              "SELL",
-              "BUY_OR_SELL"
-            ]
+            "enum": ["BUY", "SELL", "BUY_OR_SELL"]
           },
           {
             "name": "clientId",
@@ -4990,10 +4373,7 @@
             "description": "保证金类型",
             "required": false,
             "type": "string",
-            "enum": [
-              "CROSS_MARGIN",
-              "ISOLATED_MARGIN"
-            ]
+            "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
           },
           {
             "name": "mode",
@@ -5001,10 +4381,7 @@
             "description": "订单模式",
             "required": false,
             "type": "string",
-            "enum": [
-              "NETTING",
-              "LOCKED_POSITION"
-            ]
+            "enum": ["NETTING", "LOCKED_POSITION"]
           },
           {
             "name": "orderBy",
@@ -5012,10 +4389,7 @@
             "description": "排序",
             "required": false,
             "type": "string",
-            "enum": [
-              "ASC",
-              "DESC"
-            ]
+            "enum": ["ASC", "DESC"]
           },
           {
             "name": "orderByField",
@@ -5046,10 +4420,7 @@
             "description": "状态",
             "required": false,
             "type": "string",
-            "enum": [
-              "BAG",
-              "FINISH"
-            ]
+            "enum": ["BAG", "FINISH"]
           },
           {
             "name": "symbol",
@@ -5104,19 +4475,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5125,15 +4490,11 @@
     },
     "/coreApi/orders/bgaOrderPriceProfit": {
       "get": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "持仓订单-报价&盈亏",
         "description": "传入bagOrder",
         "operationId": "bgaOrderPriceProfitUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "asgoArrayStr",
@@ -5182,19 +4543,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5203,18 +4558,12 @@
     },
     "/coreApi/orders/createOrder": {
       "post": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "委托订单-下单",
         "description": "传入orders",
         "operationId": "createOrderUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -5271,19 +4620,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5292,15 +4635,11 @@
     },
     "/coreApi/orders/crossHigh": {
       "get": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "【全仓】追加预付款账户【敏感账户】",
         "description": "传入",
         "operationId": "crossHighUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "responses": {
           "200": {
             "description": "OK",
@@ -5339,19 +4678,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5360,18 +4693,12 @@
     },
     "/coreApi/orders/extractMargin": {
       "post": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "持仓订单-提取逐仓保证金",
         "description": "传入orders",
         "operationId": "extractMarginUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -5428,19 +4755,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5449,15 +4770,11 @@
     },
     "/coreApi/orders/isolatedHigh": {
       "get": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "【逐仓】追加预付款订单【敏感订单】",
         "description": "传入",
         "operationId": "isolatedHighUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "responses": {
           "200": {
             "description": "OK",
@@ -5496,19 +4813,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5517,18 +4828,12 @@
     },
     "/coreApi/orders/newOrderMargin": {
       "post": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "委托订单-计算新订单保证金",
         "description": "传入",
         "operationId": "newOrderMarginUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -5585,19 +4890,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5606,18 +4905,12 @@
     },
     "/coreApi/orders/orderCancel": {
       "post": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "委托订单-取消",
         "description": "传入orders",
         "operationId": "orderCancelUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -5673,19 +4966,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5694,15 +4981,11 @@
     },
     "/coreApi/orders/orderDetail": {
       "get": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "委托订单-详情",
         "description": "传入订单ID",
         "operationId": "orderDetailUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -5752,19 +5035,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5773,18 +5050,12 @@
     },
     "/coreApi/orders/orderEdit": {
       "post": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "委托订单-修改",
         "description": "传入orders",
         "operationId": "orderEditUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -5841,19 +5112,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -5862,15 +5127,11 @@
     },
     "/coreApi/orders/orderPage": {
       "get": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "委托订单-分页",
         "description": "传入orders",
         "operationId": "pageUsingGET_2",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountId",
@@ -5886,11 +5147,7 @@
             "description": "订单方向",
             "required": false,
             "type": "string",
-            "enum": [
-              "BUY",
-              "SELL",
-              "BUY_OR_SELL"
-            ]
+            "enum": ["BUY", "SELL", "BUY_OR_SELL"]
           },
           {
             "name": "clientId",
@@ -5936,10 +5193,7 @@
             "description": "保证金类型",
             "required": false,
             "type": "string",
-            "enum": [
-              "CROSS_MARGIN",
-              "ISOLATED_MARGIN"
-            ]
+            "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
           },
           {
             "name": "mode",
@@ -5947,10 +5201,7 @@
             "description": "订单模式",
             "required": false,
             "type": "string",
-            "enum": [
-              "NETTING",
-              "LOCKED_POSITION"
-            ]
+            "enum": ["NETTING", "LOCKED_POSITION"]
           },
           {
             "name": "orderBy",
@@ -5958,10 +5209,7 @@
             "description": "排序",
             "required": false,
             "type": "string",
-            "enum": [
-              "ASC",
-              "DESC"
-            ]
+            "enum": ["ASC", "DESC"]
           },
           {
             "name": "orderByField",
@@ -6061,19 +5309,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6082,18 +5324,12 @@
     },
     "/coreApi/orders/stopProfitLoss": {
       "post": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "持仓订单-修改止盈止损",
         "description": "传入orders",
         "operationId": "stopProfitLossUsingPOST",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -6150,19 +5386,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6171,15 +5401,11 @@
     },
     "/coreApi/orders/tradeRecordsPage": {
       "get": {
-        "tags": [
-          "订单接口"
-        ],
+        "tags": ["订单接口"],
         "summary": "成交记录-分页",
         "description": "传入tradeRecords",
         "operationId": "pageUsingGET_3",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "accountId",
@@ -6234,11 +5460,7 @@
             "description": "成交方向",
             "required": false,
             "type": "string",
-            "enum": [
-              "IN",
-              "OUT",
-              "IN_OUT"
-            ]
+            "enum": ["IN", "OUT", "IN_OUT"]
           },
           {
             "name": "isSimulate",
@@ -6253,10 +5475,7 @@
             "description": "排序",
             "required": false,
             "type": "string",
-            "enum": [
-              "ASC",
-              "DESC"
-            ]
+            "enum": ["ASC", "DESC"]
           },
           {
             "name": "orderByField",
@@ -6350,19 +5569,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6371,15 +5584,11 @@
     },
     "/coreApi/public/lp/redeemApply": {
       "get": {
-        "tags": [
-          "公开接口接口"
-        ],
+        "tags": ["公开接口接口"],
         "summary": "Lp池MXLP代币赎回申请",
         "description": "传入",
         "operationId": "lpRedeemApplyUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "address",
@@ -6452,19 +5661,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6473,15 +5676,11 @@
     },
     "/coreApi/public/symbol/holiday": {
       "get": {
-        "tags": [
-          "公开接口接口"
-        ],
+        "tags": ["公开接口接口"],
         "summary": "判断品种是否是假期",
         "description": "传入",
         "operationId": "holidayUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "symbol",
@@ -6530,19 +5729,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6551,15 +5744,11 @@
     },
     "/coreApi/public/test/getIp": {
       "get": {
-        "tags": [
-          "公开接口接口"
-        ],
+        "tags": ["公开接口接口"],
         "summary": "测试获取IP",
         "description": "传入null",
         "operationId": "getIpUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "responses": {
           "200": {
             "description": "OK",
@@ -6598,19 +5787,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6619,15 +5802,11 @@
     },
     "/coreApi/public/test/i18n": {
       "get": {
-        "tags": [
-          "公开接口接口"
-        ],
+        "tags": ["公开接口接口"],
         "summary": "测试国际化",
         "description": "传入null",
         "operationId": "i18nUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "key",
@@ -6676,19 +5855,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6697,15 +5870,11 @@
     },
     "/coreApi/public/test/orderBy": {
       "get": {
-        "tags": [
-          "公开接口接口"
-        ],
+        "tags": ["公开接口接口"],
         "summary": "测试排序",
         "description": "传入null",
         "operationId": "orderByUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "field",
@@ -6754,19 +5923,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6775,15 +5938,11 @@
     },
     "/coreApi/public/test/timeConvert": {
       "get": {
-        "tags": [
-          "公开接口接口"
-        ],
+        "tags": ["公开接口接口"],
         "summary": "测试时间转换",
         "description": "传入null",
         "operationId": "timeConvertUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "moneyRecordsId",
@@ -6833,19 +5992,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6854,18 +6007,12 @@
     },
     "/coreApi/symbolGroup/remove": {
       "post": {
-        "tags": [
-          "交易品种组接口"
-        ],
+        "tags": ["交易品种组接口"],
         "summary": "交易品种组-删除",
         "description": "传入id",
         "operationId": "removeUsingPOST_5",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -6921,19 +6068,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -6942,18 +6083,12 @@
     },
     "/coreApi/symbolGroup/submit": {
       "post": {
-        "tags": [
-          "交易品种组接口"
-        ],
+        "tags": ["交易品种组接口"],
         "summary": "交易品种组-新增或修改",
         "description": "传入symbolGroup",
         "operationId": "submitUsingPOST_1",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -7010,19 +6145,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7031,15 +6160,11 @@
     },
     "/coreApi/symbolGroup/tree": {
       "get": {
-        "tags": [
-          "交易品种组接口"
-        ],
+        "tags": ["交易品种组接口"],
         "summary": "交易品种组-树形结构",
         "description": "树形结构",
         "operationId": "treeUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "responses": {
           "200": {
             "description": "OK",
@@ -7078,19 +6203,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7099,18 +6218,12 @@
     },
     "/coreApi/symbols/add": {
       "post": {
-        "tags": [
-          "交易品种接口"
-        ],
+        "tags": ["交易品种接口"],
         "summary": "交易品种-新增",
         "description": "传入symbols",
         "operationId": "addUsingPOST_3",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -7167,19 +6280,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7188,15 +6295,11 @@
     },
     "/coreApi/symbols/detail": {
       "get": {
-        "tags": [
-          "交易品种接口"
-        ],
+        "tags": ["交易品种接口"],
         "summary": "交易品种-详情",
         "description": "传入id",
         "operationId": "detailUsingGET_5",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -7246,19 +6349,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7267,15 +6364,11 @@
     },
     "/coreApi/symbols/list": {
       "get": {
-        "tags": [
-          "交易品种接口"
-        ],
+        "tags": ["交易品种接口"],
         "summary": "交易品种-分页",
         "description": "传入symbols",
         "operationId": "listUsingGET_5",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "responses": {
           "200": {
             "description": "OK",
@@ -7314,19 +6407,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7335,15 +6422,11 @@
     },
     "/coreApi/symbols/page": {
       "get": {
-        "tags": [
-          "交易品种接口"
-        ],
+        "tags": ["交易品种接口"],
         "summary": "交易品种-自定义分页",
         "description": "传入symbols",
         "operationId": "pageUsingGET_4",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "calculationType",
@@ -7351,10 +6434,7 @@
             "description": "交易-计算类型",
             "required": false,
             "type": "string",
-            "enum": [
-              "FOREIGN_CURRENCY",
-              "CFD"
-            ]
+            "enum": ["FOREIGN_CURRENCY", "CFD"]
           },
           {
             "name": "current",
@@ -7385,10 +6465,7 @@
             "description": "状态",
             "required": false,
             "type": "string",
-            "enum": [
-              "ENABLE",
-              "DISABLED"
-            ]
+            "enum": ["ENABLE", "DISABLED"]
           },
           {
             "name": "symbol",
@@ -7444,19 +6521,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7465,18 +6536,12 @@
     },
     "/coreApi/symbols/remove": {
       "post": {
-        "tags": [
-          "交易品种接口"
-        ],
+        "tags": ["交易品种接口"],
         "summary": "交易品种-删除",
         "description": "传入id",
         "operationId": "removeUsingPOST_6",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "id",
@@ -7532,19 +6597,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7553,15 +6612,11 @@
     },
     "/coreApi/symbols/symbol/detail": {
       "get": {
-        "tags": [
-          "交易品种接口"
-        ],
+        "tags": ["交易品种接口"],
         "summary": "交易品种-详情",
         "description": "传入symbol",
         "operationId": "detailUsingGET_4",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "symbol",
@@ -7610,19 +6665,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7631,15 +6680,11 @@
     },
     "/coreApi/symbols/tree": {
       "get": {
-        "tags": [
-          "交易品种接口"
-        ],
+        "tags": ["交易品种接口"],
         "summary": "交易品种-树形结构",
         "description": "树形结构",
         "operationId": "treeUsingGET_1",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "responses": {
           "200": {
             "description": "OK",
@@ -7678,19 +6723,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7699,18 +6738,12 @@
     },
     "/coreApi/symbols/update": {
       "post": {
-        "tags": [
-          "交易品种接口"
-        ],
+        "tags": ["交易品种接口"],
         "summary": "交易品种-修改",
         "description": "传入symbols",
         "operationId": "updateUsingPOST_3",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -7767,19 +6800,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7788,15 +6815,11 @@
     },
     "/coreApi/systemSet/detail": {
       "get": {
-        "tags": [
-          "系统参数设置接口"
-        ],
+        "tags": ["系统参数设置接口"],
         "summary": "系统参数-详情",
         "description": "传入manager",
         "operationId": "detailUsingGET_6",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "responses": {
           "200": {
             "description": "OK",
@@ -7835,19 +6858,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7856,15 +6873,11 @@
     },
     "/coreApi/systemSet/language": {
       "get": {
-        "tags": [
-          "系统参数设置接口"
-        ],
+        "tags": ["系统参数设置接口"],
         "summary": "多语言国际化查询",
         "description": "传入manager",
         "operationId": "getLanguageUsingGET",
-        "produces": [
-          "*/*"
-        ],
+        "produces": ["*/*"],
         "parameters": [
           {
             "name": "key",
@@ -7911,19 +6924,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -7932,18 +6939,12 @@
     },
     "/coreApi/systemSet/update": {
       "post": {
-        "tags": [
-          "系统参数设置接口"
-        ],
+        "tags": ["系统参数设置接口"],
         "summary": "系统参数-修改",
         "description": "传入manager",
         "operationId": "updateUsingPOST_4",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "*/*"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["*/*"],
         "parameters": [
           {
             "in": "body",
@@ -8000,19 +7001,13 @@
         },
         "security": [
           {
-            "TenantId": [
-              "global"
-            ]
+            "TenantId": ["global"]
           },
           {
-            "BladeAuth": [
-              "global"
-            ]
+            "BladeAuth": ["global"]
           },
           {
-            "ClientInfo": [
-              "global"
-            ]
+            "ClientInfo": ["global"]
           }
         ],
         "deprecated": false,
@@ -8071,10 +7066,7 @@
     },
     "AccountCreateVO": {
       "type": "object",
-      "required": [
-        "accountGroupId",
-        "clientId"
-      ],
+      "required": ["accountGroupId", "clientId"],
       "properties": {
         "accountGroupId": {
           "type": "integer",
@@ -8169,10 +7161,7 @@
         "fundTransfer": {
           "type": "string",
           "description": "资金划转",
-          "enum": [
-            "ALLOWABLE",
-            "PROHIBIT"
-          ]
+          "enum": ["ALLOWABLE", "PROHIBIT"]
         },
         "groupCode": {
           "type": "string",
@@ -8206,10 +7195,7 @@
         "orderMode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "programId": {
           "type": "string",
@@ -8226,10 +7212,7 @@
         "usableAdvanceCharge": {
           "type": "string",
           "description": "可用预付款",
-          "enum": [
-            "NOT_PROFIT_LOSS",
-            "PROFIT_LOSS"
-          ]
+          "enum": ["NOT_PROFIT_LOSS", "PROFIT_LOSS"]
         },
         "usableHistory": {
           "type": "integer",
@@ -8264,10 +7247,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "symbolConfId": {
           "type": "integer",
@@ -8307,10 +7287,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "symbolConf": {
           "description": "主键",
@@ -8375,10 +7352,7 @@
         "fundTransfer": {
           "type": "string",
           "description": "资金划转",
-          "enum": [
-            "ALLOWABLE",
-            "PROHIBIT"
-          ]
+          "enum": ["ALLOWABLE", "PROHIBIT"]
         },
         "groupCode": {
           "type": "string",
@@ -8421,10 +7395,7 @@
         "orderMode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "programId": {
           "type": "string",
@@ -8441,10 +7412,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "synopsis": {
           "type": "string",
@@ -8453,10 +7421,7 @@
         "usableAdvanceCharge": {
           "type": "string",
           "description": "可用预付款",
-          "enum": [
-            "NOT_PROFIT_LOSS",
-            "PROFIT_LOSS"
-          ]
+          "enum": ["NOT_PROFIT_LOSS", "PROFIT_LOSS"]
         },
         "usableHistory": {
           "type": "integer",
@@ -8548,10 +7513,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "NORMAL",
-            "CANCEL"
-          ]
+          "enum": ["NORMAL", "CANCEL"]
         },
         "tradeAccountId": {
           "type": "integer",
@@ -8612,10 +7574,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "NORMAL",
-            "CANCEL"
-          ]
+          "enum": ["NORMAL", "CANCEL"]
         },
         "tradeAccountId": {
           "type": "integer",
@@ -8686,10 +7645,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "NORMAL",
-            "CANCEL"
-          ]
+          "enum": ["NORMAL", "CANCEL"]
         },
         "tradeAccountId": {
           "type": "integer",
@@ -8702,10 +7658,7 @@
     },
     "AccountMoneyTransferVO": {
       "type": "object",
-      "required": [
-        "fromAccountId",
-        "toAccountId"
-      ],
+      "required": ["fromAccountId", "toAccountId"],
       "properties": {
         "fromAccountId": {
           "type": "integer",
@@ -8779,10 +7732,7 @@
         "fundTransfer": {
           "type": "string",
           "description": "资金划转",
-          "enum": [
-            "ALLOWABLE",
-            "PROHIBIT"
-          ]
+          "enum": ["ALLOWABLE", "PROHIBIT"]
         },
         "groupCode": {
           "type": "string",
@@ -8850,10 +7800,7 @@
         "orderMode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "pdaTokenAddress": {
           "type": "string",
@@ -8870,10 +7817,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "DISABLED",
-            "ENABLE"
-          ]
+          "enum": ["DISABLED", "ENABLE"]
         },
         "totalProfit": {
           "type": "number",
@@ -8882,11 +7826,7 @@
         "type": {
           "type": "string",
           "description": "账户类型",
-          "enum": [
-            "MAIN",
-            "SIMULATE",
-            "FOLLOW"
-          ]
+          "enum": ["MAIN", "SIMULATE", "FOLLOW"]
         },
         "userAccount": {
           "type": "string",
@@ -8940,10 +7880,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "DISABLED",
-            "ENABLE"
-          ]
+          "enum": ["DISABLED", "ENABLE"]
         }
       },
       "title": "AccountUpdateVO"
@@ -9011,19 +7948,12 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "DISABLED",
-            "ENABLE"
-          ]
+          "enum": ["DISABLED", "ENABLE"]
         },
         "type": {
           "type": "string",
           "description": "账户类型",
-          "enum": [
-            "MAIN",
-            "SIMULATE",
-            "FOLLOW"
-          ]
+          "enum": ["MAIN", "SIMULATE", "FOLLOW"]
         }
       },
       "title": "Account对象",
@@ -9058,11 +7988,7 @@
         "buySell": {
           "type": "string",
           "description": "订单方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "closePrice": {
           "type": "number",
@@ -9116,18 +8042,12 @@
         "marginType": {
           "type": "string",
           "description": "保证金类型",
-          "enum": [
-            "CROSS_MARGIN",
-            "ISOLATED_MARGIN"
-          ]
+          "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
         },
         "mode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "orderBaseMargin": {
           "type": "number",
@@ -9160,10 +8080,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "BAG",
-            "FINISH"
-          ]
+          "enum": ["BAG", "FINISH"]
         },
         "stopLoss": {
           "type": "number",
@@ -9233,11 +8150,7 @@
         "buySell": {
           "type": "string",
           "description": "订单方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "closePrice": {
           "type": "number",
@@ -9282,18 +8195,12 @@
         "marginType": {
           "type": "string",
           "description": "保证金类型",
-          "enum": [
-            "CROSS_MARGIN",
-            "ISOLATED_MARGIN"
-          ]
+          "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
         },
         "mode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "orderBaseMargin": {
           "type": "number",
@@ -9334,10 +8241,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "BAG",
-            "FINISH"
-          ]
+          "enum": ["BAG", "FINISH"]
         },
         "stopLoss": {
           "type": "number",
@@ -9503,10 +8407,7 @@
     },
     "HandRechargeVO": {
       "type": "object",
-      "required": [
-        "accountId",
-        "type"
-      ],
+      "required": ["accountId", "type"],
       "properties": {
         "accountId": {
           "type": "integer",
@@ -9551,10 +8452,7 @@
     },
     "HandWithdrawVO": {
       "type": "object",
-      "required": [
-        "accountId",
-        "withdrawAddress"
-      ],
+      "required": ["accountId", "withdrawAddress"],
       "properties": {
         "accountId": {
           "type": "integer",
@@ -9580,13 +8478,7 @@
     },
     "Holiday对象": {
       "type": "object",
-      "required": [
-        "endTime",
-        "repeatYear",
-        "startTime",
-        "status",
-        "symbols"
-      ],
+      "required": ["endTime", "repeatYear", "startTime", "status", "symbols"],
       "properties": {
         "describeInfo": {
           "type": "string",
@@ -9614,10 +8506,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "symbols": {
           "type": "string",
@@ -9629,13 +8518,7 @@
     },
     "Holiday对象_1": {
       "type": "object",
-      "required": [
-        "endTime",
-        "repeatYear",
-        "startTime",
-        "status",
-        "symbols"
-      ],
+      "required": ["endTime", "repeatYear", "startTime", "status", "symbols"],
       "properties": {
         "describeInfo": {
           "type": "string",
@@ -9663,10 +8546,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "symbols": {
           "type": "string",
@@ -10274,12 +9154,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "INIT",
-            "NORMAL",
-            "PAUSE",
-            "CLOSE"
-          ]
+          "enum": ["INIT", "NORMAL", "PAUSE", "CLOSE"]
         },
         "transferMoney": {
           "type": "number",
@@ -10522,11 +9397,7 @@
         "buySell": {
           "type": "string",
           "description": "订单方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "conf": {
           "type": "string",
@@ -10535,16 +9406,7 @@
         "createReason": {
           "type": "string",
           "description": "创建原因",
-          "enum": [
-            "CLIENT",
-            "MANAGER",
-            "DEALER",
-            "STOP_LOSS",
-            "TAKE_PROFIT",
-            "STOP_OUT",
-            "FOLLOW_REDEEM",
-            "SYSTEM"
-          ]
+          "enum": ["CLIENT", "MANAGER", "DEALER", "STOP_LOSS", "TAKE_PROFIT", "STOP_OUT", "FOLLOW_REDEEM", "SYSTEM"]
         },
         "createTime": {
           "type": "string",
@@ -10582,11 +9444,7 @@
         "inOut": {
           "type": "string",
           "description": "成交方向",
-          "enum": [
-            "IN",
-            "OUT",
-            "IN_OUT"
-          ]
+          "enum": ["IN", "OUT", "IN_OUT"]
         },
         "leverageMultiple": {
           "type": "integer",
@@ -10600,18 +9458,12 @@
         "marginType": {
           "type": "string",
           "description": "保证金类型",
-          "enum": [
-            "CROSS_MARGIN",
-            "ISOLATED_MARGIN"
-          ]
+          "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
         },
         "mode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "operatorId": {
           "type": "integer",
@@ -10637,12 +9489,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "FINISH",
-            "ENTRUST",
-            "CANCEL",
-            "FAIL"
-          ]
+          "enum": ["FINISH", "ENTRUST", "CANCEL", "FAIL"]
         },
         "stopLoss": {
           "type": "number",
@@ -10729,11 +9576,7 @@
         "buySell": {
           "type": "string",
           "description": "订单方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "conf": {
           "type": "string",
@@ -10742,16 +9585,7 @@
         "createReason": {
           "type": "string",
           "description": "创建原因",
-          "enum": [
-            "CLIENT",
-            "MANAGER",
-            "DEALER",
-            "STOP_LOSS",
-            "TAKE_PROFIT",
-            "STOP_OUT",
-            "FOLLOW_REDEEM",
-            "SYSTEM"
-          ]
+          "enum": ["CLIENT", "MANAGER", "DEALER", "STOP_LOSS", "TAKE_PROFIT", "STOP_OUT", "FOLLOW_REDEEM", "SYSTEM"]
         },
         "createTime": {
           "type": "string",
@@ -10785,11 +9619,7 @@
         "inOut": {
           "type": "string",
           "description": "成交方向",
-          "enum": [
-            "IN",
-            "OUT",
-            "IN_OUT"
-          ]
+          "enum": ["IN", "OUT", "IN_OUT"]
         },
         "leverageMultiple": {
           "type": "integer",
@@ -10803,18 +9633,12 @@
         "marginType": {
           "type": "string",
           "description": "保证金类型",
-          "enum": [
-            "CROSS_MARGIN",
-            "ISOLATED_MARGIN"
-          ]
+          "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
         },
         "mode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "operatorId": {
           "type": "integer",
@@ -10840,12 +9664,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "FINISH",
-            "ENTRUST",
-            "CANCEL",
-            "FAIL"
-          ]
+          "enum": ["FINISH", "ENTRUST", "CANCEL", "FAIL"]
         },
         "stopLoss": {
           "type": "number",
@@ -10920,11 +9739,7 @@
         "buySell": {
           "type": "string",
           "description": "订单方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "conf": {
           "type": "string",
@@ -10933,16 +9748,7 @@
         "createReason": {
           "type": "string",
           "description": "创建原因",
-          "enum": [
-            "CLIENT",
-            "MANAGER",
-            "DEALER",
-            "STOP_LOSS",
-            "TAKE_PROFIT",
-            "STOP_OUT",
-            "FOLLOW_REDEEM",
-            "SYSTEM"
-          ]
+          "enum": ["CLIENT", "MANAGER", "DEALER", "STOP_LOSS", "TAKE_PROFIT", "STOP_OUT", "FOLLOW_REDEEM", "SYSTEM"]
         },
         "createTime": {
           "type": "string",
@@ -10976,11 +9782,7 @@
         "inOut": {
           "type": "string",
           "description": "成交方向",
-          "enum": [
-            "IN",
-            "OUT",
-            "IN_OUT"
-          ]
+          "enum": ["IN", "OUT", "IN_OUT"]
         },
         "leverageMultiple": {
           "type": "integer",
@@ -10994,18 +9796,12 @@
         "marginType": {
           "type": "string",
           "description": "保证金类型",
-          "enum": [
-            "CROSS_MARGIN",
-            "ISOLATED_MARGIN"
-          ]
+          "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
         },
         "mode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "operatorId": {
           "type": "integer",
@@ -11031,12 +9827,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "FINISH",
-            "ENTRUST",
-            "CANCEL",
-            "FAIL"
-          ]
+          "enum": ["FINISH", "ENTRUST", "CANCEL", "FAIL"]
         },
         "stopLoss": {
           "type": "number",
@@ -11180,12 +9971,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "INIT",
-            "NORMAL",
-            "PAUSE",
-            "CLOSE"
-          ]
+          "enum": ["INIT", "NORMAL", "PAUSE", "CLOSE"]
         },
         "totalAmount": {
           "type": "number",
@@ -11269,12 +10055,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "INIT",
-            "NORMAL",
-            "PAUSE",
-            "CLOSE"
-          ]
+          "enum": ["INIT", "NORMAL", "PAUSE", "CLOSE"]
         },
         "totalAmount": {
           "type": "number",
@@ -11298,11 +10079,7 @@
     },
     "R": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11327,11 +10104,7 @@
     },
     "R«AccountGroup对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11357,11 +10130,7 @@
     },
     "R«AccountManage对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11387,11 +10156,7 @@
     },
     "R«AccountPage对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11417,11 +10182,7 @@
     },
     "R«BagOrder对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11447,11 +10208,7 @@
     },
     "R«Holiday对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11477,11 +10234,7 @@
     },
     "R«IPage«AccountGroupSymbols对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11507,11 +10260,7 @@
     },
     "R«IPage«AccountGroup对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11537,11 +10286,7 @@
     },
     "R«IPage«AccountManage对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11567,11 +10312,7 @@
     },
     "R«IPage«AccountPage对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11597,11 +10338,7 @@
     },
     "R«IPage«BagOrder对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11627,11 +10364,7 @@
     },
     "R«IPage«DelayUser对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11657,11 +10390,7 @@
     },
     "R«IPage«Holiday对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11687,11 +10416,7 @@
     },
     "R«IPage«LbPool对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11717,11 +10442,7 @@
     },
     "R«IPage«MoneyRecords对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11747,11 +10468,7 @@
     },
     "R«IPage«Orders对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11777,11 +10494,7 @@
     },
     "R«IPage«PoolManage对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11807,11 +10520,7 @@
     },
     "R«IPage«SharesRecord对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11837,11 +10546,7 @@
     },
     "R«IPage«Symbols对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11867,11 +10572,7 @@
     },
     "R«IPage«TradeRecords对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11897,11 +10598,7 @@
     },
     "R«JSONArray»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11929,11 +10626,7 @@
     },
     "R«JSONObject»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11961,11 +10654,7 @@
     },
     "R«LbPool对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -11991,11 +10680,7 @@
     },
     "R«List«AccountCountVO»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12024,11 +10709,7 @@
     },
     "R«List«AccountHighVO»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12057,11 +10738,7 @@
     },
     "R«List«OrderHighVO»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12090,11 +10767,7 @@
     },
     "R«List«SymbolGroup对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12123,11 +10796,7 @@
     },
     "R«List«Symbols对象»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12156,11 +10825,7 @@
     },
     "R«List«Symbols对象»»_1": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12189,11 +10854,7 @@
     },
     "R«List«TwrRecordVO»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12222,11 +10883,7 @@
     },
     "R«Map«string,boolean»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12254,11 +10911,7 @@
     },
     "R«MoneyRecords对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12284,11 +10937,7 @@
     },
     "R«Orders对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12314,11 +10963,7 @@
     },
     "R«Orders对象»_1": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12344,11 +10989,7 @@
     },
     "R«PoolManage对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12374,11 +11015,7 @@
     },
     "R«Set«object»»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12406,11 +11043,7 @@
     },
     "R«SymbolConf对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12436,11 +11069,7 @@
     },
     "R«Symbols对象»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12466,11 +11095,7 @@
     },
     "R«Symbols对象»_1": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12496,11 +11121,7 @@
     },
     "R«bigdecimal»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12525,11 +11146,7 @@
     },
     "R«boolean»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12554,11 +11171,7 @@
     },
     "R«string»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12583,11 +11196,7 @@
     },
     "R«系统设置»": {
       "type": "object",
-      "required": [
-        "code",
-        "msg",
-        "success"
-      ],
+      "required": ["code", "msg", "success"],
       "properties": {
         "code": {
           "type": "integer",
@@ -12677,13 +11286,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "INITIALIZE",
-            "FIRST_CLOSE_ORDER",
-            "AGAIN_CLOSE_ORDER",
-            "SUCCESS",
-            "FAIL"
-          ]
+          "enum": ["INITIALIZE", "FIRST_CLOSE_ORDER", "AGAIN_CLOSE_ORDER", "SUCCESS", "FAIL"]
         },
         "totalShares": {
           "type": "number",
@@ -12697,13 +11300,7 @@
         "type": {
           "type": "string",
           "description": "记录类型",
-          "enum": [
-            "INITIALIZE",
-            "PURCHASE_SHARES",
-            "REDEEM_SHARES",
-            "DIVVY",
-            "CLOSE"
-          ]
+          "enum": ["INITIALIZE", "PURCHASE_SHARES", "REDEEM_SHARES", "DIVVY", "CLOSE"]
         }
       },
       "title": "SharesRecord对象",
@@ -12724,10 +11321,7 @@
         "calculationType": {
           "type": "string",
           "description": "交易-计算类型",
-          "enum": [
-            "FOREIGN_CURRENCY",
-            "CFD"
-          ]
+          "enum": ["FOREIGN_CURRENCY", "CFD"]
         },
         "contractSize": {
           "type": "integer",
@@ -12746,11 +11340,7 @@
         "gtc": {
           "type": "string",
           "description": "交易-GTC",
-          "enum": [
-            "DAY_VALID",
-            "DAY_VALID_NOT",
-            "CLIENT_CANCEL"
-          ]
+          "enum": ["DAY_VALID", "DAY_VALID_NOT", "CLIENT_CANCEL"]
         },
         "holdingCostConf": {
           "type": "string",
@@ -12824,13 +11414,7 @@
         "tradeLicense": {
           "type": "string",
           "description": "交易-交易许可",
-          "enum": [
-            "ENABLE",
-            "DISABLED",
-            "ONLY_BUY",
-            "ONLY_SELL",
-            "ONLY_CLOSE"
-          ]
+          "enum": ["ENABLE", "DISABLED", "ONLY_BUY", "ONLY_SELL", "ONLY_CLOSE"]
         },
         "tradeLimit": {
           "type": "number",
@@ -12867,10 +11451,7 @@
         "calculationType": {
           "type": "string",
           "description": "交易-计算类型",
-          "enum": [
-            "FOREIGN_CURRENCY",
-            "CFD"
-          ]
+          "enum": ["FOREIGN_CURRENCY", "CFD"]
         },
         "contractSize": {
           "type": "integer",
@@ -12889,11 +11470,7 @@
         "gtc": {
           "type": "string",
           "description": "交易-GTC",
-          "enum": [
-            "DAY_VALID",
-            "DAY_VALID_NOT",
-            "CLIENT_CANCEL"
-          ]
+          "enum": ["DAY_VALID", "DAY_VALID_NOT", "CLIENT_CANCEL"]
         },
         "holdingCostConf": {
           "type": "string",
@@ -12967,13 +11544,7 @@
         "tradeLicense": {
           "type": "string",
           "description": "交易-交易许可",
-          "enum": [
-            "ENABLE",
-            "DISABLED",
-            "ONLY_BUY",
-            "ONLY_SELL",
-            "ONLY_CLOSE"
-          ]
+          "enum": ["ENABLE", "DISABLED", "ONLY_BUY", "ONLY_SELL", "ONLY_CLOSE"]
         },
         "tradeLimit": {
           "type": "number",
@@ -12997,9 +11568,7 @@
     },
     "SymbolGroup对象": {
       "type": "object",
-      "required": [
-        "groupName"
-      ],
+      "required": ["groupName"],
       "properties": {
         "groupName": {
           "type": "string",
@@ -13027,9 +11596,7 @@
     },
     "SymbolGroup对象_1": {
       "type": "object",
-      "required": [
-        "groupName"
-      ],
+      "required": ["groupName"],
       "properties": {
         "children": {
           "type": "array",
@@ -13098,10 +11665,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "subSymbol": {
           "type": "string",
@@ -13174,10 +11738,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "subSymbol": {
           "type": "string",
@@ -13230,11 +11791,7 @@
         "buySell": {
           "type": "string",
           "description": "订单方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "createTime": {
           "type": "string",
@@ -13261,11 +11818,7 @@
         "inOut": {
           "type": "string",
           "description": "成交方向",
-          "enum": [
-            "IN",
-            "OUT",
-            "IN_OUT"
-          ]
+          "enum": ["IN", "OUT", "IN_OUT"]
         },
         "interestFees": {
           "type": "number",
@@ -13279,18 +11832,12 @@
         "marginType": {
           "type": "string",
           "description": "保证金类型",
-          "enum": [
-            "CROSS_MARGIN",
-            "ISOLATED_MARGIN"
-          ]
+          "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
         },
         "mode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "orderId": {
           "type": "integer",
@@ -13375,11 +11922,7 @@
         "buySell": {
           "type": "string",
           "description": "订单方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "createTime": {
           "type": "string",
@@ -13402,11 +11945,7 @@
         "inOut": {
           "type": "string",
           "description": "成交方向",
-          "enum": [
-            "IN",
-            "OUT",
-            "IN_OUT"
-          ]
+          "enum": ["IN", "OUT", "IN_OUT"]
         },
         "interestFees": {
           "type": "number",
@@ -13420,10 +11959,7 @@
         "mode": {
           "type": "string",
           "description": "订单模式",
-          "enum": [
-            "NETTING",
-            "LOCKED_POSITION"
-          ]
+          "enum": ["NETTING", "LOCKED_POSITION"]
         },
         "orderId": {
           "type": "integer",
@@ -13546,9 +12082,7 @@
     },
     "修改品种": {
       "type": "object",
-      "required": [
-        "symbol"
-      ],
+      "required": ["symbol"],
       "properties": {
         "alias": {
           "type": "string",
@@ -13566,10 +12100,7 @@
         "calculationType": {
           "type": "string",
           "description": "交易-计算类型",
-          "enum": [
-            "FOREIGN_CURRENCY",
-            "CFD"
-          ]
+          "enum": ["FOREIGN_CURRENCY", "CFD"]
         },
         "classify": {
           "type": "string",
@@ -13592,11 +12123,7 @@
         "gtc": {
           "type": "string",
           "description": "交易-GTC",
-          "enum": [
-            "DAY_VALID",
-            "DAY_VALID_NOT",
-            "CLIENT_CANCEL"
-          ]
+          "enum": ["DAY_VALID", "DAY_VALID_NOT", "CLIENT_CANCEL"]
         },
         "holdingCostConf": {
           "type": "string",
@@ -13678,10 +12205,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "subSymbol": {
           "type": "string",
@@ -13704,22 +12228,12 @@
         "tradeBuySell": {
           "type": "string",
           "description": "交易-交易方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "tradeLicense": {
           "type": "string",
           "description": "交易-交易许可",
-          "enum": [
-            "ENABLE",
-            "DISABLED",
-            "ONLY_BUY",
-            "ONLY_SELL",
-            "ONLY_CLOSE"
-          ]
+          "enum": ["ENABLE", "DISABLED", "ONLY_BUY", "ONLY_SELL", "ONLY_CLOSE"]
         },
         "tradeLimit": {
           "type": "number",
@@ -13791,10 +12305,7 @@
     },
     "创建品种": {
       "type": "object",
-      "required": [
-        "symbol",
-        "symbolGroupId"
-      ],
+      "required": ["symbol", "symbolGroupId"],
       "properties": {
         "alias": {
           "type": "string",
@@ -13812,10 +12323,7 @@
         "calculationType": {
           "type": "string",
           "description": "交易-计算类型",
-          "enum": [
-            "FOREIGN_CURRENCY",
-            "CFD"
-          ]
+          "enum": ["FOREIGN_CURRENCY", "CFD"]
         },
         "classify": {
           "type": "string",
@@ -13838,11 +12346,7 @@
         "gtc": {
           "type": "string",
           "description": "交易-GTC",
-          "enum": [
-            "DAY_VALID",
-            "DAY_VALID_NOT",
-            "CLIENT_CANCEL"
-          ]
+          "enum": ["DAY_VALID", "DAY_VALID_NOT", "CLIENT_CANCEL"]
         },
         "holdingCostConf": {
           "type": "string",
@@ -13919,10 +12423,7 @@
         "status": {
           "type": "string",
           "description": "状态",
-          "enum": [
-            "ENABLE",
-            "DISABLED"
-          ]
+          "enum": ["ENABLE", "DISABLED"]
         },
         "subSymbol": {
           "type": "string",
@@ -13945,22 +12446,12 @@
         "tradeBuySell": {
           "type": "string",
           "description": "交易-交易方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "tradeLicense": {
           "type": "string",
           "description": "交易-交易许可",
-          "enum": [
-            "ENABLE",
-            "DISABLED",
-            "ONLY_BUY",
-            "ONLY_SELL",
-            "ONLY_CLOSE"
-          ]
+          "enum": ["ENABLE", "DISABLED", "ONLY_BUY", "ONLY_SELL", "ONLY_CLOSE"]
         },
         "tradeLimit": {
           "type": "number",
@@ -13984,37 +12475,17 @@
     },
     "创建订单": {
       "type": "object",
-      "required": [
-        "buySell",
-        "marginType",
-        "orderVolume",
-        "symbol",
-        "tradeAccountId",
-        "type"
-      ],
+      "required": ["buySell", "marginType", "orderVolume", "symbol", "tradeAccountId", "type"],
       "properties": {
         "buySell": {
           "type": "string",
           "description": "订单方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "createReason": {
           "type": "string",
           "description": "创建原因",
-          "enum": [
-            "CLIENT",
-            "MANAGER",
-            "DEALER",
-            "STOP_LOSS",
-            "TAKE_PROFIT",
-            "STOP_OUT",
-            "FOLLOW_REDEEM",
-            "SYSTEM"
-          ]
+          "enum": ["CLIENT", "MANAGER", "DEALER", "STOP_LOSS", "TAKE_PROFIT", "STOP_OUT", "FOLLOW_REDEEM", "SYSTEM"]
         },
         "executeOrderId": {
           "type": "integer",
@@ -14033,10 +12504,7 @@
         "marginType": {
           "type": "string",
           "description": "保证金类型",
-          "enum": [
-            "CROSS_MARGIN",
-            "ISOLATED_MARGIN"
-          ]
+          "enum": ["CROSS_MARGIN", "ISOLATED_MARGIN"]
         },
         "orderVolume": {
           "type": "number",
@@ -14080,11 +12548,7 @@
     },
     "系统设置": {
       "type": "object",
-      "required": [
-        "daily",
-        "daylightTime",
-        "timeZone"
-      ],
+      "required": ["daily", "daylightTime", "timeZone"],
       "properties": {
         "daily": {
           "type": "string",
@@ -14104,10 +12568,7 @@
     },
     "订单提取保证金": {
       "type": "object",
-      "required": [
-        "bagOrderId",
-        "extractMargin"
-      ],
+      "required": ["bagOrderId", "extractMargin"],
       "properties": {
         "bagOrderId": {
           "type": "integer",
@@ -14124,10 +12585,7 @@
     },
     "订单追加保证金": {
       "type": "object",
-      "required": [
-        "addMargin",
-        "bagOrderId"
-      ],
+      "required": ["addMargin", "bagOrderId"],
       "properties": {
         "addMargin": {
           "type": "number",
@@ -14144,9 +12602,7 @@
     },
     "账户组品种配置": {
       "type": "object",
-      "required": [
-        "accountGroupSymbolsId"
-      ],
+      "required": ["accountGroupSymbolsId"],
       "properties": {
         "accountGroupSymbolsId": {
           "type": "integer",
@@ -14165,10 +12621,7 @@
         "calculationType": {
           "type": "string",
           "description": "交易-计算类型",
-          "enum": [
-            "FOREIGN_CURRENCY",
-            "CFD"
-          ]
+          "enum": ["FOREIGN_CURRENCY", "CFD"]
         },
         "contractSize": {
           "type": "integer",
@@ -14187,11 +12640,7 @@
         "gtc": {
           "type": "string",
           "description": "交易-GTC",
-          "enum": [
-            "DAY_VALID",
-            "DAY_VALID_NOT",
-            "CLIENT_CANCEL"
-          ]
+          "enum": ["DAY_VALID", "DAY_VALID_NOT", "CLIENT_CANCEL"]
         },
         "holdingCostConf": {
           "type": "string",
@@ -14257,22 +12706,12 @@
         "tradeBuySell": {
           "type": "string",
           "description": "交易-交易方向",
-          "enum": [
-            "BUY",
-            "SELL",
-            "BUY_OR_SELL"
-          ]
+          "enum": ["BUY", "SELL", "BUY_OR_SELL"]
         },
         "tradeLicense": {
           "type": "string",
           "description": "交易-交易许可",
-          "enum": [
-            "ENABLE",
-            "DISABLED",
-            "ONLY_BUY",
-            "ONLY_SELL",
-            "ONLY_CLOSE"
-          ]
+          "enum": ["ENABLE", "DISABLED", "ONLY_BUY", "ONLY_SELL", "ONLY_CLOSE"]
         },
         "tradeLimit": {
           "type": "number",
@@ -14314,7 +12753,7 @@
       "enableDebug": true,
       "enableFooter": false,
       "enableFooterCustom": true,
-      "footerCustomContent": "Copyright © 2023 BladeX All Rights Reserved",
+      "footerCustomContent": "Copyright © 2025 BladeX All Rights Reserved",
       "enableSearch": true,
       "enableOpenApi": true,
       "enableHomeCustom": false,

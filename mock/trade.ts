@@ -25,7 +25,7 @@ export default {
       user_name: 'admin',
       real_name: '管理员',
       avatar: 'https://gw.alipayobjects.com/zos/rmsportal/BiazfanxmamNRoxxVxka.png',
-      client_id: 'StelluxTrader',
+      client_id: 'MulletTrader',
       role_name: 'administrator,senior,devops',
       license: 'powered by bladex',
       post_id: '1792378147786727425',

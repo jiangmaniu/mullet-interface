@@ -8,11 +8,11 @@ import { useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
 import { isAndroid, isIOS } from 'react-device-detect'
-import VerifyDoc from '../KycV2/VerifyDoc'
-import VerifyMsg from '../KycV2/VerifyMsg'
-import VerifyStatus2 from '../KycV2/VerifyStatus2'
-import VerifyStatus3 from '../KycV2/VerifyStatus3'
-import VerifyStatus4 from '../KycV2/VerifyStatus4'
+import VerifyDoc from './VerifyDoc'
+import VerifyMsg from './VerifyMsg'
+import VerifyStatus2 from './VerifyStatus2'
+import VerifyStatus3 from './VerifyStatus3'
+import VerifyStatus4 from './VerifyStatus4'
 
 /** rn 版本所有逻辑，webview 版本所有逻辑 */
 const Children = observer(
