@@ -1,4 +1,4 @@
-import { useStores } from "@/context/mobxProvider"
+import { useStores } from '@/context/mobxProvider'
 
 export const useSolExploreUrl = () => {
   const { trade } = useStores()

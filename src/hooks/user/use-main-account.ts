@@ -1,4 +1,4 @@
-import { useModel } from "@umijs/max"
+import { useModel } from '@umijs/max'
 
 export function useMainAccount() {
   const { initialState } = useModel('@@initialState')

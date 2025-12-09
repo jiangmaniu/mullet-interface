@@ -29,4 +29,3 @@ export const useGetPoolDetailApiOptions = (query: GetPoolDetailRequestQuery) => 
 
   return { getPoolDetailApiOptions }
 }
-

@@ -1,7 +1,7 @@
-import { sendAndConfirmTransactionFactory } from "@solana/kit";
-import { useCallback, useMemo } from "react"
-import usePrivyInfo from "./usePrivyInfo";
-import useConnection from "./useConnection";
+import { sendAndConfirmTransactionFactory } from '@solana/kit'
+import { useCallback, useMemo } from 'react'
+import usePrivyInfo from './usePrivyInfo'
+import useConnection from './useConnection'
 
 export function useSendAndConfirmTransaction() {
   const { rpc, rpcSubscriptions } = useConnection()
@@ -9,8 +9,8 @@ export function useSendAndConfirmTransaction() {
   const sendAndConfirmTransaction = useMemo(() => {
     return sendAndConfirmTransactionFactory({
       rpc,
-      rpcSubscriptions,
-    });
+      rpcSubscriptions
+    })
   }, [rpc])
 
   return { sendAndConfirmTransaction }

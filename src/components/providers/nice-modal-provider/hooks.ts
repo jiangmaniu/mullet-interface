@@ -3,7 +3,10 @@ import { useModal, type NiceModalHandler } from '@ebay/nice-modal-react'
 import { merge } from 'lodash'
 
 export function useNiceModal(): NiceModalHandler & { setVisible: (visible: boolean) => void }
-export function useNiceModal<P extends Partial<Record<string, unknown>>>(modal: string, args?: P): NiceModalHandler<P> & { setVisible: (visible: boolean) => void }
+export function useNiceModal<P extends Partial<Record<string, unknown>>>(
+  modal: string,
+  args?: P
+): NiceModalHandler<P> & { setVisible: (visible: boolean) => void }
 export function useNiceModal<C extends any, P extends Partial<Record<string, unknown>> = Partial<Record<string, unknown>>>(
   modal: React.FC<C>,
   args?: P

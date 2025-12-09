@@ -1,7 +1,7 @@
-import { BNumber } from "@/utils/b-number"
-import { useVaultDetail } from "./use-vault-detail"
-import { useVaultSharePrice } from "./use-vault-share-price"
-import { useVaultAccountNetValue } from "./use-vault-account-net-value"
+import { BNumber } from '@/utils/b-number'
+import { useVaultDetail } from './use-vault-detail'
+import { useVaultSharePrice } from './use-vault-share-price'
+import { useVaultAccountNetValue } from './use-vault-account-net-value'
 
 export const useVaultOverviewData = () => {
   const { vaultDetail } = useVaultDetail()
@@ -9,7 +9,9 @@ export const useVaultOverviewData = () => {
 
   const totalPurchaseMoney = BNumber.from(vaultDetail?.totalShares)?.multipliedBy(sharePrice)
   const yourBalance = useVaultAccountNetValue()
-  const yourProfit = BNumber.from(vaultDetail?.accountFollowShares?.redeemTotalMoney)?.plus(yourBalance)?.minus(vaultDetail?.accountFollowShares?.followTotalMoney)
+  const yourProfit = BNumber.from(vaultDetail?.accountFollowShares?.redeemTotalMoney)
+    ?.plus(yourBalance)
+    ?.minus(vaultDetail?.accountFollowShares?.followTotalMoney)
 
   return {
     totalPurchaseMoney: totalPurchaseMoney?.toString(),

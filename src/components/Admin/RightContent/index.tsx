@@ -14,6 +14,7 @@ import { goKefu, push } from '@/utils/navigator'
 import Button from '@/components/Base/Button'
 import DepositModal from '@/components/Web/DepositWithdrawModal/DepositModal'
 import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
+import TransferCryptoDialog from '@/components/Web/TransferCryptoDialog'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
@@ -102,27 +103,27 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
 
   const withdrawModalRef = useRef<any>(null)
   const depositModalRef = useRef<any>(null)
+  const [showTransferDialog, setShowTransferDialog] = useState(false)
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
 
   return (
     <div className="flex items-center">
       <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
-        {/* {isBaseAuth && (
-          <Button
-            onClick={() => {
-              push(`/deposit`)
-            }}
-            type="default"
-            // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
-          >
-            <div className="flex flex-row gap-1.5 items-center">
-              <Iconfont name="rujin1" width={20} height={20} color={themeConfig.theme.isDark ? '#fff' : ''} />
-              <span className=" w-[1px] h-[18px] bg-[#ddd] dark:bg-gray-570"></span>
-              <FormattedMessage id="mt.rujin" />
-            </div>
-          </Button>
-        )} */}
+        {/* Add Funds - 跨链充值 */}
+        <Button
+          onClick={() => {
+            setShowTransferDialog(true)
+          }}
+          type="primary"
+          disabled={!hasWallet}
+        >
+          <div className="flex flex-row gap-1.5 items-center">
+            <Iconfont name="jiahao" width={16} height={16} />
+            <span>Add Funds</span>
+          </div>
+        </Button>
+        {/* 入金 - 内部充值 */}
         <Button
           onClick={() => {
             depositModalRef.current?.show()
@@ -204,6 +205,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       {/* 出入金弹窗 */}
       <WithdrawModal ref={withdrawModalRef} />
       <DepositModal ref={depositModalRef} />
+      {/* 跨链充值弹窗 */}
+      <TransferCryptoDialog open={showTransferDialog} onClose={() => setShowTransferDialog(false)} />
     </div>
   )
 })

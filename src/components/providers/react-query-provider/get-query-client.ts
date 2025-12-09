@@ -7,14 +7,14 @@ function makeQueryClient() {
         staleTime: 60 * 1000,
         retry: 3,
         // refetchInterval: 1000 * 15,
-        refetchOnMount: 'always',
+        refetchOnMount: 'always'
       },
 
       dehydrate: {
         // include pending queries in dehydration
-        shouldDehydrateQuery: (query) => defaultShouldDehydrateQuery(query) || query.state.status === 'pending',
-      },
-    },
+        shouldDehydrateQuery: (query) => defaultShouldDehydrateQuery(query) || query.state.status === 'pending'
+      }
+    }
   })
 }
 
