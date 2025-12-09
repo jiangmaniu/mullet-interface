@@ -26,10 +26,10 @@ export const useGetSharesRecordListApiOptions = (query: GetSharesRecordListReque
     select: (rs) => {
       if (rs.data) {
         const list = rs.data?.records?.map((item) => {
-
           const createTime = dayjs(item.createTime, TimeParseEnum.default).valueOf()
           return {
-            ...item, createTime
+            ...item,
+            createTime
           }
         })
 

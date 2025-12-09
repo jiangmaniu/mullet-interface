@@ -1,10 +1,4 @@
-import {
-  Connection,
-  Commitment,
-  TransactionError,
-  VersionedTransactionResponse,
-  Finality,
-} from "@solana/web3.js";
+import { Connection, Commitment, TransactionError, VersionedTransactionResponse, Finality } from '@solana/web3.js'
 
 /**
  * 确认交易是否成功，并返回交易详情
@@ -16,31 +10,31 @@ import {
 export async function waitTransactionConfirm(
   connection: Connection,
   txSig: string,
-  commitment: Commitment = "confirmed"
+  commitment: Commitment = 'confirmed'
 ): Promise<VersionedTransactionResponse | null> {
   // 先获取最新 blockhash，避免旧交易被判定为过期
-  const latestBlockhash = await connection.getLatestBlockhash();
+  const latestBlockhash = await connection.getLatestBlockhash()
 
   const result = await connection.confirmTransaction(
     {
       signature: txSig,
-      ...latestBlockhash,
+      ...latestBlockhash
     },
     commitment
-  );
+  )
 
   if (result.value.err !== null) {
-    const err: TransactionError = result.value.err;
-    throw new Error(`❌ Transaction failed: ${JSON.stringify(err)}`);
+    const err: TransactionError = result.value.err
+    throw new Error(`❌ Transaction failed: ${JSON.stringify(err)}`)
   }
 
-  const finality: Finality = commitment === "finalized" ? "finalized" : "confirmed";
+  const finality: Finality = commitment === 'finalized' ? 'finalized' : 'confirmed'
 
   // 成功时获取交易详情
   const txDetails = await connection.getTransaction(txSig, {
     commitment: finality,
-    maxSupportedTransactionVersion: 0, // 支持 v0
-  });
+    maxSupportedTransactionVersion: 0 // 支持 v0
+  })
 
-  return txDetails;
+  return txDetails
 }

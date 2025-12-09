@@ -15,7 +15,7 @@ interface DepositDetection {
 interface UseDepositListenerOptions {
   enabled?: boolean
   pollInterval?: number // 轮询间隔(ms)
-  chains?: ('TRON' | 'Ethereum' | 'Solana')[] // 监听的链
+  chains?: ('Tron' | 'Ethereum' | 'Solana')[] // 监听的链
 }
 
 /**
@@ -197,7 +197,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
 
       let detectedDeposit: DepositDetection | null = null
 
-      if (chains.includes('TRON') && tronWallet) {
+      if (chains.includes('Tron') && tronWallet) {
         const tronDeposit = await checkTronBalance(tronWallet.address)
         if (tronDeposit) detectedDeposit = tronDeposit
       }

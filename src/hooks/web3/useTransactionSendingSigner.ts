@@ -1,6 +1,6 @@
-import { ConnectedStandardSolanaWallet, useStandardSignAndSendTransaction } from "@privy-io/react-auth/solana"
-import { address, Address, SignatureBytes, TransactionSendingSigner } from "@solana/kit"
-import { useCallback, useMemo } from "react"
+import { ConnectedStandardSolanaWallet, useStandardSignAndSendTransaction } from '@privy-io/react-auth/solana'
+import { address, Address, SignatureBytes, TransactionSendingSigner } from '@solana/kit'
+import { useCallback, useMemo } from 'react'
 
 export function useTransactionSendingSignerAction() {
   const { signAndSendTransaction } = useStandardSignAndSendTransaction()

@@ -2,15 +2,23 @@ import { useStores } from '@/context/mobxProvider'
 import { Connection } from '@solana/web3.js'
 import { useMemo } from 'react'
 import usePrivyInfo from './usePrivyInfo'
-import { createSolanaRpc, createSolanaRpcSubscriptions, Rpc, RpcSubscriptions, sendAndConfirmTransactionFactory, SolanaRpcApi, SolanaRpcSubscriptionsApi } from '@solana/kit'
+import {
+  createSolanaRpc,
+  createSolanaRpcSubscriptions,
+  Rpc,
+  RpcSubscriptions,
+  sendAndConfirmTransactionFactory,
+  SolanaRpcApi,
+  SolanaRpcSubscriptionsApi
+} from '@solana/kit'
 
 type RetutrnConnectType = {
   connection: Connection
   cluster: string
   /**钱包是否已连接 */
   connected: boolean
-  rpc: Rpc<SolanaRpcApi>;
-  rpcSubscriptions: RpcSubscriptions<SolanaRpcSubscriptionsApi>;
+  rpc: Rpc<SolanaRpcApi>
+  rpcSubscriptions: RpcSubscriptions<SolanaRpcSubscriptionsApi>
 }
 
 // privy connection initialization
