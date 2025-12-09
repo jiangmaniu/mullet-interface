@@ -10,7 +10,6 @@ import { ConnectedWallet } from '@privy-io/react-auth'
  */
 interface ExtendedWallet extends ConnectedWallet {
   chainType?: 'ethereum' | 'solana' | 'tron' | string
-  connectorType?: 'embedded' | 'injected' | string
 }
 
 /**

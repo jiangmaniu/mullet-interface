@@ -1,16 +1,12 @@
-import { BNumber, BNumberValue } from "@/utils/b-number";
-import { isNil } from "lodash-es";
+import { BNumber, BNumberValue } from '@/utils/b-number'
+import { isNil } from 'lodash-es'
 
 /**
  * 计算 vault 可用余额
  * @param balance 余额
  * @returns 可用余额
  */
-export function calculateVaultAvailableBalance({
-  balance,
-}: {
-  balance?: BNumberValue
-}) {
+export function calculateVaultAvailableBalance({ balance }: { balance?: BNumberValue }) {
   if (isNil(balance)) {
     return undefined
   }
@@ -25,15 +21,7 @@ export function calculateVaultAvailableBalance({
  * @param pnl 实时盈亏
  * @returns 可用余额
  */
-export function calculateVaultSharePrice({
-  balance,
-  share,
-  pnl
-}: {
-  balance?: BNumberValue
-  share?: BNumberValue
-  pnl?: BNumberValue
-}) {
+export function calculateVaultSharePrice({ balance, share, pnl }: { balance?: BNumberValue; share?: BNumberValue; pnl?: BNumberValue }) {
   if (isNil(balance) || isNil(share) || isNil(pnl)) {
     return undefined
   }
@@ -42,20 +30,12 @@ export function calculateVaultSharePrice({
     return undefined
   }
 
-  const price = BNumber.from(balance)
-    .plus(pnl)
-    .div(share)
+  const price = BNumber.from(balance).plus(pnl).div(share)
 
   return price
 }
 
-export const calculateVaultAccountNetValue = ({
-  sharePrice,
-  share
-}: {
-  sharePrice?: BNumberValue
-  share?: BNumberValue
-}) => {
+export const calculateVaultAccountNetValue = ({ sharePrice, share }: { sharePrice?: BNumberValue; share?: BNumberValue }) => {
   if (isNil(sharePrice) || isNil(share)) {
     return undefined
   }
