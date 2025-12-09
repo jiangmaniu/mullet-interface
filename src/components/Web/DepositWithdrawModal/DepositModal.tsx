@@ -12,6 +12,8 @@ import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import useSPLTokenBalance from '@/hooks/web3/useSPLTokenBalance'
 // import { useSPLTransferPDA } from '@/hooks/web3/useSPLTransferOfKit'
 import useSPLTransfer from '@/hooks/web3/useSPLTransfer'
+import TransferCryptoDialog from '@/components/Web/TransferCryptoDialog'
+import SwapDialog from '@/components/Web/SwapDialog'
 import { InfoCircleOutlined } from '@ant-design/icons'
 import { Form, Tooltip } from 'antd'
 
@@ -28,6 +30,10 @@ export default observer(
     const { trade } = useStores()
     const { hasEmbeddedWallet, address, hasExternalWallet, foundWallet } = usePrivyInfo()
     const { balance: walletBalance, getTokenBalance } = useSPLTokenBalance()
+
+    // 跨链桥接对话框状态
+    const [showTransferDialog, setShowTransferDialog] = useState(false)
+    const [showSwapDialog, setShowSwapDialog] = useState(false)
 
     const close = () => {
       setOpen(false)
@@ -188,12 +194,66 @@ export default observer(
                   <span className="ml-1">{intl.formatMessage({ id: 'mt.zhuanruzhizhitips' })}</span>
                 </div>
               </div>
+
+              {/* 跨链桥接按钮 */}
+              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="text-sm text-blue-600 dark:text-blue-400 mb-2 flex items-center">
+                  <InfoCircleOutlined className="mr-2" />
+                  <span>支持从 TRON / Ethereum 跨链充值</span>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    type="default"
+                    block
+                    onClick={() => {
+                      setShowTransferDialog(true)
+                      close()
+                    }}
+                  >
+                    跨链转账
+                  </Button>
+                  <Button
+                    type="default"
+                    block
+                    onClick={() => {
+                      setShowSwapDialog(true)
+                      close()
+                    }}
+                  >
+                    资产兑换
+                  </Button>
+                </div>
+              </div>
+
               <Button type="primary" block className="mt-8" onClick={close}>
                 {intl.formatMessage({ id: 'mt.queding' })}
               </Button>
             </div>
           )}
         </Modal>
+
+        {/* 跨链充值对话框 */}
+        <TransferCryptoDialog
+          open={showTransferDialog}
+          onClose={() => setShowTransferDialog(false)}
+          onDepositDetected={(amount, token, chain) => {
+            console.log('[Deposit] Bridge completed:', { amount, token, chain })
+            // 刷新余额
+            getTokenBalance()
+          }}
+        />
+
+        {/* 资产兑换对话框 */}
+        <SwapDialog
+          open={showSwapDialog}
+          onClose={() => setShowSwapDialog(false)}
+          onSwapComplete={(txHash) => {
+            console.log('[Deposit] Swap completed:', txHash)
+            // 刷新余额
+            getTokenBalance()
+          }}
+        />
+
         {/* 登录入金弹窗动画 */}
         <Modal open={showLoadingModal} onClose={() => setShowLoadingModal(false)} footer={null} width={580} centered>
           <div className="flex flex-col items-center justify-center h-[200px]">

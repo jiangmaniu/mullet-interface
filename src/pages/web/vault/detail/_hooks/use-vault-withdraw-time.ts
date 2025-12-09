@@ -14,10 +14,7 @@ interface UseVaultWithdrawTimeReturn {
   canWithdrawTime: string
 }
 
-export function useVaultWithdrawTime({
-  lastVisitedTime,
-  intervalDays = 1
-}: UseVaultWithdrawTimeParams): UseVaultWithdrawTimeReturn {
+export function useVaultWithdrawTime({ lastVisitedTime, intervalDays = 1 }: UseVaultWithdrawTimeParams): UseVaultWithdrawTimeReturn {
   const [canWithdrawTime, setCanWithdrawTime] = useState<string>('')
 
   // 计算目标时间戳
@@ -34,7 +31,7 @@ export function useVaultWithdrawTime({
   }, [lastVisitedTime, intervalDays])
 
   const [countdown, formattedRes] = useCountDown({
-    targetDate: targetTime,
+    targetDate: targetTime
   })
 
   // 计算是否可以提取

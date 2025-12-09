@@ -19,7 +19,11 @@ export const usePoolVaultDivvyApiMutation = () => {
     },
     onSuccess: (data, variables, context) => {
       const queryClient = getQueryClient()
-      queryClient.invalidateQueries({ queryKey: tradeCoreApiQueriesKey.followManage.poolDetail.toKeyWithArgs({ followManageId: variables.followManageId! } as GetPoolDetailRequestQuery) })
+      queryClient.invalidateQueries({
+        queryKey: tradeCoreApiQueriesKey.followManage.poolDetail.toKeyWithArgs({
+          followManageId: variables.followManageId!
+        } as GetPoolDetailRequestQuery)
+      })
 
       if (data.success && data.data) {
         return data.data

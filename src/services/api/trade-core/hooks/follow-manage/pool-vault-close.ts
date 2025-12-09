@@ -16,12 +16,14 @@ export const usePoolCloseVaultApiMutation = () => {
       const rs = await tradeCoreApi.followManage.postFollowManageVaultClose(data)
 
       return rs.data
-
     },
     onSuccess: (data, variables, context) => {
       const queryClient = getQueryClient()
-      queryClient.invalidateQueries({ queryKey: tradeCoreApiQueriesKey.followManage.poolDetail.toKeyWithArgs({ followManageId: variables.followManageId! } as GetPoolDetailRequestQuery) })
-
+      queryClient.invalidateQueries({
+        queryKey: tradeCoreApiQueriesKey.followManage.poolDetail.toKeyWithArgs({
+          followManageId: variables.followManageId!
+        } as GetPoolDetailRequestQuery)
+      })
     }
   })
 

@@ -1,9 +1,9 @@
-import { EChartsOption } from "@/libs/echarts"
+import { EChartsOption } from '@/libs/echarts'
 
 export const baseVaultChartsOption: EChartsOption = {
   backgroundColor: 'transparent',
   tooltip: {
-    trigger: 'axis',
+    trigger: 'axis'
   },
   grid: {
     left: '3%',
@@ -15,26 +15,26 @@ export const baseVaultChartsOption: EChartsOption = {
   xAxis: {
     type: 'category',
     axisLabel: {
-      color: '#767783',
+      color: '#767783'
     },
     axisLine: {
       lineStyle: {
         type: 'dashed',
-        color: 'rgba(216, 216, 216, 0.2)',
-      },
+        color: 'rgba(216, 216, 216, 0.2)'
+      }
     }
   },
   yAxis: {
     type: 'value',
     axisLabel: {
-      color: '#767783',
+      color: '#767783'
     },
     splitLine: {
       lineStyle: {
         type: 'dashed',
-        color: 'rgba(216, 216, 216, 0.2)',
-      },
-    },
+        color: 'rgba(216, 216, 216, 0.2)'
+      }
+    }
   },
   series: [
     {

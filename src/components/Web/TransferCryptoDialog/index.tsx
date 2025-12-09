@@ -1,0 +1,429 @@
+import React, { useState, useEffect } from 'react'
+import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar } from 'antd'
+import { CopyOutlined } from '@ant-design/icons'
+import { usePrivy, useWallets } from '@privy-io/react-auth'
+import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
+import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
+import { debridgeService } from '@/services/debridgeService'
+import { useDepositListener } from '@/hooks/useDepositListener'
+import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
+import { useStores } from '@/context/mobxProvider'
+import './index.less'
+
+const { Text } = Typography
+
+interface TransferCryptoDialogProps {
+  open: boolean
+  onClose: () => void
+  onDepositDetected?: (amount: string, token: string, chain: string) => void
+}
+
+/**
+ * 跨链充值对话框
+ * 支持 TRON / Ethereum / Solana 充值并自动桥接到 Solana
+ */
+const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClose, onDepositDetected }) => {
+  const { getAccessToken, user } = usePrivy()
+  const { wallets } = useWallets()
+  const { trade } = useStores()
+
+  const [selectedChain, setSelectedChain] = useState('Tron')
+  const [selectedToken, setSelectedToken] = useState('USDT')
+  const [depositAddress, setDepositAddress] = useState('')
+  const [bridgeInProgress, setBridgeInProgress] = useState(false)
+  const [bridgeStep, setBridgeStep] = useState<'idle' | 'tron-eth' | 'eth-sol' | 'completed'>('idle')
+
+  // 使用充值监听 hook
+  const { deposit, isListening, clearDeposit } = useDepositListener({
+    enabled: open,
+    chains: [selectedChain as 'Tron' | 'Ethereum' | 'Solana'],
+    pollInterval: 5000
+  })
+
+  // 获取钱包地址
+  useEffect(() => {
+    if (!open) return
+
+    const loadAddress = () => {
+      // 找到对应的链配置
+      const chainConfig = SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)
+      if (!chainConfig) {
+        console.warn(`[TransferCrypto] Chain config not found for: ${selectedChain}`)
+        setDepositAddress('')
+        return
+      }
+
+      const chainType = chainConfig.id // 'tron' | 'ethereum' | 'solana'
+
+      // 对于 Solana，使用 PDA 地址（与入金模块完全一致）
+      if (chainType === 'solana') {
+        const pdaAddress = trade.currentAccountInfo?.pdaTokenAddress
+        if (pdaAddress) {
+          setDepositAddress(pdaAddress)
+          console.log(`[TransferCrypto] Using Solana PDA address:`, pdaAddress)
+        } else {
+          console.warn(`[TransferCrypto] No PDA address found`)
+          setDepositAddress('')
+        }
+        return
+      }
+
+      // 其他链从 user.linkedAccounts 查找钱包
+      const walletAccount = user?.linkedAccounts?.find(
+        (account: any) => account.type === 'wallet' && account.chainType === chainType
+      ) as any
+
+      if (walletAccount?.address) {
+        setDepositAddress(walletAccount.address)
+        console.log(`[TransferCrypto] Using ${selectedChain} wallet:`, walletAccount.address)
+      } else {
+        console.warn(`[TransferCrypto] No ${selectedChain} wallet found for chainType: ${chainType}`)
+        console.warn('[TransferCrypto] Available accounts:', user?.linkedAccounts)
+        setDepositAddress('')
+      }
+    }
+
+    loadAddress()
+  }, [open, selectedChain, user, trade.currentAccountInfo])
+
+  // 检测到充值后自动触发桥接
+  useEffect(() => {
+    if (deposit && !bridgeInProgress) {
+      console.log('[TransferCrypto] Deposit detected:', deposit)
+      message.success(`Detected ${deposit.amount} ${deposit.token} on ${deposit.chain}!`)
+
+      // 触发桥接
+      handleAutoBridge(deposit.amount, deposit.token, deposit.chain)
+
+      // 清除检测记录
+      clearDeposit()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deposit])
+
+  // 自动桥接
+  const handleAutoBridge = async (amount: string, token: string, chain: string) => {
+    try {
+      setBridgeInProgress(true)
+      message.loading('正在启动跨链桥接...', 0)
+
+      // 从 user.linkedAccounts 获取钱包地址
+      const tronAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'tron') as any
+      const ethAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'ethereum') as any
+      const solAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'solana') as any
+
+      if (!tronAccount || !ethAccount || !solAccount) {
+        throw new Error('缺少必需的钱包。请确保已创建 Tron、Ethereum 和 Solana 钱包。')
+      }
+
+      // 构建钱包对象（兼容旧接口）
+      const tronWallet = { address: tronAccount.address }
+      const ethWallet = wallets.find((w) => (w as any).chainType === 'ethereum') || { address: ethAccount.address }
+      const solWallet = { address: solAccount.address }
+
+      const accessToken = await getAccessToken()
+      if (!accessToken) {
+        throw new Error('无法获取访问令牌，请重新登录')
+      }
+
+      // 检查最低金额：Tron $20, Ethereum $3
+      const minAmount = chain === 'Tron' ? 20 : chain === 'Ethereum' ? 3 : 10
+      const depositAmount = typeof amount === 'string' ? parseFloat(amount) : amount
+
+      if (depositAmount < minAmount) {
+        throw new Error(
+          `金额过小。最低金额: $${minAmount} USD，当前金额: $${depositAmount.toFixed(
+            2
+          )} USD。跨链桥接有固定费用约 $2-3，小额转账费用占比过高。`
+        )
+      }
+
+      if (chain === 'Tron') {
+        // Tron → Ethereum
+        console.log('[Bridge] Step 1: Tron → Ethereum')
+        setBridgeStep('tron-eth')
+        message.loading('步骤 1/2: 正在从 Tron 桥接到 Ethereum...', 0)
+
+        const tronTokenInfo = SUPPORTED_TOKENS.tron.find((t) => t.symbol === token)
+        if (!tronTokenInfo) throw new Error(`Token ${token} 在 Tron 上不受支持`)
+
+        // 使用已有的 tronAccount
+        const tronWalletId = tronAccount.walletId || tronAccount.id
+        const tronPublicKey = tronAccount.publicKey
+
+        if (!tronWalletId || !tronPublicKey) {
+          throw new Error('TRON 钱包缺少 ID 或公钥信息')
+        }
+
+        console.log('[Bridge] TRON wallet info:', { walletId: tronWalletId, hasPublicKey: !!tronPublicKey })
+
+        const tronResult = await debridgeService.bridgeTronToEthereum({
+          tokenAddress: tronTokenInfo.address,
+          amount,
+          fromAddress: tronWallet.address,
+          ethereumAddress: ethWallet.address,
+          walletId: tronWalletId,
+          publicKey: tronPublicKey,
+          accessToken,
+          useGasSponsorship: true
+        })
+
+        message.success(`✅ TRON 交易成功: ${tronResult.txHash.slice(0, 8)}...`)
+        console.log('[Bridge] TRON tx:', tronResult.txHash)
+        console.log('[Bridge] Order ID:', tronResult.orderId)
+
+        // 等待订单完成
+        message.loading('等待 TRON → Ethereum 桥接完成 (约 3-5 分钟)...', 0)
+        await debridgeService.waitForOrderCompletion(tronResult.orderId)
+        message.success('✅ TRON → Ethereum 桥接完成!')
+
+        // Ethereum → Solana
+        console.log('[Bridge] Step 2: Ethereum → Solana')
+        setBridgeStep('eth-sol')
+        message.loading('步骤 2/2: 正在从 Ethereum 桥接到 Solana...', 0)
+
+        const ethTokenInfo = SUPPORTED_TOKENS.ethereum.find((t) => t.symbol === token)
+        if (!ethTokenInfo) throw new Error(`Token ${token} 在 Ethereum 上不受支持`)
+
+        const ethResult = await debridgeService.bridgeEthereumToSolana({
+          tokenAddress: ethTokenInfo.address,
+          amount: tronResult.dstChainTokenOutAmount,
+          solanaAddress: solWallet.address,
+          privyWallet: ethWallet
+        })
+
+        message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
+        console.log('[Bridge] ETH tx:', ethResult.txHash)
+
+        // 等待最终确认
+        if (ethResult.orderId) {
+          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          await debridgeService.waitForOrderCompletion(ethResult.orderId)
+        }
+      } else if (chain === 'Ethereum') {
+        // Ethereum → Solana 直接桥接
+        console.log('[Bridge] Direct: Ethereum → Solana')
+        setBridgeStep('eth-sol')
+        message.loading('正在从 Ethereum 桥接到 Solana...', 0)
+
+        const ethTokenInfo = SUPPORTED_TOKENS.ethereum.find((t) => t.symbol === token)
+        if (!ethTokenInfo) throw new Error(`Token ${token} 在 Ethereum 上不受支持`)
+
+        const ethResult = await debridgeService.bridgeEthereumToSolana({
+          tokenAddress: ethTokenInfo.address,
+          amount,
+          solanaAddress: solWallet.address,
+          privyWallet: ethWallet
+        })
+
+        message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
+        console.log('[Bridge] ETH tx:', ethResult.txHash)
+
+        // 等待最终确认
+        if (ethResult.orderId) {
+          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          await debridgeService.waitForOrderCompletion(ethResult.orderId)
+        }
+      }
+
+      // 通知完成
+      if (onDepositDetected) {
+        onDepositDetected(amount, token, chain)
+      }
+
+      message.destroy()
+      message.success('🎉 跨链桥接全部完成! 资金已到达 Solana 账户')
+      setBridgeStep('completed')
+
+      // 延迟关闭，让用户看到完成状态
+      setTimeout(() => {
+        onClose()
+        setBridgeStep('idle')
+      }, 2000)
+    } catch (error) {
+      console.error('[Bridge] Failed:', error)
+      const errorMessage = error instanceof Error ? error.message : '未知错误'
+      message.error(`桥接失败: ${errorMessage}`)
+
+      // 提供更友好的错误提示
+      if (errorMessage.includes('Amount too small')) {
+        message.warning('提示：跨链桥接最低金额为 $10 USD，小额转账手续费占比较高')
+      } else if (errorMessage.includes('wallet')) {
+        message.info('请确保已连接所有需要的钱包 (TRON、Ethereum、Solana)')
+      } else if (errorMessage.includes('token')) {
+        message.info('请检查选择的代币是否正确')
+      }
+    } finally {
+      setBridgeInProgress(false)
+      if (bridgeStep !== 'completed') {
+        setBridgeStep('idle')
+      }
+      message.destroy()
+    }
+  }
+
+  // 复制地址
+  const handleCopyAddress = () => {
+    navigator.clipboard.writeText(depositAddress)
+    message.success('Address copied!')
+  }
+
+  return (
+    <Modal title="Add Funds - Transfer Crypto" open={open} onCancel={onClose} footer={null} width={500} className="transfer-crypto-dialog">
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {/* 链选择 */}
+        <div>
+          <Text strong>Select Chain</Text>
+          <Select value={selectedChain} onChange={setSelectedChain} style={{ width: '100%', marginTop: 8 }} size="large">
+            {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
+              <Select.Option key={chain.name} value={chain.name}>
+                <Space>
+                  <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
+                  {chain.name} - Min: ${chain.minDeposit}
+                </Space>
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+
+        {/* Token 选择 */}
+        <div>
+          <Text strong>Select Token</Text>
+          <Select value={selectedToken} onChange={setSelectedToken} style={{ width: '100%', marginTop: 8 }} size="large">
+            <Select.Option value="USDT">
+              <Space>
+                <Avatar src={TOKEN_ICONS.USDT} size="small" />
+                USDT
+              </Space>
+            </Select.Option>
+            <Select.Option value="USDC">
+              <Space>
+                <Avatar src={TOKEN_ICONS.USDC} size="small" />
+                USDC
+              </Space>
+            </Select.Option>
+          </Select>
+        </div>
+
+        {/* 充值地址和二维码 */}
+        {depositAddress ? (
+          <>
+            {/* QR Code - 无黑框 */}
+            <div style={{ textAlign: 'center', marginTop: 8 }}>
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <QRCode value={depositAddress} size={180} />
+                {/* 链图标叠加 */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    width: 40,
+                    height: 40,
+                    background: 'white',
+                    borderRadius: '50%',
+                    padding: 6,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
+                  }}
+                >
+                  <Avatar src={CHAIN_ICONS[selectedChain]} size={28} />
+                </div>
+              </div>
+              <Text type="secondary" style={{ display: 'block', marginTop: 8, fontSize: 12 }}>
+                Scan to deposit on {selectedChain}
+              </Text>
+            </div>
+
+            {/* 充值地址 */}
+            <div>
+              <Text strong style={{ fontSize: 13 }}>
+                Your deposit address
+                <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
+                  ⓘ Auto-bridge to Solana
+                </Text>
+              </Text>
+              <Input
+                value={depositAddress}
+                readOnly
+                suffix={<CopyOutlined onClick={handleCopyAddress} style={{ cursor: 'pointer', color: '#1890ff' }} />}
+                style={{ marginTop: 8, fontFamily: 'monospace', fontSize: 13 }}
+                size="large"
+              />
+            </div>
+          </>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <Spin />
+            <Text type="secondary" style={{ display: 'block', marginTop: 12 }}>
+              Loading wallet address...
+            </Text>
+          </div>
+        )}
+
+        {/* 状态显示 */}
+        {isListening && depositAddress && (
+          <div style={{ padding: 12, background: '#e6f7ff', border: '1px solid #91d5ff', borderRadius: 4 }}>
+            <Space>
+              <Spin size="small" />
+              <Text>Monitoring deposits...</Text>
+            </Space>
+          </div>
+        )}
+
+        {bridgeInProgress && (
+          <div style={{ padding: 12, background: '#fff7e6', border: '1px solid #ffd591', borderRadius: 4 }}>
+            <Space direction="vertical" style={{ width: '100%' }}>
+              <Space>
+                <Spin size="small" />
+                <Text strong>跨链桥接进行中...</Text>
+              </Space>
+              {bridgeStep === 'tron-eth' && (
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  ⏳ 步骤 1/2: Tron → Ethereum (预计 3-5 分钟)
+                </Text>
+              )}
+              {bridgeStep === 'eth-sol' && (
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  ⏳ 步骤 2/2: Ethereum → Solana (预计 2-3 分钟)
+                </Text>
+              )}
+              {bridgeStep === 'completed' && (
+                <Text type="success" style={{ fontSize: 12 }}>
+                  ✅ 桥接完成！资金已到达 Solana
+                </Text>
+              )}
+            </Space>
+          </div>
+        )}
+
+        {/* 说明 */}
+        <div style={{ padding: 12, background: '#f0f2f5', borderRadius: 4 }}>
+          <Text type="secondary" style={{ fontSize: 12 }}>
+            • 发送 {selectedToken} 到上面的地址
+            <br />• 最低充值金额: ${SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)?.minDeposit || 10}
+            <br />• 资金将自动桥接到 Solana
+            <br />• 桥接时间: 约 5-10 分钟
+            <br />• 手续费: 跨链桥接费用 + Gas 费 (由平台赞助)
+            <br />
+            <br />
+            💡 <strong>工作原理：</strong>
+            <br />
+            1. 检测到充值后自动启动桥接
+            <br />
+            2. Tron → Ethereum (3-5 分钟)
+            <br />
+            3. Ethereum → Solana (2-3 分钟)
+            <br />
+            4. 完成后资金到达 Solana 账户
+          </Text>
+        </div>
+      </Space>
+    </Modal>
+  )
+}
+
+export default TransferCryptoDialog

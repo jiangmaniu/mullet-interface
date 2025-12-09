@@ -152,9 +152,9 @@ export const errorConfig: RequestConfig = {
         headers['Authorization'] = `Basic ${Base64.encode(`${CLIENT_ID}:${CLIENT_SECRET}`)}`
       }
 
-      // if (token) {
-      //   headers['Blade-Auth'] = `${userInfo?.token_type || 'Bearer'} ${token}`
-      // }
+      if (token) {
+        headers['Blade-Auth'] = `${userInfo?.token_type || 'Bearer'} ${token}`
+      }
 
       // POST接口
       // if (config.method === 'post') {

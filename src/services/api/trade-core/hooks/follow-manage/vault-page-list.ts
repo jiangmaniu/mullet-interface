@@ -9,7 +9,7 @@ import { TimeParseEnum } from '@/utils/dayjs'
 import { BNumber } from '@/utils/b-number'
 
 export type VaultListItemWrapper = Prettify<
-  DeepOverride<Omit<_10, 'id' | 'details' | 'status'>, object> & Required<Pick<_10, 'id'>> & { createTime: number, mySharesValue: string }
+  DeepOverride<Omit<_10, 'id' | 'details' | 'status'>, object> & Required<Pick<_10, 'id'>> & { createTime: number; mySharesValue: string }
 >
 
 export type GetVaultPageListRequestQuery = FollowManage.GetFollowmanageVaultpageList.RequestQuery
@@ -27,10 +27,9 @@ export const useGetVaultListApiOptions = (query: GetVaultPageListRequestQuery) =
           const createTime = dayjs(item.createTime, TimeParseEnum.default).valueOf()
           const balance = BNumber.from(item.myShares)?.div(item.totalShares)?.multipliedBy(item.tvl)
           return {
-
             ...item,
             mySharesValue: balance?.toString(),
-            createTime,
+            createTime
           }
         })
 

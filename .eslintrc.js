@@ -39,6 +39,6 @@ module.exports = {
     'react/no-string-refs': 'off',
     'guard-for-in': 'off',
     'react/button-has-type': 'off',
-    'no-param-reassign': '["error", { "props": false }]'
+    'no-param-reassign': ['error', { props: false }]
   }
 }

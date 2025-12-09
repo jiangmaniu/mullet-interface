@@ -25,9 +25,8 @@ export const useGetPoolPageListApiOptions = (query?: GetPoolPageListRequestQuery
         const list = (rs.data.data.records || []).map((item) => {
           const createTime = dayjs(item.createTime, TimeParseEnum.default).valueOf()
           return {
-
             ...item,
-            createTime,
+            createTime
           }
         })
 

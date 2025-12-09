@@ -4,7 +4,9 @@ import { getTradeCoreApiInstance } from '../../instance'
 import { AccountManage1, FollowShares, PoolManage } from '../../instance/gen'
 import { tradeCoreApiQueriesKey } from '../../queries-eache-key'
 
-export type FollowSharesWrapper = Prettify<DeepOverride<Omit<AccountManage1, 'id' | 'details'>, object> & Required<Pick<PoolManage, 'id'>> & {}>
+export type FollowSharesWrapper = Prettify<
+  DeepOverride<Omit<AccountManage1, 'id' | 'details'>, object> & Required<Pick<PoolManage, 'id'>> & {}
+>
 
 export type GetPoolAccountDetailRequestQuery = FollowShares.GetFollowsharesSharesdetail.RequestQuery
 

@@ -7,7 +7,7 @@ const LogoIcons = {
   Discord: DiscordLogoIcon,
   Telegram: TelegramLogoIcon,
   X: XLogoIcon,
-  Certik: CertikLogoIcon,
+  Certik: CertikLogoIcon
 }
 
 export { LogoIcons }
