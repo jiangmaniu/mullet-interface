@@ -8,6 +8,7 @@ import { debridgeService } from '@/services/debridgeService'
 import { useDepositListener } from '@/hooks/useDepositListener'
 import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
+import { useTronWallet } from '@/hooks/useTronWallet'
 import './index.less'
 
 const { Text } = Typography
@@ -26,6 +27,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const { getAccessToken, user } = usePrivy()
   const { wallets } = useWallets()
   const { trade } = useStores()
+  
+  // TRON 钱包自动创建和管理
+  const { tronAddress, isCreating: isTronWalletCreating } = useTronWallet(true)
 
   const [selectedChain, setSelectedChain] = useState('Tron')
   const [selectedToken, setSelectedToken] = useState('USDT')
@@ -67,6 +71,22 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         }
         return
       }
+      
+      // 对于 TRON，优先使用 hook 返回的地址
+      if (chainType === 'tron') {
+        if (tronAddress) {
+          setDepositAddress(tronAddress)
+          console.log(`[TransferCrypto] Using TRON wallet from hook:`, tronAddress)
+          return
+        }
+        
+        // 如果 hook 还在创建中，等待
+        if (isTronWalletCreating) {
+          console.log(`[TransferCrypto] TRON wallet is being created...`)
+          setDepositAddress('')
+          return
+        }
+      }
 
       // 其他链从 user.linkedAccounts 查找钱包
       const walletAccount = user?.linkedAccounts?.find(
@@ -84,7 +104,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     }
 
     loadAddress()
-  }, [open, selectedChain, user, trade.currentAccountInfo])
+  }, [open, selectedChain, user, trade.currentAccountInfo, tronAddress, isTronWalletCreating])
 
   // 检测到充值后自动触发桥接
   useEffect(() => {

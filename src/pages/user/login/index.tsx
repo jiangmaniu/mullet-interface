@@ -9,11 +9,16 @@ import { useLogin, usePrivy } from '@privy-io/react-auth'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
+import { useTronWallet } from '@/hooks/useTronWallet'
 
 export default function Login() {
   const { ready, authenticated, logout, user, getAccessToken } = usePrivy()
   const { initialState, setInitialState } = useModel('@@initialState')
   const [showJumpingLoader, setShowJumpingLoader] = useState(false)
+  
+  // 自动创建 TRON 钱包（在登录后触发）
+  // autoCreate=true 会在 authenticated 时自动检测并创建
+  useTronWallet(true)
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.()
