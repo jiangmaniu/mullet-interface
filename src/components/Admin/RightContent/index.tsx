@@ -129,7 +129,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
             depositModalRef.current?.show()
           }}
           type="default"
-          disabled={!hasWallet || !currentAccountInfo?.pdaTokenAddress}
+          disabled={!hasWallet}
         >
           <div className="flex flex-row gap-1.5 items-center">
             <Iconfont name="rujin1" width={20} height={20} color={themeConfig.theme.isDark ? '#fff' : ''} />
