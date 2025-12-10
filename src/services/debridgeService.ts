@@ -11,12 +11,7 @@
  */
 
 import { request } from '@/utils/request'
-
-// deBridge API 配置
-const DEBRIDGE_API_BASE_URL = 'https://dln.debridge.finance/v1.0'
-
-// 后端 API 配置
-const API_BASE_URL = 'https://api.mulletfinance.xyz'
+import { API_BASE_URL, DEBRIDGE_API_BASE_URL, TRON_API_ENDPOINTS } from '@/constants/api'
 
 // 支持的链 ID（deBridge 格式）
 export const DEBRIDGE_CHAIN_IDS = {
@@ -363,8 +358,8 @@ export async function createDeBridgeOrderTron(
       console.log('[deBridge-TRON] Sending approve tx to backend...')
 
       const endpoint = useGasSponsorship
-        ? `${API_BASE_URL}/api/tron-transaction/sponsor-and-sign`
-        : `${API_BASE_URL}/api/tron-transaction/sign`
+        ? TRON_API_ENDPOINTS.SPONSOR_AND_SIGN
+        : TRON_API_ENDPOINTS.SIGN_TRANSACTION
 
       const sponsorResponse = await request<any>(endpoint, {
         method: 'POST',
@@ -454,8 +449,8 @@ export async function createDeBridgeOrderTron(
     console.log('[deBridge-TRON] Transaction ID:', newTxID)
 
     const endpoint = useGasSponsorship
-      ? `${API_BASE_URL}/api/tron-transaction/sponsor-and-sign`
-      : `${API_BASE_URL}/api/tron-transaction/sign`
+      ? TRON_API_ENDPOINTS.SPONSOR_AND_SIGN
+      : TRON_API_ENDPOINTS.SIGN_TRANSACTION
 
     const orderSponsorResponse = await request<any>(endpoint, {
       method: 'POST',

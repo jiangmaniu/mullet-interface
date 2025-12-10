@@ -47,7 +47,7 @@ export const PrivyProvider = ({ children }: IProps) => {
               createOnLogin: 'users-without-wallets'
             },
             ethereum: {
-              createOnLogin: 'off'
+              createOnLogin: 'users-without-wallets'  // 🔥 改为自动创建
             }
           }
         }}
