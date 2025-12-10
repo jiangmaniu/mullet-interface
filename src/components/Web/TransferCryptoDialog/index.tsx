@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
-import { usePrivy, useWallets } from '@privy-io/react-auth'
+import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { debridgeService } from '@/services/debridgeService'
@@ -28,6 +28,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const { token } = antdTheme.useToken()
   const { getAccessToken, user } = usePrivy()
   const { wallets } = useWallets()
+  const { sendTransaction } = useSendTransaction() // Privy Gas 赞助
   const { trade } = useStores()
   
   // TRON 钱包自动创建和管理
@@ -57,14 +58,13 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   ) as any
 
   // 使用充值监听 hook - 传递所有链的地址
-  const { deposit, isListening, clearDeposit } = useDepositListener({
-    enabled: open,
+  const { deposit, isListening, clearDeposit, resetDetection } = useDepositListener({
+    enabled: open, // 简单：只要对话框打开就监听
     chains: [selectedChain as 'Tron' | 'Ethereum' | 'Solana'],
     pollInterval: 5000,
     tronAddress: tronAddress || undefined,
     ethereumAddress: ethereumAccount?.address || undefined,
-    solanaAddress: solanaAccount?.address || undefined,
-    detectExisting: true // 🔥 启用检测现有余额（用于 TRON→ETH 后继续 ETH→SOL）
+    solanaAddress: solanaAccount?.address || undefined
   })
 
   // 获取钱包地址
@@ -145,14 +145,36 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     loadAddress()
   }, [open, selectedChain, user, trade.currentAccountInfo, tronAddress, isTronWalletCreating])
 
+  // 对话框关闭时重置检测状态
+  useEffect(() => {
+    if (!open) {
+      resetDetection()
+    }
+  }, [open, resetDetection])
+
   // 检测到充值后自动触发桥接
   useEffect(() => {
+    console.log('[TransferCrypto] useEffect triggered:', { 
+      hasDeposit: !!deposit, 
+      bridgeInProgress,
+      depositData: deposit 
+    })
+    
     if (deposit && !bridgeInProgress) {
       console.log('[TransferCrypto] Deposit detected:', deposit)
       message.success(`Detected ${deposit.amount} ${deposit.token} on ${deposit.chain}!`)
 
-      // 触发桥接 - 使用 rawBalance（最小单位）而不是 amount（USD）
-      handleAutoBridge(deposit.rawBalance || deposit.amount, deposit.token, deposit.chain)
+      // 触发桥接 - 使用 rawBalance（最小单位）
+      // rawBalance 是十六进制字符串，需要转换为十进制数字字符串
+      let amountToUse = deposit.amount
+      if (deposit.rawBalance && deposit.rawBalance.startsWith('0x')) {
+        amountToUse = BigInt(deposit.rawBalance).toString() // 转换为十进制字符串
+        console.log('[TransferCrypto] Converted rawBalance:', deposit.rawBalance, '→', amountToUse)
+      } else if (deposit.rawBalance) {
+        amountToUse = deposit.rawBalance
+      }
+      
+      handleAutoBridge(amountToUse, deposit.token, deposit.chain)
 
       // 清除检测记录
       clearDeposit()
@@ -261,7 +283,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           tokenAddress: ethTokenInfo.address,
           amount: tronResult.dstChainTokenOutAmount,
           solanaAddress: solWallet.address,
-          privyWallet: ethWallet
+          privyWallet: ethWallet,
+          sendTransaction // Privy Gas 赞助函数
         })
 
         message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
@@ -285,7 +308,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           tokenAddress: ethTokenInfo.address,
           amount,
           solanaAddress: solWallet.address,
-          privyWallet: ethWallet
+          privyWallet: ethWallet,
+          sendTransaction // Privy Gas 赞助函数
         })
 
         message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
@@ -300,6 +324,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
       // 通知后端跨链成功（带重试机制）
       try {
+        const bridgePath = chain === 'Tron' ? 'TRON → ETH → SOL' : 'ETH → SOL'
+        console.log(`[Bridge] ✅ ${bridgePath} bridge completed successfully!`)
         console.log('[Bridge] Notifying backend of successful cross-chain transfer...')
         
         // 使用后端账户信息中的 Solana 地址（不是 Privy 钱包地址）
@@ -309,9 +335,13 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         } else {
           const notifyUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${targetAddress}&amount=${amount}`
           
-          console.log('[Bridge] Notification URL:', notifyUrl)
-          console.log('[Bridge] Target address (backend account):', targetAddress)
-          console.log('[Bridge] Amount:', amount)
+          console.log('[Bridge] Notification details:', {
+            path: bridgePath,
+            url: notifyUrl,
+            targetAddress,
+            amount,
+            token
+          })
           
           // 重试机制：最多重试 3 次
           let retryCount = 0

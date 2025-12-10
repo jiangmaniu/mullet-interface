@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useWallets } from '@privy-io/react-auth'
 import { Connection, PublicKey } from '@solana/web3.js'
 import { SUPPORTED_TOKENS } from '@/config/lifiConfig'
@@ -19,7 +19,6 @@ interface UseDepositListenerOptions {
   tronAddress?: string // 手动指定 TRON 地址（因为 Tier 2 钱包不在 wallets 中）
   ethereumAddress?: string // 手动指定 Ethereum 地址
   solanaAddress?: string // 手动指定 Solana 地址
-  detectExisting?: boolean // 是否检测现有余额（不仅仅是增量）
 }
 
 /**
@@ -48,14 +47,15 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
     chains = ['Tron', 'Ethereum', 'Solana'],
     tronAddress,
     ethereumAddress,
-    solanaAddress,
-    detectExisting = false // 默认不检测现有余额
+    solanaAddress
   } = options
 
   const { wallets } = useWallets()
   const [deposit, setDeposit] = useState<DepositDetection | null>(null)
   const [isListening, setIsListening] = useState(false)
   const [previousBalances, setPreviousBalances] = useState<Record<string, string>>({})
+  const lastDetectionTime = useRef<number>(0) // 上次检测到余额的时间戳
+  const cooldownPeriod = 60000 // 60 秒冷却时间
 
   // 检查 Solana 余额
   const checkSolanaBalance = useCallback(
@@ -193,39 +193,41 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
             }
           )
 
+          if (!response.ok) {
+            console.error(`[Deposit] Ethereum RPC error: ${response.status} ${response.statusText}`)
+            continue
+          }
+
           const data = await response.json()
+          
+          if (data.error) {
+            console.error(`[Deposit] Ethereum RPC error:`, data.error)
+            continue
+          }
+
           const balance = data.result
 
           if (balance && balance !== '0x0') {
             const balanceNum = BigInt(balance)
             const key = `ethereum-${token.symbol.toLowerCase()}-${address}`
             const previousBalance = previousBalances[key] ? BigInt(previousBalances[key]) : BigInt(0)
-
-            // 如果余额增加，触发充值检测
-            if (balanceNum > previousBalance && balanceNum > BigInt(0)) {
-              const diff = balanceNum - previousBalance
-              const diffFormatted = (Number(diff) / Math.pow(10, token.decimals)).toFixed(token.decimals)
+            const balanceFormatted = (Number(balanceNum) / Math.pow(10, token.decimals)).toFixed(token.decimals)
+            
+            // 方案1: 余额增加了（有新充值）
+            const hasIncrease = balanceNum > previousBalance && balanceNum > BigInt(0)
+            
+            // 方案2: 首次检测到余额（从 0 到有余额）且过了冷却期
+            const now = Date.now()
+            const timeSinceLastDetection = now - lastDetectionTime.current
+            const isFirstDetection = previousBalance === BigInt(0) && balanceNum > BigInt(0) && timeSinceLastDetection >= cooldownPeriod
+            
+            if (hasIncrease || isFirstDetection) {
+              console.log(`[Deposit] ✅ Detected Ethereum ${token.symbol} balance:`, balanceFormatted, token.symbol)
+              console.log(`[Deposit] Trigger reason:`, hasIncrease ? 'Balance increased' : 'First detection')
               
-              console.log(`[Deposit] Detected Ethereum ${token.symbol} deposit:`, diffFormatted, token.symbol)
+              lastDetectionTime.current = now // 更新检测时间
+              setPreviousBalances((prev) => ({ ...prev, [key]: balance })) // 更新余额记录
               
-              setPreviousBalances((prev) => ({ ...prev, [key]: balance }))
-
-              return {
-                amount: diffFormatted,
-                token: token.symbol,
-                chain: 'Ethereum',
-                rawBalance: balance
-              }
-            }
-
-            // 如果启用了 detectExisting，首次检测到余额时也触发
-            if (detectExisting && previousBalance === BigInt(0) && balanceNum > BigInt(0)) {
-              const balanceFormatted = (Number(balanceNum) / Math.pow(10, token.decimals)).toFixed(token.decimals)
-              
-              console.log(`[Deposit] Detected existing Ethereum ${token.symbol} balance:`, balanceFormatted, token.symbol)
-              
-              setPreviousBalances((prev) => ({ ...prev, [key]: balance }))
-
               return {
                 amount: balanceFormatted,
                 token: token.symbol,
@@ -233,11 +235,9 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
                 rawBalance: balance
               }
             }
-
-            // 更新余额记录（但不触发）
-            if (!detectExisting && previousBalance === BigInt(0) && balanceNum > BigInt(0)) {
-              // 首次检测到余额，记录但不触发
-              console.log(`[Deposit] First time detecting Ethereum ${token.symbol} balance:`, (Number(balanceNum) / Math.pow(10, token.decimals)).toFixed(token.decimals), '(not triggering)')
+            
+            // 更新余额记录（即使不触发也要记录）
+            if (previousBalance === BigInt(0) && balanceNum > BigInt(0)) {
               setPreviousBalances((prev) => ({ ...prev, [key]: balance }))
             }
           }
@@ -274,12 +274,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
       console.log('[DepositListener] Checking balances with addresses:', {
         tron: tronAddr ? `${tronAddr.slice(0, 6)}...${tronAddr.slice(-4)}` : 'none',
         eth: ethAddr ? `${ethAddr.slice(0, 6)}...${ethAddr.slice(-4)}` : 'none',
-        sol: solAddr ? `${solAddr.slice(0, 6)}...${solAddr.slice(-4)}` : 'none',
-        source: {
-          tron: tronAddress ? 'manual' : 'wallet',
-          eth: ethereumAddress ? 'manual' : 'wallet',
-          sol: solanaAddress ? 'manual' : 'wallet'
-        }
+        sol: solAddr ? `${solAddr.slice(0, 6)}...${solAddr.slice(-4)}` : 'none'
       })
 
       let detectedDeposit: DepositDetection | null = null
@@ -321,9 +316,18 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
     setDeposit(null)
   }, [])
 
+  // 重置所有检测状态（关闭对话框时调用）
+  const resetDetection = useCallback(() => {
+    setDeposit(null)
+    setPreviousBalances({})
+    lastDetectionTime.current = 0
+    console.log('[Deposit] 🔄 Detection state reset (cooldown cleared)')
+  }, [])
+
   return {
     deposit,
     isListening,
-    clearDeposit
+    clearDeposit,
+    resetDetection
   }
 }
