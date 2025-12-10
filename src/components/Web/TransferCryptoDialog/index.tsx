@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar } from 'antd'
+import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
@@ -24,6 +24,7 @@ interface TransferCryptoDialogProps {
  * 支持 TRON / Ethereum / Solana 充值并自动桥接到 Solana
  */
 const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClose, onDepositDetected }) => {
+  const { token } = antdTheme.useToken()
   const { getAccessToken, user } = usePrivy()
   const { wallets } = useWallets()
   const { trade } = useStores()
@@ -424,7 +425,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
             {/* QR Code - 无黑框 */}
             <div style={{ textAlign: 'center', marginTop: 8 }}>
               <div style={{ position: 'relative', display: 'inline-block' }}>
-                <QRCode value={depositAddress} size={180} />
+                <QRCode value={depositAddress} size={180} bgColor={token.colorBgContainer} />
                 {/* 链图标叠加 */}
                 <div
                   style={{
@@ -434,7 +435,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                     transform: 'translate(-50%, -50%)',
                     width: 40,
                     height: 40,
-                    background: 'white',
+                    background: token.colorBgContainer,
                     borderRadius: '50%',
                     padding: 6,
                     display: 'flex',
@@ -479,7 +480,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
         {/* 状态显示 */}
         {isListening && depositAddress && !bridgeInProgress && (
-          <div style={{ padding: 12, background: '#e6f7ff', border: '1px solid #91d5ff', borderRadius: 4 }}>
+          <div style={{ padding: 12, background: token.colorInfoBg, border: `1px solid ${token.colorInfoBorder}`, borderRadius: 4 }}>
             <Space>
               <Spin size="small" />
               <Text>Monitoring deposits...</Text>
@@ -491,7 +492,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         )}
 
         {bridgeInProgress && (
-          <div style={{ padding: 12, background: '#fff7e6', border: '1px solid #ffd591', borderRadius: 4 }}>
+          <div style={{ padding: 12, background: token.colorWarningBg, border: `1px solid ${token.colorWarningBorder}`, borderRadius: 4 }}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <Space>
                 <Spin size="small" />
@@ -517,7 +518,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         )}
 
         {/* 说明 */}
-        <div style={{ padding: 12, background: '#f0f2f5', borderRadius: 4 }}>
+        <div style={{ padding: 12, background: token.colorBgLayout, borderRadius: 4 }}>
           <Text type="secondary" style={{ fontSize: 12 }}>
             • 发送 {selectedToken} 到上面的地址
             <br />• 最低充值金额: ${SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)?.minDeposit || 10}
