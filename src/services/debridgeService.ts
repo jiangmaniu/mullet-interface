@@ -8,7 +8,7 @@
  * 3. 速度快，确认时间短（TRON→ETH: 3-5分钟，ETH→SOL: 2-3分钟）
  * 4. 完整的流程控制（手动 approve、签名验证、交易广播）
  * 5. USDT 特殊处理（自动重置 allowance）
- * 6. ETH Gas 余额检查（最低 0.001 ETH）
+ * 6. ETH Gas 余额检查（最低 0.002 ETH）
  *
  * API 文档：https://docs.debridge.finance/
  */
@@ -745,7 +745,7 @@ export async function bridgeEthereumToSolana(params: {
   })
 
   if (ethBalance === BigInt(0)) {
-    throw new Error(`⚠️ ETH 余额不足以支付 Gas 费用！请向钱包 ${params.privyWallet.address} 充值至少 0.001 ETH`)
+    throw new Error(`⚠️ ETH 余额不足以支付 Gas 费用！请向钱包 ${params.privyWallet.address} 充值至少 0.002 ETH`)
   }
 
   // 1. 获取报价

@@ -271,6 +271,74 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         }
       }
 
+      // 通知后端跨链成功（带重试机制）
+      try {
+        console.log('[Bridge] Notifying backend of successful cross-chain transfer...')
+        
+        // 使用后端账户信息中的 Solana 地址（不是 Privy 钱包地址）
+        const targetAddress = trade.currentAccountInfo?.address
+        if (!targetAddress) {
+          console.warn('[Bridge] ⚠️ Backend account address not found, skipping notification')
+        } else {
+          const notifyUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${targetAddress}&amount=${amount}`
+          
+          console.log('[Bridge] Notification URL:', notifyUrl)
+          console.log('[Bridge] Target address (backend account):', targetAddress)
+          console.log('[Bridge] Amount:', amount)
+          
+          // 重试机制：最多重试 3 次
+          let retryCount = 0
+          const maxRetries = 3
+          let notifySuccess = false
+          
+          while (retryCount < maxRetries && !notifySuccess) {
+            try {
+              if (retryCount > 0) {
+                console.log(`[Bridge] Retry attempt ${retryCount}/${maxRetries}...`)
+                // 等待 2 秒后重试
+                await new Promise(resolve => setTimeout(resolve, 2000))
+              }
+              
+              const notifyResponse = await fetch(notifyUrl, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                signal: AbortSignal.timeout(10000) // 10秒超时
+              })
+
+              if (notifyResponse.ok) {
+                // 验证返回数据格式
+                const responseData = await notifyResponse.json()
+                console.log('[Bridge] Backend response:', responseData)
+                
+                if (responseData.code === 200 && responseData.success === true) {
+                  console.log('[Bridge] ✅ Backend notification sent successfully')
+                  notifySuccess = true
+                } else {
+                  console.warn(`[Bridge] ⚠️ Backend returned error (attempt ${retryCount + 1}/${maxRetries}):`, responseData.msg || 'Unknown error')
+                  retryCount++
+                }
+              } else {
+                const errorText = await notifyResponse.text()
+                console.warn(`[Bridge] ⚠️ Backend notification failed (attempt ${retryCount + 1}/${maxRetries}):`, notifyResponse.status, errorText)
+                retryCount++
+              }
+            } catch (fetchError) {
+              console.error(`[Bridge] ❌ Notification request failed (attempt ${retryCount + 1}/${maxRetries}):`, fetchError)
+              retryCount++
+            }
+          }
+          
+          if (!notifySuccess) {
+            console.error('[Bridge] ❌ Backend notification failed after 3 attempts')
+          }
+        }
+      } catch (error) {
+        console.error('[Bridge] ❌ Failed to notify backend:', error)
+        // 不抛出错误，因为跨链已经成功，只是通知失败
+      }
+
       // 通知完成
       if (onDepositDetected) {
         onDepositDetected(amount, token, chain)
