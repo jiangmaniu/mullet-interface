@@ -15,6 +15,7 @@
     "build:mullet:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/mullet/.env.mullet.prod max build",
     "clearPlatformFiles": "node scripts/clearPlatform.js",
     "cz": "git add . && git-cz",
+    "deploy:cloudflare": "npx wrangler pages deploy dist --project-name=mullet-frontend",
     "dev:lynfoo:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/.env.lynfoo.prod max dev",
     "dev:mrgold:prod": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/.env.mrgold.prod max dev",
     "dev:mullet:dev": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/mullet/.env.mullet.dev max dev",
