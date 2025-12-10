@@ -10,6 +10,7 @@
     "build:lynfoo:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/.env.lynfoo.prod max build",
     "build:mrgold:prod": "npm run build && cp -r ./docs/平台配置物料/mrgold/** ./dist/platform",
     "build:mullet:dev": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/mullet/.env.mullet.dev max build",
+    "build:mullet:test": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/mullet/.env.mullet.test max build",
     "build:mullet:prod": "npm run build && cp -r ./docs/平台配置物料/mullet/** ./dist/platform",
     "build:mullet:seo": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/mullet/.env.mullet.prod max build",
     "clearPlatformFiles": "node scripts/clearPlatform.js",
