@@ -16,6 +16,9 @@ interface UseDepositListenerOptions {
   enabled?: boolean
   pollInterval?: number // 轮询间隔(ms)
   chains?: ('Tron' | 'Ethereum' | 'Solana')[] // 监听的链
+  tronAddress?: string // 手动指定 TRON 地址（因为 Tier 2 钱包不在 wallets 中）
+  ethereumAddress?: string // 手动指定 Ethereum 地址
+  solanaAddress?: string // 手动指定 Solana 地址
 }
 
 /**
@@ -38,7 +41,14 @@ interface UseDepositListenerOptions {
  * ```
  */
 export function useDepositListener(options: UseDepositListenerOptions = {}) {
-  const { enabled = false, pollInterval = 5000, chains = ['Tron', 'Ethereum', 'Solana'] } = options
+  const { 
+    enabled = false, 
+    pollInterval = 5000, 
+    chains = ['Tron', 'Ethereum', 'Solana'],
+    tronAddress,
+    ethereumAddress,
+    solanaAddress
+  } = options
 
   const { wallets } = useWallets()
   const [deposit, setDeposit] = useState<DepositDetection | null>(null)
@@ -91,42 +101,52 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
     [previousBalances]
   )
 
-  // 检查 TRON 余额 (使用 TronGrid API)
+  // 检查 TRON 余额 (直接查询智能合约余额)
   const checkTronBalance = useCallback(
     async (address: string) => {
       try {
-        const response = await fetch(`https://api.trongrid.io/v1/accounts/${address}/transactions/trc20`, {
-          headers: {
-            'TRON-PRO-API-KEY': '6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
-          }
+        // 动态导入 TronWeb
+        const { TronWeb } = await import('tronweb')
+        
+        // 使用 Ankr Premium RPC (已付费)
+        const tronWeb = new TronWeb({
+          fullHost: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
         })
 
-        if (!response.ok) {
-          throw new Error(`TronGrid API error: ${response.status}`)
+        // 检查 USDT TRC20 余额
+        const usdtTokenInfo = SUPPORTED_TOKENS.tron.find((t) => t.symbol === 'USDT')
+        if (!usdtTokenInfo) {
+          console.warn('[Deposit] TRON USDT token not found in config')
+          return null
         }
 
-        const data = await response.json()
+        tronWeb.setAddress(address)
+        const contract = await tronWeb.contract().at(usdtTokenInfo.address)
+        const balance = await contract.balanceOf(address).call()
+        const tokenBalance = Number(balance.toString()) / Math.pow(10, 6) // USDT 有 6 位小数
 
-        // 检查最近的交易
-        if (data.data && data.data.length > 0) {
-          const latestTx = data.data[0]
-          const key = `tron-last-tx-${address}`
+        const key = `tron-usdt-${address}`
+        const previousBalance = previousBalances[key] ? parseFloat(previousBalances[key]) : 0
 
-          if (previousBalances[key] !== latestTx.transaction_id) {
-            // 新交易
-            if (latestTx.to === address) {
-              console.log('[Deposit] Detected TRON deposit:', latestTx)
-              setPreviousBalances((prev) => ({ ...prev, [key]: latestTx.transaction_id }))
+        // 如果余额增加，触发充值检测
+        if (tokenBalance > previousBalance && tokenBalance > 0.000001) {
+          const depositAmount = (tokenBalance - previousBalance).toFixed(6)
+          console.log('[Deposit] Detected TRON USDT deposit:', depositAmount, 'USDT')
+          
+          setPreviousBalances((prev) => ({ ...prev, [key]: tokenBalance.toString() }))
 
-              return {
-                amount: latestTx.value,
-                token: latestTx.token_info?.symbol || 'TRX',
-                chain: 'TRON',
-                txHash: latestTx.transaction_id,
-                rawBalance: latestTx.value
-              }
-            }
+          return {
+            amount: depositAmount,
+            token: 'USDT',
+            chain: 'Tron',
+            rawBalance: balance.toString()
           }
+        }
+
+        // 更新余额记录
+        if (previousBalance === 0 && tokenBalance > 0) {
+          // 首次检测到余额，记录但不触发
+          setPreviousBalances((prev) => ({ ...prev, [key]: tokenBalance.toString() }))
         }
       } catch (error) {
         console.error('[Deposit] Failed to check TRON balance:', error)
@@ -191,24 +211,41 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
     setIsListening(true)
 
     const checkAllBalances = async () => {
+      // Use manual addresses if provided, otherwise fall back to wallet discovery
       const tronWallet = findWalletByChain(wallets, 'tron')
       const ethWallet = findWalletByChain(wallets, 'ethereum')
       const solWallet = findWalletByChain(wallets, 'solana')
 
+      // Use manual addresses with priority
+      const tronAddr = tronAddress || tronWallet?.address
+      const ethAddr = ethereumAddress || ethWallet?.address
+      const solAddr = solanaAddress || solWallet?.address
+
+      console.log('[DepositListener] Checking balances with addresses:', {
+        tron: tronAddr ? `${tronAddr.slice(0, 6)}...${tronAddr.slice(-4)}` : 'none',
+        eth: ethAddr ? `${ethAddr.slice(0, 6)}...${ethAddr.slice(-4)}` : 'none',
+        sol: solAddr ? `${solAddr.slice(0, 6)}...${solAddr.slice(-4)}` : 'none',
+        source: {
+          tron: tronAddress ? 'manual' : 'wallet',
+          eth: ethereumAddress ? 'manual' : 'wallet',
+          sol: solanaAddress ? 'manual' : 'wallet'
+        }
+      })
+
       let detectedDeposit: DepositDetection | null = null
 
-      if (chains.includes('Tron') && tronWallet) {
-        const tronDeposit = await checkTronBalance(tronWallet.address)
+      if (chains.includes('Tron') && tronAddr) {
+        const tronDeposit = await checkTronBalance(tronAddr)
         if (tronDeposit) detectedDeposit = tronDeposit
       }
 
-      if (chains.includes('Ethereum') && ethWallet) {
-        const ethDeposit = await checkEthereumBalance(ethWallet.address)
+      if (chains.includes('Ethereum') && ethAddr) {
+        const ethDeposit = await checkEthereumBalance(ethAddr)
         if (ethDeposit) detectedDeposit = ethDeposit
       }
 
-      if (chains.includes('Solana') && solWallet) {
-        const solDeposit = await checkSolanaBalance(solWallet.address)
+      if (chains.includes('Solana') && solAddr) {
+        const solDeposit = await checkSolanaBalance(solAddr)
         if (solDeposit) detectedDeposit = solDeposit
       }
 
@@ -227,7 +264,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
       clearInterval(interval)
       setIsListening(false)
     }
-  }, [enabled, pollInterval, chains, wallets, checkTronBalance, checkEthereumBalance, checkSolanaBalance])
+  }, [enabled, pollInterval, chains, wallets, checkTronBalance, checkEthereumBalance, checkSolanaBalance, tronAddress, ethereumAddress, solanaAddress])
 
   // 清除检测到的充值
   const clearDeposit = useCallback(() => {

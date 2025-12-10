@@ -29,7 +29,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const { trade } = useStores()
   
   // TRON 钱包自动创建和管理
-  const { tronAddress, isCreating: isTronWalletCreating } = useTronWallet(true)
+  const { tronAddress, tronWalletId, tronPublicKey, isCreating: isTronWalletCreating } = useTronWallet(true)
 
   const [selectedChain, setSelectedChain] = useState('Tron')
   const [selectedToken, setSelectedToken] = useState('USDT')
@@ -41,7 +41,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const { deposit, isListening, clearDeposit } = useDepositListener({
     enabled: open,
     chains: [selectedChain as 'Tron' | 'Ethereum' | 'Solana'],
-    pollInterval: 5000
+    pollInterval: 5000,
+    tronAddress: tronAddress || undefined
   })
 
   // 获取钱包地址
@@ -59,14 +60,30 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
       const chainType = chainConfig.id // 'tron' | 'ethereum' | 'solana'
 
-      // 对于 Solana，使用 PDA 地址（与入金模块完全一致）
+      // 对于 Solana，使用 Privy 钱包地址（而不是 PDA）
+      // PDA 地址已注释，改用 Privy Solana 钱包
       if (chainType === 'solana') {
-        const pdaAddress = trade.currentAccountInfo?.pdaTokenAddress
-        if (pdaAddress) {
-          setDepositAddress(pdaAddress)
-          console.log(`[TransferCrypto] Using Solana PDA address:`, pdaAddress)
+        // 注释掉 PDA 地址逻辑
+        // const pdaAddress = trade.currentAccountInfo?.pdaTokenAddress
+        // if (pdaAddress) {
+        //   setDepositAddress(pdaAddress)
+        //   console.log(`[TransferCrypto] Using Solana PDA address:`, pdaAddress)
+        // } else {
+        //   console.warn(`[TransferCrypto] No PDA address found`)
+        //   setDepositAddress('')
+        // }
+        // return
+        
+        // 使用 Privy Solana 钱包地址
+        const solanaAccount = user?.linkedAccounts?.find(
+          (account: any) => account.type === 'wallet' && account.chainType === 'solana'
+        ) as any
+        
+        if (solanaAccount?.address) {
+          setDepositAddress(solanaAccount.address)
+          console.log(`[TransferCrypto] Using Privy Solana wallet:`, solanaAccount.address)
         } else {
-          console.warn(`[TransferCrypto] No PDA address found`)
+          console.warn(`[TransferCrypto] No Privy Solana wallet found`)
           setDepositAddress('')
         }
         return
@@ -112,8 +129,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       console.log('[TransferCrypto] Deposit detected:', deposit)
       message.success(`Detected ${deposit.amount} ${deposit.token} on ${deposit.chain}!`)
 
-      // 触发桥接
-      handleAutoBridge(deposit.amount, deposit.token, deposit.chain)
+      // 触发桥接 - 使用 rawBalance（最小单位）而不是 amount（USD）
+      handleAutoBridge(deposit.rawBalance || deposit.amount, deposit.token, deposit.chain)
 
       // 清除检测记录
       clearDeposit()
@@ -125,6 +142,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const handleAutoBridge = async (amount: string, token: string, chain: string) => {
     try {
       setBridgeInProgress(true)
+      console.log('[Bridge] Starting with params:', { amount, token, chain, tronAddress, tronWalletId })
       message.loading('正在启动跨链桥接...', 0)
 
       // 从 user.linkedAccounts 获取钱包地址
@@ -132,12 +150,19 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       const ethAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'ethereum') as any
       const solAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'solana') as any
 
-      if (!tronAccount || !ethAccount || !solAccount) {
-        throw new Error('缺少必需的钱包。请确保已创建 Tron、Ethereum 和 Solana 钱包。')
+      // 使用 useTronWallet hook 的返回值
+      // publicKey 可能为 null（Privy Tier 2 限制），但后端签名不需要它
+      if (!tronAddress || !tronWalletId) {
+        console.error('[Bridge] Missing TRON wallet info:', { tronAddress, tronWalletId })
+        throw new Error('TRON 钱包信息不完整，请刷新页面重试')
+      }
+
+      if (!ethAccount || !solAccount) {
+        throw new Error('缺少必需的钱包。请确保已创建 Ethereum 和 Solana 钱包。')
       }
 
       // 构建钱包对象（兼容旧接口）
-      const tronWallet = { address: tronAccount.address }
+      const tronWallet = { address: tronAddress }
       const ethWallet = wallets.find((w) => (w as any).chainType === 'ethereum') || { address: ethAccount.address }
       const solWallet = { address: solAccount.address }
 
@@ -147,12 +172,16 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       }
 
       // 检查最低金额：Tron $20, Ethereum $3
-      const minAmount = chain === 'Tron' ? 20 : chain === 'Ethereum' ? 3 : 10
-      const depositAmount = typeof amount === 'string' ? parseFloat(amount) : amount
+      // amount 是最小单位格式（如 USDT: 20000000 = 20 USD）
+      const minAmountUSD = chain === 'Tron' ? 20 : chain === 'Ethereum' ? 3 : 10
+      const minAmountSmallestUnit = minAmountUSD * 1_000_000 // 转换为最小单位
+      
+      const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount
 
-      if (depositAmount < minAmount) {
+      if (amountNum < minAmountSmallestUnit) {
+        const amountUSD = amountNum / 1_000_000
         throw new Error(
-          `金额过小。最低金额: $${minAmount} USD，当前金额: $${depositAmount.toFixed(
+          `金额过小。最低金额: $${minAmountUSD} USD，当前金额: $${amountUSD.toFixed(
             2
           )} USD。跨链桥接有固定费用约 $2-3，小额转账费用占比过高。`
         )
@@ -167,15 +196,11 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         const tronTokenInfo = SUPPORTED_TOKENS.tron.find((t) => t.symbol === token)
         if (!tronTokenInfo) throw new Error(`Token ${token} 在 Tron 上不受支持`)
 
-        // 使用已有的 tronAccount
-        const tronWalletId = tronAccount.walletId || tronAccount.id
-        const tronPublicKey = tronAccount.publicKey
-
-        if (!tronWalletId || !tronPublicKey) {
-          throw new Error('TRON 钱包缺少 ID 或公钥信息')
-        }
-
-        console.log('[Bridge] TRON wallet info:', { walletId: tronWalletId, hasPublicKey: !!tronPublicKey })
+        console.log('[Bridge] TRON wallet info:', { 
+          walletId: tronWalletId, 
+          publicKey: tronPublicKey?.slice(0, 10) + '...', 
+          address: tronAddress 
+        })
 
         const tronResult = await debridgeService.bridgeTronToEthereum({
           tokenAddress: tronTokenInfo.address,
@@ -183,7 +208,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           fromAddress: tronWallet.address,
           ethereumAddress: ethWallet.address,
           walletId: tronWalletId,
-          publicKey: tronPublicKey,
+          publicKey: tronPublicKey || '', // 允许空字符串，后端不需要此参数
           accessToken,
           useGasSponsorship: true
         })
@@ -385,11 +410,14 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         )}
 
         {/* 状态显示 */}
-        {isListening && depositAddress && (
+        {isListening && depositAddress && !bridgeInProgress && (
           <div style={{ padding: 12, background: '#e6f7ff', border: '1px solid #91d5ff', borderRadius: 4 }}>
             <Space>
               <Spin size="small" />
               <Text>Monitoring deposits...</Text>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                ({selectedChain} - {depositAddress.slice(0, 6)}...{depositAddress.slice(-4)})
+              </Text>
             </Space>
           </div>
         )}

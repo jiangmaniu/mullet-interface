@@ -361,21 +361,30 @@ export async function createDeBridgeOrderTron(
         ? TRON_API_ENDPOINTS.SPONSOR_AND_SIGN
         : TRON_API_ENDPOINTS.SIGN_TRANSACTION
 
-      const sponsorResponse = await request<any>(endpoint, {
+      // 使用 fetch 而不是 request，避免自动添加 Blade-Auth header
+      const sponsorResponse = await fetch(endpoint, {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`
         },
-        data: {
+        body: JSON.stringify({
           walletId,
           transaction: approveTransaction.transaction,
           publicKey,
           transactionHash: approveTransaction.transaction.txID
-        }
+        })
       })
 
-      if (!sponsorResponse?.success) {
-        throw new Error(`Approval failed: ${sponsorResponse?.message || 'Unknown error'}`)
+      if (!sponsorResponse.ok) {
+        const errorText = await sponsorResponse.text()
+        throw new Error(`Approval failed: ${errorText}`)
+      }
+
+      const sponsorData = await sponsorResponse.json()
+
+      if (!sponsorData?.success) {
+        throw new Error(`Approval failed: ${sponsorData?.message || 'Unknown error'}`)
       }
 
       const sponsorResult = sponsorResponse.data || sponsorResponse
@@ -452,24 +461,33 @@ export async function createDeBridgeOrderTron(
       ? TRON_API_ENDPOINTS.SPONSOR_AND_SIGN
       : TRON_API_ENDPOINTS.SIGN_TRANSACTION
 
-    const orderSponsorResponse = await request<any>(endpoint, {
+    // 使用 fetch 而不是 request，避免自动添加 Blade-Auth header
+    const orderSponsorResponse = await fetch(endpoint, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`
       },
-      data: {
+      body: JSON.stringify({
         walletId,
         transaction: txObject,
         publicKey,
         transactionHash: newTxID
-      }
+      })
     })
 
-    if (!orderSponsorResponse?.success) {
-      throw new Error(`Order creation failed: ${orderSponsorResponse?.message || 'Unknown error'}`)
+    if (!orderSponsorResponse.ok) {
+      const errorText = await orderSponsorResponse.text()
+      throw new Error(`Order creation failed: ${errorText}`)
     }
 
-    const orderResult = orderSponsorResponse.data || orderSponsorResponse
+    const orderData = await orderSponsorResponse.json()
+
+    if (!orderData?.success) {
+      throw new Error(`Order creation failed: ${orderData?.message || 'Unknown error'}`)
+    }
+
+    const orderResult = orderData.data || orderData
     console.log('[deBridge-TRON] ✅ Order tx:', orderResult.txid || orderResult.transactionHash)
 
     return {
