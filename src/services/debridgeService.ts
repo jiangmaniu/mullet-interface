@@ -281,7 +281,7 @@ export async function createDeBridgeOrderEthereum(
 
 /**
  * 创建带 Gas 赞助的桥接订单（Solana）
- * 使用 Solana 钱包签名
+ * 使用 Privy 的 signAndSendTransaction 和 sponsor 选项
  */
 export async function createDeBridgeOrderSolana(
   quote: DeBridgeQuote,
@@ -289,13 +289,42 @@ export async function createDeBridgeOrderSolana(
   connection: any
 ): Promise<{ txHash: string; orderId?: string }> {
   try {
-    console.log('[deBridge] Creating Solana bridge order...')
+    console.log('[deBridge-Solana] Creating Solana bridge order with gas sponsorship...')
 
-    // Solana 实现待完成 - 需要使用 @solana/web3.js
-    // 这里先返回占位符
-    throw new Error('Solana bridge not implemented yet')
+    // 从 quote 中获取交易数据
+    if (!quote.tx.data) {
+      throw new Error('No transaction data in quote')
+    }
+
+    // quote.tx.data 是 base64 编码的 Solana 交易
+    const transactionBuffer = Buffer.from(quote.tx.data, 'base64')
+    const transaction = new Uint8Array(transactionBuffer)
+
+    console.log('[deBridge-Solana] Transaction size:', transaction.length, 'bytes')
+
+    // 使用 Privy 的 signAndSendTransaction 发送交易（支持 gas sponsorship）
+    // 注意：这需要使用 @privy-io/react-auth/solana 的 useSignAndSendTransaction hook
+    // 在实际使用时需要从组件中传入 signAndSendTransaction 函数
+    if (!solanaWallet.signAndSendTransaction) {
+      throw new Error('Solana wallet does not support signAndSendTransaction')
+    }
+
+    const result = await solanaWallet.signAndSendTransaction({
+      transaction: transaction,
+      wallet: solanaWallet,
+      options: {
+        sponsor: true // Enable gas sponsorship
+      }
+    })
+
+    console.log('[deBridge-Solana] ✅ Transaction sent:', result.signature)
+
+    return {
+      txHash: result.signature,
+      orderId: quote.orderId
+    }
   } catch (error) {
-    console.error('[deBridge] Failed to create Solana bridge order:', error)
+    console.error('[deBridge-Solana] Failed to create Solana bridge order:', error)
     throw new Error(`Failed to create bridge order: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
@@ -821,11 +850,16 @@ export async function bridgeEthereumToSolana(params: {
           args: [quote.tx.allowanceTarget as `0x${string}`, BigInt(0)]
         })
 
-        const resetTx = await params.privyWallet.sendTransaction({
-          to: params.tokenAddress as `0x${string}`,
-          data: resetApproveData as `0x${string}`,
-          value: BigInt(0)
-        })
+        const resetTx = await params.privyWallet.sendTransaction(
+          {
+            to: params.tokenAddress as `0x${string}`,
+            data: resetApproveData as `0x${string}`,
+            value: BigInt(0)
+          },
+          {
+            sponsor: true // Enable gas sponsorship
+          }
+        )
 
         console.log('[deBridge-ETH] ✅ Reset approval tx sent:', resetTx.transactionHash)
         console.log('[deBridge-ETH] Waiting for reset confirmation...')
@@ -850,11 +884,16 @@ export async function bridgeEthereumToSolana(params: {
         args: [quote.tx.allowanceTarget as `0x${string}`, BigInt(quote.tx.allowanceValue)]
       })
 
-      const approveTx = await params.privyWallet.sendTransaction({
-        to: params.tokenAddress as `0x${string}`,
-        data: approveData as `0x${string}`,
-        value: BigInt(0)
-      })
+      const approveTx = await params.privyWallet.sendTransaction(
+        {
+          to: params.tokenAddress as `0x${string}`,
+          data: approveData as `0x${string}`,
+          value: BigInt(0)
+        },
+        {
+          sponsor: true // Enable gas sponsorship
+        }
+      )
 
       console.log('[deBridge-ETH] ✅ Approval tx sent:', approveTx.transactionHash)
 
@@ -879,14 +918,19 @@ export async function bridgeEthereumToSolana(params: {
   }
 
   // 4. 创建桥接订单
-  console.log('[deBridge-ETH] Creating bridge order...')
+  console.log('[deBridge-ETH] Creating bridge order with gas sponsorship...')
 
   try {
-    const bridgeTx = await params.privyWallet.sendTransaction({
-      to: (quote.tx.to || quote.tx.allowanceTarget) as `0x${string}`,
-      data: quote.tx.data as `0x${string}`,
-      value: BigInt(quote.tx.value || '0')
-    })
+    const bridgeTx = await params.privyWallet.sendTransaction(
+      {
+        to: (quote.tx.to || quote.tx.allowanceTarget) as `0x${string}`,
+        data: quote.tx.data as `0x${string}`,
+        value: BigInt(quote.tx.value || '0')
+      },
+      {
+        sponsor: true // Enable gas sponsorship
+      }
+    )
 
     console.log('[deBridge-ETH] ✅ Bridge tx sent:', bridgeTx.transactionHash)
 
