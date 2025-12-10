@@ -488,12 +488,33 @@ export async function createDeBridgeOrderTron(
     }
 
     const txData = (await createTxResponse.json()) as any
+    
+    console.log('[deBridge-TRON] ========== CREATE-TX API RESPONSE ==========')
+    console.log('[deBridge-TRON] Full response:', JSON.stringify(txData, null, 2))
+    console.log('[deBridge-TRON] Available fields:', Object.keys(txData))
+    console.log('[deBridge-TRON] ===========================================')
+    
     if (!txData.tx?.data) {
+      console.error('[deBridge-TRON] Missing tx.data in response!')
       throw new Error('No transaction data in response')
     }
 
     const orderId = txData.orderId
-    const dstChainTokenOutAmount = txData.estimation?.dstChainTokenOut?.recommendedAmount || '0'
+    const dstChainTokenOutAmount = txData.estimation?.dstChainTokenOut?.recommendedAmount || 
+                                   txData.estimation?.dstChainTokenOut?.amount || 
+                                   '0'
+    
+    console.log('[deBridge-TRON] Extracted Order ID:', orderId || '❌ NULL/UNDEFINED')
+    console.log('[deBridge-TRON] Extracted Dst amount:', dstChainTokenOutAmount)
+
+    if (!orderId) {
+      console.error('[deBridge-TRON] ⚠️⚠️⚠️ CRITICAL: No orderId in API response!')
+      console.error('[deBridge-TRON] This will prevent order tracking.')
+      console.error('[deBridge-TRON] Possible reasons:')
+      console.error('[deBridge-TRON]   1. deBridge API changed response format')
+      console.error('[deBridge-TRON]   2. Wrong API endpoint or parameters')
+      console.error('[deBridge-TRON]   3. Order not created yet (async processing)')
+    }
 
     // Build transaction
     const fullCallData = txData.tx.data.startsWith('0x') ? txData.tx.data.slice(2) : txData.tx.data

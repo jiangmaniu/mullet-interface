@@ -19,6 +19,7 @@ interface UseDepositListenerOptions {
   tronAddress?: string // 手动指定 TRON 地址（因为 Tier 2 钱包不在 wallets 中）
   ethereumAddress?: string // 手动指定 Ethereum 地址
   solanaAddress?: string // 手动指定 Solana 地址
+  detectExisting?: boolean // 是否检测现有余额（不仅仅是增量）
 }
 
 /**
@@ -47,7 +48,8 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
     chains = ['Tron', 'Ethereum', 'Solana'],
     tronAddress,
     ethereumAddress,
-    solanaAddress
+    solanaAddress,
+    detectExisting = false // 默认不检测现有余额
   } = options
 
   const { wallets } = useWallets()
@@ -60,7 +62,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
     async (address: string) => {
       try {
         const connection = new Connection(
-          'https://rpc.ankr.com/premium-http/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+          'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
         )
 
         // 检查 USDT
@@ -157,41 +159,89 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
     [previousBalances]
   )
 
-  // 检查 Ethereum 余额 (使用 Ankr API)
+  // 检查 Ethereum 余额 (检查 USDT/USDC ERC20 代币)
   const checkEthereumBalance = useCallback(
     async (address: string) => {
       try {
-        const response = await fetch(
-          'https://rpc.ankr.com/premium-http/eth/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              jsonrpc: '2.0',
-              method: 'eth_getBalance',
-              params: [address, 'latest'],
-              id: 1
-            })
-          }
-        )
+        // 检查所有支持的 ERC20 代币 (USDT 和 USDC)
+        const supportedTokens = [
+          { symbol: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', decimals: 6 },
+          { symbol: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', decimals: 6 }
+        ]
 
-        const data = await response.json()
-        const balance = data.result
+        for (const token of supportedTokens) {
+          // 使用 Ankr Premium RPC 调用 ERC20 balanceOf
+          const balanceOfData = `0x70a08231000000000000000000000000${address.slice(2).toLowerCase()}`
+          
+          const response = await fetch(
+            'https://rpc.ankr.com/eth/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+            {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                jsonrpc: '2.0',
+                method: 'eth_call',
+                params: [
+                  {
+                    to: token.address,
+                    data: balanceOfData
+                  },
+                  'latest'
+                ],
+                id: 1
+              })
+            }
+          )
 
-        const key = `ethereum-eth-${address}`
+          const data = await response.json()
+          const balance = data.result
 
-        if (previousBalances[key] && BigInt(balance) > BigInt(previousBalances[key])) {
-          const diff = (BigInt(balance) - BigInt(previousBalances[key])).toString()
-          console.log('[Deposit] Detected Ethereum ETH deposit:', diff)
-          return {
-            amount: diff,
-            token: 'ETH',
-            chain: 'Ethereum',
-            rawBalance: balance
+          if (balance && balance !== '0x0') {
+            const balanceNum = BigInt(balance)
+            const key = `ethereum-${token.symbol.toLowerCase()}-${address}`
+            const previousBalance = previousBalances[key] ? BigInt(previousBalances[key]) : BigInt(0)
+
+            // 如果余额增加，触发充值检测
+            if (balanceNum > previousBalance && balanceNum > BigInt(0)) {
+              const diff = balanceNum - previousBalance
+              const diffFormatted = (Number(diff) / Math.pow(10, token.decimals)).toFixed(token.decimals)
+              
+              console.log(`[Deposit] Detected Ethereum ${token.symbol} deposit:`, diffFormatted, token.symbol)
+              
+              setPreviousBalances((prev) => ({ ...prev, [key]: balance }))
+
+              return {
+                amount: diffFormatted,
+                token: token.symbol,
+                chain: 'Ethereum',
+                rawBalance: balance
+              }
+            }
+
+            // 如果启用了 detectExisting，首次检测到余额时也触发
+            if (detectExisting && previousBalance === BigInt(0) && balanceNum > BigInt(0)) {
+              const balanceFormatted = (Number(balanceNum) / Math.pow(10, token.decimals)).toFixed(token.decimals)
+              
+              console.log(`[Deposit] Detected existing Ethereum ${token.symbol} balance:`, balanceFormatted, token.symbol)
+              
+              setPreviousBalances((prev) => ({ ...prev, [key]: balance }))
+
+              return {
+                amount: balanceFormatted,
+                token: token.symbol,
+                chain: 'Ethereum',
+                rawBalance: balance
+              }
+            }
+
+            // 更新余额记录（但不触发）
+            if (!detectExisting && previousBalance === BigInt(0) && balanceNum > BigInt(0)) {
+              // 首次检测到余额，记录但不触发
+              console.log(`[Deposit] First time detecting Ethereum ${token.symbol} balance:`, (Number(balanceNum) / Math.pow(10, token.decimals)).toFixed(token.decimals), '(not triggering)')
+              setPreviousBalances((prev) => ({ ...prev, [key]: balance }))
+            }
           }
         }
-
-        setPreviousBalances((prev) => ({ ...prev, [key]: balance }))
       } catch (error) {
         console.error('[Deposit] Failed to check Ethereum balance:', error)
       }

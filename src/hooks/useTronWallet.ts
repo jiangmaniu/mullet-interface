@@ -10,6 +10,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { ensureTronWallet, getTronWalletFromUser } from '@/services/tronWalletService'
+import { useSessionSigner } from './useSessionSigner'
 
 interface UseTronWalletResult {
   tronAddress: string | null
@@ -32,6 +33,9 @@ interface UseTronWalletResult {
  */
 export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
   const { user, authenticated, ready } = usePrivy()
+  
+  // 自动添加 Session Signer（当 TRON 钱包创建后）
+  useSessionSigner({ autoAdd: true })
 
   const [tronAddress, setTronAddress] = useState<string | null>(null)
   const [tronWalletId, setTronWalletId] = useState<string | null>(null)

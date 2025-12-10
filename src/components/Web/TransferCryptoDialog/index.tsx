@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme } from 'antd'
+import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
@@ -9,6 +9,7 @@ import { useDepositListener } from '@/hooks/useDepositListener'
 import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
 import { useTronWallet } from '@/hooks/useTronWallet'
+import { useSessionSigner } from '@/hooks/useSessionSigner'
 import './index.less'
 
 const { Text } = Typography
@@ -31,6 +32,14 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   
   // TRON 钱包自动创建和管理
   const { tronAddress, tronWalletId, tronPublicKey, isCreating: isTronWalletCreating } = useTronWallet(true)
+  
+  // Session Signer 授权管理
+  const { 
+    isSessionSignerAdded, 
+    isChecking: isCheckingSessionSigner,
+    isAdding: isAddingSessionSigner, 
+    addSessionSigner 
+  } = useSessionSigner()
 
   const [selectedChain, setSelectedChain] = useState('Tron')
   const [selectedToken, setSelectedToken] = useState('USDT')
@@ -38,12 +47,24 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const [bridgeInProgress, setBridgeInProgress] = useState(false)
   const [bridgeStep, setBridgeStep] = useState<'idle' | 'tron-eth' | 'eth-sol' | 'completed'>('idle')
 
-  // 使用充值监听 hook
+  // 获取所有链的钱包地址
+  const ethereumAccount = user?.linkedAccounts?.find(
+    (account: any) => account.type === 'wallet' && account.chainType === 'ethereum'
+  ) as any
+  
+  const solanaAccount = user?.linkedAccounts?.find(
+    (account: any) => account.type === 'wallet' && account.chainType === 'solana'
+  ) as any
+
+  // 使用充值监听 hook - 传递所有链的地址
   const { deposit, isListening, clearDeposit } = useDepositListener({
     enabled: open,
     chains: [selectedChain as 'Tron' | 'Ethereum' | 'Solana'],
     pollInterval: 5000,
-    tronAddress: tronAddress || undefined
+    tronAddress: tronAddress || undefined,
+    ethereumAddress: ethereumAccount?.address || undefined,
+    solanaAddress: solanaAccount?.address || undefined,
+    detectExisting: true // 🔥 启用检测现有余额（用于 TRON→ETH 后继续 ETH→SOL）
   })
 
   // 获取钱包地址
@@ -217,6 +238,11 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         message.success(`✅ TRON 交易成功: ${tronResult.txHash.slice(0, 8)}...`)
         console.log('[Bridge] TRON tx:', tronResult.txHash)
         console.log('[Bridge] Order ID:', tronResult.orderId)
+        console.log('[Bridge] Full TRON result:', tronResult)
+
+        if (!tronResult.orderId) {
+          throw new Error('❌ deBridge 未返回 Order ID，无法继续桥接。请检查交易状态或联系支持。')
+        }
 
         // 等待订单完成
         message.loading('等待 TRON → Ethereum 桥接完成 (约 3-5 分钟)...', 0)
@@ -385,6 +411,33 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   return (
     <Modal title="Add Funds - Transfer Crypto" open={open} onCancel={onClose} footer={null} width={500} className="transfer-crypto-dialog">
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {/* Session Signer 授权提示 */}
+        {tronAddress && !isSessionSignerAdded && !isCheckingSessionSigner && (
+          <Alert
+            message="Server Signing Not Enabled"
+            description={
+              <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                <Text style={{ fontSize: 13 }}>
+                  To enable automated TRON transactions, please authorize server signing. 
+                  This allows our backend to sign transactions on your behalf for seamless bridging.
+                </Text>
+                <Button 
+                  type="primary" 
+                  onClick={addSessionSigner}
+                  loading={isAddingSessionSigner}
+                  size="small"
+                  style={{ marginTop: 4 }}
+                >
+                  {isAddingSessionSigner ? 'Authorizing...' : 'Authorize Server Signing'}
+                </Button>
+              </Space>
+            }
+            type="warning"
+            showIcon
+            style={{ marginBottom: 8 }}
+          />
+        )}
+
         {/* 链选择 */}
         <div>
           <Text strong>Select Chain</Text>

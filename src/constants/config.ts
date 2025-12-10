@@ -9,6 +9,8 @@ export const CONFIG_URL = '/platform/config.js'
 // 正式
 export const PRIVY_APP_ID = 'cmbzwhjss024vl80oyqt6ege9'
 export const PRIVY_CLIENT_ID = 'client-WY6ME6viJ5LPg8qjzwjdh7MzPpZWJfPv1yBeGEmz9o1Qk'
+// Session Signer ID for server-side TRON transaction signing
+export const PRIVY_SESSION_SIGNER_ID = 'fdfl30hvw9b8uybjukk3nawh'
 
 export const getAppRegisterCode = () => {
   const code = STORAGE_GET_REGISTER_CODE()
