@@ -64,6 +64,14 @@ export default {
       //   //   }
       //   // })
       // }
+    },
+    // WebSocket 代理配置
+    '/websocketServer': {
+      target: process.env.WS_URL?.replace('/websocketServer', ''),
+      ws: true, // 启用 WebSocket 代理
+      changeOrigin: true,
+      secure: false,
+      pathRewrite: { '^/websocketServer': '/websocketServer' }
     }
   },
 
