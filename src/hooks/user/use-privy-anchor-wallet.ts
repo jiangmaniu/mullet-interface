@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Wallet } from '@coral-xyz/anchor'
 import { Connection, PublicKey, VersionedTransaction, TransactionMessage, Transaction } from '@solana/web3.js'
-import { useConnectedStandardWallets, useSignTransaction } from '@privy-io/react-auth/solana'
+import { useStandardWallets, useSignTransaction } from '@privy-io/react-auth/solana'
 import { useUserConnectedWallet } from './use-wallet-user'
 
 type AnchorCompatibleWallet = {
@@ -11,7 +11,7 @@ type AnchorCompatibleWallet = {
 }
 
 export function usePrivyAnchorWallet(): Wallet | null {
-  const { wallets } = useConnectedStandardWallets()
+  const { wallets } = useStandardWallets()
   const { signTransaction: privySignTransaction } = useSignTransaction()
   const [walletAdapter, setWalletAdapter] = useState<AnchorCompatibleWallet | null>(null)
 
