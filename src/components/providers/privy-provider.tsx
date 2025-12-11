@@ -22,6 +22,7 @@ export const PrivyProvider = ({ children }: IProps) => {
         clientId={PRIVY_CLIENT_ID}
         config={{
           appearance: {
+            logo: '/platform/mullet-logo.png',
             showWalletLoginFirst: false,
             walletChainType: 'solana-only',
             landingHeader: '',
