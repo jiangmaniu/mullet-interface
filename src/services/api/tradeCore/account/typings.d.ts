@@ -360,5 +360,9 @@ declare namespace Account {
      * 出金地址
      */
     withdrawAddress: string
+    /**
+     * 目标链 (用于跨链桥接)
+     */
+    targetChain?: string
   }
 }

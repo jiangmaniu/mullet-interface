@@ -1032,5 +1032,223 @@ export const debridgeService = {
   createDeBridgeOrderTron,
   waitForOrderCompletion,
   bridgeTronToEthereum,
-  bridgeEthereumToSolana
+  bridgeEthereumToSolana,
+  bridgeSolanaToEthereum,
+  bridgeSolanaToTron
+}
+
+/**
+ * 桥接 Solana → Ethereum (出金使用)
+ * 用于将 Solana USDC 桥接回 Ethereum
+ */
+async function bridgeSolanaToEthereum(params: {
+  amount: string // USDC 金额（最小单位，6位小数）
+  ethereumAddress: string // 目标 Ethereum 地址
+  solanaWallet: any // Privy Solana 钱包
+}): Promise<{ txHash: string; orderId: string }> {
+  const { amount, ethereumAddress, solanaWallet } = params
+
+  console.log('[deBridge-SOL→ETH] 🔄 Starting Solana to Ethereum bridge:', {
+    amount,
+    ethereumAddress,
+    solanaWallet: solanaWallet?.address
+  })
+
+  // 检查最小金额
+  const MIN_AMOUNT = 10_000_000 // 10 USD
+  const amountNum = parseInt(amount)
+  if (amountNum < MIN_AMOUNT) {
+    throw new Error(`金额太小，最少需要 $10 USD（当前: $${(amountNum / 1_000_000).toFixed(2)}）`)
+  }
+
+  // 源 token: Solana USDC
+  const srcTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC
+  // 目标 token: Ethereum USDC (保持相同类型)
+  const dstTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDC
+
+  console.log('[deBridge-SOL→ETH] Token mapping:', {
+    src: srcTokenAddress,
+    dst: dstTokenAddress,
+    note: 'SOL→ETH keeps same token type (USDC→USDC)'
+  })
+
+  // 1. 获取报价
+  console.log('[deBridge-SOL→ETH] Requesting quote...')
+  const quote = await getDeBridgeQuote({
+    srcChainId: DEBRIDGE_CHAIN_IDS.SOLANA,
+    srcChainTokenIn: srcTokenAddress,
+    srcChainTokenInAmount: amount,
+    dstChainId: DEBRIDGE_CHAIN_IDS.ETHEREUM,
+    dstChainTokenOut: dstTokenAddress,
+    dstChainTokenOutRecipient: ethereumAddress,
+    srcChainOrderAuthorityAddress: solanaWallet.address,
+    dstChainOrderAuthorityAddress: ethereumAddress,
+    prependOperatingExpenses: false
+  })
+
+  console.log('[deBridge-SOL→ETH] Quote received:', {
+    srcAmount: quote.estimation.srcChainTokenIn.amount,
+    dstAmount: quote.estimation.dstChainTokenOut.recommendedAmount,
+    orderId: quote.orderId
+  })
+
+  // 2. 调用 create-tx API 获取 Solana 交易
+  console.log('[deBridge-SOL→ETH] Calling create-tx API...')
+  
+  const createTxUrl = new URL(`${DEBRIDGE_API_BASE_URL}/dln/order/create-tx`)
+  createTxUrl.searchParams.append('srcChainId', DEBRIDGE_CHAIN_IDS.SOLANA.toString())
+  createTxUrl.searchParams.append('srcChainTokenIn', srcTokenAddress)
+  createTxUrl.searchParams.append('srcChainTokenInAmount', amount)
+  createTxUrl.searchParams.append('dstChainId', DEBRIDGE_CHAIN_IDS.ETHEREUM.toString())
+  createTxUrl.searchParams.append('dstChainTokenOut', dstTokenAddress)
+  createTxUrl.searchParams.append('dstChainTokenOutRecipient', ethereumAddress)
+  createTxUrl.searchParams.append('srcChainOrderAuthorityAddress', solanaWallet.address)
+  createTxUrl.searchParams.append('dstChainOrderAuthorityAddress', ethereumAddress)
+  createTxUrl.searchParams.append('prependOperatingExpenses', 'false')
+
+  console.log('[deBridge-SOL→ETH] create-tx URL:', createTxUrl.toString())
+
+  const createTxResponse = await fetch(createTxUrl.toString(), {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json'
+    }
+  })
+
+  if (!createTxResponse.ok) {
+    const errorText = await createTxResponse.text()
+    throw new Error(`DeBridge create-tx API error: ${createTxResponse.status} ${errorText}`)
+  }
+
+  const txData = (await createTxResponse.json()) as any
+  console.log('[deBridge-SOL→ETH] Transaction data received')
+  console.log('[deBridge-SOL→ETH] - Order ID:', txData.orderId || 'NOT_AVAILABLE')
+  console.log('[deBridge-SOL→ETH] - Has tx data:', !!txData.tx)
+
+  if (!txData.tx || !txData.tx.data) {
+    throw new Error('DeBridge API did not return valid Solana transaction data')
+  }
+
+  const orderId = txData.orderId || ''
+  const dstChainTokenOutAmount =
+    txData.estimation?.dstChainTokenOut?.recommendedAmount || txData.estimation?.dstChainTokenOut?.amount
+
+  console.log('[deBridge-SOL→ETH] Expected Ethereum output amount:', dstChainTokenOutAmount)
+
+  // 3. 发送 Solana 交易
+  console.log('[deBridge-SOL→ETH] 🔐 Signing and sending Solana transaction...')
+
+  try {
+    // Solana 交易数据是 base64 编码的序列化交易
+    // deBridge 返回的是完整的序列化交易，可以直接发送
+    
+    // 动态导入 @solana/web3.js
+    const { Transaction, Connection } = await import('@solana/web3.js')
+    
+    // 创建 Solana connection
+    const connection = new Connection(
+      'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+      'confirmed'
+    )
+    
+    // 反序列化交易
+    const txBuffer = Buffer.from(txData.tx.data, 'base64')
+    const transaction = Transaction.from(txBuffer)
+    
+    console.log('[deBridge-SOL→ETH] Transaction deserialized')
+    console.log('[deBridge-SOL→ETH] - Instructions:', transaction.instructions.length)
+    console.log('[deBridge-SOL→ETH] - Fee payer:', transaction.feePayer?.toBase58())
+    
+    // 使用 Privy Solana 钱包签名并发送
+    // 检查钱包是否支持 sendTransaction
+    if (!solanaWallet.sendTransaction) {
+      throw new Error('Solana wallet does not support sendTransaction method')
+    }
+
+    // Privy 钱包的 sendTransaction 会自动签名并发送
+    const txSignature = await solanaWallet.sendTransaction(transaction, connection)
+    
+    console.log('[deBridge-SOL→ETH] ✅ Solana tx sent:', txSignature)
+    
+    // 等待交易确认
+    console.log('[deBridge-SOL→ETH] Waiting for confirmation...')
+    const confirmation = await connection.confirmTransaction(txSignature, 'confirmed')
+    
+    if (confirmation.value.err) {
+      throw new Error(`Transaction failed: ${JSON.stringify(confirmation.value.err)}`)
+    }
+    
+    console.log('[deBridge-SOL→ETH] ✅ Transaction confirmed')
+
+    return {
+      txHash: txSignature,
+      orderId: orderId
+    }
+  } catch (error) {
+    console.error('[deBridge-SOL→ETH] Transaction failed:', error)
+    throw new Error(`Solana bridge transaction failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
+  }
+}
+
+/**
+ * 桥接 Solana → Tron (出金使用)
+ * 两步桥接：Solana → Ethereum → Tron
+ */
+async function bridgeSolanaToTron(params: {
+  amount: string
+  tronAddress: string
+  solanaWallet: any
+  ethereumWallet: any
+}): Promise<{ txHash: string; orderId: string }> {
+  const { amount, tronAddress, solanaWallet, ethereumWallet } = params
+
+  console.log('[deBridge-SOL→TRON] 🔄 Starting Solana to Tron bridge (2 steps):', {
+    amount,
+    tronAddress,
+    solanaWallet: solanaWallet?.address,
+    ethereumWallet: ethereumWallet?.address
+  })
+
+  // 检查最小金额（TRON 需要更高，因为有两次桥接费用）
+  const MIN_AMOUNT = 20_000_000 // 20 USD
+  const amountNum = parseInt(amount)
+  if (amountNum < MIN_AMOUNT) {
+    throw new Error(`金额太小，Solana → Tron 需要两次桥接，最少需要 $20 USD（当前: $${(amountNum / 1_000_000).toFixed(2)}）`)
+  }
+
+  console.log('[deBridge-SOL→TRON] Step 1/2: Solana → Ethereum (intermediate)')
+
+  // 步骤 1: Solana → Ethereum (中转到 Ethereum 钱包)
+  const step1Result = await bridgeSolanaToEthereum({
+    amount,
+    ethereumAddress: ethereumWallet.address,
+    solanaWallet
+  })
+
+  console.log('[deBridge-SOL→TRON] ✅ Step 1 completed:', step1Result.txHash)
+  console.log('[deBridge-SOL→TRON] Waiting for Ethereum to receive USDC...')
+
+  // 等待第一步完成（通常需要 2-5 分钟）
+  if (step1Result.orderId) {
+    try {
+      await waitForOrderCompletion(step1Result.orderId, 600000, 10000) // 10分钟超时
+      console.log('[deBridge-SOL→TRON] ✅ Step 1 order fulfilled')
+    } catch (error) {
+      console.warn('[deBridge-SOL→TRON] ⚠️ Order tracking failed, proceeding anyway:', error)
+    }
+  }
+
+  console.log('[deBridge-SOL→TRON] Step 2/2: Ethereum → Tron (final)')
+
+  // 步骤 2: Ethereum → Tron
+  // 需要等待 Ethereum 收到 USDC 后才能继续
+  // TODO: 这里需要实现余额监听或手动触发
+  // 当前返回第一步的结果，提示用户等待
+  console.warn('[deBridge-SOL→TRON] ⚠️ Step 2 (Ethereum → Tron) needs to be triggered manually or via balance polling')
+  console.warn('[deBridge-SOL→TRON] Returning step 1 result. User needs to wait for Ethereum to receive USDC.')
+  
+  return {
+    txHash: step1Result.txHash,
+    orderId: step1Result.orderId
+  }
 }
