@@ -1,7 +1,7 @@
 // 配色参考 https://www.tailwindcss.cn/docs/customizing-colors
 import colors from 'tailwindcss/colors'
 
-import { getColors, getTailwindCssVarColor, setRootVars } from '../../../theme/theme.config'
+import { getColors, getTailwindCssVarColor, setRootVars, hexToRgbSpaced } from '../../../theme/theme.config'
 
 /** 灰色 色值50 - 900 阶梯加深 */
 export const gray = {
@@ -120,42 +120,42 @@ export const themeColorsMobile = {
   // 黄色系
   yellow: {
     ...colors.yellow,
-    // 使用css变量覆盖pc和h5的同名变量
+    // 使用css变量覆盖pc和h5的同名变量，支持透明度修饰符
     ...getTailwindCssVarColor<typeof yellow>(yellow, 'yellow'),
-    DEFAULT: 'var(--color-yellow)'
+    DEFAULT: 'rgb(var(--color-yellow) / <alpha-value>)'
   },
   // 灰色系
   gray: {
     ...colors.gray,
-    // 使用css变量覆盖pc和h5的同名变量
+    // 使用css变量覆盖pc和h5的同名变量，支持透明度修饰符
     ...getTailwindCssVarColor<typeof gray>(gray, 'gray'),
-    DEFAULT: 'var(--color-gray)'
+    DEFAULT: 'rgb(var(--color-gray) / <alpha-value>)'
   },
   // 绿色系
   green: {
     ...colors.green,
-    // 使用css变量覆盖pc和h5的同名变量
+    // 使用css变量覆盖pc和h5的同名变量，支持透明度修饰符
     ...getTailwindCssVarColor<typeof green>(green, 'green'),
-    DEFAULT: 'var(--color-green)'
+    DEFAULT: 'rgb(var(--color-green) / <alpha-value>)'
   },
   // 红色系
   red: {
     ...colors.red,
-    // 使用css变量覆盖pc和h5的同名变量
+    // 使用css变量覆盖pc和h5的同名变量，支持透明度修饰符
     ...getTailwindCssVarColor<typeof red>(red, 'red'),
-    DEFAULT: 'var(--color-red)'
+    DEFAULT: 'rgb(var(--color-red) / <alpha-value>)'
   },
   // 蓝色系
   blue: {
     ...colors.blue,
-    // 使用css变量覆盖pc和h5的同名变量
+    // 使用css变量覆盖pc和h5的同名变量，支持透明度修饰符
     ...getTailwindCssVarColor<typeof blue>(blue, 'blue'),
-    DEFAULT: 'var(--color-blue)'
+    DEFAULT: 'rgb(var(--color-blue) / <alpha-value>)'
   },
   // 白色系
   white: {
     ...getTailwindCssVarColor<typeof white>(white, 'white'),
-    DEFAULT: 'var(--color-white)'
+    DEFAULT: 'rgb(var(--color-white) / <alpha-value>)'
   },
   // 黑色系
   black: {
@@ -185,13 +185,13 @@ export const lightThemeVarsMobile = {
   /** 激活边框颜色 */
   '--border-active-color': gray[900],
 
-  // 默认颜色
-  '--color-gray': gray.DEFAULT, // 默认全局黑
-  '--color-green': green.DEFAULT, // 默认全局绿
-  '--color-red': red.DEFAULT, // 默认全局红
-  '--color-blue': blue.DEFAULT, // 默认全局蓝
-  '--color-yellow': yellow['600'], // 默认全局黄
-  '--color-white': white.DEFAULT, // 默认全局白
+  // 默认颜色 - 使用空格分隔的 RGB 值，支持透明度修饰符
+  '--color-gray': hexToRgbSpaced(gray.DEFAULT), // 默认全局黑
+  '--color-green': hexToRgbSpaced(green.DEFAULT), // 默认全局绿
+  '--color-red': hexToRgbSpaced(red.DEFAULT), // 默认全局红
+  '--color-blue': hexToRgbSpaced(blue.DEFAULT), // 默认全局蓝
+  '--color-yellow': hexToRgbSpaced(yellow['600']), // 默认全局黄
+  '--color-white': '255 255 255', // 默认全局白
 
   // 灰色系
   ...getColors(gray, 'gray'),
@@ -222,13 +222,13 @@ export const darkThemeVarsMobile = {
   /** 激活边框颜色 */
   '--border-active-color': gray[900],
 
-  // 默认颜色
-  '--color-gray': gray.DEFAULT, // 默认全局黑
-  '--color-green': green.DEFAULT, // 默认全局绿
-  '--color-red': red.DEFAULT, // 默认全局红
-  '--color-blue': blue.DEFAULT, // 默认全局蓝
-  '--color-yellow': yellow['600'], // 默认全局黄
-  '--color-white': white.DEFAULT // 默认全局白
+  // 默认颜色 - 使用空格分隔的 RGB 值，支持透明度修饰符
+  '--color-gray': hexToRgbSpaced(gray.DEFAULT), // 默认全局黑
+  '--color-green': hexToRgbSpaced(green.DEFAULT), // 默认全局绿
+  '--color-red': hexToRgbSpaced(red.DEFAULT), // 默认全局红
+  '--color-blue': hexToRgbSpaced(blue.DEFAULT), // 默认全局蓝
+  '--color-yellow': hexToRgbSpaced(yellow['600']), // 默认全局黄
+  '--color-white': '255 255 255' // 默认全局白
 }
 
 // css变量注入页面中，通过var(--color-brand-primary)使用

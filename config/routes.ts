@@ -62,7 +62,7 @@ export default [
   // web端路由
   {
     path: '/',
-    component: '@/layouts/WebLayout',
+    component: '@/layouts/main-layout',
     layout: false,
     routes: [
       // {
@@ -246,280 +246,280 @@ export default [
   },
 
   // ======================== 移动端页面路由 start ======================
-  {
-    path: '/:lng/app',
-    layout: false,
-    component: './webapp/layouts/WebAppLayout',
-    routes: [
-      /* ------------------------------- 主tabbar ------------------------------- */
-      // 行情
-      {
-        path: '/:lng/app/quote',
-        component: './webapp/pages/Quote',
-        access: 'canAdmin' // 权限配置
-      },
-      // 交易
-      {
-        path: '/:lng/app/trade',
-        component: './webapp/pages/Trade',
-        access: 'canAdmin' // 权限配置
-      },
-      // 仓位
-      {
-        path: '/:lng/app/position',
-        component: './webapp/pages/Position',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心
-      {
-        path: '/:lng/app/user-center',
-        component: './webapp/pages/UserCenter',
-        access: 'canAdmin' // 权限配置
-      },
-      /* ------------------------------- 授权验证 ------------------------------- */
-      {
-        path: '/:lng/app/authorization',
-        component: './webapp/pages/Authorization'
-      },
-      /* ------------------------------- 登录/注册/忘记密码 ------------------------------- */
-      {
-        path: '/:lng/app/login',
-        component: './webapp/pages/Welcome'
-      },
-      {
-        path: '/:lng/app/forget-pwd',
-        component: './webapp/pages/User/ForgetPwd'
-      },
-      {
-        path: '/:lng/app/reset-success',
-        component: './webapp/pages/Welcome/ResetSuccess'
-      },
-      /* ------------------------------- 行情 ------------------------------- */
-      // 行情-k线
-      {
-        path: '/:lng/app/quote/kline',
-        component: './webapp/pages/Quote/KLine',
-        access: 'canAdmin' // 权限配置
-      },
-      // 行情-品种搜索
-      {
-        path: '/:lng/app/quote/search',
-        component: './webapp/pages/Quote/SymbolSearch',
-        access: 'canAdmin' // 权限配置
-      },
-      /* ------------------------------- 仓位 ------------------------------- */
-      // 仓位-历史记录
-      {
-        path: '/:lng/app/position/record',
-        component: './webapp/pages/Position/HistoryRecord',
-        access: 'canAdmin' // 权限配置
-      },
-      // 仓位-历史记录-详情
-      {
-        path: '/:lng/app/position/record/detail',
-        component: './webapp/pages/Position/HistoryRecord/HistoryOrderDetail',
-        access: 'canAdmin' // 权限配置
-      },
-      /* ------------------------------- 账号相关 ------------------------------- */
-      // 账号选择
-      {
-        path: '/:lng/app/account/select',
-        component: './webapp/pages/Account/AccountSelect',
-        access: 'canAdmin' // 权限配置
-      },
-      // 创建账号
-      {
-        path: '/:lng/app/account/create',
-        component: './webapp/pages/Account/AccountNew',
-        access: 'canAdmin' // 权限配置
-      },
-      // 账号详情
-      {
-        path: '/:lng/app/account/info',
-        component: './webapp/pages/Account/AccountDetail',
-        access: 'canAdmin' // 权限配置
-      },
-      // 转账-划转页面
-      {
-        path: '/:lng/app/account/transfer',
-        component: './webapp/pages/Account/Transfer',
-        access: 'canAdmin' // 权限配置
-      },
-      // 转账-划转详情
-      {
-        path: '/:lng/app/account/transfer/detail',
-        component: './webapp/pages/Account/Transfer/TransferDetailScreen',
-        access: 'canAdmin' // 权限配置
-      },
-      /* ------------------------------- 个人中心 ------------------------------- */
-      // 个人中心-语言选择
-      {
-        path: '/:lng/app/user-center/language',
-        component: './webapp/pages/UserCenter/Language',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-消息列表
-      {
-        path: '/:lng/app/user-center/message',
-        component: './webapp/pages/UserCenter/Message',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-消息列表-详情
-      {
-        path: '/:lng/app/user-center/message/:id',
-        component: './webapp/pages/UserCenter/Message/Detail',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-实名认证状态
-      // {
-      //   path: '/:lng/app/user-center/verify-status',
-      //   component: './webapp/pages/UserCenter/Kyc/VerifyStatus',
-      //   access: 'canAdmin' // 权限配置
-      // },
-      // 个人中心-绑定邮箱
-      {
-        path: '/:lng/app/user-center/bind-email',
-        component: './webapp/pages/UserCenter/Kyc/BindEmail',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-绑定手机
-      {
-        path: '/:lng/app/user-center/bind-phone',
-        component: './webapp/pages/UserCenter/Kyc/BindPhone',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-验证消息
-      {
-        path: '/:lng/app/user-center/verify-msg',
-        component: './webapp/pages/UserCenter/KycV2/KycVerifyMsgPage',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-验证证件照
-      {
-        path: '/:lng/app/user-center/verify-document',
-        component: './webapp/pages/UserCenter/KycV2/KycVerifyDocPage',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-验证状态
-      {
-        path: '/:lng/app/user-center/verify-status',
-        component: './webapp/pages/UserCenter/KycV2/KycVerifyStatusPage',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-验证状态
-      {
-        path: '/:lng/app/user-center/verify-success',
-        component: './webapp/pages/UserCenter/KycV2/KycVerifySuccessPage',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心-认证信息
-      {
-        path: '/:lng/app/user-center/certification-information',
-        component: './webapp/pages/UserCenter/Certification',
-        access: 'canAdmin' // 权限配置
-      },
-      // 个人中心- kyc 认证（webview）
-      {
-        path: '/:lng/app/user-center/kyc-webview-page',
-        component: './webapp/pages/UserCenter/KycV2/KycWebviewPage'
-      },
-      // 个人中心- 人臉核身状态
-      {
-        path: '/:lng/app/user-center/verify-status-face',
-        component: './webapp/pages/UserCenter/KycV2/VerifyStatusFace'
-      },
-      // 入金 （h5 & webview）
-      {
-        path: '/:lng/app/deposit',
-        name: 'deposit',
-        component: './webapp/pages/Deposit'
-      },
-      // 出金 （h5 & webview）
-      {
-        path: '/:lng/app/withdraw',
-        name: 'withdraw',
-        component: './webapp/pages/Withdraw'
-      },
-      // 出金過程 （h5 & webview）
-      {
-        path: '/:lng/app/withdraw/process/:method',
-        name: 'withdrawProcess',
-        component: './webapp/pages/Withdraw/Process'
-      },
-      // 出金預覽 （h5 & webview）
-      {
-        path: '/:lng/app/withdraw/preview',
-        name: 'withdrawPreview',
-        component: './webapp/pages/Withdraw/Preview'
-      },
-      // 出金等待 （h5 & webview）
-      {
-        path: '/:lng/app/withdraw/wait/:id',
-        name: 'withdrawWait',
-        component: './webapp/pages/Withdraw/Wait'
-      },
-      // 出入金记录 （h5 & webview）
-      {
-        path: '/:lng/app/record/payment',
-        name: 'recordPayment',
-        component: './webapp/pages/Record/Payment'
-      },
-      // 入金过程 （h5 & webview）
-      {
-        path: '/:lng/app/deposit/process/:method',
-        name: 'depositProcess',
-        component: './webapp/pages/Deposit/Process'
-      },
-      // 入金 OTC （h5 & webview）
-      {
-        path: '/:lng/app/deposit/otc/:id',
-        name: 'depositOtc',
-        component: './webapp/pages/Deposit/Otc'
-      },
-      // 入金等待 （h5 & webview）
-      {
-        path: '/:lng/app/deposit/wait/:id',
-        name: 'depositWait',
-        component: './webapp/pages/Deposit/Wait'
-      },
-      // 个人信息
-      {
-        path: '/:lng/app/person-info',
-        component: './webapp/pages/UserCenter/PersonInfo'
-      },
-      // 修改密码
-      {
-        path: '/:lng/app/modify-password',
-        component: './webapp/pages/UserCenter/ModifyPassword'
-      },
-      // 银行卡地址
-      {
-        path: '/:lng/app/bankcard-address',
-        component: './webapp/pages/UserCenter/BankCardAddress'
-      },
-      // 数字钱包地址
-      {
-        path: '/:lng/app/wallet-address',
-        component: './webapp/pages/UserCenter/WalletAddress'
-      },
-      // salesmartly客服
-      {
-        path: '/:lng/app/smart-kefu',
-        access: 'canAdmin', // 权限配置
-        component: './webapp/pages/SalesmartKefu',
-        hideInMenu: true
-      },
-      {
-        path: '/:lng/app/test',
-        component: './webapp/pages/Test'
-      },
-      /* ------------------------------- PageViewer ------------------------------- */
-      {
-        path: '/:lng/app/viewer/markdown',
-        component: './webapp/pages/Viewer/MarkdownPageViewer'
-      }
-    ]
-  },
+  // {
+  //   path: '/:lng/app',
+  //   layout: false,
+  //   component: './webapp/layouts/WebAppLayout',
+  //   routes: [
+  //     /* ------------------------------- 主tabbar ------------------------------- */
+  //     // 行情
+  //     {
+  //       path: '/:lng/app/quote',
+  //       component: './webapp/pages/Quote',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 交易
+  //     {
+  //       path: '/:lng/app/trade',
+  //       component: './webapp/pages/Trade',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 仓位
+  //     {
+  //       path: '/:lng/app/position',
+  //       component: './webapp/pages/Position',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心
+  //     {
+  //       path: '/:lng/app/user-center',
+  //       component: './webapp/pages/UserCenter',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     /* ------------------------------- 授权验证 ------------------------------- */
+  //     {
+  //       path: '/:lng/app/authorization',
+  //       component: './webapp/pages/Authorization'
+  //     },
+  //     /* ------------------------------- 登录/注册/忘记密码 ------------------------------- */
+  //     {
+  //       path: '/:lng/app/login',
+  //       component: './webapp/pages/Welcome'
+  //     },
+  //     {
+  //       path: '/:lng/app/forget-pwd',
+  //       component: './webapp/pages/User/ForgetPwd'
+  //     },
+  //     {
+  //       path: '/:lng/app/reset-success',
+  //       component: './webapp/pages/Welcome/ResetSuccess'
+  //     },
+  //     /* ------------------------------- 行情 ------------------------------- */
+  //     // 行情-k线
+  //     {
+  //       path: '/:lng/app/quote/kline',
+  //       component: './webapp/pages/Quote/KLine',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 行情-品种搜索
+  //     {
+  //       path: '/:lng/app/quote/search',
+  //       component: './webapp/pages/Quote/SymbolSearch',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     /* ------------------------------- 仓位 ------------------------------- */
+  //     // 仓位-历史记录
+  //     {
+  //       path: '/:lng/app/position/record',
+  //       component: './webapp/pages/Position/HistoryRecord',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 仓位-历史记录-详情
+  //     {
+  //       path: '/:lng/app/position/record/detail',
+  //       component: './webapp/pages/Position/HistoryRecord/HistoryOrderDetail',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     /* ------------------------------- 账号相关 ------------------------------- */
+  //     // 账号选择
+  //     {
+  //       path: '/:lng/app/account/select',
+  //       component: './webapp/pages/Account/AccountSelect',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 创建账号
+  //     {
+  //       path: '/:lng/app/account/create',
+  //       component: './webapp/pages/Account/AccountNew',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 账号详情
+  //     {
+  //       path: '/:lng/app/account/info',
+  //       component: './webapp/pages/Account/AccountDetail',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 转账-划转页面
+  //     {
+  //       path: '/:lng/app/account/transfer',
+  //       component: './webapp/pages/Account/Transfer',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 转账-划转详情
+  //     {
+  //       path: '/:lng/app/account/transfer/detail',
+  //       component: './webapp/pages/Account/Transfer/TransferDetailScreen',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     /* ------------------------------- 个人中心 ------------------------------- */
+  //     // 个人中心-语言选择
+  //     {
+  //       path: '/:lng/app/user-center/language',
+  //       component: './webapp/pages/UserCenter/Language',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-消息列表
+  //     {
+  //       path: '/:lng/app/user-center/message',
+  //       component: './webapp/pages/UserCenter/Message',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-消息列表-详情
+  //     {
+  //       path: '/:lng/app/user-center/message/:id',
+  //       component: './webapp/pages/UserCenter/Message/Detail',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-实名认证状态
+  //     // {
+  //     //   path: '/:lng/app/user-center/verify-status',
+  //     //   component: './webapp/pages/UserCenter/Kyc/VerifyStatus',
+  //     //   access: 'canAdmin' // 权限配置
+  //     // },
+  //     // 个人中心-绑定邮箱
+  //     {
+  //       path: '/:lng/app/user-center/bind-email',
+  //       component: './webapp/pages/UserCenter/Kyc/BindEmail',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-绑定手机
+  //     {
+  //       path: '/:lng/app/user-center/bind-phone',
+  //       component: './webapp/pages/UserCenter/Kyc/BindPhone',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-验证消息
+  //     {
+  //       path: '/:lng/app/user-center/verify-msg',
+  //       component: './webapp/pages/UserCenter/KycV2/KycVerifyMsgPage',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-验证证件照
+  //     {
+  //       path: '/:lng/app/user-center/verify-document',
+  //       component: './webapp/pages/UserCenter/KycV2/KycVerifyDocPage',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-验证状态
+  //     {
+  //       path: '/:lng/app/user-center/verify-status',
+  //       component: './webapp/pages/UserCenter/KycV2/KycVerifyStatusPage',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-验证状态
+  //     {
+  //       path: '/:lng/app/user-center/verify-success',
+  //       component: './webapp/pages/UserCenter/KycV2/KycVerifySuccessPage',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心-认证信息
+  //     {
+  //       path: '/:lng/app/user-center/certification-information',
+  //       component: './webapp/pages/UserCenter/Certification',
+  //       access: 'canAdmin' // 权限配置
+  //     },
+  //     // 个人中心- kyc 认证（webview）
+  //     {
+  //       path: '/:lng/app/user-center/kyc-webview-page',
+  //       component: './webapp/pages/UserCenter/KycV2/KycWebviewPage'
+  //     },
+  //     // 个人中心- 人臉核身状态
+  //     {
+  //       path: '/:lng/app/user-center/verify-status-face',
+  //       component: './webapp/pages/UserCenter/KycV2/VerifyStatusFace'
+  //     },
+  //     // 入金 （h5 & webview）
+  //     {
+  //       path: '/:lng/app/deposit',
+  //       name: 'deposit',
+  //       component: './webapp/pages/Deposit'
+  //     },
+  //     // 出金 （h5 & webview）
+  //     {
+  //       path: '/:lng/app/withdraw',
+  //       name: 'withdraw',
+  //       component: './webapp/pages/Withdraw'
+  //     },
+  //     // 出金過程 （h5 & webview）
+  //     {
+  //       path: '/:lng/app/withdraw/process/:method',
+  //       name: 'withdrawProcess',
+  //       component: './webapp/pages/Withdraw/Process'
+  //     },
+  //     // 出金預覽 （h5 & webview）
+  //     {
+  //       path: '/:lng/app/withdraw/preview',
+  //       name: 'withdrawPreview',
+  //       component: './webapp/pages/Withdraw/Preview'
+  //     },
+  //     // 出金等待 （h5 & webview）
+  //     {
+  //       path: '/:lng/app/withdraw/wait/:id',
+  //       name: 'withdrawWait',
+  //       component: './webapp/pages/Withdraw/Wait'
+  //     },
+  //     // 出入金记录 （h5 & webview）
+  //     {
+  //       path: '/:lng/app/record/payment',
+  //       name: 'recordPayment',
+  //       component: './webapp/pages/Record/Payment'
+  //     },
+  //     // 入金过程 （h5 & webview）
+  //     {
+  //       path: '/:lng/app/deposit/process/:method',
+  //       name: 'depositProcess',
+  //       component: './webapp/pages/Deposit/Process'
+  //     },
+  //     // 入金 OTC （h5 & webview）
+  //     {
+  //       path: '/:lng/app/deposit/otc/:id',
+  //       name: 'depositOtc',
+  //       component: './webapp/pages/Deposit/Otc'
+  //     },
+  //     // 入金等待 （h5 & webview）
+  //     {
+  //       path: '/:lng/app/deposit/wait/:id',
+  //       name: 'depositWait',
+  //       component: './webapp/pages/Deposit/Wait'
+  //     },
+  //     // 个人信息
+  //     {
+  //       path: '/:lng/app/person-info',
+  //       component: './webapp/pages/UserCenter/PersonInfo'
+  //     },
+  //     // 修改密码
+  //     {
+  //       path: '/:lng/app/modify-password',
+  //       component: './webapp/pages/UserCenter/ModifyPassword'
+  //     },
+  //     // 银行卡地址
+  //     {
+  //       path: '/:lng/app/bankcard-address',
+  //       component: './webapp/pages/UserCenter/BankCardAddress'
+  //     },
+  //     // 数字钱包地址
+  //     {
+  //       path: '/:lng/app/wallet-address',
+  //       component: './webapp/pages/UserCenter/WalletAddress'
+  //     },
+  //     // salesmartly客服
+  //     {
+  //       path: '/:lng/app/smart-kefu',
+  //       access: 'canAdmin', // 权限配置
+  //       component: './webapp/pages/SalesmartKefu',
+  //       hideInMenu: true
+  //     },
+  //     {
+  //       path: '/:lng/app/test',
+  //       component: './webapp/pages/Test'
+  //     },
+  //     /* ------------------------------- PageViewer ------------------------------- */
+  //     {
+  //       path: '/:lng/app/viewer/markdown',
+  //       component: './webapp/pages/Viewer/MarkdownPageViewer'
+  //     }
+  //   ]
+  // },
 
   // ======================== 移动端页面路由 end ======================
   {

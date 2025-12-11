@@ -765,6 +765,11 @@ class TradeStore {
     return this.favoriteList.some((item) => item.symbol === this.activeSymbolName && item.checked)
   }
 
+  // 当前激活品种的完整信息
+  @computed get activeSymbolInfo() {
+    return this.symbolListAll.find((item) => item.symbol === this.activeSymbolName) || ({} as Account.TradeSymbolListItem)
+  }
+
   // 获取本地自选
   @action async initFavoriteList() {
     // const data = await STORAGE_GET_FAVORITE()

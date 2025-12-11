@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-zinc-base;
+    outline-color: color-mix(in srgb, var(--color-zinc-300) 20%, transparent);
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .flex-center {
+    @apply items-center justify-center;
+  }
+
+  .font-sans {
+    font-family: var(--font-inter), 'PingFang SC', 'Microsoft YaHei', var(--font-sans);
+  }
+}

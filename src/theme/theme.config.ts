@@ -7,6 +7,14 @@ function hexToRgb(hex: string) {
   return `${r},${g},${b})`
 }
 
+// 将十六进制颜色转换为空格分隔的 RGB 值，用于支持 Tailwind 透明度修饰符
+export function hexToRgbSpaced(hex: string) {
+  const r = parseInt(hex.slice(1, 3), 16)
+  const g = parseInt(hex.slice(3, 5), 16)
+  const b = parseInt(hex.slice(5, 7), 16)
+  return `${r} ${g} ${b}`
+}
+
 const transferHexToRgb = (obj: any) => {
   const result: any = {}
   Object.keys(obj).forEach((key) => {
@@ -80,38 +88,91 @@ export const gray = {
   950: '#000000' // 最深
 } as const
 
+export const zinc = {
+  50: '#bcbed3',
+  100: '#a6a8c0',
+  200: '#9093ad',
+  300: '#656886',
+  400: '#393d60',
+  500: '#0e123a',
+  600: '#0b0e2e',
+  700: '#080b23',
+  800: '#060717',
+  900: '#040511'
+} as const
+
+
 // 黄色 色值50 - 900 阶梯加深
 export const yellow = {
-  400: '#FFDA00',
-  490: '#FCD535',
-  500: '#FDD436',
-  550: '#F5B52C',
-  560: '#FFA90E',
-  600: '#C49002'
+  50: '#fcf7db',
+  100: '#faf4c9',
+  200: '#f8f0b7',
+  300: '#f5e894',
+  400: '#f1e170',
+  500: '#eed94c',
+  600: '#beae3d',
+  700: '#8f822e',
+  800: '#5f571e',
+  900: '#474117'
 } as const
 
 // 红色 色值50 - 900 阶梯加深
 export const red = {
-  100: '#FFDDE2',
-  500: '#FA2E4C',
-  600: '#C54747',
-  650: '#F95050',
-  700: '#FF3D3D'
+  50: '#ffdadf',
+  100: '#ffc7ce',
+  200: '#ff8c99',
+  300: '#ff6376',
+  400: '#ff3a53',
+  500: '#ff112f',
+  600: '#cc0e26',
+  700: '#990b1d',
+  800: '#660814',
+  900: '#4c060f'
 } as const
+
+
 
 // 绿色 色值50 - 900 阶梯加深
 export const green = {
-  100: '#D6FFF4',
-  600: '#29BE95',
-  700: '#45A48A'
+  50: '#d5f2e6',
+  100: '#c0ebda',
+  200: '#abe4ce',
+  300: '#82d7b5',
+  400: '#58c99d',
+  500: '#2ebc84',
+  600: '#25966a',
+  700: '#1c714f',
+  800: '#124b35',
+  900: '#0e3828'
 } as const
+
 
 // 蓝色 色值50 - 900 阶梯加深
 export const blue = {
-  50: '#F8FBFD',
-  400: '#4775EE',
-  500: '#3253F6',
-  700: '#183EFC'
+  50: '#d2e0ff',
+  100: '#bbd1ff',
+  200: '#a4c2ff',
+  300: '#77a3ff',
+  400: '#4985ff',
+  500: '#1c66ff',
+  600: '#1652cc',
+  700: '#113d99',
+  800: '#0b2966',
+  900: '#081f4c'
+} as const
+
+
+export const orange = {
+  50: '#ffe9d6',
+  100: '#ffddc2',
+  200: '#ffd2ae',
+  300: '#ffbc85',
+  400: '#ffa55d',
+  500: '#ff8f34',
+  600: '#d6772a',
+  700: '#ae5f1f',
+  800: '#854715',
+  900: '#713b10'
 } as const
 
 // 品牌色
@@ -132,22 +193,24 @@ export const colorWhite = '#fff'
 export const fontFamily =
   "pf-medium, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji'"
 
-// 获取系列颜色
+// 获取系列颜色 - 使用空格分隔的 RGB 值，支持 Tailwind 透明度修饰符
 export const getColors = (colors: any, name: any) => {
   const result = {}
   Object.keys(colors).forEach((key: string) => {
     // @ts-ignore
-    result[`--color-${name}-${key}`] = colors[key]
+    // 转换为空格分隔的 RGB 值，如 "6 7 23"
+    result[`--color-${name}-${key}`] = hexToRgbSpaced(colors[key])
   })
   return result
 }
 
-// tailwindcss颜色使用变量代替
+// tailwindcss颜色使用变量代替 - 使用支持透明度的格式
 export const getTailwindCssVarColor = <T = any>(colors: any, name: any) => {
   const result = {} as T
   Object.keys(colors).forEach((key: string) => {
     // @ts-ignore
-    result[key] = `var(--color-${name}-${key})`
+    // 使用 rgb(var(--xxx) / <alpha-value>) 格式支持透明度
+    result[key] = `rgb(var(--color-${name}-${key}) / <alpha-value>)`
   })
   return result
 }
@@ -238,19 +301,31 @@ export const lightTheme = {
   '--depth-buy-bg': green['100'], // 买
   '--depth-sell-bg': red['100'], // 卖
 
-  // 默认颜色
-  '--color-gray': gray['900'], // 默认全局黑
-  '--color-green': green['700'], // 默认全局绿
-  '--color-red': red['600'], // 默认全局红
-  '--color-blue': blue['700'], // 默认全局蓝
-  '--color-yellow': yellow['600'], // 默认全局黄
-  '--color-white': colorWhite, // 默认全局白
+  // 默认颜色 - 使用空格分隔的 RGB 值，支持透明度修饰符
+  '--color-gray': hexToRgbSpaced(gray['900']), // 默认全局黑
+  '--color-green': hexToRgbSpaced(green['700']), // 默认全局绿
+  '--color-red': hexToRgbSpaced(red['600']), // 默认全局红
+  '--color-blue': hexToRgbSpaced(blue['700']), // 默认全局蓝
+  '--color-yellow': hexToRgbSpaced(yellow['600']), // 默认全局黄
+  '--color-orange': hexToRgbSpaced(orange['500']), // 默认全局橙
+  '--color-zinc': hexToRgbSpaced(zinc['500']), // 默认全局zinc
+  '--color-white': '255 255 255', // 默认全局白
+  '--color-black': '0 0 0', // 默认全局黑
+
+  '--color-trade-buy': 'rgb(var(--color-green-500))',
+  '--color-trade-sell': 'rgb(var(--color-red-500))',
+  '--color-market-rise': 'var(--color-trade-buy)',
+  '--color-market-fall': 'var(--color-trade-sell)',
 
   // 灰色系
   ...getColors(gray, 'gray'),
 
   // 黄色系
   ...getColors(yellow, 'yellow'),
+
+  ...getColors(zinc, 'zinc'),
+
+  ...getColors(orange, 'orange'),
 
   // 红色系
   ...getColors(red, 'red'),
@@ -348,10 +423,10 @@ export const darkTheme = {
   '--scrollbar-color': `${gray[675]} ${gray[675]}`, // 滚动条颜色
   '--scrollbar-hover-color': `${gray[578]} ${gray[675]}`, // hover颜色 第一个滚动条颜色、第二个滚动条轨道颜色
 
-  // 默认颜色
-  '--color-gray': gray['95'], // 默认全局黑
-  '--color-green': green['600'], // 全局绿
-  '--color-red': red['650'] // 全局红
+  // 默认颜色 - 使用空格分隔的 RGB 值，支持透明度修饰符
+  '--color-gray': hexToRgbSpaced(gray['95']), // 默认全局黑
+  '--color-green': hexToRgbSpaced(green['600']), // 全局绿
+  '--color-red': hexToRgbSpaced(red['500']) // 全局红
 }
 
 export const setRootVars = (themeVars: any, isImportant?: boolean) => {

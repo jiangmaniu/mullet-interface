@@ -33,7 +33,6 @@ function WebLayout() {
   return (
     <div className="">
       <Header />
-      123123
       <div
       // className={classNames('pt-24 pb-24 max-myxl:pb-14 min-h-screen mx-auto', {
       //   'myxl:w-[1300px]': pathname !== '/'

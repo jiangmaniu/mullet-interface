@@ -113,10 +113,10 @@ export default defineConfig({
    * @doc https://umijs.org/docs/max/layout-menu
    */
   title: serverEnv?.name,
-  layout: {
-    locale: true,
-    ...defaultSettings
-  },
+  // layout: {
+  // locale: true,
+  //   ...defaultSettings
+  // },
   /**
    * @name moment2dayjs 插件
    * @description 将项目中的 moment 替换为 dayjs

@@ -174,6 +174,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
           token: {
             ...theme.themeToken
           },
+          hashed: false,
           cssVar: true,
           algorithm: mode === 'dark' ? darkAlgorithm : defaultAlgorithm
         }}

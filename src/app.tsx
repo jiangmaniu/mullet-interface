@@ -79,199 +79,199 @@ export async function getInitialState(): Promise<{
 }
 
 // ProLayout 支持的api https://procomponents.ant.design/components/layout
-export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
-  // const [collapsed, setCollapsed] = useState<boolean>(false) // 默认展开侧边栏
-  const { sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } = useModel('global')
-  const { breakPoint, isMobileOrIpad, isMobile, isIpad } = useEnv()
-  const { lng, count } = useLang()
-  const [showMenuExtra, setShowMenuExtra] = useState(false)
-  const { pageBgColor } = useModel('global')
-  const { pathname } = useLocation()
-  const { setMode } = useTheme()
+// export const layout: RunTimeLayoutConfig = ({ initialState, setInitialState }) => {
+//   // const [collapsed, setCollapsed] = useState<boolean>(false) // 默认展开侧边栏
+//   const { sidebarCollapsed: collapsed, setSidebarCollapsed: setCollapsed } = useModel('global')
+//   const { breakPoint, isMobileOrIpad, isMobile, isIpad } = useEnv()
+//   const { lng, count } = useLang()
+//   const [showMenuExtra, setShowMenuExtra] = useState(false)
+//   const { pageBgColor } = useModel('global')
+//   const { pathname } = useLocation()
+//   const { setMode } = useTheme()
 
-  // @TODO 临时设置切换主题，后面删除
-  useEffect(() => {
-    if (pathname !== '/trade') {
-      setMode('light')
-    }
-  }, [pathname])
+//   // @TODO 临时设置切换主题，后面删除
+//   useEffect(() => {
+//     if (pathname !== '/trade') {
+//       setMode('light')
+//     }
+//   }, [pathname])
 
-  return {
-    ...initialState?.settings,
-    // title: '测试',// layout 的左上角 的 title
-    // logo: '', // layout 的左上角 logo 的 url，可以动态修改
-    // loading: false, // layout 的加载态
-    // 渲染 logo 和 title, 优先级比 headerTitleRender 更高
-    // headerTitleRender: () => <div>headerTitleRender</div>,
-    // 在 layout 底部渲染一个块
-    // menuFooterRender: () => <div>菜单底部区域</div>,
-    logo: (
-      <div className="flex gap-2">
-        <Logo />
-        <HeaderNav />
-      </div>
-    ),
-    title: '',
-    // layout 的内容区 style
-    contentStyle: {
-      background: pageBgColor,
-      minHeight: '100vh',
-      paddingLeft: 0,
-      paddingRight: 0,
-      paddingTop: 0
-    },
-    // pure: isMobileOrIpad ? true : false, // 是否删除掉所有的自带界面
-    // actionsRender: () => [],
-    actionsRender: () => [<HeaderRightContent key="content" isAdmin />],
-    // avatarProps: {
-    //   src: initialState?.currentUser?.avatar || '/img/logo.png',
-    //   title: <AvatarName />,
-    //   render: (_, avatarChildren) => {
-    //     return <AvatarDropdown>{avatarChildren}</AvatarDropdown>
-    //   }
-    // },
-    // 是否固定 header 到顶部
-    // fixedHeader: true,
-    // waterMarkProps: {
-    //   content: initialState?.currentUser?.name
-    // },
-    // onMenuHeaderClick: () => {
-    //   history.push('/')
-    // }, // 点击跳转到首页，移动端不支持点击
-    // headerRender: () => <p>123</p>, // 自定义顶部头
-    // footerRender: () => <Footer />, // 自定义页脚的 render 方法
-    siderWidth: 286, // 侧边菜单宽度默认	208
-    collapsed,
-    // 自定义展开收起按钮的渲染
-    collapsedButtonRender: false,
-    // collapsedButtonRender: (collapsed: boolean | undefined, defaultDom: React.ReactNode) => (isMobileOrIpad ? undefined : defaultDom),
-    // 侧边菜单底部的配置，可以增加一些底部操作
-    menuFooterRender: (props) => {
-      if (isMobileOrIpad && !props?.collapsed) {
-        return (
-          <div className="flex justify-center" style={{ paddingBottom: 100 }}>
-            <SwitchLanguage isAdmin />
-          </div>
-        )
-      }
-    },
-    onCollapse: (collapsed: boolean) => {
-      setCollapsed(collapsed)
-    },
-    // 一些时候我们会发现 collapsed 和 onCollapse 设置默认收起并不生效，这是因为 ProLayout 中内置了 breakpoint 来触发收起的机制，我们可以设置 breakpoint={false} 来关掉这个机制
-    breakpoint: false,
-    onPageChange: () => {
-      const { location } = history
-      // 如果没有登录，重定向到 login
-      // @TODO
-      // if (!initialState?.currentUser && location.pathname !== loginPath) {
-      //   history.push(loginPath)
-      // }
-    },
-    // links: isDev
-    //   ? [
-    //       <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
-    //         <LinkOutlined />
-    //         <span>OpenAPI 文档</span>
-    //       </Link>
-    //     ]
-    //   : [],
-    // 自定义 403 页面
-    unAccessible: <Forbid />,
-    // 增加一个 loading 的状态
-    childrenRender: (children) => {
-      // if (initialState?.loading) return <PageLoading />;
-      // 渲染移动端入口
-      // return <>{isMobileOrIpad ? <TabBottomBar /> : children}</>
-      return <>{children}</>
-    },
-    menuHeaderRender: () => {
-      return <div></div>
-    },
-    menu: {
-      // https://beta-pro.ant.design/docs/advanced-menu-cn
-      // actionRef: layoutActionRef, // 如果你希望可以手动的控制菜单刷新，可以使用 actionRef 功能。
-      // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
-      params: {
-        // userId: initialState?.currentUser?.userid,
-        count
-      },
-      // @TODO 动态菜单
-      // config.ts/routes.ts文件里的路由还是要添加,和静态路由是一样
-      request: async (params, defaultMenuData) => {
-        // initialState.currentUser 中包含了所有用户信息
-        // const menuData = await fetchMenuData();
-        // return menuData;
-        // await new Promise((resolve) => setTimeout(() => resolve(''), 2000))
-        // return [
-        //   ...defaultMenuData,
-        //   {
-        //     path: '/system-manage',
-        //     name: 'systemManage',
-        //     icon: '/img/menu-icon/system@2x.png',
-        //     access: 'canAdmin', // 权限配置
-        //     routes: [
-        //       {
-        //         path: '/system-manage/:account',
-        //         component: './admin/systemManage/list',
-        //         name: 'account'
-        //       }
-        //     ]
-        //   }
-        // ]
+//   return {
+//     ...initialState?.settings,
+//     // title: '测试',// layout 的左上角 的 title
+//     // logo: '', // layout 的左上角 logo 的 url，可以动态修改
+//     // loading: false, // layout 的加载态
+//     // 渲染 logo 和 title, 优先级比 headerTitleRender 更高
+//     // headerTitleRender: () => <div>headerTitleRender</div>,
+//     // 在 layout 底部渲染一个块
+//     // menuFooterRender: () => <div>菜单底部区域</div>,
+//     logo: (
+//       <div className="flex gap-2">
+//         <Logo />
+//         <HeaderNav />
+//       </div>
+//     ),
+//     title: '',
+//     // layout 的内容区 style
+//     contentStyle: {
+//       background: pageBgColor,
+//       minHeight: '100vh',
+//       paddingLeft: 0,
+//       paddingRight: 0,
+//       paddingTop: 0
+//     },
+//     // pure: isMobileOrIpad ? true : false, // 是否删除掉所有的自带界面
+//     // actionsRender: () => [],
+//     actionsRender: () => [<HeaderRightContent key="content" isAdmin />],
+//     // avatarProps: {
+//     //   src: initialState?.currentUser?.avatar || '/img/logo.png',
+//     //   title: <AvatarName />,
+//     //   render: (_, avatarChildren) => {
+//     //     return <AvatarDropdown>{avatarChildren}</AvatarDropdown>
+//     //   }
+//     // },
+//     // 是否固定 header 到顶部
+//     // fixedHeader: true,
+//     // waterMarkProps: {
+//     //   content: initialState?.currentUser?.name
+//     // },
+//     // onMenuHeaderClick: () => {
+//     //   history.push('/')
+//     // }, // 点击跳转到首页，移动端不支持点击
+//     // headerRender: () => <p>123</p>, // 自定义顶部头
+//     // footerRender: () => <Footer />, // 自定义页脚的 render 方法
+//     siderWidth: 286, // 侧边菜单宽度默认	208
+//     collapsed,
+//     // 自定义展开收起按钮的渲染
+//     collapsedButtonRender: false,
+//     // collapsedButtonRender: (collapsed: boolean | undefined, defaultDom: React.ReactNode) => (isMobileOrIpad ? undefined : defaultDom),
+//     // 侧边菜单底部的配置，可以增加一些底部操作
+//     menuFooterRender: (props) => {
+//       if (isMobileOrIpad && !props?.collapsed) {
+//         return (
+//           <div className="flex justify-center" style={{ paddingBottom: 100 }}>
+//             <SwitchLanguage isAdmin />
+//           </div>
+//         )
+//       }
+//     },
+//     onCollapse: (collapsed: boolean) => {
+//       setCollapsed(collapsed)
+//     },
+//     // 一些时候我们会发现 collapsed 和 onCollapse 设置默认收起并不生效，这是因为 ProLayout 中内置了 breakpoint 来触发收起的机制，我们可以设置 breakpoint={false} 来关掉这个机制
+//     breakpoint: false,
+//     onPageChange: () => {
+//       const { location } = history
+//       // 如果没有登录，重定向到 login
+//       // @TODO
+//       // if (!initialState?.currentUser && location.pathname !== loginPath) {
+//       //   history.push(loginPath)
+//       // }
+//     },
+//     // links: isDev
+//     //   ? [
+//     //       <Link key="openapi" to="/umi/plugin/openapi" target="_blank">
+//     //         <LinkOutlined />
+//     //         <span>OpenAPI 文档</span>
+//     //       </Link>
+//     //     ]
+//     //   : [],
+//     // 自定义 403 页面
+//     unAccessible: <Forbid />,
+//     // 增加一个 loading 的状态
+//     childrenRender: (children) => {
+//       // if (initialState?.loading) return <PageLoading />;
+//       // 渲染移动端入口
+//       // return <>{isMobileOrIpad ? <TabBottomBar /> : children}</>
+//       return <>{children}</>
+//     },
+//     menuHeaderRender: () => {
+//       return <div></div>
+//     },
+//     menu: {
+//       // https://beta-pro.ant.design/docs/advanced-menu-cn
+//       // actionRef: layoutActionRef, // 如果你希望可以手动的控制菜单刷新，可以使用 actionRef 功能。
+//       // 每当 initialState?.currentUser?.userid 发生修改时重新执行 request
+//       params: {
+//         // userId: initialState?.currentUser?.userid,
+//         count
+//       },
+//       // @TODO 动态菜单
+//       // config.ts/routes.ts文件里的路由还是要添加,和静态路由是一样
+//       request: async (params, defaultMenuData) => {
+//         // initialState.currentUser 中包含了所有用户信息
+//         // const menuData = await fetchMenuData();
+//         // return menuData;
+//         // await new Promise((resolve) => setTimeout(() => resolve(''), 2000))
+//         // return [
+//         //   ...defaultMenuData,
+//         //   {
+//         //     path: '/system-manage',
+//         //     name: 'systemManage',
+//         //     icon: '/img/menu-icon/system@2x.png',
+//         //     access: 'canAdmin', // 权限配置
+//         //     routes: [
+//         //       {
+//         //         path: '/system-manage/:account',
+//         //         component: './admin/systemManage/list',
+//         //         name: 'account'
+//         //       }
+//         //     ]
+//         //   }
+//         // ]
 
-        const formatMenuPath = (data: any) => {
-          data.forEach((item: any) => {
-            // 首次
-            if (item.path.indexOf(':lng') > -1) {
-              item.path = item.path?.replace(/:lng/, lng)
-            } else {
-              // 更新后替换当前路径
-              item.path = replacePathnameLng(item.path, lng)
-            }
+//         const formatMenuPath = (data: any) => {
+//           data.forEach((item: any) => {
+//             // 首次
+//             if (item.path.indexOf(':lng') > -1) {
+//               item.path = item.path?.replace(/:lng/, lng)
+//             } else {
+//               // 更新后替换当前路径
+//               item.path = replacePathnameLng(item.path, lng)
+//             }
 
-            // 递归
-            if (item.children?.length) {
-              formatMenuPath(item.children)
-            }
-            if (item.routes?.length) {
-              formatMenuPath(item.routes)
-            }
-          })
-        }
+//             // 递归
+//             if (item.children?.length) {
+//               formatMenuPath(item.children)
+//             }
+//             if (item.routes?.length) {
+//               formatMenuPath(item.routes)
+//             }
+//           })
+//         }
 
-        formatMenuPath(defaultMenuData)
+//         formatMenuPath(defaultMenuData)
 
-        // console.log('defaultMenuData', defaultMenuData)
+//         // console.log('defaultMenuData', defaultMenuData)
 
-        return defaultMenuData
-      }
-    },
+//         return defaultMenuData
+//       }
+//     },
 
-    menuItemRender: (menuItemProps, defaultDom) => {
-      // console.log('menuItemProps', menuItemProps)
-      if (menuItemProps.isUrl || !menuItemProps.path) {
-        return defaultDom
-      }
-      // 支持二级菜单显示icon
-      const src = menuItemProps.pro_layout_parentKeys && menuItemProps.pro_layout_parentKeys.length > 0 && menuItemProps.icon
-      return (
-        <Link to={menuItemProps.path} className="flex items-center">
-          {src && <img src={src} width={22} height={22} />}
-          {defaultDom}
-        </Link>
-      )
-    }
-    // logout: () => {
-    //   alert('退出登录成功')
-    // },
-    // headerContentRender: (props: ProLayoutProps) => <div>自定义头内容的方法</div>,
-    // menuRender: (props: HeaderViewProps) => <div>自定义菜单的 render 方法</div>,
-    // menuItemRender: (itemProps: MenuDataItem, defaultDom: React.ReactNode, props: BaseMenuProps) => <div>自定义菜单项的 render 方法</div>,
-    // subMenuItemRender: (itemProps: MenuDataItem) => <div>自定义拥有子菜单菜单项的 render 方法</div>,
-    // menuDataRender: (menuData: MenuDataItem[]) => MenuDataItem[], // menuData 的 render 方法，用来自定义 menuData
-  }
-}
+//     menuItemRender: (menuItemProps, defaultDom) => {
+//       // console.log('menuItemProps', menuItemProps)
+//       if (menuItemProps.isUrl || !menuItemProps.path) {
+//         return defaultDom
+//       }
+//       // 支持二级菜单显示icon
+//       const src = menuItemProps.pro_layout_parentKeys && menuItemProps.pro_layout_parentKeys.length > 0 && menuItemProps.icon
+//       return (
+//         <Link to={menuItemProps.path} className="flex items-center">
+//           {src && <img src={src} width={22} height={22} />}
+//           {defaultDom}
+//         </Link>
+//       )
+//     }
+//     // logout: () => {
+//     //   alert('退出登录成功')
+//     // },
+//     // headerContentRender: (props: ProLayoutProps) => <div>自定义头内容的方法</div>,
+//     // menuRender: (props: HeaderViewProps) => <div>自定义菜单的 render 方法</div>,
+//     // menuItemRender: (itemProps: MenuDataItem, defaultDom: React.ReactNode, props: BaseMenuProps) => <div>自定义菜单项的 render 方法</div>,
+//     // subMenuItemRender: (itemProps: MenuDataItem) => <div>自定义拥有子菜单菜单项的 render 方法</div>,
+//     // menuDataRender: (menuData: MenuDataItem[]) => MenuDataItem[], // menuData 的 render 方法，用来自定义 menuData
+//   }
+// }
 
 /**
  * @name request 配置，可以配置错误处理

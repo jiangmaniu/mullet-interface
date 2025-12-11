@@ -15,14 +15,18 @@ import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 
 import { checkPageShowTime } from '@/utils/business'
-import BuyAndSell from './comp/BuyAndSell'
-import Center from './comp/Center'
+// import BuyAndSell from './comp/BuyAndSell'
+// import Center from './comp/Center'
 import Footer from './comp/Footer'
 import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
-import Sidebar from './comp/Sidebar'
-import TradeRecord from './comp/TradeRecord'
-import DepthPrice from './comp/Widget/DepthPrice'
-import Liquidation from './comp/Widget/Liquidation'
+// import Sidebar from './comp/Sidebar'
+// import TradeRecord from './comp/TradeRecord'
+// import DepthPrice from './comp/Widget/DepthPrice'
+// import Liquidation from './comp/Widget/Liquidation'
+import { Overview } from './_comps/overview'
+// import { AccountDetails } from './_comps/account'
+// import { TradeLayout } from './_comps/layout'
+// import { TradeLayoutKey } from './_comps/layout/types'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -127,50 +131,60 @@ export default observer(() => {
     }
   )
 
-  const borderTopClassName = useEmotionCss(({ token }) => {
-    return {
-      '&::after': {
-        content: "''",
-        background: 'var(--divider-line-color)',
-        width: '100%',
-        height: 0.5,
-        position: 'absolute',
-        right: 0,
-        top: 0,
-        zIndex: 10
-      }
-    }
-  })
-
   return (
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className="mb-8">
-            {/* 交易 */}
-            <div className="flex">
-              <Sidebar />
-              {/* 中间区域 */}
-              <Center />
-              {/* 深度报价 */}
-              <DepthPrice />
-              {/* 买卖交易区 */}
-              <BuyAndSell />
+          <div className="p-2">
+            <div className="flex gap-2">
+              <div className="flex flex-1 gap-2 flex-col">
+                <Overview />
+                {/* 交易 */}
+                {/* <div className="flex"> */}
+                {/* <Sidebar /> */}
+                {/* 中间区域 */}
+                {/* <Center /> */}
+                {/* 深度报价 */}
+                {/* <DepthPrice /> */}
+                {/* </div> */}
+              </div>
+
+              <div className="flex w-max gap-2 min-w-[280px]  flex-col">
+                {/* <AccountDetails /> */}
+
+                {/* 买卖交易区 */}
+                {/* <BuyAndSell /> */}
+              </div>
             </div>
-            <div className={cn('flex items-start justify-between relative bg-primary', borderTopClassName)}>
+
+            <div className={cn('flex items-start justify-between relative bg-primary')}>
               {/* 交易记录 */}
               <div style={{ width: 'calc(100vw - 303px)' }} className={cn('flex-1')}>
-                <TradeRecord />
+                {/* <TradeRecord /> */}
               </div>
-              <div className={cn('w-[300px] min-h-[270px] relative')}>
-                <Liquidation />
-              </div>
+              <div className={cn('w-[300px] min-h-[270px] relative')}>{/* <Liquidation /> */}</div>
             </div>
             {/* 底部固定状态栏 */}
             <Footer />
             {/* 浮动交易窗口 */}
             {/* <FloatTradeBox /> */}
           </div>
+
+          // <TradeLayout
+          //   slots={{
+          //     [TradeLayoutKey.Tabs]: <div className="h-full">{/* <TradingPairTabs /> */}</div>,
+          //     [TradeLayoutKey.Overview]: (
+          //       <div className="h-full">
+          //         <Overview />
+          //       </div>
+          //     ),
+          //     [TradeLayoutKey.Tradingview]: <div className="h-full">{/* <TradeMarket /> */}</div>,
+          //     [TradeLayoutKey.Orderbooks]: <div className="h-full">{/* <OrderBooks /> */}</div>,
+          //     [TradeLayoutKey.Account]: <div className="h-full">{/* <AccountDetails /> */}</div>,
+          //     [TradeLayoutKey.Action]: <div className="h-full">{/* <TradeAction /> */}</div>,
+          //     [TradeLayoutKey.Position]: <div className="h-full">{/* <Records /> */}</div>
+          //   }}
+          // />
         }
         wapComponent={<div></div>}
       />
