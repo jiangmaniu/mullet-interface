@@ -6,14 +6,14 @@ import lpSwapIdl from '@/libs/web3/idl/mxlp_swap.json'
 import { MxlpSwap } from '@/libs/web3/types/mxlp_swap'
 import { Connection, PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import type { Idl, Wallet } from '@coral-xyz/anchor'
-import { useConnectedStandardWallets, useStandardSignTransaction } from '@privy-io/react-auth/solana'
+import { useStandardWallets, useSignTransaction } from '@privy-io/react-auth/solana'
 
 export type LpSwapProgram = Program<MxlpSwap>
 
 export function useAnchorProgram<T extends Idl>(idl: any, connection?: Connection) {
   const { connection: connectionFallback } = useConnection()
   const activeConnection = connection ?? connectionFallback
-  const wallets = useConnectedStandardWallets()
+  const wallets = useStandardWallets()
   const activeWallet = wallets.wallets[0]
   const { signTransaction: signTransactionPrivy } = useStandardSignTransaction()
 

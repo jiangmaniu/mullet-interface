@@ -1,9 +1,10 @@
-import { usePrivy, useSolanaWallets, WalletWithMetadata } from '@privy-io/react-auth'
+import { usePrivy, useWallets, WalletWithMetadata } from '@privy-io/react-auth'
+import { useExportWallet } from '@privy-io/react-auth/solana'
 import Button from '../Base/Button'
 
 export default function ExportWalletButton() {
   const { ready, authenticated, user } = usePrivy()
-  const { exportWallet } = useSolanaWallets()
+  const { exportWallet } = useExportWallet()
   // Check that your user is authenticated
   const isAuthenticated = ready && authenticated
   // Check that your user has an embedded wallet

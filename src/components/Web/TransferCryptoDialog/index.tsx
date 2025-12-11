@@ -28,7 +28,17 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const { token } = antdTheme.useToken()
   const { getAccessToken, user } = usePrivy()
   const { wallets } = useWallets()
-  const { sendTransaction } = useSendTransaction() // Privy Gas 赞助
+  
+  // Privy v3.8+ Ethereum Gas 赞助
+  const { sendTransaction } = useSendTransaction({
+    onSuccess: (txReceipt) => {
+      console.log('[Privy] ✅ Ethereum transaction successful:', txReceipt)
+    },
+    onError: (error) => {
+      console.error('[Privy] ❌ Ethereum transaction failed:', error)
+    }
+  })
+  
   const { trade } = useStores()
   
   // TRON 钱包自动创建和管理
@@ -284,16 +294,23 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           amount: tronResult.dstChainTokenOutAmount,
           solanaAddress: solWallet.address,
           privyWallet: ethWallet,
-          sendTransaction // Privy Gas 赞助函数
+          sendTransaction // Privy v3.8 Gas 赞助
         })
 
         message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
         console.log('[Bridge] ETH tx:', ethResult.txHash)
+        console.log('[Bridge] Order ID:', ethResult.orderId || 'NOT_AVAILABLE')
 
-        // 等待最终确认
+        // 等待最终确认（如果有 orderId）
         if (ethResult.orderId) {
           message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
           await debridgeService.waitForOrderCompletion(ethResult.orderId)
+          console.log('[Bridge] ✅ waitForOrderCompletion completed for TRON→ETH→SOL')
+        } else {
+          console.warn('[Bridge] ⚠️ No orderId, waiting 2.5 minutes for bridge to complete...')
+          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          await new Promise(resolve => setTimeout(resolve, 150_000)) // 2.5 分钟
+          console.log('[Bridge] ✅ Manual wait completed for TRON→ETH→SOL')
         }
       } else if (chain === 'Ethereum') {
         // Ethereum → Solana 直接桥接
@@ -309,29 +326,47 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           amount,
           solanaAddress: solWallet.address,
           privyWallet: ethWallet,
-          sendTransaction // Privy Gas 赞助函数
+          sendTransaction // Privy v3.8 Gas 赞助
         })
 
         message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
         console.log('[Bridge] ETH tx:', ethResult.txHash)
+        console.log('[Bridge] Order ID:', ethResult.orderId || 'NOT_AVAILABLE')
 
-        // 等待最终确认
+        // 等待最终确认（如果有 orderId）
         if (ethResult.orderId) {
           message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
           await debridgeService.waitForOrderCompletion(ethResult.orderId)
+          console.log('[Bridge] ✅ waitForOrderCompletion completed for ETH→SOL')
+        } else {
+          console.warn('[Bridge] ⚠️ No orderId, waiting 2.5 minutes for bridge to complete...')
+          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          await new Promise(resolve => setTimeout(resolve, 150_000)) // 2.5 分钟
+          console.log('[Bridge] ✅ Manual wait completed for ETH→SOL')
         }
       }
+
+      console.log('[Bridge] 🔔 Starting backend notification process...')
 
       // 通知后端跨链成功（带重试机制）
       try {
         const bridgePath = chain === 'Tron' ? 'TRON → ETH → SOL' : 'ETH → SOL'
         console.log(`[Bridge] ✅ ${bridgePath} bridge completed successfully!`)
         console.log('[Bridge] Notifying backend of successful cross-chain transfer...')
+        console.log('[Bridge] Current trade info:', {
+          hasAccountInfo: !!trade.currentAccountInfo,
+          pdaTokenAddress: trade.currentAccountInfo?.pdaTokenAddress,
+          amount,
+          token,
+          chain
+        })
         
-        // 使用后端账户信息中的 Solana 地址（不是 Privy 钱包地址）
-        const targetAddress = trade.currentAccountInfo?.address
+        // 使用后端账户信息中的 Solana PDA 地址（不是 Privy 钱包地址）
+        const targetAddress = trade.currentAccountInfo?.pdaTokenAddress
         if (!targetAddress) {
-          console.warn('[Bridge] ⚠️ Backend account address not found, skipping notification')
+          console.error('[Bridge] ❌ Backend PDA token address not found!')
+          console.error('[Bridge] trade.currentAccountInfo:', trade.currentAccountInfo)
+          message.warning('⚠️ 无法获取后端 PDA 地址，请手动刷新余额')
         } else {
           const notifyUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${targetAddress}&amount=${amount}`
           
@@ -343,6 +378,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
             token
           })
           
+          message.loading('正在通知后端更新余额...', 0)
+          
           // 重试机制：最多重试 3 次
           let retryCount = 0
           const maxRetries = 3
@@ -351,10 +388,13 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           while (retryCount < maxRetries && !notifySuccess) {
             try {
               if (retryCount > 0) {
-                console.log(`[Bridge] Retry attempt ${retryCount}/${maxRetries}...`)
+                console.log(`[Bridge] 🔄 Retry attempt ${retryCount}/${maxRetries}...`)
                 // 等待 2 秒后重试
                 await new Promise(resolve => setTimeout(resolve, 2000))
               }
+              
+              console.log(`[Bridge] 📡 Sending notification (attempt ${retryCount + 1}/${maxRetries})...`)
+              console.log(`[Bridge] 📡 URL: ${notifyUrl}`)
               
               const notifyResponse = await fetch(notifyUrl, {
                 method: 'GET',
@@ -364,13 +404,16 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                 signal: AbortSignal.timeout(10000) // 10秒超时
               })
 
+              console.log(`[Bridge] 📡 Response status: ${notifyResponse.status}`)
+
               if (notifyResponse.ok) {
                 // 验证返回数据格式
                 const responseData = await notifyResponse.json()
-                console.log('[Bridge] Backend response:', responseData)
+                console.log('[Bridge] 📡 Backend response:', responseData)
                 
                 if (responseData.code === 200 && responseData.success === true) {
                   console.log('[Bridge] ✅ Backend notification sent successfully')
+                  message.success('✅ 后端余额已更新')
                   notifySuccess = true
                 } else {
                   console.warn(`[Bridge] ⚠️ Backend returned error (attempt ${retryCount + 1}/${maxRetries}):`, responseData.msg || 'Unknown error')
@@ -378,7 +421,11 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                 }
               } else {
                 const errorText = await notifyResponse.text()
-                console.warn(`[Bridge] ⚠️ Backend notification failed (attempt ${retryCount + 1}/${maxRetries}):`, notifyResponse.status, errorText)
+                console.error(`[Bridge] ❌ Backend notification failed (attempt ${retryCount + 1}/${maxRetries}):`, {
+                  status: notifyResponse.status,
+                  statusText: notifyResponse.statusText,
+                  error: errorText
+                })
                 retryCount++
               }
             } catch (fetchError) {
@@ -389,6 +436,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           
           if (!notifySuccess) {
             console.error('[Bridge] ❌ Backend notification failed after 3 attempts')
+            message.error('⚠️ 后端通知失败，请手动刷新余额')
           }
         }
       } catch (error) {
