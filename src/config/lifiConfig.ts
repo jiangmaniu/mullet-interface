@@ -4,6 +4,8 @@
  * 用于支持多链跨链桥接功能
  */
 
+import { ChainId } from '@lifi/sdk';
+
 // LiFi integrator configurations - rotate between multiple accounts to avoid rate limits
 export const LIFI_INTEGRATORS = [
   { name: 'm1', apiKey: '0c0399a9-61bb-401b-9ccd-88de4b22e9c0.fd2cc714-1e85-438e-98d6-91e7a044b226' },
@@ -115,4 +117,8 @@ export const SUPPORTED_TOKENS = {
       decimals: 6
     }
   ]
-} as const
+}
+
+// Chain ID constants from LiFi SDK
+export const ETHEREUM_CHAIN_ID = ChainId.ETH;
+export const SOLANA_CHAIN_ID = ChainId.SOL;

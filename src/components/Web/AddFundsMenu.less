@@ -1,0 +1,53 @@
+.add-funds-menu {
+  .ant-modal-header {
+    border-bottom: none;
+    padding-bottom: 8px;
+  }
+
+  .ant-modal-body {
+    padding-top: 0;
+  }
+
+  .ant-btn {
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-color: #1890ff;
+    }
+  }
+}
+
+.swap-dialog {
+  .ant-modal-body {
+    padding: 24px;
+  }
+
+  .ant-select-selector {
+    border-radius: 8px !important;
+  }
+
+  .ant-input {
+    &:focus,
+    &:hover {
+      border-color: transparent !important;
+      box-shadow: none !important;
+    }
+  }
+
+  .ant-btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #5568d3 0%, #63408b 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    &:disabled {
+      background: #d9d9d9;
+    }
+  }
+}
