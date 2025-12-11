@@ -36,6 +36,8 @@ const Step2 = ({
   const actualAmount = Form.useWatch('actualAmount', form)
   const exchangeRate = Form.useWatch('exchangeRate', form)
   const fromAccountId = Form.useWatch('fromAccountId', form)
+  const targetChain = Form.useWatch('targetChain', form) // 目标链
+  const toAccountId = Form.useWatch('toAccountId', form) // 目标地址
 
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
@@ -61,12 +63,28 @@ const Step2 = ({
               value: symbol
             },
             {
-              label: getIntl().formatMessage({ id: 'mt.lianmingcheng' }),
-              value: chain
+              label: '目标链',
+              value: targetChain
             },
             {
               label: getIntl().formatMessage({ id: 'mt.tibidizhi' }),
-              value: fromAccountId
+              value: toAccountId,
+              render: () => {
+                return (
+                  <div className="flex items-center gap-2">
+                    <span className="flex-shrink-0 max-w-[200px]">{toAccountId}</span>
+                    <Iconfont
+                      name="a-bianzu3beifen2"
+                      color="black"
+                      width={18}
+                      height={18}
+                      onClick={() => {
+                        copyToClipboard(toAccountId || '')
+                      }}
+                    />
+                  </div>
+                )
+              }
             }
           ]
         : []),
@@ -239,6 +257,8 @@ const Step2 = ({
             <ProFormText name="fromAccountId" hidden />
             <ProFormText name="bankCard" hidden />
             <ProFormText name="bankName" hidden />
+            <ProFormText name="targetChain" hidden />
+            <ProFormText name="toAccountId" hidden />
             <div className="flex flex-col gap-6 mt-6">
               <span className="text-primary font-medium text-sm">
                 <FormattedMessage id="mt.shoukuanxinxi" />

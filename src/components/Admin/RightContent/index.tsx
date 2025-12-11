@@ -165,23 +165,10 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   return (
     <div className="flex items-center">
       <div className="flex items-center md:gap-x-[26px] md:mr-[28px] sm:gap-x-3 sm:mr-4 gap-x-2 mr-1">
-        {/* Add Funds - 显示菜单 */}
+        {/* 入金 - 打开 Add Funds 菜单 */}
         <Button
           onClick={() => {
             setShowAddFundsMenu(true)
-          }}
-          type="primary"
-          disabled={!hasWallet}
-        >
-          <div className="flex flex-row gap-1.5 items-center">
-            <Iconfont name="jiahao" width={16} height={16} />
-            <span>Add Funds</span>
-          </div>
-        </Button>
-        {/* 入金 - 内部充值 */}
-        <Button
-          onClick={() => {
-            depositModalRef.current?.show()
           }}
           type="default"
           disabled={!hasWallet}

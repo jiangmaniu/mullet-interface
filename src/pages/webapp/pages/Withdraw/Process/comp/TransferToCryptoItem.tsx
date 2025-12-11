@@ -1,6 +1,6 @@
 import { ProForm } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { AutoComplete, FormInstance } from 'antd'
+import { AutoComplete, FormInstance, Select, Space, Avatar } from 'antd'
 import { useLayoutEffect, useState } from 'react'
 
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
@@ -8,6 +8,8 @@ import { stores } from '@/context/mobxProvider'
 import { getWithdrawalAddressList } from '@/services/api/wallet'
 import { push } from '@/utils/navigator'
 import { observer } from 'mobx-react'
+import { SUPPORTED_BRIDGE_CHAINS } from '@/config/lifiConfig'
+import { CHAIN_ICONS } from '@/config/tokenIcons'
 
 type IProps = {
   form: FormInstance
@@ -18,6 +20,7 @@ function TransferToCryptoItem({ form }: IProps) {
   const intl = useIntl()
 
   const [searchValue, setSearchValue] = useState('')
+  const [selectedChain, setSelectedChain] = useState('Solana') // 默认 Solana（不需要桥接）
 
   const handleSearch = (value: string) => {
     setSearchValue(value)
@@ -57,6 +60,37 @@ function TransferToCryptoItem({ form }: IProps) {
 
   return (
     <div className="relative">
+      {/* 目标链选择 */}
+      <ProForm.Item
+        label={
+          <span className="text-sm text-primary font-medium">
+            目标链
+          </span>
+        }
+        name="targetChain"
+        initialValue="Solana"
+      >
+        <Select 
+          value={selectedChain} 
+          onChange={(value) => {
+            setSelectedChain(value)
+            form.setFieldValue('targetChain', value)
+          }} 
+          style={{ width: '100%' }} 
+          size="large"
+        >
+          {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
+            <Select.Option key={chain.name} value={chain.name}>
+              <Space>
+                <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
+                {chain.name}
+              </Space>
+            </Select.Option>
+          ))}
+        </Select>
+      </ProForm.Item>
+
+      {/* 目标地址 */}
       <ProForm.Item
         addonWarpStyle={{}}
         label={
@@ -103,7 +137,13 @@ function TransferToCryptoItem({ form }: IProps) {
             }}
             options={bankList} // 设置自动完成的选项
             onSearch={handleSearch} // 监听搜索事件
-            placeholder={intl.formatMessage({ id: 'mt.shurudizhi' })}
+            placeholder={
+              selectedChain === 'Ethereum' 
+                ? '请输入 Ethereum 地址 (以 0x 开头)' 
+                : selectedChain === 'Tron'
+                ? '请输入 Tron 地址 (以 T 开头)'
+                : '请输入 Solana 地址'
+            }
           />
 
           <div className="absolute bottom-[5px] right-2 flex flex-row items-center gap-2 z-10">
