@@ -487,7 +487,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   }
 
   return (
-    <Modal title="Add Funds - Transfer Crypto" open={open} onCancel={onClose} footer={null} width={500} className="transfer-crypto-dialog">
+    <Modal title="Transfer Crypto" open={open} onCancel={onClose} footer={null} width={500} className="transfer-crypto-dialog">
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Session Signer 授权提示 */}
         {tronAddress && !isSessionSignerAdded && !isCheckingSessionSigner && (
