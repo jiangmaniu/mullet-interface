@@ -1,8 +1,8 @@
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useStores } from '@/context/mobxProvider'
 import { message } from '@/utils/message'
-import { useSolanaWallets } from '@privy-io/react-auth'
-import { useSendTransaction } from '@privy-io/react-auth/solana'
+import { useWallets } from '@privy-io/react-auth'
+import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
 import {
   TOKEN_PROGRAM_ID,
   createAssociatedTokenAccountInstruction,
@@ -32,9 +32,9 @@ export default function useSPLTransfer() {
   const intl = useIntl()
   const { connection, connected } = useConnection()
   const { wallet } = usePrivyInfo()
-  const { wallets } = useSolanaWallets()
+  const { wallets } = useWallets()
   const fromAddress = wallet?.address as string
-  const { sendTransaction } = useSendTransaction()
+  const { signAndSendTransaction } = useSignAndSendTransaction()
   const [transferLoading, setTransferLoading] = useState(false)
   const [transferSuccess, setTransferSuccess] = useState(false)
   const { showNotice } = useNotice()
@@ -170,8 +170,8 @@ export default function useSPLTransfer() {
       if (foundWallet && foundWallet.connectorType !== 'embedded') {
         signature = await foundWallet.sendTransaction(transaction, connection)
       } else {
-        // 如果钱包是内置钱包，则使用自定义的签名方法
-        const result = await sendTransaction({ transaction, connection, address: fromAddress })
+        // 如果钱包是内置钱包，则使用 Privy v3.8+ 的签名方法
+        const result = await signAndSendTransaction({ transaction, connection, address: fromAddress })
         signature = result?.signature
       }
 

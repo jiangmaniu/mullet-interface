@@ -1,6 +1,6 @@
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { message } from '@/utils/message'
-import { useSolanaWallets } from '@privy-io/react-auth'
+import { useWallets } from '@privy-io/react-auth'
 import { useSendTransaction } from '@privy-io/react-auth/solana'
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionSignature } from '@solana/web3.js'
 import { useIntl } from '@umijs/max'
@@ -21,7 +21,7 @@ export default function useSoLTransfer() {
   const intl = useIntl()
   const { connection, connected } = useConnection()
   const { wallet } = usePrivyInfo()
-  const { wallets } = useSolanaWallets()
+  const { wallets } = useWallets()
   const fromAddress = wallet?.address as string
   const { sendTransaction } = useSendTransaction()
   const [transferLoading, setTransferLoading] = useState(false)

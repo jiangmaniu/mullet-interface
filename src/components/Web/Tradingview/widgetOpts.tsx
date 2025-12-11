@@ -126,7 +126,7 @@ export default function getWidgetOpts(
     // 	}
     // ),
 
-    symbol: props.symbol, // 品种
+    symbol: props.symbol || 'XAUUSD', // 品种，提供默认值
     client_id: ENV.name, // 设置高级保存/加载图表 API 的客户端 ID
     user_id: 'public_user_id', // 设置高级保存/加载图表 API 的用户 ID。
     locale: props.locale as LanguageCode, // 设置语言

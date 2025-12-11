@@ -1,5 +1,5 @@
 import { usePrivy } from '@privy-io/react-auth'
-import { useConnectedStandardWallets } from '@privy-io/react-auth/solana'
+import { useStandardWallets } from '@privy-io/react-auth/solana'
 
 export const useUserWallet = () => {
   const { user } = usePrivy()
@@ -8,7 +8,7 @@ export const useUserWallet = () => {
 }
 
 export const useUserConnectedWallet = () => {
-  const { wallets } = useConnectedStandardWallets()
+  const { wallets } = useStandardWallets()
   const wallet = wallets[0]
   return wallet
 }

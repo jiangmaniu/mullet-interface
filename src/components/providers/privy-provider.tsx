@@ -22,6 +22,7 @@ export const PrivyProvider = ({ children }: IProps) => {
         clientId={PRIVY_CLIENT_ID}
         config={{
           appearance: {
+            logo: '/platform/mullet-logo.png',
             showWalletLoginFirst: false,
             walletChainType: 'solana-only',
             landingHeader: '',
@@ -47,7 +48,7 @@ export const PrivyProvider = ({ children }: IProps) => {
               createOnLogin: 'users-without-wallets'
             },
             ethereum: {
-              createOnLogin: 'off'
+              createOnLogin: 'users-without-wallets'  // 🔥 改为自动创建
             }
           }
         }}

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar } from 'antd'
+import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
-import { usePrivy, useWallets } from '@privy-io/react-auth'
+import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { debridgeService } from '@/services/debridgeService'
 import { useDepositListener } from '@/hooks/useDepositListener'
 import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
+import { useTronWallet } from '@/hooks/useTronWallet'
+import { useSessionSigner } from '@/hooks/useSessionSigner'
 import './index.less'
 
 const { Text } = Typography
@@ -23,9 +25,32 @@ interface TransferCryptoDialogProps {
  * 支持 TRON / Ethereum / Solana 充值并自动桥接到 Solana
  */
 const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClose, onDepositDetected }) => {
+  const { token } = antdTheme.useToken()
   const { getAccessToken, user } = usePrivy()
   const { wallets } = useWallets()
+  
+  // Privy v3.8+ Ethereum Gas 赞助
+  const { sendTransaction } = useSendTransaction({
+    onSuccess: (txReceipt) => {
+      console.log('[Privy] ✅ Ethereum transaction successful:', txReceipt)
+    },
+    onError: (error) => {
+      console.error('[Privy] ❌ Ethereum transaction failed:', error)
+    }
+  })
+  
   const { trade } = useStores()
+  
+  // TRON 钱包自动创建和管理
+  const { tronAddress, tronWalletId, tronPublicKey, isCreating: isTronWalletCreating } = useTronWallet(true)
+  
+  // Session Signer 授权管理
+  const { 
+    isSessionSignerAdded, 
+    isChecking: isCheckingSessionSigner,
+    isAdding: isAddingSessionSigner, 
+    addSessionSigner 
+  } = useSessionSigner()
 
   const [selectedChain, setSelectedChain] = useState('Tron')
   const [selectedToken, setSelectedToken] = useState('USDT')
@@ -33,11 +58,23 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const [bridgeInProgress, setBridgeInProgress] = useState(false)
   const [bridgeStep, setBridgeStep] = useState<'idle' | 'tron-eth' | 'eth-sol' | 'completed'>('idle')
 
-  // 使用充值监听 hook
-  const { deposit, isListening, clearDeposit } = useDepositListener({
-    enabled: open,
+  // 获取所有链的钱包地址
+  const ethereumAccount = user?.linkedAccounts?.find(
+    (account: any) => account.type === 'wallet' && account.chainType === 'ethereum'
+  ) as any
+  
+  const solanaAccount = user?.linkedAccounts?.find(
+    (account: any) => account.type === 'wallet' && account.chainType === 'solana'
+  ) as any
+
+  // 使用充值监听 hook - 传递所有链的地址
+  const { deposit, isListening, clearDeposit, resetDetection } = useDepositListener({
+    enabled: open, // 简单：只要对话框打开就监听
     chains: [selectedChain as 'Tron' | 'Ethereum' | 'Solana'],
-    pollInterval: 5000
+    pollInterval: 5000,
+    tronAddress: tronAddress || undefined,
+    ethereumAddress: ethereumAccount?.address || undefined,
+    solanaAddress: solanaAccount?.address || undefined
   })
 
   // 获取钱包地址
@@ -55,17 +92,49 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
       const chainType = chainConfig.id // 'tron' | 'ethereum' | 'solana'
 
-      // 对于 Solana，使用 PDA 地址（与入金模块完全一致）
+      // 对于 Solana，使用 Privy 钱包地址（而不是 PDA）
+      // PDA 地址已注释，改用 Privy Solana 钱包
       if (chainType === 'solana') {
-        const pdaAddress = trade.currentAccountInfo?.pdaTokenAddress
-        if (pdaAddress) {
-          setDepositAddress(pdaAddress)
-          console.log(`[TransferCrypto] Using Solana PDA address:`, pdaAddress)
+        // 注释掉 PDA 地址逻辑
+        // const pdaAddress = trade.currentAccountInfo?.pdaTokenAddress
+        // if (pdaAddress) {
+        //   setDepositAddress(pdaAddress)
+        //   console.log(`[TransferCrypto] Using Solana PDA address:`, pdaAddress)
+        // } else {
+        //   console.warn(`[TransferCrypto] No PDA address found`)
+        //   setDepositAddress('')
+        // }
+        // return
+        
+        // 使用 Privy Solana 钱包地址
+        const solanaAccount = user?.linkedAccounts?.find(
+          (account: any) => account.type === 'wallet' && account.chainType === 'solana'
+        ) as any
+        
+        if (solanaAccount?.address) {
+          setDepositAddress(solanaAccount.address)
+          console.log(`[TransferCrypto] Using Privy Solana wallet:`, solanaAccount.address)
         } else {
-          console.warn(`[TransferCrypto] No PDA address found`)
+          console.warn(`[TransferCrypto] No Privy Solana wallet found`)
           setDepositAddress('')
         }
         return
+      }
+      
+      // 对于 TRON，优先使用 hook 返回的地址
+      if (chainType === 'tron') {
+        if (tronAddress) {
+          setDepositAddress(tronAddress)
+          console.log(`[TransferCrypto] Using TRON wallet from hook:`, tronAddress)
+          return
+        }
+        
+        // 如果 hook 还在创建中，等待
+        if (isTronWalletCreating) {
+          console.log(`[TransferCrypto] TRON wallet is being created...`)
+          setDepositAddress('')
+          return
+        }
       }
 
       // 其他链从 user.linkedAccounts 查找钱包
@@ -84,16 +153,38 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     }
 
     loadAddress()
-  }, [open, selectedChain, user, trade.currentAccountInfo])
+  }, [open, selectedChain, user, trade.currentAccountInfo, tronAddress, isTronWalletCreating])
+
+  // 对话框关闭时重置检测状态
+  useEffect(() => {
+    if (!open) {
+      resetDetection()
+    }
+  }, [open, resetDetection])
 
   // 检测到充值后自动触发桥接
   useEffect(() => {
+    console.log('[TransferCrypto] useEffect triggered:', { 
+      hasDeposit: !!deposit, 
+      bridgeInProgress,
+      depositData: deposit 
+    })
+    
     if (deposit && !bridgeInProgress) {
       console.log('[TransferCrypto] Deposit detected:', deposit)
       message.success(`Detected ${deposit.amount} ${deposit.token} on ${deposit.chain}!`)
 
-      // 触发桥接
-      handleAutoBridge(deposit.amount, deposit.token, deposit.chain)
+      // 触发桥接 - 使用 rawBalance（最小单位）
+      // rawBalance 是十六进制字符串，需要转换为十进制数字字符串
+      let amountToUse = deposit.amount
+      if (deposit.rawBalance && deposit.rawBalance.startsWith('0x')) {
+        amountToUse = BigInt(deposit.rawBalance).toString() // 转换为十进制字符串
+        console.log('[TransferCrypto] Converted rawBalance:', deposit.rawBalance, '→', amountToUse)
+      } else if (deposit.rawBalance) {
+        amountToUse = deposit.rawBalance
+      }
+      
+      handleAutoBridge(amountToUse, deposit.token, deposit.chain)
 
       // 清除检测记录
       clearDeposit()
@@ -105,6 +196,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const handleAutoBridge = async (amount: string, token: string, chain: string) => {
     try {
       setBridgeInProgress(true)
+      console.log('[Bridge] Starting with params:', { amount, token, chain, tronAddress, tronWalletId })
       message.loading('正在启动跨链桥接...', 0)
 
       // 从 user.linkedAccounts 获取钱包地址
@@ -112,12 +204,19 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       const ethAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'ethereum') as any
       const solAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'solana') as any
 
-      if (!tronAccount || !ethAccount || !solAccount) {
-        throw new Error('缺少必需的钱包。请确保已创建 Tron、Ethereum 和 Solana 钱包。')
+      // 使用 useTronWallet hook 的返回值
+      // publicKey 可能为 null（Privy Tier 2 限制），但后端签名不需要它
+      if (!tronAddress || !tronWalletId) {
+        console.error('[Bridge] Missing TRON wallet info:', { tronAddress, tronWalletId })
+        throw new Error('TRON 钱包信息不完整，请刷新页面重试')
+      }
+
+      if (!ethAccount || !solAccount) {
+        throw new Error('缺少必需的钱包。请确保已创建 Ethereum 和 Solana 钱包。')
       }
 
       // 构建钱包对象（兼容旧接口）
-      const tronWallet = { address: tronAccount.address }
+      const tronWallet = { address: tronAddress }
       const ethWallet = wallets.find((w) => (w as any).chainType === 'ethereum') || { address: ethAccount.address }
       const solWallet = { address: solAccount.address }
 
@@ -127,12 +226,16 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       }
 
       // 检查最低金额：Tron $20, Ethereum $3
-      const minAmount = chain === 'Tron' ? 20 : chain === 'Ethereum' ? 3 : 10
-      const depositAmount = typeof amount === 'string' ? parseFloat(amount) : amount
+      // amount 是最小单位格式（如 USDT: 20000000 = 20 USD）
+      const minAmountUSD = chain === 'Tron' ? 20 : chain === 'Ethereum' ? 3 : 10
+      const minAmountSmallestUnit = minAmountUSD * 1_000_000 // 转换为最小单位
+      
+      const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount
 
-      if (depositAmount < minAmount) {
+      if (amountNum < minAmountSmallestUnit) {
+        const amountUSD = amountNum / 1_000_000
         throw new Error(
-          `金额过小。最低金额: $${minAmount} USD，当前金额: $${depositAmount.toFixed(
+          `金额过小。最低金额: $${minAmountUSD} USD，当前金额: $${amountUSD.toFixed(
             2
           )} USD。跨链桥接有固定费用约 $2-3，小额转账费用占比过高。`
         )
@@ -147,15 +250,11 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         const tronTokenInfo = SUPPORTED_TOKENS.tron.find((t) => t.symbol === token)
         if (!tronTokenInfo) throw new Error(`Token ${token} 在 Tron 上不受支持`)
 
-        // 使用已有的 tronAccount
-        const tronWalletId = tronAccount.walletId || tronAccount.id
-        const tronPublicKey = tronAccount.publicKey
-
-        if (!tronWalletId || !tronPublicKey) {
-          throw new Error('TRON 钱包缺少 ID 或公钥信息')
-        }
-
-        console.log('[Bridge] TRON wallet info:', { walletId: tronWalletId, hasPublicKey: !!tronPublicKey })
+        console.log('[Bridge] TRON wallet info:', { 
+          walletId: tronWalletId, 
+          publicKey: tronPublicKey?.slice(0, 10) + '...', 
+          address: tronAddress 
+        })
 
         const tronResult = await debridgeService.bridgeTronToEthereum({
           tokenAddress: tronTokenInfo.address,
@@ -163,7 +262,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           fromAddress: tronWallet.address,
           ethereumAddress: ethWallet.address,
           walletId: tronWalletId,
-          publicKey: tronPublicKey,
+          publicKey: tronPublicKey || '', // 允许空字符串，后端不需要此参数
           accessToken,
           useGasSponsorship: true
         })
@@ -171,6 +270,11 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         message.success(`✅ TRON 交易成功: ${tronResult.txHash.slice(0, 8)}...`)
         console.log('[Bridge] TRON tx:', tronResult.txHash)
         console.log('[Bridge] Order ID:', tronResult.orderId)
+        console.log('[Bridge] Full TRON result:', tronResult)
+
+        if (!tronResult.orderId) {
+          throw new Error('❌ deBridge 未返回 Order ID，无法继续桥接。请检查交易状态或联系支持。')
+        }
 
         // 等待订单完成
         message.loading('等待 TRON → Ethereum 桥接完成 (约 3-5 分钟)...', 0)
@@ -189,16 +293,24 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           tokenAddress: ethTokenInfo.address,
           amount: tronResult.dstChainTokenOutAmount,
           solanaAddress: solWallet.address,
-          privyWallet: ethWallet
+          privyWallet: ethWallet,
+          sendTransaction // Privy v3.8 Gas 赞助
         })
 
         message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
         console.log('[Bridge] ETH tx:', ethResult.txHash)
+        console.log('[Bridge] Order ID:', ethResult.orderId || 'NOT_AVAILABLE')
 
-        // 等待最终确认
+        // 等待最终确认（如果有 orderId）
         if (ethResult.orderId) {
           message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
           await debridgeService.waitForOrderCompletion(ethResult.orderId)
+          console.log('[Bridge] ✅ waitForOrderCompletion completed for TRON→ETH→SOL')
+        } else {
+          console.warn('[Bridge] ⚠️ No orderId, waiting 2.5 minutes for bridge to complete...')
+          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          await new Promise(resolve => setTimeout(resolve, 150_000)) // 2.5 分钟
+          console.log('[Bridge] ✅ Manual wait completed for TRON→ETH→SOL')
         }
       } else if (chain === 'Ethereum') {
         // Ethereum → Solana 直接桥接
@@ -213,17 +325,123 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           tokenAddress: ethTokenInfo.address,
           amount,
           solanaAddress: solWallet.address,
-          privyWallet: ethWallet
+          privyWallet: ethWallet,
+          sendTransaction // Privy v3.8 Gas 赞助
         })
 
         message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
         console.log('[Bridge] ETH tx:', ethResult.txHash)
+        console.log('[Bridge] Order ID:', ethResult.orderId || 'NOT_AVAILABLE')
 
-        // 等待最终确认
+        // 等待最终确认（如果有 orderId）
         if (ethResult.orderId) {
           message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
           await debridgeService.waitForOrderCompletion(ethResult.orderId)
+          console.log('[Bridge] ✅ waitForOrderCompletion completed for ETH→SOL')
+        } else {
+          console.warn('[Bridge] ⚠️ No orderId, waiting 2.5 minutes for bridge to complete...')
+          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          await new Promise(resolve => setTimeout(resolve, 150_000)) // 2.5 分钟
+          console.log('[Bridge] ✅ Manual wait completed for ETH→SOL')
         }
+      }
+
+      console.log('[Bridge] 🔔 Starting backend notification process...')
+
+      // 通知后端跨链成功（带重试机制）
+      try {
+        const bridgePath = chain === 'Tron' ? 'TRON → ETH → SOL' : 'ETH → SOL'
+        console.log(`[Bridge] ✅ ${bridgePath} bridge completed successfully!`)
+        console.log('[Bridge] Notifying backend of successful cross-chain transfer...')
+        console.log('[Bridge] Current trade info:', {
+          hasAccountInfo: !!trade.currentAccountInfo,
+          pdaTokenAddress: trade.currentAccountInfo?.pdaTokenAddress,
+          amount,
+          token,
+          chain
+        })
+        
+        // 使用后端账户信息中的 Solana PDA 地址（不是 Privy 钱包地址）
+        const targetAddress = trade.currentAccountInfo?.pdaTokenAddress
+        if (!targetAddress) {
+          console.error('[Bridge] ❌ Backend PDA token address not found!')
+          console.error('[Bridge] trade.currentAccountInfo:', trade.currentAccountInfo)
+          message.warning('⚠️ 无法获取后端 PDA 地址，请手动刷新余额')
+        } else {
+          const notifyUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${targetAddress}&amount=${amount}`
+          
+          console.log('[Bridge] Notification details:', {
+            path: bridgePath,
+            url: notifyUrl,
+            targetAddress,
+            amount,
+            token
+          })
+          
+          message.loading('正在通知后端更新余额...', 0)
+          
+          // 重试机制：最多重试 3 次
+          let retryCount = 0
+          const maxRetries = 3
+          let notifySuccess = false
+          
+          while (retryCount < maxRetries && !notifySuccess) {
+            try {
+              if (retryCount > 0) {
+                console.log(`[Bridge] 🔄 Retry attempt ${retryCount}/${maxRetries}...`)
+                // 等待 2 秒后重试
+                await new Promise(resolve => setTimeout(resolve, 2000))
+              }
+              
+              console.log(`[Bridge] 📡 Sending notification (attempt ${retryCount + 1}/${maxRetries})...`)
+              console.log(`[Bridge] 📡 URL: ${notifyUrl}`)
+              
+              const notifyResponse = await fetch(notifyUrl, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                signal: AbortSignal.timeout(10000) // 10秒超时
+              })
+
+              console.log(`[Bridge] 📡 Response status: ${notifyResponse.status}`)
+
+              if (notifyResponse.ok) {
+                // 验证返回数据格式
+                const responseData = await notifyResponse.json()
+                console.log('[Bridge] 📡 Backend response:', responseData)
+                
+                if (responseData.code === 200 && responseData.success === true) {
+                  console.log('[Bridge] ✅ Backend notification sent successfully')
+                  message.success('✅ 后端余额已更新')
+                  notifySuccess = true
+                } else {
+                  console.warn(`[Bridge] ⚠️ Backend returned error (attempt ${retryCount + 1}/${maxRetries}):`, responseData.msg || 'Unknown error')
+                  retryCount++
+                }
+              } else {
+                const errorText = await notifyResponse.text()
+                console.error(`[Bridge] ❌ Backend notification failed (attempt ${retryCount + 1}/${maxRetries}):`, {
+                  status: notifyResponse.status,
+                  statusText: notifyResponse.statusText,
+                  error: errorText
+                })
+                retryCount++
+              }
+            } catch (fetchError) {
+              console.error(`[Bridge] ❌ Notification request failed (attempt ${retryCount + 1}/${maxRetries}):`, fetchError)
+              retryCount++
+            }
+          }
+          
+          if (!notifySuccess) {
+            console.error('[Bridge] ❌ Backend notification failed after 3 attempts')
+            message.error('⚠️ 后端通知失败，请手动刷新余额')
+          }
+        }
+      } catch (error) {
+        console.error('[Bridge] ❌ Failed to notify backend:', error)
+        // 不抛出错误，因为跨链已经成功，只是通知失败
       }
 
       // 通知完成
@@ -269,8 +487,35 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   }
 
   return (
-    <Modal title="Add Funds - Transfer Crypto" open={open} onCancel={onClose} footer={null} width={500} className="transfer-crypto-dialog">
+    <Modal title="Transfer Crypto" open={open} onCancel={onClose} footer={null} width={500} className="transfer-crypto-dialog">
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        {/* Session Signer 授权提示 */}
+        {tronAddress && !isSessionSignerAdded && !isCheckingSessionSigner && (
+          <Alert
+            message="Server Signing Not Enabled"
+            description={
+              <Space direction="vertical" size="small" style={{ width: '100%' }}>
+                <Text style={{ fontSize: 13 }}>
+                  To enable automated TRON transactions, please authorize server signing. 
+                  This allows our backend to sign transactions on your behalf for seamless bridging.
+                </Text>
+                <Button 
+                  type="primary" 
+                  onClick={addSessionSigner}
+                  loading={isAddingSessionSigner}
+                  size="small"
+                  style={{ marginTop: 4 }}
+                >
+                  {isAddingSessionSigner ? 'Authorizing...' : 'Authorize Server Signing'}
+                </Button>
+              </Space>
+            }
+            type="warning"
+            showIcon
+            style={{ marginBottom: 8 }}
+          />
+        )}
+
         {/* 链选择 */}
         <div>
           <Text strong>Select Chain</Text>
@@ -311,7 +556,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
             {/* QR Code - 无黑框 */}
             <div style={{ textAlign: 'center', marginTop: 8 }}>
               <div style={{ position: 'relative', display: 'inline-block' }}>
-                <QRCode value={depositAddress} size={180} />
+                <QRCode value={depositAddress} size={180} bgColor={token.colorBgContainer} />
                 {/* 链图标叠加 */}
                 <div
                   style={{
@@ -321,7 +566,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                     transform: 'translate(-50%, -50%)',
                     width: 40,
                     height: 40,
-                    background: 'white',
+                    background: token.colorBgContainer,
                     borderRadius: '50%',
                     padding: 6,
                     display: 'flex',
@@ -365,17 +610,20 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         )}
 
         {/* 状态显示 */}
-        {isListening && depositAddress && (
-          <div style={{ padding: 12, background: '#e6f7ff', border: '1px solid #91d5ff', borderRadius: 4 }}>
+        {isListening && depositAddress && !bridgeInProgress && (
+          <div style={{ padding: 12, background: token.colorInfoBg, border: `1px solid ${token.colorInfoBorder}`, borderRadius: 4 }}>
             <Space>
               <Spin size="small" />
               <Text>Monitoring deposits...</Text>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                ({selectedChain} - {depositAddress.slice(0, 6)}...{depositAddress.slice(-4)})
+              </Text>
             </Space>
           </div>
         )}
 
         {bridgeInProgress && (
-          <div style={{ padding: 12, background: '#fff7e6', border: '1px solid #ffd591', borderRadius: 4 }}>
+          <div style={{ padding: 12, background: token.colorWarningBg, border: `1px solid ${token.colorWarningBorder}`, borderRadius: 4 }}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <Space>
                 <Spin size="small" />
@@ -401,7 +649,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         )}
 
         {/* 说明 */}
-        <div style={{ padding: 12, background: '#f0f2f5', borderRadius: 4 }}>
+        <div style={{ padding: 12, background: token.colorBgLayout, borderRadius: 4 }}>
           <Text type="secondary" style={{ fontSize: 12 }}>
             • 发送 {selectedToken} 到上面的地址
             <br />• 最低充值金额: ${SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)?.minDeposit || 10}

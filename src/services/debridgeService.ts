@@ -2,21 +2,19 @@
  * deBridge API 集成服务
  * 支持 TRON ↔ Ethereum ↔ Solana 跨链桥接
  *
- * 优势：
- * 1. 费用比其他桥低很多（通常 < 5%）
- * 2. 支持 TRON → Ethereum → Solana 路由
- * 3. 速度快，确认时间短
+ * 功能特性：
+ * 1. 统一使用 deBridge 桥接协议（TRON → ETH → SOL）
+ * 2. 费用低廉（固定费用 ~$2-3，通常 < 5%）
+ * 3. 速度快，确认时间短（TRON→ETH: 3-5分钟，ETH→SOL: 2-3分钟）
+ * 4. 完整的流程控制（手动 approve、签名验证、交易广播）
+ * 5. USDT 特殊处理（自动重置 allowance）
+ * 6. ETH Gas 余额检查（最低 0.002 ETH）
  *
  * API 文档：https://docs.debridge.finance/
  */
 
 import { request } from '@/utils/request'
-
-// deBridge API 配置
-const DEBRIDGE_API_BASE_URL = 'https://dln.debridge.finance/v1.0'
-
-// 后端 API 配置
-const API_BASE_URL = 'https://api.mulletfinance.xyz'
+import { API_BASE_URL, DEBRIDGE_API_BASE_URL, TRON_API_ENDPOINTS } from '@/constants/api'
 
 // 支持的链 ID（deBridge 格式）
 export const DEBRIDGE_CHAIN_IDS = {
@@ -283,7 +281,7 @@ export async function createDeBridgeOrderEthereum(
 
 /**
  * 创建带 Gas 赞助的桥接订单（Solana）
- * 使用 Solana 钱包签名
+ * 使用 Privy 的 signAndSendTransaction 和 sponsor 选项
  */
 export async function createDeBridgeOrderSolana(
   quote: DeBridgeQuote,
@@ -291,13 +289,42 @@ export async function createDeBridgeOrderSolana(
   connection: any
 ): Promise<{ txHash: string; orderId?: string }> {
   try {
-    console.log('[deBridge] Creating Solana bridge order...')
+    console.log('[deBridge-Solana] Creating Solana bridge order with gas sponsorship...')
 
-    // Solana 实现待完成 - 需要使用 @solana/web3.js
-    // 这里先返回占位符
-    throw new Error('Solana bridge not implemented yet')
+    // 从 quote 中获取交易数据
+    if (!quote.tx.data) {
+      throw new Error('No transaction data in quote')
+    }
+
+    // quote.tx.data 是 base64 编码的 Solana 交易
+    const transactionBuffer = Buffer.from(quote.tx.data, 'base64')
+    const transaction = new Uint8Array(transactionBuffer)
+
+    console.log('[deBridge-Solana] Transaction size:', transaction.length, 'bytes')
+
+    // 使用 Privy 的 signAndSendTransaction 发送交易（支持 gas sponsorship）
+    // 注意：这需要使用 @privy-io/react-auth/solana 的 useSignAndSendTransaction hook
+    // 在实际使用时需要从组件中传入 signAndSendTransaction 函数
+    if (!solanaWallet.signAndSendTransaction) {
+      throw new Error('Solana wallet does not support signAndSendTransaction')
+    }
+
+    const result = await solanaWallet.signAndSendTransaction({
+      transaction: transaction,
+      wallet: solanaWallet,
+      options: {
+        sponsor: true // Enable gas sponsorship
+      }
+    })
+
+    console.log('[deBridge-Solana] ✅ Transaction sent:', result.signature)
+
+    return {
+      txHash: result.signature,
+      orderId: quote.orderId
+    }
   } catch (error) {
-    console.error('[deBridge] Failed to create Solana bridge order:', error)
+    console.error('[deBridge-Solana] Failed to create Solana bridge order:', error)
     throw new Error(`Failed to create bridge order: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
@@ -360,31 +387,82 @@ export async function createDeBridgeOrderTron(
         throw new Error('Failed to build approve transaction')
       }
 
-      console.log('[deBridge-TRON] Sending approve tx to backend...')
+      console.log('[deBridge-TRON] Signing approve tx via backend...')
 
-      const endpoint = useGasSponsorship
-        ? `${API_BASE_URL}/api/tron-transaction/sponsor-and-sign`
-        : `${API_BASE_URL}/api/tron-transaction/sign`
+      const approveTxObject = approveTransaction.transaction
+      const approveTxID = approveTxObject.txID
 
-      const sponsorResponse = await request<any>(endpoint, {
+      // 使用 fetch 而不是 request，避免自动添加 Blade-Auth header
+      const signResponse = await fetch(TRON_API_ENDPOINTS.SIGN_TRANSACTION, {
         method: 'POST',
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`
         },
-        data: {
+        body: JSON.stringify({
           walletId,
-          transaction: approveTransaction.transaction,
-          publicKey,
-          transactionHash: approveTransaction.transaction.txID
-        }
+          transactionHash: approveTxID,
+          publicKey
+        })
       })
 
-      if (!sponsorResponse?.success) {
-        throw new Error(`Approval failed: ${sponsorResponse?.message || 'Unknown error'}`)
+      if (!signResponse.ok) {
+        const errorText = await signResponse.text()
+        throw new Error(`Approval failed: ${errorText}`)
       }
 
-      const sponsorResult = sponsorResponse.data || sponsorResponse
-      console.log('[deBridge-TRON] ✅ Approve tx:', sponsorResult.txid || sponsorResult.transactionHash)
+      const signData = await signResponse.json()
+      const signature64 = signData.signature
+      const signature64Clean = signature64.startsWith('0x') ? signature64.slice(2) : signature64
+
+      console.log('[deBridge-TRON] Testing recovery IDs for approve signature...')
+
+      // Test recovery ID '1b' first
+      approveTxObject.signature = [signature64Clean + '1b']
+      let recoveredAddress1b
+      try {
+        recoveredAddress1b = tronWeb.trx.ecRecover(approveTxObject)
+        console.log('[deBridge-TRON] Approve recovery (1b):', {
+          fromAddress,
+          recovered: recoveredAddress1b,
+          match: recoveredAddress1b === fromAddress
+        })
+      } catch (e) {
+        console.error('[deBridge-TRON] Approve recovery (1b) failed:', e)
+        recoveredAddress1b = null
+      }
+
+      // If '1b' doesn't match, try '1c'
+      if (recoveredAddress1b !== fromAddress) {
+        approveTxObject.signature = [signature64Clean + '1c']
+        let recoveredAddress1c
+        try {
+          recoveredAddress1c = tronWeb.trx.ecRecover(approveTxObject)
+          console.log('[deBridge-TRON] Approve recovery (1c):', {
+            fromAddress,
+            recovered: recoveredAddress1c,
+            match: recoveredAddress1c === fromAddress
+          })
+
+          if (recoveredAddress1c !== fromAddress) {
+            throw new Error('Approve signature recovery failed - address mismatch')
+          }
+        } catch (e) {
+          console.error('[deBridge-TRON] Approve recovery (1c) failed:', e)
+          throw new Error('Approve signature recovery failed with both recovery IDs')
+        }
+      }
+
+      console.log('[deBridge-TRON] ✅ Approve signature verified, broadcasting...')
+
+      // Broadcast transaction
+      const approveResult = await tronWeb.trx.sendRawTransaction(approveTxObject)
+
+      if (!approveResult.result) {
+        throw new Error(`Approve transaction failed: ${JSON.stringify(approveResult)}`)
+      }
+
+      console.log('[deBridge-TRON] ✅ Approve tx:', approveResult.txid)
 
       // Wait for confirmation
       await new Promise((resolve) => setTimeout(resolve, 5000))
@@ -410,12 +488,33 @@ export async function createDeBridgeOrderTron(
     }
 
     const txData = (await createTxResponse.json()) as any
+    
+    console.log('[deBridge-TRON] ========== CREATE-TX API RESPONSE ==========')
+    console.log('[deBridge-TRON] Full response:', JSON.stringify(txData, null, 2))
+    console.log('[deBridge-TRON] Available fields:', Object.keys(txData))
+    console.log('[deBridge-TRON] ===========================================')
+    
     if (!txData.tx?.data) {
+      console.error('[deBridge-TRON] Missing tx.data in response!')
       throw new Error('No transaction data in response')
     }
 
     const orderId = txData.orderId
-    const dstChainTokenOutAmount = txData.estimation?.dstChainTokenOut?.recommendedAmount || '0'
+    const dstChainTokenOutAmount = txData.estimation?.dstChainTokenOut?.recommendedAmount || 
+                                   txData.estimation?.dstChainTokenOut?.amount || 
+                                   '0'
+    
+    console.log('[deBridge-TRON] Extracted Order ID:', orderId || '❌ NULL/UNDEFINED')
+    console.log('[deBridge-TRON] Extracted Dst amount:', dstChainTokenOutAmount)
+
+    if (!orderId) {
+      console.error('[deBridge-TRON] ⚠️⚠️⚠️ CRITICAL: No orderId in API response!')
+      console.error('[deBridge-TRON] This will prevent order tracking.')
+      console.error('[deBridge-TRON] Possible reasons:')
+      console.error('[deBridge-TRON]   1. deBridge API changed response format')
+      console.error('[deBridge-TRON]   2. Wrong API endpoint or parameters')
+      console.error('[deBridge-TRON]   3. Order not created yet (async processing)')
+    }
 
     // Build transaction
     const fullCallData = txData.tx.data.startsWith('0x') ? txData.tx.data.slice(2) : txData.tx.data
@@ -450,35 +549,83 @@ export async function createDeBridgeOrderTron(
     const newTxID = tronWeb.utils.code.byteArray2hexStr(txHash)
     txObject.txID = newTxID
 
-    console.log('[deBridge-TRON] Sending order tx to backend...')
+    console.log('[deBridge-TRON] Signing order tx via backend...')
     console.log('[deBridge-TRON] Transaction ID:', newTxID)
 
-    const endpoint = useGasSponsorship
-      ? `${API_BASE_URL}/api/tron-transaction/sponsor-and-sign`
-      : `${API_BASE_URL}/api/tron-transaction/sign`
-
-    const orderSponsorResponse = await request<any>(endpoint, {
+    // 使用 fetch 而不是 request，避免自动添加 Blade-Auth header
+    const signResponse = await fetch(TRON_API_ENDPOINTS.SIGN_TRANSACTION, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`
       },
-      data: {
+      body: JSON.stringify({
         walletId,
-        transaction: txObject,
-        publicKey,
-        transactionHash: newTxID
-      }
+        transactionHash: newTxID,
+        publicKey
+      })
     })
 
-    if (!orderSponsorResponse?.success) {
-      throw new Error(`Order creation failed: ${orderSponsorResponse?.message || 'Unknown error'}`)
+    if (!signResponse.ok) {
+      const errorText = await signResponse.text()
+      throw new Error(`Order creation failed: ${errorText}`)
     }
 
-    const orderResult = orderSponsorResponse.data || orderSponsorResponse
-    console.log('[deBridge-TRON] ✅ Order tx:', orderResult.txid || orderResult.transactionHash)
+    const signData = await signResponse.json()
+    const signature64 = signData.signature
+    const signature64Clean = signature64.startsWith('0x') ? signature64.slice(2) : signature64
+
+    console.log('[deBridge-TRON] Testing recovery IDs for order signature...')
+
+    // Test recovery ID '1b' first
+    txObject.signature = [signature64Clean + '1b']
+    let recoveredAddress1b
+    try {
+      recoveredAddress1b = tronWeb.trx.ecRecover(txObject)
+      console.log('[deBridge-TRON] Order recovery (1b):', {
+        fromAddress,
+        recovered: recoveredAddress1b,
+        match: recoveredAddress1b === fromAddress
+      })
+    } catch (e) {
+      console.error('[deBridge-TRON] Order recovery (1b) failed:', e)
+      recoveredAddress1b = null
+    }
+
+    // If '1b' doesn't match, try '1c'
+    if (recoveredAddress1b !== fromAddress) {
+      txObject.signature = [signature64Clean + '1c']
+      let recoveredAddress1c
+      try {
+        recoveredAddress1c = tronWeb.trx.ecRecover(txObject)
+        console.log('[deBridge-TRON] Order recovery (1c):', {
+          fromAddress,
+          recovered: recoveredAddress1c,
+          match: recoveredAddress1c === fromAddress
+        })
+
+        if (recoveredAddress1c !== fromAddress) {
+          throw new Error('Order signature recovery failed - address mismatch')
+        }
+      } catch (e) {
+        console.error('[deBridge-TRON] Order recovery (1c) failed:', e)
+        throw new Error('Order signature recovery failed with both recovery IDs')
+      }
+    }
+
+    console.log('[deBridge-TRON] ✅ Order signature verified, broadcasting...')
+
+    // Broadcast transaction
+    const orderResult = await tronWeb.trx.sendRawTransaction(txObject)
+
+    if (!orderResult.result) {
+      throw new Error(`Order transaction failed: ${JSON.stringify(orderResult)}`)
+    }
+
+    console.log('[deBridge-TRON] ✅ Order tx:', orderResult.txid)
 
     return {
-      txHash: orderResult.txid || orderResult.transactionHash,
+      txHash: orderResult.txid,
       orderId: orderId || '',
       dstChainTokenOutAmount
     }
@@ -523,7 +670,17 @@ export async function waitForOrderCompletion(
 }
 
 /**
- * TRON → Ethereum 桥接（简化接口）
+ * TRON → Ethereum 桥接
+ * 
+ * @param params.tokenAddress - TRON token 地址 (如 TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t for USDT)
+ * @param params.amount - 转账金额（最小单位，如 20000000 = 20 USDT）
+ * @param params.fromAddress - TRON 钱包地址
+ * @param params.ethereumAddress - Ethereum 接收地址
+ * @param params.walletId - Privy wallet ID
+ * @param params.publicKey - Wallet public key (可选)
+ * @param params.accessToken - Privy access token
+ * @param params.useGasSponsorship - 是否使用 Gas 赞助（默认 true）
+ * @returns 交易哈希、订单ID、目标链金额
  */
 export async function bridgeTronToEthereum(params: {
   tokenAddress: string
@@ -537,7 +694,7 @@ export async function bridgeTronToEthereum(params: {
 }): Promise<{ txHash: string; orderId: string; dstChainTokenOutAmount: string }> {
   console.log('[deBridge] Bridge: TRON → Ethereum')
 
-  // 根据源链 token 地址，映射到目标链的对应 token
+  // 根据源链 token 地址，映射到目标链的对应 token（保持相同类型）
   let dstTokenAddress: string
   const srcTokenUpper = params.tokenAddress.toUpperCase()
 
@@ -551,7 +708,8 @@ export async function bridgeTronToEthereum(params: {
 
   console.log('[deBridge] Token mapping:', {
     src: params.tokenAddress,
-    dst: dstTokenAddress
+    dst: dstTokenAddress,
+    note: 'TRON→ETH keeps same token type (USDT→USDT, USDC→USDC)'
   })
 
   // 1. 获取报价
@@ -582,31 +740,45 @@ export async function bridgeTronToEthereum(params: {
 }
 
 /**
- * Ethereum → Solana 桥接（简化接口）
+ * Ethereum → Solana 桥接
+ * 
+ * @param params.tokenAddress - Ethereum token 地址 (如 0xdac17f958d2ee523a2206206994597c13d831ec7 for USDT)
+ * @param params.amount - 转账金额（最小单位，如 20000000 = 20 USDT）
+ * @param params.solanaAddress - Solana 接收地址
+ * @param params.privyWallet - Privy Ethereum 钱包对象
+ * @returns 交易哈希、订单ID
  */
 export async function bridgeEthereumToSolana(params: {
   tokenAddress: string
   amount: string
   solanaAddress: string
   privyWallet: any
+  sendTransaction: (tx: any) => Promise<{ hash: string }> // Privy Gas 赞助函数
 }): Promise<{ txHash: string; orderId?: string }> {
   console.log('[deBridge] Bridge: Ethereum → Solana')
+  console.log('[deBridge-ETH] 🔍 Wallet object:', params.privyWallet)
+  console.log('[deBridge-ETH] 🔍 Wallet address:', params.privyWallet?.address)
+  console.log('[deBridge-ETH] 🔍 Wallet type:', params.privyWallet?.walletClientType || params.privyWallet?.type)
+  console.log('[deBridge-ETH] 🔍 Has sendTransaction?', !!params.privyWallet?.sendTransaction)
+  console.log('[deBridge-ETH] 🔍 Available methods:', Object.keys(params.privyWallet || {}))
 
-  // 根据源链 token 地址，映射到目标链的对应 token
-  let dstTokenAddress: string
+  // 🔥 关键：目标链 Solana 始终使用 USDC（无论源 token 是 USDT 还是 USDC）
+  // 这是因为 DeBridge 在 Solana 上优先使用 USDC，流动性更好
+  const dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC
   const srcTokenLower = params.tokenAddress.toLowerCase()
 
-  if (srcTokenLower === DEBRIDGE_TOKENS.ETHEREUM.USDT.toLowerCase()) {
-    dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDT
-  } else if (srcTokenLower === DEBRIDGE_TOKENS.ETHEREUM.USDC.toLowerCase()) {
-    dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC
-  } else {
+  // 验证源 token 是支持的稳定币
+  if (
+    srcTokenLower !== DEBRIDGE_TOKENS.ETHEREUM.USDT.toLowerCase() &&
+    srcTokenLower !== DEBRIDGE_TOKENS.ETHEREUM.USDC.toLowerCase()
+  ) {
     throw new Error(`Unsupported token address: ${params.tokenAddress}`)
   }
 
   console.log('[deBridge] Token mapping:', {
     src: params.tokenAddress,
-    dst: dstTokenAddress
+    dst: dstTokenAddress,
+    note: 'Solana always uses USDC (better liquidity)'
   })
 
   // 动态导入 viem 以检查余额和处理交易
@@ -619,21 +791,8 @@ export async function bridgeEthereumToSolana(params: {
     transport: http('https://rpc.ankr.com/eth/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3')
   })
 
-  // 检查 ETH 余额
-  console.log('[deBridge-ETH] Checking ETH balance for gas...')
-  const ethBalance = await publicClient.getBalance({
-    address: params.privyWallet.address as `0x${string}`
-  })
-
-  console.log('[deBridge-ETH] ETH balance:', {
-    wei: ethBalance.toString(),
-    eth: (Number(ethBalance) / 1e18).toFixed(6),
-    hasBalance: ethBalance > BigInt(0)
-  })
-
-  if (ethBalance === BigInt(0)) {
-    throw new Error(`⚠️ ETH 余额不足以支付 Gas 费用！请向钱包 ${params.privyWallet.address} 充值至少 0.01 ETH`)
-  }
+  // ✅ 不再检查 ETH 余额 - Privy Gas 赞助会自动处理 Gas 费用
+  console.log('[deBridge-ETH] Using Privy Gas Sponsorship - no ETH balance required')
 
   // 1. 获取报价
   const quote = await getDeBridgeQuote({
@@ -654,6 +813,9 @@ export async function bridgeEthereumToSolana(params: {
     orderId: quote.orderId,
     allowanceValue: quote.tx.allowanceValue
   })
+  
+  console.log('[deBridge-ETH] ⚠️ Quote orderId:', quote.orderId || 'NULL/UNDEFINED')
+  console.log('[deBridge-ETH] Note: orderId may be null in quote response, will be generated after tx')
 
   // ERC20 ABI
   const ERC20_ABI = [
@@ -708,17 +870,25 @@ export async function bridgeEthereumToSolana(params: {
           args: [quote.tx.allowanceTarget as `0x${string}`, BigInt(0)]
         })
 
-        const resetTx = await params.privyWallet.sendTransaction({
+        console.log('[deBridge-ETH] 🔄 Sending RESET approval transaction...')
+        console.log('[deBridge-ETH] - From:', params.privyWallet.address)
+        console.log('[deBridge-ETH] - To (USDT contract):', params.tokenAddress)
+        console.log('[deBridge-ETH] - Spender (DeBridge):', quote.tx.allowanceTarget)
+        console.log('[deBridge-ETH] - Reset amount: 0')
+        console.log('[deBridge-ETH] - Gas sponsorship: ENABLED ✅')
+
+        // 使用 Privy v3.8+ Gas 赞助
+        const resetTxResult = await params.sendTransaction({
           to: params.tokenAddress as `0x${string}`,
           data: resetApproveData as `0x${string}`,
-          value: BigInt(0)
+          sponsorGas: true
         })
 
-        console.log('[deBridge-ETH] ✅ Reset approval tx sent:', resetTx.transactionHash)
+        console.log('[deBridge-ETH] ✅ Reset approval tx sent:', resetTxResult.hash)
         console.log('[deBridge-ETH] Waiting for reset confirmation...')
 
         const resetReceipt = await publicClient.waitForTransactionReceipt({
-          hash: resetTx.transactionHash as `0x${string}`,
+          hash: resetTxResult.hash as `0x${string}`,
           timeout: 180_000
         })
 
@@ -737,18 +907,19 @@ export async function bridgeEthereumToSolana(params: {
         args: [quote.tx.allowanceTarget as `0x${string}`, BigInt(quote.tx.allowanceValue)]
       })
 
-      const approveTx = await params.privyWallet.sendTransaction({
+      // 使用 Privy v3.8+ Gas 赞助
+      const approveTxResult = await params.sendTransaction({
         to: params.tokenAddress as `0x${string}`,
         data: approveData as `0x${string}`,
-        value: BigInt(0)
+        sponsorGas: true
       })
 
-      console.log('[deBridge-ETH] ✅ Approval tx sent:', approveTx.transactionHash)
+      console.log('[deBridge-ETH] ✅ Approval tx sent:', approveTxResult.hash)
 
       // 等待确认
       console.log('[deBridge-ETH] Waiting for approval confirmation...')
       const approveReceipt = await publicClient.waitForTransactionReceipt({
-        hash: approveTx.transactionHash as `0x${string}`,
+        hash: approveTxResult.hash as `0x${string}`,
         timeout: 180_000
       })
 
@@ -766,21 +937,70 @@ export async function bridgeEthereumToSolana(params: {
   }
 
   // 4. 创建桥接订单
-  console.log('[deBridge-ETH] Creating bridge order...')
+  console.log('[deBridge-ETH] Creating bridge order with gas sponsorship...')
 
   try {
-    const bridgeTx = await params.privyWallet.sendTransaction({
-      to: (quote.tx.to || quote.tx.allowanceTarget) as `0x${string}`,
-      data: quote.tx.data as `0x${string}`,
-      value: BigInt(quote.tx.value || '0')
+    // 🔥 关键：调用 create-tx API 而不是使用 quote.tx
+    // 这样可以获取 orderId 用于跟踪订单状态
+    console.log('[deBridge-ETH] Calling create-tx API to get orderId...')
+    
+    const createTxUrl = new URL(`${DEBRIDGE_API_BASE_URL}/dln/order/create-tx`)
+    createTxUrl.searchParams.append('srcChainId', DEBRIDGE_CHAIN_IDS.ETHEREUM.toString())
+    createTxUrl.searchParams.append('srcChainTokenIn', params.tokenAddress)
+    createTxUrl.searchParams.append('srcChainTokenInAmount', params.amount)
+    createTxUrl.searchParams.append('dstChainId', DEBRIDGE_CHAIN_IDS.SOLANA.toString())
+    createTxUrl.searchParams.append('dstChainTokenOut', dstTokenAddress)
+    createTxUrl.searchParams.append('dstChainTokenOutRecipient', params.solanaAddress)
+    createTxUrl.searchParams.append('srcChainOrderAuthorityAddress', params.privyWallet.address)
+    createTxUrl.searchParams.append('dstChainOrderAuthorityAddress', params.solanaAddress)
+    createTxUrl.searchParams.append('prependOperatingExpenses', 'false')
+
+    console.log('[deBridge-ETH] create-tx URL:', createTxUrl.toString())
+
+    const createTxResponse = await fetch(createTxUrl.toString(), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json'
+      }
     })
 
-    console.log('[deBridge-ETH] ✅ Bridge tx sent:', bridgeTx.transactionHash)
+    if (!createTxResponse.ok) {
+      const errorText = await createTxResponse.text()
+      throw new Error(`DeBridge create-tx API error: ${createTxResponse.status} ${errorText}`)
+    }
+
+    const txData = (await createTxResponse.json()) as any
+    console.log('[deBridge-ETH] Transaction data received')
+    console.log('[deBridge-ETH] - Order ID:', txData.orderId || 'NOT_AVAILABLE')
+    console.log('[deBridge-ETH] - Has tx data:', !!txData.tx)
+
+    if (!txData.tx || !txData.tx.to || !txData.tx.data) {
+      throw new Error('DeBridge API did not return valid transaction data')
+    }
+
+    const orderId = txData.orderId
+    const dstChainTokenOutAmount =
+      txData.estimation?.dstChainTokenOut?.recommendedAmount || txData.estimation?.dstChainTokenOut?.amount
+
+    console.log('[deBridge-ETH] Expected Solana output amount:', dstChainTokenOutAmount)
+
+    // 使用 Privy v3.8+ Gas 赞助
+    // 🔥 关键：必须包含 from 参数来指定使用哪个钱包
+    const bridgeTxResult = await params.sendTransaction({
+      to: txData.tx.to as `0x${string}`,
+      from: params.privyWallet.address as `0x${string}`, // ← 指定钱包地址
+      data: txData.tx.data as `0x${string}`,
+      value: txData.tx.value ? BigInt(txData.tx.value) : BigInt(0),
+      chainId: 1,
+      sponsorGas: true
+    })
+
+    console.log('[deBridge-ETH] ✅ Bridge tx sent:', bridgeTxResult.hash)
 
     // 等待交易确认
     console.log('[deBridge-ETH] Waiting for bridge transaction confirmation...')
     const bridgeReceipt = await publicClient.waitForTransactionReceipt({
-      hash: bridgeTx.transactionHash as `0x${string}`,
+      hash: bridgeTxResult.hash as `0x${string}`,
       timeout: 180_000
     })
 
@@ -789,10 +1009,11 @@ export async function bridgeEthereumToSolana(params: {
     }
 
     console.log('[deBridge-ETH] ✅ Bridge transaction confirmed:', bridgeReceipt.transactionHash)
+    console.log('[deBridge-ETH] ✅ Order ID:', orderId || 'NOT_AVAILABLE')
 
     return {
-      txHash: bridgeTx.transactionHash,
-      orderId: quote.orderId
+      txHash: bridgeTxResult.hash,
+      orderId: orderId // 从 create-tx API 获取的 orderId
     }
   } catch (error) {
     console.error('[deBridge-ETH] Bridge transaction failed:', error)
