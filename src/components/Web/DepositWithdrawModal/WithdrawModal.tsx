@@ -2,6 +2,7 @@ import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
+import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
 
 import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
@@ -29,6 +30,7 @@ export default observer(
     // Privy 钱包集成
     const { ready, authenticated, user } = usePrivy()
     const { wallets } = useWallets()
+    const { signAndSendTransaction } = useSignAndSendTransaction()
     
     // 桥接状态
     const [isBridging, setIsBridging] = useState(false)
@@ -61,6 +63,159 @@ export default observer(
 
     // 避免重复渲染
     if (!open) return
+
+    // 执行 Solana 链上直接转账（同链转账，无需桥接）
+    const executeSolanaTransfer = async (
+      destinationAddress: string,
+      amountInSmallestUnit: string
+    ) => {
+      console.log('[WithdrawModal] executeSolanaTransfer called')
+      console.log('[WithdrawModal]   - destinationAddress:', destinationAddress)
+      console.log('[WithdrawModal]   - amountInSmallestUnit:', amountInSmallestUnit)
+      
+      setIsBridging(true)
+      setBridgeStatus('正在转账...')
+      
+      try {
+        // 动态导入 Solana 依赖
+        const { PublicKey, Transaction } = await import('@solana/web3.js')
+        const { 
+          TOKEN_PROGRAM_ID,
+          getAssociatedTokenAddressSync,
+          createAssociatedTokenAccountInstruction,
+          createTransferInstruction,
+        } = await import('@solana/spl-token')
+        
+        // 获取 Solana 钱包
+        const solanaAccount = user?.linkedAccounts?.find(
+          (account: any) => account.type === 'wallet' && account.chainType === 'solana'
+        ) as any
+        
+        const solanaWallet = wallets.find((w) => (w as any).chainType === 'solana') || { address: solanaAccount?.address }
+        
+        if (!solanaWallet || !solanaWallet.address) {
+          throw new Error('未找到 Solana 钱包，请先连接 Privy Solana 钱包')
+        }
+
+        const senderPubkey = new PublicKey(solanaWallet.address)
+        const recipientPubkey = new PublicKey(destinationAddress)
+        const transaction = new Transaction()
+
+        // USDC Mint 地址
+        const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+        const mintPubkey = new PublicKey(USDC_MINT)
+        
+        // 获取发送者和接收者的 ATA
+        const senderAta = getAssociatedTokenAddressSync(
+          mintPubkey,
+          senderPubkey,
+          false,
+          TOKEN_PROGRAM_ID
+        )
+        const recipientAta = getAssociatedTokenAddressSync(
+          mintPubkey,
+          recipientPubkey,
+          false,
+          TOKEN_PROGRAM_ID
+        )
+
+        // 创建 connection 来检查账户
+        const { Connection } = await import('@solana/web3.js')
+        const connection = new Connection(
+          'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+          'confirmed'
+        )
+
+        // 检查接收者 ATA 是否存在
+        const recipientAtaInfo = await connection.getAccountInfo(recipientAta)
+        if (!recipientAtaInfo) {
+          // 创建接收者 ATA
+          transaction.add(
+            createAssociatedTokenAccountInstruction(
+              senderPubkey,
+              recipientAta,
+              recipientPubkey,
+              mintPubkey,
+              TOKEN_PROGRAM_ID
+            )
+          )
+        }
+
+        // 添加转账指令
+        transaction.add(
+          createTransferInstruction(
+            senderAta,
+            recipientAta,
+            senderPubkey,
+            parseInt(amountInSmallestUnit),
+            [],
+            TOKEN_PROGRAM_ID
+          )
+        )
+
+        // 安全过滤：移除 CloseAccount 指令防止租金退款漏洞
+        // 使用 gas sponsorship 时，用户可以从租金退款中获利 (~$0.40/tx)
+        const filteredInstructions = transaction.instructions.filter((instruction) => {
+          const discriminator = instruction.data[0]
+          return discriminator !== 0x0a // 0x0a = CloseAccount
+        })
+
+        // 重建安全的交易
+        const secureTransaction = new Transaction()
+        filteredInstructions.forEach(ix => secureTransaction.add(ix))
+
+        // 获取最新 blockhash
+        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
+        secureTransaction.recentBlockhash = blockhash
+        secureTransaction.lastValidBlockHeight = lastValidBlockHeight
+        secureTransaction.feePayer = senderPubkey
+
+        // 序列化交易
+        const serializedTx = secureTransaction.serialize({
+          requireAllSignatures: false,
+          verifySignatures: false,
+        })
+
+        console.log('[WithdrawModal] Sending Solana transaction via signAndSendTransaction...')
+
+        // 使用 Privy 的 signAndSendTransaction（支持 gas sponsorship）
+        const result = await signAndSendTransaction({
+          transaction: serializedTx,
+          wallet: solanaWallet,
+          options: {
+            sponsor: true, // 启用 gas sponsorship - Privy 支付 gas 费
+          },
+        })
+
+        const signature = result.signature
+        
+        console.log('[WithdrawModal] ✅ Solana transfer successful:', signature)
+        console.log(`[WithdrawModal] 🎉 Check tx: https://solscan.io/tx/${signature}`)
+        
+        message.success(
+          <span>
+            转账成功！
+            <a 
+              href={`https://solscan.io/tx/${signature}`} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ marginLeft: 8, color: '#1890ff' }}
+            >
+              查看交易
+            </a>
+          </span>
+        )
+        
+        return true
+      } catch (error: any) {
+        console.error('Solana transfer error:', error)
+        message.error(error.message || 'Solana 转账失败')
+        throw error
+      } finally {
+        setIsBridging(false)
+        setBridgeStatus('')
+      }
+    }
 
     // 执行跨链桥接
     const executeWithdrawBridge = async (
@@ -98,6 +253,7 @@ export default observer(
           setBridgeStatus('正在桥接到 Ethereum...')
           await debridgeService.bridgeSolanaToEthereum({
             amount: amountInSmallestUnit,
+            signAndSendTransaction,
             ethereumAddress: destinationAddress,
             solanaWallet
           })
@@ -130,6 +286,7 @@ export default observer(
             amount: amountInSmallestUnit,
             tronAddress: destinationAddress,
             solanaWallet,
+            signAndSendTransaction,
             ethereumWallet: ethWallet
           })
 
@@ -213,18 +370,46 @@ export default observer(
             fetchUserInfo(true)
           }
         } else {
-          // 直接提款到 Solana（无需跨链）
-          const res = await withdrawByAddress({
-            accountId: accountItem.id,
-            money: Number(money),
-            remark: '',
-            withdrawAddress,
-            targetChain
+          // 直接提款到 Solana（链上转账，使用 gas sponsorship）
+          console.log('[WithdrawModal] 💸 Starting Solana direct transfer...')
+          
+          // 检查 Privy 认证
+          if (!ready || !authenticated) {
+            console.error('[WithdrawModal] ❌ Privy not ready or not authenticated')
+            message.error('请先登录 Privy 钱包')
+            setSubmitLoading(false)
+            return
+          }
+          
+          // 转换金额为最小单位（USDC 6位小数）
+          const amountInUsd = parseFloat(money)
+          const amountInSmallestUnit = (amountInUsd * 1_000_000).toString()
+          
+          console.log('[WithdrawModal] 💱 Amount conversion:', {
+            amountInUsd,
+            amountInSmallestUnit
           })
           
-          if (res.success) {
+          // 执行 Solana 转账
+          const transferSuccess = await executeSolanaTransfer(
+            withdrawAddress,
+            amountInSmallestUnit
+          )
+          
+          console.log('[WithdrawModal] 🎯 Transfer result:', transferSuccess)
+          
+          if (transferSuccess) {
+            // 记录转账到后端
+            await withdrawByAddress({
+              accountId: accountItem.id,
+              money: Number(money),
+              remark: 'Solana direct transfer',
+              withdrawAddress,
+              targetChain: 'Solana'
+            })
+            
             close()
-            message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+            message.success('Solana 转账成功')
             form.resetFields()
             fetchUserInfo(true)
           }
