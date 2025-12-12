@@ -44,7 +44,7 @@ type TransferProps = {
 export function useSPLTransferPDA() {
   const intl = useIntl()
   const { connection, rpc, connected } = useConnection()
-  const { wallet, foundWallet } = usePrivyInfo()
+  const { wallet, activeSolanaWallet } = usePrivyInfo()
   const fromAddress = wallet?.address
   const { sendTransaction } = useSendTransaction()
   const [transferLoading, setTransferLoading] = useState(false)
@@ -94,7 +94,7 @@ export function useSPLTransferPDA() {
     const recipientAddress = address(toAddress)
     const fromTokenAccountAddress = fromAddress ? address(fromAddress) : undefined
 
-    if (!connected || !fromTokenAccountAddress || !foundWallet) {
+    if (!connected || !fromTokenAccountAddress || !activeSolanaWallet) {
       message.info('Please connect wallet first')
       return
     }
