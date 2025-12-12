@@ -1139,11 +1139,14 @@ async function bridgeSolanaToEthereum(params: {
   console.log('[deBridge-SOL→ETH] 🔐 Signing and sending Solana transaction...')
 
   try {
-    // Solana 交易数据是 base64 编码的序列化交易
-    // deBridge 返回的是完整的序列化交易，可以直接发送
+    // 根据 deBridge 官方示例和 Privy 嵌入式钱包特性：
+    // 1. txData 是 hex 格式 (0x 开头)
+    // 2. 反序列化为 VersionedTransaction
+    // 3. 更新 blockhash (deBridge 返回的可能已过期)
+    // 4. Privy 嵌入式钱包只支持 sendTransaction，不支持 signTransaction
+    //    所以使用 sendTransaction 让 Privy 自动签名并发送
     
-    // 动态导入 @solana/web3.js
-    const { Transaction, Connection } = await import('@solana/web3.js')
+    const { VersionedTransaction, Connection } = await import('@solana/web3.js')
     
     // 创建 Solana connection
     const connection = new Connection(
@@ -1151,24 +1154,43 @@ async function bridgeSolanaToEthereum(params: {
       'confirmed'
     )
     
-    // 反序列化交易
-    const txBuffer = Buffer.from(txData.tx.data, 'base64')
-    const transaction = Transaction.from(txBuffer)
+    console.log('[deBridge-SOL→ETH] Transaction data:', txData.tx.data.substring(0, 20) + '...')
     
-    console.log('[deBridge-SOL→ETH] Transaction deserialized')
-    console.log('[deBridge-SOL→ETH] - Instructions:', transaction.instructions.length)
-    console.log('[deBridge-SOL→ETH] - Fee payer:', transaction.feePayer?.toBase58())
+    // deBridge 返回的 tx.data 是 hex 格式，去除 0x 前缀后转为 buffer
+    const hexString = txData.tx.data.startsWith('0x') 
+      ? txData.tx.data.slice(2) 
+      : txData.tx.data
+    const txBuffer = Buffer.from(hexString, 'hex')
     
-    // 使用 Privy Solana 钱包签名并发送
-    // 检查钱包是否支持 sendTransaction
+    console.log('[deBridge-SOL→ETH] Buffer length:', txBuffer.length)
+    
+    // 反序列化为 VersionedTransaction
+    const transaction = VersionedTransaction.deserialize(txBuffer)
+    
+    console.log('[deBridge-SOL→ETH] ✅ Transaction deserialized')
+    console.log('[deBridge-SOL→ETH] - Message accounts:', transaction.message.staticAccountKeys.length)
+    
+    // 更新 blockhash (必须，因为 deBridge 返回的可能已过期)
+    const { blockhash } = await connection.getLatestBlockhash()
+    transaction.message.recentBlockhash = blockhash
+    
+    console.log('[deBridge-SOL→ETH] Updated blockhash:', blockhash)
+    
+    // Privy 嵌入式钱包使用 sendTransaction 自动签名并发送
     if (!solanaWallet.sendTransaction) {
       throw new Error('Solana wallet does not support sendTransaction method')
     }
 
-    // Privy 钱包的 sendTransaction 会自动签名并发送
-    const txSignature = await solanaWallet.sendTransaction(transaction, connection)
+    console.log('[deBridge-SOL→ETH] Sending transaction via Privy wallet...')
     
-    console.log('[deBridge-SOL→ETH] ✅ Solana tx sent:', txSignature)
+    // sendTransaction 会自动签名并发送，返回 signature
+    const txSignature = await solanaWallet.sendTransaction(transaction, connection, {
+      skipPreflight: false,
+      maxRetries: 3
+    })
+    
+    console.log('[deBridge-SOL→ETH] ✅ Transaction sent:', txSignature)
+    console.log(`[deBridge-SOL→ETH] 🎉 Check tx: https://solscan.io/tx/${txSignature}`)
     
     // 等待交易确认
     console.log('[deBridge-SOL→ETH] Waiting for confirmation...')
