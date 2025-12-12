@@ -228,10 +228,10 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       if (response.ok) {
         const data = await response.json()
         console.log('[Bridge] ✅ Backend notification successful:', data)
-        message.success('订单已提交，等待完成后自动充值...')
+        message.success('订单已提交，后端将自动监控并充值')
 
-        // 开始轮询订单状态
-        pollOrderStatus(orderId, targetAddress)
+        // 前端不再轮询，完全由后端处理
+        // pollOrderStatus(orderId, targetAddress)
       } else {
         console.error('[Bridge] ❌ Backend notification failed:', response.status)
       }
@@ -240,87 +240,87 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     }
   }
 
-  // 轮询订单状态
-  const pollOrderStatus = async (orderId: string, toAddress: string) => {
-    const maxAttempts = 60 // 最多轮询 60 次（约 5 分钟）
-    const pollInterval = 5000 // 每 5 秒轮询一次
-    let attempts = 0
+  // 轮询订单状态 - 已废弃，由后端完全处理
+  // const pollOrderStatus = async (orderId: string, toAddress: string) => {
+  //   const maxAttempts = 60 // 最多轮询 60 次（约 5 分钟）
+  //   const pollInterval = 5000 // 每 5 秒轮询一次
+  //   let attempts = 0
 
-    setPollingOrderId(orderId)
-    console.log('[Bridge] 🔄 Started polling order:', orderId)
+  //   setPollingOrderId(orderId)
+  //   console.log('[Bridge] 🔄 Started polling order:', orderId)
 
-    const poll = async () => {
-      try {
-        attempts++
-        console.log(`[Bridge] Polling attempt ${attempts}/${maxAttempts}`)
+  //   const poll = async () => {
+  //     try {
+  //       attempts++
+  //       console.log(`[Bridge] Polling attempt ${attempts}/${maxAttempts}`)
 
-        const response = await fetch(`${API_BASE_URL}/api/debridge-monitor/status/${orderId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        })
+  //       const response = await fetch(`${API_BASE_URL}/api/debridge-monitor/status/${orderId}`, {
+  //         method: 'GET',
+  //         headers: { 'Content-Type': 'application/json' }
+  //       })
 
-        if (!response.ok) {
-          console.error('[Bridge] Failed to fetch order status:', response.status)
-          return
-        }
+  //       if (!response.ok) {
+  //         console.error('[Bridge] Failed to fetch order status:', response.status)
+  //         return
+  //       }
 
-        const data = await response.json()
-        console.log('[Bridge] Order status:', data)
+  //       const data = await response.json()
+  //       console.log('[Bridge] Order status:', data)
 
-        if (data.success && data.data) {
-          const order = data.data
+  //       if (data.success && data.data) {
+  //         const order = data.data
 
-          // 检查订单是否完成
-          if (order.status === 'fulfilled' && order.actualAmount) {
-            console.log('[Bridge] ✅ Order fulfilled! Calling recharge API...')
+  //         // 检查订单是否完成
+  //         if (order.status === 'fulfilled' && order.actualAmount) {
+  //           console.log('[Bridge] ✅ Order fulfilled! Calling recharge API...')
             
-            // 调用充值 API
-            const rechargeUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${toAddress}&amount=${order.actualAmount}`
-            const rechargeResponse = await fetch(rechargeUrl, {
-              method: 'GET'
-            })
+  //           // 调用充值 API
+  //           const rechargeUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${toAddress}&amount=${order.actualAmount}`
+  //           const rechargeResponse = await fetch(rechargeUrl, {
+  //             method: 'GET'
+  //           })
 
-            if (rechargeResponse.ok) {
-              const rechargeData = await rechargeResponse.json()
-              console.log('[Bridge] ✅ Recharge successful:', rechargeData)
-              message.success('🎉 充值成功！订单已完成')
-              setPollingOrderId(null)
-              return // 停止轮询
-            } else {
-              console.error('[Bridge] ❌ Recharge failed:', rechargeResponse.status)
-              message.error('充值失败，请联系客服')
-              setPollingOrderId(null)
-              return
-            }
-          } else if (order.status === 'failed') {
-            console.error('[Bridge] ❌ Order failed')
-            message.error('订单失败，请重试')
-            setPollingOrderId(null)
-            return
-          }
+  //           if (rechargeResponse.ok) {
+  //             const rechargeData = await rechargeResponse.json()
+  //             console.log('[Bridge] ✅ Recharge successful:', rechargeData)
+  //             message.success('🎉 充值成功！订单已完成')
+  //             setPollingOrderId(null)
+  //             return // 停止轮询
+  //           } else {
+  //             console.error('[Bridge] ❌ Recharge failed:', rechargeResponse.status)
+  //             message.error('充值失败，请联系客服')
+  //             setPollingOrderId(null)
+  //             return
+  //           }
+  //         } else if (order.status === 'failed') {
+  //           console.error('[Bridge] ❌ Order failed')
+  //           message.error('订单失败，请重试')
+  //           setPollingOrderId(null)
+  //           return
+  //         }
 
-          // 继续轮询
-          if (attempts < maxAttempts) {
-            setTimeout(poll, pollInterval)
-          } else {
-            console.warn('[Bridge] ⚠️ Polling timeout')
-            message.warning('订单处理超时，请稍后在历史记录中查看')
-            setPollingOrderId(null)
-          }
-        }
-      } catch (error) {
-        console.error('[Bridge] Polling error:', error)
-        if (attempts < maxAttempts) {
-          setTimeout(poll, pollInterval)
-        } else {
-          setPollingOrderId(null)
-        }
-      }
-    }
+  //         // 继续轮询
+  //         if (attempts < maxAttempts) {
+  //           setTimeout(poll, pollInterval)
+  //         } else {
+  //           console.warn('[Bridge] ⚠️ Polling timeout')
+  //           message.warning('订单处理超时，请稍后在历史记录中查看')
+  //           setPollingOrderId(null)
+  //         }
+  //       }
+  //     } catch (error) {
+  //       console.error('[Bridge] Polling error:', error)
+  //       if (attempts < maxAttempts) {
+  //         setTimeout(poll, pollInterval)
+  //       } else {
+  //         setPollingOrderId(null)
+  //       }
+  //     }
+  //   }
 
-    // 开始第一次轮询
-    setTimeout(poll, pollInterval)
-  }
+  //   // 开始第一次轮询
+  //   setTimeout(poll, pollInterval)
+  // }
 
   // 自动桥接
   const handleAutoBridge = async (amount: string, token: string, chain: string) => {
