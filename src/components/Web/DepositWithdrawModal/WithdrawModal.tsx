@@ -27,7 +27,7 @@ export default observer(
     const [selectedChain, setSelectedChain] = useState('Solana') // 默认 Solana
     
     // Privy 钱包集成
-    const { ready, authenticated } = usePrivy()
+    const { ready, authenticated, user } = usePrivy()
     const { wallets } = useWallets()
     
     // 桥接状态
@@ -68,12 +68,23 @@ export default observer(
       destinationAddress: string,
       amountInSmallestUnit: string
     ) => {
+      console.log('[WithdrawModal] executeWithdrawBridge called')
+      console.log('[WithdrawModal]   - targetChain:', targetChain)
+      console.log('[WithdrawModal]   - destinationAddress:', destinationAddress)
+      console.log('[WithdrawModal]   - amountInSmallestUnit:', amountInSmallestUnit)
+      
       setIsBridging(true)
       
       try {
-        // 获取 Solana 钱包
-        const solanaWallet = wallets.find((w) => w.walletClientType === 'privy' && w.chainType === 'solana')
-        if (!solanaWallet) {
+        // 从 linkedAccounts 获取账户信息（备份）
+        const solanaAccount = user?.linkedAccounts?.find(
+          (account: any) => account.type === 'wallet' && account.chainType === 'solana'
+        ) as any
+        
+        // 优先从 wallets 数组获取完整的钱包对象（包含 sendTransaction 方法）
+        const solanaWallet = wallets.find((w) => (w as any).chainType === 'solana') || { address: solanaAccount?.address }
+        
+        if (!solanaWallet || !solanaWallet.address) {
           throw new Error('未找到 Solana 钱包，请先连接 Privy Solana 钱包')
         }
 
@@ -102,9 +113,15 @@ export default observer(
             throw new Error(`Tron 桥接最小金额为 $20 USD（需要两步桥接）`)
           }
 
-          // 获取 Ethereum 钱包
-          const ethWallet = wallets.find((w) => w.walletClientType === 'privy' && w.chainType === 'ethereum')
-          if (!ethWallet) {
+          // 从 linkedAccounts 获取账户信息（备份）
+          const ethAccount = user?.linkedAccounts?.find(
+            (account: any) => account.type === 'wallet' && account.chainType === 'ethereum'
+          ) as any
+          
+          // 优先从 wallets 数组获取完整的钱包对象
+          const ethWallet = wallets.find((w) => (w as any).chainType === 'ethereum') || { address: ethAccount?.address }
+          
+          if (!ethWallet || !ethWallet.address) {
             throw new Error('未找到 Ethereum 钱包，请先连接 Privy Ethereum 钱包')
           }
 
@@ -137,26 +154,39 @@ export default observer(
     }
 
     const handleSubmit = async (values: any) => {
-      console.log('values', values)
+      console.log('[WithdrawModal] 📝 Form values:', values)
       const { money, withdrawAddress, targetChain = 'Solana' } = values || {}
-      console.log('Target Chain:', targetChain)
+      console.log('[WithdrawModal] 🎯 Target Chain:', targetChain)
+      console.log('[WithdrawModal] 💰 Amount:', money)
+      console.log('[WithdrawModal] 📍 Address:', withdrawAddress)
+      console.log('[WithdrawModal] ❓ Is cross-chain?', targetChain !== 'Solana')
       
       setSubmitLoading(true)
       
       try {
         // 如果目标链不是 Solana，需要通过跨链桥接
         if (targetChain !== 'Solana') {
-          console.log('🌉 Starting cross-chain withdrawal via deBridge...')
+          console.log('[WithdrawModal] 🌉 Starting cross-chain withdrawal via deBridge...')
+          console.log('[WithdrawModal] 🔐 Privy ready:', ready, 'authenticated:', authenticated)
           
           // 检查 Privy 认证
           if (!ready || !authenticated) {
+            console.error('[WithdrawModal] ❌ Privy not ready or not authenticated')
             message.error('请先登录 Privy 钱包')
+            setSubmitLoading(false)
             return
           }
+          
+          console.log('[WithdrawModal] ✅ Privy authentication OK, proceeding with bridge...')
           
           // 转换金额为最小单位（USDC 6位小数）
           const amountInUsd = parseFloat(money)
           const amountInSmallestUnit = (amountInUsd * 1_000_000).toString()
+          
+          console.log('[WithdrawModal] 💱 Amount conversion:', {
+            amountInUsd,
+            amountInSmallestUnit
+          })
           
           // 执行跨链桥接
           const bridgeSuccess = await executeWithdrawBridge(
@@ -164,6 +194,8 @@ export default observer(
             withdrawAddress,
             amountInSmallestUnit
           )
+          
+          console.log('[WithdrawModal] 🎯 Bridge result:', bridgeSuccess)
           
           if (bridgeSuccess) {
             // 记录桥接订单到后端
@@ -230,10 +262,10 @@ export default observer(
                 rules={[{ required: true, message: '请选择目标链' }]}
               >
                 <Select 
-                  value={selectedChain}
                   onChange={(value) => {
+                    console.log('[WithdrawModal] 🔄 Chain selected:', value)
                     setSelectedChain(value)
-                    form.setFieldValue('targetChain', value)
+                    form.setFieldValue('targetChain', value) // 确保表单值被更新
                   }}
                   size="large"
                   className="!h-[38px]"
@@ -260,9 +292,9 @@ export default observer(
                   size="large" 
                   className="!h-[38px]" 
                   placeholder={
-                    selectedChain === 'Ethereum' 
+                    form.getFieldValue('targetChain') === 'Ethereum' 
                       ? '请输入 Ethereum 地址 (以 0x 开头)' 
-                      : selectedChain === 'Tron'
+                      : form.getFieldValue('targetChain') === 'Tron'
                       ? '请输入 Tron 地址 (以 T 开头)'
                       : '请输入 Solana 地址'
                   } 

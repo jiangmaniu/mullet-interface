@@ -21,25 +21,28 @@ type RetutrnConnectType = {
   rpcSubscriptions: RpcSubscriptions<SolanaRpcSubscriptionsApi>
 }
 
+// 使用 Ankr 的可靠 RPC endpoint
+const DEFAULT_SOLANA_RPC = 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+const DEFAULT_SOLANA_WSS = 'wss://rpc.ankr.com/solana/ws/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+
 // privy connection initialization
 export default function useConnection(): RetutrnConnectType {
   const { connected } = usePrivyInfo()
   const { trade } = useStores()
   const currentAccountInfo = trade.currentAccountInfo
   const cluster = currentAccountInfo.networkAlias || ''
-  const endpoint = currentAccountInfo.networkRpc || 'https://api.mainnet-beta.solana.com'
-  // const endpoint = 'https://api.devnet.solana.com' // @TODO 测试环境
+  const endpoint = currentAccountInfo.networkRpc || DEFAULT_SOLANA_RPC
 
   const connection = useMemo(() => {
-    return new Connection(endpoint)
+    return new Connection(endpoint, 'confirmed')
   }, [endpoint])
 
   const rpc = useMemo(() => {
-    return createSolanaRpc(currentAccountInfo.networkRpc || 'https://api.mainnet-beta.solana.com')
+    return createSolanaRpc(currentAccountInfo.networkRpc || DEFAULT_SOLANA_RPC)
   }, [currentAccountInfo.networkRpc])
 
   const rpcSubscriptions = useMemo(() => {
-    return createSolanaRpcSubscriptions('wss://api.devnet.solana.com')
+    return createSolanaRpcSubscriptions(DEFAULT_SOLANA_WSS)
   }, [currentAccountInfo.networkRpc])
 
   return {
