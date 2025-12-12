@@ -124,16 +124,18 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
   // 监听系统主题模式
   useEffect(() => {
     // 优先获取交易页面主题，如果没有获取到，则获取全局主题
-    const themeMode = STORAGE_GET_TRADE_THEME() || STORAGE_GET_THEME()
+    // const themeMode = STORAGE_GET_TRADE_THEME() || STORAGE_GET_THEME()
 
     const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
-    const matchMode = darkModeMediaQuery.matches ? 'dark' : 'light'
-    const mode = themeMode ? themeMode : matchMode
+    // const matchMode = darkModeMediaQuery.matches ? 'dark' : 'light'
+    // const mode = themeMode ? themeMode : matchMode
 
+    const mode = 'dark'
     handleSetTheme(mode)
 
     const listener = (event: any) => {
-      const themeMode = event.matches ? 'dark' : 'light'
+      // const themeMode = event.matches ? 'dark' : 'light'
+      const themeMode = mode
 
       // 监听系统主题切换
       handleSetTheme(themeMode)

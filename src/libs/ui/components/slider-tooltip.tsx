@@ -3,7 +3,7 @@
 import * as SliderPrimitive from '@radix-ui/react-slider'
 import * as React from 'react'
 
-import { BNumber } from '@mullet/utils/number'
+import { BNumber } from '@/libs/utils/number'
 
 import { cn } from '../lib/utils'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './tooltip'
@@ -17,7 +17,7 @@ type SliderProps = React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> &
   isShowMarkLabels?: boolean
 }
 
-export const SliderTooltip = React.forwardRef<React.ComponentRef<typeof SliderPrimitive.Root>, SliderProps>(
+export const SliderTooltip = React.forwardRef<React.ElementRef<typeof SliderPrimitive.Root>, SliderProps>(
   (
     {
       className,
@@ -29,11 +29,9 @@ export const SliderTooltip = React.forwardRef<React.ComponentRef<typeof SliderPr
       tooltipFormat,
       ...props
     },
-    ref,
+    ref
   ) => {
-    const [value, setValue] = React.useState<number[]>(
-      (props.defaultValue as number[]) ?? (props.value as number[]) ?? [0],
-    )
+    const [value, setValue] = React.useState<number[]>((props.defaultValue as number[]) ?? (props.value as number[]) ?? [0])
     const [innerInterval] = React.useState<number>(props.interval ?? props.step ?? 25)
     const numberOfMarks = Math.floor((props.max ?? 100) / innerInterval) + 1
     console.log(numberOfMarks, innerInterval)
@@ -91,7 +89,7 @@ export const SliderTooltip = React.forwardRef<React.ComponentRef<typeof SliderPr
           <div
             className={cn(
               'relative',
-              'group-data-[orientation=horizontal]:h-2.5 group-data-[orientation=vertical]:h-full group-data-[orientation=horizontal]:w-full group-data-[orientation=vertical]:w-1.5',
+              'group-data-[orientation=horizontal]:h-2.5 group-data-[orientation=vertical]:h-full group-data-[orientation=horizontal]:w-full group-data-[orientation=vertical]:w-1.5'
             )}
           >
             <div className="flex h-full w-full items-center">
@@ -100,7 +98,7 @@ export const SliderTooltip = React.forwardRef<React.ComponentRef<typeof SliderPr
             <SliderPrimitive.Range
               data-slot="slider-range"
               className={cn(
-                'absolute top-1/2 -translate-y-1/2 bg-[#EED94C] data-[orientation=horizontal]:h-0.5 data-[orientation=vertical]:w-full',
+                'absolute top-1/2 -translate-y-1/2 bg-[#EED94C] data-[orientation=horizontal]:h-0.5 data-[orientation=vertical]:w-full'
               )}
             />
             {isShowMarks && (
@@ -112,11 +110,11 @@ export const SliderTooltip = React.forwardRef<React.ComponentRef<typeof SliderPr
                     role="presentation"
                     className={cn('absolute top-1/2 h-2.5 w-2.5 rounded-full text-sm', {
                       'text-secondary bg-[#3B3D52]': i > tickIndex(value[0]!),
-                      'text-primary bg-[#EED94C]': i <= tickIndex(value[0]!),
+                      'text-primary bg-[#EED94C]': i <= tickIndex(value[0]!)
                     })}
                     style={{
                       left: `${calculateTickPercent(i, props.max ?? 100)}%`,
-                      transform: `translate(-${calculateTickPercent(i, props.max ?? 100)}%, -50%)`,
+                      transform: `translate(-${calculateTickPercent(i, props.max ?? 100)}%, -50%)`
                     }}
                   />
                 ))}
@@ -148,18 +146,15 @@ export const SliderTooltip = React.forwardRef<React.ComponentRef<typeof SliderPr
                 return (
                   <div
                     key={`${i}`}
-                    className={cn(
-                      'absolute top-0 cursor-pointer select-none text-xs text-[#9FA0B0] transition-colors',
-                      {
-                        'text-white': BNumber.from(value[0])?.gte(mark),
-                        '-translate-x-1/2': i > 0 && i < marks.length - 1,
-                        '-translate-x-full': i === marks.length - 1,
-                        'translate-x-0': i === 0,
-                      },
-                    )}
+                    className={cn('absolute top-0 cursor-pointer select-none text-xs text-[#9FA0B0] transition-colors', {
+                      'text-white': BNumber.from(value[0])?.gte(mark),
+                      '-translate-x-1/2': i > 0 && i < marks.length - 1,
+                      '-translate-x-full': i === marks.length - 1,
+                      'translate-x-0': i === 0
+                    })}
                     style={{
                       left: `${(mark / (props.max ?? 100)) * 100}%`,
-                      zIndex: 10,
+                      zIndex: 10
                     }}
                     onMouseDown={(e) => {
                       e.preventDefault()
@@ -186,7 +181,7 @@ export const SliderTooltip = React.forwardRef<React.ComponentRef<typeof SliderPr
         </SliderPrimitive.Track>
       </SliderPrimitive.Root>
     )
-  },
+  }
 )
 
 SliderTooltip.displayName = 'SliderTooltip'

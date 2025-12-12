@@ -162,6 +162,8 @@ export const NewThemeFontWeight = {
   'semibold': 'semibold',
 }
 
+export const NewThemeBaseSize = 4
+
 export const NewThemeRadius = {
   'xs': '4px',
   'small': '8px',
@@ -170,9 +172,19 @@ export const NewThemeRadius = {
   'xl': '24px',
   '2xl': '28px',
   '3xl': '32px',
+  'none': '0px',
+  '1': `${NewThemeBaseSize * 1}px`,
+  '2': `${NewThemeBaseSize * 2}px`,
+  '3': `${NewThemeBaseSize * 3}px`,
+  '4': `${NewThemeBaseSize * 4}px`,
+  '5': `${NewThemeBaseSize * 5}px`,
+  '6': `${NewThemeBaseSize * 6}px`,
+  '7': `${NewThemeBaseSize * 7}px`,
+  '8': `${NewThemeBaseSize * 8}px`,
+  '9': `${NewThemeBaseSize * 9}px`,
+  '10': `${NewThemeBaseSize * 10}px`,
 }
 
-export const NewThemeBaseSize = 4
 
 export const NewThemeSpacing = {
   xs: `${NewThemeBaseSize * 1}px`,

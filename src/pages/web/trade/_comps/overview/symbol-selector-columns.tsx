@@ -1,7 +1,9 @@
+import SymbolIcon from '@/components/Base/SymbolIcon'
 import { Trans } from '@/components/t'
 import { GeneralTooltip } from '@/components/tooltip'
 import { useStores } from '@/context/mobxProvider'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
+import { IconButton } from '@/libs/ui/components/button'
 import { Iconify } from '@/libs/ui/components/icons'
 import { cn } from '@/libs/ui/lib/utils'
 import { BNumber } from '@/libs/utils/number'
@@ -15,22 +17,7 @@ export const symbolColumns: {
     key: 'symbol',
     header: <Trans>交易对</Trans>,
     cell: (symbolItem) => {
-      return (
-        <div className="flex items-center gap-2">
-          <Iconify icon="iconoir:star" className="size-3.5" />
-
-          <div className="">
-            <img
-              src={`${process.env.NEXT_PUBLIC_IMAGE_DOMAIN}/${symbolItem.imgUrl}`}
-              alt={'symbol logo'}
-              className="size-3.5 rounded-full"
-            />
-          </div>
-          <GeneralTooltip align="center" content={symbolItem.remark}>
-            <div className="text-paragraph-p2 text-content-1">{symbolItem.alias}</div>
-          </GeneralTooltip>
-        </div>
-      )
+      return <SymbolInfo symbolInfo={symbolItem} />
     }
   },
   {
@@ -52,14 +39,14 @@ export const symbolColumns: {
     key: 'volume',
     header: <Trans>交易量</Trans>,
     cell: () => {
-      return <div>{BNumber.toFormatNumber(613428511.36, { volScale: 2, prefix: '$' })}</div>
+      return <div>{BNumber.toFormatNumber(undefined, { volScale: 2, prefix: '$' })}</div>
     }
   },
   {
     key: 'openInterest',
     header: <Trans>未平仓合约</Trans>,
     cell: () => {
-      return <div>{BNumber.toFormatNumber(154, { unit: 'SOL', volScale: 2 })}</div>
+      return <div>{BNumber.toFormatNumber(undefined, { unit: 'SOL', volScale: 2 })}</div>
     }
   },
   {
@@ -68,8 +55,8 @@ export const symbolColumns: {
     cell: () => {
       return (
         <div>
-          {BNumber.toFormatPercent(0.000001, { forceSign: true, volScale: undefined })} /{' '}
-          {BNumber.toFormatPercent(0.000002, { volScale: undefined })}
+          {BNumber.toFormatPercent(undefined, { forceSign: true, volScale: undefined })} /{' '}
+          {BNumber.toFormatPercent(undefined, { volScale: undefined })}
         </div>
       )
     }
@@ -98,6 +85,37 @@ const H24Change = ({ symbolInfo }: { symbolInfo: Account.TradeSymbolListItem }) 
       )}
     >
       {BNumber.toFormatPercent(percent, { forceSign: true })}
+    </div>
+  )
+}
+
+const SymbolInfo = ({ symbolInfo }: { symbolInfo: Account.TradeSymbolListItem }) => {
+  const { trade } = useStores()
+  const isFavorite = trade.favoriteList.some((item) => item.symbol === symbolInfo.symbol)
+
+  return (
+    <div className="flex items-center gap-2">
+      <GeneralTooltip align="center" content={isFavorite ? '移除自选' : '添加自选'}>
+        <div>
+          {String(isFavorite)}
+          <Iconify
+            onClick={(e) => {
+              trade.toggleSymbolFavorite(symbolInfo.symbol)
+              e.stopPropagation()
+            }}
+            icon="iconoir:star"
+            className={cn('block size-3.5 cursor-pointer', isFavorite ? 'text-brand-primary' : 'text-brand-secondary-1', {})}
+          />
+        </div>
+      </GeneralTooltip>
+
+      <div className="size-3.5 rounded-full">
+        <SymbolIcon src={symbolInfo?.imgUrl} width={14} height={14} className="size-3.5 rounded-full" />
+      </div>
+
+      <GeneralTooltip align="center" content={symbolInfo.remark}>
+        <div className="text-paragraph-p2 text-content-1">{symbolInfo.alias}</div>
+      </GeneralTooltip>
     </div>
   )
 }

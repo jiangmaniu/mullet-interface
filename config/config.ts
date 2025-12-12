@@ -175,6 +175,8 @@ export default defineConfig({
       hashPriority: 'high',
       legacyTransformer: true
     }
+    ,
+    cssinjs: false
   },
   /**
    * @name 网络请求配置
@@ -204,7 +206,7 @@ export default defineConfig({
   // pwa配置
   links: [
     { rel: 'manifest', href: '/platform/manifest.json' },
-    { rel: 'shortcut icon', href: '/platform/favicon.ico' }
+    { rel: 'shortcut icon', href: '/platform/favicon.svg' }
   ],
 
   // seo

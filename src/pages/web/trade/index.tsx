@@ -15,18 +15,18 @@ import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 
 import { checkPageShowTime } from '@/utils/business'
-// import BuyAndSell from './comp/BuyAndSell'
-// import Center from './comp/Center'
+import BuyAndSell from './comp/BuyAndSell'
+import Center from './comp/Center'
 import Footer from './comp/Footer'
 import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
-// import Sidebar from './comp/Sidebar'
-// import TradeRecord from './comp/TradeRecord'
-// import DepthPrice from './comp/Widget/DepthPrice'
-// import Liquidation from './comp/Widget/Liquidation'
+import Sidebar from './comp/Sidebar'
+import TradeRecord from './comp/TradeRecord'
+import DepthPrice from './comp/Widget/DepthPrice'
+import Liquidation from './comp/Widget/Liquidation'
 import { Overview } from './_comps/overview'
-// import { AccountDetails } from './_comps/account'
-// import { TradeLayout } from './_comps/layout'
-// import { TradeLayoutKey } from './_comps/layout/types'
+import { AccountDetails } from './_comps/account'
+import { TradeLayout } from './_comps/layout'
+import { TradeLayoutKey } from './_comps/layout/types'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -52,14 +52,14 @@ export default observer(() => {
   //   }
   // }, [currentUser])
 
-  useEffect(() => {
-    // 设置交易页面主题变量为全局主题
-    setMode(STORAGE_GET_TRADE_THEME())
-    return () => {
-      // 重置全局主题
-      setMode('light')
-    }
-  }, [pathname])
+  // useEffect(() => {
+  //   // 设置交易页面主题变量为全局主题
+  //   setMode(STORAGE_GET_TRADE_THEME())
+  //   return () => {
+  //     // 重置全局主题
+  //     setMode('light')
+  //   }
+  // }, [pathname])
 
   const onSubscribeExchangeRateQuote = () => {
     // 订阅当前激活的汇率品种行情
@@ -140,27 +140,27 @@ export default observer(() => {
               <div className="flex flex-1 gap-2 flex-col">
                 <Overview />
                 {/* 交易 */}
-                {/* <div className="flex"> */}
-                {/* <Sidebar /> */}
-                {/* 中间区域 */}
-                {/* <Center /> */}
-                {/* 深度报价 */}
-                {/* <DepthPrice /> */}
-                {/* </div> */}
+                <div className="flex flex-1">
+                  <Sidebar />
+                  {/* 中间区域 */}
+                  <Center />
+                  {/* 深度报价 */}
+                  <DepthPrice />
+                </div>
               </div>
 
               <div className="flex w-max gap-2 min-w-[280px]  flex-col">
-                {/* <AccountDetails /> */}
+                <AccountDetails />
 
                 {/* 买卖交易区 */}
-                {/* <BuyAndSell /> */}
+                <BuyAndSell />
               </div>
             </div>
 
             <div className={cn('flex items-start justify-between relative bg-primary')}>
               {/* 交易记录 */}
               <div style={{ width: 'calc(100vw - 303px)' }} className={cn('flex-1')}>
-                {/* <TradeRecord /> */}
+                <TradeRecord />
               </div>
               <div className={cn('w-[300px] min-h-[270px] relative')}>{/* <Liquidation /> */}</div>
             </div>

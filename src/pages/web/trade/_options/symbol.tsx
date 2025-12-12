@@ -33,6 +33,10 @@ export const SYMBOL_CATEGORY_OPTIONS: {
   value: SymbolCategory
 }[] = [
   {
+    label: <Trans>全部</Trans>,
+    value: SymbolCategory.All
+  },
+  {
     label: <Trans>外汇</Trans>,
     value: SymbolCategory.Forex
   },

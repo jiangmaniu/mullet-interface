@@ -150,7 +150,7 @@ const TabsTargetVariants = cva('bg-transparent', {
   }
 })
 
-const TabsTargetContentVariants = cva('cursor-pointer', {
+const TabsTargetContentVariants = cva('cursor-pointer flex flex-col items-center', {
   variants: {
     variant: {
       underline: [

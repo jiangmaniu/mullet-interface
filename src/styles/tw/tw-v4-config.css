@@ -21,3 +21,7 @@
     font-family: var(--font-inter), 'PingFang SC', 'Microsoft YaHei', var(--font-sans);
   }
 }
+
+button {
+  background-color: transparent;
+}

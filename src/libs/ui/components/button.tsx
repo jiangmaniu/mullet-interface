@@ -8,24 +8,24 @@ import { cn } from '../lib/utils'
 
 const buttonVariants = cva(
   [
-    'inline-flex items-center gap-1 box-border justify-center transition-[colors,transform] text-[14px] whitespace-nowrap font-medium ring-offset-background ',
+    'inline-flex items-center gap-1 box-border justify-center transition-all text-[14px] whitespace-nowrap font-medium ring-offset-background ',
     // 'enabled:active:scale-95',
     'focus-visible:outline-focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
     `data-[disabled='true']:cursor-not-allowed data-[disabled='true']:opacity-35`,
-    `disabled:cursor-not-allowed disabled:opacity-35`,
+    `disabled:cursor-not-allowed disabled:opacity-35`
   ],
   {
     variants: {
       color: {
         default: '',
-        primary: '',
+        primary: ''
       },
       variant: {
         primary: [
           // 'text-[#0A0C27] bg-[#EED94C]',
           // 'enabled:hover:bg-[#FDFF84] enabled:hover:outline-none enabled:hover:ring-3 enabled:hover:ring-[#FDFF84]',
           // 'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]',
-          '',
+          ''
         ],
 
         destructive: 'bg-destructive text-destructive-foreground enabled:hover:bg-destructive/90',
@@ -33,20 +33,20 @@ const buttonVariants = cva(
           // 'border border-[#3B3D52] text-white bg-transparent',
           // ' enabled:hover:text-white enabled:hover:outline-none enabled:hover:ring-3 enabled:hover:border-white',
           // ' focus-visible:text-white focus-visible:outline-none focus-visible:ring-3 focus-visible:border-white ',
-          '',
+          ''
         ],
         secondary: [
           'border border-[#0A0C27] bg-[#0A0C27] ',
           'enabled:hover:bg-[#FDFF84] enabled:hover:text-[#0A0C27] enabled:hover:outline-none enabled:hover:ring-3 enabled:hover:ring-[#FDFF84]',
-          'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]',
+          'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
         ],
         ghost: 'enabled:hover:bg-[#FDFF84] bg-transparent text-[#EED94C] enabled:hover:text-[#0A0C27]',
         // link: 'relative after:absolute after:bg-primary after:bottom-2 after:h-[1px] after:w-2/3 after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300',
         link: [
           'text-[#EED94C]! font-semibold leading-none text-xs',
           'enabled:hover:bg-[#FDFF84]',
-          'enabled:hover:text-interactive-link-focus',
-        ],
+          'enabled:hover:text-interactive-link-focus'
+        ]
       },
       size: {
         middle: 'min-h-8 py-3xs px-s box-border rounded-small leading-6 font-semibold',
@@ -56,8 +56,8 @@ const buttonVariants = cva(
         lg: 'px-8 py-2.5 rounded-2',
         icon: 'p-small rounded-[8px]',
         large: 'p-4 rounded-2xl text-lg',
-        submit: 'py-4 text-lg leading-[30px]',
-      },
+        submit: 'py-4 text-lg leading-[30px]'
+      }
     },
     compoundVariants: [
       {
@@ -67,8 +67,8 @@ const buttonVariants = cva(
           'text-content-1 text-button-1 bg-zinc-300/20',
           'hover:bg-zinc-300/40 hover:shadow-base',
           'active:shadow-inset-base',
-          'disabled:text-content-6',
-        ],
+          'disabled:text-content-6'
+        ]
       },
       {
         variant: 'outline',
@@ -77,8 +77,8 @@ const buttonVariants = cva(
           'text-content-1 text-button-1 border border-zinc-300/20',
           'hover:bg-zinc-300/0 hover:border-zinc-base hover:shadow-base',
           'active:shadow-inset-base active:border-white',
-          'disabled:text-content-6 disabled:border-zinc-xs',
-        ],
+          'disabled:text-content-6 disabled:border-zinc-xs'
+        ]
       },
 
       {
@@ -88,16 +88,16 @@ const buttonVariants = cva(
           'text-content-foreground text-button-1 bg-brand-primary',
           'hover:bg-yellow-400 hover:shadow-base',
           'active:shadow-inset-base',
-          'disabled:text-content-6 disabled:bg-zinc-300/20',
-        ],
-      },
+          'disabled:text-content-6 disabled:bg-zinc-300/20'
+        ]
+      }
     ],
     defaultVariants: {
       variant: 'primary',
       size: 'sm',
-      color: 'default',
-    },
-  },
+      color: 'default'
+    }
+  }
 )
 
 interface IconProps {
@@ -105,9 +105,7 @@ interface IconProps {
   RightIcon?: React.ReactNode
 }
 
-export interface ButtonProps
-  extends Omit<React.ComponentProps<'button'>, 'color'>,
-    VariantProps<typeof buttonVariants> {
+export interface ButtonProps extends Omit<React.ComponentProps<'button'>, 'color'>, VariantProps<typeof buttonVariants> {
   asChild?: boolean
   loading?: boolean
   block?: boolean
@@ -117,76 +115,78 @@ export interface ButtonProps
   replace?: boolean | undefined
 }
 
-const Button = ({
-  className,
-  variant,
-  size,
-  color,
-  asChild = false,
-  loading = false,
-  block = false,
-  children,
-  LeftIcon,
-  RightIcon,
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps & IconProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      color,
+      asChild = false,
+      loading = false,
+      block = false,
+      children,
+      LeftIcon,
+      RightIcon,
+      disabled = false,
+      type = 'button',
+      href,
+      // target,
+      // replace,
+      ...props
+    },
+    ref
+  ) => {
+    const Comp = asChild ? Slot : 'button'
 
-  disabled = false,
-
-  type = 'button',
-  href,
-  // target,
-  // replace,
-  ref,
-  ...props
-}: ButtonProps & IconProps) => {
-  const Comp = asChild ? Slot : 'button'
-
-  const Button = (
-    <Comp
-      className={cn(
-        buttonVariants({
-          variant,
-          size,
-          color,
-          className: cn(
-            {
-              'flex w-full flex-1': block,
-            },
-            className,
-          ),
-        }),
-      )}
-      ref={ref}
-      type={type}
-      disabled={disabled || loading}
-      {...props}
-    >
-      {/* {(LeftIcon || loading) && <>{LeftIcon ? LeftIcon : loading ? <Icons.lucide.Spinner className="size-4 animate-spin" /> : null}</>} */}
-      <Slottable>{children}</Slottable>
-      {RightIcon && <>{RightIcon}</>}
-    </Comp>
-  )
-
-  if (href && !disabled) {
-    return (
-      <LinkButton
-        href={href}
-        block={block}
-        // target={target}
-        // replace={replace}
-        className={className}
-        variant={variant}
-        size={size}
-        color={color}
-        LeftIcon={LeftIcon}
-        RightIcon={RightIcon}
+    const ButtonElement = (
+      <Comp
+        className={cn(
+          buttonVariants({
+            variant,
+            size,
+            color,
+            className: cn(
+              {
+                'flex w-full flex-1': block
+              },
+              className
+            )
+          })
+        )}
+        ref={ref}
+        type={type}
+        disabled={disabled || loading}
+        {...props}
       >
-        {children}
-      </LinkButton>
+        {/* {(LeftIcon || loading) && <>{LeftIcon ? LeftIcon : loading ? <Icons.lucide.Spinner className="size-4 animate-spin" /> : null}</>} */}
+        <Slottable>{children}</Slottable>
+        {RightIcon && <>{RightIcon}</>}
+      </Comp>
     )
-  }
 
-  return <>{Button}</>
-}
+    if (href && !disabled) {
+      return (
+        <LinkButton
+          href={href}
+          block={block}
+          // target={target}
+          // replace={replace}
+          className={className}
+          variant={variant}
+          size={size}
+          color={color}
+          LeftIcon={LeftIcon}
+          RightIcon={RightIcon}
+        >
+          {children}
+        </LinkButton>
+      )
+    }
+
+    return <>{ButtonElement}</>
+  }
+)
 
 Button.displayName = 'Button'
 
@@ -218,11 +218,11 @@ const LinkButton = ({
           color,
           className: cn(
             {
-              'flex w-full flex-1': block,
+              'flex w-full flex-1': block
             },
-            className,
-          ),
-        }),
+            className
+          )
+        })
       )}
       data-disabled={disabled}
       // ref={ref}

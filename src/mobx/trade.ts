@@ -807,15 +807,17 @@ class TradeStore {
     const symbolName = name || this.activeSymbolName // 不传name，使用当前激活的
     const index = this.favoriteList.findIndex((v) => v.symbol === symbolName)
     const item = this.symbolMapAll?.[symbolName]
+
+    let newFavoriteList: Account.TradeSymbolListItem[]
     // 删除
     if (index !== -1) {
-      this.favoriteList.splice(index, 1)
+      newFavoriteList = this.favoriteList.filter((v) => v.symbol !== symbolName)
     } else {
       // 添加到已选列表
       item.checked = true
-      this.favoriteList.push(item)
+      newFavoriteList = [...this.favoriteList, item]
     }
-    this.setSymbolFavoriteToLocal(this.favoriteList)
+    this.setSymbolFavoriteToLocal(newFavoriteList)
   }
 
   // ============================

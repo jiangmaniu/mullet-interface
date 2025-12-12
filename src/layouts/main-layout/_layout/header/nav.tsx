@@ -37,23 +37,19 @@ export const MainLayoutHeaderNav = () => {
 
             {
               path: '/lp',
-              label: (
-                <div>
-                  <IconMtlp className="w-[52px] h-[14px]" />
-                </div>
-              ),
+              label: <IconMtlp className="w-[52px] h-[14px]" />,
               activeSegment: 'lp'
             },
             {
               path: '/vaults',
               label: '金库',
               activeSegment: 'vaults'
-            },
-            {
-              path: '/points',
-              label: '积分',
-              activeSegment: 'points'
             }
+            // {
+            //   path: '/points',
+            //   label: '积分',
+            //   activeSegment: 'points'
+            // }
           ].map((item, key) => {
             const isActiveNav = activeSegment === item.activeSegment
             return (

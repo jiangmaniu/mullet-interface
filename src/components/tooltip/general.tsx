@@ -1,10 +1,9 @@
 import { isNull, isUndefined } from 'lodash-es'
 import type { ComponentProps, PropsWithChildren } from 'react'
 
-import { cn } from '@/utils/cn'
-
+import { cn } from '@/libs/ui/lib/utils'
+import { Tooltip, TooltipArrow, TooltipContent, TooltipTrigger } from '@/libs/ui/components/tooltip'
 import { TooltipProvider } from '../providers/tooltip-provider'
-import { Tooltip, TooltipArrow, TooltipContent, TooltipTrigger } from '../ui/tooltip'
 
 type CommonTooltipProps = PropsWithChildren<
   Omit<ComponentProps<typeof TooltipContent>, 'content'> &
@@ -33,9 +32,7 @@ export const GeneralTooltip = ({
   return (
     <TooltipProvider>
       <Tooltip {...{ open, defaultOpen, onOpenChange }}>
-        <TooltipTrigger className="cursor-help" asChild>
-          {children}
-        </TooltipTrigger>
+        <TooltipTrigger className="block">{children}</TooltipTrigger>
         <TooltipContent
           className={cn('max-w-[220px]', className)}
           alignOffset={alignOffset}
@@ -47,7 +44,10 @@ export const GeneralTooltip = ({
           {content}
 
           <TooltipArrow
-            className="bg-[#0E123A] border-b border-r border-[#3B3D52] relative -z-1 fill-[#0E123A] size-2.5 translate-y-[calc(-50%_-_0px)] rotate-45 rounded-[2px]"
+            className={cn(
+              'relative -z-1 size-2.5 translate-y-[calc(-50%_-_0px)] rotate-45 rounded-[2px] border-r border-b',
+              'border-zinc-base bg-zinc-800/90 backdrop-blur-[12px]'
+            )}
             {...{ variant: props.variant }}
           />
         </TooltipContent>

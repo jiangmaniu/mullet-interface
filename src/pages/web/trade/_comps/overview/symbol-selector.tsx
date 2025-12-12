@@ -14,6 +14,7 @@ import { useStores } from '@/context/mobxProvider'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { symbolColumns } from './symbol-selector-columns'
 import { useSwitchSymbol } from '@/pages/webapp/hooks/useSwitchSymbol'
+import { EmptyNoData } from '@/components/empty/no-data'
 
 export const SymbolSelector = () => {
   const [searchContent, setSearchContent] = React.useState<string>('')
@@ -112,27 +113,33 @@ export const SymbolSelector = () => {
           </div>
 
           <div className="max-h-[400px] overflow-y-auto">
-            {renderSymbolList?.map((symbolItem) => {
-              return (
-                <div
-                  key={symbolItem.symbol}
-                  className={cn('flex gap-6 px-6 py-2', 'hover:bg-[#ccc]/10', {
-                    'bg-[#ccc]/10': symbolItem.symbol === activeSymbolInfo?.symbol
-                  })}
-                  onClick={() => {
-                    switchSymbol(symbolItem.symbol)
-                  }}
-                >
-                  {symbolColumns.map((column) => {
-                    return (
-                      <div key={column.key} className="text-paragraph-p2 text-content-1 flex flex-1 items-center">
-                        {column.cell(symbolItem)}
-                      </div>
-                    )
-                  })}
-                </div>
-              )
-            })}
+            {!renderSymbolList?.length ? (
+              <div className="py-3xl">
+                <EmptyNoData />
+              </div>
+            ) : (
+              renderSymbolList?.map((symbolItem) => {
+                return (
+                  <div
+                    key={symbolItem.symbol}
+                    className={cn('flex gap-6 px-6 py-2', 'hover:bg-[#ccc]/10', {
+                      'bg-[#ccc]/10': symbolItem.symbol === activeSymbolInfo?.symbol
+                    })}
+                    onClick={() => {
+                      switchSymbol(symbolItem.symbol)
+                    }}
+                  >
+                    {symbolColumns.map((column) => {
+                      return (
+                        <div key={column.key} className="text-paragraph-p2 text-content-1 flex flex-1 items-center">
+                          {column.cell(symbolItem)}
+                        </div>
+                      )
+                    })}
+                  </div>
+                )
+              })
+            )}
           </div>
         </div>
       </HoverCardContent>
