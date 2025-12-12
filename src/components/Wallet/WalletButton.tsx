@@ -9,8 +9,13 @@ import Button from '../Base/Button'
 
 // 钱包地址选择器
 export default function WalletButton() {
-  const { user, connected, foundWallet, address, hasExternalWallet, reconnectWallet, connectWallet } = usePrivyInfo()
+  const { user, connected, activeSolanaWallet, address, connectWallet } = usePrivyInfo()
   const { login } = useLogin()
+  
+  // 检查钱包状态
+  const hasExternalWallet = !!activeSolanaWallet && !!(activeSolanaWallet as any).standardWallet
+  const reconnectWallet = !activeSolanaWallet
+  
   // 排除内嵌钱包登录（邮箱等账号登录）
 
   const handleWalletLogin = async () => {

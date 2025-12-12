@@ -28,8 +28,12 @@ export default observer(
     const [form] = Form.useForm()
     const [accountItem, setAccountItem] = useState({} as User.AccountItem)
     const { trade } = useStores()
-    const { hasEmbeddedWallet, address, hasExternalWallet, foundWallet } = usePrivyInfo()
+    const { activeSolanaWallet, address } = usePrivyInfo()
     const { balance: walletBalance, getTokenBalance } = useSPLTokenBalance()
+    
+    // 检查是否是嵌入式钱包
+    const isEmbeddedWallet = !activeSolanaWallet || !(activeSolanaWallet as any).standardWallet
+    const hasExternalWallet = !!activeSolanaWallet && !!(activeSolanaWallet as any).standardWallet
 
     // 跨链桥接对话框状态
     const [showTransferDialog, setShowTransferDialog] = useState(false)
@@ -140,7 +144,7 @@ export default observer(
                 {/* 转出地址 */}
                 <Form.Item label={intl.formatMessage({ id: 'mt.zhuanchudizhi' })}>
                   <div className="rounded-md bg-gray-50 dark:bg-[#21262A] p-2 mt-1 flex items-center">
-                    {foundWallet?.meta?.icon && <img src={foundWallet?.meta?.icon} alt="" className="w-4 h-4 mr-1" />}
+                    {activeSolanaWallet?.meta?.icon && <img src={activeSolanaWallet?.meta?.icon} alt="" className="w-4 h-4 mr-1" />}
                     <ExplorerLink path={`address/${address}`} copyable address={address} isFormatAddress={false} />
                   </div>
                 </Form.Item>
@@ -178,7 +182,7 @@ export default observer(
           )}
 
           {/* privy内嵌钱包：展示地址给用户 */}
-          {hasEmbeddedWallet && (
+          {isEmbeddedWallet && (
             <div className="mt-10">
               <div className="gap-y-1 flex flex-col">
                 <div className="text-primary">

@@ -21,7 +21,8 @@ import { WebviewComponentProps } from '../../WebviewPage'
 import SecurityCertificationModal from './SecurityCertificationModal'
 import Step2 from './Step2'
 import { debridgeService } from '@/services/debridgeService'
-import { usePrivy, useWallets } from '@privy-io/react-auth'
+import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
+import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
 
 const Notice = observer(({ methodId }: { methodId: string }) => {
   const methodInfo = stores.wallet.withdrawalMethods.find((item) => item.id === methodId)
@@ -41,8 +42,11 @@ const Notice = observer(({ methodId }: { methodId: string }) => {
 const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProps, ref) => {
   const { theme } = useTheme()
   const [form] = Form.useForm()
-  const { user } = usePrivy()
-  const { wallets } = useWallets()
+  const { 
+    user, activeSolanaWallet, activeEthereumWallet,
+    ethWallets, solWallets, wallets
+  } = usePrivyInfo()
+  const { signAndSendTransaction } = useSignAndSendTransaction()
 
   const methods = stores.wallet.withdrawalMethods
   const intl = useIntl()
@@ -175,8 +179,8 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
    * 执行出金跨链桥接：Solana → 目标链 (ETH/TRON)
    */
   const executeWithdrawBridge = async (destinationAddress: string, amount: string, targetChain: string) => {
-    // 获取 Solana 钱包
-    const solanaWallet = wallets.find((w: any) => w.walletClientType === 'privy' && w.chainType === 'solana')
+    // 使用智能选择的活跃 Solana 钱包
+    const solanaWallet = activeSolanaWallet
     if (!solanaWallet) {
       throw new Error('未找到 Solana 钱包')
     }
@@ -205,7 +209,8 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
         await debridgeService.bridgeSolanaToEthereum({
           amount: amountInSmallestUnit,
           ethereumAddress: destinationAddress,
-          solanaWallet
+          solanaWallet,
+          signAndSendTransaction
         })
         
         console.log('[WithdrawBridge] ✅ Solana → Ethereum bridge completed')
@@ -213,8 +218,8 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
       } else if (targetChain === 'Tron') {
         setBridgeStatus('步骤 1/2: 正在桥接到 Ethereum...')
         
-        // 获取 Ethereum 钱包（中转用）
-        const ethWallet = wallets.find((w: any) => w.chainType === 'ethereum')
+        // 使用智能选择的 Ethereum 钱包（匹配 Solana 钱包来源）
+        const ethWallet = activeEthereumWallet
         if (!ethWallet) {
           throw new Error('未找到 Ethereum 钱包，无法完成 Tron 桥接')
         }
@@ -223,16 +228,14 @@ const WithdrawalPreview = forwardRef(({ onDisabledChange }: WebviewComponentProp
           amount: amountInSmallestUnit,
           tronAddress: destinationAddress,
           solanaWallet,
+          signAndSendTransaction,
           ethereumWallet: ethWallet
         })
         
         console.log('[WithdrawBridge] ✅ Step 1/2 completed:', result.txHash)
         
         // 提示用户需要等待第二步
-        message.warning({
-          content: '步骤 1/2 完成：资金已发送到 Ethereum。请等待 2-5 分钟后手动触发 Ethereum → Tron 桥接。',
-          duration: 10
-        })
+        message.error('步骤 1/2 完成：资金已发送到 Ethereum。请等待 2-5 分钟后手动触发 Ethereum → Tron 桥接。')
       }
       
       message.success(`✅ 跨链桥接${targetChain === 'Tron' ? '（步骤 1/2）' : ''}完成`)

@@ -2,7 +2,7 @@ import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
-import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
+import { useSignAndSendTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana'
 
 import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
@@ -14,6 +14,7 @@ import { Form, Input, Select, Space, Avatar, Spin } from 'antd'
 import { SUPPORTED_BRIDGE_CHAINS } from '@/config/lifiConfig'
 import { CHAIN_ICONS } from '@/config/tokenIcons'
 import { debridgeService } from '@/services/debridgeService'
+import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 
 // 出金弹窗
 export default observer(
@@ -27,10 +28,19 @@ export default observer(
     const [accountItem, setAccountItem] = useState({} as User.AccountItem)
     const [selectedChain, setSelectedChain] = useState('Solana') // 默认 Solana
     
-    // Privy 钱包集成
-    const { ready, authenticated, user } = usePrivy()
-    const { wallets } = useWallets()
+    // 使用统一的 Privy 信息 hook（智能钱包选择）
+    const { 
+      user, 
+      activeSolanaWallet, 
+      activeEthereumWallet,
+      ethWallets,
+      solWallets,
+      wallets,
+      connected
+    } = usePrivyInfo()
+    
     const { signAndSendTransaction } = useSignAndSendTransaction()
+    const { ready, authenticated } = usePrivy()
     
     // 桥接状态
     const [isBridging, setIsBridging] = useState(false)
@@ -86,16 +96,14 @@ export default observer(
           createTransferInstruction,
         } = await import('@solana/spl-token')
         
-        // 获取 Solana 钱包
-        const solanaAccount = user?.linkedAccounts?.find(
-          (account: any) => account.type === 'wallet' && account.chainType === 'solana'
-        ) as any
-        
-        const solanaWallet = wallets.find((w) => (w as any).chainType === 'solana') || { address: solanaAccount?.address }
+        // 使用智能选择的活跃 Solana 钱包
+        const solanaWallet = activeSolanaWallet
         
         if (!solanaWallet || !solanaWallet.address) {
           throw new Error('未找到 Solana 钱包，请先连接 Privy Solana 钱包')
         }
+        
+        console.log('[WithdrawModal] Using active Solana wallet:', solanaWallet.address)
 
         const senderPubkey = new PublicKey(solanaWallet.address)
         const recipientPubkey = new PublicKey(destinationAddress)
@@ -231,13 +239,8 @@ export default observer(
       setIsBridging(true)
       
       try {
-        // 从 linkedAccounts 获取账户信息（备份）
-        const solanaAccount = user?.linkedAccounts?.find(
-          (account: any) => account.type === 'wallet' && account.chainType === 'solana'
-        ) as any
-        
-        // 优先从 wallets 数组获取完整的钱包对象（包含 sendTransaction 方法）
-        const solanaWallet = wallets.find((w) => (w as any).chainType === 'solana') || { address: solanaAccount?.address }
+        // 使用智能选择的活跃 Solana 钱包
+        const solanaWallet = activeSolanaWallet
         
         if (!solanaWallet || !solanaWallet.address) {
           throw new Error('未找到 Solana 钱包，请先连接 Privy Solana 钱包')
@@ -269,16 +272,11 @@ export default observer(
             throw new Error(`Tron 桥接最小金额为 $20 USD（需要两步桥接）`)
           }
 
-          // 从 linkedAccounts 获取账户信息（备份）
-          const ethAccount = user?.linkedAccounts?.find(
-            (account: any) => account.type === 'wallet' && account.chainType === 'ethereum'
-          ) as any
-          
-          // 优先从 wallets 数组获取完整的钱包对象
-          const ethWallet = wallets.find((w) => (w as any).chainType === 'ethereum') || { address: ethAccount?.address }
+          // 使用智能选择的 Ethereum 钱包（匹配 Solana 钱包来源）
+          const ethWallet = activeEthereumWallet
           
           if (!ethWallet || !ethWallet.address) {
-            throw new Error('未找到 Ethereum 钱包，请先连接 Privy Ethereum 钱包')
+            throw new Error('未找到 Ethereum 钱包，无法完成 Tron 桥接')
           }
 
           setBridgeStatus('步骤 1/2: 桥接 Solana → Ethereum...')
