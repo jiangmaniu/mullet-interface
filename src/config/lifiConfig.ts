@@ -63,7 +63,7 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     id: 'ethereum',
     name: 'Ethereum',
     color: '#627EEA',
-    minDeposit: 3 // Ethereum桥接最低金额
+    minDeposit: 10 // Ethereum桥接最低金额
   },
   {
     id: 'solana',

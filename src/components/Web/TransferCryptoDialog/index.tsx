@@ -10,6 +10,7 @@ import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { useSessionSigner } from '@/hooks/useSessionSigner'
+import { API_BASE_URL } from '@/constants/api'
 import './index.less'
 
 const { Text } = Typography
@@ -57,6 +58,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const [depositAddress, setDepositAddress] = useState('')
   const [bridgeInProgress, setBridgeInProgress] = useState(false)
   const [bridgeStep, setBridgeStep] = useState<'idle' | 'tron-eth' | 'eth-sol' | 'completed'>('idle')
+  const [pollingOrderId, setPollingOrderId] = useState<string | null>(null) // 正在轮询的订单 ID
 
   // 获取所有链的钱包地址
   const ethereumAccount = user?.linkedAccounts?.find(
@@ -192,6 +194,134 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deposit])
 
+  // 通知后端开始监控订单
+  const notifyBackendBridgeOrder = async (orderId: string, amount: string, token: string, chain: string) => {
+    try {
+      const targetAddress = trade.currentAccountInfo?.pdaTokenAddress
+      if (!targetAddress) {
+        console.error('[Bridge] ❌ Backend PDA token address not found!')
+        return
+      }
+
+      const notifyUrl = new URL(`${API_BASE_URL}/api/debridge-monitor/submit`)
+      notifyUrl.searchParams.append('orderId', orderId)
+      notifyUrl.searchParams.append('toAddress', targetAddress)
+      notifyUrl.searchParams.append('amount', amount)
+      notifyUrl.searchParams.append('token', token)
+      notifyUrl.searchParams.append('chain', chain)
+
+      console.log('[Bridge] 📡 Notifying backend to monitor order:', {
+        orderId,
+        targetAddress,
+        amount,
+        token,
+        chain,
+        url: notifyUrl.toString()
+      })
+
+      const response = await fetch(notifyUrl.toString(), {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(10000)
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        console.log('[Bridge] ✅ Backend notification successful:', data)
+        message.success('订单已提交，等待完成后自动充值...')
+
+        // 开始轮询订单状态
+        pollOrderStatus(orderId, targetAddress)
+      } else {
+        console.error('[Bridge] ❌ Backend notification failed:', response.status)
+      }
+    } catch (error) {
+      console.error('[Bridge] ❌ Failed to notify backend:', error)
+    }
+  }
+
+  // 轮询订单状态
+  const pollOrderStatus = async (orderId: string, toAddress: string) => {
+    const maxAttempts = 60 // 最多轮询 60 次（约 5 分钟）
+    const pollInterval = 5000 // 每 5 秒轮询一次
+    let attempts = 0
+
+    setPollingOrderId(orderId)
+    console.log('[Bridge] 🔄 Started polling order:', orderId)
+
+    const poll = async () => {
+      try {
+        attempts++
+        console.log(`[Bridge] Polling attempt ${attempts}/${maxAttempts}`)
+
+        const response = await fetch(`${API_BASE_URL}/api/debridge-monitor/status/${orderId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        })
+
+        if (!response.ok) {
+          console.error('[Bridge] Failed to fetch order status:', response.status)
+          return
+        }
+
+        const data = await response.json()
+        console.log('[Bridge] Order status:', data)
+
+        if (data.success && data.data) {
+          const order = data.data
+
+          // 检查订单是否完成
+          if (order.status === 'fulfilled' && order.actualAmount) {
+            console.log('[Bridge] ✅ Order fulfilled! Calling recharge API...')
+            
+            // 调用充值 API
+            const rechargeUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${toAddress}&amount=${order.actualAmount}`
+            const rechargeResponse = await fetch(rechargeUrl, {
+              method: 'GET'
+            })
+
+            if (rechargeResponse.ok) {
+              const rechargeData = await rechargeResponse.json()
+              console.log('[Bridge] ✅ Recharge successful:', rechargeData)
+              message.success('🎉 充值成功！订单已完成')
+              setPollingOrderId(null)
+              return // 停止轮询
+            } else {
+              console.error('[Bridge] ❌ Recharge failed:', rechargeResponse.status)
+              message.error('充值失败，请联系客服')
+              setPollingOrderId(null)
+              return
+            }
+          } else if (order.status === 'failed') {
+            console.error('[Bridge] ❌ Order failed')
+            message.error('订单失败，请重试')
+            setPollingOrderId(null)
+            return
+          }
+
+          // 继续轮询
+          if (attempts < maxAttempts) {
+            setTimeout(poll, pollInterval)
+          } else {
+            console.warn('[Bridge] ⚠️ Polling timeout')
+            message.warning('订单处理超时，请稍后在历史记录中查看')
+            setPollingOrderId(null)
+          }
+        }
+      } catch (error) {
+        console.error('[Bridge] Polling error:', error)
+        if (attempts < maxAttempts) {
+          setTimeout(poll, pollInterval)
+        } else {
+          setPollingOrderId(null)
+        }
+      }
+    }
+
+    // 开始第一次轮询
+    setTimeout(poll, pollInterval)
+  }
+
   // 自动桥接
   const handleAutoBridge = async (amount: string, token: string, chain: string) => {
     try {
@@ -301,6 +431,11 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         console.log('[Bridge] ETH tx:', ethResult.txHash)
         console.log('[Bridge] Order ID:', ethResult.orderId || 'NOT_AVAILABLE')
 
+        // 🔥 通知后端监控最终的 ETH→SOL 订单（如果有 orderId）
+        if (ethResult.orderId) {
+          await notifyBackendBridgeOrder(ethResult.orderId, tronResult.dstChainTokenOutAmount, token, 'Ethereum→Solana')
+        }
+
         // 等待最终确认（如果有 orderId）
         if (ethResult.orderId) {
           message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
@@ -333,6 +468,11 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         console.log('[Bridge] ETH tx:', ethResult.txHash)
         console.log('[Bridge] Order ID:', ethResult.orderId || 'NOT_AVAILABLE')
 
+        // 🔥 通知后端监控 ETH→SOL 订单（如果有 orderId）
+        if (ethResult.orderId) {
+          await notifyBackendBridgeOrder(ethResult.orderId, amount, token, 'Ethereum→Solana')
+        }
+
         // 等待最终确认（如果有 orderId）
         if (ethResult.orderId) {
           message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
@@ -346,111 +486,13 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         }
       }
 
-      console.log('[Bridge] 🔔 Starting backend notification process...')
-
-      // 通知后端跨链成功（带重试机制）
-      try {
-        const bridgePath = chain === 'Tron' ? 'TRON → ETH → SOL' : 'ETH → SOL'
-        console.log(`[Bridge] ✅ ${bridgePath} bridge completed successfully!`)
-        console.log('[Bridge] Notifying backend of successful cross-chain transfer...')
-        console.log('[Bridge] Current trade info:', {
-          hasAccountInfo: !!trade.currentAccountInfo,
-          pdaTokenAddress: trade.currentAccountInfo?.pdaTokenAddress,
-          amount,
-          token,
-          chain
-        })
-        
-        // 使用后端账户信息中的 Solana PDA 地址（不是 Privy 钱包地址）
-        const targetAddress = trade.currentAccountInfo?.pdaTokenAddress
-        if (!targetAddress) {
-          console.error('[Bridge] ❌ Backend PDA token address not found!')
-          console.error('[Bridge] trade.currentAccountInfo:', trade.currentAccountInfo)
-          message.warning('⚠️ 无法获取后端 PDA 地址，请手动刷新余额')
-        } else {
-          const notifyUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${targetAddress}&amount=${amount}`
-          
-          console.log('[Bridge] Notification details:', {
-            path: bridgePath,
-            url: notifyUrl,
-            targetAddress,
-            amount,
-            token
-          })
-          
-          message.loading('正在通知后端更新余额...', 0)
-          
-          // 重试机制：最多重试 3 次
-          let retryCount = 0
-          const maxRetries = 3
-          let notifySuccess = false
-          
-          while (retryCount < maxRetries && !notifySuccess) {
-            try {
-              if (retryCount > 0) {
-                console.log(`[Bridge] 🔄 Retry attempt ${retryCount}/${maxRetries}...`)
-                // 等待 2 秒后重试
-                await new Promise(resolve => setTimeout(resolve, 2000))
-              }
-              
-              console.log(`[Bridge] 📡 Sending notification (attempt ${retryCount + 1}/${maxRetries})...`)
-              console.log(`[Bridge] 📡 URL: ${notifyUrl}`)
-              
-              const notifyResponse = await fetch(notifyUrl, {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                signal: AbortSignal.timeout(10000) // 10秒超时
-              })
-
-              console.log(`[Bridge] 📡 Response status: ${notifyResponse.status}`)
-
-              if (notifyResponse.ok) {
-                // 验证返回数据格式
-                const responseData = await notifyResponse.json()
-                console.log('[Bridge] 📡 Backend response:', responseData)
-                
-                if (responseData.code === 200 && responseData.success === true) {
-                  console.log('[Bridge] ✅ Backend notification sent successfully')
-                  message.success('✅ 后端余额已更新')
-                  notifySuccess = true
-                } else {
-                  console.warn(`[Bridge] ⚠️ Backend returned error (attempt ${retryCount + 1}/${maxRetries}):`, responseData.msg || 'Unknown error')
-                  retryCount++
-                }
-              } else {
-                const errorText = await notifyResponse.text()
-                console.error(`[Bridge] ❌ Backend notification failed (attempt ${retryCount + 1}/${maxRetries}):`, {
-                  status: notifyResponse.status,
-                  statusText: notifyResponse.statusText,
-                  error: errorText
-                })
-                retryCount++
-              }
-            } catch (fetchError) {
-              console.error(`[Bridge] ❌ Notification request failed (attempt ${retryCount + 1}/${maxRetries}):`, fetchError)
-              retryCount++
-            }
-          }
-          
-          if (!notifySuccess) {
-            console.error('[Bridge] ❌ Backend notification failed after 3 attempts')
-            message.error('⚠️ 后端通知失败，请手动刷新余额')
-          }
-        }
-      } catch (error) {
-        console.error('[Bridge] ❌ Failed to notify backend:', error)
-        // 不抛出错误，因为跨链已经成功，只是通知失败
-      }
-
       // 通知完成
       if (onDepositDetected) {
         onDepositDetected(amount, token, chain)
       }
 
       message.destroy()
-      message.success('🎉 跨链桥接全部完成! 资金已到达 Solana 账户')
+      message.success('🎉 跨链桥接全部完成! 后端会自动充值到账')
       setBridgeStep('completed')
 
       // 延迟关闭，让用户看到完成状态
