@@ -45,3 +45,8 @@ build
 
 # Sentry Config File
 .sentryclirc
+
+# Build archives
+*.zip
+*.tar.gz
+*.tgz
