@@ -53,5 +53,9 @@ export function getTokenIcon(symbol: string, chain?: 'solana' | 'ethereum' | 'tr
 export const CHAIN_ICONS: Record<string, string> = {
   Ethereum: TOKEN_ICONS.ETH,
   Solana: TOKEN_ICONS.SOL,
-  Tron: TOKEN_ICONS.TRX
+  Tron: TOKEN_ICONS.TRX,
+  // Cobo 托管链图标 (复用对应 Privy 链的图标)
+  'Cobo-Ethereum': TOKEN_ICONS.ETH,
+  'Cobo-Solana': TOKEN_ICONS.SOL,
+  'Cobo-TRON': TOKEN_ICONS.TRX
 }
