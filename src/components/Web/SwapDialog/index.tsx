@@ -5,6 +5,7 @@ import { useWallets, useSendTransaction, usePrivy } from '@privy-io/react-auth'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { useTokenPrices } from '@/hooks/useTokenPrices'
 import { useSolanaBalance } from '@/hooks/useSolanaBalance'
+import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { checkBalance } from '@/services/balanceService'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { useTheme } from '@/context/themeProvider'
@@ -102,18 +103,19 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   const { sendTransaction } = useSendTransaction()
   const { getAccessToken, user } = usePrivy()
   const { prices } = useTokenPrices()
+  const { activeSolanaWallet } = usePrivyInfo()
   const themeConfig = useTheme()
   const isDark = themeConfig.theme.isDark
 
-  // Get Solana wallet
-  const solanaWallet = useMemo(() => {
-    return wallets.find(w => w.address.length === 44 && !w.address.startsWith('0x'))
-  }, [wallets])
+  // Get Solana wallet from usePrivyInfo (智能选择逻辑)
+  const solanaWallet = activeSolanaWallet
 
   // Fetch balances
   const { balances: solBalances } = useSolanaBalance(solanaWallet?.address)
   const [ethBalance, setEthBalance] = useState(0)
   const [ethUsdtBalance, setEthUsdtBalance] = useState(0)
+  const [trxBalance, setTrxBalance] = useState(0)
+  const [tronUsdtBalance, setTronUsdtBalance] = useState(0)
 
   // Fetch ETH Balance and ETH USDT Balance
   useEffect(() => {
@@ -145,6 +147,47 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     }
   }, [wallets])
 
+  // Fetch Tron Balance and Tron USDT Balance
+  useEffect(() => {
+    const fetchTronBalances = async () => {
+      if (!tronAddress) return
+
+      try {
+        // 动态导入 TronWeb
+        const { TronWeb } = await import('tronweb')
+        
+        // 使用 Ankr Premium RPC (已付费)
+        const tronWeb = new TronWeb({
+          fullHost: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+        })
+
+        // 获取 TRX 余额
+        const trxBalanceInSun = await tronWeb.trx.getBalance(tronAddress)
+        const trxAmount = trxBalanceInSun / 1_000_000 // SUN to TRX
+        setTrxBalance(trxAmount)
+
+        // 获取 Tron USDT 余额
+        const USDT_TRON_ADDRESS = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'
+        try {
+          tronWeb.setAddress(tronAddress)
+          const contract = await tronWeb.contract().at(USDT_TRON_ADDRESS)
+          const balance = await contract.balanceOf(tronAddress).call()
+          const usdtAmount = Number(balance.toString()) / 1_000_000 // USDT has 6 decimals
+          setTronUsdtBalance(usdtAmount)
+        } catch (err) {
+          console.error('[SwapDialog] Failed to fetch Tron USDT balance', err)
+          setTronUsdtBalance(0)
+        }
+      } catch (e) {
+        console.error('[SwapDialog] Failed to fetch Tron balances', e)
+      }
+    }
+
+    if (tronAddress) {
+      fetchTronBalances()
+    }
+  }, [tronAddress])
+
   // Construct Assets List
   const assets = useMemo(() => {
     const list: AssetBalance[] = []
@@ -168,6 +211,15 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       network: 'Ethereum'
     })
 
+    // TRX
+    list.push({
+      symbol: 'TRX',
+      balance: trxBalance,
+      usdValue: trxBalance * (prices.tron || 0),
+      icon: TOKEN_ICONS.TRX,
+      network: 'Tron'
+    })
+
     // SOL
     const solAmount = parseFloat(solBalances?.['SOL']?.balance || '0')
     list.push({
@@ -187,6 +239,15 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       network: 'Ethereum'
     })
 
+    // USDT (Tron)
+    list.push({
+      symbol: 'USDT',
+      balance: tronUsdtBalance,
+      usdValue: tronUsdtBalance,
+      icon: TOKEN_ICONS.USDT,
+      network: 'Tron'
+    })
+
     // USDT (Solana)
     const solanaUsdtAmount = parseFloat(solBalances?.['USDT']?.balance || '0')
     list.push({
@@ -197,19 +258,9 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       network: 'Solana'
     })
 
-    // PYUSD (Solana)
-    const pyusdAmount = parseFloat(solBalances?.['PYUSD']?.balance || '0')
-    list.push({
-      symbol: 'PYUSD',
-      balance: pyusdAmount,
-      usdValue: pyusdAmount,
-      icon: TOKEN_ICONS.PYUSD,
-      network: 'Solana'
-    })
-
     // Sort by USD value descending
     return list.sort((a, b) => b.usdValue - a.usdValue)
-  }, [solBalances, ethBalance, ethUsdtBalance, prices])
+  }, [solBalances, ethBalance, ethUsdtBalance, trxBalance, tronUsdtBalance, prices])
 
   // Reset when dialog opens
   useEffect(() => {
@@ -328,7 +379,20 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       let srcChainId: number = DEBRIDGE_CHAIN_IDS.ETHEREUM
       let srcAddress = ethWallet.address
       let srcToken = asset?.symbol || 'ETH'
-      let srcTokenAddress: string = DEBRIDGE_TOKENS.ETHEREUM.USDC
+      let srcTokenAddress: string
+      let decimals: number
+
+      // Set token address and decimals based on selected token
+      if (asset?.symbol === 'ETH') {
+        srcTokenAddress = '0x0000000000000000000000000000000000000000' // Native ETH
+        decimals = 18
+      } else if (asset?.symbol === 'USDT') {
+        srcTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDT
+        decimals = 6
+      } else {
+        srcTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDC
+        decimals = 6
+      }
 
       if (sourceNetwork === 'Tron' || asset?.symbol === 'TRX' || asset?.symbol === 'USDT') {
         if (!tronAddress) {
@@ -337,16 +401,34 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         srcChainId = DEBRIDGE_CHAIN_IDS.TRON
         srcAddress = tronAddress
         srcToken = asset?.symbol || 'USDT'
-        srcTokenAddress = asset?.symbol === 'USDC' 
-          ? DEBRIDGE_TOKENS.TRON.USDC 
-          : DEBRIDGE_TOKENS.TRON.USDT
+        if (asset?.symbol === 'USDC') {
+          srcTokenAddress = DEBRIDGE_TOKENS.TRON.USDC
+          decimals = 6
+        } else if (asset?.symbol === 'TRX') {
+          srcTokenAddress = '0x0000000000000000000000000000000000000000' // Native TRX
+          decimals = 6
+        } else {
+          srcTokenAddress = DEBRIDGE_TOKENS.TRON.USDT
+          decimals = 6
+        }
       }
 
       // Destination is always Solana
       const dstChainId = DEBRIDGE_CHAIN_IDS.SOLANA
-      const dstAddress = walletAddress
+      const dstAddress = solanaWallet?.address || walletAddress // 使用 Solana 钱包地址
       const dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC
-      const amountInSmallestUnit = Math.floor(amountInUsd * 1e6).toString()
+      
+      // Calculate amount in smallest unit based on token decimals
+      // For native tokens (ETH, TRX), use tokenAmount directly
+      // For stablecoins, can use amountInUsd since they're ~$1
+      const amountInSmallestUnit = Math.floor(tokenAmount * Math.pow(10, decimals)).toString()
+
+      console.log('[SwapDialog] Quote address debug:', {
+        solanaWalletAddress: solanaWallet?.address,
+        walletAddressProp: walletAddress,
+        finalDstAddress: dstAddress,
+        isSolanaFormat: dstAddress?.length === 44 && !dstAddress?.startsWith('0x')
+      })
 
       // Get DeBridge quote (doesn't execute anything)
       const quoteParams: DeBridgeParams = {
@@ -467,7 +549,14 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       // Calculate amount in smallest unit based on token decimals
       // tokenAmount is the actual token amount (e.g., 0.01 ETH or 50 USDT)
       const amountInSmallestUnit = Math.floor(tokenAmount * Math.pow(10, decimals)).toString()
-      const solanaAddress = walletAddress
+      const solanaAddress = solanaWallet?.address || walletAddress // 使用 Solana 钱包地址
+
+      console.log('[SwapDialog] Execute address debug:', {
+        solanaWalletAddress: solanaWallet?.address,
+        walletAddressProp: walletAddress,
+        finalSolanaAddress: solanaAddress,
+        isSolanaFormat: solanaAddress?.length === 44 && !solanaAddress?.startsWith('0x')
+      })
 
       console.log('[SwapDialog] Using token:', {
         selected: selectedToken,
@@ -1042,28 +1131,40 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         {view === 'asset_select' && (
           <>
             <Space direction="vertical" size={12} style={{ width: '100%', marginTop: 8 }}>
-              {assets.map((asset) => (
-                <div
-                  key={`${asset.symbol}-${asset.network}`}
-                  onClick={() => {
-                    setSelectedAsset(asset)
-                    setView('input')
-                  }}
-                  style={{
-                    background: getColor.cardBg,
-                    border: `2px solid ${selectedAsset?.symbol === asset.symbol && selectedAsset?.network === asset.network ? '#FF6B35' : 'transparent'}`,
-                    borderRadius: 12,
-                    padding: 16,
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = getColor.cardBgHover
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = getColor.cardBg
-                  }}
-                >
+              {assets.map((asset) => {
+                // Solana USDC 是充值目标，不能作为源资产
+                const isTargetAsset = asset.symbol === 'USDC' && asset.network === 'Solana'
+                const isDisabled = isTargetAsset
+                
+                return (
+                  <div
+                    key={`${asset.symbol}-${asset.network}`}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        setSelectedAsset(asset)
+                        setView('input')
+                      }
+                    }}
+                    style={{
+                      background: getColor.cardBg,
+                      border: `2px solid ${selectedAsset?.symbol === asset.symbol && selectedAsset?.network === asset.network ? '#FF6B35' : 'transparent'}`,
+                      borderRadius: 12,
+                      padding: 16,
+                      cursor: isDisabled ? 'not-allowed' : 'pointer',
+                      opacity: isDisabled ? 0.5 : 1,
+                      transition: 'all 0.2s',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isDisabled) {
+                        e.currentTarget.style.background = getColor.cardBgHover
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isDisabled) {
+                        e.currentTarget.style.background = getColor.cardBg
+                      }
+                    }}
+                  >
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                       <div style={{ position: 'relative' }}>
@@ -1116,7 +1217,18 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                     </div>
                     
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      {asset.usdValue < 10 && (
+                      {/* Solana USDC 是充值目标，不显示 Low Balance */}
+                      {asset.symbol === 'USDC' && asset.network === 'Solana' ? (
+                        <div style={{
+                          padding: '4px 8px',
+                          borderRadius: 16,
+                          background: getColor.cardBg,
+                        }}>
+                          <Text style={{ fontSize: '0.75rem', color: getColor.textSecondary }}>
+                            N/A
+                          </Text>
+                        </div>
+                      ) : asset.usdValue < 10 && (
                         <div style={{
                           padding: '4px 8px',
                           borderRadius: 16,
@@ -1133,7 +1245,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                     </div>
                   </div>
                 </div>
-              ))}
+                )
+              })}
             </Space>
           </>
         )}
@@ -1474,7 +1587,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                 </Text>
               </div>
               <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>
-                {amount || '0.00'}
+                {quote?.youReceive?.amount || '0.00'}
               </Text>
             </div>
 
