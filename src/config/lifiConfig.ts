@@ -54,22 +54,28 @@ export const LIFI_CONFIG = {
 // Supported chains for cross-chain bridging
 export const SUPPORTED_BRIDGE_CHAINS = [
   {
-    id: 'tron',
-    name: 'Tron',
-    color: '#c62828',
-    minDeposit: 20 // Tron桥接最低金额
-  },
-  {
-    id: 'ethereum',
-    name: 'Ethereum',
+    id: 'ETH',
+    name: 'Cobo-Ethereum',
     color: '#627EEA',
-    minDeposit: 10 // Ethereum桥接最低金额
+    minDeposit: 10,
+    type: 'cobo' as const,
+    displayName: 'Ethereum (Cobo)'
   },
   {
-    id: 'solana',
-    name: 'Solana',
+    id: 'SOL',
+    name: 'Cobo-Solana',
     color: '#14F195',
-    minDeposit: 10 // Solana桥接最低金额
+    minDeposit: 10,
+    type: 'cobo' as const,
+    displayName: 'Solana (Cobo)'
+  },
+  {
+    id: 'TRON',
+    name: 'Cobo-TRON',
+    color: '#c62828',
+    minDeposit: 20,
+    type: 'cobo' as const,
+    displayName: 'TRON (Cobo)'
   }
 ] as const
 
