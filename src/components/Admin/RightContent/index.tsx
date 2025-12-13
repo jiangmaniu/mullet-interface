@@ -102,7 +102,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const isBaseAuth = currentUser?.isBaseAuth
   const themeConfig = useTheme()
   const env = getEnv()
-  const { hasWallet, wallets } = usePrivyInfo()
+  const { activeSolanaWallet, wallets } = usePrivyInfo()
+  const hasWallet = !!activeSolanaWallet
   const realAccountList = accountList.filter((item) => !item.isSimulate)
   const { fundWallet: fundEvmWallet } = useEvmFundWallet()
   const { fundWallet: fundSolanaWallet } = useSolanaFundWallet()

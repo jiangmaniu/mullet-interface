@@ -194,7 +194,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deposit])
 
-  // 通知后端开始监控订单
+  // 通知后端开始监控订单 + 前端立即充值
   const notifyBackendBridgeOrder = async (orderId: string, amount: string, token: string, chain: string) => {
     try {
       const targetAddress = trade.currentAccountInfo?.pdaTokenAddress
@@ -219,107 +219,43 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         url: notifyUrl.toString()
       })
 
-      const response = await fetch(notifyUrl.toString(), {
+      // 提交后端监控（不等待结果）
+      fetch(notifyUrl.toString(), {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         signal: AbortSignal.timeout(10000)
+      }).then(response => {
+        if (response.ok) {
+          console.log('[Bridge] ✅ Backend notification successful')
+        } else {
+          console.error('[Bridge] ❌ Backend notification failed:', response.status)
+        }
+      }).catch(error => {
+        console.error('[Bridge] ❌ Failed to notify backend:', error)
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        console.log('[Bridge] ✅ Backend notification successful:', data)
-        message.success('订单已提交，等待完成后自动充值...')
+      // 🔥 前端立即调用充值 API（不等后端）
+      console.log('[Bridge] 💰 Calling recharge API immediately...')
+      const rechargeUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${targetAddress}&amount=${amount}`
+      
+      const rechargeResponse = await fetch(rechargeUrl, {
+        method: 'GET',
+        signal: AbortSignal.timeout(10000) // 10秒超时
+      })
 
-        // 开始轮询订单状态
-        pollOrderStatus(orderId, targetAddress)
+      if (rechargeResponse.ok) {
+        const rechargeData = await rechargeResponse.json()
+        console.log('[Bridge] ✅ Recharge successful:', rechargeData)
+        message.success('🎉 充值成功！资金已到账')
       } else {
-        console.error('[Bridge] ❌ Backend notification failed:', response.status)
+        const errorText = await rechargeResponse.text()
+        console.error('[Bridge] ❌ Recharge failed:', rechargeResponse.status, errorText)
+        message.warning('充值请求已提交，后端将自动重试')
       }
     } catch (error) {
-      console.error('[Bridge] ❌ Failed to notify backend:', error)
+      console.error('[Bridge] ❌ Recharge error:', error)
+      message.info('充值处理中，后端将自动完成')
     }
-  }
-
-  // 轮询订单状态
-  const pollOrderStatus = async (orderId: string, toAddress: string) => {
-    const maxAttempts = 60 // 最多轮询 60 次（约 5 分钟）
-    const pollInterval = 5000 // 每 5 秒轮询一次
-    let attempts = 0
-
-    setPollingOrderId(orderId)
-    console.log('[Bridge] 🔄 Started polling order:', orderId)
-
-    const poll = async () => {
-      try {
-        attempts++
-        console.log(`[Bridge] Polling attempt ${attempts}/${maxAttempts}`)
-
-        const response = await fetch(`${API_BASE_URL}/api/debridge-monitor/status/${orderId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        })
-
-        if (!response.ok) {
-          console.error('[Bridge] Failed to fetch order status:', response.status)
-          return
-        }
-
-        const data = await response.json()
-        console.log('[Bridge] Order status:', data)
-
-        if (data.success && data.data) {
-          const order = data.data
-
-          // 检查订单是否完成
-          if (order.status === 'fulfilled' && order.actualAmount) {
-            console.log('[Bridge] ✅ Order fulfilled! Calling recharge API...')
-            
-            // 调用充值 API
-            const rechargeUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${toAddress}&amount=${order.actualAmount}`
-            const rechargeResponse = await fetch(rechargeUrl, {
-              method: 'GET'
-            })
-
-            if (rechargeResponse.ok) {
-              const rechargeData = await rechargeResponse.json()
-              console.log('[Bridge] ✅ Recharge successful:', rechargeData)
-              message.success('🎉 充值成功！订单已完成')
-              setPollingOrderId(null)
-              return // 停止轮询
-            } else {
-              console.error('[Bridge] ❌ Recharge failed:', rechargeResponse.status)
-              message.error('充值失败，请联系客服')
-              setPollingOrderId(null)
-              return
-            }
-          } else if (order.status === 'failed') {
-            console.error('[Bridge] ❌ Order failed')
-            message.error('订单失败，请重试')
-            setPollingOrderId(null)
-            return
-          }
-
-          // 继续轮询
-          if (attempts < maxAttempts) {
-            setTimeout(poll, pollInterval)
-          } else {
-            console.warn('[Bridge] ⚠️ Polling timeout')
-            message.warning('订单处理超时，请稍后在历史记录中查看')
-            setPollingOrderId(null)
-          }
-        }
-      } catch (error) {
-        console.error('[Bridge] Polling error:', error)
-        if (attempts < maxAttempts) {
-          setTimeout(poll, pollInterval)
-        } else {
-          setPollingOrderId(null)
-        }
-      }
-    }
-
-    // 开始第一次轮询
-    setTimeout(poll, pollInterval)
   }
 
   // 自动桥接

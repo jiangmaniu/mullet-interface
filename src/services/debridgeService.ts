@@ -1045,8 +1045,9 @@ async function bridgeSolanaToEthereum(params: {
   amount: string // USDC 金额（最小单位，6位小数）
   ethereumAddress: string // 目标 Ethereum 地址
   solanaWallet: any // Privy Solana 钱包
+  signAndSendTransaction: any // Privy signAndSendTransaction hook
 }): Promise<{ txHash: string; orderId: string }> {
-  const { amount, ethereumAddress, solanaWallet } = params
+  const { amount, ethereumAddress, solanaWallet, signAndSendTransaction } = params
 
   console.log('[deBridge-SOL→ETH] 🔄 Starting Solana to Ethereum bridge:', {
     amount,
@@ -1139,46 +1140,45 @@ async function bridgeSolanaToEthereum(params: {
   console.log('[deBridge-SOL→ETH] 🔐 Signing and sending Solana transaction...')
 
   try {
-    // Solana 交易数据是 base64 编码的序列化交易
-    // deBridge 返回的是完整的序列化交易，可以直接发送
+    // 根据 Privy 嵌入式钱包：
+    // 1. txData 是 hex 格式 (0x 开头)
+    // 2. 反序列化为 buffer
+    // 3. 使用 Privy 的 signAndSendTransaction hook 发送
+    //    这个方法支持 gas sponsorship 并正确处理序列化交易
     
-    // 动态导入 @solana/web3.js
-    const { Transaction, Connection } = await import('@solana/web3.js')
+    console.log('[deBridge-SOL→ETH] Transaction data:', txData.tx.data.substring(0, 20) + '...')
     
-    // 创建 Solana connection
-    const connection = new Connection(
-      'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
-      'confirmed'
-    )
+    // deBridge 返回的 tx.data 是 hex 格式，去除 0x 前缀后转为 buffer
+    const hexString = txData.tx.data.startsWith('0x') 
+      ? txData.tx.data.slice(2) 
+      : txData.tx.data
+    const txBuffer = Buffer.from(hexString, 'hex')
     
-    // 反序列化交易
-    const txBuffer = Buffer.from(txData.tx.data, 'base64')
-    const transaction = Transaction.from(txBuffer)
+    console.log('[deBridge-SOL→ETH] Buffer length:', txBuffer.length)
     
-    console.log('[deBridge-SOL→ETH] Transaction deserialized')
-    console.log('[deBridge-SOL→ETH] - Instructions:', transaction.instructions.length)
-    console.log('[deBridge-SOL→ETH] - Fee payer:', transaction.feePayer?.toBase58())
-    
-    // 使用 Privy Solana 钱包签名并发送
-    // 检查钱包是否支持 sendTransaction
-    if (!solanaWallet.sendTransaction) {
-      throw new Error('Solana wallet does not support sendTransaction method')
+    // 使用 Privy 的 signAndSendTransaction 发送序列化的交易
+    // 参考 frontend/src/components/WithdrawDialog.tsx
+    if (!signAndSendTransaction) {
+      throw new Error('signAndSendTransaction hook not available')
     }
 
-    // Privy 钱包的 sendTransaction 会自动签名并发送
-    const txSignature = await solanaWallet.sendTransaction(transaction, connection)
+    console.log('[deBridge-SOL→ETH] Sending transaction via Privy signAndSendTransaction...')
     
-    console.log('[deBridge-SOL→ETH] ✅ Solana tx sent:', txSignature)
+    // signAndSendTransaction 接受序列化的交易 buffer
+    const result = await signAndSendTransaction({
+      transaction: txBuffer,
+      wallet: solanaWallet,
+      options: {
+        sponsor: true, // Enable gas sponsorship - Privy pays the gas fees
+      },
+    })
     
-    // 等待交易确认
-    console.log('[deBridge-SOL→ETH] Waiting for confirmation...')
-    const confirmation = await connection.confirmTransaction(txSignature, 'confirmed')
+    const txSignature = result.signature
     
-    if (confirmation.value.err) {
-      throw new Error(`Transaction failed: ${JSON.stringify(confirmation.value.err)}`)
-    }
+    console.log('[deBridge-SOL→ETH] ✅ Transaction sent:', txSignature)
+    console.log(`[deBridge-SOL→ETH] 🎉 Check tx: https://solscan.io/tx/${txSignature}`)
     
-    console.log('[deBridge-SOL→ETH] ✅ Transaction confirmed')
+    // signAndSendTransaction 已经等待交易确认，所以不需要再次等待
 
     return {
       txHash: txSignature,
@@ -1198,9 +1198,10 @@ async function bridgeSolanaToTron(params: {
   amount: string
   tronAddress: string
   solanaWallet: any
+  signAndSendTransaction: any // Privy signAndSendTransaction hook
   ethereumWallet: any
 }): Promise<{ txHash: string; orderId: string }> {
-  const { amount, tronAddress, solanaWallet, ethereumWallet } = params
+  const { amount, tronAddress, solanaWallet, signAndSendTransaction, ethereumWallet } = params
 
   console.log('[deBridge-SOL→TRON] 🔄 Starting Solana to Tron bridge (2 steps):', {
     amount,
@@ -1222,7 +1223,8 @@ async function bridgeSolanaToTron(params: {
   const step1Result = await bridgeSolanaToEthereum({
     amount,
     ethereumAddress: ethereumWallet.address,
-    solanaWallet
+    solanaWallet,
+    signAndSendTransaction
   })
 
   console.log('[deBridge-SOL→TRON] ✅ Step 1 completed:', step1Result.txHash)

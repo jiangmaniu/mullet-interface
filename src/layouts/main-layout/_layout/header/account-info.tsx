@@ -20,11 +20,12 @@ import { useStores } from '@/context/mobxProvider'
 import { Dropdown, Segmented, Tooltip } from 'antd'
 import { FormattedMessage, useModel } from '@umijs/max'
 import { useEffect, useState } from 'react'
-import { push } from '@/utils/navigator'
+import { onLogout, push } from '@/utils/navigator'
 import { getAccountSynopsisByLng } from '@/utils/business'
 import { formatNum } from '@/utils'
 import { EmptyNoData } from '@/components/empty/no-data'
 import { observer } from 'mobx-react'
+import { usePrivy } from '@privy-io/react-auth'
 
 export const TradeAccountInfo = observer(() => {
   // const { isAuthenticated } = useWalletAuthState()
@@ -56,15 +57,9 @@ export const TradeAccountInfo = observer(() => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[330px]" sideOffset={8} align="end">
-        <div>
-          <AccountSelector />
-        </div>
-        <DropdownMenuItem
+        <AccountSelector />
 
-        // onClick={() => walletLogout()}
-        >
-          <IconDisconnect className="size-4" /> 断开连接
-        </DropdownMenuItem>
+        <DisconnectButton />
       </DropdownMenuContent>
     </DropdownMenu>
   )
@@ -257,5 +252,20 @@ const AccountSelector = observer(() => {
         )}
       </div>
     </div>
+  )
+})
+
+const DisconnectButton = observer(() => {
+  const { logout } = usePrivy()
+
+  return (
+    <DropdownMenuItem
+      onClick={async () => {
+        await logout()
+        onLogout(true)
+      }}
+    >
+      <IconDisconnect className="size-4" /> 断开连接
+    </DropdownMenuItem>
   )
 })

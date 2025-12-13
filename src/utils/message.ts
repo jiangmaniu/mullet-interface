@@ -29,5 +29,37 @@ export const message = {
         duration: duration || 2000
       })
     }
+  },
+  success: (content: string, duration?: number) => {
+    if (isPCByWidth()) {
+      showMessage({
+        type: 'success',
+        content,
+        duration: duration || 2
+      })
+    } else {
+      Toast.show({
+        position: 'center',
+        icon: 'success',
+        content,
+        duration: duration || 2000
+      })
+    }
+  },
+  error: (content: string, duration?: number) => {
+    if (isPCByWidth()) {
+      showMessage({
+        type: 'error',
+        content,
+        duration: duration || 2
+      })
+    } else {
+      Toast.show({
+        position: 'center',
+        icon: 'fail',
+        content,
+        duration: duration || 2000
+      })
+    }
   }
 }

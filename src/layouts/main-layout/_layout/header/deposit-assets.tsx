@@ -20,7 +20,8 @@ export const DepositAssets = () => {
   const [showAddFundsMenu, setShowAddFundsMenu] = useState(false)
   const [showTransferDialog, setShowTransferDialog] = useState(false)
   const [showSwapDialog, setShowSwapDialog] = useState(false)
-  const { hasWallet, wallets } = usePrivyInfo()
+  const { activeSolanaWallet, wallets } = usePrivyInfo()
+  const hasWallet = !!activeSolanaWallet
   const { fundWallet: fundSolanaWallet } = useSolanaFundWallet()
   const { fundWallet: fundEvmWallet } = useEvmFundWallet()
 
