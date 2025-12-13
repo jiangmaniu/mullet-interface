@@ -2,13 +2,15 @@ import { ChartingLibraryFeatureset, ChartingLibraryWidgetOptions, LanguageCode, 
 import { isChrome, isChromium, isEdge, isFirefox, isSafari } from 'react-device-detect'
 import ma from './customIndicators/ma'
 
-const fullZero = (value: number | string) => String(value).padStart(2, '0')
-
 import { getEnv } from '@/env'
 import { isPCByWidth } from '@/utils'
 import { STORAGE_GET_TRADINGVIEW_RESOLUTION } from '@/utils/storage'
 import { defaultInterval, ThemeConst } from './constant'
 import DataFeedBase from './datafeed'
+
+const fullZero = (value: number | string) => String(value).padStart(2, '0')
+
+const bgPrimary = '#0e123a'
 
 // https://www.tradingview.com/charting-library-docs/latest/api/interfaces/Charting_Library.ChartingLibraryWidgetOptions
 export default function getWidgetOpts(
@@ -26,7 +28,7 @@ export default function getWidgetOpts(
   const isDark = theme === 'dark'
   const bgColor = theme === 'dark' ? ThemeConst.black : ThemeConst.white // 自定义背景颜色
   // const toolbar_bg = theme === 'dark' ? ThemeConst.black : '#f4f7f9' // 侧边工具栏和底部工具栏背景颜色
-  const toolbar_bg = theme === 'dark' ? ThemeConst.black : '#fff' // 侧边工具栏和底部工具栏背景颜色
+  // const toolbar_bg = theme === 'dark' ? ThemeConst.black : '#fff' // 侧边工具栏和底部工具栏背景颜色
   const isPopularBrowser = isSafari || isChrome || isChromium || isFirefox || isEdge // 主流浏览器
 
   /**
@@ -131,8 +133,8 @@ export default function getWidgetOpts(
     user_id: 'public_user_id', // 设置高级保存/加载图表 API 的用户 ID。
     locale: props.locale as LanguageCode, // 设置语言
     interval: interval as ResolutionString, // 分辨率，时间间隔，例如1W代表每个条形1周的 默认周期  1/5/15/30/60/240-> 1/5/15/30/60/240分钟  D->一天   W->一周   M->一月
-    theme, // 设置主题颜色
-    toolbar_bg, // 侧边工具栏和底部工具栏背景颜色
+    theme: 'dark', // 设置主题颜色
+    // toolbar_bg, // 侧边工具栏和底部工具栏背景颜色
     container: containerRef, // dom的引用
 
     symbol_search_request_delay: 1000, // 防抖：搜索symbol延迟的时间，默认1000
@@ -237,20 +239,19 @@ export default function getWidgetOpts(
     // 可以通过api来动态设置 applyOverrides
     // https://www.tradingview.com/charting-library-docs/latest/customization/overrides/
     overrides: {
-      'scalesProperties.lineColor': isDark ? '#29292C' : '#f0f0f0', // 边框线条颜色
-      'paneProperties.separatorColor': isDark ? '#29292C' : '#E0E3EB', // 分割线颜色
-      // 'paneProperties.legendProperties.showSeriesTitle': false, // 图例标题可见性，legend最左侧的标题
-      // priceScaleSelectionStrategyName: 'left', // 将价格刻度位置更改为左侧
-      // 'mainSeriesProperties.visible': true, // 隐藏主图
-      'paneProperties.background': `${bgColor}`, // 图表背景颜色
-      // 'scalesProperties.showStudyLastValue': true // 是否在右侧价格刻度上展示value值
-      // 'paneProperties.backgroundType': 'solid'
-      // "paneProperties.vertGridProperties.color": "#454545",
-      // "paneProperties.horzGridProperties.color": "#454545",
-      'scalesProperties.textColor': isDark ? '#57606B' : '#131722'
-      // 'paneProperties.topMargin': 0 // 图表距顶部距离
-      // 'paneProperties.bottomMargin': 0,
-      // 'mainSeriesProperties.priceLineColor': 'red', // 价格涨跌线样式
+      'paneProperties.background': bgPrimary,
+      'paneProperties.backgroundType': 'solid',
+
+      'paneProperties.vertGridProperties.style': 1,
+      'paneProperties.vertGridProperties.color': 'rgba(255, 255, 255, 0.1)',
+      'paneProperties.horzGridProperties.style': 1,
+      'paneProperties.horzGridProperties.color': 'rgba(255, 255, 255, 0.1)',
+
+      // 刻度文字颜色
+      'scalesProperties.textColor': 'rgba(118, 119, 131, 1)',
+      // 刻度线颜色
+      'scalesProperties.lineColor': 'rgba(255, 255, 255, 0.1)',
+      'scalesProperties.fontSize': 10
     },
     // 可用于自定义指标参数的属性，例如颜色、线宽、绘图类型等
     // https://www.tradingview.com/charting-library-docs/latest/customization/overrides/Studies-Overrides?_highlight=studies_overrides
@@ -281,8 +282,8 @@ export default function getWidgetOpts(
       return Promise.resolve([ma(PineJS)])
     },
     loading_screen: {
-      backgroundColor: isDark ? '#161A1E' : '#fff',
-      foregroundColor: isDark ? '#161A1E' : '#fff'
+      backgroundColor: bgPrimary,
+      foregroundColor: '#eed94c'
     }
     // 加载背景 加载图标背景颜色  没找到隐藏方式，这样隐藏
     // charts_storage_url: "https://saveload.tradingview.com", // 点击图标保存按钮会把配置保存到服务器

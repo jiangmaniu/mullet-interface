@@ -196,7 +196,7 @@ function DeepPrice() {
   if ((!asks.length && !bids.length) || symbolInfo.symbolConf?.depthOfMarket === 0) return
 
   return (
-    <div className={cn('w-[260px] h-[700px] overflow-hidden relative bg-primary', className)}>
+    <div className={cn('w-[260px] overflow-hidden relative bg-primary', className)}>
       <div className="flex items-center pl-3 pr-1 h-[42px] border-b border-gray-130 dark:border-[var(--border-primary-color)]">
         {renderMode}
         {/* <div>

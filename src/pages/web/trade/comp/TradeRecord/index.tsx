@@ -128,7 +128,7 @@ function TradeRecord({ trigger }: IProps) {
 
   const renderTabContent = () => {
     return (
-      <div className="pb-[50px] h-[479px]">
+      <div className="flex-1 h-0 overflow-y-auto">
         {tabKey === 'POSITION' && <PositionList parentPopup={popupRef.current} />}
         {tabKey === 'PENDING' && <PendingList parentPopup={popupRef.current} />}
         {tabKey === 'HISTORY_PENDING' && <HistoryPendingList />}
@@ -158,7 +158,10 @@ function TradeRecord({ trigger }: IProps) {
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className={cn('pt-1 mb-3 bg-primary relative z-[1]', borderClassName)}>
+          <div
+            style={{ width: 'calc(100vw - 303px)' }}
+            className={cn('h-full flex flex-col flex-1 max-h-[246px] bg-primary relative z-[1]', borderClassName)}
+          >
             {renderTabs()}
             {renderTabContent()}
           </div>

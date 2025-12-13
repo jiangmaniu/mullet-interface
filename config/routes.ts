@@ -89,8 +89,29 @@ export default [
       {
         path: '/:lng/vault/:vaultId',
         component: './web/vault/detail'
-      }
-
+      },
+      {
+        path: '/:lng/account',
+        access: 'canAdmin', // 权限配置
+        component: './web/account'
+      },
+      {
+        path: '/:lng/account/type',
+        access: 'canAdmin', // 权限配置
+        component: './web/account/accountTypeSelect',
+        hideInMenu: true
+      },
+      {
+        path: `/:lng/account/type/add/:accountId`,
+        access: 'canAdmin', // 权限配置
+        component: './web/account/accountTypeSelect/add',
+        hideInMenu: true
+      }, {
+        path: '/:lng/account/transfer',
+        access: 'canAdmin', // 权限配置
+        component: './web/account/transfer',
+        hideInMenu: true
+      },
     ]
   },
   // 用户
@@ -116,31 +137,16 @@ export default [
     component: './webapp/pages/Viewer/MarkdownPageViewer',
     access: 'canAdmin' // 权限配置
   },
-  {
-    path: '/:lng/account',
-    name: 'myAccount',
-    icon: 'icon-geren-zhanghu',
-    access: 'canAdmin', // 权限配置
-    component: './admin/account'
-  },
-  {
-    path: '/:lng/account/transfer',
-    access: 'canAdmin', // 权限配置
-    component: './admin/account/transfer',
-    hideInMenu: true
-  },
-  {
-    path: '/:lng/account/type',
-    access: 'canAdmin', // 权限配置
-    component: './admin/account/accountTypeSelect',
-    hideInMenu: true
-  },
-  {
-    path: `/:lng/account/type/add/:accountId`,
-    access: 'canAdmin', // 权限配置
-    component: './admin/account/accountTypeSelect/add',
-    hideInMenu: true
-  },
+  // {
+  //   path: '/:lng/account',
+  //   name: 'myAccount',
+  //   icon: 'icon-geren-zhanghu',
+  //   access: 'canAdmin', // 权限配置
+  //   component: './admin/account'
+  // },
+
+
+
   {
     path: '/:lng/deposit',
     name: 'deposit',

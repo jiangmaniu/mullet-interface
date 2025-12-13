@@ -2,6 +2,7 @@
 
 import { Trans } from '@/libs/lingui/react/macro'
 import { useEffect } from 'react'
+import { FormattedMessage } from '@umijs/max'
 
 import { GeneralTooltip } from '@/components/tooltip/general'
 import { cn } from '@/libs/ui/lib/utils'
@@ -10,6 +11,7 @@ import { BNumber } from '@/libs/utils/number'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 
 import { SymbolSelector } from './symbol-selector'
+import { useStores } from '@/context/mobxProvider'
 
 export function Overview() {
   return (
@@ -27,16 +29,28 @@ export function Overview() {
 
 const CurrentPrice = () => {
   const res = useCurrentQuote()
+  const { ws, trade } = useStores()
+  const symbol = trade.activeSymbolName
 
   const isPriceChangePositive = BNumber.from(res?.percent)?.gt(0)
+  const isMarketOpen = trade.isMarketOpen(symbol)
+
   return (
-    <div
-      className={cn('text-[24px] font-bold', {
-        'text-market-rise': isPriceChangePositive,
-        'text-market-fall': !isPriceChangePositive
-      })}
-    >
-      {BNumber.toFormatNumber(res?.bid, { volScale: 2 })}
+    <div className="flex items-center">
+      <div
+        className={cn('text-[24px] font-bold', {
+          'text-market-rise': isPriceChangePositive,
+          'text-market-fall': !isPriceChangePositive
+        })}
+      >
+        {BNumber.toFormatNumber(res?.bid, { volScale: 2 })}
+      </div>
+
+      {!isMarketOpen && (
+        <span className="text-sm leading-6 px-[6px] rounded-[6px] text-red-600 bg-red-600/10 dark:text-red-650 dark:bg-red-650/10 ml-2">
+          <FormattedMessage id="mt.xiushizhong" />
+        </span>
+      )}
     </div>
   )
 }
@@ -59,8 +73,8 @@ const DataOverview = () => {
             'text-market-fall': !isPriceChangePositive
           })}
         >
-          {BNumber.toFormatNumber(res?.bidDiff, { forceSign: true, positive: false })} /{' '}
-          {BNumber.toFormatPercent(res?.percent, { forceSign: true })}
+          {BNumber.toFormatNumber(res?.bidDiff, { forceSign: true, positive: false, volScale: 2 })} /{' '}
+          {BNumber.toFormatPercent(res?.percent, { forceSign: true, isRaw: false })}
         </div>
       )
     },
@@ -74,18 +88,17 @@ const DataOverview = () => {
     },
     {
       label: (
-        <GeneralTooltip side="top" content="24小时交易量">
+        <GeneralTooltip content={<Trans>需要提供提示文本</Trans>}>
           <TooltipTriggerDottedText>
             <Trans>24小时交易量</Trans>
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
-      value: BNumber.toFormatNumber(613428511.36, { volScale: 2, prefix: '$' })
+      value: BNumber.toFormatNumber(undefined, { volScale: 2, prefix: '$' })
     },
     {
       label: (
         <GeneralTooltip
-          side="top"
           content={
             <Trans>
               展期费是指您在每日结算时为继续持有未平仓合约而支付的费用，计算方式为“持仓名义价值 ×
@@ -100,21 +113,21 @@ const DataOverview = () => {
       ),
       value: (
         <div>
-          {BNumber.toFormatPercent(0.000001, { forceSign: true, volScale: undefined })} /{' '}
-          {BNumber.toFormatPercent(0.000002, { volScale: undefined })}
+          {BNumber.toFormatPercent(undefined, { forceSign: true, volScale: undefined, isRaw: false })} /{' '}
+          {BNumber.toFormatPercent(undefined, { volScale: undefined, isRaw: false })}
         </div>
       )
     },
 
     {
       label: (
-        <GeneralTooltip side="top" content="24小时交易量">
+        <GeneralTooltip content={<Trans>需要提供提示文本</Trans>}>
           <TooltipTriggerDottedText>
             <Trans>持仓量</Trans>
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
-      value: BNumber.toFormatNumber(154, { unit: 'SOL', volScale: 2 })
+      value: BNumber.toFormatNumber(undefined, { unit: 'SOL', volScale: 2 })
     }
   ]
   return (

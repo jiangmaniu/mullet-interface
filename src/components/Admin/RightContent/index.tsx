@@ -117,7 +117,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
 
   const handleCardClick = async () => {
     setShowAddFundsMenu(false)
-    
+
     // 获取当前钱包地址
     const wallet = wallets?.[0]
     if (!wallet) {
@@ -127,7 +127,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
 
     const walletAddress = wallet.address
     console.log('[Buy Crypto] Wallet address:', walletAddress)
-    
+
     // 检测是 Solana 还是 EVM 钱包
     const isSolanaAddress = walletAddress.length === 44 && !walletAddress.startsWith('0x')
 
@@ -144,10 +144,10 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       } else {
         // EVM wallet - use EVM fundWallet with mainnet chain
         console.log('[Buy Crypto] Opening EVM fundWallet for:', walletAddress)
-        
+
         // 动态导入 viem/chains 以获取 mainnet 配置
         const { mainnet } = await import('viem/chains')
-        
+
         fundEvmWallet({
           address: walletAddress,
           options: {
@@ -258,8 +258,8 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
       {/* 跨链充值弹窗 */}
       <TransferCryptoDialog open={showTransferDialog} onClose={() => setShowTransferDialog(false)} />
       {/* 资产兑换弹窗 */}
-      <SwapDialog 
-        open={showSwapDialog} 
+      <SwapDialog
+        open={showSwapDialog}
         onClose={() => setShowSwapDialog(false)}
         walletAddress={wallets?.[0]?.address || ''}
         network={

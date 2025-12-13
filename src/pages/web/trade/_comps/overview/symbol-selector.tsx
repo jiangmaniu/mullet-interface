@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { useState } from 'react'
 
+import { observer } from 'mobx-react'
 import { Button } from '@/libs/ui/components/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/libs/ui/components/hover-card'
 import { Iconify, IconNavArrowDown } from '@/libs/ui/components/icons'
@@ -16,7 +17,7 @@ import { symbolColumns } from './symbol-selector-columns'
 import { useSwitchSymbol } from '@/pages/webapp/hooks/useSwitchSymbol'
 import { EmptyNoData } from '@/components/empty/no-data'
 
-export const SymbolSelector = () => {
+export const SymbolSelector = observer(() => {
   const [searchContent, setSearchContent] = React.useState<string>('')
   // const [activeSymbolCategory, setActiveSymbolCategory] = useQueryState(
   //   'symbol-category',
@@ -43,9 +44,11 @@ export const SymbolSelector = () => {
     ? symbolListByCategory
     : symbolListByCategory.filter((item) => item.symbol.toLowerCase().includes(searchContent.toLowerCase()))
 
-  console.log(symbolListByFilterMode, symbolListByCategory)
   return (
-    <HoverCard openDelay={100} open={true}>
+    <HoverCard
+      openDelay={100}
+      // open={true}
+    >
       <HoverCardTrigger asChild>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
@@ -145,4 +148,4 @@ export const SymbolSelector = () => {
       </HoverCardContent>
     </HoverCard>
   )
-}
+})

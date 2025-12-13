@@ -19,7 +19,7 @@ import BuyAndSell from './comp/BuyAndSell'
 import Center from './comp/Center'
 import Footer from './comp/Footer'
 import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
-import Sidebar from './comp/Sidebar'
+// import Sidebar from './comp/Sidebar'
 import TradeRecord from './comp/TradeRecord'
 import DepthPrice from './comp/Widget/DepthPrice'
 import Liquidation from './comp/Widget/Liquidation'
@@ -141,31 +141,35 @@ export default observer(() => {
                 <Overview />
                 {/* 交易 */}
                 <div className="flex flex-1">
-                  <Sidebar />
+                  {/* <Sidebar /> */}
                   {/* 中间区域 */}
                   <Center />
                   {/* 深度报价 */}
                   <DepthPrice />
                 </div>
+
+                {/* 交易记录 */}
+                <TradeRecord />
               </div>
 
               <div className="flex w-max gap-2 min-w-[280px]  flex-col">
                 <AccountDetails />
 
                 {/* 买卖交易区 */}
-                <BuyAndSell />
+                <div className="">
+                  <BuyAndSell />
+                </div>
+
+                <div className={cn('flex flex-1 items-start justify-between relative bg-primary')}>
+                  <div className={cn('w-[300px] min-h-[270px] relative')}>
+                    <Liquidation />
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className={cn('flex items-start justify-between relative bg-primary')}>
-              {/* 交易记录 */}
-              <div style={{ width: 'calc(100vw - 303px)' }} className={cn('flex-1')}>
-                <TradeRecord />
-              </div>
-              <div className={cn('w-[300px] min-h-[270px] relative')}>{/* <Liquidation /> */}</div>
-            </div>
             {/* 底部固定状态栏 */}
-            <Footer />
+            {/* <Footer /> */}
             {/* 浮动交易窗口 */}
             {/* <FloatTradeBox /> */}
           </div>

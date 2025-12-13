@@ -24,19 +24,19 @@ export const getTradingviewThemeCssVar = (theme: ThemeName) => {
     // /* 将鼠标悬停在右侧工具栏上的活动按钮上时的背景颜色 */
     // '--tv-color-toolbar-button-background-active-hover': primary,
     // /* 工具栏按钮的文本和图标颜色 */
-    '--tv-color-toolbar-button-text': '#767E8A',
+    // '--tv-color-toolbar-button-text': '#767E8A',
     // /* 将鼠标悬停在工具栏按钮上时的文本和图标颜色 */
     // '--tv-color-toolbar-button-text-hover': 'rgb(74, 20, 140)',
     /* 活动工具栏按钮的文本和图标颜色 */
-    '--tv-color-toolbar-button-text-active': textPrimary,
+    // '--tv-color-toolbar-button-text-active': textPrimary,
     /* 将鼠标悬停在工具栏按钮上时处于活动状态的文本和图标颜色 */
-    '--tv-color-toolbar-button-text-active-hover': textPrimary,
+    // '--tv-color-toolbar-button-text-active-hover': textPrimary,
     /* 切换工具栏按钮的文本颜色（例如磁铁模式、锁定所有绘图） */
     // '--tv-color-item-active-text': primary,
     // /* 切换工具栏按钮的填充颜色（例如磁铁模式、锁定所有绘图） */
-    '--tv-color-toolbar-toggle-button-background-active': primary,
+    // '--tv-color-toolbar-toggle-button-background-active': primary,
     // /* 将鼠标悬停在切换工具栏按钮上时的填充颜色（例如磁铁模式、锁定所有绘图） */
-    '--tv-color-toolbar-toggle-button-background-active-hover': primary,
+    // '--tv-color-toolbar-toggle-button-background-active-hover': primary,
     // /* 工具栏分隔线颜色 */
     // '--tv-color-toolbar-divider-background': '#f7f7f7',
     // /* 工具栏保存布局按钮的加载器颜色 */
@@ -54,8 +54,8 @@ export const getTradingviewThemeCssVar = (theme: ThemeName) => {
     // '--tv-color-popup-element-divider-background': 'rgb(251, 223, 244)',
     // '--tv-color-popup-element-secondary-text': 'rgb(74, 20, 140)',
     // '--tv-color-popup-element-hint-text': 'rgb(74, 20, 140)',
-    '--tv-color-popup-element-text-active': '#131722',
-    '--tv-color-popup-element-background-active': '#f0f3fa'
+    // '--tv-color-popup-element-text-active': '#131722',
+    // '--tv-color-popup-element-background-active': '#f0f3fa'
     // '--tv-color-popup-element-toolbox-text': 'rgb(136, 24, 79)',
     // '--tv-color-popup-element-toolbox-text-hover': 'rgb(74, 20, 140)',
     // '--tv-color-popup-element-toolbox-text-active-hover': 'rgb(74, 20, 140)',
@@ -66,18 +66,18 @@ export const getTradingviewThemeCssVar = (theme: ThemeName) => {
     ...commonThemeConfig,
     ...(isDark
       ? {
-          '--tv-color-pane-background': ThemeConst.black,
-          '--tv-color-toolbar-button-text': '#767E8A',
-          '--tv-color-toolbar-button-text-active': ThemeDark.primary,
-          '--tv-color-popup-background': '#23262A',
-          '--tv-color-popup-element-background-hover': '#2a2e39',
-          '--tv-color-popup-element-background-active': '#2a2e39',
-          '--tv-color-popup-element-text-active': '#fff',
-          // /* 切换工具栏按钮的填充颜色（例如磁铁模式、锁定所有绘图） */
-          '--tv-color-toolbar-toggle-button-background-active': ThemeDark.primary,
-          // /* 将鼠标悬停在切换工具栏按钮上时的填充颜色（例如磁铁模式、锁定所有绘图） */
-          '--tv-color-toolbar-toggle-button-background-active-hover': ThemeDark.primary
-        }
+        // '--tv-color-pane-background': ThemeConst.black,
+        // '--tv-color-toolbar-button-text': '#767E8A',
+        // '--tv-color-toolbar-button-text-active': ThemeDark.primary,
+        // '--tv-color-popup-background': '#23262A',
+        // '--tv-color-popup-element-background-hover': '#2a2e39',
+        // '--tv-color-popup-element-background-active': '#2a2e39',
+        // '--tv-color-popup-element-text-active': '#fff',
+        // // /* 切换工具栏按钮的填充颜色（例如磁铁模式、锁定所有绘图） */
+        // '--tv-color-toolbar-toggle-button-background-active': ThemeDark.primary,
+        // // /* 将鼠标悬停在切换工具栏按钮上时的填充颜色（例如磁铁模式、锁定所有绘图） */
+        // '--tv-color-toolbar-toggle-button-background-active-hover': ThemeDark.primary
+      }
       : {})
   }
 }

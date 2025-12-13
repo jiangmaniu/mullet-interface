@@ -27,6 +27,7 @@ import { getAccountSynopsisByLng } from '@/utils/business'
 import Header from './comp/Header'
 import RechargeSimulateModal from './comp/RechargeSimulateModal'
 import RenameAccountModal from './comp/RenameAccountModal'
+import { Iconify } from '@/libs/ui/components/icons'
 
 type IAccountItem = User.AccountItem & {
   isEyeOpen?: boolean
@@ -108,7 +109,7 @@ function Account() {
   const depositModalRef = useRef<any>(null)
 
   return (
-    <PageContainer pageBgColorMode="white" renderHeader={() => <Header />}>
+    <PageContainer renderHeader={() => <Header />}>
       <img src="/img/rujin-banner.png" className="w-full h-[108px]" />
       <div className="flex items-center justify-between mt-10">
         {/* <Tabs
@@ -173,22 +174,20 @@ function Account() {
                       )}
                       <div className="pl-[6px] flex items-center">
                         <div
-                          className="py-[2px] px-[3px] hover:bg-gray-80 rounded-[10px]"
+                          className="py-[2px] px-[3px] hover:bg-move-in rounded-[10px]"
                           onClick={() => {
                             setCurrentAccountList(
                               currentAccountList.map((v) => ({ ...v, isEyeOpen: v.id === item.id ? !v.isEyeOpen : v.isEyeOpen }))
                             )
                           }}
                         >
-                          <img
-                            src={`/img/${!item.isEyeOpen ? 'eye_open' : 'eye_close'}.png`}
-                            width={20}
-                            height={20}
-                            className="align-middle cursor-pointer"
+                          <Iconify
+                            icon={!item.isEyeOpen ? 'iconoir:eye' : 'iconoir:eye-closed'}
+                            className="size-5 align-middle cursor-pointer"
                           />
                         </div>
                         <div
-                          className="py-[2px] px-[3px] hover:bg-gray-80 rounded-[10px]"
+                          className="py-[2px] px-[3px] hover:bg-move-in rounded-[10px]"
                           onClick={() => {
                             setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: v.id === item.id })))
                             fetchUserInfo(false).then((res) => {
@@ -199,14 +198,7 @@ function Account() {
                             })
                           }}
                         >
-                          <img
-                            src="/img/shuaxin.png"
-                            width={20}
-                            height={20}
-                            className={classNames('align-middle cursor-pointer', {
-                              rotate: item.isRefresh
-                            })}
-                          />
+                          <Iconify icon={'iconoir:refresh'} className="size-3.5 align-middle cursor-pointer" />
                         </div>
                       </div>
                     </div>
@@ -256,7 +248,7 @@ function Account() {
                         }}
                         disabled={!item.pdaTokenAddress}
                         style={{ height: 46, width: 108 }}
-                        icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
+                        // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
                       >
                         <FormattedMessage id="mt.rujin" />
                       </Button>
@@ -264,18 +256,18 @@ function Account() {
                   )}
                 </Tooltip>
                 {/* @TODO 真实账户暂时不支持出金 */}
-                {!isSimulate && (
+                {/* {!isSimulate && (
                   <Button
                     onClick={() => {
                       // push(`/withdrawal?tradeAccountId=${item.id}`)
                       withdrawModalRef.current.show(item)
                     }}
                     style={{ height: 46, width: 108 }}
-                    icon={<img src="/img/chujin_icon.png" width={20} height={20} />}
+                    // icon={<img src="/img/chujin_icon.png" width={20} height={20} />}
                   >
                     <FormattedMessage id="mt.chujin" />
                   </Button>
-                )}
+                )} */}
                 <Button
                   type="primary"
                   style={{ height: 46, width: 108 }}

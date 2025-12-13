@@ -6,7 +6,7 @@ import Tabs from '@/components/Base/Tabs'
 
 import TradingviewWrapper from '@/components/Web/Tradingview/wrapper'
 import Futures from '../Futures'
-import HeaderStatisInfo from '../HeaderStatisInfo'
+// import HeaderStatisInfo from '../HeaderStatisInfo'
 
 // pc端中间区域部分
 const Center = () => {
@@ -19,7 +19,7 @@ const Center = () => {
   ]
 
   return (
-    <div className="flex h-[700px] flex-1 flex-col bg-primary pb-1 min-w-[400px]">
+    <div className="flex flex-1 flex-col bg-primary pb-1 min-w-[400px]">
       <Tabs
         items={TabsItems}
         onChange={(key: any) => {
@@ -32,7 +32,7 @@ const Center = () => {
         size="small"
         marginBottom={0}
       />
-      <HeaderStatisInfo />
+      {/* <HeaderStatisInfo /> */}
       {tabKey === 1 && <TradingviewWrapper />}
       {tabKey === 2 && <Futures />}
     </div>

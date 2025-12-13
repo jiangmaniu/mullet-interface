@@ -155,7 +155,7 @@ function ModalForm<T = Record<string, any>, U = Record<string, any>>(
             wrapClassName: 'modal-no-padding',
             styles: {
               header: {
-                background: isTabList || showHeaderBg ? 'var(--modal-header-bg)' : '#fff',
+                background: isTabList || showHeaderBg ? 'var(--modal-header-bg)' : '',
                 paddingTop: 24,
                 paddingLeft: 0,
                 paddingRight: 0

@@ -8,6 +8,8 @@ import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 
 import Tabs, { ITabItem } from '../Tabs'
+import { Iconify } from '@/libs/ui/components/icons'
+import { IconButton } from '@/libs/ui/components/button'
 
 interface IProps {
   children: React.ReactNode
@@ -107,14 +109,13 @@ export default function PageContainer({
         <div
           style={{
             overflow: 'hidden',
-            background: '#fff',
             height: 70,
             borderBottom: '1px solid rgba(218, 218, 218, .3)',
             ...headerStyle
             // paddingInline: '9.5%'
           }}
-          className={cn('flex items-center justify-center', {
-            'sticky top-[66px] z-[99]': fixedHeader
+          className={cn('flex items-center bg-navigation backdrop-blur-base justify-center', {
+            'sticky top-[60px] z-[10]': fixedHeader
           })}
         >
           <div className={cn('xl:w-1300 w-1120 mx-4', !fluidWidth ? 'm-auto' : '')}>
@@ -141,18 +142,17 @@ export default function PageContainer({
       {/* 返回按钮 */}
       {backTitle && backPath && (
         <div
-          className={cn('pt-4 md:pt-7 pb-2 md:pb-0 flex items-center px-5 md:px-6 justify-center sticky top-[66px] z-10')}
+          className={cn('py-2 md:py-3 flex items-center px-5 md:px-6 justify-center sticky top-[66px] z-10')}
           style={{ background: pageBgColorMode === 'white' ? '#fff' : 'var(--bg-base-gray)', ...backStyle }}
         >
           <div className="flex items-center relative -left-2 xl:w-1300 w-1120 mx-0 md:mx-4">
-            <div
-              className="hover:bg-gray-150 rounded-full cursor-pointer"
+            <IconButton
               onClick={() => {
                 push(backUrl || `/${backPath}`)
               }}
             >
-              <img src="/img/uc/arrow-left.png" width={40} height={40} />
-            </div>
+              <Iconify icon={'iconoir:arrow-left'} className="size-5" />
+            </IconButton>
             <div className="text-[24px] font-bold ml-1 md:ml-3 w-full">{backTitle}</div>
           </div>
         </div>

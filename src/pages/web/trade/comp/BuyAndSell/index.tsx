@@ -71,7 +71,7 @@ export default observer(
       return (
         <div
           className={cn({
-            'h-[700px] w-[300px] relative bg-primary flex-shrink-0': isPc,
+            'h-[700px] relative bg-primary flex-shrink-0': isPc,
             [className]: isPc
           })}
         >

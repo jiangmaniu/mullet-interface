@@ -107,7 +107,7 @@ const TradingviewWrapper = ({ style }: IProps) => {
   )
 
   return (
-    <div style={{ ...style }}>
+    <div style={{ ...style }} className="h-full">
       {pageVisible && (
         <Suspense
           fallback={

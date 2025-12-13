@@ -58,8 +58,8 @@ interface IProps {
 export const ThemeContext = createContext<IThemeContextProps>({} as IThemeContextProps)
 
 export const ThemeProvider = ({ children }: IProps): JSX.Element => {
-  const [mode, setMode] = useState<IThemeMode>('light') // 主题色
-  const [tradeTheme, setTradeTheme] = useState<IThemeMode>('light') // 主题色
+  const [mode, setMode] = useState<IThemeMode>('dark') // 主题色
+  const [tradeTheme, setTradeTheme] = useState<IThemeMode>('dark') // 主题色
   const [direction, setDirection] = useState<any>(0) // 0绿涨红跌 1红涨绿跌
   const { isPc, isMobileOrIpad } = useEnv()
 
@@ -97,11 +97,13 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     // 只有在交易页面才需要切换主题模式
     if (location.pathname.indexOf('/trade') !== -1) {
       // 避免设置null值
-      document.documentElement.className = ['dark', 'light'].includes(theme) ? theme : 'light'
-      document.body.style.background = 'var(--bg-primary)'
+      document.documentElement.className = ['dark', 'light'].includes(theme) ? theme : 'dark'
+      // document.body.style.background = 'var(--bg-primary)'
     } else {
-      document.documentElement.className = 'light'
-      document.body.style.background = '#fff'
+      document.documentElement.className = ['dark', 'light'].includes(theme) ? theme : 'dark'
+      // document.body.style.background = 'var(--bg-primary)'
+      // document.documentElement.className = 'light'
+      // document.body.style.background = '#fff'
     }
     setMobileThemeMode()
   }
@@ -113,12 +115,12 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
 
   // @TODO 移动端 切换为亮色主题及时pc设置了黑色，暂时不考虑移动端黑色主题
   useEffect(() => {
-    if (theme.isDark && isMobileOrIpad) {
-      const themeMode = theme.isDark ? 'light' : 'dark'
-      setMode(themeMode)
-      // 设置交易页面主题，因为交易页面主题不是全局的，所以需要单独设置
-      STORAGE_SET_TRADE_THEME(themeMode)
-    }
+    // if (theme.isDark && isMobileOrIpad) {
+    //   const themeMode = theme.isDark ? 'light' : 'dark'
+    //   setMode(themeMode)
+    //   // 设置交易页面主题，因为交易页面主题不是全局的，所以需要单独设置
+    //   STORAGE_SET_TRADE_THEME(themeMode)
+    // }
   }, [theme.isDark, isMobileOrIpad])
 
   // 监听系统主题模式
@@ -126,7 +128,7 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     // 优先获取交易页面主题，如果没有获取到，则获取全局主题
     // const themeMode = STORAGE_GET_TRADE_THEME() || STORAGE_GET_THEME()
 
-    const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    // const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
     // const matchMode = darkModeMediaQuery.matches ? 'dark' : 'light'
     // const mode = themeMode ? themeMode : matchMode
 
@@ -141,9 +143,9 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
       handleSetTheme(themeMode)
     }
 
-    darkModeMediaQuery.addEventListener('change', listener)
+    // darkModeMediaQuery.addEventListener('change', listener)
     return () => {
-      darkModeMediaQuery.removeEventListener('change', listener)
+      // darkModeMediaQuery.removeEventListener('change', listener)
     }
   }, [])
 
@@ -159,11 +161,11 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
     tradeTheme,
     setDirection,
     toggleTheme: () => {
-      setMode(mode === 'dark' ? 'light' : 'dark')
+      // setMode(mode === 'dark' ? 'light' : 'dark')
     },
     setMode: (mode: IThemeMode) => {
       if (mode) {
-        handleSetTheme(mode)
+        // handleSetTheme(mode)
       }
     }
   } as IThemeContextProps

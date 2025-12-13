@@ -9,6 +9,7 @@ type CommonTooltipProps = PropsWithChildren<
   Omit<ComponentProps<typeof TooltipContent>, 'content'> &
     ComponentProps<typeof Tooltip> & {
       content?: React.ReactNode
+      isDisabledCursorHelp?: boolean
     }
 >
 
@@ -22,6 +23,7 @@ export const GeneralTooltip = ({
   side = 'bottom',
   sideOffset,
   defaultOpen,
+  isDisabledCursorHelp,
   onOpenChange,
   ...props
 }: CommonTooltipProps) => {
@@ -32,7 +34,13 @@ export const GeneralTooltip = ({
   return (
     <TooltipProvider>
       <Tooltip {...{ open, defaultOpen, onOpenChange }}>
-        <TooltipTrigger className="block">{children}</TooltipTrigger>
+        <TooltipTrigger
+          className={cn('block', {
+            'cursor-help': !isDisabledCursorHelp
+          })}
+        >
+          {children}
+        </TooltipTrigger>
         <TooltipContent
           className={cn('max-w-[220px]', className)}
           alignOffset={alignOffset}

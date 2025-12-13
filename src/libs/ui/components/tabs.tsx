@@ -84,7 +84,7 @@ function Tabs<T>({
         value={value as string}
         onValueChange={handleValueChange}
         activationMode={activationMode}
-        className={cn('flex flex-col', tabsVariantsClassName, className)}
+        className={cn('flex flex-col h-full', tabsVariantsClassName, className)}
         {...props}
       />
     </TabsVariantsContext.Provider>

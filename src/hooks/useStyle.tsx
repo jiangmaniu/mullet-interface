@@ -10,7 +10,7 @@ export default function useStyle() {
         fontWeight: '500 !important'
       },
       '.ant-empty': {
-        height: '350px !important',
+        height: '125px !important',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

@@ -118,74 +118,74 @@ export interface ButtonProps extends Omit<React.ComponentProps<'button'>, 'color
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps & IconProps>(
   (
     {
-      className,
-      variant,
-      size,
-      color,
-      asChild = false,
-      loading = false,
-      block = false,
-      children,
-      LeftIcon,
-      RightIcon,
-      disabled = false,
-      type = 'button',
-      href,
-      // target,
-      // replace,
-      ...props
+  className,
+  variant,
+  size,
+  color,
+  asChild = false,
+  loading = false,
+  block = false,
+  children,
+  LeftIcon,
+  RightIcon,
+  disabled = false,
+  type = 'button',
+  href,
+  // target,
+  // replace,
+  ...props
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : 'button'
+  const Comp = asChild ? Slot : 'button'
 
     const ButtonElement = (
-      <Comp
-        className={cn(
-          buttonVariants({
-            variant,
-            size,
-            color,
-            className: cn(
-              {
-                'flex w-full flex-1': block
-              },
-              className
-            )
-          })
-        )}
-        ref={ref}
-        type={type}
-        disabled={disabled || loading}
-        {...props}
-      >
-        {/* {(LeftIcon || loading) && <>{LeftIcon ? LeftIcon : loading ? <Icons.lucide.Spinner className="size-4 animate-spin" /> : null}</>} */}
-        <Slottable>{children}</Slottable>
-        {RightIcon && <>{RightIcon}</>}
-      </Comp>
-    )
+    <Comp
+      className={cn(
+        buttonVariants({
+          variant,
+          size,
+          color,
+          className: cn(
+            {
+              'flex w-full flex-1': block
+            },
+            className
+          )
+        })
+      )}
+      ref={ref}
+      type={type}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {/* {(LeftIcon || loading) && <>{LeftIcon ? LeftIcon : loading ? <Icons.lucide.Spinner className="size-4 animate-spin" /> : null}</>} */}
+      <Slottable>{children}</Slottable>
+      {RightIcon && <>{RightIcon}</>}
+    </Comp>
+  )
 
-    if (href && !disabled) {
-      return (
-        <LinkButton
-          href={href}
-          block={block}
-          // target={target}
-          // replace={replace}
-          className={className}
-          variant={variant}
-          size={size}
-          color={color}
-          LeftIcon={LeftIcon}
-          RightIcon={RightIcon}
-        >
-          {children}
-        </LinkButton>
-      )
-    }
+  if (href && !disabled) {
+    return (
+      <LinkButton
+        href={href}
+        block={block}
+        // target={target}
+        // replace={replace}
+        className={className}
+        variant={variant}
+        size={size}
+        color={color}
+        LeftIcon={LeftIcon}
+        RightIcon={RightIcon}
+      >
+        {children}
+      </LinkButton>
+    )
+  }
 
     return <>{ButtonElement}</>
-  }
+}
 )
 
 Button.displayName = 'Button'

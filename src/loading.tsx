@@ -9,15 +9,14 @@ import { STORAGE_GET_THEME } from './utils/storage'
 export default () => {
   const isTradePage = location.pathname.indexOf('/trade') !== -1
   const isDark = STORAGE_GET_THEME() === 'dark' && isTradePage
-  const bgColor = document.body.style.background || '#fff'
 
   return (
     <div
       style={{
-        background: isDark ? gray[675] : bgColor,
         width: isTradePage ? '100vw' : '100%',
         height: isTradePage ? '100vh' : '100%'
       }}
+      className="bg-primary"
     >
       <ConfigProvider
         theme={{

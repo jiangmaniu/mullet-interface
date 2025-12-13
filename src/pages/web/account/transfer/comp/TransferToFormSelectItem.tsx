@@ -1,11 +1,10 @@
-import { FormattedMessage, useIntl, useModel, useSearchParams } from '@umijs/max'
+import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { Form, FormInstance } from 'antd'
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import ProFormSelect from '@/components/Admin/Form/ProFormSelect'
 import SelectSuffixIcon from '@/components/Base/SelectSuffixIcon'
-import { DEFAULT_CURRENCY_DECIMAL } from '@/constants'
 import { formatNum, toFixed } from '@/utils'
 import { getAccountSynopsisByLng } from '@/utils/business'
 
@@ -13,12 +12,12 @@ type IProps = {
   form: FormInstance
 }
 
-/**转出表单项 */
-export default function TransferFromFormSelectItem({ form }: IProps) {
+/**转入表单项 */
+export default function TransferToFormSelectItem({ form }: IProps) {
   const [open, setOpen] = useState(false)
   const intl = useIntl()
   const { initialState } = useModel('@@initialState')
-  const [searchParams] = useSearchParams()
+
   const currentUser = initialState?.currentUser
   const accountList = (currentUser?.accountList || []).filter((v) => !v.isSimulate) // 真实账号
 
@@ -28,28 +27,21 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
   const toAccountInfo = accountList.find((item) => item.id === toAccountId) // 转入账号信息
 
   // 当前账户占用的保证金 = 逐仓保证金 + 全仓保证金（可用保证金）
-  const occupyMargin = Number(toFixed(Number(fromAccountInfo?.margin || 0) + Number(fromAccountInfo?.isolatedMargin || 0)))
-  const money = fromAccountInfo?.money || 0
+  const occupyMargin = Number(toFixed(Number(toAccountInfo?.margin || 0) + Number(toAccountInfo?.isolatedMargin || 0)))
+  const money = toAccountInfo?.money || 0
   // 可用余额
   const availableMoney = Number(toFixed(money - occupyMargin))
-
-  const searchFrom = searchParams.get('from')
-
-  useEffect(() => {
-    form.setFieldValue('fromAccountId', searchFrom)
-  }, [searchFrom])
 
   return (
     <ProFormSelect
       label={
         <span className="text-sm text-primary font-medium">
-          <FormattedMessage id="mt.zhuanchuzhanghao" />
+          <FormattedMessage id="mt.zhuanruzhanghao" />
         </span>
       }
-      name="fromAccountId"
-      placeholder={intl.formatMessage({ id: 'mt.xuanzezhuanchuzhanghao' })}
+      name="toAccountId"
+      placeholder={intl.formatMessage({ id: 'mt.xuanzezhuanruzhanghao' })}
       allowClear={false}
-      initialValue={searchFrom}
       fieldProps={{
         open,
         onDropdownVisibleChange: (visible) => setOpen(visible),
@@ -58,15 +50,12 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
             <SelectSuffixIcon opacity={0.5} />
             <div className="bg-gray-250 h-3 w-[1px] mr-3"></div>
             <div className="text-primary text-sm py-3 !font-dingpro-medium">
-              {formatNum(availableMoney, { precision: fromAccountInfo?.currencyDecimal || DEFAULT_CURRENCY_DECIMAL })} USD
+              {formatNum(availableMoney, { precision: toAccountInfo?.currencyDecimal })} USD
             </div>
           </>
         ),
         showSearch: false,
         listHeight: 300,
-        onChange: (value) => {
-          form.validateFields(['money'])
-        },
         optionRender: (option) => {
           const item = option?.data || {}
 
@@ -76,7 +65,7 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
                 setOpen(false)
               }}
               className={classNames('cursor-pointer rounded-lg border border-gray-250 pb-[6px] pt-[11px] hover:bg-primary', {
-                'bg-primary': item.id === fromAccountId
+                'bg-primary': item.id === toAccountId
               })}
             >
               <div className="flex w-full py-2 ml-[10px]">{item.label}</div>
@@ -91,10 +80,10 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
           required: true,
           validator(rule, value, callback) {
             setTimeout(() => {
-              form.validateFields(['toAccountId'])
+              form.validateFields(['fromAccountId'])
             }, 300)
-            if (!fromAccountId) {
-              return Promise.reject(intl.formatMessage({ id: 'mt.xuanzezhuanchuzhanghao' }))
+            if (!toAccountId) {
+              return Promise.reject(intl.formatMessage({ id: 'mt.xuanzezhuanruzhanghao' }))
             }
             if (toAccountId === fromAccountId) {
               return Promise.reject(intl.formatMessage({ id: 'mt.zhuanruzhanchuzhanghaobunengxiangtong' }))
@@ -109,10 +98,10 @@ export default function TransferFromFormSelectItem({ form }: IProps) {
           ...item,
           value: item.id,
           label: (
-            <div className="flex justify-between w-full">
+            <div className="flex items-center justify-between w-full">
               {synopsis?.tag && (
-                <div className="flex px-1">
-                  <div className="flex items-center justify-center rounded bg-gray text-white text-xs py-[2px] px-2 mr-[6px]">
+                <div className="flex items-center px-1">
+                  <div className="flex leading-normal items-center justify-center rounded bg-brand-secondary-1 text-white text-xs py-[2px] px-2 mr-[6px]">
                     {synopsis?.tag}
                   </div>
                 </div>

@@ -299,7 +299,7 @@ const Tradingview = (props: any, ref: any) => {
   }
 
   return (
-    <div className={cn('relative', className)} style={{ height: isPc ? 585 : document.documentElement.clientHeight - height }}>
+    <div className={cn('relative h-full', className)} style={{ height: isPc ? '' : document.documentElement.clientHeight - height }}>
       <div id="tradingview" ref={chartContainerRef} className="relative flex flex-1 h-full" style={{ opacity: loading ? 0 : 1 }} />
       {isChartLoading && (
         <div className="absolute top-0 left-0 right-0 bottom-0 flex justify-center items-center w-full h-full z-40">
