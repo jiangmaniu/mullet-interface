@@ -2,6 +2,7 @@ import { PRIVY_APP_ID, PRIVY_CLIENT_ID } from '@/constants/config'
 import { PrivyProvider as PrivyProviderComp } from '@privy-io/react-auth'
 import { toSolanaWalletConnectors } from '@privy-io/react-auth/solana'
 import { createContext, useContext } from 'react'
+import { useCoboAddressPreload } from '@/hooks/useCoboAddressPreload'
 
 interface IProps {
   children: JSX.Element
@@ -10,6 +11,17 @@ interface IProps {
 type ProviderType = {}
 
 const Context = createContext<ProviderType>({} as ProviderType)
+
+/**
+ * Cobo 地址预加载包装组件
+ * 在用户登录后自动预加载所有链的充值地址
+ */
+const CoboPreloadWrapper = ({ children }: IProps) => {
+  // 自动预加载 Cobo 充值地址
+  useCoboAddressPreload()
+  
+  return <>{children}</>
+}
 
 // https://demo.privy.io
 export const PrivyProvider = ({ children }: IProps) => {
@@ -53,7 +65,9 @@ export const PrivyProvider = ({ children }: IProps) => {
           }
         }}
       >
-        {children}
+        <CoboPreloadWrapper>
+          {children}
+        </CoboPreloadWrapper>
       </PrivyProviderComp>
     </Context.Provider>
   )
