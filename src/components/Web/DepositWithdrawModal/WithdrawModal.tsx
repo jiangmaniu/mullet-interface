@@ -89,21 +89,26 @@ export default observer(
       }
     })
 
-    // Token ID 映射 - 必须与数据库中的 token_id 完全一致
-    const getTokenId = (chainId: string): string => {
-      const tokenMap: Record<string, string> = {
-        'SOL': 'SOL_USDC',
-        'ETH': 'ETH_USDT',     // 数据库中是 ETH_USDT
-        'TRON': 'TRON',        // 数据库中就是 TRON
-        'ARBITRUM': 'ARBITRUM_USDC',
-        'BASE': 'BASE_USDC',
-        'MATIC': 'MATIC_USDC',
-        'BSC': 'BSC_USDT',
+    // Token ID 映射 - 返回可能的多个 token (USDC/USDT)
+    const getPossibleTokenIds = (chainId: string): string[] => {
+      const tokenMap: Record<string, string[]> = {
+        'SOL': ['SOL_USDT', 'SOL_USDC'],
+        'ETH': ['ETH_USDT', 'ETH_USDC'],
+        'TRON': ['TRON'],  // TRON 使用原生代币
+        'ARBITRUM': ['ARBITRUM_USDT', 'ARBITRUM_USDC'],
+        'BASE': ['BASE_USDT', 'BASE_USDC'],
+        'MATIC': ['MATIC_USDT', 'MATIC_USDC'],
+        'BSC': ['BSC_USDT', 'BSC_USDC'],
       }
-      return tokenMap[chainId] || 'SOL_USDC'
+      return tokenMap[chainId] || ['SOL_USDT']
     }
 
-    // 当选择的链改变时，查询该链的余额
+    // 获取第一个可用的 token_id（用于提现）
+    const getTokenId = (chainId: string): string => {
+      return getPossibleTokenIds(chainId)[0]
+    }
+
+    // 当选择的链改变时，查询该链所有可能代币的总余额
     useEffect(() => {
       // 只在弹窗打开且有用户ID时查询
       if (!open || !user?.id || !selectedChain) return
@@ -114,17 +119,37 @@ export default observer(
           const chainConfig = SUPPORTED_CHAINS.find(c => c.name === selectedChain)
           if (!chainConfig) return
           
-          const tokenId = getTokenId(chainConfig.chainId)
-          const response = await getCoboBalance({ userId: user.id, tokenId })
+          const possibleTokenIds = getPossibleTokenIds(chainConfig.chainId)
+          let totalBalance = BigInt(0)
+          let foundTokenId = ''
           
-          if (response.success && response.data) {
-            setChainBalance(response.data.available)
-            console.log('[WithdrawModal] Chain balance loaded:', {
-              chain: selectedChain,
-              tokenId,
-              available: response.data.available
-            })
+          // 查询所有可能的代币余额并累加
+          for (const tokenId of possibleTokenIds) {
+            try {
+              const response = await getCoboBalance({ userId: user.id, tokenId })
+              if (response.success && response.data) {
+                const available = BigInt(response.data.available || '0')
+                if (available > 0) {
+                  totalBalance += available
+                  if (!foundTokenId) foundTokenId = tokenId
+                  console.log('[WithdrawModal] Found balance:', {
+                    tokenId,
+                    available: response.data.available
+                  })
+                }
+              }
+            } catch (error) {
+              // 该代币不存在或查询失败，继续下一个
+              console.log(`[WithdrawModal] Token ${tokenId} not found, trying next...`)
+            }
           }
+          
+          setChainBalance(totalBalance.toString())
+          console.log('[WithdrawModal] Total chain balance:', {
+            chain: selectedChain,
+            tokens: possibleTokenIds,
+            totalBalance: totalBalance.toString()
+          })
         } catch (error) {
           console.error('[WithdrawModal] Failed to fetch chain balance:', error)
           setChainBalance('0')
