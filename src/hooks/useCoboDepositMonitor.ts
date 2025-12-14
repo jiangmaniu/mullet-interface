@@ -159,25 +159,33 @@ export const useCoboDepositMonitor = ({
         return
       }
       
-      // 检测确认中的交易进度变化
-      txList
-        .filter(tx => tx.status === 'Confirming')
-        .forEach(tx => {
-          const previousConfirms = confirmingTxs.current.get(tx.transaction_id)
-          const currentConfirms = tx.confirmed_num
-          
-          // 确认数增加了，触发回调
-          if (previousConfirms !== undefined && currentConfirms > previousConfirms) {
-            console.log(`[Cobo] 确认进度更新: ${tx.transaction_id} (${currentConfirms}/${tx.confirming_threshold})`)
-            setConfirmingDeposit(tx)
-            if (onDepositConfirming) {
-              onDepositConfirming(tx)
-            }
+      // 检测确认中的交易
+      const confirmingTxList = txList.filter(tx => tx.status === 'Confirming')
+      
+      // 设置当前确认中的交易（最新的一笔）
+      if (confirmingTxList.length > 0) {
+        const latestConfirming = confirmingTxList[0]
+        setConfirmingDeposit(latestConfirming)
+        
+        // 检测进度变化并触发回调
+        const previousConfirms = confirmingTxs.current.get(latestConfirming.transaction_id)
+        const currentConfirms = latestConfirming.confirmed_num
+        
+        if (previousConfirms !== undefined && currentConfirms > previousConfirms) {
+          console.log(`[Cobo] 确认进度更新: ${latestConfirming.transaction_id} (${currentConfirms}/${latestConfirming.confirming_threshold})`)
+          if (onDepositConfirming) {
+            onDepositConfirming(latestConfirming)
           }
-          
-          // 更新记录
-          confirmingTxs.current.set(tx.transaction_id, currentConfirms)
+        }
+        
+        // 更新所有确认中交易的记录
+        confirmingTxList.forEach(tx => {
+          confirmingTxs.current.set(tx.transaction_id, tx.confirmed_num)
         })
+      } else {
+        // 没有确认中的交易，清空状态
+        setConfirmingDeposit(null)
+      }
       
       // 检测新的已完成充值（非首次加载）
       const newCompletedDeposits = txList.filter(

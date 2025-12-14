@@ -10,6 +10,7 @@ import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { useSessionSigner } from '@/hooks/useSessionSigner'
+import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
 import { useCoboDepositMonitor } from '@/hooks/useCoboDepositMonitor'
 import { API_BASE_URL } from '@/constants/api'
@@ -62,14 +63,22 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const [bridgeStep, setBridgeStep] = useState<'idle' | 'tron-eth' | 'eth-sol' | 'completed'>('idle')
   const [pollingOrderId, setPollingOrderId] = useState<string | null>(null) // 正在轮询的订单 ID
 
-  // Cobo Wallet ID (可以从环境变量读取)
-  const COBO_WALLET_ID = '4887566c-3311-46a3-9dc7-16183e72d4f5'
-  
   // 判断当前选择的链是否是 Cobo
   const selectedChainConfig = SUPPORTED_BRIDGE_CHAINS.find(c => c.name === selectedChain)
   const isCoboChain = selectedChainConfig?.type === 'cobo'
   
-  // 获取 Cobo 充值地址（仅在选择 Cobo 链时启用）
+  // 获取用户的 Cobo 钱包（自动创建）
+  const { 
+    walletId: coboWalletId, 
+    walletData: coboWalletData,
+    isLoading: coboWalletLoading, 
+    error: coboWalletError 
+  } = useCoboWallet({
+    userId: user?.id || '',
+    enabled: open && isCoboChain
+  })
+  
+  // 获取 Cobo 充值地址（仅在选择 Cobo 链且已有钱包时启用）
   const { 
     address: coboAddress, 
     isLoading: coboAddressLoading,
@@ -78,11 +87,11 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   } = useCoboDepositAddress({
     userId: user?.id || '',
     chainId: selectedChainConfig?.id as 'ETH' | 'SOL' | 'TRON',
-    walletId: COBO_WALLET_ID,
-    enabled: open && isCoboChain
+    walletId: coboWalletId || '',
+    enabled: open && isCoboChain && !!coboWalletId
   })
 
-  // Cobo 充值监听（仅在选择 Cobo 链时启用）
+  // Cobo 充值监听（仅在选择 Cobo 链且已有钱包时启用）
   const { 
     transactions: coboTransactions,
     deposits: coboDeposits,
@@ -95,8 +104,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     getConfirmationPercentage
   } = useCoboDepositMonitor({
     depositAddress: coboAddress || undefined,
-    walletIds: [COBO_WALLET_ID],
-    enabled: open && isCoboChain && !!coboAddress,
+    walletIds: coboWalletId ? [coboWalletId] : [],
+    enabled: open && isCoboChain && !!coboAddress && !!coboWalletId,
     pollInterval: 10000, // 10秒轮询
     onDepositConfirming: (tx) => {
       console.log('[Cobo] 确认进度:', getConfirmationProgress(tx))
