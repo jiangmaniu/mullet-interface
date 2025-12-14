@@ -93,7 +93,7 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     displayName: 'Solana (Cobo)'
   },
   {
-    id: 'ARB',
+    id: 'ARBITRUM_ETH',
     name: 'Cobo-Arbitrum',
     color: '#28A0F0',
     minDeposit: 10,
@@ -101,7 +101,7 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     displayName: 'Arbitrum (Cobo)'
   },
   {
-    id: 'BASE',
+    id: 'BASE_ETH',
     name: 'Cobo-Base',
     color: '#0052FF',
     minDeposit: 10,
@@ -125,7 +125,7 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     displayName: 'BNB Chain (Cobo)'
   },
   {
-    id: 'HYPE',
+    id: 'HYPEREVM_HYPE',
     name: 'Cobo-HyperEVM',
     color: '#00D4AA',
     minDeposit: 10,
