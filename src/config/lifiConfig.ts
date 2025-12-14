@@ -117,7 +117,7 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     displayName: 'Polygon (Cobo)'
   },
   {
-    id: 'BNB',
+    id: 'BSC',
     name: 'Cobo-BNB',
     color: '#F0B90B',
     minDeposit: 10,
