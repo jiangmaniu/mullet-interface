@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert, Tooltip } from 'antd'
-import { CopyOutlined } from '@ant-design/icons'
+import { CopyOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
@@ -21,6 +21,7 @@ const { Text } = Typography
 interface TransferCryptoDialogProps {
   open: boolean
   onClose: () => void
+  onBack?: () => void
   onDepositDetected?: (amount: string, token: string, chain: string) => void
 }
 
@@ -28,7 +29,7 @@ interface TransferCryptoDialogProps {
  * 跨链充值对话框
  * 支持 TRON / Ethereum / Solana 充值并自动桥接到 Solana
  */
-const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClose, onDepositDetected }) => {
+const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClose, onBack, onDepositDetected }) => {
   const { token } = antdTheme.useToken()
   const { getAccessToken, user } = usePrivy()
   const { wallets } = useWallets()
@@ -553,7 +554,27 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   }
 
   return (
-    <Modal title="Transfer Crypto" open={open} onCancel={onClose} footer={null} width={500} className="transfer-crypto-dialog">
+    <Modal 
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {onBack && (
+            <ArrowLeftOutlined 
+              style={{ cursor: 'pointer', fontSize: 16 }} 
+              onClick={() => {
+                onClose()
+                onBack()
+              }} 
+            />
+          )}
+          <span>Transfer Crypto</span>
+        </div>
+      } 
+      open={open} 
+      onCancel={onClose} 
+      footer={null} 
+      width={500} 
+      className="transfer-crypto-dialog"
+    >
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
         {/* Session Signer 授权提示 */}
         {tronAddress && !isSessionSignerAdded && !isCheckingSessionSigner && (

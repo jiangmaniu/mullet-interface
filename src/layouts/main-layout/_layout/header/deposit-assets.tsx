@@ -109,11 +109,16 @@ export const DepositAssets = () => {
           onCardClick={handleCardClick}
         />
         {/* 跨链充值弹窗 */}
-        <TransferCryptoDialog open={showTransferDialog} onClose={() => setShowTransferDialog(false)} />
+        <TransferCryptoDialog 
+          open={showTransferDialog} 
+          onClose={() => setShowTransferDialog(false)}
+          onBack={() => setShowAddFundsMenu(true)}
+        />
         {/* 资产兑换弹窗 */}
         <SwapDialog
           open={showSwapDialog}
           onClose={() => setShowSwapDialog(false)}
+          onBack={() => setShowAddFundsMenu(true)}
           walletAddress={wallets?.[0]?.address || ''}
           network={
             wallets?.[0]?.address?.length === 44 && !wallets?.[0]?.address?.startsWith('0x')
