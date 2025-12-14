@@ -86,7 +86,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     isNew: coboAddressIsNew 
   } = useCoboDepositAddress({
     userId: user?.id || '',
-    chainId: selectedChainConfig?.id as 'ETH' | 'SOL' | 'TRON' | 'ARB' | 'BASE' | 'MATIC' | 'BNB' | 'HYPE',
+    chainId: selectedChainConfig?.id as 'ETH' | 'SOL' | 'TRON' | 'ARB' | 'BASE' | 'MATIC' | 'BSC' | 'HYPE',
     walletId: coboWalletId || '',
     enabled: open && isCoboChain && !!coboWalletId
   })

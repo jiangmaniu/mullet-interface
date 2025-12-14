@@ -4,7 +4,7 @@ import { API_BASE_URL } from '@/constants/api'
 
 interface UseCoboDepositAddressParams {
   userId: string
-  chainId: 'ETH' | 'SOL' | 'TRON' | 'ARB' | 'BASE' | 'MATIC' | 'BNB' | 'HYPE'
+  chainId: 'ETH' | 'SOL' | 'TRON' | 'ARB' | 'BASE' | 'MATIC' | 'BSC' | 'HYPE'
   walletId: string
   enabled?: boolean
 }
