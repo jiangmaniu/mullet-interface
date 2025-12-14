@@ -155,6 +155,13 @@ export const useCoboDepositMonitor = ({
           completed: processedDepositIds.current.size,
           confirming: confirmingTxs.current.size
         })
+        
+        // 首次加载也要设置确认中的交易（显示进度条）
+        const confirmingTxList = txList.filter(tx => tx.status === 'Confirming')
+        if (confirmingTxList.length > 0) {
+          setConfirmingDeposit(confirmingTxList[0])
+        }
+        
         setError(null)
         return
       }

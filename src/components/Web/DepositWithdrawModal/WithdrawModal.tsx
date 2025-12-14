@@ -90,13 +90,14 @@ export default observer(
     })
 
     // Token ID 映射 - 返回可能的多个 token (USDC/USDT)
+    // 注意：Cobo的token_id命名规范：USDC = USDCOIN, USDT = TETHER
     const getPossibleTokenIds = (chainId: string): string[] => {
       const tokenMap: Record<string, string[]> = {
         'SOL': ['SOL_USDT', 'SOL_USDC'],
         'ETH': ['ETH_USDT', 'ETH_USDC'],
         'TRON': ['TRON'],  // TRON 使用原生代币
-        'ARBITRUM_ETH': ['ARBITRUM_USDT', 'ARBITRUM_USDC'],
-        'BASE_ETH': ['BASE_USDT', 'BASE_USDC'],
+        'ARBITRUM_ETH': ['ARBITRUM_USDCOIN', 'ARBITRUM_TETHER'],
+        'BASE_ETH': ['BASE_USDCOIN', 'BASE_TETHER'],
         'MATIC': ['MATIC_USDT', 'MATIC_USDC'],
         'BSC_BNB': ['BSC_USDT', 'BSC_USDC'],
       }
