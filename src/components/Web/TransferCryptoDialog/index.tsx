@@ -86,7 +86,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     isNew: coboAddressIsNew 
   } = useCoboDepositAddress({
     userId: user?.id || '',
-    chainId: selectedChainConfig?.id as 'ETH' | 'SOL' | 'TRON',
+    chainId: selectedChainConfig?.id as 'ETH' | 'SOL' | 'TRON' | 'ARB' | 'BASE' | 'MATIC' | 'BNB' | 'HYPE',
     walletId: coboWalletId || '',
     enabled: open && isCoboChain && !!coboWalletId
   })
@@ -582,39 +582,46 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           />
         )}
 
-        {/* 链选择 */}
-        <div>
-          <Text strong>Select Chain</Text>
-          <Select value={selectedChain} onChange={setSelectedChain} style={{ width: '100%', marginTop: 8 }} size="large">
-            {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
-              <Select.Option key={chain.name} value={chain.name}>
+        {/* Token 和 Chain 选择器 - 并排显示 */}
+        <div style={{ display: 'flex', gap: 16 }}>
+          {/* Token 选择 */}
+          <div style={{ flex: 1 }}>
+            <Text strong>Supported token</Text>
+            <Select value={selectedToken} onChange={setSelectedToken} style={{ width: '100%', marginTop: 8 }} size="large">
+              <Select.Option value="USDT">
                 <Space>
-                  <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
-                  {chain.displayName || chain.name} - Min: ${chain.minDeposit}
-                  {chain.type === 'cobo' && <span style={{ color: '#52c41a', fontSize: 12 }}>(Cobo托管)</span>}
+                  <Avatar src={TOKEN_ICONS.USDT} size="small" />
+                  USDT
                 </Space>
               </Select.Option>
-            ))}
-          </Select>
-        </div>
+              <Select.Option value="USDC">
+                <Space>
+                  <Avatar src={TOKEN_ICONS.USDC} size="small" />
+                  USDC
+                </Space>
+              </Select.Option>
+            </Select>
+          </div>
 
-        {/* Token 选择 */}
-        <div>
-          <Text strong>Select Token</Text>
-          <Select value={selectedToken} onChange={setSelectedToken} style={{ width: '100%', marginTop: 8 }} size="large">
-            <Select.Option value="USDT">
-              <Space>
-                <Avatar src={TOKEN_ICONS.USDT} size="small" />
-                USDT
-              </Space>
-            </Select.Option>
-            <Select.Option value="USDC">
-              <Space>
-                <Avatar src={TOKEN_ICONS.USDC} size="small" />
-                USDC
-              </Space>
-            </Select.Option>
-          </Select>
+          {/* 链选择 */}
+          <div style={{ flex: 1 }}>
+            <Text strong>
+              Supported chain
+              <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
+                Min ${selectedChainConfig?.minDeposit}
+              </Text>
+            </Text>
+            <Select value={selectedChain} onChange={setSelectedChain} style={{ width: '100%', marginTop: 8 }} size="large">
+              {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
+                <Select.Option key={chain.name} value={chain.name}>
+                  <Space>
+                    <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
+                    {chain.displayName || chain.name}
+                  </Space>
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
         </div>
 
         {/* 充值地址和二维码 */}
