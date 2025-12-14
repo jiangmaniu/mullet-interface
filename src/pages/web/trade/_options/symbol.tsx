@@ -21,11 +21,11 @@ export const SYMBOL_FILTER_MODE_OPTIONS = [
  */
 export enum SymbolCategory {
   All = '0',
-  Forex = '10',
+  Forex = '30',
   Commodities = '20',
-  Indices = '30',
-  Stock = '40',
-  Crypto = '50'
+  Indices = '40',
+  Stock = '50',
+  Crypto = '10'
 }
 
 export const SYMBOL_CATEGORY_OPTIONS: {

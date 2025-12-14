@@ -1,0 +1,21 @@
+:root {
+  --font-weight-regular: regular;
+  --font-weight-medium: medium;
+  --font-weight-semibold: semibold;
+
+  --font-size-xs: 12px;
+  --font-size-small: 14px;
+  --font-size-medium: 16px;
+  --font-size-large: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 28px;
+  --font-size-3xl: 32px;
+
+  --leading-xs: 16px;
+  --leading-small: 20px;
+  --leading-medium: 24px;
+  --leading-large: 28px;
+  --leading-xl: 32px;
+  --leading-2xl: 36px;
+  --leading-3xl: 40px;
+}

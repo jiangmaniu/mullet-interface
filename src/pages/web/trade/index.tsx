@@ -16,8 +16,8 @@ import { STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/uti
 
 import { checkPageShowTime } from '@/utils/business'
 import BuyAndSell from './comp/BuyAndSell'
-import Center from './comp/Center'
-import Footer from './comp/Footer'
+// import Center from './comp/Center'
+// import Footer from './comp/Footer'
 import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
 // import Sidebar from './comp/Sidebar'
 import TradeRecord from './comp/TradeRecord'
@@ -27,6 +27,8 @@ import { Overview } from './_comps/overview'
 import { AccountDetails } from './_comps/account'
 import { TradeLayout } from './_comps/layout'
 import { TradeLayoutKey } from './_comps/layout/types'
+import { TradeMarket } from './_comps/market'
+import { TradeActionPanel } from './_comps/action-panel'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -140,12 +142,17 @@ export default observer(() => {
               <div className="flex flex-1 gap-2 flex-col">
                 <Overview />
                 {/* 交易 */}
-                <div className="flex flex-1">
+                <div className="flex gap-2 flex-1">
                   {/* <Sidebar /> */}
                   {/* 中间区域 */}
-                  <Center />
+                  {/* <Center /> */}
+                  <div className="flex-1">
+                    <TradeMarket />
+                  </div>
                   {/* 深度报价 */}
                   <DepthPrice />
+
+                  <TradeActionPanel />
                 </div>
 
                 {/* 交易记录 */}

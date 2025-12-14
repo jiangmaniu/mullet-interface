@@ -3,13 +3,13 @@ import { NumericFormat } from 'react-number-format'
 import { isUndefined } from 'lodash-es'
 import type { NumberFormatValues, SourceInfo } from 'react-number-format'
 
-import { cn } from '@/lib/utils'
-import { BNumber } from '@mullet/utils/number'
+import { cn } from '@/libs/ui/lib/utils'
+import { BNumber } from '@/libs/utils/number'
 
 // TODO: Unable to import `SourceType` enumeration directly from `react-number-format`
 export enum NumberInputSourceType {
   EVENT = 'event',
-  PROPS = 'prop',
+  PROPS = 'prop'
 }
 
 export type NumberInputSourceInfo = Omit<SourceInfo, 'source'> & {
@@ -73,7 +73,7 @@ const NumberInputPrimitiveBase = ({
             values = {
               floatValue: maxForBN.toNumber(),
               value: maxForBN.toString(),
-              formattedValue: values.formattedValue.replace(new RegExp(values.value), maxForBN.toString()),
+              formattedValue: values.formattedValue.replace(new RegExp(values.value), maxForBN.toString())
             }
           }
         }

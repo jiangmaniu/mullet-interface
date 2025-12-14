@@ -2,7 +2,7 @@ import * as React from 'react'
 import { isUndefined } from 'lodash-es'
 import type { NumberInputPrimitiveProps } from './number-input-primitive'
 
-import { BNumber } from '@mullet/utils/number'
+import { BNumber } from '@/libs/utils/number'
 
 import { cn } from '../lib/utils'
 import { InputContainer, InputContainerProps } from './input-container'
@@ -72,9 +72,9 @@ const NumberInput = ({
           'file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium',
           'focus:border-none focus:shadow-none focus:outline-none focus:ring-0',
           {
-            'text-status-danger': isError && !props.disabled,
+            'text-status-danger': isError && !props.disabled
           },
-          inputClassName,
+          inputClassName
         )}
         onValueChange={(...args) => {
           const [, sourceInfo] = args
@@ -93,9 +93,9 @@ const NumberInput = ({
               {
                 floatValue: BNumber.from(min).toNumber(),
                 value: min?.toString(),
-                formattedValue: min?.toString(),
+                formattedValue: min?.toString()
               },
-              { source: NumberInputSourceType.EVENT },
+              { source: NumberInputSourceType.EVENT }
             )
           }
 

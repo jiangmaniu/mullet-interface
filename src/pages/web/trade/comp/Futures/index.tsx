@@ -102,14 +102,15 @@ function Futures({ trigger, style }: IProps) {
   const renderContent = () => {
     return (
       <div style={{ ...style }} className="relative h-full px-[37px] max-xl:rounded-t-[16px] xl:py-[26px]">
-        <div className="absolute left-8 flex w-[92%] justify-between">
-          <div
-            className={cn('relative top-0 h-[92px] w-[328px] bg-cover bg-no-repeat opacity-50 dark:opacity-[0.05]')}
-            style={{
-              backgroundImage: `url(${theme.isDark ? '/platform/img/feature-water-logo-dark.png' : '/platform/img/kline-water-logo.png'})`
-            }}
+        <div className={cn('absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 ')}>
+          <img
+            className={'w-[560px]'}
+            src={theme.isDark ? '/platform/img/feature-water-logo.svg' : '/platform/img/feature-water-logo.svg'}
           />
-          <div className="h-[180px] w-[227px] bg-[url(/img/heyue-mask.png)] dark:bg-[url(/img/mask2-dark.png)] bg-cover bg-no-repeat" />
+        </div>
+
+        <div className="absolute left-8 flex w-[92%] justify-between">
+          <div className="h-[180px] ml-auto w-[227px] bg-[url(/img/heyue-mask.png)] dark:bg-[url(/img/mask2-dark.png)] bg-cover bg-no-repeat" />
         </div>
         <div className="relative top-[30px] z-10">
           <div className="pb-12 text-[24px] font-pf-bold">

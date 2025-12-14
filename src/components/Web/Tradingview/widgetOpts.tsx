@@ -251,7 +251,8 @@ export default function getWidgetOpts(
       'scalesProperties.textColor': 'rgba(118, 119, 131, 1)',
       // 刻度线颜色
       'scalesProperties.lineColor': 'rgba(255, 255, 255, 0.1)',
-      'scalesProperties.fontSize': 10
+      'scalesProperties.fontSize': 10,
+      'MACD.zeroLine.color': '#666666'
     },
     // 可用于自定义指标参数的属性，例如颜色、线宽、绘图类型等
     // https://www.tradingview.com/charting-library-docs/latest/customization/overrides/Studies-Overrides?_highlight=studies_overrides

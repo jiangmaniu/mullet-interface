@@ -66,7 +66,7 @@
   --tv-color-popup-element-toolbox-background-active-hover: magenta;
 }
 
-.theme-dark:root {
+:root.theme-dark {
   --bg-primary: #0e123a;
 
   --tv-color-platform-background: var(--bg-primary);

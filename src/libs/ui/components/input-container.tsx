@@ -9,31 +9,31 @@ const InputContainerVariants = cva('bg-transparent relative', {
   variants: {
     size: {
       sm: 'py-medium px-xl rounded-small',
-      md: 'rounded-small py-large px-xl',
+      md: 'rounded-small py-large px-xl'
     },
     variant: {
       default: '',
-      outlined: 'border-zinc-base border',
-    },
+      outlined: 'border-zinc-base border'
+    }
   },
 
   compoundVariants: [
     {
       variant: 'outlined',
       size: 'sm',
-      className: 'py-medium px-xl',
+      className: 'py-medium px-xl'
     },
     {
       variant: 'outlined',
       size: 'md',
-      className: 'py-large px-xl',
-    },
+      className: 'py-large px-xl'
+    }
   ],
 
   defaultVariants: {
     size: 'sm',
-    variant: 'outlined',
-  },
+    variant: 'outlined'
+  }
 })
 
 export type InputContainerProps<T = string> = Prettify<
@@ -199,9 +199,9 @@ const InputContainer = <T,>({
       className={cn(
         'gap-medium flex flex-col',
         {
-          'w-full flex-1': block,
+          'w-full flex-1': block
         },
-        className,
+        className
       )}
       {...props}
     >
@@ -209,17 +209,13 @@ const InputContainer = <T,>({
 
       <div
         ref={inputRef}
-        className={cn(
-          inputContainerVariantsClassName,
-          'gap-medium group relative flex cursor-text items-center transition-colors',
-          {
-            'border-brand-primary': isFocused,
-          },
-        )}
+        className={cn(inputContainerVariantsClassName, 'gap-medium group relative flex cursor-text items-center transition-colors', {
+          'border-brand-primary': isFocused
+        })}
         style={
           labelBgColor
             ? ({
-                '--input-label-bg': labelBgColor,
+                '--input-label-bg': labelBgColor
               } as React.CSSProperties)
             : undefined
         }
@@ -249,13 +245,12 @@ const InputContainer = <T,>({
               // 聚焦时 → 覆盖上面的样式，颜色变为品牌色（必须在后面，优先级更高）
               'peer-focus:!left-xl peer-focus:px-xs peer-focus:!text-brand-primary peer-focus:-top-[9px] peer-focus:translate-y-0 peer-focus:scale-90',
               // 默认背景色（如果没有提供自定义类）
-              !labelClassName &&
-                'peer-focus:bg-[var(--input-label-bg,#27272a)] peer-[:not(:placeholder-shown)]:bg-[var(--input-label-bg,#27272a)]',
+              !labelClassName && 'peer-focus:bg-primary peer-[:not(:placeholder-shown)]:bg-primary',
               // 自定义类（外部传入，需要包含完整的 peer 修饰符）
-              labelClassName,
+              labelClassName
             )}
             style={{
-              left: labelInitialLeft,
+              left: labelInitialLeft
             }}
           >
             {typeof displayLabel === 'function' ? displayLabel({ isFocused }) : displayLabel}
@@ -264,12 +259,7 @@ const InputContainer = <T,>({
 
         {/* Clean Button */}
         {!!clean && !!value && (
-          <Button
-            data-clean-button
-            className="z-10 order-3 rounded-full bg-[#3B3D52] p-0.5"
-            size={'icon'}
-            onClick={onClean}
-          >
+          <Button data-clean-button className="z-10 order-3 rounded-full bg-[#3B3D52] p-0.5" size={'icon'} onClick={onClean}>
             <IconClose size={10} />
           </Button>
         )}
