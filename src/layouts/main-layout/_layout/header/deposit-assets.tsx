@@ -6,9 +6,13 @@ import TransferCryptoDialog from '@/components/Web/TransferCryptoDialog'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 // import { useWalletAuthState } from '@/hooks/wallet/use-wallet-auth-state'
 import { Button } from '@/libs/ui/components/button'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useFundWallet as useSolanaFundWallet } from '@privy-io/react-auth/solana'
 import { useFundWallet as useEvmFundWallet } from '@privy-io/react-auth'
+import { usePrivy } from '@privy-io/react-auth'
+import { useCoboWallet } from '@/hooks/useCoboWallet'
+import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
+import { message } from 'antd'
 
 export const DepositAssets = () => {
   // const { isAuthenticated } = useWalletAuthState()
@@ -21,54 +25,71 @@ export const DepositAssets = () => {
   const [showTransferDialog, setShowTransferDialog] = useState(false)
   const [showSwapDialog, setShowSwapDialog] = useState(false)
   const { activeSolanaWallet, wallets } = usePrivyInfo()
+  const { user } = usePrivy()
   const hasWallet = !!activeSolanaWallet
-  const { fundWallet: fundSolanaWallet } = useSolanaFundWallet()
-  const { fundWallet: fundEvmWallet } = useEvmFundWallet()
+  
+  // 使用 onUserExited 回调处理用户关闭 modal
+  const handleFundWalletExit = useCallback(() => {
+    console.log('[Privy] User exited fund wallet modal')
+  }, [])
+  
+  const { fundWallet: fundSolanaWallet } = useSolanaFundWallet({
+    onUserExited: handleFundWalletExit
+  })
+  const { fundWallet: fundEvmWallet } = useEvmFundWallet({
+    onUserExited: handleFundWalletExit
+  })
+
+  // 获取 Cobo 钱包
+  const { 
+    walletId: coboWalletId, 
+    isLoading: coboWalletLoading 
+  } = useCoboWallet({
+    userId: user?.id || '',
+    enabled: !!user?.id
+  })
+
+  // 获取 Cobo Solana 充值地址（用于信用卡购买）
+  const { 
+    address: coboSolanaAddress, 
+    isLoading: coboAddressLoading 
+  } = useCoboDepositAddress({
+    userId: user?.id || '',
+    chainId: 'SOL',
+    walletId: coboWalletId || '',
+    enabled: !!user?.id && !!coboWalletId
+  })
 
   const handleCardClick = async () => {
     setShowAddFundsMenu(false)
 
-    // 获取当前钱包地址
-    const wallet = wallets?.[0]
-    if (!wallet) {
-      console.error('[Buy Crypto] No wallet found')
+    // 如果 Cobo 地址还在加载中
+    if (coboWalletLoading || coboAddressLoading) {
+      message.info('正在加载充值地址，请稍候...')
       return
     }
 
-    const walletAddress = wallet.address
-    console.log('[Buy Crypto] Wallet address:', walletAddress)
+    // 必须使用 Cobo Solana 充值地址
+    if (!coboSolanaAddress) {
+      console.error('[Buy Crypto] No Cobo Solana address available')
+      message.error('Cobo Solana 充值地址未就绪，请稍后重试')
+      return
+    }
 
-    // 检测是 Solana 还是 EVM 钱包
-    const isSolanaAddress = walletAddress.length === 44 && !walletAddress.startsWith('0x')
-
+    console.log('[Buy Crypto] Using Cobo Solana address:', coboSolanaAddress)
+    
     try {
-      if (isSolanaAddress) {
-        // Solana wallet - use Solana fundWallet
-        console.log('[Buy Crypto] Opening Solana fundWallet for:', walletAddress)
-        fundSolanaWallet({
-          address: walletAddress,
-          options: {
-            amount: '10' // 默认 $10
-          }
-        })
-      } else {
-        // EVM wallet - use EVM fundWallet with mainnet chain
-        console.log('[Buy Crypto] Opening EVM fundWallet for:', walletAddress)
-
-        // 动态导入 viem/chains 以获取 mainnet 配置
-        const { mainnet } = await import('viem/chains')
-
-        fundEvmWallet({
-          address: walletAddress,
-          options: {
-            chain: mainnet,
-            asset: 'USDC', // 默认购买 USDC
-            amount: '10' // 默认 $10
-          }
-        })
-      }
+      const result = await fundSolanaWallet({
+        address: coboSolanaAddress,
+        options: {
+          asset: 'USDC', // 购买 USDC 稳定币
+          amount: '10' // 默认 $10
+        }
+      })
+      console.log('[Buy Crypto] Fund wallet result:', result)
     } catch (error) {
-      console.error('[Buy Crypto] Failed to open fundWallet:', error)
+      console.error('[Buy Crypto] Fund wallet error:', error)
+      // 用户取消或关闭 modal 也会抛出错误，这是正常的
     }
   }
 
