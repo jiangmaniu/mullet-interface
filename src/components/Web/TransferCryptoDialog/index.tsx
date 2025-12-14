@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert } from 'antd'
+import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert, Tooltip } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
 import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
@@ -10,6 +10,9 @@ import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { useSessionSigner } from '@/hooks/useSessionSigner'
+import { useCoboWallet } from '@/hooks/useCoboWallet'
+import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
+import { useCoboDepositMonitor } from '@/hooks/useCoboDepositMonitor'
 import { API_BASE_URL } from '@/constants/api'
 import './index.less'
 
@@ -53,12 +56,68 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     addSessionSigner 
   } = useSessionSigner()
 
-  const [selectedChain, setSelectedChain] = useState('Tron')
+  const [selectedChain, setSelectedChain] = useState('Cobo-Solana')
   const [selectedToken, setSelectedToken] = useState('USDT')
   const [depositAddress, setDepositAddress] = useState('')
   const [bridgeInProgress, setBridgeInProgress] = useState(false)
   const [bridgeStep, setBridgeStep] = useState<'idle' | 'tron-eth' | 'eth-sol' | 'completed'>('idle')
   const [pollingOrderId, setPollingOrderId] = useState<string | null>(null) // 正在轮询的订单 ID
+
+  // 判断当前选择的链是否是 Cobo
+  const selectedChainConfig = SUPPORTED_BRIDGE_CHAINS.find(c => c.name === selectedChain)
+  const isCoboChain = selectedChainConfig?.type === 'cobo'
+  
+  // 获取用户的 Cobo 钱包（自动创建）
+  const { 
+    walletId: coboWalletId, 
+    walletData: coboWalletData,
+    isLoading: coboWalletLoading, 
+    error: coboWalletError 
+  } = useCoboWallet({
+    userId: user?.id || '',
+    enabled: open && isCoboChain
+  })
+  
+  // 获取 Cobo 充值地址（仅在选择 Cobo 链且已有钱包时启用）
+  const { 
+    address: coboAddress, 
+    isLoading: coboAddressLoading,
+    error: coboAddressError,
+    isNew: coboAddressIsNew 
+  } = useCoboDepositAddress({
+    userId: user?.id || '',
+    chainId: selectedChainConfig?.id as 'ETH' | 'SOL' | 'TRON' | 'ARBITRUM_ETH' | 'BASE_ETH' | 'MATIC' | 'BSC_BNB' | 'HYPEREVM_HYPE',
+    walletId: coboWalletId || '',
+    enabled: open && isCoboChain && !!coboWalletId
+  })
+
+  // Cobo 充值监听（仅在选择 Cobo 链且已有钱包时启用）
+  const { 
+    transactions: coboTransactions,
+    deposits: coboDeposits,
+    latestDeposit: coboLatestDeposit,
+    confirmingDeposit: coboConfirmingDeposit,
+    isMonitoring: coboIsMonitoring,
+    startMonitoring: coboStartMonitoring,
+    stopMonitoring: coboStopMonitoring,
+    getConfirmationProgress,
+    getConfirmationPercentage
+  } = useCoboDepositMonitor({
+    depositAddress: coboAddress || undefined,
+    walletIds: coboWalletId ? [coboWalletId] : [],
+    enabled: open && isCoboChain && !!coboAddress && !!coboWalletId,
+    pollInterval: 10000, // 10秒轮询
+    onDepositConfirming: (tx) => {
+      console.log('[Cobo] 确认进度:', getConfirmationProgress(tx))
+      // 可以在 UI 上显示进度条
+    },
+    onDepositDetected: (tx) => {
+      console.log('[Cobo] 充值到账:', tx)
+      if (onDepositDetected) {
+        onDepositDetected(tx.destination.amount, tx.token_id, tx.chain_id)
+      }
+    }
+  })
 
   // 获取所有链的钱包地址
   const ethereumAccount = user?.linkedAccounts?.find(
@@ -69,9 +128,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     (account: any) => account.type === 'wallet' && account.chainType === 'solana'
   ) as any
 
-  // 使用充值监听 hook - 传递所有链的地址
+  // 使用充值监听 hook - 传递所有链的地址（仅 Privy 链）
   const { deposit, isListening, clearDeposit, resetDetection } = useDepositListener({
-    enabled: open, // 简单：只要对话框打开就监听
+    enabled: open && !isCoboChain, // Cobo 链使用独立的监听机制
     chains: [selectedChain as 'Tron' | 'Ethereum' | 'Solana'],
     pollInterval: 5000,
     tronAddress: tronAddress || undefined,
@@ -82,7 +141,23 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   // 获取钱包地址
   useEffect(() => {
     if (!open) return
+    
+    // 如果是 Cobo 链，使用 Cobo 地址
+    if (isCoboChain) {
+      if (coboAddress) {
+        setDepositAddress(coboAddress)
+        console.log(`[TransferCrypto] Using Cobo address for ${selectedChain}:`, coboAddress)
+      } else if (coboAddressLoading) {
+        setDepositAddress('')
+        console.log(`[TransferCrypto] Loading Cobo address for ${selectedChain}...`)
+      } else if (coboAddressError) {
+        setDepositAddress('')
+        console.error(`[TransferCrypto] Cobo address error:`, coboAddressError)
+      }
+      return
+    }
 
+    // 原有的 Privy 钱包逻辑
     const loadAddress = () => {
       // 找到对应的链配置
       const chainConfig = SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)
@@ -155,7 +230,20 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     }
 
     loadAddress()
-  }, [open, selectedChain, user, trade.currentAccountInfo, tronAddress, isTronWalletCreating])
+  }, [open, selectedChain, user, trade.currentAccountInfo, tronAddress, isTronWalletCreating, isCoboChain, coboAddress, coboAddressLoading, coboAddressError])
+
+  // Cobo 充值监听 - 地址加载完成后自动启动
+  useEffect(() => {
+    if (isCoboChain && coboAddress && !coboAddressLoading) {
+      console.log('[Cobo] Starting deposit monitoring for address:', coboAddress)
+      coboStartMonitoring()
+    }
+    
+    // 对话框关闭或切换到非 Cobo 链时停止监听
+    if (!open || !isCoboChain) {
+      coboStopMonitoring()
+    }
+  }, [isCoboChain, coboAddress, coboAddressLoading, open, coboStartMonitoring, coboStopMonitoring])
 
   // 对话框关闭时重置检测状态
   useEffect(() => {
@@ -494,38 +582,46 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           />
         )}
 
-        {/* 链选择 */}
-        <div>
-          <Text strong>Select Chain</Text>
-          <Select value={selectedChain} onChange={setSelectedChain} style={{ width: '100%', marginTop: 8 }} size="large">
-            {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
-              <Select.Option key={chain.name} value={chain.name}>
+        {/* Token 和 Chain 选择器 - 并排显示 */}
+        <div style={{ display: 'flex', gap: 16 }}>
+          {/* Token 选择 */}
+          <div style={{ flex: 1 }}>
+            <Text strong>Supported token</Text>
+            <Select value={selectedToken} onChange={setSelectedToken} style={{ width: '100%', marginTop: 8 }} size="large">
+              <Select.Option value="USDT">
                 <Space>
-                  <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
-                  {chain.name} - Min: ${chain.minDeposit}
+                  <Avatar src={TOKEN_ICONS.USDT} size="small" />
+                  USDT
                 </Space>
               </Select.Option>
-            ))}
-          </Select>
-        </div>
+              <Select.Option value="USDC">
+                <Space>
+                  <Avatar src={TOKEN_ICONS.USDC} size="small" />
+                  USDC
+                </Space>
+              </Select.Option>
+            </Select>
+          </div>
 
-        {/* Token 选择 */}
-        <div>
-          <Text strong>Select Token</Text>
-          <Select value={selectedToken} onChange={setSelectedToken} style={{ width: '100%', marginTop: 8 }} size="large">
-            <Select.Option value="USDT">
-              <Space>
-                <Avatar src={TOKEN_ICONS.USDT} size="small" />
-                USDT
-              </Space>
-            </Select.Option>
-            <Select.Option value="USDC">
-              <Space>
-                <Avatar src={TOKEN_ICONS.USDC} size="small" />
-                USDC
-              </Space>
-            </Select.Option>
-          </Select>
+          {/* 链选择 */}
+          <div style={{ flex: 1 }}>
+            <Text strong>
+              Supported chain
+              <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
+                Min ${selectedChainConfig?.minDeposit}
+              </Text>
+            </Text>
+            <Select value={selectedChain} onChange={setSelectedChain} style={{ width: '100%', marginTop: 8 }} size="large">
+              {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
+                <Select.Option key={chain.name} value={chain.name}>
+                  <Space>
+                    <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
+                    {chain.displayName || chain.name}
+                  </Space>
+                </Select.Option>
+              ))}
+            </Select>
+          </div>
         </div>
 
         {/* 充值地址和二维码 */}
@@ -565,9 +661,28 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
             <div>
               <Text strong style={{ fontSize: 13 }}>
                 Your deposit address
-                <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
-                  ⓘ Auto-bridge to Solana
-                </Text>
+                {isCoboChain ? (
+                  <Tooltip
+                    title={
+                      <div style={{ fontSize: 12 }}>
+                        <div style={{ fontWeight: 'bold', marginBottom: 8 }}>Cobo 托管充值说明</div>
+                        <div>• 这是您的专属充值地址，充值将直接到账</div>
+                        <div>• 仅支持 {selectedToken} 充值，请勿转入其他代币</div>
+                        <div>• 充值到账后将自动显示在您的账户余额中</div>
+                        <div>• 最小充值金额: ${selectedChainConfig?.minDeposit}</div>
+                      </div>
+                    }
+                    placement="top"
+                  >
+                    <Text type="secondary" style={{ marginLeft: 8, fontSize: 12, cursor: 'help' }}>
+                      ⓘ Cobo托管钱包 {coboAddressIsNew && <span style={{ color: '#52c41a' }}>(新地址)</span>}
+                    </Text>
+                  </Tooltip>
+                ) : (
+                  <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
+                    ⓘ Auto-bridge to Solana
+                  </Text>
+                )}
               </Text>
               <Input
                 value={depositAddress}
@@ -587,8 +702,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           </div>
         )}
 
-        {/* 状态显示 */}
-        {isListening && depositAddress && !bridgeInProgress && (
+        {/* 状态显示 - 仅Privy钱包显示监听和桥接状态 */}
+        {!isCoboChain && isListening && depositAddress && !bridgeInProgress && (
           <div style={{ padding: 12, background: token.colorInfoBg, border: `1px solid ${token.colorInfoBorder}`, borderRadius: 4 }}>
             <Space>
               <Spin size="small" />
@@ -600,7 +715,122 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           </div>
         )}
 
-        {bridgeInProgress && (
+        {/* Cobo 充值监听状态 */}
+        {isCoboChain && coboIsMonitoring && depositAddress && (
+          <div style={{ padding: 12, background: token.colorInfoBg, border: `1px solid ${token.colorInfoBorder}`, borderRadius: 4 }}>
+            <Space direction="vertical" style={{ width: '100%' }} size="small">
+              <Space>
+                <Spin size="small" />
+                <Text>监听充值中...</Text>
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  ({selectedChainConfig?.id} - {depositAddress.slice(0, 6)}...{depositAddress.slice(-4)})
+                </Text>
+              </Space>
+              
+              {/* 显示确认中的交易（支持多笔） */}
+              {coboTransactions.filter(tx => tx.status === 'Confirming').map((tx, index) => {
+                // 获取区块链浏览器链接
+                const getExplorerUrl = (chainId: string, txHash: string) => {
+                  const explorers: Record<string, string> = {
+                    'ARBITRUM_ETH': `https://arbiscan.io/tx/${txHash}`,
+                    'BASE_ETH': `https://basescan.org/tx/${txHash}`,
+                    'ETH': `https://etherscan.io/tx/${txHash}`,
+                    'SOL': `https://solscan.io/tx/${txHash}`,
+                    'TRON': `https://tronscan.org/#/transaction/${txHash}`,
+                    'MATIC': `https://polygonscan.com/tx/${txHash}`,
+                    'BSC_BNB': `https://bscscan.com/tx/${txHash}`,
+                  }
+                  return explorers[chainId] || '#'
+                }
+
+                return (
+                  <div 
+                    key={tx.transaction_id}
+                    style={{ 
+                      marginTop: 8, 
+                      padding: 8, 
+                      background: '#fff', 
+                      borderRadius: 4,
+                      border: '1px solid #d9d9d9'
+                    }}
+                  >
+                    <Space direction="vertical" style={{ width: '100%' }} size="small">
+                      <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                        <Text strong style={{ fontSize: 13 }}>
+                          {tx.destination.amount} {tx.token_id.split('_').pop()}
+                        </Text>
+                        <Text type="secondary" style={{ fontSize: 12 }}>
+                          {getConfirmationProgress(tx)}
+                        </Text>
+                      </Space>
+                      <div>
+                        <div style={{ 
+                          height: 6, 
+                          background: '#f0f0f0', 
+                          borderRadius: 3, 
+                          overflow: 'hidden' 
+                        }}>
+                          <div style={{ 
+                            height: '100%', 
+                            width: `${getConfirmationPercentage(tx)}%`,
+                            background: 'linear-gradient(90deg, #1890ff 0%, #52c41a 100%)',
+                            transition: 'width 0.3s ease'
+                          }} />
+                        </div>
+                        <Text type="secondary" style={{ fontSize: 11, marginTop: 4, display: 'block' }}>
+                          区块确认中... ({getConfirmationPercentage(tx)}%)
+                        </Text>
+                      </div>
+                      {tx.transaction_hash && (
+                        <a 
+                          href={getExplorerUrl(tx.chain_id, tx.transaction_hash)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ fontSize: 11, color: '#1890ff' }}
+                        >
+                          TxHash: {tx.transaction_hash.slice(0, 10)}...{tx.transaction_hash.slice(-8)} ↗
+                        </a>
+                      )}
+                    </Space>
+                  </div>
+                )
+              })}
+              
+              {/* 显示最新完成的充值 */}
+              {coboLatestDeposit && (
+                <div style={{ 
+                  marginTop: 8, 
+                  padding: 8, 
+                  background: '#f6ffed', 
+                  borderRadius: 4,
+                  border: '1px solid #b7eb8f'
+                }}>
+                  <Space>
+                    <span style={{ fontSize: 16 }}>✅</span>
+                    <div>
+                      <Text strong style={{ color: '#52c41a', fontSize: 13 }}>
+                        充值成功！
+                      </Text>
+                      <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>
+                        {coboLatestDeposit.destination.amount} {coboLatestDeposit.token_id}
+                      </Text>
+                    </div>
+                  </Space>
+                </div>
+              )}
+              
+              {coboDeposits.length > 0 && !coboConfirmingDeposit && !coboLatestDeposit && (
+                <div style={{ marginTop: 8 }}>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    最近充值: {coboDeposits.length} 笔
+                  </Text>
+                </div>
+              )}
+            </Space>
+          </div>
+        )}
+
+        {!isCoboChain && bridgeInProgress && (
           <div style={{ padding: 12, background: token.colorWarningBg, border: `1px solid ${token.colorWarningBorder}`, borderRadius: 4 }}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <Space>
@@ -626,27 +856,29 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           </div>
         )}
 
-        {/* 说明 */}
-        <div style={{ padding: 12, background: token.colorBgLayout, borderRadius: 4 }}>
-          <Text type="secondary" style={{ fontSize: 12 }}>
-            • 发送 {selectedToken} 到上面的地址
-            <br />• 最低充值金额: ${SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)?.minDeposit || 10}
-            <br />• 资金将自动桥接到 Solana
-            <br />• 桥接时间: 约 5-10 分钟
-            <br />• 手续费: 跨链桥接费用 + Gas 费 (由平台赞助)
-            <br />
-            <br />
-            💡 <strong>工作原理：</strong>
-            <br />
-            1. 检测到充值后自动启动桥接
-            <br />
-            2. Tron → Ethereum (3-5 分钟)
-            <br />
-            3. Ethereum → Solana (2-3 分钟)
-            <br />
-            4. 完成后资金到达 Solana 账户
-          </Text>
-        </div>
+        {/* 说明 - 仅 Privy 钱包显示桥接说明 */}
+        {!isCoboChain && (
+          <div style={{ padding: 12, background: token.colorBgLayout, borderRadius: 4 }}>
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              • 发送 {selectedToken} 到上面的地址
+              <br />• 最低充值金额: ${SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)?.minDeposit || 10}
+              <br />• 资金将自动桥接到 Solana
+              <br />• 桥接时间: 约 5-10 分钟
+              <br />• 手续费: 跨链桥接费用 + Gas 费 (由平台赞助)
+              <br />
+              <br />
+              💡 <strong>工作原理：</strong>
+              <br />
+              1. 检测到充值后自动启动桥接
+              <br />
+              2. Tron → Ethereum (3-5 分钟)
+              <br />
+              3. Ethereum → Solana (2-3 分钟)
+              <br />
+              4. 完成后资金到达 Solana 账户
+            </Text>
+          </div>
+        )}
       </Space>
     </Modal>
   )

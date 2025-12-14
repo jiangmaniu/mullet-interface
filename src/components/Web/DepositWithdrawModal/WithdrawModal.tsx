@@ -1,52 +1,70 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import { observer } from 'mobx-react'
-import { forwardRef, useImperativeHandle, useState } from 'react'
-import { usePrivy, useWallets } from '@privy-io/react-auth'
-import { useSignAndSendTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana'
+import { forwardRef, useImperativeHandle, useState, useEffect } from 'react'
+import { usePrivy } from '@privy-io/react-auth'
 
 import Button from '@/components/Base/Button'
 import InputNumber from '@/components/Base/InputNumber'
 import Modal from '@/components/Base/Modal'
 import { useStores } from '@/context/mobxProvider'
+import { useTheme } from '@/context/themeProvider'
 import { withdrawByAddress } from '@/services/api/tradeCore/account'
+import { coboWithdraw, getCoboBalance } from '@/services/api/cobo'
 import { message } from '@/utils/message'
-import { Form, Input, Select, Space, Avatar, Spin } from 'antd'
-import { SUPPORTED_BRIDGE_CHAINS } from '@/config/lifiConfig'
+import { Form, Input, Select, Space, Avatar } from 'antd'
+import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { CHAIN_ICONS } from '@/config/tokenIcons'
-import { debridgeService } from '@/services/debridgeService'
-import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 
-// 出金弹窗
+// 支持的链配置
+const SUPPORTED_CHAINS = [
+  { name: 'Solana', displayName: 'Solana', chainId: 'SOL' },
+  { name: 'Ethereum', displayName: 'Ethereum', chainId: 'ETH' },
+  { name: 'Tron', displayName: 'Tron', chainId: 'TRON' },
+  { name: 'Arbitrum', displayName: 'Arbitrum', chainId: 'ARBITRUM_ETH' },
+  { name: 'Base', displayName: 'Base', chainId: 'BASE_ETH' },
+  { name: 'Polygon', displayName: 'Polygon', chainId: 'MATIC' },
+  { name: 'BNB', displayName: 'BNB Chain', chainId: 'BSC_BNB' },
+]
+
+// 地址验证规则
+const ADDRESS_VALIDATION: Record<string, RegExp> = {
+  'Solana': /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+  'Ethereum': /^0x[a-fA-F0-9]{40}$/,
+  'Tron': /^T[a-zA-Z0-9]{33}$/,
+  'Arbitrum': /^0x[a-fA-F0-9]{40}$/,
+  'Base': /^0x[a-fA-F0-9]{40}$/,
+  'Polygon': /^0x[a-fA-F0-9]{40}$/,
+  'BNB': /^0x[a-fA-F0-9]{40}$/,
+}
+
+// 出金弹窗 - 使用 Cobo API
 export default observer(
   forwardRef((props, ref) => {
     const intl = useIntl()
     const [open, setOpen] = useState(false)
     const { trade } = useStores()
+    const { theme } = useTheme()
     const [submitLoading, setSubmitLoading] = useState(false)
     const [form] = Form.useForm()
     const { fetchUserInfo } = useModel('user')
     const [accountItem, setAccountItem] = useState({} as User.AccountItem)
-    const [selectedChain, setSelectedChain] = useState('Solana') // 默认 Solana
-    
-    // 使用统一的 Privy 信息 hook（智能钱包选择）
-    const { 
-      user, 
-      activeSolanaWallet, 
-      activeEthereumWallet,
-      ethWallets,
-      solWallets,
-      wallets,
-      connected
-    } = usePrivyInfo()
-    
-    const { signAndSendTransaction } = useSignAndSendTransaction()
-    const { ready, authenticated } = usePrivy()
-    
-    // 桥接状态
-    const [isBridging, setIsBridging] = useState(false)
-    const [bridgeStatus, setBridgeStatus] = useState('')
+    const [selectedChain, setSelectedChain] = useState('Solana')
+    const { user } = usePrivy()
+    const [chainBalance, setChainBalance] = useState<string>('0') // 当前链的实际余额
+    const [loadingBalance, setLoadingBalance] = useState(false)
 
     const accountMoney = accountItem.money as number
+
+    // 使用 useCoboWallet hook 获取或创建 Cobo 钱包
+    const { 
+      walletId: coboWalletId, 
+      walletData: coboWalletData,
+      isLoading: coboWalletLoading, 
+      error: coboWalletError 
+    } = useCoboWallet({
+      userId: user?.id || '',
+      enabled: open && !!user?.id
+    })
 
     const close = () => {
       setOpen(false)
@@ -59,7 +77,7 @@ export default observer(
       if (rawItem) {
         setAccountItem(rawItem)
         form.setFieldValue('accountId', rawItem.id)
-        form.setFieldValue('targetChain', 'Solana') // 设置默认目标链
+        form.setFieldValue('targetChain', 'Solana')
       }
     }
 
@@ -71,353 +89,174 @@ export default observer(
       }
     })
 
+    // Token ID 映射 - 返回可能的多个 token (USDC/USDT)
+    // 注意：Cobo的token_id命名规范：USDC = USDCOIN, USDT = TETHER
+    const getPossibleTokenIds = (chainId: string): string[] => {
+      const tokenMap: Record<string, string[]> = {
+        'SOL': ['SOL_USDT', 'SOL_USDC'],
+        'ETH': ['ETH_USDT', 'ETH_USDC'],
+        'TRON': ['TRON'],  // TRON 使用原生代币
+        'ARBITRUM_ETH': ['ARBITRUM_USDCOIN', 'ARBITRUM_TETHER'],
+        'BASE_ETH': ['BASE_USDCOIN', 'BASE_TETHER'],
+        'MATIC': ['MATIC_USDT', 'MATIC_USDC'],
+        'BSC_BNB': ['BSC_USDT', 'BSC_USDC'],
+      }
+      return tokenMap[chainId] || ['SOL_USDT']
+    }
+
+    // 获取第一个可用的 token_id（用于提现）
+    const getTokenId = (chainId: string): string => {
+      return getPossibleTokenIds(chainId)[0]
+    }
+
+    // 当选择的链改变时，查询该链所有可能代币的总余额
+    useEffect(() => {
+      // 只在弹窗打开且有用户ID时查询
+      if (!open || !user?.id || !selectedChain) return
+      
+      const fetchChainBalance = async () => {
+        setLoadingBalance(true)
+        try {
+          const chainConfig = SUPPORTED_CHAINS.find(c => c.name === selectedChain)
+          if (!chainConfig) return
+          
+          const possibleTokenIds = getPossibleTokenIds(chainConfig.chainId)
+          let totalBalance = BigInt(0)
+          let foundTokenId = ''
+          
+          // 查询所有可能的代币余额并累加
+          for (const tokenId of possibleTokenIds) {
+            try {
+              const response = await getCoboBalance({ userId: user.id, tokenId })
+              if (response.success && response.data) {
+                const available = BigInt(response.data.available || '0')
+                if (available > 0) {
+                  totalBalance += available
+                  if (!foundTokenId) foundTokenId = tokenId
+                  console.log('[WithdrawModal] Found balance:', {
+                    tokenId,
+                    available: response.data.available
+                  })
+                }
+              }
+            } catch (error) {
+              // 该代币不存在或查询失败，继续下一个
+              console.log(`[WithdrawModal] Token ${tokenId} not found, trying next...`)
+            }
+          }
+          
+          setChainBalance(totalBalance.toString())
+          console.log('[WithdrawModal] Total chain balance:', {
+            chain: selectedChain,
+            tokens: possibleTokenIds,
+            totalBalance: totalBalance.toString()
+          })
+        } catch (error) {
+          console.error('[WithdrawModal] Failed to fetch chain balance:', error)
+          setChainBalance('0')
+        } finally {
+          setLoadingBalance(false)
+        }
+      }
+      
+      fetchChainBalance()
+    }, [open, selectedChain, user?.id])
+
     // 避免重复渲染
-    if (!open) return
+    if (!open) return null
 
-    // 执行 Solana 链上直接转账（同链转账，无需桥接）
-    const executeSolanaTransfer = async (
-      destinationAddress: string,
-      amountInSmallestUnit: string
-    ) => {
-      console.log('[WithdrawModal] executeSolanaTransfer called')
-      console.log('[WithdrawModal]   - destinationAddress:', destinationAddress)
-      console.log('[WithdrawModal]   - amountInSmallestUnit:', amountInSmallestUnit)
-      
-      setIsBridging(true)
-      setBridgeStatus('正在转账...')
-      
-      try {
-        // 动态导入 Solana 依赖
-        const { PublicKey, Transaction } = await import('@solana/web3.js')
-        const { 
-          TOKEN_PROGRAM_ID,
-          getAssociatedTokenAddressSync,
-          createAssociatedTokenAccountInstruction,
-          createTransferInstruction,
-        } = await import('@solana/spl-token')
-        
-        // 使用智能选择的活跃 Solana 钱包
-        const solanaWallet = activeSolanaWallet
-        
-        if (!solanaWallet || !solanaWallet.address) {
-          throw new Error('未找到 Solana 钱包，请先连接 Privy Solana 钱包')
-        }
-        
-        console.log('[WithdrawModal] Using active Solana wallet:', solanaWallet.address)
-
-        const senderPubkey = new PublicKey(solanaWallet.address)
-        const recipientPubkey = new PublicKey(destinationAddress)
-        const transaction = new Transaction()
-
-        // USDC Mint 地址
-        const USDC_MINT = 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-        const mintPubkey = new PublicKey(USDC_MINT)
-        
-        // 获取发送者和接收者的 ATA
-        const senderAta = getAssociatedTokenAddressSync(
-          mintPubkey,
-          senderPubkey,
-          false,
-          TOKEN_PROGRAM_ID
-        )
-        const recipientAta = getAssociatedTokenAddressSync(
-          mintPubkey,
-          recipientPubkey,
-          false,
-          TOKEN_PROGRAM_ID
-        )
-
-        // 创建 connection 来检查账户
-        const { Connection } = await import('@solana/web3.js')
-        const connection = new Connection(
-          'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
-          'confirmed'
-        )
-
-        // 检查接收者 ATA 是否存在
-        const recipientAtaInfo = await connection.getAccountInfo(recipientAta)
-        if (!recipientAtaInfo) {
-          // 创建接收者 ATA
-          transaction.add(
-            createAssociatedTokenAccountInstruction(
-              senderPubkey,
-              recipientAta,
-              recipientPubkey,
-              mintPubkey,
-              TOKEN_PROGRAM_ID
-            )
-          )
-        }
-
-        // 添加转账指令
-        transaction.add(
-          createTransferInstruction(
-            senderAta,
-            recipientAta,
-            senderPubkey,
-            parseInt(amountInSmallestUnit),
-            [],
-            TOKEN_PROGRAM_ID
-          )
-        )
-
-        // 安全过滤：移除 CloseAccount 指令防止租金退款漏洞
-        // 使用 gas sponsorship 时，用户可以从租金退款中获利 (~$0.40/tx)
-        const filteredInstructions = transaction.instructions.filter((instruction) => {
-          const discriminator = instruction.data[0]
-          return discriminator !== 0x0a // 0x0a = CloseAccount
-        })
-
-        // 重建安全的交易
-        const secureTransaction = new Transaction()
-        filteredInstructions.forEach(ix => secureTransaction.add(ix))
-
-        // 获取最新 blockhash
-        const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
-        secureTransaction.recentBlockhash = blockhash
-        secureTransaction.lastValidBlockHeight = lastValidBlockHeight
-        secureTransaction.feePayer = senderPubkey
-
-        // 序列化交易
-        const serializedTx = secureTransaction.serialize({
-          requireAllSignatures: false,
-          verifySignatures: false,
-        })
-
-        console.log('[WithdrawModal] Sending Solana transaction via signAndSendTransaction...')
-
-        // 使用 Privy 的 signAndSendTransaction（支持 gas sponsorship）
-        const result = await signAndSendTransaction({
-          transaction: serializedTx,
-          wallet: solanaWallet,
-          options: {
-            sponsor: true, // 启用 gas sponsorship - Privy 支付 gas 费
-          },
-        })
-
-        const signature = result.signature
-        
-        console.log('[WithdrawModal] ✅ Solana transfer successful:', signature)
-        console.log(`[WithdrawModal] 🎉 Check tx: https://solscan.io/tx/${signature}`)
-        
-        message.success(
-          <span>
-            转账成功！
-            <a 
-              href={`https://solscan.io/tx/${signature}`} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={{ marginLeft: 8, color: '#1890ff' }}
-            >
-              查看交易
-            </a>
-          </span>
-        )
-        
-        return true
-      } catch (error: any) {
-        console.error('Solana transfer error:', error)
-        message.error(error.message || 'Solana 转账失败')
-        throw error
-      } finally {
-        setIsBridging(false)
-        setBridgeStatus('')
-      }
-    }
-
-    // 执行跨链桥接
-    const executeWithdrawBridge = async (
-      targetChain: string,
-      destinationAddress: string,
-      amountInSmallestUnit: string
-    ) => {
-      console.log('[WithdrawModal] executeWithdrawBridge called')
-      console.log('[WithdrawModal]   - targetChain:', targetChain)
-      console.log('[WithdrawModal]   - destinationAddress:', destinationAddress)
-      console.log('[WithdrawModal]   - amountInSmallestUnit:', amountInSmallestUnit)
-      
-      setIsBridging(true)
-      
-      try {
-        // 使用智能选择的活跃 Solana 钱包
-        const solanaWallet = activeSolanaWallet
-        
-        if (!solanaWallet || !solanaWallet.address) {
-          throw new Error('未找到 Solana 钱包，请先连接 Privy Solana 钱包')
-        }
-
-        // Ethereum 桥接
-        if (targetChain === 'Ethereum') {
-          const minAmount = 10 * 1_000_000 // $10 最小金额
-          if (parseInt(amountInSmallestUnit) < minAmount) {
-            throw new Error(`Ethereum 桥接最小金额为 $10 USD`)
-          }
-
-          setBridgeStatus('正在桥接到 Ethereum...')
-          await debridgeService.bridgeSolanaToEthereum({
-            amount: amountInSmallestUnit,
-            signAndSendTransaction,
-            ethereumAddress: destinationAddress,
-            solanaWallet
-          })
-          
-          message.success('桥接交易已提交，预计 2-5 分钟到账')
-          return true
-        }
-
-        // Tron 桥接（两步）
-        if (targetChain === 'Tron') {
-          const minAmount = 20 * 1_000_000 // $20 最小金额
-          if (parseInt(amountInSmallestUnit) < minAmount) {
-            throw new Error(`Tron 桥接最小金额为 $20 USD（需要两步桥接）`)
-          }
-
-          // 使用智能选择的 Ethereum 钱包（匹配 Solana 钱包来源）
-          const ethWallet = activeEthereumWallet
-          
-          if (!ethWallet || !ethWallet.address) {
-            throw new Error('未找到 Ethereum 钱包，无法完成 Tron 桥接')
-          }
-
-          setBridgeStatus('步骤 1/2: 桥接 Solana → Ethereum...')
-          const result = await debridgeService.bridgeSolanaToTron({
-            amount: amountInSmallestUnit,
-            tronAddress: destinationAddress,
-            solanaWallet,
-            signAndSendTransaction,
-            ethereumWallet: ethWallet
-          })
-
-          setBridgeStatus('步骤 1/2 完成')
-          message.warning(
-            '第一步桥接完成。请等待 Ethereum 到账（约 2-5 分钟），然后手动触发第二步 Ethereum → Tron',
-            8
-          )
-          
-          return true
-        }
-
-        return false
-      } catch (error: any) {
-        console.error('Bridge error:', error)
-        message.error(error.message || '桥接失败')
-        throw error
-      } finally {
-        setIsBridging(false)
-        setBridgeStatus('')
-      }
-    }
-
+    // 提交提现请求
     const handleSubmit = async (values: any) => {
-      console.log('[WithdrawModal] 📝 Form values:', values)
-      const { money, withdrawAddress, targetChain = 'Solana' } = values || {}
-      console.log('[WithdrawModal] 🎯 Target Chain:', targetChain)
-      console.log('[WithdrawModal] 💰 Amount:', money)
-      console.log('[WithdrawModal] 📍 Address:', withdrawAddress)
-      console.log('[WithdrawModal] ❓ Is cross-chain?', targetChain !== 'Solana')
+      console.log('[WithdrawModal] 🚀 Starting Cobo withdraw...')
+      console.log('[WithdrawModal] Form values:', values)
+
+      const { money, withdrawAddress, targetChain } = values
       
+      if (!user?.id) {
+        message.error('请先登录')
+        return
+      }
+
+      if (!coboWalletId) {
+        message.error('未找到 Cobo 钱包，请先创建钱包')
+        return
+      }
+
       setSubmitLoading(true)
-      
+
       try {
-        // 如果目标链不是 Solana，需要通过跨链桥接
-        if (targetChain !== 'Solana') {
-          console.log('[WithdrawModal] 🌉 Starting cross-chain withdrawal via deBridge...')
-          console.log('[WithdrawModal] 🔐 Privy ready:', ready, 'authenticated:', authenticated)
-          
-          // 检查 Privy 认证
-          if (!ready || !authenticated) {
-            console.error('[WithdrawModal] ❌ Privy not ready or not authenticated')
-            message.error('请先登录 Privy 钱包')
-            setSubmitLoading(false)
-            return
-          }
-          
-          console.log('[WithdrawModal] ✅ Privy authentication OK, proceeding with bridge...')
-          
-          // 转换金额为最小单位（USDC 6位小数）
-          const amountInUsd = parseFloat(money)
-          const amountInSmallestUnit = (amountInUsd * 1_000_000).toString()
-          
-          console.log('[WithdrawModal] 💱 Amount conversion:', {
-            amountInUsd,
-            amountInSmallestUnit
-          })
-          
-          // 执行跨链桥接
-          const bridgeSuccess = await executeWithdrawBridge(
-            targetChain,
+        // 获取选中的链配置
+        const selectedChainConfig = SUPPORTED_CHAINS.find(c => c.name === targetChain)
+        if (!selectedChainConfig) {
+          throw new Error('不支持的目标链')
+        }
+
+        const chainId = selectedChainConfig.chainId
+        const tokenId = getTokenId(chainId)
+        
+        console.log('[WithdrawModal] 💰 Withdraw params:', {
+          userId: user.id,
+          chainId,
+          tokenId,
+          amount: money.toString(),
+          toAddress: withdrawAddress,
+          walletId: coboWalletId
+        })
+
+        // 调用 Cobo 提现 API
+        const response = await coboWithdraw({
+          userId: user.id,
+          chainId,
+          tokenId,
+          amount: money.toString(),
+          toAddress: withdrawAddress,
+          walletId: coboWalletId
+        })
+
+        console.log('[WithdrawModal] ✅ Withdraw response:', response)
+
+        if (response.success) {
+          // 记录提现到交易系统
+          await withdrawByAddress({
+            accountId: accountItem.id,
+            money: Number(money),
+            remark: `Cobo withdraw to ${targetChain}`,
             withdrawAddress,
-            amountInSmallestUnit
+            targetChain
+          })
+
+          const requestId = response.data?.requestId || ''
+          message.success(
+            `提现请求已提交！请求ID: ${requestId.slice(-8)}`
           )
           
-          console.log('[WithdrawModal] 🎯 Bridge result:', bridgeSuccess)
-          
-          if (bridgeSuccess) {
-            // 记录桥接订单到后端
-            await withdrawByAddress({
-              accountId: accountItem.id,
-              money: Number(money),
-              remark: `Cross-chain bridge to ${targetChain}`,
-              withdrawAddress,
-              targetChain
-            })
-            
-            close()
-            message.success('跨链出金已提交')
-            form.resetFields()
-            fetchUserInfo(true)
-          }
+          close()
+          form.resetFields()
+          fetchUserInfo(true)
         } else {
-          // 直接提款到 Solana（链上转账，使用 gas sponsorship）
-          console.log('[WithdrawModal] 💸 Starting Solana direct transfer...')
-          
-          // 检查 Privy 认证
-          if (!ready || !authenticated) {
-            console.error('[WithdrawModal] ❌ Privy not ready or not authenticated')
-            message.error('请先登录 Privy 钱包')
-            setSubmitLoading(false)
-            return
-          }
-          
-          // 转换金额为最小单位（USDC 6位小数）
-          const amountInUsd = parseFloat(money)
-          const amountInSmallestUnit = (amountInUsd * 1_000_000).toString()
-          
-          console.log('[WithdrawModal] 💱 Amount conversion:', {
-            amountInUsd,
-            amountInSmallestUnit
-          })
-          
-          // 执行 Solana 转账
-          const transferSuccess = await executeSolanaTransfer(
-            withdrawAddress,
-            amountInSmallestUnit
-          )
-          
-          console.log('[WithdrawModal] 🎯 Transfer result:', transferSuccess)
-          
-          if (transferSuccess) {
-            // 记录转账到后端
-            await withdrawByAddress({
-              accountId: accountItem.id,
-              money: Number(money),
-              remark: 'Solana direct transfer',
-              withdrawAddress,
-              targetChain: 'Solana'
-            })
-            
-            close()
-            message.success('Solana 转账成功')
-            form.resetFields()
-            fetchUserInfo(true)
-          }
+          const errorMsg = (response as any).error || '提现失败'
+          throw new Error(errorMsg)
         }
       } catch (error: any) {
-        console.error('Withdrawal error:', error)
-        message.error(error.message || '提款失败')
+        console.error('[WithdrawModal] ❌ Withdraw error:', error)
+        message.error(error.message || '提现失败，请稍后重试')
       } finally {
         setSubmitLoading(false)
       }
+    }
+
+    // 地址验证器
+    const validateAddress = (_: any, value: string) => {
+      if (!value) {
+        return Promise.reject(new Error('请输入目标地址'))
+      }
+
+      const pattern = ADDRESS_VALIDATION[selectedChain]
+      if (pattern && !pattern.test(value)) {
+        return Promise.reject(new Error(`无效的 ${selectedChain} 地址格式`))
+      }
+
+      return Promise.resolve()
     }
 
     return (
@@ -426,6 +265,9 @@ export default observer(
           title={
             <div className="flex items-center">
               <FormattedMessage id="mt.chujin" />
+              <span className="ml-2 text-sm text-gray-500 font-normal">
+                (通过 Cobo 钱包出金)
+              </span>
             </div>
           }
           open={open}
@@ -448,16 +290,18 @@ export default observer(
                   onChange={(value) => {
                     console.log('[WithdrawModal] 🔄 Chain selected:', value)
                     setSelectedChain(value)
-                    form.setFieldValue('targetChain', value) // 确保表单值被更新
+                    form.setFieldValue('targetChain', value)
+                    // 清空地址字段以重新验证
+                    form.setFieldValue('withdrawAddress', '')
                   }}
                   size="large"
                   className="!h-[38px]"
                 >
-                  {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
+                  {SUPPORTED_CHAINS.map((chain) => (
                     <Select.Option key={chain.name} value={chain.name}>
                       <Space>
-                        <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
-                        {chain.name}
+                        <Avatar src={CHAIN_ICONS[`Cobo-${chain.name}`] || CHAIN_ICONS[chain.name]} size="small" />
+                        {chain.displayName}
                       </Space>
                     </Select.Option>
                   ))}
@@ -469,20 +313,62 @@ export default observer(
                 required
                 label={intl.formatMessage({ id: 'mt.mubiaodizhi' })}
                 name="withdrawAddress"
-                rules={[{ required: true, message: intl.formatMessage({ id: 'mt.mubiaodizhi' }) }]}
+                rules={[
+                  { required: true, message: '请输入目标地址' },
+                  { validator: validateAddress }
+                ]}
               >
                 <Input 
                   size="large" 
                   className="!h-[38px]" 
                   placeholder={
-                    form.getFieldValue('targetChain') === 'Ethereum' 
+                    selectedChain === 'Ethereum' 
                       ? '请输入 Ethereum 地址 (以 0x 开头)' 
-                      : form.getFieldValue('targetChain') === 'Tron'
+                      : selectedChain === 'Tron'
                       ? '请输入 Tron 地址 (以 T 开头)'
-                      : '请输入 Solana 地址'
+                      : selectedChain === 'Solana'
+                      ? '请输入 Solana 地址'
+                      : selectedChain === 'Arbitrum'
+                      ? '请输入 Arbitrum 地址 (以 0x 开头)'
+                      : selectedChain === 'Base'
+                      ? '请输入 Base 地址 (以 0x 开头)'
+                      : selectedChain === 'Polygon'
+                      ? '请输入 Polygon 地址 (以 0x 开头)'
+                      : selectedChain === 'BNB'
+                      ? '请输入 BNB Chain 地址 (以 0x 开头)'
+                      : '请输入目标地址'
                   } 
                 />
               </Form.Item>
+
+              {/* 链余额显示 */}
+              <div className={`mb-4 px-3 py-2 rounded-lg border ${
+                theme.isDark 
+                  ? 'bg-gray-800/50 border-gray-700' 
+                  : 'bg-gray-100/50 border-gray-200'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <span className={`text-sm ${theme.isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                    {selectedChain} 链可用余额:
+                  </span>
+                  {loadingBalance ? (
+                    <span className={`text-sm ${theme.isDark ? 'text-gray-400' : 'text-gray-500'}`}>加载中...</span>
+                  ) : (
+                    <span className={`text-sm font-semibold ${
+                      parseFloat(chainBalance) > 0 
+                        ? (theme.isDark ? 'text-green-500' : 'text-green-600')
+                        : (theme.isDark ? 'text-red-400' : 'text-red-500')
+                    }`}>
+                      {chainBalance || '0'} USD
+                    </span>
+                  )}
+                </div>
+                {!loadingBalance && parseFloat(chainBalance || '0') === 0 && (
+                  <div className={`mt-1 text-xs ${theme.isDark ? 'text-red-400' : 'text-red-500'}`}>
+                    ⚠️ 该链余额不足，请先充值或选择其他链
+                  </div>
+                )}
+              </div>
 
               <Form.Item
                 className="!mt-5"
@@ -496,11 +382,17 @@ export default observer(
                       if (!Number(value)) {
                         return Promise.reject(new Error(intl.formatMessage({ id: 'mt.qingshurujine' })))
                       }
-                      if (!Number(accountMoney)) {
-                        return Promise.reject(new Error(intl.formatMessage({ id: 'mt.yuebuzu' })))
+                      if (loadingBalance) {
+                        return Promise.reject(new Error('正在加载链余额...'))
                       }
-                      if (Number(value) > accountMoney) {
-                        return Promise.reject(new Error(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' })))
+                      // 从表单获取当前选择的链，确保使用最新的值
+                      const currentChain = form.getFieldValue('targetChain') || selectedChain
+                      const availableBalance = parseFloat(chainBalance || '0')
+                      if (availableBalance === 0) {
+                        return Promise.reject(new Error(`${currentChain} 链余额为 0，请先充值或选择其他链`))
+                      }
+                      if (Number(value) > availableBalance) {
+                        return Promise.reject(new Error(`${currentChain} 链余额不足，可用: ${chainBalance} USD`))
                       }
                       return Promise.resolve()
                     }
@@ -512,12 +404,12 @@ export default observer(
                   showFloatTips={false}
                   addonAfter={
                     <>
-                      {!!accountMoney && (
+                      {!loadingBalance && chainBalance && parseFloat(chainBalance) > 0 && (
                         <span
-                          onClick={() => form.setFieldValue('money', accountMoney)}
+                          onClick={() => form.setFieldValue('money', parseFloat(chainBalance))}
                           className="text-xs cursor-pointer hover:text-brand text-primary"
                         >
-                          {intl.formatMessage({ id: 'mt.zuidazhi' })} {accountMoney} USD
+                          {intl.formatMessage({ id: 'mt.zuidazhi' })} {chainBalance} USD
                         </span>
                       )}
                     </>
@@ -526,43 +418,52 @@ export default observer(
                 />
               </Form.Item>
               
-              {/* 显示目标链信息 */}
-              {selectedChain && selectedChain !== 'Solana' && (
-                <div className="text-sm mt-4 px-4 py-2 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="flex items-center gap-2">
-                    <span className="text-orange-600 font-medium">
-                      ⚠️ 跨链桥接到 {selectedChain}
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-600 mt-1 space-y-1">
-                    <div>• 桥接费用: ${selectedChain === 'Tron' ? '4-6' : '2-3'} USD</div>
-                    <div>• 预计时间: {selectedChain === 'Tron' ? '5-10' : '2-5'} 分钟</div>
-                    {selectedChain === 'Tron' && (
-                      <div className="text-orange-600 mt-1">
-                        ※ Tron 需要两步桥接（经 Ethereum 中转）
-                      </div>
-                    )}
-                  </div>
+              {/* 提现信息提示 */}
+              <div className={`text-sm mt-4 px-4 py-3 rounded-lg border ${
+                theme.isDark 
+                  ? 'bg-blue-900/20 border-blue-800' 
+                  : 'bg-blue-50 border-blue-200'
+              }`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className={`font-medium ${theme.isDark ? 'text-blue-400' : 'text-blue-600'}`}>
+                    ℹ️ 提现到 {selectedChain}
+                  </span>
                 </div>
-              )}
+                <div className={`text-xs space-y-1 ${theme.isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+                  <div>• 提现通过 Cobo 钱包处理</div>
+                  <div>• 预计到账时间: 2-10 分钟</div>
+                  <div>• 网络费用由平台支付</div>
+                  {coboWalletLoading && (
+                    <div className="text-blue-600 mt-2">
+                      🔄 正在加载钱包信息...
+                    </div>
+                  )}
+                  {coboWalletError && (
+                    <div className="text-red-600 mt-2">
+                      ⚠️ {coboWalletError}
+                    </div>
+                  )}
+                  {coboWalletData?.isNew && (
+                    <div className="text-green-600 mt-2">
+                      ✅ 已自动创建 Cobo 钱包
+                    </div>
+                  )}
+                </div>
+              </div>
               
-              <Button type="primary" htmlType="submit" block className="mt-8" loading={submitLoading}>
-                {intl.formatMessage({ id: 'mt.queding' })}
+              <Button 
+                type="primary" 
+                htmlType="submit" 
+                block 
+                className="mt-8" 
+                loading={submitLoading || coboWalletLoading}
+                disabled={!coboWalletId || coboWalletLoading}
+              >
+                {coboWalletLoading ? '正在加载钱包...' : intl.formatMessage({ id: 'mt.queding' })}
               </Button>
             </div>
           </Form>
         </Modal>
-        
-        {/* 桥接进度遮罩 */}
-        {isBridging && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-            <div className="bg-white rounded-lg p-8 flex flex-col items-center gap-4">
-              <Spin size="large" />
-              <div className="text-lg font-medium">{bridgeStatus || '正在处理跨链桥接...'}</div>
-              <div className="text-sm text-gray-500">请勿关闭此页面</div>
-            </div>
-          </div>
-        )}
       </>
     )
   })
