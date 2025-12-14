@@ -56,7 +56,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     addSessionSigner 
   } = useSessionSigner()
 
-  const [selectedChain, setSelectedChain] = useState('Cobo-Tron')
+  const [selectedChain, setSelectedChain] = useState('Cobo-Solana')
   const [selectedToken, setSelectedToken] = useState('USDT')
   const [depositAddress, setDepositAddress] = useState('')
   const [bridgeInProgress, setBridgeInProgress] = useState(false)
