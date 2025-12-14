@@ -38,7 +38,22 @@ export const CUSTOM_RPC_URLS = {
   solana: 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
 
   // TRON Mainnet
-  tron: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+  tron: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+
+  // Arbitrum One
+  arbitrum: 'https://rpc.ankr.com/arbitrum/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+
+  // Base Mainnet
+  base: 'https://rpc.ankr.com/base/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+
+  // Polygon Mainnet
+  polygon: 'https://rpc.ankr.com/polygon/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+
+  // BNB Smart Chain
+  bnb: 'https://rpc.ankr.com/bsc/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+
+  // HyperEVM
+  hyperevm: 'https://rpc.hyperliquid.xyz/evm'
 }
 
 // LiFi configuration defaults
@@ -76,6 +91,46 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     minDeposit: 10,
     type: 'cobo' as const,
     displayName: 'Solana (Cobo)'
+  },
+  {
+    id: 'ARB',
+    name: 'Cobo-Arbitrum',
+    color: '#28A0F0',
+    minDeposit: 10,
+    type: 'cobo' as const,
+    displayName: 'Arbitrum (Cobo)'
+  },
+  {
+    id: 'BASE',
+    name: 'Cobo-Base',
+    color: '#0052FF',
+    minDeposit: 10,
+    type: 'cobo' as const,
+    displayName: 'Base (Cobo)'
+  },
+  {
+    id: 'MATIC',
+    name: 'Cobo-Polygon',
+    color: '#8247E5',
+    minDeposit: 10,
+    type: 'cobo' as const,
+    displayName: 'Polygon (Cobo)'
+  },
+  {
+    id: 'BNB',
+    name: 'Cobo-BNB',
+    color: '#F0B90B',
+    minDeposit: 10,
+    type: 'cobo' as const,
+    displayName: 'BNB Chain (Cobo)'
+  },
+  {
+    id: 'HYPE',
+    name: 'Cobo-HyperEVM',
+    color: '#00D4AA',
+    minDeposit: 10,
+    type: 'cobo' as const,
+    displayName: 'HyperEVM (Cobo)'
   }
 ] as const
 
@@ -120,6 +175,70 @@ export const SUPPORTED_TOKENS = {
       symbol: 'USDT',
       name: 'Tether USD',
       address: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+      decimals: 6
+    }
+  ],
+  arbitrum: [
+    {
+      symbol: 'USDT',
+      name: 'Tether USD',
+      address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
+      decimals: 6
+    },
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+      decimals: 6
+    }
+  ],
+  base: [
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+      decimals: 6
+    },
+    {
+      symbol: 'USDT',
+      name: 'Tether USD',
+      address: '0xfde4C96c8593536E31F229EA8f37b2ADa2699bb2',
+      decimals: 6
+    }
+  ],
+  polygon: [
+    {
+      symbol: 'USDT',
+      name: 'Tether USD',
+      address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+      decimals: 6
+    },
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      address: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',
+      decimals: 6
+    }
+  ],
+  bnb: [
+    {
+      symbol: 'USDT',
+      name: 'Tether USD',
+      address: '0x55d398326f99059fF775485246999027B3197955',
+      decimals: 18
+    },
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      address: '0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d',
+      decimals: 18
+    }
+  ],
+  hyperevm: [
+    {
+      symbol: 'USDC',
+      name: 'USD Coin',
+      address: '0xe7b4270d8710d1c62e37628f7e85b238b75cf97d',
       decimals: 6
     }
   ]

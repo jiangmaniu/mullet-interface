@@ -26,7 +26,7 @@ export default observer(
     const [form] = Form.useForm()
     const { fetchUserInfo } = useModel('user')
     const [accountItem, setAccountItem] = useState({} as User.AccountItem)
-    const [selectedChain, setSelectedChain] = useState('Solana') // 默认 Solana
+    const [selectedChain, setSelectedChain] = useState('Cobo-Solana') // 默认 Solana
     
     // 使用统一的 Privy 信息 hook（智能钱包选择）
     const { 
@@ -59,7 +59,7 @@ export default observer(
       if (rawItem) {
         setAccountItem(rawItem)
         form.setFieldValue('accountId', rawItem.id)
-        form.setFieldValue('targetChain', 'Solana') // 设置默认目标链
+        form.setFieldValue('targetChain', 'Cobo-Solana') // 设置默认目标链
       }
     }
 
@@ -441,7 +441,7 @@ export default observer(
                 required
                 label="目标链"
                 name="targetChain"
-                initialValue="Solana"
+                initialValue="Cobo-Solana"
                 rules={[{ required: true, message: '请选择目标链' }]}
               >
                 <Select 
@@ -457,7 +457,7 @@ export default observer(
                     <Select.Option key={chain.name} value={chain.name}>
                       <Space>
                         <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
-                        {chain.name}
+                        {chain.displayName || chain.name}
                       </Space>
                     </Select.Option>
                   ))}
@@ -475,11 +475,23 @@ export default observer(
                   size="large" 
                   className="!h-[38px]" 
                   placeholder={
-                    form.getFieldValue('targetChain') === 'Ethereum' 
+                    selectedChain === 'Cobo-Ethereum' 
                       ? '请输入 Ethereum 地址 (以 0x 开头)' 
-                      : form.getFieldValue('targetChain') === 'Tron'
+                      : selectedChain === 'Cobo-Tron'
                       ? '请输入 Tron 地址 (以 T 开头)'
-                      : '请输入 Solana 地址'
+                      : selectedChain === 'Cobo-Solana'
+                      ? '请输入 Solana 地址'
+                      : selectedChain === 'Cobo-Arbitrum'
+                      ? '请输入 Arbitrum 地址 (以 0x 开头)'
+                      : selectedChain === 'Cobo-Base'
+                      ? '请输入 Base 地址 (以 0x 开头)'
+                      : selectedChain === 'Cobo-Polygon'
+                      ? '请输入 Polygon 地址 (以 0x 开头)'
+                      : selectedChain === 'Cobo-BNB'
+                      ? '请输入 BNB Chain 地址 (以 0x 开头)'
+                      : selectedChain === 'Cobo-HyperEVM'
+                      ? '请输入 HyperEVM 地址 (以 0x 开头)'
+                      : '请输入目标地址'
                   } 
                 />
               </Form.Item>
