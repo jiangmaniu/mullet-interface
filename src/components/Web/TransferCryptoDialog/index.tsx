@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert } from 'antd'
+import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert, Tooltip } from 'antd'
 import { CopyOutlined } from '@ant-design/icons'
 import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
@@ -662,9 +662,22 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
               <Text strong style={{ fontSize: 13 }}>
                 Your deposit address
                 {isCoboChain ? (
-                  <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
-                    ⓘ Cobo托管钱包 {coboAddressIsNew && <span style={{ color: '#52c41a' }}>(新地址)</span>}
-                  </Text>
+                  <Tooltip
+                    title={
+                      <div style={{ fontSize: 12 }}>
+                        <div style={{ fontWeight: 'bold', marginBottom: 8 }}>Cobo 托管充值说明</div>
+                        <div>• 这是您的专属充值地址，充值将直接到账</div>
+                        <div>• 仅支持 {selectedToken} 充值，请勿转入其他代币</div>
+                        <div>• 充值到账后将自动显示在您的账户余额中</div>
+                        <div>• 最小充值金额: ${selectedChainConfig?.minDeposit}</div>
+                      </div>
+                    }
+                    placement="top"
+                  >
+                    <Text type="secondary" style={{ marginLeft: 8, fontSize: 12, cursor: 'help' }}>
+                      ⓘ Cobo托管钱包 {coboAddressIsNew && <span style={{ color: '#52c41a' }}>(新地址)</span>}
+                    </Text>
+                  </Tooltip>
                 ) : (
                   <Text type="secondary" style={{ marginLeft: 8, fontSize: 12 }}>
                     ⓘ Auto-bridge to Solana
@@ -678,22 +691,6 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                 style={{ marginTop: 8, fontFamily: 'monospace', fontSize: 13 }}
                 size="large"
               />
-              {isCoboChain && (
-                <Alert
-                  message="Cobo 托管充值说明"
-                  description={
-                    <div style={{ fontSize: 12 }}>
-                      <div>• 这是您的专属充值地址，充值将直接到账</div>
-                      <div>• 仅支持 {selectedToken} 充值，请勿转入其他代币</div>
-                      <div>• 充值到账后将自动显示在您的账户余额中</div>
-                      <div>• 最小充值金额: ${selectedChainConfig?.minDeposit}</div>
-                    </div>
-                  }
-                  type="info"
-                  showIcon
-                  style={{ marginTop: 8, fontSize: 12 }}
-                />
-              )}
             </div>
           </>
         ) : (
@@ -730,54 +727,74 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                 </Text>
               </Space>
               
-              {/* 显示确认中的交易 */}
-              {coboConfirmingDeposit && (
-                <div style={{ 
-                  marginTop: 8, 
-                  padding: 8, 
-                  background: '#fff', 
-                  borderRadius: 4,
-                  border: '1px solid #d9d9d9'
-                }}>
-                  <Space direction="vertical" style={{ width: '100%' }} size="small">
-                    <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-                      <Text strong style={{ fontSize: 13 }}>
-                        {coboConfirmingDeposit.destination.amount} {coboConfirmingDeposit.token_id}
-                      </Text>
-                      <Text type="secondary" style={{ fontSize: 12 }}>
-                        {getConfirmationProgress(coboConfirmingDeposit)}
-                      </Text>
-                    </Space>
-                    <div>
-                      <div style={{ 
-                        height: 6, 
-                        background: '#f0f0f0', 
-                        borderRadius: 3, 
-                        overflow: 'hidden' 
-                      }}>
+              {/* 显示确认中的交易（支持多笔） */}
+              {coboTransactions.filter(tx => tx.status === 'Confirming').map((tx, index) => {
+                // 获取区块链浏览器链接
+                const getExplorerUrl = (chainId: string, txHash: string) => {
+                  const explorers: Record<string, string> = {
+                    'ARBITRUM_ETH': `https://arbiscan.io/tx/${txHash}`,
+                    'BASE_ETH': `https://basescan.org/tx/${txHash}`,
+                    'ETH': `https://etherscan.io/tx/${txHash}`,
+                    'SOL': `https://solscan.io/tx/${txHash}`,
+                    'TRON': `https://tronscan.org/#/transaction/${txHash}`,
+                    'MATIC': `https://polygonscan.com/tx/${txHash}`,
+                    'BSC_BNB': `https://bscscan.com/tx/${txHash}`,
+                  }
+                  return explorers[chainId] || '#'
+                }
+
+                return (
+                  <div 
+                    key={tx.transaction_id}
+                    style={{ 
+                      marginTop: 8, 
+                      padding: 8, 
+                      background: '#fff', 
+                      borderRadius: 4,
+                      border: '1px solid #d9d9d9'
+                    }}
+                  >
+                    <Space direction="vertical" style={{ width: '100%' }} size="small">
+                      <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                        <Text strong style={{ fontSize: 13 }}>
+                          {tx.destination.amount} {tx.token_id.split('_').pop()}
+                        </Text>
+                        <Text type="secondary" style={{ fontSize: 12 }}>
+                          {getConfirmationProgress(tx)}
+                        </Text>
+                      </Space>
+                      <div>
                         <div style={{ 
-                          height: '100%', 
-                          width: `${getConfirmationPercentage(coboConfirmingDeposit)}%`,
-                          background: 'linear-gradient(90deg, #1890ff 0%, #52c41a 100%)',
-                          transition: 'width 0.3s ease'
-                        }} />
+                          height: 6, 
+                          background: '#f0f0f0', 
+                          borderRadius: 3, 
+                          overflow: 'hidden' 
+                        }}>
+                          <div style={{ 
+                            height: '100%', 
+                            width: `${getConfirmationPercentage(tx)}%`,
+                            background: 'linear-gradient(90deg, #1890ff 0%, #52c41a 100%)',
+                            transition: 'width 0.3s ease'
+                          }} />
+                        </div>
+                        <Text type="secondary" style={{ fontSize: 11, marginTop: 4, display: 'block' }}>
+                          区块确认中... ({getConfirmationPercentage(tx)}%)
+                        </Text>
                       </div>
-                      <Text type="secondary" style={{ fontSize: 11, marginTop: 4, display: 'block' }}>
-                        区块确认中... ({getConfirmationPercentage(coboConfirmingDeposit)}%)
-                      </Text>
-                    </div>
-                    {coboConfirmingDeposit.transaction_hash && (
-                      <Text 
-                        type="secondary" 
-                        style={{ fontSize: 11 }}
-                        ellipsis={{ tooltip: coboConfirmingDeposit.transaction_hash }}
-                      >
-                        TxHash: {coboConfirmingDeposit.transaction_hash.slice(0, 10)}...
-                      </Text>
-                    )}
-                  </Space>
-                </div>
-              )}
+                      {tx.transaction_hash && (
+                        <a 
+                          href={getExplorerUrl(tx.chain_id, tx.transaction_hash)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ fontSize: 11, color: '#1890ff' }}
+                        >
+                          TxHash: {tx.transaction_hash.slice(0, 10)}...{tx.transaction_hash.slice(-8)} ↗
+                        </a>
+                      )}
+                    </Space>
+                  </div>
+                )
+              })}
               
               {/* 显示最新完成的充值 */}
               {coboLatestDeposit && (
