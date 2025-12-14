@@ -20,10 +20,10 @@ const SUPPORTED_CHAINS = [
   { name: 'Solana', displayName: 'Solana', chainId: 'SOL' },
   { name: 'Ethereum', displayName: 'Ethereum', chainId: 'ETH' },
   { name: 'Tron', displayName: 'Tron', chainId: 'TRON' },
-  { name: 'Arbitrum', displayName: 'Arbitrum', chainId: 'ARBITRUM' },
-  { name: 'Base', displayName: 'Base', chainId: 'BASE' },
+  { name: 'Arbitrum', displayName: 'Arbitrum', chainId: 'ARBITRUM_ETH' },
+  { name: 'Base', displayName: 'Base', chainId: 'BASE_ETH' },
   { name: 'Polygon', displayName: 'Polygon', chainId: 'MATIC' },
-  { name: 'BNB', displayName: 'BNB Chain', chainId: 'BSC' },
+  { name: 'BNB', displayName: 'BNB Chain', chainId: 'BSC_BNB' },
 ]
 
 // 地址验证规则
@@ -95,10 +95,10 @@ export default observer(
         'SOL': ['SOL_USDT', 'SOL_USDC'],
         'ETH': ['ETH_USDT', 'ETH_USDC'],
         'TRON': ['TRON'],  // TRON 使用原生代币
-        'ARBITRUM': ['ARBITRUM_USDT', 'ARBITRUM_USDC'],
-        'BASE': ['BASE_USDT', 'BASE_USDC'],
+        'ARBITRUM_ETH': ['ARBITRUM_USDT', 'ARBITRUM_USDC'],
+        'BASE_ETH': ['BASE_USDT', 'BASE_USDC'],
         'MATIC': ['MATIC_USDT', 'MATIC_USDC'],
-        'BSC': ['BSC_USDT', 'BSC_USDC'],
+        'BSC_BNB': ['BSC_USDT', 'BSC_USDC'],
       }
       return tokenMap[chainId] || ['SOL_USDT']
     }
