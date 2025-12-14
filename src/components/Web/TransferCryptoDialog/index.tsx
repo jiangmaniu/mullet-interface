@@ -55,7 +55,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     addSessionSigner 
   } = useSessionSigner()
 
-  const [selectedChain, setSelectedChain] = useState('Tron')
+  const [selectedChain, setSelectedChain] = useState('Cobo-Tron')
   const [selectedToken, setSelectedToken] = useState('USDT')
   const [depositAddress, setDepositAddress] = useState('')
   const [bridgeInProgress, setBridgeInProgress] = useState(false)
@@ -84,19 +84,28 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
   // Cobo 充值监听（仅在选择 Cobo 链时启用）
   const { 
+    transactions: coboTransactions,
     deposits: coboDeposits,
     latestDeposit: coboLatestDeposit,
+    confirmingDeposit: coboConfirmingDeposit,
     isMonitoring: coboIsMonitoring,
     startMonitoring: coboStartMonitoring,
-    stopMonitoring: coboStopMonitoring
+    stopMonitoring: coboStopMonitoring,
+    getConfirmationProgress,
+    getConfirmationPercentage
   } = useCoboDepositMonitor({
-    userId: user?.id || '',
-    enabled: open && isCoboChain,
-    pollInterval: 5000,
-    onDepositDetected: (deposit) => {
-      console.log('[Cobo] 充值到账:', deposit)
+    depositAddress: coboAddress || undefined,
+    walletIds: [COBO_WALLET_ID],
+    enabled: open && isCoboChain && !!coboAddress,
+    pollInterval: 10000, // 10秒轮询
+    onDepositConfirming: (tx) => {
+      console.log('[Cobo] 确认进度:', getConfirmationProgress(tx))
+      // 可以在 UI 上显示进度条
+    },
+    onDepositDetected: (tx) => {
+      console.log('[Cobo] 充值到账:', tx)
       if (onDepositDetected) {
-        onDepositDetected(deposit.amount, deposit.tokenId, deposit.chainId)
+        onDepositDetected(tx.destination.amount, tx.token_id, tx.chain_id)
       }
     }
   })
@@ -696,20 +705,95 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         {/* Cobo 充值监听状态 */}
         {isCoboChain && coboIsMonitoring && depositAddress && (
           <div style={{ padding: 12, background: token.colorInfoBg, border: `1px solid ${token.colorInfoBorder}`, borderRadius: 4 }}>
-            <Space>
-              <Spin size="small" />
-              <Text>监听充值中...</Text>
-              <Text type="secondary" style={{ fontSize: 12 }}>
-                ({selectedChainConfig?.id} - {depositAddress.slice(0, 6)}...{depositAddress.slice(-4)})
-              </Text>
-            </Space>
-            {coboDeposits.length > 0 && (
-              <div style={{ marginTop: 8 }}>
+            <Space direction="vertical" style={{ width: '100%' }} size="small">
+              <Space>
+                <Spin size="small" />
+                <Text>监听充值中...</Text>
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  最近充值: {coboDeposits.length} 笔
+                  ({selectedChainConfig?.id} - {depositAddress.slice(0, 6)}...{depositAddress.slice(-4)})
                 </Text>
-              </div>
-            )}
+              </Space>
+              
+              {/* 显示确认中的交易 */}
+              {coboConfirmingDeposit && (
+                <div style={{ 
+                  marginTop: 8, 
+                  padding: 8, 
+                  background: '#fff', 
+                  borderRadius: 4,
+                  border: '1px solid #d9d9d9'
+                }}>
+                  <Space direction="vertical" style={{ width: '100%' }} size="small">
+                    <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                      <Text strong style={{ fontSize: 13 }}>
+                        {coboConfirmingDeposit.destination.amount} {coboConfirmingDeposit.token_id}
+                      </Text>
+                      <Text type="secondary" style={{ fontSize: 12 }}>
+                        {getConfirmationProgress(coboConfirmingDeposit)}
+                      </Text>
+                    </Space>
+                    <div>
+                      <div style={{ 
+                        height: 6, 
+                        background: '#f0f0f0', 
+                        borderRadius: 3, 
+                        overflow: 'hidden' 
+                      }}>
+                        <div style={{ 
+                          height: '100%', 
+                          width: `${getConfirmationPercentage(coboConfirmingDeposit)}%`,
+                          background: 'linear-gradient(90deg, #1890ff 0%, #52c41a 100%)',
+                          transition: 'width 0.3s ease'
+                        }} />
+                      </div>
+                      <Text type="secondary" style={{ fontSize: 11, marginTop: 4, display: 'block' }}>
+                        区块确认中... ({getConfirmationPercentage(coboConfirmingDeposit)}%)
+                      </Text>
+                    </div>
+                    {coboConfirmingDeposit.transaction_hash && (
+                      <Text 
+                        type="secondary" 
+                        style={{ fontSize: 11 }}
+                        ellipsis={{ tooltip: coboConfirmingDeposit.transaction_hash }}
+                      >
+                        TxHash: {coboConfirmingDeposit.transaction_hash.slice(0, 10)}...
+                      </Text>
+                    )}
+                  </Space>
+                </div>
+              )}
+              
+              {/* 显示最新完成的充值 */}
+              {coboLatestDeposit && (
+                <div style={{ 
+                  marginTop: 8, 
+                  padding: 8, 
+                  background: '#f6ffed', 
+                  borderRadius: 4,
+                  border: '1px solid #b7eb8f'
+                }}>
+                  <Space>
+                    <span style={{ fontSize: 16 }}>✅</span>
+                    <div>
+                      <Text strong style={{ color: '#52c41a', fontSize: 13 }}>
+                        充值成功！
+                      </Text>
+                      <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>
+                        {coboLatestDeposit.destination.amount} {coboLatestDeposit.token_id}
+                      </Text>
+                    </div>
+                  </Space>
+                </div>
+              )}
+              
+              {coboDeposits.length > 0 && !coboConfirmingDeposit && !coboLatestDeposit && (
+                <div style={{ marginTop: 8 }}>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    最近充值: {coboDeposits.length} 笔
+                  </Text>
+                </div>
+              )}
+            </Space>
           </div>
         )}
 
