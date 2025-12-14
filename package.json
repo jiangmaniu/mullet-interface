@@ -5,7 +5,8 @@
   "description": "client",
   "scripts": {
     "analyze": "cross-env ANALYZE=1 ANALYZE_PORT=8888 max build",
-    "build": "max build && npm run clearPlatformFiles",
+    "build": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/mullet/.env.mullet.test max build && npm run clearPlatformFiles",
+    "dev": "REACT_APP_ENV=dev MOCK=none UMI_ENV=dev env-cmd -f .env-conf/mullet/.env.mullet.test max dev",
     "build:mullet:dev": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/mullet/.env.mullet.dev max build",
     "build:mullet:test": "cross-env PLATFORM_SEO=1 env-cmd -f .env-conf/mullet/.env.mullet.test max build",
     "build:mullet:prod": "npm run build && cp -r ./docs/平台配置物料/mullet/** ./dist/platform",
