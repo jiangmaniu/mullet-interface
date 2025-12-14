@@ -770,9 +770,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                     style={{ 
                       marginTop: 8, 
                       padding: 8, 
-                      background: '#fff', 
+                      background: token.colorBgContainer, 
                       borderRadius: 4,
-                      border: '1px solid #d9d9d9'
+                      border: `1px solid ${token.colorBorderSecondary}`
                     }}
                   >
                     <Space direction="vertical" style={{ width: '100%' }} size="small">
@@ -787,7 +787,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                       <div>
                         <div style={{ 
                           height: 6, 
-                          background: '#f0f0f0', 
+                          background: token.colorFillSecondary, 
                           borderRadius: 3, 
                           overflow: 'hidden' 
                         }}>
@@ -807,7 +807,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                           href={getExplorerUrl(tx.chain_id, tx.transaction_hash)}
                           target="_blank"
                           rel="noopener noreferrer"
-                          style={{ fontSize: 11, color: '#1890ff' }}
+                          style={{ fontSize: 11, color: token.colorLink }}
                         >
                           TxHash: {tx.transaction_hash.slice(0, 10)}...{tx.transaction_hash.slice(-8)} ↗
                         </a>
@@ -822,14 +822,14 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                 <div style={{ 
                   marginTop: 8, 
                   padding: 8, 
-                  background: '#f6ffed', 
+                  background: token.colorSuccessBg, 
                   borderRadius: 4,
-                  border: '1px solid #b7eb8f'
+                  border: `1px solid ${token.colorSuccessBorder}`
                 }}>
                   <Space>
                     <span style={{ fontSize: 16 }}>✅</span>
                     <div>
-                      <Text strong style={{ color: '#52c41a', fontSize: 13 }}>
+                      <Text strong style={{ color: token.colorSuccess, fontSize: 13 }}>
                         充值成功！
                       </Text>
                       <Text type="secondary" style={{ fontSize: 12, display: 'block' }}>
