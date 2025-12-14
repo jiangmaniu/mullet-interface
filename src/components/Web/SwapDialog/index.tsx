@@ -1077,7 +1077,10 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
               <Button
                 type="text"
                 icon={<ArrowLeftOutlined />}
-                onClick={onBack}
+                onClick={() => {
+                  onClose()
+                  onBack()
+                }}
                 style={{ color: getColor.text, padding: 0 }}
               />
             )}

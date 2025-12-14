@@ -23,6 +23,29 @@ export const TOKEN_ICONS = {
   USDC_TRON: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png',
   USDT_TRON: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
 
+  // Arbitrum Tokens
+  ARB: 'https://assets.coingecko.com/coins/images/16547/standard/photo_2023-03-29_21.47.00.jpeg',
+  USDC_ARBITRUM: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png',
+  USDT_ARBITRUM: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
+
+  // Base Tokens
+  BASE: 'https://assets.coingecko.com/coins/images/279/standard/ethereum.png', // Base uses ETH as native token
+  USDC_BASE: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png',
+
+  // Polygon Tokens
+  MATIC: 'https://assets.coingecko.com/coins/images/4713/standard/polygon.png',
+  USDC_POLYGON: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png',
+  USDT_POLYGON: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
+
+  // BNB Chain Tokens
+  BNB: 'https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png',
+  USDC_BNB: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png',
+  USDT_BNB: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
+
+  // HyperEVM Tokens
+  HYPE: 'https://raw.githubusercontent.com/lifinance/types/main/src/assets/icons/chains/hyperliquid.svg',
+  USDC_HYPE: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png',
+
   // Generic (可用于任何链的 USDC/USDT/PYUSD) - Using CoinGecko CDN
   USDC: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png',
   USDT: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png',
@@ -53,5 +76,14 @@ export function getTokenIcon(symbol: string, chain?: 'solana' | 'ethereum' | 'tr
 export const CHAIN_ICONS: Record<string, string> = {
   Ethereum: TOKEN_ICONS.ETH,
   Solana: TOKEN_ICONS.SOL,
-  Tron: TOKEN_ICONS.TRX
+  Tron: TOKEN_ICONS.TRX,
+  // Cobo 托管链图标 (复用对应 Privy 链的图标)
+  'Cobo-Ethereum': TOKEN_ICONS.ETH,
+  'Cobo-Solana': TOKEN_ICONS.SOL,
+  'Cobo-Tron': TOKEN_ICONS.TRX,
+  'Cobo-Arbitrum': TOKEN_ICONS.ARB,
+  'Cobo-Base': 'https://avatars.githubusercontent.com/u/108554348?s=280&v=4',
+  'Cobo-Polygon': TOKEN_ICONS.MATIC,
+  'Cobo-BNB': TOKEN_ICONS.BNB,
+  'Cobo-HyperEVM': TOKEN_ICONS.HYPE
 }

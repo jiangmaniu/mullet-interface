@@ -8,8 +8,9 @@ import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { BNumber } from '@/libs/utils/number'
 import { useStores } from '@/context/mobxProvider'
 import { observer } from 'mobx-react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getCurrentQuote } from '@/utils/wsUtil'
+import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
 
 export const AccountDetails = observer(() => {
   const { trade } = useStores()
@@ -24,6 +25,9 @@ export const AccountDetails = observer(() => {
 
   const { availableMargin } = trade.getAccountBalance()
   const [count, setCount] = useState(0)
+  
+  // 提现 Modal ref
+  const withdrawModalRef = useRef<any>(null)
 
   useEffect(() => {
     // 设置一个定时器强制更新availableMargin的值
@@ -105,13 +109,13 @@ export const AccountDetails = observer(() => {
 
         <div className="flex gap-3">
           <div>
-            <Button variant="outline" size="sm" color="default">
+            <Button 
+              variant="primary" 
+              size="sm" 
+              className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold"
+              onClick={() => withdrawModalRef.current?.show(currentAccountInfo)}
+            >
               取现
-            </Button>
-          </div>
-          <div>
-            <Button variant="primary" size="sm" color="primary">
-              存款
             </Button>
           </div>
         </div>
@@ -125,6 +129,9 @@ export const AccountDetails = observer(() => {
           </div>
         ))}
       </div>
+
+      {/* 提现模态框 */}
+      <WithdrawModal ref={withdrawModalRef} />
     </div>
   )
 })
