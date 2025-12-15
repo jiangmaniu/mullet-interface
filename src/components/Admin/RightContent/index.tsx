@@ -4,7 +4,7 @@ import { FormattedMessage, SelectLang as UmiSelectLang, useLocation, useModel } 
 import { Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import { useRef, useState } from 'react'
-import { useFundWallet as useEvmFundWallet } from '@privy-io/react-auth'
+import { useFundWallet as useEvmFundWallet, usePrivy } from '@privy-io/react-auth'
 import { useFundWallet as useSolanaFundWallet } from '@privy-io/react-auth/solana'
 
 import Iconfont from '@/components/Base/Iconfont'
@@ -103,7 +103,15 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const themeConfig = useTheme()
   const env = getEnv()
   const { activeSolanaWallet, wallets } = usePrivyInfo()
+  const { user } = usePrivy()
   const hasWallet = !!activeSolanaWallet
+  
+  // 判断是否是外部钱包：用 activeSolanaWallet.address 在 linkedAccounts 中查找
+  const currentWalletAccount = user?.linkedAccounts?.find(
+    (account: any) => account.address === activeSolanaWallet?.address
+  )
+  const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
+  
   const realAccountList = accountList.filter((item) => !item.isSimulate)
   const { fundWallet: fundEvmWallet } = useEvmFundWallet()
   const { fundWallet: fundSolanaWallet } = useSolanaFundWallet()
@@ -255,6 +263,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
         onTransferClick={() => setShowTransferDialog(true)}
         onSwapClick={() => setShowSwapDialog(true)}
         onCardClick={handleCardClick}
+        showSwapOption={!!isExternalWallet}
       />
       {/* 跨链充值弹窗 */}
       <TransferCryptoDialog open={showTransferDialog} onClose={() => setShowTransferDialog(false)} />

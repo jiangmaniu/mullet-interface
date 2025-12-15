@@ -11,6 +11,7 @@ interface AddFundsMenuProps {
   onTransferClick: () => void
   onSwapClick: () => void
   onCardClick: () => void
+  showSwapOption?: boolean // 是否显示资产兑换选项（仅外部钱包显示）
 }
 
 /**
@@ -22,7 +23,8 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
   onClose, 
   onTransferClick, 
   onSwapClick,
-  onCardClick
+  onCardClick,
+  showSwapOption = false // 默认不显示
 }) => {
   const handleTransferClick = () => {
     onClose()
@@ -100,46 +102,48 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
           <SendOutlined style={{ fontSize: 18, color: '#8c8c8c' }} />
         </Button>
 
-        {/* 资产兑换选项 */}
-        <Button
-          size="large"
-          onClick={handleSwapClick}
-          style={{
-            width: '100%',
-            height: 'auto',
-            padding: '20px 24px',
-            textAlign: 'left',
-            borderRadius: 12,
-            border: '1px solid #e0e0e0',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 16
-          }}
-        >
-          <div
+        {/* 资产兑换选项 - 仅外部钱包显示 */}
+        {showSwapOption && (
+          <Button
+            size="large"
+            onClick={handleSwapClick}
             style={{
-              width: 48,
-              height: 48,
-              borderRadius: 10,
-              background: 'linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%)',
+              width: '100%',
+              height: 'auto',
+              padding: '20px 24px',
+              textAlign: 'left',
+              borderRadius: 12,
+              border: '1px solid #e0e0e0',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
+              gap: 16
             }}
           >
-            <SwapOutlined style={{ fontSize: 24, color: '#fff' }} />
-          </div>
-          <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
-              资产兑换
+            <div
+              style={{
+                width: 48,
+                height: 48,
+                borderRadius: 10,
+                background: 'linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              <SwapOutlined style={{ fontSize: 24, color: '#fff' }} />
             </div>
-            <div style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>
-              将持有的资产兑换成 USDC
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
+                资产兑换
+              </div>
+              <div style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>
+                将持有的资产兑换成 USDC
+              </div>
             </div>
-          </div>
-          <SwapOutlined style={{ fontSize: 18, color: '#8c8c8c' }} />
-        </Button>
+            <SwapOutlined style={{ fontSize: 18, color: '#8c8c8c' }} />
+          </Button>
+        )}
 
         {/* 信用卡购买选项 */}
         <Button
