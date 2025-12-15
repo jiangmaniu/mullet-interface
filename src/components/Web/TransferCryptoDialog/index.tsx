@@ -9,7 +9,6 @@ import { useDepositListener } from '@/hooks/useDepositListener'
 import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
 import { useTronWallet } from '@/hooks/useTronWallet'
-import { useSessionSigner } from '@/hooks/useSessionSigner'
 import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
 import { useCoboDepositMonitor } from '@/hooks/useCoboDepositMonitor'
@@ -48,14 +47,6 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   
   // TRON 钱包自动创建和管理
   const { tronAddress, tronWalletId, tronPublicKey, isCreating: isTronWalletCreating } = useTronWallet(true)
-  
-  // Session Signer 授权管理
-  const { 
-    isSessionSignerAdded, 
-    isChecking: isCheckingSessionSigner,
-    isAdding: isAddingSessionSigner, 
-    addSessionSigner 
-  } = useSessionSigner()
 
   const [selectedChain, setSelectedChain] = useState('Solana')
   const [selectedToken, setSelectedToken] = useState('USDT')
@@ -576,33 +567,6 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       className="transfer-crypto-dialog"
     >
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        {/* Session Signer 授权提示 */}
-        {tronAddress && !isSessionSignerAdded && !isCheckingSessionSigner && (
-          <Alert
-            message="Server Signing Not Enabled"
-            description={
-              <Space direction="vertical" size="small" style={{ width: '100%' }}>
-                <Text style={{ fontSize: 13 }}>
-                  To enable automated TRON transactions, please authorize server signing. 
-                  This allows our backend to sign transactions on your behalf for seamless bridging.
-                </Text>
-                <Button 
-                  type="primary" 
-                  onClick={addSessionSigner}
-                  loading={isAddingSessionSigner}
-                  size="small"
-                  style={{ marginTop: 4 }}
-                >
-                  {isAddingSessionSigner ? 'Authorizing...' : 'Authorize Server Signing'}
-                </Button>
-              </Space>
-            }
-            type="warning"
-            showIcon
-            style={{ marginBottom: 8 }}
-          />
-        )}
-
         {/* Token 和 Chain 选择器 - 并排显示 */}
         <div style={{ display: 'flex', gap: 16 }}>
           {/* Token 选择 */}
