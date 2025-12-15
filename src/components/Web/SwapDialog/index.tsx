@@ -1007,7 +1007,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
               </Title>
               <Text style={{ color: getColor.textSecondary, fontSize: '0.875rem' }}>
                 {view === 'asset_select' 
-                  ? 'Choose which asset to swap to Solana USDC' 
+                  ? 'Choose asset from your Cobo Wallet to swap to Solana USDC' 
                   : `Balance: $${(selectedAsset || initialAsset)?.balance?.toFixed(2) || '0.00'}`
                 }
               </Text>
