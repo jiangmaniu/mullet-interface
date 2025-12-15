@@ -13,6 +13,9 @@ interface CoboWalletData {
   isNew: boolean
 }
 
+// 🔥 钱包ID缓存（按userId）
+const walletCache: Map<string, CoboWalletData> = new Map()
+
 /**
  * Cobo 钱包管理 Hook
  * 获取或创建用户的专属 Cobo 钱包
@@ -26,13 +29,37 @@ export const useCoboWallet = ({
   userId,
   enabled = true 
 }: UseCoboWalletParams) => {
-  const [walletId, setWalletId] = useState<string>('')
-  const [walletData, setWalletData] = useState<CoboWalletData | null>(null)
+  // 🔥 初始化时立即检查缓存
+  const [walletId, setWalletId] = useState<string>(() => {
+    if (userId) {
+      const cached = walletCache.get(userId)
+      if (cached) {
+        console.log('[Cobo Wallet] ✅ 使用缓存的钱包ID:', cached.walletId)
+        return cached.walletId
+      }
+    }
+    return ''
+  })
+  const [walletData, setWalletData] = useState<CoboWalletData | null>(() => {
+    if (userId) {
+      return walletCache.get(userId) || null
+    }
+    return null
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const fetchOrCreateWallet = useCallback(async () => {
+  const fetchOrCreateWallet = useCallback(async (forceRefresh = false) => {
     if (!enabled || !userId) {
+      return
+    }
+
+    // 🔥 优先使用缓存（除非强制刷新）
+    if (!forceRefresh && walletCache.has(userId)) {
+      const cached = walletCache.get(userId)!
+      console.log('[Cobo Wallet] ✅ 使用缓存的钱包:', cached.walletId)
+      setWalletData(cached)
+      setWalletId(cached.walletId)
       return
     }
 
@@ -58,6 +85,9 @@ export const useCoboWallet = ({
             walletType: queryData.data.walletType,
             isNew: false
           }
+          
+          // 🔥 存入缓存
+          walletCache.set(userId, wallet)
           
           setWalletData(wallet)
           setWalletId(wallet.walletId)
@@ -100,6 +130,9 @@ export const useCoboWallet = ({
         isNew: true
       }
       
+      // 🔥 存入缓存
+      walletCache.set(userId, wallet)
+      
       setWalletData(wallet)
       setWalletId(wallet.walletId)
       
@@ -125,6 +158,19 @@ export const useCoboWallet = ({
     walletData,
     isLoading,
     error,
-    refetch: fetchOrCreateWallet
+    refetch: () => fetchOrCreateWallet(true) // 强制刷新
   }
+}
+
+// 🔥 导出缓存操作函数
+export const getCachedWalletId = (userId: string): string | null => {
+  return walletCache.get(userId)?.walletId || null
+}
+
+export const setCachedWallet = (userId: string, wallet: CoboWalletData) => {
+  walletCache.set(userId, wallet)
+}
+
+export const clearWalletCache = () => {
+  walletCache.clear()
 }

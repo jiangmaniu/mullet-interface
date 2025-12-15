@@ -70,67 +70,67 @@ export const LIFI_CONFIG = {
 export const SUPPORTED_BRIDGE_CHAINS = [
   {
     id: 'TRON',
-    name: 'Cobo-Tron',
+    name: 'Tron',
     color: '#c62828',
     minDeposit: 20,
     type: 'cobo' as const,
-    displayName: 'Tron (Cobo)'
+    displayName: 'Tron'
   },
   {
     id: 'ETH',
-    name: 'Cobo-Ethereum',
+    name: 'Ethereum',
     color: '#627EEA',
     minDeposit: 10,
     type: 'cobo' as const,
-    displayName: 'Ethereum (Cobo)'
+    displayName: 'Ethereum'
   },
   {
     id: 'SOL',
-    name: 'Cobo-Solana',
+    name: 'Solana',
     color: '#14F195',
     minDeposit: 10,
     type: 'cobo' as const,
-    displayName: 'Solana (Cobo)'
+    displayName: 'Solana'
   },
   {
     id: 'ARBITRUM_ETH',
-    name: 'Cobo-Arbitrum',
+    name: 'Arbitrum',
     color: '#28A0F0',
     minDeposit: 10,
     type: 'cobo' as const,
-    displayName: 'Arbitrum (Cobo)'
+    displayName: 'Arbitrum'
   },
   {
     id: 'BASE_ETH',
-    name: 'Cobo-Base',
+    name: 'Base',
     color: '#0052FF',
     minDeposit: 10,
     type: 'cobo' as const,
-    displayName: 'Base (Cobo)'
+    displayName: 'Base'
   },
   {
     id: 'MATIC',
-    name: 'Cobo-Polygon',
+    name: 'Polygon',
     color: '#8247E5',
     minDeposit: 10,
     type: 'cobo' as const,
-    displayName: 'Polygon (Cobo)'
+    displayName: 'Polygon'
   },
   {
     id: 'BSC_BNB',
-    name: 'Cobo-BNB',
+    name: 'BSC',
     color: '#F0B90B',
     minDeposit: 10,
     type: 'cobo' as const,
-    displayName: 'BNB Chain (Cobo)'
+    displayName: 'BSC'
   },
   {
     id: 'HYPEREVM_HYPE',
-    name: 'Cobo-HyperEVM',
+    name: 'HyperEVM',
     color: '#00D4AA',
     minDeposit: 10,
     type: 'cobo' as const,
-    displayName: 'HyperEVM (Cobo)'
+    displayName: 'HyperEVM'
   }
 ] as const
 

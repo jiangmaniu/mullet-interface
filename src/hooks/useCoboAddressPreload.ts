@@ -1,15 +1,15 @@
 /**
  * Cobo 充值地址预加载 Hook
- * 在用户登录后自动预加载所有链的充值地址
+ * 在用户登录后自动预加载所有链的充值地址和余额
  */
 
 import { useEffect, useRef } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useCoboWallet } from './useCoboWallet'
-import { preloadCoboDepositAddresses } from '@/services/coboPreloadService'
+import { preloadCoboDepositAddresses, preloadCoboBalances } from '@/services/coboPreloadService'
 
 /**
- * 在用户登录后自动预加载所有 Cobo 充值地址
+ * 在用户登录后自动预加载所有 Cobo 充值地址和余额
  */
 export const useCoboAddressPreload = () => {
   const { user, authenticated } = usePrivy()
@@ -43,10 +43,16 @@ export const useCoboAddressPreload = () => {
 
       // 延迟 500ms 执行，避免阻塞登录流程
       const timer = setTimeout(() => {
-        preloadCoboDepositAddresses(user.id, coboWalletId)
-          .then((results) => {
-            const successCount = results.filter(r => r.address !== null).length
-            console.log(`[Cobo Preload Hook] ✅ 预加载完成: ${successCount}/${results.length} 条链`)
+        // 并发预加载充值地址和余额
+        Promise.all([
+          preloadCoboDepositAddresses(user.id, coboWalletId),
+          preloadCoboBalances(user.id)
+        ])
+          .then(([addressResults, balanceResults]) => {
+            const successCount = addressResults.filter(r => r.address !== null).length
+            console.log(`[Cobo Preload Hook] ✅ 预加载完成:`)
+            console.log(`  - 充值地址: ${successCount}/${addressResults.length} 条链`)
+            console.log(`  - 余额: ${balanceResults.length} 条记录`)
           })
           .catch((error) => {
             console.error('[Cobo Preload Hook] ❌ 预加载失败:', error)

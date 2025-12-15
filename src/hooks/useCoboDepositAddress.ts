@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { message } from 'antd'
 import { API_BASE_URL } from '@/constants/api'
+import { getCachedDepositAddress, setCachedDepositAddress } from '@/services/coboPreloadService'
 
 interface UseCoboDepositAddressParams {
   userId: string
@@ -18,6 +19,7 @@ interface CoboDepositAddressData {
 /**
  * Cobo 充值地址管理 Hook
  * 获取用户在指定链上的专属充值地址
+ * 优先使用预加载缓存
  */
 export const useCoboDepositAddress = ({ 
   userId, 
@@ -30,9 +32,20 @@ export const useCoboDepositAddress = ({
   const [error, setError] = useState<string | null>(null)
   const [isNew, setIsNew] = useState(false)
 
-  const fetchAddress = useCallback(async () => {
+  const fetchAddress = useCallback(async (forceRefresh = false) => {
     if (!enabled || !userId || !chainId || !walletId) {
       return
+    }
+
+    // 🔥 优先使用预加载缓存（除非强制刷新）
+    if (!forceRefresh) {
+      const cached = getCachedDepositAddress(chainId)
+      if (cached) {
+        console.log('[Cobo] ✅ 使用预加载的充值地址:', chainId, cached.address.slice(0, 8) + '...')
+        setAddress(cached.address)
+        setIsNew(cached.isNew)
+        return
+      }
     }
 
     setIsLoading(true)
@@ -59,6 +72,9 @@ export const useCoboDepositAddress = ({
       
       setAddress(addressData.address)
       setIsNew(addressData.isNew)
+      
+      // 🔥 存入缓存
+      setCachedDepositAddress(chainId, addressData.address, addressData.isNew)
       
       console.log('[Cobo] Deposit address received:', {
         address: addressData.address,
@@ -88,6 +104,6 @@ export const useCoboDepositAddress = ({
     isLoading,
     error,
     isNew,
-    refetch: fetchAddress
+    refetch: () => fetchAddress(true) // 强制刷新
   }
 }

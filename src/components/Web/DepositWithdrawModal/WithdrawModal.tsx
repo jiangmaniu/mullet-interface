@@ -23,7 +23,7 @@ const SUPPORTED_CHAINS = [
   { name: 'Arbitrum', displayName: 'Arbitrum', chainId: 'ARBITRUM_ETH' },
   { name: 'Base', displayName: 'Base', chainId: 'BASE_ETH' },
   { name: 'Polygon', displayName: 'Polygon', chainId: 'MATIC' },
-  { name: 'BNB', displayName: 'BNB Chain', chainId: 'BSC_BNB' },
+  { name: 'BSC', displayName: 'BSC', chainId: 'BSC_BNB' },
 ]
 
 // 地址验证规则
@@ -34,7 +34,7 @@ const ADDRESS_VALIDATION: Record<string, RegExp> = {
   'Arbitrum': /^0x[a-fA-F0-9]{40}$/,
   'Base': /^0x[a-fA-F0-9]{40}$/,
   'Polygon': /^0x[a-fA-F0-9]{40}$/,
-  'BNB': /^0x[a-fA-F0-9]{40}$/,
+  'BSC': /^0x[a-fA-F0-9]{40}$/,
 }
 
 // 出金弹窗 - 使用 Cobo API
@@ -300,7 +300,7 @@ export default observer(
                   {SUPPORTED_CHAINS.map((chain) => (
                     <Select.Option key={chain.name} value={chain.name}>
                       <Space>
-                        <Avatar src={CHAIN_ICONS[`Cobo-${chain.name}`] || CHAIN_ICONS[chain.name]} size="small" />
+                        <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
                         {chain.displayName}
                       </Space>
                     </Select.Option>
@@ -335,7 +335,7 @@ export default observer(
                       : selectedChain === 'Polygon'
                       ? '请输入 Polygon 地址 (以 0x 开头)'
                       : selectedChain === 'BNB'
-                      ? '请输入 BNB Chain 地址 (以 0x 开头)'
+                      ? '请输入 BSC 地址 (以 0x 开头)'
                       : '请输入目标地址'
                   } 
                 />

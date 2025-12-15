@@ -77,13 +77,9 @@ export const CHAIN_ICONS: Record<string, string> = {
   Ethereum: TOKEN_ICONS.ETH,
   Solana: TOKEN_ICONS.SOL,
   Tron: TOKEN_ICONS.TRX,
-  // Cobo 托管链图标 (复用对应 Privy 链的图标)
-  'Cobo-Ethereum': TOKEN_ICONS.ETH,
-  'Cobo-Solana': TOKEN_ICONS.SOL,
-  'Cobo-Tron': TOKEN_ICONS.TRX,
-  'Cobo-Arbitrum': TOKEN_ICONS.ARB,
-  'Cobo-Base': 'https://avatars.githubusercontent.com/u/108554348?s=280&v=4',
-  'Cobo-Polygon': TOKEN_ICONS.MATIC,
-  'Cobo-BNB': TOKEN_ICONS.BNB,
-  'Cobo-HyperEVM': TOKEN_ICONS.HYPE
+  Arbitrum: TOKEN_ICONS.ARB,
+  Base: 'https://avatars.githubusercontent.com/u/108554348?s=280&v=4',
+  Polygon: TOKEN_ICONS.MATIC,
+  BSC: TOKEN_ICONS.BNB,
+  HyperEVM: TOKEN_ICONS.HYPE
 }

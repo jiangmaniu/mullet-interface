@@ -5,12 +5,56 @@
 
 import { API_BASE_URL } from '@/constants/api'
 import { SUPPORTED_BRIDGE_CHAINS } from '@/config/lifiConfig'
+import { getCoboBalance } from '@/services/api/cobo'
 
 interface PreloadResult {
   chainId: string
   address: string | null
   error: string | null
   isNew: boolean
+}
+
+// 🔥 缓存充值地址数据
+const cachedAddresses: Map<string, { address: string; isNew: boolean; timestamp: number }> = new Map()
+const ADDRESS_CACHE_TTL = 5 * 60 * 1000 // 5分钟缓存
+
+// 缓存余额数据
+let cachedBalances: any[] | null = null
+let balancesCacheTime: number = 0
+const BALANCE_CACHE_TTL = 60 * 1000 // 1分钟缓存
+
+// 默认查询的代币列表
+const DEFAULT_TOKEN_IDS = [
+  'SOL_USDC', 'SOL_USDT', 'ETH_USDC', 'ETH_USDT',
+  'ARBITRUM_USDCOIN', 'ARBITRUM_TETHER', 'BASE_USDCOIN', 'BASE_TETHER',
+  'MATIC_USDC', 'MATIC_USDT', 'BSC_USDC', 'BSC_USDT', 'TRON_USDT',
+  'SOL_SOL', 'ETH_ETH', 'ARBITRUM_ETH', 'BASE_ETH', 'MATIC_MATIC', 'BSC_BNB', 'TRON_TRX',
+]
+
+/**
+ * 获取缓存的充值地址
+ */
+export const getCachedDepositAddress = (chainId: string): { address: string; isNew: boolean } | null => {
+  const cached = cachedAddresses.get(chainId)
+  if (cached && Date.now() - cached.timestamp < ADDRESS_CACHE_TTL) {
+    console.log(`[Cobo Preload] ✅ 使用缓存的 ${chainId} 充值地址`)
+    return { address: cached.address, isNew: cached.isNew }
+  }
+  return null
+}
+
+/**
+ * 设置充值地址缓存
+ */
+export const setCachedDepositAddress = (chainId: string, address: string, isNew: boolean) => {
+  cachedAddresses.set(chainId, { address, isNew, timestamp: Date.now() })
+}
+
+/**
+ * 清除充值地址缓存
+ */
+export const clearDepositAddressCache = () => {
+  cachedAddresses.clear()
 }
 
 /**
@@ -56,6 +100,9 @@ export const preloadCoboDepositAddresses = async (
         }
 
         console.log(`[Cobo Preload] ✅ ${chain.displayName} 地址已获取:`, data.data.address.slice(0, 8) + '...')
+
+        // 🔥 存入缓存
+        setCachedDepositAddress(chain.id, data.data.address, data.data.isNew)
 
         return {
           chainId: chain.id,
@@ -143,4 +190,76 @@ export const preloadSingleChainAddress = async (
       isNew: false
     }
   }
+}
+
+/**
+ * 预加载 Cobo 钱包余额
+ * @param userId 用户 ID
+ * @returns Promise<void>
+ */
+export const preloadCoboBalances = async (userId: string): Promise<any[]> => {
+  if (!userId) {
+    console.warn('[Cobo Preload] Missing userId for balance preload')
+    return []
+  }
+
+  // 检查缓存是否有效
+  if (cachedBalances && Date.now() - balancesCacheTime < BALANCE_CACHE_TTL) {
+    console.log('[Cobo Preload] 使用缓存的余额数据')
+    return cachedBalances
+  }
+
+  console.log('[Cobo Preload] 开始预加载余额...', { userId })
+
+  const results: any[] = []
+
+  // 并发查询所有代币余额
+  const promises = DEFAULT_TOKEN_IDS.map(async (tokenId) => {
+    try {
+      const response = await getCoboBalance({ userId, tokenId })
+      if (response.success && response.data) {
+        return {
+          tokenId,
+          balance: response.data.balance || '0',
+          available: response.data.available || '0'
+        }
+      }
+    } catch (err) {
+      // 忽略单个代币查询失败
+    }
+    return null
+  })
+
+  const responses = await Promise.all(promises)
+  responses.forEach((res) => {
+    if (res) {
+      results.push(res)
+    }
+  })
+
+  // 更新缓存
+  cachedBalances = results
+  balancesCacheTime = Date.now()
+
+  console.log(`[Cobo Preload] ✅ 余额预加载完成: ${results.length} 条记录`)
+
+  return results
+}
+
+/**
+ * 获取缓存的余额数据
+ */
+export const getCachedBalances = () => {
+  if (cachedBalances && Date.now() - balancesCacheTime < BALANCE_CACHE_TTL) {
+    return cachedBalances
+  }
+  return null
+}
+
+/**
+ * 清除余额缓存
+ */
+export const clearBalancesCache = () => {
+  cachedBalances = null
+  balancesCacheTime = 0
 }
