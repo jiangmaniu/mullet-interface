@@ -79,7 +79,7 @@ export const MarketDetails = () => {
 
   return (
     <div className="h-full relative">
-      <div className={cn('-z-1 select-none absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 ')}>
+      <div className={cn('-z-10 select-none absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 ')}>
         <img className={'w-[560px]'} src={theme.isDark ? '/platform/img/feature-water-logo.svg' : '/platform/img/feature-water-logo.svg'} />
       </div>
 

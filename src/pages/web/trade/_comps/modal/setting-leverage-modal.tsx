@@ -6,12 +6,13 @@ import { isUndefined } from 'lodash-es'
 
 import { Alert, AlertDescription, AlertTitle } from '@/libs/ui/components/alert'
 import { Button, IconButton } from '@/libs/ui/components/button'
-import { IconClose, IconInfo, IconMinus, IconPlus } from '@/libs/ui/components/icons'
+import { IconClose, Iconify, IconInfo, IconMinus, IconPlus } from '@/libs/ui/components/icons'
 import { cn } from '@/libs/ui/lib/utils'
 import { Modal, ModalClose, ModalContent, ModalFooter, ModalHeader, ModalTitle, ModalTrigger } from '@/libs/ui/components/modal'
 import { NumberInputPrimitive, NumberInputSourceType } from '@/libs/ui/components/number-input'
 import { SliderTooltip } from '@/libs/ui/components/slider-tooltip'
 import { BNumber } from '@/libs/utils/number'
+import { renderFallback } from '@/libs/utils/format/fallback'
 
 export type LeverageModalProps = {
   isOpen?: boolean
@@ -19,14 +20,29 @@ export type LeverageModalProps = {
   children?: React.ReactNode
   onSettingLeverage?: (leverage: number) => void
   defaultLeverage?: number
+  maxLeverage?: number
+  minLeverage?: number
+  formatMaxPosition?: (leverage: number) => React.ReactNode
 }
 
-export const SettingLeverageModal = ({ onSettingLeverage, defaultLeverage = 1, isOpen, onClose, children }: LeverageModalProps) => {
+export const LeverageLabelUnit = 'x'
+export const FormatedLeverage = ({ leverage }: { leverage?: number }) => {
+  return <>{`${renderFallback(leverage)}${LeverageLabelUnit}`}</>
+}
+
+export const SettingLeverageModal = ({
+  maxLeverage = 100,
+  minLeverage = 1,
+  onSettingLeverage,
+  defaultLeverage = 1,
+  formatMaxPosition,
+  isOpen,
+  onClose,
+  children
+}: LeverageModalProps) => {
   const [isLoading, setIsLoading] = useState(false)
 
   const [leverage, setLeverage] = useState(defaultLeverage)
-  const maxLeverage = 100
-  const minLeverage = 1
 
   useEffect(() => {
     if (BNumber.from(defaultLeverage)?.lt(minLeverage)) {
@@ -45,6 +61,7 @@ export const SettingLeverageModal = ({ onSettingLeverage, defaultLeverage = 1, i
       setIsLoading(false)
     }
   }
+
   return (
     <Modal open={isOpen} onOpenChange={onClose}>
       {children && <ModalTrigger asChild>{children}</ModalTrigger>}
@@ -73,7 +90,7 @@ export const SettingLeverageModal = ({ onSettingLeverage, defaultLeverage = 1, i
 
               <NumberInputPrimitive
                 inputMode={'decimal'}
-                suffix="x"
+                suffix={LeverageLabelUnit}
                 value={leverage}
                 className="flex-1 text-center"
                 thousandSeparator={false}
@@ -114,12 +131,17 @@ export const SettingLeverageModal = ({ onSettingLeverage, defaultLeverage = 1, i
               min={minLeverage}
               step={1}
               max={maxLeverage}
-              // tooltipFormat={([value]) => {
-              //   return <div className="text-white">{value}%</div>
-              // }}
+              markLabelFormat={(value) => {
+                return (
+                  <div className="text-white">
+                    <FormatedLeverage leverage={value} />
+                  </div>
+                )
+              }}
               isShowMarkLabels
               isShowMarks
-              interval={maxLeverage / 5}
+              // interval={BNumber.from(maxLeverage).div(5).decimalPlaces(0).toNumber()}
+              interval={10}
               value={[BNumber.from(leverage).toNumber()]}
               onValueChange={(val) => {
                 setLeverage(val[0]!)
@@ -127,22 +149,18 @@ export const SettingLeverageModal = ({ onSettingLeverage, defaultLeverage = 1, i
             />
 
             <div className="mt-5 flex justify-between text-xs">
-              <div className="text-[#9FA0B0]">最大仓位</div>
-              <div className="text-white">
-                {BNumber.toFormatNumber(52341.23, {
-                  unit: 'USDC'
-                })}
-              </div>
+              <div className="text-content-4">最大仓位</div>
+              <div className="text-content-1">{formatMaxPosition?.(leverage)}</div>
             </div>
 
             <div className="mt-4 text-xs text-[#9FA0B0]">
               <div> 您的杠杆越高，最大仓位大小就越小。</div>
-              <div>10x杠杆在ETH上的最大仓位大小为$100,000,000。</div>
+              {/* <div>10x杠杆在ETH上的最大仓位大小为{BNumber.toFormatNumber(undefined, { unit: 'USDC' })}</div> */}
             </div>
 
             <div className="mt-5">
               <Alert>
-                <IconInfo className="size-4" />
+                <Iconify icon="iconoir:chat-bubble-warning" className="size-4" />
                 <AlertTitle>
                   <Trans>请注意，设置更高的杠杆率会增加清算的风险。</Trans>
                 </AlertTitle>
@@ -151,9 +169,11 @@ export const SettingLeverageModal = ({ onSettingLeverage, defaultLeverage = 1, i
           </div>
 
           <ModalFooter>
-            <Button block loading={isLoading} onClick={handleConfirm}>
-              <Trans>确定</Trans>
-            </Button>
+            <ModalClose asChild>
+              <Button block size={'md'} variant="primary" color="primary" loading={isLoading} onClick={handleConfirm}>
+                <Trans>确定</Trans>
+              </Button>
+            </ModalClose>
           </ModalFooter>
         </ModalHeader>
       </ModalContent>

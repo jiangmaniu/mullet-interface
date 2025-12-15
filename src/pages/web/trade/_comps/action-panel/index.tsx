@@ -1,7 +1,7 @@
 'use client'
 
 import { Trans } from '@/libs/lingui/react/macro'
-import { useState } from 'react'
+import { startTransition, useState } from 'react'
 
 import { GeneralTooltip } from '@/components/tooltip/general'
 import { Button } from '@/libs/ui/components/button'
@@ -12,7 +12,7 @@ import { Switch } from '@/libs/ui/components/switch'
 import { Tabs, TabsList, TabsTrigger } from '@/libs/ui/components/tabs'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { BNumber } from '@/libs/utils/number'
-
+import { TradeActionPanelOrderPrice } from './order-price'
 import { MarginModeModal } from '../modal/margin-mode-modal'
 
 // import { AdjustMarginModal } from '../adjust-margin-modal'
@@ -20,34 +20,23 @@ import { MarginModeModal } from '../modal/margin-mode-modal'
 // import { OrderConfirmModal } from '../order-confirm-modal'
 // import { PositionPnlModal } from '../position-pnl-modal'
 import { SettingLeverageModal } from '../modal/setting-leverage-modal'
+import { useStores } from '@/context/mobxProvider'
+import { observer } from 'mobx-react'
+import { MarginModeSetting } from './margin-mode-setting'
+import { TradingLeverage } from './trading-leverage'
+import { TRADE_ORDER_TYPE_OPTIONS } from '../../_options/order'
+import { TradeActionPanelTpAndSl } from './tp-and-sl'
+import { TradeActionPanelOrderDirection } from './order-direction'
 
-export function TradeActionPanel() {
+export const TradeActionPanel = observer(() => {
   const [leverage, setLeverage] = useState(1)
   const [tradeType, setTradeType] = useState<'market' | 'limit'>('market')
   const [orderSide, setOrderSide] = useState<'buy' | 'sell'>('buy')
   const [stopLimit, setStopLimit] = useState(false)
   const [isOrderConfirmModalOpen, setIsOrderConfirmModalOpen] = useState(false)
-  enum OrderTypeEnum {
-    MARKET = 'market',
-    LIMIT = 'limit',
-    STOP_LOSS = 'stop_loss'
-  }
+  const { trade } = useStores()
 
-  const [selectedOrderType, setSelectedOrderType] = useState(OrderTypeEnum.MARKET)
-  const OrderTypeOptions = [
-    {
-      label: '市价',
-      value: OrderTypeEnum.MARKET
-    },
-    {
-      label: '限价',
-      value: OrderTypeEnum.LIMIT
-    },
-    {
-      label: '停损',
-      value: OrderTypeEnum.STOP_LOSS
-    }
-  ]
+  const [selectedOrderType, setSelectedOrderType] = useState(trade.orderType)
 
   const [accountPercent, setAccountPercent] = useState('')
 
@@ -55,16 +44,8 @@ export function TradeActionPanel() {
     <div className="rounded-large bg-primary flex h-full flex-col gap-3 p-3">
       <div className="flex flex-col gap-2">
         <div className="gap-xl flex flex-wrap">
-          <MarginModeModal>
-            <Button className="flex-1" variant={'primary'} size={'md'} color="default">
-              <Trans>全仓</Trans>
-            </Button>
-          </MarginModeModal>
-          <SettingLeverageModal>
-            <Button className="flex-1" variant={'primary'} size={'md'} color="default">
-              <Trans>1x</Trans>
-            </Button>
-          </SettingLeverageModal>
+          <MarginModeSetting />
+          <TradingLeverage />
           {/* <AdjustMarginModal>
             <Button className="flex-1" variant={'primary'} size={'md'} color="default">
               <Trans>调整保证金</Trans>
@@ -82,9 +63,19 @@ export function TradeActionPanel() {
           </PositionPnlModal> */}
         </div>
 
-        <Tabs value={selectedOrderType} onValueChange={setSelectedOrderType}>
+        <Tabs
+          value={selectedOrderType}
+          onValueChange={(value) => {
+            startTransition(() => {
+              trade.setOrderType(value)
+              // 重置买卖类型
+              trade.setBuySell('BUY')
+              setSelectedOrderType(value)
+            })
+          }}
+        >
           <TabsList className="gap-medium">
-            {OrderTypeOptions.map((option, i) => {
+            {TRADE_ORDER_TYPE_OPTIONS.map((option, i) => {
               return (
                 <TabsTrigger className="flex-1" key={i} value={option.value}>
                   {option.label}
@@ -97,28 +88,10 @@ export function TradeActionPanel() {
 
       {/* 交易表单 */}
       <div className="gap-xl flex flex-col">
-        <div className={'gap-medium flex'}>
-          <Button block variant="primary" color="primary" size="md">
-            <Trans>买入/做多</Trans>
-          </Button>
-          <Button block variant="primary" color="primary" size="md">
-            <Trans>卖出/做空</Trans>
-          </Button>
-        </div>
+        <TradeActionPanelOrderDirection />
 
-        <div>
-          <NumberInput
-            placeholder="0.00"
-            labelText={<Trans>价格</Trans>}
-            RightContent={
-              <div className="text-paragraph-p2 flex gap-1">
-                <div>USDC</div>
-                <div>|</div>
-                <div className={'text-brand-primary'}>最新</div>
-              </div>
-            }
-          />
-        </div>
+        <TradeActionPanelOrderPrice />
+
         {/* 保证金 */}
         <div className={'gap-medium flex flex-col'}>
           <Input placeholder="0.00" />
@@ -169,49 +142,7 @@ export function TradeActionPanel() {
           />
         </div>
 
-        {/* 止盈止损 */}
-        <div className="">
-          <Switch checked={stopLimit} onCheckedChange={setStopLimit}>
-            <Trans>止盈/止损</Trans>
-          </Switch>
-        </div>
-
-        {stopLimit && (
-          <>
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <div className="mb-2 flex items-center gap-1">
-                  <span className="text-sm text-gray-400">止盈比率</span>
-                  <span className="text-xs text-yellow-500">止盈</span>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="0"
-                    className="flex-1 rounded border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-green-500 focus:outline-none"
-                  />
-                  <span className="flex items-center text-white">%</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex gap-2">
-              <div className="flex-1">
-                <div className="mb-2 flex items-center gap-1">
-                  <span className="text-sm text-gray-400">止损比率</span>
-                </div>
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="0"
-                    className="flex-1 rounded border border-gray-700 bg-gray-800 px-3 py-2 text-white focus:border-green-500 focus:outline-none"
-                  />
-                  <span className="flex items-center text-white">%</span>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
+        <TradeActionPanelTpAndSl />
 
         {/* 下单按钮 */}
         <Button
@@ -239,7 +170,7 @@ export function TradeActionPanel() {
       </div>
     </div>
   )
-}
+})
 
 const OrderOverview = () => {
   const list = [

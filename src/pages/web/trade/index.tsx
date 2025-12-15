@@ -28,7 +28,7 @@ import { AccountDetails } from './_comps/account'
 import { TradeLayout } from './_comps/layout'
 import { TradeLayoutKey } from './_comps/layout/types'
 import { TradeMarket } from './_comps/market'
-// import { TradeActionPanel } from './_comps/action-panel'
+import { TradeActionPanel } from './_comps/action-panel'
 
 export default observer(() => {
   const sidebarRef = useRef()

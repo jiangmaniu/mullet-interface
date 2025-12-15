@@ -11,8 +11,8 @@ const buttonVariants = cva(
     'inline-flex items-center gap-1 box-border justify-center transition-all text-[14px] whitespace-nowrap font-medium ring-offset-background ',
     // 'enabled:active:scale-95',
     'focus-visible:outline-focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-    `data-[disabled='true']:cursor-not-allowed data-[disabled='true']:opacity-35`,
-    `disabled:cursor-not-allowed disabled:opacity-35`
+    `data-[disabled='true']:cursor-not-allowed data-[disabled='true']:opacity-80`,
+    `disabled:cursor-not-allowed disabled:opacity-80`
   ],
   {
     variants: {
@@ -118,74 +118,74 @@ export interface ButtonProps extends Omit<React.ComponentProps<'button'>, 'color
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps & IconProps>(
   (
     {
-  className,
-  variant,
-  size,
-  color,
-  asChild = false,
-  loading = false,
-  block = false,
-  children,
-  LeftIcon,
-  RightIcon,
-  disabled = false,
-  type = 'button',
-  href,
-  // target,
-  // replace,
-  ...props
+      className,
+      variant,
+      size,
+      color,
+      asChild = false,
+      loading = false,
+      block = false,
+      children,
+      LeftIcon,
+      RightIcon,
+      disabled = false,
+      type = 'button',
+      href,
+      // target,
+      // replace,
+      ...props
     },
     ref
   ) => {
-  const Comp = asChild ? Slot : 'button'
+    const Comp = asChild ? Slot : 'button'
 
     const ButtonElement = (
-    <Comp
-      className={cn(
-        buttonVariants({
-          variant,
-          size,
-          color,
-          className: cn(
-            {
-              'flex w-full flex-1': block
-            },
-            className
-          )
-        })
-      )}
-      ref={ref}
-      type={type}
-      disabled={disabled || loading}
-      {...props}
-    >
-      {/* {(LeftIcon || loading) && <>{LeftIcon ? LeftIcon : loading ? <Icons.lucide.Spinner className="size-4 animate-spin" /> : null}</>} */}
-      <Slottable>{children}</Slottable>
-      {RightIcon && <>{RightIcon}</>}
-    </Comp>
-  )
-
-  if (href && !disabled) {
-    return (
-      <LinkButton
-        href={href}
-        block={block}
-        // target={target}
-        // replace={replace}
-        className={className}
-        variant={variant}
-        size={size}
-        color={color}
-        LeftIcon={LeftIcon}
-        RightIcon={RightIcon}
+      <Comp
+        className={cn(
+          buttonVariants({
+            variant,
+            size,
+            color,
+            className: cn(
+              {
+                'flex w-full flex-1': block
+              },
+              className
+            )
+          })
+        )}
+        ref={ref}
+        type={type}
+        disabled={disabled || loading}
+        {...props}
       >
-        {children}
-      </LinkButton>
+        {/* {(LeftIcon || loading) && <>{LeftIcon ? LeftIcon : loading ? <Icons.lucide.Spinner className="size-4 animate-spin" /> : null}</>} */}
+        <Slottable>{children}</Slottable>
+        {RightIcon && <>{RightIcon}</>}
+      </Comp>
     )
-  }
+
+    if (href && !disabled) {
+      return (
+        <LinkButton
+          href={href}
+          block={block}
+          // target={target}
+          // replace={replace}
+          className={className}
+          variant={variant}
+          size={size}
+          color={color}
+          LeftIcon={LeftIcon}
+          RightIcon={RightIcon}
+        >
+          {children}
+        </LinkButton>
+      )
+    }
 
     return <>{ButtonElement}</>
-}
+  }
 )
 
 Button.displayName = 'Button'

@@ -34,8 +34,6 @@ export const SliderTooltip = React.forwardRef<React.ElementRef<typeof SliderPrim
     const [value, setValue] = React.useState<number[]>((props.defaultValue as number[]) ?? (props.value as number[]) ?? [0])
     const [innerInterval] = React.useState<number>(props.interval ?? props.step ?? 25)
     const numberOfMarks = Math.floor((props.max ?? 100) / innerInterval) + 1
-    console.log(numberOfMarks, innerInterval)
-    // debugger
     const marks = Array.from({ length: numberOfMarks }, (_, i) => i * innerInterval)
 
     React.useEffect(() => {
@@ -142,7 +140,6 @@ export const SliderTooltip = React.forwardRef<React.ElementRef<typeof SliderPrim
           {isShowMarkLabels && (
             <div className="relative mt-2.5 flex h-3.5">
               {marks.map((mark, i) => {
-                console.log(mark, i)
                 return (
                   <div
                     key={`${i}`}

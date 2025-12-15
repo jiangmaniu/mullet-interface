@@ -62,7 +62,7 @@ const DataOverview = () => {
   const options = [
     {
       label: <Trans>预言机价格</Trans>,
-      value: BNumber.toFormatNumber(183.52)
+      value: BNumber.toFormatNumber(undefined)
     },
     {
       label: <Trans>24 小时变化</Trans>,

@@ -40,11 +40,11 @@ export const TradeMarket = () => {
               <Trans>详情</Trans>
             </span>
           </TabsTrigger>
-          {/* <TabsTrigger value={TabEnum.new}>
+          <TabsTrigger value={TabEnum.new}>
             <span>
               <Trans>新</Trans>
             </span>
-          </TabsTrigger> */}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value={TabEnum.charts} forceMount>
           {/* <MarketCharts /> */}
@@ -54,12 +54,11 @@ export const TradeMarket = () => {
           <MarketDepth />
         </TabsContent> */}
         <TabsContent value={TabEnum.detail}>
-          {/* <Futures /> */}
+          <Futures />
+        </TabsContent>
+        <TabsContent value={TabEnum.new}>
           <MarketDetails />
         </TabsContent>
-        {/* <TabsContent value={TabEnum.new}>
-          <MarketDetails />
-        </TabsContent> */}
       </Tabs>
     </div>
   )

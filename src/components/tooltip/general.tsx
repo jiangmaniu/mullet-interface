@@ -53,7 +53,7 @@ export const GeneralTooltip = ({
 
           <TooltipArrow
             className={cn(
-              'relative -z-1 size-2.5 translate-y-[calc(-50%_-_0px)] rotate-45 rounded-[2px] border-r border-b',
+              'relative -z-10 size-2.5 translate-y-[calc(-50%_-_0px)] rotate-45 rounded-[2px] border-r border-b',
               'border-zinc-base bg-zinc-800/90 backdrop-blur-[12px]'
             )}
             {...{ variant: props.variant }}

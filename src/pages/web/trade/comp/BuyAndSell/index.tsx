@@ -102,7 +102,6 @@ export default observer(
             <StopLimitOrder popupRef={popupRef} />
           </div> */}
           <OrderItem />
-
           {/* 禁用交易区操作 */}
           <DisabledTradeView />
         </div>

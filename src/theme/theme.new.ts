@@ -45,6 +45,9 @@ export const NewThemeColor = {
   'trade-sell': 'rgb(var(--color-red-500))',
   'market-rise': 'var(--color-trade-buy)',
   'market-fall': 'var(--color-trade-sell)',
+  'status-success': 'rgb(var(--color-green-500) / <alpha-value>)',
+  'status-warning': 'rgb(var(--color-orange-500) / <alpha-value>)',
+  'status-danger': 'rgb(var(--color-red-500) / <alpha-value>)',
 }
 
 export const NewThemeFontSize = {

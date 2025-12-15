@@ -5,11 +5,11 @@ import type { VariantProps } from 'class-variance-authority'
 import { cn } from '@/libs/ui/lib/utils'
 
 const alertVariants = cva(
-  'relative w-full rounded-lg border box-border px-3 py-3.5 text-sm grid group has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-1.5 gap-y-0.5 items-start [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current',
+  'relative w-full rounded-lg items-start border box-border px-3 py-3.5 text-sm grid group has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] grid-cols-[0_1fr] has-[>svg]:gap-x-1.5 gap-y-0.5 [&>svg]:size-4 [&>svg]:text-current',
   {
     variants: {
       variant: {
-        default: 'bg-[#3E2B38] border-[#FF8F34] text-white [&>svg]:text-[#FF8F34]',
+        default: 'bg-orange-500/10 border-status-warning backdrop-blur-base text-white [&>svg]:text-status-warning',
         destructive: 'text-destructive bg-card [&>svg]:text-current *:data-[slot=alert-description]:text-destructive/90'
       }
     },
@@ -28,7 +28,7 @@ function AlertTitle({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="alert-title"
       className={cn(
-        'col-start-2 text-xs leading-[14px] tracking-tight group-has-[>svg]:mt-0.5',
+        'col-start-2 text-xs leading-[14px] tracking-tight group-has-[>svg]:pt-0.5',
         // 'line-clamp-1',
         className
       )}
@@ -47,4 +47,4 @@ function AlertDescription({ className, ...props }: React.ComponentProps<'div'>) 
   )
 }
 
-export { Alert, AlertTitle, AlertDescription }
+export { Alert, AlertDescription, AlertTitle }

@@ -256,9 +256,10 @@ type TabsTargetProps<T> = Omit<React.ComponentProps<typeof TabsPrimitive.Trigger
   value: T
 } & VariantProps<typeof TabsTargetContentVariants> & {
     contentClassName?: string
+    block?: boolean
   }
 
-function TabsTrigger<T>({ className, contentClassName, value, variant, ...props }: TabsTargetProps<T>) {
+function TabsTrigger<T>({ className, contentClassName, value, variant, block, ...props }: TabsTargetProps<T>) {
   const { variant: tabsVariants, triggerOnPointerUp, onValueChange } = useTabsVariantsContext()
   const [isPointerDown, setIsPointerDown] = React.useState(false)
 
@@ -301,7 +302,7 @@ function TabsTrigger<T>({ className, contentClassName, value, variant, ...props 
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       value={value as string}
-      className={cn([tabsTargetVariantsClassName, 'group', className])}
+      className={cn([tabsTargetVariantsClassName, 'group', { 'flex-1 w-full': block }, className])}
       onPointerDown={handlePointerDown}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}

@@ -1,28 +1,10 @@
-import React, { ComponentProps, useState } from 'react'
+import React, { ComponentProps, forwardRef, useState } from 'react'
 import { omit } from 'lodash-es'
 
 import { cn } from '../lib/utils'
 import { Button, ButtonProps } from './button'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-} from './dialog'
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerOverlay,
-  DrawerPortal,
-  DrawerTitle,
-  DrawerTrigger,
-} from './drawer'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger } from './dialog'
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerOverlay, DrawerPortal, DrawerTitle, DrawerTrigger } from './drawer'
 import { IconClose } from './icons'
 
 export function useMediaQuery(query: string) {
@@ -60,37 +42,44 @@ const Modal = (props: React.ComponentProps<typeof Drawer | typeof Dialog>) => {
 
 Modal.displayName = 'Modal'
 
-const ModalTrigger = ({ ...props }: React.ComponentProps<typeof DrawerTrigger | typeof DialogTrigger>) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-  const Comp = isDesktop ? <DialogTrigger {...props} /> : <DrawerTrigger {...props} />
-  return Comp
-}
+const ModalTrigger = forwardRef<React.ElementRef<typeof DialogTrigger>, React.ComponentPropsWithoutRef<typeof DialogTrigger>>(
+  ({ ...props }, ref) => {
+    const isDesktop = useMediaQuery('(min-width: 768px)')
+    const Comp: any = isDesktop ? DialogTrigger : DrawerTrigger
+    return <Comp ref={ref} {...props} />
+  }
+)
 ModalTrigger.displayName = 'ModalTrigger'
 
-const ModalClose = ({ ...props }: React.ComponentProps<typeof DrawerClose | typeof DialogClose>) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)')
-  const Comp = isDesktop ? <DialogClose {...props} /> : <DrawerClose {...props} />
-  return Comp
-}
+const ModalClose = forwardRef<React.ElementRef<typeof DialogClose>, React.ComponentPropsWithoutRef<typeof DialogClose>>(
+  ({ ...props }, ref) => {
+    const isDesktop = useMediaQuery('(min-width: 768px)')
+    const Comp: any = isDesktop ? DialogClose : DrawerClose
+    return <Comp ref={ref} {...props} />
+  }
+)
 ModalClose.displayName = 'ModalClose'
 
-const ModalOverlay = ({ className, ...props }: ComponentProps<typeof DialogOverlay | typeof DrawerOverlay>) => {
-  // const isDesktop = useMediaQuery('(min-width: 768px)')
+const ModalOverlay = forwardRef<React.ElementRef<typeof DialogOverlay>, ComponentProps<typeof DialogOverlay | typeof DrawerOverlay>>(
+  ({ className, ...props }, ref) => {
+    // const isDesktop = useMediaQuery('(min-width: 768px)')
 
-  // if (isDesktop) {
-  return (
-    <DialogOverlay
-      className={cn(
-        'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/[0.32]',
-        className,
-      )}
-      {...props}
-    />
-  )
-  // }
+    // if (isDesktop) {
+    return (
+      <DialogOverlay
+        ref={ref}
+        className={cn(
+          'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/[0.32]',
+          className
+        )}
+        {...props}
+      />
+    )
+    // }
 
-  // return <DrawerOverlay ref={ref} {...props} />
-}
+    // return <DrawerOverlay ref={ref} {...props} />
+  }
+)
 ModalOverlay.displayName = 'ModalOverlay'
 
 const ModalPortal = ({ ...props }: React.ComponentProps<typeof DrawerPortal | typeof DialogPortal>) => {
@@ -103,104 +92,98 @@ const ModalPortal = ({ ...props }: React.ComponentProps<typeof DrawerPortal | ty
 
 Modal.displayName = 'ModalPortal'
 
-const ModalContent = ({
-  className,
-  children,
-  ...props
-}: ComponentProps<typeof DialogContent | typeof DrawerContent>) => {
-  const isDesktop = useMediaQuery('(min-width: 768px)')
+const ModalContent = forwardRef<React.ElementRef<typeof DialogContent>, ComponentProps<typeof DialogContent | typeof DrawerContent>>(
+  ({ className, children, ...props }, ref) => {
+    const isDesktop = useMediaQuery('(min-width: 768px)')
 
-  if (isDesktop) {
-    return (
-      <ModalPortal>
-        <ModalOverlay />
+    if (isDesktop) {
+      return (
+        <ModalPortal>
+          <ModalOverlay />
 
-        <DialogContent
-          className={cn(
-            'rounded-[20px] border border-[#3B3D52] bg-[#0E123A] px-5 py-6',
-            'group fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 gap-1 shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.10),0px_8px_8px_-4px_rgba(16,24,40,0.04)] duration-200 sm:rounded-[20px]',
-            'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
-            'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
-            className,
-          )}
-          {...props}
-        >
-          {children}
+          <DialogContent
+            ref={ref}
+            className={cn(
+              'rounded-[20px] border border-[#3B3D52] bg-[#0E123A] px-5 py-6',
+              'group fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 gap-1 shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.10),0px_8px_8px_-4px_rgba(16,24,40,0.04)] duration-200 sm:rounded-[20px]',
+              'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
+              'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
+              className
+            )}
+            {...props}
+          >
+            {children}
 
-          {/* <DialogPrimitive.Close className="right-4 top-4 absolute rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+            {/* <DialogPrimitive.Close className="right-4 top-4 absolute rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
         <Icons.Close className="size-6" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close> */}
-        </DialogContent>
-      </ModalPortal>
+          </DialogContent>
+        </ModalPortal>
+      )
+    }
+
+    return (
+      <DrawerContent
+        ref={ref as any}
+        className={cn('min-h-[70%] shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.10),0px_8px_8px_-4px_rgba(16,24,40,0.04)]')}
+        {...props}
+      >
+        <div className={cn('flex flex-col px-4 pb-4 pt-2', className, 'max-w-full')}>{children}</div>
+      </DrawerContent>
     )
   }
-
-  return (
-    <DrawerContent
-      className={cn('min-h-[70%] shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.10),0px_8px_8px_-4px_rgba(16,24,40,0.04)]')}
-      {...props}
-    >
-      <div className={cn('flex flex-col px-4 pb-4 pt-2', className, 'max-w-full')}>{children}</div>
-    </DrawerContent>
-  )
-}
+)
 ModalContent.displayName = 'ModalContent'
 
-function ModalHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+const ModalHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
   return (
-    <div className={cn('flex flex-col gap-1 text-left', className)} {...props}>
+    <div ref={ref} className={cn('flex flex-col gap-1 text-left', className)} {...props}>
       {props.children}
     </div>
   )
-}
+})
 ModalHeader.displayName = 'ModalHeader'
 
-function ModalOverview({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+const ModalOverview = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
   return (
-    <div className="py-4">
+    <div ref={ref} className="py-4">
       <div className={cn('flex flex-col gap-2 rounded-sm border border-gray-200 bg-gray-50 p-4', className)} {...props}>
         {props.children}
       </div>
     </div>
   )
-}
+})
 ModalOverview.displayName = 'ModalOverview'
 
-function ModalOverviewItem({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement> & { label?: React.ReactNode }) {
-  return (
-    <div className={cn('flex justify-between gap-1 text-left', className)} {...props}>
-      <div className="text-sm leading-[22px] text-gray-600">{props.label}</div>
-      <div className="text-sm font-medium leading-[22px] text-gray-900">{props.children}</div>
-    </div>
-  )
-}
+const ModalOverviewItem = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & { label?: React.ReactNode }>(
+  ({ className, ...props }, ref) => {
+    return (
+      <div ref={ref} className={cn('flex justify-between gap-1 text-left', className)} {...props}>
+        <div className="text-sm leading-[22px] text-gray-600">{props.label}</div>
+        <div className="text-sm font-medium leading-[22px] text-gray-900">{props.children}</div>
+      </div>
+    )
+  }
+)
 ModalOverviewItem.displayName = 'ModalOverviewItem'
 
-function ModalFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn('flex gap-3', className)} {...props} />
-}
+const ModalFooter = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => {
+  return <div ref={ref} className={cn('flex gap-3', className)} {...props} />
+})
 ModalFooter.displayName = 'ModalFooter'
 
-const ModalTitle = ({
-  className,
-  children,
-  showCloseButton = true,
-  ...props
-}: ComponentProps<typeof DialogTitle | typeof DrawerTitle> & { showCloseButton?: boolean }) => {
+const ModalTitle = forwardRef<
+  React.ElementRef<typeof DialogTitle>,
+  ComponentProps<typeof DialogTitle | typeof DrawerTitle> & { showCloseButton?: boolean }
+>(({ className, children, showCloseButton = true, ...props }, ref) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const Comp = isDesktop ? DialogTitle : DrawerTitle
 
   return (
-    <Comp className="flex items-start justify-between gap-3">
-      <div
-        className={cn('flex-1 text-base font-bold leading-normal tracking-tight text-[white]', className)}
-        {...props}
-      >
+    <Comp ref={ref as any} className="flex items-start justify-between gap-3">
+      <div className={cn('flex-1 text-base font-bold leading-normal tracking-tight text-[white]', className)} {...props}>
         {children}
       </div>
 
@@ -214,19 +197,19 @@ const ModalTitle = ({
       )}
     </Comp>
   )
-}
+})
 ModalTitle.displayName = 'ModalTitle'
 
-const ModalDescription = ({
-  className,
-  ...props
-}: ComponentProps<typeof DialogDescription | typeof DrawerDescription>) => {
+const ModalDescription = forwardRef<
+  React.ElementRef<typeof DialogDescription>,
+  ComponentProps<typeof DialogDescription | typeof DrawerDescription>
+>(({ className, ...props }, ref) => {
   const isDesktop = useMediaQuery('(min-width: 768px)')
 
   const Comp = isDesktop ? DialogDescription : DrawerDescription
 
-  return <Comp className={cn('text-sm leading-[22px] text-gray-600', className)} {...props} />
-}
+  return <Comp ref={ref as any} className={cn('text-sm leading-[22px] text-gray-600', className)} {...props} />
+})
 ModalDescription.displayName = 'ModalDescription'
 
 export type ModalActionProps = {
@@ -293,24 +276,24 @@ function ModalAction({ ...props }: ModalActionProps) {
                 props.confirm.type === 'submit'
                   ? undefined
                   : props.confirm.cb
-                    ? async () => {
-                        if (props.confirm === true) {
-                          props?.hide?.()
-                          return
-                        }
-
-                        setConfirmLoading(true)
-
-                        try {
-                          await Promise.resolve(props.confirm?.cb?.())
-                          props?.hide?.()
-                        } finally {
-                          setConfirmLoading(false)
-                        }
-                      }
-                    : () => {
+                  ? async () => {
+                      if (props.confirm === true) {
                         props?.hide?.()
+                        return
                       }
+
+                      setConfirmLoading(true)
+
+                      try {
+                        await Promise.resolve(props.confirm?.cb?.())
+                        props?.hide?.()
+                      } finally {
+                        setConfirmLoading(false)
+                      }
+                    }
+                  : () => {
+                      props?.hide?.()
+                    }
               }
               className={cn('flex-1', props.confirm?.className)}
               /** @ts-ignore */
@@ -348,6 +331,6 @@ export {
   ModalOverview,
   ModalOverviewItem,
   ModalPortal,
-  ModalTrigger,
   ModalTitle,
+  ModalTrigger
 }
