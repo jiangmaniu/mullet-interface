@@ -48,11 +48,23 @@ export const PrivyProvider = ({ children }: IProps) => {
             walletList: [
               // 浏览器自动检测
               'detected_solana_wallets',
-              // 按顺序展示 将会覆盖浏览器自动检测的
-              'phantom',
-              'backpack',
+              // 主流钱包 - 按顺序展示
+              'solflare',
               'okx_wallet',
-              'solflare'
+              'binance_wallet',
+              'phantom',
+              'metamask',
+              // 大陆用户常用
+              'imtoken',
+              'math_wallet',
+              'trust_wallet',
+              'bitget_wallet',
+              'coin98_wallet',
+              'coinbase_wallet',
+              'tokenpocket',
+              'bybit_wallet',
+              'gate_wallet',
+              'safepal'
             ]
           },
           // 新版 Solana RPC 配置

@@ -4,8 +4,9 @@ import { ArrowRightOutlined, SwapOutlined, ArrowLeftOutlined, CheckCircleOutline
 import { useWallets, useSendTransaction, usePrivy } from '@privy-io/react-auth'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { useTokenPrices } from '@/hooks/useTokenPrices'
-import { useCoboBalances } from '@/hooks/useCoboBalances'
+import { useSolanaBalance } from '@/hooks/useSolanaBalance'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
+import { checkBalance } from '@/services/balanceService'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { useTheme } from '@/context/themeProvider'
 import { 
@@ -109,75 +110,157 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   // Get Solana wallet from usePrivyInfo (智能选择逻辑)
   const solanaWallet = activeSolanaWallet
 
-  // 🔥 从 Cobo 钱包获取余额
-  const { balances: coboBalances, isLoading: isLoadingCoboBalances } = useCoboBalances({
-    userId: user?.id || '',
-    enabled: open && !!user?.id
-  })
+  // Fetch balances
+  const { balances: solBalances } = useSolanaBalance(solanaWallet?.address)
+  const [ethBalance, setEthBalance] = useState(0)
+  const [ethUsdtBalance, setEthUsdtBalance] = useState(0)
+  const [trxBalance, setTrxBalance] = useState(0)
+  const [tronUsdtBalance, setTronUsdtBalance] = useState(0)
 
-  // Construct Assets List - 从 Cobo 钱包获取余额
+  // Fetch ETH Balance and ETH USDT Balance
+  useEffect(() => {
+    const fetchEthBalances = async () => {
+      const ethWallets = wallets.filter(w => w.address.startsWith('0x'))
+      if (ethWallets.length === 0) return
+
+      const selectedWallet = ethWallets[0]
+      if (selectedWallet?.address) {
+        try {
+          // Fetch ETH balance
+          const ethRes = await checkBalance('', 1, selectedWallet.address)
+          const ethAmount = parseFloat(ethRes.balance) / Math.pow(10, ethRes.decimals)
+          setEthBalance(ethAmount)
+          
+          // Fetch ETH USDT balance
+          const USDT_ETH_ADDRESS = '0xdac17f958d2ee523a2206206994597c13d831ec7'
+          const usdtRes = await checkBalance(USDT_ETH_ADDRESS, 1, selectedWallet.address)
+          const usdtAmount = parseFloat(usdtRes.balance) / Math.pow(10, usdtRes.decimals)
+          setEthUsdtBalance(usdtAmount)
+        } catch (e) {
+          console.error('[SwapDialog] Failed to fetch ETH balances', e)
+        }
+      }
+    }
+    
+    if (wallets.length > 0) {
+      fetchEthBalances()
+    }
+  }, [wallets])
+
+  // Fetch Tron Balance and Tron USDT Balance
+  useEffect(() => {
+    const fetchTronBalances = async () => {
+      if (!tronAddress) return
+
+      try {
+        // 动态导入 TronWeb
+        const { TronWeb } = await import('tronweb')
+        
+        // 使用 Ankr Premium RPC (已付费)
+        const tronWeb = new TronWeb({
+          fullHost: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+        })
+
+        // 获取 TRX 余额
+        const trxBalanceInSun = await tronWeb.trx.getBalance(tronAddress)
+        const trxAmount = trxBalanceInSun / 1_000_000 // SUN to TRX
+        setTrxBalance(trxAmount)
+
+        // 获取 Tron USDT 余额
+        const USDT_TRON_ADDRESS = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'
+        try {
+          tronWeb.setAddress(tronAddress)
+          const contract = await tronWeb.contract().at(USDT_TRON_ADDRESS)
+          const balance = await contract.balanceOf(tronAddress).call()
+          const usdtAmount = Number(balance.toString()) / 1_000_000 // USDT has 6 decimals
+          setTronUsdtBalance(usdtAmount)
+        } catch (err) {
+          console.error('[SwapDialog] Failed to fetch Tron USDT balance', err)
+          setTronUsdtBalance(0)
+        }
+      } catch (e) {
+        console.error('[SwapDialog] Failed to fetch Tron balances', e)
+      }
+    }
+
+    if (tronAddress) {
+      fetchTronBalances()
+    }
+  }, [tronAddress])
+
+  // Construct Assets List
   const assets = useMemo(() => {
     const list: AssetBalance[] = []
 
-    if (coboBalances && coboBalances.length > 0) {
-      coboBalances.forEach((coboBalance) => {
-        // 🔥 后端存储的余额格式不一致：
-        // - ETH 余额存储为 wei（最小单位）
-        // - USDT/USDC/TRX 等存储为人类可读格式
-        // 这里根据 tokenId 智能判断格式
-        const rawBalance = coboBalance.available
-        let balance: number
-        
-        // 检查是否是 ETH 原生代币（存储为 wei）
-        const isEthNative = coboBalance.tokenId === 'ETH' || coboBalance.tokenId === 'ETH_ETH'
-        
-        if (isEthNative && rawBalance.length > 15) {
-          // ETH 余额是 wei 格式，需要转换
-          balance = Number(BigInt(rawBalance)) / Math.pow(10, 18)
-        } else {
-          // 其他代币余额已经是人类可读格式
-          balance = parseFloat(rawBalance) || 0
-        }
-        
-        console.log('[SwapDialog] Processing balance:', {
-          tokenId: coboBalance.tokenId,
-          symbol: coboBalance.symbol,
-          rawBalance,
-          balance,
-          isEthNative
-        })
-        
-        // 计算 USD 价值
-        let usdValue = balance
-        if (coboBalance.symbol === 'SOL') {
-          usdValue = balance * (prices.solana || 0)
-        } else if (coboBalance.symbol === 'ETH') {
-          usdValue = balance * (prices.ethereum || 0)
-        } else if (coboBalance.symbol === 'TRX') {
-          usdValue = balance * (prices.tron || 0)
-        } else if (coboBalance.symbol === 'MATIC') {
-          usdValue = balance * (prices.matic || 0)
-        } else if (coboBalance.symbol === 'BNB') {
-          usdValue = balance * (prices.bnb || 0)
-        }
-        // USDC/USDT 默认 usdValue = balance
+    // USDC (Solana)
+    const solanaUsdcBalance = parseFloat(solBalances?.['USDC']?.balance || '0')
+    list.push({
+      symbol: 'USDC',
+      balance: solanaUsdcBalance,
+      usdValue: solanaUsdcBalance,
+      icon: TOKEN_ICONS.USDC,
+      network: 'Solana'
+    })
 
-        // 🔥 只添加余额大于0的资产
-        if (balance > 0) {
-          list.push({
-            symbol: coboBalance.symbol,
-            balance,
-            usdValue,
-            icon: TOKEN_ICONS[coboBalance.symbol] || TOKEN_ICONS.USDC,
-            network: coboBalance.chainName
-          })
-        }
-      })
-    }
+    // ETH
+    list.push({
+      symbol: 'ETH',
+      balance: ethBalance,
+      usdValue: ethBalance * (prices.ethereum || 0),
+      icon: TOKEN_ICONS.ETH,
+      network: 'Ethereum'
+    })
+
+    // TRX
+    list.push({
+      symbol: 'TRX',
+      balance: trxBalance,
+      usdValue: trxBalance * (prices.tron || 0),
+      icon: TOKEN_ICONS.TRX,
+      network: 'Tron'
+    })
+
+    // SOL
+    const solAmount = parseFloat(solBalances?.['SOL']?.balance || '0')
+    list.push({
+      symbol: 'SOL',
+      balance: solAmount,
+      usdValue: solAmount * (prices.solana || 0),
+      icon: TOKEN_ICONS.SOL,
+      network: 'Solana'
+    })
+
+    // USDT (Ethereum)
+    list.push({
+      symbol: 'USDT',
+      balance: ethUsdtBalance,
+      usdValue: ethUsdtBalance,
+      icon: TOKEN_ICONS.USDT,
+      network: 'Ethereum'
+    })
+
+    // USDT (Tron)
+    list.push({
+      symbol: 'USDT',
+      balance: tronUsdtBalance,
+      usdValue: tronUsdtBalance,
+      icon: TOKEN_ICONS.USDT,
+      network: 'Tron'
+    })
+
+    // USDT (Solana)
+    const solanaUsdtAmount = parseFloat(solBalances?.['USDT']?.balance || '0')
+    list.push({
+      symbol: 'USDT',
+      balance: solanaUsdtAmount,
+      usdValue: solanaUsdtAmount,
+      icon: TOKEN_ICONS.USDT,
+      network: 'Solana'
+    })
 
     // Sort by USD value descending
     return list.sort((a, b) => b.usdValue - a.usdValue)
-  }, [coboBalances, prices])
+  }, [solBalances, ethBalance, ethUsdtBalance, trxBalance, tronUsdtBalance, prices])
 
   // Reset when dialog opens
   useEffect(() => {
@@ -1007,7 +1090,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
               </Title>
               <Text style={{ color: getColor.textSecondary, fontSize: '0.875rem' }}>
                 {view === 'asset_select' 
-                  ? 'Choose asset from your Cobo Wallet to swap to Solana USDC' 
+                  ? 'Choose which asset to swap to Solana USDC' 
                   : `Balance: $${(selectedAsset || initialAsset)?.balance?.toFixed(2) || '0.00'}`
                 }
               </Text>
@@ -1050,36 +1133,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         {/* Asset Selection View */}
         {view === 'asset_select' && (
           <>
-            {/* Cobo 余额加载中 */}
-            {isLoadingCoboBalances && (
-              <div style={{ 
-                width: '100%', 
-                padding: '40px 0', 
-                display: 'flex', 
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: 12
-              }}>
-                <Spin />
-                <Text style={{ color: getColor.textSecondary }}>Loading Cobo wallet balances...</Text>
-              </div>
-            )}
-            
-            {/* 没有资产时显示提示 */}
-            {!isLoadingCoboBalances && assets.length === 0 && (
-              <div style={{ 
-                width: '100%', 
-                padding: '40px 0', 
-                textAlign: 'center'
-              }}>
-                <Text style={{ color: getColor.textSecondary }}>
-                  No assets found in your Cobo wallet. Please deposit first.
-                </Text>
-              </div>
-            )}
-            
             <Space direction="vertical" size={12} style={{ width: '100%', marginTop: 8 }}>
-              {!isLoadingCoboBalances && assets.map((asset) => {
+              {assets.map((asset) => {
                 // Solana USDC 是充值目标，不能作为源资产
                 const isTargetAsset = asset.symbol === 'USDC' && asset.network === 'Solana'
                 const isDisabled = isTargetAsset

@@ -28,6 +28,23 @@ export const DepositAssets = () => {
   const { user } = usePrivy()
   const hasWallet = !!activeSolanaWallet
   
+  // 判断是否是外部钱包：用 activeSolanaWallet.address 在 linkedAccounts 中查找
+  // 如果该地址对应的 walletClientType 不是 'privy'，则是外部钱包
+  const currentWalletAccount = user?.linkedAccounts?.find(
+    (account: any) => account.address === activeSolanaWallet?.address
+  )
+  const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
+  
+  console.log('[DepositAssets] 🔍 Wallet check:', {
+    hasWallet,
+    isExternalWallet,
+    walletAddress: activeSolanaWallet?.address,
+    currentWalletAccount: currentWalletAccount ? {
+      address: (currentWalletAccount as any).address,
+      walletClientType: (currentWalletAccount as any).walletClientType
+    } : null
+  })
+  
   // 使用 onUserExited 回调处理用户关闭 modal
   const handleFundWalletExit = useCallback(() => {
     console.log('[Privy] User exited fund wallet modal')
@@ -107,6 +124,7 @@ export const DepositAssets = () => {
           onTransferClick={() => setShowTransferDialog(true)}
           onSwapClick={() => setShowSwapDialog(true)}
           onCardClick={handleCardClick}
+          showSwapOption={!!isExternalWallet}
         />
         {/* 跨链充值弹窗 */}
         <TransferCryptoDialog 
