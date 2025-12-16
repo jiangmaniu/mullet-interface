@@ -14,17 +14,14 @@ import { message } from '@/utils/message'
 import { Form, Input, Select, Space, Avatar } from 'antd'
 import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { CHAIN_ICONS } from '@/config/tokenIcons'
+import { SUPPORTED_BRIDGE_CHAINS } from '@/config/lifiConfig'
 
-// 支持的链配置
-const SUPPORTED_CHAINS = [
-  { name: 'Solana', displayName: 'Solana', chainId: 'SOL' },
-  { name: 'Ethereum', displayName: 'Ethereum', chainId: 'ETH' },
-  { name: 'Tron', displayName: 'Tron', chainId: 'TRON' },
-  { name: 'Arbitrum', displayName: 'Arbitrum', chainId: 'ARBITRUM_ETH' },
-  { name: 'Base', displayName: 'Base', chainId: 'BASE_ETH' },
-  { name: 'Polygon', displayName: 'Polygon', chainId: 'MATIC' },
-  { name: 'BSC', displayName: 'BSC', chainId: 'BSC_BNB' },
-]
+// 使用统一的链配置
+const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.map(chain => ({
+  name: chain.name,
+  displayName: chain.displayName,
+  chainId: chain.id
+}))
 
 // 地址验证规则
 const ADDRESS_VALIDATION: Record<string, RegExp> = {

@@ -100,22 +100,22 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     type: 'cobo' as const,
     displayName: 'Arbitrum'
   },
-  {
-    id: 'BASE_ETH',
-    name: 'Base',
-    color: '#0052FF',
-    minDeposit: 10,
-    type: 'cobo' as const,
-    displayName: 'Base'
-  },
-  {
-    id: 'MATIC',
-    name: 'Polygon',
-    color: '#8247E5',
-    minDeposit: 10,
-    type: 'cobo' as const,
-    displayName: 'Polygon'
-  },
+  // {
+  //   id: 'BASE_ETH',
+  //   name: 'Base',
+  //   color: '#0052FF',
+  //   minDeposit: 10,
+  //   type: 'cobo' as const,
+  //   displayName: 'Base'
+  // },
+  // {
+  //   id: 'MATIC',
+  //   name: 'Polygon',
+  //   color: '#8247E5',
+  //   minDeposit: 10,
+  //   type: 'cobo' as const,
+  //   displayName: 'Polygon'
+  // },
   {
     id: 'BSC_BNB',
     name: 'BSC',
@@ -124,14 +124,14 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     type: 'cobo' as const,
     displayName: 'BSC'
   },
-  {
-    id: 'HYPEREVM_HYPE',
-    name: 'HyperEVM',
-    color: '#00D4AA',
-    minDeposit: 10,
-    type: 'cobo' as const,
-    displayName: 'HyperEVM'
-  }
+  // {
+  //   id: 'HYPEREVM_HYPE',
+  //   name: 'HyperEVM',
+  //   color: '#00D4AA',
+  //   minDeposit: 10,
+  //   type: 'cobo' as const,
+  //   displayName: 'HyperEVM'
+  // }
 ] as const
 
 // Supported tokens for each chain
