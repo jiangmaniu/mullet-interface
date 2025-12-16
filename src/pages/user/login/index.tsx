@@ -1,4 +1,3 @@
-import Button from '@/components/Base/Button'
 import JumpingLoader from '@/components/Base/JumpingLoader'
 import { WEB_HOME_PAGE } from '@/constants'
 import { login } from '@/services/api/user'
@@ -10,12 +9,13 @@ import { FormattedMessage, useModel } from '@umijs/max'
 import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useTronWallet } from '@/hooks/useTronWallet'
+import { Button } from '@/libs/ui/components/button'
 
 export default function Login() {
   const { ready, authenticated, logout, user, getAccessToken } = usePrivy()
   const { initialState, setInitialState } = useModel('@@initialState')
   const [showJumpingLoader, setShowJumpingLoader] = useState(false)
-  
+
   // 自动创建 TRON 钱包（在登录后触发）
   // autoCreate=true 会在 authenticated 时自动检测并创建
   useTronWallet(true)
@@ -89,11 +89,11 @@ export default function Login() {
       {ready && !showJumpingLoader && (
         <>
           {!authenticated ? (
-            <Button onClick={onPrivyLogin} type="primary">
+            <Button variant={'primary'} color="primary" onClick={onPrivyLogin}>
               Connect
             </Button>
           ) : (
-            <Button onClick={handleLogout} type="primary">
+            <Button onClick={handleLogout} variant={'primary'} color="primary">
               DisConnect
             </Button>
           )}

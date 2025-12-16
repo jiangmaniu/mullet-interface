@@ -26,7 +26,7 @@ const Context = createContext<ProviderType>({} as ProviderType)
 const CoboPreloadWrapper = ({ children }: IProps) => {
   // 自动预加载 Cobo 充值地址
   useCoboAddressPreload()
-  
+
   return <>{children}</>
 }
 
@@ -41,6 +41,7 @@ export const PrivyProvider = ({ children }: IProps) => {
         clientId={PRIVY_CLIENT_ID}
         config={{
           appearance: {
+            theme: 'dark',
             logo: '/platform/mullet-logo.png',
             showWalletLoginFirst: false,
             walletChainType: 'solana-only',
@@ -73,14 +74,14 @@ export const PrivyProvider = ({ children }: IProps) => {
               'solana:mainnet': {
                 rpc: createSolanaRpc(SOLANA_MAINNET_RPC_URL),
                 rpcSubscriptions: createSolanaRpcSubscriptions(SOLANA_MAINNET_WS_URL),
-                blockExplorerUrl: 'https://explorer.solana.com',
+                blockExplorerUrl: 'https://explorer.solana.com'
               },
               'solana:devnet': {
                 rpc: createSolanaRpc(SOLANA_DEVNET_RPC_URL),
                 rpcSubscriptions: createSolanaRpcSubscriptions(SOLANA_DEVNET_WS_URL),
-                blockExplorerUrl: 'https://explorer.solana.com/?cluster=devnet',
-              },
-            },
+                blockExplorerUrl: 'https://explorer.solana.com/?cluster=devnet'
+              }
+            }
           },
           // loginMethods: ["wallet", "email"],
           externalWallets: {
@@ -93,14 +94,12 @@ export const PrivyProvider = ({ children }: IProps) => {
               createOnLogin: 'users-without-wallets'
             },
             ethereum: {
-              createOnLogin: 'users-without-wallets'  // 🔥 改为自动创建
+              createOnLogin: 'users-without-wallets' // 🔥 改为自动创建
             }
           }
         }}
       >
-        <CoboPreloadWrapper>
-          {children}
-        </CoboPreloadWrapper>
+        <CoboPreloadWrapper>{children}</CoboPreloadWrapper>
       </PrivyProviderComp>
     </Context.Provider>
   )

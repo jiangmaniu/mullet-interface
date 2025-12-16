@@ -14,6 +14,8 @@ import { cn } from '@/utils/cn'
 import { push } from '@/utils/navigator'
 import { STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 
+import { NewTradeRecords } from './_comps/records'
+
 import { checkPageShowTime } from '@/utils/business'
 import BuyAndSell from './comp/BuyAndSell'
 // import Center from './comp/Center'
@@ -152,11 +154,13 @@ export default observer(() => {
                   {/* 深度报价 */}
                   <DepthPrice />
 
-                  {/* <TradeActionPanel /> */}
+                  <TradeActionPanel />
                 </div>
 
                 {/* 交易记录 */}
                 <TradeRecord />
+
+                <NewTradeRecords />
               </div>
 
               <div className="flex w-max gap-2 min-w-[280px]  flex-col">

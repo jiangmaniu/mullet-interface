@@ -95,7 +95,7 @@ function TradeRecord({ trigger }: IProps) {
               </span>
             )}
             {tabKey !== 'FUND_RECORD' && (
-              <Checkbox onChange={onCheckBoxChange} className="max-xl:hidden">
+              <Checkbox checked={showActiveSymbol} onChange={onCheckBoxChange} className="max-xl:hidden">
                 <span className="text-primary text-sm">
                   <FormattedMessage id="mt.zhizhanshidangqian" />
                 </span>

@@ -96,18 +96,17 @@ const SymbolInfo = observer(({ symbolInfo }: { symbolInfo: Account.TradeSymbolLi
 
   return (
     <div className="flex items-center gap-2">
-      <GeneralTooltip isDisabledCursorHelp align="center" content={isFavorite ? '移除自选' : '添加自选'}>
-        <div>
-          <Iconify
-            onClick={(e) => {
-              trade.toggleSymbolFavorite(symbolInfo.symbol)
-              e.stopPropagation()
-            }}
-            icon="iconoir:star"
-            className={cn('block size-3.5 cursor-pointer', isFavorite ? 'text-brand-primary' : 'text-brand-secondary-1', {})}
-          />
-        </div>
-      </GeneralTooltip>
+      {/* <GeneralTooltip isDisabledCursorHelp align="center" content={isFavorite ? '移除自选' : '添加自选'}> */}
+      <div>
+        <Iconify
+          onClick={(e) => {
+            trade.toggleSymbolFavorite(symbolInfo.symbol)
+          }}
+          icon="iconoir:star"
+          className={cn('block size-3.5 cursor-pointer', isFavorite ? 'text-brand-primary' : 'text-brand-secondary-1', {})}
+        />
+      </div>
+      {/* </GeneralTooltip> */}
 
       <div className="size-3.5 rounded-full">
         <SymbolIcon src={symbolInfo?.imgUrl} width={14} height={14} className="size-3.5 rounded-full" />

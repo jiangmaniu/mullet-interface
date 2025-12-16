@@ -5,6 +5,7 @@ import SwitchLanguage from '@/components/SwitchLanguage'
 import { useTheme } from '@/context/themeProvider'
 import { getEnv } from '@/env'
 import { goKefu } from '@/utils/navigator'
+import { Iconify } from '@/libs/ui/components/icons'
 
 /**
  * 登录、注册、忘记密码页面的布局
@@ -30,11 +31,11 @@ export default function UserLayout() {
     { icon: '/img/uc/app_icon6.svg' }
   ]
   return (
-    <div className="flex flex-col bg-[url(/img/uc/login-bg.png)] bg-no-repeat bg-[size:100%_100%] h-full overflow-hidden bg-gray-50">
+    <div className="flex flex-col bg-primary bg-[url(/img/uc/login-bg.png)] bg-no-repeat bg-[size:100%_100%] h-full overflow-hidden bg-gray-50">
       <div className="flex gap-x-4 justify-end items-center pr-5 pt-3">
-        {!ENV.HIDE_SWITCH_LANGUAGE && <SwitchLanguage isAdmin={false} />}
-        <div className="cursor-pointer relative -top-[1px]" onClick={goKefu}>
-          <img src="/img/uc/kefu.png" width={28} height={28} />
+        {/* {!ENV.HIDE_SWITCH_LANGUAGE && <SwitchLanguage isAdmin={false} />} */}
+        <div className="cursor-pointer relative -top-[1px] text-content-1" onClick={goKefu}>
+          <Iconify icon="iconoir:headset-help" className="size-7" />
         </div>
       </div>
       <div className="flex-1 flex flex-col">

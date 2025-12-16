@@ -124,10 +124,10 @@ export default [
         path: '/:lng/user/login',
         component: './user/login'
       },
-      {
-        path: '/:lng/user/forget',
-        component: './user/forgetPassword'
-      }
+      // {
+      //   path: '/:lng/user/forget',
+      //   component: './user/forgetPassword'
+      // }
     ]
   },
   /* ------------------------------- PageViewer ------------------------------- */

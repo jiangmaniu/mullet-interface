@@ -22,6 +22,7 @@ function Input({
   labelText,
   placeholder,
   labelBgColor,
+  hideLabel,
   labelClassName,
   size,
   LeftContent,
@@ -53,6 +54,7 @@ function Input({
       LeftContent={LeftContent}
       RightContent={RightContent}
       hintLabel={hintLabel}
+      hideLabel={hideLabel}
       hintValue={hintValue}
       errorMessage={errorMessage}
       className={className}
@@ -66,7 +68,7 @@ function Input({
           'text-paragraph-p2 text-content-1 flex w-full min-w-0 border-none bg-transparent shadow-none outline-none transition-colors placeholder:text-transparent disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
           'file:text-foreground file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium',
           'focus:border-none focus:shadow-none focus:outline-none focus:ring-0',
-          inputClassName,
+          inputClassName
         )}
         value={value}
         onChange={(event) => {
