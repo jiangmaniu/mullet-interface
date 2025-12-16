@@ -95,13 +95,23 @@ export const useCoboDepositMonitor = ({
 
   const fetchTransactions = useCallback(async () => {
     if (!enabled) {
+      console.log('[Cobo] fetchTransactions skipped: enabled=false')
       return
     }
 
     // 至少需要充值地址或钱包ID之一
     if (!depositAddress && (!walletIds || walletIds.length === 0)) {
+      console.log('[Cobo] fetchTransactions skipped: no address or walletIds')
       return
     }
+
+    console.log('[Cobo] 🔄 fetchTransactions called', {
+      enabled,
+      isMonitoring,
+      depositAddress,
+      walletIds,
+      timestamp: new Date().toISOString()
+    })
 
     try {
       // 构建查询参数
@@ -118,6 +128,8 @@ export const useCoboDepositMonitor = ({
       }
 
       const url = `${API_BASE_URL}/api/v1/transactions?${params.toString()}`
+      
+      console.log('[Cobo] 📡 Fetching:', url)
       
       const response = await fetch(url)
       
@@ -235,30 +247,76 @@ export const useCoboDepositMonitor = ({
     }
   }, [depositAddress, walletIds, enabled, onDepositDetected, onDepositConfirming])
 
+  // 用 ref 存储 timeout ID
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
+
   // 启动监听
   const startMonitoring = useCallback(() => {
+    console.log('[Cobo] ▶️ startMonitoring called')
     setIsMonitoring(true)
-    isFirstLoad.current = true // 重置首次加载标志
-    fetchTransactions()
-  }, [fetchTransactions])
+    isFirstLoad.current = true
+  }, [])
 
   // 停止监听
   const stopMonitoring = useCallback(() => {
+    console.log('[Cobo] ⏹️ stopMonitoring called')
     setIsMonitoring(false)
-    isFirstLoad.current = true // 停止时重置，下次启动时重新初始化
-    confirmingTxs.current.clear() // 清除确认中的交易记录
+    isFirstLoad.current = true
+    confirmingTxs.current.clear()
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
   }, [])
 
-  // 自动轮询
+  // 轮询逻辑：fetch 完成后等 pollInterval 再 fetch
   useEffect(() => {
-    if (!isMonitoring || !enabled) return
+    if (!isMonitoring || !enabled) {
+      return
+    }
 
-    const interval = setInterval(() => {
-      fetchTransactions()
-    }, pollInterval)
+    let cancelled = false
 
-    return () => clearInterval(interval)
-  }, [isMonitoring, enabled, pollInterval, fetchTransactions])
+    const poll = async () => {
+      if (cancelled) return
+      
+      console.log('[Cobo] 🔄 Polling...')
+      await fetchTransactions()
+      
+      if (cancelled) return
+      
+      // fetch 完成后等 pollInterval 再下一次
+      console.log('[Cobo] ⏰ Waiting', pollInterval, 'ms for next poll')
+      timeoutRef.current = setTimeout(poll, pollInterval)
+    }
+
+    // 立即开始第一次
+    poll()
+
+    return () => {
+      console.log('[Cobo] 🛑 Stopping poll')
+      cancelled = true
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMonitoring, enabled, pollInterval]) // 不依赖 fetchTransactions
+
+  // enabled 变为 false 时自动停止监听
+  useEffect(() => {
+    if (!enabled && isMonitoring) {
+      console.log('[Cobo] Auto-stopping monitoring because enabled=false')
+      setIsMonitoring(false)
+      isFirstLoad.current = true
+      confirmingTxs.current.clear()
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+        timeoutRef.current = null
+      }
+    }
+  }, [enabled, isMonitoring])
 
   return {
     transactions,        // 所有交易列表

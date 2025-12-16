@@ -225,17 +225,27 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   }, [open, selectedChain, user, trade.currentAccountInfo, tronAddress, isTronWalletCreating, isCoboChain, coboAddress, coboAddressLoading, coboAddressError])
 
   // Cobo 充值监听 - 地址加载完成后自动启动
+  // 使用 ref 避免 callback 变化导致的死循环
+  const coboStartMonitoringRef = React.useRef(coboStartMonitoring)
+  const coboStopMonitoringRef = React.useRef(coboStopMonitoring)
+  coboStartMonitoringRef.current = coboStartMonitoring
+  coboStopMonitoringRef.current = coboStopMonitoring
+
   useEffect(() => {
-    if (isCoboChain && coboAddress && !coboAddressLoading) {
+    // 只有在对话框打开、是 Cobo 链、地址已加载时才启动监听
+    if (open && isCoboChain && coboAddress && !coboAddressLoading) {
       console.log('[Cobo] Starting deposit monitoring for address:', coboAddress)
-      coboStartMonitoring()
+      coboStartMonitoringRef.current()
+    } else {
+      // 其他情况都停止监听
+      coboStopMonitoringRef.current()
     }
     
-    // 对话框关闭或切换到非 Cobo 链时停止监听
-    if (!open || !isCoboChain) {
-      coboStopMonitoring()
+    // 组件卸载或依赖变化时确保停止监听
+    return () => {
+      coboStopMonitoringRef.current()
     }
-  }, [isCoboChain, coboAddress, coboAddressLoading, open, coboStartMonitoring, coboStopMonitoring])
+  }, [isCoboChain, coboAddress, coboAddressLoading, open])
 
   // 对话框关闭时重置检测状态
   useEffect(() => {
