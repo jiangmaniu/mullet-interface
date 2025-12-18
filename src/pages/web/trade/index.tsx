@@ -22,15 +22,15 @@ import BuyAndSell from './comp/BuyAndSell'
 // import Footer from './comp/Footer'
 import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
 // import Sidebar from './comp/Sidebar'
-import TradeRecord from './comp/TradeRecord'
+// import TradeRecord from './comp/TradeRecord'
 import DepthPrice from './comp/Widget/DepthPrice'
 import Liquidation from './comp/Widget/Liquidation'
 import { Overview } from './_comps/overview'
 import { AccountDetails } from './_comps/account'
-import { TradeLayout } from './_comps/layout'
-import { TradeLayoutKey } from './_comps/layout/types'
+// import { TradeLayout } from './_comps/layout'
+// import { TradeLayoutKey } from './_comps/layout/types'
 import { TradeMarket } from './_comps/market'
-import { TradeActionPanel } from './_comps/action-panel'
+// import { TradeActionPanel } from './_comps/action-panel'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -139,12 +139,12 @@ export default observer(() => {
     <>
       <SwitchPcOrWapLayout
         pcComponent={
-          <div className="p-2">
-            <div className="flex gap-2">
+          <div className="p-2 h-full">
+            <div className="flex gap-2 h-full">
               <div className="flex flex-1 gap-2 flex-col">
                 <Overview />
                 {/* 交易 */}
-                <div className="flex gap-2 flex-1">
+                <div className="flex gap-2 flex-1 min-h-[480px]">
                   {/* <Sidebar /> */}
                   {/* 中间区域 */}
                   {/* <Center /> */}
@@ -154,11 +154,11 @@ export default observer(() => {
                   {/* 深度报价 */}
                   <DepthPrice />
 
-                  <TradeActionPanel />
+                  {/* <TradeActionPanel /> */}
                 </div>
 
                 {/* 交易记录 */}
-                <TradeRecord />
+                {/* <TradeRecord /> */}
 
                 <NewTradeRecords />
               </div>

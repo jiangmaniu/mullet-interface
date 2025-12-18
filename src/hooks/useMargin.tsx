@@ -22,7 +22,7 @@ export default function useMargin(props?: IProps) {
     () => {
       if (isLimit) return
       trade.calcMargin(orderParams).then((res: any) => {
-        setExpectedMargin(formatNum(res, { precision: accountGroupPrecision }))
+        setExpectedMargin(res)
       })
     },
     [orderParams, isLimit],

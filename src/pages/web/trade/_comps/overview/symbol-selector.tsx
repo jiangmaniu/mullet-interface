@@ -44,28 +44,31 @@ export const SymbolSelector = observer(() => {
     ? symbolListByCategory
     : symbolListByCategory.filter((item) => item.symbol.toLowerCase().includes(searchContent.toLowerCase()))
 
+  const [open, setOpen] = useState(false)
+
   return (
-    <HoverCard
-      openDelay={100}
-      // open={true}
-    >
+    <HoverCard open={open} onOpenChange={setOpen} openDelay={100}>
       <HoverCardTrigger asChild>
-        <div className="flex items-center gap-4">
+        <div
+          className="flex h-full pl-3 items-center gap-4"
+          onPointerDownCapture={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+          }}
+        >
           <div className="flex items-center gap-3">
             <SymbolIcon src={activeSymbolInfo?.imgUrl} width={24} height={24} className="size-6 rounded-full" />
 
             <div className="text-button-2 text-white">{activeSymbolInfo?.alias}</div>
           </div>
 
-          <div>
-            <IconNavArrowDown />
-          </div>
+          <IconNavArrowDown className="size-4" />
         </div>
       </HoverCardTrigger>
       <HoverCardContent
-        sideOffset={22}
-        alignOffset={-12}
-        className="flex w-[var(--radix-hover-card-content-available-width)] max-w-[1048px] min-w-[480px] flex-col gap-1.5"
+        sideOffset={0}
+        alignOffset={0}
+        className="flex w-[var(--radix-hover-card-content-available-width)] max-w-[720px] min-w-[480px] flex-col gap-1.5"
       >
         <div className="flex items-center gap-6">
           <Input
@@ -105,13 +108,9 @@ export const SymbolSelector = observer(() => {
         </Tabs>
 
         <div className="">
-          <div className="flex gap-6 px-6 py-2">
+          <div className="flex gap-6 px-6 py-2 text-paragraph-p3 text-content-5">
             {symbolColumns.map((column) => {
-              return (
-                <div key={column.key} className="text-paragraph-p3 text-content-5 flex flex-1 items-center">
-                  {column.header}
-                </div>
-              )
+              return <React.Fragment key={column.key}>{column.header}</React.Fragment>
             })}
           </div>
 
@@ -125,19 +124,16 @@ export const SymbolSelector = observer(() => {
                 return (
                   <div
                     key={symbolItem.symbol}
-                    className={cn('flex gap-6 px-6 py-2', 'hover:bg-[#ccc]/10', {
+                    className={cn('flex gap-6 px-6 py-2 text-paragraph-p3 text-content-5', 'hover:bg-[#ccc]/10', {
                       'bg-[#ccc]/10': symbolItem.symbol === activeSymbolInfo?.symbol
                     })}
                     onClick={() => {
                       switchSymbol(symbolItem.symbol)
+                      setOpen(false)
                     }}
                   >
                     {symbolColumns.map((column) => {
-                      return (
-                        <div key={column.key} className="text-paragraph-p2 text-content-1 flex flex-1 items-center">
-                          {column.cell(symbolItem)}
-                        </div>
-                      )
+                      return <React.Fragment key={column.key}>{column.cell(symbolItem)}</React.Fragment>
                     })}
                   </div>
                 )

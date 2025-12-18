@@ -139,6 +139,8 @@ class TradeStore {
   @observable slValue = '' // 止损输入框-按价格
   @observable spAmount = '' // 止盈输入框-按金额
   @observable slAmount = '' // 止损输入框-按金额
+  @observable spPercent = '' // 止盈输入框-按百分比
+  @observable slPercent = '' // 止损输入框-按百分比
   @observable spPriceOrAmountType: IPriceOrAmountType = 'PRICE' // 止盈，下单时，按价格还是按金额计算
   @observable slPriceOrAmountType: IPriceOrAmountType = 'PRICE' // 止损，下单时，按价格还是按金额计算
   @observable isPosition = false // 是否是持仓单/挂单
@@ -359,6 +361,15 @@ class TradeStore {
     this.slAmount = value
   }
 
+  @action
+  setSlPercent = (value: any) => {
+    this.slPercent = value
+  }
+  @action
+  setSpPercent = (value: any) => {
+    this.spPercent = value
+  }
+
   // 止盈 --- 按价格止盈、金额止盈
   @action
   setSpPriceOrAmountType = (type: IPriceOrAmountType) => {
@@ -413,6 +424,8 @@ class TradeStore {
     this.slValue = ''
     this.spAmount = ''
     this.slAmount = ''
+    this.spPercent = ''
+    this.slPercent = ''
   }
 
   // 重置交易操作

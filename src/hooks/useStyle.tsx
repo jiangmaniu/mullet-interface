@@ -6,7 +6,7 @@ export default function useStyle() {
       '.ant-table-thead > tr > th': {
         fontSize: '12px !important',
         color: 'var(--color-text-weak) !important',
-        background: '#fff !important',
+        background: 'var(--bg-primary) !important',
         fontWeight: '500 !important'
       },
       '.ant-empty': {

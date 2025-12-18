@@ -407,7 +407,7 @@ function Position({ style, parentPopup }: IProps) {
   return (
     <>
       {/* 加上loading避免右侧闪动问题 */}
-      <Spin spinning={loading} style={{ background: 'var(--bg-primary)' }}>
+      <Spin spinning={loading}>
         <StandardTable
           columns={columns}
           key={trade.currentAccountInfo.id}

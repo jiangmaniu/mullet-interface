@@ -1,7 +1,7 @@
 import { Provider } from '@/context'
 import { pcCssVars } from '@/theme/theme.config'
 import { Settings as LayoutSettings } from '@ant-design/pro-components'
-import { history, Link, Navigate, RunTimeLayoutConfig, useLocation, useModel } from '@umijs/max'
+import { history, Link, Navigate, useLocation, useModel } from '@umijs/max'
 import 'animate.css'
 // import { ClickToComponent } from 'click-to-react-component'
 import React, { useEffect, useState } from 'react'

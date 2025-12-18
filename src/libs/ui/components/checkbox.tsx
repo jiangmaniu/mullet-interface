@@ -69,7 +69,7 @@ type CheckboxProps = React.ComponentProps<typeof CheckboxPrimitive.Root> &
     labelClassName?: string
   } & React.ComponentProps<typeof LabelPrimitive.Root>
 
-function Checkbox({ className, labelClassName, color, label, ...props }: CheckboxProps) {
+function Checkbox({ className, labelClassName, onCheckedChange, color, label, ...props }: CheckboxProps) {
   const Checkbox = (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
@@ -80,6 +80,7 @@ function Checkbox({ className, labelClassName, color, label, ...props }: Checkbo
         },
         className
       )}
+      onCheckedChange={onCheckedChange}
       {...props}
     >
       <div className={checkboxIconVariants({ color })}>

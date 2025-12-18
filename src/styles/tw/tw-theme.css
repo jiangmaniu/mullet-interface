@@ -21,3 +21,9 @@
 
   --spacing: 4px;
 }
+
+:root.dark,
+:root[class='dark'] {
+  --ant-color-bg-container: var(--color-zinc-500) !important;
+  --bg-primary: var(--color-zinc-500) !important;
+}

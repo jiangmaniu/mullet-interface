@@ -7,7 +7,93 @@ import { cn } from '@/libs/ui/lib/utils'
 import { COMMON_PERCENT_DISPLAY_DECIMALS } from '@/libs/utils/format'
 import { BNumber } from '@/libs/utils/number/b-number'
 import { observer } from 'mobx-react'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+
+// 常量定义
+const ZERO_PERCENT_PLACEHOLDER = `0.${'0'.repeat(COMMON_PERCENT_DISPLAY_DECIMALS)}`
+const MAX_PERCENT = BNumber.from(`99.${'9'.repeat(COMMON_PERCENT_DISPLAY_DECIMALS)}`).toString()
+
+/**
+ * 根据多空方向获取百分比输入框的最大值
+ * @param isBuy 是否做多
+ * @param isTakeProfit 是否为止盈（true: 止盈, false: 止损）
+ * @returns 最大值字符串，如果无限制则返回 undefined
+ */
+const getMaxPercent = (isBuy: boolean, isTakeProfit: boolean): string | undefined => {
+  if (isTakeProfit) {
+    // 止盈：开空时限制为 MAX_PERCENT，开多时无限制
+    return !isBuy ? MAX_PERCENT : undefined
+  } else {
+    // 止损：开多时限制为 MAX_PERCENT，开空时无限制
+    return isBuy ? MAX_PERCENT : undefined
+  }
+}
+
+/**
+ * 根据百分比计算止盈价格
+ * @param percent 百分比字符串
+ * @param isBuy 是否做多
+ * @param sp_scope 止盈范围
+ * @returns 止盈价格字符串，如果无效则返回空字符串
+ */
+const getTakeProfitPrice = (percent: string, isBuy: boolean, sp_scope: number, volScale: number): string => {
+  if (!percent || !sp_scope) return ''
+
+  const maxPercent = getMaxPercent(isBuy, true)
+  const percentValue = BNumber.from(percent)
+
+  // 如果超过最大值，返回空字符串
+  if (maxPercent && percentValue.gt(maxPercent)) {
+    return ''
+  }
+
+  const spRate = percentValue.div(100)
+  if (spRate?.lte(0)) {
+    return ''
+  }
+
+  const pricePercent = isBuy ? BNumber.from(1).plus(spRate) : BNumber.from(1).minus(spRate)
+
+  const profitPrice = pricePercent.multipliedBy(sp_scope).decimalPlaces(volScale)
+  if (profitPrice.lte(0)) {
+    return ''
+  }
+
+  return profitPrice.toString()
+}
+
+/**
+ * 根据百分比计算止损价格
+ * @param percent 百分比字符串
+ * @param isBuy 是否做多
+ * @param sl_scope 止损范围
+ * @returns 止损价格字符串，如果无效则返回空字符串
+ */
+const getStopLossPrice = (percent: string, isBuy: boolean, sl_scope: number, volScale: number): string => {
+  if (!percent || !sl_scope) return ''
+
+  const maxPercent = getMaxPercent(isBuy, false)
+  const percentValue = BNumber.from(percent)
+
+  // 如果超过最大值，返回空字符串
+  if (maxPercent && percentValue.gt(maxPercent)) {
+    return ''
+  }
+
+  const slRate = percentValue.div(100)
+  if (slRate?.lte(0)) {
+    return ''
+  }
+
+  // 止损逻辑与止盈相反：做多时价格下降，做空时价格上升
+  const pricePercent = isBuy ? BNumber.from(1).minus(slRate) : BNumber.from(1).plus(slRate)
+  const lossPrice = pricePercent.multipliedBy(sl_scope).decimalPlaces(volScale)
+  if (lossPrice.lte(0)) {
+    return ''
+  }
+
+  return lossPrice.toString()
+}
 
 export const TradeActionPanelTpAndSl = observer(() => {
   const { trade, ws } = useStores()
@@ -18,7 +104,7 @@ export const TradeActionPanelTpAndSl = observer(() => {
       <div className="">
         <Switch
           checked={orderSpslChecked}
-          onCheckedChange={(checked) => {
+          onCheckedChange={(checked: boolean) => {
             setOrderSpslChecked(checked)
             // 重置值
             trade.resetSpSl()
@@ -39,8 +125,33 @@ export const TradeActionPanelTpAndSl = observer(() => {
 })
 
 const SetTakeProfit = observer(() => {
-  let { disabledTrade, spValue, sp_scope, isBuy, slValue, onSpAdd, onSpMinus, onSlAdd, onSlMinus, setSl, setSp } = useTrade()
-  const [tpPercent, setTpPercent] = useState('')
+  let {
+    disabledTrade,
+    spValue,
+    sp_scope,
+    spPercent: tpPercent,
+    setSpPercent: setTpPercent,
+    isBuy,
+    slValue,
+    onSpAdd,
+    onSpMinus,
+    onSlAdd,
+    onSlMinus,
+    setSl,
+    setSp
+  } = useTrade()
+  const prevIsBuyRef = useRef(isBuy)
+
+  // 当多空方向变化时，如果已输入百分比，重新计算止盈价格
+  useEffect(() => {
+    // 只有当 isBuy 真正发生变化时才重新计算
+    if (prevIsBuyRef.current !== isBuy && tpPercent && sp_scope) {
+      const price = getTakeProfitPrice(tpPercent, isBuy, sp_scope, 2)
+      setSp(price)
+    }
+    // 更新 ref 为当前值
+    prevIsBuyRef.current = isBuy
+  }, [isBuy, tpPercent, sp_scope, setSp])
 
   return (
     <div className="flex flex-col gap-medium">
@@ -51,7 +162,6 @@ const SetTakeProfit = observer(() => {
           decimalScale={2}
           value={spValue}
           placeholder={({ isFocused }) => {
-            // return <>{isFocused || spValue ? '止盈价格' : '0 '}</>
             return <Trans>止盈价格</Trans>
           }}
           onValueChange={({ value }, { source }) => {
@@ -74,22 +184,17 @@ const SetTakeProfit = observer(() => {
           onValueChange={({ value, floatValue }, { source }) => {
             if (source === NumberInputSourceType.EVENT) {
               setTpPercent(value)
-
-              const spRate = BNumber.from(value).div(100)
-              if (spRate?.lte(0)) {
-                setSp('')
-              } else {
-                const pricePercent = isBuy ? BNumber.from(1).plus(spRate) : BNumber.from(1).minus(spRate)
-                setSp(pricePercent.multipliedBy(sp_scope).toString())
-              }
+              const price = getTakeProfitPrice(value, isBuy, sp_scope, 2)
+              setSp(price)
             }
           }}
           min={0}
-          max={100}
+          max={getMaxPercent(isBuy, true)}
           decimalScale={COMMON_PERCENT_DISPLAY_DECIMALS}
           size={'md'}
-          placeholder={({ isFocused }) => {
-            return <>{isFocused ? <Trans>百分比</Trans> : '0 '}</>
+          labelText={<Trans>百分比</Trans>}
+          placeholder={() => {
+            return <>{ZERO_PERCENT_PLACEHOLDER}</>
           }}
           RightContent={'%'}
         />
@@ -118,9 +223,9 @@ const SetTakeProfitLabel = observer(() => {
       </div>
 
       {!spFlag && spValueEstimate && (
-        <div className="text-paragraph-p3 flex items-start gap-1">
-          <Trans>预计盈亏</Trans>
-          <span className="text-content-1">
+        <div className="text-paragraph-p3 text-content-5 flex items-start gap-1">
+          <Trans>预计盈利</Trans>
+          <span className="text-market-rise">
             {BNumber.toFormatNumber(spValueEstimate, {
               volScale: 2,
               unit: 'USDC'
@@ -133,8 +238,21 @@ const SetTakeProfitLabel = observer(() => {
 })
 
 const SetStopLoss = observer(() => {
-  let { disabledTrade, spValue, isBuy, slValue, onSpAdd, onSpMinus, sl_scope, onSlAdd, onSlMinus, setSl, setSp } = useTrade()
-  const [slPercent, setSlPercent] = useState('')
+  let { disabledTrade, spValue, slPercent, setSlPercent, isBuy, slValue, onSpAdd, onSpMinus, sl_scope, onSlAdd, onSlMinus, setSl, setSp } =
+    useTrade()
+  const prevIsBuyRef = useRef(isBuy)
+
+  // 当多空方向变化时，如果已输入百分比，重新计算止损价格
+  useEffect(() => {
+    // 只有当 isBuy 真正发生变化时才重新计算
+    if (prevIsBuyRef.current !== isBuy && slPercent && sl_scope) {
+      const price = getStopLossPrice(slPercent, isBuy, sl_scope, 2)
+      setSl(price)
+    }
+    // 更新 ref 为当前值
+    prevIsBuyRef.current = isBuy
+  }, [isBuy, slPercent, sl_scope, setSl])
+
   return (
     <div className="flex flex-col gap-medium">
       <div className={'gap-xl flex-1 flex items-center'}>
@@ -143,10 +261,7 @@ const SetStopLoss = observer(() => {
           min={0}
           decimalScale={2}
           value={slValue}
-          placeholder={({ isFocused }) => {
-            // return <>{isFocused || spValue ? '止盈价格' : '0 '}</>
-            return <Trans>止损价格</Trans>
-          }}
+          labelText={<Trans>止损价格</Trans>}
           onValueChange={({ value }, { source }) => {
             if (source === NumberInputSourceType.EVENT) {
               setSl(value)
@@ -157,26 +272,22 @@ const SetStopLoss = observer(() => {
 
         <NumberInput
           min={0}
-          max={100}
+          max={getMaxPercent(isBuy, false)}
           decimalScale={COMMON_PERCENT_DISPLAY_DECIMALS}
           className={'w-[80px]'}
           value={slPercent}
           onValueChange={({ value, floatValue }, { source }) => {
             if (source === NumberInputSourceType.EVENT) {
               setSlPercent(value)
+              const price = getStopLossPrice(value, isBuy, sl_scope, 2)
 
-              const slRate = BNumber.from(value).div(100)
-              if (slRate?.lte(0)) {
-                setSl('')
-              } else {
-                const pricePercent = isBuy ? BNumber.from(1).plus(slRate) : BNumber.from(1).minus(slRate)
-                setSl(pricePercent.multipliedBy(sl_scope).toString())
-              }
+              setSl(price)
             }
           }}
           size={'md'}
-          placeholder={({ isFocused }) => {
-            return <>{isFocused ? <Trans>百分比</Trans> : '0 '}</>
+          labelText={<Trans>百分比</Trans>}
+          placeholder={() => {
+            return <>{ZERO_PERCENT_PLACEHOLDER}</>
           }}
           RightContent={'%'}
         />
@@ -205,9 +316,9 @@ const SetStopLossLabel = observer(() => {
       </div>
 
       {!slFlag && slValueEstimate && (
-        <div className="text-paragraph-p3 flex items-start gap-1">
-          <Trans>预计盈亏</Trans>
-          <span className="text-content-1">
+        <div className="text-paragraph-p3 text-content-5 flex items-start gap-1">
+          <Trans>预计亏损</Trans>
+          <span className="text-market-fall">
             {BNumber.toFormatNumber(slValueEstimate, {
               volScale: 2,
               unit: 'USDC'

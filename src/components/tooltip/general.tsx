@@ -34,12 +34,14 @@ export const GeneralTooltip = ({
   return (
     <TooltipProvider>
       <Tooltip {...{ open, defaultOpen, onOpenChange }}>
-        <TooltipTrigger
-          className={cn('block', {
-            'cursor-help': !isDisabledCursorHelp
-          })}
-        >
-          {children}
+        <TooltipTrigger asChild>
+          <div
+            className={cn('block', {
+              'cursor-help': !isDisabledCursorHelp
+            })}
+          >
+            {children}
+          </div>
         </TooltipTrigger>
         <TooltipContent
           className={cn('max-w-[220px]', className)}

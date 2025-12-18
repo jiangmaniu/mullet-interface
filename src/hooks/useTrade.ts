@@ -39,6 +39,8 @@ export default function useTrade(props?: IProps) {
     setSl: _setSl,
     setSpAmount: _setSpAmount,
     setSlAmount: _setSlAmount,
+    setSpPercent: _setSpPercent,
+    setSlPercent: _setSlPercent,
     spValue, // 止盈价格, 只参与计算，不提交到后端，也不直接展示在 UI 层
     slValue, // 止损价格, 只参与计算，不提交到后端，也不直接展示在 UI 层
     spAmount, // 止盈金额, 只参与计算，不提交到后端，也不直接展示在 UI 层
@@ -324,7 +326,7 @@ export default function useTrade(props?: IProps) {
     if (!recordModalItem.id) {
       resetSpSl()
     }
-  }, [buySell, orderType, symbol, recordModalItem])
+  }, [orderType, symbol, recordModalItem])
 
   useEffect(() => {
     // 初始化下单交易价格
@@ -539,7 +541,7 @@ export default function useTrade(props?: IProps) {
   const spValueEstimate = useMemo(
     throttle(
       () => {
-        return spValueEstimateRaw ? formatNum(spValueEstimateRaw, { precision: accountGroupPrecision }) : ''
+        return spValueEstimateRaw ? String(spValueEstimateRaw) : ''
       },
       100,
       {
@@ -560,11 +562,9 @@ export default function useTrade(props?: IProps) {
   const slValueEstimate = useMemo(
     throttle(
       () => {
-        let retValue = slValueEstimateRaw === 0 ? '' : toNegativeOrEmpty(slValueEstimateRaw)
+        let retValue = slValueEstimateRaw === 0 ? '' : slValueEstimateRaw
         return retValue
-          ? formatNum(retValue, {
-              precision: accountGroupPrecision
-            })
+          ? retValue
           : retValue
       },
       100,
@@ -582,8 +582,8 @@ export default function useTrade(props?: IProps) {
       !spValuePrice || Number(spValuePrice) === 0 || Number.isNaN(spValuePrice)
         ? false
         : isBuy
-        ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
-        : Number(spValuePrice) > sp_scope,
+          ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
+          : Number(spValuePrice) > sp_scope,
     [isBuy, spValuePrice, sp_scope]
   )
   const slFlag = useMemo(
@@ -591,8 +591,8 @@ export default function useTrade(props?: IProps) {
       !slValuePrice || Number(slValuePrice) === 0 || Number.isNaN(slValuePrice)
         ? false
         : isBuy
-        ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
-        : Number(slValuePrice) < sl_scope,
+          ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
+          : Number(slValuePrice) < sl_scope,
     [isBuy, slValuePrice, sl_scope]
   )
 
@@ -830,6 +830,10 @@ export default function useTrade(props?: IProps) {
     isBuy,
     ask,
     bid,
+    spPercent: trade.spPercent,
+    slPercent: trade.slPercent,
+    setSpPercent: _setSpPercent,
+    setSlPercent: _setSlPercent,
     d,
     symbol,
     orderVolume,

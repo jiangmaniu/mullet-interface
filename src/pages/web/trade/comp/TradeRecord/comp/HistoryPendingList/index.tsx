@@ -52,6 +52,17 @@ function HistoryPendingList() {
         params={{ accountId: trade.currentAccountInfo?.id, symbol }}
         action={{
           query: (params: Order.OrderPageListParams) => onQuery(params)
+          // query: (params: Order.OrderPageListParams) => {
+          //   // onQuery(params)
+          //   return new Promise((resolve) => {
+          //     setTimeout(() => {
+          //       resolve({
+          //         data: [],
+          //         total: 0
+          //       })
+          //     }, 100000000000)
+          //   })
+          // }
         }}
       />
     </>

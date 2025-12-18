@@ -538,7 +538,7 @@ function Position({ style, parentPopup }: IProps) {
           paddingTop: '0 !important'
         },
         '.ant-table-thead > tr > th': {
-          background: `var(--bg-base-gray) !important`,
+          background: `var(--bg-primary) !important`,
           color: `var(--color-text-secondary) !important`
         }
       },
@@ -562,13 +562,18 @@ function Position({ style, parentPopup }: IProps) {
         },
         '&::-webkit-scrollbar-thumb': {
           borderRadius: 5,
-          background: `${isDark ? '#161A1E' : '#fff'} !important`,
+          background: `${isDark ? 'transparent' : '#fff'} !important`,
           boxShadow: 'none'
         },
         '&::-webkit-scrollbar-track': {
           boxShadow: 'none',
           borderRadius: 0,
-          background: `${isDark ? '#161A1E' : '#fff'}  !important`
+          background: `${isDark ? 'transparent' : '#fff'}  !important`
+        },
+        '&::-webkit-scrollbar-corner': {
+          boxShadow: 'none',
+          borderRadius: 0,
+          background: `${isDark ? 'transparent' : '#fff'}  !important`
         }
       },
       '.ant-table:hover .ant-table-container .ant-table-body': {
@@ -609,7 +614,7 @@ function Position({ style, parentPopup }: IProps) {
   return (
     <>
       {/* 加上loading避免右侧闪动问题 */}
-      <Spin spinning={loading} style={{ background: 'var(--bg-primary)' }}>
+      <Spin spinning={loading}>
         <div onScrollCapture={handleScrollTable} key={forceUpdateKey}>
           <StandardTable
             columns={getColumns('oneLevel')}

@@ -109,7 +109,7 @@ export const NewThemeFontSize = {
   ],
 
   'important-1': [
-    '14px',
+    'var(--font-size-medium)',
     {
       lineHeight: 'var(--leading-xs)',
       fontWeight: 'var(--font-weight-semibold)',

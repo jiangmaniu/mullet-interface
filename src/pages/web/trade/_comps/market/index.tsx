@@ -17,7 +17,7 @@ export const TradeMarket = () => {
     charts,
     depth,
     detail,
-    new
+    old
   }
   const [activeTab, setActiveTab] = useState(TabEnum.charts)
 
@@ -35,14 +35,14 @@ export const TradeMarket = () => {
               <Trans>深度</Trans>
             </span>
           </TabsTrigger> */}
+          {/* <TabsTrigger value={TabEnum.old}>
+            <span>
+              <Trans>老详情</Trans>
+            </span>
+          </TabsTrigger> */}
           <TabsTrigger value={TabEnum.detail}>
             <span>
               <Trans>详情</Trans>
-            </span>
-          </TabsTrigger>
-          <TabsTrigger value={TabEnum.new}>
-            <span>
-              <Trans>新</Trans>
             </span>
           </TabsTrigger>
         </TabsList>
@@ -53,10 +53,10 @@ export const TradeMarket = () => {
         {/* <TabsContent value={TabEnum.depth} forceMount>
           <MarketDepth />
         </TabsContent> */}
-        <TabsContent value={TabEnum.detail}>
+        <TabsContent value={TabEnum.old}>
           <Futures />
         </TabsContent>
-        <TabsContent value={TabEnum.new}>
+        <TabsContent value={TabEnum.detail}>
           <MarketDetails />
         </TabsContent>
       </Tabs>

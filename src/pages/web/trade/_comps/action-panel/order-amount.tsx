@@ -6,8 +6,6 @@ import { observer } from 'mobx-react'
 import { useState } from 'react'
 
 export const TradeActionPanelOrderAmount = observer(() => {
-  const [orderAmount, setOrderAmount] = useState('')
-
   const { trade } = useStores()
   const { disabledTrade, isBuy, orderVolume, vmax, vmaxShow, vmin, countPrecision, setOrderVolume, onAdd, onMinus } = useTrade()
 
@@ -33,6 +31,7 @@ export const TradeActionPanelOrderAmount = observer(() => {
           max={vmax}
           value={orderVolume}
           placeholder="0.00"
+          RightContent={<Trans>手</Trans>}
           labelText={<Trans>数量</Trans>}
           onValueChange={({ value }, { source }) => {
             if (source === NumberInputSourceType.EVENT) {

@@ -440,13 +440,17 @@ export default function OptimizedTable<T extends Record<string, any>, U extends 
         },
         '&::-webkit-scrollbar-thumb': {
           borderRadius: 5,
-          backgroundColor: `${isDark ? '#17171c' : '#f7f7f7'} !important`,
+          backgroundColor: `${isDark ? 'transparent' : 'var(--bg-primary)'} !important`,
+          background: 'none !important'
+        },
+        '&::-webkit-scrollbar-corner': {
+          backgroundColor: `${isDark ? 'transparent' : 'var(--bg-primary)'} !important`,
           background: 'none !important'
         },
         '&::-webkit-scrollbar-track': {
           boxShadow: 'none',
           borderRadius: 0,
-          background: `${isDark ? '#17171c' : '#fff'} !important`
+          background: `${isDark ? 'transparent' : 'var(--bg-primary)'} !important`
         },
         '&::-webkit-scrollbar-thumb:hover': {
           background: 'rgba(0, 0, 0, 0.4) !important',

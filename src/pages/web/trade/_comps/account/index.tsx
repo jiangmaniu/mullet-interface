@@ -17,7 +17,6 @@ export const AccountDetails = observer(() => {
   const totalProfit = trade.accountBalanceInfo.totalProfit
   const currentAccountInfo = trade.currentAccountInfo
   const currencyDecimal = currentAccountInfo.currencyDecimal || 2 // 账户组小数位
-
   const { occupyMargin } = trade.getAccountBalance()
   const { hasQuote } = getCurrentQuote()
   // 没有行情取当前账号余额展示
@@ -25,7 +24,7 @@ export const AccountDetails = observer(() => {
 
   const { availableMargin } = trade.getAccountBalance()
   const [count, setCount] = useState(0)
-  
+
   // 提现 Modal ref
   const withdrawModalRef = useRef<any>(null)
 
@@ -43,9 +42,9 @@ export const AccountDetails = observer(() => {
   const options = [
     {
       label: (
-        <GeneralTooltip content={<Trans>未计入当前未结算头寸的金额</Trans>}>
+        <GeneralTooltip content={<Trans>账户的总资产</Trans>}>
           <TooltipTriggerDottedText>
-            <Trans>账户余额</Trans>
+            <Trans>资产净值</Trans>
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
@@ -56,14 +55,13 @@ export const AccountDetails = observer(() => {
     },
     {
       label: (
-        <GeneralTooltip content={<Trans>我们为维持您当前持仓持有的资金</Trans>}>
+        <GeneralTooltip content={<Trans>未计入当前未结算头寸的金额</Trans>}>
           <TooltipTriggerDottedText>
-            <Trans>占用保证金</Trans>
+            <Trans>账户余额</Trans>
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
-
-      value: BNumber.toFormatNumber(occupyMargin, {
+      value: BNumber.toFormatNumber(currentAccountInfo?.money, {
         unit: 'USDC',
         volScale: currencyDecimal
       })
@@ -76,16 +74,16 @@ export const AccountDetails = observer(() => {
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
-      value: BNumber.toFormatNumber(totalProfit, {
+      value: BNumber.toFormatNumber(occupyMargin, {
         unit: 'USDC',
         volScale: currencyDecimal
       })
     },
     {
       label: (
-        <GeneralTooltip content={<Trans>可用于开创建仓位的资金</Trans>}>
+        <GeneralTooltip content={<Trans>维持当前仓位需要的保证金</Trans>}>
           <TooltipTriggerDottedText>
-            <Trans>可用保证金</Trans>
+            <Trans>占用</Trans>
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
@@ -109,9 +107,9 @@ export const AccountDetails = observer(() => {
 
         <div className="flex gap-3">
           <div>
-            <Button 
-              variant="primary" 
-              size="sm" 
+            <Button
+              variant="primary"
+              size="sm"
               className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold"
               onClick={() => withdrawModalRef.current?.show(currentAccountInfo)}
             >

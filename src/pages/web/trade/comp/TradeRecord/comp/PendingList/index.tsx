@@ -251,7 +251,7 @@ function PendingList({ style, parentPopup }: IProps) {
         showOptionColumn={false}
         dataSource={dataSource}
         stripe={false}
-        hasTableBordered
+        hasTableBordered={false}
         hideSearch
         cardBordered={false}
         bordered={false}

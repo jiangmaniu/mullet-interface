@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import { cn } from "import { cn } from '@/libs/ui/lib/utils'"
+import { cn } from '@/libs/ui/lib/utils'
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
@@ -61,4 +61,4 @@ function TableCaption({ className, ...props }: React.ComponentProps<'caption'>) 
   return <caption data-slot="table-caption" className={cn('text-muted-foreground mt-4 text-sm', className)} {...props} />
 }
 
-export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption }
+export { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow }

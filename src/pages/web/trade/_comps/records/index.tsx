@@ -82,9 +82,14 @@ export const NewTradeRecords = observer(() => {
     },
     {
       key: TabType.FUNDING_FLOW,
-      label: <Trans>资金清流</Trans>,
-      content: <FundRecordList />,
-      // <FundingFlow />
+      label: <Trans>资金流水</Trans>,
+      content: (
+        <>
+          {/* <FundingFlow /> */}
+          <FundRecordList />
+        </>
+      ),
+
       count: null
     }
   ]
@@ -103,8 +108,8 @@ export const NewTradeRecords = observer(() => {
   }, [trade.currentAccountInfo?.id])
 
   return (
-    <>
-      <Tabs className="bg-primary rounded-4 h-full" value={activeTab} onValueChange={setActiveTab}>
+    <div>
+      <Tabs className="bg-primary rounded-4" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="pr-3 flex justify-between gap-3">
           <div className="flex gap-2">
             {TABS_OPTIONS.map((tab) => {
@@ -134,7 +139,7 @@ export const NewTradeRecords = observer(() => {
           </div>
         </TabsList>
 
-        <div className="min-h-[300px] max-w-[calc(100vw-303px)]">
+        <div className="min-h-[250px] max-w-[calc(100vw-303px)]">
           {TABS_OPTIONS.map((tab) => (
             <TabsContent key={tab.key} value={tab.key}>
               {tab.content}
@@ -142,6 +147,6 @@ export const NewTradeRecords = observer(() => {
           ))}
         </div>
       </Tabs>
-    </>
+    </div>
   )
 })

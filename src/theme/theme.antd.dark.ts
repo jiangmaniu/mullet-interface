@@ -1,4 +1,4 @@
-import { blue, colorWhite, darkTheme, gray } from './theme.config'
+import { blue, colorWhite, darkTheme, gray, zinc } from './theme.config'
 
 const gray500 = gray['500']
 const gray600 = gray['600']
@@ -23,9 +23,10 @@ export default {
   colorText: gray['95'], // 文字主色
   colorBorder: gray['650'], // 默认使用的边框颜色, 用于分割不同的元素，例如：表单的分割线、卡片的分割线等。
   colorTextDisabled: gray['95'], // 控制禁用状态下的字体颜色。
-  colorBgContainer: gray['675'], // gray['750'] 组件的容器背景色，例如：默认按钮、输入框等。务必不要将其与 `colorBgElevated` 混淆。
+  colorBgContainer: zinc['500'], // gray['750'] 组件的容器背景色，例如：默认按钮、输入框等。务必不要将其与 `colorBgElevated` 混淆。
   colorBgElevated: gray[680],
   motion: false, // 动画关闭，否则切换主题样式会闪烁
+  splitColor: zinc['500'],
   colorLinkActive: colorWhite, // 控制超链接被点击时的颜色
   colorLinkHover: colorWhite, // 控制超链接悬浮时的颜色
 
@@ -36,7 +37,8 @@ export default {
     itemSelectedColor: gray['95'],
     itemColor: gray['570'],
     inkBarColor: gray['95'], // 指示条颜色
-    titleFontSize: 16
+    titleFontSize: 16,
+
   },
   Modal: {
     colorBgMask: 'rgba(0, 0, 0, 0.7)',
@@ -74,7 +76,12 @@ export default {
   },
   Table: {
     rowHoverBg: gray[590],
-    colorBgContainer: gray[675]
+    colorBgContainer: zinc['500'],
+    borderColor: 'transparent',
+    headerSplitColor: 'transparent',
+    splitColor: zinc['500'],
+    headerBg: zinc['500'],
+    stickyScrollBarBg: zinc['500'],
   },
   Message: {
     contentBg: 'rgba(1,1,1,0.6)'

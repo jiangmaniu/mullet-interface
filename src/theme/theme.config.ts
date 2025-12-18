@@ -266,7 +266,7 @@ export const lightTheme = {
   '--modal-mask-bg': 'rgba(0,0,0,0.5)',
 
   // divider
-  '--divider-line-color': gray['190'], // 分割线条颜色
+  '--divider-line-color': zinc['500'], // 分割线条颜色
 
   // dropdown
   '--dropdown-bg': colorWhite, // 背景颜色
@@ -278,8 +278,9 @@ export const lightTheme = {
   // '--border-weak-color': gray['80'], // 通用边框颜色
   // '--border-light-color': gray['80'], // 通用边框颜色
 
+  '--ant-color-bg-container': zinc['500'],
   // 页面颜色
-  '--bg-primary': colorWhite, // 页面背景
+  '--bg-primary': zinc['500'], // 页面背景
   '--bg-base-gray': bgColorBase, // 页面背景-灰色
 
   // 头部渐变颜色
@@ -388,7 +389,7 @@ export const darkTheme = {
   '--modal-mask-bg': 'rgba(7,7,7,0.7)',
 
   // divider
-  '--divider-line-color': '#282b2e', // 边框分割线条颜色
+  '--divider-line-color': zinc['500'], // 边框分割线条颜色
 
   // dropdown
   '--dropdown-bg': gray['680'], // 背景颜色
@@ -402,8 +403,10 @@ export const darkTheme = {
   '--hover-primary-bg': 'rgba(225, 225, 225, .2)', // hover颜色
 
   // 页面背景
-  '--bg-primary': gray['675'],
-  '--bg-base-gray': gray['675'], // 页面背景-灰色
+  '--ant-color-bg-container': zinc['500'],
+  // 页面颜色
+  '--bg-primary': zinc['500'], // 页
+  '--bg-base-gray': zinc['500'], // 页面背景-灰色
 
   // list
   '--list-item-disabled': gray['651'], // 列表项目禁用颜色

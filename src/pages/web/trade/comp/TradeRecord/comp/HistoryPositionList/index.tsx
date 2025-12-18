@@ -30,7 +30,7 @@ function HistoryPositionList() {
           marginTop: `-16px !important`
         },
         '.ant-table-thead > tr > th': {
-          background: `var(--bg-base-gray) !important`,
+          background: `var(--bg-primary) !important`,
           color: `var(--color-text-secondary) !important`
         }
       }
