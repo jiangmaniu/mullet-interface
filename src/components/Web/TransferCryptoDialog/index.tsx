@@ -821,6 +821,16 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                   </Text>
                 </div>
               )}
+              
+              {/* 完成按钮 */}
+              <Button 
+                type="primary" 
+                block 
+                onClick={onClose}
+                style={{ marginTop: 12 }}
+              >
+                完成
+              </Button>
             </Space>
           </div>
         )}

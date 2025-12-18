@@ -26,6 +26,8 @@ import { formatNum } from '@/utils'
 import { EmptyNoData } from '@/components/empty/no-data'
 import { observer } from 'mobx-react'
 import { usePrivy } from '@privy-io/react-auth'
+import { useCoboWallet } from '@/hooks/useCoboWallet'
+import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
 
 export const TradeAccountInfo = observer(() => {
   // const { isAuthenticated } = useWalletAuthState()
@@ -37,7 +39,26 @@ export const TradeAccountInfo = observer(() => {
   const { trade, ws } = useStores()
   const { currentAccountInfo } = trade
 
-  const { address } = usePrivyInfo()
+  const { address: privyAddress } = usePrivyInfo()
+  const { user } = usePrivy()
+
+  // 获取 Cobo 钱包
+  const { walletId: coboWalletId } = useCoboWallet({
+    userId: user?.id || '',
+    enabled: !!user?.id
+  })
+
+  // 获取 Cobo Solana 充值地址
+  const { address: coboSolanaAddress } = useCoboDepositAddress({
+    userId: user?.id || '',
+    chainId: 'SOL',
+    walletId: coboWalletId || '',
+    enabled: !!user?.id && !!coboWalletId
+  })
+
+  // 优先使用 Cobo Solana 地址，否则 fallback 到 Privy 地址
+  const displayAddress = coboSolanaAddress || privyAddress
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -45,7 +66,7 @@ export const TradeAccountInfo = observer(() => {
           <div className="flex text-paragraph-p3 flex-col gap-1">
             <div className="flex items-center gap-1">
               <IconWallet className="size-4" />
-              <span>{formatAddress(address)}</span>
+              <span>{formatAddress(displayAddress)}</span>
             </div>
             {/* <div className="flex items-center justify-center gap-1">
               <div>{currentAccountInfo?.isSimulate ? <Trans>模拟</Trans> : <Trans>真实</Trans>}</div>

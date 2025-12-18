@@ -1135,9 +1135,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
           <>
             <Space direction="vertical" size={12} style={{ width: '100%', marginTop: 8 }}>
               {assets.map((asset) => {
-                // Solana USDC 是充值目标，不能作为源资产
-                const isTargetAsset = asset.symbol === 'USDC' && asset.network === 'Solana'
-                const isDisabled = isTargetAsset
+                // 所有资产都可选择
+                const isDisabled = false
                 
                 return (
                   <div
@@ -1220,18 +1219,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                     </div>
                     
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      {/* Solana USDC 是充值目标，不显示 Low Balance */}
-                      {asset.symbol === 'USDC' && asset.network === 'Solana' ? (
-                        <div style={{
-                          padding: '4px 8px',
-                          borderRadius: 16,
-                          background: getColor.cardBg,
-                        }}>
-                          <Text style={{ fontSize: '0.75rem', color: getColor.textSecondary }}>
-                            N/A
-                          </Text>
-                        </div>
-                      ) : asset.usdValue < 10 && (
+                      {asset.usdValue < 10 && (
                         <div style={{
                           padding: '4px 8px',
                           borderRadius: 16,
