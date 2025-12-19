@@ -5,26 +5,24 @@ import './AddFundsMenu.less'
 
 const { Title, Text } = Typography
 
-// 钱包 Logo CDN 映射 - 使用 CoinMarketCap / CoinGecko / Wikipedia 稳定 CDN
+// 钱包 Logo - 使用本地图片
 const WALLET_LOGOS: Record<string, string> = {
   // 主流钱包
-  okx: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/294.png',
-  phantom: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Phantom-Icon_App.svg/120px-Phantom-Icon_App.svg.png',
-  metamask: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/MetaMask_Fox.svg/120px-MetaMask_Fox.svg.png',
-  solflare: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5426.png',
-  coinbase: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/89.png',
-  trust: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8526.png',
-  binance: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/270.png',
+  okx: '/img/wallets/okx.png',
+  phantom: '/img/wallets/phantom.png',
+  metamask: '/img/wallets/metamask.png',
+  solflare: '/img/wallets/solflare.png',
+  coinbase: '/img/wallets/coinbase.png',
+  trust: '/img/wallets/trust.png',
+  binance: '/img/wallets/binance.png',
   // 大陆用户常用
-  imtoken: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5765.png',
-  math: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5765.png',
-  bitget: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/513.png',
-  coin98: 'https://s2.coinmarketcap.com/static/img/coins/64x64/10903.png',
-  tokenpocket: 'https://s2.coinmarketcap.com/static/img/coins/64x64/5947.png',
-  bybit: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/521.png',
-  gate: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/302.png',
-  safepal: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8119.png',
-  backpack: 'https://s2.coinmarketcap.com/static/img/exchanges/64x64/1414.png',
+  bitget: '/img/wallets/bitget.png',
+  coin98: '/img/wallets/coin98.png',
+  tokenpocket: '/img/wallets/tokenpocket.png',
+  bybit: '/img/wallets/bybit.png',
+  gate: '/img/wallets/gate.png',
+  safepal: '/img/wallets/safepal.png',
+  backpack: '/img/wallets/backpack.png',
 }
 
 // 钱包显示名称映射
@@ -36,8 +34,6 @@ const WALLET_NAMES: Record<string, string> = {
   coinbase: 'Coinbase Wallet',
   trust: 'Trust Wallet',
   binance: 'Binance Wallet',
-  imtoken: 'imToken',
-  math: 'Math Wallet',
   bitget: 'Bitget Wallet',
   coin98: 'Coin98 Wallet',
   tokenpocket: 'TokenPocket',

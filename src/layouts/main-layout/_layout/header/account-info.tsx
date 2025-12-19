@@ -15,6 +15,7 @@ import { IconChevronDown, IconDisconnect, IconWallet } from '@/libs/ui/component
 import { cn } from '@/libs/ui/lib/utils'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { formatAddress } from '@/libs/utils/web3'
+import { copyContent } from '@/utils'
 import { Trans } from '@/libs/lingui/react/macro'
 import { useStores } from '@/context/mobxProvider'
 import { Dropdown, Segmented, Tooltip } from 'antd'
@@ -96,6 +97,21 @@ const AccountSelector = observer(() => {
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
+  const { user } = usePrivy()
+
+  // 获取 Cobo 钱包
+  const { walletId: coboWalletId } = useCoboWallet({
+    userId: user?.id || '',
+    enabled: !!user?.id
+  })
+
+  // 获取 Cobo Solana 充值地址
+  const { address: coboSolanaAddress } = useCoboDepositAddress({
+    userId: user?.id || '',
+    chainId: 'SOL',
+    walletId: coboWalletId || '',
+    enabled: !!user?.id && !!coboWalletId
+  })
 
   useEffect(() => {
     const accountList = currentUser?.accountList || []
@@ -147,8 +163,30 @@ const AccountSelector = observer(() => {
                 </span>{' '}
                 <span className="ml-1 text-sm font-normal text-secondary">USD</span>
               </div>
-              {/* <span>{formatAddress(item.pdaTokenAddress)}</span> */}
             </div>
+            {/* 显示 Cobo Solana 充值地址和复制按钮 */}
+            {coboSolanaAddress && (
+              <div className="mt-2 flex items-center gap-2 text-xs">
+                <a
+                  href={`https://explorer.solana.com/address/${coboSolanaAddress}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand hover:underline"
+                >
+                  {formatAddress(coboSolanaAddress)}
+                </a>
+                <button
+                  onClick={() => copyContent(coboSolanaAddress)}
+                  className="text-secondary hover:text-primary cursor-pointer p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
+                  title="Copy address"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
