@@ -31,9 +31,10 @@ type TransferProps = {
 export default function useSPLTransfer() {
   const intl = useIntl()
   const { connection, connected } = useConnection()
-  const { wallet } = usePrivyInfo()
+  const { wallet, activeSolanaWallet, solWallets } = usePrivyInfo()
   const { wallets } = useWallets()
-  const fromAddress = wallet?.address as string
+  // 🔥 优先使用 activeSolanaWallet（支持外部 Solana 钱包如 Phantom）
+  const fromAddress = activeSolanaWallet?.address || wallet?.address as string
   const { signAndSendTransaction } = useSignAndSendTransaction()
   const [transferLoading, setTransferLoading] = useState(false)
   const [transferSuccess, setTransferSuccess] = useState(false)
@@ -159,18 +160,33 @@ export default function useSPLTransfer() {
       transaction.recentBlockhash = blockhash
       transaction.feePayer = new PublicKey(fromAddress)
 
-      // 获取钱包的实例
-      const foundWallet = wallets.find((v) => v.address === fromAddress)
+      // 🔥 判断是否是外部 Solana 钱包（如 Phantom, OKX）
+      // 有 standardWallet 属性表示是外部钱包
+      const hasExternalSolanaWallet = !!activeSolanaWallet && !!(activeSolanaWallet as any).standardWallet
+      
+      // 获取 EVM 钱包的实例（用于 EVM 地址）
+      const foundEvmWallet = wallets.find((v) => v.address === fromAddress)
+      // 获取 Solana 钱包的实例（用于 Solana 地址）
+      const foundSolanaWallet = solWallets.find((v) => v.address === fromAddress)
 
-      console.log('foundWallet', foundWallet)
+      console.log('foundEvmWallet', foundEvmWallet)
+      console.log('foundSolanaWallet', foundSolanaWallet)
+      console.log('hasExternalSolanaWallet', hasExternalSolanaWallet)
 
       let signature = ''
 
-      // 如果钱包是外部钱包，则使用内置的签名方法
-      if (foundWallet && foundWallet.connectorType !== 'embedded') {
-        signature = await foundWallet.sendTransaction(transaction, connection)
+      // 🔥 优先检查是否是外部 Solana 钱包
+      if (hasExternalSolanaWallet && foundSolanaWallet) {
+        // 外部 Solana 钱包（Phantom, OKX 等）：使用 solWallets 中找到的钱包
+        console.log('使用外部 Solana 钱包 sendTransaction...')
+        signature = await foundSolanaWallet.sendTransaction(transaction, connection)
+      } else if (foundEvmWallet && foundEvmWallet.connectorType !== 'embedded') {
+        // 外部 EVM 钱包：使用 wallets 中找到的钱包
+        console.log('使用外部 EVM 钱包 sendTransaction...')
+        signature = await foundEvmWallet.sendTransaction(transaction, connection)
       } else {
-        // 如果钱包是内置钱包，则使用 Privy v3.8+ 的签名方法
+        // Privy 内置钱包：使用 signAndSendTransaction
+        console.log('使用 Privy signAndSendTransaction...')
         const result = await signAndSendTransaction({ transaction, connection, address: fromAddress })
         signature = result?.signature
       }

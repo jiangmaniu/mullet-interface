@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Modal, Button, Input, Progress, Alert, Collapse, Typography, Space, Spin, Divider } from 'antd'
 import { ArrowRightOutlined, SwapOutlined, ArrowLeftOutlined, CheckCircleOutlined, DownOutlined } from '@ant-design/icons'
-import { useWallets, useSendTransaction, usePrivy } from '@privy-io/react-auth'
+import { useWallets, usePrivy, useSendTransaction } from '@privy-io/react-auth'
+import { useSignAndSendTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { useTokenPrices } from '@/hooks/useTokenPrices'
 import { useSolanaBalance } from '@/hooks/useSolanaBalance'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
+import useConnection from '@/hooks/web3/useConnection'
 import { checkBalance } from '@/services/balanceService'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { useTheme } from '@/context/themeProvider'
@@ -40,7 +42,7 @@ interface SwapDialogProps {
   }
 }
 
-type BridgeStage = 'idle' | 'step1-executing' | 'step1-confirming' | 'step2-executing' | 'completed' | 'error'
+type BridgeStage = 'idle' | 'step1-executing' | 'step1-confirming' | 'step2-executing' | 'solana-transferring' | 'solana-confirming' | 'completed' | 'error'
 type ViewState = 'asset_select' | 'input' | 'quote' | 'executing'
 
 interface AssetBalance {
@@ -99,18 +101,23 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   const [bridgeStage, setBridgeStage] = useState<BridgeStage>('idle')
   const [bridgeError, setBridgeError] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
+  const [txSignature, setTxSignature] = useState<string | null>(null)
 
   const { wallets } = useWallets()
+  const { wallets: privySolanaWallets } = useSolanaWallets() // 🔥 Privy Solana wallets (用于 signAndSendTransaction)
   const { tronAddress, tronWalletId } = useTronWallet()
-  const { sendTransaction } = useSendTransaction()
+  const { sendTransaction } = useSendTransaction() // ETH transactions
+  const { signAndSendTransaction } = useSignAndSendTransaction() // Solana transactions
   const { getAccessToken, user } = usePrivy()
   const { prices } = useTokenPrices()
-  const { activeSolanaWallet } = usePrivyInfo()
+  const { activeSolanaWallet, activeEthereumWallet, solWallets } = usePrivyInfo() // 🔥 统一获取钱包，包含 solWallets
+  const { connection } = useConnection()
   const themeConfig = useTheme()
   const isDark = themeConfig.theme.isDark
 
-  // Get Solana wallet from usePrivyInfo (智能选择逻辑)
+  // 统一使用 usePrivyInfo 的智能选择逻辑
   const solanaWallet = activeSolanaWallet
+  const ethWallet = activeEthereumWallet
 
   // 🔥 获取 Cobo Solana 充值地址作为跨链兑换的目标地址
   const { walletId: coboWalletId } = useCoboWallet({
@@ -298,6 +305,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       setBridgeStage('idle')
       setBridgeError(null)
       setProgress(0)
+      setTxSignature(null)
     }
   }, [open, initialAsset, network])
 
@@ -348,6 +356,40 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       const amountInUsd = tokenAmount * tokenPrice
 
+      // 🔥 处理 Solana SPL Token (USDC/USDT) → Cobo Solana (直接转账，无需跨链)
+      if ((tokenSymbol === 'USDC' || tokenSymbol === 'USDT') && sourceNetwork === 'Solana') {
+        // Solana USDC/USDT → Solana: 直接转账，无需兑换
+        // 只需极少的 Solana 网络费用
+        setQuote({
+          youSend: {
+            token: tokenSymbol,
+            amount: tokenAmount.toFixed(2)
+          },
+          youReceive: {
+            token: tokenSymbol,
+            amount: tokenAmount.toFixed(2) // 1:1 转账，无损耗
+          },
+          source: {
+            token: tokenSymbol,
+            network: 'Solana',
+            account: 'Privy Wallet'
+          },
+          destination: {
+            token: tokenSymbol,
+            network: 'Solana',
+            account: 'Mullet Account (Cobo)'
+          },
+          networkCost: '~$0.00001', // Solana 转账费用极低
+          priceImpact: '0%', // 无价格影响
+          maxSlippage: 'N/A', // 直接转账无需滑点
+          estimatedTime: '~30 seconds' // Solana 确认速度快
+        })
+
+        setCountdown(30)
+        setIsLoadingQuote(false)
+        return
+      }
+
       // Validate minimum amount for DeBridge
       if (amountInUsd < 10) {
         throw new Error(
@@ -395,7 +437,6 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       }
 
       // Use DeBridge for cross-chain quotes
-      const ethWallet = wallets.find((w: any) => w.address.startsWith('0x'))
       if (!ethWallet) throw new Error('No Ethereum wallet found')
 
       // Determine source chain and token
@@ -531,27 +572,14 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     }
 
     try {
-      // Use consistent wallet selection logic (same as TransferCryptoDialog)
-      const ethWallets = wallets.filter((w) => w.address.startsWith('0x'))
-      if (ethWallets.length === 0) {
+      // 统一使用 usePrivyInfo 的 activeEthereumWallet
+      if (!ethWallet) {
         throw new Error('Ethereum wallet not found')
       }
 
-      // Three-tier selection: walletSource match → Privy embedded → first ETH wallet
-      let ethWallet = ethWallets.find((w) => w.walletClientType === walletSource)
-
-      if (!ethWallet && walletSource !== 'privy') {
-        ethWallet = ethWallets.find((w) => w.walletClientType === 'privy')
-      }
-
-      if (!ethWallet) {
-        ethWallet = ethWallets[0]
-      }
-
-      console.log('[SwapDialog] Selected ETH wallet:', {
+      console.log('[SwapDialog] Using ETH wallet from usePrivyInfo:', {
         address: ethWallet.address,
-        type: ethWallet.walletClientType,
-        walletSource
+        type: ethWallet.walletClientType
       })
 
       // Token addresses for DeBridge - use the actual selected token
@@ -897,7 +925,6 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     }
 
     const tronAddr = tronAddress
-    const ethWallet = wallets.find((w: any) => w.address.startsWith('0x'))
     if (!ethWallet) throw new Error('No Ethereum wallet found')
     const ethAddress = ethWallet.address
 
@@ -1009,6 +1036,208 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     await executeDirectBridge(ethAddress, parseFloat(ethereumAmount) / 1e6)
   }
 
+  // 🔥 新增：处理 Solana SPL Token 直接转账到 Cobo Solana 地址
+  const executeSolanaTokenTransfer = async (tokenAmount: number, tokenSymbol: string): Promise<void> => {
+    console.log('[SwapDialog] Starting Solana', tokenSymbol, 'direct transfer:', tokenAmount)
+    setProgress(10)
+    setBridgeStage('solana-transferring') // 使用 Solana 转账专用状态
+
+    // 🔥 确认 Cobo Solana 充值地址可用
+    if (!coboSolanaAddress) {
+      throw new Error('Cobo Solana deposit address not ready. Please wait and try again.')
+    }
+
+    // Solana SPL Token Mint 地址映射
+    const SOLANA_TOKEN_MINTS: Record<string, { mint: string; decimals: number }> = {
+      'USDC': { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', decimals: 6 },
+      'USDT': { mint: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', decimals: 6 },
+    }
+
+    const tokenConfig = SOLANA_TOKEN_MINTS[tokenSymbol]
+    if (!tokenConfig) {
+      throw new Error(`Unsupported Solana token: ${tokenSymbol}. Supported: ${Object.keys(SOLANA_TOKEN_MINTS).join(', ')}`)
+    }
+
+    try {
+      // 动态导入需要的依赖
+      const { PublicKey, Transaction, Connection } = await import('@solana/web3.js')
+      const {
+        TOKEN_PROGRAM_ID,
+        getAssociatedTokenAddressSync,
+        createAssociatedTokenAccountInstruction,
+        createTransferInstruction,
+      } = await import('@solana/spl-token')
+
+      // 🔥 使用主网 RPC，避免 useConnection 返回的可能是 devnet
+      const MAINNET_RPC = 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+      const mainnetConnection = new Connection(MAINNET_RPC, 'confirmed')
+
+      if (!solanaWallet?.address) {
+        throw new Error('Solana wallet not connected')
+      }
+
+      const fromAddress = solanaWallet.address
+      console.log('[SwapDialog] Transfer from:', fromAddress)
+      console.log('[SwapDialog] Transfer to (Cobo Solana):', coboSolanaAddress)
+      console.log('[SwapDialog] Token:', tokenSymbol, 'Mint:', tokenConfig.mint)
+
+      setProgress(30)
+
+      // 根据传入的 token 获取 mint 地址和 decimals
+      const mintPubkey = new PublicKey(tokenConfig.mint)
+      const senderPubkey = new PublicKey(fromAddress)
+      const recipientPubkey = new PublicKey(coboSolanaAddress)
+      const decimals = tokenConfig.decimals
+
+      const transferAmount = Math.floor(tokenAmount * Math.pow(10, decimals))
+      console.log('[SwapDialog] Transfer amount (raw):', transferAmount)
+
+      setProgress(50)
+
+      // 使用 getAssociatedTokenAddressSync (同步版本，参考 WithdrawDialog)
+      const senderAta = getAssociatedTokenAddressSync(
+        mintPubkey,
+        senderPubkey,
+        false,
+        TOKEN_PROGRAM_ID
+      )
+      
+      // 🔥 计算 Cobo 地址的 ATA
+      // 使用 allowOwnerOffCurve = true，因为 Cobo 地址可能是 PDA
+      const recipientAta = getAssociatedTokenAddressSync(
+        mintPubkey,
+        recipientPubkey,
+        true,  // allowOwnerOffCurve = true (支持 PDA 地址)
+        TOKEN_PROGRAM_ID
+      )
+      
+      console.log('[SwapDialog] Sender ATA:', senderAta.toString())
+      console.log('[SwapDialog] Recipient ATA:', recipientAta.toString())
+      
+      // 检查 Cobo 地址和其 ATA 的状态
+      const [coboAccountInfo, recipientAtaInfo] = await Promise.all([
+        mainnetConnection.getAccountInfo(recipientPubkey),
+        mainnetConnection.getAccountInfo(recipientAta)
+      ])
+      
+      console.log('[SwapDialog] Cobo wallet info:', {
+        exists: !!coboAccountInfo,
+        owner: coboAccountInfo?.owner?.toString(),
+        lamports: coboAccountInfo?.lamports
+      })
+      console.log('[SwapDialog] Recipient ATA info:', {
+        exists: !!recipientAtaInfo,
+        owner: recipientAtaInfo?.owner?.toString(),
+        lamports: recipientAtaInfo?.lamports
+      })
+
+      setProgress(60)
+
+      // 构建交易
+      const transaction = new Transaction()
+      
+      // 如果 Cobo 的 ATA 不存在，需要创建
+      if (!recipientAtaInfo) {
+        console.log('[SwapDialog] Creating recipient ATA...')
+        transaction.add(
+          createAssociatedTokenAccountInstruction(
+            senderPubkey,     // payer
+            recipientAta,     // ata to create
+            recipientPubkey,  // owner (Cobo wallet)
+            mintPubkey        // mint
+          )
+        )
+      }
+
+      // 添加转账指令 - 转到 ATA，不是钱包地址
+      transaction.add(
+        createTransferInstruction(
+          senderAta,       // source (用户的 ATA)
+          recipientAta,    // destination (Cobo 的 ATA)
+          senderPubkey,    // owner
+          transferAmount,  // amount
+          [],              // multiSigners
+          TOKEN_PROGRAM_ID // programId
+        )
+      )
+
+      // 获取最新区块哈希
+      const { blockhash, lastValidBlockHeight } = await mainnetConnection.getLatestBlockhash()
+      transaction.recentBlockhash = blockhash
+      transaction.lastValidBlockHeight = lastValidBlockHeight
+      transaction.feePayer = senderPubkey
+
+      setProgress(70)
+
+      console.log('[SwapDialog] Sending Solana transaction...')
+      console.log('[SwapDialog] fromAddress:', fromAddress)
+      
+      // 🔥 根据 Privy 文档：signAndSendTransaction 需要：
+      // 1. transaction: Uint8Array (序列化后的交易)
+      // 2. wallet: ConnectedStandardSolanaWallet (从 useSolanaWallets 获取)
+      
+      // 从 privySolanaWallets 中找到对应的钱包
+      const selectedWallet = privySolanaWallets.find((w) => w.address === fromAddress)
+      
+      console.log('[SwapDialog] Selected wallet:', {
+        address: selectedWallet?.address,
+        available: privySolanaWallets.map(w => w.address)
+      })
+      
+      if (!selectedWallet) {
+        throw new Error('Cannot find Solana wallet in Privy for address: ' + fromAddress)
+      }
+      
+      // 序列化交易为 Uint8Array
+      const serializedTransaction = transaction.serialize({
+        requireAllSignatures: false,
+        verifySignatures: false
+      })
+      
+      // 使用 Privy signAndSendTransaction
+      const result = await signAndSendTransaction({
+        transaction: serializedTransaction,
+        wallet: selectedWallet
+      })
+      
+      // 将签名转为 base58 字符串
+      const bs58 = await import('bs58')
+      const signature = bs58.default.encode(result.signature)
+
+      console.log('[SwapDialog] Transaction sent, signature:', signature)
+      console.log('[SwapDialog] 🔗 Solscan: https://solscan.io/tx/' + signature)
+      
+      // 保存 tx signature 用于页面显示
+      setTxSignature(signature)
+
+      // 等待交易确认
+      console.log('[SwapDialog] Waiting for confirmation...')
+      const confirmation = await mainnetConnection.confirmTransaction(
+        {
+          signature,
+          blockhash,
+          lastValidBlockHeight
+        },
+        'confirmed'
+      )
+
+      if (confirmation?.value?.err) {
+        console.error('[SwapDialog] Transaction failed:', confirmation.value.err)
+        throw new Error('Transaction failed on blockchain')
+      }
+
+      console.log('[SwapDialog] ✅', tokenSymbol, 'transfer confirmed!')
+      console.log('[SwapDialog] Transferred', tokenAmount.toFixed(2), tokenSymbol, 'to Cobo Solana address')
+
+      setProgress(100)
+      setBridgeStage('completed')
+    } catch (error: any) {
+      console.error('[SwapDialog] Solana', tokenSymbol, 'transfer error:', error)
+      setBridgeStage('error')
+      throw error
+    }
+  }
+
   const handleContinue = async () => {
     // If in input view, get quote first
     if (view === 'input') {
@@ -1026,22 +1255,27 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       const tokenAmount = parseFloat(amount) // User input token amount (e.g., 0.01 ETH or 50 USDT)
       const sourceNetwork = (selectedAsset || initialAsset)?.network || network
+      const tokenSymbol = (selectedAsset || initialAsset)?.symbol
 
       console.log('[SwapDialog] Starting swap:', {
         tokenAmount,
-        from: (selectedAsset || initialAsset)?.symbol,
+        tokenSymbol,
         network: sourceNetwork
       })
 
+      // 🔥 检查是否是 Solana SPL Token (USDC/USDT) - 直接转账到 Cobo
+      if (sourceNetwork === 'Solana' && (tokenSymbol === 'USDC' || tokenSymbol === 'USDT')) {
+        console.log('[SwapDialog] Using direct Solana', tokenSymbol, 'transfer to Cobo')
+        await executeSolanaTokenTransfer(tokenAmount, tokenSymbol!)
+      }
       // Check if source is TRON - use two-step bridge
-      if (sourceNetwork === 'Tron') {
+      else if (sourceNetwork === 'Tron') {
         console.log('[SwapDialog] Using two-step bridge: TRON → ETH → Solana')
         await executeTronBridge(amount) // For TRON, keep as string
       } else {
         // ETH or other EVM chains - direct bridge to Solana
         console.log('[SwapDialog] Using direct bridge: ETH → Solana')
         setBridgeStage('step2-executing')
-        const ethWallet = wallets.find((w: any) => w.address.startsWith('0x'))
         if (!ethWallet) throw new Error('No Ethereum wallet found')
 
         // Direct DeBridge to Solana (one step)
@@ -1711,10 +1945,38 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                   {bridgeStage === 'step1-executing' && 'Step 1/2: Bridging via DeBridge...'}
                   {bridgeStage === 'step1-confirming' && 'Step 1/2: Confirming transaction...'}
                   {bridgeStage === 'step2-executing' && 'Step 2/2: Bridging via LiFi...'}
+                  {bridgeStage === 'solana-transferring' && 'Transferring USDC...'}
+                  {bridgeStage === 'solana-confirming' && (
+                    <div>
+                      Confirming on Solana...
+                      {txSignature && (
+                        <a
+                          href={`https://solscan.io/tx/${txSignature}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#FF6B35', display: 'block', marginTop: '8px', fontSize: '12px' }}
+                        >
+                          View on Solscan →
+                        </a>
+                      )}
+                    </div>
+                  )}
                   {bridgeStage === 'completed' && (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-                      <CheckCircleOutlined style={{ color: '#4caf50', fontSize: 20 }} />
-                      Swap completed successfully!
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <CheckCircleOutlined style={{ color: '#4caf50', fontSize: 20 }} />
+                        Swap completed successfully!
+                      </div>
+                      {txSignature && (
+                        <a
+                          href={`https://solscan.io/tx/${txSignature}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#FF6B35', fontSize: '12px' }}
+                        >
+                          View on Solscan →
+                        </a>
+                      )}
                     </div>
                   )}
                   {bridgeStage === 'error' && `Error: ${bridgeError}`}
