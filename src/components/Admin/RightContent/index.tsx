@@ -105,13 +105,11 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
   const { activeSolanaWallet, wallets } = usePrivyInfo()
   const { user } = usePrivy()
   const hasWallet = !!activeSolanaWallet
-  
+
   // 判断是否是外部钱包：用 activeSolanaWallet.address 在 linkedAccounts 中查找
-  const currentWalletAccount = user?.linkedAccounts?.find(
-    (account: any) => account.address === activeSolanaWallet?.address
-  )
+  const currentWalletAccount = user?.linkedAccounts?.find((account: any) => account.address === activeSolanaWallet?.address)
   const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
-  
+
   const realAccountList = accountList.filter((item) => !item.isSimulate)
   const { fundWallet: fundEvmWallet } = useEvmFundWallet()
   const { fundWallet: fundSolanaWallet } = useSolanaFundWallet()

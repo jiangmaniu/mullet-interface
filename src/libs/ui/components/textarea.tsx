@@ -13,7 +13,7 @@ function Textarea({ className, ...props }: React.ComponentProps<'textarea'>) {
         'min-h-20',
         'px-3.5 py-3',
         'rounded-[8px]',
-        className,
+        className
       )}
       {...props}
     />

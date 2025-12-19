@@ -9,13 +9,15 @@ import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { checkBalance } from '@/services/balanceService'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { useTheme } from '@/context/themeProvider'
-import { 
-  getDeBridgeQuote, 
+import { useCoboWallet } from '@/hooks/useCoboWallet'
+import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
+import {
+  getDeBridgeQuote,
   createDeBridgeOrderTron,
-  getDeBridgeOrderStatus, 
+  getDeBridgeOrderStatus,
   DEBRIDGE_CHAIN_IDS,
   DEBRIDGE_TOKENS,
-  type DeBridgeParams 
+  type DeBridgeParams
 } from '@/services/debridgeService'
 import { createPublicClient, http, encodeFunctionData, createWalletClient, custom } from 'viem'
 import { mainnet } from 'viem/chains'
@@ -77,13 +79,13 @@ interface QuoteData {
 const skeletonPulse = {
   '@keyframes pulse': {
     '0%, 100%': {
-      opacity: 1,
+      opacity: 1
     },
     '50%': {
-      opacity: 0.4,
-    },
+      opacity: 0.4
+    }
   },
-  animation: 'pulse 1.5s ease-in-out infinite',
+  animation: 'pulse 1.5s ease-in-out infinite'
 }
 
 const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAddress, network, walletSource, initialAsset }) => {
@@ -97,7 +99,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   const [bridgeStage, setBridgeStage] = useState<BridgeStage>('idle')
   const [bridgeError, setBridgeError] = useState<string | null>(null)
   const [progress, setProgress] = useState(0)
-  
+
   const { wallets } = useWallets()
   const { tronAddress, tronWalletId } = useTronWallet()
   const { sendTransaction } = useSendTransaction()
@@ -110,6 +112,19 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   // Get Solana wallet from usePrivyInfo (智能选择逻辑)
   const solanaWallet = activeSolanaWallet
 
+  // 🔥 获取 Cobo Solana 充值地址作为跨链兑换的目标地址
+  const { walletId: coboWalletId } = useCoboWallet({
+    userId: user?.id || '',
+    enabled: !!user?.id
+  })
+
+  const { address: coboSolanaAddress } = useCoboDepositAddress({
+    userId: user?.id || '',
+    chainId: 'SOL',
+    walletId: coboWalletId || '',
+    enabled: !!user?.id && !!coboWalletId
+  })
+
   // Fetch balances
   const { balances: solBalances } = useSolanaBalance(solanaWallet?.address)
   const [ethBalance, setEthBalance] = useState(0)
@@ -120,7 +135,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   // Fetch ETH Balance and ETH USDT Balance
   useEffect(() => {
     const fetchEthBalances = async () => {
-      const ethWallets = wallets.filter(w => w.address.startsWith('0x'))
+      const ethWallets = wallets.filter((w) => w.address.startsWith('0x'))
       if (ethWallets.length === 0) return
 
       const selectedWallet = ethWallets[0]
@@ -130,7 +145,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
           const ethRes = await checkBalance('', 1, selectedWallet.address)
           const ethAmount = parseFloat(ethRes.balance) / Math.pow(10, ethRes.decimals)
           setEthBalance(ethAmount)
-          
+
           // Fetch ETH USDT balance
           const USDT_ETH_ADDRESS = '0xdac17f958d2ee523a2206206994597c13d831ec7'
           const usdtRes = await checkBalance(USDT_ETH_ADDRESS, 1, selectedWallet.address)
@@ -141,7 +156,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         }
       }
     }
-    
+
     if (wallets.length > 0) {
       fetchEthBalances()
     }
@@ -155,7 +170,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       try {
         // 动态导入 TronWeb
         const { TronWeb } = await import('tronweb')
-        
+
         // 使用 Ankr Premium RPC (已付费)
         const tronWeb = new TronWeb({
           fullHost: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
@@ -267,13 +282,17 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     if (open) {
       setAmount('')
       setView(initialAsset ? 'input' : 'asset_select')
-      setSelectedAsset(initialAsset ? {
-        symbol: initialAsset.symbol,
-        balance: initialAsset.balance,
-        icon: initialAsset.icon,
-        network: initialAsset.network || network,
-        usdValue: initialAsset.balance
-      } : null)
+      setSelectedAsset(
+        initialAsset
+          ? {
+              symbol: initialAsset.symbol,
+              balance: initialAsset.balance,
+              icon: initialAsset.icon,
+              network: initialAsset.network || network,
+              usdValue: initialAsset.balance
+            }
+          : null
+      )
       setQuote(null)
       setCountdown(30)
       setBridgeStage('idle')
@@ -319,19 +338,23 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       const tokenAmount = parseFloat(amount)
       const asset = selectedAsset || initialAsset
       const sourceNetwork = asset?.network || network
-      
+
       // Calculate USD value based on token type
       const tokenSymbol = asset?.symbol || 'ETH'
-      let tokenPrice = 1; // Default for stablecoins
+      let tokenPrice = 1 // Default for stablecoins
       if (tokenSymbol === 'SOL') tokenPrice = prices.solana
       else if (tokenSymbol === 'ETH') tokenPrice = prices.ethereum
       else if (tokenSymbol === 'TRX') tokenPrice = prices.tron
-      
+
       const amountInUsd = tokenAmount * tokenPrice
 
       // Validate minimum amount for DeBridge
       if (amountInUsd < 10) {
-        throw new Error(`Minimum amount is $10 USD (current: $${amountInUsd.toFixed(2)} = ${tokenAmount.toFixed(4)} ${tokenSymbol}). DeBridge has fixed fees of ~$2-3.`)
+        throw new Error(
+          `Minimum amount is $10 USD (current: $${amountInUsd.toFixed(2)} = ${tokenAmount.toFixed(
+            4
+          )} ${tokenSymbol}). DeBridge has fixed fees of ~$2-3.`
+        )
       }
 
       // For SOL on Solana: Need to swap SOL → USDC on Solana first, then bridge (or direct deposit)
@@ -340,30 +363,30 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         // Solana → Solana: Just show estimated USDC amount (Jupiter swap would happen)
         // Estimate 0.5% slippage for Jupiter swap
         const estimatedUSDCAmount = amountInUsd * 0.995
-        
+
         setQuote({
           youSend: {
             token: 'SOL',
-            amount: tokenAmount.toFixed(6),
+            amount: tokenAmount.toFixed(6)
           },
           youReceive: {
             token: 'USDC',
-            amount: estimatedUSDCAmount.toFixed(2),
+            amount: estimatedUSDCAmount.toFixed(2)
           },
           source: {
             token: 'SOL',
             network: 'Solana',
-            account: 'Wallet',
+            account: 'Wallet'
           },
           destination: {
             token: 'USDC',
             network: 'Solana',
-            account: 'Mullet Account',
+            account: 'Mullet Account'
           },
           networkCost: '$0.01', // Solana transaction fee
           priceImpact: '0.5%',
           maxSlippage: 'Auto • 0.50%',
-          estimatedTime: '~1 minute',
+          estimatedTime: '~1 minute'
         })
 
         setCountdown(30)
@@ -413,21 +436,23 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         }
       }
 
-      // Destination is always Solana
+      // Destination is always Solana - 🔥 使用 Cobo Solana 充值地址
       const dstChainId = DEBRIDGE_CHAIN_IDS.SOLANA
-      const dstAddress = solanaWallet?.address || walletAddress // 使用 Solana 钱包地址
+      // 必须使用 Cobo Solana 充值地址，确保资金到达托管账户
+      if (!coboSolanaAddress) {
+        throw new Error('Cobo Solana deposit address not ready. Please wait a moment and try again.')
+      }
+      const dstAddress = coboSolanaAddress
       const dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC
-      
+
       // Calculate amount in smallest unit based on token decimals
       // For native tokens (ETH, TRX), use tokenAmount directly
       // For stablecoins, can use amountInUsd since they're ~$1
       const amountInSmallestUnit = Math.floor(tokenAmount * Math.pow(10, decimals)).toString()
 
       console.log('[SwapDialog] Quote address debug:', {
-        solanaWalletAddress: solanaWallet?.address,
-        walletAddressProp: walletAddress,
-        finalDstAddress: dstAddress,
-        isSolanaFormat: dstAddress?.length === 44 && !dstAddress?.startsWith('0x')
+        coboSolanaAddress: dstAddress,
+        isCoboAddress: true
       })
 
       // Get DeBridge quote (doesn't execute anything)
@@ -439,21 +464,21 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         dstChainTokenOut: dstTokenAddress,
         dstChainTokenOutRecipient: dstAddress,
         srcChainOrderAuthorityAddress: srcAddress,
-        dstChainOrderAuthorityAddress: dstAddress,
+        dstChainOrderAuthorityAddress: dstAddress
       }
 
       console.log('[SwapDialog] Getting DeBridge quote:', quoteParams)
       const deBridgeQuote = await getDeBridgeQuote(quoteParams)
 
       // Extract actual receive amount from DeBridge quote
-      const dstChainTokenOutAmount = deBridgeQuote.estimation?.dstChainTokenOut?.recommendedAmount || 
-                                      deBridgeQuote.estimation?.dstChainTokenOut?.amount || '0'
-      const actualReceiveAmount = parseFloat(dstChainTokenOutAmount) / 1e6; // USDC has 6 decimals
+      const dstChainTokenOutAmount =
+        deBridgeQuote.estimation?.dstChainTokenOut?.recommendedAmount || deBridgeQuote.estimation?.dstChainTokenOut?.amount || '0'
+      const actualReceiveAmount = parseFloat(dstChainTokenOutAmount) / 1e6 // USDC has 6 decimals
 
       console.log('[SwapDialog] DeBridge quote received:', {
         sendAmount: tokenAmount,
         receiveAmount: actualReceiveAmount,
-        dstChainTokenOutAmount,
+        dstChainTokenOutAmount
       })
 
       // Calculate send amount (estimate 1% fee)
@@ -462,35 +487,35 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       setQuote({
         youSend: {
           token: srcToken,
-          amount: sendAmount.toFixed(6),
+          amount: sendAmount.toFixed(6)
         },
         youReceive: {
           token: 'USDC',
-          amount: actualReceiveAmount.toFixed(2),
+          amount: actualReceiveAmount.toFixed(2)
         },
         source: {
           token: srcToken,
           network: sourceNetwork || 'Ethereum',
-          account: 'Wallet',
+          account: 'Wallet'
         },
         destination: {
           token: 'USDC',
           network: 'Solana',
-          account: 'Mullet Account',
+          account: 'Mullet Account'
         },
         networkCost: '$2.50', // DeBridge typical fee
         priceImpact: '0.1%',
         maxSlippage: 'Auto • 0.50%',
-        estimatedTime: '~5 minutes',
+        estimatedTime: '~5 minutes'
       })
 
-      setCountdown(30); // Reset countdown when new quote is fetched
+      setCountdown(30) // Reset countdown when new quote is fetched
       setIsLoadingQuote(false)
     } catch (error) {
       console.error('[SwapDialog] Quote failed:', error)
       setBridgeError(error instanceof Error ? error.message : 'Failed to get quote')
       setIsLoadingQuote(false)
-      setView('input'); // Go back to input view on error
+      setView('input') // Go back to input view on error
     }
   }
 
@@ -500,20 +525,25 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     setProgress(20)
     setBridgeStage('step2-executing')
 
+    // 🔥 必须使用 Cobo Solana 地址作为目标地址
+    if (!coboSolanaAddress) {
+      throw new Error('Cobo Solana deposit address not ready. Please wait and try again.')
+    }
+
     try {
       // Use consistent wallet selection logic (same as TransferCryptoDialog)
-      const ethWallets = wallets.filter(w => w.address.startsWith('0x'))
+      const ethWallets = wallets.filter((w) => w.address.startsWith('0x'))
       if (ethWallets.length === 0) {
         throw new Error('Ethereum wallet not found')
       }
 
       // Three-tier selection: walletSource match → Privy embedded → first ETH wallet
-      let ethWallet = ethWallets.find(w => w.walletClientType === walletSource)
-      
+      let ethWallet = ethWallets.find((w) => w.walletClientType === walletSource)
+
       if (!ethWallet && walletSource !== 'privy') {
-        ethWallet = ethWallets.find(w => w.walletClientType === 'privy')
+        ethWallet = ethWallets.find((w) => w.walletClientType === 'privy')
       }
-      
+
       if (!ethWallet) {
         ethWallet = ethWallets[0]
       }
@@ -526,11 +556,11 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       // Token addresses for DeBridge - use the actual selected token
       const selectedToken = (selectedAsset || initialAsset)?.symbol || 'USDC'
-      
+
       // Determine source token address and decimals
       let srcTokenAddress: string
       let decimals: number
-      
+
       if (selectedToken === 'ETH') {
         // Native ETH - use zero address
         srcTokenAddress = '0x0000000000000000000000000000000000000000'
@@ -543,19 +573,20 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         srcTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDC
         decimals = 6
       }
-      
-      const dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC; // Always bridge to USDC on Solana
-      
+
+      const dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC // Always bridge to USDC on Solana
+
       // Calculate amount in smallest unit based on token decimals
       // tokenAmount is the actual token amount (e.g., 0.01 ETH or 50 USDT)
       const amountInSmallestUnit = Math.floor(tokenAmount * Math.pow(10, decimals)).toString()
-      const solanaAddress = solanaWallet?.address || walletAddress // 使用 Solana 钱包地址
+      // 🔥 强制使用 Cobo Solana 充值地址作为目标地址（已在函数开头检查）
+      const solanaAddress = coboSolanaAddress!
 
       console.log('[SwapDialog] Execute address debug:', {
-        solanaWalletAddress: solanaWallet?.address,
-        walletAddressProp: walletAddress,
+        coboSolanaAddress,
         finalSolanaAddress: solanaAddress,
-        isSolanaFormat: solanaAddress?.length === 44 && !solanaAddress?.startsWith('0x')
+        isUsingCoboAddress: true,
+        isSolanaFormat: solanaAddress?.length >= 32 && !solanaAddress?.startsWith('0x')
       })
 
       console.log('[SwapDialog] Using token:', {
@@ -569,7 +600,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       // Get DeBridge quote
       console.log('[SwapDialog] Requesting DeBridge quote...')
       setProgress(30)
-      
+
       const quote = await getDeBridgeQuote({
         srcChainId: DEBRIDGE_CHAIN_IDS.ETHEREUM,
         dstChainId: DEBRIDGE_CHAIN_IDS.SOLANA,
@@ -578,13 +609,13 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         dstChainTokenOut: dstTokenAddress,
         dstChainTokenOutRecipient: solanaAddress,
         srcChainOrderAuthorityAddress: ethWallet.address,
-        dstChainOrderAuthorityAddress: solanaAddress,
+        dstChainOrderAuthorityAddress: solanaAddress
       })
 
       console.log('[SwapDialog] DeBridge quote received:', {
         estimation: quote.estimation,
         allowanceTarget: quote.tx?.allowanceTarget,
-        allowanceValue: quote.tx?.allowanceValue,
+        allowanceValue: quote.tx?.allowanceValue
       })
 
       // Check ETH balance for gas fees
@@ -592,17 +623,17 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         chain: mainnet,
         transport: http()
       })
-      
+
       const ethBalance = await publicClient.getBalance({
         address: ethWallet.address as `0x${string}`
       })
-      
+
       console.log('[SwapDialog] ETH balance:', {
         wei: ethBalance.toString(),
         eth: Number(ethBalance) / 1e18,
         hasBalance: ethBalance > BigInt(0)
       })
-      
+
       if (ethBalance === BigInt(0)) {
         throw new Error('⚠️ No ETH for gas fees! Please add ETH to your wallet: ' + ethWallet.address)
       }
@@ -655,12 +686,12 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         ]
 
         // Check current allowance
-        const currentAllowance = await publicClient.readContract({
+        const currentAllowance = (await publicClient.readContract({
           address: srcTokenAddress as `0x${string}`,
           abi: ERC20_ABI,
           functionName: 'allowance',
           args: [ethWallet.address as `0x${string}`, quote.tx.allowanceTarget as `0x${string}`]
-        }) as bigint
+        })) as bigint
 
         console.log('[SwapDialog] Current allowance:', currentAllowance.toString())
         console.log('[SwapDialog] Required amount:', amountInSmallestUnit)
@@ -674,7 +705,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
           const isUSDT = srcTokenAddress.toLowerCase() === '0xdac17f958d2ee523a2206206994597c13d831ec7'
           if (isUSDT && currentAllowance > BigInt(0)) {
             console.log('[SwapDialog] ⚠️ USDT detected with existing allowance, resetting to 0 first...')
-            
+
             const resetApproveData = encodeFunctionData({
               abi: ERC20_ABI,
               functionName: 'approve',
@@ -686,21 +717,21 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
               resetTxHash = await walletClient.sendTransaction({
                 to: srcTokenAddress as `0x${string}`,
                 data: resetApproveData as `0x${string}`,
-                chain: mainnet,
+                chain: mainnet
               })
             } else {
               const resetTxResult = await sendTransaction({
                 to: srcTokenAddress as `0x${string}`,
                 from: ethWallet.address as `0x${string}`,
                 data: resetApproveData as `0x${string}`,
-                chainId: 1,
+                chainId: 1
               })
               resetTxHash = resetTxResult.hash
             }
 
             console.log('[SwapDialog] ✅ Reset approval tx sent:', resetTxHash)
             console.log('[SwapDialog] Waiting for reset confirmation...')
-            
+
             const resetReceipt = await publicClient.waitForTransactionReceipt({
               hash: resetTxHash as `0x${string}`,
               timeout: 180_000
@@ -727,7 +758,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
             approveTxHash = await walletClient.sendTransaction({
               to: srcTokenAddress as `0x${string}`,
               data: approveData as `0x${string}`,
-              chain: mainnet,
+              chain: mainnet
             })
             console.log('[SwapDialog] ✅ External wallet approve tx sent:', approveTxHash)
           } else {
@@ -736,14 +767,14 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
               to: srcTokenAddress as `0x${string}`,
               from: ethWallet.address as `0x${string}`,
               data: approveData as `0x${string}`,
-              chainId: 1,
+              chainId: 1
             })
             approveTxHash = approveTxResult.hash
             console.log('[SwapDialog] ✅ Privy approve tx sent:', approveTxHash)
           }
 
           console.log('[SwapDialog] Waiting for approve confirmation...')
-          
+
           const approveReceipt = await publicClient.waitForTransactionReceipt({
             hash: approveTxHash as `0x${string}`,
             timeout: 180_000
@@ -765,10 +796,10 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       setProgress(60)
 
       const createTxUrl = new URL('https://dln.debridge.finance/v1.0/dln/order/create-tx')
-      createTxUrl.searchParams.append('srcChainId', '1'); // Ethereum
+      createTxUrl.searchParams.append('srcChainId', '1') // Ethereum
       createTxUrl.searchParams.append('srcChainTokenIn', srcTokenAddress)
       createTxUrl.searchParams.append('srcChainTokenInAmount', amountInSmallestUnit)
-      createTxUrl.searchParams.append('dstChainId', '7565164'); // Solana
+      createTxUrl.searchParams.append('dstChainId', '7565164') // Solana
       createTxUrl.searchParams.append('dstChainTokenOut', dstTokenAddress)
       createTxUrl.searchParams.append('dstChainTokenOutRecipient', solanaAddress)
       createTxUrl.searchParams.append('srcChainOrderAuthorityAddress', ethWallet.address)
@@ -780,8 +811,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       const createTxResponse = await fetch(createTxUrl.toString(), {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
-        },
+          Accept: 'application/json'
+        }
       })
 
       if (!createTxResponse.ok) {
@@ -790,7 +821,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         throw new Error(`Failed to get DeBridge transaction data: ${createTxResponse.status}`)
       }
 
-      const txData = await createTxResponse.json() as any
+      const txData = (await createTxResponse.json()) as any
       console.log('[SwapDialog] Transaction data received:', txData)
 
       if (!txData.tx || !txData.tx.to || !txData.tx.data) {
@@ -800,7 +831,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       const orderId = txData.orderId
       const dstChainTokenOutAmount = txData.estimation?.dstChainTokenOut?.recommendedAmount || txData.estimation?.dstChainTokenOut?.amount
-      
+
       console.log('[SwapDialog] Order ID:', orderId)
       console.log('[SwapDialog] Expected Solana USDC amount:', dstChainTokenOutAmount)
 
@@ -815,7 +846,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
           to: txData.tx.to as `0x${string}`,
           data: txData.tx.data as `0x${string}`,
           value: txData.tx.value ? BigInt(txData.tx.value) : BigInt(0),
-          chain: mainnet,
+          chain: mainnet
         })
         console.log('[SwapDialog] ✅ External wallet order tx sent:', orderTxHash)
       } else {
@@ -825,7 +856,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
           from: ethWallet.address as `0x${string}`,
           data: txData.tx.data as `0x${string}`,
           value: txData.tx.value ? BigInt(txData.tx.value) : BigInt(0),
-          chainId: 1,
+          chainId: 1
         })
         orderTxHash = orderTxResult.hash
         console.log('[SwapDialog] ✅ Privy order tx sent:', orderTxHash)
@@ -848,7 +879,6 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       setProgress(100)
       setBridgeStage('completed')
-
     } catch (error: any) {
       console.error('[SwapDialog] Direct bridge error:', error)
       setBridgeStage('error')
@@ -874,21 +904,19 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     // Import TronWeb and create instance
     const { TronWeb } = await import('tronweb')
     const tronWeb = new TronWeb({
-      fullHost: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+      fullHost: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
     })
 
     // Find TRON wallet from user.linkedAccounts (Privy embedded wallet)
-    const tronAccount = user?.linkedAccounts?.find(
-      (account: any) => account.type === 'wallet' && account.chainType === 'tron'
-    ) as any
-    
+    const tronAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'tron') as any
+
     if (!tronAccount) {
       throw new Error('TRON wallet not found in linked accounts')
     }
 
     const tronWalletId = tronAccount.walletId || tronAccount.id
     const tronPublicKey = tronAccount.publicKey
-    
+
     if (!tronWalletId || !tronPublicKey) {
       throw new Error('TRON wallet missing ID or public key')
     }
@@ -899,14 +927,11 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     }
 
     // Step 1: TRON → Ethereum via DeBridge
-    const srcTokenAddress = (selectedAsset || initialAsset)?.symbol === 'USDC' 
-      ? DEBRIDGE_TOKENS.TRON.USDC 
-      : DEBRIDGE_TOKENS.TRON.USDT
+    const srcTokenAddress = (selectedAsset || initialAsset)?.symbol === 'USDC' ? DEBRIDGE_TOKENS.TRON.USDC : DEBRIDGE_TOKENS.TRON.USDT
     const dstChainId = DEBRIDGE_CHAIN_IDS.ETHEREUM
-    const dstTokenAddress = (selectedAsset || initialAsset)?.symbol === 'USDC' 
-      ? DEBRIDGE_TOKENS.ETHEREUM.USDC 
-      : DEBRIDGE_TOKENS.ETHEREUM.USDT
-    
+    const dstTokenAddress =
+      (selectedAsset || initialAsset)?.symbol === 'USDC' ? DEBRIDGE_TOKENS.ETHEREUM.USDC : DEBRIDGE_TOKENS.ETHEREUM.USDT
+
     const amountInSmallestUnit = Math.floor(parseFloat(amountInUsd) * 1e6).toString()
 
     const quote = await getDeBridgeQuote({
@@ -917,7 +942,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       dstChainTokenOut: dstTokenAddress,
       dstChainTokenOutRecipient: ethAddress,
       srcChainOrderAuthorityAddress: tronAddr,
-      dstChainOrderAuthorityAddress: ethAddress,
+      dstChainOrderAuthorityAddress: ethAddress
     })
 
     console.log('[SwapDialog] DeBridge quote received')
@@ -949,11 +974,11 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
     let confirmed = false
     let attempts = 0
-    const maxAttempts = 20; // 20 attempts × 10s = ~3.3 minutes
+    const maxAttempts = 20 // 20 attempts × 10s = ~3.3 minutes
 
     while (!confirmed && attempts < maxAttempts) {
-      await new Promise(resolve => setTimeout(resolve, 10000))
-      
+      await new Promise((resolve) => setTimeout(resolve, 10000))
+
       const orderStatus = await getDeBridgeOrderStatus(step1Result.orderId)
       console.log(`[SwapDialog] Order status (${attempts + 1}):`, orderStatus.status)
 
@@ -987,7 +1012,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   const handleContinue = async () => {
     // If in input view, get quote first
     if (view === 'input') {
-      setView('quote'); // Switch to quote view immediately
+      setView('quote') // Switch to quote view immediately
       await getQuote()
       return
     }
@@ -999,26 +1024,26 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       setBridgeError(null)
       setProgress(0)
 
-      const tokenAmount = parseFloat(amount); // User input token amount (e.g., 0.01 ETH or 50 USDT)
+      const tokenAmount = parseFloat(amount) // User input token amount (e.g., 0.01 ETH or 50 USDT)
       const sourceNetwork = (selectedAsset || initialAsset)?.network || network
 
       console.log('[SwapDialog] Starting swap:', {
         tokenAmount,
         from: (selectedAsset || initialAsset)?.symbol,
-        network: sourceNetwork,
+        network: sourceNetwork
       })
 
       // Check if source is TRON - use two-step bridge
       if (sourceNetwork === 'Tron') {
         console.log('[SwapDialog] Using two-step bridge: TRON → ETH → Solana')
-        await executeTronBridge(amount); // For TRON, keep as string
+        await executeTronBridge(amount) // For TRON, keep as string
       } else {
         // ETH or other EVM chains - direct bridge to Solana
         console.log('[SwapDialog] Using direct bridge: ETH → Solana')
         setBridgeStage('step2-executing')
         const ethWallet = wallets.find((w: any) => w.address.startsWith('0x'))
         if (!ethWallet) throw new Error('No Ethereum wallet found')
-        
+
         // Direct DeBridge to Solana (one step)
         await executeDirectBridge(ethWallet.address, tokenAmount)
       }
@@ -1028,7 +1053,6 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         setLoading(false)
         onClose()
       }, 2000)
-
     } catch (error) {
       console.error('[SwapDialog] Swap failed:', error)
       setBridgeError(error instanceof Error ? error.message : 'Swap failed')
@@ -1045,7 +1069,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     background: isDark ? '#1a1a1a' : '#ffffff',
     cardBg: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.02)',
     cardBgHover: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.04)',
-    border: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)',
+    border: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.06)'
   }
 
   return (
@@ -1060,14 +1084,14 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         body: {
           padding: '24px',
           minHeight: 500,
-          background: isDark ? '#1a1a1a' : '#ffffff',
+          background: isDark ? '#1a1a1a' : '#ffffff'
         },
         content: {
-          background: isDark ? '#1a1a1a' : '#ffffff',
+          background: isDark ? '#1a1a1a' : '#ffffff'
         },
         header: {
           background: isDark ? '#1a1a1a' : '#ffffff',
-          borderBottom: 'none',
+          borderBottom: 'none'
         }
       }}
       title={
@@ -1089,10 +1113,9 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                 {view === 'asset_select' ? 'Select Asset to Swap' : 'Top Up Your Wallet'}
               </Title>
               <Text style={{ color: getColor.textSecondary, fontSize: '0.875rem' }}>
-                {view === 'asset_select' 
-                  ? 'Choose which asset to swap to Solana USDC' 
-                  : `Balance: $${(selectedAsset || initialAsset)?.balance?.toFixed(2) || '0.00'}`
-                }
+                {view === 'asset_select'
+                  ? 'Choose which asset to swap to Solana USDC'
+                  : `Balance: $${(selectedAsset || initialAsset)?.balance?.toFixed(2) || '0.00'}`}
               </Text>
             </div>
           </Space>
@@ -1107,21 +1130,21 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                 showInfo={false}
                 style={{ position: 'absolute' }}
               />
-              <div style={{
-                position: 'absolute',
-                width: 36,
-                height: 36,
-                left: 4,
-                top: 4,
-                borderRadius: '50%',
-                background: getColor.cardBg,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}>
-                <Text style={{ color: getColor.text, fontWeight: 600, fontSize: '0.875rem' }}>
-                  {countdown}
-                </Text>
+              <div
+                style={{
+                  position: 'absolute',
+                  width: 36,
+                  height: 36,
+                  left: 4,
+                  top: 4,
+                  borderRadius: '50%',
+                  background: getColor.cardBg,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <Text style={{ color: getColor.text, fontWeight: 600, fontSize: '0.875rem' }}>{countdown}</Text>
               </div>
             </div>
           )}
@@ -1129,7 +1152,6 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       }
     >
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        
         {/* Asset Selection View */}
         {view === 'asset_select' && (
           <>
@@ -1137,7 +1159,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
               {assets.map((asset) => {
                 // 所有资产都可选择
                 const isDisabled = false
-                
+
                 return (
                   <div
                     key={`${asset.symbol}-${asset.network}`}
@@ -1149,12 +1171,14 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                     }}
                     style={{
                       background: getColor.cardBg,
-                      border: `2px solid ${selectedAsset?.symbol === asset.symbol && selectedAsset?.network === asset.network ? '#FF6B35' : 'transparent'}`,
+                      border: `2px solid ${
+                        selectedAsset?.symbol === asset.symbol && selectedAsset?.network === asset.network ? '#FF6B35' : 'transparent'
+                      }`,
                       borderRadius: 12,
                       padding: 16,
                       cursor: isDisabled ? 'not-allowed' : 'pointer',
                       opacity: isDisabled ? 0.5 : 1,
-                      transition: 'all 0.2s',
+                      transition: 'all 0.2s'
                     }}
                     onMouseEnter={(e) => {
                       if (!isDisabled) {
@@ -1167,81 +1191,77 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                       }
                     }}
                   >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                      <div style={{ position: 'relative' }}>
-                        <img 
-                          src={asset.icon} 
-                          alt={asset.symbol}
-                          style={{ 
-                            width: 40, 
-                            height: 40, 
-                            borderRadius: '50%',
-                            objectFit: 'cover',
-                          }} 
-                        />
-                        <div style={{
-                          position: 'absolute',
-                          bottom: -2,
-                          right: -2,
-                          width: 18,
-                          height: 18,
-                          borderRadius: '50%',
-                          background: isDark ? '#1a1a1a' : '#ffffff',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                        }}>
-                          <img 
-                            src={CHAIN_ICONS[asset.network] || TOKEN_ICONS.ETH} 
-                            alt={asset.network}
-                            style={{ 
-                              width: 14, 
-                              height: 14, 
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                        <div style={{ position: 'relative' }}>
+                          <img
+                            src={asset.icon}
+                            alt={asset.symbol}
+                            style={{
+                              width: 40,
+                              height: 40,
                               borderRadius: '50%',
-                            }} 
+                              objectFit: 'cover'
+                            }}
                           />
+                          <div
+                            style={{
+                              position: 'absolute',
+                              bottom: -2,
+                              right: -2,
+                              width: 18,
+                              height: 18,
+                              borderRadius: '50%',
+                              background: isDark ? '#1a1a1a' : '#ffffff',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <img
+                              src={CHAIN_ICONS[asset.network] || TOKEN_ICONS.ETH}
+                              alt={asset.network}
+                              style={{
+                                width: 14,
+                                height: 14,
+                                borderRadius: '50%'
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <Text style={{ fontSize: '1rem', fontWeight: 500, color: getColor.text }}>{asset.symbol}</Text>
+                            <Text style={{ fontSize: '0.75rem', color: getColor.textSecondary }}>{asset.network}</Text>
+                          </div>
+                          <Text style={{ fontSize: '0.875rem', color: getColor.textSecondary }}>
+                            {asset.balance.toFixed(asset.symbol === 'USDT' ? 2 : 5)} {asset.symbol}
+                          </Text>
                         </div>
                       </div>
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <Text style={{ fontSize: '1rem', fontWeight: 500, color: getColor.text }}>
-                            {asset.symbol}
-                          </Text>
-                          <Text style={{ fontSize: '0.75rem', color: getColor.textSecondary }}>
-                            {asset.network}
-                          </Text>
-                        </div>
-                        <Text style={{ fontSize: '0.875rem', color: getColor.textSecondary }}>
-                          {asset.balance.toFixed(asset.symbol === 'USDT' ? 2 : 5)} {asset.symbol}
-                        </Text>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        {asset.usdValue < 10 && (
+                          <div
+                            style={{
+                              padding: '4px 8px',
+                              borderRadius: 16,
+                              background: getColor.cardBg
+                            }}
+                          >
+                            <Text style={{ fontSize: '0.75rem', color: getColor.textSecondary }}>Low Balance</Text>
+                          </div>
+                        )}
+                        <Text style={{ fontSize: '1rem', fontWeight: 500, color: getColor.text }}>${asset.usdValue.toFixed(2)}</Text>
                       </div>
-                    </div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                      {asset.usdValue < 10 && (
-                        <div style={{
-                          padding: '4px 8px',
-                          borderRadius: 16,
-                          background: getColor.cardBg,
-                        }}>
-                          <Text style={{ fontSize: '0.75rem', color: getColor.textSecondary }}>
-                            Low Balance
-                          </Text>
-                        </div>
-                      )}
-                      <Text style={{ fontSize: '1rem', fontWeight: 500, color: getColor.text }}>
-                        ${asset.usdValue.toFixed(2)}
-                      </Text>
                     </div>
                   </div>
-                </div>
                 )
               })}
             </Space>
           </>
         )}
-        
+
         {/* Input View */}
         {view === 'input' && (
           <>
@@ -1252,7 +1272,9 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
                 prefix={
-                  <Text style={{ fontSize: '3.5rem', fontWeight: 500, color: amount ? getColor.text : getColor.textTertiary, marginRight: 8 }}>
+                  <Text
+                    style={{ fontSize: '3.5rem', fontWeight: 500, color: amount ? getColor.text : getColor.textTertiary, marginRight: 8 }}
+                  >
                     $
                   </Text>
                 }
@@ -1263,7 +1285,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                   border: 'none',
                   background: 'transparent',
                   color: getColor.text,
-                  padding: 0,
+                  padding: 0
                 }}
                 bordered={false}
               />
@@ -1279,7 +1301,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
             {/* Percentage Buttons */}
             <Space size={12} style={{ marginBottom: 48, width: '100%', justifyContent: 'center' }}>
-              {[0.25, 0.50, 0.75, 1].map((percent) => (
+              {[0.25, 0.5, 0.75, 1].map((percent) => (
                 <Button
                   key={percent}
                   onClick={() => handlePercentageClick(percent)}
@@ -1288,7 +1310,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                     color: getColor.text,
                     borderRadius: 8,
                     padding: '8px 20px',
-                    background: getColor.cardBg,
+                    background: getColor.cardBg
                   }}
                 >
                   {percent === 1 ? 'Max' : `${percent * 100}%`}
@@ -1305,15 +1327,15 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                 display: 'flex',
                 alignItems: 'center',
                 gap: 16,
-                marginBottom: 'auto',
+                marginBottom: 'auto'
               }}
             >
               <Space align="center" size={8}>
                 <div style={{ position: 'relative', width: 24, height: 24 }}>
-                  <img 
-                    src={(selectedAsset || initialAsset)?.icon || TOKEN_ICONS.USDT} 
+                  <img
+                    src={(selectedAsset || initialAsset)?.icon || TOKEN_ICONS.USDT}
                     alt={(selectedAsset || initialAsset)?.symbol}
-                    style={{ width: '100%', height: '100%', borderRadius: '50%' }} 
+                    style={{ width: '100%', height: '100%', borderRadius: '50%' }}
                   />
                   {(selectedAsset || initialAsset)?.network && CHAIN_ICONS[(selectedAsset || initialAsset)?.network || 'Ethereum'] && (
                     <div
@@ -1328,21 +1350,19 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                         border: '1px solid #1a1a1a',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'center'
                       }}
                     >
-                      <img 
-                        src={CHAIN_ICONS[(selectedAsset || initialAsset)?.network || 'Ethereum']} 
+                      <img
+                        src={CHAIN_ICONS[(selectedAsset || initialAsset)?.network || 'Ethereum']}
                         alt={(selectedAsset || initialAsset)?.network}
-                        style={{ width: '100%', height: '100%', borderRadius: '50%' }} 
+                        style={{ width: '100%', height: '100%', borderRadius: '50%' }}
                       />
                     </div>
                   )}
                 </div>
                 <div>
-                  <Text style={{ color: getColor.textSecondary, fontSize: '0.75rem', display: 'block', lineHeight: 1 }}>
-                    You send
-                  </Text>
+                  <Text style={{ color: getColor.textSecondary, fontSize: '0.75rem', display: 'block', lineHeight: 1 }}>You send</Text>
                   <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '0.875rem', lineHeight: 1.2 }}>
                     {(selectedAsset || initialAsset)?.symbol || 'USDT'}
                   </Text>
@@ -1353,11 +1373,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
               <Space align="center" size={8}>
                 <div style={{ position: 'relative', width: 24, height: 24 }}>
-                  <img 
-                    src={TOKEN_ICONS.USDC} 
-                    alt="USDC"
-                    style={{ width: '100%', height: '100%', borderRadius: '50%' }} 
-                  />
+                  <img src={TOKEN_ICONS.USDC} alt="USDC" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                   {network && CHAIN_ICONS[network] && (
                     <div
                       style={{
@@ -1371,277 +1387,286 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                         border: '1px solid #1a1a1a',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
+                        justifyContent: 'center'
                       }}
                     >
-                      <img 
-                        src={CHAIN_ICONS[network]} 
-                        alt={network}
-                        style={{ width: '100%', height: '100%', borderRadius: '50%' }} 
-                      />
+                      <img src={CHAIN_ICONS[network]} alt={network} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                     </div>
                   )}
                 </div>
                 <div>
-                  <Text style={{ color: getColor.textSecondary, fontSize: '0.75rem', display: 'block', lineHeight: 1 }}>
-                    You receive
-                  </Text>
-                  <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '0.875rem', lineHeight: 1.2 }}>
-                    USDC
-                  </Text>
+                  <Text style={{ color: getColor.textSecondary, fontSize: '0.75rem', display: 'block', lineHeight: 1 }}>You receive</Text>
+                  <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '0.875rem', lineHeight: 1.2 }}>USDC</Text>
                 </div>
               </Space>
             </div>
 
-        {/* Continue Button */}
-        <Button
-          block
-          type="primary"
-          onClick={handleContinue}
-          disabled={!amount || parseFloat(amount) <= 0}
-          style={{
-            backgroundColor: '#FF6B35',
-            color: getColor.text,
-            padding: '16px',
-            borderRadius: '8px',
-            fontSize: '16px',
-            fontWeight: 600,
-            marginTop: '32px',
-            height: 'auto',
-          }}
-          onMouseEnter={(e) => !(!amount || parseFloat(amount) <= 0) && (e.currentTarget.style.backgroundColor = '#E55A25')}
-          onMouseLeave={(e) => !(!amount || parseFloat(amount) <= 0) && (e.currentTarget.style.backgroundColor = '#FF6B35')}
-        >
-          Continue
-        </Button>
+            {/* Continue Button */}
+            <Button
+              block
+              type="primary"
+              onClick={handleContinue}
+              disabled={!amount || parseFloat(amount) <= 0}
+              style={{
+                backgroundColor: '#FF6B35',
+                color: getColor.text,
+                padding: '16px',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: 600,
+                marginTop: '32px',
+                height: 'auto'
+              }}
+              onMouseEnter={(e) => !(!amount || parseFloat(amount) <= 0) && (e.currentTarget.style.backgroundColor = '#E55A25')}
+              onMouseLeave={(e) => !(!amount || parseFloat(amount) <= 0) && (e.currentTarget.style.backgroundColor = '#FF6B35')}
+            >
+              Continue
+            </Button>
 
-        {/* Error Display */}
-        {bridgeError && (
-          <Alert
-            message={bridgeError}
-            type="error"
-            showIcon
-            style={{
-              width: '100%',
-              marginTop: 16,
-              background: 'rgba(255, 68, 68, 0.1)',
-              border: '1px solid rgba(255, 68, 68, 0.3)',
-            }}
-          />
-        )}
-        </>
+            {/* Error Display */}
+            {bridgeError && (
+              <Alert
+                message={bridgeError}
+                type="error"
+                showIcon
+                style={{
+                  width: '100%',
+                  marginTop: 16,
+                  background: 'rgba(255, 68, 68, 0.1)',
+                  border: '1px solid rgba(255, 68, 68, 0.3)'
+                }}
+              />
+            )}
+          </>
         )}
 
         {/* Quote View */}
         {view === 'quote' && (
           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {/* Source */}
-            <div style={{ background: getColor.cardBg, borderRadius: '8px', padding: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Text style={{ color: getColor.textSecondary, minWidth: 65, fontSize: '14px' }}>
-                Source
-              </Text>
+            <div
+              style={{
+                background: getColor.cardBg,
+                borderRadius: '8px',
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+            >
+              <Text style={{ color: getColor.textSecondary, minWidth: 65, fontSize: '14px' }}>Source</Text>
               {isLoadingQuote ? (
                 <div style={{ background: getColor.border, borderRadius: '4px', height: 20, flex: 1, ...skeletonPulse }} />
-              ) : quote && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ position: 'relative', width: 20, height: 20 }}>
-                    <img 
-                      src={(selectedAsset || initialAsset)?.icon || TOKEN_ICONS.USDT} 
-                      alt={quote.source.token}
-                      style={{ width: '100%', height: '100%', borderRadius: '50%' }} 
-                    />
-                    {quote.source.network && CHAIN_ICONS[quote.source.network] && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 6,
-                          right: -2,
-                          width: 10,
-                          height: 10,
-                          borderRadius: '50%',
-                        }}
-                      >
-                        <img src={CHAIN_ICONS[quote.source.network]} alt={quote.source.network} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
-                      </div>
-                    )}
+              ) : (
+                quote && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ position: 'relative', width: 20, height: 20 }}>
+                      <img
+                        src={(selectedAsset || initialAsset)?.icon || TOKEN_ICONS.USDT}
+                        alt={quote.source.token}
+                        style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                      />
+                      {quote.source.network && CHAIN_ICONS[quote.source.network] && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 6,
+                            right: -2,
+                            width: 10,
+                            height: 10,
+                            borderRadius: '50%'
+                          }}
+                        >
+                          <img
+                            src={CHAIN_ICONS[quote.source.network]}
+                            alt={quote.source.network}
+                            style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>{quote.source.account}</Text>
                   </div>
-                  <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>
-                    {quote.source.account}
-                  </Text>
-                </div>
+                )
               )}
             </div>
 
             {/* Destination */}
-            <div style={{ background: getColor.cardBg, borderRadius: '8px', padding: '12px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Text style={{ color: getColor.textSecondary, minWidth: 65, fontSize: '14px' }}>
-                Destination
-              </Text>
+            <div
+              style={{
+                background: getColor.cardBg,
+                borderRadius: '8px',
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+            >
+              <Text style={{ color: getColor.textSecondary, minWidth: 65, fontSize: '14px' }}>Destination</Text>
               {isLoadingQuote ? (
                 <div style={{ background: getColor.border, borderRadius: '4px', height: 20, flex: 1, ...skeletonPulse }} />
-              ) : quote && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <div style={{ position: 'relative', width: 20, height: 20 }}>
-                    <img 
-                      src={TOKEN_ICONS.USDC} 
-                      alt="USDC"
-                      style={{ width: '100%', height: '100%', borderRadius: '50%' }} 
-                    />
-                    {quote.destination.network && CHAIN_ICONS[quote.destination.network] && (
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 6,
-                          right: -2,
-                          width: 10,
-                          height: 10,
-                          borderRadius: '50%',
-                        }}
-                      >
-                        <img src={CHAIN_ICONS[quote.destination.network]} alt={quote.destination.network} style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
-                      </div>
-                    )}
+              ) : (
+                quote && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ position: 'relative', width: 20, height: 20 }}>
+                      <img src={TOKEN_ICONS.USDC} alt="USDC" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
+                      {quote.destination.network && CHAIN_ICONS[quote.destination.network] && (
+                        <div
+                          style={{
+                            position: 'absolute',
+                            top: 6,
+                            right: -2,
+                            width: 10,
+                            height: 10,
+                            borderRadius: '50%'
+                          }}
+                        >
+                          <img
+                            src={CHAIN_ICONS[quote.destination.network]}
+                            alt={quote.destination.network}
+                            style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                    <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>{quote.destination.account}</Text>
                   </div>
-                  <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>
-                    {quote.destination.account}
-                  </Text>
-                </div>
+                )
               )}
             </div>
 
             {/* Estimated Time */}
-            <div style={{ background: getColor.cardBg, borderRadius: '8px', padding: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>
-                Estimated time
-              </Text>
+            <div
+              style={{
+                background: getColor.cardBg,
+                borderRadius: '8px',
+                padding: '12px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>Estimated time</Text>
               {isLoadingQuote ? (
                 <div style={{ background: getColor.border, borderRadius: '4px', height: 20, width: 80, ...skeletonPulse }} />
-              ) : quote && (
-                <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>
-                  {quote.estimatedTime}
-                </Text>
+              ) : (
+                quote && <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>{quote.estimatedTime}</Text>
               )}
             </div>
 
             {/* You Send */}
-            <div style={{ background: getColor.cardBg, borderRadius: '8px', padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <div
+              style={{
+                background: getColor.cardBg,
+                borderRadius: '8px',
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '12px'
+              }}
+            >
               {isLoadingQuote ? (
                 <>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>
-                      You send
-                    </Text>
+                    <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>You send</Text>
                     <div style={{ background: getColor.border, borderRadius: '50%', width: 20, height: 20, ...skeletonPulse }} />
                     <div style={{ background: getColor.border, borderRadius: '4px', height: 16, width: 40, ...skeletonPulse }} />
                   </div>
                   <div style={{ background: getColor.border, borderRadius: '4px', height: 20, width: 60, ...skeletonPulse }} />
                 </>
-              ) : quote && (
-                <>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>
-                      You send
-                    </Text>
-                    <div style={{ position: 'relative', width: 20, height: 20 }}>
-                      <img 
-                        src={(selectedAsset || initialAsset)?.icon || TOKEN_ICONS.USDT} 
-                        alt={quote.youSend.token}
-                        style={{ width: '100%', height: '100%', borderRadius: '50%' }} 
-                      />
+              ) : (
+                quote && (
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>You send</Text>
+                      <div style={{ position: 'relative', width: 20, height: 20 }}>
+                        <img
+                          src={(selectedAsset || initialAsset)?.icon || TOKEN_ICONS.USDT}
+                          alt={quote.youSend.token}
+                          style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                        />
+                      </div>
+                      <Text style={{ color: getColor.text, fontSize: '14px' }}>{quote.youSend.token}</Text>
                     </div>
-                    <Text style={{ color: getColor.text, fontSize: '14px' }}>
-                      {quote.youSend.token}
-                    </Text>
-                  </div>
-                  <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>
-                    {quote.youSend.amount}
-                  </Text>
-                </>
+                    <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>{quote.youSend.amount}</Text>
+                  </>
+                )
               )}
             </div>
 
             {/* You Receive - Always show user input amount */}
-            <div style={{ background: getColor.cardBg, borderRadius: '8px', padding: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            <div
+              style={{
+                background: getColor.cardBg,
+                borderRadius: '8px',
+                padding: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '12px'
+              }}
+            >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>
-                  You receive
-                </Text>
+                <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>You receive</Text>
                 <div style={{ position: 'relative', width: 20, height: 20 }}>
-                  <img 
-                    src={TOKEN_ICONS.USDC} 
-                    alt="USDC"
-                    style={{ width: '100%', height: '100%', borderRadius: '50%' }} 
-                  />
+                  <img src={TOKEN_ICONS.USDC} alt="USDC" style={{ width: '100%', height: '100%', borderRadius: '50%' }} />
                 </div>
-                <Text style={{ color: getColor.text, fontSize: '14px' }}>
-                  USDC
-                </Text>
+                <Text style={{ color: getColor.text, fontSize: '14px' }}>USDC</Text>
               </div>
-              <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>
-                {quote?.youReceive?.amount || '0.00'}
-              </Text>
+              <Text style={{ color: getColor.text, fontWeight: 500, fontSize: '14px' }}>{quote?.youReceive?.amount || '0.00'}</Text>
             </div>
 
             {/* Transaction Breakdown */}
             {!isLoadingQuote && quote && (
-            <Collapse
-              ghost
-              items={[{
-                key: '1',
-                label: <Text style={{ color: getColor.textSecondary, fontWeight: 500, fontSize: '14px' }}>Transaction breakdown</Text>,
-                children: (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>
-                        Network cost
-                      </Text>
-                      <Text style={{ color: getColor.text, fontSize: '14px' }}>
-                        {quote.networkCost}
-                      </Text>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>
-                        Price impact
-                      </Text>
-                      <Text style={{ color: getColor.text, fontSize: '14px' }}>
-                        {quote.priceImpact}
-                      </Text>
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>
-                        Max slippage
-                      </Text>
-                      <Text style={{ color: getColor.text, fontSize: '14px' }}>
-                        {quote.maxSlippage}
-                      </Text>
-                    </div>
-                  </div>
-                )
-              }]}
-              style={{
-                background: getColor.cardBg,
-                borderRadius: '8px',
-              }}
-            />
+              <Collapse
+                ghost
+                items={[
+                  {
+                    key: '1',
+                    label: <Text style={{ color: getColor.textSecondary, fontWeight: 500, fontSize: '14px' }}>Transaction breakdown</Text>,
+                    children: (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>Network cost</Text>
+                          <Text style={{ color: getColor.text, fontSize: '14px' }}>{quote.networkCost}</Text>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>Price impact</Text>
+                          <Text style={{ color: getColor.text, fontSize: '14px' }}>{quote.priceImpact}</Text>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <Text style={{ color: getColor.textSecondary, fontSize: '14px' }}>Max slippage</Text>
+                          <Text style={{ color: getColor.text, fontSize: '14px' }}>{quote.maxSlippage}</Text>
+                        </div>
+                      </div>
+                    )
+                  }
+                ]}
+                style={{
+                  background: getColor.cardBg,
+                  borderRadius: '8px'
+                }}
+              />
             )}
 
             {/* Terms Agreement */}
             {!isLoadingQuote && quote && (
-            <div style={{ background: getColor.cardBg, borderRadius: '8px', padding: '12px', marginTop: '8px' }}>
-              <Text style={{ color: getColor.textSecondary, textAlign: 'center', fontSize: '14px' }}>
-                By clicking on Confirm Order, you agree to our{' '}
-                <span
-                  style={{
-                    color: getColor.text,
-                    textDecoration: 'underline',
-                    cursor: 'pointer',
-                  }}
-                >
-                  terms
-                </span>
-                .
-              </Text>
-            </div>
+              <div style={{ background: getColor.cardBg, borderRadius: '8px', padding: '12px', marginTop: '8px' }}>
+                <Text style={{ color: getColor.textSecondary, textAlign: 'center', fontSize: '14px' }}>
+                  By clicking on Confirm Order, you agree to our{' '}
+                  <span
+                    style={{
+                      color: getColor.text,
+                      textDecoration: 'underline',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    terms
+                  </span>
+                  .
+                </Text>
+              </div>
             )}
 
             {/* Confirm Button */}
@@ -1659,14 +1684,12 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                 fontSize: '16px',
                 fontWeight: 600,
                 marginTop: '16px',
-                height: 'auto',
+                height: 'auto'
               }}
               onMouseEnter={(e) => !(isLoadingQuote || loading) && (e.currentTarget.style.backgroundColor = '#E55A25')}
               onMouseLeave={(e) => !(isLoadingQuote || loading) && (e.currentTarget.style.backgroundColor = '#FF6B35')}
             >
-              {isLoadingQuote ? 'Preparing your quote...' : loading ? 'Regenerating quote...' :
-                'Confirm Order'
-              }
+              {isLoadingQuote ? 'Preparing your quote...' : loading ? 'Regenerating quote...' : 'Confirm Order'}
             </Button>
           </div>
         )}
@@ -1677,9 +1700,9 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
             {/* Bridge Progress */}
             {bridgeStage !== 'idle' && (
               <div style={{ width: '100%', marginBottom: '24px' }}>
-                <Progress 
+                <Progress
                   percent={progress}
-                  strokeColor={bridgeStage === 'error' ? '#ff4444' : (bridgeStage === 'completed' ? '#4caf50' : '#FF6B35')}
+                  strokeColor={bridgeStage === 'error' ? '#ff4444' : bridgeStage === 'completed' ? '#4caf50' : '#FF6B35'}
                   trailColor="rgba(255,255,255,0.1)"
                   showInfo={false}
                   strokeLinecap="round"
@@ -1709,13 +1732,12 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                   width: '100%',
                   marginBottom: '24px',
                   background: 'rgba(255, 68, 68, 0.1)',
-                  border: '1px solid rgba(255, 68, 68, 0.3)',
+                  border: '1px solid rgba(255, 68, 68, 0.3)'
                 }}
               />
             )}
           </div>
         )}
-
       </div>
     </Modal>
   )

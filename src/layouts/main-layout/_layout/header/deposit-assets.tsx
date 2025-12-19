@@ -27,29 +27,29 @@ export const DepositAssets = () => {
   const { activeSolanaWallet, wallets } = usePrivyInfo()
   const { user } = usePrivy()
   const hasWallet = !!activeSolanaWallet
-  
+
   // 判断是否是外部钱包：用 activeSolanaWallet.address 在 linkedAccounts 中查找
   // 如果该地址对应的 walletClientType 不是 'privy'，则是外部钱包
-  const currentWalletAccount = user?.linkedAccounts?.find(
-    (account: any) => account.address === activeSolanaWallet?.address
-  )
+  const currentWalletAccount = user?.linkedAccounts?.find((account: any) => account.address === activeSolanaWallet?.address)
   const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
-  
+
   console.log('[DepositAssets] 🔍 Wallet check:', {
     hasWallet,
     isExternalWallet,
     walletAddress: activeSolanaWallet?.address,
-    currentWalletAccount: currentWalletAccount ? {
-      address: (currentWalletAccount as any).address,
-      walletClientType: (currentWalletAccount as any).walletClientType
-    } : null
+    currentWalletAccount: currentWalletAccount
+      ? {
+          address: (currentWalletAccount as any).address,
+          walletClientType: (currentWalletAccount as any).walletClientType
+        }
+      : null
   })
-  
+
   // 使用 onUserExited 回调处理用户关闭 modal
   const handleFundWalletExit = useCallback(() => {
     console.log('[Privy] User exited fund wallet modal')
   }, [])
-  
+
   const { fundWallet: fundSolanaWallet } = useSolanaFundWallet({
     onUserExited: handleFundWalletExit
   })
@@ -58,19 +58,13 @@ export const DepositAssets = () => {
   })
 
   // 获取 Cobo 钱包
-  const { 
-    walletId: coboWalletId, 
-    isLoading: coboWalletLoading 
-  } = useCoboWallet({
+  const { walletId: coboWalletId, isLoading: coboWalletLoading } = useCoboWallet({
     userId: user?.id || '',
     enabled: !!user?.id
   })
 
   // 获取 Cobo Solana 充值地址（用于信用卡购买）
-  const { 
-    address: coboSolanaAddress, 
-    isLoading: coboAddressLoading 
-  } = useCoboDepositAddress({
+  const { address: coboSolanaAddress, isLoading: coboAddressLoading } = useCoboDepositAddress({
     userId: user?.id || '',
     chainId: 'SOL',
     walletId: coboWalletId || '',
@@ -94,7 +88,7 @@ export const DepositAssets = () => {
     }
 
     console.log('[Buy Crypto] Using Cobo Solana address:', coboSolanaAddress)
-    
+
     try {
       const result = await fundSolanaWallet({
         address: coboSolanaAddress,
@@ -113,7 +107,13 @@ export const DepositAssets = () => {
   return (
     <div>
       <div>
-        <Button disabled={!hasWallet} variant={'primary'} size={'md'} className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold" onClick={() => setShowAddFundsMenu(true)}>
+        <Button
+          disabled={!hasWallet}
+          variant={'primary'}
+          size={'md'}
+          className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold"
+          onClick={() => setShowAddFundsMenu(true)}
+        >
           存款
         </Button>
 
@@ -127,8 +127,8 @@ export const DepositAssets = () => {
           showSwapOption={!!isExternalWallet}
         />
         {/* 跨链充值弹窗 */}
-        <TransferCryptoDialog 
-          open={showTransferDialog} 
+        <TransferCryptoDialog
+          open={showTransferDialog}
           onClose={() => setShowTransferDialog(false)}
           onBack={() => setShowAddFundsMenu(true)}
         />

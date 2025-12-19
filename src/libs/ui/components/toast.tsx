@@ -18,25 +18,25 @@ const Toaster = ({ ...props }: ToasterProps) => {
           description: cn('text-[14px] text-[#9FA0B0]'),
           content: cn('flex flex-col gap-2 flex-1'),
           closeButton: cn(
-            'order-last text-[#D8D8D8] p-0.5 size-5 justify-center items-center flex leading-none bg-[#3B3D52] rounded-full active:scale-95 transition-transform',
+            'order-last text-[#D8D8D8] p-0.5 size-5 justify-center items-center flex leading-none bg-[#3B3D52] rounded-full active:scale-95 transition-transform'
           ),
           success: cn('text-[#2EBC84]'),
           error: cn('text-[#FF453A]'),
           info: cn('text-[#2167ff]'),
-          icon: cn('flex'),
+          icon: cn('flex')
         },
-        closeButton: true,
+        closeButton: true
       }}
       style={
         {
-          '--width': '380px',
+          '--width': '380px'
           // '--normal-bg': 'var(--popover)',
           // '--normal-text': 'var(--popover-foreground)',
           // '--normal-border': 'var(--border)'
         } as React.CSSProperties
       }
       icons={{
-        close: <IconClose size={14} />,
+        close: <IconClose size={14} />
       }}
       {...props}
     />

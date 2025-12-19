@@ -26,15 +26,13 @@ export function useSessionSigner(options: UseSessionSignerOptions = {}) {
   // Auto-add session signer if enabled and not added
   useEffect(() => {
     if (autoAdd && user && !isSessionSignerAdded && !isChecking && !isAdding) {
-      const tronWallet = user.linkedAccounts?.find(
-        (account: any) => account.type === 'wallet' && account.chainType === 'tron'
-      ) as any
+      const tronWallet = user.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'tron') as any
 
       if (tronWallet && !tronWallet.delegated) {
         console.log('[SessionSigner] Auto-adding session signer...')
         // 延迟 1 秒，确保钱包创建完成
         setTimeout(() => {
-          addSessionSigner().catch(err => {
+          addSessionSigner().catch((err) => {
             console.error('[SessionSigner] Auto-add failed:', err)
           })
         }, 1000)
@@ -50,9 +48,7 @@ export function useSessionSigner(options: UseSessionSignerOptions = {}) {
 
     setIsChecking(true)
     try {
-      const tronWallet = user.linkedAccounts?.find(
-        (account: any) => account.type === 'wallet' && account.chainType === 'tron'
-      )
+      const tronWallet = user.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'tron')
 
       console.log('[SessionSigner] TRON wallet info:', {
         found: !!tronWallet,
@@ -81,9 +77,7 @@ export function useSessionSigner(options: UseSessionSignerOptions = {}) {
       throw new Error('User not logged in')
     }
 
-    const tronWallet = user.linkedAccounts?.find(
-      (account: any) => account.type === 'wallet' && account.chainType === 'tron'
-    ) as any
+    const tronWallet = user.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'tron') as any
 
     if (!tronWallet) {
       throw new Error('TRON wallet not found')
@@ -99,9 +93,7 @@ export function useSessionSigner(options: UseSessionSignerOptions = {}) {
       // Get Session Signer ID from config
       const signerId = PRIVY_SESSION_SIGNER_ID
       if (!signerId) {
-        throw new Error(
-          'PRIVY_SESSION_SIGNER_ID not configured. Please set up Session Signer in constants/config.ts'
-        )
+        throw new Error('PRIVY_SESSION_SIGNER_ID not configured. Please set up Session Signer in constants/config.ts')
       }
 
       console.log('[SessionSigner] Adding session signer with ID:', signerId)

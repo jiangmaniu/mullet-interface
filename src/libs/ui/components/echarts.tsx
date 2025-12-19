@@ -16,7 +16,7 @@ import type {
   LegendComponentOption,
   TitleComponentOption,
   ToolboxComponentOption,
-  TooltipComponentOption,
+  TooltipComponentOption
 } from 'echarts/components'
 
 import { cn } from '../lib/utils'
@@ -26,12 +26,7 @@ type EChartsProps = Omit<EChartsReactProps, 'echarts' | 'option'> & {
 }
 
 export type EChartsOption = ComposeOption<
-  | TitleComponentOption
-  | ToolboxComponentOption
-  | TooltipComponentOption
-  | GridComponentOption
-  | LegendComponentOption
-  | LineSeriesOption
+  TitleComponentOption | ToolboxComponentOption | TooltipComponentOption | GridComponentOption | LegendComponentOption | LineSeriesOption
 >
 
 echarts.use([
@@ -42,7 +37,7 @@ echarts.use([
   LegendComponent,
   LineChart,
   CanvasRenderer,
-  UniversalTransition,
+  UniversalTransition
 ])
 
 const EChartOption: echarts.EChartsCoreOption = {
@@ -53,9 +48,9 @@ const EChartOption: echarts.EChartsCoreOption = {
       symbol: 'none',
       smooth: true,
       lineStyle: {
-        color: '#ffffff',
-      },
-    },
+        color: '#ffffff'
+      }
+    }
   ],
   tooltip: {
     confine: true,
@@ -66,45 +61,45 @@ const EChartOption: echarts.EChartsCoreOption = {
     padding: 10,
     textStyle: {
       fontSize: 12,
-      color: '#ffffff',
-    },
+      color: '#ffffff'
+    }
   },
   xAxis: {
     type: 'category',
     axisTick: {
       lineStyle: {
-        color: '#ffffff',
-      },
+        color: '#ffffff'
+      }
     },
     axisLine: {
       lineStyle: {
-        color: '#ffffff',
-      },
+        color: '#ffffff'
+      }
     },
     axisLabel: {
       interval: 0,
-      color: '#ffffff',
-    },
+      color: '#ffffff'
+    }
   },
   yAxis: {
     type: 'value',
     axisLabel: {
-      color: '#ffffff',
+      color: '#ffffff'
     },
     splitLine: {
       lineStyle: {
         type: 'dashed',
-        color: 'rgba(81, 8, 8, 0.3)',
-      },
-    },
+        color: 'rgba(81, 8, 8, 0.3)'
+      }
+    }
   },
   grid: {
     top: '20px',
     left: '16px',
     right: '16px',
     bottom: '20px',
-    containLabel: true,
-  },
+    containLabel: true
+  }
 }
 
 export { echarts }

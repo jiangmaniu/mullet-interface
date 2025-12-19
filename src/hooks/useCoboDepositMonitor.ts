@@ -4,9 +4,9 @@ import { API_BASE_URL } from '@/constants/api'
 
 interface UseCoboDepositMonitorParams {
   depositAddress?: string // 充值地址（可选，用于过滤特定地址的充值）
-  walletIds?: string[]    // 钱包ID列表（可选）
+  walletIds?: string[] // 钱包ID列表（可选）
   enabled?: boolean
-  pollInterval?: number   // 轮询间隔（毫秒），默认10秒
+  pollInterval?: number // 轮询间隔（毫秒），默认10秒
   onDepositDetected?: (deposit: CoboTransaction) => void
   onDepositConfirming?: (deposit: CoboTransaction) => void // 确认中的回调
 }
@@ -57,7 +57,7 @@ interface CoboDeposit {
 /**
  * Cobo 充值监听 Hook
  * 轮询充值交易状态，显示确认进度和完成状态
- * 
+ *
  * @example
  * ```tsx
  * const { transactions, latestDeposit, isMonitoring, startMonitoring } = useCoboDepositMonitor({
@@ -72,7 +72,7 @@ interface CoboDeposit {
  * })
  * ```
  */
-export const useCoboDepositMonitor = ({ 
+export const useCoboDepositMonitor = ({
   depositAddress,
   walletIds,
   enabled = true,
@@ -85,7 +85,7 @@ export const useCoboDepositMonitor = ({
   const [error, setError] = useState<string | null>(null)
   const [latestDeposit, setLatestDeposit] = useState<CoboTransaction | null>(null)
   const [confirmingDeposit, setConfirmingDeposit] = useState<CoboTransaction | null>(null)
-  
+
   // 记录已处理的充值ID，避免重复通知
   const processedDepositIds = useRef(new Set<string>())
   // 记录正在确认中的交易ID及其确认数
@@ -119,7 +119,7 @@ export const useCoboDepositMonitor = ({
       params.append('types', 'Deposit')
       params.append('statuses', 'Confirming,Completed')
       params.append('limit', '10')
-      
+
       if (depositAddress) {
         params.append('addresses', depositAddress)
       }
@@ -128,117 +128,113 @@ export const useCoboDepositMonitor = ({
       }
 
       const url = `${API_BASE_URL}/api/v1/transactions?${params.toString()}`
-      
+
       console.log('[Cobo] 📡 Fetching:', url)
-      
+
       const response = await fetch(url)
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions: ${response.statusText}`)
       }
 
       const result = await response.json()
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to get transactions')
       }
 
       const txList: CoboTransaction[] = result.data.data || []
-      
+
       setTransactions(txList)
-      
+
       // 首次加载时，将所有已完成的交易标记为已处理，但不触发通知
       if (isFirstLoad.current) {
         txList
-          .filter(tx => tx.status === 'Completed')
-          .forEach(tx => {
+          .filter((tx) => tx.status === 'Completed')
+          .forEach((tx) => {
             processedDepositIds.current.add(tx.transaction_id)
           })
-        
+
         // 记录正在确认中的交易
         txList
-          .filter(tx => tx.status === 'Confirming')
-          .forEach(tx => {
+          .filter((tx) => tx.status === 'Confirming')
+          .forEach((tx) => {
             confirmingTxs.current.set(tx.transaction_id, tx.confirmed_num)
           })
-        
+
         isFirstLoad.current = false
         console.log('[Cobo] First load:', {
           completed: processedDepositIds.current.size,
           confirming: confirmingTxs.current.size
         })
-        
+
         // 首次加载也要设置确认中的交易（显示进度条）
-        const confirmingTxList = txList.filter(tx => tx.status === 'Confirming')
+        const confirmingTxList = txList.filter((tx) => tx.status === 'Confirming')
         if (confirmingTxList.length > 0) {
           setConfirmingDeposit(confirmingTxList[0])
         }
-        
+
         setError(null)
         return
       }
-      
+
       // 检测确认中的交易
-      const confirmingTxList = txList.filter(tx => tx.status === 'Confirming')
-      
+      const confirmingTxList = txList.filter((tx) => tx.status === 'Confirming')
+
       // 设置当前确认中的交易（最新的一笔）
       if (confirmingTxList.length > 0) {
         const latestConfirming = confirmingTxList[0]
         setConfirmingDeposit(latestConfirming)
-        
+
         // 检测进度变化并触发回调
         const previousConfirms = confirmingTxs.current.get(latestConfirming.transaction_id)
         const currentConfirms = latestConfirming.confirmed_num
-        
+
         if (previousConfirms !== undefined && currentConfirms > previousConfirms) {
-          console.log(`[Cobo] 确认进度更新: ${latestConfirming.transaction_id} (${currentConfirms}/${latestConfirming.confirming_threshold})`)
+          console.log(
+            `[Cobo] 确认进度更新: ${latestConfirming.transaction_id} (${currentConfirms}/${latestConfirming.confirming_threshold})`
+          )
           if (onDepositConfirming) {
             onDepositConfirming(latestConfirming)
           }
         }
-        
+
         // 更新所有确认中交易的记录
-        confirmingTxList.forEach(tx => {
+        confirmingTxList.forEach((tx) => {
           confirmingTxs.current.set(tx.transaction_id, tx.confirmed_num)
         })
       } else {
         // 没有确认中的交易，清空状态
         setConfirmingDeposit(null)
       }
-      
+
       // 检测新的已完成充值（非首次加载）
-      const newCompletedDeposits = txList.filter(
-        (tx) => 
-          tx.status === 'Completed' && 
-          !processedDepositIds.current.has(tx.transaction_id)
-      )
-      
+      const newCompletedDeposits = txList.filter((tx) => tx.status === 'Completed' && !processedDepositIds.current.has(tx.transaction_id))
+
       if (newCompletedDeposits.length > 0) {
         // 按时间排序，最新的在前
         newCompletedDeposits.sort((a, b) => b.created_timestamp - a.created_timestamp)
-        
+
         const newest = newCompletedDeposits[0]
         setLatestDeposit(newest)
-        
+
         // 从确认中列表移除
         confirmingTxs.current.delete(newest.transaction_id)
-        
+
         // 标记为已处理
-        newCompletedDeposits.forEach(tx => {
+        newCompletedDeposits.forEach((tx) => {
           processedDepositIds.current.add(tx.transaction_id)
         })
-        
+
         // 通知回调
         if (onDepositDetected) {
           onDepositDetected(newest)
         }
-        
+
         // 显示成功消息
-        message.success(
-          `✅ 充值成功！${newest.destination.amount} ${newest.token_id}`
-        )
+        message.success(`✅ 充值成功！${newest.destination.amount} ${newest.token_id}`)
       }
-      
+
       setError(null)
     } catch (err: any) {
       const errorMsg = err.message || 'Failed to fetch transactions'
@@ -279,12 +275,12 @@ export const useCoboDepositMonitor = ({
 
     const poll = async () => {
       if (cancelled) return
-      
+
       console.log('[Cobo] 🔄 Polling...')
       await fetchTransactions()
-      
+
       if (cancelled) return
-      
+
       // fetch 完成后等 pollInterval 再下一次
       console.log('[Cobo] ⏰ Waiting', pollInterval, 'ms for next poll')
       timeoutRef.current = setTimeout(poll, pollInterval)
@@ -301,7 +297,7 @@ export const useCoboDepositMonitor = ({
         timeoutRef.current = null
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isMonitoring, enabled, pollInterval]) // 不依赖 fetchTransactions
 
   // enabled 变为 false 时自动停止监听
@@ -319,20 +315,18 @@ export const useCoboDepositMonitor = ({
   }, [enabled, isMonitoring])
 
   return {
-    transactions,        // 所有交易列表
+    transactions, // 所有交易列表
     deposits: transactions, // 兼容旧版本（别名）
-    latestDeposit,      // 最新完成的充值
-    confirmingDeposit,  // 当前确认中的充值
+    latestDeposit, // 最新完成的充值
+    confirmingDeposit, // 当前确认中的充值
     isMonitoring,
     error,
     startMonitoring,
     stopMonitoring,
     refetch: fetchTransactions,
     // 辅助方法：获取确认进度文本
-    getConfirmationProgress: (tx: CoboTransaction) => 
-      `${tx.confirmed_num}/${tx.confirming_threshold}`,
+    getConfirmationProgress: (tx: CoboTransaction) => `${tx.confirmed_num}/${tx.confirming_threshold}`,
     // 辅助方法：获取确认百分比
-    getConfirmationPercentage: (tx: CoboTransaction) => 
-      Math.round((tx.confirmed_num / tx.confirming_threshold) * 100)
+    getConfirmationPercentage: (tx: CoboTransaction) => Math.round((tx.confirmed_num / tx.confirming_threshold) * 100)
   }
 }

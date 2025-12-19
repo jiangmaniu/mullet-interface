@@ -15,10 +15,10 @@ interface CoboDepositStatusProps {
 /**
  * Cobo 充值状态监听组件
  * 显示充值确认进度和完成状态
- * 
+ *
  * @example
  * ```tsx
- * <CoboDepositStatus 
+ * <CoboDepositStatus
  *   depositAddress="5i5g14ncp2tVDk98ZB89oKrbhsEWjE7mcgLp18J5TeA9"
  *   autoStart={true}
  *   onDepositComplete={(amount, token) => {
@@ -27,12 +27,7 @@ interface CoboDepositStatusProps {
  * />
  * ```
  */
-const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({
-  depositAddress,
-  walletIds,
-  autoStart = true,
-  onDepositComplete
-}) => {
+const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({ depositAddress, walletIds, autoStart = true, onDepositComplete }) => {
   const {
     transactions,
     latestDeposit,
@@ -65,22 +60,24 @@ const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({
     if (autoStart && depositAddress) {
       startMonitoring()
     }
-    
+
     return () => {
       stopMonitoring()
     }
   }, [autoStart, depositAddress, startMonitoring, stopMonitoring])
 
   // 获取最新的确认中交易
-  const currentConfirmingTx = transactions.find(tx => tx.status === 'Confirming')
+  const currentConfirmingTx = transactions.find((tx) => tx.status === 'Confirming')
 
   return (
-    <Card 
-      title="充值状态监听" 
+    <Card
+      title="充值状态监听"
       style={{ width: '100%', maxWidth: 500 }}
       extra={
         isMonitoring ? (
-          <Tag icon={<SyncOutlined spin />} color="processing">监听中...</Tag>
+          <Tag icon={<SyncOutlined spin />} color="processing">
+            监听中...
+          </Tag>
         ) : (
           <Tag color="default">已停止</Tag>
         )
@@ -88,14 +85,7 @@ const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({
     >
       <Space direction="vertical" style={{ width: '100%' }} size="large">
         {/* 错误提示 */}
-        {error && (
-          <Alert 
-            message="监听错误" 
-            description={error} 
-            type="error" 
-            closable 
-          />
-        )}
+        {error && <Alert message="监听错误" description={error} type="error" closable />}
 
         {/* 确认中的充值 */}
         {currentConfirmingTx && (
@@ -107,24 +97,18 @@ const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({
                   <Text strong>
                     {currentConfirmingTx.destination.amount} {currentConfirmingTx.token_id}
                   </Text>
-                  <Text type="secondary">
-                    {getConfirmationProgress(currentConfirmingTx)}
-                  </Text>
+                  <Text type="secondary">{getConfirmationProgress(currentConfirmingTx)}</Text>
                 </div>
-                <Progress 
-                  percent={getConfirmationPercentage(currentConfirmingTx)} 
+                <Progress
+                  percent={getConfirmationPercentage(currentConfirmingTx)}
                   status="active"
                   strokeColor={{
                     '0%': '#108ee9',
-                    '100%': '#87d068',
+                    '100%': '#87d068'
                   }}
                 />
                 {currentConfirmingTx.transaction_hash && (
-                  <Text 
-                    type="secondary" 
-                    style={{ fontSize: 12 }}
-                    ellipsis={{ tooltip: currentConfirmingTx.transaction_hash }}
-                  >
+                  <Text type="secondary" style={{ fontSize: 12 }} ellipsis={{ tooltip: currentConfirmingTx.transaction_hash }}>
                     TxHash: {currentConfirmingTx.transaction_hash.slice(0, 10)}...
                   </Text>
                 )}
@@ -139,7 +123,9 @@ const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({
             <Space>
               <CheckCircleOutlined style={{ color: '#52c41a', fontSize: 20 }} />
               <div>
-                <Title level={5} style={{ margin: 0 }}>充值成功！</Title>
+                <Title level={5} style={{ margin: 0 }}>
+                  充值成功！
+                </Title>
                 <Text type="secondary">
                   {latestDeposit.destination.amount} {latestDeposit.token_id}
                 </Text>
@@ -156,10 +142,10 @@ const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({
             </Text>
             <div style={{ marginTop: 8 }}>
               {transactions.slice(0, 3).map((tx) => (
-                <div 
-                  key={tx.transaction_id} 
-                  style={{ 
-                    padding: '8px 0', 
+                <div
+                  key={tx.transaction_id}
+                  style={{
+                    padding: '8px 0',
                     borderBottom: '1px solid #f0f0f0',
                     display: 'flex',
                     justifyContent: 'space-between',
@@ -167,16 +153,22 @@ const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({
                   }}
                 >
                   <Space>
-                    <Text>{tx.destination.amount} {tx.token_id}</Text>
+                    <Text>
+                      {tx.destination.amount} {tx.token_id}
+                    </Text>
                   </Space>
                   {tx.status === 'Completed' ? (
-                    <Tag icon={<CheckCircleOutlined />} color="success">已完成</Tag>
+                    <Tag icon={<CheckCircleOutlined />} color="success">
+                      已完成
+                    </Tag>
                   ) : tx.status === 'Confirming' ? (
                     <Tag icon={<SyncOutlined spin />} color="processing">
                       {getConfirmationProgress(tx)}
                     </Tag>
                   ) : (
-                    <Tag icon={<CloseCircleOutlined />} color="error">失败</Tag>
+                    <Tag icon={<CloseCircleOutlined />} color="error">
+                      失败
+                    </Tag>
                   )}
                 </div>
               ))}
@@ -185,9 +177,7 @@ const CoboDepositStatus: React.FC<CoboDepositStatusProps> = ({
         )}
 
         {/* 无数据提示 */}
-        {!isMonitoring && transactions.length === 0 && !error && (
-          <Text type="secondary">暂无充值记录</Text>
-        )}
+        {!isMonitoring && transactions.length === 0 && !error && <Text type="secondary">暂无充值记录</Text>}
 
         {/* 加载中 */}
         {isMonitoring && transactions.length === 0 && !error && (

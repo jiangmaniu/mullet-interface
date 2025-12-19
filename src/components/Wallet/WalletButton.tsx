@@ -11,11 +11,11 @@ import Button from '../Base/Button'
 export default function WalletButton() {
   const { user, connected, activeSolanaWallet, address, connectWallet } = usePrivyInfo()
   const { login } = useLogin()
-  
+
   // 检查钱包状态
   const hasExternalWallet = !!activeSolanaWallet && !!(activeSolanaWallet as any).standardWallet
   const reconnectWallet = !activeSolanaWallet
-  
+
   // 排除内嵌钱包登录（邮箱等账号登录）
 
   const handleWalletLogin = async () => {

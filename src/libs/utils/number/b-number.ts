@@ -6,7 +6,7 @@ import { FormatNumberOpt, FormatPercentOpt, toFormatNumber, toFormatPercent } fr
 const BigNumberConfig: BigNumber.Config = {
   ROUNDING_MODE: BigNumber.ROUND_DOWN,
   EXPONENTIAL_AT: [-30, 40],
-  DECIMAL_PLACES: 30,
+  DECIMAL_PLACES: 30
 }
 
 BigNumber.config(BigNumberConfig)

@@ -170,10 +170,10 @@ export function setCSSCustomProperty(props: { tvWidget: IChartingLibraryWidget; 
 export function createWatermarkLogo(isDark?: boolean) {
   const chartContainer = document.getElementById('tradingview')
   const logo = document.createElement('img')
-  logo.src = isDark ? '/platform/img/kline-water-logo.svg' : '/platform/img/kline-water-logo.svg'  // 替换为您的 LOGO 路径
+  logo.src = isDark ? '/platform/img/kline-water-logo.svg' : '/platform/img/kline-water-logo.svg' // 替换为您的 LOGO 路径
   logo.style.width = '560px'
   logo.style.opacity = 0.05
-  logo.className = cn("absolute select-none left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2")
+  logo.className = cn('absolute select-none left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2')
 
   // 将 LOGO 元素添加到图表容器中
   chartContainer.appendChild(logo)

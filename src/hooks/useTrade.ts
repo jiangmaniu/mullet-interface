@@ -563,9 +563,7 @@ export default function useTrade(props?: IProps) {
     throttle(
       () => {
         let retValue = slValueEstimateRaw === 0 ? '' : slValueEstimateRaw
-        return retValue
-          ? retValue
-          : retValue
+        return retValue ? retValue : retValue
       },
       100,
       {
@@ -582,8 +580,8 @@ export default function useTrade(props?: IProps) {
       !spValuePrice || Number(spValuePrice) === 0 || Number.isNaN(spValuePrice)
         ? false
         : isBuy
-          ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
-          : Number(spValuePrice) > sp_scope,
+        ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
+        : Number(spValuePrice) > sp_scope,
     [isBuy, spValuePrice, sp_scope]
   )
   const slFlag = useMemo(
@@ -591,8 +589,8 @@ export default function useTrade(props?: IProps) {
       !slValuePrice || Number(slValuePrice) === 0 || Number.isNaN(slValuePrice)
         ? false
         : isBuy
-          ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
-          : Number(slValuePrice) < sl_scope,
+        ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
+        : Number(slValuePrice) < sl_scope,
     [isBuy, slValuePrice, sl_scope]
   )
 

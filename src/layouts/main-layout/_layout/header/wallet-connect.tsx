@@ -9,7 +9,7 @@ import { Button } from '@mullet/ui/button'
 export const WalletConnect = () => {
   const {
     connectAndlogin,
-    loginAccountMutationResult: { isPending },
+    loginAccountMutationResult: { isPending }
   } = useWalletLogin()
 
   const { isAuthenticated } = useWalletAuthState()

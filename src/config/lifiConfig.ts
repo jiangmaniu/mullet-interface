@@ -4,7 +4,7 @@
  * 用于支持多链跨链桥接功能
  */
 
-import { ChainId } from '@lifi/sdk';
+import { ChainId } from '@lifi/sdk'
 
 // LiFi integrator configurations - rotate between multiple accounts to avoid rate limits
 export const LIFI_INTEGRATORS = [
@@ -123,7 +123,7 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     minDeposit: 10,
     type: 'cobo' as const,
     displayName: 'BSC'
-  },
+  }
   // {
   //   id: 'HYPEREVM_HYPE',
   //   name: 'HyperEVM',
@@ -245,5 +245,5 @@ export const SUPPORTED_TOKENS = {
 }
 
 // Chain ID constants from LiFi SDK
-export const ETHEREUM_CHAIN_ID = ChainId.ETH;
-export const SOLANA_CHAIN_ID = ChainId.SOL;
+export const ETHEREUM_CHAIN_ID = ChainId.ETH
+export const SOLANA_CHAIN_ID = ChainId.SOL

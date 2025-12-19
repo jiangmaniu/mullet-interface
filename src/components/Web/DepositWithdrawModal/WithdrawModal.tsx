@@ -17,7 +17,7 @@ import { CHAIN_ICONS } from '@/config/tokenIcons'
 import { SUPPORTED_BRIDGE_CHAINS } from '@/config/lifiConfig'
 
 // 使用统一的链配置
-const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.map(chain => ({
+const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.map((chain) => ({
   name: chain.name,
   displayName: chain.displayName,
   chainId: chain.id
@@ -25,13 +25,13 @@ const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.map(chain => ({
 
 // 地址验证规则
 const ADDRESS_VALIDATION: Record<string, RegExp> = {
-  'Solana': /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
-  'Ethereum': /^0x[a-fA-F0-9]{40}$/,
-  'Tron': /^T[a-zA-Z0-9]{33}$/,
-  'Arbitrum': /^0x[a-fA-F0-9]{40}$/,
-  'Base': /^0x[a-fA-F0-9]{40}$/,
-  'Polygon': /^0x[a-fA-F0-9]{40}$/,
-  'BSC': /^0x[a-fA-F0-9]{40}$/,
+  Solana: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+  Ethereum: /^0x[a-fA-F0-9]{40}$/,
+  Tron: /^T[a-zA-Z0-9]{33}$/,
+  Arbitrum: /^0x[a-fA-F0-9]{40}$/,
+  Base: /^0x[a-fA-F0-9]{40}$/,
+  Polygon: /^0x[a-fA-F0-9]{40}$/,
+  BSC: /^0x[a-fA-F0-9]{40}$/
 }
 
 // 出金弹窗 - 使用 Cobo API
@@ -53,11 +53,11 @@ export default observer(
     const accountMoney = accountItem.money as number
 
     // 使用 useCoboWallet hook 获取或创建 Cobo 钱包
-    const { 
-      walletId: coboWalletId, 
+    const {
+      walletId: coboWalletId,
       walletData: coboWalletData,
-      isLoading: coboWalletLoading, 
-      error: coboWalletError 
+      isLoading: coboWalletLoading,
+      error: coboWalletError
     } = useCoboWallet({
       userId: user?.id || '',
       enabled: open && !!user?.id
@@ -90,13 +90,13 @@ export default observer(
     // 注意：Cobo的token_id命名规范：USDC = USDCOIN, USDT = TETHER
     const getPossibleTokenIds = (chainId: string): string[] => {
       const tokenMap: Record<string, string[]> = {
-        'SOL': ['SOL_USDT', 'SOL_USDC'],
-        'ETH': ['ETH_USDT', 'ETH_USDC'],
-        'TRON': ['TRON'],  // TRON 使用原生代币
-        'ARBITRUM_ETH': ['ARBITRUM_USDCOIN', 'ARBITRUM_TETHER'],
-        'BASE_ETH': ['BASE_USDCOIN', 'BASE_TETHER'],
-        'MATIC': ['MATIC_USDT', 'MATIC_USDC'],
-        'BSC_BNB': ['BSC_USDT', 'BSC_USDC'],
+        SOL: ['SOL_USDT', 'SOL_USDC'],
+        ETH: ['ETH_USDT', 'ETH_USDC'],
+        TRON: ['TRON'], // TRON 使用原生代币
+        ARBITRUM_ETH: ['ARBITRUM_USDCOIN', 'ARBITRUM_TETHER'],
+        BASE_ETH: ['BASE_USDCOIN', 'BASE_TETHER'],
+        MATIC: ['MATIC_USDT', 'MATIC_USDC'],
+        BSC_BNB: ['BSC_USDT', 'BSC_USDC']
       }
       return tokenMap[chainId] || ['SOL_USDT']
     }
@@ -110,17 +110,17 @@ export default observer(
     useEffect(() => {
       // 只在弹窗打开且有用户ID时查询
       if (!open || !user?.id || !selectedChain) return
-      
+
       const fetchChainBalance = async () => {
         setLoadingBalance(true)
         try {
-          const chainConfig = SUPPORTED_CHAINS.find(c => c.name === selectedChain)
+          const chainConfig = SUPPORTED_CHAINS.find((c) => c.name === selectedChain)
           if (!chainConfig) return
-          
+
           const possibleTokenIds = getPossibleTokenIds(chainConfig.chainId)
           let totalBalance = BigInt(0)
           let foundTokenId = ''
-          
+
           // 查询所有可能的代币余额并累加
           for (const tokenId of possibleTokenIds) {
             try {
@@ -141,7 +141,7 @@ export default observer(
               console.log(`[WithdrawModal] Token ${tokenId} not found, trying next...`)
             }
           }
-          
+
           setChainBalance(totalBalance.toString())
           console.log('[WithdrawModal] Total chain balance:', {
             chain: selectedChain,
@@ -155,7 +155,7 @@ export default observer(
           setLoadingBalance(false)
         }
       }
-      
+
       fetchChainBalance()
     }, [open, selectedChain, user?.id])
 
@@ -168,7 +168,7 @@ export default observer(
       console.log('[WithdrawModal] Form values:', values)
 
       const { money, withdrawAddress, targetChain } = values
-      
+
       if (!user?.id) {
         message.error('请先登录')
         return
@@ -183,14 +183,14 @@ export default observer(
 
       try {
         // 获取选中的链配置
-        const selectedChainConfig = SUPPORTED_CHAINS.find(c => c.name === targetChain)
+        const selectedChainConfig = SUPPORTED_CHAINS.find((c) => c.name === targetChain)
         if (!selectedChainConfig) {
           throw new Error('不支持的目标链')
         }
 
         const chainId = selectedChainConfig.chainId
         const tokenId = getTokenId(chainId)
-        
+
         console.log('[WithdrawModal] 💰 Withdraw params:', {
           userId: user.id,
           chainId,
@@ -223,10 +223,8 @@ export default observer(
           })
 
           const requestId = response.data?.requestId || ''
-          message.success(
-            `提现请求已提交！请求ID: ${requestId.slice(-8)}`
-          )
-          
+          message.success(`提现请求已提交！请求ID: ${requestId.slice(-8)}`)
+
           close()
           form.resetFields()
           fetchUserInfo(true)
@@ -262,9 +260,7 @@ export default observer(
           title={
             <div className="flex items-center">
               <FormattedMessage id="mt.chujin" />
-              <span className="ml-2 text-sm text-gray-500 font-normal">
-                (通过 Cobo 钱包出金)
-              </span>
+              <span className="ml-2 text-sm text-gray-500 font-normal">(通过 Cobo 钱包出金)</span>
             </div>
           }
           open={open}
@@ -283,7 +279,7 @@ export default observer(
                 initialValue="Solana"
                 rules={[{ required: true, message: '请选择目标链' }]}
               >
-                <Select 
+                <Select
                   onChange={(value) => {
                     console.log('[WithdrawModal] 🔄 Chain selected:', value)
                     setSelectedChain(value)
@@ -310,17 +306,14 @@ export default observer(
                 required
                 label={intl.formatMessage({ id: 'mt.mubiaodizhi' })}
                 name="withdrawAddress"
-                rules={[
-                  { required: true, message: '请输入目标地址' },
-                  { validator: validateAddress }
-                ]}
+                rules={[{ required: true, message: '请输入目标地址' }, { validator: validateAddress }]}
               >
-                <Input 
-                  size="large" 
-                  className="!h-[38px]" 
+                <Input
+                  size="large"
+                  className="!h-[38px]"
                   placeholder={
-                    selectedChain === 'Ethereum' 
-                      ? '请输入 Ethereum 地址 (以 0x 开头)' 
+                    selectedChain === 'Ethereum'
+                      ? '请输入 Ethereum 地址 (以 0x 开头)'
                       : selectedChain === 'Tron'
                       ? '请输入 Tron 地址 (以 T 开头)'
                       : selectedChain === 'Solana'
@@ -334,28 +327,32 @@ export default observer(
                       : selectedChain === 'BNB'
                       ? '请输入 BSC 地址 (以 0x 开头)'
                       : '请输入目标地址'
-                  } 
+                  }
                 />
               </Form.Item>
 
               {/* 链余额显示 */}
-              <div className={`mb-4 px-3 py-2 rounded-lg border ${
-                theme.isDark 
-                  ? 'bg-gray-800/50 border-gray-700' 
-                  : 'bg-gray-100/50 border-gray-200'
-              }`}>
+              <div
+                className={`mb-4 px-3 py-2 rounded-lg border ${
+                  theme.isDark ? 'bg-gray-800/50 border-gray-700' : 'bg-gray-100/50 border-gray-200'
+                }`}
+              >
                 <div className="flex items-center justify-between">
-                  <span className={`text-sm ${theme.isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-                    {selectedChain} 链可用余额:
-                  </span>
+                  <span className={`text-sm ${theme.isDark ? 'text-gray-400' : 'text-gray-600'}`}>{selectedChain} 链可用余额:</span>
                   {loadingBalance ? (
                     <span className={`text-sm ${theme.isDark ? 'text-gray-400' : 'text-gray-500'}`}>加载中...</span>
                   ) : (
-                    <span className={`text-sm font-semibold ${
-                      parseFloat(chainBalance) > 0 
-                        ? (theme.isDark ? 'text-green-500' : 'text-green-600')
-                        : (theme.isDark ? 'text-red-400' : 'text-red-500')
-                    }`}>
+                    <span
+                      className={`text-sm font-semibold ${
+                        parseFloat(chainBalance) > 0
+                          ? theme.isDark
+                            ? 'text-green-500'
+                            : 'text-green-600'
+                          : theme.isDark
+                          ? 'text-red-400'
+                          : 'text-red-500'
+                      }`}
+                    >
                       {chainBalance || '0'} USD
                     </span>
                   )}
@@ -414,45 +411,31 @@ export default observer(
                   placeholder={intl.formatMessage({ id: 'mt.jine' })}
                 />
               </Form.Item>
-              
+
               {/* 提现信息提示 */}
-              <div className={`text-sm mt-4 px-4 py-3 rounded-lg border ${
-                theme.isDark 
-                  ? 'bg-blue-900/20 border-blue-800' 
-                  : 'bg-blue-50 border-blue-200'
-              }`}>
+              <div
+                className={`text-sm mt-4 px-4 py-3 rounded-lg border ${
+                  theme.isDark ? 'bg-blue-900/20 border-blue-800' : 'bg-blue-50 border-blue-200'
+                }`}
+              >
                 <div className="flex items-center gap-2 mb-2">
-                  <span className={`font-medium ${theme.isDark ? 'text-blue-400' : 'text-blue-600'}`}>
-                    ℹ️ 提现到 {selectedChain}
-                  </span>
+                  <span className={`font-medium ${theme.isDark ? 'text-blue-400' : 'text-blue-600'}`}>ℹ️ 提现到 {selectedChain}</span>
                 </div>
                 <div className={`text-xs space-y-1 ${theme.isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                   <div>• 提现通过 Cobo 钱包处理</div>
                   <div>• 预计到账时间: 2-10 分钟</div>
                   <div>• 网络费用由平台支付</div>
-                  {coboWalletLoading && (
-                    <div className="text-blue-600 mt-2">
-                      🔄 正在加载钱包信息...
-                    </div>
-                  )}
-                  {coboWalletError && (
-                    <div className="text-red-600 mt-2">
-                      ⚠️ {coboWalletError}
-                    </div>
-                  )}
-                  {coboWalletData?.isNew && (
-                    <div className="text-green-600 mt-2">
-                      ✅ 已自动创建 Cobo 钱包
-                    </div>
-                  )}
+                  {coboWalletLoading && <div className="text-blue-600 mt-2">🔄 正在加载钱包信息...</div>}
+                  {coboWalletError && <div className="text-red-600 mt-2">⚠️ {coboWalletError}</div>}
+                  {coboWalletData?.isNew && <div className="text-green-600 mt-2">✅ 已自动创建 Cobo 钱包</div>}
                 </div>
               </div>
-              
-              <Button 
-                type="primary" 
-                htmlType="submit" 
-                block 
-                className="mt-8" 
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                className="mt-8"
                 loading={submitLoading || coboWalletLoading}
                 disabled={!coboWalletId || coboWalletLoading}
               >

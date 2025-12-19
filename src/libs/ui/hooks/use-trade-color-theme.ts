@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 export enum TradeColorThemeType {
   Classic,
-  VisualImpairment,
+  VisualImpairment
 }
 
 export interface TradeColorThemeProps {
@@ -14,12 +14,12 @@ export interface TradeColorThemeProps {
 export const TRADE_COLOR_THEME_MAP = {
   [TradeColorThemeType.Classic]: {
     buy: 'var(--color-green-500)',
-    sell: 'var(--color-red-500)',
+    sell: 'var(--color-red-500)'
   },
   [TradeColorThemeType.VisualImpairment]: {
     buy: 'var(--color-yellow-500)',
-    sell: 'var(--color-blue-500)',
-  },
+    sell: 'var(--color-blue-500)'
+  }
 }
 
 export const useTradeColorTheme = ({ defaultType = TradeColorThemeType.Classic }: TradeColorThemeProps = {}) => {
@@ -39,6 +39,6 @@ export const useTradeColorTheme = ({ defaultType = TradeColorThemeType.Classic }
   return {
     styleContainerRef,
     activeColorThemeType,
-    handleChangeColorThemeType,
+    handleChangeColorThemeType
   }
 }

@@ -32,7 +32,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const { token } = antdTheme.useToken()
   const { getAccessToken, user } = usePrivy()
   const { wallets } = useWallets()
-  
+
   // Privy v3.8+ Ethereum Gas 赞助
   const { sendTransaction } = useSendTransaction({
     onSuccess: (txReceipt) => {
@@ -42,9 +42,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       console.error('[Privy] ❌ Ethereum transaction failed:', error)
     }
   })
-  
+
   const { trade } = useStores()
-  
+
   // TRON 钱包自动创建和管理
   const { tronAddress, tronWalletId, tronPublicKey, isCreating: isTronWalletCreating } = useTronWallet(true)
 
@@ -56,26 +56,26 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const [pollingOrderId, setPollingOrderId] = useState<string | null>(null) // 正在轮询的订单 ID
 
   // 判断当前选择的链是否是 Cobo
-  const selectedChainConfig = SUPPORTED_BRIDGE_CHAINS.find(c => c.name === selectedChain)
+  const selectedChainConfig = SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)
   const isCoboChain = selectedChainConfig?.type === 'cobo'
-  
+
   // 获取用户的 Cobo 钱包（自动创建）
-  const { 
-    walletId: coboWalletId, 
+  const {
+    walletId: coboWalletId,
     walletData: coboWalletData,
-    isLoading: coboWalletLoading, 
-    error: coboWalletError 
+    isLoading: coboWalletLoading,
+    error: coboWalletError
   } = useCoboWallet({
     userId: user?.id || '',
     enabled: open && isCoboChain
   })
-  
+
   // 获取 Cobo 充值地址（仅在选择 Cobo 链且已有钱包时启用）
-  const { 
-    address: coboAddress, 
+  const {
+    address: coboAddress,
     isLoading: coboAddressLoading,
     error: coboAddressError,
-    isNew: coboAddressIsNew 
+    isNew: coboAddressIsNew
   } = useCoboDepositAddress({
     userId: user?.id || '',
     chainId: selectedChainConfig?.id as 'ETH' | 'SOL' | 'TRON' | 'ARBITRUM_ETH' | 'BASE_ETH' | 'MATIC' | 'BSC_BNB' | 'HYPEREVM_HYPE',
@@ -84,7 +84,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   })
 
   // Cobo 充值监听（仅在选择 Cobo 链且已有钱包时启用）
-  const { 
+  const {
     transactions: coboTransactions,
     deposits: coboDeposits,
     latestDeposit: coboLatestDeposit,
@@ -112,13 +112,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   })
 
   // 获取所有链的钱包地址
-  const ethereumAccount = user?.linkedAccounts?.find(
-    (account: any) => account.type === 'wallet' && account.chainType === 'ethereum'
-  ) as any
-  
-  const solanaAccount = user?.linkedAccounts?.find(
-    (account: any) => account.type === 'wallet' && account.chainType === 'solana'
-  ) as any
+  const ethereumAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'ethereum') as any
+
+  const solanaAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'solana') as any
 
   // 使用充值监听 hook - 传递所有链的地址（仅 Privy 链）
   const { deposit, isListening, clearDeposit, resetDetection } = useDepositListener({
@@ -133,7 +129,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   // 获取钱包地址
   useEffect(() => {
     if (!open) return
-    
+
     // 如果是 Cobo 链，使用 Cobo 地址
     if (isCoboChain) {
       if (coboAddress) {
@@ -174,12 +170,12 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         //   setDepositAddress('')
         // }
         // return
-        
+
         // 使用 Privy Solana 钱包地址
         const solanaAccount = user?.linkedAccounts?.find(
           (account: any) => account.type === 'wallet' && account.chainType === 'solana'
         ) as any
-        
+
         if (solanaAccount?.address) {
           setDepositAddress(solanaAccount.address)
           console.log(`[TransferCrypto] Using Privy Solana wallet:`, solanaAccount.address)
@@ -189,7 +185,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         }
         return
       }
-      
+
       // 对于 TRON，优先使用 hook 返回的地址
       if (chainType === 'tron') {
         if (tronAddress) {
@@ -197,7 +193,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           console.log(`[TransferCrypto] Using TRON wallet from hook:`, tronAddress)
           return
         }
-        
+
         // 如果 hook 还在创建中，等待
         if (isTronWalletCreating) {
           console.log(`[TransferCrypto] TRON wallet is being created...`)
@@ -222,7 +218,18 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     }
 
     loadAddress()
-  }, [open, selectedChain, user, trade.currentAccountInfo, tronAddress, isTronWalletCreating, isCoboChain, coboAddress, coboAddressLoading, coboAddressError])
+  }, [
+    open,
+    selectedChain,
+    user,
+    trade.currentAccountInfo,
+    tronAddress,
+    isTronWalletCreating,
+    isCoboChain,
+    coboAddress,
+    coboAddressLoading,
+    coboAddressError
+  ])
 
   // Cobo 充值监听 - 地址加载完成后自动启动
   // 使用 ref 避免 callback 变化导致的死循环
@@ -240,7 +247,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       // 其他情况都停止监听
       coboStopMonitoringRef.current()
     }
-    
+
     // 组件卸载或依赖变化时确保停止监听
     return () => {
       coboStopMonitoringRef.current()
@@ -256,12 +263,12 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
   // 检测到充值后自动触发桥接
   useEffect(() => {
-    console.log('[TransferCrypto] useEffect triggered:', { 
-      hasDeposit: !!deposit, 
+    console.log('[TransferCrypto] useEffect triggered:', {
+      hasDeposit: !!deposit,
       bridgeInProgress,
-      depositData: deposit 
+      depositData: deposit
     })
-    
+
     if (deposit && !bridgeInProgress) {
       console.log('[TransferCrypto] Deposit detected:', deposit)
       message.success(`Detected ${deposit.amount} ${deposit.token} on ${deposit.chain}!`)
@@ -275,7 +282,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       } else if (deposit.rawBalance) {
         amountToUse = deposit.rawBalance
       }
-      
+
       handleAutoBridge(amountToUse, deposit.token, deposit.chain)
 
       // 清除检测记录
@@ -314,20 +321,22 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         signal: AbortSignal.timeout(10000)
-      }).then(response => {
-        if (response.ok) {
-          console.log('[Bridge] ✅ Backend notification successful')
-        } else {
-          console.error('[Bridge] ❌ Backend notification failed:', response.status)
-        }
-      }).catch(error => {
-        console.error('[Bridge] ❌ Failed to notify backend:', error)
       })
+        .then((response) => {
+          if (response.ok) {
+            console.log('[Bridge] ✅ Backend notification successful')
+          } else {
+            console.error('[Bridge] ❌ Backend notification failed:', response.status)
+          }
+        })
+        .catch((error) => {
+          console.error('[Bridge] ❌ Failed to notify backend:', error)
+        })
 
       // 🔥 前端立即调用充值 API（不等后端）
       console.log('[Bridge] 💰 Calling recharge API immediately...')
       const rechargeUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${targetAddress}&amount=${amount}`
-      
+
       const rechargeResponse = await fetch(rechargeUrl, {
         method: 'GET',
         signal: AbortSignal.timeout(10000) // 10秒超时
@@ -385,7 +394,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       // amount 是最小单位格式（如 USDT: 20000000 = 20 USD）
       const minAmountUSD = chain === 'Tron' ? 20 : chain === 'Ethereum' ? 3 : 10
       const minAmountSmallestUnit = minAmountUSD * 1_000_000 // 转换为最小单位
-      
+
       const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount
 
       if (amountNum < minAmountSmallestUnit) {
@@ -406,10 +415,10 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         const tronTokenInfo = SUPPORTED_TOKENS.tron.find((t) => t.symbol === token)
         if (!tronTokenInfo) throw new Error(`Token ${token} 在 Tron 上不受支持`)
 
-        console.log('[Bridge] TRON wallet info:', { 
-          walletId: tronWalletId, 
-          publicKey: tronPublicKey?.slice(0, 10) + '...', 
-          address: tronAddress 
+        console.log('[Bridge] TRON wallet info:', {
+          walletId: tronWalletId,
+          publicKey: tronPublicKey?.slice(0, 10) + '...',
+          address: tronAddress
         })
 
         const tronResult = await debridgeService.bridgeTronToEthereum({
@@ -470,7 +479,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         } else {
           console.warn('[Bridge] ⚠️ No orderId, waiting 2.5 minutes for bridge to complete...')
           message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
-          await new Promise(resolve => setTimeout(resolve, 150_000)) // 2.5 分钟
+          await new Promise((resolve) => setTimeout(resolve, 150_000)) // 2.5 分钟
           console.log('[Bridge] ✅ Manual wait completed for TRON→ETH→SOL')
         }
       } else if (chain === 'Ethereum') {
@@ -507,7 +516,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         } else {
           console.warn('[Bridge] ⚠️ No orderId, waiting 2.5 minutes for bridge to complete...')
           message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
-          await new Promise(resolve => setTimeout(resolve, 150_000)) // 2.5 分钟
+          await new Promise((resolve) => setTimeout(resolve, 150_000)) // 2.5 分钟
           console.log('[Bridge] ✅ Manual wait completed for ETH→SOL')
         }
       }
@@ -555,25 +564,25 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   }
 
   return (
-    <Modal 
+    <Modal
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {onBack && (
-            <ArrowLeftOutlined 
-              style={{ cursor: 'pointer', fontSize: 16 }} 
+            <ArrowLeftOutlined
+              style={{ cursor: 'pointer', fontSize: 16 }}
               onClick={() => {
                 onClose()
                 onBack()
-              }} 
+              }}
             />
           )}
           <span>Transfer Crypto</span>
         </div>
-      } 
-      open={open} 
-      onCancel={onClose} 
-      footer={null} 
-      width={500} 
+      }
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      width={500}
       className="transfer-crypto-dialog"
     >
       <Space direction="vertical" size="large" style={{ width: '100%' }}>
@@ -721,85 +730,93 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                   ({selectedChainConfig?.id} - {depositAddress.slice(0, 6)}...{depositAddress.slice(-4)})
                 </Text>
               </Space>
-              
-              {/* 显示确认中的交易（支持多笔） */}
-              {coboTransactions.filter(tx => tx.status === 'Confirming').map((tx, index) => {
-                // 获取区块链浏览器链接
-                const getExplorerUrl = (chainId: string, txHash: string) => {
-                  const explorers: Record<string, string> = {
-                    'ARBITRUM_ETH': `https://arbiscan.io/tx/${txHash}`,
-                    'BASE_ETH': `https://basescan.org/tx/${txHash}`,
-                    'ETH': `https://etherscan.io/tx/${txHash}`,
-                    'SOL': `https://solscan.io/tx/${txHash}`,
-                    'TRON': `https://tronscan.org/#/transaction/${txHash}`,
-                    'MATIC': `https://polygonscan.com/tx/${txHash}`,
-                    'BSC_BNB': `https://bscscan.com/tx/${txHash}`,
-                  }
-                  return explorers[chainId] || '#'
-                }
 
-                return (
-                  <div 
-                    key={tx.transaction_id}
-                    style={{ 
-                      marginTop: 8, 
-                      padding: 8, 
-                      background: token.colorBgContainer, 
-                      borderRadius: 4,
-                      border: `1px solid ${token.colorBorderSecondary}`
-                    }}
-                  >
-                    <Space direction="vertical" style={{ width: '100%' }} size="small">
-                      <Space style={{ width: '100%', justifyContent: 'space-between' }}>
-                        <Text strong style={{ fontSize: 13 }}>
-                          {tx.destination.amount} {tx.token_id.split('_').pop()}
-                        </Text>
-                        <Text type="secondary" style={{ fontSize: 12 }}>
-                          {getConfirmationProgress(tx)}
-                        </Text>
-                      </Space>
-                      <div>
-                        <div style={{ 
-                          height: 6, 
-                          background: token.colorFillSecondary, 
-                          borderRadius: 3, 
-                          overflow: 'hidden' 
-                        }}>
-                          <div style={{ 
-                            height: '100%', 
-                            width: `${getConfirmationPercentage(tx)}%`,
-                            background: 'linear-gradient(90deg, #1890ff 0%, #52c41a 100%)',
-                            transition: 'width 0.3s ease'
-                          }} />
+              {/* 显示确认中的交易（支持多笔） */}
+              {coboTransactions
+                .filter((tx) => tx.status === 'Confirming')
+                .map((tx, index) => {
+                  // 获取区块链浏览器链接
+                  const getExplorerUrl = (chainId: string, txHash: string) => {
+                    const explorers: Record<string, string> = {
+                      ARBITRUM_ETH: `https://arbiscan.io/tx/${txHash}`,
+                      BASE_ETH: `https://basescan.org/tx/${txHash}`,
+                      ETH: `https://etherscan.io/tx/${txHash}`,
+                      SOL: `https://solscan.io/tx/${txHash}`,
+                      TRON: `https://tronscan.org/#/transaction/${txHash}`,
+                      MATIC: `https://polygonscan.com/tx/${txHash}`,
+                      BSC_BNB: `https://bscscan.com/tx/${txHash}`
+                    }
+                    return explorers[chainId] || '#'
+                  }
+
+                  return (
+                    <div
+                      key={tx.transaction_id}
+                      style={{
+                        marginTop: 8,
+                        padding: 8,
+                        background: token.colorBgContainer,
+                        borderRadius: 4,
+                        border: `1px solid ${token.colorBorderSecondary}`
+                      }}
+                    >
+                      <Space direction="vertical" style={{ width: '100%' }} size="small">
+                        <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                          <Text strong style={{ fontSize: 13 }}>
+                            {tx.destination.amount} {tx.token_id.split('_').pop()}
+                          </Text>
+                          <Text type="secondary" style={{ fontSize: 12 }}>
+                            {getConfirmationProgress(tx)}
+                          </Text>
+                        </Space>
+                        <div>
+                          <div
+                            style={{
+                              height: 6,
+                              background: token.colorFillSecondary,
+                              borderRadius: 3,
+                              overflow: 'hidden'
+                            }}
+                          >
+                            <div
+                              style={{
+                                height: '100%',
+                                width: `${getConfirmationPercentage(tx)}%`,
+                                background: 'linear-gradient(90deg, #1890ff 0%, #52c41a 100%)',
+                                transition: 'width 0.3s ease'
+                              }}
+                            />
+                          </div>
+                          <Text type="secondary" style={{ fontSize: 11, marginTop: 4, display: 'block' }}>
+                            区块确认中... ({getConfirmationPercentage(tx)}%)
+                          </Text>
                         </div>
-                        <Text type="secondary" style={{ fontSize: 11, marginTop: 4, display: 'block' }}>
-                          区块确认中... ({getConfirmationPercentage(tx)}%)
-                        </Text>
-                      </div>
-                      {tx.transaction_hash && (
-                        <a 
-                          href={getExplorerUrl(tx.chain_id, tx.transaction_hash)}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{ fontSize: 11, color: token.colorLink }}
-                        >
-                          TxHash: {tx.transaction_hash.slice(0, 10)}...{tx.transaction_hash.slice(-8)} ↗
-                        </a>
-                      )}
-                    </Space>
-                  </div>
-                )
-              })}
-              
+                        {tx.transaction_hash && (
+                          <a
+                            href={getExplorerUrl(tx.chain_id, tx.transaction_hash)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ fontSize: 11, color: token.colorLink }}
+                          >
+                            TxHash: {tx.transaction_hash.slice(0, 10)}...{tx.transaction_hash.slice(-8)} ↗
+                          </a>
+                        )}
+                      </Space>
+                    </div>
+                  )
+                })}
+
               {/* 显示最新完成的充值 */}
               {coboLatestDeposit && (
-                <div style={{ 
-                  marginTop: 8, 
-                  padding: 8, 
-                  background: token.colorSuccessBg, 
-                  borderRadius: 4,
-                  border: `1px solid ${token.colorSuccessBorder}`
-                }}>
+                <div
+                  style={{
+                    marginTop: 8,
+                    padding: 8,
+                    background: token.colorSuccessBg,
+                    borderRadius: 4,
+                    border: `1px solid ${token.colorSuccessBorder}`
+                  }}
+                >
                   <Space>
                     <span style={{ fontSize: 16 }}>✅</span>
                     <div>
@@ -813,7 +830,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                   </Space>
                 </div>
               )}
-              
+
               {coboDeposits.length > 0 && !coboConfirmingDeposit && !coboLatestDeposit && (
                 <div style={{ marginTop: 8 }}>
                   <Text type="secondary" style={{ fontSize: 12 }}>
@@ -821,14 +838,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                   </Text>
                 </div>
               )}
-              
+
               {/* 完成按钮 */}
-              <Button 
-                type="primary" 
-                block 
-                onClick={onClose}
-                style={{ marginTop: 12 }}
-              >
+              <Button type="primary" block onClick={onClose} style={{ marginTop: 12 }}>
                 完成
               </Button>
             </Space>

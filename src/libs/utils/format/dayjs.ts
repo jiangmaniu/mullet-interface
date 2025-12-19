@@ -8,12 +8,12 @@ dayjs.extend(relativeTime)
 dayjs.extend(duration)
 
 export enum TimeParseEnum {
-  default = 'YYYY-MM-DD HH:mm:ss',
+  default = 'YYYY-MM-DD HH:mm:ss'
 }
 export enum TimeFormatEnum {
   default = 'YYYY-MM-DD HH:mm:ss',
   utc = 'YYYY-MM-DD HH:mm:ss (UTC)',
-  otc = 'MMM D, YYYY HH:mm (UTC)',
+  otc = 'MMM D, YYYY HH:mm (UTC)'
 }
 
 export { dayjs }

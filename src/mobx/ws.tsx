@@ -63,7 +63,7 @@ class WSStore {
     const ENV = getEnv()
     const token = await STORAGE_GET_TOKEN()
     const userInfo = (await STORAGE_GET_USER_INFO()) as User.UserInfo
-    
+
     // 开发环境使用相对路径（利用代理），生产环境使用完整 URL
     let websocketUrl = ENV?.ws
     if (process.env.NODE_ENV === 'development' && websocketUrl) {
@@ -75,7 +75,7 @@ class WSStore {
         // 如果已经是相对路径，保持不变
       }
     }
-    
+
     if (!token) return
 
     console.log('connect')

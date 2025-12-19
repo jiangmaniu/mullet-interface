@@ -28,8 +28,8 @@ const enUs: numbro.NumbroLanguage = merge(numbro.languageData('en-US'), {
     thousand: 'K',
     million: 'M',
     billion: 'B',
-    trillion: 'T',
-  },
+    trillion: 'T'
+  }
 } as numbro.NumbroLanguage)
 numbro.registerLanguage(enUs)
 
@@ -51,14 +51,14 @@ export function toFormatNumber(value?: BNumberValue | null, opt?: FormatNumberOp
     sign,
     forceSign = false,
     minimumFallback = false,
-    unitSeparated = isFrontUnit ? '' : ' ',
+    unitSeparated = isFrontUnit ? '' : ' '
   }: FormatNumberOpt = opt || {}
 
   const initFormat: numbro.Format = {
     roundingFunction: (...args) => {
       return Math.floor(...args)
     },
-    thousandSeparated: true,
+    thousandSeparated: true
   }
 
   if ((amount instanceof BNumber || amount instanceof BigNumber) && !isUndefined(precision)) {
@@ -87,7 +87,7 @@ export function toFormatNumber(value?: BNumberValue | null, opt?: FormatNumberOp
   if (autoHideDecimal && !isUndefined(volScale) && !isUndefined(precision)) {
     volScale = formatAutoHideDecimal(amount, {
       precision,
-      volScale,
+      volScale
     })
   }
 
@@ -102,8 +102,8 @@ export function toFormatNumber(value?: BNumberValue | null, opt?: FormatNumberOp
       numbro(amountWithFormated.toFixed(0)).format({
         ...initFormat,
         ...format,
-        mantissa: volScale,
-      }),
+        mantissa: volScale
+      })
     )
     if (amountWithLimitDecimals.eq(0) && !isUndefined(volScale)) {
       return `<${isNegative ? '-' : ''}${1 / 10 ** volScale}${!isFrontUnit ? rearUnitLabel : ''}`
@@ -113,12 +113,10 @@ export function toFormatNumber(value?: BNumberValue | null, opt?: FormatNumberOp
   const formatedValue = numbro(amountWithFormated.abs().toFixed()).format({
     ...initFormat,
     ...format,
-    ...(volScale ? { mantissa: volScale } : {}),
+    ...(volScale ? { mantissa: volScale } : {})
   })
 
-  return `${prefix ? prefix : ''}${signOfDisplayed}${isFrontUnit ? frontUnitLabel : ''}${formatedValue}${
-    !isFrontUnit ? rearUnitLabel : ''
-  }`
+  return `${prefix ? prefix : ''}${signOfDisplayed}${isFrontUnit ? frontUnitLabel : ''}${formatedValue}${!isFrontUnit ? rearUnitLabel : ''}`
 }
 
 type formatAutoHideDecimalParams = {

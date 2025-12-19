@@ -41,7 +41,6 @@ export const getTradingviewThemeCssVar = (theme: ThemeName) => {
     // '--tv-color-toolbar-divider-background': '#f7f7f7',
     // /* 工具栏保存布局按钮的加载器颜色 */
     // '--tv-color-toolbar-save-layout-loader': 'rgb(106, 109, 120)',
-
     /*
       弹出菜单变量
       当用户单击工具栏图标时会出现弹出/弹出菜单，并且通常是锚定到该图标的菜单。
@@ -66,18 +65,18 @@ export const getTradingviewThemeCssVar = (theme: ThemeName) => {
     ...commonThemeConfig,
     ...(isDark
       ? {
-        // '--tv-color-pane-background': ThemeConst.black,
-        // '--tv-color-toolbar-button-text': '#767E8A',
-        // '--tv-color-toolbar-button-text-active': ThemeDark.primary,
-        // '--tv-color-popup-background': '#23262A',
-        // '--tv-color-popup-element-background-hover': '#2a2e39',
-        // '--tv-color-popup-element-background-active': '#2a2e39',
-        // '--tv-color-popup-element-text-active': '#fff',
-        // // /* 切换工具栏按钮的填充颜色（例如磁铁模式、锁定所有绘图） */
-        // '--tv-color-toolbar-toggle-button-background-active': ThemeDark.primary,
-        // // /* 将鼠标悬停在切换工具栏按钮上时的填充颜色（例如磁铁模式、锁定所有绘图） */
-        // '--tv-color-toolbar-toggle-button-background-active-hover': ThemeDark.primary
-      }
+          // '--tv-color-pane-background': ThemeConst.black,
+          // '--tv-color-toolbar-button-text': '#767E8A',
+          // '--tv-color-toolbar-button-text-active': ThemeDark.primary,
+          // '--tv-color-popup-background': '#23262A',
+          // '--tv-color-popup-element-background-hover': '#2a2e39',
+          // '--tv-color-popup-element-background-active': '#2a2e39',
+          // '--tv-color-popup-element-text-active': '#fff',
+          // // /* 切换工具栏按钮的填充颜色（例如磁铁模式、锁定所有绘图） */
+          // '--tv-color-toolbar-toggle-button-background-active': ThemeDark.primary,
+          // // /* 将鼠标悬停在切换工具栏按钮上时的填充颜色（例如磁铁模式、锁定所有绘图） */
+          // '--tv-color-toolbar-toggle-button-background-active-hover': ThemeDark.primary
+        }
       : {})
   }
 }

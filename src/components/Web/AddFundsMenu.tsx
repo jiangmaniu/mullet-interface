@@ -18,10 +18,10 @@ interface AddFundsMenuProps {
  * Add Funds 菜单选择对话框
  * 提供两个选项：跨链转账 和 资产兑换
  */
-const AddFundsMenu: React.FC<AddFundsMenuProps> = ({ 
-  open, 
-  onClose, 
-  onTransferClick, 
+const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
+  open,
+  onClose,
+  onTransferClick,
   onSwapClick,
   onCardClick,
   showSwapOption = false // 默认不显示
@@ -92,12 +92,8 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
             <SendOutlined style={{ fontSize: 24, color: '#fff' }} />
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
-              跨链转账
-            </div>
-            <div style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>
-              支持从 TRON / Ethereum 跨链充值
-            </div>
+            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>跨链转账</div>
+            <div style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>支持从 TRON / Ethereum 跨链充值</div>
           </div>
           <SendOutlined style={{ fontSize: 18, color: '#8c8c8c' }} />
         </Button>
@@ -134,12 +130,8 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
               <SwapOutlined style={{ fontSize: 24, color: '#fff' }} />
             </div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
-                资产兑换
-              </div>
-              <div style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>
-                将持有的资产兑换成 USDC
-              </div>
+              <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>资产兑换</div>
+              <div style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>将持有的资产兑换成 USDC</div>
             </div>
             <SwapOutlined style={{ fontSize: 18, color: '#8c8c8c' }} />
           </Button>
@@ -176,12 +168,8 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
             <CreditCardOutlined style={{ fontSize: 24, color: '#fff' }} />
           </div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>
-              信用卡购买
-            </div>
-            <div style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>
-              使用信用卡快速购买加密货币
-            </div>
+            <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 4 }}>信用卡购买</div>
+            <div style={{ fontSize: 13, color: '#8c8c8c', fontWeight: 400 }}>使用信用卡快速购买加密货币</div>
           </div>
           <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             {/* Mastercard Logo */}

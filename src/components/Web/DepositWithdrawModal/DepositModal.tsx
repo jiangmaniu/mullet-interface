@@ -30,7 +30,7 @@ export default observer(
     const { trade } = useStores()
     const { activeSolanaWallet, address } = usePrivyInfo()
     const { balance: walletBalance, getTokenBalance } = useSPLTokenBalance()
-    
+
     // 检查是否是嵌入式钱包
     const isEmbeddedWallet = !activeSolanaWallet || !(activeSolanaWallet as any).standardWallet
     const hasExternalWallet = !!activeSolanaWallet && !!(activeSolanaWallet as any).standardWallet

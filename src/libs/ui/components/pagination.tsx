@@ -6,22 +6,13 @@ import { buttonVariants } from './button'
 import { IconChevronLeft, IconChevronRight, IconEllipsis } from './icons'
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
-  return (
-    <nav
-      role="navigation"
-      aria-label="pagination"
-      className={cn('py-s mx-auto flex w-full justify-center', className)}
-      {...props}
-    />
-  )
+  return <nav role="navigation" aria-label="pagination" className={cn('py-s mx-auto flex w-full justify-center', className)} {...props} />
 }
 Pagination.displayName = 'Pagination'
 
-const PaginationContent = React.forwardRef<HTMLUListElement, React.ComponentProps<'ul'>>(
-  ({ className, ...props }, ref) => (
-    <ul ref={ref} className={cn('flex flex-row items-center gap-1', className)} {...props} />
-  ),
-)
+const PaginationContent = React.forwardRef<HTMLUListElement, React.ComponentProps<'ul'>>(({ className, ...props }, ref) => (
+  <ul ref={ref} className={cn('flex flex-row items-center gap-1', className)} {...props} />
+))
 PaginationContent.displayName = 'PaginationContent'
 
 const PaginationItem = React.forwardRef<HTMLLIElement, React.ComponentProps<'li'>>(({ className, ...props }, ref) => (
@@ -46,10 +37,10 @@ function PaginationLink({ className, isActive, disabled, ...props }: PaginationL
           variant: isActive ? 'primary' : 'ghost',
           size: 'icon',
           className: cn('rounded-small size-8 cursor-pointer select-none', {
-            'hover:bg-[#EED94C]': !isActive,
-          }),
+            'hover:bg-[#EED94C]': !isActive
+          })
         }),
-        className,
+        className
       )}
       {...props}
     />
@@ -85,12 +76,4 @@ function PaginationEllipsis({ className, ...props }: React.ComponentProps<'span'
 }
 PaginationEllipsis.displayName = 'PaginationEllipsis'
 
-export {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-}
+export { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious }

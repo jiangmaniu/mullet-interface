@@ -6,12 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { Locale, LOCALE_LABEL_MAP, SUPPORTED_LOCALES } from '@/constants/locale'
 import { i18nRouterConfig } from '@/locales/i18n-router-config'
 import { IconButton } from '@mullet/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '@mullet/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from '@mullet/ui/dropdown-menu'
 import { IconLanguage } from '@mullet/ui/icons'
 
 export const LanguageChanger = () => {
@@ -40,11 +35,7 @@ export const LanguageChanger = () => {
       <DropdownMenuContent align="end">
         {SUPPORTED_LOCALES.map((locale) => {
           return (
-            <DropdownMenuCheckboxItem
-              key={locale}
-              checked={currentLocale === locale}
-              onClick={() => handleChange(locale)}
-            >
+            <DropdownMenuCheckboxItem key={locale} checked={currentLocale === locale} onClick={() => handleChange(locale)}>
               {LOCALE_LABEL_MAP[locale]}
             </DropdownMenuCheckboxItem>
           )

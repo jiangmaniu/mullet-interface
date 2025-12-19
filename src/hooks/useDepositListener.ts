@@ -41,9 +41,9 @@ interface UseDepositListenerOptions {
  * ```
  */
 export function useDepositListener(options: UseDepositListenerOptions = {}) {
-  const { 
-    enabled = false, 
-    pollInterval = 5000, 
+  const {
+    enabled = false,
+    pollInterval = 5000,
     chains = ['Tron', 'Ethereum', 'Solana'],
     tronAddress,
     ethereumAddress,
@@ -61,9 +61,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
   const checkSolanaBalance = useCallback(
     async (address: string) => {
       try {
-        const connection = new Connection(
-          'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
-        )
+        const connection = new Connection('https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3')
 
         // 检查 USDT
         const usdtTokenInfo = SUPPORTED_TOKENS.solana.find((t) => t.symbol === 'USDT')
@@ -109,7 +107,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
       try {
         // 动态导入 TronWeb
         const { TronWeb } = await import('tronweb')
-        
+
         // 使用 Ankr Premium RPC (已付费)
         const tronWeb = new TronWeb({
           fullHost: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
@@ -134,7 +132,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
         if (tokenBalance > previousBalance && tokenBalance > 0.000001) {
           const depositAmount = (tokenBalance - previousBalance).toFixed(6)
           console.log('[Deposit] Detected TRON USDT deposit:', depositAmount, 'USDT')
-          
+
           setPreviousBalances((prev) => ({ ...prev, [key]: tokenBalance.toString() }))
 
           return {
@@ -172,26 +170,23 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
         for (const token of supportedTokens) {
           // 使用 Ankr Premium RPC 调用 ERC20 balanceOf
           const balanceOfData = `0x70a08231000000000000000000000000${address.slice(2).toLowerCase()}`
-          
-          const response = await fetch(
-            'https://rpc.ankr.com/eth/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                jsonrpc: '2.0',
-                method: 'eth_call',
-                params: [
-                  {
-                    to: token.address,
-                    data: balanceOfData
-                  },
-                  'latest'
-                ],
-                id: 1
-              })
-            }
-          )
+
+          const response = await fetch('https://rpc.ankr.com/eth/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              method: 'eth_call',
+              params: [
+                {
+                  to: token.address,
+                  data: balanceOfData
+                },
+                'latest'
+              ],
+              id: 1
+            })
+          })
 
           if (!response.ok) {
             console.error(`[Deposit] Ethereum RPC error: ${response.status} ${response.statusText}`)
@@ -199,7 +194,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
           }
 
           const data = await response.json()
-          
+
           if (data.error) {
             console.error(`[Deposit] Ethereum RPC error:`, data.error)
             continue
@@ -212,22 +207,22 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
             const key = `ethereum-${token.symbol.toLowerCase()}-${address}`
             const previousBalance = previousBalances[key] ? BigInt(previousBalances[key]) : BigInt(0)
             const balanceFormatted = (Number(balanceNum) / Math.pow(10, token.decimals)).toFixed(token.decimals)
-            
+
             // 方案1: 余额增加了（有新充值）
             const hasIncrease = balanceNum > previousBalance && balanceNum > BigInt(0)
-            
+
             // 方案2: 首次检测到余额（从 0 到有余额）且过了冷却期
             const now = Date.now()
             const timeSinceLastDetection = now - lastDetectionTime.current
             const isFirstDetection = previousBalance === BigInt(0) && balanceNum > BigInt(0) && timeSinceLastDetection >= cooldownPeriod
-            
+
             if (hasIncrease || isFirstDetection) {
               console.log(`[Deposit] ✅ Detected Ethereum ${token.symbol} balance:`, balanceFormatted, token.symbol)
               console.log(`[Deposit] Trigger reason:`, hasIncrease ? 'Balance increased' : 'First detection')
-              
+
               lastDetectionTime.current = now // 更新检测时间
               setPreviousBalances((prev) => ({ ...prev, [key]: balance })) // 更新余额记录
-              
+
               return {
                 amount: balanceFormatted,
                 token: token.symbol,
@@ -235,7 +230,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
                 rawBalance: balance
               }
             }
-            
+
             // 更新余额记录（即使不触发也要记录）
             if (previousBalance === BigInt(0) && balanceNum > BigInt(0)) {
               setPreviousBalances((prev) => ({ ...prev, [key]: balance }))
@@ -309,7 +304,18 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
       clearInterval(interval)
       setIsListening(false)
     }
-  }, [enabled, pollInterval, chains, wallets, checkTronBalance, checkEthereumBalance, checkSolanaBalance, tronAddress, ethereumAddress, solanaAddress])
+  }, [
+    enabled,
+    pollInterval,
+    chains,
+    wallets,
+    checkTronBalance,
+    checkEthereumBalance,
+    checkSolanaBalance,
+    tronAddress,
+    ethereumAddress,
+    solanaAddress
+  ])
 
   // 清除检测到的充值
   const clearDeposit = useCallback(() => {

@@ -1,7 +1,18 @@
 import { clsx } from 'clsx'
 import { extendTailwindMerge } from 'tailwind-merge'
 import type { ClassValue } from 'clsx'
-import { NewThemeBackgroundColor, NewThemeBorderColor, NewThemeBoxShadow, NewThemeColor, NewThemeFontSize, NewThemeFontWeight, NewThemeLineHeight, NewThemeRadius, NewThemeSpacing, NewThemeTextColor } from '@/theme/theme.new'
+import {
+  NewThemeBackgroundColor,
+  NewThemeBorderColor,
+  NewThemeBoxShadow,
+  NewThemeColor,
+  NewThemeFontSize,
+  NewThemeFontWeight,
+  NewThemeLineHeight,
+  NewThemeRadius,
+  NewThemeSpacing,
+  NewThemeTextColor
+} from '@/theme/theme.new'
 import { isUndefined } from 'lodash-es'
 
 /**
@@ -68,11 +79,16 @@ const createCn = (...args: Parameters<typeof extendTailwindMerge>) => {
 export const cn = createCn({
   extend: {
     theme: {
-      colors: [...flattenObjectKeys(NewThemeColor), ...flattenObjectKeys(NewThemeBackgroundColor), ...flattenObjectKeys(NewThemeBorderColor), ...flattenObjectKeys(NewThemeTextColor)],
+      colors: [
+        ...flattenObjectKeys(NewThemeColor),
+        ...flattenObjectKeys(NewThemeBackgroundColor),
+        ...flattenObjectKeys(NewThemeBorderColor),
+        ...flattenObjectKeys(NewThemeTextColor)
+      ],
       fontSize: [...flattenObjectKeys(NewThemeFontSize)],
       textColor: flattenObjectKeys(NewThemeTextColor),
       backgroundColor: [...flattenObjectKeys(NewThemeBackgroundColor)],
-      borderColor: [...flattenObjectKeys(NewThemeBorderColor)],
+      borderColor: [...flattenObjectKeys(NewThemeBorderColor)]
     },
     classGroups: {
       // 字体大小组 - 必须放在 text-color 之前，优先匹配字体大小类（如 text-button-2）
@@ -82,15 +98,14 @@ export const cn = createCn({
       // 由于 button-2 不在 NewThemeTextColor 中，text-button-2 不会匹配到这里
       'text-color': [{ text: flattenObjectKeys(NewThemeTextColor) }],
       // 其他颜色组
-      'colors': [{ text: flattenObjectKeys(NewThemeColor) }],
+      colors: [{ text: flattenObjectKeys(NewThemeColor) }]
     }
   },
   override: {
     classGroups: {
       // 覆盖默认的 text-color 组，只匹配我们定义的文本颜色类
       // 这样可以防止默认的 text-color 组匹配到字体大小类
-      'text-color': [{ text: flattenObjectKeys(NewThemeTextColor) }],
+      'text-color': [{ text: flattenObjectKeys(NewThemeTextColor) }]
     }
   }
 })
-
