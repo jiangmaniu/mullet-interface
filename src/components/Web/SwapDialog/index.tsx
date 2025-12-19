@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Modal, Button, Input, Progress, Alert, Collapse, Typography, Space, Spin, Divider } from 'antd'
-import { ArrowRightOutlined, SwapOutlined, ArrowLeftOutlined, CheckCircleOutlined, DownOutlined } from '@ant-design/icons'
+import { ArrowRightOutlined, SwapOutlined, ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, DownOutlined } from '@ant-design/icons'
 import { useWallets, usePrivy, useSendTransaction } from '@privy-io/react-auth'
 import { useSignAndSendTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana'
 import { useTronWallet } from '@/hooks/useTronWallet'
@@ -1979,24 +1979,95 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
                       )}
                     </div>
                   )}
-                  {bridgeStage === 'error' && `Error: ${bridgeError}`}
                 </Text>
               </div>
             )}
 
-            {/* Error Alert */}
-            {bridgeError && (
-              <Alert
-                message={bridgeError}
-                type="error"
-                showIcon
-                style={{
-                  width: '100%',
-                  marginBottom: '24px',
+            {/* Error State - 友好的错误展示 */}
+            {bridgeStage === 'error' && bridgeError && (
+              <div style={{ 
+                width: '100%', 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                padding: '24px 0'
+              }}>
+                {/* 错误图标 */}
+                <div style={{
+                  width: 80,
+                  height: 80,
+                  borderRadius: '50%',
                   background: 'rgba(255, 68, 68, 0.1)',
-                  border: '1px solid rgba(255, 68, 68, 0.3)'
-                }}
-              />
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginBottom: 24
+                }}>
+                  <CloseCircleOutlined style={{ fontSize: 40, color: '#ff4444' }} />
+                </div>
+                
+                {/* 错误标题 */}
+                <Title level={4} style={{ color: getColor.text, marginBottom: 8 }}>
+                  Swap Failed
+                </Title>
+                
+                {/* 错误详情 */}
+                <Text style={{ 
+                  color: getColor.textSecondary, 
+                  textAlign: 'center',
+                  marginBottom: 32,
+                  maxWidth: 320,
+                  fontSize: '14px',
+                  lineHeight: '1.6'
+                }}>
+                  {bridgeError}
+                </Text>
+                
+                {/* 操作按钮 */}
+                <Space direction="vertical" size={12} style={{ width: '100%', maxWidth: 280 }}>
+                  <Button
+                    type="primary"
+                    size="large"
+                    block
+                    onClick={() => {
+                      // 重试 - 返回到输入界面重新开始
+                      setBridgeStage('idle')
+                      setBridgeError(null)
+                      setProgress(0)
+                      setView('input')
+                    }}
+                    style={{
+                      background: '#FF6B35',
+                      borderColor: '#FF6B35',
+                      height: 48,
+                      borderRadius: 12,
+                      fontWeight: 600
+                    }}
+                  >
+                    Try Again
+                  </Button>
+                  <Button
+                    type="text"
+                    size="large"
+                    block
+                    onClick={() => {
+                      // 返回到 Add Funds 菜单
+                      setBridgeStage('idle')
+                      setBridgeError(null)
+                      setProgress(0)
+                      onClose()
+                      if (onBack) onBack()
+                    }}
+                    style={{
+                      color: getColor.textSecondary,
+                      height: 48,
+                      borderRadius: 12
+                    }}
+                  >
+                    Back to Menu
+                  </Button>
+                </Space>
+              </div>
             )}
           </div>
         )}

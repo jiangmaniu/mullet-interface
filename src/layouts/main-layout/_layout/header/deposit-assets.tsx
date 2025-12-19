@@ -125,6 +125,7 @@ export const DepositAssets = () => {
           onSwapClick={() => setShowSwapDialog(true)}
           onCardClick={handleCardClick}
           showSwapOption={!!isExternalWallet}
+          walletType={(currentWalletAccount as any)?.walletClientType}
         />
         {/* 跨链充值弹窗 */}
         <TransferCryptoDialog
