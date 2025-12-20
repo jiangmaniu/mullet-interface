@@ -15,7 +15,7 @@ import { Positions } from './positions'
 import { useStores } from '@/context/mobxProvider'
 import { isBoolean } from 'lodash-es'
 import { observer } from 'mobx-react'
-import PositionList from '../../comp/TradeRecord/comp/PositionList'
+import PositionList from './PositionList'
 import PendingList from '../../comp/TradeRecord/comp/PendingList'
 import HistoryPendingList from '../../comp/TradeRecord/comp/HistoryPendingList'
 import HistoryCloseList from '../../comp/TradeRecord/comp/HistoryCloseList'
@@ -116,7 +116,7 @@ export const NewTradeRecords = observer(() => {
               return (
                 <TabsTrigger key={tab.key} value={tab.key}>
                   {tab.label}
-                  {tab.count && `(${tab.count})`}
+                  {!!tab.count && `(${tab.count})`}
                 </TabsTrigger>
               )
             })}

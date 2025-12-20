@@ -33,6 +33,13 @@ export const NewThemeBorderColor = {
   'orange-base': 'color-mix(in srgb, rgb(var(--color-orange-500)) 100%, transparent)',
   // shadcn/ui 兼容变量
   'border': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
+
+  'warning': 'rgb(var(--color-orange-500) / <alpha-value>)',
+  'divider-line': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 20%, transparent)',
+  'default': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
+  'special': 'rgb(var(--color-zinc-300) / <alpha-value>)',
+  'important': 'rgb(var(--color-white) / <alpha-value>)',
+  'primary': 'rgb(var(--color-yellow-500) / <alpha-value>)',
 }
 
 export const NewThemeColor = {

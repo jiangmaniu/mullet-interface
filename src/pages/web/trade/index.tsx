@@ -30,7 +30,9 @@ import { AccountDetails } from './_comps/account'
 // import { TradeLayout } from './_comps/layout'
 // import { TradeLayoutKey } from './_comps/layout/types'
 import { TradeMarket } from './_comps/market'
-// import { TradeActionPanel } from './_comps/action-panel'
+import { TradeActionPanel } from './_comps/action-panel'
+import { MarginRate } from './_comps/margin-rate'
+import { OrderDepthPriceBooks } from './_comps/order-book'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -154,7 +156,7 @@ export default observer(() => {
                   {/* 深度报价 */}
                   <DepthPrice />
 
-                  {/* <TradeActionPanel /> */}
+                  {/* <OrderDepthPriceBooks /> */}
                 </div>
 
                 {/* 交易记录 */}
@@ -163,16 +165,18 @@ export default observer(() => {
                 <NewTradeRecords />
               </div>
 
-              <div className="flex w-max gap-2 min-w-[280px]  flex-col">
+              <div className="flex w-max gap-2 min-w-[280px] flex-col">
                 <AccountDetails />
 
                 {/* 买卖交易区 */}
                 <div className="">
-                  <BuyAndSell />
+                  <TradeActionPanel />
+                  {/* <BuyAndSell /> */}
                 </div>
 
-                <div className={cn('flex flex-1 items-start justify-between relative bg-primary')}>
-                  <div className={cn('w-[300px] min-h-[270px] relative')}>
+                <div className={cn('flex flex-1 flex-col gap-2')}>
+                  {/* <MarginRate /> */}
+                  <div className={cn(' flex flex-1 flex-col bg-primary gap-2 min-h-[270px] rounded-large relative')}>
                     <Liquidation />
                   </div>
                 </div>

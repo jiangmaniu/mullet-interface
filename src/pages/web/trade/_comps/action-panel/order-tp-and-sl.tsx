@@ -99,7 +99,7 @@ export const TradeActionPanelTpAndSl = observer(() => {
   const { trade, ws } = useStores()
   const { setOrderSpslChecked, orderSpslChecked, orderType, currentAccountInfo } = trade
   return (
-    <div className="gap-xl flex flex-col">
+    <div className=" flex flex-col">
       {/* 止盈止损 */}
       <div className="">
         <Switch
@@ -114,12 +114,20 @@ export const TradeActionPanelTpAndSl = observer(() => {
         </Switch>
       </div>
 
-      {orderSpslChecked && (
-        <div className="flex flex-col gap-xl">
-          <SetTakeProfit />
-          <SetStopLoss />
+      {/* 使用 CSS Grid 实现高度过渡动画 */}
+      <div
+        className={cn(
+          'grid transition-[grid-template-rows] duration-300 ease-in-out',
+          orderSpslChecked ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        )}
+      >
+        <div className={cn('overflow-hidden', {})}>
+          <div className="flex flex-col gap-xl pt-xl">
+            <SetTakeProfit />
+            <SetStopLoss />
+          </div>
         </div>
-      )}
+      </div>
     </div>
   )
 })
@@ -156,27 +164,28 @@ const SetTakeProfit = observer(() => {
   return (
     <div className="flex flex-col gap-medium">
       <div className={'gap-xl flex-1 flex items-center'}>
-        <NumberInput
-          className="flex-1"
-          min={0}
-          decimalScale={2}
-          value={spValue}
-          placeholder={({ isFocused }) => {
-            return <Trans>止盈价格</Trans>
-          }}
-          onValueChange={({ value }, { source }) => {
-            if (source === NumberInputSourceType.EVENT) {
-              setSp(value)
+        <div className="flex-1">
+          <NumberInput
+            min={0}
+            decimalScale={2}
+            value={spValue}
+            placeholder={({ isFocused }) => {
+              return <Trans>止盈价格</Trans>
+            }}
+            onValueChange={({ value }, { source }) => {
+              if (source === NumberInputSourceType.EVENT) {
+                setSp(value)
 
-              // const diffPrice = isBuy ? BNumber.from(value).minus(sp_scope) : BNumber.from(sp_scope).minus(value)
+                // const diffPrice = isBuy ? BNumber.from(value).minus(sp_scope) : BNumber.from(sp_scope).minus(value)
 
-              // const tpSlPercent = diffPrice?.gt(0)
-              //   ? diffPrice?.div(sp_scope)?.multipliedBy(100)?.decimalPlaces(COMMON_PERCENT_DISPLAY_DECIMALS)?.toString()
-              //   : '0'
-            }
-          }}
-          size={'md'}
-        />
+                // const tpSlPercent = diffPrice?.gt(0)
+                //   ? diffPrice?.div(sp_scope)?.multipliedBy(100)?.decimalPlaces(COMMON_PERCENT_DISPLAY_DECIMALS)?.toString()
+                //   : '0'
+              }
+            }}
+            size={'md'}
+          />
+        </div>
 
         <NumberInput
           className={'w-[80px]'}
@@ -256,41 +265,43 @@ const SetStopLoss = observer(() => {
   return (
     <div className="flex flex-col gap-medium">
       <div className={'gap-xl flex-1 flex items-center'}>
-        <NumberInput
-          className="flex-1"
-          min={0}
-          decimalScale={2}
-          value={slValue}
-          labelText={<Trans>止损价格</Trans>}
-          onValueChange={({ value }, { source }) => {
-            if (source === NumberInputSourceType.EVENT) {
-              setSl(value)
-            }
-          }}
-          size={'md'}
-        />
+        <div className="flex-1">
+          <NumberInput
+            min={0}
+            decimalScale={2}
+            value={slValue}
+            labelText={<Trans>止损价格</Trans>}
+            onValueChange={({ value }, { source }) => {
+              if (source === NumberInputSourceType.EVENT) {
+                setSl(value)
+              }
+            }}
+            size={'md'}
+          />
+        </div>
 
-        <NumberInput
-          min={0}
-          max={getMaxPercent(isBuy, false)}
-          decimalScale={COMMON_PERCENT_DISPLAY_DECIMALS}
-          className={'w-[80px]'}
-          value={slPercent}
-          onValueChange={({ value, floatValue }, { source }) => {
-            if (source === NumberInputSourceType.EVENT) {
-              setSlPercent(value)
-              const price = getStopLossPrice(value, isBuy, sl_scope, 2)
+        <div className={'w-[80px]'}>
+          <NumberInput
+            min={0}
+            max={getMaxPercent(isBuy, false)}
+            decimalScale={COMMON_PERCENT_DISPLAY_DECIMALS}
+            value={slPercent}
+            onValueChange={({ value, floatValue }, { source }) => {
+              if (source === NumberInputSourceType.EVENT) {
+                setSlPercent(value)
+                const price = getStopLossPrice(value, isBuy, sl_scope, 2)
 
-              setSl(price)
-            }
-          }}
-          size={'md'}
-          labelText={<Trans>百分比</Trans>}
-          placeholder={() => {
-            return <>{ZERO_PERCENT_PLACEHOLDER}</>
-          }}
-          RightContent={'%'}
-        />
+                setSl(price)
+              }
+            }}
+            size={'md'}
+            labelText={<Trans>百分比</Trans>}
+            placeholder={() => {
+              return <>{ZERO_PERCENT_PLACEHOLDER}</>
+            }}
+            RightContent={'%'}
+          />
+        </div>
       </div>
 
       <div>

@@ -4,39 +4,60 @@ import { observer } from 'mobx-react'
 import { startTransition } from 'react'
 import { TRADE_ORDER_DIRECTION_OPTIONS, TradeOrderDirectionEnum } from '../../_options/order'
 import { cn } from '@/libs/ui/lib/utils'
+import { Trans } from '@/libs/lingui/react/macro'
+import { useCurrentQuote } from '@/hooks/useCurrentQuote'
+import { BNumber } from '@/libs/utils/number/b-number'
 
 export const TradeActionPanelOrderDirection = observer(() => {
   const { trade } = useStores()
+
+  const quoteInfo = useCurrentQuote(trade.activeSymbolName)
   return (
-    <Tabs
-      variant="solid"
-      size="md"
-      value={trade.buySell}
-      onValueChange={(value) => {
-        startTransition(() => {
-          trade.setBuySell(value)
-        })
-      }}
-    >
-      <TabsList className="gap-medium">
-        {TRADE_ORDER_DIRECTION_OPTIONS.map((option, i) => {
-          const isActive = trade.buySell === option.value
-          return (
-            <TabsTrigger
-              block
-              contentClassName={cn('', {
-                'group-data-[state=active]:bg-market-rise': isActive && option.value === TradeOrderDirectionEnum.BUY,
-                'group-data-[state=active]:bg-market-fall group-data-[state=active]:text-content-1':
-                  isActive && option.value === TradeOrderDirectionEnum.SELL
-              })}
-              key={i}
-              value={option.value}
-            >
-              {option.label}
-            </TabsTrigger>
-          )
+    <div className={cn('flex gap-medium relative')}>
+      <div
+        className={cn(
+          'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ',
+          'rounded-xs bg-white size-5 text-paragraph-p3 flex justify-center items-center text-content-foreground'
+        )}
+      >
+        {BNumber.toFormatNumber(quoteInfo?.spread)}
+      </div>
+
+      <div
+        className={cn('flex flex-1 flex-col gap-xs py-small px-3xl rounded-small text-button-2 text-content-4 bg-button', {
+          'bg-market-rise text-content-foreground': trade.buySell === TradeOrderDirectionEnum.BUY,
+          'cursor-pointer': trade.buySell !== TradeOrderDirectionEnum.BUY
         })}
-      </TabsList>
-    </Tabs>
+        onClick={() => {
+          startTransition(() => {
+            trade.setBuySell(TradeOrderDirectionEnum.BUY)
+          })
+        }}
+      >
+        <div className="text-center">
+          <Trans>买入/做多</Trans>
+        </div>
+
+        <div className="text-center">{BNumber.toFormatNumber(quoteInfo?.bid, { volScale: 2 })}</div>
+      </div>
+
+      <div
+        className={cn('flex flex-1 flex-col gap-xs py-small px-3xl rounded-small text-button-2 text-content-4 bg-button', {
+          'bg-market-fall text-content-1': trade.buySell === TradeOrderDirectionEnum.SELL,
+          'cursor-pointer': trade.buySell !== TradeOrderDirectionEnum.SELL
+        })}
+        onClick={() => {
+          startTransition(() => {
+            trade.setBuySell(TradeOrderDirectionEnum.SELL)
+          })
+        }}
+      >
+        <div className="text-center">
+          <Trans>卖出/做空</Trans>
+        </div>
+
+        <div className="text-center">{BNumber.toFormatNumber(quoteInfo?.ask, { volScale: 2 })}</div>
+      </div>
+    </div>
   )
 })

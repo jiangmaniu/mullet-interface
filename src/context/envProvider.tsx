@@ -64,41 +64,41 @@ const Context = createContext<ProviderType>({} as ProviderType)
 export const EnvProvider = ({ children }: IProps) => {
   const [screenSize, setScreenSize] = useState({} as SizeInfo)
 
-  // 根据不同分辨率缩放屏幕大小
-  function adjustScale(size: SizeInfo) {
-    const width = size?.width
-    let scale = 1
+  // // 根据不同分辨率缩放屏幕大小
+  // function adjustScale(size: SizeInfo) {
+  //   const width = size?.width
+  //   let scale = 1
 
-    if (width >= 1540) {
-      scale = 1 // 100%
-    } else if (width < 1540 && width >= 1470) {
-      scale = 0.9 // 94%
-    } else if (width < 1470 && width >= 1200) {
-      scale = 0.85 // 85%
-    }
-    // @ts-ignore
-    document.body.style.zoom = scale
-  }
+  //   if (width >= 1540) {
+  //     scale = 1 // 100%
+  //   } else if (width < 1540 && width >= 1470) {
+  //     scale = 0.9 // 94%
+  //   } else if (width < 1470 && width >= 1200) {
+  //     scale = 0.85 // 85%
+  //   }
+  //   // @ts-ignore
+  //   document.body.style.zoom = scale
+  // }
 
-  const onResize = useCallback(
-    debounce(() => {
-      const size: SizeInfo = {
-        width: document.documentElement.clientWidth,
-        height: document.documentElement.clientHeight
-      }
-      setScreenSize(size)
-      adjustScale(size)
-    }, 100),
-    []
-  ) // 100ms 的防抖时间
+  // const onResize = useCallback(
+  //   debounce(() => {
+  //     const size: SizeInfo = {
+  //       width: document.documentElement.clientWidth,
+  //       height: document.documentElement.clientHeight
+  //     }
+  //     setScreenSize(size)
+  //     adjustScale(size)
+  //   }, 100),
+  //   []
+  // ) // 100ms 的防抖时间
 
-  useEffect(() => {
-    onResize()
-    window.addEventListener('resize', onResize)
-    return () => {
-      window.removeEventListener('resize', onResize)
-    }
-  }, [onResize])
+  // useEffect(() => {
+  //   onResize()
+  //   window.addEventListener('resize', onResize)
+  //   return () => {
+  //     window.removeEventListener('resize', onResize)
+  //   }
+  // }, [onResize])
 
   /** 检查设备类型，如果设备类型发生变化，则跳转到对应的页面 */
   const { exposed } = useDeviceChange()

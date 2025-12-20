@@ -15,7 +15,7 @@ import { useStores } from '@/context/mobxProvider'
 
 export function Overview() {
   return (
-    <div className="bg-primary flex h-[60px] items-center gap-6 rounded-lg">
+    <div className="bg-primary flex h-[60px] items-center gap-6 rounded-large">
       <div className="flex items-center gap-5 h-full">
         <SymbolSelector />
 
@@ -85,12 +85,13 @@ const DataOverview = () => {
       label: <Trans>收盘价</Trans>,
       value: (
         <div
-          className={cn()
-          // isClosePriceChangeState === 'up'
-          //   ? 'text-market-rise'
-          //   : isClosePriceChangeState === 'down'
-          //   ? 'text-market-fall'
-          //   : 'text-content-1'
+          className={
+            cn()
+            // isClosePriceChangeState === 'up'
+            //   ? 'text-market-rise'
+            //   : isClosePriceChangeState === 'down'
+            //   ? 'text-market-fall'
+            //   : 'text-content-1'
           }
         >
           {BNumber.toFormatNumber(res?.close, { volScale: undefined })}

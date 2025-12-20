@@ -28,10 +28,6 @@ import { TradeActionPanelOrderOverview } from './order-overview'
 import { TradeActionPanelOrderAmount } from './order-amount'
 
 export const TradeActionPanel = observer(() => {
-  const [leverage, setLeverage] = useState(1)
-  const [tradeType, setTradeType] = useState<'market' | 'limit'>('market')
-  const [orderSide, setOrderSide] = useState<'buy' | 'sell'>('buy')
-  const [stopLimit, setStopLimit] = useState(false)
   const { trade } = useStores()
 
   const [selectedOrderType, setSelectedOrderType] = useState(trade.orderType)
@@ -39,9 +35,13 @@ export const TradeActionPanel = observer(() => {
   return (
     <div className="rounded-large bg-primary flex h-full flex-col gap-3 p-3">
       <div className="flex flex-col gap-2">
-        <div className="gap-xl flex flex-wrap">
-          <MarginModeSetting />
-          <TradingLeverage />
+        <div className="gap-xl flex justify-between">
+          <div className="flex-1">
+            <MarginModeSetting />
+          </div>
+          <div className="flex-1">
+            <TradingLeverage />
+          </div>
         </div>
 
         <Tabs

@@ -29,10 +29,11 @@ export const MarginModeSetting = observer(() => {
           }}
         >
           <Button
-            className="flex-1"
+            className="flex-1 h-full"
+            block
             variant={'primary'}
             disabled={disabled}
-            size={'md'}
+            size={'lg'}
             // RightIcon={!disabled && <Iconify icon="iconoir:nav-arrow-right" />}
             color="default"
           >

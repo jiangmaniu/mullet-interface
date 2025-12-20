@@ -57,7 +57,7 @@ export const TradingLeverage = observer(() => {
             return maxPosition
           }}
         >
-          <Button className="flex-1" variant={'primary'} size={'md'} color="default">
+          <Button className="flex-1 h-full" block variant={'primary'} size={'lg'} color="default">
             <FormatedLeverage leverage={currentLeverage} />
           </Button>
         </SettingLeverageModal>
