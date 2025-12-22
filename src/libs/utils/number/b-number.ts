@@ -174,7 +174,7 @@ export class BNumber extends BigNumberBase {
 
   decimalPlaces(): number
   decimalPlaces(decimalPlaces: number, roundingMode?: BigNumber.RoundingMode): BNumber
-  decimalPlaces(decimalPlaces?: number, roundingMode?: BigNumber.RoundingMode) {
+  decimalPlaces(decimalPlaces?: number, roundingMode?: BigNumber.RoundingMode): BNumber | number | null {
     if (isUndefined(decimalPlaces)) {
       return super.decimalPlaces()
     }

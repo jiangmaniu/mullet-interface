@@ -5,3 +5,10 @@ export const Trans = ({ children }: PropsWithChildren) => {
 }
 
 export const t = (v: any) => v
+
+export const useLingui = () => {
+  const t = (...args: any) => {
+    return args.join('')
+  }
+  return { t }
+}

@@ -88,7 +88,10 @@ export const cn = createCn({
       fontSize: [...flattenObjectKeys(NewThemeFontSize)],
       textColor: flattenObjectKeys(NewThemeTextColor),
       backgroundColor: [...flattenObjectKeys(NewThemeBackgroundColor)],
-      borderColor: [...flattenObjectKeys(NewThemeBorderColor)]
+      borderColor: [...flattenObjectKeys(NewThemeBorderColor)],
+      spacing: [...flattenObjectKeys(NewThemeSpacing)],
+      borderRadius: [...flattenObjectKeys(NewThemeRadius)],
+      lineHeight: [...flattenObjectKeys(NewThemeLineHeight)]
     },
     classGroups: {
       // 字体大小组 - 必须放在 text-color 之前，优先匹配字体大小类（如 text-button-2）
@@ -98,7 +101,8 @@ export const cn = createCn({
       // 由于 button-2 不在 NewThemeTextColor 中，text-button-2 不会匹配到这里
       'text-color': [{ text: flattenObjectKeys(NewThemeTextColor) }],
       // 其他颜色组
-      colors: [{ text: flattenObjectKeys(NewThemeColor) }]
+      colors: [{ text: flattenObjectKeys(NewThemeColor) }],
+
     }
   },
   override: {

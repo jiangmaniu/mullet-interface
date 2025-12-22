@@ -13,8 +13,6 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
-import ClosePositionConfirmModal from '@/pages/web/trade/comp/Modal/ClosePositionConfirmModal'
-import SetStopLossProfitModal from '@/pages/web/trade/comp/Modal/SetStopLossProfitModal'
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
@@ -27,6 +25,16 @@ import CurrentPrice from './comp/CurrentPrice'
 import MarginRate from './comp/MarginRate'
 import ProfitYieldRate from './comp/ProfitYieldRate'
 import RowTotalProfitYieldRate from './comp/RowTotalProfitYieldRate'
+import { ClosePositionAction } from './_comps/close-position-action'
+import { Trans } from '@/libs/lingui/react/macro'
+import { Button, IconButton } from '@/libs/ui/components/button'
+import { Iconify } from '@/libs/ui/components/icons'
+import { BNumber } from '@/libs/utils/number'
+import { SettingPositionTpSlAction } from './_comps/setting-position-tp-sl-action'
+import { renderFallback } from '@/libs/utils/format/fallback'
+import { GeneralTooltip } from '@/components/tooltip'
+import { TradeOrderDirectionEnum } from '../../../_options/order'
+import { AdjustPositionMarginAction } from './_comps/adjust-position-margin-action'
 
 export type IPositionItem = Order.BgaOrderPageListItem & {
   /**合并汇总展开行的手续费 */
@@ -54,8 +62,10 @@ function Position({ style, parentPopup }: IProps) {
 
   const [loading, setLoading] = useState(true)
 
-  const closePositionRef = useRef<any>(null)
-  const stopLossProfitRef = useRef<any>(null)
+  const closePositionActionRef = useRef<any>(null)
+  const settingPositionTpSlActionRef = useRef<any>(null)
+  const adjustPositionMarginActionRef = useRef<any>(null)
+
   const addOrExtractMarginRef = useRef<any>(null)
   const [pageNum, setPageNum] = useState(1)
   const [expandedRowKeys, setExpandedRowKeys] = useState<any>([])
@@ -159,9 +169,14 @@ function Position({ style, parentPopup }: IProps) {
           return <span className="!text-[13px] text-primary">{formatNum(text, { precision: 2 })}</span>
         }
       },
+
       {
-        title: <FormattedMessage id="mt.kaicangjia" />,
-        dataIndex: 'startPrice',
+        title: (
+          <>
+            <Trans>开仓均价</Trans> / <Trans>标记价</Trans>
+          </>
+        ),
+        dataIndex: 'price',
         hideInSearch: true, // 在 table的查询表单 中隐藏
         ellipsis: false,
         fieldProps: {
@@ -170,15 +185,20 @@ function Position({ style, parentPopup }: IProps) {
         formItemProps: {
           label: '' // 去掉form label
         },
-        width: 110,
+        width: 220,
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
-          return <span className="!text-[13px] text-primary">{formatNum(text, { precision: record.symbolDecimal })} </span>
+
+          return <PositionPriceCell positionInfo={record} isOneLevel={isOneLevel} />
         }
       },
       {
-        title: <FormattedMessage id="mt.biaojijia" />,
-        dataIndex: 'currentPrice',
+        title: (
+          <>
+            <Trans>保证金</Trans> / <Trans>保证金率</Trans>
+          </>
+        ),
+        dataIndex: 'margin',
         hideInSearch: true, // 在 table的查询表单 中隐藏
         ellipsis: false,
         fieldProps: {
@@ -187,10 +207,19 @@ function Position({ style, parentPopup }: IProps) {
         formItemProps: {
           label: '' // 去掉form label
         },
-        width: 110,
+        width: 220,
         renderText(text, record, index, action) {
-          if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
-          return <CurrentPrice item={record} />
+          return (
+            <PositionMarginCell
+              positionInfo={record}
+              isOneLevel={isOneLevel}
+              onEdit={() => {
+                // adjustPositionMarginActionRef.current?.show(record)
+                setModalInfo(record)
+                addOrExtractMarginRef.current?.show()
+              }}
+            />
+          )
         }
       },
       // {
@@ -209,75 +238,7 @@ function Position({ style, parentPopup }: IProps) {
       //     return <span className="!text-[13px] text-primary">{text ? formatNum(text) : '--'} </span>
       //   }
       // },
-      {
-        title: <FormattedMessage id="mt.baozhengjinlv" />,
-        dataIndex: 'marginRate',
-        hideInSearch: true, // 在 table的查询表单 中隐藏
-        ellipsis: false,
-        fieldProps: {
-          placeholder: ''
-        },
-        formItemProps: {
-          label: '' // 去掉form label
-        },
-        width: isZh ? 115 : 125,
-        renderText(text, record, index, action) {
-          if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
-          return (
-            <span className="!text-[13px] text-primary">
-              <MarginRate item={record} />
-            </span>
-          )
-        }
-      },
-      {
-        title: (
-          <>
-            <FormattedMessage id="mt.baozhengjin" />
-            (USD)
-          </>
-        ),
-        dataIndex: 'margin',
-        hideInSearch: true, // 在 table的查询表单 中隐藏
-        ellipsis: false,
-        fieldProps: {
-          placeholder: ''
-        },
-        formItemProps: {
-          label: '' // 去掉form label
-        },
-        width: 120,
-        renderText(text, record, index, action) {
-          if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
 
-          const buySellInfo = getBuySellInfo(record)
-          const orderMargin = record.orderMargin
-
-          return (
-            <div className="flex items-center pl-[1px]">
-              <div className="flex flex-col">
-                <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin, { precision }) : '--'} </span>
-                <span className={cn('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
-              </div>
-              {/* 逐仓才可以追加保证金 */}
-              {record.marginType === 'ISOLATED_MARGIN' && (
-                <div className="pl-[6px]">
-                  {/* 追加、提取保证金 */}
-                  <div
-                    className="cursor-pointer"
-                    onClick={() => {
-                      setModalInfo(record)
-                      addOrExtractMarginRef.current?.show()
-                    }}
-                  >
-                    <img src="/img/edit-icon.png" width={30} height={30} />
-                  </div>
-                </div>
-              )}
-            </div>
-          )
-        }
-      },
       {
         title: <FormattedMessage id="mt.zhiyingzhisun2" />,
         dataIndex: 'stopLossProfit',
@@ -289,29 +250,18 @@ function Position({ style, parentPopup }: IProps) {
         formItemProps: {
           label: '' // 去掉form label
         },
-        width: 180,
+        width: 220,
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
 
-          const AddDom = (
-            <span className="font-pf-bold">
-              <FormattedMessage id="mt.tianjia" />
-            </span>
-          )
           return (
-            <div
-              className="cursor-pointer"
-              onClick={() => {
-                stopLossProfitRef.current?.show(record)
-              }}
-            >
-              <span className="!text-[13px] text-primary border-b border-dashed dark:border-gray-570 border-gray-weak">
-                {Number(record?.takeProfit) ? formatNum(record?.takeProfit, { precision: record.symbolDecimal }) : AddDom}
-              </span>
-              <span className="dark:text-gray-95"> / </span>
-              <span className="!text-[13px] text-primary border-b border-dashed dark:border-gray-570 border-gray-weak">
-                {Number(record?.stopLoss) ? formatNum(record?.stopLoss, { precision: record.symbolDecimal }) : AddDom}
-              </span>
+            <div>
+              <PositionTpSlCell
+                positionInfo={record}
+                onEdit={() => {
+                  settingPositionTpSlActionRef.current?.show(record)
+                }}
+              />
             </div>
           )
         }
@@ -335,21 +285,7 @@ function Position({ style, parentPopup }: IProps) {
           return <span className="!text-[13px] text-primary">{record.id}</span>
         }
       },
-      {
-        title: <FormattedMessage id="mt.dizhi" />,
-        dataIndex: 'pdaAddress',
-        hideInSearch: true, // 在 table的查询表单 中隐藏
-        ellipsis: false,
-        width: 150,
-        renderText(text, record, index, action) {
-          if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
-          return (
-            <span className="!text-[13px] text-primary">
-              <ExplorerLink path={`address/${record.pdaAddress}`} address={record.pdaAddress} />
-            </span>
-          )
-        }
-      },
+
       {
         title: <FormattedMessage id="mt.jiaoyishijian" />,
         dataIndex: 'createTime',
@@ -367,14 +303,14 @@ function Position({ style, parentPopup }: IProps) {
           return <span className="!text-[13px] text-primary">{record.createTime}</span>
         }
       },
+
       {
         title: (
           <>
-            <FormattedMessage id="mt.shouxufei" />
-            (USD)
+            <Trans>手续费</Trans>/ <Trans>库存费</Trans>
           </>
         ),
-        dataIndex: 'handlingFees',
+        dataIndex: 'Fees',
         hideInSearch: true, // 在 table的查询表单 中隐藏
         ellipsis: false,
         fieldProps: {
@@ -383,34 +319,12 @@ function Position({ style, parentPopup }: IProps) {
         formItemProps: {
           label: '' // 去掉form label
         },
-        width: isZh ? 110 : 150,
+        width: 220,
         renderText(text, record, index, action) {
-          const handlingFees = isOneLevel && Number(record?.childrenList?.length) ? record.totalHandlingFees : text
-          return <span className="!text-[13px] text-primary">{handlingFees ? formatNum(handlingFees, { precision }) : '0.00'}</span>
+          return <PositionFeesCell positionInfo={record} isOneLevel={isOneLevel} />
         }
       },
-      {
-        title: (
-          <>
-            <FormattedMessage id="mt.kucunfei" />
-            (USD)
-          </>
-        ),
-        dataIndex: 'interestFees',
-        hideInSearch: true, // 在 table的查询表单 中隐藏
-        ellipsis: false,
-        fieldProps: {
-          placeholder: ''
-        },
-        formItemProps: {
-          label: '' // 去掉form label
-        },
-        width: 110,
-        renderText(text, record, index, action) {
-          const interestFees = isOneLevel && Number(record?.childrenList?.length) ? record.totalInterestFees : text
-          return <span className="!text-[13px] text-primary">{interestFees ? formatNum(interestFees, { precision }) : '0.00'}</span>
-        }
-      },
+
       {
         title: (
           <>
@@ -445,14 +359,18 @@ function Position({ style, parentPopup }: IProps) {
         render: (text, record, _, _action) => {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
           return (
-            <div className="flex justify-end">
-              <div
-                className="min-w-[82px] cursor-pointer rounded-[6px] border border-gray-250 dark:btn-dark px-2 py-[5px] text-center text-primary text-sm"
-                onClick={() => {
-                  closePositionRef.current?.show(record)
-                }}
-              >
-                <FormattedMessage id="mt.pingcang" />
+            <div className="flex gap-2 justify-end">
+              <div>
+                <Button
+                  variant={'primary'}
+                  size="sm"
+                  color={'default'}
+                  onClick={() => {
+                    closePositionActionRef.current?.show(record)
+                  }}
+                >
+                  <Trans>平仓</Trans>
+                </Button>
               </div>
             </div>
           )
@@ -726,13 +644,156 @@ function Position({ style, parentPopup }: IProps) {
         </div>
       </Spin>
       {/* 平仓修改确认弹窗 */}
-      <ClosePositionConfirmModal ref={closePositionRef} />
+      <ClosePositionAction ref={closePositionActionRef} />
       {/* 设置止损止盈弹窗 */}
-      <SetStopLossProfitModal ref={stopLossProfitRef} />
+      <SettingPositionTpSlAction ref={settingPositionTpSlActionRef} />
       {/* 追加、提取保证金弹窗 */}
+      <AdjustPositionMarginAction ref={adjustPositionMarginActionRef} />
+
       <AddOrExtractMarginModal ref={addOrExtractMarginRef} info={modalInfo} onClose={() => setModalInfo({})} />
     </>
   )
 }
 
 export default observer(Position)
+
+const PositionTpSlCell = observer(({ positionInfo, onEdit }: { positionInfo: IPositionItem; onEdit: () => void }) => {
+  const isBuy = positionInfo?.buySell === TradeOrderDirectionEnum.BUY
+
+  return (
+    <div className="flex gap-medium items-center">
+      <div className={'text-paragraph-p2 text-content-1'}>
+        {renderFallback(
+          <span className="text-market-rise">
+            {BNumber.toFormatNumber(positionInfo?.takeProfit, {
+              volScale: positionInfo?.symbolDecimal,
+              //止盈：买入方向 ≥，卖出方向 ≤
+              prefix: isBuy ? '≥' : '≤'
+            })}
+          </span>,
+          { verify: !!positionInfo?.takeProfit }
+        )}{' '}
+        /{' '}
+        {renderFallback(
+          <span className="text-market-fall">
+            {BNumber.toFormatNumber(positionInfo?.stopLoss, {
+              volScale: positionInfo?.symbolDecimal,
+              // 止损：买入方向 ≤，卖出方向 ≥
+              prefix: isBuy ? '≤' : '≥'
+            })}
+          </span>,
+          { verify: !!positionInfo?.stopLoss }
+        )}
+      </div>
+
+      <IconButton variant={'ghost'} className="p-0.5 rounded-1" onClick={onEdit}>
+        <Iconify icon="iconoir:edit" className="size-4" />
+      </IconButton>
+    </div>
+  )
+})
+
+const PositionFeesCell = observer(({ positionInfo, isOneLevel }: { positionInfo: IPositionItem; isOneLevel: boolean }) => {
+  const handlingFees = isOneLevel && Number(positionInfo?.childrenList?.length) ? positionInfo.totalHandlingFees : positionInfo.handlingFees
+  const interestFees = isOneLevel && Number(positionInfo?.childrenList?.length) ? positionInfo.totalInterestFees : positionInfo.interestFees
+
+  const { trade } = useStores()
+  const precision = trade.currentAccountInfo.currencyDecimal
+  const unit = 'USDC'
+
+  return (
+    <div className="text-paragraph-p2 text-content-1">
+      {BNumber.toFormatNumber(handlingFees, {
+        volScale: precision,
+        unit: unit,
+        positive: false
+      })}
+      {' / '}
+      {BNumber.toFormatNumber(interestFees, {
+        volScale: precision,
+        unit: unit,
+        positive: false
+      })}
+    </div>
+  )
+})
+
+const PositionPriceCell = observer(({ positionInfo, isOneLevel }: { positionInfo: IPositionItem; isOneLevel: boolean }) => {
+  return (
+    <div className="text-paragraph-p2 text-content-1">
+      {BNumber.toFormatNumber(positionInfo?.startPrice, {
+        volScale: positionInfo?.symbolDecimal,
+        positive: false
+      })}
+      {' / '}
+      <CurrentPrice item={positionInfo} />
+    </div>
+  )
+})
+
+const PositionMarginCell = observer(
+  ({ positionInfo, isOneLevel, onEdit }: { positionInfo: IPositionItem; isOneLevel: boolean; onEdit: () => void }) => {
+    const startPrice = isOneLevel && Number(positionInfo?.childrenList?.length) ? positionInfo.startPrice : positionInfo.startPrice
+
+    const { trade } = useStores()
+    const precision = trade.currentAccountInfo.currencyDecimal
+    const buySellInfo = getBuySellInfo(positionInfo)
+    const orderMargin = positionInfo.orderMargin
+
+    // return (
+    //   <div className="flex items-center pl-[1px]">
+    //     <div className="flex flex-col">
+    //       <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin, { precision }) : '--'} </span>
+    //       <span className={cn('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
+    //     </div>
+    //     {/* 逐仓才可以追加保证金 */}
+    //     {record.marginType === 'ISOLATED_MARGIN' && (
+    //       <div className="pl-[6px]">
+    //         {/* 追加、提取保证金 */}
+    //         <div
+    //           className="cursor-pointer"
+    //           onClick={() => {
+    //             setModalInfo(record)
+    //             addOrExtractMarginRef.current?.show()
+    //           }}
+    //         >
+    //           <img src="/img/edit-icon.png" width={30} height={30} />
+    //         </div>
+    //       </div>
+    //     )}
+    //   </div>
+    // )
+    return (
+      <div className="text-paragraph-p2 text-content-1">
+        <div className="flex gap-1">
+          <div>
+            {BNumber.toFormatNumber(positionInfo?.orderMargin, {
+              volScale: precision,
+              unit: 'USDC'
+            })}
+            {' / '}
+            <span className={cn('text-content-4')}>{buySellInfo.marginTypeText}</span>
+          </div>
+
+          {positionInfo.marginType === 'ISOLATED_MARGIN' && (
+            <div>
+              <IconButton
+                variant={'ghost'}
+                className="p-0.5 rounded-1"
+                onClick={() => {
+                  // setModalInfo(positionInfo)
+                  onEdit()
+                }}
+              >
+                <Iconify icon="iconoir:edit" className="size-4" />
+              </IconButton>
+            </div>
+          )}
+        </div>
+        <div>
+          (<MarginRate item={positionInfo} />)
+        </div>
+      </div>
+    )
+  }
+)

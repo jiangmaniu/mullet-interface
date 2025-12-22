@@ -65,8 +65,8 @@ const buttonVariants = cva(
         color: 'default',
         class: [
           'text-content-1 text-button-1 bg-zinc-300/20',
-          'hover:bg-zinc-300/40 hover:shadow-base',
-          'active:shadow-inset-base',
+          'enabled:hover:bg-zinc-300/40 enabled:hover:shadow-base',
+          'enabled:active:shadow-inset-base',
           'disabled:text-content-6'
         ]
       },
@@ -75,8 +75,8 @@ const buttonVariants = cva(
         color: 'default',
         class: [
           'text-content-1 text-button-1 border border-zinc-300/20',
-          'hover:bg-zinc-300/0 hover:border-zinc-base hover:shadow-base',
-          'active:shadow-inset-base active:border-white',
+          'enabled:hover:bg-zinc-300/0 enabled:hover:border-zinc-base enabled:hover:shadow-base',
+          'enabled:active:shadow-inset-base enabled:active:border-white',
           'disabled:text-content-6 disabled:border-zinc-xs'
         ]
       },
@@ -86,8 +86,8 @@ const buttonVariants = cva(
         color: 'primary',
         class: [
           'text-content-foreground text-button-1 bg-brand-primary',
-          'hover:bg-yellow-400 hover:shadow-base',
-          'active:shadow-inset-base',
+          'enabled:hover:bg-yellow-400 enabled:hover:shadow-base',
+          'enabled:active:shadow-inset-base',
           'disabled:text-content-6 disabled:bg-zinc-300/20'
         ]
       }
@@ -152,7 +152,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps & IconProps>(
               },
               className
             )
-          })
+          }),
+          className
         )}
         ref={ref}
         type={type}

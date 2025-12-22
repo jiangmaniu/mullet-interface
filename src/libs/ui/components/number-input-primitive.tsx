@@ -28,7 +28,7 @@ export type NumberInputPrimitiveProps = Prettify<
 
 const NumberInputPrimitiveBase = ({
   className,
-  allowNegative = true,
+  allowNegative = false,
   valueIsNumericString = false,
   thousandSeparator = ',',
   onValueChange,
