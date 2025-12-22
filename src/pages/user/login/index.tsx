@@ -11,6 +11,7 @@ import { flushSync } from 'react-dom'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { Button } from '@/libs/ui/components/button'
 import { message } from 'antd'
+import { Trans } from '@/libs/lingui/react/macro'
 
 export default function Login() {
   const { ready, authenticated, logout, user, getAccessToken } = usePrivy()
@@ -115,20 +116,16 @@ export default function Login() {
         <div className="flex flex-col items-center max-w-md w-full">
           {/* Logo */}
           <div className="mb-8">
-            <img 
-              src="/platform/img/pc-logo-dark.png" 
-              alt="Mullet" 
-              className="h-16 w-auto" 
-            />
+            <img src="/icons/logo/mullet-long.svg" alt="Mullet" className="h-16 w-auto" />
           </div>
 
           {/* 欢迎文字 */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              <FormattedMessage id="mt.huanyinghuila" />
+              <Trans>欢迎回来</Trans>
             </h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm">
-              <FormattedMessage id="mt.lianjiequanbaodenglu" />
+              <Trans>连接您的钱包以继续</Trans>
             </p>
           </div>
 
@@ -136,7 +133,7 @@ export default function Login() {
           {loginError && (
             <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-center w-full">
               <div className="text-red-600 dark:text-red-400 text-sm font-medium mb-1">
-                <FormattedMessage id="mt.denglushibai" />
+                <Trans>登录失败</Trans>
               </div>
               <div className="text-red-500 dark:text-red-300 text-xs">{loginError}</div>
             </div>
@@ -144,41 +141,27 @@ export default function Login() {
 
           {/* 登录按钮 */}
           {!authenticated ? (
-            <Button 
-              variant={'primary'} 
-              color="primary" 
-              onClick={handleRetryLogin}
-              className="w-full h-12 text-base font-medium"
-            >
-              {loginError ? <FormattedMessage id="mt.chongxindenglu" /> : <FormattedMessage id="mt.lianjiequanbao" />}
+            <Button variant={'primary'} color="primary" onClick={handleRetryLogin} className="w-full h-12 text-base font-medium">
+              {loginError ? <Trans>重新登录</Trans> : <Trans>连接钱包</Trans>}
             </Button>
           ) : (
             <div className="w-full space-y-3">
               {/* 已连接钱包提示 */}
               <div className="text-center text-sm text-gray-500 dark:text-gray-400 mb-2">
-                <FormattedMessage id="mt.yilianjiequanbao" />
+                <Trans>钱包已连接</Trans>
               </div>
-              <Button 
-                onClick={handleRetryLogin} 
-                variant={'primary'} 
-                color="primary"
-                className="w-full h-12 text-base font-medium"
-              >
-                <FormattedMessage id="mt.chongxindenglu" />
+              <Button onClick={handleRetryLogin} variant={'primary'} color="primary" className="w-full h-12 text-base font-medium">
+                <Trans>重新登录</Trans>
               </Button>
-              <Button 
-                onClick={handleLogout} 
-                variant={'outline'} 
-                className="w-full h-12 text-base font-medium"
-              >
-                <FormattedMessage id="mt.duankailianjie" />
+              <Button onClick={handleLogout} variant={'outline'} className="w-full h-12 text-base font-medium">
+                <Trans>断开连接</Trans>
               </Button>
             </div>
           )}
 
           {/* 底部提示 */}
           <p className="mt-6 text-xs text-gray-400 dark:text-gray-500 text-center">
-            <FormattedMessage id="mt.dengludiyitishi" />
+            <Trans>通过连接钱包，您同意我们的服务条款和隐私政策</Trans>
           </p>
         </div>
       )}
@@ -186,7 +169,7 @@ export default function Login() {
         <div className="flex flex-col items-center gap-y-4">
           <JumpingLoader />
           <span className="text-gray-600 dark:text-gray-300">
-            <FormattedMessage id="mt.tiaozhuanzhong" />
+            <Trans>跳转中</Trans>
             ...
           </span>
         </div>
