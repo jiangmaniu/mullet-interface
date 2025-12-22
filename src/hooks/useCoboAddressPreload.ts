@@ -7,17 +7,20 @@ import { useEffect, useRef } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useCoboWallet } from './useCoboWallet'
 import { preloadCoboDepositAddresses, preloadCoboBalances } from '@/services/coboPreloadService'
+import { useStores } from '@/context/mobxProvider'
 
 /**
  * 在用户登录后自动预加载所有 Cobo 充值地址和余额
  */
 export const useCoboAddressPreload = () => {
   const { user, authenticated } = usePrivy()
+  const { trade } = useStores()
   const hasPreloadedRef = useRef(false)
 
   // 获取 Cobo 钱包
   const { walletId: coboWalletId, isLoading: coboWalletLoading } = useCoboWallet({
     userId: user?.id || '',
+    tradeAccountId: trade.currentAccountInfo?.id,
     enabled: authenticated && !!user?.id
   })
 

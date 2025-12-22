@@ -3,7 +3,9 @@ import { API_BASE_URL } from '@/constants/api'
 
 interface UseCoboWalletParams {
   userId: string
+  tradeAccountId?: string | number  // 交易账户ID，用于钱包命名
   enabled?: boolean
+  autoCreate?: boolean  // 🔥 是否自动创建钱包（默认 false，只有 layout 设为 true）
 }
 
 interface CoboWalletData {
@@ -16,16 +18,24 @@ interface CoboWalletData {
 // 🔥 钱包ID缓存（按userId）
 const walletCache: Map<string, CoboWalletData> = new Map()
 
+// 🔥 防并发锁：存储正在进行的请求 Promise
+let pendingRequest: Promise<CoboWalletData | null> | null = null
+
 /**
  * Cobo 钱包管理 Hook
  * 获取或创建用户的专属 Cobo 钱包
  *
+ * @param autoCreate - 只在 layout 组件设为 true，其他组件默认 false 只读缓存
  * @example
  * ```tsx
- * const { walletId, isLoading } = useCoboWallet({ userId: user.id })
+ * // Layout 组件（负责创建）
+ * const { walletId } = useCoboWallet({ userId, tradeAccountId, autoCreate: true })
+ * 
+ * // 其他组件（只读缓存）
+ * const { walletId } = useCoboWallet({ userId, tradeAccountId })
  * ```
  */
-export const useCoboWallet = ({ userId, enabled = true }: UseCoboWalletParams) => {
+export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCreate = false }: UseCoboWalletParams) => {
   // 🔥 初始化时立即检查缓存
   const [walletId, setWalletId] = useState<string>(() => {
     if (userId) {
@@ -48,7 +58,8 @@ export const useCoboWallet = ({ userId, enabled = true }: UseCoboWalletParams) =
 
   const fetchOrCreateWallet = useCallback(
     async (forceRefresh = false) => {
-      if (!enabled || !userId) {
+      // 🔥 必须有 userId 和 tradeAccountId 才能创建/获取钱包
+      if (!enabled || !userId || !tradeAccountId) {
         return
       }
 
@@ -61,96 +72,125 @@ export const useCoboWallet = ({ userId, enabled = true }: UseCoboWalletParams) =
         return
       }
 
+      // 🔥 如果不是 autoCreate 模式，只查询不创建
+      if (!autoCreate) {
+        console.log('[Cobo Wallet] 📖 只读模式，等待缓存...')
+        return
+      }
+
+      // 🔥 防并发：如果已经有请求在进行中，等待它完成
+      if (pendingRequest) {
+        console.log('[Cobo Wallet] ⏳ 等待其他请求完成...')
+        try {
+          const result = await pendingRequest
+          if (result) {
+            setWalletData(result)
+            setWalletId(result.walletId)
+          }
+        } catch (e) {
+          // 忽略，让当前请求继续
+        }
+        return
+      }
+
       setIsLoading(true)
       setError(null)
 
-      try {
-        // 1. 先查询用户是否已有钱包
-        const queryUrl = `${API_BASE_URL}/api/v1/wallet?userId=${userId}`
+      // 🔥 创建新的请求 Promise
+      pendingRequest = (async (): Promise<CoboWalletData | null> => {
+        try {
+          // 1. 先查询用户是否已有钱包
+          const queryUrl = `${API_BASE_URL}/api/v1/wallet?userId=${userId}`
 
-        console.log('[Cobo Wallet] Fetching wallet for user:', userId)
+          console.log('[Cobo Wallet] Fetching wallet for user:', userId)
 
-        const queryResponse = await fetch(queryUrl)
+          const queryResponse = await fetch(queryUrl)
 
-        if (queryResponse.ok) {
-          const queryData = await queryResponse.json()
+          if (queryResponse.ok) {
+            const queryData = await queryResponse.json()
+            console.log('[Cobo Wallet] 🔍 Query response:', queryData)
 
-          if (queryData.success && queryData.data.walletId) {
-            // 用户已有钱包
-            const wallet: CoboWalletData = {
-              walletId: queryData.data.walletId,
-              walletName: queryData.data.walletName,
-              walletType: queryData.data.walletType,
-              isNew: false
+            if (queryData.success && queryData.data.walletId) {
+              // 用户已有钱包
+              const wallet: CoboWalletData = {
+                walletId: queryData.data.walletId,
+                walletName: queryData.data.walletName,
+                walletType: queryData.data.walletType,
+                isNew: false
+              }
+
+              // 🔥 存入缓存
+              walletCache.set(userId, wallet)
+              console.log('[Cobo Wallet] Existing wallet found:', wallet.walletId)
+              return wallet
             }
-
-            // 🔥 存入缓存
-            walletCache.set(userId, wallet)
-
-            setWalletData(wallet)
-            setWalletId(wallet.walletId)
-
-            console.log('[Cobo Wallet] Existing wallet found:', wallet.walletId)
-            return
           }
-        }
 
-        // 2. 没有钱包，创建新钱包
-        console.log('[Cobo Wallet] No wallet found, creating new one...')
+          // 2. 没有钱包，创建新钱包
+          console.log('[Cobo Wallet] No wallet found, creating new one...')
 
-        const createUrl = `${API_BASE_URL}/api/v1/wallet/create`
-        const createResponse = await fetch(createUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            userId,
-            // 钱包名称：MW_ 前缀（Mullet Wallet）+ 完整 userId（去掉 did:privy: 前缀）
-            walletName: `MW_${userId.replace('did:privy:', '')}`
+          const createUrl = `${API_BASE_URL}/api/v1/wallet/create`
+          const createResponse = await fetch(createUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              userId,
+              // 钱包名称：wallet_ 前缀 + 交易账户ID
+              walletName: `wallet_${tradeAccountId}`
+            })
           })
-        })
 
-        if (!createResponse.ok) {
-          throw new Error(`Failed to create wallet: ${createResponse.statusText}`)
+          if (!createResponse.ok) {
+            throw new Error(`Failed to create wallet: ${createResponse.statusText}`)
+          }
+
+          const createData = await createResponse.json()
+
+          if (!createData.success) {
+            throw new Error(createData.error || 'Failed to create wallet')
+          }
+
+          const wallet: CoboWalletData = {
+            walletId: createData.data.walletId,
+            walletName: createData.data.walletName,
+            walletType: createData.data.walletType,
+            isNew: true
+          }
+
+          // 🔥 存入缓存
+          walletCache.set(userId, wallet)
+          console.log('[Cobo Wallet] New wallet created:', wallet.walletId)
+          return wallet
+        } catch (err: any) {
+          console.error('[Cobo Wallet] Error:', err)
+          throw err
         }
+      })()
 
-        const createData = await createResponse.json()
-
-        if (!createData.success) {
-          throw new Error(createData.error || 'Failed to create wallet')
+      try {
+        const wallet = await pendingRequest
+        if (wallet) {
+          setWalletData(wallet)
+          setWalletId(wallet.walletId)
         }
-
-        const wallet: CoboWalletData = {
-          walletId: createData.data.walletId,
-          walletName: createData.data.walletName,
-          walletType: createData.data.walletType,
-          isNew: true
-        }
-
-        // 🔥 存入缓存
-        walletCache.set(userId, wallet)
-
-        setWalletData(wallet)
-        setWalletId(wallet.walletId)
-
-        console.log('[Cobo Wallet] New wallet created:', wallet.walletId)
       } catch (err: any) {
         const errorMsg = err.message || 'Failed to get or create wallet'
         setError(errorMsg)
-        console.error('[Cobo Wallet] Error:', err)
       } finally {
         setIsLoading(false)
+        pendingRequest = null  // 🔥 清除锁
       }
     },
-    [userId, enabled]
+    [userId, tradeAccountId, enabled, autoCreate]
   )
 
   useEffect(() => {
-    if (enabled && userId) {
+    if (enabled && userId && tradeAccountId) {
       fetchOrCreateWallet()
     }
-  }, [enabled, userId, fetchOrCreateWallet])
+  }, [enabled, userId, tradeAccountId, fetchOrCreateWallet])
 
   return {
     walletId,

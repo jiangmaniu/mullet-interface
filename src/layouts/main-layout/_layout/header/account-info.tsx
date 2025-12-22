@@ -43,10 +43,12 @@ export const TradeAccountInfo = observer(() => {
   const { address: privyAddress } = usePrivyInfo()
   const { user } = usePrivy()
 
-  // 获取 Cobo 钱包
+  // 🔥 获取 Cobo 钱包 - autoCreate: true 负责创建，其他组件只读缓存
   const { walletId: coboWalletId } = useCoboWallet({
     userId: user?.id || '',
-    enabled: !!user?.id
+    tradeAccountId: currentAccountInfo?.id,
+    enabled: !!user?.id,
+    autoCreate: true  // 🔥 只有这里负责创建钱包
   })
 
   // 获取 Cobo Solana 充值地址
@@ -102,6 +104,7 @@ const AccountSelector = observer(() => {
   // 获取 Cobo 钱包
   const { walletId: coboWalletId } = useCoboWallet({
     userId: user?.id || '',
+    tradeAccountId: currentAccountInfo?.id,
     enabled: !!user?.id
   })
 

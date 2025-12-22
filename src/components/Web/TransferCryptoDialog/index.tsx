@@ -67,6 +67,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     error: coboWalletError
   } = useCoboWallet({
     userId: user?.id || '',
+    tradeAccountId: trade.currentAccountInfo?.id,
     enabled: open && isCoboChain
   })
 
