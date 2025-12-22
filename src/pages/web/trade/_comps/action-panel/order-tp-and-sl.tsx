@@ -224,10 +224,10 @@ const SetTakeProfitLabel = observer(() => {
           <Trans>范围</Trans>
         </span>
         <span className="text-content-1">
-          {BNumber.toFormatNumber(sp_scope, {
+          {sp_scope != null ? BNumber.toFormatNumber(sp_scope, {
             prefix: isBuy ? '≥' : '≤',
             volScale: 2
-          })}
+          }) : '--'}
         </span>
       </div>
 
@@ -319,10 +319,10 @@ const SetStopLossLabel = observer(() => {
           <Trans>范围</Trans>
         </span>
         <span className="text-content-1">
-          {BNumber.toFormatNumber(sl_scope, {
+          {sl_scope != null ? BNumber.toFormatNumber(sl_scope, {
             prefix: isBuy ? '≤' : '≥',
             volScale: 2
-          })}
+          }) : '--'}
         </span>
       </div>
 

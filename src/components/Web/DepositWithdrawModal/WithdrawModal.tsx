@@ -60,6 +60,7 @@ export default observer(
       error: coboWalletError
     } = useCoboWallet({
       userId: user?.id || '',
+      tradeAccountId: accountItem?.id || trade.currentAccountInfo?.id,
       enabled: open && !!user?.id
     })
 

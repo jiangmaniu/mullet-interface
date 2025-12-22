@@ -13,6 +13,7 @@ import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { useTheme } from '@/context/themeProvider'
 import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
+import { useStores } from '@/context/mobxProvider'
 import {
   getDeBridgeQuote,
   createDeBridgeOrderTron,
@@ -114,6 +115,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   const { connection } = useConnection()
   const themeConfig = useTheme()
   const isDark = themeConfig.theme.isDark
+  const { trade } = useStores()
 
   // 统一使用 usePrivyInfo 的智能选择逻辑
   const solanaWallet = activeSolanaWallet
@@ -122,6 +124,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   // 🔥 获取 Cobo Solana 充值地址作为跨链兑换的目标地址
   const { walletId: coboWalletId } = useCoboWallet({
     userId: user?.id || '',
+    tradeAccountId: trade.currentAccountInfo?.id,
     enabled: !!user?.id
   })
 
