@@ -32,7 +32,7 @@ export const useSolanaBalance = (walletAddress?: string) => {
 
   // Helper functions
   const getRpcConnection = () => {
-    const rpcEndpoint = 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+    const rpcEndpoint = 'https://mainnet.helius-rpc.com/?api-key=3e4462af-f2b9-4a36-9387-a649c63273d3'
     return new Connection(rpcEndpoint, 'confirmed')
   }
 
@@ -50,7 +50,7 @@ export const useSolanaBalance = (walletAddress?: string) => {
   }
 
   const fetchSOLBalance = async (walletPublicKey: PublicKey): Promise<BalanceResult> => {
-    const rpcEndpoint = 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+    const rpcEndpoint = 'https://mainnet.helius-rpc.com/?api-key=3e4462af-f2b9-4a36-9387-a649c63273d3'
 
     const response = await fetch(rpcEndpoint, {
       method: 'POST',
