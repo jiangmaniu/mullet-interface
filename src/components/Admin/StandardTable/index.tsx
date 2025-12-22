@@ -484,11 +484,11 @@ export default function OptimizedTable<T extends Record<string, any>, U extends 
   const darkClassName = useEmotionCss(({ token }) => {
     return {
       '.ant-table-thead > tr > th': {
-        background: 'var(--bg-primary) !important',
+        background: '#0e123a !important',
         border: '0px solid var(--divider-line-color) !important'
       },
       'tr > td': {
-        background: 'var(--bg-primary)',
+        background: '#0e123a',
         borderBottom: '1px solid var(--divider-line-color) !important'
       }
     }

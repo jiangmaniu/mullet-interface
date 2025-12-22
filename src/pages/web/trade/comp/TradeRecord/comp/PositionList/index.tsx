@@ -538,7 +538,7 @@ function Position({ style, parentPopup }: IProps) {
           paddingTop: '0 !important'
         },
         '.ant-table-thead > tr > th': {
-          background: `var(--bg-primary) !important`,
+          backgroundColor: `#0e123a !important`,
           color: `var(--color-text-secondary) !important`
         }
       },
