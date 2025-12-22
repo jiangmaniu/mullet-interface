@@ -5,11 +5,11 @@ import { createContext, useContext } from 'react'
 import { useCoboAddressPreload } from '@/hooks/useCoboAddressPreload'
 import { createSolanaRpc, createSolanaRpcSubscriptions } from '@solana/kit'
 
-// Solana RPC 配置
-const SOLANA_MAINNET_RPC_URL = 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
-const SOLANA_MAINNET_WS_URL = 'wss://rpc.ankr.com/solana/ws/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
-const SOLANA_DEVNET_RPC_URL = 'https://api.devnet.solana.com'
-const SOLANA_DEVNET_WS_URL = 'wss://api.devnet.solana.com'
+// Solana RPC 配置 - Helius
+const SOLANA_MAINNET_RPC_URL = 'https://mainnet.helius-rpc.com/?api-key=3e4462af-f2b9-4a36-9387-a649c63273d3'
+const SOLANA_MAINNET_WS_URL = 'wss://mainnet.helius-rpc.com/?api-key=3e4462af-f2b9-4a36-9387-a649c63273d3'
+const SOLANA_DEVNET_RPC_URL = 'https://devnet.helius-rpc.com/?api-key=3e4462af-f2b9-4a36-9387-a649c63273d3'
+const SOLANA_DEVNET_WS_URL = 'wss://devnet.helius-rpc.com/?api-key=3e4462af-f2b9-4a36-9387-a649c63273d3'
 
 interface IProps {
   children: JSX.Element

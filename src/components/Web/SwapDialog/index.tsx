@@ -210,7 +210,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     }
   }, [tronAddress])
 
-  // Construct Assets List
+  // Construct Assets List - Only Solana chain tokens
   const assets = useMemo(() => {
     const list: AssetBalance[] = []
 
@@ -224,24 +224,6 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       network: 'Solana'
     })
 
-    // ETH
-    list.push({
-      symbol: 'ETH',
-      balance: ethBalance,
-      usdValue: ethBalance * (prices.ethereum || 0),
-      icon: TOKEN_ICONS.ETH,
-      network: 'Ethereum'
-    })
-
-    // TRX
-    list.push({
-      symbol: 'TRX',
-      balance: trxBalance,
-      usdValue: trxBalance * (prices.tron || 0),
-      icon: TOKEN_ICONS.TRX,
-      network: 'Tron'
-    })
-
     // SOL
     const solAmount = parseFloat(solBalances?.['SOL']?.balance || '0')
     list.push({
@@ -250,24 +232,6 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       usdValue: solAmount * (prices.solana || 0),
       icon: TOKEN_ICONS.SOL,
       network: 'Solana'
-    })
-
-    // USDT (Ethereum)
-    list.push({
-      symbol: 'USDT',
-      balance: ethUsdtBalance,
-      usdValue: ethUsdtBalance,
-      icon: TOKEN_ICONS.USDT,
-      network: 'Ethereum'
-    })
-
-    // USDT (Tron)
-    list.push({
-      symbol: 'USDT',
-      balance: tronUsdtBalance,
-      usdValue: tronUsdtBalance,
-      icon: TOKEN_ICONS.USDT,
-      network: 'Tron'
     })
 
     // USDT (Solana)
@@ -282,7 +246,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
     // Sort by USD value descending
     return list.sort((a, b) => b.usdValue - a.usdValue)
-  }, [solBalances, ethBalance, ethUsdtBalance, trxBalance, tronUsdtBalance, prices])
+  }, [solBalances, prices])
 
   // Reset when dialog opens
   useEffect(() => {
@@ -1068,8 +1032,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         createTransferInstruction,
       } = await import('@solana/spl-token')
 
-      // 🔥 使用主网 RPC，避免 useConnection 返回的可能是 devnet
-      const MAINNET_RPC = 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+      // 🔥 使用主网 RPC (Helius)，避免 useConnection 返回的可能是 devnet
+      const MAINNET_RPC = 'https://mainnet.helius-rpc.com/?api-key=3e4462af-f2b9-4a36-9387-a649c63273d3'
       const mainnetConnection = new Connection(MAINNET_RPC, 'confirmed')
 
       if (!solanaWallet?.address) {

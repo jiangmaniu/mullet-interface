@@ -338,7 +338,7 @@ export default observer(
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className={`text-sm ${theme.isDark ? 'text-gray-400' : 'text-gray-600'}`}>{selectedChain} 链可用余额:</span>
+                  <span className={`text-sm ${theme.isDark ? 'text-gray-400' : 'text-gray-600'}`}>可取金额:</span>
                   {loadingBalance ? (
                     <span className={`text-sm ${theme.isDark ? 'text-gray-400' : 'text-gray-500'}`}>加载中...</span>
                   ) : (
