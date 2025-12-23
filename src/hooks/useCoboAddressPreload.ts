@@ -19,9 +19,8 @@ export const useCoboAddressPreload = () => {
 
   // 获取 Cobo 钱包
   const { walletId: coboWalletId, isLoading: coboWalletLoading } = useCoboWallet({
-    userId: user?.id || '',
     tradeAccountId: trade.currentAccountInfo?.id,
-    enabled: authenticated && !!user?.id
+    enabled: authenticated && !!trade.currentAccountInfo?.id
   })
 
   useEffect(() => {

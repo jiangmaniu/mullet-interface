@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { API_BASE_URL } from '@/constants/api'
 
 interface UseCoboWalletParams {
-  userId: string
-  tradeAccountId?: string | number  // 交易账户ID，用于钱包命名
+  userId?: string  // Privy userId（可选，用于日志）
+  tradeAccountId?: string | number  // 交易账户ID（必填，作为钱包标识）
   enabled?: boolean
   autoCreate?: boolean  // 🔥 是否自动创建钱包（默认 false，只有 layout 设为 true）
 }
@@ -15,7 +15,7 @@ interface CoboWalletData {
   isNew: boolean
 }
 
-// 🔥 钱包ID缓存（按userId）
+// 🔥 钱包ID缓存（按 tradeAccountId）
 const walletCache: Map<string, CoboWalletData> = new Map()
 
 // 🔥 防并发锁：存储正在进行的请求 Promise
@@ -29,17 +29,20 @@ let pendingRequest: Promise<CoboWalletData | null> | null = null
  * @example
  * ```tsx
  * // Layout 组件（负责创建）
- * const { walletId } = useCoboWallet({ userId, tradeAccountId, autoCreate: true })
+ * const { walletId } = useCoboWallet({ tradeAccountId, autoCreate: true })
  * 
  * // 其他组件（只读缓存）
- * const { walletId } = useCoboWallet({ userId, tradeAccountId })
+ * const { walletId } = useCoboWallet({ tradeAccountId })
  * ```
  */
 export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCreate = false }: UseCoboWalletParams) => {
+  // 🔥 使用 tradeAccountId 作为缓存 key
+  const cacheKey = tradeAccountId?.toString() || ''
+  
   // 🔥 初始化时立即检查缓存
   const [walletId, setWalletId] = useState<string>(() => {
-    if (userId) {
-      const cached = walletCache.get(userId)
+    if (cacheKey) {
+      const cached = walletCache.get(cacheKey)
       if (cached) {
         console.log('[Cobo Wallet] ✅ 使用缓存的钱包ID:', cached.walletId)
         return cached.walletId
@@ -48,8 +51,8 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
     return ''
   })
   const [walletData, setWalletData] = useState<CoboWalletData | null>(() => {
-    if (userId) {
-      return walletCache.get(userId) || null
+    if (cacheKey) {
+      return walletCache.get(cacheKey) || null
     }
     return null
   })
@@ -58,14 +61,14 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
 
   const fetchOrCreateWallet = useCallback(
     async (forceRefresh = false) => {
-      // 🔥 必须有 userId 和 tradeAccountId 才能创建/获取钱包
-      if (!enabled || !userId || !tradeAccountId) {
+      // 🔥 必须有 tradeAccountId 才能创建/获取钱包
+      if (!enabled || !tradeAccountId) {
         return
       }
 
       // 🔥 优先使用缓存（除非强制刷新）
-      if (!forceRefresh && walletCache.has(userId)) {
-        const cached = walletCache.get(userId)!
+      if (!forceRefresh && walletCache.has(cacheKey)) {
+        const cached = walletCache.get(cacheKey)!
         console.log('[Cobo Wallet] ✅ 使用缓存的钱包:', cached.walletId)
         setWalletData(cached)
         setWalletId(cached.walletId)
@@ -99,10 +102,10 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
       // 🔥 创建新的请求 Promise
       pendingRequest = (async (): Promise<CoboWalletData | null> => {
         try {
-          // 1. 先查询用户是否已有钱包
-          const queryUrl = `${API_BASE_URL}/api/v1/wallet?userId=${userId}`
+          // 1. 先查询用户是否已有钱包（用 tradeAccountId 查询）
+          const queryUrl = `${API_BASE_URL}/api/v1/wallet?userId=${tradeAccountId}`
 
-          console.log('[Cobo Wallet] Fetching wallet for user:', userId)
+          console.log('[Cobo Wallet] Fetching wallet for tradeAccountId:', tradeAccountId)
 
           const queryResponse = await fetch(queryUrl)
 
@@ -119,8 +122,8 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
                 isNew: false
               }
 
-              // 🔥 存入缓存
-              walletCache.set(userId, wallet)
+              // 🔥 存入缓存（用 tradeAccountId 作为 key）
+              walletCache.set(cacheKey, wallet)
               console.log('[Cobo Wallet] Existing wallet found:', wallet.walletId)
               return wallet
             }
@@ -136,20 +139,23 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              userId,
+              // 🔥 使用 tradeAccountId 作为 userId 传给后端
+              userId: tradeAccountId,
               // 钱包名称：wallet_ 前缀 + 交易账户ID
               walletName: `wallet_${tradeAccountId}`
             })
           })
 
+          const createData = await createResponse.json().catch(() => null)
+          console.log('[Cobo Wallet] 📝 Create response:', { status: createResponse.status, data: createData })
+
           if (!createResponse.ok) {
-            throw new Error(`Failed to create wallet: ${createResponse.statusText}`)
+            const errorMsg = createData?.error || createData?.message || createResponse.statusText || `HTTP ${createResponse.status}`
+            throw new Error(`Failed to create wallet: ${errorMsg}`)
           }
 
-          const createData = await createResponse.json()
-
-          if (!createData.success) {
-            throw new Error(createData.error || 'Failed to create wallet')
+          if (!createData?.success) {
+            throw new Error(createData?.error || createData?.message || 'Failed to create wallet')
           }
 
           const wallet: CoboWalletData = {
@@ -159,8 +165,8 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
             isNew: true
           }
 
-          // 🔥 存入缓存
-          walletCache.set(userId, wallet)
+          // 🔥 存入缓存（用 tradeAccountId 作为 key）
+          walletCache.set(cacheKey, wallet)
           console.log('[Cobo Wallet] New wallet created:', wallet.walletId)
           return wallet
         } catch (err: any) {
@@ -183,14 +189,14 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
         pendingRequest = null  // 🔥 清除锁
       }
     },
-    [userId, tradeAccountId, enabled, autoCreate]
+    [cacheKey, tradeAccountId, enabled, autoCreate]
   )
 
   useEffect(() => {
-    if (enabled && userId && tradeAccountId) {
+    if (enabled && tradeAccountId) {
       fetchOrCreateWallet()
     }
-  }, [enabled, userId, tradeAccountId, fetchOrCreateWallet])
+  }, [enabled, tradeAccountId, fetchOrCreateWallet])
 
   return {
     walletId,
@@ -201,13 +207,13 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
   }
 }
 
-// 🔥 导出缓存操作函数
-export const getCachedWalletId = (userId: string): string | null => {
-  return walletCache.get(userId)?.walletId || null
+// 🔥 导出缓存操作函数（使用 tradeAccountId 作为 key）
+export const getCachedWalletId = (tradeAccountId: string | number): string | null => {
+  return walletCache.get(tradeAccountId.toString())?.walletId || null
 }
 
-export const setCachedWallet = (userId: string, wallet: CoboWalletData) => {
-  walletCache.set(userId, wallet)
+export const setCachedWallet = (tradeAccountId: string | number, wallet: CoboWalletData) => {
+  walletCache.set(tradeAccountId.toString(), wallet)
 }
 
 export const clearWalletCache = () => {

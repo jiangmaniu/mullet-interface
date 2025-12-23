@@ -77,6 +77,12 @@ export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
       return
     }
 
+    // 如果已经有地址了，不再创建
+    if (tronAddress) {
+      console.log('[useTronWallet] Already have TRON address, skipping creation')
+      return
+    }
+
     try {
       setIsCreating(true)
       setError(null)
@@ -101,7 +107,7 @@ export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
     } finally {
       setIsCreating(false)
     }
-  }, [authenticated, ready, isCreating])
+  }, [authenticated, ready, isCreating, tronAddress])
 
   // 刷新钱包信息
   const refetch = useCallback(() => {
@@ -111,6 +117,11 @@ export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
   // 自动检测和创建
   useEffect(() => {
     if (!authenticated || !ready) {
+      return
+    }
+
+    // 如果已经有地址了，不再检查
+    if (tronAddress) {
       return
     }
 
@@ -138,7 +149,7 @@ export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
 
       return () => clearTimeout(timer)
     }
-  }, [authenticated, ready, autoCreate, isCreating, shouldCheck, updateFromUser, createWallet])
+  }, [authenticated, ready, autoCreate, isCreating, shouldCheck, tronAddress, updateFromUser, createWallet])
 
   return {
     tronAddress,

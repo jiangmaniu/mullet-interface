@@ -61,17 +61,16 @@ export const DepositAssets = () => {
 
   // 获取 Cobo 钱包
   const { walletId: coboWalletId, isLoading: coboWalletLoading } = useCoboWallet({
-    userId: user?.id || '',
     tradeAccountId: trade.currentAccountInfo?.id,
-    enabled: !!user?.id
+    enabled: !!trade.currentAccountInfo?.id
   })
 
   // 获取 Cobo Solana 充值地址（用于信用卡购买）
   const { address: coboSolanaAddress, isLoading: coboAddressLoading } = useCoboDepositAddress({
-    userId: user?.id || '',
+    tradeAccountId: trade.currentAccountInfo?.id,
     chainId: 'SOL',
     walletId: coboWalletId || '',
-    enabled: !!user?.id && !!coboWalletId
+    enabled: !!trade.currentAccountInfo?.id && !!coboWalletId
   })
 
   const handleCardClick = async () => {

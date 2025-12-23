@@ -66,9 +66,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     isLoading: coboWalletLoading,
     error: coboWalletError
   } = useCoboWallet({
-    userId: user?.id || '',
     tradeAccountId: trade.currentAccountInfo?.id,
-    enabled: open && isCoboChain
+    enabled: open && isCoboChain && !!trade.currentAccountInfo?.id,
+    autoCreate: true  // 🔥 启用自动创建钱包
   })
 
   // 获取 Cobo 充值地址（仅在选择 Cobo 链且已有钱包时启用）
@@ -78,10 +78,10 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     error: coboAddressError,
     isNew: coboAddressIsNew
   } = useCoboDepositAddress({
-    userId: user?.id || '',
+    tradeAccountId: trade.currentAccountInfo?.id,
     chainId: selectedChainConfig?.id as 'ETH' | 'SOL' | 'TRON' | 'ARBITRUM_ETH' | 'BASE_ETH' | 'MATIC' | 'BSC_BNB' | 'HYPEREVM_HYPE',
     walletId: coboWalletId || '',
-    enabled: open && isCoboChain && !!coboWalletId
+    enabled: open && isCoboChain && !!coboWalletId && !!trade.currentAccountInfo?.id
   })
 
   // Cobo 充值监听（仅在选择 Cobo 链且已有钱包时启用）
@@ -133,15 +133,29 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
     // 如果是 Cobo 链，使用 Cobo 地址
     if (isCoboChain) {
+      console.log(`[TransferCrypto] Cobo chain status:`, {
+        selectedChain,
+        chainId: selectedChainConfig?.id,
+        coboWalletId,
+        coboWalletLoading,
+        coboWalletError,
+        coboAddress,
+        coboAddressLoading,
+        coboAddressError
+      })
+
       if (coboAddress) {
         setDepositAddress(coboAddress)
         console.log(`[TransferCrypto] Using Cobo address for ${selectedChain}:`, coboAddress)
-      } else if (coboAddressLoading) {
+      } else if (coboAddressLoading || coboWalletLoading) {
         setDepositAddress('')
         console.log(`[TransferCrypto] Loading Cobo address for ${selectedChain}...`)
-      } else if (coboAddressError) {
+      } else if (coboAddressError || coboWalletError) {
         setDepositAddress('')
-        console.error(`[TransferCrypto] Cobo address error:`, coboAddressError)
+        console.error(`[TransferCrypto] Cobo error:`, coboAddressError || coboWalletError)
+      } else if (!coboWalletId) {
+        setDepositAddress('')
+        console.log(`[TransferCrypto] Waiting for Cobo wallet ID...`)
       }
       return
     }
@@ -227,6 +241,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     tronAddress,
     isTronWalletCreating,
     isCoboChain,
+    coboWalletId,
+    coboWalletLoading,
+    coboWalletError,
     coboAddress,
     coboAddressLoading,
     coboAddressError

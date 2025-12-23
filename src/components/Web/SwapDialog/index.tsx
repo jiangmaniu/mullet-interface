@@ -123,16 +123,15 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
   // 🔥 获取 Cobo Solana 充值地址作为跨链兑换的目标地址
   const { walletId: coboWalletId } = useCoboWallet({
-    userId: user?.id || '',
     tradeAccountId: trade.currentAccountInfo?.id,
-    enabled: !!user?.id
+    enabled: !!trade.currentAccountInfo?.id
   })
 
   const { address: coboSolanaAddress } = useCoboDepositAddress({
-    userId: user?.id || '',
+    tradeAccountId: trade.currentAccountInfo?.id,
     chainId: 'SOL',
     walletId: coboWalletId || '',
-    enabled: !!user?.id && !!coboWalletId
+    enabled: !!trade.currentAccountInfo?.id && !!coboWalletId
   })
 
   // Fetch balances
