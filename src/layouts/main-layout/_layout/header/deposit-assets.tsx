@@ -13,6 +13,7 @@ import { usePrivy } from '@privy-io/react-auth'
 import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
 import { message } from 'antd'
+import { useStores } from '@/context/mobxProvider'
 
 export const DepositAssets = () => {
   // const { isAuthenticated } = useWalletAuthState()
@@ -21,6 +22,7 @@ export const DepositAssets = () => {
   //   return null
   // }
 
+  const { trade } = useStores()
   const [showAddFundsMenu, setShowAddFundsMenu] = useState(false)
   const [showTransferDialog, setShowTransferDialog] = useState(false)
   const [showSwapDialog, setShowSwapDialog] = useState(false)
@@ -60,6 +62,7 @@ export const DepositAssets = () => {
   // 获取 Cobo 钱包
   const { walletId: coboWalletId, isLoading: coboWalletLoading } = useCoboWallet({
     userId: user?.id || '',
+    tradeAccountId: trade.currentAccountInfo?.id,
     enabled: !!user?.id
   })
 

@@ -224,14 +224,14 @@ const SetTakeProfitLabel = observer(() => {
           <Trans>范围</Trans>
         </span>
         <span className="text-content-1">
-          {BNumber.toFormatNumber(sp_scope, {
+          {sp_scope != null && !isNaN(sp_scope) ? BNumber.toFormatNumber(sp_scope, {
             prefix: isBuy ? '≥' : '≤',
             volScale: 2
-          })}
+          }) : '--'}
         </span>
       </div>
 
-      {!spFlag && spValueEstimate && (
+      {!spFlag && spValueEstimate != null && !isNaN(spValueEstimate) && (
         <div className="text-paragraph-p3 text-content-5 flex items-start gap-1">
           <Trans>预计盈利</Trans>
           <span className="text-market-rise">
@@ -319,10 +319,10 @@ const SetStopLossLabel = observer(() => {
           <Trans>范围</Trans>
         </span>
         <span className="text-content-1">
-          {BNumber.toFormatNumber(sl_scope, {
+          {sl_scope != null ? BNumber.toFormatNumber(sl_scope, {
             prefix: isBuy ? '≤' : '≥',
             volScale: 2
-          })}
+          }) : '--'}
         </span>
       </div>
 

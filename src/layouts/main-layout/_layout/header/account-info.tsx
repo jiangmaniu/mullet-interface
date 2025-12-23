@@ -43,10 +43,12 @@ export const TradeAccountInfo = observer(() => {
   const { address: privyAddress } = usePrivyInfo()
   const { user } = usePrivy()
 
-  // 获取 Cobo 钱包
+  // 🔥 获取 Cobo 钱包 - autoCreate: true 负责创建，其他组件只读缓存
   const { walletId: coboWalletId } = useCoboWallet({
     userId: user?.id || '',
-    enabled: !!user?.id
+    tradeAccountId: currentAccountInfo?.id,
+    enabled: !!user?.id,
+    autoCreate: true  // 🔥 只有这里负责创建钱包
   })
 
   // 获取 Cobo Solana 充值地址
@@ -57,8 +59,8 @@ export const TradeAccountInfo = observer(() => {
     enabled: !!user?.id && !!coboWalletId
   })
 
-  // 优先使用 Cobo Solana 地址，否则 fallback 到 Privy 地址
-  const displayAddress = coboSolanaAddress || privyAddress
+  // 优先使用交易账户 PDA 地址，否则 fallback 到 Cobo/Privy 地址
+  const displayAddress = currentAccountInfo?.pdaTokenAddress || coboSolanaAddress || privyAddress
 
   return (
     <DropdownMenu>
@@ -102,6 +104,7 @@ const AccountSelector = observer(() => {
   // 获取 Cobo 钱包
   const { walletId: coboWalletId } = useCoboWallet({
     userId: user?.id || '',
+    tradeAccountId: currentAccountInfo?.id,
     enabled: !!user?.id
   })
 
@@ -164,19 +167,19 @@ const AccountSelector = observer(() => {
                 <span className="ml-1 text-sm font-normal text-secondary">USD</span>
               </div>
             </div>
-            {/* 显示 Cobo Solana 充值地址和复制按钮 */}
-            {coboSolanaAddress && (
+            {/* 显示 PDA 地址和复制按钮 */}
+            {currentAccountInfo.pdaTokenAddress && (
               <div className="mt-2 flex items-center gap-2 text-xs">
                 <a
-                  href={`https://explorer.solana.com/address/${coboSolanaAddress}`}
+                  href={`https://explorer.solana.com/address/${currentAccountInfo.pdaTokenAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-brand hover:underline"
                 >
-                  {formatAddress(coboSolanaAddress)}
+                  {formatAddress(currentAccountInfo.pdaTokenAddress)}
                 </a>
                 <button
-                  onClick={() => copyContent(coboSolanaAddress)}
+                  onClick={() => copyContent(currentAccountInfo.pdaTokenAddress)}
                   className="text-secondary hover:text-primary cursor-pointer p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                   title="Copy address"
                 >
