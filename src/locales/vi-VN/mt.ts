@@ -338,6 +338,7 @@ export default {
   'mt.gerenzhongxin': 'Trung tâm cá nhân',
   'mt.quanbushoukuanfangshi': 'Tất cả phương thức thanh toán',
   'mt.rujin': 'Nạp tiền',
+  'mt.cunkuan': 'Nạp tiền',
   'mt.chujin': 'Rút tiền',
   'mt.shezhi': 'Cài đặt',
   'mt.churujinjilu': 'Lịch sử nạp và rút tiền',

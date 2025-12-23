@@ -336,6 +336,7 @@ export default {
   'mt.gerenzhongxin': '個人中心',
   'mt.quanbushoukuanfangshi': '全部收款方式',
   'mt.rujin': '入金',
+  'mt.cunkuan': '存款',
   'mt.chujin': '出金',
   'mt.shezhi': '設置',
   'mt.churujinjilu': '出入金記錄',

@@ -338,6 +338,7 @@ export default {
   'mt.gerenzhongxin': 'Personal Center',
   'mt.quanbushoukuanfangshi': 'All Payment Methods',
   'mt.rujin': 'Deposit',
+  'mt.cunkuan': 'Deposit',
   'mt.chujin': 'Withdraw',
   'mt.shezhi': 'Settings',
   'mt.churujinjilu': 'Transaction History',
