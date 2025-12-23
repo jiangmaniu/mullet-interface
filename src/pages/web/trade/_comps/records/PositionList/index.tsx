@@ -56,7 +56,6 @@ function Position({ style, parentPopup }: IProps) {
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
   const intl = useIntl()
-  const [modalInfo, setModalInfo] = useState<any>({} as IPositionItem)
   const { recordListClassName } = useStyle()
   const showActiveSymbol = trade.showActiveSymbol
 
@@ -65,6 +64,7 @@ function Position({ style, parentPopup }: IProps) {
   const closePositionActionRef = useRef<any>(null)
   const settingPositionTpSlActionRef = useRef<any>(null)
   const adjustPositionMarginActionRef = useRef<any>(null)
+  const [adjustPositionMarginData, setAdjustPositionMarginData] = useState<any>({} as IPositionItem)
 
   const addOrExtractMarginRef = useRef<any>(null)
   const [pageNum, setPageNum] = useState(1)
@@ -111,7 +111,7 @@ function Position({ style, parentPopup }: IProps) {
           label: '' // 去掉form label
         },
         fixed: 'left',
-        width: 240,
+        width: 160,
         renderText(_text, record, index, action) {
           const { colorClassName, text } = getBuySellInfo(record)
           const childrenListLen = Number(record?.childrenList?.length)
@@ -214,9 +214,10 @@ function Position({ style, parentPopup }: IProps) {
               positionInfo={record}
               isOneLevel={isOneLevel}
               onEdit={() => {
-                // adjustPositionMarginActionRef.current?.show(record)
-                setModalInfo(record)
-                addOrExtractMarginRef.current?.show()
+                setAdjustPositionMarginData(record)
+                adjustPositionMarginActionRef.current?.show(record)
+
+                // addOrExtractMarginRef.current?.show()
               }}
             />
           )
@@ -266,6 +267,28 @@ function Position({ style, parentPopup }: IProps) {
           )
         }
       },
+
+      {
+        title: (
+          <>
+            <Trans>手续费</Trans>/ <Trans>库存费</Trans>
+          </>
+        ),
+        dataIndex: 'Fees',
+        hideInSearch: true, // 在 table的查询表单 中隐藏
+        ellipsis: false,
+        fieldProps: {
+          placeholder: ''
+        },
+        formItemProps: {
+          label: '' // 去掉form label
+        },
+        width: 220,
+        renderText(text, record, index, action) {
+          return <PositionFeesCell positionInfo={record} isOneLevel={isOneLevel} />
+        }
+      },
+
       {
         title: <FormattedMessage id="mt.chicangdanhao" />,
         dataIndex: 'id',
@@ -301,27 +324,6 @@ function Position({ style, parentPopup }: IProps) {
         className: '!text-[13px] text-primary',
         renderText(text, record, index, action) {
           return <span className="!text-[13px] text-primary">{record.createTime}</span>
-        }
-      },
-
-      {
-        title: (
-          <>
-            <Trans>手续费</Trans>/ <Trans>库存费</Trans>
-          </>
-        ),
-        dataIndex: 'Fees',
-        hideInSearch: true, // 在 table的查询表单 中隐藏
-        ellipsis: false,
-        fieldProps: {
-          placeholder: ''
-        },
-        formItemProps: {
-          label: '' // 去掉form label
-        },
-        width: 220,
-        renderText(text, record, index, action) {
-          return <PositionFeesCell positionInfo={record} isOneLevel={isOneLevel} />
         }
       },
 
@@ -458,8 +460,14 @@ function Position({ style, parentPopup }: IProps) {
         '.ant-table-thead > tr > th': {
           backgroundColor: `#0e123a !important`,
           color: `var(--color-text-secondary) !important`
+        },
+        '.ant-table-container .ant-table-content': {
+          '&::-webkit-scrollbar': {
+            height: `0px !important`
+          }
         }
       },
+
       '.ant-table-expanded-row-fixed': {
         paddingLeft: '0 !important',
         paddingRight: '0 !important',
@@ -596,7 +604,7 @@ function Position({ style, parentPopup }: IProps) {
                           label: '' // 去掉form label
                         },
                         fixed: 'left',
-                        width: 240,
+                        width: 160,
                         renderText(text, record, index, action) {
                           const buySellInfo = getBuySellInfo(record)
                           return (
@@ -648,9 +656,11 @@ function Position({ style, parentPopup }: IProps) {
       {/* 设置止损止盈弹窗 */}
       <SettingPositionTpSlAction ref={settingPositionTpSlActionRef} />
       {/* 追加、提取保证金弹窗 */}
-      <AdjustPositionMarginAction ref={adjustPositionMarginActionRef} />
-
-      <AddOrExtractMarginModal ref={addOrExtractMarginRef} info={modalInfo} onClose={() => setModalInfo({})} />
+      <AdjustPositionMarginAction
+        ref={adjustPositionMarginActionRef}
+        positionInfo={adjustPositionMarginData}
+        onClose={() => setAdjustPositionMarginData({})}
+      />
     </>
   )
 }
@@ -740,29 +750,6 @@ const PositionMarginCell = observer(
     const buySellInfo = getBuySellInfo(positionInfo)
     const orderMargin = positionInfo.orderMargin
 
-    // return (
-    //   <div className="flex items-center pl-[1px]">
-    //     <div className="flex flex-col">
-    //       <span className="text-primary text-[13px]">{orderMargin ? formatNum(orderMargin, { precision }) : '--'} </span>
-    //       <span className={cn('text-xs font-medium dark:!text-yellow-600')}>{buySellInfo.marginTypeText}</span>
-    //     </div>
-    //     {/* 逐仓才可以追加保证金 */}
-    //     {record.marginType === 'ISOLATED_MARGIN' && (
-    //       <div className="pl-[6px]">
-    //         {/* 追加、提取保证金 */}
-    //         <div
-    //           className="cursor-pointer"
-    //           onClick={() => {
-    //             setModalInfo(record)
-    //             addOrExtractMarginRef.current?.show()
-    //           }}
-    //         >
-    //           <img src="/img/edit-icon.png" width={30} height={30} />
-    //         </div>
-    //       </div>
-    //     )}
-    //   </div>
-    // )
     return (
       <div className="text-paragraph-p2 text-content-1">
         <div className="flex gap-1">
@@ -781,7 +768,6 @@ const PositionMarginCell = observer(
                 variant={'ghost'}
                 className="p-0.5 rounded-1"
                 onClick={() => {
-                  // setModalInfo(positionInfo)
                   onEdit()
                 }}
               >

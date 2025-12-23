@@ -26,7 +26,8 @@ export default {
   colorBgContainer: zinc['500'], // gray['750'] 组件的容器背景色，例如：默认按钮、输入框等。务必不要将其与 `colorBgElevated` 混淆。
   colorBgElevated: gray[680],
   motion: false, // 动画关闭，否则切换主题样式会闪烁
-  splitColor: zinc['500'],
+  colorSplit: zinc['700'],
+
   colorLinkActive: colorWhite, // 控制超链接被点击时的颜色
   colorLinkHover: colorWhite, // 控制超链接悬浮时的颜色
 

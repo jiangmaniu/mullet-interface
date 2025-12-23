@@ -109,7 +109,7 @@ export const NewTradeRecords = observer(() => {
 
   return (
     <div>
-      <Tabs className="bg-primary rounded-4" value={activeTab} onValueChange={setActiveTab}>
+      <Tabs className="bg-primary rounded-large overflow-hidden" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="pr-3 flex justify-between gap-3">
           <div className="flex gap-2">
             {TABS_OPTIONS.map((tab) => {

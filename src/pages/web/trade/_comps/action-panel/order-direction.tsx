@@ -16,8 +16,8 @@ export const TradeActionPanelOrderDirection = observer(() => {
     <div className={cn('flex gap-medium relative')}>
       <div
         className={cn(
-          'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ',
-          'rounded-xs bg-white size-5 text-paragraph-p3 flex justify-center items-center text-content-foreground'
+          'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 px-0.5',
+          'rounded-xs bg-white h-5 text-paragraph-p3 flex justify-center items-center text-content-foreground'
         )}
       >
         {BNumber.toFormatNumber(quoteInfo?.spread)}

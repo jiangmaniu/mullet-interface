@@ -139,7 +139,7 @@ function Liquidation() {
               optionRender: (item: any) => {
                 return <>{item.label}</>
               },
-              style: { width: 282, height: 40, marginTop: 10, position: 'relative', left: -7 },
+              style: { height: 40, position: 'relative' },
               suffixIcon: <Iconfont name="down" width={24} height={24} color={isDark ? '#fff' : gray[400]} />,
               // 回填到选择框的 Option 的属性值，默认是 Option 的子元素
               optionLabelProp: 'label'
@@ -191,7 +191,7 @@ function Liquidation() {
               </span>
             )}
           </div>
-          {renderSelect}
+          <div className="w-full">{renderSelect}</div>
         </div>
         <div className="flex items-center flex-col pt-2">
           <div className="flex items-center justify-center flex-col relative w-full">

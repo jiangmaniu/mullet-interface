@@ -6,9 +6,10 @@ import { useForm } from 'react-hook-form'
 import { isUndefined, omit } from 'lodash-es'
 import z from 'zod'
 
+import { addMargin, extractMargin } from '@/services/api/tradeCore/order'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@/libs/ui/components/button'
-import { Form, FormControl, FormField, FormItem } from '@/libs/ui/components/form'
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/libs/ui/components/form'
 import { cn } from '@/libs/ui/lib/utils'
 import { Modal, ModalClose, ModalContent, ModalFooter, ModalHeader, ModalTitle, ModalTrigger } from '@/libs/ui/components/modal'
 import { NumberInput, NumberInputSourceType } from '@/libs/ui/components/number-input'
@@ -19,11 +20,8 @@ import { IPositionItem } from '../records/PositionList'
 import { observable } from 'mobx'
 import { useStores } from '@/context/mobxProvider'
 import { observer } from 'mobx-react'
-
-enum MarginMode {
-  CROSS_MARGIN = 'CROSS_MARGIN',
-  ISOLATED_MARGIN = 'ISOLATED_MARGIN'
-}
+import { toast } from '@/libs/ui/components/toast'
+import { useModel } from '@umijs/max'
 
 export type AdjustPositionMarginModalProps = {
   isOpen?: boolean
@@ -33,24 +31,26 @@ export type AdjustPositionMarginModalProps = {
   positionInfo: IPositionItem
 }
 
-export const AdjustPositionMarginModal = ({ isOpen, onClose, positionInfo, onConfirm, children }: AdjustPositionMarginModalProps) => {
-  enum AdjustMarginType {
-    ADD = 'add',
-    REDUCE = 'reduce'
-  }
+enum AdjustMarginTypeEnum {
+  ADD = 'addMargin',
+  REDUCE = 'extractMargin'
+}
 
-  const [selectedTab, setSelectedTab] = useState(AdjustMarginType.ADD)
+export const AdjustPositionMarginModal = observer((props: AdjustPositionMarginModalProps) => {
+  const { isOpen, onClose, positionInfo, onConfirm, children } = props
+
+  const [selectedTab, setSelectedTab] = useState(AdjustMarginTypeEnum.ADD)
 
   const TABS_OPTIONS = [
     {
       label: <Trans>增加保证金</Trans>,
-      value: AdjustMarginType.ADD,
-      content: <AddMarginModalContent />
+      value: AdjustMarginTypeEnum.ADD,
+      content: <AddMarginModalContent {...props} />
     },
     {
       label: <Trans>减少保证金</Trans>,
-      value: AdjustMarginType.REDUCE,
-      content: <ReduceMarginModalContent />
+      value: AdjustMarginTypeEnum.REDUCE,
+      content: <ReduceMarginModalContent {...props} />
     }
   ]
 
@@ -58,7 +58,10 @@ export const AdjustPositionMarginModal = ({ isOpen, onClose, positionInfo, onCon
     <Modal open={isOpen} onOpenChange={onClose}>
       {children && <ModalTrigger asChild>{children}</ModalTrigger>}
 
-      <ModalContent onInteractOutside={(event) => event.preventDefault()} className="flex min-h-[260px] w-full max-w-[360px] min-w-[360px]">
+      <ModalContent
+        onInteractOutside={(event) => event.preventDefault()}
+        className="flex min-h-[260px] w-full max-w-[360px] min-w-[360px] gap-2xl"
+      >
         <ModalHeader className="w-full">
           <ModalTitle className="flex items-center justify-between gap-3">
             <div className={cn('')}>
@@ -66,10 +69,10 @@ export const AdjustPositionMarginModal = ({ isOpen, onClose, positionInfo, onCon
             </div>
           </ModalTitle>
 
-          <Tabs value={selectedTab} className="mt-2xl" variant={'underline'} onValueChange={setSelectedTab}>
+          <Tabs value={selectedTab} size={'md'} variant={'underline'} onValueChange={setSelectedTab}>
             <TabsList>
               {TABS_OPTIONS.map((option) => (
-                <TabsTrigger key={option.value} value={option.value}>
+                <TabsTrigger key={option.value} className="flex-1" value={option.value}>
                   {option.label}
                 </TabsTrigger>
               ))}
@@ -85,28 +88,30 @@ export const AdjustPositionMarginModal = ({ isOpen, onClose, positionInfo, onCon
       </ModalContent>
     </Modal>
   )
-}
+})
 
-const AddMarginModalContent = observer(() => {
+const AddMarginModalContent = observer(({ isOpen, children, onClose, positionInfo, onConfirm }: AdjustPositionMarginModalProps) => {
   const { trade } = useStores()
   const { t } = useLingui()
   const { availableMargin } = trade.getAccountBalance()
   const precision = trade.currentAccountInfo.currencyDecimal
+
+  const { fetchUserInfo } = useModel('user')
 
   const formSchema = z.object({
     amount: z
       .string()
       .refine(
         (val) => {
-          return BNumber.from(val).gte(availableMargin)
+          return BNumber.from(val).lte(availableMargin)
         },
         {
-          message: t`最大可新增${availableMargin}USDC保证金`
+          message: t`超过最大可增加的保证金`
         }
       )
       .refine(
         (val) => {
-          return BNumber.from(val).lt(0)
+          return BNumber.from(val).gt(0)
         },
         {
           message: t`请输入保证金金额`
@@ -119,27 +124,49 @@ const AddMarginModalContent = observer(() => {
     defaultValues: { amount: '' }
   })
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data)
+  useEffect(() => {
+    if (isOpen) {
+      form.reset()
+    }
+  }, [isOpen])
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const params = {
+      [AdjustMarginTypeEnum.ADD]: BNumber.from(data.amount).toNumber(),
+      bagOrderId: positionInfo.id // 持仓订单号
+    }
+
+    const res = await addMargin(params)
+    const success = res.success
+    if (success) {
+      await trade.getPositionList()
+      // 刷新账户信息
+      await fetchUserInfo(true)
+      toast.success(<Trans>添加保证金成功</Trans>)
+      onClose?.()
+    }
   }
 
+  const unit = 'USDC'
+
   return (
-    <div className="gap-2xl flex flex-col">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="gap-2xl flex flex-col">
           <FormField
             control={form.control}
             name="amount"
             render={({ field }) => {
-              const amountPercent = BNumber.from(field.value).div(availableMargin).toPercent()
+              const amountPercent = BNumber.from(field.value).div(BNumber.max(availableMargin, 1)).toPercent()
               return (
                 <FormItem>
                   <FormControl>
                     <div className="space-y-2xl">
                       <NumberInput
-                        placeholder={<Trans>0.00</Trans>}
+                        placeholder={`0.${'0'.repeat(precision ?? 2)}`}
                         labelText={<Trans>保证金</Trans>}
                         max={availableMargin}
+                        RightContent={<div className="text-white">{unit}</div>}
                         onValueChange={({ value }, { source }) => {
                           if (source === NumberInputSourceType.EVENT) {
                             field.onChange(value)
@@ -149,14 +176,14 @@ const AddMarginModalContent = observer(() => {
                         hintValue={
                           <div>
                             {BNumber.toFormatNumber(availableMargin, {
-                              unit: 'USDC',
+                              unit: unit,
                               volScale: 2
                             })}
                           </div>
                         }
                         {...omit(field, 'onChange')}
                       />
-                      {/* <FormMessage /> */}
+                      <FormMessage />
 
                       <SliderTooltip
                         min={0}
@@ -166,7 +193,7 @@ const AddMarginModalContent = observer(() => {
                         tooltipFormat={([value]) => {
                           return <div className="text-white">{value}%</div>
                         }}
-                        disabled={!availableMargin}
+                        disabled={BNumber.from(availableMargin).lte(0)}
                         isShowMarks
                         isShowMarkLabels
                         interval={100 / 5}
@@ -187,25 +214,28 @@ const AddMarginModalContent = observer(() => {
               )
             }}
           />
-        </form>
-      </Form>
 
-      <div className="text-paragraph-p3 text-content-4">
-        <Trans>系统需要执行一次链上交易来更新用户账户的保证金。因此会产生 Gas 费用。</Trans>
-      </div>
+          <div className="text-paragraph-p3 text-content-4">
+            <Trans>系统需要执行一次链上交易来更新用户账户的保证金。因此会产生 Gas 费用。</Trans>
+          </div>
 
-      <ModalFooter>
-        <Button block color="primary" size="md" loading={form.formState.isSubmitting} type="submit">
-          <Trans>确定</Trans>
-        </Button>
-      </ModalFooter>
-    </div>
+          <ModalFooter>
+            <Button block color="primary" size="md" loading={form.formState.isSubmitting} disabled={!form.formState.isValid} type="submit">
+              <Trans>确定</Trans>
+            </Button>
+          </ModalFooter>
+        </div>
+      </form>
+    </Form>
   )
 })
 
-const ReduceMarginModalContent = () => {
-  const availableMargin = '10000.00'
-
+const ReduceMarginModalContent = observer(({ isOpen, children, onClose, positionInfo, onConfirm }: AdjustPositionMarginModalProps) => {
+  const { trade } = useStores()
+  const precision = trade.currentAccountInfo.currencyDecimal
+  console.log('positionInfo', positionInfo.orderMargin, positionInfo.orderBaseMargin)
+  const availableMargin = BNumber.from(positionInfo.orderMargin ?? 0)?.minus(positionInfo.orderBaseMargin ?? 0)
+  const { fetchUserInfo } = useModel('user')
   const { t } = useLingui()
   const formSchema = z.object({
     amount: z
@@ -215,15 +245,15 @@ const ReduceMarginModalContent = () => {
           return BNumber.from(val).lte(availableMargin)
         },
         {
-          message: t`最大可减少${availableMargin}USDC保证金`
+          message: t`超过最大可减少的保证金`
         }
       )
       .refine(
         (val) => {
-          return BNumber.from(val).gte(0)
+          return BNumber.from(val).gt(0)
         },
         {
-          message: t`保证金金额不能小于0`
+          message: t`请输入保证金金额`
         }
       )
   })
@@ -233,26 +263,50 @@ const ReduceMarginModalContent = () => {
     defaultValues: { amount: '' }
   })
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data)
+  useEffect(() => {
+    if (isOpen) {
+      form.reset()
+    }
+  }, [isOpen])
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    const params = {
+      [AdjustMarginTypeEnum.REDUCE]: BNumber.from(data.amount).toNumber(),
+      bagOrderId: positionInfo.id // 持仓订单号
+    }
+
+    const res = await extractMargin(params)
+    const success = res.success
+    if (success) {
+      await trade.getPositionList()
+      // 刷新账户信息
+      await fetchUserInfo(true)
+
+      toast.success(<Trans>减少保证金成功</Trans>)
+      onClose?.()
+    }
   }
+
+  const unit = 'USDC'
+
   return (
-    <div className="gap-2xl flex flex-col">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <div className="gap-2xl flex flex-col">
           <FormField
             control={form.control}
             name="amount"
             render={({ field }) => {
-              const amountPercent = BNumber.from(field.value).div(availableMargin).toPercent()
+              const amountPercent = BNumber.from(field.value).div(BNumber.max(availableMargin, 1)).toPercent()
+
               return (
                 <FormItem>
                   <FormControl>
                     <div className="space-y-2xl">
                       <NumberInput
-                        placeholder={<Trans>0.00</Trans>}
+                        placeholder={`0.${'0'.repeat(precision ?? 2)}`}
                         labelText={<Trans>保证金</Trans>}
-                        max={availableMargin}
+                        max={availableMargin.toString()}
                         onValueChange={({ value }, { source }) => {
                           if (source === NumberInputSourceType.EVENT) {
                             field.onChange(value)
@@ -262,14 +316,15 @@ const ReduceMarginModalContent = () => {
                         hintValue={
                           <div>
                             {BNumber.toFormatNumber(availableMargin, {
-                              unit: 'USDC',
-                              volScale: 2
+                              unit: unit,
+                              volScale: precision
                             })}
                           </div>
                         }
+                        RightContent={<div className="text-white">{unit}</div>}
                         {...omit(field, 'onChange')}
                       />
-                      {/* <FormMessage /> */}
+                      <FormMessage />
 
                       <SliderTooltip
                         min={0}
@@ -281,6 +336,7 @@ const ReduceMarginModalContent = () => {
                         }}
                         isShowMarks
                         isShowMarkLabels
+                        disabled={BNumber.from(availableMargin).lte(0)}
                         interval={100 / 5}
                         value={[amountPercent.decimalPlaces(0).toNumber()]}
                         onValueChange={(val) => {
@@ -295,18 +351,18 @@ const ReduceMarginModalContent = () => {
               )
             }}
           />
-        </form>
-      </Form>
 
-      <div className="text-paragraph-p3 text-content-4">
-        <Trans>系统需要执行一次链上交易来更新用户账户的保证金。因此会产生 Gas 费用。</Trans>
-      </div>
+          <div className="text-paragraph-p3 text-content-4">
+            <Trans>系统需要执行一次链上交易来更新用户账户的保证金。因此会产生 Gas 费用。</Trans>
+          </div>
 
-      <ModalFooter>
-        <Button block color="primary" size="md" loading={form.formState.isSubmitting} type="submit">
-          <Trans>确定</Trans>
-        </Button>
-      </ModalFooter>
-    </div>
+          <ModalFooter>
+            <Button block color="primary" size="md" loading={form.formState.isSubmitting} disabled={!form.formState.isValid} type="submit">
+              <Trans>确定</Trans>
+            </Button>
+          </ModalFooter>
+        </div>
+      </form>
+    </Form>
   )
-}
+})
