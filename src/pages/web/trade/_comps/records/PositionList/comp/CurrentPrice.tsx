@@ -5,8 +5,7 @@ import { useStores } from '@/context/mobxProvider'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
 import { cn } from '@/utils/cn'
-
-import { IPendingItem } from '../../PendingList'
+import { IPendingItem } from '@/pages/web/trade/comp/TradeRecord/comp/PendingList'
 
 type IProps = {
   item: Order.BgaOrderPageListItem | IPendingItem

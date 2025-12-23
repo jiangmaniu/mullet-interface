@@ -3,24 +3,19 @@
 import { Trans } from '@/libs/lingui/react/macro'
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/libs/ui/components/button'
 import { Checkbox } from '@/libs/ui/components/checkbox'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/ui/components/tabs'
 
-import { FundingFlow } from './funding-flow'
-import { HistoryOrders } from './history-orders'
-import { HistoryTrades } from './history-trades'
-import { PendingOrders } from './pending-orders'
-import { Positions } from './positions'
 import { useStores } from '@/context/mobxProvider'
 import { isBoolean } from 'lodash-es'
 import { observer } from 'mobx-react'
 import PositionList from './PositionList'
-import PendingList from '../../comp/TradeRecord/comp/PendingList'
+import PendingList from './PendingList'
 import HistoryPendingList from '../../comp/TradeRecord/comp/HistoryPendingList'
 import HistoryCloseList from '../../comp/TradeRecord/comp/HistoryCloseList'
 import FundRecordList from '../../comp/TradeRecord/comp/FundRecordList'
 import HistoryPositionList from '../../comp/TradeRecord/comp/HistoryPositionList'
+// import PendingList from '../../comp/TradeRecord/comp/PendingList'
 // import { CloseAllPositions } from './positions/close-all'
 
 enum TabType {

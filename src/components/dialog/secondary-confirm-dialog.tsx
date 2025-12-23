@@ -1,8 +1,8 @@
+import { Button } from '@/libs/ui/components/button'
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/libs/ui/components/dialog'
+import { Iconify } from '@/libs/ui/components/icons'
 import { cn } from '@/utils/cn'
 import { useEffect, useState } from 'react'
-import { Button } from '../ui/button'
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog'
-import { Icons } from '../ui/icons'
 
 type Props = {
   isOpen?: boolean
@@ -59,7 +59,7 @@ export const SecondaryConfirmationDialog = (props: Props) => {
                 disabled={props.confirm?.loading ?? (confirmLoading || (props.cancel !== false && props.cancel?.loading)) ?? cancelLoading}
                 size={'icon'}
               >
-                <Icons.lucide.Close className="size-4" />
+                <Iconify icon="iconoir:xmark" className="size-5" />
                 <span className="sr-only">Close</span>
               </Button>
             </DialogClose>
@@ -73,6 +73,8 @@ export const SecondaryConfirmationDialog = (props: Props) => {
             <>
               <Button
                 variant="outline"
+                color={'default'}
+                size="lg"
                 disabled={props.confirm?.loading ?? confirmLoading}
                 loading={props.cancel?.loading ?? cancelLoading}
                 className={cn('flex-1', props.cancel?.className)}
@@ -103,6 +105,9 @@ export const SecondaryConfirmationDialog = (props: Props) => {
           {props.confirm && (
             <>
               <Button
+                variant="primary"
+                color={'primary'}
+                size="lg"
                 loading={props.confirm?.loading ?? confirmLoading}
                 disabled={props.confirm?.loading ?? confirmLoading}
                 className={cn('flex-1', props.confirm?.className)}

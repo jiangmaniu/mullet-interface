@@ -20,7 +20,6 @@ import { cn } from '@/utils/cn'
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useTheme } from '@/context/themeProvider'
 import usePageVisibility from '@/hooks/usePageVisibility'
-import AddOrExtractMarginModal from './comp/AddOrExtractMarginModal'
 import CurrentPrice from './comp/CurrentPrice'
 import MarginRate from './comp/MarginRate'
 import ProfitYieldRate from './comp/ProfitYieldRate'
@@ -35,6 +34,8 @@ import { renderFallback } from '@/libs/utils/format/fallback'
 import { GeneralTooltip } from '@/components/tooltip'
 import { TradeOrderDirectionEnum } from '../../../_options/order'
 import { AdjustPositionMarginAction } from './_comps/adjust-position-margin-action'
+import { formatAddress } from '@/libs/utils/format/common'
+import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 
 export type IPositionItem = Order.BgaOrderPageListItem & {
   /**合并汇总展开行的手续费 */
@@ -113,41 +114,7 @@ function Position({ style, parentPopup }: IProps) {
         fixed: 'left',
         width: 160,
         renderText(_text, record, index, action) {
-          const { colorClassName, text } = getBuySellInfo(record)
-          const childrenListLen = Number(record?.childrenList?.length)
-          if (childrenListLen > 1) {
-            return (
-              <div className="flex items-center">
-                <div className="flex items-center">
-                  <SymbolIcon src={record.imgUrl} />
-                  <span className="text-base font-pf-bold text-primary pl-2">{record.alias}</span>
-                </div>
-                <div className="flex items-center">
-                  <div className="bg-gray-200 dark:bg-gray-700 flex items-center font-pf-bold text-primary text-xs flex-shrink justify-center rounded w-[18px] h-[18px] mx-2 p-1">
-                    {childrenListLen}
-                  </div>
-                  {/* <span className="flex items-center">
-                    {!!record.leverageMultiple && (
-                      <span className={cn('text-sm font-pf-bold', colorClassName)}>{record.leverageMultiple}X</span>
-                    )} */}
-                  {/**<LockIcon color={record.buySell === 'BUY' ? 'var(--color-green)' : 'var(--color-red)'} /> */}
-                  {/* </span> */}
-                  <span className="flex">
-                    <SelectIcon style={{ transform: isExpandCurrentRow(record.id) ? 'rotate(180deg)' : 'rotate(0deg)' }} />
-                  </span>
-                </div>
-              </div>
-            )
-          }
-          return (
-            <div className="flex items-center">
-              <SymbolIcon src={record.imgUrl} />
-              <div className="flex flex-col pl-4">
-                <span className="text-base font-pf-bold text-primary">{record.alias}</span>
-                <span className={cn('text-xs font-medium', colorClassName)}>{text}</span>
-              </div>
-            </div>
-          )
+          return <PositionSymbolInfo positionInfo={record} isOneLevel={isOneLevel} isExpandCurrentRow={isExpandCurrentRow} />
         }
       },
       {
@@ -166,7 +133,7 @@ function Position({ style, parentPopup }: IProps) {
         align: 'left',
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
-          return <span className="!text-[13px] text-primary">{formatNum(text, { precision: 2 })}</span>
+          return <PositionAmount positionInfo={record} isOneLevel={isOneLevel} />
         }
       },
 
@@ -185,7 +152,7 @@ function Position({ style, parentPopup }: IProps) {
         formItemProps: {
           label: '' // 去掉form label
         },
-        width: 220,
+        width: 200,
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
 
@@ -305,7 +272,7 @@ function Position({ style, parentPopup }: IProps) {
         className: '!text-[13px] text-primary',
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
-          return <span className="!text-[13px] text-primary">{record.id}</span>
+          return <PositionIdCell positionInfo={record} />
         }
       },
 
@@ -606,15 +573,7 @@ function Position({ style, parentPopup }: IProps) {
                         fixed: 'left',
                         width: 160,
                         renderText(text, record, index, action) {
-                          const buySellInfo = getBuySellInfo(record)
-                          return (
-                            <div className="flex items-center">
-                              <div className="flex flex-col pl-[32px]">
-                                <span className="text-base font-pf-bold text-primary">{record.alias || record.symbol}</span>
-                                <span className={cn('text-xs font-medium', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
-                              </div>
-                            </div>
-                          )
+                          return <PositionSubSymbolInfo positionInfo={record} isExpandCurrentRow={isExpandCurrentRow} />
                         }
                       },
                       ...getColumns('expand').slice(1)
@@ -783,3 +742,78 @@ const PositionMarginCell = observer(
     )
   }
 )
+
+const PositionAmount = observer(({ positionInfo, isOneLevel }: { positionInfo: IPositionItem; isOneLevel: boolean }) => {
+  return (
+    <div className="text-paragraph-p2 text-content-1">
+      {BNumber.toFormatNumber(positionInfo?.orderVolume, {
+        volScale: positionInfo?.symbolDecimal,
+        positive: true
+      })}
+    </div>
+  )
+})
+
+const PositionSymbolInfo = observer(
+  ({
+    positionInfo,
+    isOneLevel,
+    isExpandCurrentRow
+  }: {
+    positionInfo: IPositionItem
+    isOneLevel: boolean
+    isExpandCurrentRow: (id: string) => any
+  }) => {
+    const { colorClassName, text } = getBuySellInfo(positionInfo)
+    const childrenListLen = Number(positionInfo?.childrenList?.length)
+    if (childrenListLen > 1) {
+      return (
+        <div className="flex items-center">
+          <div className="flex items-center gap-medium">
+            <SymbolIcon src={positionInfo.imgUrl} width={24} height={24} />
+            <span className="text-paragraph-p2 text-content-1">{positionInfo.alias}</span>
+          </div>
+          <div className="flex items-center">
+            <div className="bg-gray-200 dark:bg-gray-700 flex items-center font-pf-bold text-primary text-xs flex-shrink justify-center rounded w-[18px] h-[18px] mx-2 p-1">
+              {childrenListLen}
+            </div>
+
+            <span className="flex">
+              <SelectIcon style={{ transform: isExpandCurrentRow(positionInfo.id) ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+            </span>
+          </div>
+        </div>
+      )
+    }
+    return (
+      <div className="flex items-center gap-medium">
+        <SymbolIcon src={positionInfo.imgUrl} width={24} height={24} />
+        <div className="flex flex-col">
+          <span className="text-paragraph-p2 text-content-1">{positionInfo.alias}</span>
+          <span className={cn('text-paragraph-p3 text-content-4', colorClassName)}>{text}</span>
+        </div>
+      </div>
+    )
+  }
+)
+
+const PositionSubSymbolInfo = observer(({ positionInfo }: { positionInfo: IPositionItem; isExpandCurrentRow: (id: string) => any }) => {
+  const buySellInfo = getBuySellInfo(positionInfo)
+  return (
+    <div className="flex items-center">
+      <div className="flex flex-col pl-[32px]">
+        <span className={cn('text-paragraph-p3', buySellInfo.colorClassName)}>{buySellInfo.text}</span>
+      </div>
+    </div>
+  )
+})
+
+const PositionIdCell = observer(({ positionInfo }: { positionInfo: IPositionItem }) => {
+  return (
+    <div>
+      <GeneralTooltip content={<>{positionInfo?.id}</>} triggerClassName="inline-block">
+        <TooltipTriggerDottedText>{formatAddress(positionInfo?.id, { prefix: 3, suffix: 3 })}</TooltipTriggerDottedText>
+      </GeneralTooltip>
+    </div>
+  )
+})

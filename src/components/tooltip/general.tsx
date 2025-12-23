@@ -10,6 +10,7 @@ type CommonTooltipProps = PropsWithChildren<
     ComponentProps<typeof Tooltip> & {
       content?: React.ReactNode
       isDisabledCursorHelp?: boolean
+      triggerClassName?: string
     }
 >
 
@@ -25,6 +26,7 @@ export const GeneralTooltip = ({
   defaultOpen,
   isDisabledCursorHelp,
   onOpenChange,
+  triggerClassName,
   ...props
 }: CommonTooltipProps) => {
   if (isUndefined(content) || isNull(content)) {
@@ -36,9 +38,13 @@ export const GeneralTooltip = ({
       <Tooltip {...{ open, defaultOpen, onOpenChange }}>
         <TooltipTrigger asChild>
           <div
-            className={cn('block', {
-              'cursor-help': !isDisabledCursorHelp
-            })}
+            className={cn(
+              'block',
+              {
+                'cursor-help': !isDisabledCursorHelp
+              },
+              triggerClassName
+            )}
           >
             {children}
           </div>
