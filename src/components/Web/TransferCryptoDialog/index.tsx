@@ -131,7 +131,20 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   useEffect(() => {
     if (!open) return
 
-    // 如果是 Cobo 链，使用 Cobo 地址
+    // 对于 Solana 链，始终使用 PDA 地址
+    if (selectedChain === 'Solana') {
+      const pdaAddress = trade.currentAccountInfo?.pdaTokenAddress
+      if (pdaAddress) {
+        setDepositAddress(pdaAddress)
+        console.log(`[TransferCrypto] Using Solana PDA address:`, pdaAddress)
+      } else {
+        setDepositAddress('')
+        console.warn(`[TransferCrypto] No PDA address found`)
+      }
+      return
+    }
+
+    // 如果是 Cobo 链（非 Solana），使用 Cobo 地址
     if (isCoboChain) {
       if (coboAddress) {
         setDepositAddress(coboAddress)
@@ -158,30 +171,14 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
       const chainType = chainConfig.id // 'tron' | 'ethereum' | 'solana'
 
-      // 对于 Solana，使用 Privy 钱包地址（而不是 PDA）
-      // PDA 地址已注释，改用 Privy Solana 钱包
+      // 对于 Solana，使用 PDA 地址
       if (chainType === 'solana') {
-        // 注释掉 PDA 地址逻辑
-        // const pdaAddress = trade.currentAccountInfo?.pdaTokenAddress
-        // if (pdaAddress) {
-        //   setDepositAddress(pdaAddress)
-        //   console.log(`[TransferCrypto] Using Solana PDA address:`, pdaAddress)
-        // } else {
-        //   console.warn(`[TransferCrypto] No PDA address found`)
-        //   setDepositAddress('')
-        // }
-        // return
-
-        // 使用 Privy Solana 钱包地址
-        const solanaAccount = user?.linkedAccounts?.find(
-          (account: any) => account.type === 'wallet' && account.chainType === 'solana'
-        ) as any
-
-        if (solanaAccount?.address) {
-          setDepositAddress(solanaAccount.address)
-          console.log(`[TransferCrypto] Using Privy Solana wallet:`, solanaAccount.address)
+        const pdaAddress = trade.currentAccountInfo?.pdaTokenAddress
+        if (pdaAddress) {
+          setDepositAddress(pdaAddress)
+          console.log(`[TransferCrypto] Using Solana PDA address:`, pdaAddress)
         } else {
-          console.warn(`[TransferCrypto] No Privy Solana wallet found`)
+          console.warn(`[TransferCrypto] No PDA address found`)
           setDepositAddress('')
         }
         return

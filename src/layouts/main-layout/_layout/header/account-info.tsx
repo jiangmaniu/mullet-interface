@@ -59,8 +59,8 @@ export const TradeAccountInfo = observer(() => {
     enabled: !!user?.id && !!coboWalletId
   })
 
-  // 优先使用 Cobo Solana 地址，否则 fallback 到 Privy 地址
-  const displayAddress = coboSolanaAddress || privyAddress
+  // 优先使用交易账户 PDA 地址，否则 fallback 到 Cobo/Privy 地址
+  const displayAddress = currentAccountInfo?.pdaTokenAddress || coboSolanaAddress || privyAddress
 
   return (
     <DropdownMenu>
@@ -167,19 +167,19 @@ const AccountSelector = observer(() => {
                 <span className="ml-1 text-sm font-normal text-secondary">USD</span>
               </div>
             </div>
-            {/* 显示 Cobo Solana 充值地址和复制按钮 */}
-            {coboSolanaAddress && (
+            {/* 显示 PDA 地址和复制按钮 */}
+            {currentAccountInfo.pdaTokenAddress && (
               <div className="mt-2 flex items-center gap-2 text-xs">
                 <a
-                  href={`https://explorer.solana.com/address/${coboSolanaAddress}`}
+                  href={`https://explorer.solana.com/address/${currentAccountInfo.pdaTokenAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-brand hover:underline"
                 >
-                  {formatAddress(coboSolanaAddress)}
+                  {formatAddress(currentAccountInfo.pdaTokenAddress)}
                 </a>
                 <button
-                  onClick={() => copyContent(coboSolanaAddress)}
+                  onClick={() => copyContent(currentAccountInfo.pdaTokenAddress)}
                   className="text-secondary hover:text-primary cursor-pointer p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                   title="Copy address"
                 >
