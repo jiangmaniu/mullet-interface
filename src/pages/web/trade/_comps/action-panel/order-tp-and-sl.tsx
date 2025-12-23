@@ -319,14 +319,14 @@ const SetStopLossLabel = observer(() => {
           <Trans>范围</Trans>
         </span>
         <span className="text-content-1">
-          {sl_scope != null ? BNumber.toFormatNumber(sl_scope, {
+          {sl_scope != null && !isNaN(sl_scope) ? BNumber.toFormatNumber(sl_scope, {
             prefix: isBuy ? '≤' : '≥',
             volScale: 2
           }) : '--'}
         </span>
       </div>
 
-      {!slFlag && slValueEstimate && (
+      {!slFlag && slValueEstimate != null && !isNaN(slValueEstimate) && (
         <div className="text-paragraph-p3 text-content-5 flex items-start gap-1">
           <Trans>预计亏损</Trans>
           <span className="text-market-fall">
