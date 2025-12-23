@@ -4,8 +4,9 @@ import { API_BASE_URL } from '@/constants/api'
 import { getCachedDepositAddress, setCachedDepositAddress } from '@/services/coboPreloadService'
 
 interface UseCoboDepositAddressParams {
-  userId: string
-  chainId: 'ETH' | 'SOL' | 'TRON' | 'ARBITRUM_ETH' | 'BASE_ETH' | 'MATIC' | 'BSC_BNB' | 'HYPE'
+  userId?: string  // 可选，兼容旧代码
+  tradeAccountId?: string | number  // 交易账户ID（推荐使用）
+  chainId: 'ETH' | 'SOL' | 'TRON' | 'ARBITRUM_ETH' | 'BASE_ETH' | 'MATIC' | 'BSC_BNB' | 'HYPE' | 'HYPEREVM_HYPE'
   walletId: string
   enabled?: boolean
 }
@@ -21,7 +22,10 @@ interface CoboDepositAddressData {
  * 获取用户在指定链上的专属充值地址
  * 优先使用预加载缓存
  */
-export const useCoboDepositAddress = ({ userId, chainId, walletId, enabled = true }: UseCoboDepositAddressParams) => {
+export const useCoboDepositAddress = ({ userId, tradeAccountId, chainId, walletId, enabled = true }: UseCoboDepositAddressParams) => {
+  // 🔥 优先使用 tradeAccountId，兼容 userId
+  const effectiveUserId = tradeAccountId?.toString() || userId || ''
+  
   const [address, setAddress] = useState<string>('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -29,7 +33,7 @@ export const useCoboDepositAddress = ({ userId, chainId, walletId, enabled = tru
 
   const fetchAddress = useCallback(
     async (forceRefresh = false) => {
-      if (!enabled || !userId || !chainId || !walletId) {
+      if (!enabled || !effectiveUserId || !chainId || !walletId) {
         return
       }
 
@@ -48,9 +52,9 @@ export const useCoboDepositAddress = ({ userId, chainId, walletId, enabled = tru
       setError(null)
 
       try {
-        const url = `${API_BASE_URL}/api/v1/deposit/address?userId=${userId}&chainId=${chainId}&walletId=${walletId}`
+        const url = `${API_BASE_URL}/api/v1/deposit/address?userId=${effectiveUserId}&chainId=${chainId}&walletId=${walletId}`
 
-        console.log('[Cobo] Fetching deposit address:', { userId, chainId, walletId, url })
+        console.log('[Cobo] Fetching deposit address:', { userId: effectiveUserId, chainId, walletId, url })
 
         const response = await fetch(url)
 
@@ -90,7 +94,7 @@ export const useCoboDepositAddress = ({ userId, chainId, walletId, enabled = tru
         setIsLoading(false)
       }
     },
-    [userId, chainId, walletId, enabled]
+    [effectiveUserId, chainId, walletId, enabled]
   )
 
   useEffect(() => {

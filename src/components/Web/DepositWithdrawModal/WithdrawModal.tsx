@@ -59,9 +59,8 @@ export default observer(
       isLoading: coboWalletLoading,
       error: coboWalletError
     } = useCoboWallet({
-      userId: user?.id || '',
       tradeAccountId: accountItem?.id || trade.currentAccountInfo?.id,
-      enabled: open && !!user?.id
+      enabled: open && !!(accountItem?.id || trade.currentAccountInfo?.id)
     })
 
     const close = () => {

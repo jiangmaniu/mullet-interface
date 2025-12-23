@@ -21,6 +21,9 @@ import { useEffect, useRef, useState } from 'react'
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import DepositModal from '@/components/Web/DepositWithdrawModal/DepositModal'
 import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
+import AddFundsMenu from '@/components/Web/AddFundsMenu'
+import TransferCryptoDialog from '@/components/Web/TransferCryptoDialog'
+import SwapDialog from '@/components/Web/SwapDialog'
 import { getEnv } from '@/env'
 import useKycAuth from '@/hooks/useKycAuth'
 import { getAccountSynopsisByLng } from '@/utils/business'
@@ -28,6 +31,8 @@ import Header from './comp/Header'
 import RechargeSimulateModal from './comp/RechargeSimulateModal'
 import RenameAccountModal from './comp/RenameAccountModal'
 import { Iconify } from '@/libs/ui/components/icons'
+import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
+import { usePrivy } from '@privy-io/react-auth'
 
 type IAccountItem = User.AccountItem & {
   isEyeOpen?: boolean
@@ -57,6 +62,17 @@ function Account() {
   const precision = trade.currentAccountInfo.currencyDecimal
 
   const transferModalRef = useRef<any>(null)
+
+  // Add Funds 相关状态
+  const [showAddFundsMenu, setShowAddFundsMenu] = useState(false)
+  const [showTransferDialog, setShowTransferDialog] = useState(false)
+  const [showSwapDialog, setShowSwapDialog] = useState(false)
+  const { activeSolanaWallet, wallets } = usePrivyInfo()
+  const { user } = usePrivy()
+  
+  // 判断是否是外部钱包
+  const currentWalletAccount = user?.linkedAccounts?.find((account: any) => account.address === activeSolanaWallet?.address)
+  const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
 
   const { notKycAuth } = useKycAuth()
 
@@ -232,7 +248,7 @@ function Account() {
                       trigger={
                         <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
                           <span className="font-pf-bold">
-                            <FormattedMessage id="mt.rujin" />
+                            <FormattedMessage id="mt.cunkuan" />
                           </span>
                         </Button>
                       }
@@ -240,17 +256,15 @@ function Account() {
                     />
                   ) : (
                     <>
-                      {/* @TODO 真实账户暂时不支持入金 */}
+                      {/* 存款 - 打开 Add Funds 菜单 */}
                       <Button
                         onClick={() => {
-                          // push(`/deposit?tradeAccountId=${item.id}`)
-                          depositModalRef.current.show(item)
+                          setShowAddFundsMenu(true)
                         }}
                         disabled={!item.pdaTokenAddress}
                         style={{ height: 46, width: 108 }}
-                        // icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
                       >
-                        <FormattedMessage id="mt.rujin" />
+                        <FormattedMessage id="mt.cunkuan" />
                       </Button>
                     </>
                   )}
@@ -273,8 +287,13 @@ function Account() {
                   style={{ height: 46, width: 108 }}
                   onClick={() => {
                     // setMode(STORAGE_GET_TRADE_THEME() || 'light')
-                    trade.setCurrentAccountInfo(item)
-                    trade.jumpTrade()
+                    // 如果是同一个账户，直接跳转，不需要重新切换
+                    if (trade.currentAccountInfo?.id === item.id) {
+                      push('/trade')
+                    } else {
+                      trade.setCurrentAccountInfo(item)
+                      trade.jumpTrade()
+                    }
                   }}
                   disabled={trade.disabledConect(item)}
                 >
@@ -358,6 +377,31 @@ function Account() {
       {/* 出入金弹窗 */}
       <WithdrawModal ref={withdrawModalRef} />
       <DepositModal ref={depositModalRef} />
+      {/* Add Funds 菜单 */}
+      <AddFundsMenu
+        open={showAddFundsMenu}
+        onClose={() => setShowAddFundsMenu(false)}
+        onTransferClick={() => setShowTransferDialog(true)}
+        onSwapClick={() => setShowSwapDialog(true)}
+        onCardClick={() => setShowAddFundsMenu(false)}
+        showSwapOption={!!isExternalWallet}
+      />
+      {/* 跨链充值弹窗 */}
+      <TransferCryptoDialog open={showTransferDialog} onClose={() => setShowTransferDialog(false)} />
+      {/* 资产兑换弹窗 */}
+      <SwapDialog
+        open={showSwapDialog}
+        onClose={() => setShowSwapDialog(false)}
+        walletAddress={wallets?.[0]?.address || ''}
+        network={
+          wallets?.[0]?.address?.length === 44 && !wallets?.[0]?.address?.startsWith('0x')
+            ? 'solana'
+            : wallets?.[0]?.chainId?.includes('tron') || wallets?.[0]?.chainId?.startsWith('0x')
+            ? 'ethereum'
+            : 'ethereum'
+        }
+        walletSource={wallets?.[0]?.walletClientType || 'privy'}
+      />
     </PageContainer>
   )
 }

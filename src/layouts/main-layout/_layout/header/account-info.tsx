@@ -45,18 +45,17 @@ export const TradeAccountInfo = observer(() => {
 
   // 🔥 获取 Cobo 钱包 - autoCreate: true 负责创建，其他组件只读缓存
   const { walletId: coboWalletId } = useCoboWallet({
-    userId: user?.id || '',
     tradeAccountId: currentAccountInfo?.id,
-    enabled: !!user?.id,
+    enabled: !!currentAccountInfo?.id,
     autoCreate: true  // 🔥 只有这里负责创建钱包
   })
 
   // 获取 Cobo Solana 充值地址
   const { address: coboSolanaAddress } = useCoboDepositAddress({
-    userId: user?.id || '',
+    tradeAccountId: currentAccountInfo?.id,
     chainId: 'SOL',
     walletId: coboWalletId || '',
-    enabled: !!user?.id && !!coboWalletId
+    enabled: !!currentAccountInfo?.id && !!coboWalletId
   })
 
   // 优先使用交易账户 PDA 地址，否则 fallback 到 Cobo/Privy 地址
@@ -103,17 +102,16 @@ const AccountSelector = observer(() => {
 
   // 获取 Cobo 钱包
   const { walletId: coboWalletId } = useCoboWallet({
-    userId: user?.id || '',
     tradeAccountId: currentAccountInfo?.id,
-    enabled: !!user?.id
+    enabled: !!currentAccountInfo?.id
   })
 
   // 获取 Cobo Solana 充值地址
   const { address: coboSolanaAddress } = useCoboDepositAddress({
-    userId: user?.id || '',
+    tradeAccountId: currentAccountInfo?.id,
     chainId: 'SOL',
     walletId: coboWalletId || '',
-    enabled: !!user?.id && !!coboWalletId
+    enabled: !!currentAccountInfo?.id && !!coboWalletId
   })
 
   useEffect(() => {
