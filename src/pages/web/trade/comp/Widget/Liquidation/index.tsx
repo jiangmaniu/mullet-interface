@@ -125,51 +125,53 @@ function Liquidation() {
     return (
       <>
         {isolatedMarginList.length > 0 && (
-          <ProFormSelect
-            fieldProps={{
-              size: 'large',
-              popupClassName: selectClassName,
-              className: selectClassName,
-              value: trade.currentLiquidationSelectBgaId,
-              onChange: (value: any) => {
-                startTransition(() => {
-                  trade.setCurrentLiquidationSelectBgaId(value)
-                })
-              },
-              optionRender: (item: any) => {
-                return <>{item.label}</>
-              },
-              style: { height: 40, position: 'relative' },
-              suffixIcon: <Iconfont name="down" width={24} height={24} color={isDark ? '#fff' : gray[400]} />,
-              // 回填到选择框的 Option 的属性值，默认是 Option 的子元素
-              optionLabelProp: 'label'
-            }}
-            allowClear={false}
-            options={options.map((item) => {
-              const isBuy = item.buySell === 'BUY'
-              const isLockedPosition = item.mode === 'LOCKED_POSITION'
-              return {
-                ...item,
-                label: (
-                  <div className="flex items-center truncate w-full h-[26px]">
-                    {/* 全仓 使用默认icon*/}
-                    <img
-                      src={item.value === 'CROSS_MARGIN' ? '/img/all.png' : getSymbolIcon(item.imgUrl)}
-                      alt=""
-                      className="w-[20px] h-[20px] rounded-full border border-gray-90"
-                    />
-                    <span className="text-primary !text-xs pl-1">{item.label}</span>
-                    {/* 逐仓-锁仓模式展示 */}
-                    {isLockedPosition && (
-                      <span className={cn('text-white px-[2px] py-[1px] text-xs rounded ml-[5px]', isBuy ? 'bg-green' : 'bg-red')}>
-                        {isBuy ? <FormattedMessage id="mt.duo" /> : <FormattedMessage id="mt.kong" />}
-                      </span>
-                    )}
-                  </div>
-                )
-              }
-            })}
-          />
+          <div className="flex-1">
+            <ProFormSelect
+              fieldProps={{
+                size: 'large',
+                popupClassName: selectClassName,
+                className: selectClassName,
+                value: trade.currentLiquidationSelectBgaId,
+                onChange: (value: any) => {
+                  startTransition(() => {
+                    trade.setCurrentLiquidationSelectBgaId(value)
+                  })
+                },
+                optionRender: (item: any) => {
+                  return <>{item.label}</>
+                },
+                style: { height: 40, position: 'relative' },
+                suffixIcon: <Iconfont name="down" width={24} height={24} color={isDark ? '#fff' : gray[400]} />,
+                // 回填到选择框的 Option 的属性值，默认是 Option 的子元素
+                optionLabelProp: 'label'
+              }}
+              allowClear={false}
+              options={options.map((item) => {
+                const isBuy = item.buySell === 'BUY'
+                const isLockedPosition = item.mode === 'LOCKED_POSITION'
+                return {
+                  ...item,
+                  label: (
+                    <div className="flex items-center truncate w-full h-[26px]">
+                      {/* 全仓 使用默认icon*/}
+                      <img
+                        src={item.value === 'CROSS_MARGIN' ? '/img/all.png' : getSymbolIcon(item.imgUrl)}
+                        alt=""
+                        className="w-[20px] h-[20px] rounded-full border border-gray-90"
+                      />
+                      <span className="text-primary !text-xs pl-1">{item.label}</span>
+                      {/* 逐仓-锁仓模式展示 */}
+                      {isLockedPosition && (
+                        <span className={cn('text-white px-[2px] py-[1px] text-xs rounded ml-[5px]', isBuy ? 'bg-green' : 'bg-red')}>
+                          {isBuy ? <FormattedMessage id="mt.duo" /> : <FormattedMessage id="mt.kong" />}
+                        </span>
+                      )}
+                    </div>
+                  )
+                }
+              })}
+            />
+          </div>
         )}
       </>
     )
@@ -191,7 +193,7 @@ function Liquidation() {
               </span>
             )}
           </div>
-          <div className="w-full">{renderSelect}</div>
+          {renderSelect}
         </div>
         <div className="flex items-center flex-col pt-2">
           <div className="flex items-center justify-center flex-col relative w-full">

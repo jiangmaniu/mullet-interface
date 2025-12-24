@@ -4,7 +4,7 @@ import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { formatNum, toFixed } from '@/utils'
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/ui/lib/utils'
 
 import { IPositionItem } from '..'
 

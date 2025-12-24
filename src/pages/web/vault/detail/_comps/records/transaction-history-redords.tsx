@@ -1,7 +1,7 @@
 import { CommonTableBody } from '@/components/table/common-table'
 import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { PoolManageWrapper, useGetPoolPageListApiOptions } from '@/services/api/trade-core/hooks/follow-manage/pool-list'
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/ui/lib/utils'
 import { formatAddress } from '@/utils/web3'
 import { useQuery } from '@tanstack/react-query'
 import { ColumnDef, flexRender, getCoreRowModel, PaginationState, useReactTable } from '@tanstack/react-table'

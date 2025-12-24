@@ -1,4 +1,4 @@
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/ui/lib/utils'
 
 /**
  * 爆仓信号

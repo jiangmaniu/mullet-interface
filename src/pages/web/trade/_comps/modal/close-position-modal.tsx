@@ -214,7 +214,7 @@ export const ClosePositionModal = observer(({ isOpen, onClose, onConfirm, childr
                           : 'text-white'
                       )}
                     >
-                      {BNumber.toFormatNumber(calcInfo?.profit, { unit: 'USDC', forceSign: true, volScale: precision })}
+                      {BNumber.toFormatNumber(calcInfo?.profit, { unit: 'USDC', forceSign: true, positive: false, volScale: precision })}
                     </div>
                   </div>
                 </div>

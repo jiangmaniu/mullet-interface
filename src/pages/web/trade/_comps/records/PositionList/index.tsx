@@ -15,7 +15,7 @@ import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { formatNum, toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/ui/lib/utils'
 
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useTheme } from '@/context/themeProvider'
@@ -812,7 +812,9 @@ const PositionIdCell = observer(({ positionInfo }: { positionInfo: IPositionItem
   return (
     <div>
       <GeneralTooltip content={<>{positionInfo?.id}</>} triggerClassName="inline-block">
-        <TooltipTriggerDottedText>{formatAddress(positionInfo?.id, { prefix: 3, suffix: 3 })}</TooltipTriggerDottedText>
+        <TooltipTriggerDottedText className="text-paragraph-p2 text-content-1">
+          {formatAddress(positionInfo?.id, { prefix: 3, suffix: 3 })}
+        </TooltipTriggerDottedText>
       </GeneralTooltip>
     </div>
   )

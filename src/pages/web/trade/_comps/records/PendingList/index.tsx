@@ -13,7 +13,7 @@ import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/ui/lib/utils'
 
 import CurrentPrice from '../PositionList/comp/CurrentPrice'
 import { Trans } from '@/libs/lingui/react/macro'
@@ -330,7 +330,9 @@ const PendingIdCell = observer(({ pendingOrderInfo }: { pendingOrderInfo: IPendi
   return (
     <div>
       <GeneralTooltip content={<>{pendingOrderInfo?.id}</>} triggerClassName="inline-block">
-        <TooltipTriggerDottedText>{formatAddress(pendingOrderInfo?.id, { prefix: 3, suffix: 3 })}</TooltipTriggerDottedText>
+        <TooltipTriggerDottedText className="text-paragraph-p2 text-content-1">
+          {formatAddress(pendingOrderInfo?.id, { prefix: 3, suffix: 3 })}
+        </TooltipTriggerDottedText>
       </GeneralTooltip>
     </div>
   )

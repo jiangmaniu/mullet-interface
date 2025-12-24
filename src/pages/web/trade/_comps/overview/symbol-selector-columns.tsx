@@ -175,11 +175,11 @@ const SymbolInfo = observer(({ symbolInfo }: { symbolInfo: Account.TradeSymbolLi
         <div className="text-paragraph-p2 text-content-1">{symbolInfo.alias}</div>
       </GeneralTooltip>
 
-      {['fixed_margin', 'fixed_leverage', 'float_leverage'].includes(symbolInfo.symbolConf?.prepaymentConf?.mode || '') && (
+      {/* {['fixed_margin', 'fixed_leverage', 'float_leverage'].includes(symbolInfo.symbolConf?.prepaymentConf?.mode || '') && (
         <div className="text-paragraph-p3 max-w-25 min-w-8 h-5 p-1 flex justify-center items-center rounded-xs bg-button text-content-1">
           <>
             {symbolInfo.symbolConf?.prepaymentConf?.mode === 'fixed_margin' ? (
-              <Trans>预付款</Trans>
+              <Trans>固定预付款</Trans>
             ) : symbolInfo.symbolConf?.prepaymentConf?.mode === 'fixed_leverage' ? (
               <>{symbolInfo.symbolConf?.prepaymentConf?.fixed_leverage?.leverage_multiple}x</>
             ) : symbolInfo.symbolConf?.prepaymentConf?.mode === 'float_leverage' ? (
@@ -187,7 +187,7 @@ const SymbolInfo = observer(({ symbolInfo }: { symbolInfo: Account.TradeSymbolLi
             ) : null}
           </>
         </div>
-      )}
+      )} */}
     </div>
   )
 })

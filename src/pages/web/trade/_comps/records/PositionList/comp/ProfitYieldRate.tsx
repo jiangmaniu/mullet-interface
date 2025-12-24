@@ -2,7 +2,7 @@ import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/ui/lib/utils'
 
 type IProps = {
   item: Order.BgaOrderPageListItem

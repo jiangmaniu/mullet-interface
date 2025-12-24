@@ -12,10 +12,10 @@ import { observer } from 'mobx-react'
 import PositionList from './PositionList'
 import PendingList from './PendingList'
 import HistoryPendingList from '../../comp/TradeRecord/comp/HistoryPendingList'
-import HistoryCloseList from '../../comp/TradeRecord/comp/HistoryCloseList'
+// import HistoryCloseList from '../../comp/TradeRecord/comp/HistoryCloseList'
+import HistoryCloseList from './HistoryCloseList'
 import FundRecordList from '../../comp/TradeRecord/comp/FundRecordList'
 import HistoryPositionList from '../../comp/TradeRecord/comp/HistoryPositionList'
-// import PendingList from '../../comp/TradeRecord/comp/PendingList'
 // import { CloseAllPositions } from './positions/close-all'
 
 enum TabType {

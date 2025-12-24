@@ -4,11 +4,11 @@ import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { formatNum } from '@/utils'
-import { cn } from '@/utils/cn'
+import { cn } from '@/libs/ui/lib/utils'
 import { IPendingItem } from '@/pages/web/trade/comp/TradeRecord/comp/PendingList'
 
 type IProps = {
-  item: Order.BgaOrderPageListItem | IPendingItem
+  item: Order.BgaOrderPageListItem | IPendingItem | Order.TradeRecordsPageListItem
 }
 
 // 标记价格，当前市价行情价格

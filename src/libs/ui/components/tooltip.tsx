@@ -24,9 +24,9 @@ function TooltipTrigger({ className, ...props }: React.ComponentProps<typeof Too
   return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" className={cn('', className)} {...props} />
 }
 
-function TooltipTriggerDottedText({ children, ...props }: React.ComponentProps<'div'>) {
+function TooltipTriggerDottedText({ children, className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <div className={cn('text-clickable-1 underline decoration-dotted underline-offset-4')} {...props}>
+    <div className={cn('text-clickable-1 underline decoration-dotted underline-offset-4', className)} {...props}>
       {children}
     </div>
   )
