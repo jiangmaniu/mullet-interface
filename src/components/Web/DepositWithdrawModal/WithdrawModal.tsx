@@ -49,6 +49,7 @@ export default observer(
     const { user } = usePrivy()
     const [chainBalance, setChainBalance] = useState<string>('0') // 当前链的实际余额
     const [loadingBalance, setLoadingBalance] = useState(false)
+    const [activeTokenId, setActiveTokenId] = useState<string>('') // 🔥 实际有余额的 tokenId
 
     const accountMoney = accountItem.money as number
 
@@ -148,12 +149,17 @@ export default observer(
           // 转换为 USD（USDC/USDT 都是 6 位小数）
           const balanceUSD = Number(totalBalance) / 1_000_000
           setChainBalance(balanceUSD.toFixed(2))
+          // 🔥 保存实际有余额的 tokenId，供提现时使用
+          if (foundTokenId) {
+            setActiveTokenId(foundTokenId)
+          }
           console.log('[WithdrawModal] Total chain balance:', {
             chain: selectedChain,
             tradeAccountId: effectiveTradeAccountId,
             tokens: possibleTokenIds,
             totalBalanceRaw: totalBalance.toString(),
-            totalBalanceUSD: balanceUSD.toFixed(2)
+            totalBalanceUSD: balanceUSD.toFixed(2),
+            activeTokenId: foundTokenId
           })
         } catch (error) {
           console.error('[WithdrawModal] Failed to fetch chain balance:', error)
@@ -197,7 +203,8 @@ export default observer(
         }
 
         const chainId = selectedChainConfig.chainId
-        const tokenId = getTokenId(chainId)
+        // 🔥 优先使用实际有余额的 tokenId，而不是默认的第一个
+        const tokenId = activeTokenId || getTokenId(chainId)
 
         // 将 USD 金额转换为最小单位（USDC/USDT 都是 6 位小数）
         const amountInMinUnits = Math.floor(Number(money) * 1_000_000).toString()
@@ -206,6 +213,7 @@ export default observer(
           tradeAccountId: effectiveTradeAccountId,
           chainId,
           tokenId,
+          activeTokenId,
           amountUSD: money,
           amountMinUnits: amountInMinUnits,
           toAddress: withdrawAddress,
