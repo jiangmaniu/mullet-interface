@@ -49,7 +49,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const { tronAddress, tronWalletId, tronPublicKey, isCreating: isTronWalletCreating } = useTronWallet(true)
 
   const [selectedChain, setSelectedChain] = useState('Solana')
-  const [selectedToken, setSelectedToken] = useState('USDT')
+  const [selectedToken, setSelectedToken] = useState('USDC')
   const [depositAddress, setDepositAddress] = useState('')
   const [bridgeInProgress, setBridgeInProgress] = useState(false)
   const [bridgeStep, setBridgeStep] = useState<'idle' | 'tron-eth' | 'eth-sol' | 'completed'>('idle')

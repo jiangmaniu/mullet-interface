@@ -49,6 +49,7 @@ export default observer(
     const { user } = usePrivy()
     const [chainBalance, setChainBalance] = useState<string>('0') // 当前链的实际余额
     const [loadingBalance, setLoadingBalance] = useState(false)
+    const [activeTokenId, setActiveTokenId] = useState<string>('') // 🔥 实际有余额的 tokenId
 
     const accountMoney = accountItem.money as number
 
@@ -108,8 +109,9 @@ export default observer(
 
     // 当选择的链改变时，查询该链所有可能代币的总余额
     useEffect(() => {
-      // 只在弹窗打开且有用户ID时查询
-      if (!open || !user?.id || !selectedChain) return
+      // 只在弹窗打开且有交易账户ID时查询
+      const effectiveTradeAccountId = accountItem?.id || trade.currentAccountInfo?.id
+      if (!open || !effectiveTradeAccountId || !selectedChain) return
 
       const fetchChainBalance = async () => {
         setLoadingBalance(true)
@@ -124,7 +126,8 @@ export default observer(
           // 查询所有可能的代币余额并累加
           for (const tokenId of possibleTokenIds) {
             try {
-              const response = await getCoboBalance({ userId: user.id, tokenId })
+              // 🔥 使用 tradeAccountId 而不是 Privy userId
+              const response = await getCoboBalance({ userId: String(effectiveTradeAccountId), tokenId })
               if (response.success && response.data) {
                 const available = BigInt(response.data.available || '0')
                 if (available > 0) {
@@ -132,7 +135,8 @@ export default observer(
                   if (!foundTokenId) foundTokenId = tokenId
                   console.log('[WithdrawModal] Found balance:', {
                     tokenId,
-                    available: response.data.available
+                    available: response.data.available,
+                    availableUSD: Number(available) / 1_000_000
                   })
                 }
               }
@@ -142,11 +146,20 @@ export default observer(
             }
           }
 
-          setChainBalance(totalBalance.toString())
+          // 转换为 USD（USDC/USDT 都是 6 位小数）
+          const balanceUSD = Number(totalBalance) / 1_000_000
+          setChainBalance(balanceUSD.toFixed(2))
+          // 🔥 保存实际有余额的 tokenId，供提现时使用
+          if (foundTokenId) {
+            setActiveTokenId(foundTokenId)
+          }
           console.log('[WithdrawModal] Total chain balance:', {
             chain: selectedChain,
+            tradeAccountId: effectiveTradeAccountId,
             tokens: possibleTokenIds,
-            totalBalance: totalBalance.toString()
+            totalBalanceRaw: totalBalance.toString(),
+            totalBalanceUSD: balanceUSD.toFixed(2),
+            activeTokenId: foundTokenId
           })
         } catch (error) {
           console.error('[WithdrawModal] Failed to fetch chain balance:', error)
@@ -157,7 +170,7 @@ export default observer(
       }
 
       fetchChainBalance()
-    }, [open, selectedChain, user?.id])
+    }, [open, selectedChain, accountItem?.id, trade.currentAccountInfo?.id])
 
     // 避免重复渲染
     if (!open) return null
@@ -168,9 +181,10 @@ export default observer(
       console.log('[WithdrawModal] Form values:', values)
 
       const { money, withdrawAddress, targetChain } = values
+      const effectiveTradeAccountId = accountItem?.id || trade.currentAccountInfo?.id
 
-      if (!user?.id) {
-        message.error('请先登录')
+      if (!effectiveTradeAccountId) {
+        message.error('请先选择交易账户')
         return
       }
 
@@ -189,23 +203,29 @@ export default observer(
         }
 
         const chainId = selectedChainConfig.chainId
-        const tokenId = getTokenId(chainId)
+        // 🔥 优先使用实际有余额的 tokenId，而不是默认的第一个
+        const tokenId = activeTokenId || getTokenId(chainId)
+
+        // 将 USD 金额转换为最小单位（USDC/USDT 都是 6 位小数）
+        const amountInMinUnits = Math.floor(Number(money) * 1_000_000).toString()
 
         console.log('[WithdrawModal] 💰 Withdraw params:', {
-          userId: user.id,
+          tradeAccountId: effectiveTradeAccountId,
           chainId,
           tokenId,
-          amount: money.toString(),
+          activeTokenId,
+          amountUSD: money,
+          amountMinUnits: amountInMinUnits,
           toAddress: withdrawAddress,
           walletId: coboWalletId
         })
 
-        // 调用 Cobo 提现 API
+        // 调用 Cobo 提现 API - 使用 tradeAccountId 而不是 Privy userId
         const response = await coboWithdraw({
-          userId: user.id,
+          userId: String(effectiveTradeAccountId),
           chainId,
           tokenId,
-          amount: money.toString(),
+          amount: amountInMinUnits,
           toAddress: withdrawAddress,
           walletId: coboWalletId
         })

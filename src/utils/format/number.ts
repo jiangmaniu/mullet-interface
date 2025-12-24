@@ -65,11 +65,27 @@ export function toFormatNumber(value?: BNumberValue | null, opt?: FormatNumberOp
     amount = BNumber.from(amount).toFixed(0)
   }
 
-  if (isNil(amount) || amount.toString().length === 0) {
+  // 🔥 更安全的空值检查，避免 toString() 报错
+  if (isNil(amount) || amount === '' || (typeof amount === 'number' && isNaN(amount))) {
     if (!fallbackToZero) {
       return defaultLabel
     }
+    amount = BNumber.from(0)
+  }
 
+  // 尝试安全地转换为字符串检查
+  try {
+    const amountStr = String(amount)
+    if (amountStr === '' || amountStr === 'undefined' || amountStr === 'null' || amountStr === 'NaN') {
+      if (!fallbackToZero) {
+        return defaultLabel
+      }
+      amount = BNumber.from(0)
+    }
+  } catch {
+    if (!fallbackToZero) {
+      return defaultLabel
+    }
     amount = BNumber.from(0)
   }
 
