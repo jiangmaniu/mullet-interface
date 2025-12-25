@@ -142,7 +142,7 @@ const SettingPendingEditorModalContent = observer(({ pendingOrderInfo, onConfirm
                 <div className="text-paragraph-p2 text-content-4">
                   <Trans>类型</Trans>
                 </div>
-                <div className="text-paragraph-p2 text-market-rise">
+                <div className="text-paragraph-p2 text-content-1">
                   {pendingOrderInfo.isLimitOrder ? <Trans>限价单</Trans> : <Trans>停损单</Trans>}
                 </div>
               </div>
@@ -150,7 +150,7 @@ const SettingPendingEditorModalContent = observer(({ pendingOrderInfo, onConfirm
                 <div className="text-paragraph-p2 text-content-4">
                   <Trans>数量</Trans>
                 </div>
-                <div className="text-paragraph-p2 text-market-rise">
+                <div className="text-paragraph-p2 text-content-1">
                   {BNumber.toFormatNumber(pendingOrderInfo?.orderVolume, { volScale: pendingOrderInfo?.symbolDecimal, unit: '手' })}
                 </div>
               </div>
@@ -158,7 +158,7 @@ const SettingPendingEditorModalContent = observer(({ pendingOrderInfo, onConfirm
                 <div className="text-paragraph-p2 text-content-4">
                   <Trans>挂单价</Trans>
                 </div>
-                <div className="text-paragraph-p2 text-market-rise">{BNumber.toFormatNumber(pendingOrderInfo?.limitPrice)}</div>
+                <div className="text-paragraph-p2 text-content-1">{BNumber.toFormatNumber(pendingOrderInfo?.limitPrice)}</div>
               </div>
               <div className="flex justify-between gap-1">
                 <div className="text-paragraph-p2 text-content-4">
