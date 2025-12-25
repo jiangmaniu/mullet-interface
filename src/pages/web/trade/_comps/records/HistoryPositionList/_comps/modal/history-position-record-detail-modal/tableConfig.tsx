@@ -10,6 +10,7 @@ import { cn } from '@/libs/ui/lib/utils'
 import { GeneralTooltip } from '@/components/tooltip'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { formatAddress } from '@/libs/utils/format'
+import { Trans } from '@/libs/lingui/react/macro'
 
 export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
   const { trade } = useStores()
@@ -22,7 +23,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
 
   return [
     {
-      title: <FormattedMessage id="mt.danhao" />,
+      title: <Trans>订单号</Trans>,
       dataIndex: 'id',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: true,
@@ -46,7 +47,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       }
     },
     {
-      title: <FormattedMessage id="mt.pinzhong" />,
+      title: <Trans>品种</Trans>,
       dataIndex: 'symbol',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -56,10 +57,10 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 200
+      width: 100
     },
     {
-      title: <FormattedMessage id="mt.fangxiang" />,
+      title: <Trans>方向</Trans>,
       dataIndex: 'direction',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -72,7 +73,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       width: 100
     },
     {
-      title: <FormattedMessage id="mt.shuliang" />,
+      title: <Trans>手数</Trans>,
       dataIndex: 'orderVolume',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -85,7 +86,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       width: 120
     },
     {
-      title: <FormattedMessage id="mt.jiage" />,
+      title: <Trans>价格</Trans>,
       dataIndex: 'price',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -98,7 +99,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       width: 200
     },
     {
-      title: <FormattedMessage id="mt.shijian" />,
+      title: <Trans>时间</Trans>,
       dataIndex: 'createTime',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -111,7 +112,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       width: 190
     },
     {
-      title: <FormattedMessage id="mt.leixing" />,
+      title: <Trans>类型</Trans>,
       dataIndex: 'type',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -126,7 +127,11 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       width: 150
     },
     {
-      title: <FormattedMessage id="mt.zhiyingzhisun2" />,
+      title: (
+        <>
+          <Trans>止盈</Trans> / <Trans>止损</Trans>
+        </>
+      ),
       dataIndex: 'stopLossProfit',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -155,7 +160,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
     {
       title: (
         <>
-          <FormattedMessage id="mt.shouxufei" />
+          <Trans>手续费</Trans>
           (USD)
         </>
       ),
@@ -176,7 +181,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
     {
       title: (
         <>
-          <FormattedMessage id="mt.kucunfei" />
+          <Trans>库存费</Trans>
           (USD)
         </>
       ),
@@ -197,7 +202,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
     {
       title: (
         <>
-          <FormattedMessage id="mt.yingkui" />
+          <Trans>盈亏</Trans>
           (USD)
         </>
       ),

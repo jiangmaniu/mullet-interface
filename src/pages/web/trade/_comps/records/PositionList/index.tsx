@@ -99,7 +99,7 @@ function Position({ style, parentPopup }: IProps) {
       {
         title: (
           <span className="!pl-1">
-            <FormattedMessage id="mt.pinlei" />
+            <Trans>品种</Trans>
           </span>
         ), // 与 antd 中基本相同，但是支持通过传入一个方法
         dataIndex: 'category',
@@ -118,7 +118,11 @@ function Position({ style, parentPopup }: IProps) {
         }
       },
       {
-        title: <FormattedMessage id="mt.kaicangshoushu" />,
+        title: (
+          <>
+            <Trans>开仓数量</Trans>(手)
+          </>
+        ),
         dataIndex: 'orderVolume',
         hideInSearch: true, // 在 table的查询表单 中隐藏
         ellipsis: false,
@@ -277,7 +281,7 @@ function Position({ style, parentPopup }: IProps) {
       },
 
       {
-        title: <FormattedMessage id="mt.jiaoyishijian" />,
+        title: <Trans>交易时间</Trans>,
         dataIndex: 'createTime',
         hideInSearch: true, // 在 table的查询表单 中隐藏
         ellipsis: false,
@@ -297,7 +301,7 @@ function Position({ style, parentPopup }: IProps) {
       {
         title: (
           <>
-            <FormattedMessage id="mt.fudongyingkui" />/<FormattedMessage id="mt.shouyilv" />
+            <Trans>浮动盈亏</Trans>/<Trans>收益率</Trans>
           </>
         ),
         dataIndex: 'profit',
@@ -318,7 +322,7 @@ function Position({ style, parentPopup }: IProps) {
         }
       },
       {
-        title: <FormattedMessage id="common.op" />,
+        title: <Trans>操作</Trans>,
         key: 'option',
         fixed: 'right',
         width: 100,

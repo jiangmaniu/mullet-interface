@@ -1,5 +1,4 @@
 import { ProColumns } from '@ant-design/pro-components'
-import { FormattedMessage } from '@umijs/max'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import { getEnum } from '@/constants/enum'
@@ -45,7 +44,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       }
     },
     {
-      title: <FormattedMessage id="common.type" />,
+      title: <Trans>类型</Trans>,
       dataIndex: 'type',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,

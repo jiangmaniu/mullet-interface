@@ -48,6 +48,11 @@ export const NewThemeColor = {
   'brand-secondary-1': 'color-mix(in srgb, rgb(var(--color-zinc-400)) 100%, transparent)',
   'brand-secondary-2': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 100%, transparent)',
   'brand-secondary-3': 'color-mix(in srgb, rgb(var(--color-zinc-200)) 100%, transparent)',
+  'brand-default': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
+  'brand-special': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 100%, transparent)',
+  'brand-important': 'color-mix(in srgb, rgb(var(--color-white)) 100%, transparent)',
+  'brand-divider-line': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 20%, transparent)',
+
   'trade-buy': 'rgb(var(--color-green-500))',
   'trade-sell': 'rgb(var(--color-red-500))',
   'market-rise': 'var(--color-trade-buy)',

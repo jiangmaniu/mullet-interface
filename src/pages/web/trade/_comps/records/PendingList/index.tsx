@@ -76,7 +76,7 @@ function PendingList({ style, parentPopup }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="common.type" />,
+      title: <Trans>类型</Trans>,
       dataIndex: 'type',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -117,7 +117,11 @@ function PendingList({ style, parentPopup }: IProps) {
     },
 
     {
-      title: <FormattedMessage id="mt.shoushu" />,
+      title: (
+        <>
+          <Trans>数量</Trans>(手)
+        </>
+      ),
       dataIndex: 'orderVolume',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -136,7 +140,11 @@ function PendingList({ style, parentPopup }: IProps) {
       }
     },
     {
-      title: <FormattedMessage id="mt.zhiyingzhisun2" />,
+      title: (
+        <>
+          <Trans>止盈</Trans> / <Trans>止损</Trans>
+        </>
+      ),
       dataIndex: 'stopLossProfit',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -148,11 +156,6 @@ function PendingList({ style, parentPopup }: IProps) {
       },
       width: 230,
       renderText(text, record, index, action) {
-        const AddDom = (
-          <span className="font-pf-bold">
-            <FormattedMessage id="mt.tianjia" />
-          </span>
-        )
         return (
           <div>
             <div>
@@ -170,7 +173,7 @@ function PendingList({ style, parentPopup }: IProps) {
     },
 
     {
-      title: <FormattedMessage id="mt.dingdanhao" />,
+      title: <Trans>订单号</Trans>,
       dataIndex: 'id',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -189,7 +192,7 @@ function PendingList({ style, parentPopup }: IProps) {
     },
 
     {
-      title: <FormattedMessage id="mt.jiaoyishijian" />,
+      title: <Trans>交易时间</Trans>,
       dataIndex: 'createTime',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -204,7 +207,7 @@ function PendingList({ style, parentPopup }: IProps) {
     },
 
     {
-      title: <FormattedMessage id="common.op" />,
+      title: <Trans>操作</Trans>,
       key: 'option',
       fixed: 'right',
       width: 160,

@@ -104,7 +104,7 @@ const ModalContent = forwardRef<React.ElementRef<typeof DialogContent>, Componen
           <DialogContent
             ref={ref}
             className={cn(
-              'rounded-[20px] border border-[#3B3D52] bg-[#0E123A] px-5 py-6',
+              'rounded-large border border-brand-default bg-primary px-5 py-6',
               'group flex flex-col fixed left-1/2 top-1/2 z-50 w-[calc(100%-32px)] max-w-[360px] -translate-x-1/2 -translate-y-1/2 gap-1 shadow-[0px_20px_24px_-4px_rgba(16,24,40,0.10),0px_8px_8px_-4px_rgba(16,24,40,0.04)] duration-200 sm:rounded-[20px]',
               'data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95',
               'data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95',
@@ -182,7 +182,7 @@ const ModalTitle = forwardRef<
   const Comp = isDesktop ? DialogTitle : DrawerTitle
 
   return (
-    <Comp ref={ref as any} className="flex items-start justify-between gap-3">
+    <Comp ref={ref as any} className="flex items-center justify-between gap-3">
       <div className={cn('flex-1 text-base font-bold leading-normal tracking-tight text-[white]', className)} {...props}>
         {children}
       </div>

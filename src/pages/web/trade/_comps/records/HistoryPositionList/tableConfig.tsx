@@ -115,7 +115,11 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
     },
 
     {
-      title: <FormattedMessage id="mt.zhiyingzhisun2" />,
+      title: (
+        <>
+          <Trans>止盈</Trans> / <Trans>止损</Trans>
+        </>
+      ),
       dataIndex: 'stopLossProfit',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -144,7 +148,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
     {
       title: (
         <>
-          <FormattedMessage id="mt.yingkui" />
+          <Trans>盈亏</Trans>
           (USD)
         </>
       ),
@@ -240,7 +244,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
     },
 
     {
-      title: <FormattedMessage id="common.status" />,
+      title: <Trans>状态</Trans>,
       dataIndex: 'status',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -255,7 +259,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
       className: 'text-paragraph-p2 text-content-1'
     },
     {
-      title: <FormattedMessage id="mt.dizhi" />,
+      title: <Trans>地址</Trans>,
       dataIndex: 'pdaAddress',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -277,7 +281,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
     },
 
     {
-      title: <FormattedMessage id="common.op" />,
+      title: <Trans>操作</Trans>,
       key: 'option',
       fixed: 'right',
       width: 100,
