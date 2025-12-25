@@ -28,8 +28,9 @@ import { COMMON_PERCENT_DISPLAY_DECIMALS } from '@/libs/utils/format'
 import { observer } from 'mobx-react'
 import { toast } from '@/libs/ui/components/toast'
 import { IPendingItem } from '../records/PendingList'
+import OrderPrice from '../../comp/BuyAndSell/comp/OrderItem/OrderPrice'
 
-export type SettingPendingTpSlModalProps = {
+export type SettingPendingEditorModalProps = {
   isOpen?: boolean
   onClose?: () => void
   children?: React.ReactNode
@@ -37,7 +38,7 @@ export type SettingPendingTpSlModalProps = {
   pendingOrderInfo: IPendingItem
 }
 
-export const SettingPendingTpSlModal = observer(({ ...props }: SettingPendingTpSlModalProps) => {
+export const SettingPendingEditorModal = observer(({ ...props }: SettingPendingEditorModalProps) => {
   const { isOpen, onClose, onConfirm, children } = props
 
   return (
@@ -47,22 +48,24 @@ export const SettingPendingTpSlModal = observer(({ ...props }: SettingPendingTpS
         <ModalHeader className="w-full">
           <ModalTitle className="flex items-center justify-between gap-3">
             <div className={cn('')}>
-              <Trans>设置止盈止损</Trans>
+              <Trans>编辑订单</Trans>
             </div>
           </ModalTitle>
         </ModalHeader>
-        {isOpen && <SettingPendingTpSlModalContent {...props} />}
+        {isOpen && <SettingPendingEditorModalContent {...props} />}
       </ModalContent>
     </Modal>
   )
 })
 
-type SettingPendingTpSlModalContentProps = SettingPendingTpSlModalProps
+type SettingPendingEditorModalContentProps = SettingPendingEditorModalProps
 
-const SettingPendingTpSlModalContent = observer(({ pendingOrderInfo, onConfirm, onClose }: SettingPendingTpSlModalContentProps) => {
+const SettingPendingEditorModalContent = observer(({ pendingOrderInfo, onConfirm, onClose }: SettingPendingEditorModalContentProps) => {
   const buySellInfo = getBuySellInfo(pendingOrderInfo)
   const isPositionDirectionBuy = TradeOrderDirectionEnum.BUY === pendingOrderInfo.buySell
-  const { setSl, setSp, slFlag, spFlag, takeProfit, stopLoss, disabledBtnByCondition } = useTrade({ limitStopItem: pendingOrderInfo })
+  const { setSl, setSp, slFlag, spFlag, takeProfit, stopLoss, orderPrice, setOrderPrice, disabledBtnByCondition } = useTrade({
+    limitStopItem: pendingOrderInfo
+  })
   const { trade } = useStores()
 
   console.log('tpsl:', slFlag, spFlag, takeProfit, stopLoss, disabledBtnByCondition)
@@ -86,7 +89,7 @@ const SettingPendingTpSlModalContent = observer(({ pendingOrderInfo, onConfirm, 
       orderId: pendingOrderInfo.id,
       stopLoss: stopLoss ? Number(stopLoss) : undefined,
       takeProfit: takeProfit ? Number(takeProfit) : undefined,
-      limitPrice: pendingOrderInfo.limitPrice
+      limitPrice: orderPrice
     } as Order.UpdatePendingOrderParams
 
     console.log('修改挂单参数', params)
@@ -137,6 +140,22 @@ const SettingPendingTpSlModalContent = observer(({ pendingOrderInfo, onConfirm, 
             <div className="gap-2xl flex flex-col">
               <div className="flex justify-between gap-1">
                 <div className="text-paragraph-p2 text-content-4">
+                  <Trans>类型</Trans>
+                </div>
+                <div className="text-paragraph-p2 text-market-rise">
+                  {pendingOrderInfo.isLimitOrder ? <Trans>限价单</Trans> : <Trans>停损单</Trans>}
+                </div>
+              </div>
+              <div className="flex justify-between gap-1">
+                <div className="text-paragraph-p2 text-content-4">
+                  <Trans>数量</Trans>
+                </div>
+                <div className="text-paragraph-p2 text-market-rise">
+                  {BNumber.toFormatNumber(pendingOrderInfo?.orderVolume, { volScale: pendingOrderInfo?.symbolDecimal, unit: '手' })}
+                </div>
+              </div>
+              <div className="flex justify-between gap-1">
+                <div className="text-paragraph-p2 text-content-4">
                   <Trans>挂单价</Trans>
                 </div>
                 <div className="text-paragraph-p2 text-market-rise">{BNumber.toFormatNumber(pendingOrderInfo?.limitPrice)}</div>
@@ -151,6 +170,18 @@ const SettingPendingTpSlModalContent = observer(({ pendingOrderInfo, onConfirm, 
               </div>
 
               <div className="flex flex-col gap-2xl">
+                <NumberInput
+                  placeholder="0.00"
+                  value={orderPrice}
+                  size="md"
+                  labelText={<Trans>订单价格</Trans>}
+                  onValueChange={({ value }, { source }) => {
+                    if (source === NumberInputSourceType.EVENT) {
+                      setOrderPrice(value)
+                    }
+                  }}
+                />
+
                 <SetTakeProfit />
                 <SetStopLoss />
               </div>

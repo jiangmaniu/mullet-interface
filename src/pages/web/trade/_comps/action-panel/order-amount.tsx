@@ -13,7 +13,7 @@ export const TradeActionPanelOrderAmount = observer(() => {
     <div>
       <div className="flex flex-col gap-medium">
         <div className="text-paragraph-p3 flex justify-between items-center">
-          <div className="text-content-4">{isBuy ? <Trans>买数手数</Trans> : <Trans>卖出手数</Trans>}</div>
+          <div className="text-content-4">{isBuy ? <Trans>买入手数</Trans> : <Trans>卖出手数</Trans>}</div>
           <div className="flex gap-1">
             <div className="text-content-4">
               <Trans>范围</Trans>

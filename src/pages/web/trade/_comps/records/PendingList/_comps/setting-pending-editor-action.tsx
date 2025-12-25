@@ -8,13 +8,12 @@ import { useStores } from '@/context/mobxProvider'
 import { toast } from '@/libs/ui/components/toast'
 import { Trans, useLingui } from '@/libs/lingui/react/macro'
 import { useModel } from '@umijs/max'
-import { SettingPositionTpSlModal } from '../../../modal/setting-position-tp-sl-modal'
 import useTrade from '@/hooks/useTrade'
 import { RecordModalItem } from '@/mobx/trade'
-import { SettingPendingTpSlModal } from '../../../modal/setting-pending-tp-sl-modal'
-import { IPendingItem } from '../../PendingList'
+import { IPendingItem } from '..'
+import { SettingPendingEditorModal } from '../../../modal/setting-pending-editor-modal'
 
-export const SettingPendingTpSlAction = observer(
+export const SettingPendingEditorAction = observer(
   forwardRef<{ show: () => void; close: () => void }, { record: IPendingItem; onClose?: () => void }>((props, ref) => {
     const { record, onClose } = props
     const { trade } = useStores()
@@ -38,12 +37,12 @@ export const SettingPendingTpSlAction = observer(
       }
     })
 
-    return <SettingPendingTpSlActionContent isOpen={open} onClose={close} pendingOrderInfo={record} />
+    return <SettingPendingEditorActionContent isOpen={open} onClose={close} pendingOrderInfo={record} />
   })
 )
 
-const SettingPendingTpSlActionContent = observer(
+const SettingPendingEditorActionContent = observer(
   ({ isOpen: open, onClose: close, pendingOrderInfo }: { isOpen: boolean; onClose: () => void; pendingOrderInfo: IPendingItem }) => {
-    return <SettingPendingTpSlModal isOpen={open} onClose={close} pendingOrderInfo={pendingOrderInfo} />
+    return <SettingPendingEditorModal isOpen={open} onClose={close} pendingOrderInfo={pendingOrderInfo} />
   }
 )

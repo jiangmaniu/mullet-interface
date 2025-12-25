@@ -7,9 +7,11 @@ import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { cn } from '@/libs/ui/lib/utils'
+import { GeneralTooltip } from '@/components/tooltip'
+import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
+import { formatAddress } from '@/libs/utils/format'
 
-// 点击行展开的表格配置
-export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
+export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
   const { trade } = useStores()
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
@@ -31,9 +33,17 @@ export const getExpandColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => 
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 280,
+      width: 150,
       fixed: 'left',
-      className: '!px-1'
+      renderText(text, record, index, action) {
+        return (
+          <GeneralTooltip content={<>{record?.id}</>} triggerClassName="inline-block">
+            <TooltipTriggerDottedText className="text-paragraph-p2 text-content-1">
+              {formatAddress(record?.id, { prefix: 4, suffix: 3 })}
+            </TooltipTriggerDottedText>
+          </GeneralTooltip>
+        )
+      }
     },
     {
       title: <FormattedMessage id="mt.pinzhong" />,

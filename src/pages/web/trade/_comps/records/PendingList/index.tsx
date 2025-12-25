@@ -2,7 +2,7 @@ import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 import { toJS } from 'mobx'
 import { observer } from 'mobx-react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 import StandardTable from '@/components/Admin/StandardTable'
 import SymbolIcon from '@/components/Base/SymbolIcon'
@@ -27,9 +27,7 @@ import { SecondaryConfirmationGlobalModalProps } from '@/components/providers/ni
 import { GLOBAL_MODAL_ID } from '@/components/providers/nice-modal-provider/register'
 import { TradeOrderDirectionEnum } from '../../../_options/order'
 import { renderFallback } from '@/libs/utils/format/fallback'
-import { Iconify } from '@/libs/ui/components/icons'
-// import { SettingPendingTpSlAction } from './_comps/setting-pending-tp-sl-action'
-import ModifyPendingOrderModal from '../../../comp/Modal/PendingOrderModifyModal'
+import { SettingPendingEditorAction } from './_comps/setting-pending-editor-action'
 
 export type IPendingItem = Order.OrderPageListItem & {
   /**是否是限价单 */
@@ -52,14 +50,14 @@ function PendingList({ style, parentPopup }: IProps) {
 
   let pendingList = trade.pendingList as IPendingItem[]
   let list = showActiveSymbol ? pendingList.filter((v) => v.symbol === trade.activeSymbolName) : pendingList
-  // const settingPendingTpSlActionRef = useRef<any>(null)
-  const modifyPendingRef = useRef<any>(null)
+  const settingPendingEditorActionRef = useRef<any>(null)
+  const [settingPendingTpSlRecord, setSettingPendingTpSlRecord] = useState<IPendingItem>({} as IPendingItem)
 
   const columns: ProColumns<IPendingItem>[] = [
     {
       title: (
         <span className="!pl-1">
-          <FormattedMessage id="mt.pinlei" />
+          <Trans>品种</Trans>
         </span>
       ), // 与 antd 中基本相同，但是支持通过传入一个方法
       dataIndex: 'category',
@@ -148,7 +146,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 220,
+      width: 230,
       renderText(text, record, index, action) {
         const AddDom = (
           <span className="font-pf-bold">
@@ -158,29 +156,14 @@ function PendingList({ style, parentPopup }: IProps) {
         return (
           <div>
             <div>
-              <div
-                className="cursor-pointer"
-                onClick={() => {
-                  modifyPendingRef.current?.show(record)
-                }}
-              >
-                <span className="!text-[13px] text-primary border-b border-dashed border-gray-weak">
-                  {Number(record?.takeProfit) ? formatNum(record?.takeProfit, { precision: record.symbolDecimal }) : AddDom}
-                </span>
-                <span> / </span>
-                <span className="!text-[13px] text-primary border-b border-dashed border-gray-weak">
-                  {Number(record?.stopLoss) ? formatNum(record?.stopLoss, { precision: record.symbolDecimal }) : AddDom}
-                </span>
-              </div>
-            </div>
-            {/* <div>
               <PendingTpSlCell
                 pendingOrderInfo={record}
-                onEdit={() => {
-                  settingPendingTpSlActionRef.current?.show(record)
-                }}
+                // onEdit={() => {
+                //   setSettingPendingTpSlRecord(record)
+                //   settingPendingTpSlActionRef.current?.show()
+                // }}
               />
-            </div> */}
+            </div>
           </div>
         )
       }
@@ -198,7 +181,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 200,
+      width: 150,
 
       renderText(text, record, index, action) {
         return <PendingIdCell pendingOrderInfo={record} />
@@ -217,20 +200,32 @@ function PendingList({ style, parentPopup }: IProps) {
         label: '' // 去掉form label
       },
       width: 180,
-      className: '!text-[13px] text-primary'
+      className: 'text-paragraph-p2 text-content-1'
     },
 
     {
       title: <FormattedMessage id="common.op" />,
       key: 'option',
       fixed: 'right',
-      width: 100,
+      width: 160,
       align: 'right',
       hideInForm: true,
       hideInSearch: true,
       render: (text, record, _, _action) => {
         return (
-          <div className="flex items-center justify-end">
+          <div className="flex items-center gap-medium justify-end">
+            <Button
+              variant={'primary'}
+              color={'default'}
+              size={'sm'}
+              onClick={() => {
+                setSettingPendingTpSlRecord(record)
+                settingPendingEditorActionRef.current?.show()
+              }}
+            >
+              <Trans>编辑</Trans>
+            </Button>
+
             <PendingCancelOrderAction pendingOrderInfo={record} />
           </div>
         )
@@ -267,12 +262,15 @@ function PendingList({ style, parentPopup }: IProps) {
         rowClassName={(record, i) => {
           return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
         }}
-        size="small"
+        size="middle"
         pageSize={6}
       />
 
-      {/* <SettingPendingTpSlAction ref={settingPendingTpSlActionRef} /> */}
-      <ModifyPendingOrderModal ref={modifyPendingRef} />
+      <SettingPendingEditorAction
+        ref={settingPendingEditorActionRef}
+        record={settingPendingTpSlRecord}
+        onClose={() => setSettingPendingTpSlRecord({} as IPendingItem)}
+      />
     </>
   )
 }
@@ -364,7 +362,7 @@ const PendingCancelOrderAction = observer(({ pendingOrderInfo }: { pendingOrderI
   )
 })
 
-const PendingTpSlCell = observer(({ pendingOrderInfo, onEdit }: { pendingOrderInfo: IPendingItem; onEdit: () => void }) => {
+const PendingTpSlCell = observer(({ pendingOrderInfo, onEdit }: { pendingOrderInfo: IPendingItem; onEdit?: () => void }) => {
   const isBuy = pendingOrderInfo?.buySell === TradeOrderDirectionEnum.BUY
 
   return (
@@ -393,9 +391,9 @@ const PendingTpSlCell = observer(({ pendingOrderInfo, onEdit }: { pendingOrderIn
         )}
       </div>
 
-      <IconButton variant={'ghost'} className="p-0.5 rounded-1" onClick={onEdit}>
+      {/* <IconButton variant={'ghost'} className="p-0.5 rounded-1" onClick={onEdit}>
         <Iconify icon="iconoir:edit" className="size-4" />
-      </IconButton>
+      </IconButton> */}
     </div>
   )
 })

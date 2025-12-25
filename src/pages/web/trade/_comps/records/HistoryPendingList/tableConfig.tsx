@@ -2,23 +2,23 @@ import { ProColumns } from '@ant-design/pro-components'
 import { FormattedMessage } from '@umijs/max'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
-import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { getEnum } from '@/constants/enum'
 import { useLang } from '@/context/languageProvider'
+import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
-import { cn } from '@/libs/ui/lib/utils'
-import { observer } from 'mobx-react'
-import { BNumber } from '@/libs/utils/number'
-import CurrentPrice from '../PositionList/_comps/CurrentPrice'
+import { cn } from '@/utils/cn'
 import { Trans } from '@/libs/lingui/react/macro'
-import { B } from 'react-grid-layout/dist/position-Dk2b4ZMS'
-import { formatAddress } from '@/libs/utils/format'
-import { GeneralTooltip } from '@/components/tooltip'
+import { GeneralTooltip } from '@/components/tooltip/general'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
+import { formatAddress } from '@/libs/utils/format'
 import { renderFallback } from '@/libs/utils/format/fallback'
+import { BNumber } from '@/libs/utils/number'
+import { observer } from 'mobx-react'
 
-export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsPageListItem>[] => {
+export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
+  const { trade } = useStores()
+  const currencyDecimal = trade.currentAccountInfo.currencyDecimal
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
 
@@ -39,13 +39,13 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
         label: '' // 去掉form label
       },
       fixed: 'left',
-      width: 230,
+      width: 200,
       renderText(text, record, index, action) {
         return <HistoryOrderSymbolInfoCell orderInfo={record} />
       }
     },
     {
-      title: <Trans>交易类型</Trans>,
+      title: <FormattedMessage id="common.type" />,
       dataIndex: 'type',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -56,21 +56,19 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120,
+      width: isZh ? 120 : 160,
       align: 'left',
-      className: '!text-[13px] text-primary',
-      renderText(text, record, index, action) {
-        return renderFallback(getEnum().Enum.OrderInOut?.[record.inOut!]?.text)
-      }
+      valueEnum: getEnum().Enum.OrderType,
+      className: 'text-paragraph-p2 text-content-1'
     },
 
     {
       title: (
         <>
-          <Trans>开仓均价</Trans> / <Trans>成交价</Trans>
+          <Trans>请求价格</Trans> / <Trans>成交价</Trans>
         </>
       ),
-      dataIndex: ' price',
+      dataIndex: 'price',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
       fieldProps: {
@@ -84,9 +82,10 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
         return <HistoryOrderPriceCell orderInfo={record} />
       }
     },
+
     {
       title: <Trans>手数</Trans>,
-      dataIndex: 'tradingVolume',
+      dataIndex: 'orderVolume',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
       copyable: false,
@@ -100,48 +99,36 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       width: 100,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="text-paragraph-p2 text-content-1">{BNumber.toFormatNumber(record.tradingVolume)}</span>
+        return <span className="text-paragraph-p2 text-content-1">{BNumber.toFormatNumber(text)}</span>
       }
     },
-    // {
-    //   title: (
-    //     <>
-    //       <FormattedMessage id="mt.shouxufei" />
-    //       (USD)
-    //     </>
-    //   ),
-    //   dataIndex: 'handlingFees',
-    //   hideInSearch: true, // 在 table的查询表单 中隐藏
-    //   ellipsis: false,
-    //   fieldProps: {
-    //     placeholder: ''
-    //   },
-    //   formItemProps: {
-    //     label: '' // 去掉form label
-    //   },
-    //   width: 150,
-    //   renderText(text, record, index, action) {
-    //     return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
-    //   }
-    // },
     {
-      title: <Trans>保证金类型</Trans>,
-      dataIndex: 'marginType',
+      title: (
+        <>
+          <Trans>手续费</Trans>
+        </>
+      ),
+      dataIndex: 'handlingFees',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
-      valueEnum: getEnum().Enum.MarginType,
       fieldProps: {
         placeholder: ''
       },
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 140,
-      className: 'text-paragraph-p2 text-content-1'
+      width: isZh ? 140 : 150,
+      renderText(text, record, index, action) {
+        return (
+          <span className="text-paragraph-p2 text-content-1">
+            {BNumber.toFormatNumber(text, { precision: currencyDecimal, unit: 'USDC' })}
+          </span>
+        )
+      }
     },
 
     {
-      title: <Trans>成交单号</Trans>,
+      title: <Trans>订单号</Trans>,
       dataIndex: 'id',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
@@ -166,27 +153,6 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       }
     },
     {
-      title: <Trans>交易签名</Trans>,
-      dataIndex: 'signature',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      width: 140,
-      renderText(text, record, index, action) {
-        return (
-          <>
-            {renderFallback(
-              <span className="text-content-1 text-paragraph-p2">
-                <ExplorerLink path={`tx/${record.signature}`} address={record.signature} />
-              </span>,
-              {
-                verify: !!record.signature
-              }
-            )}
-          </>
-        )
-      }
-    },
-    {
       title: <Trans>交易时间</Trans>,
       dataIndex: 'createTime',
       hideInSearch: true, // 在 table的查询表单 中隐藏
@@ -201,45 +167,30 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       className: 'text-paragraph-p2 text-content-1'
     },
     {
-      title: (
-        <>
-          <Trans>盈亏</Trans>
-          (USDC)
-        </>
-      ),
-      dataIndex: 'profit',
+      title: <Trans>状态</Trans>,
+      dataIndex: 'status',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
-      copyable: false,
       fieldProps: {
         placeholder: ''
       },
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: isZh ? 120 : 140,
+      width: 120,
       align: 'right',
       fixed: 'right',
+      className: '!text-[13px] text-primary',
       renderText(text, record, index, action) {
-        const profit = record.profit
         return (
-          <>
-            <span
-              className={cn(
-                'text-paragraph-p2',
-                BNumber.from(profit)?.gt(0) ? 'text-market-rise' : BNumber.from(profit)?.lt(0) ? 'text-market-fall' : 'text-content-1'
-              )}
-            >
-              {BNumber.toFormatNumber(profit, { forceSign: true, positive: false, volScale: currencyDecimal })}
-            </span>
-          </>
+          <span className="text-paragraph-p2 text-content-1">{renderFallback(getEnum().Enum.OrderStatus?.[record.status!]?.text)}</span>
         )
       }
     }
   ]
 }
 
-const HistoryOrderSymbolInfoCell = observer(({ orderInfo }: { orderInfo: Order.TradeRecordsPageListItem }) => {
+const HistoryOrderSymbolInfoCell = observer(({ orderInfo }: { orderInfo: Order.OrderPageListItem }) => {
   const { colorClassName, text2 } = getBuySellInfo(orderInfo)
   return (
     <div className="flex items-center gap-medium">
@@ -252,15 +203,25 @@ const HistoryOrderSymbolInfoCell = observer(({ orderInfo }: { orderInfo: Order.T
   )
 })
 
-const HistoryOrderPriceCell = observer(({ orderInfo }: { orderInfo: Order.TradeRecordsPageListItem }) => {
+const HistoryOrderPriceCell = observer(({ orderInfo }: { orderInfo: Order.OrderPageListItem }) => {
+  const { trade } = useStores()
+  const currencyDecimal = trade.currentAccountInfo.currencyDecimal
+
   return (
     <div className="text-paragraph-p2 text-content-1">
-      {BNumber.toFormatNumber(orderInfo?.startPrice, {
-        volScale: orderInfo?.symbolDecimal
-      })}
+      {orderInfo.type === 'MARKET_ORDER' ? (
+        <span className="text-paragraph-p2 text-content-1">
+          <Trans>市价</Trans>
+        </span>
+      ) : (
+        BNumber.toFormatNumber(orderInfo.limitPrice, {
+          volScale: currencyDecimal
+        })
+      )}
+
       {' / '}
       {BNumber.toFormatNumber(orderInfo?.tradePrice, {
-        volScale: orderInfo?.symbolDecimal
+        volScale: currencyDecimal
       })}
     </div>
   )
