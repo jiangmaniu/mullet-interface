@@ -188,7 +188,7 @@ export const HeaderRightContent = observer(({ isAdmin, isTrade, theme = 'black' 
         </Button>
         <Button
           onClick={() => {
-            withdrawModalRef?.current.show()
+            withdrawModalRef?.current.show(currentAccountInfo)
           }}
           type="default"
         >

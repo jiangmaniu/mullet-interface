@@ -11,7 +11,6 @@ import { useTheme } from '@/context/themeProvider'
 import { withdrawByAddress } from '@/services/api/tradeCore/account'
 import { message } from '@/utils/message'
 import { Form, Input, Select, Space, Avatar } from 'antd'
-import { useCachedServerWallet } from '@/context/ServerWalletsProvider'
 import { useServerWallet } from '@/hooks/useServerWallet'
 import { CHAIN_ICONS, getTokenIcon } from '@/config/tokenIcons'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
@@ -46,39 +45,42 @@ export default observer(
     const [submitLoading, setSubmitLoading] = useState(false)
     const [form] = Form.useForm()
     const { fetchUserInfo } = useModel('user')
-    const [accountItem, setAccountItem] = useState({} as User.AccountItem)
+    const [accountItem, setAccountItem] = useState<User.AccountItem | null>(null)
     const [selectedChain, setSelectedChain] = useState('Solana')
     const [selectedToken, setSelectedToken] = useState('USDC')
     const { user, getAccessToken } = usePrivy()
     const [walletBalance, setWalletBalance] = useState<string>('0') // Solana 钱包余额
     const [loadingBalance, setLoadingBalance] = useState(false)
 
-    const tradeAccountId = accountItem?.id || trade.currentAccountInfo?.id
+    // 🔥 只使用 accountItem?.id，不 fallback 到 trade.currentAccountInfo
+    const tradeAccountId = accountItem?.id
 
     // 获取 Solana 钱包地址（源钱包 - 出金时从这里转出）
-    const cachedWallet = useCachedServerWallet('solana') // 出金总是从 Solana 钱包转出
-    const { address: serverWalletAddress, isCreating: isServerWalletCreating } = useServerWallet(
+    // 🔥 不使用缓存，直接用 useServerWallet 确保与 tradeAccountId 匹配
+    const { address: solanaWalletAddress, isCreating: isWalletLoading } = useServerWallet(
       'solana',
-      open && !!tradeAccountId && !cachedWallet.address,
+      !!tradeAccountId,  // 只要有 tradeAccountId 就启用
       tradeAccountId
     )
-    const solanaWalletAddress = cachedWallet.address || serverWalletAddress
-    const isWalletLoading = cachedWallet.isLoading || isServerWalletCreating
 
     const close = () => {
       setOpen(false)
+      setAccountItem(null)  // 🔥 关闭时清空
       form.resetFields()
+      setWalletBalance('0')
     }
 
     const show = (item?: User.AccountItem) => {
-      setOpen(true)
       const rawItem = item || trade.currentAccountInfo
+      console.log('[WithdrawModal] show() called with tradeAccountId:', rawItem?.id)
       if (rawItem) {
-        setAccountItem(rawItem)
+        setAccountItem(rawItem)  // 🔥 先设置 accountItem
         form.setFieldValue('accountId', rawItem.id)
         form.setFieldValue('targetChain', 'Solana')
         form.setFieldValue('targetToken', 'USDC')
+        setWalletBalance('0')
       }
+      setOpen(true)  // 🔥 再打开弹窗
     }
 
     // 对外暴露接口
@@ -210,7 +212,8 @@ export default observer(
               money: Number(money),
               remark: `Privy withdraw ${targetToken} to ${targetChain}`,
               withdrawAddress,
-              targetChain
+              targetChain,
+              signature: result.txHash,  // 🔥 传递交易签名
             })
 
             message.success(`提现成功！交易哈希: ${(result.txHash || '').slice(0, 12)}...`)
@@ -247,7 +250,8 @@ export default observer(
               money: Number(money),
               remark: `Privy bridge ${targetToken} to ${targetChain}`,
               withdrawAddress,
-              targetChain
+              targetChain,
+              signature: result.data?.txHash || result.data?.orderId,  // 🔥 传递交易签名
             })
 
             message.success(`跨链提现订单已创建！订单ID: ${result.data?.orderId || ''}`)
@@ -452,8 +456,8 @@ export default observer(
                       if (Number(value) > availableBalance) {
                         return Promise.reject(new Error(`余额不足，可用: ${walletBalance} USD`))
                       }
-                      if (Number(value) < 1) {
-                        return Promise.reject(new Error('最低提现金额为 1 USD'))
+                      if (Number(value) < 0.001) {
+                        return Promise.reject(new Error('最低提现金额为 0.001 USD'))
                       }
                       return Promise.resolve()
                     }
