@@ -27,8 +27,7 @@ import { formatNum } from '@/utils'
 import { EmptyNoData } from '@/components/empty/no-data'
 import { observer } from 'mobx-react'
 import { usePrivy } from '@privy-io/react-auth'
-import { useCoboWallet } from '@/hooks/useCoboWallet'
-import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
+import { useServerWallet } from '@/hooks/useServerWallet'
 
 export const TradeAccountInfo = observer(() => {
   // const { isAuthenticated } = useWalletAuthState()
@@ -43,23 +42,11 @@ export const TradeAccountInfo = observer(() => {
   const { address: privyAddress } = usePrivyInfo()
   const { user } = usePrivy()
 
-  // 🔥 获取 Cobo 钱包 - autoCreate: true 负责创建，其他组件只读缓存
-  const { walletId: coboWalletId } = useCoboWallet({
-    tradeAccountId: currentAccountInfo?.id,
-    enabled: !!currentAccountInfo?.id,
-    autoCreate: true  // 🔥 只有这里负责创建钱包
-  })
+  // 🔥 使用 Privy Server Solana 钱包地址
+  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id)
 
-  // 获取 Cobo Solana 充值地址
-  const { address: coboSolanaAddress } = useCoboDepositAddress({
-    tradeAccountId: currentAccountInfo?.id,
-    chainId: 'SOL',
-    walletId: coboWalletId || '',
-    enabled: !!currentAccountInfo?.id && !!coboWalletId
-  })
-
-  // 优先使用交易账户 PDA 地址，否则 fallback 到 Cobo/Privy 地址
-  const displayAddress = currentAccountInfo?.pdaTokenAddress || coboSolanaAddress || privyAddress
+  // 优先使用 Privy Server Solana 地址
+  const displayAddress = serverSolanaAddress || privyAddress
 
   return (
     <DropdownMenu>
@@ -100,19 +87,8 @@ const AccountSelector = observer(() => {
   const currentUser = initialState?.currentUser
   const { user } = usePrivy()
 
-  // 获取 Cobo 钱包
-  const { walletId: coboWalletId } = useCoboWallet({
-    tradeAccountId: currentAccountInfo?.id,
-    enabled: !!currentAccountInfo?.id
-  })
-
-  // 获取 Cobo Solana 充值地址
-  const { address: coboSolanaAddress } = useCoboDepositAddress({
-    tradeAccountId: currentAccountInfo?.id,
-    chainId: 'SOL',
-    walletId: coboWalletId || '',
-    enabled: !!currentAccountInfo?.id && !!coboWalletId
-  })
+  // 🔥 使用 Privy Server Solana 钱包地址
+  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id)
 
   useEffect(() => {
     const accountList = currentUser?.accountList || []
@@ -165,19 +141,19 @@ const AccountSelector = observer(() => {
                 <span className="ml-1 text-sm font-normal text-secondary">USD</span>
               </div>
             </div>
-            {/* 显示 PDA 地址和复制按钮 */}
-            {currentAccountInfo.pdaTokenAddress && (
+            {/* 显示 Privy Server Solana 地址和复制按钮 */}
+            {serverSolanaAddress && (
               <div className="mt-2 flex items-center gap-2 text-xs">
                 <a
-                  href={`https://explorer.solana.com/address/${currentAccountInfo.pdaTokenAddress}`}
+                  href={`https://explorer.solana.com/address/${serverSolanaAddress}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-brand hover:underline"
                 >
-                  {formatAddress(currentAccountInfo.pdaTokenAddress)}
+                  {formatAddress(serverSolanaAddress)}
                 </a>
                 <button
-                  onClick={() => copyContent(currentAccountInfo.pdaTokenAddress)}
+                  onClick={() => copyContent(serverSolanaAddress)}
                   className="text-secondary hover:text-primary cursor-pointer p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
                   title="Copy address"
                 >

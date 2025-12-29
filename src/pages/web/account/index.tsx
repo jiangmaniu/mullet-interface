@@ -33,6 +33,7 @@ import RenameAccountModal from './comp/RenameAccountModal'
 import { Iconify } from '@/libs/ui/components/icons'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { usePrivy } from '@privy-io/react-auth'
+import { useServerWallet } from '@/hooks/useServerWallet'
 
 type IAccountItem = User.AccountItem & {
   isEyeOpen?: boolean
@@ -73,6 +74,9 @@ function Account() {
   // 判断是否是外部钱包
   const currentWalletAccount = user?.linkedAccounts?.find((account: any) => account.address === activeSolanaWallet?.address)
   const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
+
+  // 🔥 使用 Privy Server Solana 钱包地址
+  const { address: serverSolanaAddress } = useServerWallet('solana', true)
 
   const { notKycAuth } = useKycAuth()
 
@@ -221,7 +225,7 @@ function Account() {
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
-                  <ExplorerLink path={`address/${item.pdaTokenAddress}`} copyable address={item.pdaTokenAddress} />
+                  <ExplorerLink path={`address/${serverSolanaAddress}`} copyable address={serverSolanaAddress} />
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-[30px] !font-dingpro-medium text-primary">
@@ -234,7 +238,7 @@ function Account() {
                 <Tooltip
                   overlayClassName="tooltipBoxDeposit"
                   zIndex={100}
-                  open={Number(item.money) <= 0 && countDownSeconds > 0 && !!item.pdaTokenAddress}
+                  open={Number(item.money) <= 0 && countDownSeconds > 0 && !!serverSolanaAddress}
                   placement={isPc ? 'left' : 'bottomRight'}
                   title={
                     <div className="contentBox">
@@ -261,7 +265,7 @@ function Account() {
                         onClick={() => {
                           setShowAddFundsMenu(true)
                         }}
-                        disabled={!item.pdaTokenAddress}
+                        disabled={!serverSolanaAddress}
                         style={{ height: 46, width: 108 }}
                       >
                         <FormattedMessage id="mt.cunkuan" />

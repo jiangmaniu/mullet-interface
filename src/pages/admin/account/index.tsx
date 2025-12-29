@@ -27,6 +27,7 @@ import { getAccountSynopsisByLng } from '@/utils/business'
 import Header from './comp/Header'
 import RechargeSimulateModal from './comp/RechargeSimulateModal'
 import RenameAccountModal from './comp/RenameAccountModal'
+import { useServerWallet } from '@/hooks/useServerWallet'
 
 type IAccountItem = User.AccountItem & {
   isEyeOpen?: boolean
@@ -56,6 +57,9 @@ function Account() {
   const precision = trade.currentAccountInfo.currencyDecimal
 
   const transferModalRef = useRef<any>(null)
+
+  // 🔥 使用 Privy Server Solana 钱包地址
+  const { address: serverSolanaAddress } = useServerWallet('solana', true)
 
   const { notKycAuth } = useKycAuth()
 
@@ -213,7 +217,7 @@ function Account() {
                   </div>
                 </div>
                 <div className="flex items-center gap-x-2">
-                  <ExplorerLink path={`address/${item.pdaTokenAddress}`} copyable address={item.pdaTokenAddress} />
+                  <ExplorerLink path={`address/${serverSolanaAddress}`} copyable address={serverSolanaAddress} />
                 </div>
                 <div className="flex items-baseline">
                   <span className="text-[30px] !font-dingpro-medium text-primary">
@@ -226,7 +230,7 @@ function Account() {
                 <Tooltip
                   overlayClassName="tooltipBoxDeposit"
                   zIndex={100}
-                  open={Number(item.money) <= 0 && countDownSeconds > 0 && !!item.pdaTokenAddress}
+                  open={Number(item.money) <= 0 && countDownSeconds > 0 && !!serverSolanaAddress}
                   placement={isPc ? 'left' : 'bottomRight'}
                   title={
                     <div className="contentBox">
@@ -254,7 +258,7 @@ function Account() {
                           // push(`/deposit?tradeAccountId=${item.id}`)
                           depositModalRef.current.show(item)
                         }}
-                        disabled={!item.pdaTokenAddress}
+                        disabled={!serverSolanaAddress}
                         style={{ height: 46, width: 108 }}
                         icon={<img src="/img/rujin_icon.png" width={20} height={20} />}
                       >
