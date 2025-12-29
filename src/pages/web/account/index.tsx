@@ -33,7 +33,9 @@ import RenameAccountModal from './comp/RenameAccountModal'
 import { Iconify } from '@/libs/ui/components/icons'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { usePrivy } from '@privy-io/react-auth'
+import { useFundWallet as useSolanaFundWallet } from '@privy-io/react-auth/solana'
 import { useServerWallet } from '@/hooks/useServerWallet'
+import { message } from 'antd'
 
 type IAccountItem = User.AccountItem & {
   isEyeOpen?: boolean
@@ -76,7 +78,41 @@ function Account() {
   const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
 
   // 🔥 使用 Privy Server Solana 钱包地址
-  const { address: serverSolanaAddress } = useServerWallet('solana', true)
+  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet('solana', true)
+
+  // Privy 信用卡购买
+  const { fundWallet: fundSolanaWallet } = useSolanaFundWallet()
+
+  // 信用卡购买处理
+  const handleCardClick = async () => {
+    setShowAddFundsMenu(false)
+
+    if (serverWalletLoading) {
+      message.info('正在加载充值地址，请稍候...')
+      return
+    }
+
+    if (!serverSolanaAddress) {
+      console.error('[Buy Crypto] No Server Solana address available')
+      message.error('Solana 充值地址未就绪，请稍后重试')
+      return
+    }
+
+    console.log('[Buy Crypto] Using Server Solana address:', serverSolanaAddress)
+
+    try {
+      const result = await fundSolanaWallet({
+        address: serverSolanaAddress,
+        options: {
+          asset: 'USDC',
+          amount: '10'
+        }
+      })
+      console.log('[Buy Crypto] Fund wallet result:', result)
+    } catch (error) {
+      console.error('[Buy Crypto] Fund wallet error:', error)
+    }
+  }
 
   const { notKycAuth } = useKycAuth()
 
@@ -387,7 +423,7 @@ function Account() {
         onClose={() => setShowAddFundsMenu(false)}
         onTransferClick={() => setShowTransferDialog(true)}
         onSwapClick={() => setShowSwapDialog(true)}
-        onCardClick={() => setShowAddFundsMenu(false)}
+        onCardClick={handleCardClick}
         showSwapOption={!!isExternalWallet}
       />
       {/* 跨链充值弹窗 */}
