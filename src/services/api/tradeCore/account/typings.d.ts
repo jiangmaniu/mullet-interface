@@ -364,5 +364,9 @@ declare namespace Account {
      * 目标链 (用于跨链桥接)
      */
     targetChain?: string
+    /**
+     * 交易签名 (链上交易哈希)
+     */
+    signature?: string
   }
 }
