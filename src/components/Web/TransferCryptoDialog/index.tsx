@@ -286,11 +286,6 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
     if (deposit && !bridgeInProgress) {
       console.log('[TransferCrypto] Deposit detected:', deposit)
-      message.success({
-        key: 'deposit-detected',
-        content: `✅ 检测到充值: ${deposit.amount} ${deposit.token} (${deposit.chain})`,
-        duration: 10, // 10秒
-      })
 
       // 触发桥接 - 使用 rawBalance（最小单位）
       // rawBalance 是十六进制字符串，需要转换为十进制数字字符串
@@ -788,7 +783,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
               {deposits.length > 0 && (
                 <div style={{ marginTop: 8 }}>
                   <Text type="secondary" style={{ fontSize: 12 }}>
-                    充值记录 ({deposits.length})
+                    新充值 ({deposits.length})
                   </Text>
                   <div style={{ marginTop: 4 }}>
                     {deposits.slice(0, 5).map((d, index) => {
