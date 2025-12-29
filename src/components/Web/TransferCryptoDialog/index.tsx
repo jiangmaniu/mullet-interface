@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert, Tooltip } from 'antd'
 import { CopyOutlined, ArrowLeftOutlined } from '@ant-design/icons'
-import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth'
+import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { debridgeService } from '@/services/debridgeService'
 import { useDepositListener } from '@/hooks/useDepositListenerV2'
-import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
 import { useServerWallet } from '@/hooks/useServerWallet'
 import type { SupportedChain } from '@/services/serverWalletService'
@@ -34,16 +33,6 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const { getAccessToken, user } = usePrivy()
   const { wallets } = useWallets()
 
-  // Privy v3.8+ Ethereum Gas 赞助
-  const { sendTransaction } = useSendTransaction({
-    onSuccess: (txReceipt) => {
-      console.log('[Privy] ✅ Ethereum transaction successful:', txReceipt)
-    },
-    onError: (error) => {
-      console.error('[Privy] ❌ Ethereum transaction failed:', error)
-    }
-  })
-
   const { trade } = useStores()
 
   const [selectedChain, setSelectedChain] = useState('Tron')
@@ -51,7 +40,6 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const [depositAddress, setDepositAddress] = useState('')
   const [bridgeInProgress, setBridgeInProgress] = useState(false)
   const [bridgeStep, setBridgeStep] = useState<'idle' | 'tron-eth' | 'eth-sol' | 'completed'>('idle')
-  const [pollingOrderId, setPollingOrderId] = useState<string | null>(null) // 正在轮询的订单 ID
 
   // 判断当前选择的链是否是 Cobo
   const selectedChainConfig = SUPPORTED_BRIDGE_CHAINS.find((c) => c.name === selectedChain)
@@ -82,6 +70,16 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   } = useServerWallet(
     currentChainId, 
     open && isPrivyChain && !!tradeAccountId, 
+    tradeAccountId
+  )
+  
+  // 🔥 额外获取 BSC/EVM 钱包信息，用于 TRON → BSC → Solana 桥接
+  const { 
+    address: evmWalletAddress, 
+    walletId: evmWalletId,
+  } = useServerWallet(
+    'bsc', // BSC 代表所有 EVM 链，地址相同
+    open && currentChainId === 'tron' && !!tradeAccountId, // 仅在 TRON 页面时获取
     tradeAccountId
   )
   
@@ -297,14 +295,14 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     if (deposit && !bridgeInProgress) {
       console.log('[TransferCrypto] Deposit detected:', deposit)
 
-      // 触发桥接 - 使用 rawBalance（最小单位）
-      // rawBalance 是十六进制字符串，需要转换为十进制数字字符串
+      // 触发桥接 - 使用 rawAmount（最小单位）
+      // rawAmount 可能是十六进制字符串，需要转换为十进制数字字符串
       let amountToUse = deposit.amount
-      if (deposit.rawBalance && deposit.rawBalance.startsWith('0x')) {
-        amountToUse = BigInt(deposit.rawBalance).toString() // 转换为十进制字符串
-        console.log('[TransferCrypto] Converted rawBalance:', deposit.rawBalance, '→', amountToUse)
-      } else if (deposit.rawBalance) {
-        amountToUse = deposit.rawBalance
+      if (deposit.rawAmount && deposit.rawAmount.startsWith('0x')) {
+        amountToUse = BigInt(deposit.rawAmount).toString() // 转换为十进制字符串
+        console.log('[TransferCrypto] Converted rawAmount:', deposit.rawAmount, '→', amountToUse)
+      } else if (deposit.rawAmount) {
+        amountToUse = deposit.rawAmount
       }
 
       handleAutoBridge(amountToUse, deposit.token, deposit.chain)
@@ -315,82 +313,28 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deposit])
 
-  // 通知后端开始监控订单 + 前端立即充值
-  const notifyBackendBridgeOrder = async (orderId: string, amount: string, token: string, chain: string) => {
-    try {
-      const targetAddress = trade.currentAccountInfo?.pdaTokenAddress
-      if (!targetAddress) {
-        console.error('[Bridge] ❌ Backend PDA token address not found!')
-        return
-      }
-
-      const notifyUrl = new URL(`${API_BASE_URL}/api/debridge-monitor/submit`)
-      notifyUrl.searchParams.append('orderId', orderId)
-      notifyUrl.searchParams.append('toAddress', targetAddress)
-      notifyUrl.searchParams.append('amount', amount)
-      notifyUrl.searchParams.append('token', token)
-      notifyUrl.searchParams.append('chain', chain)
-
-      console.log('[Bridge] 📡 Notifying backend to monitor order:', {
-        orderId,
-        targetAddress,
-        amount,
-        token,
-        chain,
-        url: notifyUrl.toString()
-      })
-
-      // 提交后端监控（不等待结果）
-      fetch(notifyUrl.toString(), {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-        signal: AbortSignal.timeout(10000)
-      })
-        .then((response) => {
-          if (response.ok) {
-            console.log('[Bridge] ✅ Backend notification successful')
-          } else {
-            console.error('[Bridge] ❌ Backend notification failed:', response.status)
-          }
-        })
-        .catch((error) => {
-          console.error('[Bridge] ❌ Failed to notify backend:', error)
-        })
-
-      // 🔥 前端立即调用充值 API（不等后端）
-      console.log('[Bridge] 💰 Calling recharge API immediately...')
-      const rechargeUrl = `https://client-test.mullet.top/api/trade-solana/recharge/swap?toAddress=${targetAddress}&amount=${amount}`
-
-      const rechargeResponse = await fetch(rechargeUrl, {
-        method: 'GET',
-        signal: AbortSignal.timeout(10000) // 10秒超时
-      })
-
-      if (rechargeResponse.ok) {
-        const rechargeData = await rechargeResponse.json()
-        console.log('[Bridge] ✅ Recharge successful:', rechargeData)
-        message.success('🎉 充值成功！资金已到账')
-      } else {
-        const errorText = await rechargeResponse.text()
-        console.error('[Bridge] ❌ Recharge failed:', rechargeResponse.status, errorText)
-        message.warning('充值请求已提交，后端将自动重试')
-      }
-    } catch (error) {
-      console.error('[Bridge] ❌ Recharge error:', error)
-      message.info('充值处理中，后端将自动完成')
-    }
-  }
-
   // 自动桥接
   const handleAutoBridge = async (amount: string, token: string, chain: string) => {
     try {
       setBridgeInProgress(true)
-      console.log('[Bridge] Starting with params:', { amount, token, chain, finalServerWalletAddress, finalServerWalletId })
-      message.loading('正在启动跨链桥接...', 0)
+      
+      // 🔥 标准化 chain 名称（首字母大写）
+      const chainNameMap: Record<string, string> = {
+        'tron': 'Tron',
+        'ethereum': 'Ethereum',
+        'solana': 'Solana',
+        'bsc': 'BSC',
+        'polygon': 'Polygon',
+        'arbitrum': 'Arbitrum',
+        'optimism': 'Optimism',
+        'base': 'Base',
+        'avalanche': 'Avalanche',
+      }
+      const normalizedChain = chainNameMap[chain.toLowerCase()] || chain
+      
+      console.log('[Bridge] Starting with params:', { amount, token, chain: normalizedChain, originalChain: chain, finalServerWalletAddress, finalServerWalletId })
 
-      // 从 user.linkedAccounts 获取钱包地址（备用）
-      const tronAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'tron') as any
-      const ethAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'ethereum') as any
+      // 从 user.linkedAccounts 获取钱包地址
       const solAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'solana') as any
 
       // 使用 useServerWallet hook 的返回值
@@ -399,13 +343,10 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         throw new Error('Server Wallet 信息不完整，请刷新页面重试')
       }
 
-      if (!ethAccount || !solAccount) {
-        throw new Error('缺少必需的钱包。请确保已创建 Ethereum 和 Solana 钱包。')
+      if (!solAccount) {
+        throw new Error('缺少 Solana 钱包，请确保已创建 Solana 钱包')
       }
 
-      // 构建钱包对象（兼容旧接口）
-      const sourceWallet = { address: finalServerWalletAddress }
-      const ethWallet = wallets.find((w) => (w as any).chainType === 'ethereum') || { address: ethAccount.address }
       const solWallet = { address: solAccount.address }
 
       const accessToken = await getAccessToken()
@@ -413,143 +354,161 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         throw new Error('无法获取访问令牌，请重新登录')
       }
 
-      // 检查最低金额：Tron $20, Ethereum $3
-      // amount 是最小单位格式（如 USDT: 20000000 = 20 USD）
-      const minAmountUSD = chain === 'Tron' ? 20 : chain === 'Ethereum' ? 3 : 10
-      const minAmountSmallestUnit = minAmountUSD * 1_000_000 // 转换为最小单位
+      // 检查最低金额
+      const minAmountUSD = normalizedChain === 'Tron' ? 20 : 10
+      const minAmountSmallestUnit = minAmountUSD * 1_000_000
 
       const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount
 
       if (amountNum < minAmountSmallestUnit) {
         const amountUSD = amountNum / 1_000_000
         throw new Error(
-          `金额过小。最低金额: $${minAmountUSD} USD，当前金额: $${amountUSD.toFixed(
-            2
-          )} USD。跨链桥接有固定费用约 $2-3，小额转账费用占比过高。`
+          `金额过小。最低金额: $${minAmountUSD} USD，当前金额: $${amountUSD.toFixed(2)} USD`
         )
       }
 
-      if (chain === 'Tron') {
-        // Tron → Ethereum
-        console.log('[Bridge] Step 1: Tron → Ethereum')
+      if (normalizedChain === 'Tron') {
+        // 🔥 Tron → BSC → Solana (两步跨链，通过后端执行)
+        console.log('[Bridge] TRON → BSC → Solana (2 steps via backend)')
+        
+        // 检查 EVM 钱包是否已准备好
+        if (!evmWalletAddress || !evmWalletId) {
+          throw new Error('EVM 钱包信息未就绪，请稍后重试')
+        }
+        
+        // Step 1: TRON → BSC
         setBridgeStep('tron-eth')
-        message.loading('步骤 1/2: 正在从 Tron 桥接到 Ethereum...', 0)
+        message.loading('步骤 1/2: 正在从 TRON 桥接到 BSC...', 0)
 
-        const tronTokenInfo = SUPPORTED_TOKENS.tron.find((t) => t.symbol === token)
-        if (!tronTokenInfo) throw new Error(`Token ${token} 在 Tron 上不受支持`)
-
-        console.log('[Bridge] Server wallet info:', {
-          walletId: finalServerWalletId,
-          address: finalServerWalletAddress
+        const step1Response = await fetch(`${API_BASE_URL}/api/server-wallet-bridge/bridge-tron-to-bsc`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({
+            walletId: finalServerWalletId,
+            walletAddress: finalServerWalletAddress,
+            evmWalletId,  // 🔥 传递 EVM 钱包 ID
+            evmWalletAddress,  // 🔥 传递 EVM 钱包地址（BSC 接收地址）
+            amount,
+            token
+          })
         })
 
-        const tronResult = await debridgeService.bridgeTronToEthereum({
-          tokenAddress: tronTokenInfo.address,
-          amount,
-          fromAddress: sourceWallet.address,
-          ethereumAddress: ethWallet.address,
-          walletId: finalServerWalletId,
-          publicKey: '', // Server wallet 不需要 publicKey
-          accessToken,
-          useGasSponsorship: true
-        })
-
-        message.success(`✅ TRON 交易成功: ${tronResult.txHash.slice(0, 8)}...`)
-        console.log('[Bridge] TRON tx:', tronResult.txHash)
-        console.log('[Bridge] Order ID:', tronResult.orderId)
-        console.log('[Bridge] Full TRON result:', tronResult)
-
-        if (!tronResult.orderId) {
-          throw new Error('❌ deBridge 未返回 Order ID，无法继续桥接。请检查交易状态或联系支持。')
+        if (!step1Response.ok) {
+          const errorData = await step1Response.json().catch(() => ({}))
+          throw new Error(errorData.message || errorData.error || `TRON→BSC 桥接失败: ${step1Response.status}`)
         }
 
-        // 等待订单完成
-        message.loading('等待 TRON → Ethereum 桥接完成 (约 3-5 分钟)...', 0)
-        await debridgeService.waitForOrderCompletion(tronResult.orderId)
-        message.success('✅ TRON → Ethereum 桥接完成!')
+        const step1Result = await step1Response.json()
+        console.log('[Bridge] ✅ TRON→BSC result:', step1Result)
+        message.success(`✅ TRON 交易成功: ${step1Result.txHash.slice(0, 8)}...`)
 
-        // Ethereum → Solana
-        console.log('[Bridge] Step 2: Ethereum → Solana')
+        // 等待 TRON→BSC 完成
+        if (step1Result.orderId) {
+          message.loading('等待 TRON → BSC 桥接完成 (约 3-5 分钟)...', 0)
+          await debridgeService.waitForOrderCompletion(step1Result.orderId, 600000, 15000)
+        } else {
+          message.loading('等待 TRON → BSC 桥接完成 (约 3-5 分钟)...', 0)
+          await new Promise(resolve => setTimeout(resolve, 180000)) // 3分钟
+        }
+
+        // Step 2: BSC → Solana
         setBridgeStep('eth-sol')
-        message.loading('步骤 2/2: 正在从 Ethereum 桥接到 Solana...', 0)
+        message.loading('步骤 2/2: 正在从 BSC 桥接到 Solana...', 0)
 
-        const ethTokenInfo = SUPPORTED_TOKENS.ethereum.find((t) => t.symbol === token)
-        if (!ethTokenInfo) throw new Error(`Token ${token} 在 Ethereum 上不受支持`)
+        // 使用第一步返回的 EVM 钱包信息
+        const bscWalletId = step1Result.evmWalletId || evmWalletId
+        const bscWalletAddress = step1Result.evmWalletAddress || evmWalletAddress
+        
+        console.log('[Bridge] Step 2 using BSC wallet:', { bscWalletId, bscWalletAddress: bscWalletAddress?.slice(0, 10) })
 
-        const ethResult = await debridgeService.bridgeEthereumToSolana({
-          tokenAddress: ethTokenInfo.address,
-          amount: tronResult.dstChainTokenOutAmount,
-          solanaAddress: solWallet.address,
-          privyWallet: ethWallet,
-          sendTransaction // Privy v3.8 Gas 赞助
+        // 获取 BSC 上的余额并桥接到 Solana
+        const step2Response = await fetch(`${API_BASE_URL}/api/server-wallet-bridge/bridge-to-solana`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({
+            chain: 'bsc',
+            walletId: bscWalletId,  // 🔥 使用 BSC 钱包 ID
+            walletAddress: bscWalletAddress,  // 🔥 使用 BSC 钱包地址
+            amount: step1Result.dstAmount || amount, // 使用第一步的输出金额
+            token,
+            solanaAddress: solWallet.address
+          })
         })
 
-        message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
-        console.log('[Bridge] ETH tx:', ethResult.txHash)
-        console.log('[Bridge] Order ID:', ethResult.orderId || 'NOT_AVAILABLE')
-
-        // 🔥 通知后端监控最终的 ETH→SOL 订单（如果有 orderId）
-        if (ethResult.orderId) {
-          await notifyBackendBridgeOrder(ethResult.orderId, tronResult.dstChainTokenOutAmount, token, 'Ethereum→Solana')
+        if (!step2Response.ok) {
+          const errorData = await step2Response.json().catch(() => ({}))
+          throw new Error(errorData.message || errorData.error || `BSC→Solana 桥接失败: ${step2Response.status}`)
         }
+
+        const step2Result = await step2Response.json()
+        console.log('[Bridge] ✅ BSC→Solana result:', step2Result)
+        message.success(`✅ BSC 交易成功: ${step2Result.txHash.slice(0, 8)}...`)
+
+        // 等待最终确认
+        if (step2Result.orderId) {
+          message.loading('等待 BSC → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          await debridgeService.waitForOrderCompletion(step2Result.orderId)
+        } else {
+          message.loading('等待 BSC → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          await new Promise(resolve => setTimeout(resolve, 120000))
+        }
+
+      } else if (['Ethereum', 'BSC', 'Polygon', 'Arbitrum', 'Optimism', 'Base', 'Avalanche'].includes(normalizedChain)) {
+        // 🔥 EVM → Solana: 调用后端 API 执行桥接
+        console.log(`[Bridge] Direct: ${normalizedChain} → Solana (via backend)`)
+        setBridgeStep('eth-sol')
+        message.loading(`正在从 ${normalizedChain} 桥接到 Solana...`, 0)
+
+        // 调用后端 Server Wallet Bridge API
+        const bridgeResponse = await fetch(`${API_BASE_URL}/api/server-wallet-bridge/bridge-to-solana`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          body: JSON.stringify({
+            chain: normalizedChain.toLowerCase(),
+            walletId: finalServerWalletId,
+            walletAddress: finalServerWalletAddress,
+            amount,
+            token,
+            solanaAddress: solWallet.address
+          })
+        })
+
+        if (!bridgeResponse.ok) {
+          const errorData = await bridgeResponse.json().catch(() => ({}))
+          throw new Error(errorData.message || errorData.error || `桥接失败: ${bridgeResponse.status}`)
+        }
+
+        const bridgeResult = await bridgeResponse.json()
+        console.log('[Bridge] ✅ Backend bridge result:', bridgeResult)
+        
+        message.success(`✅ ${normalizedChain} 交易成功: ${bridgeResult.txHash.slice(0, 8)}...`)
+        console.log(`[Bridge] ${normalizedChain} tx:`, bridgeResult.txHash)
+        console.log('[Bridge] Order ID:', bridgeResult.orderId || 'NOT_AVAILABLE')
 
         // 等待最终确认（如果有 orderId）
-        if (ethResult.orderId) {
-          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
-          await debridgeService.waitForOrderCompletion(ethResult.orderId)
-          console.log('[Bridge] ✅ waitForOrderCompletion completed for TRON→ETH→SOL')
+        if (bridgeResult.orderId) {
+          message.loading(`等待 ${normalizedChain} → Solana 桥接完成 (约 2-3 分钟)...`, 0)
+          await debridgeService.waitForOrderCompletion(bridgeResult.orderId)
+          console.log(`[Bridge] ✅ waitForOrderCompletion completed for ${normalizedChain}→SOL`)
         } else {
-          console.warn('[Bridge] ⚠️ No orderId, waiting 2.5 minutes for bridge to complete...')
-          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
-          await new Promise((resolve) => setTimeout(resolve, 150_000)) // 2.5 分钟
-          console.log('[Bridge] ✅ Manual wait completed for TRON→ETH→SOL')
+          console.warn('[Bridge] ⚠️ No orderId, waiting 2 minutes for bridge to complete...')
+          message.loading(`等待 ${normalizedChain} → Solana 桥接完成 (约 2-3 分钟)...`, 0)
+          await new Promise((resolve) => setTimeout(resolve, 120_000)) // 2 分钟
+          console.log(`[Bridge] ✅ Manual wait completed for ${normalizedChain}→SOL`)
         }
-      } else if (chain === 'Ethereum') {
-        // Ethereum → Solana 直接桥接
-        console.log('[Bridge] Direct: Ethereum → Solana')
-        setBridgeStep('eth-sol')
-        message.loading('正在从 Ethereum 桥接到 Solana...', 0)
-
-        const ethTokenInfo = SUPPORTED_TOKENS.ethereum.find((t) => t.symbol === token)
-        if (!ethTokenInfo) throw new Error(`Token ${token} 在 Ethereum 上不受支持`)
-
-        const ethResult = await debridgeService.bridgeEthereumToSolana({
-          tokenAddress: ethTokenInfo.address,
-          amount,
-          solanaAddress: solWallet.address,
-          privyWallet: ethWallet,
-          sendTransaction // Privy v3.8 Gas 赞助
-        })
-
-        message.success(`✅ Ethereum 交易成功: ${ethResult.txHash.slice(0, 8)}...`)
-        console.log('[Bridge] ETH tx:', ethResult.txHash)
-        console.log('[Bridge] Order ID:', ethResult.orderId || 'NOT_AVAILABLE')
-
-        // 🔥 通知后端监控 ETH→SOL 订单（如果有 orderId）
-        if (ethResult.orderId) {
-          await notifyBackendBridgeOrder(ethResult.orderId, amount, token, 'Ethereum→Solana')
-        }
-
-        // 等待最终确认（如果有 orderId）
-        if (ethResult.orderId) {
-          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
-          await debridgeService.waitForOrderCompletion(ethResult.orderId)
-          console.log('[Bridge] ✅ waitForOrderCompletion completed for ETH→SOL')
-        } else {
-          console.warn('[Bridge] ⚠️ No orderId, waiting 2.5 minutes for bridge to complete...')
-          message.loading('等待 Ethereum → Solana 桥接完成 (约 2-3 分钟)...', 0)
-          await new Promise((resolve) => setTimeout(resolve, 150_000)) // 2.5 分钟
-          console.log('[Bridge] ✅ Manual wait completed for ETH→SOL')
-        }
-      }
-
-      // 通知完成
-      if (onDepositDetected) {
-        onDepositDetected(amount, token, chain)
       }
 
       message.destroy()
-      message.success('🎉 跨链桥接全部完成! 后端会自动充值到账')
+      message.success('🎉 跨链桥接全部完成!')
       setBridgeStep('completed')
 
       // 延迟关闭，让用户看到完成状态
@@ -561,15 +520,6 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       console.error('[Bridge] Failed:', error)
       const errorMessage = error instanceof Error ? error.message : '未知错误'
       message.error(`桥接失败: ${errorMessage}`)
-
-      // 提供更友好的错误提示
-      if (errorMessage.includes('Amount too small')) {
-        message.warning('提示：跨链桥接最低金额为 $10 USD，小额转账手续费占比较高')
-      } else if (errorMessage.includes('wallet')) {
-        message.info('请确保已连接所有需要的钱包 (TRON、Ethereum、Solana)')
-      } else if (errorMessage.includes('token')) {
-        message.info('请检查选择的代币是否正确')
-      }
     } finally {
       setBridgeInProgress(false)
       if (bridgeStep !== 'completed') {

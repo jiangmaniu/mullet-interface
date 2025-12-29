@@ -47,13 +47,18 @@ interface AllWalletsResponse {
 /**
  * Create a server-owned wallet for a specific chain
  * @param chain - The chain to create wallet for
- * @param tradeAccountId - Trade account ID (required for solana)
+ * @param tradeAccountId - Trade account ID (required for ALL chains)
  */
 export async function createServerWallet(chain: SupportedChain, tradeAccountId?: string): Promise<WalletResponse> {
   const token = await getAccessToken()
   
   if (!token) {
     throw new Error('Not authenticated - please login first')
+  }
+
+  // 🔥 All chains require tradeAccountId now
+  if (!tradeAccountId) {
+    throw new Error('tradeAccountId is required for wallet creation')
   }
 
   // TRON has its own endpoint
@@ -64,6 +69,7 @@ export async function createServerWallet(chain: SupportedChain, tradeAccountId?:
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      body: JSON.stringify({ tradeAccountId }),
     })
 
     if (!response.ok) {
@@ -83,10 +89,6 @@ export async function createServerWallet(chain: SupportedChain, tradeAccountId?:
 
   // Solana has its own endpoint
   if (chain === 'solana') {
-    if (!tradeAccountId) {
-      throw new Error('tradeAccountId is required for Solana wallet creation')
-    }
-    
     const response = await fetch(`${API_BASE}/api/solana-wallet/create`, {
       method: 'POST',
       headers: {
@@ -112,14 +114,14 @@ export async function createServerWallet(chain: SupportedChain, tradeAccountId?:
   }
 
   // Generic server-wallet endpoint for other EVM chains
-  console.log(`[serverWalletService] Creating EVM wallet for chain: ${chain}`)
+  console.log(`[serverWalletService] Creating EVM wallet for chain: ${chain}, tradeAccountId: ${tradeAccountId}`)
   const response = await fetch(`${API_BASE}/api/server-wallet/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ chain }),
+    body: JSON.stringify({ chain, tradeAccountId }),
   })
 
   console.log(`[serverWalletService] Create response status: ${response.status}`)
@@ -138,7 +140,7 @@ export async function createServerWallet(chain: SupportedChain, tradeAccountId?:
 /**
  * Check if user has a server-owned wallet for a specific chain
  * @param chain - The chain to check
- * @param tradeAccountId - Trade account ID (required for solana)
+ * @param tradeAccountId - Trade account ID (required for ALL chains)
  */
 export async function checkServerWallet(chain: SupportedChain, tradeAccountId?: string): Promise<CheckWalletResponse> {
   const token = await getAccessToken()
@@ -147,9 +149,14 @@ export async function checkServerWallet(chain: SupportedChain, tradeAccountId?: 
     throw new Error('Not authenticated - please login first')
   }
 
+  // 🔥 All chains require tradeAccountId now
+  if (!tradeAccountId) {
+    throw new Error('tradeAccountId is required for wallet check')
+  }
+
   // TRON has its own endpoint
   if (chain === 'tron') {
-    const response = await fetch(`${API_BASE}/api/tron-wallet/check`, {
+    const response = await fetch(`${API_BASE}/api/tron-wallet/check?tradeAccountId=${tradeAccountId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -173,10 +180,6 @@ export async function checkServerWallet(chain: SupportedChain, tradeAccountId?: 
 
   // Solana has its own endpoint  
   if (chain === 'solana') {
-    if (!tradeAccountId) {
-      throw new Error('tradeAccountId is required for Solana wallet check')
-    }
-    
     const response = await fetch(`${API_BASE}/api/solana-wallet/check?tradeAccountId=${tradeAccountId}`, {
       method: 'GET',
       headers: {
@@ -200,8 +203,8 @@ export async function checkServerWallet(chain: SupportedChain, tradeAccountId?: 
   }
 
   // Generic server-wallet endpoint for other EVM chains
-  console.log(`[serverWalletService] Checking EVM wallet for chain: ${chain}`)
-  const response = await fetch(`${API_BASE}/api/server-wallet/check?chain=${chain}`, {
+  console.log(`[serverWalletService] Checking EVM wallet for chain: ${chain}, tradeAccountId: ${tradeAccountId}`)
+  const response = await fetch(`${API_BASE}/api/server-wallet/check?chain=${chain}&tradeAccountId=${tradeAccountId}`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${token}`,

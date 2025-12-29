@@ -32,25 +32,25 @@ export const getIntegrator = () => {
 // Custom RPC URLs for different chains
 export const CUSTOM_RPC_URLS = {
   // Ethereum Mainnet
-  ethereum: 'https://rpc.ankr.com/eth/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  ethereum: 'https://rpc.ankr.com/eth/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // Solana Mainnet
-  solana: 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  solana: 'https://rpc.ankr.com/solana/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // TRON Mainnet
-  tron: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  tron: 'https://rpc.ankr.com/premium-http/tron/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // Arbitrum One
-  arbitrum: 'https://rpc.ankr.com/arbitrum/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  arbitrum: 'https://rpc.ankr.com/arbitrum/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // Base Mainnet
-  base: 'https://rpc.ankr.com/base/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  base: 'https://rpc.ankr.com/base/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // Polygon Mainnet
-  polygon: 'https://rpc.ankr.com/polygon/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  polygon: 'https://rpc.ankr.com/polygon/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // BNB Smart Chain
-  bnb: 'https://rpc.ankr.com/bsc/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  bnb: 'https://rpc.ankr.com/bsc/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // HyperEVM
   hyperevm: 'https://rpc.hyperliquid.xyz/evm'
@@ -220,7 +220,7 @@ export const SUPPORTED_TOKENS = {
       decimals: 6
     }
   ],
-  bnb: [
+  bsc: [
     {
       symbol: 'USDT',
       name: 'Tether USD',
