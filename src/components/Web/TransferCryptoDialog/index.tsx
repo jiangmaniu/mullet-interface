@@ -287,8 +287,9 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     if (deposit && !bridgeInProgress) {
       console.log('[TransferCrypto] Deposit detected:', deposit)
       message.success({
+        key: 'deposit-detected',
         content: `✅ 检测到充值: ${deposit.amount} ${deposit.token} (${deposit.chain})`,
-        duration: 8, // 8秒
+        duration: 10, // 10秒
       })
 
       // 触发桥接 - 使用 rawBalance（最小单位）
