@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert, Tooltip } from 'antd'
 import { CopyOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { usePrivy, useWallets, useSendTransaction } from '@privy-io/react-auth'
@@ -9,6 +9,7 @@ import { useDepositListener } from '@/hooks/useDepositListenerV2'
 import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
 import { useServerWallet } from '@/hooks/useServerWallet'
+import { useCachedServerWallet } from '@/context/ServerWalletsProvider'
 import type { SupportedChain } from '@/services/serverWalletService'
 import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
@@ -74,13 +75,24 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const currentChainId = getChainId(selectedChain)
   const tradeAccountId = trade.currentAccountInfo?.id
   
-  // 使用通用的 Server Wallet hook（仅在 Privy 链时启用）
-  // 🔥 传递 tradeAccountId 作为唯一标识
+  // 🔥 优先使用缓存的钱包地址（在 MainLayout 中已预加载）
+  const cachedWallet = useCachedServerWallet(currentChainId)
+  
+  // 回退：使用 Server Wallet hook（仅在缓存没有地址时启用）
   const { 
     address: serverWalletAddress, 
     walletId: serverWalletId, 
     isCreating: isServerWalletCreating 
-  } = useServerWallet(currentChainId, open && isPrivyChain && !!tradeAccountId, tradeAccountId)
+  } = useServerWallet(
+    currentChainId, 
+    open && isPrivyChain && !!tradeAccountId && !cachedWallet.address, 
+    tradeAccountId
+  )
+  
+  // 最终地址：优先使用缓存，否则使用新获取的
+  const finalServerWalletAddress = cachedWallet.address || serverWalletAddress
+  const finalServerWalletId = cachedWallet.walletId || serverWalletId
+  const finalIsCreating = cachedWallet.isLoading || isServerWalletCreating
 
   // 获取用户的 Cobo 钱包（自动创建）
   const {
@@ -142,10 +154,10 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
   // 使用后端API充值监听 hook（V2版本）- 通过后端监控链上交易
   const { deposit, deposits, isListening, clearDeposit, resetDetection } = useDepositListener({
-    enabled: open && !isCoboChain && !!serverWalletAddress, // Cobo 链使用独立的监听机制
+    enabled: open && !isCoboChain && !!finalServerWalletAddress, // Cobo 链使用独立的监听机制
     pollInterval: 5000,
     chain: selectedChain.toLowerCase() as 'tron' | 'ethereum' | 'solana' | 'arbitrum' | 'bsc',
-    address: serverWalletAddress || ''
+    address: finalServerWalletAddress || ''
   })
 
   // 获取钱包地址
@@ -186,14 +198,14 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       console.log(`[TransferCrypto] Privy chain status:`, {
         selectedChain,
         chainId: currentChainId,
-        serverWalletAddress,
-        isServerWalletCreating
+        finalServerWalletAddress,
+        finalIsCreating
       })
 
-      if (serverWalletAddress) {
-        setDepositAddress(serverWalletAddress)
-        console.log(`[TransferCrypto] Using Server Wallet address for ${selectedChain}:`, serverWalletAddress)
-      } else if (isServerWalletCreating) {
+      if (finalServerWalletAddress) {
+        setDepositAddress(finalServerWalletAddress)
+        console.log(`[TransferCrypto] Using Server Wallet address for ${selectedChain}:`, finalServerWalletAddress)
+      } else if (finalIsCreating) {
         setDepositAddress('')
         console.log(`[TransferCrypto] Creating Server Wallet for ${selectedChain}...`)
       } else {
@@ -235,8 +247,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     selectedChain,
     user,
     trade.currentAccountInfo,
-    serverWalletAddress,
-    isServerWalletCreating,
+    finalServerWalletAddress,
+    finalIsCreating,
     isCoboChain,
     isPrivyChain,
     currentChainId,
@@ -377,7 +389,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const handleAutoBridge = async (amount: string, token: string, chain: string) => {
     try {
       setBridgeInProgress(true)
-      console.log('[Bridge] Starting with params:', { amount, token, chain, serverWalletAddress, serverWalletId })
+      console.log('[Bridge] Starting with params:', { amount, token, chain, finalServerWalletAddress, finalServerWalletId })
       message.loading('正在启动跨链桥接...', 0)
 
       // 从 user.linkedAccounts 获取钱包地址（备用）
@@ -386,8 +398,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       const solAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'solana') as any
 
       // 使用 useServerWallet hook 的返回值
-      if (!serverWalletAddress || !serverWalletId) {
-        console.error('[Bridge] Missing Server Wallet info:', { serverWalletAddress, serverWalletId })
+      if (!finalServerWalletAddress || !finalServerWalletId) {
+        console.error('[Bridge] Missing Server Wallet info:', { finalServerWalletAddress, finalServerWalletId })
         throw new Error('Server Wallet 信息不完整，请刷新页面重试')
       }
 
@@ -396,7 +408,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       }
 
       // 构建钱包对象（兼容旧接口）
-      const sourceWallet = { address: serverWalletAddress }
+      const sourceWallet = { address: finalServerWalletAddress }
       const ethWallet = wallets.find((w) => (w as any).chainType === 'ethereum') || { address: ethAccount.address }
       const solWallet = { address: solAccount.address }
 
@@ -431,8 +443,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         if (!tronTokenInfo) throw new Error(`Token ${token} 在 Tron 上不受支持`)
 
         console.log('[Bridge] Server wallet info:', {
-          walletId: serverWalletId,
-          address: serverWalletAddress
+          walletId: finalServerWalletId,
+          address: finalServerWalletAddress
         })
 
         const tronResult = await debridgeService.bridgeTronToEthereum({
@@ -440,7 +452,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           amount,
           fromAddress: sourceWallet.address,
           ethereumAddress: ethWallet.address,
-          walletId: serverWalletId,
+          walletId: finalServerWalletId,
           publicKey: '', // Server wallet 不需要 publicKey
           accessToken,
           useGasSponsorship: true
