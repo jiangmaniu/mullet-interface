@@ -9,7 +9,6 @@ import { useDepositListener } from '@/hooks/useDepositListenerV2'
 import { findPrivyWalletByChain } from '@/utils/privyWalletHelpers'
 import { useStores } from '@/context/mobxProvider'
 import { useServerWallet } from '@/hooks/useServerWallet'
-import { useCachedServerWallet } from '@/context/ServerWalletsProvider'
 import type { SupportedChain } from '@/services/serverWalletService'
 import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
@@ -75,24 +74,21 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const currentChainId = getChainId(selectedChain)
   const tradeAccountId = trade.currentAccountInfo?.id
   
-  // 🔥 优先使用缓存的钱包地址（在 MainLayout 中已预加载）
-  const cachedWallet = useCachedServerWallet(currentChainId)
-  
-  // 回退：使用 Server Wallet hook（仅在缓存没有地址时启用）
+  // 🔥 直接使用 useServerWallet，传入当前账户 ID，确保切换账户后地址正确更新
   const { 
     address: serverWalletAddress, 
     walletId: serverWalletId, 
     isCreating: isServerWalletCreating 
   } = useServerWallet(
     currentChainId, 
-    open && isPrivyChain && !!tradeAccountId && !cachedWallet.address, 
+    open && isPrivyChain && !!tradeAccountId, 
     tradeAccountId
   )
   
-  // 最终地址：优先使用缓存，否则使用新获取的
-  const finalServerWalletAddress = cachedWallet.address || serverWalletAddress
-  const finalServerWalletId = cachedWallet.walletId || serverWalletId
-  const finalIsCreating = cachedWallet.isLoading || isServerWalletCreating
+  // 最终地址
+  const finalServerWalletAddress = serverWalletAddress
+  const finalServerWalletId = serverWalletId
+  const finalIsCreating = isServerWalletCreating
 
   // 获取用户的 Cobo 钱包（自动创建）
   const {

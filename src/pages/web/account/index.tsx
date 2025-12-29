@@ -42,6 +42,227 @@ type IAccountItem = User.AccountItem & {
   isRefresh?: boolean
 }
 
+/**
+ * 🔥 AccountCard 组件 - 每个账户使用自己的 tradeAccountId 获取钱包地址
+ */
+interface AccountCardProps {
+  item: IAccountItem
+  idx: number
+  trade: any
+  isPc: boolean
+  ENV: any
+  countDownSeconds: number
+  isKycAuth: boolean | undefined
+  notKycAuth: boolean
+  getAccountSynopsisByLng: (synopsis: any) => any
+  setCurrentAccountList: React.Dispatch<React.SetStateAction<IAccountItem[]>>
+  currentAccountList: IAccountItem[]
+  fetchUserInfo: (force: boolean) => Promise<any>
+  getCurrentAccountList: (accountList: IAccountItem[]) => IAccountItem[]
+  setShowAddFundsMenu: React.Dispatch<React.SetStateAction<boolean>>
+  transferModalRef: React.RefObject<any>
+  setModalInfo: React.Dispatch<React.SetStateAction<User.AccountItem>>
+  modalRef: React.RefObject<any>
+}
+
+function AccountCard({
+  item,
+  idx,
+  trade,
+  isPc,
+  ENV,
+  countDownSeconds,
+  isKycAuth,
+  notKycAuth,
+  getAccountSynopsisByLng,
+  setCurrentAccountList,
+  currentAccountList,
+  fetchUserInfo,
+  getCurrentAccountList,
+  setShowAddFundsMenu,
+  transferModalRef,
+  setModalInfo,
+  modalRef,
+}: AccountCardProps) {
+  const isSimulate = item.isSimulate
+  const synopsis = getAccountSynopsisByLng(item.synopsis)
+
+  // 🔥 每个账户卡片使用自己的 tradeAccountId 获取钱包地址
+  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet(
+    'solana',
+    !!item.id,
+    item.id  // 使用当前卡片账户的 ID，而不是 currentAccountInfo
+  )
+
+  return (
+    <div className="flex items-center justify-between py-4 px-[20px] rounded-lg border-[0.5px] border-gray-200 mb-5" key={idx}>
+      <div className="flex flex-col">
+        <div className="flex flex-col">
+          <div className="flex items-center">
+            <div className="text-sm font-bold text-primary">
+              {item.name} / {item.id}
+            </div>
+            <div className="ml-[10px] flex px-1 items-center">
+              <div
+                className={classNames(
+                  'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
+                  isSimulate ? 'bg-green' : 'bg-brand'
+                )}
+              >
+                {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
+              </div>
+              {synopsis?.abbr && (
+                <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
+                  {synopsis?.abbr}
+                </div>
+              )}
+              <div className="pl-[6px] flex items-center">
+                <div
+                  className="py-[2px] px-[3px] hover:bg-move-in rounded-[10px]"
+                  onClick={() => {
+                    setCurrentAccountList(
+                      currentAccountList.map((v) => ({ ...v, isEyeOpen: v.id === item.id ? !v.isEyeOpen : v.isEyeOpen }))
+                    )
+                  }}
+                >
+                  <Iconify
+                    icon={!item.isEyeOpen ? 'iconoir:eye' : 'iconoir:eye-closed'}
+                    className="size-5 align-middle cursor-pointer"
+                  />
+                </div>
+                <div
+                  className="py-[2px] px-[3px] hover:bg-move-in rounded-[10px]"
+                  onClick={() => {
+                    setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: v.id === item.id })))
+                    fetchUserInfo(false).then((res) => {
+                      setTimeout(() => {
+                        // @ts-ignore
+                        setCurrentAccountList(getCurrentAccountList(res?.accountList || []))
+                      }, 2000)
+                    })
+                  }}
+                >
+                  <Iconify icon={'iconoir:refresh'} className="size-3.5 align-middle cursor-pointer" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-x-2">
+          <ExplorerLink path={`address/${serverSolanaAddress}`} copyable address={serverSolanaAddress} />
+        </div>
+        <div className="flex items-baseline">
+          <span className="text-[30px] !font-dingpro-medium text-primary">
+            {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal })) : '∗∗∗∗'}
+          </span>
+          <span className="pl-[6px] text-sm text-secondary">USD</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-x-3">
+        <Tooltip
+          overlayClassName="tooltipBoxDeposit"
+          zIndex={100}
+          open={Number(item.money) <= 0 && countDownSeconds > 0 && !!serverSolanaAddress}
+          placement={isPc ? 'left' : 'bottomRight'}
+          title={
+            <div className="contentBox">
+              <FormattedMessage id="mt.cunruzijinkaishijiaoyi" />
+              <img src="/img/tips_icon.png" />
+            </div>
+          }
+        >
+          {isSimulate ? (
+            <RechargeSimulateModal
+              trigger={
+                <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
+                  <span className="font-pf-bold">
+                    <FormattedMessage id="mt.cunkuan" />
+                  </span>
+                </Button>
+              }
+              info={item}
+            />
+          ) : (
+            <>
+              {/* 存款 - 打开 Add Funds 菜单 */}
+              <Button
+                onClick={() => {
+                  setShowAddFundsMenu(true)
+                }}
+                disabled={!serverSolanaAddress}
+                style={{ height: 46, width: 108 }}
+              >
+                <FormattedMessage id="mt.cunkuan" />
+              </Button>
+            </>
+          )}
+        </Tooltip>
+        <Button
+          type="primary"
+          style={{ height: 46, width: 108 }}
+          onClick={() => {
+            if (trade.currentAccountInfo?.id === item.id) {
+              push('/trade')
+            } else {
+              trade.setCurrentAccountInfo(item)
+              trade.jumpTrade()
+            }
+          }}
+          disabled={trade.disabledConect(item)}
+        >
+          <span className="font-pf-bold">
+            <FormattedMessage id="common.jiaoyi" />
+          </span>
+        </Button>
+        {!ENV.HIDE_ACCOUNT_RENAME && !ENV.HIDE_ACCOUNT_TRANSFER && (
+          <Dropdown
+            menu={{
+              onClick: (event: MenuInfo) => {
+                const { key } = event
+                if (key === 'transfer') {
+                  if (!isKycAuth && !notKycAuth) {
+                    transferModalRef.current.show()
+                    return
+                  }
+                  push(`/account/transfer?from=${item.id}`)
+                } else if (key === 'rename') {
+                  setModalInfo(item)
+                  modalRef.current.setOpen(true)
+                }
+              },
+              items: [
+                // @ts-ignore
+                !isSimulate &&
+                  !ENV.HIDE_ACCOUNT_TRANSFER && {
+                    key: 'transfer',
+                    label: (
+                      <span className="text-sm text-secondary hover:text-primary">
+                        <FormattedMessage id="common.zhuanzhang" />
+                      </span>
+                    )
+                  },
+                // @ts-ignore
+                !ENV.HIDE_ACCOUNT_RENAME && {
+                  key: 'rename',
+                  label: (
+                    <span className="text-sm text-secondary hover:text-primary">
+                      <FormattedMessage id="mt.zhanghuchongmingming" />
+                    </span>
+                  )
+                }
+              ]
+            }}
+          >
+            <div className="hover:bg-gray-50 flex items-center justify-center p-3 rounded-full w-[46px] h-[46px] cursor-pointer">
+              <img src="/img/dian.png" width={4} height={22} />
+            </div>
+          </Dropdown>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function Account() {
   const { isPc } = useEnv()
   const { initialState } = useModel('@@initialState')
@@ -203,201 +424,28 @@ function Account() {
         )}
       </div>
       <div className="pt-6">
-        {currentAccountList.map((item, idx) => {
-          const isSimulate = item.isSimulate
-          const synopsis = getAccountSynopsisByLng(item.synopsis)
-          return (
-            <div className="flex items-center justify-between py-4 px-[20px] rounded-lg border-[0.5px] border-gray-200 mb-5" key={idx}>
-              <div className="flex flex-col">
-                <div className="flex flex-col">
-                  <div className="flex items-center">
-                    <div className="text-sm font-bold text-primary">
-                      {item.name} / {item.id}
-                    </div>
-                    <div className="ml-[10px] flex px-1 items-center">
-                      <div
-                        className={classNames(
-                          'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                          isSimulate ? 'bg-green' : 'bg-brand'
-                        )}
-                      >
-                        {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
-                      </div>
-                      {synopsis?.abbr && (
-                        <div className="ml-[6px] flex h-5 min-w-[42px] items-center justify-center rounded bg-black text-xs px-1 font-normal text-white">
-                          {synopsis?.abbr}
-                        </div>
-                      )}
-                      <div className="pl-[6px] flex items-center">
-                        <div
-                          className="py-[2px] px-[3px] hover:bg-move-in rounded-[10px]"
-                          onClick={() => {
-                            setCurrentAccountList(
-                              currentAccountList.map((v) => ({ ...v, isEyeOpen: v.id === item.id ? !v.isEyeOpen : v.isEyeOpen }))
-                            )
-                          }}
-                        >
-                          <Iconify
-                            icon={!item.isEyeOpen ? 'iconoir:eye' : 'iconoir:eye-closed'}
-                            className="size-5 align-middle cursor-pointer"
-                          />
-                        </div>
-                        <div
-                          className="py-[2px] px-[3px] hover:bg-move-in rounded-[10px]"
-                          onClick={() => {
-                            setCurrentAccountList(currentAccountList.map((v) => ({ ...v, isRefresh: v.id === item.id })))
-                            fetchUserInfo(false).then((res) => {
-                              setTimeout(() => {
-                                // @ts-ignore
-                                setCurrentAccountList(getCurrentAccountList(res?.accountList || []))
-                              }, 2000)
-                            })
-                          }}
-                        >
-                          <Iconify icon={'iconoir:refresh'} className="size-3.5 align-middle cursor-pointer" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-x-2">
-                  <ExplorerLink path={`address/${serverSolanaAddress}`} copyable address={serverSolanaAddress} />
-                </div>
-                <div className="flex items-baseline">
-                  <span className="text-[30px] !font-dingpro-medium text-primary">
-                    {!item.isEyeOpen ? (!Number(item.money) ? '0.00' : formatNum(item.money, { precision: item.currencyDecimal })) : '∗∗∗∗'}
-                  </span>
-                  <span className="pl-[6px] text-sm text-secondary">USD</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-x-3">
-                <Tooltip
-                  overlayClassName="tooltipBoxDeposit"
-                  zIndex={100}
-                  open={Number(item.money) <= 0 && countDownSeconds > 0 && !!serverSolanaAddress}
-                  placement={isPc ? 'left' : 'bottomRight'}
-                  title={
-                    <div className="contentBox">
-                      <FormattedMessage id="mt.cunruzijinkaishijiaoyi" />
-                      <img src="/img/tips_icon.png" />
-                    </div>
-                  }
-                >
-                  {isSimulate ? (
-                    <RechargeSimulateModal
-                      trigger={
-                        <Button style={{ height: 46, width: 108 }} icon={<img src="/img/rujin_icon.png" width={20} height={20} />}>
-                          <span className="font-pf-bold">
-                            <FormattedMessage id="mt.cunkuan" />
-                          </span>
-                        </Button>
-                      }
-                      info={item}
-                    />
-                  ) : (
-                    <>
-                      {/* 存款 - 打开 Add Funds 菜单 */}
-                      <Button
-                        onClick={() => {
-                          setShowAddFundsMenu(true)
-                        }}
-                        disabled={!serverSolanaAddress}
-                        style={{ height: 46, width: 108 }}
-                      >
-                        <FormattedMessage id="mt.cunkuan" />
-                      </Button>
-                    </>
-                  )}
-                </Tooltip>
-                {/* @TODO 真实账户暂时不支持出金 */}
-                {/* {!isSimulate && (
-                  <Button
-                    onClick={() => {
-                      // push(`/withdrawal?tradeAccountId=${item.id}`)
-                      withdrawModalRef.current.show(item)
-                    }}
-                    style={{ height: 46, width: 108 }}
-                    // icon={<img src="/img/chujin_icon.png" width={20} height={20} />}
-                  >
-                    <FormattedMessage id="mt.chujin" />
-                  </Button>
-                )} */}
-                <Button
-                  type="primary"
-                  style={{ height: 46, width: 108 }}
-                  onClick={() => {
-                    // setMode(STORAGE_GET_TRADE_THEME() || 'light')
-                    // 如果是同一个账户，直接跳转，不需要重新切换
-                    if (trade.currentAccountInfo?.id === item.id) {
-                      push('/trade')
-                    } else {
-                      trade.setCurrentAccountInfo(item)
-                      trade.jumpTrade()
-                    }
-                  }}
-                  disabled={trade.disabledConect(item)}
-                >
-                  <span className="font-pf-bold">
-                    <FormattedMessage id="common.jiaoyi" />
-                  </span>
-                </Button>
-                {!ENV.HIDE_ACCOUNT_RENAME && !ENV.HIDE_ACCOUNT_TRANSFER && (
-                  <Dropdown
-                    menu={{
-                      onClick: (event: MenuInfo) => {
-                        const { key } = event
-                        console.log('key', key)
-                        if (key === 'transfer') {
-                          if (!isKycAuth && !notKycAuth) {
-                            transferModalRef.current.show()
-                            return
-                          }
-                          push(`/account/transfer?from=${item.id}`)
-                        } else if (key === 'rename') {
-                          setModalInfo(item)
-                          modalRef.current.setOpen(true)
-                        }
-                      },
-                      items: [
-                        // @ts-ignore
-                        !isSimulate &&
-                          !ENV.HIDE_ACCOUNT_TRANSFER && {
-                            key: 'transfer',
-                            label: (
-                              <span className="text-sm text-secondary hover:text-primary">
-                                <FormattedMessage id="common.zhuanzhang" />
-                              </span>
-                            )
-                          },
-                        // @ts-ignore
-                        !ENV.HIDE_ACCOUNT_RENAME && {
-                          key: 'rename',
-                          label: (
-                            <span className="text-sm text-secondary hover:text-primary">
-                              <FormattedMessage id="mt.zhanghuchongmingming" />
-                            </span>
-                          )
-                        }
-                        // {
-                        //   key: 'editPwd',
-                        //   label: (
-                        //     <span className="text-sm text-secondary hover:text-primary">
-                        //       <FormattedMessage id="mt.genggaijiaoyimima" />
-                        //     </span>
-                        //   )
-                        // }
-                      ]
-                    }}
-                  >
-                    <div className="hover:bg-gray-50 flex items-center justify-center p-3 rounded-full w-[46px] h-[46px] cursor-pointer">
-                      <img src="/img/dian.png" width={4} height={22} />
-                    </div>
-                  </Dropdown>
-                )}
-              </div>
-            </div>
-          )
-        })}
+        {currentAccountList.map((item, idx) => (
+          <AccountCard
+            key={item.id || idx}
+            item={item}
+            idx={idx}
+            trade={trade}
+            isPc={isPc}
+            ENV={ENV}
+            countDownSeconds={countDownSeconds}
+            isKycAuth={isKycAuth}
+            notKycAuth={notKycAuth}
+            getAccountSynopsisByLng={getAccountSynopsisByLng}
+            setCurrentAccountList={setCurrentAccountList}
+            currentAccountList={currentAccountList}
+            fetchUserInfo={fetchUserInfo}
+            getCurrentAccountList={getCurrentAccountList}
+            setShowAddFundsMenu={setShowAddFundsMenu}
+            transferModalRef={transferModalRef}
+            setModalInfo={setModalInfo}
+            modalRef={modalRef}
+          />
+        ))}
         {currentAccountList.length === 0 && <Empty />}
       </div>
       <RenameAccountModal ref={modalRef} info={modalInfo} />
