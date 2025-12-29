@@ -27,10 +27,12 @@ interface UseServerWalletResult {
  * Server Wallet Hook
  * @param chain - The chain to create wallet for
  * @param autoCreate - Whether to auto-create wallet if not exists (default: true)
+ * @param tradeAccountId - Trade account ID (required for solana chain)
  */
 export function useServerWallet(
   chain: SupportedChain,
-  autoCreate = true
+  autoCreate = true,
+  tradeAccountId?: string
 ): UseServerWalletResult {
   const { authenticated, ready } = usePrivy()
 
@@ -41,12 +43,19 @@ export function useServerWallet(
   
   // 使用 ref 追踪当前 chain 和创建状态
   const currentChainRef = useRef(chain)
+  const currentTradeAccountIdRef = useRef(tradeAccountId)
   const isCreatingRef = useRef(false)
 
   // Create wallet manually
   const createWallet = useCallback(async () => {
     if (!authenticated || !ready) {
       console.log(`[useServerWallet:${chain}] Not authenticated or not ready`)
+      return
+    }
+
+    // Solana requires tradeAccountId
+    if (chain === 'solana' && !tradeAccountId) {
+      console.log(`[useServerWallet:${chain}] Solana requires tradeAccountId`)
       return
     }
 
@@ -62,7 +71,7 @@ export function useServerWallet(
 
       console.log(`[useServerWallet:${chain}] Creating wallet...`)
 
-      const result = await ensureServerWallet(chain)
+      const result = await ensureServerWallet(chain, tradeAccountId)
 
       // 检查 chain 是否已经变化
       if (currentChainRef.current !== chain) {
@@ -84,7 +93,7 @@ export function useServerWallet(
       isCreatingRef.current = false
       setIsCreating(false)
     }
-  }, [authenticated, ready, chain])
+  }, [authenticated, ready, chain, tradeAccountId])
 
   // Refresh wallet info
   const refetch = useCallback(() => {
@@ -95,22 +104,29 @@ export function useServerWallet(
     isCreatingRef.current = false
   }, [])
 
-  // 当 chain 变化时，立即重置状态
+  // 当 chain 或 tradeAccountId 变化时，立即重置状态
   useEffect(() => {
-    console.log(`[useServerWallet] Chain changed to: ${chain}`)
+    console.log(`[useServerWallet] Chain changed to: ${chain}, tradeAccountId: ${tradeAccountId}`)
     currentChainRef.current = chain
+    currentTradeAccountIdRef.current = tradeAccountId
     setAddress(null)
     setWalletId(null)
     setError(null)
     isCreatingRef.current = false
     setIsCreating(false)
-  }, [chain])
+  }, [chain, tradeAccountId])
 
   // Auto check/create wallet
   useEffect(() => {
     // 必须满足：已认证、ready、开启自动创建
     if (!authenticated || !ready || !autoCreate) {
       console.log(`[useServerWallet:${chain}] Skip: authenticated=${authenticated}, ready=${ready}, autoCreate=${autoCreate}`)
+      return
+    }
+
+    // Solana requires tradeAccountId
+    if (chain === 'solana' && !tradeAccountId) {
+      console.log(`[useServerWallet:${chain}] Skip: Solana requires tradeAccountId`)
       return
     }
 
@@ -121,7 +137,8 @@ export function useServerWallet(
     }
 
     const currentChain = chain // 捕获当前 chain
-    console.log(`[useServerWallet:${currentChain}] Starting check/create wallet...`)
+    const currentTradeAccountId = tradeAccountId // 捕获当前 tradeAccountId
+    console.log(`[useServerWallet:${currentChain}] Starting check/create wallet with tradeAccountId: ${currentTradeAccountId}...`)
 
     const checkAndCreate = async () => {
       // 再次检查
@@ -138,7 +155,7 @@ export function useServerWallet(
       try {
         // First check if wallet exists
         console.log(`[useServerWallet:${currentChain}] Calling check API...`)
-        const existingWallet = await checkServerWallet(currentChain)
+        const existingWallet = await checkServerWallet(currentChain, currentTradeAccountId)
 
         // 检查 chain 是否已经变化
         if (currentChainRef.current !== currentChain) {
@@ -155,7 +172,7 @@ export function useServerWallet(
 
         // Create new wallet
         console.log(`[useServerWallet:${currentChain}] No wallet found, creating...`)
-        const result = await ensureServerWallet(currentChain)
+        const result = await ensureServerWallet(currentChain, currentTradeAccountId)
 
         // 再次检查 chain 是否已经变化
         if (currentChainRef.current !== currentChain) {
@@ -184,7 +201,7 @@ export function useServerWallet(
     }
 
     checkAndCreate()
-  }, [authenticated, ready, autoCreate, chain, address]) // 添加 address 作为依赖，这样 reset 后会重新触发
+  }, [authenticated, ready, autoCreate, chain, tradeAccountId, address]) // 添加 address 作为依赖，这样 reset 后会重新触发
 
   return {
     address,

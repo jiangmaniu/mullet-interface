@@ -46,8 +46,10 @@ interface AllWalletsResponse {
 
 /**
  * Create a server-owned wallet for a specific chain
+ * @param chain - The chain to create wallet for
+ * @param tradeAccountId - Trade account ID (required for solana)
  */
-export async function createServerWallet(chain: SupportedChain): Promise<WalletResponse> {
+export async function createServerWallet(chain: SupportedChain, tradeAccountId?: string): Promise<WalletResponse> {
   const token = await getAccessToken()
   
   if (!token) {
@@ -81,12 +83,17 @@ export async function createServerWallet(chain: SupportedChain): Promise<WalletR
 
   // Solana has its own endpoint
   if (chain === 'solana') {
+    if (!tradeAccountId) {
+      throw new Error('tradeAccountId is required for Solana wallet creation')
+    }
+    
     const response = await fetch(`${API_BASE}/api/solana-wallet/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
       },
+      body: JSON.stringify({ tradeAccountId }),
     })
 
     if (!response.ok) {
@@ -130,8 +137,10 @@ export async function createServerWallet(chain: SupportedChain): Promise<WalletR
 
 /**
  * Check if user has a server-owned wallet for a specific chain
+ * @param chain - The chain to check
+ * @param tradeAccountId - Trade account ID (required for solana)
  */
-export async function checkServerWallet(chain: SupportedChain): Promise<CheckWalletResponse> {
+export async function checkServerWallet(chain: SupportedChain, tradeAccountId?: string): Promise<CheckWalletResponse> {
   const token = await getAccessToken()
   
   if (!token) {
@@ -164,7 +173,11 @@ export async function checkServerWallet(chain: SupportedChain): Promise<CheckWal
 
   // Solana has its own endpoint  
   if (chain === 'solana') {
-    const response = await fetch(`${API_BASE}/api/solana-wallet/check`, {
+    if (!tradeAccountId) {
+      throw new Error('tradeAccountId is required for Solana wallet check')
+    }
+    
+    const response = await fetch(`${API_BASE}/api/solana-wallet/check?tradeAccountId=${tradeAccountId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -236,11 +249,13 @@ export async function getAllServerWallets(): Promise<AllWalletsResponse> {
 /**
  * Ensure user has a server wallet for a specific chain
  * Returns existing wallet or creates new one
+ * @param chain - The chain
+ * @param tradeAccountId - Trade account ID (required for solana)
  */
-export async function ensureServerWallet(chain: SupportedChain): Promise<WalletResponse | null> {
+export async function ensureServerWallet(chain: SupportedChain, tradeAccountId?: string): Promise<WalletResponse | null> {
   try {
     // First check if wallet exists
-    const checkResult = await checkServerWallet(chain)
+    const checkResult = await checkServerWallet(chain, tradeAccountId)
     
     if (checkResult.exists && checkResult.address) {
       console.log(`[ServerWallet] Found existing ${chain} wallet:`, checkResult.address)
@@ -255,7 +270,7 @@ export async function ensureServerWallet(chain: SupportedChain): Promise<WalletR
 
     // Create new wallet
     console.log(`[ServerWallet] Creating new ${chain} wallet...`)
-    return await createServerWallet(chain)
+    return await createServerWallet(chain, tradeAccountId)
   } catch (error) {
     console.error(`[ServerWallet] Error ensuring ${chain} wallet:`, error)
     throw error

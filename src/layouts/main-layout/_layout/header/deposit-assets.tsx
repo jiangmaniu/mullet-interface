@@ -59,7 +59,7 @@ export const DepositAssets = () => {
   })
 
   // 🔥 使用 Privy Server Solana 钱包地址（用于信用卡购买）
-  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet('solana', !!trade.currentAccountInfo?.id)
+  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet('solana', !!trade.currentAccountInfo?.id, trade.currentAccountInfo?.id)
 
   const handleCardClick = async () => {
     setShowAddFundsMenu(false)

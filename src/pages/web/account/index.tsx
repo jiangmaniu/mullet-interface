@@ -78,7 +78,7 @@ function Account() {
   const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
 
   // 🔥 使用 Privy Server Solana 钱包地址
-  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet('solana', true)
+  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet('solana', !!trade.currentAccountInfo?.id, trade.currentAccountInfo?.id)
 
   // Privy 信用卡购买
   const { fundWallet: fundSolanaWallet } = useSolanaFundWallet()

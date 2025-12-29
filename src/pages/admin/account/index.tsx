@@ -59,7 +59,7 @@ function Account() {
   const transferModalRef = useRef<any>(null)
 
   // 🔥 使用 Privy Server Solana 钱包地址
-  const { address: serverSolanaAddress } = useServerWallet('solana', true)
+  const { address: serverSolanaAddress } = useServerWallet('solana', !!trade.currentAccountInfo?.id, trade.currentAccountInfo?.id)
 
   const { notKycAuth } = useKycAuth()
 

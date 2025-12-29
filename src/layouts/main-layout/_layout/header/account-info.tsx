@@ -43,7 +43,7 @@ export const TradeAccountInfo = observer(() => {
   const { user } = usePrivy()
 
   // 🔥 使用 Privy Server Solana 钱包地址
-  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id)
+  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id, currentAccountInfo?.id)
 
   // 优先使用 Privy Server Solana 地址
   const displayAddress = serverSolanaAddress || privyAddress
@@ -88,7 +88,7 @@ const AccountSelector = observer(() => {
   const { user } = usePrivy()
 
   // 🔥 使用 Privy Server Solana 钱包地址
-  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id)
+  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id, currentAccountInfo?.id)
 
   useEffect(() => {
     const accountList = currentUser?.accountList || []

@@ -72,13 +72,15 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   }
 
   const currentChainId = getChainId(selectedChain)
+  const tradeAccountId = trade.currentAccountInfo?.id
   
   // 使用通用的 Server Wallet hook（仅在 Privy 链时启用）
+  // 🔥 传递 tradeAccountId 作为唯一标识
   const { 
     address: serverWalletAddress, 
     walletId: serverWalletId, 
     isCreating: isServerWalletCreating 
-  } = useServerWallet(currentChainId, open && isPrivyChain)
+  } = useServerWallet(currentChainId, open && isPrivyChain && !!tradeAccountId, tradeAccountId)
 
   // 获取用户的 Cobo 钱包（自动创建）
   const {
