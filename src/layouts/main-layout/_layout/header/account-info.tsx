@@ -43,10 +43,10 @@ export const TradeAccountInfo = observer(() => {
   const { user } = usePrivy()
 
   // 🔥 使用 Privy Server Solana 钱包地址
-  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id, currentAccountInfo?.id)
+  const { address: serverSolanaAddress, isCreating: isWalletLoading } = useServerWallet('solana', !!currentAccountInfo?.id, currentAccountInfo?.id)
 
-  // 优先使用 Privy Server Solana 地址
-  const displayAddress = serverSolanaAddress || privyAddress
+  // 🔥 只显示 Solana Server Wallet 地址，加载中显示 loading
+  const displayAddress = serverSolanaAddress || (isWalletLoading ? '' : serverSolanaAddress)
 
   return (
     <DropdownMenu>
@@ -55,7 +55,7 @@ export const TradeAccountInfo = observer(() => {
           <div className="flex text-paragraph-p3 flex-col gap-1">
             <div className="flex items-center gap-1">
               <IconWallet className="size-4" />
-              <span>{formatAddress(displayAddress)}</span>
+              <span>{isWalletLoading ? 'Loading...' : formatAddress(displayAddress)}</span>
             </div>
             {/* <div className="flex items-center justify-center gap-1">
               <div>{currentAccountInfo?.isSimulate ? <Trans>模拟</Trans> : <Trans>真实</Trans>}</div>
