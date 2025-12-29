@@ -5,11 +5,15 @@
  * 使用场景:
  * 1. 登录后自动创建 (email/phone 用户)
  * 2. 在充值/转账对话框中使用
+ * 
+ * Mode 2 Support:
+ * - Server-owned wallets (Authorization Key) are NOT in user.linkedAccounts
+ * - We must call backend API to check/create wallets
  */
 
 import { useState, useEffect, useCallback } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
-import { ensureTronWallet, getTronWalletFromUser } from '@/services/tronWalletService'
+import { ensureTronWallet, checkTronWallet, getTronWalletFromUser } from '@/services/tronWalletService'
 import { useSessionSigner } from './useSessionSigner'
 
 interface UseTronWalletResult {
@@ -125,31 +129,59 @@ export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
       return
     }
 
-    // 先尝试从 user 对象获取
+    // 先尝试从 user 对象获取（Mode 1 legacy wallets）
     const hasWallet = updateFromUser()
 
     if (hasWallet) {
-      console.log('[useTronWallet] Found existing TRON wallet in user data')
+      console.log('[useTronWallet] Found existing TRON wallet in user data (Mode 1)')
       return
     }
 
-    // 如果没有且启用了自动创建
+    // Mode 2: Server-owned wallets are NOT in user.linkedAccounts
+    // We need to call the backend API to check/create
     if (autoCreate && !isCreating) {
-      console.log('[useTronWallet] No TRON wallet found, will attempt auto-creation...')
+      console.log('[useTronWallet] No TRON wallet in user data, checking backend API (Mode 2)...')
 
-      // 延迟 2 秒，让 Privy 有时间同步用户数据
-      const timer = setTimeout(() => {
-        // 再次检查，确保不是因为数据未同步
-        const hasWalletNow = updateFromUser()
-        if (!hasWalletNow) {
-          console.log('[useTronWallet] Still no wallet after delay, creating now...')
-          createWallet()
+      // 直接调用 API 检查/创建，不需要延迟
+      const checkAndCreate = async () => {
+        try {
+          setIsCreating(true)
+          setError(null)
+          
+          // 先检查后端是否已有钱包
+          console.log('[useTronWallet] Calling checkTronWallet API...')
+          const existingWallet = await checkTronWallet()
+          
+          if (existingWallet.exists && existingWallet.address) {
+            console.log('[useTronWallet] ✅ Found existing TRON wallet (Mode 2):', existingWallet.address)
+            setTronAddress(existingWallet.address)
+            setTronWalletId(existingWallet.walletId || null)
+            setTronPublicKey(existingWallet.publicKey || null)
+            setIsCreating(false)
+            return
+          }
+          
+          // 如果不存在，创建新钱包
+          console.log('[useTronWallet] No wallet found, calling ensureTronWallet to create...')
+          const result = await ensureTronWallet()
+          
+          if (result) {
+            console.log('[useTronWallet] ✅ TRON wallet created (Mode 2):', result.address)
+            setTronAddress(result.address)
+            setTronWalletId(result.walletId)
+            setTronPublicKey(result.publicKey)
+          }
+        } catch (err: any) {
+          console.error('[useTronWallet] Failed to check/create wallet:', err)
+          setError(err.message || 'Failed to create TRON wallet')
+        } finally {
+          setIsCreating(false)
         }
-      }, 2000)
-
-      return () => clearTimeout(timer)
+      }
+      
+      checkAndCreate()
     }
-  }, [authenticated, ready, autoCreate, isCreating, shouldCheck, tronAddress, updateFromUser, createWallet])
+  }, [authenticated, ready, autoCreate, isCreating, shouldCheck, tronAddress, updateFromUser])
 
   return {
     tronAddress,

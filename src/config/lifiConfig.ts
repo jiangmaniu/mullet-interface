@@ -69,35 +69,35 @@ export const LIFI_CONFIG = {
 // Supported chains for cross-chain bridging
 export const SUPPORTED_BRIDGE_CHAINS = [
   {
-    id: 'TRON',
+    id: 'tron',  // 小写，匹配 Privy chainType
     name: 'Tron',
     color: '#c62828',
     minDeposit: 20,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'Tron'
   },
   {
-    id: 'ETH',
+    id: 'ethereum',  // 小写，匹配 Privy chainType
     name: 'Ethereum',
     color: '#627EEA',
     minDeposit: 10,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'Ethereum'
   },
   {
-    id: 'SOL',
+    id: 'solana',  // 小写，匹配 Privy chainType
     name: 'Solana',
     color: '#14F195',
     minDeposit: 10,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'Solana'
   },
   {
-    id: 'ARBITRUM_ETH',
+    id: 'arbitrum',  // 小写，匹配 Privy chainType
     name: 'Arbitrum',
     color: '#28A0F0',
     minDeposit: 10,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'Arbitrum'
   },
   // {
@@ -117,11 +117,11 @@ export const SUPPORTED_BRIDGE_CHAINS = [
   //   displayName: 'Polygon'
   // },
   {
-    id: 'BSC_BNB',
+    id: 'bsc',  // 小写，匹配 Privy chainType
     name: 'BSC',
     color: '#F0B90B',
     minDeposit: 10,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'BSC'
   }
   // {

@@ -10,8 +10,7 @@ import { useState, useCallback } from 'react'
 import { useFundWallet as useSolanaFundWallet } from '@privy-io/react-auth/solana'
 import { useFundWallet as useEvmFundWallet } from '@privy-io/react-auth'
 import { usePrivy } from '@privy-io/react-auth'
-import { useCoboWallet } from '@/hooks/useCoboWallet'
-import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
+import { useServerWallet } from '@/hooks/useServerWallet'
 import { message } from 'antd'
 import { useStores } from '@/context/mobxProvider'
 
@@ -59,41 +58,30 @@ export const DepositAssets = () => {
     onUserExited: handleFundWalletExit
   })
 
-  // 获取 Cobo 钱包
-  const { walletId: coboWalletId, isLoading: coboWalletLoading } = useCoboWallet({
-    tradeAccountId: trade.currentAccountInfo?.id,
-    enabled: !!trade.currentAccountInfo?.id
-  })
-
-  // 获取 Cobo Solana 充值地址（用于信用卡购买）
-  const { address: coboSolanaAddress, isLoading: coboAddressLoading } = useCoboDepositAddress({
-    tradeAccountId: trade.currentAccountInfo?.id,
-    chainId: 'SOL',
-    walletId: coboWalletId || '',
-    enabled: !!trade.currentAccountInfo?.id && !!coboWalletId
-  })
+  // 🔥 使用 Privy Server Solana 钱包地址（用于信用卡购买）
+  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet('solana', !!trade.currentAccountInfo?.id, trade.currentAccountInfo?.id)
 
   const handleCardClick = async () => {
     setShowAddFundsMenu(false)
 
-    // 如果 Cobo 地址还在加载中
-    if (coboWalletLoading || coboAddressLoading) {
+    // 如果 Server Wallet 还在加载中
+    if (serverWalletLoading) {
       message.info('正在加载充值地址，请稍候...')
       return
     }
 
-    // 必须使用 Cobo Solana 充值地址
-    if (!coboSolanaAddress) {
-      console.error('[Buy Crypto] No Cobo Solana address available')
-      message.error('Cobo Solana 充值地址未就绪，请稍后重试')
+    // 必须使用 Privy Server Solana 充值地址
+    if (!serverSolanaAddress) {
+      console.error('[Buy Crypto] No Server Solana address available')
+      message.error('Solana 充值地址未就绪，请稍后重试')
       return
     }
 
-    console.log('[Buy Crypto] Using Cobo Solana address:', coboSolanaAddress)
+    console.log('[Buy Crypto] Using Server Solana address:', serverSolanaAddress)
 
     try {
       const result = await fundSolanaWallet({
-        address: coboSolanaAddress,
+        address: serverSolanaAddress,
         options: {
           asset: 'USDC', // 购买 USDC 稳定币
           amount: '10' // 默认 $10
