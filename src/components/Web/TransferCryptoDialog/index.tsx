@@ -367,6 +367,15 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         )
       }
 
+      // 🔥 Solana 直接充值，无需桥接
+      if (normalizedChain === 'Solana') {
+        console.log('[Bridge] Solana deposit detected, no bridge needed')
+        message.success('✅ Solana 充值已到账，无需跨链桥接')
+        setBridgeStep('completed')
+        // 🔥 不自动关闭弹窗，让用户手动点击"完成"按钮
+        return
+      }
+
       if (normalizedChain === 'Tron') {
         // 🔥 Tron → BSC → Solana (两步跨链，通过后端执行)
         console.log('[Bridge] TRON → BSC → Solana (2 steps via backend)')

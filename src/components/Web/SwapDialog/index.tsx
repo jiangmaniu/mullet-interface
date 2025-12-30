@@ -23,7 +23,7 @@ import {
   type DeBridgeParams
 } from '@/services/debridgeService'
 import { createPublicClient, http, encodeFunctionData, createWalletClient, custom } from 'viem'
-import { mainnet } from 'viem/chains'
+import { mainnet, bsc } from 'viem/chains'
 
 const { Text, Title } = Typography
 const { Panel } = Collapse
@@ -527,8 +527,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   }
 
   // Direct one-step bridge: ETH → Solana (DeBridge only)
-  const executeDirectBridge = async (_ethAddress: string, tokenAmount: number): Promise<void> => {
-    console.log('[SwapDialog] Starting direct ETH → Solana bridge:', tokenAmount)
+  const executeDirectBridge = async (_ethAddress: string, tokenAmount: number, sourceChain: 'ethereum' | 'bsc' = 'ethereum'): Promise<void> => {
+    console.log(`[SwapDialog] Starting direct ${sourceChain.toUpperCase()} → Solana bridge:`, tokenAmount)
     setProgress(20)
     setBridgeStage('step2-executing')
 
@@ -551,20 +551,24 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       // Token addresses for DeBridge - use the actual selected token
       const selectedToken = (selectedAsset || initialAsset)?.symbol || 'USDC'
 
+      // 根据源链选择正确的token地址
+      const srcChainId = sourceChain === 'bsc' ? DEBRIDGE_CHAIN_IDS.BSC : DEBRIDGE_CHAIN_IDS.ETHEREUM
+      const srcTokens = sourceChain === 'bsc' ? DEBRIDGE_TOKENS.BSC : DEBRIDGE_TOKENS.ETHEREUM
+
       // Determine source token address and decimals
       let srcTokenAddress: string
       let decimals: number
 
-      if (selectedToken === 'ETH') {
-        // Native ETH - use zero address
+      if (selectedToken === 'ETH' && sourceChain === 'ethereum') {
+        // Native ETH - use zero address (only for Ethereum)
         srcTokenAddress = '0x0000000000000000000000000000000000000000'
         decimals = 18
       } else if (selectedToken === 'USDT') {
-        srcTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDT
+        srcTokenAddress = srcTokens.USDT!
         decimals = 6
       } else {
         // USDC or other stablecoins
-        srcTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDC
+        srcTokenAddress = srcTokens.USDC!
         decimals = 6
       }
 
@@ -596,7 +600,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       setProgress(30)
 
       const quote = await getDeBridgeQuote({
-        srcChainId: DEBRIDGE_CHAIN_IDS.ETHEREUM,
+        srcChainId: srcChainId,
         dstChainId: DEBRIDGE_CHAIN_IDS.SOLANA,
         srcChainTokenIn: srcTokenAddress,
         srcChainTokenInAmount: amountInSmallestUnit,
@@ -612,24 +616,27 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         allowanceValue: quote.tx?.allowanceValue
       })
 
-      // Check ETH balance for gas fees
+      // Check ETH/BNB balance for gas fees
+      const chainConfig = sourceChain === 'bsc' ? bsc : mainnet
+      const nativeSymbol = sourceChain === 'bsc' ? 'BNB' : 'ETH'
+      
       const publicClient = createPublicClient({
-        chain: mainnet,
+        chain: chainConfig,
         transport: http()
       })
 
-      const ethBalance = await publicClient.getBalance({
+      const nativeBalance = await publicClient.getBalance({
         address: ethWallet.address as `0x${string}`
       })
 
-      console.log('[SwapDialog] ETH balance:', {
-        wei: ethBalance.toString(),
-        eth: Number(ethBalance) / 1e18,
-        hasBalance: ethBalance > BigInt(0)
+      console.log(`[SwapDialog] ${nativeSymbol} balance:`, {
+        wei: nativeBalance.toString(),
+        value: Number(nativeBalance) / 1e18,
+        hasBalance: nativeBalance > BigInt(0)
       })
 
-      if (ethBalance === BigInt(0)) {
-        throw new Error('⚠️ No ETH for gas fees! Please add ETH to your wallet: ' + ethWallet.address)
+      if (nativeBalance === BigInt(0)) {
+        throw new Error(`⚠️ No ${nativeSymbol} for gas fees! Please add ${nativeSymbol} to your wallet: ` + ethWallet.address)
       }
 
       // Check if this is an external wallet (not Privy embedded)
@@ -645,13 +652,13 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         }
         walletClient = createWalletClient({
           account: ethWallet.address as `0x${string}`,
-          chain: mainnet,
+          chain: chainConfig,
           transport: custom(evmProvider)
         })
-        console.log('[SwapDialog] Created wallet client for external wallet')
+        console.log('[SwapDialog] Created wallet client for external wallet on', sourceChain)
       }
 
-      // Step 1: Check and approve token to DeBridge contract (only for ERC20 tokens, not ETH)
+      // Step 1: Check and approve token to DeBridge contract (only for ERC20 tokens, not ETH/BNB)
       if (selectedToken !== 'ETH') {
         console.log('[SwapDialog] Step 1: Checking token allowance...')
         setProgress(40)
@@ -919,11 +926,11 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       throw new Error('Failed to get access token')
     }
 
-    // Step 1: TRON → Ethereum via DeBridge
+    // Step 1: TRON → BSC via DeBridge (统一使用BSC作为中间链)
     const srcTokenAddress = (selectedAsset || initialAsset)?.symbol === 'USDC' ? DEBRIDGE_TOKENS.TRON.USDC : DEBRIDGE_TOKENS.TRON.USDT
-    const dstChainId = DEBRIDGE_CHAIN_IDS.ETHEREUM
+    const dstChainId = DEBRIDGE_CHAIN_IDS.BSC
     const dstTokenAddress =
-      (selectedAsset || initialAsset)?.symbol === 'USDC' ? DEBRIDGE_TOKENS.ETHEREUM.USDC : DEBRIDGE_TOKENS.ETHEREUM.USDT
+      (selectedAsset || initialAsset)?.symbol === 'USDC' ? DEBRIDGE_TOKENS.BSC.USDC : DEBRIDGE_TOKENS.BSC.USDT
 
     const amountInSmallestUnit = Math.floor(parseFloat(amountInUsd) * 1e6).toString()
 
@@ -938,7 +945,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       dstChainOrderAuthorityAddress: ethAddress
     })
 
-    console.log('[SwapDialog] DeBridge quote received')
+    console.log('[SwapDialog] DeBridge quote received (TRON → BSC)')
     setProgress(15)
 
     // Create DeBridge order
@@ -977,7 +984,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       if (orderStatus.status === 'Fulfilled' || orderStatus.status === 'SentUnlock') {
         confirmed = true
-        console.log('[SwapDialog] ✅ TRON → Ethereum confirmed')
+        console.log('[SwapDialog] ✅ TRON → BSC confirmed')
       } else if (orderStatus.status === 'OrderCancelled') {
         throw new Error('DeBridge order cancelled')
       }
@@ -990,16 +997,16 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       throw new Error('Bridge confirmation timeout')
     }
 
-    // Step 3: Ethereum → Solana via direct DeBridge
-    console.log('[SwapDialog] Step 3: Bridging Ethereum → Solana...')
+    // Step 3: BSC → Solana via direct DeBridge
+    console.log('[SwapDialog] Step 3: Bridging BSC → Solana...')
     setBridgeStage('step2-executing')
     setProgress(60)
 
-    const ethereumAmount = step1Result.dstChainTokenOutAmount || amountInSmallestUnit
-    console.log('[SwapDialog] Ethereum amount for final bridge:', ethereumAmount)
+    const bscAmount = step1Result.dstChainTokenOutAmount || amountInSmallestUnit
+    console.log('[SwapDialog] BSC amount for final bridge:', bscAmount)
 
-    // Execute final ETH → Solana bridge
-    await executeDirectBridge(ethAddress, parseFloat(ethereumAmount) / 1e6)
+    // Execute final BSC → Solana bridge
+    await executeDirectBridge(ethAddress, parseFloat(bscAmount) / 1e6, 'bsc')
   }
 
   // 🔥 新增：处理 Solana SPL Token 直接转账到 Cobo Solana 地址
