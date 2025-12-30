@@ -32,25 +32,25 @@ export const getIntegrator = () => {
 // Custom RPC URLs for different chains
 export const CUSTOM_RPC_URLS = {
   // Ethereum Mainnet
-  ethereum: 'https://rpc.ankr.com/eth/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  ethereum: 'https://rpc.ankr.com/eth/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // Solana Mainnet
-  solana: 'https://rpc.ankr.com/solana/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  solana: 'https://rpc.ankr.com/solana/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // TRON Mainnet
-  tron: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  tron: 'https://rpc.ankr.com/premium-http/tron/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // Arbitrum One
-  arbitrum: 'https://rpc.ankr.com/arbitrum/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  arbitrum: 'https://rpc.ankr.com/arbitrum/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // Base Mainnet
-  base: 'https://rpc.ankr.com/base/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  base: 'https://rpc.ankr.com/base/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // Polygon Mainnet
-  polygon: 'https://rpc.ankr.com/polygon/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  polygon: 'https://rpc.ankr.com/polygon/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // BNB Smart Chain
-  bnb: 'https://rpc.ankr.com/bsc/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3',
+  bnb: 'https://rpc.ankr.com/bsc/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
 
   // HyperEVM
   hyperevm: 'https://rpc.hyperliquid.xyz/evm'
@@ -69,35 +69,35 @@ export const LIFI_CONFIG = {
 // Supported chains for cross-chain bridging
 export const SUPPORTED_BRIDGE_CHAINS = [
   {
-    id: 'TRON',
+    id: 'tron',  // 小写，匹配 Privy chainType
     name: 'Tron',
     color: '#c62828',
     minDeposit: 20,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'Tron'
   },
   {
-    id: 'ETH',
+    id: 'ethereum',  // 小写，匹配 Privy chainType
     name: 'Ethereum',
     color: '#627EEA',
     minDeposit: 10,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'Ethereum'
   },
   {
-    id: 'SOL',
+    id: 'solana',  // 小写，匹配 Privy chainType
     name: 'Solana',
     color: '#14F195',
     minDeposit: 10,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'Solana'
   },
   {
-    id: 'ARBITRUM_ETH',
+    id: 'arbitrum',  // 小写，匹配 Privy chainType
     name: 'Arbitrum',
     color: '#28A0F0',
     minDeposit: 10,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'Arbitrum'
   },
   // {
@@ -117,11 +117,11 @@ export const SUPPORTED_BRIDGE_CHAINS = [
   //   displayName: 'Polygon'
   // },
   {
-    id: 'BSC_BNB',
+    id: 'bsc',  // 小写，匹配 Privy chainType
     name: 'BSC',
     color: '#F0B90B',
     minDeposit: 10,
-    type: 'cobo' as const,
+    type: 'privy' as const,  // 使用 Privy Server Wallet
     displayName: 'BSC'
   }
   // {
@@ -220,7 +220,7 @@ export const SUPPORTED_TOKENS = {
       decimals: 6
     }
   ],
-  bnb: [
+  bsc: [
     {
       symbol: 'USDT',
       name: 'Tether USD',

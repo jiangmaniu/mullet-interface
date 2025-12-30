@@ -38,7 +38,7 @@ interface TronWalletCheckResponse {
  * Note: Privy's client SDK (useCreateWallet) only supports Tier 3 chains (Ethereum, Solana).
  * For Tier 2 chains like TRON, we must use the server-side SDK via a backend API.
  */
-export async function createTronWallet(): Promise<TronWalletResponse> {
+export async function createTronWallet(tradeAccountId?: string): Promise<TronWalletResponse> {
   try {
     const accessToken = await getAccessToken()
     if (!accessToken) {
@@ -53,7 +53,8 @@ export async function createTronWallet(): Promise<TronWalletResponse> {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`
-      }
+      },
+      body: JSON.stringify({ tradeAccountId })
     })
 
     if (!result.ok) {
@@ -80,16 +81,20 @@ export async function createTronWallet(): Promise<TronWalletResponse> {
 /**
  * 检查用户是否已有 TRON 钱包
  */
-export async function checkTronWallet(): Promise<TronWalletCheckResponse> {
+export async function checkTronWallet(tradeAccountId?: string): Promise<TronWalletCheckResponse> {
   try {
     const accessToken = await getAccessToken()
     if (!accessToken) {
       throw new Error('No access token available')
     }
 
-    console.log('[TronWallet] Checking wallet at:', TRON_API_ENDPOINTS.CHECK_WALLET)
+    const url = tradeAccountId
+      ? `${TRON_API_ENDPOINTS.CHECK_WALLET}?tradeAccountId=${tradeAccountId}`
+      : TRON_API_ENDPOINTS.CHECK_WALLET
 
-    const result = await fetch(TRON_API_ENDPOINTS.CHECK_WALLET, {
+    console.log('[TronWallet] Checking wallet at:', url)
+
+    const result = await fetch(url, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -116,12 +121,12 @@ export async function checkTronWallet(): Promise<TronWalletCheckResponse> {
  * 1. User logs in with email/phone (no external wallet)
  * 2. User opens the deposit/transfer dialog
  */
-export async function ensureTronWallet(): Promise<TronWalletResponse | null> {
+export async function ensureTronWallet(tradeAccountId?: string): Promise<TronWalletResponse | null> {
   try {
     console.log('[TronWallet] Checking for existing TRON wallet...')
 
     // 先检查是否已有钱包
-    const checkResult = await checkTronWallet()
+    const checkResult = await checkTronWallet(tradeAccountId)
 
     if (checkResult.exists) {
       console.log('[TronWallet] ✅ TRON wallet already exists:', checkResult.address)
@@ -135,7 +140,7 @@ export async function ensureTronWallet(): Promise<TronWalletResponse | null> {
 
     // 如果没有，则创建新钱包
     console.log('[TronWallet] No existing wallet, creating new one...')
-    return await createTronWallet()
+    return await createTronWallet(tradeAccountId)
   } catch (error: any) {
     if (error.message === 'WALLET_EXISTS') {
       // 钱包已存在，返回 null 让调用方处理

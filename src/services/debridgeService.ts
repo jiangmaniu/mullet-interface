@@ -1,14 +1,15 @@
 /**
  * deBridge API 集成服务
- * 支持 TRON ↔ Ethereum ↔ Solana 跨链桥接
+ * 支持 EVM 链 ↔ Solana 跨链桥接
  *
  * 功能特性：
- * 1. 统一使用 deBridge 桥接协议（TRON → ETH → SOL）
- * 2. 费用低廉（固定费用 ~$2-3，通常 < 5%）
- * 3. 速度快，确认时间短（TRON→ETH: 3-5分钟，ETH→SOL: 2-3分钟）
- * 4. 完整的流程控制（手动 approve、签名验证、交易广播）
- * 5. USDT 特殊处理（自动重置 allowance）
- * 6. ETH Gas 余额检查（最低 0.002 ETH）
+ * 1. 统一使用 deBridge 桥接协议
+ * 2. 支持所有 EVM 兼容链（ETH、BSC、Arbitrum、Polygon、Base、Optimism、HyperEVM）
+ * 3. 费用低廉（固定费用 ~$2-3，通常 < 5%）
+ * 4. 速度快，确认时间短
+ * 5. 完整的流程控制（手动 approve、签名验证、交易广播）
+ * 6. USDT 特殊处理（自动重置 allowance）
+ * 7. Privy Gas 赞助支持
  *
  * API 文档：https://docs.debridge.finance/
  */
@@ -21,28 +22,111 @@ export const DEBRIDGE_CHAIN_IDS = {
   TRON: 100000026, // TRON Mainnet
   ETHEREUM: 1, // Ethereum Mainnet
   SOLANA: 7565164, // Solana Mainnet
-  BSC: 56,
-  POLYGON: 137,
-  ARBITRUM: 42161,
-  OPTIMISM: 10,
-  BASE: 8453
+  BSC: 56, // BNB Smart Chain
+  POLYGON: 137, // Polygon
+  ARBITRUM: 42161, // Arbitrum One
+  OPTIMISM: 10, // Optimism
+  BASE: 8453, // Base
+  AVALANCHE: 43114, // Avalanche C-Chain
+  HYPEREVM: 999, // HyperEVM (需确认实际 chain ID)
 } as const
 
-// Token 地址映射
-export const DEBRIDGE_TOKENS = {
+// EVM 链配置（RPC URLs）
+export const EVM_CHAIN_CONFIG: Record<string, {
+  chainId: number
+  name: string
+  rpcUrl: string
+  nativeCurrency: string
+}> = {
+  Ethereum: {
+    chainId: 1,
+    name: 'Ethereum',
+    rpcUrl: 'https://rpc.ankr.com/eth/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    nativeCurrency: 'ETH'
+  },
+  BSC: {
+    chainId: 56,
+    name: 'BNB Smart Chain',
+    rpcUrl: 'https://rpc.ankr.com/bsc/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    nativeCurrency: 'BNB'
+  },
+  Polygon: {
+    chainId: 137,
+    name: 'Polygon',
+    rpcUrl: 'https://rpc.ankr.com/polygon/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    nativeCurrency: 'MATIC'
+  },
+  Arbitrum: {
+    chainId: 42161,
+    name: 'Arbitrum One',
+    rpcUrl: 'https://rpc.ankr.com/arbitrum/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    nativeCurrency: 'ETH'
+  },
+  Optimism: {
+    chainId: 10,
+    name: 'Optimism',
+    rpcUrl: 'https://rpc.ankr.com/optimism/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    nativeCurrency: 'ETH'
+  },
+  Base: {
+    chainId: 8453,
+    name: 'Base',
+    rpcUrl: 'https://rpc.ankr.com/base/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    nativeCurrency: 'ETH'
+  },
+  Avalanche: {
+    chainId: 43114,
+    name: 'Avalanche C-Chain',
+    rpcUrl: 'https://rpc.ankr.com/avalanche/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    nativeCurrency: 'AVAX'
+  },
+  HyperEVM: {
+    chainId: 999, // 需确认实际 chain ID
+    name: 'HyperEVM',
+    rpcUrl: 'https://rpc.hyperliquid.xyz/evm',
+    nativeCurrency: 'HYPE'
+  }
+}
+
+// Token 地址映射（各链上的稳定币地址）
+export const DEBRIDGE_TOKENS: Record<string, { USDT?: string; USDC?: string }> = {
   TRON: {
     USDT: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
     USDC: 'TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8'
   },
-  ETHEREUM: {
+  Ethereum: {
     USDT: '0xdac17f958d2ee523a2206206994597c13d831ec7',
     USDC: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
   },
-  SOLANA: {
+  BSC: {
+    USDT: '0x55d398326f99059ff775485246999027b3197955', // BSC USDT
+    USDC: '0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d'  // BSC USDC
+  },
+  Polygon: {
+    USDT: '0xc2132d05d31c914a87c6611c10748aeb04b58e8f', // Polygon USDT
+    USDC: '0x3c499c542cef5e3811e1192ce70d8cc03d5c3359'  // Polygon USDC (native)
+  },
+  Arbitrum: {
+    USDT: '0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9', // Arbitrum USDT
+    USDC: '0xaf88d065e77c8cc2239327c5edb3a432268e5831'  // Arbitrum USDC (native)
+  },
+  Optimism: {
+    USDT: '0x94b008aa00579c1307b0ef2c499ad98a8ce58e58', // Optimism USDT
+    USDC: '0x0b2c639c533813f4aa9d7837caf62653d097ff85'  // Optimism USDC (native)
+  },
+  Base: {
+    USDC: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913'  // Base USDC (native)
+    // Base 没有官方 USDT
+  },
+  Avalanche: {
+    USDT: '0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7', // Avalanche USDT
+    USDC: '0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e'  // Avalanche USDC (native)
+  },
+  Solana: {
     USDT: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', // USDT SPL
     USDC: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v' // USDC SPL
   }
-} as const
+}
 
 /**
  * 桥接参数
@@ -353,7 +437,7 @@ export async function createDeBridgeOrderTron(
     // 动态导入 TronWeb
     const { TronWeb } = await import('tronweb')
     const tronWeb = new TronWeb({
-      fullHost: 'https://rpc.ankr.com/premium-http/tron/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3'
+      fullHost: 'https://rpc.ankr.com/premium-http/tron/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374'
     })
 
     const DLN_SOURCE_ADDRESS = tronWeb.address.fromHex(quote.tx.allowanceTarget)
@@ -670,46 +754,70 @@ export async function waitForOrderCompletion(
 }
 
 /**
- * TRON → Ethereum 桥接
- * 
+ * 通用 TRON → EVM 链桥接
+ * 支持 TRON → Ethereum、BSC、Polygon、Arbitrum 等所有 EVM 兼容链
+ *
+ * @param params.targetChain - 目标 EVM 链名称 (Ethereum, BSC, Polygon, Arbitrum, Optimism, Base, Avalanche)
  * @param params.tokenAddress - TRON token 地址 (如 TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t for USDT)
  * @param params.amount - 转账金额（最小单位，如 20000000 = 20 USDT）
  * @param params.fromAddress - TRON 钱包地址
- * @param params.ethereumAddress - Ethereum 接收地址
+ * @param params.evmAddress - 目标 EVM 链接收地址
  * @param params.walletId - Privy wallet ID
  * @param params.publicKey - Wallet public key (可选)
  * @param params.accessToken - Privy access token
  * @param params.useGasSponsorship - 是否使用 Gas 赞助（默认 true）
  * @returns 交易哈希、订单ID、目标链金额
  */
-export async function bridgeTronToEthereum(params: {
+export async function bridgeTronToEvm(params: {
+  targetChain: string // Ethereum, BSC, Polygon, Arbitrum, Optimism, Base, Avalanche
   tokenAddress: string
   amount: string
   fromAddress: string
-  ethereumAddress: string
+  evmAddress: string
   walletId: string
   publicKey: string
   accessToken: string
   useGasSponsorship?: boolean
 }): Promise<{ txHash: string; orderId: string; dstChainTokenOutAmount: string }> {
-  console.log('[deBridge] Bridge: TRON → Ethereum')
+  const { targetChain } = params
+  
+  // 获取目标链配置
+  const chainConfig = EVM_CHAIN_CONFIG[targetChain]
+  if (!chainConfig) {
+    throw new Error(`Unsupported target chain: ${targetChain}. Supported: ${Object.keys(EVM_CHAIN_CONFIG).join(', ')}`)
+  }
+
+  console.log(`[deBridge] Bridge: TRON → ${targetChain}`)
+
+  // 获取目标链的 token 地址
+  const targetChainTokens = DEBRIDGE_TOKENS[targetChain]
+  if (!targetChainTokens) {
+    throw new Error(`No token configuration for chain: ${targetChain}`)
+  }
 
   // 根据源链 token 地址，映射到目标链的对应 token（保持相同类型）
   let dstTokenAddress: string
   const srcTokenUpper = params.tokenAddress.toUpperCase()
+  const tronTokens = DEBRIDGE_TOKENS.TRON
 
-  if (srcTokenUpper === DEBRIDGE_TOKENS.TRON.USDT.toUpperCase()) {
-    dstTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDT
-  } else if (srcTokenUpper === DEBRIDGE_TOKENS.TRON.USDC.toUpperCase()) {
-    dstTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDC
+  if (tronTokens?.USDT && srcTokenUpper === tronTokens.USDT.toUpperCase()) {
+    // USDT → USDT (如果目标链有 USDT)
+    dstTokenAddress = targetChainTokens.USDT || targetChainTokens.USDC || ''
+    if (!dstTokenAddress) throw new Error(`${targetChain} does not support USDT or USDC`)
+  } else if (tronTokens?.USDC && srcTokenUpper === tronTokens.USDC.toUpperCase()) {
+    // USDC → USDC
+    dstTokenAddress = targetChainTokens.USDC || targetChainTokens.USDT || ''
+    if (!dstTokenAddress) throw new Error(`${targetChain} does not support USDC or USDT`)
   } else {
-    throw new Error(`Unsupported token address: ${params.tokenAddress}`)
+    throw new Error(`Unsupported TRON token address: ${params.tokenAddress}`)
   }
 
   console.log('[deBridge] Token mapping:', {
     src: params.tokenAddress,
+    srcChain: 'TRON',
     dst: dstTokenAddress,
-    note: 'TRON→ETH keeps same token type (USDT→USDT, USDC→USDC)'
+    dstChain: targetChain,
+    note: `TRON→${targetChain} auto-maps to available stablecoin`
   })
 
   // 1. 获取报价
@@ -717,11 +825,11 @@ export async function bridgeTronToEthereum(params: {
     srcChainId: DEBRIDGE_CHAIN_IDS.TRON,
     srcChainTokenIn: params.tokenAddress,
     srcChainTokenInAmount: params.amount,
-    dstChainId: DEBRIDGE_CHAIN_IDS.ETHEREUM,
+    dstChainId: chainConfig.chainId,
     dstChainTokenOut: dstTokenAddress,
-    dstChainTokenOutRecipient: params.ethereumAddress,
+    dstChainTokenOutRecipient: params.evmAddress,
     srcChainOrderAuthorityAddress: params.fromAddress,
-    dstChainOrderAuthorityAddress: params.ethereumAddress,
+    dstChainOrderAuthorityAddress: params.evmAddress,
     prependOperatingExpenses: false
   })
 
@@ -731,7 +839,7 @@ export async function bridgeTronToEthereum(params: {
     params.tokenAddress,
     params.amount,
     params.fromAddress,
-    params.ethereumAddress,
+    params.evmAddress,
     params.walletId,
     params.publicKey,
     params.accessToken,
@@ -740,82 +848,89 @@ export async function bridgeTronToEthereum(params: {
 }
 
 /**
- * Ethereum → Solana 桥接
+ * 通用 EVM 链 → Solana 桥接
+ * 支持 Ethereum、BSC、Polygon、Arbitrum、Optimism、Base、Avalanche 等 EVM 兼容链
  * 
- * @param params.tokenAddress - Ethereum token 地址 (如 0xdac17f958d2ee523a2206206994597c13d831ec7 for USDT)
- * @param params.amount - 转账金额（最小单位，如 20000000 = 20 USDT）
+ * @param params.chainName - 源链名称 (Ethereum, BSC, Polygon, Arbitrum, Optimism, Base, Avalanche)
+ * @param params.tokenAddress - 源链 token 地址 (USDC/USDT)
+ * @param params.amount - 转账金额（最小单位，如 20000000 = 20 USDC）
  * @param params.solanaAddress - Solana 接收地址
- * @param params.privyWallet - Privy Ethereum 钱包对象
+ * @param params.privyWallet - Privy EVM 钱包对象
+ * @param params.sendTransaction - Privy Gas 赞助函数
  * @returns 交易哈希、订单ID
  */
-export async function bridgeEthereumToSolana(params: {
+export async function bridgeEvmToSolana(params: {
+  chainName: string // Ethereum, BSC, Polygon, Arbitrum, Optimism, Base, Avalanche
   tokenAddress: string
   amount: string
   solanaAddress: string
   privyWallet: any
-  sendTransaction: (tx: any) => Promise<{ hash: string }> // Privy Gas 赞助函数
+  sendTransaction: (tx: any) => Promise<{ hash: string }>
 }): Promise<{ txHash: string; orderId?: string }> {
-  console.log('[deBridge] Bridge: Ethereum → Solana')
-  console.log('[deBridge-ETH] 🔍 Wallet object:', params.privyWallet)
-  console.log('[deBridge-ETH] 🔍 Wallet address:', params.privyWallet?.address)
-  console.log('[deBridge-ETH] 🔍 Wallet type:', params.privyWallet?.walletClientType || params.privyWallet?.type)
-  console.log('[deBridge-ETH] 🔍 Has sendTransaction?', !!params.privyWallet?.sendTransaction)
-  console.log('[deBridge-ETH] 🔍 Available methods:', Object.keys(params.privyWallet || {}))
-
-  // 🔥 关键：目标链 Solana 始终使用 USDC（无论源 token 是 USDT 还是 USDC）
-  // 这是因为 DeBridge 在 Solana 上优先使用 USDC，流动性更好
-  const dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC
-  const srcTokenLower = params.tokenAddress.toLowerCase()
-
-  // 验证源 token 是支持的稳定币
-  if (
-    srcTokenLower !== DEBRIDGE_TOKENS.ETHEREUM.USDT.toLowerCase() &&
-    srcTokenLower !== DEBRIDGE_TOKENS.ETHEREUM.USDC.toLowerCase()
-  ) {
-    throw new Error(`Unsupported token address: ${params.tokenAddress}`)
+  const { chainName, tokenAddress, amount, solanaAddress, privyWallet, sendTransaction } = params
+  
+  // 获取链配置
+  const chainConfig = EVM_CHAIN_CONFIG[chainName]
+  if (!chainConfig) {
+    throw new Error(`Unsupported chain: ${chainName}. Supported chains: ${Object.keys(EVM_CHAIN_CONFIG).join(', ')}`)
   }
 
-  console.log('[deBridge] Token mapping:', {
-    src: params.tokenAddress,
+  console.log(`[deBridge] Bridge: ${chainName} → Solana`)
+  console.log(`[deBridge-EVM] Chain: ${chainName} (chainId: ${chainConfig.chainId})`)
+  console.log('[deBridge-EVM] 🔍 Wallet address:', privyWallet?.address)
+  console.log('[deBridge-EVM] 🔍 Token address:', tokenAddress)
+  console.log('[deBridge-EVM] 🔍 Amount:', amount)
+
+  // 🔥 关键：目标链 Solana 始终使用 USDC（流动性更好）
+  const dstTokenAddress = DEBRIDGE_TOKENS.Solana?.USDC
+  if (!dstTokenAddress) {
+    throw new Error('Solana USDC address not configured')
+  }
+
+  // 验证源 token 是支持的稳定币
+  const chainTokens = DEBRIDGE_TOKENS[chainName]
+  const srcTokenLower = tokenAddress.toLowerCase()
+  const isValidToken = chainTokens && (
+    (chainTokens.USDT && srcTokenLower === chainTokens.USDT.toLowerCase()) ||
+    (chainTokens.USDC && srcTokenLower === chainTokens.USDC.toLowerCase())
+  )
+
+  if (!isValidToken) {
+    throw new Error(`Unsupported token address on ${chainName}: ${tokenAddress}`)
+  }
+
+  console.log('[deBridge-EVM] Token mapping:', {
+    src: tokenAddress,
+    srcChain: chainName,
     dst: dstTokenAddress,
+    dstChain: 'Solana',
     note: 'Solana always uses USDC (better liquidity)'
   })
 
-  // 动态导入 viem 以检查余额和处理交易
-  const { createPublicClient, http, encodeFunctionData } = await import('viem')
-  const { mainnet } = await import('viem/chains')
+  // 动态导入 viem
+  const { createPublicClient, http, encodeFunctionData, defineChain } = await import('viem')
+
+  // 创建自定义链配置
+  const customChain = defineChain({
+    id: chainConfig.chainId,
+    name: chainConfig.name,
+    nativeCurrency: {
+      decimals: 18,
+      name: chainConfig.nativeCurrency,
+      symbol: chainConfig.nativeCurrency,
+    },
+    rpcUrls: {
+      default: { http: [chainConfig.rpcUrl] },
+    },
+  })
 
   // 创建 public client 用于读取链上数据
   const publicClient = createPublicClient({
-    chain: mainnet,
-    transport: http('https://rpc.ankr.com/eth/6399319de5985a2ee9496b8ae8590d7bba3988a6fb28d4fc80cb1fbf9f039fb3')
+    chain: customChain,
+    transport: http(chainConfig.rpcUrl)
   })
 
-  // ✅ 不再检查 ETH 余额 - Privy Gas 赞助会自动处理 Gas 费用
-  console.log('[deBridge-ETH] Using Privy Gas Sponsorship - no ETH balance required')
-
-  // 1. 获取报价
-  const quote = await getDeBridgeQuote({
-    srcChainId: DEBRIDGE_CHAIN_IDS.ETHEREUM,
-    srcChainTokenIn: params.tokenAddress,
-    srcChainTokenInAmount: params.amount,
-    dstChainId: DEBRIDGE_CHAIN_IDS.SOLANA,
-    dstChainTokenOut: dstTokenAddress,
-    dstChainTokenOutRecipient: params.solanaAddress,
-    srcChainOrderAuthorityAddress: params.privyWallet.address,
-    dstChainOrderAuthorityAddress: params.solanaAddress,
-    prependOperatingExpenses: false
-  })
-
-  console.log('[deBridge] Quote received:', {
-    srcAmount: quote.estimation.srcChainTokenIn.amount,
-    dstAmount: quote.estimation.dstChainTokenOut.recommendedAmount,
-    orderId: quote.orderId,
-    allowanceValue: quote.tx.allowanceValue
-  })
-  
-  console.log('[deBridge-ETH] ⚠️ Quote orderId:', quote.orderId || 'NULL/UNDEFINED')
-  console.log('[deBridge-ETH] Note: orderId may be null in quote response, will be generated after tx')
+  console.log(`[deBridge-EVM] Using Privy Gas Sponsorship on ${chainName}`)
 
   // ERC20 ABI
   const ERC20_ABI = [
@@ -841,28 +956,49 @@ export async function bridgeEthereumToSolana(params: {
     }
   ] as const
 
+  // 1. 获取报价
+  const quote = await getDeBridgeQuote({
+    srcChainId: chainConfig.chainId,
+    srcChainTokenIn: tokenAddress,
+    srcChainTokenInAmount: amount,
+    dstChainId: DEBRIDGE_CHAIN_IDS.SOLANA,
+    dstChainTokenOut: dstTokenAddress,
+    dstChainTokenOutRecipient: solanaAddress,
+    srcChainOrderAuthorityAddress: privyWallet.address,
+    dstChainOrderAuthorityAddress: solanaAddress,
+    prependOperatingExpenses: false
+  })
+
+  console.log('[deBridge-EVM] Quote received:', {
+    srcAmount: quote.estimation.srcChainTokenIn.amount,
+    dstAmount: quote.estimation.dstChainTokenOut.recommendedAmount,
+    orderId: quote.orderId,
+    allowanceTarget: quote.tx.allowanceTarget,
+    allowanceValue: quote.tx.allowanceValue
+  })
+
   // 2. 检查当前 allowance
-  console.log('[deBridge-ETH] Checking current allowance...')
+  console.log('[deBridge-EVM] Checking current allowance...')
   const currentAllowance = (await publicClient.readContract({
-    address: params.tokenAddress as `0x${string}`,
+    address: tokenAddress as `0x${string}`,
     abi: ERC20_ABI,
     functionName: 'allowance',
-    args: [params.privyWallet.address as `0x${string}`, quote.tx.allowanceTarget as `0x${string}`]
+    args: [privyWallet.address as `0x${string}`, quote.tx.allowanceTarget as `0x${string}`]
   })) as bigint
 
-  console.log('[deBridge-ETH] Current allowance:', currentAllowance.toString())
-  console.log('[deBridge-ETH] Required amount:', params.amount)
+  console.log('[deBridge-EVM] Current allowance:', currentAllowance.toString())
+  console.log('[deBridge-EVM] Required amount:', amount)
 
   // 3. 如果需要，进行 approve
-  if (currentAllowance < BigInt(params.amount)) {
-    console.log('[deBridge-ETH] Insufficient allowance, requesting approval...')
+  if (currentAllowance < BigInt(amount)) {
+    console.log('[deBridge-EVM] Insufficient allowance, requesting approval...')
 
     try {
-      // 🔥 USDT 特殊处理：如果当前 allowance > 0，必须先重置为 0
-      const isUSDT = srcTokenLower === '0xdac17f958d2ee523a2206206994597c13d831ec7'
-
-      if (isUSDT && currentAllowance > BigInt(0)) {
-        console.log('[deBridge-ETH] ⚠️ USDT detected with existing allowance, resetting to 0 first...')
+      // 🔥 USDT 特殊处理：Ethereum 和 BSC 上的 USDT 如果当前 allowance > 0，必须先重置为 0
+      const isEthereumUSDT = chainName === 'Ethereum' && srcTokenLower === '0xdac17f958d2ee523a2206206994597c13d831ec7'
+      
+      if (isEthereumUSDT && currentAllowance > BigInt(0)) {
+        console.log('[deBridge-EVM] ⚠️ Ethereum USDT detected with existing allowance, resetting to 0 first...')
 
         const resetApproveData = encodeFunctionData({
           abi: ERC20_ABI,
@@ -870,22 +1006,14 @@ export async function bridgeEthereumToSolana(params: {
           args: [quote.tx.allowanceTarget as `0x${string}`, BigInt(0)]
         })
 
-        console.log('[deBridge-ETH] 🔄 Sending RESET approval transaction...')
-        console.log('[deBridge-ETH] - From:', params.privyWallet.address)
-        console.log('[deBridge-ETH] - To (USDT contract):', params.tokenAddress)
-        console.log('[deBridge-ETH] - Spender (DeBridge):', quote.tx.allowanceTarget)
-        console.log('[deBridge-ETH] - Reset amount: 0')
-        console.log('[deBridge-ETH] - Gas sponsorship: ENABLED ✅')
-
-        // 使用 Privy v3.8+ Gas 赞助
-        const resetTxResult = await params.sendTransaction({
-          to: params.tokenAddress as `0x${string}`,
+        const resetTxResult = await sendTransaction({
+          to: tokenAddress as `0x${string}`,
           data: resetApproveData as `0x${string}`,
+          chainId: chainConfig.chainId,
           sponsorGas: true
         })
 
-        console.log('[deBridge-ETH] ✅ Reset approval tx sent:', resetTxResult.hash)
-        console.log('[deBridge-ETH] Waiting for reset confirmation...')
+        console.log('[deBridge-EVM] ✅ Reset approval tx sent:', resetTxResult.hash)
 
         const resetReceipt = await publicClient.waitForTransactionReceipt({
           hash: resetTxResult.hash as `0x${string}`,
@@ -896,28 +1024,26 @@ export async function bridgeEthereumToSolana(params: {
           throw new Error('Reset approval transaction failed')
         }
 
-        console.log('[deBridge-ETH] ✅ Reset approval confirmed')
+        console.log('[deBridge-EVM] ✅ Reset approval confirmed')
       }
 
       // 正式 approve
-      console.log('[deBridge-ETH] Sending approval transaction...')
+      console.log('[deBridge-EVM] Sending approval transaction...')
       const approveData = encodeFunctionData({
         abi: ERC20_ABI,
         functionName: 'approve',
         args: [quote.tx.allowanceTarget as `0x${string}`, BigInt(quote.tx.allowanceValue)]
       })
 
-      // 使用 Privy v3.8+ Gas 赞助
-      const approveTxResult = await params.sendTransaction({
-        to: params.tokenAddress as `0x${string}`,
+      const approveTxResult = await sendTransaction({
+        to: tokenAddress as `0x${string}`,
         data: approveData as `0x${string}`,
+        chainId: chainConfig.chainId,
         sponsorGas: true
       })
 
-      console.log('[deBridge-ETH] ✅ Approval tx sent:', approveTxResult.hash)
+      console.log('[deBridge-EVM] ✅ Approval tx sent:', approveTxResult.hash)
 
-      // 等待确认
-      console.log('[deBridge-ETH] Waiting for approval confirmation...')
       const approveReceipt = await publicClient.waitForTransactionReceipt({
         hash: approveTxResult.hash as `0x${string}`,
         timeout: 180_000
@@ -927,41 +1053,36 @@ export async function bridgeEthereumToSolana(params: {
         throw new Error('Token approval transaction failed')
       }
 
-      console.log('[deBridge-ETH] ✅ Approval confirmed:', approveReceipt.transactionHash)
+      console.log('[deBridge-EVM] ✅ Approval confirmed:', approveReceipt.transactionHash)
     } catch (error) {
-      console.error('[deBridge-ETH] Approval failed:', error)
+      console.error('[deBridge-EVM] Approval failed:', error)
       throw new Error(`Token approval failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   } else {
-    console.log('[deBridge-ETH] ✅ Sufficient allowance, skipping approval')
+    console.log('[deBridge-EVM] ✅ Sufficient allowance, skipping approval')
   }
 
   // 4. 创建桥接订单
-  console.log('[deBridge-ETH] Creating bridge order with gas sponsorship...')
+  console.log('[deBridge-EVM] Creating bridge order...')
 
   try {
-    // 🔥 关键：调用 create-tx API 而不是使用 quote.tx
-    // 这样可以获取 orderId 用于跟踪订单状态
-    console.log('[deBridge-ETH] Calling create-tx API to get orderId...')
-    
+    // 调用 create-tx API 获取 orderId
     const createTxUrl = new URL(`${DEBRIDGE_API_BASE_URL}/dln/order/create-tx`)
-    createTxUrl.searchParams.append('srcChainId', DEBRIDGE_CHAIN_IDS.ETHEREUM.toString())
-    createTxUrl.searchParams.append('srcChainTokenIn', params.tokenAddress)
-    createTxUrl.searchParams.append('srcChainTokenInAmount', params.amount)
+    createTxUrl.searchParams.append('srcChainId', chainConfig.chainId.toString())
+    createTxUrl.searchParams.append('srcChainTokenIn', tokenAddress)
+    createTxUrl.searchParams.append('srcChainTokenInAmount', amount)
     createTxUrl.searchParams.append('dstChainId', DEBRIDGE_CHAIN_IDS.SOLANA.toString())
     createTxUrl.searchParams.append('dstChainTokenOut', dstTokenAddress)
-    createTxUrl.searchParams.append('dstChainTokenOutRecipient', params.solanaAddress)
-    createTxUrl.searchParams.append('srcChainOrderAuthorityAddress', params.privyWallet.address)
-    createTxUrl.searchParams.append('dstChainOrderAuthorityAddress', params.solanaAddress)
+    createTxUrl.searchParams.append('dstChainTokenOutRecipient', solanaAddress)
+    createTxUrl.searchParams.append('srcChainOrderAuthorityAddress', privyWallet.address)
+    createTxUrl.searchParams.append('dstChainOrderAuthorityAddress', solanaAddress)
     createTxUrl.searchParams.append('prependOperatingExpenses', 'false')
 
-    console.log('[deBridge-ETH] create-tx URL:', createTxUrl.toString())
+    console.log('[deBridge-EVM] create-tx URL:', createTxUrl.toString())
 
     const createTxResponse = await fetch(createTxUrl.toString(), {
       method: 'GET',
-      headers: {
-        Accept: 'application/json'
-      }
+      headers: { Accept: 'application/json' }
     })
 
     if (!createTxResponse.ok) {
@@ -970,9 +1091,8 @@ export async function bridgeEthereumToSolana(params: {
     }
 
     const txData = (await createTxResponse.json()) as any
-    console.log('[deBridge-ETH] Transaction data received')
-    console.log('[deBridge-ETH] - Order ID:', txData.orderId || 'NOT_AVAILABLE')
-    console.log('[deBridge-ETH] - Has tx data:', !!txData.tx)
+    console.log('[deBridge-EVM] Transaction data received')
+    console.log('[deBridge-EVM] - Order ID:', txData.orderId || 'NOT_AVAILABLE')
 
     if (!txData.tx || !txData.tx.to || !txData.tx.data) {
       throw new Error('DeBridge API did not return valid transaction data')
@@ -982,23 +1102,22 @@ export async function bridgeEthereumToSolana(params: {
     const dstChainTokenOutAmount =
       txData.estimation?.dstChainTokenOut?.recommendedAmount || txData.estimation?.dstChainTokenOut?.amount
 
-    console.log('[deBridge-ETH] Expected Solana output amount:', dstChainTokenOutAmount)
+    console.log('[deBridge-EVM] Expected Solana output amount:', dstChainTokenOutAmount)
 
-    // 使用 Privy v3.8+ Gas 赞助
-    // 🔥 关键：必须包含 from 参数来指定使用哪个钱包
-    const bridgeTxResult = await params.sendTransaction({
+    // 发送桥接交易
+    const bridgeTxResult = await sendTransaction({
       to: txData.tx.to as `0x${string}`,
-      from: params.privyWallet.address as `0x${string}`, // ← 指定钱包地址
+      from: privyWallet.address as `0x${string}`,
       data: txData.tx.data as `0x${string}`,
       value: txData.tx.value ? BigInt(txData.tx.value) : BigInt(0),
-      chainId: 1,
+      chainId: chainConfig.chainId,
       sponsorGas: true
     })
 
-    console.log('[deBridge-ETH] ✅ Bridge tx sent:', bridgeTxResult.hash)
+    console.log('[deBridge-EVM] ✅ Bridge tx sent:', bridgeTxResult.hash)
 
     // 等待交易确认
-    console.log('[deBridge-ETH] Waiting for bridge transaction confirmation...')
+    console.log('[deBridge-EVM] Waiting for bridge transaction confirmation...')
     const bridgeReceipt = await publicClient.waitForTransactionReceipt({
       hash: bridgeTxResult.hash as `0x${string}`,
       timeout: 180_000
@@ -1008,15 +1127,15 @@ export async function bridgeEthereumToSolana(params: {
       throw new Error('Bridge transaction failed')
     }
 
-    console.log('[deBridge-ETH] ✅ Bridge transaction confirmed:', bridgeReceipt.transactionHash)
-    console.log('[deBridge-ETH] ✅ Order ID:', orderId || 'NOT_AVAILABLE')
+    console.log('[deBridge-EVM] ✅ Bridge transaction confirmed:', bridgeReceipt.transactionHash)
+    console.log('[deBridge-EVM] ✅ Order ID:', orderId || 'NOT_AVAILABLE')
 
     return {
       txHash: bridgeTxResult.hash,
-      orderId: orderId // 从 create-tx API 获取的 orderId
+      orderId: orderId
     }
   } catch (error) {
-    console.error('[deBridge-ETH] Bridge transaction failed:', error)
+    console.error('[deBridge-EVM] Bridge transaction failed:', error)
     throw new Error(`Bridge transaction failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
@@ -1031,28 +1150,46 @@ export const debridgeService = {
   createDeBridgeOrderSolana,
   createDeBridgeOrderTron,
   waitForOrderCompletion,
-  bridgeTronToEthereum,
-  bridgeEthereumToSolana,
-  bridgeSolanaToEthereum,
-  bridgeSolanaToTron
+  bridgeTronToEvm, // 🔥 通用：TRON → 任意 EVM 链
+  bridgeEvmToSolana, // 🔥 通用：任意 EVM → Solana
+  bridgeSolanaToEvm, // 🔥 通用：Solana → 任意 EVM 链
+  bridgeSolanaToTron,
+  // 导出链配置供外部使用
+  DEBRIDGE_CHAIN_IDS,
+  DEBRIDGE_TOKENS,
+  EVM_CHAIN_CONFIG
 }
 
 /**
- * 桥接 Solana → Ethereum (出金使用)
- * 用于将 Solana USDC 桥接回 Ethereum
+ * 通用 Solana → EVM 链桥接 (出金使用)
+ * 用于将 Solana USDC 桥接到任意 EVM 链
+ * 
+ * @param params.targetChain - 目标 EVM 链名称 (Ethereum, BSC, Polygon, Arbitrum, Optimism, Base, Avalanche)
+ * @param params.amount - USDC 金额（最小单位，6位小数）
+ * @param params.evmAddress - 目标 EVM 链地址
+ * @param params.solanaWallet - Privy Solana 钱包
+ * @param params.signAndSendTransaction - Privy signAndSendTransaction hook
  */
-async function bridgeSolanaToEthereum(params: {
+async function bridgeSolanaToEvm(params: {
+  targetChain: string // Ethereum, BSC, Polygon, Arbitrum, etc.
   amount: string // USDC 金额（最小单位，6位小数）
-  ethereumAddress: string // 目标 Ethereum 地址
+  evmAddress: string // 目标 EVM 链地址
   solanaWallet: any // Privy Solana 钱包
   signAndSendTransaction: any // Privy signAndSendTransaction hook
 }): Promise<{ txHash: string; orderId: string }> {
-  const { amount, ethereumAddress, solanaWallet, signAndSendTransaction } = params
+  const { targetChain, amount, evmAddress, solanaWallet, signAndSendTransaction } = params
 
-  console.log('[deBridge-SOL→ETH] 🔄 Starting Solana to Ethereum bridge:', {
+  // 获取目标链配置
+  const chainConfig = EVM_CHAIN_CONFIG[targetChain]
+  if (!chainConfig) {
+    throw new Error(`Unsupported target chain: ${targetChain}. Supported: ${Object.keys(EVM_CHAIN_CONFIG).join(', ')}`)
+  }
+
+  console.log(`[deBridge-SOL→${targetChain}] 🔄 Starting Solana to ${targetChain} bridge:`, {
     amount,
-    ethereumAddress,
-    solanaWallet: solanaWallet?.address
+    evmAddress,
+    solanaWallet: solanaWallet?.address,
+    targetChainId: chainConfig.chainId
   })
 
   // 检查最小金额
@@ -1063,51 +1200,66 @@ async function bridgeSolanaToEthereum(params: {
   }
 
   // 源 token: Solana USDC
-  const srcTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC
-  // 目标 token: Ethereum USDC (保持相同类型)
-  const dstTokenAddress = DEBRIDGE_TOKENS.ETHEREUM.USDC
+  const srcTokenAddress = DEBRIDGE_TOKENS.Solana?.USDC
+  if (!srcTokenAddress) {
+    throw new Error('Solana USDC address not configured')
+  }
 
-  console.log('[deBridge-SOL→ETH] Token mapping:', {
+  // 目标 token: 目标链 USDC (保持相同类型)
+  const targetChainTokens = DEBRIDGE_TOKENS[targetChain]
+  if (!targetChainTokens) {
+    throw new Error(`No token configuration for chain: ${targetChain}`)
+  }
+  
+  // 优先使用 USDC，如果没有则使用 USDT
+  const dstTokenAddress = targetChainTokens.USDC || targetChainTokens.USDT
+  if (!dstTokenAddress) {
+    throw new Error(`${targetChain} does not support USDC or USDT`)
+  }
+
+  console.log(`[deBridge-SOL→${targetChain}] Token mapping:`, {
     src: srcTokenAddress,
+    srcChain: 'Solana',
     dst: dstTokenAddress,
-    note: 'SOL→ETH keeps same token type (USDC→USDC)'
+    dstChain: targetChain,
+    note: `SOL→${targetChain} keeps same token type (USDC→USDC)`
   })
 
   // 1. 获取报价
-  console.log('[deBridge-SOL→ETH] Requesting quote...')
+  console.log(`[deBridge-SOL→${targetChain}] Requesting quote...`)
   const quote = await getDeBridgeQuote({
     srcChainId: DEBRIDGE_CHAIN_IDS.SOLANA,
     srcChainTokenIn: srcTokenAddress,
     srcChainTokenInAmount: amount,
-    dstChainId: DEBRIDGE_CHAIN_IDS.ETHEREUM,
+    dstChainId: chainConfig.chainId,
     dstChainTokenOut: dstTokenAddress,
-    dstChainTokenOutRecipient: ethereumAddress,
+    dstChainTokenOutRecipient: evmAddress,
     srcChainOrderAuthorityAddress: solanaWallet.address,
-    dstChainOrderAuthorityAddress: ethereumAddress,
+    dstChainOrderAuthorityAddress: evmAddress,
     prependOperatingExpenses: false
   })
 
-  console.log('[deBridge-SOL→ETH] Quote received:', {
+  console.log(`[deBridge-SOL→${targetChain}] Quote received:`, {
     srcAmount: quote.estimation.srcChainTokenIn.amount,
     dstAmount: quote.estimation.dstChainTokenOut.recommendedAmount,
     orderId: quote.orderId
   })
 
   // 2. 调用 create-tx API 获取 Solana 交易
-  console.log('[deBridge-SOL→ETH] Calling create-tx API...')
+  console.log(`[deBridge-SOL→${targetChain}] Calling create-tx API...`)
   
   const createTxUrl = new URL(`${DEBRIDGE_API_BASE_URL}/dln/order/create-tx`)
   createTxUrl.searchParams.append('srcChainId', DEBRIDGE_CHAIN_IDS.SOLANA.toString())
   createTxUrl.searchParams.append('srcChainTokenIn', srcTokenAddress)
   createTxUrl.searchParams.append('srcChainTokenInAmount', amount)
-  createTxUrl.searchParams.append('dstChainId', DEBRIDGE_CHAIN_IDS.ETHEREUM.toString())
+  createTxUrl.searchParams.append('dstChainId', chainConfig.chainId.toString())
   createTxUrl.searchParams.append('dstChainTokenOut', dstTokenAddress)
-  createTxUrl.searchParams.append('dstChainTokenOutRecipient', ethereumAddress)
+  createTxUrl.searchParams.append('dstChainTokenOutRecipient', evmAddress)
   createTxUrl.searchParams.append('srcChainOrderAuthorityAddress', solanaWallet.address)
-  createTxUrl.searchParams.append('dstChainOrderAuthorityAddress', ethereumAddress)
+  createTxUrl.searchParams.append('dstChainOrderAuthorityAddress', evmAddress)
   createTxUrl.searchParams.append('prependOperatingExpenses', 'false')
 
-  console.log('[deBridge-SOL→ETH] create-tx URL:', createTxUrl.toString())
+  console.log(`[deBridge-SOL→${targetChain}] create-tx URL:`, createTxUrl.toString())
 
   const createTxResponse = await fetch(createTxUrl.toString(), {
     method: 'GET',
@@ -1122,9 +1274,9 @@ async function bridgeSolanaToEthereum(params: {
   }
 
   const txData = (await createTxResponse.json()) as any
-  console.log('[deBridge-SOL→ETH] Transaction data received')
-  console.log('[deBridge-SOL→ETH] - Order ID:', txData.orderId || 'NOT_AVAILABLE')
-  console.log('[deBridge-SOL→ETH] - Has tx data:', !!txData.tx)
+  console.log(`[deBridge-SOL→${targetChain}] Transaction data received`)
+  console.log(`[deBridge-SOL→${targetChain}] - Order ID:`, txData.orderId || 'NOT_AVAILABLE')
+  console.log(`[deBridge-SOL→${targetChain}] - Has tx data:`, !!txData.tx)
 
   if (!txData.tx || !txData.tx.data) {
     throw new Error('DeBridge API did not return valid Solana transaction data')
@@ -1134,10 +1286,10 @@ async function bridgeSolanaToEthereum(params: {
   const dstChainTokenOutAmount =
     txData.estimation?.dstChainTokenOut?.recommendedAmount || txData.estimation?.dstChainTokenOut?.amount
 
-  console.log('[deBridge-SOL→ETH] Expected Ethereum output amount:', dstChainTokenOutAmount)
+  console.log(`[deBridge-SOL→${targetChain}] Expected ${targetChain} output amount:`, dstChainTokenOutAmount)
 
   // 3. 发送 Solana 交易
-  console.log('[deBridge-SOL→ETH] 🔐 Signing and sending Solana transaction...')
+  console.log(`[deBridge-SOL→${targetChain}] 🔐 Signing and sending Solana transaction...`)
 
   try {
     // 根据 Privy 嵌入式钱包：
@@ -1146,7 +1298,7 @@ async function bridgeSolanaToEthereum(params: {
     // 3. 使用 Privy 的 signAndSendTransaction hook 发送
     //    这个方法支持 gas sponsorship 并正确处理序列化交易
     
-    console.log('[deBridge-SOL→ETH] Transaction data:', txData.tx.data.substring(0, 20) + '...')
+    console.log(`[deBridge-SOL→${targetChain}] Transaction data:`, txData.tx.data.substring(0, 20) + '...')
     
     // deBridge 返回的 tx.data 是 hex 格式，去除 0x 前缀后转为 buffer
     const hexString = txData.tx.data.startsWith('0x') 
@@ -1154,15 +1306,14 @@ async function bridgeSolanaToEthereum(params: {
       : txData.tx.data
     const txBuffer = Buffer.from(hexString, 'hex')
     
-    console.log('[deBridge-SOL→ETH] Buffer length:', txBuffer.length)
+    console.log(`[deBridge-SOL→${targetChain}] Buffer length:`, txBuffer.length)
     
     // 使用 Privy 的 signAndSendTransaction 发送序列化的交易
-    // 参考 frontend/src/components/WithdrawDialog.tsx
     if (!signAndSendTransaction) {
       throw new Error('signAndSendTransaction hook not available')
     }
 
-    console.log('[deBridge-SOL→ETH] Sending transaction via Privy signAndSendTransaction...')
+    console.log(`[deBridge-SOL→${targetChain}] Sending transaction via Privy signAndSendTransaction...`)
     
     // signAndSendTransaction 接受序列化的交易 buffer
     const result = await signAndSendTransaction({
@@ -1175,8 +1326,8 @@ async function bridgeSolanaToEthereum(params: {
     
     const txSignature = result.signature
     
-    console.log('[deBridge-SOL→ETH] ✅ Transaction sent:', txSignature)
-    console.log(`[deBridge-SOL→ETH] 🎉 Check tx: https://solscan.io/tx/${txSignature}`)
+    console.log(`[deBridge-SOL→${targetChain}] ✅ Transaction sent:`, txSignature)
+    console.log(`[deBridge-SOL→${targetChain}] 🎉 Check tx: https://solscan.io/tx/${txSignature}`)
     
     // signAndSendTransaction 已经等待交易确认，所以不需要再次等待
 
@@ -1185,29 +1336,30 @@ async function bridgeSolanaToEthereum(params: {
       orderId: orderId
     }
   } catch (error) {
-    console.error('[deBridge-SOL→ETH] Transaction failed:', error)
+    console.error(`[deBridge-SOL→${targetChain}] Transaction failed:`, error)
     throw new Error(`Solana bridge transaction failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
   }
 }
 
 /**
  * 桥接 Solana → Tron (出金使用)
- * 两步桥接：Solana → Ethereum → Tron
+ * 两步桥接：Solana → BSC → Tron
+ * 使用 BSC 作为中转链（费用更低）
  */
 async function bridgeSolanaToTron(params: {
   amount: string
   tronAddress: string
   solanaWallet: any
   signAndSendTransaction: any // Privy signAndSendTransaction hook
-  ethereumWallet: any
+  evmWallet: any // EVM 钱包（用于 BSC 中转）
 }): Promise<{ txHash: string; orderId: string }> {
-  const { amount, tronAddress, solanaWallet, signAndSendTransaction, ethereumWallet } = params
+  const { amount, tronAddress, solanaWallet, signAndSendTransaction, evmWallet } = params
 
-  console.log('[deBridge-SOL→TRON] 🔄 Starting Solana to Tron bridge (2 steps):', {
+  console.log('[deBridge-SOL→TRON] 🔄 Starting Solana to Tron bridge (2 steps via BSC):', {
     amount,
     tronAddress,
     solanaWallet: solanaWallet?.address,
-    ethereumWallet: ethereumWallet?.address
+    evmWallet: evmWallet?.address
   })
 
   // 检查最小金额（TRON 需要更高，因为有两次桥接费用）
@@ -1217,18 +1369,19 @@ async function bridgeSolanaToTron(params: {
     throw new Error(`金额太小，Solana → Tron 需要两次桥接，最少需要 $20 USD（当前: $${(amountNum / 1_000_000).toFixed(2)}）`)
   }
 
-  console.log('[deBridge-SOL→TRON] Step 1/2: Solana → Ethereum (intermediate)')
+  console.log('[deBridge-SOL→TRON] Step 1/2: Solana → BSC (intermediate)')
 
-  // 步骤 1: Solana → Ethereum (中转到 Ethereum 钱包)
-  const step1Result = await bridgeSolanaToEthereum({
+  // 步骤 1: Solana → BSC (中转到 BSC 钱包，费用更低)
+  const step1Result = await bridgeSolanaToEvm({
+    targetChain: 'BSC',
     amount,
-    ethereumAddress: ethereumWallet.address,
+    evmAddress: evmWallet.address,
     solanaWallet,
     signAndSendTransaction
   })
 
   console.log('[deBridge-SOL→TRON] ✅ Step 1 completed:', step1Result.txHash)
-  console.log('[deBridge-SOL→TRON] Waiting for Ethereum to receive USDC...')
+  console.log('[deBridge-SOL→TRON] Waiting for BSC to receive USDC...')
 
   // 等待第一步完成（通常需要 2-5 分钟）
   if (step1Result.orderId) {
@@ -1240,14 +1393,14 @@ async function bridgeSolanaToTron(params: {
     }
   }
 
-  console.log('[deBridge-SOL→TRON] Step 2/2: Ethereum → Tron (final)')
+  console.log('[deBridge-SOL→TRON] Step 2/2: BSC → Tron (final)')
 
-  // 步骤 2: Ethereum → Tron
-  // 需要等待 Ethereum 收到 USDC 后才能继续
+  // 步骤 2: BSC → Tron
+  // 需要等待 BSC 收到 USDC 后才能继续
   // TODO: 这里需要实现余额监听或手动触发
   // 当前返回第一步的结果，提示用户等待
-  console.warn('[deBridge-SOL→TRON] ⚠️ Step 2 (Ethereum → Tron) needs to be triggered manually or via balance polling')
-  console.warn('[deBridge-SOL→TRON] Returning step 1 result. User needs to wait for Ethereum to receive USDC.')
+  console.warn('[deBridge-SOL→TRON] ⚠️ Step 2 (BSC → Tron) needs to be triggered manually or via balance polling')
+  console.warn('[deBridge-SOL→TRON] Returning step 1 result. User needs to wait for BSC to receive USDC.')
   
   return {
     txHash: step1Result.txHash,
