@@ -109,13 +109,7 @@ export const DepositAssets = () => {
   return (
     <div>
       <div>
-        <Button
-          disabled={!hasWallet}
-          variant={'primary'}
-          size={'md'}
-          className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold"
-          onClick={() => setShowAddFundsMenu(true)}
-        >
+        <Button disabled={!hasWallet} variant={'primary'} color={'primary'} size={'md'} onClick={() => setShowAddFundsMenu(true)}>
           存款
         </Button>
 

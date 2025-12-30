@@ -113,8 +113,8 @@ function VaultDetailOverview() {
           content: '--',
           tooltip: '回报率是根据不同周期的平均值计算的，并不代表真实的未来收益。 30 day 14.05%'
         }
-      ].map((item) => (
-        <div className="flex flex-1 flex-col gap-1.5 py-[25px] px-[30px]">
+      ].map((item, i) => (
+        <div key={i} className="flex flex-1 flex-col gap-1.5 py-[25px] px-[30px]">
           <div className={contentClassName}>{item.content}</div>
           <div className="flex items-center gap-3">
             <div className={labelClassName}>{item.label}</div>

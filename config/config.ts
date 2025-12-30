@@ -236,6 +236,7 @@ export default defineConfig({
 
   //================ pro 插件配置 =================
   presets: ['umi-presets-pro'],
+
   /**
    * @name openAPI 插件的配置
    * @description 基于 openapi 的规范生成serve 和mock，能减少很多样板代码

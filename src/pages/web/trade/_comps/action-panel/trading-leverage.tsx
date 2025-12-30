@@ -35,7 +35,9 @@ export const TradingLeverage = observer(() => {
             <Trans>固定预付款</Trans>
           ) : isFixedLeverage ? (
             <FormatedLeverage leverage={prepaymentConf?.fixed_leverage?.leverage_multiple} />
-          ) : null}
+          ) : (
+            '-'
+          )}
         </div>
       ) : (
         <SettingLeverageModal

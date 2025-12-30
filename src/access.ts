@@ -9,7 +9,7 @@ export default function access(initialState: { currentUser?: User.UserInfo } | u
   return {
     // 登录可见
     // canAdmin: currentUser && currentUser.appId
-    canAdmin: !!STORAGE_GET_TOKEN()
+    canAdmin: currentUser && !!STORAGE_GET_TOKEN()
     // canUpdateFoo: role === 'admin',
     // canDeleteFoo: (foo) => {
     //   return foo.ownerId === userId;

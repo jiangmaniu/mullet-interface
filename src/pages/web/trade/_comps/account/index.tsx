@@ -107,12 +107,7 @@ export const AccountDetails = observer(() => {
 
         <div className="flex gap-3">
           <div>
-            <Button
-              variant="primary"
-              size="sm"
-              className="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold"
-              onClick={() => withdrawModalRef.current?.show(currentAccountInfo)}
-            >
+            <Button variant="primary" size="sm" color={'primary'} onClick={() => withdrawModalRef.current?.show(currentAccountInfo)}>
               取现
             </Button>
           </div>

@@ -33,18 +33,18 @@ export const MainLayoutHeaderNav = () => {
               path: '/trade',
               label: '交易',
               activeSegment: 'trade'
-            },
-
-            {
-              path: '/lp',
-              label: <IconMtlp className="w-[52px] h-[14px]" />,
-              activeSegment: 'lp'
-            },
-            {
-              path: '/vaults',
-              label: '金库',
-              activeSegment: 'vaults'
             }
+
+            // {
+            //   path: '/lp',
+            //   label: <IconMtlp className="w-[52px] h-[14px]" />,
+            //   activeSegment: 'lp'
+            // },
+            // {
+            //   path: '/vaults',
+            //   label: '金库',
+            //   activeSegment: 'vaults'
+            // }
             // {
             //   path: '/points',
             //   label: '积分',

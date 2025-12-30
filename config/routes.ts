@@ -78,18 +78,18 @@ export default [
         path: '/:lng/trade',
         component: './web/trade'
       },
-      {
-        path: '/:lng/lp',
-        component: './web/lp'
-      },
-      {
-        path: '/:lng/vault',
-        component: './web/vault'
-      },
-      {
-        path: '/:lng/vault/:vaultId',
-        component: './web/vault/detail'
-      },
+      // {
+      //   path: '/:lng/lp',
+      //   component: './web/lp'
+      // },
+      // {
+      //   path: '/:lng/vault',
+      //   component: './web/vault'
+      // },
+      // {
+      //   path: '/:lng/vault/:vaultId',
+      //   component: './web/vault/detail'
+      // },
       {
         path: '/:lng/account',
         access: 'canAdmin', // 权限配置

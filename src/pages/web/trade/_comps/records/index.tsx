@@ -11,15 +11,10 @@ import { isBoolean } from 'lodash-es'
 import { observer } from 'mobx-react'
 import PositionList from './PositionList'
 import PendingList from './PendingList'
-// import HistoryPendingList from '../../comp/TradeRecord/comp/HistoryPendingList'
-import HistoryCloseList from '../../comp/TradeRecord/comp/HistoryCloseList'
-// import HistoryCloseList from './HistoryCloseList'
+import HistoryCloseList from './HistoryCloseList'
 import HistoryPendingList from './HistoryPendingList'
-import FundRecordList from '../../comp/TradeRecord/comp/FundRecordList'
-// import FundRecordList from './FundRecordList'
-import HistoryPositionList from '../../comp/TradeRecord/comp/HistoryPositionList'
-// import HistoryPositionList from './HistoryPositionList'
-// import { CloseAllPositions } from './positions/close-all'
+import FundRecordList from './FundRecordList'
+import HistoryPositionList from './HistoryPositionList'
 
 enum TabType {
   POSITIONS = 'positions',

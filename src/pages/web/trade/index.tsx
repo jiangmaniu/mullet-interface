@@ -11,8 +11,8 @@ import usePageVisibility from '@/hooks/usePageVisibility'
 import useSyncDataToWorker from '@/hooks/useSyncDataToWorker'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { cn } from '@/utils/cn'
-import { push } from '@/utils/navigator'
-import { STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
+import { push, replace } from '@/utils/navigator'
+import { STORAGE_GET_TOKEN, STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW_TIME } from '@/utils/storage'
 
 import { NewTradeRecords } from './_comps/records'
 
@@ -33,6 +33,7 @@ import { TradeMarket } from './_comps/market'
 import { TradeActionPanel } from './_comps/action-panel'
 import { MarginRate } from './_comps/margin-rate'
 import { OrderDepthPriceBooks } from './_comps/order-book'
+import { WEB_LOGIN_PAGE } from '@/constants'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -73,6 +74,12 @@ export default observer(() => {
       ws.subscribeExchangeRateQuote()
     }, 1000)
   }
+
+  useEffect(() => {
+    if (!currentUser || !STORAGE_GET_TOKEN()) {
+      replace(WEB_LOGIN_PAGE)
+    }
+  }, [currentUser])
 
   useEffect(() => {
     if (trade.currentAccountInfo?.status === 'DISABLED' || trade.currentAccountInfo?.enableConnect === false) {
