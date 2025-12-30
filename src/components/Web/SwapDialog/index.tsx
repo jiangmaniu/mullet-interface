@@ -11,9 +11,8 @@ import useConnection from '@/hooks/web3/useConnection'
 import { checkBalance } from '@/services/balanceService'
 import { TOKEN_ICONS, CHAIN_ICONS } from '@/config/tokenIcons'
 import { useTheme } from '@/context/themeProvider'
-import { useCoboWallet } from '@/hooks/useCoboWallet'
-import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
 import { useStores } from '@/context/mobxProvider'
+import { useServerWallet } from '@/hooks/useServerWallet'
 import {
   getDeBridgeQuote,
   createDeBridgeOrderTron,
@@ -121,18 +120,12 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   const solanaWallet = activeSolanaWallet
   const ethWallet = activeEthereumWallet
 
-  // 🔥 获取 Cobo Solana 充值地址作为跨链兑换的目标地址
-  const { walletId: coboWalletId } = useCoboWallet({
-    tradeAccountId: trade.currentAccountInfo?.id,
-    enabled: !!trade.currentAccountInfo?.id
-  })
-
-  const { address: coboSolanaAddress } = useCoboDepositAddress({
-    tradeAccountId: trade.currentAccountInfo?.id,
-    chainId: 'SOL',
-    walletId: coboWalletId || '',
-    enabled: !!trade.currentAccountInfo?.id && !!coboWalletId
-  })
+  // 🔥 获取 Privy Server Solana 地址（用于 SPL Token 直接转账和跨链兑换的目标地址）
+  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet(
+    'solana',
+    !!trade.currentAccountInfo?.id,
+    trade.currentAccountInfo?.id
+  )
 
   // Fetch balances
   const { balances: solBalances } = useSolanaBalance(solanaWallet?.address)
@@ -322,7 +315,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       const amountInUsd = tokenAmount * tokenPrice
 
-      // 🔥 处理 Solana SPL Token (USDC/USDT) → Cobo Solana (直接转账，无需跨链)
+      // 🔥 处理 Solana SPL Token (USDC/USDT) → Privy Server Solana (直接转账，无需跨链)
       if ((tokenSymbol === 'USDC' || tokenSymbol === 'USDT') && sourceNetwork === 'Solana') {
         // Solana USDC/USDT → Solana: 直接转账，无需兑换
         // 只需极少的 Solana 网络费用
@@ -343,7 +336,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
           destination: {
             token: tokenSymbol,
             network: 'Solana',
-            account: 'Mullet Account (Cobo)'
+            account: 'Mullet Account'
           },
           networkCost: '~$0.00001', // Solana 转账费用极低
           priceImpact: '0%', // 无价格影响
@@ -443,13 +436,16 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         }
       }
 
-      // Destination is always Solana - 🔥 使用 Cobo Solana 充值地址
+      // Destination is always Solana - 🔥 使用 Privy Server Solana 地址
       const dstChainId = DEBRIDGE_CHAIN_IDS.SOLANA
-      // 必须使用 Cobo Solana 充值地址，确保资金到达托管账户
-      if (!coboSolanaAddress) {
-        throw new Error('Cobo Solana deposit address not ready. Please wait a moment and try again.')
+      // 🔥 使用 Privy Server Solana 地址作为跨链目标地址
+      if (!serverSolanaAddress) {
+        if (serverWalletLoading) {
+          throw new Error('Solana deposit address is being created. Please wait a moment and try again.')
+        }
+        throw new Error('Solana deposit address not ready. Please wait a moment and try again.')
       }
-      const dstAddress = coboSolanaAddress
+      const dstAddress = serverSolanaAddress
       const dstTokenAddress = DEBRIDGE_TOKENS.SOLANA.USDC
 
       // Calculate amount in smallest unit based on token decimals
@@ -458,8 +454,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       const amountInSmallestUnit = Math.floor(tokenAmount * Math.pow(10, decimals)).toString()
 
       console.log('[SwapDialog] Quote address debug:', {
-        coboSolanaAddress: dstAddress,
-        isCoboAddress: true
+        serverSolanaAddress: dstAddress,
+        isServerWallet: true
       })
 
       // Get DeBridge quote (doesn't execute anything)
@@ -532,9 +528,12 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     setProgress(20)
     setBridgeStage('step2-executing')
 
-    // 🔥 必须使用 Cobo Solana 地址作为目标地址
-    if (!coboSolanaAddress) {
-      throw new Error('Cobo Solana deposit address not ready. Please wait and try again.')
+    // 🔥 使用 Privy Server Solana 地址作为目标地址
+    if (!serverSolanaAddress) {
+      if (serverWalletLoading) {
+        throw new Error('Solana deposit address is being created. Please wait and try again.')
+      }
+      throw new Error('Solana deposit address not ready. Please wait and try again.')
     }
 
     try {
@@ -577,13 +576,13 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       // Calculate amount in smallest unit based on token decimals
       // tokenAmount is the actual token amount (e.g., 0.01 ETH or 50 USDT)
       const amountInSmallestUnit = Math.floor(tokenAmount * Math.pow(10, decimals)).toString()
-      // 🔥 强制使用 Cobo Solana 充值地址作为目标地址（已在函数开头检查）
-      const solanaAddress = coboSolanaAddress!
+      // 🔥 使用 Privy Server Solana 地址作为目标地址
+      const solanaAddress = serverSolanaAddress
 
       console.log('[SwapDialog] Execute address debug:', {
-        coboSolanaAddress,
+        serverSolanaAddress,
         finalSolanaAddress: solanaAddress,
-        isUsingCoboAddress: true,
+        isServerWallet: true,
         isSolanaFormat: solanaAddress?.length >= 32 && !solanaAddress?.startsWith('0x')
       })
 
@@ -1009,15 +1008,18 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     await executeDirectBridge(ethAddress, parseFloat(bscAmount) / 1e6, 'bsc')
   }
 
-  // 🔥 新增：处理 Solana SPL Token 直接转账到 Cobo Solana 地址
+  // 🔥 新增：处理 Solana SPL Token 直接转账到 Privy Server Solana 地址
   const executeSolanaTokenTransfer = async (tokenAmount: number, tokenSymbol: string): Promise<void> => {
     console.log('[SwapDialog] Starting Solana', tokenSymbol, 'direct transfer:', tokenAmount)
     setProgress(10)
     setBridgeStage('solana-transferring') // 使用 Solana 转账专用状态
 
-    // 🔥 确认 Cobo Solana 充值地址可用
-    if (!coboSolanaAddress) {
-      throw new Error('Cobo Solana deposit address not ready. Please wait and try again.')
+    // 🔥 确认 Privy Server Solana 充值地址可用
+    if (!serverSolanaAddress) {
+      if (serverWalletLoading) {
+        throw new Error('Solana deposit address is being created. Please wait a moment and try again.')
+      }
+      throw new Error('Solana deposit address not ready. Please wait and try again.')
     }
 
     // Solana SPL Token Mint 地址映射
@@ -1040,6 +1042,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         createAssociatedTokenAccountInstruction,
         createTransferInstruction,
       } = await import('@solana/spl-token')
+      const { createMemoInstruction } = await import('@solana/spl-memo')
 
       // 🔥 使用主网 RPC (Helius)，避免 useConnection 返回的可能是 devnet
       const MAINNET_RPC = 'https://mainnet.helius-rpc.com/?api-key=3e4462af-f2b9-4a36-9387-a649c63273d3'
@@ -1051,7 +1054,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       const fromAddress = solanaWallet.address
       console.log('[SwapDialog] Transfer from:', fromAddress)
-      console.log('[SwapDialog] Transfer to (Cobo Solana):', coboSolanaAddress)
+      console.log('[SwapDialog] Transfer to (Privy Server Solana):', serverSolanaAddress)
       console.log('[SwapDialog] Token:', tokenSymbol, 'Mint:', tokenConfig.mint)
 
       setProgress(30)
@@ -1059,7 +1062,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       // 根据传入的 token 获取 mint 地址和 decimals
       const mintPubkey = new PublicKey(tokenConfig.mint)
       const senderPubkey = new PublicKey(fromAddress)
-      const recipientPubkey = new PublicKey(coboSolanaAddress)
+      const recipientPubkey = new PublicKey(serverSolanaAddress)
       const decimals = tokenConfig.decimals
 
       const transferAmount = Math.floor(tokenAmount * Math.pow(10, decimals))
@@ -1075,28 +1078,28 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         TOKEN_PROGRAM_ID
       )
       
-      // 🔥 计算 Cobo 地址的 ATA
-      // 使用 allowOwnerOffCurve = true，因为 Cobo 地址可能是 PDA
+      // 🔥 计算 Privy Server Solana 地址的 ATA
+      // 使用 allowOwnerOffCurve = false，因为 Privy Server Wallet 是普通地址
       const recipientAta = getAssociatedTokenAddressSync(
         mintPubkey,
         recipientPubkey,
-        true,  // allowOwnerOffCurve = true (支持 PDA 地址)
+        false,  // allowOwnerOffCurve = false (Privy Server Wallet 是普通地址)
         TOKEN_PROGRAM_ID
       )
       
       console.log('[SwapDialog] Sender ATA:', senderAta.toString())
       console.log('[SwapDialog] Recipient ATA:', recipientAta.toString())
       
-      // 检查 Cobo 地址和其 ATA 的状态
-      const [coboAccountInfo, recipientAtaInfo] = await Promise.all([
+      // 检查 Privy Server Solana 地址和其 ATA 的状态
+      const [serverWalletInfo, recipientAtaInfo] = await Promise.all([
         mainnetConnection.getAccountInfo(recipientPubkey),
         mainnetConnection.getAccountInfo(recipientAta)
       ])
       
-      console.log('[SwapDialog] Cobo wallet info:', {
-        exists: !!coboAccountInfo,
-        owner: coboAccountInfo?.owner?.toString(),
-        lamports: coboAccountInfo?.lamports
+      console.log('[SwapDialog] Privy Server wallet info:', {
+        exists: !!serverWalletInfo,
+        owner: serverWalletInfo?.owner?.toString(),
+        lamports: serverWalletInfo?.lamports
       })
       console.log('[SwapDialog] Recipient ATA info:', {
         exists: !!recipientAtaInfo,
@@ -1109,14 +1112,14 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       // 构建交易
       const transaction = new Transaction()
       
-      // 如果 Cobo 的 ATA 不存在，需要创建
+      // 如果 Privy Server Wallet 的 ATA 不存在，需要创建
       if (!recipientAtaInfo) {
         console.log('[SwapDialog] Creating recipient ATA...')
         transaction.add(
           createAssociatedTokenAccountInstruction(
             senderPubkey,     // payer
             recipientAta,     // ata to create
-            recipientPubkey,  // owner (Cobo wallet)
+            recipientPubkey,  // owner (Privy Server Wallet)
             mintPubkey        // mint
           )
         )
@@ -1126,13 +1129,25 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       transaction.add(
         createTransferInstruction(
           senderAta,       // source (用户的 ATA)
-          recipientAta,    // destination (Cobo 的 ATA)
+          recipientAta,    // destination (Privy Server Wallet 的 ATA)
           senderPubkey,    // owner
           transferAmount,  // amount
           [],              // multiSigners
           TOKEN_PROGRAM_ID // programId
         )
       )
+
+      // 🔥 添加 Memo 指令 - 记录用户 ID 和来源
+      const userId = trade.currentAccountInfo?.id || 'unknown'
+      const memoContent = JSON.stringify({
+        app: 'betta',
+        userId: userId,
+        token: tokenSymbol,
+        amount: tokenAmount.toString(),
+        ts: Date.now()
+      })
+      transaction.add(createMemoInstruction(memoContent, [senderPubkey]))
+      console.log('[SwapDialog] Added memo:', memoContent)
 
       // 获取最新区块哈希
       const { blockhash, lastValidBlockHeight } = await mainnetConnection.getLatestBlockhash()
@@ -1200,7 +1215,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       }
 
       console.log('[SwapDialog] ✅', tokenSymbol, 'transfer confirmed!')
-      console.log('[SwapDialog] Transferred', tokenAmount.toFixed(2), tokenSymbol, 'to Cobo Solana address')
+      console.log('[SwapDialog] Transferred', tokenAmount.toFixed(2), tokenSymbol, 'to Privy Server Solana address')
 
       setProgress(100)
       setBridgeStage('completed')
@@ -1236,9 +1251,9 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
         network: sourceNetwork
       })
 
-      // 🔥 检查是否是 Solana SPL Token (USDC/USDT) - 直接转账到 Cobo
+      // 🔥 检查是否是 Solana SPL Token (USDC/USDT) - 直接转账到 Privy Server Wallet
       if (sourceNetwork === 'Solana' && (tokenSymbol === 'USDC' || tokenSymbol === 'USDT')) {
-        console.log('[SwapDialog] Using direct Solana', tokenSymbol, 'transfer to Cobo')
+        console.log('[SwapDialog] Using direct Solana', tokenSymbol, 'transfer to Privy Server Wallet')
         await executeSolanaTokenTransfer(tokenAmount, tokenSymbol!)
       }
       // Check if source is TRON - use two-step bridge
