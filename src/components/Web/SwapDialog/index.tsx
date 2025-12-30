@@ -106,7 +106,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
   const { wallets } = useWallets()
   const { wallets: privySolanaWallets } = useSolanaWallets() // 🔥 Privy Solana wallets (用于 signAndSendTransaction)
-  const { tronAddress, tronWalletId } = useTronWallet()
+  const { trade } = useStores()
+  const { tronAddress, tronWalletId } = useTronWallet(true, trade.currentAccountInfo?.id)
   const { sendTransaction } = useSendTransaction() // ETH transactions
   const { signAndSendTransaction } = useSignAndSendTransaction() // Solana transactions
   const { getAccessToken, user } = usePrivy()
@@ -115,7 +116,6 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   const { connection } = useConnection()
   const themeConfig = useTheme()
   const isDark = themeConfig.theme.isDark
-  const { trade } = useStores()
 
   // 统一使用 usePrivyInfo 的智能选择逻辑
   const solanaWallet = activeSolanaWallet

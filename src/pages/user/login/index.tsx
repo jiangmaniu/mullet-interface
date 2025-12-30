@@ -20,9 +20,9 @@ export default function Login() {
   const [loginError, setLoginError] = useState<string | null>(null)
   const intl = useIntl()
 
-  // 自动创建 TRON 钱包（在登录后触发）
-  // autoCreate=true 会在 authenticated 时自动检测并创建
-  useTronWallet(true)
+  // REMOVED: TRON wallet creation moved to after account selection
+  // Reason: tradeAccountId is not available at login time
+  // TRON wallet will be auto-created when needed (e.g., in SwapDialog, TransferDialog)
 
   const fetchUserInfo = async () => {
     const userInfo = await initialState?.fetchUserInfo?.()

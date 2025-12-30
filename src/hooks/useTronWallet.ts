@@ -34,8 +34,11 @@ interface UseTronWalletResult {
  * - 如果没有，自动创建
  * - 提供手动创建方法
  * - 提供刷新方法
+ * 
+ * @param autoCreate - 是否自动创建钱包
+ * @param tradeAccountId - Trade account ID (optional, for unified storage)
  */
-export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
+export function useTronWallet(autoCreate: boolean = true, tradeAccountId?: string): UseTronWalletResult {
   const { user, authenticated, ready } = usePrivy()
 
   // 自动添加 Session Signer（当 TRON 钱包创建后）
@@ -93,7 +96,7 @@ export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
 
       console.log('[useTronWallet] Starting TRON wallet creation...')
 
-      const result = await ensureTronWallet()
+      const result = await ensureTronWallet(tradeAccountId)
 
       if (result) {
         console.log('[useTronWallet] ✅ TRON wallet ready:', result.address)
@@ -150,7 +153,7 @@ export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
           
           // 先检查后端是否已有钱包
           console.log('[useTronWallet] Calling checkTronWallet API...')
-          const existingWallet = await checkTronWallet()
+          const existingWallet = await checkTronWallet(tradeAccountId)
           
           if (existingWallet.exists && existingWallet.address) {
             console.log('[useTronWallet] ✅ Found existing TRON wallet (Mode 2):', existingWallet.address)
@@ -163,7 +166,7 @@ export function useTronWallet(autoCreate: boolean = true): UseTronWalletResult {
           
           // 如果不存在，创建新钱包
           console.log('[useTronWallet] No wallet found, calling ensureTronWallet to create...')
-          const result = await ensureTronWallet()
+          const result = await ensureTronWallet(tradeAccountId)
           
           if (result) {
             console.log('[useTronWallet] ✅ TRON wallet created (Mode 2):', result.address)

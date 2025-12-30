@@ -661,15 +661,31 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                         <div style={{ fontWeight: 'bold', marginBottom: 8 }}>💡 工作原理</div>
                         <div>• 发送 {selectedToken} 到上面的地址</div>
                         <div>• 最低充值金额: ${selectedChainConfig?.minDeposit || 20}</div>
-                        <div>• 资金将自动桥接到 Solana</div>
-                        <div>• 桥接时间: 约 5-10 分钟</div>
-                        <div>• 手续费: 跨链桥接费用 + Gas 费 (由平台赞助)</div>
-                        <div style={{ marginTop: 8, borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: 8 }}>
-                          <div>1. 检测到充值后自动启动桥接</div>
-                          <div>2. {selectedChain} → Ethereum (3-5 分钟)</div>
-                          <div>3. Ethereum → Solana (2-3 分钟)</div>
-                          <div>4. 完成后资金到达 Solana 账户</div>
-                        </div>
+                        {selectedChain !== 'Solana' && (
+                          <>
+                            <div>• 资金将自动桥接到 Solana</div>
+                            <div>• 桥接时间: 约 {selectedChain === 'Tron' ? '10-15' : '5-10'} 分钟</div>
+                            <div>• 手续费: 跨链桥接费用 + Gas 费 (由平台赞助)</div>
+                            <div style={{ marginTop: 8, borderTop: '1px solid rgba(255,255,255,0.2)', paddingTop: 8 }}>
+                              <div>1. 检测到充值后自动启动桥接</div>
+                              {selectedChain === 'Tron' ? (
+                                <>
+                                  <div>2. Tron → BSC (5-8 分钟)</div>
+                                  <div>3. BSC → Solana (5-7 分钟)</div>
+                                  <div>4. 完成后资金到达 Solana 账户</div>
+                                </>
+                              ) : (
+                                <>
+                                  <div>2. {selectedChain} → Solana (5-10 分钟)</div>
+                                  <div>3. 完成后资金到达 Solana 账户</div>
+                                </>
+                              )}
+                            </div>
+                          </>
+                        )}
+                        {selectedChain === 'Solana' && (
+                          <div>• 到账时间: 通常 1-2 分钟</div>
+                        )}
                       </div>
                     }
                     placement="top"
