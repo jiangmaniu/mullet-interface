@@ -9,7 +9,6 @@ import { Button } from '@/libs/ui/components/button'
 import { useState, useCallback } from 'react'
 import { useFundWallet as useSolanaFundWallet } from '@privy-io/react-auth/solana'
 import { useFundWallet as useEvmFundWallet } from '@privy-io/react-auth'
-import { usePrivy } from '@privy-io/react-auth'
 import { useServerWallet } from '@/hooks/useServerWallet'
 import { message } from 'antd'
 import { useStores } from '@/context/mobxProvider'
@@ -25,8 +24,8 @@ export const DepositAssets = () => {
   const [showAddFundsMenu, setShowAddFundsMenu] = useState(false)
   const [showTransferDialog, setShowTransferDialog] = useState(false)
   const [showSwapDialog, setShowSwapDialog] = useState(false)
-  const { activeSolanaWallet, wallets } = usePrivyInfo()
-  const { user } = usePrivy()
+  // 🔥 统一从 usePrivyInfo 获取 user，避免多个 hook 数据不同步
+  const { activeSolanaWallet, wallets, user } = usePrivyInfo()
   const hasWallet = !!activeSolanaWallet
 
   // 判断是否是外部钱包：用 activeSolanaWallet.address 在 linkedAccounts 中查找
