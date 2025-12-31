@@ -12,6 +12,7 @@ import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 
 import { SymbolSelector } from './symbol-selector'
 import { useStores } from '@/context/mobxProvider'
+import { observer } from 'mobx-react-lite'
 
 export function Overview() {
   return (
@@ -27,7 +28,7 @@ export function Overview() {
   )
 }
 
-const CurrentPrice = () => {
+const CurrentPrice = observer(() => {
   const res = useCurrentQuote()
   const { ws, trade } = useStores()
   const symbol = trade.activeSymbolName
@@ -53,9 +54,9 @@ const CurrentPrice = () => {
       )}
     </div>
   )
-}
+})
 
-const DataOverview = () => {
+const DataOverview = observer(() => {
   const res = useCurrentQuote()
 
   const isPriceChangePositive = BNumber.from(res?.percent)?.gt(0)
@@ -160,4 +161,4 @@ const DataOverview = () => {
       ))}
     </div>
   )
-}
+})
