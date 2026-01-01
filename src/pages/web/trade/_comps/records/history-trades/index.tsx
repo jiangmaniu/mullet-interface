@@ -13,7 +13,7 @@ const MOCK_HISTORY_TRADES = [
     fee: '5.32 USDC',
     tradeHash: '6546...5342',
     openTime: '2025-08-24 10:00:00',
-    closeTime: '2025-08-25 12:00:00',
+    closeTime: '2025-08-25 12:00:00'
   },
   {
     id: 2,
@@ -27,8 +27,8 @@ const MOCK_HISTORY_TRADES = [
     fee: '3.45 USDC',
     tradeHash: '8912...9876',
     openTime: '2025-08-23 14:30:00',
-    closeTime: '2025-08-24 09:15:00',
-  },
+    closeTime: '2025-08-24 09:15:00'
+  }
 ]
 
 export function HistoryTrades() {
@@ -56,9 +56,7 @@ export function HistoryTrades() {
               <td className="p-3">
                 <span
                   className={`px-2 py-1 rounded text-xs ${
-                    trade.direction === 'buy'
-                      ? 'bg-green-500/20 text-green-500'
-                      : 'bg-red-500/20 text-red-500'
+                    trade.direction === 'buy' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'
                   }`}
                 >
                   {trade.direction === 'buy' ? '做多' : '做空'}
@@ -69,28 +67,13 @@ export function HistoryTrades() {
               <td className="p-3 text-white">{trade.exitPrice}</td>
               <td className="p-3">
                 <div className="flex flex-col">
-                  <span
-                    className={
-                      trade.pnl.startsWith('+') ? 'text-green-500' : 'text-red-500'
-                    }
-                  >
-                    {trade.pnl}
-                  </span>
-                  <span
-                    className={`text-xs ${
-                      trade.pnl.startsWith('+') ? 'text-green-500' : 'text-red-500'
-                    }`}
-                  >
-                    {trade.pnlPercent}
-                  </span>
+                  <span className={trade.pnl.startsWith('+') ? 'text-green-500' : 'text-red-500'}>{trade.pnl}</span>
+                  <span className={`text-xs ${trade.pnl.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>{trade.pnlPercent}</span>
                 </div>
               </td>
               <td className="p-3 text-gray-400">{trade.fee}</td>
               <td className="p-3">
-                <a
-                  href={`#${trade.tradeHash}`}
-                  className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
-                >
+                <a href={`#${trade.tradeHash}`} className="text-blue-400 hover:text-blue-300 flex items-center gap-1">
                   {trade.tradeHash}
                   <span>↗</span>
                 </a>
@@ -101,27 +84,7 @@ export function HistoryTrades() {
           ))}
         </tbody>
       </table>
-      {MOCK_HISTORY_TRADES.length === 0 && (
-        <div className="flex items-center justify-center h-40 text-gray-500">
-          暂无历史交易
-        </div>
-      )}
+      {MOCK_HISTORY_TRADES.length === 0 && <div className="flex items-center justify-center h-40 text-gray-500">暂无历史交易</div>}
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

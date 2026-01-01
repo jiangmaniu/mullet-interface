@@ -12,8 +12,8 @@ const MOCK_POSITIONS = [
     pnl: '+245.32',
     pnlPercent: '+2.45%',
     liquidationPrice: '165.42',
-    margin: '50.00 USDC',
-  },
+    margin: '50.00 USDC'
+  }
 ]
 
 export function Positions() {
@@ -54,35 +54,15 @@ export function Positions() {
               <td className="p-3 text-white">{position.liquidationPrice}</td>
               <td className="p-3">
                 <div className="flex gap-2">
-                  <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-white text-xs">
-                    平仓
-                  </button>
-                  <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-white text-xs">
-                    调整
-                  </button>
+                  <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-white text-xs">平仓</button>
+                  <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-white text-xs">调整</button>
                 </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {MOCK_POSITIONS.length === 0 && (
-        <div className="flex items-center justify-center h-40 text-gray-500">
-          暂无持仓
-        </div>
-      )}
+      {MOCK_POSITIONS.length === 0 && <div className="flex items-center justify-center h-40 text-gray-500">暂无持仓</div>}
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-

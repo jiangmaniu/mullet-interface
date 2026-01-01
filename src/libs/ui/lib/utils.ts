@@ -101,8 +101,7 @@ export const cn = createCn({
       // 由于 button-2 不在 NewThemeTextColor 中，text-button-2 不会匹配到这里
       'text-color': [{ text: flattenObjectKeys(NewThemeTextColor) }],
       // 其他颜色组
-      colors: [{ text: flattenObjectKeys(NewThemeColor) }],
-
+      colors: [{ text: flattenObjectKeys(NewThemeColor) }]
     }
   },
   override: {

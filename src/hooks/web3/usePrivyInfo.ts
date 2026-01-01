@@ -70,23 +70,29 @@ export default function usePrivyInfo() {
    */
   const getActiveEthereumWallet = () => {
     const ethereumWallets = ethWallets.filter((w) => w.address.startsWith('0x'))
-    
+
     // 🔍 Debug: 打印 user.linkedAccounts
-    console.log('[usePrivyInfo] 🔍 user.linkedAccounts:', user?.linkedAccounts?.map(acc => ({
-      type: acc.type,
-      address: (acc as any).address?.slice(0, 10) + '...',
-      walletClient: (acc as any).walletClient,
-      walletClientType: (acc as any).walletClientType
-    })))
-    
+    console.log(
+      '[usePrivyInfo] 🔍 user.linkedAccounts:',
+      user?.linkedAccounts?.map((acc) => ({
+        type: acc.type,
+        address: (acc as any).address?.slice(0, 10) + '...',
+        walletClient: (acc as any).walletClient,
+        walletClientType: (acc as any).walletClientType
+      }))
+    )
+
     if (ethereumWallets.length === 0) return undefined
 
     // 🔍 Debug: 打印所有 ETH 钱包的类型
-    console.log('[usePrivyInfo] 📋 All ETH wallets:', ethereumWallets.map(w => ({
-      address: w.address.slice(0, 10) + '...',
-      type: w.walletClientType,
-      connectorType: w.connectorType
-    })))
+    console.log(
+      '[usePrivyInfo] 📋 All ETH wallets:',
+      ethereumWallets.map((w) => ({
+        address: w.address.slice(0, 10) + '...',
+        type: w.walletClientType,
+        connectorType: w.connectorType
+      }))
+    )
 
     // 获取 Solana 钱包来源
     const solWalletSource = (() => {

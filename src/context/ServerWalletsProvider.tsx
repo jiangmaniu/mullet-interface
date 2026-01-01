@@ -31,7 +31,7 @@ interface ServerWalletsContextValue {
 const defaultWalletInfo: WalletInfo = {
   address: null,
   walletId: null,
-  status: 'idle',
+  status: 'idle'
 }
 
 const initialWallets: Record<SupportedChain, WalletInfo> = {
@@ -39,7 +39,7 @@ const initialWallets: Record<SupportedChain, WalletInfo> = {
   ethereum: { ...defaultWalletInfo },
   tron: { ...defaultWalletInfo },
   arbitrum: { ...defaultWalletInfo },
-  bsc: { ...defaultWalletInfo },
+  bsc: { ...defaultWalletInfo }
 }
 
 const ServerWalletsContext = createContext<ServerWalletsContextValue | null>(null)
@@ -53,49 +53,52 @@ export function ServerWalletsProvider({ children }: { children: React.ReactNode 
   const [preloadStarted, setPreloadStarted] = useState(false)
 
   // 加载单个钱包
-  const loadWallet = useCallback(async (chain: SupportedChain) => {
-    if (!tradeAccountId) {
-      console.log(`[ServerWalletsProvider] Cannot load ${chain} wallet: no tradeAccountId`)
-      return
-    }
+  const loadWallet = useCallback(
+    async (chain: SupportedChain) => {
+      if (!tradeAccountId) {
+        console.log(`[ServerWalletsProvider] Cannot load ${chain} wallet: no tradeAccountId`)
+        return
+      }
 
-    // 如果已经加载成功，不重复加载
-    if (wallets[chain].status === 'success' && wallets[chain].address) {
-      return
-    }
+      // 如果已经加载成功，不重复加载
+      if (wallets[chain].status === 'success' && wallets[chain].address) {
+        return
+      }
 
-    setWallets(prev => ({
-      ...prev,
-      [chain]: { ...prev[chain], status: 'loading' }
-    }))
+      setWallets((prev) => ({
+        ...prev,
+        [chain]: { ...prev[chain], status: 'loading' }
+      }))
 
-    try {
-      console.log(`[ServerWalletsProvider] Loading ${chain} wallet...`)
-      const result = await ensureServerWallet(chain, tradeAccountId)
+      try {
+        console.log(`[ServerWalletsProvider] Loading ${chain} wallet...`)
+        const result = await ensureServerWallet(chain, tradeAccountId)
 
-      if (result) {
-        console.log(`[ServerWalletsProvider] ✅ ${chain} wallet:`, result.address)
-        setWallets(prev => ({
+        if (result) {
+          console.log(`[ServerWalletsProvider] ✅ ${chain} wallet:`, result.address)
+          setWallets((prev) => ({
+            ...prev,
+            [chain]: {
+              address: result.address,
+              walletId: result.walletId,
+              status: 'success'
+            }
+          }))
+        }
+      } catch (error: any) {
+        console.error(`[ServerWalletsProvider] ❌ Failed to load ${chain}:`, error)
+        setWallets((prev) => ({
           ...prev,
           [chain]: {
-            address: result.address,
-            walletId: result.walletId,
-            status: 'success',
+            ...prev[chain],
+            status: 'error',
+            error: error.message
           }
         }))
       }
-    } catch (error: any) {
-      console.error(`[ServerWalletsProvider] ❌ Failed to load ${chain}:`, error)
-      setWallets(prev => ({
-        ...prev,
-        [chain]: {
-          ...prev[chain],
-          status: 'error',
-          error: error.message,
-        }
-      }))
-    }
-  }, [tradeAccountId, wallets])
+    },
+    [tradeAccountId, wallets]
+  )
 
   // 预加载所有钱包
   const preloadAll = useCallback(async () => {
@@ -105,34 +108,39 @@ export function ServerWalletsProvider({ children }: { children: React.ReactNode 
     }
 
     console.log('[ServerWalletsProvider] 🚀 Preloading all wallets...')
-    
+
     // 并行加载所有钱包
-    await Promise.allSettled(
-      SUPPORTED_CHAINS.map(chain => loadWallet(chain))
-    )
+    await Promise.allSettled(SUPPORTED_CHAINS.map((chain) => loadWallet(chain)))
 
     console.log('[ServerWalletsProvider] ✅ All wallets preloaded')
   }, [tradeAccountId, loadWallet])
 
   // 获取钱包信息
-  const getWallet = useCallback((chain: SupportedChain): WalletInfo => {
-    return wallets[chain] || defaultWalletInfo
-  }, [wallets])
+  const getWallet = useCallback(
+    (chain: SupportedChain): WalletInfo => {
+      return wallets[chain] || defaultWalletInfo
+    },
+    [wallets]
+  )
 
   // 获取地址
-  const getAddress = useCallback((chain: SupportedChain): string | null => {
-    return wallets[chain]?.address || null
-  }, [wallets])
+  const getAddress = useCallback(
+    (chain: SupportedChain): string | null => {
+      return wallets[chain]?.address || null
+    },
+    [wallets]
+  )
 
   // 检查是否正在加载
-  const isLoading = useCallback((chain: SupportedChain): boolean => {
-    return wallets[chain]?.status === 'loading'
-  }, [wallets])
+  const isLoading = useCallback(
+    (chain: SupportedChain): boolean => {
+      return wallets[chain]?.status === 'loading'
+    },
+    [wallets]
+  )
 
   // 检查是否全部加载完成
-  const isAllLoaded = SUPPORTED_CHAINS.every(chain => 
-    wallets[chain].status === 'success' || wallets[chain].status === 'error'
-  )
+  const isAllLoaded = SUPPORTED_CHAINS.every((chain) => wallets[chain].status === 'success' || wallets[chain].status === 'error')
 
   // 当 tradeAccountId 变化时重置
   useEffect(() => {
@@ -160,7 +168,7 @@ export function ServerWalletsProvider({ children }: { children: React.ReactNode 
         isLoading,
         isAllLoaded,
         preloadAll,
-        loadWallet,
+        loadWallet
       }}
     >
       {children}
@@ -182,7 +190,7 @@ export function useServerWalletsContext() {
  */
 export function useCachedServerWallet(chain: SupportedChain) {
   const context = useContext(ServerWalletsContext)
-  
+
   if (context) {
     const wallet = context.getWallet(chain)
     return {
@@ -190,7 +198,7 @@ export function useCachedServerWallet(chain: SupportedChain) {
       walletId: wallet.walletId,
       isLoading: wallet.status === 'loading',
       error: wallet.error,
-      reload: () => context.loadWallet(chain),
+      reload: () => context.loadWallet(chain)
     }
   }
 
@@ -200,7 +208,7 @@ export function useCachedServerWallet(chain: SupportedChain) {
     walletId: null,
     isLoading: false,
     error: null,
-    reload: () => {},
+    reload: () => {}
   }
 }
 

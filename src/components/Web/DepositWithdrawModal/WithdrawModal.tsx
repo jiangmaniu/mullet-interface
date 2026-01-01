@@ -18,7 +18,7 @@ import type { SupportedChain } from '@/services/serverWalletService'
 import { API_BASE_URL } from '@/constants/api'
 
 // 使用统一的链配置 - 只使用 Privy 链
-const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.filter(chain => chain.type === 'privy').map((chain) => ({
+const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.filter((chain) => chain.type === 'privy').map((chain) => ({
   name: chain.name,
   displayName: chain.displayName,
   chainId: chain.id
@@ -59,13 +59,13 @@ export default observer(
     // 🔥 不使用缓存，直接用 useServerWallet 确保与 tradeAccountId 匹配
     const { address: solanaWalletAddress, isCreating: isWalletLoading } = useServerWallet(
       'solana',
-      !!tradeAccountId,  // 只要有 tradeAccountId 就启用
+      !!tradeAccountId, // 只要有 tradeAccountId 就启用
       tradeAccountId
     )
 
     const close = () => {
       setOpen(false)
-      setAccountItem(null)  // 🔥 关闭时清空
+      setAccountItem(null) // 🔥 关闭时清空
       form.resetFields()
       setWalletBalance('0')
     }
@@ -74,13 +74,13 @@ export default observer(
       const rawItem = item || trade.currentAccountInfo
       console.log('[WithdrawModal] show() called with tradeAccountId:', rawItem?.id)
       if (rawItem) {
-        setAccountItem(rawItem)  // 🔥 先设置 accountItem
+        setAccountItem(rawItem) // 🔥 先设置 accountItem
         form.setFieldValue('accountId', rawItem.id)
         form.setFieldValue('targetChain', 'Solana')
         form.setFieldValue('targetToken', 'USDC')
         setWalletBalance('0')
       }
-      setOpen(true)  // 🔥 再打开弹窗
+      setOpen(true) // 🔥 再打开弹窗
     }
 
     // 对外暴露接口
@@ -108,8 +108,8 @@ export default observer(
           const response = await fetch(`${API_BASE_URL}/api/solana-wallet/balance?address=${solanaWalletAddress}`, {
             method: 'GET',
             headers: {
-              'Authorization': `Bearer ${accessToken}`,
-            },
+              Authorization: `Bearer ${accessToken}`
+            }
           })
 
           if (response.ok) {
@@ -183,7 +183,7 @@ export default observer(
           targetChain,
           targetToken,
           amountUSD: money,
-          amountMinUnits: amountInMinUnits,
+          amountMinUnits: amountInMinUnits
         })
 
         // 如果目标链是 Solana，使用直接转账
@@ -193,18 +193,18 @@ export default observer(
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken}`,
+              Authorization: `Bearer ${accessToken}`
             },
             body: JSON.stringify({
               tradeAccountId,
               toAddress: withdrawAddress,
               token: targetToken,
-              amount: amountInMinUnits,
-            }),
+              amount: amountInMinUnits
+            })
           })
 
           const result = await response.json()
-          
+
           if (result.success || result.txHash) {
             // 记录提现到交易系统
             await withdrawByAddress({
@@ -213,7 +213,7 @@ export default observer(
               remark: `Privy withdraw ${targetToken} to ${targetChain}`,
               withdrawAddress,
               targetChain,
-              signature: result.txHash,  // 🔥 传递交易签名
+              signature: result.txHash // 🔥 传递交易签名
             })
 
             message.success(`提现成功！交易哈希: ${(result.txHash || '').slice(0, 12)}...`)
@@ -224,42 +224,45 @@ export default observer(
             throw new Error(result.error || result.message || '提现失败')
           }
         } else {
-          // 跨链提现 - 使用 DeBridge 桥接
-          const response = await fetch(`${API_BASE_URL}/api/debridge/withdraw`, {
+          // 跨链提现 - 使用 Privy Server Wallet Bridge
+          const response = await fetch(`${API_BASE_URL}/api/solana-wallet-bridge/withdraw`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken}`,
+              Authorization: `Bearer ${accessToken}`
             },
             body: JSON.stringify({
-              userId: tradeAccountId,
-              sourceAddress: solanaWalletAddress,
-              destinationChain: selectedChainConfig.chainId.toUpperCase(),
-              destinationToken: targetToken,
+              tradeAccountId,
+              targetChain,
+              targetToken,
               destinationAddress: withdrawAddress,
-              amount: amountInMinUnits,
-            }),
+              amount: amountInMinUnits
+            })
           })
 
           const result = await response.json()
 
           if (result.success) {
+            // 🔥 Tron 返回的是 step1.txHash，其他链返回 txHash
+            const txHash = result.step1?.txHash || result.txHash
+            const orderId = result.step2?.orderId || result.orderId || result.taskId
+
             // 记录提现到交易系统
             await withdrawByAddress({
               accountId: accountItem.id,
               money: Number(money),
-              remark: `Privy bridge ${targetToken} to ${targetChain}`,
+              remark: `Privy bridge ${targetToken} to ${targetChain}${result.taskId ? ` (Task: ${result.taskId})` : ''}`,
               withdrawAddress,
               targetChain,
-              signature: result.data?.txHash || result.data?.orderId,  // 🔥 传递交易签名
+              signature: txHash || orderId // 🔥 优先使用交易哈希
             })
 
-            message.success(`跨链提现订单已创建！订单ID: ${result.data?.orderId || ''}`)
+            message.success(`跨链提现订单已创建！交易哈希: ${(txHash || orderId || '').slice(0, 12)}...`)
             close()
             form.resetFields()
             fetchUserInfo(true)
           } else {
-            throw new Error(result.msg || result.error || '创建跨链订单失败')
+            throw new Error(result.error || result.message || '创建跨链订单失败')
           }
         }
       } catch (error: any) {
@@ -319,7 +322,7 @@ export default observer(
                     // 检查当前代币是否在新链支持
                     const tokens = getChainTokens(value)
                     const currentToken = form.getFieldValue('targetToken')
-                    if (!tokens.find(t => t.symbol === currentToken)) {
+                    if (!tokens.find((t) => t.symbol === currentToken)) {
                       form.setFieldValue('targetToken', tokens[0]?.symbol || 'USDC')
                       setSelectedToken(tokens[0]?.symbol || 'USDC')
                     }
@@ -423,9 +426,7 @@ export default observer(
                   )}
                 </div>
                 {!loadingBalance && !isWalletLoading && parseFloat(walletBalance || '0') === 0 && (
-                  <div className={`mt-1 text-xs ${theme.isDark ? 'text-red-400' : 'text-red-500'}`}>
-                    ⚠️ 钱包余额不足，请先充值
-                  </div>
+                  <div className={`mt-1 text-xs ${theme.isDark ? 'text-red-400' : 'text-red-500'}`}>⚠️ 钱包余额不足，请先充值</div>
                 )}
                 {solanaWalletAddress && (
                   <div className={`mt-1 text-xs ${theme.isDark ? 'text-gray-500' : 'text-gray-400'}`}>
@@ -498,9 +499,7 @@ export default observer(
                   <div>• 提现通过 Privy Server Wallet 处理</div>
                   <div>• 预计到账时间: {selectedChain === 'Solana' ? '即时 (1-2秒)' : '2-10 分钟'}</div>
                   <div>• 网络费用由平台支付 (Gas Sponsorship)</div>
-                  {selectedChain !== 'Solana' && (
-                    <div>• 跨链提现使用 DeBridge 桥接</div>
-                  )}
+                  {selectedChain !== 'Solana' && <div>• 跨链提现使用 DeBridge 桥接</div>}
                   {isWalletLoading && <div className="text-blue-600 mt-2">🔄 正在加载钱包信息...</div>}
                 </div>
               </div>

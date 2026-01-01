@@ -50,39 +50,32 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   // 将链名转换为 API 需要的格式
   const getChainId = (chainName: string): SupportedChain => {
     const chainMap: Record<string, SupportedChain> = {
-      'Tron': 'tron',
-      'Ethereum': 'ethereum',
-      'Solana': 'solana',
-      'Arbitrum': 'arbitrum',
-      'BSC': 'bsc',
+      Tron: 'tron',
+      Ethereum: 'ethereum',
+      Solana: 'solana',
+      Arbitrum: 'arbitrum',
+      BSC: 'bsc'
     }
     return chainMap[chainName] || 'tron'
   }
 
   const currentChainId = getChainId(selectedChain)
   const tradeAccountId = trade.currentAccountInfo?.id
-  
+
   // 🔥 直接使用 useServerWallet，传入当前账户 ID，确保切换账户后地址正确更新
-  const { 
-    address: serverWalletAddress, 
-    walletId: serverWalletId, 
-    isCreating: isServerWalletCreating 
-  } = useServerWallet(
-    currentChainId, 
-    open && isPrivyChain && !!tradeAccountId, 
-    tradeAccountId
-  )
-  
+  const {
+    address: serverWalletAddress,
+    walletId: serverWalletId,
+    isCreating: isServerWalletCreating
+  } = useServerWallet(currentChainId, open && isPrivyChain && !!tradeAccountId, tradeAccountId)
+
   // 🔥 额外获取 BSC/EVM 钱包信息，用于 TRON → BSC → Solana 桥接
-  const { 
-    address: evmWalletAddress, 
-    walletId: evmWalletId,
-  } = useServerWallet(
+  const { address: evmWalletAddress, walletId: evmWalletId } = useServerWallet(
     'bsc', // BSC 代表所有 EVM 链，地址相同
     open && currentChainId === 'tron' && !!tradeAccountId, // 仅在 TRON 页面时获取
     tradeAccountId
   )
-  
+
   // 最终地址
   const finalServerWalletAddress = serverWalletAddress
   const finalServerWalletId = serverWalletId
@@ -97,7 +90,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   } = useCoboWallet({
     tradeAccountId: trade.currentAccountInfo?.id,
     enabled: open && isCoboChain && !!trade.currentAccountInfo?.id,
-    autoCreate: true  // 🔥 启用自动创建钱包
+    autoCreate: true // 🔥 启用自动创建钱包
   })
 
   // 获取 Cobo 充值地址（仅在选择 Cobo 链且已有钱包时启用）
@@ -317,22 +310,29 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const handleAutoBridge = async (amount: string, token: string, chain: string) => {
     try {
       setBridgeInProgress(true)
-      
+
       // 🔥 标准化 chain 名称（首字母大写）
       const chainNameMap: Record<string, string> = {
-        'tron': 'Tron',
-        'ethereum': 'Ethereum',
-        'solana': 'Solana',
-        'bsc': 'BSC',
-        'polygon': 'Polygon',
-        'arbitrum': 'Arbitrum',
-        'optimism': 'Optimism',
-        'base': 'Base',
-        'avalanche': 'Avalanche',
+        tron: 'Tron',
+        ethereum: 'Ethereum',
+        solana: 'Solana',
+        bsc: 'BSC',
+        polygon: 'Polygon',
+        arbitrum: 'Arbitrum',
+        optimism: 'Optimism',
+        base: 'Base',
+        avalanche: 'Avalanche'
       }
       const normalizedChain = chainNameMap[chain.toLowerCase()] || chain
-      
-      console.log('[Bridge] Starting with params:', { amount, token, chain: normalizedChain, originalChain: chain, finalServerWalletAddress, finalServerWalletId })
+
+      console.log('[Bridge] Starting with params:', {
+        amount,
+        token,
+        chain: normalizedChain,
+        originalChain: chain,
+        finalServerWalletAddress,
+        finalServerWalletId
+      })
 
       // 从 user.linkedAccounts 获取钱包地址
       const solAccount = user?.linkedAccounts?.find((account: any) => account.type === 'wallet' && account.chainType === 'solana') as any
@@ -362,9 +362,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
       if (amountNum < minAmountSmallestUnit) {
         const amountUSD = amountNum / 1_000_000
-        throw new Error(
-          `金额过小。最低金额: $${minAmountUSD} USD，当前金额: $${amountUSD.toFixed(2)} USD`
-        )
+        throw new Error(`金额过小。最低金额: $${minAmountUSD} USD，当前金额: $${amountUSD.toFixed(2)} USD`)
       }
 
       // 🔥 Solana 直接充值，无需桥接
@@ -379,12 +377,12 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       if (normalizedChain === 'Tron') {
         // 🔥 Tron → BSC → Solana (两步跨链，通过后端执行)
         console.log('[Bridge] TRON → BSC → Solana (2 steps via backend)')
-        
+
         // 检查 EVM 钱包是否已准备好
         if (!evmWalletAddress || !evmWalletId) {
           throw new Error('EVM 钱包信息未就绪，请稍后重试')
         }
-        
+
         // Step 1: TRON → BSC
         setBridgeStep('tron-eth')
         message.loading('步骤 1/2: 正在从 TRON 桥接到 BSC...', 0)
@@ -393,13 +391,13 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
+            Authorization: `Bearer ${accessToken}`
           },
           body: JSON.stringify({
             walletId: finalServerWalletId,
             walletAddress: finalServerWalletAddress,
-            evmWalletId,  // 🔥 传递 EVM 钱包 ID
-            evmWalletAddress,  // 🔥 传递 EVM 钱包地址（BSC 接收地址）
+            evmWalletId, // 🔥 传递 EVM 钱包 ID
+            evmWalletAddress, // 🔥 传递 EVM 钱包地址（BSC 接收地址）
             amount,
             token
           })
@@ -420,7 +418,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           await debridgeService.waitForOrderCompletion(step1Result.orderId, 600000, 15000)
         } else {
           message.loading('等待 TRON → BSC 桥接完成 (约 3-5 分钟)...', 0)
-          await new Promise(resolve => setTimeout(resolve, 180000)) // 3分钟
+          await new Promise((resolve) => setTimeout(resolve, 180000)) // 3分钟
         }
 
         // Step 2: BSC → Solana
@@ -430,7 +428,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         // 使用第一步返回的 EVM 钱包信息
         const bscWalletId = step1Result.evmWalletId || evmWalletId
         const bscWalletAddress = step1Result.evmWalletAddress || evmWalletAddress
-        
+
         console.log('[Bridge] Step 2 using BSC wallet:', { bscWalletId, bscWalletAddress: bscWalletAddress?.slice(0, 10) })
 
         // 获取 BSC 上的余额并桥接到 Solana
@@ -438,12 +436,12 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
+            Authorization: `Bearer ${accessToken}`
           },
           body: JSON.stringify({
             chain: 'bsc',
-            walletId: bscWalletId,  // 🔥 使用 BSC 钱包 ID
-            walletAddress: bscWalletAddress,  // 🔥 使用 BSC 钱包地址
+            walletId: bscWalletId, // 🔥 使用 BSC 钱包 ID
+            walletAddress: bscWalletAddress, // 🔥 使用 BSC 钱包地址
             amount: step1Result.dstAmount || amount, // 使用第一步的输出金额
             token,
             solanaAddress: solWallet.address
@@ -465,9 +463,8 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           await debridgeService.waitForOrderCompletion(step2Result.orderId)
         } else {
           message.loading('等待 BSC → Solana 桥接完成 (约 2-3 分钟)...', 0)
-          await new Promise(resolve => setTimeout(resolve, 120000))
+          await new Promise((resolve) => setTimeout(resolve, 120000))
         }
-
       } else if (['Ethereum', 'BSC', 'Polygon', 'Arbitrum', 'Optimism', 'Base', 'Avalanche'].includes(normalizedChain)) {
         // 🔥 EVM → Solana: 调用后端 API 执行桥接
         console.log(`[Bridge] Direct: ${normalizedChain} → Solana (via backend)`)
@@ -479,7 +476,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`
+            Authorization: `Bearer ${accessToken}`
           },
           body: JSON.stringify({
             chain: normalizedChain.toLowerCase(),
@@ -498,7 +495,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
         const bridgeResult = await bridgeResponse.json()
         console.log('[Bridge] ✅ Backend bridge result:', bridgeResult)
-        
+
         message.success(`✅ ${normalizedChain} 交易成功: ${bridgeResult.txHash.slice(0, 8)}...`)
         console.log(`[Bridge] ${normalizedChain} tx:`, bridgeResult.txHash)
         console.log('[Bridge] Order ID:', bridgeResult.orderId || 'NOT_AVAILABLE')
@@ -692,9 +689,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                             </div>
                           </>
                         )}
-                        {selectedChain === 'Solana' && (
-                          <div>• 到账时间: 通常 1-2 分钟</div>
-                        )}
+                        {selectedChain === 'Solana' && <div>• 到账时间: 通常 1-2 分钟</div>}
                       </div>
                     }
                     placement="top"
@@ -725,7 +720,14 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
         {/* 状态显示 - 仅Privy钱包显示监听和桥接状态 */}
         {!isCoboChain && depositAddress && !bridgeInProgress && (
-          <div style={{ padding: 12, background: deposit ? token.colorSuccessBg : token.colorInfoBg, border: `1px solid ${deposit ? token.colorSuccessBorder : token.colorInfoBorder}`, borderRadius: 4 }}>
+          <div
+            style={{
+              padding: 12,
+              background: deposit ? token.colorSuccessBg : token.colorInfoBg,
+              border: `1px solid ${deposit ? token.colorSuccessBorder : token.colorInfoBorder}`,
+              borderRadius: 4
+            }}
+          >
             <Space direction="vertical" style={{ width: '100%' }} size="small">
               {/* 检测到充值 - 显示成功状态 */}
               {deposit && (
@@ -733,7 +735,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                   style={{
                     padding: 8,
                     background: token.colorSuccessBg,
-                    borderRadius: 4,
+                    borderRadius: 4
                   }}
                 >
                   <Space>
@@ -779,7 +781,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                           ethereum: `https://etherscan.io/address/${address}`,
                           arbitrum: `https://arbiscan.io/address/${address}`,
                           bsc: `https://bscscan.com/address/${address}`,
-                          tron: `https://tronscan.org/#/address/${address}`,
+                          tron: `https://tronscan.org/#/address/${address}`
                         }
                         return explorers[chain.toLowerCase()] || '#'
                       }
@@ -979,8 +981,6 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
             </Space>
           </div>
         )}
-
-
       </Space>
     </Modal>
   )

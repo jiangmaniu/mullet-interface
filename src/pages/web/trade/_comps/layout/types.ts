@@ -5,7 +5,7 @@ export enum TradeLayoutKey {
   Position = 'position',
   Orderbooks = 'orderbooks',
   Action = 'action',
-  Account = 'account',
+  Account = 'account'
 }
 
 export interface TradeLayoutSlots {
