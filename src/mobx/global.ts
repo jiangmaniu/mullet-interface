@@ -249,8 +249,8 @@ export class GlobalStore {
 
   // ========== 全局页面初始化执行 ================
 
-  init = () => {
-    this.getPlatformConfig(() => {
+  init = async () => {
+    await this.getPlatformConfig(() => {
       message.info(getIntl().formatMessage({ id: 'common.huanjinpeizhiyichang' }))
     })
 

@@ -18,10 +18,14 @@ export const useDeviceChange = () => {
     isPwaApp: isInStandaloneMode(),
     isRNWebview: !!window.ReactNativeWebView,
     breakPoint,
-    isMobile: ['xs', 'sm'].includes(breakPoint), // 手机端，不包含ipad
-    isIpad: ['md', 'lg'].includes(breakPoint), // 是否是ipad端
-    isMobileOrIpad: ['xs', 'sm', 'md', 'lg'].includes(breakPoint), // 手机端，包含ipad
-    isPc: ['xl', 'xxl'].includes(breakPoint) // pc端 >= 1200px
+    // isMobile: ['xs', 'sm'].includes(breakPoint), // 手机端，不包含ipad
+    // isIpad: ['md', 'lg'].includes(breakPoint), // 是否是ipad端
+    // isMobileOrIpad: ['xs', 'sm', 'md', 'lg'].includes(breakPoint), // 手机端，包含ipad
+    isMobile: false,
+    isIpad: false,
+    isMobileOrIpad: false,
+    // isPc: ['xl', 'xxl'].includes(breakPoint) // pc端 >= 1200px
+    isPc: true
   }
 
   const setDeviceType = (type: 'PC' | 'MOBILE') => {
