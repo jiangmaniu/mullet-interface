@@ -34,7 +34,7 @@ export default function useSPLTransfer() {
   const { wallet, activeSolanaWallet, solWallets } = usePrivyInfo()
   const { wallets } = useWallets()
   // 🔥 优先使用 activeSolanaWallet（支持外部 Solana 钱包如 Phantom）
-  const fromAddress = activeSolanaWallet?.address || wallet?.address as string
+  const fromAddress = activeSolanaWallet?.address || (wallet?.address as string)
   const { signAndSendTransaction } = useSignAndSendTransaction()
   const [transferLoading, setTransferLoading] = useState(false)
   const [transferSuccess, setTransferSuccess] = useState(false)
@@ -163,7 +163,7 @@ export default function useSPLTransfer() {
       // 🔥 判断是否是外部 Solana 钱包（如 Phantom, OKX）
       // 有 standardWallet 属性表示是外部钱包
       const hasExternalSolanaWallet = !!activeSolanaWallet && !!(activeSolanaWallet as any).standardWallet
-      
+
       // 获取 EVM 钱包的实例（用于 EVM 地址）
       const foundEvmWallet = wallets.find((v) => v.address === fromAddress)
       // 获取 Solana 钱包的实例（用于 Solana 地址）

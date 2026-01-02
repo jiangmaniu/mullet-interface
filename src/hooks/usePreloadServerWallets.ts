@@ -42,7 +42,7 @@ export function usePreloadServerWallets(enabled = true): UsePreloadServerWallets
     ethereum: { chain: 'ethereum', address: null, walletId: null, status: 'pending' },
     tron: { chain: 'tron', address: null, walletId: null, status: 'pending' },
     arbitrum: { chain: 'arbitrum', address: null, walletId: null, status: 'pending' },
-    bsc: { chain: 'bsc', address: null, walletId: null, status: 'pending' },
+    bsc: { chain: 'bsc', address: null, walletId: null, status: 'pending' }
   }
 
   const [wallets, setWallets] = useState<Record<SupportedChain, WalletInfo>>(initialWallets)
@@ -51,64 +51,67 @@ export function usePreloadServerWallets(enabled = true): UsePreloadServerWallets
   const loadingRef = useRef(false)
 
   // 加载单个链的钱包
-  const loadWallet = useCallback(async (chain: SupportedChain) => {
-    if (!tradeAccountId) return
+  const loadWallet = useCallback(
+    async (chain: SupportedChain) => {
+      if (!tradeAccountId) return
 
-    setWallets(prev => ({
-      ...prev,
-      [chain]: { ...prev[chain], status: 'loading' }
-    }))
+      setWallets((prev) => ({
+        ...prev,
+        [chain]: { ...prev[chain], status: 'loading' }
+      }))
 
-    try {
-      console.log(`[PreloadWallets] Loading ${chain} wallet for tradeAccountId:`, tradeAccountId)
-      const result = await ensureServerWallet(chain, tradeAccountId)
+      try {
+        console.log(`[PreloadWallets] Loading ${chain} wallet for tradeAccountId:`, tradeAccountId)
+        const result = await ensureServerWallet(chain, tradeAccountId)
 
-      if (result) {
-        console.log(`[PreloadWallets] ✅ ${chain} wallet loaded:`, result.address)
-        setWallets(prev => ({
+        if (result) {
+          console.log(`[PreloadWallets] ✅ ${chain} wallet loaded:`, result.address)
+          setWallets((prev) => ({
+            ...prev,
+            [chain]: {
+              chain,
+              address: result.address,
+              walletId: result.walletId,
+              status: 'success'
+            }
+          }))
+        } else {
+          setWallets((prev) => ({
+            ...prev,
+            [chain]: { ...prev[chain], status: 'error', error: 'No wallet returned' }
+          }))
+        }
+      } catch (error: any) {
+        console.error(`[PreloadWallets] ❌ Failed to load ${chain} wallet:`, error)
+        setWallets((prev) => ({
           ...prev,
           [chain]: {
-            chain,
-            address: result.address,
-            walletId: result.walletId,
-            status: 'success'
+            ...prev[chain],
+            status: 'error',
+            error: error.message || 'Unknown error'
           }
         }))
-      } else {
-        setWallets(prev => ({
-          ...prev,
-          [chain]: { ...prev[chain], status: 'error', error: 'No wallet returned' }
-        }))
       }
-    } catch (error: any) {
-      console.error(`[PreloadWallets] ❌ Failed to load ${chain} wallet:`, error)
-      setWallets(prev => ({
-        ...prev,
-        [chain]: {
-          ...prev[chain],
-          status: 'error',
-          error: error.message || 'Unknown error'
-        }
-      }))
-    }
-  }, [tradeAccountId])
+    },
+    [tradeAccountId]
+  )
 
   // 并行加载所有钱包
   const loadAllWallets = useCallback(async () => {
     if (loadingRef.current || !tradeAccountId) return
-    
+
     loadingRef.current = true
     setIsLoading(true)
-    
+
     console.log('[PreloadWallets] 🚀 Starting to preload all wallets...')
 
     // 并行加载所有链
-    await Promise.allSettled(PRELOAD_CHAINS.map(chain => loadWallet(chain)))
+    await Promise.allSettled(PRELOAD_CHAINS.map((chain) => loadWallet(chain)))
 
     loadingRef.current = false
     setIsLoading(false)
     loadedRef.current = true
-    
+
     console.log('[PreloadWallets] ✅ All wallets preloaded')
   }, [loadWallet, tradeAccountId])
 
@@ -120,14 +123,15 @@ export function usePreloadServerWallets(enabled = true): UsePreloadServerWallets
   }, [loadAllWallets])
 
   // 获取指定链的地址
-  const getAddress = useCallback((chain: SupportedChain): string | null => {
-    return wallets[chain]?.address || null
-  }, [wallets])
+  const getAddress = useCallback(
+    (chain: SupportedChain): string | null => {
+      return wallets[chain]?.address || null
+    },
+    [wallets]
+  )
 
   // 计算是否全部加载完成
-  const isAllLoaded = PRELOAD_CHAINS.every(chain => 
-    wallets[chain].status === 'success' || wallets[chain].status === 'error'
-  )
+  const isAllLoaded = PRELOAD_CHAINS.every((chain) => wallets[chain].status === 'success' || wallets[chain].status === 'error')
 
   // 在认证成功且有 tradeAccountId 时自动加载
   useEffect(() => {
@@ -154,7 +158,7 @@ export function usePreloadServerWallets(enabled = true): UsePreloadServerWallets
     isLoading,
     isAllLoaded,
     getAddress,
-    reload,
+    reload
   }
 }
 

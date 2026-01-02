@@ -1,10 +1,10 @@
 /**
  * Server Wallet Hook
  * Generic hook for managing server-owned wallets on multiple chains
- * 
+ *
  * Supports all Privy-enabled chains:
  * - tron
- * - ethereum  
+ * - ethereum
  * - solana
  * - arbitrum
  * - bsc
@@ -29,18 +29,14 @@ interface UseServerWalletResult {
  * @param autoCreate - Whether to auto-create wallet if not exists (default: true)
  * @param tradeAccountId - Trade account ID (required for solana chain)
  */
-export function useServerWallet(
-  chain: SupportedChain,
-  autoCreate = true,
-  tradeAccountId?: string
-): UseServerWalletResult {
+export function useServerWallet(chain: SupportedChain, autoCreate = true, tradeAccountId?: string): UseServerWalletResult {
   const { authenticated, ready } = usePrivy()
 
   const [address, setAddress] = useState<string | null>(null)
   const [walletId, setWalletId] = useState<string | null>(null)
   const [isCreating, setIsCreating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
+
   // 使用 ref 追踪当前 chain 和创建状态
   const currentChainRef = useRef(chain)
   const currentTradeAccountIdRef = useRef(tradeAccountId)
@@ -151,7 +147,7 @@ export function useServerWallet(
       isCreatingRef.current = true
       setIsCreating(true)
       setError(null)
-      
+
       try {
         // First check if wallet exists
         console.log(`[useServerWallet:${currentChain}] Calling check API...`)

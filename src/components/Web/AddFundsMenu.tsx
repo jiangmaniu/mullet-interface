@@ -22,7 +22,7 @@ const WALLET_LOGOS: Record<string, string> = {
   bybit: '/img/wallets/bybit.png',
   gate: '/img/wallets/gate.png',
   safepal: '/img/wallets/safepal.png',
-  backpack: '/img/wallets/backpack.png',
+  backpack: '/img/wallets/backpack.png'
 }
 
 // 钱包显示名称映射
@@ -40,14 +40,14 @@ const WALLET_NAMES: Record<string, string> = {
   bybit: 'Bybit Wallet',
   gate: 'Gate Wallet',
   safepal: 'SafePal',
-  backpack: 'Backpack',
+  backpack: 'Backpack'
 }
 
 // 标准化钱包类型 - 通过关键字匹配
 const normalizeWalletType = (walletType?: string): string => {
   if (!walletType) return ''
   const lower = walletType.toLowerCase()
-  
+
   // 关键字匹配优先级
   if (lower.includes('okx')) return 'okx'
   if (lower.includes('phantom')) return 'phantom'
@@ -65,7 +65,7 @@ const normalizeWalletType = (walletType?: string): string => {
   if (lower.includes('gate')) return 'gate'
   if (lower.includes('safepal')) return 'safepal'
   if (lower.includes('backpack')) return 'backpack'
-  
+
   return lower
 }
 
@@ -101,10 +101,10 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
 }) => {
   const normalizedType = normalizeWalletType(walletType)
   const walletLogo = WALLET_LOGOS[normalizedType]
-  
+
   // Debug: 打印钱包类型
   console.log('[AddFundsMenu] walletType:', walletType, 'normalized:', normalizedType, 'logo:', walletLogo)
-  
+
   const handleTransferClick = () => {
     onClose()
     onTransferClick()
@@ -162,9 +162,7 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
                 width: 48,
                 height: 48,
                 borderRadius: 10,
-                background: walletLogo 
-                  ? '#1a1a2e' 
-                  : 'linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%)',
+                background: walletLogo ? '#1a1a2e' : 'linear-gradient(135deg, #FF6B35 0%, #FF8E53 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -173,11 +171,7 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
               }}
             >
               {walletLogo ? (
-                <img 
-                  src={walletLogo} 
-                  alt={walletType}
-                  style={{ width: 32, height: 32, borderRadius: 6 }}
-                />
+                <img src={walletLogo} alt={walletType} style={{ width: 32, height: 32, borderRadius: 6 }} />
               ) : (
                 <SwapOutlined style={{ fontSize: 24, color: '#fff' }} />
               )}
@@ -194,12 +188,14 @@ const AddFundsMenu: React.FC<AddFundsMenuProps> = ({
 
         {/* more 分割线 */}
         {showSwapOption && (
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: 16,
-            padding: '8px 0'
-          }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 16,
+              padding: '8px 0'
+            }}
+          >
             <div style={{ flex: 1, height: 1, background: '#333' }} />
             <span style={{ color: '#666', fontSize: 13 }}>more</span>
             <div style={{ flex: 1, height: 1, background: '#333' }} />

@@ -82,7 +82,7 @@ function AccountCard({
   setShowAddFundsMenu,
   transferModalRef,
   setModalInfo,
-  modalRef,
+  modalRef
 }: AccountCardProps) {
   const isSimulate = item.isSimulate
   const synopsis = getAccountSynopsisByLng(item.synopsis)
@@ -91,7 +91,7 @@ function AccountCard({
   const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet(
     'solana',
     !!item.id,
-    item.id  // 使用当前卡片账户的 ID，而不是 currentAccountInfo
+    item.id // 使用当前卡片账户的 ID，而不是 currentAccountInfo
   )
 
   return (
@@ -125,10 +125,7 @@ function AccountCard({
                     )
                   }}
                 >
-                  <Iconify
-                    icon={!item.isEyeOpen ? 'iconoir:eye' : 'iconoir:eye-closed'}
-                    className="size-5 align-middle cursor-pointer"
-                  />
+                  <Iconify icon={!item.isEyeOpen ? 'iconoir:eye' : 'iconoir:eye-closed'} className="size-5 align-middle cursor-pointer" />
                 </div>
                 <div
                   className="py-[2px] px-[3px] hover:bg-move-in rounded-[10px]"
@@ -293,13 +290,17 @@ function Account() {
   const [showSwapDialog, setShowSwapDialog] = useState(false)
   const { activeSolanaWallet, wallets } = usePrivyInfo()
   const { user } = usePrivy()
-  
+
   // 判断是否是外部钱包
   const currentWalletAccount = user?.linkedAccounts?.find((account: any) => account.address === activeSolanaWallet?.address)
   const isExternalWallet = currentWalletAccount && (currentWalletAccount as any).walletClientType !== 'privy'
 
   // 🔥 使用 Privy Server Solana 钱包地址
-  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet('solana', !!trade.currentAccountInfo?.id, trade.currentAccountInfo?.id)
+  const { address: serverSolanaAddress, isCreating: serverWalletLoading } = useServerWallet(
+    'solana',
+    !!trade.currentAccountInfo?.id,
+    trade.currentAccountInfo?.id
+  )
 
   // Privy 信用卡购买
   const { fundWallet: fundSolanaWallet } = useSolanaFundWallet()

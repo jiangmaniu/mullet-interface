@@ -5,7 +5,7 @@
  * 使用场景:
  * 1. 登录后自动创建 (email/phone 用户)
  * 2. 在充值/转账对话框中使用
- * 
+ *
  * Mode 2 Support:
  * - Server-owned wallets (Authorization Key) are NOT in user.linkedAccounts
  * - We must call backend API to check/create wallets
@@ -34,7 +34,7 @@ interface UseTronWalletResult {
  * - 如果没有，自动创建
  * - 提供手动创建方法
  * - 提供刷新方法
- * 
+ *
  * @param autoCreate - 是否自动创建钱包
  * @param tradeAccountId - Trade account ID (optional, for unified storage)
  */
@@ -150,11 +150,11 @@ export function useTronWallet(autoCreate: boolean = true, tradeAccountId?: strin
         try {
           setIsCreating(true)
           setError(null)
-          
+
           // 先检查后端是否已有钱包
           console.log('[useTronWallet] Calling checkTronWallet API...')
           const existingWallet = await checkTronWallet(tradeAccountId)
-          
+
           if (existingWallet.exists && existingWallet.address) {
             console.log('[useTronWallet] ✅ Found existing TRON wallet (Mode 2):', existingWallet.address)
             setTronAddress(existingWallet.address)
@@ -163,11 +163,11 @@ export function useTronWallet(autoCreate: boolean = true, tradeAccountId?: strin
             setIsCreating(false)
             return
           }
-          
+
           // 如果不存在，创建新钱包
           console.log('[useTronWallet] No wallet found, calling ensureTronWallet to create...')
           const result = await ensureTronWallet(tradeAccountId)
-          
+
           if (result) {
             console.log('[useTronWallet] ✅ TRON wallet created (Mode 2):', result.address)
             setTronAddress(result.address)
@@ -181,7 +181,7 @@ export function useTronWallet(autoCreate: boolean = true, tradeAccountId?: strin
           setIsCreating(false)
         }
       }
-      
+
       checkAndCreate()
     }
   }, [authenticated, ready, autoCreate, isCreating, shouldCheck, tronAddress, updateFromUser])

@@ -1,11 +1,11 @@
 /**
  * WebSocket 客户端 Hook
  * 连接 Mullet Backend WebSocket 服务
- * 
+ *
  * 使用方式:
  * ```tsx
  * const { connected, subscribe, unsubscribe, send, lastMessage } = useWebSocket()
- * 
+ *
  * // 订阅价格更新
  * useEffect(() => {
  *   subscribe('prices')
@@ -49,7 +49,7 @@ const DEFAULT_CONFIG: Required<Omit<WebSocketConfig, 'onMessage' | 'onConnect' |
   reconnect: true,
   reconnectInterval: 3000,
   maxReconnectAttempts: 10,
-  heartbeatInterval: 30000,
+  heartbeatInterval: 30000
 }
 
 /**
@@ -57,16 +57,16 @@ const DEFAULT_CONFIG: Required<Omit<WebSocketConfig, 'onMessage' | 'onConnect' |
  */
 export function useWebSocket(config: WebSocketConfig = {}) {
   const mergedConfig = { ...DEFAULT_CONFIG, ...config }
-  
+
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectCountRef = useRef(0)
   const heartbeatTimerRef = useRef<NodeJS.Timeout | null>(null)
   const reconnectTimerRef = useRef<NodeJS.Timeout | null>(null)
-  
+
   const [readyState, setReadyState] = useState<WSReadyState>('disconnected')
   const [lastMessage, setLastMessage] = useState<WSMessage | null>(null)
   const [subscribedChannels, setSubscribedChannels] = useState<Set<string>>(new Set())
-  
+
   // 发送消息
   const send = useCallback((message: WSMessage) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -76,25 +76,31 @@ export function useWebSocket(config: WebSocketConfig = {}) {
     console.warn('[WebSocket] Cannot send message, connection not open')
     return false
   }, [])
-  
+
   // 订阅频道
-  const subscribe = useCallback((channel: string) => {
-    if (send({ type: 'subscribe', channel })) {
-      setSubscribedChannels(prev => new Set(prev).add(channel))
-    }
-  }, [send])
-  
+  const subscribe = useCallback(
+    (channel: string) => {
+      if (send({ type: 'subscribe', channel })) {
+        setSubscribedChannels((prev) => new Set(prev).add(channel))
+      }
+    },
+    [send]
+  )
+
   // 取消订阅
-  const unsubscribe = useCallback((channel: string) => {
-    if (send({ type: 'unsubscribe', channel })) {
-      setSubscribedChannels(prev => {
-        const next = new Set(prev)
-        next.delete(channel)
-        return next
-      })
-    }
-  }, [send])
-  
+  const unsubscribe = useCallback(
+    (channel: string) => {
+      if (send({ type: 'unsubscribe', channel })) {
+        setSubscribedChannels((prev) => {
+          const next = new Set(prev)
+          next.delete(channel)
+          return next
+        })
+      }
+    },
+    [send]
+  )
+
   // 开始心跳
   const startHeartbeat = useCallback(() => {
     if (heartbeatTimerRef.current) {
@@ -104,7 +110,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
       send({ type: 'ping' })
     }, mergedConfig.heartbeatInterval)
   }, [send, mergedConfig.heartbeatInterval])
-  
+
   // 停止心跳
   const stopHeartbeat = useCallback(() => {
     if (heartbeatTimerRef.current) {
@@ -112,32 +118,32 @@ export function useWebSocket(config: WebSocketConfig = {}) {
       heartbeatTimerRef.current = null
     }
   }, [])
-  
+
   // 连接 WebSocket
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
       console.log('[WebSocket] Already connected')
       return
     }
-    
+
     try {
       setReadyState('connecting')
       wsRef.current = new WebSocket(mergedConfig.url)
-      
+
       wsRef.current.onopen = () => {
         console.log('[WebSocket] Connected')
         setReadyState('connected')
         reconnectCountRef.current = 0
         startHeartbeat()
-        
+
         // 重新订阅之前的频道
-        subscribedChannels.forEach(channel => {
+        subscribedChannels.forEach((channel) => {
           wsRef.current?.send(JSON.stringify({ type: 'subscribe', channel }))
         })
-        
+
         mergedConfig.onConnect?.()
       }
-      
+
       wsRef.current.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data) as WSMessage
@@ -147,13 +153,13 @@ export function useWebSocket(config: WebSocketConfig = {}) {
           console.error('[WebSocket] Failed to parse message:', error)
         }
       }
-      
+
       wsRef.current.onclose = () => {
         console.log('[WebSocket] Disconnected')
         setReadyState('disconnected')
         stopHeartbeat()
         mergedConfig.onDisconnect?.()
-        
+
         // 自动重连
         if (mergedConfig.reconnect && reconnectCountRef.current < mergedConfig.maxReconnectAttempts) {
           setReadyState('reconnecting')
@@ -164,7 +170,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
           }, mergedConfig.reconnectInterval)
         }
       }
-      
+
       wsRef.current.onerror = (error) => {
         console.error('[WebSocket] Error:', error)
         mergedConfig.onError?.(error)
@@ -174,7 +180,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
       setReadyState('disconnected')
     }
   }, [mergedConfig, startHeartbeat, stopHeartbeat, subscribedChannels])
-  
+
   // 断开连接
   const disconnect = useCallback(() => {
     if (reconnectTimerRef.current) {
@@ -182,40 +188,40 @@ export function useWebSocket(config: WebSocketConfig = {}) {
       reconnectTimerRef.current = null
     }
     stopHeartbeat()
-    
+
     if (wsRef.current) {
       wsRef.current.close()
       wsRef.current = null
     }
-    
+
     setReadyState('disconnected')
     reconnectCountRef.current = mergedConfig.maxReconnectAttempts // 阻止重连
   }, [stopHeartbeat, mergedConfig.maxReconnectAttempts])
-  
+
   // 自动连接
   useEffect(() => {
     if (mergedConfig.autoConnect) {
       connect()
     }
-    
+
     return () => {
       disconnect()
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-  
+
   return {
     // 状态
     readyState,
     connected: readyState === 'connected',
     lastMessage,
     subscribedChannels: Array.from(subscribedChannels),
-    
+
     // 方法
     connect,
     disconnect,
     send,
     subscribe,
-    unsubscribe,
+    unsubscribe
   }
 }
 
@@ -231,14 +237,14 @@ export function usePriceSubscription(tokenMint?: string) {
       }
     }
   })
-  
+
   useEffect(() => {
     if (connected && tokenMint) {
       subscribe(`prices:${tokenMint}`)
       return () => unsubscribe(`prices:${tokenMint}`)
     }
   }, [connected, tokenMint, subscribe, unsubscribe])
-  
+
   return { price, connected }
 }
 
@@ -254,14 +260,14 @@ export function useOrderSubscription(orderId?: string) {
       }
     }
   })
-  
+
   useEffect(() => {
     if (connected && orderId) {
       subscribe(`orders:${orderId}`)
       return () => unsubscribe(`orders:${orderId}`)
     }
   }, [connected, orderId, subscribe, unsubscribe])
-  
+
   return { orderStatus, connected }
 }
 
@@ -277,14 +283,14 @@ export function useDebridgeSubscription(txHash?: string) {
       }
     }
   })
-  
+
   useEffect(() => {
     if (connected && txHash) {
       subscribe(`debridge:${txHash}`)
       return () => unsubscribe(`debridge:${txHash}`)
     }
   }, [connected, txHash, subscribe, unsubscribe])
-  
+
   return { bridgeStatus, connected }
 }
 

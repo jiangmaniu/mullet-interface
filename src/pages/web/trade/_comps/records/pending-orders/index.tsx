@@ -10,8 +10,8 @@ const MOCK_PENDING_ORDERS = [
     markPrice: '187.17',
     type: '限价挂单',
     orderHash: '6546...5342',
-    createTime: '2025-08-25 12:00:00',
-  },
+    createTime: '2025-08-25 12:00:00'
+  }
 ]
 
 export function PendingOrders() {
@@ -48,45 +48,20 @@ export function PendingOrders() {
                 <button className="text-green-500 hover:text-green-400">+</button>
               </td>
               <td className="p-3">
-                <a
-                  href={`#${order.orderHash}`}
-                  className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
-                >
+                <a href={`#${order.orderHash}`} className="text-blue-400 hover:text-blue-300 flex items-center gap-1">
                   {order.orderHash}
                   <span>↗</span>
                 </a>
               </td>
               <td className="p-3 text-gray-400 text-xs">{order.createTime}</td>
               <td className="p-3">
-                <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-white text-xs">
-                  取消
-                </button>
+                <button className="px-3 py-1 bg-gray-800 hover:bg-gray-700 rounded text-white text-xs">取消</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-      {MOCK_PENDING_ORDERS.length === 0 && (
-        <div className="flex items-center justify-center h-40 text-gray-500">
-          暂无挂单
-        </div>
-      )}
+      {MOCK_PENDING_ORDERS.length === 0 && <div className="flex items-center justify-center h-40 text-gray-500">暂无挂单</div>}
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

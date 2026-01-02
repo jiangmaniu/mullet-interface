@@ -4,8 +4,8 @@ import { API_BASE_URL } from '@/constants/api'
 import { getCachedDepositAddress, setCachedDepositAddress } from '@/services/coboPreloadService'
 
 interface UseCoboDepositAddressParams {
-  userId?: string  // 可选，兼容旧代码
-  tradeAccountId?: string | number  // 交易账户ID（推荐使用）
+  userId?: string // 可选，兼容旧代码
+  tradeAccountId?: string | number // 交易账户ID（推荐使用）
   chainId: 'ETH' | 'SOL' | 'TRON' | 'ARBITRUM_ETH' | 'BASE_ETH' | 'MATIC' | 'BSC_BNB' | 'HYPE' | 'HYPEREVM_HYPE'
   walletId: string
   enabled?: boolean
@@ -25,7 +25,7 @@ interface CoboDepositAddressData {
 export const useCoboDepositAddress = ({ userId, tradeAccountId, chainId, walletId, enabled = true }: UseCoboDepositAddressParams) => {
   // 🔥 优先使用 tradeAccountId，兼容 userId
   const effectiveUserId = tradeAccountId?.toString() || userId || ''
-  
+
   const [address, setAddress] = useState<string>('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)

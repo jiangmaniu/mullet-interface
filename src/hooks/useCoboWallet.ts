@@ -2,10 +2,10 @@ import { useState, useEffect, useCallback } from 'react'
 import { API_BASE_URL } from '@/constants/api'
 
 interface UseCoboWalletParams {
-  userId?: string  // Privy userId（可选，用于日志）
-  tradeAccountId?: string | number  // 交易账户ID（必填，作为钱包标识）
+  userId?: string // Privy userId（可选，用于日志）
+  tradeAccountId?: string | number // 交易账户ID（必填，作为钱包标识）
   enabled?: boolean
-  autoCreate?: boolean  // 🔥 是否自动创建钱包（默认 false，只有 layout 设为 true）
+  autoCreate?: boolean // 🔥 是否自动创建钱包（默认 false，只有 layout 设为 true）
 }
 
 interface CoboWalletData {
@@ -30,7 +30,7 @@ let pendingRequest: Promise<CoboWalletData | null> | null = null
  * ```tsx
  * // Layout 组件（负责创建）
  * const { walletId } = useCoboWallet({ tradeAccountId, autoCreate: true })
- * 
+ *
  * // 其他组件（只读缓存）
  * const { walletId } = useCoboWallet({ tradeAccountId })
  * ```
@@ -38,7 +38,7 @@ let pendingRequest: Promise<CoboWalletData | null> | null = null
 export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCreate = false }: UseCoboWalletParams) => {
   // 🔥 使用 tradeAccountId 作为缓存 key
   const cacheKey = tradeAccountId?.toString() || ''
-  
+
   // 🔥 初始化时立即检查缓存
   const [walletId, setWalletId] = useState<string>(() => {
     if (cacheKey) {
@@ -186,7 +186,7 @@ export const useCoboWallet = ({ userId, tradeAccountId, enabled = true, autoCrea
         setError(errorMsg)
       } finally {
         setIsLoading(false)
-        pendingRequest = null  // 🔥 清除锁
+        pendingRequest = null // 🔥 清除锁
       }
     },
     [cacheKey, tradeAccountId, enabled, autoCreate]

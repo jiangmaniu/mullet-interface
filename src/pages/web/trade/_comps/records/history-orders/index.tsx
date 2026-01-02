@@ -12,7 +12,7 @@ const MOCK_HISTORY_ORDERS = [
     status: '已成交',
     orderHash: '6546...5342',
     createTime: '2025-08-25 12:00:00',
-    completeTime: '2025-08-25 12:05:00',
+    completeTime: '2025-08-25 12:05:00'
   },
   {
     id: 2,
@@ -25,8 +25,8 @@ const MOCK_HISTORY_ORDERS = [
     status: '已取消',
     orderHash: '7892...1234',
     createTime: '2025-08-24 18:30:00',
-    completeTime: '2025-08-24 18:31:00',
-  },
+    completeTime: '2025-08-24 18:31:00'
+  }
 ]
 
 export function HistoryOrders() {
@@ -62,19 +62,14 @@ export function HistoryOrders() {
               <td className="p-3">
                 <span
                   className={`px-2 py-1 rounded text-xs ${
-                    order.status === '已成交'
-                      ? 'bg-green-500/20 text-green-500'
-                      : 'bg-gray-500/20 text-gray-400'
+                    order.status === '已成交' ? 'bg-green-500/20 text-green-500' : 'bg-gray-500/20 text-gray-400'
                   }`}
                 >
                   {order.status}
                 </span>
               </td>
               <td className="p-3">
-                <a
-                  href={`#${order.orderHash}`}
-                  className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
-                >
+                <a href={`#${order.orderHash}`} className="text-blue-400 hover:text-blue-300 flex items-center gap-1">
                   {order.orderHash}
                   <span>↗</span>
                 </a>
@@ -85,27 +80,7 @@ export function HistoryOrders() {
           ))}
         </tbody>
       </table>
-      {MOCK_HISTORY_ORDERS.length === 0 && (
-        <div className="flex items-center justify-center h-40 text-gray-500">
-          暂无历史委托
-        </div>
-      )}
+      {MOCK_HISTORY_ORDERS.length === 0 && <div className="flex items-center justify-center h-40 text-gray-500">暂无历史委托</div>}
     </div>
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

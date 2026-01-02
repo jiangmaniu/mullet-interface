@@ -1,6 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { Modal, Button, Input, Progress, Alert, Collapse, Typography, Space, Spin, Divider } from 'antd'
-import { ArrowRightOutlined, SwapOutlined, ArrowLeftOutlined, CheckCircleOutlined, CloseCircleOutlined, DownOutlined } from '@ant-design/icons'
+import {
+  ArrowRightOutlined,
+  SwapOutlined,
+  ArrowLeftOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  DownOutlined
+} from '@ant-design/icons'
 import { useWallets, usePrivy, useSendTransaction } from '@privy-io/react-auth'
 import { useSignAndSendTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana'
 import { useTronWallet } from '@/hooks/useTronWallet'
@@ -42,7 +49,15 @@ interface SwapDialogProps {
   }
 }
 
-type BridgeStage = 'idle' | 'step1-executing' | 'step1-confirming' | 'step2-executing' | 'solana-transferring' | 'solana-confirming' | 'completed' | 'error'
+type BridgeStage =
+  | 'idle'
+  | 'step1-executing'
+  | 'step1-confirming'
+  | 'step2-executing'
+  | 'solana-transferring'
+  | 'solana-confirming'
+  | 'completed'
+  | 'error'
 type ViewState = 'asset_select' | 'input' | 'quote' | 'executing'
 
 interface AssetBalance {
@@ -523,7 +538,11 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
   }
 
   // Direct one-step bridge: ETH → Solana (DeBridge only)
-  const executeDirectBridge = async (_ethAddress: string, tokenAmount: number, sourceChain: 'ethereum' | 'bsc' = 'ethereum'): Promise<void> => {
+  const executeDirectBridge = async (
+    _ethAddress: string,
+    tokenAmount: number,
+    sourceChain: 'ethereum' | 'bsc' = 'ethereum'
+  ): Promise<void> => {
     console.log(`[SwapDialog] Starting direct ${sourceChain.toUpperCase()} → Solana bridge:`, tokenAmount)
     setProgress(20)
     setBridgeStage('step2-executing')
@@ -618,7 +637,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       // Check ETH/BNB balance for gas fees
       const chainConfig = sourceChain === 'bsc' ? bsc : mainnet
       const nativeSymbol = sourceChain === 'bsc' ? 'BNB' : 'ETH'
-      
+
       const publicClient = createPublicClient({
         chain: chainConfig,
         transport: http()
@@ -928,8 +947,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     // Step 1: TRON → BSC via DeBridge (统一使用BSC作为中间链)
     const srcTokenAddress = (selectedAsset || initialAsset)?.symbol === 'USDC' ? DEBRIDGE_TOKENS.TRON.USDC : DEBRIDGE_TOKENS.TRON.USDT
     const dstChainId = DEBRIDGE_CHAIN_IDS.BSC
-    const dstTokenAddress =
-      (selectedAsset || initialAsset)?.symbol === 'USDC' ? DEBRIDGE_TOKENS.BSC.USDC : DEBRIDGE_TOKENS.BSC.USDT
+    const dstTokenAddress = (selectedAsset || initialAsset)?.symbol === 'USDC' ? DEBRIDGE_TOKENS.BSC.USDC : DEBRIDGE_TOKENS.BSC.USDT
 
     const amountInSmallestUnit = Math.floor(parseFloat(amountInUsd) * 1e6).toString()
 
@@ -1024,8 +1042,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
     // Solana SPL Token Mint 地址映射
     const SOLANA_TOKEN_MINTS: Record<string, { mint: string; decimals: number }> = {
-      'USDC': { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', decimals: 6 },
-      'USDT': { mint: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', decimals: 6 },
+      USDC: { mint: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v', decimals: 6 },
+      USDT: { mint: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB', decimals: 6 }
     }
 
     const tokenConfig = SOLANA_TOKEN_MINTS[tokenSymbol]
@@ -1036,12 +1054,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     try {
       // 动态导入需要的依赖
       const { PublicKey, Transaction, Connection } = await import('@solana/web3.js')
-      const {
-        TOKEN_PROGRAM_ID,
-        getAssociatedTokenAddressSync,
-        createAssociatedTokenAccountInstruction,
-        createTransferInstruction,
-      } = await import('@solana/spl-token')
+      const { TOKEN_PROGRAM_ID, getAssociatedTokenAddressSync, createAssociatedTokenAccountInstruction, createTransferInstruction } =
+        await import('@solana/spl-token')
       const { createMemoInstruction } = await import('@solana/spl-memo')
 
       // 🔥 使用主网 RPC (Helius)，避免 useConnection 返回的可能是 devnet
@@ -1071,31 +1085,26 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       setProgress(50)
 
       // 使用 getAssociatedTokenAddressSync (同步版本，参考 WithdrawDialog)
-      const senderAta = getAssociatedTokenAddressSync(
-        mintPubkey,
-        senderPubkey,
-        false,
-        TOKEN_PROGRAM_ID
-      )
-      
+      const senderAta = getAssociatedTokenAddressSync(mintPubkey, senderPubkey, false, TOKEN_PROGRAM_ID)
+
       // 🔥 计算 Privy Server Solana 地址的 ATA
       // 使用 allowOwnerOffCurve = false，因为 Privy Server Wallet 是普通地址
       const recipientAta = getAssociatedTokenAddressSync(
         mintPubkey,
         recipientPubkey,
-        false,  // allowOwnerOffCurve = false (Privy Server Wallet 是普通地址)
+        false, // allowOwnerOffCurve = false (Privy Server Wallet 是普通地址)
         TOKEN_PROGRAM_ID
       )
-      
+
       console.log('[SwapDialog] Sender ATA:', senderAta.toString())
       console.log('[SwapDialog] Recipient ATA:', recipientAta.toString())
-      
+
       // 检查 Privy Server Solana 地址和其 ATA 的状态
       const [serverWalletInfo, recipientAtaInfo] = await Promise.all([
         mainnetConnection.getAccountInfo(recipientPubkey),
         mainnetConnection.getAccountInfo(recipientAta)
       ])
-      
+
       console.log('[SwapDialog] Privy Server wallet info:', {
         exists: !!serverWalletInfo,
         owner: serverWalletInfo?.owner?.toString(),
@@ -1111,16 +1120,16 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       // 构建交易
       const transaction = new Transaction()
-      
+
       // 如果 Privy Server Wallet 的 ATA 不存在，需要创建
       if (!recipientAtaInfo) {
         console.log('[SwapDialog] Creating recipient ATA...')
         transaction.add(
           createAssociatedTokenAccountInstruction(
-            senderPubkey,     // payer
-            recipientAta,     // ata to create
-            recipientPubkey,  // owner (Privy Server Wallet)
-            mintPubkey        // mint
+            senderPubkey, // payer
+            recipientAta, // ata to create
+            recipientPubkey, // owner (Privy Server Wallet)
+            mintPubkey // mint
           )
         )
       }
@@ -1128,11 +1137,11 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
       // 添加转账指令 - 转到 ATA，不是钱包地址
       transaction.add(
         createTransferInstruction(
-          senderAta,       // source (用户的 ATA)
-          recipientAta,    // destination (Privy Server Wallet 的 ATA)
-          senderPubkey,    // owner
-          transferAmount,  // amount
-          [],              // multiSigners
+          senderAta, // source (用户的 ATA)
+          recipientAta, // destination (Privy Server Wallet 的 ATA)
+          senderPubkey, // owner
+          transferAmount, // amount
+          [], // multiSigners
           TOKEN_PROGRAM_ID // programId
         )
       )
@@ -1159,42 +1168,42 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
       console.log('[SwapDialog] Sending Solana transaction...')
       console.log('[SwapDialog] fromAddress:', fromAddress)
-      
+
       // 🔥 根据 Privy 文档：signAndSendTransaction 需要：
       // 1. transaction: Uint8Array (序列化后的交易)
       // 2. wallet: ConnectedStandardSolanaWallet (从 useSolanaWallets 获取)
-      
+
       // 从 privySolanaWallets 中找到对应的钱包
       const selectedWallet = privySolanaWallets.find((w) => w.address === fromAddress)
-      
+
       console.log('[SwapDialog] Selected wallet:', {
         address: selectedWallet?.address,
-        available: privySolanaWallets.map(w => w.address)
+        available: privySolanaWallets.map((w) => w.address)
       })
-      
+
       if (!selectedWallet) {
         throw new Error('Cannot find Solana wallet in Privy for address: ' + fromAddress)
       }
-      
+
       // 序列化交易为 Uint8Array
       const serializedTransaction = transaction.serialize({
         requireAllSignatures: false,
         verifySignatures: false
       })
-      
+
       // 使用 Privy signAndSendTransaction
       const result = await signAndSendTransaction({
         transaction: serializedTransaction,
         wallet: selectedWallet
       })
-      
+
       // 将签名转为 base58 字符串
       const bs58 = await import('bs58')
       const signature = bs58.default.encode(result.signature)
 
       console.log('[SwapDialog] Transaction sent, signature:', signature)
       console.log('[SwapDialog] 🔗 Solscan: https://solscan.io/tx/' + signature)
-      
+
       // 保存 tx signature 用于页面显示
       setTxSignature(signature)
 
@@ -1973,44 +1982,50 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
             {/* Error State - 友好的错误展示 */}
             {bridgeStage === 'error' && bridgeError && (
-              <div style={{ 
-                width: '100%', 
-                display: 'flex', 
-                flexDirection: 'column', 
-                alignItems: 'center',
-                padding: '24px 0'
-              }}>
-                {/* 错误图标 */}
-                <div style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: '50%',
-                  background: 'rgba(255, 68, 68, 0.1)',
+              <div
+                style={{
+                  width: '100%',
                   display: 'flex',
+                  flexDirection: 'column',
                   alignItems: 'center',
-                  justifyContent: 'center',
-                  marginBottom: 24
-                }}>
+                  padding: '24px 0'
+                }}
+              >
+                {/* 错误图标 */}
+                <div
+                  style={{
+                    width: 80,
+                    height: 80,
+                    borderRadius: '50%',
+                    background: 'rgba(255, 68, 68, 0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 24
+                  }}
+                >
                   <CloseCircleOutlined style={{ fontSize: 40, color: '#ff4444' }} />
                 </div>
-                
+
                 {/* 错误标题 */}
                 <Title level={4} style={{ color: getColor.text, marginBottom: 8 }}>
                   Swap Failed
                 </Title>
-                
+
                 {/* 错误详情 */}
-                <Text style={{ 
-                  color: getColor.textSecondary, 
-                  textAlign: 'center',
-                  marginBottom: 32,
-                  maxWidth: 320,
-                  fontSize: '14px',
-                  lineHeight: '1.6'
-                }}>
+                <Text
+                  style={{
+                    color: getColor.textSecondary,
+                    textAlign: 'center',
+                    marginBottom: 32,
+                    maxWidth: 320,
+                    fontSize: '14px',
+                    lineHeight: '1.6'
+                  }}
+                >
                   {bridgeError}
                 </Text>
-                
+
                 {/* 操作按钮 */}
                 <Space direction="vertical" size={12} style={{ width: '100%', maxWidth: 280 }}>
                   <Button

@@ -21,7 +21,7 @@ interface UseDepositListenerOptions {
 
 /**
  * 监听用户钱包的充值 - 使用后端 API
- * 
+ *
  * 后端会监控链上交易，检测余额变化
  * 前端只需要轮询后端 API 获取充值状态
  *
@@ -42,12 +42,7 @@ interface UseDepositListenerOptions {
  * ```
  */
 export function useDepositListener(options: UseDepositListenerOptions = {}) {
-  const {
-    enabled = false,
-    pollInterval = 5000,
-    chain,
-    address
-  } = options
+  const { enabled = false, pollInterval = 5000, chain, address } = options
 
   const { getAccessToken } = usePrivy()
   const [deposit, setDeposit] = useState<DepositDetection | null>(null)
@@ -64,18 +59,15 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
 
     try {
       const accessToken = await getAccessToken()
-      
-      const response = await fetch(
-        `${API_BASE_URL}/api/deposit-monitor/check/${chain.toLowerCase()}/${address}`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(accessToken ? { 'Authorization': `Bearer ${accessToken}` } : {}),
-          },
-          signal: abortControllerRef.current?.signal,
-        }
-      )
+
+      const response = await fetch(`${API_BASE_URL}/api/deposit-monitor/check/${chain.toLowerCase()}/${address}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {})
+        },
+        signal: abortControllerRef.current?.signal
+      })
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`)
@@ -93,7 +85,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
           chain: latestDeposit.chain,
           rawAmount: latestDeposit.rawAmount,
           address: latestDeposit.address,
-          timestamp: latestDeposit.timestamp,
+          timestamp: latestDeposit.timestamp
         }
       }
 
@@ -124,8 +116,8 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
       if (detectedDeposit) {
         setDeposit(detectedDeposit)
         // 添加到历史记录（避免重复）
-        setDeposits(prev => {
-          const exists = prev.some(d => d.timestamp === detectedDeposit.timestamp)
+        setDeposits((prev) => {
+          const exists = prev.some((d) => d.timestamp === detectedDeposit.timestamp)
           if (!exists) {
             return [detectedDeposit, ...prev].slice(0, 10) // 最多保留10条
           }
@@ -166,7 +158,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
     isListening,
     error,
     clearDeposit,
-    resetDetection,
+    resetDetection
   }
 }
 
@@ -175,9 +167,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
  */
 export async function getDepositHistory(address: string): Promise<DepositDetection[]> {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/deposit-monitor/history/${address}`
-    )
+    const response = await fetch(`${API_BASE_URL}/api/deposit-monitor/history/${address}`)
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`)
@@ -196,10 +186,7 @@ export async function getDepositHistory(address: string): Promise<DepositDetecti
  */
 export async function triggerDepositScan(): Promise<{ scanned: number; deposits: DepositDetection[] }> {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/deposit-monitor/scan`,
-      { method: 'POST' }
-    )
+    const response = await fetch(`${API_BASE_URL}/api/deposit-monitor/scan`, { method: 'POST' })
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status}`)

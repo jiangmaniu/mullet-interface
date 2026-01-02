@@ -28,20 +28,13 @@ const ExplorerLink = ({ path, address, className, cluster = '', copyable = false
 
   // 🔥 直接使用 Solscan mainnet，因为 Privy Server Wallet 交易都在 mainnet 上
   // 如果需要支持其他网络，可以通过 cluster prop 显式指定
-  const explorerUrl = cluster === 'devnet' 
-    ? `https://explorer.solana.com/${path}?cluster=devnet`
-    : `https://solscan.io/${path}`  // mainnet 使用 Solscan
+  const explorerUrl = cluster === 'devnet' ? `https://explorer.solana.com/${path}?cluster=devnet` : `https://solscan.io/${path}` // mainnet 使用 Solscan
 
   console.log('[ExplorerLink]', { path, address, cluster, network, networkAlias: currentAccountInfo.networkAlias, explorerUrl })
 
   return (
     <span>
-      <a
-        href={explorerUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(`!text-brand`, className)}
-      >
+      <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className={cn(`!text-brand`, className)}>
         <LinkOutlined className="mr-1" />
         {label}
         {!label && (
