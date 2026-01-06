@@ -10,7 +10,7 @@ export const UserInfo = () => {
       <GeneralTooltip content={<Trans>账户中心</Trans>}>
         <Link href="/account">
           <IconButton className="size-9">
-            <Iconify icon="iconoir:user" className="size-5 text-white" />
+            <Iconify icon="iconoir:user-circle" className="size-5 text-white" />
             <span className="sr-only">User Info</span>
           </IconButton>
         </Link>

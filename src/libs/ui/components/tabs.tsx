@@ -94,7 +94,7 @@ function Tabs<T>({
 const TabsListVariants = cva('flex items-center', {
   variants: {
     variant: {
-      underline: 'border-b border-zinc-xs',
+      underline: 'border-b border-divider-line',
       iconsAndText: '',
       solid: '',
       outline: [],

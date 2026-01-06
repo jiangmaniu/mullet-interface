@@ -3,7 +3,7 @@
 // import { useWalletAuthState } from '@/hooks/wallet/use-wallet-auth-state'
 // import { useWalletLogout } from '@/hooks/wallet/use-wallet-login'
 import { logout } from '@/services/api/user'
-import { Button } from '@/libs/ui/components/button'
+import { Button, IconButton } from '@/libs/ui/components/button'
 import {
   DropdownMenu,
   DropdownMenuPrimitive,
@@ -11,12 +11,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/libs/ui/components/dropdown-menu'
-import { IconChevronDown, IconDisconnect, IconWallet } from '@/libs/ui/components/icons'
+import { IconChevronDown, IconDisconnect, Iconify, IconWallet } from '@/libs/ui/components/icons'
 import { cn } from '@/libs/ui/lib/utils'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { formatAddress } from '@/libs/utils/web3'
 import { copyContent } from '@/utils'
-import { Trans } from '@/libs/lingui/react/macro'
+import { t, Trans } from '@/libs/lingui/react/macro'
 import { useStores } from '@/context/mobxProvider'
 import { Dropdown, Segmented, Tooltip } from 'antd'
 import { FormattedMessage, useModel } from '@umijs/max'
@@ -28,19 +28,17 @@ import { EmptyNoData } from '@/components/empty/no-data'
 import { observer } from 'mobx-react'
 import { usePrivy } from '@privy-io/react-auth'
 import { useServerWallet } from '@/hooks/useServerWallet'
+import { BNumber } from '@/libs/utils/number'
+import { Chip } from '@/libs/ui/components/chip'
+import { GeneralTooltip } from '@/components/tooltip'
+import { Tabs, TabsList, TabsTrigger } from '@/libs/ui/components/tabs'
+import { toast } from '@/libs/ui/components/toast'
+import { CopyButton } from '@/components/common/copy-button'
+import { Separator } from '@/libs/ui/components/separator'
 
 export const TradeAccountInfo = observer(() => {
-  // const { isAuthenticated } = useWalletAuthState()
-  // const walletLogout = useWalletLogout()
-  // if (!isAuthenticated) {
-  //   return null
-  // }
-
   const { trade, ws } = useStores()
   const { currentAccountInfo } = trade
-
-  const { address: privyAddress } = usePrivyInfo()
-  const { user } = usePrivy()
 
   // 🔥 使用 Privy Server Solana 钱包地址
   const { address: serverSolanaAddress, isCreating: isWalletLoading } = useServerWallet(
@@ -61,21 +59,81 @@ export const TradeAccountInfo = observer(() => {
               <IconWallet className="size-4" />
               <span>{isWalletLoading ? 'Loading...' : formatAddress(displayAddress)}</span>
             </div>
-            {/* <div className="flex items-center justify-center gap-1">
-              <div>{currentAccountInfo?.isSimulate ? <Trans>模拟</Trans> : <Trans>真实</Trans>}</div>
-              <div className="w-px h-4 bg-brand-secondary-2"></div>
-              <div className="text-content-4">{currentAccountInfo.name}</div>
-            </div> */}
           </div>
           <IconChevronDown className="action-icon size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-[330px]" sideOffset={8} align="end">
+        <CurrentAccountInfo />
         <AccountSelector />
 
+        <AccountManagementButton />
+        <Separator />
         <DisconnectButton />
       </DropdownMenuContent>
     </DropdownMenu>
+  )
+})
+
+const CurrentAccountInfo = observer(() => {
+  const { trade } = useStores()
+
+  const { currentAccountInfo } = trade
+
+  // 🔥 使用 Privy Server Solana 钱包地址
+  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id, currentAccountInfo?.id)
+
+  const currentAccountInfoSynopsis = getAccountSynopsisByLng(currentAccountInfo.synopsis)
+
+  return (
+    <div className="flex flex-col gap-small">
+      <div className=" flex items-center justify-between flex-shrink-0 flex-grow-0">
+        <div className="text-paragraph-p2 text-content-4">
+          <Trans>当前账户</Trans>
+        </div>
+      </div>
+      <div className={cn('border border-brand-default rounded-small p-xl flex flex-col gap-1')}>
+        <div className="flex gap-2 justify-between">
+          <div className="flex-1 text-paragraph-p2 text-content-1">
+            {currentAccountInfo.name}
+            {/* / {hiddenCenterPartStr(item?.id, 4)} */}
+          </div>
+          <div className="flex gap-2">
+            <Chip color={currentAccountInfo.isSimulate ? 'secondary' : 'rise'} variant="solid">
+              {currentAccountInfo.isSimulate ? <Trans>模拟</Trans> : <Trans>真实</Trans>}
+            </Chip>
+            {currentAccountInfoSynopsis?.abbr && (
+              <Chip color="default" variant="solid">
+                {currentAccountInfoSynopsis?.abbr}
+              </Chip>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-2 items-end">
+          <span className="text-title-h4 text-content-1">
+            {BNumber.toFormatNumber(currentAccountInfo.money, { volScale: currentAccountInfo.currencyDecimal || 2 })}
+          </span>
+          <span className="text-content-4 text-paragraph-p2">USDC</span>
+        </div>
+
+        {/* 显示 Privy Server Solana 地址和复制按钮 */}
+        {serverSolanaAddress && (
+          <div className="flex items-center gap-2">
+            <a
+              href={`https://explorer.solana.com/address/${serverSolanaAddress}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-content-4 text-paragraph-p2 hover:underline"
+            >
+              {formatAddress(serverSolanaAddress)}
+            </a>
+
+            <CopyButton text={serverSolanaAddress} />
+          </div>
+        )}
+      </div>
+    </div>
   )
 })
 
@@ -83,137 +141,38 @@ const AccountSelector = observer(() => {
   const { trade, ws } = useStores()
 
   const [currentAccountList, setCurrentAccountList] = useState<User.AccountItem[]>([])
-  const [accountTabActiveKey, setAccountTabActiveKey] = useState<'REAL' | 'DEMO'>('REAL') //  真实账户、模拟账户
+  const enum AccountTabActiveKey {
+    REAL = 'REAL',
+    DEMO = 'DEMO'
+  }
+  const [accountTabActiveKey, setAccountTabActiveKey] = useState<AccountTabActiveKey>(AccountTabActiveKey.REAL) //  真实账户、模拟账户
   const { currentAccountInfo } = trade
-  const [accountBoxOpen, setAccountBoxOpen] = useState(false)
   const accountArr = currentAccountList.filter((item) => item.id !== currentAccountInfo.id)
   const { initialState } = useModel('@@initialState')
   const currentUser = initialState?.currentUser
-  const { user } = usePrivy()
-
-  // 🔥 使用 Privy Server Solana 钱包地址
-  const { address: serverSolanaAddress } = useServerWallet('solana', !!currentAccountInfo?.id, currentAccountInfo?.id)
 
   useEffect(() => {
     const accountList = currentUser?.accountList || []
     // 切换真实模拟账户列表
-    const list = accountList.filter((item) => (accountTabActiveKey === 'DEMO' ? item.isSimulate : !item.isSimulate))
+    const list = accountList.filter((item) => (accountTabActiveKey === AccountTabActiveKey.DEMO ? item.isSimulate : !item.isSimulate))
     setCurrentAccountList(list)
   }, [accountTabActiveKey, currentUser?.accountList])
 
-  const currentAccountInfoSynopsis = getAccountSynopsisByLng(currentAccountInfo.synopsis)
   return (
-    <div className="py-0 flex flex-col">
-      <div>
-        <div className="">
-          <div className="my-3 flex items-center justify-between flex-shrink-0 flex-grow-0">
-            <div className=" text-primary max-xl:text-right">
-              <Trans>当前账户</Trans>
-            </div>
-          </div>
-          <div className={cn('scrollbar rounded-lg dark:border-gray-610 border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px]')}>
-            <div className="flex justify-between">
-              <div className="flex">
-                <div className="flex-1 text-sm font-bold text-primary">
-                  {currentAccountInfo.name}
-                  {/* / {hiddenCenterPartStr(item?.id, 4)} */}
-                </div>
-                <div className="ml-[10px] flex px-1">
-                  <div
-                    className={cn(
-                      'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                      currentAccountInfo.isSimulate ? 'bg-green' : 'bg-brand'
-                    )}
-                  >
-                    {currentAccountInfo.isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
-                  </div>
-                  {currentAccountInfoSynopsis?.abbr && (
-                    <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white">
-                      {currentAccountInfoSynopsis?.abbr}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="mt-1 flex items-center justify-between">
-              <div>
-                <span className="text-[20px] text-primary !font-dingpro-regular">
-                  {Number(currentAccountInfo.money)
-                    ? formatNum(currentAccountInfo.money, { precision: currentAccountInfo.currencyDecimal || 2 })
-                    : '0.00'}
-                </span>{' '}
-                <span className="ml-1 text-sm font-normal text-secondary">USD</span>
-              </div>
-            </div>
-            {/* 显示 Privy Server Solana 地址和复制按钮 */}
-            {serverSolanaAddress && (
-              <div className="mt-2 flex items-center gap-2 text-xs">
-                <a
-                  href={`https://explorer.solana.com/address/${serverSolanaAddress}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand hover:underline"
-                >
-                  {formatAddress(serverSolanaAddress)}
-                </a>
-                <button
-                  onClick={() => copyContent(serverSolanaAddress)}
-                  className="text-secondary hover:text-primary cursor-pointer p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                  title="Copy address"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                  </svg>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+    <div className="py-0 flex gap-3 flex-col">
+      <div className="">
+        <Tabs value={accountTabActiveKey} onValueChange={(value) => setAccountTabActiveKey(value)}>
+          <TabsList>
+            <TabsTrigger className="flex-1" value={AccountTabActiveKey.REAL}>
+              <Trans>真实账户</Trans>
+            </TabsTrigger>
+            <TabsTrigger className="flex-1" value={AccountTabActiveKey.DEMO}>
+              <Trans>模拟账户</Trans>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
-      <div className="my-3 flex items-center justify-between flex-shrink-0 flex-grow-0">
-        <Segmented
-          className="account"
-          // rootClassName="border-gray-700 border-[0.5px] rounded-[26px]"
-          onChange={(value: any) => {
-            setAccountTabActiveKey(value)
-          }}
-          value={accountTabActiveKey}
-          options={[
-            { label: <FormattedMessage id="mt.zhenshizhanghao" />, value: 'REAL' },
-            { label: <FormattedMessage id="mt.monizhanghu" />, value: 'DEMO' }
-          ]}
-        />
-        <DropdownMenuPrimitive.Item
-          onClick={() => {
-            push('/account')
-          }}
-          className="cursor-pointer p-2 text-primary max-xl:text-right"
-        >
-          <FormattedMessage id="mt.guanlizhanghu" />
-        </DropdownMenuPrimitive.Item>
-      </div>
-      <div
-        className="flex flex-col gap-3 max-h-[380px] overflow-y-auto"
-        // style={
-        //   true
-        //     ? {
-        //         scrollbarColor: `${gray[578]} ${gray[680]}`,
-        //         scrollbarWidth: 'thin'
-        //       }
-        //     : {}
-        // }
-      >
+      <div className="flex flex-col gap-3 max-h-[380px] overflow-y-auto">
         {!accountArr.length ? (
           <EmptyNoData />
         ) : (
@@ -230,11 +189,15 @@ const AccountSelector = observer(() => {
                     // if (isMobileOrIpad) {
                     //   hoverAccountBoxPopupRef?.current?.close()
                     // }
-                    if (disabledTrade || isCurrentAccount) {
+
+                    if (disabledTrade) {
+                      toast.error(t`账户已禁用`)
                       return
                     }
 
-                    setAccountBoxOpen(false)
+                    if (disabledTrade || isCurrentAccount) {
+                      return
+                    }
 
                     // 取消之前账户组品种行情订阅
                     console.log('取消之前账户组品种行情订阅')
@@ -255,45 +218,33 @@ const AccountSelector = observer(() => {
                     }, 200)
                   }}
                   key={item.id}
-                  className={cn(
-                    'scrollbar cursor-pointer rounded-lg dark:border-gray-610 border border-gray-250 pb-[6px] pl-[11px] pr-[11px] pt-[11px]',
-                    {
-                      'hover:bg-[var(--list-hover-light-bg)]': !isCurrentAccount,
-                      'cursor-no-drop !bg-[var(--list-item-disabled)] opacity-70': disabledTrade
-                    }
-                  )}
+                  className={cn('cursor-pointer rounded-small border border-brand-default p-xl flex flex-col gap-1', {
+                    'hover:bg-button': !isCurrentAccount && !disabledTrade,
+                    'cursor-no-drop opacity-50': disabledTrade
+                  })}
                 >
-                  <div className="flex justify-between">
-                    <div className="flex">
-                      <div className="flex-1 text-sm font-bold text-primary">
-                        {item.name}
-                        {/* / {hiddenCenterPartStr(item?.id, 4)} */}
-                      </div>
-                      <div className="ml-[10px] flex px-1">
-                        <div
-                          className={cn(
-                            'flex h-5 min-w-[42px] items-center justify-center rounded px-1 text-xs font-normal text-white',
-                            isSimulate ? 'bg-green' : 'bg-brand'
-                          )}
-                        >
-                          {isSimulate ? <FormattedMessage id="mt.moni" /> : <FormattedMessage id="mt.zhenshi" />}
-                        </div>
-                        {synopsis?.abbr && (
-                          <div className="ml-[6px] flex h-5 min-w-[42px] items-center px-1 justify-center rounded bg-black text-xs font-normal text-white">
-                            {synopsis?.abbr}
-                          </div>
-                        )}
-                      </div>
+                  <div className="flex gap-2 justify-between">
+                    <div className="flex-1 text-paragraph-p2 text-content-1">
+                      {item.name}
+                      {/* / {hiddenCenterPartStr(item?.id, 4)} */}
+                    </div>
+                    <div className="flex gap-2">
+                      <Chip color={isSimulate ? 'secondary' : 'rise'} variant="solid">
+                        {isSimulate ? <Trans>模拟</Trans> : <Trans>真实</Trans>}
+                      </Chip>
+                      {synopsis?.abbr && (
+                        <Chip color="default" variant="solid">
+                          {synopsis?.abbr}
+                        </Chip>
+                      )}
                     </div>
                   </div>
-                  <div className="mt-1 flex items-center justify-between">
-                    <div>
-                      <span className="text-[20px] text-primary !font-dingpro-regular">
-                        {Number(item.money) ? formatNum(item.money, { precision: item.currencyDecimal || 2 }) : '0.00'}
-                      </span>{' '}
-                      <span className="ml-1 text-sm font-normal text-secondary">USD</span>
-                    </div>
-                    {/* <span>{formatAddress(item.pdaTokenAddress)}</span> */}
+
+                  <div className="flex gap-2 items-end">
+                    <span className="text-title-h4 text-content-1">
+                      {BNumber.toFormatNumber(item.money, { volScale: item.currencyDecimal || 2 })}
+                    </span>
+                    <span className="text-content-4 text-paragraph-p2">USDC</span>
                   </div>
                 </DropdownMenuPrimitive.Item>
               </div>
@@ -302,6 +253,19 @@ const AccountSelector = observer(() => {
         )}
       </div>
     </div>
+  )
+})
+
+const AccountManagementButton = observer(() => {
+  return (
+    <DropdownMenuItem
+      onClick={async () => {
+        push('/account')
+      }}
+    >
+      <Iconify icon="iconoir:user" className="size-6" />
+      <Trans>账户管理</Trans>
+    </DropdownMenuItem>
   )
 })
 
@@ -315,7 +279,7 @@ const DisconnectButton = observer(() => {
         onLogout(true)
       }}
     >
-      <IconDisconnect className="size-4" /> 断开连接
+      <Iconify icon="iconoir:link-slash" className="size-6" /> <Trans>断开连接</Trans>
     </DropdownMenuItem>
   )
 })

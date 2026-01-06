@@ -40,7 +40,7 @@ const buttonVariants = cva(
           'enabled:hover:bg-[#FDFF84] enabled:hover:text-[#0A0C27] enabled:hover:outline-none enabled:hover:ring-3 enabled:hover:ring-[#FDFF84]',
           'focus-visible:bg-[#FDFF84] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-[#FDFF84]'
         ],
-        ghost: 'enabled:hover:bg-[#FDFF84] bg-transparent text-[#EED94C] enabled:hover:text-[#0A0C27]',
+        ghost: 'enabled:hover:bg-[#FDFF84] bg-transparent text-white enabled:hover:text-[#0A0C27]',
         // link: 'relative after:absolute after:bg-primary after:bottom-2 after:h-[1px] after:w-2/3 after:origin-bottom-right after:scale-x-0 hover:after:origin-bottom-left hover:after:scale-x-100 after:transition-transform after:ease-in-out after:duration-300',
         link: [
           'text-[#EED94C]! font-semibold leading-none text-xs',
@@ -55,6 +55,7 @@ const buttonVariants = cva(
         md: 'rounded-2 py-2 px-6',
         lg: 'px-8 py-2.5 rounded-2',
         icon: 'p-small rounded-[8px]',
+        'icon-sm': 'p-0.5 rounded-[4px]',
         large: 'p-4 rounded-2xl text-lg',
         submit: 'py-4 text-lg leading-[30px]'
       }
@@ -245,6 +246,8 @@ const LinkButton = ({
 }
 
 LinkButton.displayName = 'LinkButton'
+
+export type IconButtonProps = ButtonProps & IconProps
 
 const IconButton = ({ className, variant = 'outline', size = 'icon', ...props }: ButtonProps & IconProps) => {
   return <Button className={className} variant={variant} size={size} {...props} />

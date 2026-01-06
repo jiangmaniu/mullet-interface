@@ -87,7 +87,7 @@ const DropdownMenuContent = React.forwardRef<
       data-slot="dropdown-menu-content"
       sideOffset={sideOffset}
       className={cn(
-        'flex flex-col gap-3 rounded-large border border-[#3B3D52] bg-pop-up-mask backdrop-blur-base p-3 text-white shadow-md',
+        'flex flex-col gap-3 rounded-large border border-brand-default bg-pop-up-mask backdrop-blur-base p-3 text-white shadow-md',
         'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 max-h-(--radix-dropdown-menu-content-available-height) origin-(--radix-dropdown-menu-content-transform-origin) z-50 min-w-[8rem] overflow-y-auto overflow-x-hidden ',
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         'data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2',
@@ -194,7 +194,7 @@ const DropdownMenuSeparator = React.forwardRef<
   <DropdownMenuPrimitive.Separator
     ref={ref}
     data-slot="dropdown-menu-separator"
-    className={cn('bg-border -mx-1 my-1 h-px', className)}
+    className={cn('bg-brand-divider-line -mx-1 my-1 h-px', className)}
     {...props}
   />
 ))

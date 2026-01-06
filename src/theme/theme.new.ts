@@ -19,7 +19,7 @@ export const NewThemeBackgroundColor = {
   'button-box': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
   'card': 'color-mix(in srgb, rgb(var(--color-zinc-800)) 50%, transparent)',
   'navigation': 'color-mix(in srgb, rgb(var(--color-zinc-800)) 80%, transparent)',
-  'pop-up-mask': 'color-mix(in srgb, rgb(var(--color-zinc-800)) 100%, transparent)',
+  'pop-up-mask': 'color-mix(in srgb, rgb(var(--color-zinc-800)) 90%, transparent)',
   // shadcn/ui 兼容变量
   'background': 'rgb(var(--color-zinc-500))',
 }
@@ -92,6 +92,14 @@ export const NewThemeFontSize = {
     '24px',
     {
       lineHeight: 'var(--leading-large)',
+      fontWeight: 'var(--font-weight-semibold)',
+    },
+  ],
+
+  'title-h4': [
+    'var(--font-size-large)',
+    {
+      lineHeight: 'var(--leading-medium)',
       fontWeight: 'var(--font-weight-semibold)',
     },
   ],
