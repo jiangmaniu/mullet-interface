@@ -31,9 +31,9 @@ import { AccountDetails } from './_comps/account'
 // import { TradeLayoutKey } from './_comps/layout/types'
 import { TradeMarket } from './_comps/market'
 import { TradeActionPanel } from './_comps/action-panel'
-import { MarginRate } from './_comps/margin-rate'
 import { OrderDepthPriceBooks } from './_comps/order-book'
 import { WEB_LOGIN_PAGE } from '@/constants'
+import { PositionDashboard } from './_comps/position-dashboard'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -184,7 +184,7 @@ export default observer(() => {
                 <div className={cn('flex flex-1 flex-col gap-2')}>
                   {/* <MarginRate /> */}
                   <div className={cn(' flex flex-1 flex-col bg-primary gap-2 min-h-[270px] rounded-large relative')}>
-                    <Liquidation />
+                    <PositionDashboard />
                   </div>
                 </div>
               </div>
