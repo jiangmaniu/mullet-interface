@@ -210,7 +210,7 @@ const handleError = (error: any, opts?: IAxiosRequestConfig): void => {
         break
       case 401:
         // 重新去登录
-        onLogout(true)
+        onLogout()
         break
       case 413:
         statusText = 'Payload Too Large'
