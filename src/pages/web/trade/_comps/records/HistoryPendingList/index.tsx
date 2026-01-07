@@ -29,7 +29,7 @@ function HistoryPendingList() {
   return (
     <>
       <StandardTable
-        columns={getColumns()}
+        columns={getColumns({ currentAccountInfo: trade.currentAccountInfo })}
         key={trade.currentAccountInfo.id}
         // ghost
         showOptionColumn={false}

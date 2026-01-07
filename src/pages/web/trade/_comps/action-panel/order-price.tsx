@@ -6,12 +6,14 @@ import { TradeOrderTypeEnum } from '../../_options/order'
 import useTrade from '@/hooks/useTrade'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { cn } from '@/libs/ui/lib/utils'
+import { BNumber } from '@/libs/utils/number'
 
 export const TradeActionPanelOrderPrice = observer(() => {
   const { trade } = useStores()
   const { disabledTrade, orderPrice, setOrderPrice, isBuy, onPriceMinus, onPriceAdd } = useTrade()
   const selectedOrderType = trade.orderType
   const quoteInfo = useCurrentQuote(trade.activeSymbolName)
+  const activeSymbolInfo = trade.activeSymbolInfo
 
   const isSellOrder = trade.buySell === 'SELL'
   const isBuyOrder = trade.buySell === 'BUY'
@@ -39,7 +41,8 @@ export const TradeActionPanelOrderPrice = observer(() => {
   return (
     <div>
       <NumberInput
-        placeholder="0.00"
+        placeholder={BNumber.toFormatNumber(0, { volScale: activeSymbolInfo.symbolDecimal })}
+        decimalScale={activeSymbolInfo.symbolDecimal}
         value={orderPrice}
         size="md"
         labelText={<Trans>价格</Trans>}

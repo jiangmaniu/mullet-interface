@@ -14,9 +14,7 @@ function HistoryClose() {
   const { isPc } = useEnv()
   const { ws, trade } = useStores()
   const { recordListClassName } = useStyle()
-  const intl = useIntl()
   const symbol = trade.showActiveSymbol ? trade.activeSymbolName : undefined
-  const currencyDecimal = trade.currentAccountInfo.currencyDecimal
 
   const onQuery = async (params: Order.TradeRecordsPageListParams) => {
     const res = await getTradeRecordsPage({ current: 1, size: 10, ...params })
@@ -26,7 +24,9 @@ function HistoryClose() {
   return (
     <>
       <StandardTable
-        columns={getColumns(currencyDecimal)}
+        columns={getColumns({
+          currentAccountInfo: trade.currentAccountInfo
+        })}
         key={trade.currentAccountInfo.id}
         // ghost
         showOptionColumn={false}

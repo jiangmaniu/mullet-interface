@@ -3,10 +3,11 @@ import currency from 'currency.js'
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
-import { formatNum, toFixed } from '@/utils'
+import { toFixed } from '@/utils'
 import { cn } from '@/libs/ui/lib/utils'
 
 import { IPositionItem } from '..'
+import { BNumber } from '@/libs/utils/number'
 
 type IProps = {
   childrenList?: IPositionItem[]
@@ -17,6 +18,7 @@ function RowTotalProfitYieldRate({ childrenList = [] }: IProps) {
   const { trade } = useStores()
   const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
   const precision = trade.currentAccountInfo.currencyDecimal
+  const unit = trade.currentAccountInfo.currencyUnit
 
   if (!childrenList.length) return '--'
 
@@ -34,35 +36,15 @@ function RowTotalProfitYieldRate({ childrenList = [] }: IProps) {
   totalOrderMargin = totalOrderMargin.toNumber()
 
   // 总盈利百分比=(总投资金额/总盈亏金额)×100]
-  const totalYieldRateValue = totalProfit && totalOrderMargin ? formatNum((totalProfit / totalOrderMargin) * 100, { precision }) : 0
-
-  const flag = Number(totalProfit) > 0
-  const color = flag ? 'text-green' : 'text-red'
-
-  const profitFormat = Number(totalProfit) ? formatNum(totalProfit, { precision }) : totalProfit || '--' // 格式化的
-  const profitDom = totalProfit ? (
-    <span className={cn('font-pf-bold', color)}>
-      {flag ? '+' : ''}
-      {profitFormat} USD
-    </span>
-  ) : (
-    <span className="!text-[13px]">--</span>
-  )
-
-  const formatTotalYieldRate = !isNaN(totalYieldRate) ? formatNum(totalYieldRate, { precision }) : '--'
+  const totalYieldRateValue = BNumber.from(totalProfit).div(totalOrderMargin)
+  const color = BNumber.from(totalProfit).gt(0) ? 'text-green' : 'text-red'
 
   return (
-    <div className="flex flex-col">
-      <div>{profitDom}</div>
-      {/* {!!totalYieldRate && (
-        <div className={cn('!text-xs font-pf-bold', color)}>
-          ({Number(totalYieldRate) > 0 ? '+' + formatTotalYieldRate : formatTotalYieldRate}%)
-        </div>
-      )} */}
+    <div className={cn('flex flex-col', color)}>
+      <div>{BNumber.toFormatNumber(totalProfit, { volScale: precision, positive: false, forceSign: true })}</div>
+
       {!!totalYieldRateValue && (
-        <div className={cn('!text-xs font-pf-bold', color)}>
-          ({Number(totalYieldRateValue) > 0 ? '+' + totalYieldRateValue : totalYieldRateValue}%)
-        </div>
+        <div className={cn('!text-xs font-pf-bold', color)}>({BNumber.toFormatPercent(totalYieldRateValue, { forceSign: true })})</div>
       )}
     </div>
   )

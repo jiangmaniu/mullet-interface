@@ -6,6 +6,7 @@ import { CopyOutlined, LinkOutlined } from '@ant-design/icons'
 import { Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import React from 'react'
+import { GeneralTooltip } from '../tooltip'
 
 type IProps = {
   path: any
@@ -40,9 +41,9 @@ const ExplorerLink = ({ path, address, className, cluster = '', copyable = false
         {!label && (
           <>
             {isFormatAddress ? (
-              <Tooltip title={address} placement="top">
+              <GeneralTooltip side={'top'} triggerClassName="inline" content={address}>
                 {formatAddress(address)}
-              </Tooltip>
+              </GeneralTooltip>
             ) : (
               address
             )}

@@ -9,10 +9,11 @@ import { BNumber } from '@/libs/utils/number'
 import { Trans } from '@/libs/lingui/react/macro'
 import { renderFallback } from '@/libs/utils/format/fallback'
 
-export const getColumns = (currencyDecimal: any): ProColumns<Account.MoneyRecordsPageListItem>[] => {
-  const { trade } = useStores()
-  const accountGroupPrecision = currencyDecimal
-
+export const getColumns = ({
+  currentAccountInfo
+}: {
+  currentAccountInfo: User.AccountItem
+}): ProColumns<Account.MoneyRecordsPageListItem>[] => {
   return [
     {
       title: <Trans>时间</Trans>, // 与 antd 中基本相同，但是支持通过传入一个方法
@@ -64,7 +65,12 @@ export const getColumns = (currencyDecimal: any): ProColumns<Account.MoneyRecord
               BNumber.from(text).gt(0) ? 'text-market-rise' : BNumber.from(text).lt(0) ? 'text-market-fall' : 'text-content-1'
             )}
           >
-            {BNumber.toFormatNumber(text, { precision: accountGroupPrecision, positive: false, forceSign: true })}
+            {BNumber.toFormatNumber(text, {
+              volScale: currentAccountInfo.currencyDecimal,
+              positive: false,
+              forceSign: true,
+              unit: currentAccountInfo.currencyUnit
+            })}
           </span>
         )
       }
@@ -82,7 +88,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Account.MoneyRecord
       },
       width: 150,
       renderText(text, record, index, action) {
-        return BNumber.toFormatNumber(text, { precision: accountGroupPrecision })
+        return BNumber.toFormatNumber(text, { volScale: currentAccountInfo.currencyDecimal, unit: currentAccountInfo.currencyUnit })
       },
       className: 'text-paragraph-p2 text-content-1'
     },
@@ -99,7 +105,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Account.MoneyRecord
       },
       width: 150,
       renderText(text, record, index, action) {
-        return BNumber.toFormatNumber(text, { precision: accountGroupPrecision })
+        return BNumber.toFormatNumber(text, { volScale: currentAccountInfo.currencyDecimal, unit: currentAccountInfo.currencyUnit })
       },
       className: 'text-paragraph-p2 text-content-1'
     },

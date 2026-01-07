@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react'
 import { MarginModeModal } from '../modal/margin-mode-modal'
 import { Button } from '@/libs/ui/components/button'
-import { Trans } from '@/libs/lingui/react/macro'
+import { t, Trans } from '@/libs/lingui/react/macro'
 import { useStores } from '@/context/mobxProvider'
 import { current } from 'tailwindcss/colors'
 import { TRADE_MARGIN_MODE_MAP, TradeMarginMode } from '../../_options/trade'
@@ -54,7 +54,8 @@ export const TradingLeverage = observer(() => {
                 (grade) => BNumber.from(leverage).gte(grade.lever_start_value) && BNumber.from(currentLeverage).lte(grade.lever_end_value)
               )?.bag_nominal_value || 0
             const maxPosition = BNumber.toFormatNumber(maxOpenLeverage, {
-              unit: prepaymentConf?.float_leverage?.type === 'volume' ? `手` : 'USD'
+              unit: prepaymentConf?.float_leverage?.type === 'volume' ? t`手` : trade.currentAccountInfo.currencyUnit,
+              volScale: trade.currentAccountInfo.currencyDecimal
             })
             return maxPosition
           }}

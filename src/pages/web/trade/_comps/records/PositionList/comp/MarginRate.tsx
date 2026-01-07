@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react'
 
 import { useStores } from '@/context/mobxProvider'
+import { BNumber } from '@/libs/utils/number'
 
 type IProps = {
   item: Order.BgaOrderPageListItem
@@ -21,7 +22,7 @@ function MarginRate({ item }: IProps) {
   const calcInfo = positionListSymbolCalcInfo.get(item.id)
   const marginRate = calcInfo?.marginRateInfo?.marginRate
 
-  return marginRate ? `${marginRate}%` : '-'
+  return `${BNumber.toFormatPercent(marginRate, { isRaw: false })}`
 }
 
 export default observer(MarginRate)

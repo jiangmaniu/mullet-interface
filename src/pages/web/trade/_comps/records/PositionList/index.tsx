@@ -13,7 +13,7 @@ import { useEnv } from '@/context/envProvider'
 import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import useStyle from '@/hooks/useStyle'
-import { formatNum, toFixed } from '@/utils'
+import { toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/libs/ui/lib/utils'
 
@@ -36,6 +36,8 @@ import { TradeOrderDirectionEnum } from '../../../_options/order'
 import { AdjustPositionMarginAction } from './_comps/adjust-position-margin-action'
 import { formatAddress } from '@/libs/utils/format/common'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
+import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
+import { LOTS_UNIT_LABEL } from '../../../_options/trade'
 
 export type IPositionItem = Order.BgaOrderPageListItem & {
   /**合并汇总展开行的手续费 */
@@ -120,7 +122,7 @@ function Position({ style, parentPopup }: IProps) {
       {
         title: (
           <>
-            <Trans>开仓数量</Trans>(手)
+            <Trans>开仓数量</Trans>({LOTS_UNIT_LABEL})
           </>
         ),
         dataIndex: 'orderVolume',
@@ -133,7 +135,7 @@ function Position({ style, parentPopup }: IProps) {
         formItemProps: {
           label: '' // 去掉form label
         },
-        width: 90,
+        width: 110,
         align: 'left',
         renderText(text, record, index, action) {
           if (isOneLevel && Number(record?.childrenList?.length) > 1) return ' '
@@ -301,7 +303,7 @@ function Position({ style, parentPopup }: IProps) {
       {
         title: (
           <>
-            <Trans>浮动盈亏</Trans>/<Trans>收益率</Trans>
+            <Trans>浮动盈亏</Trans>({trade.currentAccountInfo.currencyUnit}) / <Trans>收益率</Trans>
           </>
         ),
         dataIndex: 'profit',
@@ -672,19 +674,17 @@ const PositionFeesCell = observer(({ positionInfo, isOneLevel }: { positionInfo:
 
   const { trade } = useStores()
   const precision = trade.currentAccountInfo.currencyDecimal
-  const unit = 'USDC'
+  const unit = trade.currentAccountInfo.currencyUnit
 
   return (
     <div className="text-paragraph-p2 text-content-1">
       {BNumber.toFormatNumber(handlingFees, {
         volScale: precision,
-        unit: unit,
         positive: false
       })}
       {' / '}
       {BNumber.toFormatNumber(interestFees, {
         volScale: precision,
-        unit: unit,
         positive: false
       })}
     </div>
@@ -709,7 +709,6 @@ const PositionMarginCell = observer(
     const startPrice = isOneLevel && Number(positionInfo?.childrenList?.length) ? positionInfo.startPrice : positionInfo.startPrice
 
     const { trade } = useStores()
-    const precision = trade.currentAccountInfo.currencyDecimal
     const buySellInfo = getBuySellInfo(positionInfo)
     const orderMargin = positionInfo.orderMargin
 
@@ -718,8 +717,8 @@ const PositionMarginCell = observer(
         <div className="flex gap-1">
           <div>
             {BNumber.toFormatNumber(positionInfo?.orderMargin, {
-              volScale: precision,
-              unit: 'USDC'
+              volScale: trade.currentAccountInfo.currencyDecimal,
+              unit: trade.currentAccountInfo.currencyUnit
             })}
             {' / '}
             <span className={cn('text-content-4')}>{buySellInfo.marginTypeText}</span>
@@ -748,10 +747,11 @@ const PositionMarginCell = observer(
 )
 
 const PositionAmount = observer(({ positionInfo, isOneLevel }: { positionInfo: IPositionItem; isOneLevel: boolean }) => {
+  const lotVolScale = parseSymbolLotsVolScale(positionInfo.conf)
   return (
     <div className="text-paragraph-p2 text-content-1">
       {BNumber.toFormatNumber(positionInfo?.orderVolume, {
-        volScale: positionInfo?.symbolDecimal,
+        volScale: lotVolScale,
         positive: true
       })}
     </div>

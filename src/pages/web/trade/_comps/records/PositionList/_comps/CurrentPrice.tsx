@@ -3,12 +3,13 @@ import { observer } from 'mobx-react'
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
-import { formatNum } from '@/utils'
 import { cn } from '@/libs/ui/lib/utils'
 import { IPendingItem } from '@/pages/web/trade/comp/TradeRecord/comp/PendingList'
+import { renderFallback } from '@/libs/utils/format/fallback'
+import { BNumber } from '@/libs/utils/number'
 
 type IProps = {
-  item: Order.BgaOrderPageListItem | IPendingItem | Order.TradeRecordsPageListItem
+  item: Order.BgaOrderPageListItem | IPendingItem
 }
 
 // 标记价格，当前市价行情价格
@@ -26,15 +27,14 @@ function CurrentPrice({ item }: IProps) {
   const currentPrice = type === 'LIMIT_BUY_ORDER' || type === 'LIMIT_SELL_ORDER' ? limitCurrentPrice : marketCurrentPrice
 
   return (
-    <>
-      {currentPrice ? (
-        <span className={cn('', quoteInfo?.bidDiff && quoteInfo?.bidDiff > 0 ? 'text-green' : 'text-red')}>
-          {formatNum(currentPrice, { precision: item.symbolDecimal })}
-        </span>
-      ) : (
-        <span className="">-</span>
+    <div className="inline text-paragraph-p2">
+      {renderFallback(
+        <span className={cn(quoteInfo?.bidDiff && quoteInfo?.bidDiff > 0 ? 'text-green' : 'text-red')}>
+          {BNumber.toFormatNumber(currentPrice, { volScale: item.symbolDecimal })}
+        </span>,
+        { verify: !!currentPrice }
       )}
-    </>
+    </div>
   )
 }
 

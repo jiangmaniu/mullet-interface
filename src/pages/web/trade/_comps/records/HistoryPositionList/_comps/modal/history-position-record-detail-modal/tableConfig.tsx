@@ -11,16 +11,14 @@ import { GeneralTooltip } from '@/components/tooltip'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { formatAddress } from '@/libs/utils/format'
 import { Trans } from '@/libs/lingui/react/macro'
+import { BNumber } from '@/libs/utils/number'
+import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
 
-export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Order.BgaOrderPageListItem>[] => {
-  const { trade } = useStores()
-  const { lng } = useLang()
-  const isZh = lng === 'zh-TW'
-  const precision = trade.currentAccountInfo.currencyDecimal
-
-  const { screenSize } = useEnv()
-  const width = screenSize.width
-
+export const getHistoryPositionRecordDetailModalTableColumns = ({
+  currentAccountInfo
+}: {
+  currentAccountInfo: User.AccountItem
+}): ProColumns<Order.BgaOrderPageListItem>[] => {
   return [
     {
       title: <Trans>订单号</Trans>,
@@ -83,7 +81,11 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 120
+      width: 120,
+      renderText(text, record, index, action) {
+        const lotVolScale = parseSymbolLotsVolScale(record.conf)
+        return BNumber.toFormatNumber(record.orderVolume, { volScale: lotVolScale })
+      }
     },
     {
       title: <Trans>价格</Trans>,
@@ -96,7 +98,10 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 200
+      width: 200,
+      renderText(text, record, index, action) {
+        return text
+      }
     },
     {
       title: <Trans>时间</Trans>,
@@ -147,11 +152,11 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
         return (
           <div>
             <span className="!text-[13px] text-primary">
-              {record?.takeProfit ? formatNum(record?.takeProfit, { precision: record.symbolDecimal || 2 }) : '--'}
+              {BNumber.toFormatNumber(record?.takeProfit, { volScale: record.symbolDecimal })}
             </span>
             <span className="dark:text-gray-95"> / </span>
             <span className="!text-[13px] text-primary">
-              {record?.stopLoss ? formatNum(record?.stopLoss, { precision: record.symbolDecimal || 2 }) : '--'}
+              {BNumber.toFormatNumber(record?.stopLoss, { volScale: record.symbolDecimal })}
             </span>
           </div>
         )
@@ -160,8 +165,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
     {
       title: (
         <>
-          <Trans>手续费</Trans>
-          (USD)
+          <Trans>手续费</Trans>({currentAccountInfo.currencyUnit})
         </>
       ),
       dataIndex: 'handlingFees',
@@ -175,14 +179,17 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
+        return (
+          <span className="!text-[13px] text-primary">
+            {BNumber.toFormatNumber(text, { volScale: currentAccountInfo.currencyDecimal })}
+          </span>
+        )
       }
     },
     {
       title: (
         <>
-          <Trans>库存费</Trans>
-          (USD)
+          <Trans>库存费</Trans>({currentAccountInfo.currencyUnit})
         </>
       ),
       dataIndex: 'interestFees',
@@ -196,14 +203,17 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       },
       width: 150,
       renderText(text, record, index, action) {
-        return <span className="!text-[13px] text-primary">{formatNum(text, { precision })}</span>
+        return (
+          <span className="!text-[13px] text-primary">
+            {BNumber.toFormatNumber(text, { volScale: currentAccountInfo.currencyDecimal })}
+          </span>
+        )
       }
     },
     {
       title: (
         <>
-          <Trans>盈亏</Trans>
-          (USD)
+          <Trans>盈亏</Trans>({currentAccountInfo.currencyUnit})
         </>
       ),
       dataIndex: 'profit',
@@ -217,13 +227,20 @@ export const getHistoryPositionRecordDetailModalTableColumns = (): ProColumns<Or
       },
       width: 120,
       renderText(text, record, index, action) {
-        let profit: any = record.profit
-        const flag = Number(profit) > 0
-        const formatProfit = formatNum(profit, { precision })
-        return profit ? (
-          <span className={cn('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${formatProfit}` : formatProfit}</span>
-        ) : (
-          '-'
+        const profit = record.profit
+        return (
+          <span
+            className={cn(
+              '!font-dingpro-medium',
+              BNumber.from(profit)?.gt(0) ? 'text-green' : BNumber.from(profit)?.lt(0) ? 'text-red' : 'text-content-1'
+            )}
+          >
+            {BNumber.toFormatNumber(profit, {
+              forceSign: true,
+              positive: false,
+              volScale: currentAccountInfo.currencyDecimal
+            })}
+          </span>
         )
       },
       align: 'right',

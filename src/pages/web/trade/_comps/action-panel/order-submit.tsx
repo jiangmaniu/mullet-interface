@@ -7,6 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { FormattedMessage } from '@umijs/max'
 import { MinusCircleOutlined } from '@ant-design/icons'
 import useTrade from '@/hooks/useTrade'
+import { LOTS_UNIT_LABEL } from '../../_options/trade'
 
 export const TradeActionPanelOrderSubmit = observer(() => {
   const [isOrderConfirmModalOpen, setIsOrderConfirmModalOpen] = useState(false)
@@ -20,8 +21,7 @@ export const TradeActionPanelOrderSubmit = observer(() => {
 
   const BuySellButton = (
     <>
-      {isBuy ? <FormattedMessage id="mt.querenmairu" /> : <FormattedMessage id="mt.querenmaichu" />} {orderVolume}{' '}
-      <FormattedMessage id="mt.lot" />
+      {isBuy ? <Trans>确认买入</Trans> : <Trans>确认卖出</Trans>} {orderVolume} {LOTS_UNIT_LABEL}
     </>
   )
 
@@ -47,11 +47,11 @@ export const TradeActionPanelOrderSubmit = observer(() => {
         {hasQuote ? (
           <>
             {!disabledTrade && isMarketOpen && BuySellButton}
-            {disabledTrade && <FormattedMessage id="mt.zhanghubeijinyong" />}
+            {disabledTrade && <Trans>账户禁止交易</Trans>}
             {!isMarketOpen && !disabledTrade && (
               <div className="flex items-center">
                 <MinusCircleOutlined style={{ fontSize: 14, paddingRight: 6 }} />
-                <FormattedMessage id="mt.xiushizhong" />
+                <Trans>修改中</Trans>
               </div>
             )}
           </>

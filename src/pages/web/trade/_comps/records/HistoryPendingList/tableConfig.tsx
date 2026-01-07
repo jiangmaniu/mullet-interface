@@ -14,13 +14,9 @@ import { formatAddress } from '@/libs/utils/format'
 import { renderFallback } from '@/libs/utils/format/fallback'
 import { BNumber } from '@/libs/utils/number'
 import { observer } from 'mobx-react'
+import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
 
-export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
-  const { trade } = useStores()
-  const currencyDecimal = trade.currentAccountInfo.currencyDecimal
-  const { lng } = useLang()
-  const isZh = lng === 'zh-TW'
-
+export const getColumns = ({ currentAccountInfo }: { currentAccountInfo: User.AccountItem }): ProColumns<Order.OrderPageListItem>[] => {
   return [
     {
       title: (
@@ -55,7 +51,7 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: isZh ? 120 : 160,
+      width: 160,
       align: 'left',
       valueEnum: getEnum().Enum.OrderType,
       className: 'text-paragraph-p2 text-content-1'
@@ -98,13 +94,14 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       width: 100,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="text-paragraph-p2 text-content-1">{BNumber.toFormatNumber(text)}</span>
+        const lotVolScale = parseSymbolLotsVolScale(record.conf)
+        return <span className="text-paragraph-p2 text-content-1">{BNumber.toFormatNumber(text, { volScale: lotVolScale })}</span>
       }
     },
     {
       title: (
         <>
-          <Trans>手续费</Trans>
+          <Trans>手续费</Trans>({currentAccountInfo.currencyUnit})
         </>
       ),
       dataIndex: 'handlingFees',
@@ -116,13 +113,9 @@ export const getColumns = (): ProColumns<Order.OrderPageListItem>[] => {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: isZh ? 140 : 150,
+      width: 150,
       renderText(text, record, index, action) {
-        return (
-          <span className="text-paragraph-p2 text-content-1">
-            {BNumber.toFormatNumber(text, { precision: currencyDecimal, unit: 'USDC' })}
-          </span>
-        )
+        return <HandlingFees text={text} />
       }
     },
 
@@ -195,7 +188,7 @@ const HistoryOrderSymbolInfoCell = observer(({ orderInfo }: { orderInfo: Order.O
     <div className="flex items-center gap-medium">
       <SymbolIcon src={orderInfo.imgUrl} width={24} height={24} />
       <div className="flex flex-col">
-        <span className="text-paragraph-p2 text-content-1">{orderInfo.symbol}</span>
+        <span className="text-paragraph-p2 textcontent--1">{orderInfo.symbol}</span>
         <span className={cn('text-paragraph-p3 text-content-4', colorClassName)}>{text2}</span>
       </div>
     </div>
@@ -223,5 +216,14 @@ const HistoryOrderPriceCell = observer(({ orderInfo }: { orderInfo: Order.OrderP
         volScale: currencyDecimal
       })}
     </div>
+  )
+})
+
+const HandlingFees = observer(({ text }: { text: string }) => {
+  const { trade } = useStores()
+  return (
+    <span className="text-paragraph-p2 text-content-1">
+      {BNumber.toFormatNumber(text, { volScale: trade.currentAccountInfo.currencyDecimal })}
+    </span>
   )
 })

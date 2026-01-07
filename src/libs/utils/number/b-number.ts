@@ -172,6 +172,13 @@ export class BNumber extends BigNumberBase {
     return BNumber.from(super.plus(BNumber.from(n), base))
   }
 
+  cutDecimalPlaces(decimalPlaces?: number, roundingMode?: BigNumber.RoundingMode): BNumber {
+    if (!decimalPlaces) {
+      return this
+    }
+    return BNumber.from(super.decimalPlaces(decimalPlaces, roundingMode))
+  }
+
   decimalPlaces(): number
   decimalPlaces(decimalPlaces: number, roundingMode?: BigNumber.RoundingMode): BNumber
   decimalPlaces(decimalPlaces?: number, roundingMode?: BigNumber.RoundingMode): BNumber | number | null {

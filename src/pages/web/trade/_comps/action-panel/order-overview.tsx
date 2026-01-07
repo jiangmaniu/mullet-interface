@@ -1,4 +1,6 @@
 import { GeneralTooltip } from '@/components/tooltip/general'
+import { useStores } from '@/context/mobxProvider'
+import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
 import useMargin from '@/hooks/useMargin'
 import useMaxOpenVolume from '@/hooks/useMaxOpenVolume'
 import useTrade from '@/hooks/useTrade'
@@ -6,11 +8,15 @@ import { Trans } from '@/libs/lingui/react/macro'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { BNumber } from '@/libs/utils/number/b-number'
 import { observer } from 'mobx-react'
+import { LOTS_UNIT_LABEL } from '../../_options/trade'
 
 export const TradeActionPanelOrderOverview = observer(() => {
   const { availableMargin } = useTrade()
   const margin = useMargin()
   const maxOpenVolume = useMaxOpenVolume()
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
+  const lotVolScale = parseSymbolLotsVolScale(trade.activeSymbolInfo.symbolConf)
 
   const list = [
     {
@@ -21,7 +27,11 @@ export const TradeActionPanelOrderOverview = observer(() => {
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
-      value: <>{BNumber.toFormatNumber(availableMargin, { unit: 'USDC', volScale: 2 })}</>
+      value: (
+        <>
+          {BNumber.toFormatNumber(availableMargin, { unit: currentAccountInfo.currencyUnit, volScale: currentAccountInfo.currencyDecimal })}
+        </>
+      )
     },
     {
       label: (
@@ -31,7 +41,7 @@ export const TradeActionPanelOrderOverview = observer(() => {
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
-      value: <>{BNumber.toFormatNumber(margin, { unit: 'USDC', volScale: 2 })}</>
+      value: <>{BNumber.toFormatNumber(margin, { unit: currentAccountInfo.currencyUnit, volScale: currentAccountInfo.currencyDecimal })}</>
     },
     {
       label: (
@@ -41,7 +51,7 @@ export const TradeActionPanelOrderOverview = observer(() => {
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
-      value: <>{BNumber.toFormatNumber(maxOpenVolume, { volScale: 2, unit: '手' })}</>
+      value: <>{BNumber.toFormatNumber(maxOpenVolume, { volScale: lotVolScale, unit: LOTS_UNIT_LABEL })}</>
     }
   ]
 

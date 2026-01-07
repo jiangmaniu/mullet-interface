@@ -137,7 +137,9 @@ const SettingPositionTpSlModalContent = observer(({ positionInfo, onConfirm, onC
                 <div className="text-paragraph-p2 text-content-4">
                   <Trans>开仓均价</Trans>
                 </div>
-                <div className="text-paragraph-p2 text-market-rise">{BNumber.toFormatNumber(positionInfo?.startPrice)}</div>
+                <div className="text-paragraph-p2 text-market-rise">
+                  {BNumber.toFormatNumber(positionInfo?.startPrice, { volScale: positionInfo?.symbolDecimal })}
+                </div>
               </div>
               <div className="flex justify-between gap-1">
                 <div className="text-paragraph-p2 text-content-4">
@@ -149,8 +151,8 @@ const SettingPositionTpSlModalContent = observer(({ positionInfo, onConfirm, onC
               </div>
 
               <div className="flex flex-col gap-2xl">
-                <SetTakeProfit />
-                <SetStopLoss />
+                <SetTakeProfit positionInfo={positionInfo} />
+                <SetStopLoss positionInfo={positionInfo} />
               </div>
             </div>
           </div>
@@ -252,7 +254,7 @@ const getStopLossPrice = (percent: string, isBuy: boolean, sl_scope: number, vol
   return lossPrice.toString()
 }
 
-const SetTakeProfit = observer(() => {
+const SetTakeProfit = observer(({ positionInfo }: { positionInfo: IPositionItem }) => {
   let {
     disabledTrade,
     spValue,
@@ -274,7 +276,7 @@ const SetTakeProfit = observer(() => {
   useEffect(() => {
     // 只有当 isBuy 真正发生变化时才重新计算
     if (prevIsBuyRef.current !== isBuy && tpPercent && sp_scope) {
-      const price = getTakeProfitPrice(tpPercent, isBuy, sp_scope, 2)
+      const price = getTakeProfitPrice(tpPercent, isBuy, sp_scope, positionInfo.symbolDecimal)
       setSp(price)
     }
     // 更新 ref 为当前值
@@ -313,7 +315,7 @@ const SetTakeProfit = observer(() => {
           onValueChange={({ value, floatValue }, { source }) => {
             if (source === NumberInputSourceType.EVENT) {
               setTpPercent(value)
-              const price = getTakeProfitPrice(value, isBuy, sp_scope, 2)
+              const price = getTakeProfitPrice(value, isBuy, sp_scope, positionInfo.symbolDecimal)
               setSp(price)
             }
           }}
@@ -329,14 +331,16 @@ const SetTakeProfit = observer(() => {
         />
       </div>
       <div>
-        <SetTakeProfitLabel />
+        <SetTakeProfitLabel positionInfo={positionInfo} />
       </div>
     </div>
   )
 })
 
-const SetTakeProfitLabel = observer(() => {
+const SetTakeProfitLabel = observer(({ positionInfo }: { positionInfo: IPositionItem }) => {
   const { isBuy, sp_scope, spFlag, spValueEstimate } = useTrade()
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
   return (
     <div className="flex justify-between gap-2">
       <div className="text-paragraph-p3 flex items-start gap-1">
@@ -346,7 +350,7 @@ const SetTakeProfitLabel = observer(() => {
         <span className="text-content-1">
           {BNumber.toFormatNumber(sp_scope, {
             prefix: isBuy ? '≥' : '≤',
-            volScale: 2
+            volScale: positionInfo.symbolDecimal
           })}
         </span>
       </div>
@@ -356,8 +360,8 @@ const SetTakeProfitLabel = observer(() => {
           <Trans>预计盈利</Trans>
           <span className="text-market-rise">
             {BNumber.toFormatNumber(spValueEstimate, {
-              volScale: 2,
-              unit: 'USDC'
+              volScale: currentAccountInfo.currencyDecimal,
+              unit: currentAccountInfo.currencyUnit
             })}
           </span>
         </div>
@@ -366,7 +370,7 @@ const SetTakeProfitLabel = observer(() => {
   )
 })
 
-const SetStopLoss = observer(() => {
+const SetStopLoss = observer(({ positionInfo }: { positionInfo: IPositionItem }) => {
   let { disabledTrade, spValue, slPercent, setSlPercent, isBuy, slValue, onSpAdd, onSpMinus, sl_scope, onSlAdd, onSlMinus, setSl, setSp } =
     useTrade()
   const prevIsBuyRef = useRef(isBuy)
@@ -375,7 +379,7 @@ const SetStopLoss = observer(() => {
   useEffect(() => {
     // 只有当 isBuy 真正发生变化时才重新计算
     if (prevIsBuyRef.current !== isBuy && slPercent && sl_scope) {
-      const price = getStopLossPrice(slPercent, isBuy, sl_scope, 2)
+      const price = getStopLossPrice(slPercent, isBuy, sl_scope, positionInfo.symbolDecimal)
       setSl(price)
     }
     // 更新 ref 为当前值
@@ -388,7 +392,7 @@ const SetStopLoss = observer(() => {
         <div className="flex-1">
           <NumberInput
             min={0}
-            decimalScale={2}
+            decimalScale={positionInfo.symbolDecimal}
             value={slValue}
             labelText={<Trans>止损价格</Trans>}
             onValueChange={({ value }, { source }) => {
@@ -409,7 +413,7 @@ const SetStopLoss = observer(() => {
             onValueChange={({ value, floatValue }, { source }) => {
               if (source === NumberInputSourceType.EVENT) {
                 setSlPercent(value)
-                const price = getStopLossPrice(value, isBuy, sl_scope, 2)
+                const price = getStopLossPrice(value, isBuy, sl_scope, positionInfo.symbolDecimal)
 
                 setSl(price)
               }
@@ -425,13 +429,15 @@ const SetStopLoss = observer(() => {
       </div>
 
       <div>
-        <SetStopLossLabel />
+        <SetStopLossLabel positionInfo={positionInfo} />
       </div>
     </div>
   )
 })
-const SetStopLossLabel = observer(() => {
+const SetStopLossLabel = observer(({ positionInfo }: { positionInfo: IPositionItem }) => {
   const { isBuy, sl_scope, slFlag, slValueEstimate } = useTrade()
+  const { trade } = useStores()
+  const currentAccountInfo = trade.currentAccountInfo
   return (
     <div className="flex justify-between gap-2">
       <div className="text-paragraph-p3 flex items-start gap-1">
@@ -441,7 +447,7 @@ const SetStopLossLabel = observer(() => {
         <span className="text-content-1">
           {BNumber.toFormatNumber(sl_scope, {
             prefix: isBuy ? '≤' : '≥',
-            volScale: 2
+            volScale: positionInfo.symbolDecimal
           })}
         </span>
       </div>
@@ -451,8 +457,8 @@ const SetStopLossLabel = observer(() => {
           <Trans>预计亏损</Trans>
           <span className="text-market-fall">
             {BNumber.toFormatNumber(slValueEstimate, {
-              volScale: 2,
-              unit: 'USDC'
+              volScale: currentAccountInfo.currencyDecimal,
+              unit: currentAccountInfo.currencyUnit
             })}
           </span>
         </div>

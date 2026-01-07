@@ -1,12 +1,8 @@
 'use client'
 
 import { Trans } from '@/libs/lingui/react/macro'
-import { useEffect } from 'react'
-import { FormattedMessage } from '@umijs/max'
 
-import { GeneralTooltip } from '@/components/tooltip/general'
 import { cn } from '@/libs/ui/lib/utils'
-import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { BNumber } from '@/libs/utils/number'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 
@@ -44,12 +40,12 @@ const CurrentPrice = observer(() => {
           'text-market-fall': !isPriceChangePositive
         })}
       >
-        {BNumber.toFormatNumber(res?.bid, { volScale: 2 })}
+        {BNumber.toFormatNumber(res?.bid, { volScale: trade.activeSymbolInfo.symbolDecimal })}
       </div>
 
       {!isMarketOpen && (
         <span className="text-sm leading-6 px-[6px] rounded-[6px] text-red-600 bg-red-600/10 dark:text-red-650 dark:bg-red-650/10 ml-2">
-          <FormattedMessage id="mt.xiushizhong" />
+          <Trans>休市中</Trans>
         </span>
       )}
     </div>
@@ -58,7 +54,7 @@ const CurrentPrice = observer(() => {
 
 const DataOverview = observer(() => {
   const res = useCurrentQuote()
-
+  const { ws, trade } = useStores()
   const isPriceChangePositive = BNumber.from(res?.percent)?.gt(0)
 
   // const closePriceDiff = BNumber.from(res?.close).minus(res?.open)
@@ -80,7 +76,7 @@ const DataOverview = observer(() => {
     },
     {
       label: <Trans>开盘价</Trans>,
-      value: BNumber.toFormatNumber(res?.open, { volScale: undefined })
+      value: BNumber.toFormatNumber(res?.open, { volScale: trade.activeSymbolInfo.symbolDecimal })
     },
     {
       label: <Trans>收盘价</Trans>,
@@ -95,17 +91,17 @@ const DataOverview = observer(() => {
             //   : 'text-content-1'
           }
         >
-          {BNumber.toFormatNumber(res?.close, { volScale: undefined })}
+          {BNumber.toFormatNumber(res?.close, { volScale: trade.activeSymbolInfo.symbolDecimal })}
         </div>
       )
     },
     {
       label: <Trans>24小时最高价</Trans>,
-      value: BNumber.toFormatNumber(res?.high, { volScale: undefined })
+      value: BNumber.toFormatNumber(res?.high, { volScale: trade.activeSymbolInfo.symbolDecimal })
     },
     {
       label: <Trans>24小时最低价</Trans>,
-      value: BNumber.toFormatNumber(res?.low, { volScale: undefined })
+      value: BNumber.toFormatNumber(res?.low, { volScale: trade.activeSymbolInfo.symbolDecimal })
     }
     // {
     //   label: (

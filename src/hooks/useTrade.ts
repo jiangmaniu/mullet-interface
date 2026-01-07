@@ -10,6 +10,7 @@ import { add } from '@/utils/float'
 import { message } from '@/utils/message'
 import { calcExchangeRate } from '@/utils/wsUtil'
 import { useCurrentQuote } from './useCurrentQuote'
+import { BNumber } from '@/libs/utils/number'
 
 type IProps = {
   /** 市价订单 */
@@ -184,6 +185,10 @@ export default function useTrade(props?: IProps) {
   // const step2 = useMemo(() => Math.pow(10, -(d - 1)) || step, [d, step])
   // 报价大小 * Math.pow(10, -d)
   const step2 = useMemo(() => Number(symbolConf?.quotationSize || 0) * Math.pow(10, -d) || step, [d, symbolConf, step])
+  const lotVolScale = useMemo(() => {
+    return BNumber.from(symbolConf?.tradeStep).decimalPlaces()
+  }, [symbolConf?.tradeStep])
+
   const countPrecision = useMemo(() => getPrecisionByNumber(symbolConf?.minTrade), [symbolConf]) // 手数精度
   const accountGroupPrecision = useMemo(() => trade.currentAccountInfo.currencyDecimal || 2, [trade.currentAccountInfo.currencyDecimal])
 
@@ -580,8 +585,8 @@ export default function useTrade(props?: IProps) {
       !spValuePrice || Number(spValuePrice) === 0 || Number.isNaN(spValuePrice)
         ? false
         : isBuy
-        ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
-        : Number(spValuePrice) > sp_scope,
+          ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
+          : Number(spValuePrice) > sp_scope,
     [isBuy, spValuePrice, sp_scope]
   )
   const slFlag = useMemo(
@@ -589,8 +594,8 @@ export default function useTrade(props?: IProps) {
       !slValuePrice || Number(slValuePrice) === 0 || Number.isNaN(slValuePrice)
         ? false
         : isBuy
-        ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
-        : Number(slValuePrice) < sl_scope,
+          ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
+          : Number(slValuePrice) < sl_scope,
     [isBuy, slValuePrice, sl_scope]
   )
 
@@ -820,6 +825,7 @@ export default function useTrade(props?: IProps) {
     countPrecision,
     step2,
     step,
+    lotVolScale,
     maxOpenVolume,
     vmaxShow,
     vmax,

@@ -16,7 +16,8 @@ export const AccountDetails = observer(() => {
   const { trade } = useStores()
   const totalProfit = trade.accountBalanceInfo.totalProfit
   const currentAccountInfo = trade.currentAccountInfo
-  const currencyDecimal = currentAccountInfo.currencyDecimal || 2 // 账户组小数位
+  const currencyDecimal = currentAccountInfo.currencyDecimal
+  const currencyUnit = currentAccountInfo.currencyUnit
   const { occupyMargin } = trade.getAccountBalance()
   const { hasQuote } = getCurrentQuote()
   // 没有行情取当前账号余额展示
@@ -49,7 +50,7 @@ export const AccountDetails = observer(() => {
         </GeneralTooltip>
       ),
       value: BNumber.toFormatNumber(balance, {
-        unit: 'USDC',
+        unit: currencyUnit,
         volScale: currencyDecimal
       })
     },
@@ -62,7 +63,7 @@ export const AccountDetails = observer(() => {
         </GeneralTooltip>
       ),
       value: BNumber.toFormatNumber(currentAccountInfo?.money, {
-        unit: 'USDC',
+        unit: currencyUnit,
         volScale: currencyDecimal
       })
     },
@@ -75,7 +76,7 @@ export const AccountDetails = observer(() => {
         </GeneralTooltip>
       ),
       value: BNumber.toFormatNumber(occupyMargin, {
-        unit: 'USDC',
+        unit: currencyUnit,
         volScale: currencyDecimal
       })
     },
@@ -90,7 +91,7 @@ export const AccountDetails = observer(() => {
       value: (
         <div key={count}>
           {BNumber.toFormatNumber(availableMargin, {
-            unit: 'USDC',
+            unit: currencyUnit,
             volScale: currencyDecimal
           })}
         </div>

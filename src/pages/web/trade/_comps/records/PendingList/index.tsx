@@ -15,7 +15,7 @@ import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/libs/ui/lib/utils'
 
-import CurrentPrice from '../PositionList/comp/CurrentPrice'
+import CurrentPrice from '../PositionList/_comps/CurrentPrice'
 import { Trans } from '@/libs/lingui/react/macro'
 import { BNumber } from '@/libs/utils/number/b-number'
 import { formatAddress } from '@/libs/utils/format/common'
@@ -28,6 +28,8 @@ import { GLOBAL_MODAL_ID } from '@/components/providers/nice-modal-provider/regi
 import { TradeOrderDirectionEnum } from '../../../_options/order'
 import { renderFallback } from '@/libs/utils/format/fallback'
 import { SettingPendingEditorAction } from './_comps/setting-pending-editor-action'
+import { LOTS_UNIT_LABEL } from '../../../_options/trade'
+import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
 
 export type IPendingItem = Order.OrderPageListItem & {
   /**是否是限价单 */
@@ -110,7 +112,7 @@ function PendingList({ style, parentPopup }: IProps) {
       formItemProps: {
         label: '' // 去掉form label
       },
-      width: 200,
+      width: 210,
       renderText(text, record, index, action) {
         return <PendingPriceCell pendingOrderInfo={record} />
       }
@@ -119,7 +121,7 @@ function PendingList({ style, parentPopup }: IProps) {
     {
       title: (
         <>
-          <Trans>数量</Trans>(手)
+          <Trans>数量</Trans>({LOTS_UNIT_LABEL})
         </>
       ),
       dataIndex: 'orderVolume',
@@ -318,10 +320,11 @@ const PendingSymbolCell = observer(({ pendingOrderInfo }: { pendingOrderInfo: IP
 })
 
 const PendingAmountCell = observer(({ pendingOrderInfo }: { pendingOrderInfo: IPendingItem }) => {
+  const lotVolScale = parseSymbolLotsVolScale(pendingOrderInfo.conf)
   return (
     <div className="text-paragraph-p2 text-content-1">
       {BNumber.toFormatNumber(pendingOrderInfo?.orderVolume, {
-        volScale: pendingOrderInfo?.symbolDecimal
+        volScale: lotVolScale
       })}
     </div>
   )

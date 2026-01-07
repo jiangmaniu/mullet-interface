@@ -1,4 +1,4 @@
-import { Trans } from '@/libs/lingui/react/macro'
+import { t, Trans } from '@/libs/lingui/react/macro'
 
 export enum TradeMarginMode {
   CROSS_MARGIN = 'CROSS_MARGIN',
@@ -32,3 +32,5 @@ export const TRADE_MARGIN_MODE_MAP: Record<TradeMarginMode, TradeMarginModeOptio
   map[option.value] = option
   return map
 }, {} as Record<TradeMarginMode, TradeMarginModeOption>)
+
+export const LOTS_UNIT_LABEL = t`手`

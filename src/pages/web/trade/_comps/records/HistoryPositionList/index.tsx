@@ -38,7 +38,9 @@ function HistoryPositionList() {
   return (
     <div>
       <StandardTable
-        columns={getColumns(currencyDecimal)}
+        columns={getColumns({
+          currentAccountInfo: trade.currentAccountInfo
+        })}
         // ghost
         showOptionColumn={false}
         stripe={false}

@@ -53,7 +53,9 @@ export const HistoryPositionRecordDetailModal = observer(
           </ModalHeader>
           <div>
             <StandardTable
-              columns={getHistoryPositionRecordDetailModalTableColumns()}
+              columns={getHistoryPositionRecordDetailModalTableColumns({
+                currentAccountInfo: trade.currentAccountInfo
+              })}
               key={record.id}
               ghost
               showOptionColumn={false}

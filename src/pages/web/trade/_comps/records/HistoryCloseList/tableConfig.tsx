@@ -12,16 +12,21 @@ import { observer } from 'mobx-react'
 import { BNumber } from '@/libs/utils/number'
 import CurrentPrice from '../PositionList/_comps/CurrentPrice'
 import { Trans } from '@/libs/lingui/react/macro'
-import { B } from 'react-grid-layout/dist/position-Dk2b4ZMS'
 import { formatAddress } from '@/libs/utils/format'
 import { GeneralTooltip } from '@/components/tooltip'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { renderFallback } from '@/libs/utils/format/fallback'
+import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
 
-export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsPageListItem>[] => {
+export const getColumns = ({
+  currentAccountInfo
+}: {
+  currentAccountInfo: User.AccountItem
+}): ProColumns<Order.TradeRecordsPageListItem>[] => {
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
-
+  const currencyDecimal = currentAccountInfo.currencyDecimal
+  const currencyUnit = currentAccountInfo.currencyUnit
   return [
     {
       title: (
@@ -100,7 +105,12 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
       width: 100,
       align: 'left',
       renderText(text, record, index, action) {
-        return <span className="text-paragraph-p2 text-content-1">{BNumber.toFormatNumber(record.tradingVolume)}</span>
+        const lotVolScale = parseSymbolLotsVolScale(record.conf)
+        return (
+          <span className="text-paragraph-p2 text-content-1">
+            {BNumber.toFormatNumber(record.tradingVolume, { volScale: lotVolScale })}
+          </span>
+        )
       }
     },
     // {
@@ -203,8 +213,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.TradeRecordsP
     {
       title: (
         <>
-          <Trans>盈亏</Trans>
-          (USDC)
+          <Trans>盈亏</Trans>({currencyUnit})
         </>
       ),
       dataIndex: 'profit',

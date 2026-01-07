@@ -20,12 +20,7 @@ import { GeneralTooltip } from '@/components/tooltip'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { formatAddress } from '@/libs/utils/format'
 
-export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageListItem>[] => {
-  const { trade } = useStores()
-  const precision = currencyDecimal
-  const { lng } = useLang()
-  const isZh = lng === 'zh-TW'
-
+export const getColumns = ({ currentAccountInfo }: { currentAccountInfo: User.AccountItem }): ProColumns<Order.BgaOrderPageListItem>[] => {
   return [
     {
       title: (
@@ -148,8 +143,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
     {
       title: (
         <>
-          <Trans>盈亏</Trans>
-          (USD)
+          <Trans>盈亏</Trans>({currentAccountInfo.currencyUnit})
         </>
       ),
       dataIndex: 'profit',
@@ -163,13 +157,15 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
       },
       width: 120,
       renderText(text, record, index, action) {
-        let profit: any = record.profit
-        const flag = Number(profit) > 0
-        const formatProfit = formatNum(profit, { precision })
-        return profit ? (
-          <span className={cn('!font-dingpro-medium', flag ? 'text-green' : 'text-red')}>{flag ? `+${formatProfit}` : formatProfit}</span>
-        ) : (
-          '-'
+        return (
+          <span
+            className={cn(
+              '!font-dingpro-medium',
+              BNumber.from(record.profit)?.gt(0) ? 'text-green' : BNumber.from(record.profit)?.lt(0) ? 'text-red' : 'text-content-1'
+            )}
+          >
+            {BNumber.toFormatNumber(record.profit, { volScale: currentAccountInfo.currencyDecimal, positive: false, forceSign: true })}
+          </span>
         )
       }
     },
@@ -263,7 +259,7 @@ export const getColumns = (currencyDecimal: any): ProColumns<Order.BgaOrderPageL
       dataIndex: 'pdaAddress',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
-      width: 150,
+      width: 180,
       renderText(text, record, index, action) {
         return (
           <>

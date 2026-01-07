@@ -10,6 +10,7 @@ import { BNumber } from '@/libs/utils/number/b-number'
 
 export const TradeActionPanelOrderDirection = observer(() => {
   const { trade } = useStores()
+  const activeSymbolInfo = trade.activeSymbolInfo
 
   const quoteInfo = useCurrentQuote(trade.activeSymbolName)
   return (
@@ -38,7 +39,7 @@ export const TradeActionPanelOrderDirection = observer(() => {
           <Trans>买入/做多</Trans>
         </div>
 
-        <div className="text-center">{BNumber.toFormatNumber(quoteInfo?.bid, { volScale: 2 })}</div>
+        <div className="text-center">{BNumber.toFormatNumber(quoteInfo?.bid, { volScale: activeSymbolInfo.symbolDecimal })}</div>
       </div>
 
       <div
@@ -56,7 +57,7 @@ export const TradeActionPanelOrderDirection = observer(() => {
           <Trans>卖出/做空</Trans>
         </div>
 
-        <div className="text-center">{BNumber.toFormatNumber(quoteInfo?.ask, { volScale: 2 })}</div>
+        <div className="text-center">{BNumber.toFormatNumber(quoteInfo?.ask, { volScale: activeSymbolInfo.symbolDecimal })}</div>
       </div>
     </div>
   )

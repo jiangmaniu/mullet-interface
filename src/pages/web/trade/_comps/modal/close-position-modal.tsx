@@ -22,6 +22,9 @@ import { TradeOrderDirectionEnum } from '../../_options/order'
 import CurrentPrice from '../records/PositionList/_comps/CurrentPrice'
 import { useStores } from '@/context/mobxProvider'
 import { observer } from 'mobx-react'
+import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
+import { renderFallbackAmount } from '@/libs/utils/format/fallback'
+import { LOTS_UNIT_LABEL } from '../../_options/trade'
 
 export type ClosePositionModalProps = {
   isOpen?: boolean
@@ -35,15 +38,13 @@ export const ClosePositionModal = observer(({ isOpen, onClose, onConfirm, childr
   const buySellInfo = getBuySellInfo(positionInfo)
   const isPositionDirectionBuy = TradeOrderDirectionEnum.BUY === positionInfo.buySell
 
-  const volScale = 2
+  const lotVolScale = parseSymbolLotsVolScale(positionInfo.conf)
   const { trade } = useStores()
   const positionListSymbolCalcInfo = trade.positionListSymbolCalcInfo
   const calcInfo = positionListSymbolCalcInfo.get(positionInfo.id)
-  const precision = trade.currentAccountInfo.currencyDecimal
-
+  const currentAccountInfo = trade.currentAccountInfo
   const { t } = useLingui()
 
-  const unit = t`手`
   const formSchema = z.object({
     amount: z
       .string()
@@ -124,7 +125,9 @@ export const ClosePositionModal = observer(({ isOpen, onClose, onConfirm, childr
                     <div className="text-paragraph-p2 text-content-4">
                       <Trans>开仓均价</Trans>
                     </div>
-                    <div className="text-paragraph-p2 text-market-rise">{BNumber.toFormatNumber(positionInfo?.startPrice)}</div>
+                    <div className="text-paragraph-p2 text-market-rise">
+                      {BNumber.toFormatNumber(positionInfo?.startPrice, { volScale: positionInfo?.symbolDecimal })}
+                    </div>
                   </div>
                   <div className="flex justify-between gap-1">
                     <div className="text-paragraph-p2 text-content-4">
@@ -146,7 +149,7 @@ export const ClosePositionModal = observer(({ isOpen, onClose, onConfirm, childr
                             <FormControl>
                               <div className="space-y-2xl">
                                 <NumberInput
-                                  placeholder={`0.${'0'.repeat(volScale)}`}
+                                  placeholder={renderFallbackAmount({ integerValue: 0, decimalValue: 0, volScale: lotVolScale })}
                                   labelText={<Trans>平仓数量</Trans>}
                                   max={positionInfo?.orderVolume}
                                   onValueChange={({ value }, { source }) => {
@@ -154,14 +157,14 @@ export const ClosePositionModal = observer(({ isOpen, onClose, onConfirm, childr
                                       field.onChange(value)
                                     }
                                   }}
-                                  decimalScale={volScale}
-                                  RightContent={<div className="text-white">{'手'}</div>}
+                                  decimalScale={lotVolScale}
+                                  RightContent={<div className="text-white">{LOTS_UNIT_LABEL}</div>}
                                   hintLabel={<Trans>可平仓数量</Trans>}
                                   hintValue={
                                     <div>
                                       {BNumber.toFormatNumber(positionInfo?.orderVolume, {
-                                        unit: '手',
-                                        volScale: volScale
+                                        unit: LOTS_UNIT_LABEL,
+                                        volScale: lotVolScale
                                       })}
                                     </div>
                                   }
@@ -186,8 +189,8 @@ export const ClosePositionModal = observer(({ isOpen, onClose, onConfirm, childr
                                     const amount = BNumber.from(positionInfo?.orderVolume)
                                       ?.multipliedBy(val[0]!)
                                       .div(100)
-                                      .decimalPlaces(volScale)
-                                      .toString()
+                                      .cutDecimalPlaces(lotVolScale)
+                                      ?.toString()
 
                                     field.onChange(amount)
                                   }}
@@ -214,7 +217,12 @@ export const ClosePositionModal = observer(({ isOpen, onClose, onConfirm, childr
                           : 'text-white'
                       )}
                     >
-                      {BNumber.toFormatNumber(calcInfo?.profit, { unit: 'USDC', forceSign: true, positive: false, volScale: precision })}
+                      {BNumber.toFormatNumber(calcInfo?.profit, {
+                        unit: currentAccountInfo.currencyUnit,
+                        forceSign: true,
+                        positive: false,
+                        volScale: currentAccountInfo.currencyDecimal
+                      })}
                     </div>
                   </div>
                 </div>

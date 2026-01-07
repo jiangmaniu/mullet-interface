@@ -50,7 +50,7 @@ export const GeneralTooltip = ({
           </div>
         </TooltipTrigger>
         <TooltipContent
-          className={cn('max-w-[220px]', className)}
+          className={cn('max-w-[220px] break-words', className)}
           alignOffset={alignOffset}
           sideOffset={sideOffset}
           side={side}
