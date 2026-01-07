@@ -77,39 +77,6 @@ export const symbolColumns: {
       )
     }
   }
-  // {
-  //   key: 'h24Change',
-  //   header: <Trans>24H 涨幅</Trans>,
-  //   cell: (symbolInfo) => {
-  //     return <H24Change symbolInfo={symbolInfo} />
-  //   }
-  // }
-  // {
-  //   key: 'volume',
-  //   header: <Trans>交易量</Trans>,
-  //   cell: () => {
-  //     return <div>{BNumber.toFormatNumber(undefined, { volScale: 2, prefix: '$' })}</div>
-  //   }
-  // },
-  // {
-  //   key: 'openInterest',
-  //   header: <Trans>未平仓合约</Trans>,
-  //   cell: () => {
-  //     return <div>{BNumber.toFormatNumber(undefined, { unit: 'SOL', volScale: 2 })}</div>
-  //   }
-  // },
-  // {
-  //   key: 'holdingCostRate',
-  //   header: <Trans>展期费率</Trans>,
-  //   cell: () => {
-  //     return (
-  //       <div>
-  //         {BNumber.toFormatPercent(undefined, { forceSign: true, volScale: undefined, isRaw: false })} /{' '}
-  //         {BNumber.toFormatPercent(undefined, { volScale: undefined, isRaw: false })}
-  //       </div>
-  //     )
-  //   }
-  // }
 ]
 
 const SymbolAskPrice = observer(({ symbolInfo }: { symbolInfo: Account.TradeSymbolListItem }) => {
@@ -117,7 +84,7 @@ const SymbolAskPrice = observer(({ symbolInfo }: { symbolInfo: Account.TradeSymb
   const askDiff = BNumber.from(res?.askDiff)
   return (
     <div className={cn(askDiff?.gt(0) ? 'text-market-rise' : askDiff?.lt(0) ? 'text-market-fall' : 'text-content-1')}>
-      {BNumber.toFormatNumber(res?.ask, { volScale: undefined })}
+      {BNumber.toFormatNumber(res?.ask, { volScale: symbolInfo.symbolDecimal })}
     </div>
   )
 })
@@ -127,7 +94,7 @@ const SymbolBidPrice = observer(({ symbolInfo }: { symbolInfo: Account.TradeSymb
   const bidDiff = BNumber.from(res?.bidDiff)
   return (
     <div className={cn(bidDiff?.gt(0) ? 'text-market-rise' : bidDiff?.lt(0) ? 'text-market-fall' : 'text-content-1')}>
-      {BNumber.toFormatNumber(res?.bid, { volScale: undefined })}
+      {BNumber.toFormatNumber(res?.bid, { volScale: symbolInfo.symbolDecimal })}
     </div>
   )
 })

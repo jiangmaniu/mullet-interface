@@ -23,51 +23,6 @@ export const MarketDetails = () => {
   const marginMode = prepaymentConf?.mode // 保证金模式
   const showPencent = holdingCostConf?.type !== 'pointMode' // 以百分比模式
 
-  const contractRules: { label: React.ReactNode; value: React.ReactNode | string | number }[] = [
-    {
-      label: <Trans>合约单位</Trans>,
-      value: symbolConf?.contractSize
-    },
-    {
-      label: <Trans>合约单笔最小</Trans>,
-      value: BNumber.toFormatNumber(undefined, { volScale: 2, unit: 'USDC' })
-    },
-    {
-      label: <Trans>报价小数位</Trans>,
-      value: quoteInfo?.digits
-    },
-    {
-      label: <Trans>开仓费率</Trans>,
-      value: BNumber.toFormatPercent(undefined, { volScale: undefined })
-    },
-    {
-      label: <Trans>买入展期费率</Trans>,
-      value: BNumber.toFormatPercent(undefined, { volScale: undefined })
-    },
-    {
-      label: <Trans>平仓费率</Trans>,
-      value: BNumber.toFormatPercent(undefined, { volScale: undefined })
-    }
-  ]
-
-  let tradeTime = undefined
-  if (!!tradeTimeConf?.length) {
-    contractRules.push({
-      label: <Trans>交易时间</Trans>,
-      value: (
-        <div className="text-right">
-          {tradeTimeConf.map((item, index) => {
-            return (
-              <div key={index}>
-                {transferWeekDay(item.weekDay)} {`${formatTimeStr(item.trade)}`}
-              </div>
-            )
-          })}
-        </div>
-      )
-    })
-  }
-
   const contractAttributes: { label: React.ReactNode; value: React.ReactNode | string | number }[] = [
     {
       label: <Trans>合约单位</Trans>,
