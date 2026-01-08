@@ -92,7 +92,7 @@ export const MarketDetails = () => {
       )
     },
     {
-      label: <Trans>现价k和停损距离</Trans>,
+      label: <Trans>限价和停损距离</Trans>,
       value: symbolConf?.limitStopLevel
     },
     {
