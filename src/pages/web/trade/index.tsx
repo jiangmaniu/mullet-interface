@@ -31,7 +31,7 @@ import { AccountDetails } from './_comps/account'
 // import { TradeLayoutKey } from './_comps/layout/types'
 import { TradeMarket } from './_comps/market'
 import { TradeActionPanel } from './_comps/action-panel'
-import { OrderDepthPriceBooks } from './_comps/order-book'
+import { OrderPriceDepthBooks } from './_comps/order-book'
 import { WEB_LOGIN_PAGE } from '@/constants'
 import { PositionDashboard } from './_comps/position-dashboard'
 
@@ -153,17 +153,15 @@ export default observer(() => {
               <div className="flex flex-1 gap-2 flex-col">
                 <Overview />
                 {/* 交易 */}
-                <div className="flex gap-2 flex-1 min-h-[480px]">
+                <div className="flex gap-2 flex-1 h-[480px]">
                   {/* <Sidebar /> */}
                   {/* 中间区域 */}
                   {/* <Center /> */}
                   <div className="flex-1">
                     <TradeMarket />
                   </div>
-                  {/* 深度报价 */}
-                  <DepthPrice />
 
-                  {/* <OrderDepthPriceBooks /> */}
+                  <OrderPriceDepthBooks />
                 </div>
 
                 {/* 交易记录 */}

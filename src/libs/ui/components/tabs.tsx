@@ -14,7 +14,8 @@ const TabsVariants = cva('', {
       solid: '',
       underline: '',
       iconsAndText: '',
-      text: ''
+      text: '',
+      icon: ''
     },
     size: {
       sm: '',
@@ -33,7 +34,8 @@ type TabsContextValue = TabsVariantsProps & {
 }
 
 const TabsVariantsContext = React.createContext<TabsContextValue>({
-  variant: 'underline'
+  variant: 'underline',
+  size: 'sm'
 })
 
 const useTabsVariantsContext = (): TabsContextValue => {
@@ -59,12 +61,13 @@ function Tabs<T>({
   className,
   value,
   variant,
+  size,
   activationMode = 'manual',
   triggerOnPointerUp = false,
   onValueChange,
   ...props
 }: TabsProps<T>) {
-  const tabsVariantsClassName = TabsVariants({ variant })
+  const tabsVariantsClassName = TabsVariants({ variant, size })
 
   const handleValueChange = React.useCallback(
     (newValue: string) => {
@@ -78,7 +81,7 @@ function Tabs<T>({
   )
 
   return (
-    <TabsVariantsContext.Provider value={{ variant, onValueChange: handleValueChange, triggerOnPointerUp }}>
+    <TabsVariantsContext.Provider value={{ variant, size, onValueChange: handleValueChange, triggerOnPointerUp }}>
       <TabsPrimitive.Root
         data-slot="tabs"
         value={value as string}
@@ -96,6 +99,7 @@ const TabsListVariants = cva('flex items-center', {
     variant: {
       underline: 'border-b border-divider-line',
       iconsAndText: '',
+      icon: '',
       solid: '',
       outline: [],
       text: ''
@@ -122,9 +126,9 @@ const TabsListVariants = cva('flex items-center', {
 
 type TabsListProps = React.ComponentProps<typeof TabsPrimitive.List> & VariantProps<typeof TabsListVariants>
 
-function TabsList({ className, variant, ...props }: TabsListProps) {
-  const { variant: tabsVariants } = useTabsVariantsContext()
-  const tabsListVariantsClassName = TabsListVariants({ variant: variant ?? tabsVariants })
+function TabsList({ className, variant, size, ...props }: TabsListProps) {
+  const { variant: tabsVariants, size: tabsSize } = useTabsVariantsContext()
+  const tabsListVariantsClassName = TabsListVariants({ variant: variant ?? tabsVariants, size: size ?? tabsSize })
 
   return <TabsPrimitive.List data-slot="tabs-list" className={cn(tabsListVariantsClassName, '', className)} {...props} />
 }
@@ -136,7 +140,8 @@ const TabsTargetVariants = cva('bg-transparent', {
       iconsAndText: [],
       solid: [],
       outline: [],
-      text: ''
+      text: '',
+      icon: ''
     },
     size: {
       sm: '',
@@ -177,7 +182,13 @@ const TabsTargetContentVariants = cva('cursor-pointer flex flex-col items-center
         'group-active:bg-zinc-300/40 group-active:text-content-1',
         'group-data-[state=active]:bg-brand-primary group-data-[state=active]:text-content-foreground'
       ],
-      text: ['text-content-4', 'group-hover:text-content-1', 'group-active:text-content-1', 'group-data-[state=active]:text-content-1']
+      text: ['text-content-4', 'group-hover:text-content-1', 'group-active:text-content-1', 'group-data-[state=active]:text-content-1'],
+      icon: [
+        'border border-transparent transition-all',
+        'group-hover:border-important',
+        'group-active:border-important',
+        'group-data-[state=active]:border-brand-default'
+      ]
     },
     size: {
       sm: '',
@@ -193,6 +204,18 @@ const TabsTargetContentVariants = cva('cursor-pointer flex flex-col items-center
     },
     {
       variant: 'iconsAndText',
+      size: 'md',
+      class: ['rounded-2 text-button-2']
+    },
+
+    {
+      variant: 'icon',
+      size: 'sm',
+      class: ['rounded-xs p-xs']
+    },
+
+    {
+      variant: 'icon',
       size: 'md',
       class: ['rounded-2 text-button-2']
     },
@@ -259,12 +282,14 @@ type TabsTargetProps<T> = Omit<React.ComponentProps<typeof TabsPrimitive.Trigger
     block?: boolean
   }
 
-function TabsTrigger<T>({ className, contentClassName, value, variant, block, ...props }: TabsTargetProps<T>) {
-  const { variant: tabsVariants, triggerOnPointerUp, onValueChange } = useTabsVariantsContext()
+function TabsTrigger<T>({ className, contentClassName, value, variant, size, block, ...props }: TabsTargetProps<T>) {
+  const { variant: tabsVariants, size: tabsSize, triggerOnPointerUp, onValueChange } = useTabsVariantsContext()
   const [isPointerDown, setIsPointerDown] = React.useState(false)
 
-  const tabsTargetVariantsClassName = TabsTargetVariants({ variant: variant ?? tabsVariants })
-  const tabsTargetContentVariantsClassName = TabsTargetContentVariants({ variant: variant ?? tabsVariants })
+  const finalVariant = variant ?? tabsVariants
+  const finalSize = size ?? tabsSize
+  const tabsTargetVariantsClassName = TabsTargetVariants({ variant: finalVariant, size: finalSize })
+  const tabsTargetContentVariantsClassName = TabsTargetContentVariants({ variant: finalVariant, size: finalSize })
 
   const handlePointerDown = React.useCallback(
     (e: React.PointerEvent<HTMLButtonElement>) => {

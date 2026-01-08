@@ -53,10 +53,10 @@ export const NewThemeColor = {
   'brand-important': 'color-mix(in srgb, rgb(var(--color-white)) 100%, transparent)',
   'brand-divider-line': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 20%, transparent)',
 
-  'trade-buy': 'rgb(var(--color-green-500))',
-  'trade-sell': 'rgb(var(--color-red-500))',
-  'market-rise': 'var(--color-trade-buy)',
-  'market-fall': 'var(--color-trade-sell)',
+  'trade-buy': 'rgb(var(--color-green-500) / <alpha-value>)',
+  'trade-sell': 'rgb(var(--color-red-500) / <alpha-value>)',
+  'market-rise': 'rgb(var(--color-green-500) / <alpha-value>)',
+  'market-fall': 'rgb(var(--color-red-500) / <alpha-value>)',
   'status-success': 'rgb(var(--color-green-500) / <alpha-value>)',
   'status-warning': 'rgb(var(--color-orange-500) / <alpha-value>)',
   'status-danger': 'rgb(var(--color-red-500) / <alpha-value>)',
@@ -131,7 +131,7 @@ export const NewThemeFontSize = {
   'important-1': [
     'var(--font-size-medium)',
     {
-      lineHeight: 'var(--leading-xs)',
+      lineHeight: 'var(--leading-small)',
       fontWeight: 'var(--font-weight-semibold)',
     },
   ],
