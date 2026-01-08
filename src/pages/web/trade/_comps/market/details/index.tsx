@@ -139,44 +139,46 @@ export const MarketDetails = () => {
 
   return (
     <div className="h-full relative">
-      {/* <div className={cn('select-none absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 ')}>
-        <img className={'w-[560px]'} src={theme.isDark ? '/platform/img/feature-water-logo.svg' : '/platform/img/feature-water-logo.svg'} />
-      </div> */}
+      <div className="absolute inset-0 overflow-y-auto">
+        {/* <div className={cn('select-none absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-5 ')}>
+          <img className={'w-[560px]'} src={theme.isDark ? '/platform/img/feature-water-logo.svg' : '/platform/img/feature-water-logo.svg'} />
+        </div> */}
 
-      <div className="relative z-10">
-        <div className={cn('p-xl gap-xl flex flex-col ')}>
-          <div className={cn('text-important-1 text-content-1')}>
-            <Trans>合约属性</Trans>
-          </div>
-          <div className={cn('grid  grid-rows-[repeat(3,fit-content(100%))] gap-x-10 grid-cols-5 gap-y-xl')}>
-            {contractAttributes.map((item, index) => {
-              return (
-                <div key={index} className="flex flex-col gap-small">
-                  <div className={cn('text-content-1 text-paragraph-p1')}>{item.value}</div>
-                  <div className={cn('text-content-4 text-paragraph-p3')}>{item.label}</div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {!!tradeTimeConf?.length && (
+        <div className="relative z-10">
           <div className={cn('p-xl gap-xl flex flex-col ')}>
             <div className={cn('text-important-1 text-content-1')}>
-              <Trans>交易时间（GMT+8）</Trans>
+              <Trans>合约属性</Trans>
             </div>
-            <div className={cn('grid  grid-rows-[repeat(3,fit-content(100%))] gap-x-10 grid-cols-3 gap-y-xl')}>
-              {tradeTimeConf.map((item, index) => {
+            <div className={cn('grid  grid-rows-[repeat(3,fit-content(100%))] gap-x-10 grid-cols-5 gap-y-xl')}>
+              {contractAttributes.map((item, index) => {
                 return (
-                  <div key={index} className="flex justify-between gap-small">
-                    <div className={cn('text-content-4 text-paragraph-p1 ')}>{transferWeekDay(item.weekDay)}</div>
-                    <div className={cn('text-content-4 text-paragraph-p1')}>{formatTimeStr(item.trade)}</div>
+                  <div key={index} className="flex flex-col gap-small">
+                    <div className={cn('text-content-1 text-paragraph-p1')}>{item.value}</div>
+                    <div className={cn('text-content-4 text-paragraph-p3')}>{item.label}</div>
                   </div>
                 )
               })}
             </div>
           </div>
-        )}
+
+          {!!tradeTimeConf?.length && (
+            <div className={cn('p-xl gap-xl flex flex-col ')}>
+              <div className={cn('text-important-1 text-content-1')}>
+                <Trans>交易时间（GMT+8）</Trans>
+              </div>
+              <div className={cn('grid  grid-rows-[repeat(3,fit-content(100%))] gap-x-10 grid-cols-3 gap-y-xl')}>
+                {tradeTimeConf.map((item, index) => {
+                  return (
+                    <div key={index} className="flex justify-between gap-small">
+                      <div className={cn('text-content-4 text-paragraph-p1 ')}>{transferWeekDay(item.weekDay)}</div>
+                      <div className={cn('text-content-4 text-paragraph-p1')}>{formatTimeStr(item.trade)}</div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

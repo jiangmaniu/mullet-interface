@@ -14,7 +14,6 @@ import WithdrawModal from '@/components/Web/DepositWithdrawModal/WithdrawModal'
 
 export const AccountDetails = observer(() => {
   const { trade } = useStores()
-  const totalProfit = trade.accountBalanceInfo.totalProfit
   const currentAccountInfo = trade.currentAccountInfo
   const currencyDecimal = currentAccountInfo.currencyDecimal
   const currencyUnit = currentAccountInfo.currencyUnit
@@ -100,7 +99,7 @@ export const AccountDetails = observer(() => {
   ]
 
   return (
-    <div className="rounded-large bg-primary flex flex-col gap-3 p-3">
+    <div className="rounded-large h-full bg-primary flex flex-col gap-3 p-3">
       <div className="flex items-center justify-between gap-2">
         <div className="text-important-1">
           <Trans>账户详情</Trans>

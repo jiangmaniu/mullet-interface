@@ -16,7 +16,7 @@ import { Chip } from '@/libs/ui/components/chip'
 
 export const PositionDashboard = observer(() => {
   return (
-    <div className="mt-3 rounded-large py-3 px-xl bg-primary flex flex-col gap-2.5">
+    <div className="rounded-large h-full py-3 px-xl bg-primary flex flex-col gap-2.5">
       <PositionSelector />
       <PositionMargin />
       <PositionMarginRate />

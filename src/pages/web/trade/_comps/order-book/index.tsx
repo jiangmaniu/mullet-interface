@@ -15,6 +15,7 @@ import { LOTS_UNIT_LABEL } from '../../_options/trade'
 import { Iconify } from '@/libs/ui/components/icons'
 import { cn } from '@/libs/ui/lib/utils'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
+import { EmptyNoData } from '@/components/empty/no-data'
 
 enum DepthModeType {
   Both = 'Both',
@@ -68,10 +69,10 @@ export const OrderPriceDepthBooks = observer(() => {
   const asks = toJS(depth?.asks || []).reverse()
   const bids = toJS(depth?.bids || [])
 
-  if ((!asks.length && !bids.length) || activeSymbolInfo.symbolConf?.depthOfMarket === 0) return
+  // if ((!asks.length && !bids.length) || activeSymbolInfo.symbolConf?.depthOfMarket === 0) return
 
   return (
-    <div className="bg-primary w-[280px] rounded-large gap-medium p-xl py-medium flex h-full max-h-full flex-col">
+    <div className="bg-primary w-full rounded-large gap-medium p-xl py-medium flex h-full max-h-full flex-col">
       <Tabs
         variant={'icon'}
         className="gap-medium flex-1 h-full flex flex-col min-h-0 overflow-hidden"
@@ -101,7 +102,7 @@ export const OrderPriceDepthBooks = observer(() => {
             </div>
           </div>
 
-          <div className="min-h-0 flex flex-col">
+          <div className="flex-1 min-h-0 flex gap-medium flex-col">
             {/* 卖盘 */}
             {mode !== DepthModeType.Bid && <SellList mode={mode} />}
 
@@ -155,7 +156,8 @@ const SellList = observer(({ mode }: { mode: DepthModeType }) => {
 
   const showAll = mode !== DepthModeType.Both
 
-  const list = showAll ? asks : asks.slice(-12)
+  // const list = showAll ? asks : asks.slice(-12)
+  const list = asks
 
   const sellMaxValue = BNumber.max(...list.map((ask) => BNumber.from(ask.price).multipliedBy(ask.amount)))
   const activeSymbolInfo = trade.activeSymbolInfo
@@ -169,43 +171,48 @@ const SellList = observer(({ mode }: { mode: DepthModeType }) => {
   }, [mode])
 
   return (
-    <div
-      ref={scrollRef}
-      className={cn('flex flex-col min-h-0 overflow-y-auto', mode === DepthModeType.Both ? 'h-[300px]' : 'flex-1 max-h-[600px]')}
-    >
-      <div className="mt-auto">
-        <div>
-          {list.map((ask, index) => {
-            const value = BNumber.from(ask.price).multipliedBy(ask.amount)
-            const sellDiffAmountParcent = BNumber.from(value).div(sellMaxValue).toPercent()
-            return (
-              <div
-                key={`ask-${index}`}
-                className="relative w-full flex flex-col text-paragraph-p3 cursor-pointer  py-1.5 hover:bg-zinc-900/20"
-              >
-                <div className="absolute inset-0 py-0.5 ">
-                  <div
-                    className="ml-auto h-full bg-market-fall/15 transition-all"
-                    style={{ width: `${sellDiffAmountParcent.toString()}%`, right: 0, left: 'auto' }}
-                  />
-                </div>
-
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="text-market-fall relative z-10">
-                    {BNumber.toFormatNumber(ask.price, { volScale: activeSymbolInfo.symbolDecimal })}
-                  </div>
-                  <div className="relative z-10 text-left text-white">
-                    {BNumber.toFormatNumber(ask.amount, { volScale: parseSymbolLotsVolScale(activeSymbolInfo.symbolConf) })}
-                  </div>
-                  <div className="relative z-10 text-right text-white">
-                    {BNumber.toFormatNumber(value, { volScale: currentAccountInfo.currencyDecimal })}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+    <div className="flex-1 min-h-0 relative">
+      {!list.length ? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <EmptyNoData />
         </div>
-      </div>
+      ) : (
+        <div ref={scrollRef} className="absolute inset-0 overflow-y-auto flex flex-col">
+          <div className="mt-auto">
+            <div>
+              {list.map((ask, index) => {
+                const value = BNumber.from(ask.price).multipliedBy(ask.amount)
+                const sellDiffAmountParcent = BNumber.from(value).div(sellMaxValue).toPercent()
+                return (
+                  <div
+                    key={`ask-${index}`}
+                    className="relative w-full flex flex-col text-paragraph-p3 cursor-pointer  py-1.5 hover:bg-zinc-900/20"
+                  >
+                    <div className="absolute inset-0 py-0.5 ">
+                      <div
+                        className="ml-auto h-full bg-market-fall/15 transition-all"
+                        style={{ width: `${sellDiffAmountParcent.toString()}%`, right: 0, left: 'auto' }}
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="text-market-fall relative z-10">
+                        {BNumber.toFormatNumber(ask.price, { volScale: activeSymbolInfo.symbolDecimal })}
+                      </div>
+                      <div className="relative z-10 text-left text-white">
+                        {BNumber.toFormatNumber(ask.amount, { volScale: parseSymbolLotsVolScale(activeSymbolInfo.symbolConf) })}
+                      </div>
+                      <div className="relative z-10 text-right text-white">
+                        {BNumber.toFormatNumber(value, { volScale: currentAccountInfo.currencyDecimal })}
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 })
@@ -217,45 +224,54 @@ const BuyList = observer(({ mode }: { mode: DepthModeType }) => {
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
   const bids = toJS(depth?.bids || [])
 
-  const showAll = mode !== DepthModeType.Both
+  // const showAll = mode !== DepthModeType.Both
 
-  const list = showAll ? bids : bids.slice(0, 12)
+  // const list = showAll ? bids : bids.slice(0, 12)
+  const list = bids.reverse()
   const bidMaxValue = BNumber.max(...list.map((bid) => BNumber.from(bid.price).multipliedBy(bid.amount)))
   const activeSymbolInfo = trade.activeSymbolInfo
   return (
-    <div className={cn('min-h-0 overflow-y-auto', mode === DepthModeType.Both ? 'h-[300px]' : 'flex-1 max-h-[600px]')}>
-      <div>
-        {list.map((bid, index) => {
-          const value = BNumber.from(bid.price).multipliedBy(bid.amount)
-          const bidDiffAmountParcent = BNumber.from(value).div(bidMaxValue).toPercent()
+    <div className="flex-1 min-h-0 relative">
+      {!list.length ? (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <EmptyNoData />
+        </div>
+      ) : (
+        <div className="absolute inset-0 overflow-y-auto">
+          <div>
+            {list.map((bid, index) => {
+              const value = BNumber.from(bid.price).multipliedBy(bid.amount)
+              const bidDiffAmountParcent = BNumber.from(value).div(bidMaxValue).toPercent()
 
-          return (
-            <div
-              key={`bid-${index}`}
-              className="relative w-full flex flex-col text-paragraph-p3 cursor-pointer  py-1.5 hover:bg-zinc-900/20"
-            >
-              <div className="absolute inset-0 py-0.5 ">
+              return (
                 <div
-                  className="ml-auto h-full bg-market-rise/15 transition-all"
-                  style={{ width: `${bidDiffAmountParcent.toString()}%`, right: 0, left: 'auto' }}
-                />
-              </div>
+                  key={`bid-${index}`}
+                  className="relative w-full flex flex-col text-paragraph-p3 cursor-pointer  py-1.5 hover:bg-zinc-900/20"
+                >
+                  <div className="absolute inset-0 py-0.5 ">
+                    <div
+                      className="ml-auto h-full bg-market-rise/15 transition-all"
+                      style={{ width: `${bidDiffAmountParcent.toString()}%`, right: 0, left: 'auto' }}
+                    />
+                  </div>
 
-              <div className="grid grid-cols-3 gap-2">
-                <div className="text-market-rise relative z-10">
-                  {BNumber.toFormatNumber(bid.price, { volScale: activeSymbolInfo.symbolDecimal })}
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="text-market-rise relative z-10">
+                      {BNumber.toFormatNumber(bid.price, { volScale: activeSymbolInfo.symbolDecimal })}
+                    </div>
+                    <div className="relative z-10 text-left text-white">
+                      {BNumber.toFormatNumber(bid.amount, { volScale: parseSymbolLotsVolScale(activeSymbolInfo.symbolConf) })}
+                    </div>
+                    <div className="relative z-10 text-right text-white">
+                      {BNumber.toFormatNumber(value, { volScale: currentAccountInfo.currencyDecimal })}
+                    </div>
+                  </div>
                 </div>
-                <div className="relative z-10 text-left text-white">
-                  {BNumber.toFormatNumber(bid.amount, { volScale: parseSymbolLotsVolScale(activeSymbolInfo.symbolConf) })}
-                </div>
-                <div className="relative z-10 text-right text-white">
-                  {BNumber.toFormatNumber(value, { volScale: currentAccountInfo.currencyDecimal })}
-                </div>
-              </div>
-            </div>
-          )
-        })}
-      </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 })
@@ -270,10 +286,12 @@ const BuySellRatioBar = observer(({ mode }: BuySellRatioBarProps) => {
   const showAll = mode !== DepthModeType.Both
 
   const asks = toJS(depth?.asks || []).reverse()
-  const askList = showAll ? asks : asks.slice(-12)
+  // const askList = showAll ? asks : asks.slice(-12)
+  const askList = asks
 
   const bids = toJS(depth?.bids || [])
-  const bidList = showAll ? bids : bids.slice(0, 12)
+  // const bidList = showAll ? bids : bids.slice(0, 12)
+  const bidList = bids
 
   const askTotalValue = askList.reduce((acc, ask) => {
     const value = BNumber.from(ask.price).multipliedBy(ask.amount)

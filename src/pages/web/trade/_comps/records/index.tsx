@@ -101,45 +101,43 @@ export const NewTradeRecords = observer(() => {
   }, [trade.currentAccountInfo?.id])
 
   return (
-    <div>
-      <Tabs className="bg-primary rounded-large overflow-hidden" value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="pr-3 flex justify-between gap-3">
-          <div className="flex gap-2">
-            {TABS_OPTIONS.map((tab) => {
-              return (
-                <TabsTrigger key={tab.key} value={tab.key}>
-                  {tab.label}
-                  {!!tab.count && `(${tab.count})`}
-                </TabsTrigger>
-              )
-            })}
-          </div>
-          <div className="flex items-center px- gap-4">
-            {![TabType.FUNDING_FLOW].includes(activeTab) && (
-              <Checkbox
-                checked={showActiveSymbol}
-                htmlFor="trade-only-show-current-pair"
-                label={<Trans>只展示当前</Trans>}
-                onCheckedChange={(checked) => {
-                  if (isBoolean(checked)) setShowActiveSymbol(checked)
-                }}
-              />
-            )}
-
-            {tabActionMap[activeTab]?.map((action, i) => {
-              return <div key={i}>{action}</div>
-            })}
-          </div>
-        </TabsList>
-
-        <div className="min-h-[250px] max-w-[calc(100vw-303px)]">
-          {TABS_OPTIONS.map((tab) => (
-            <TabsContent key={tab.key} value={tab.key}>
-              {tab.content}
-            </TabsContent>
-          ))}
+    <Tabs className="bg-primary rounded-large overflow-hidden" value={activeTab} onValueChange={setActiveTab}>
+      <TabsList className="pr-3 flex justify-between gap-3">
+        <div className="flex gap-2">
+          {TABS_OPTIONS.map((tab) => {
+            return (
+              <TabsTrigger key={tab.key} value={tab.key}>
+                {tab.label}
+                {!!tab.count && `(${tab.count})`}
+              </TabsTrigger>
+            )
+          })}
         </div>
-      </Tabs>
-    </div>
+        <div className="flex items-center px- gap-4">
+          {![TabType.FUNDING_FLOW].includes(activeTab) && (
+            <Checkbox
+              checked={showActiveSymbol}
+              htmlFor="trade-only-show-current-pair"
+              label={<Trans>只展示当前</Trans>}
+              onCheckedChange={(checked) => {
+                if (isBoolean(checked)) setShowActiveSymbol(checked)
+              }}
+            />
+          )}
+
+          {tabActionMap[activeTab]?.map((action, i) => {
+            return <div key={i}>{action}</div>
+          })}
+        </div>
+      </TabsList>
+
+      <div className="flex-1 min-h-0 overflow-y-auto">
+        {TABS_OPTIONS.map((tab) => (
+          <TabsContent key={tab.key} value={tab.key}>
+            {tab.content}
+          </TabsContent>
+        ))}
+      </div>
+    </Tabs>
   )
 })

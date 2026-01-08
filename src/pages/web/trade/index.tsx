@@ -34,6 +34,7 @@ import { TradeActionPanel } from './_comps/action-panel'
 import { OrderPriceDepthBooks } from './_comps/order-book'
 import { WEB_LOGIN_PAGE } from '@/constants'
 import { PositionDashboard } from './_comps/position-dashboard'
+import { TradeContent } from './_layouts/trade-content'
 
 export default observer(() => {
   const sidebarRef = useRef()
@@ -146,72 +147,7 @@ export default observer(() => {
 
   return (
     <>
-      <SwitchPcOrWapLayout
-        pcComponent={
-          <div className="p-2 h-full">
-            <div className="flex gap-2 h-full">
-              <div className="flex flex-1 gap-2 flex-col">
-                <Overview />
-                {/* 交易 */}
-                <div className="flex gap-2 flex-1 h-[480px]">
-                  {/* <Sidebar /> */}
-                  {/* 中间区域 */}
-                  {/* <Center /> */}
-                  <div className="flex-1">
-                    <TradeMarket />
-                  </div>
-
-                  <OrderPriceDepthBooks />
-                </div>
-
-                {/* 交易记录 */}
-                {/* <TradeRecord /> */}
-
-                <NewTradeRecords />
-              </div>
-
-              <div className="flex w-max gap-2 min-w-[280px] flex-col">
-                <AccountDetails />
-
-                {/* 买卖交易区 */}
-                <div className="">
-                  <TradeActionPanel />
-                  {/* <BuyAndSell /> */}
-                </div>
-
-                <div className={cn('flex flex-1 flex-col gap-2')}>
-                  {/* <MarginRate /> */}
-                  <div className={cn(' flex flex-1 flex-col bg-primary gap-2 min-h-[270px] rounded-large relative')}>
-                    <PositionDashboard />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 底部固定状态栏 */}
-            {/* <Footer /> */}
-            {/* 浮动交易窗口 */}
-            {/* <FloatTradeBox /> */}
-          </div>
-
-          // <TradeLayout
-          //   slots={{
-          //     [TradeLayoutKey.Tabs]: <div className="h-full">{/* <TradingPairTabs /> */}</div>,
-          //     [TradeLayoutKey.Overview]: (
-          //       <div className="h-full">
-          //         <Overview />
-          //       </div>
-          //     ),
-          //     [TradeLayoutKey.Tradingview]: <div className="h-full">{/* <TradeMarket /> */}</div>,
-          //     [TradeLayoutKey.Orderbooks]: <div className="h-full">{/* <OrderBooks /> */}</div>,
-          //     [TradeLayoutKey.Account]: <div className="h-full">{/* <AccountDetails /> */}</div>,
-          //     [TradeLayoutKey.Action]: <div className="h-full">{/* <TradeAction /> */}</div>,
-          //     [TradeLayoutKey.Position]: <div className="h-full">{/* <Records /> */}</div>
-          //   }}
-          // />
-        }
-        wapComponent={<div></div>}
-      />
+      <TradeContent />
       <BalanceEmptyModal />
       <ModalLoading open={trade.switchAccountLoading} tips={<FormattedMessage id="mt.qiehuanzhanghuzhong" />} />
     </>

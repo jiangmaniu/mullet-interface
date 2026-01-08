@@ -3,13 +3,14 @@ import { DepositAssets } from './deposit-assets'
 // import { LanguageChanger } from './language'
 import { MainLayoutHeaderNav } from './nav'
 import { Notification } from './notification'
-// import { GlobalSetting } from './setting'
+// import { TradeSetting } from './setting'
 // import { WalletConnect } from './wallet-connect'
 
 import { Image } from '@/libs/ui/components/images'
 import { ThemeSwitcher } from './theme-switcher'
 import { UserInfo } from './user-info'
 import { CustomerService } from './customer-service'
+import { TradeSetting } from './trade-setting'
 
 export const MainLayoutHeader = () => {
   return (
@@ -29,11 +30,13 @@ export const MainLayoutHeader = () => {
         <UserInfo />
 
         <CustomerService />
+
+        <TradeSetting />
         {/*
 
         <WalletConnect />
 
-        <GlobalSetting />
+
         <LanguageChanger />
          */}
         <ThemeSwitcher />
