@@ -190,7 +190,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
         // 使用 Ankr Premium RPC (已付费)
         const tronWeb = new TronWeb({
-          fullHost: 'https://rpc.ankr.com/premium-http/tron/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374'
+          fullHost: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93'
         })
 
         // 获取 TRX 余额
