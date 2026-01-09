@@ -174,7 +174,7 @@ export function GlobalDepositMonitorProvider({ children }: { children: React.Rea
     // 每 5 秒检查一次（和 useDepositListenerV2 一致）
     const interval = setInterval(() => {
       checkAllDeposits()
-    }, 5000)
+    }, 10000)
 
     return () => {
       clearInterval(interval)

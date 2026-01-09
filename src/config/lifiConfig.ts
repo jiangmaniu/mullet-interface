@@ -32,25 +32,25 @@ export const getIntegrator = () => {
 // Custom RPC URLs for different chains
 export const CUSTOM_RPC_URLS = {
   // Ethereum Mainnet
-  ethereum: 'https://rpc.ankr.com/eth/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+  ethereum: 'https://rpc.ankr.com/eth/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
 
   // Solana Mainnet
-  solana: 'https://rpc.ankr.com/solana/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+  solana: 'https://rpc.ankr.com/solana/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
 
   // TRON Mainnet
-  tron: 'https://rpc.ankr.com/premium-http/tron/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+  tron: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
 
   // Arbitrum One
-  arbitrum: 'https://rpc.ankr.com/arbitrum/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+  arbitrum: 'https://rpc.ankr.com/arbitrum/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
 
   // Base Mainnet
-  base: 'https://rpc.ankr.com/base/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+  base: 'https://rpc.ankr.com/base/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
 
   // Polygon Mainnet
-  polygon: 'https://rpc.ankr.com/polygon/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+  polygon: 'https://rpc.ankr.com/polygon/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
 
   // BNB Smart Chain
-  bnb: 'https://rpc.ankr.com/bsc/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+  bnb: 'https://rpc.ankr.com/bsc/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
 
   // HyperEVM
   hyperevm: 'https://rpc.hyperliquid.xyz/evm'

@@ -41,43 +41,43 @@ export const EVM_CHAIN_CONFIG: Record<string, {
   Ethereum: {
     chainId: 1,
     name: 'Ethereum',
-    rpcUrl: 'https://rpc.ankr.com/eth/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    rpcUrl: 'https://rpc.ankr.com/eth/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
     nativeCurrency: 'ETH'
   },
   BSC: {
     chainId: 56,
     name: 'BNB Smart Chain',
-    rpcUrl: 'https://rpc.ankr.com/bsc/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    rpcUrl: 'https://rpc.ankr.com/bsc/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
     nativeCurrency: 'BNB'
   },
   Polygon: {
     chainId: 137,
     name: 'Polygon',
-    rpcUrl: 'https://rpc.ankr.com/polygon/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    rpcUrl: 'https://rpc.ankr.com/polygon/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
     nativeCurrency: 'MATIC'
   },
   Arbitrum: {
     chainId: 42161,
     name: 'Arbitrum One',
-    rpcUrl: 'https://rpc.ankr.com/arbitrum/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    rpcUrl: 'https://rpc.ankr.com/arbitrum/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
     nativeCurrency: 'ETH'
   },
   Optimism: {
     chainId: 10,
     name: 'Optimism',
-    rpcUrl: 'https://rpc.ankr.com/optimism/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    rpcUrl: 'https://rpc.ankr.com/optimism/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
     nativeCurrency: 'ETH'
   },
   Base: {
     chainId: 8453,
     name: 'Base',
-    rpcUrl: 'https://rpc.ankr.com/base/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    rpcUrl: 'https://rpc.ankr.com/base/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
     nativeCurrency: 'ETH'
   },
   Avalanche: {
     chainId: 43114,
     name: 'Avalanche C-Chain',
-    rpcUrl: 'https://rpc.ankr.com/avalanche/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374',
+    rpcUrl: 'https://rpc.ankr.com/avalanche/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
     nativeCurrency: 'AVAX'
   },
   HyperEVM: {
@@ -437,7 +437,7 @@ export async function createDeBridgeOrderTron(
     // 动态导入 TronWeb
     const { TronWeb } = await import('tronweb')
     const tronWeb = new TronWeb({
-      fullHost: 'https://rpc.ankr.com/premium-http/tron/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374'
+      fullHost: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93'
     })
 
     const DLN_SOURCE_ADDRESS = tronWeb.address.fromHex(quote.tx.allowanceTarget)
