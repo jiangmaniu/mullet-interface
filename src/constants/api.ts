@@ -7,7 +7,7 @@
  * 后端 API Base URL
  * 用于 TRON 钱包创建、交易签名等服务端操作
  */
-export const API_BASE_URL = 'https://api.mulletfinance.xyz'
+export const API_BASE_URL = process.env.REACT_APP_API_BASE || 'http://localhost:3000'
 
 /**
  * deBridge API Base URL

@@ -42,7 +42,7 @@ interface UseDepositListenerOptions {
  * ```
  */
 export function useDepositListener(options: UseDepositListenerOptions = {}) {
-  const { enabled = false, pollInterval = 5000, chain, address } = options
+  const { enabled = false, pollInterval = 15000, chain, address } = options
 
   const { getAccessToken } = usePrivy()
   const [deposit, setDeposit] = useState<DepositDetection | null>(null)

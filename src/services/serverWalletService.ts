@@ -15,7 +15,7 @@
 
 import { getAccessToken } from '@privy-io/react-auth'
 
-const API_BASE = process.env.BACKEND_API_URL || 'https://api.mulletfinance.xyz'
+const API_BASE = process.env.BACKEND_API_URL || 'http://localhost:3000'
 
 export type SupportedChain = 'ethereum' | 'arbitrum' | 'bsc' | 'base' | 'polygon' | 'tron' | 'solana'
 
@@ -143,7 +143,11 @@ export async function createServerWallet(chain: SupportedChain, tradeAccountId?:
  * @param tradeAccountId - Trade account ID (required for ALL chains)
  */
 export async function checkServerWallet(chain: SupportedChain, tradeAccountId?: string): Promise<CheckWalletResponse> {
+  console.log(`[checkServerWallet] Starting for chain: ${chain}, tradeAccountId: ${tradeAccountId}`)
+  
   const token = await getAccessToken()
+  
+  console.log(`[checkServerWallet] Token obtained: ${token ? `length=${token.length}, preview=${token.substring(0, 30)}...` : 'NULL'}`)
   
   if (!token) {
     throw new Error('Not authenticated - please login first')

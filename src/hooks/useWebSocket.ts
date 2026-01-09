@@ -44,7 +44,7 @@ export interface WebSocketConfig {
 
 // 默认配置
 const DEFAULT_CONFIG: Required<Omit<WebSocketConfig, 'onMessage' | 'onConnect' | 'onDisconnect' | 'onError'>> = {
-  url: 'wss://api.mulletfinance.xyz/ws/connect',
+  url: process.env.REACT_APP_WS_URL || 'ws://localhost:3000/ws/connect',
   autoConnect: true,
   reconnect: true,
   reconnectInterval: 3000,
