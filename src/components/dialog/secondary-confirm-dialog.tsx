@@ -1,4 +1,5 @@
-import { Button } from '@/libs/ui/components/button'
+import { Trans } from '@/libs/lingui/react/macro'
+import { Button, IconButton } from '@/libs/ui/components/button'
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/libs/ui/components/dialog'
 import { Iconify } from '@/libs/ui/components/icons'
 import { cn } from '@/utils/cn'
@@ -48,20 +49,21 @@ export const SecondaryConfirmationDialog = (props: Props) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-[480px]" aria-describedby={undefined} onInteractOutside={(event) => event.preventDefault()}>
+      <DialogContent className="max-w-[360px]" aria-describedby={undefined} onInteractOutside={(event) => event.preventDefault()}>
         <DialogHeader className="">
           <DialogTitle className="flex items-center justify-between gap-3">
             {props.title && <div className={cn('')}> {props.title}</div>}
 
             <DialogClose asChild>
-              <Button
+              <IconButton
                 variant="ghost"
                 disabled={props.confirm?.loading ?? (confirmLoading || (props.cancel !== false && props.cancel?.loading)) ?? cancelLoading}
-                size={'icon'}
+                size={'icon-sm'}
+                className="text-brand-secondary-2"
               >
-                <Iconify icon="iconoir:xmark" className="size-5" />
+                <Iconify icon="iconoir:xmark" className="size-4" />
                 <span className="sr-only">Close</span>
-              </Button>
+              </IconButton>
             </DialogClose>
           </DialogTitle>
         </DialogHeader>
@@ -72,7 +74,7 @@ export const SecondaryConfirmationDialog = (props: Props) => {
           {props.cancel !== false ? (
             <>
               <Button
-                variant="outline"
+                variant="primary"
                 color={'default'}
                 size="lg"
                 disabled={props.confirm?.loading ?? confirmLoading}
@@ -97,7 +99,7 @@ export const SecondaryConfirmationDialog = (props: Props) => {
                   }
                 }}
               >
-                {props.cancel?.label ?? 'Cancel'}
+                {props.cancel?.label ?? <Trans>取消</Trans>}
               </Button>
             </>
           ) : null}
@@ -126,7 +128,7 @@ export const SecondaryConfirmationDialog = (props: Props) => {
                   }
                 }}
               >
-                {props.confirm?.label ?? 'OK'}
+                {props.confirm?.label ?? <Trans>确定</Trans>}
               </Button>
             </>
           )}

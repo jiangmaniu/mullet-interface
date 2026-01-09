@@ -11,6 +11,8 @@ type CommonTooltipProps = PropsWithChildren<
       content?: React.ReactNode
       isDisabledCursorHelp?: boolean
       triggerClassName?: string
+      /** 禁用焦点触发 tooltip */
+      disableFocusTrigger?: boolean
     }
 >
 
@@ -27,6 +29,7 @@ export const GeneralTooltip = ({
   isDisabledCursorHelp,
   onOpenChange,
   triggerClassName,
+  disableFocusTrigger,
   ...props
 }: CommonTooltipProps) => {
   if (isUndefined(content) || isNull(content)) {
@@ -45,6 +48,7 @@ export const GeneralTooltip = ({
               },
               triggerClassName
             )}
+            {...(disableFocusTrigger && { tabIndex: -1 })}
           >
             {children}
           </div>

@@ -180,7 +180,7 @@ export const getColumns = ({
       dataIndex: 'signature',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
-      width: 140,
+      width: 180,
       renderText(text, record, index, action) {
         return (
           <>

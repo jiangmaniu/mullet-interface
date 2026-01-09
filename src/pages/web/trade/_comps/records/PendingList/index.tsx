@@ -30,6 +30,7 @@ import { renderFallback } from '@/libs/utils/format/fallback'
 import { SettingPendingEditorAction } from './_comps/setting-pending-editor-action'
 import { LOTS_UNIT_LABEL } from '../../../_options/trade'
 import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
+import { Iconify } from '@/libs/ui/components/icons'
 
 export type IPendingItem = Order.OrderPageListItem & {
   /**是否是限价单 */
@@ -346,8 +347,17 @@ const PendingCancelOrderAction = observer(({ pendingOrderInfo }: { pendingOrderI
   const { trade } = useStores()
 
   const secondaryConfirmationDialog = useNiceModal<SecondaryConfirmationGlobalModalProps>(GLOBAL_MODAL_ID.SecondaryConfirmation, {
-    title: '撤销挂单',
-    message: `确定要撤销该挂单吗？`,
+    title: '取消挂单',
+    message: (
+      <div className="flex flex-col items-center gap-xs">
+        <div>
+          <Iconify icon="iconoir:info-circle-solid" className="size-10 text-status-warning" />
+        </div>
+        <div className="text-paragraph-p1  text-center text-content-1">
+          <Trans>确定取消该挂单？</Trans>
+        </div>
+      </div>
+    ),
     confirm: {
       cb: async () => {
         await trade.cancelOrder({ id: pendingOrderInfo.id })

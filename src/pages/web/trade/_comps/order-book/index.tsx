@@ -156,8 +156,8 @@ const SellList = observer(({ mode }: { mode: DepthModeType }) => {
 
   const showAll = mode !== DepthModeType.Both
 
-  // const list = showAll ? asks : asks.slice(-12)
-  const list = asks
+  const list = showAll ? asks : asks.slice(-12)
+  // const list = asks
 
   const sellMaxValue = BNumber.max(...list.map((ask) => BNumber.from(ask.price).multipliedBy(ask.amount)))
   const activeSymbolInfo = trade.activeSymbolInfo
@@ -174,7 +174,7 @@ const SellList = observer(({ mode }: { mode: DepthModeType }) => {
     <div className="flex-1 min-h-0 relative">
       {!list.length ? (
         <div className="absolute inset-0 flex items-center justify-center">
-          <EmptyNoData />
+          <EmptyNoData text={<Trans>暂无卖单数据</Trans>} />
         </div>
       ) : (
         <div ref={scrollRef} className="absolute inset-0 overflow-y-auto flex flex-col">
@@ -224,17 +224,17 @@ const BuyList = observer(({ mode }: { mode: DepthModeType }) => {
   //  bids 从上往下对应（第一个 是卖一） 作为买盘展示在下面（卖价 买盘）
   const bids = toJS(depth?.bids || [])
 
-  // const showAll = mode !== DepthModeType.Both
+  const showAll = mode !== DepthModeType.Both
 
-  // const list = showAll ? bids : bids.slice(0, 12)
-  const list = bids.reverse()
+  const list = showAll ? bids : bids.slice(0, 12)
+  // const list = bids.reverse()
   const bidMaxValue = BNumber.max(...list.map((bid) => BNumber.from(bid.price).multipliedBy(bid.amount)))
   const activeSymbolInfo = trade.activeSymbolInfo
   return (
     <div className="flex-1 min-h-0 relative">
       {!list.length ? (
         <div className="absolute inset-0 flex items-center justify-center">
-          <EmptyNoData />
+          <EmptyNoData text={<Trans>暂无买单数据</Trans>} />
         </div>
       ) : (
         <div className="absolute inset-0 overflow-y-auto">
@@ -286,12 +286,12 @@ const BuySellRatioBar = observer(({ mode }: BuySellRatioBarProps) => {
   const showAll = mode !== DepthModeType.Both
 
   const asks = toJS(depth?.asks || []).reverse()
-  // const askList = showAll ? asks : asks.slice(-12)
-  const askList = asks
+  const askList = showAll ? asks : asks.slice(-12)
+  // const askList = asks
 
   const bids = toJS(depth?.bids || [])
-  // const bidList = showAll ? bids : bids.slice(0, 12)
-  const bidList = bids
+  const bidList = showAll ? bids : bids.slice(0, 12)
+  // const bidList = bids
 
   const askTotalValue = askList.reduce((acc, ask) => {
     const value = BNumber.from(ask.price).multipliedBy(ask.amount)
@@ -305,36 +305,27 @@ const BuySellRatioBar = observer(({ mode }: BuySellRatioBarProps) => {
 
   const bothTotalValue = askTotalValue.plus(bidTotalValue)
 
+  const minWidth = 25
   const buyPercent = bothTotalValue.gt(0) ? bidTotalValue.div(bothTotalValue) : BNumber.from(0.5)
   const sellPercent = bothTotalValue.gt(0) ? askTotalValue.div(bothTotalValue) : BNumber.from(0.5)
-  const buyPercentWidth = BNumber.min(BNumber.max(buyPercent.toPercent(), 20), 80)
-  const sellPercentWidth = BNumber.min(BNumber.max(sellPercent.toPercent(), 20), 80)
+  const buyPercentWidth = BNumber.min(BNumber.max(buyPercent.toPercent(), minWidth), 80)
+  const sellPercentWidth = BNumber.min(BNumber.max(sellPercent.toPercent(), minWidth), 80)
+
+  if (bothTotalValue.eq(0)) {
+    return null
+  }
 
   return (
     <div className="relative flex w-full">
-      {/* 买方（绿色）区域 */}
-      <div className="relative transition-all" style={{ width: `${buyPercentWidth}%` }}>
-        <div className="absolute z-0 top-0 left-0 h-full w-full text-market-rise/15">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full h-full"
-            viewBox="0 0 128 20"
-            fill="currentColor"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0 4C0 1.79086 1.79086 0 4 0H123.021C125.578 0 127.478 2.36549 126.927 4.86202L124.279 16.862C123.874 18.6949 122.25 20 120.373 20H4C1.79086 20 0 18.2091 0 16V4Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-        <div className="relative z-10 flex items-center gap-0.5 rounded-xs justify-between">
-          {/* B 图标 */}
-          <div className="text-market-rise flex size-5 items-center justify-center rounded-xs border border-market-rise text-paragraph-p3">
-            B
-          </div>
+      {/* B 图标 */}
+      <div className=" text-market-rise flex size-5 items-center justify-center rounded-xs border border-market-rise text-paragraph-p3">
+        B
+      </div>
+
+      <div className="flex-1 flex relative leading-none">
+        <div className="flex-1 flex items-center">
           {/* 买方百分比 */}
-          <span className="text-market-rise flex-1 text-paragraph-p3 text-center items-center">
+          <span className=" text-market-rise  text-paragraph-p3 text-right pr-1 items-center" style={{ minWidth: `${minWidth}%` }}>
             {BNumber.toFormatPercent(buyPercent, {
               volScale: 1,
               format: {
@@ -343,28 +334,9 @@ const BuySellRatioBar = observer(({ mode }: BuySellRatioBarProps) => {
             })}
           </span>
         </div>
-      </div>
-
-      {/* 卖方（红色）区域 */}
-      <div className="relative transition-all" style={{ width: `${sellPercentWidth}%` }}>
-        <div className="absolute z-0 top-0 left-0 h-full w-full text-market-fall/15">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full h-full"
-            viewBox="0 0 128 20"
-            fill="currentColor"
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M127.023 16C127.023 18.2091 125.232 20 123.023 20H4.00172C1.44512 20 -0.455254 17.6345 0.0957031 15.138L2.74398 3.13798C3.14848 1.3051 4.77301 0 6.64999 0H123.023C125.232 0 127.023 1.79086 127.023 4V16Z"
-              fill="currentColor"
-            />
-          </svg>
-        </div>
-
-        <div className="relative z-10 flex items-center rounded-xs justify-between gap-0.5">
+        <div className="flex-1 flex items-center justify-end">
           {/* 卖方百分比 */}
-          <span className=" text-center text-market-fall text-paragraph-p3 flex-1 py-0.5">
+          <span className=" text-market-fall text-paragraph-p3 pl-1" style={{ minWidth: `${minWidth}%` }}>
             {BNumber.toFormatPercent(sellPercent, {
               volScale: 1,
               format: {
@@ -372,11 +344,23 @@ const BuySellRatioBar = observer(({ mode }: BuySellRatioBarProps) => {
               }
             })}
           </span>
-          {/* S 图标 */}
-          <div className="text-market-fall flex size-5 items-center justify-center rounded-xs border border-market-fall text-paragraph-p3">
-            S
+        </div>
+
+        <div className="absolute inset-0 flex">
+          {/* 买方（绿色）区域 */}
+          <div className="transition-all overflow-hidden" style={{ width: `${buyPercentWidth}%` }}>
+            <div className="size-full bg-market-rise/15 -translate-x-[3px] rounded-1 -skew-x-[25deg]"></div>
+          </div>
+
+          <div className="transition-all overflow-hidden" style={{ width: `${sellPercentWidth}%` }}>
+            <div className="size-full bg-market-fall/15 translate-x-[3px] rounded-1 -skew-x-[25deg]"></div>
           </div>
         </div>
+      </div>
+
+      {/* S 图标 */}
+      <div className=" text-market-fall flex size-5 items-center justify-center rounded-xs border border-market-fall text-paragraph-p3">
+        S
       </div>
     </div>
   )

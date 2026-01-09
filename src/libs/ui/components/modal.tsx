@@ -2,10 +2,10 @@ import React, { ComponentProps, forwardRef, useState } from 'react'
 import { omit } from 'lodash-es'
 
 import { cn } from '../lib/utils'
-import { Button, ButtonProps } from './button'
+import { Button, ButtonProps, IconButton } from './button'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogOverlay, DialogPortal, DialogTitle, DialogTrigger } from './dialog'
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerOverlay, DrawerPortal, DrawerTitle, DrawerTrigger } from './drawer'
-import { IconClose } from './icons'
+import { IconClose, Iconify } from './icons'
 
 export function useMediaQuery(query: string) {
   const [value, setValue] = React.useState(false)
@@ -189,10 +189,10 @@ const ModalTitle = forwardRef<
 
       {showCloseButton && (
         <ModalClose asChild>
-          <Button variant="ghost" className="text-[#9FA0B0]" size={'icon'}>
-            <IconClose className="size-4" />
+          <IconButton variant="ghost" className="text-brand-secondary-2" size={'icon-sm'}>
+            <Iconify icon="iconoir:xmark" className="size-4" />
             <span className="sr-only">Close</span>
-          </Button>
+          </IconButton>
         </ModalClose>
       )}
     </Comp>

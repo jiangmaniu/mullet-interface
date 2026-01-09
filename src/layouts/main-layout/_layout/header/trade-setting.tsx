@@ -27,10 +27,12 @@ export const TradeSetting = () => {
             <Trans>设置</Trans>
           </div>
           <div className="flex items-center justify-between gap-2">
-            <div className="text-paragraph-p3 text-content-4">颜色偏好</div>
+            <div className="text-paragraph-p3 text-content-4">
+              <Trans>交易布局</Trans>
+            </div>
 
             <div>
-              <GeneralTooltip align={'center'} side="top" content={<Trans>布局重置</Trans>}>
+              <GeneralTooltip align={'center'} side="top" content={<Trans>布局重置</Trans>} disableFocusTrigger>
                 <IconButton variant={'ghost'} onClick={resetLayoutCache}>
                   <Iconify icon="iconoir:refresh-double" className="size-3" />
                   <span className="sr-only">Layout reset</span>

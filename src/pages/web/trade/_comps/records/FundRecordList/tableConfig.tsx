@@ -114,7 +114,7 @@ export const getColumns = ({
       dataIndex: 'signature',
       hideInSearch: true, // 在 table的查询表单 中隐藏
       ellipsis: false,
-      width: 150,
+      width: 180,
       align: 'right',
       fixed: 'right',
       renderText(text, record, index, action) {
