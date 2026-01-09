@@ -18,7 +18,7 @@ interface BalanceResult {
  * 获取 Solana RPC 连接
  */
 const getSolanaConnection = (): Connection => {
-  const rpcEndpoint = 'https://rpc.ankr.com/solana/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374';
+  const rpcEndpoint = 'https://rpc.ankr.com/solana/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93';
   return new Connection(rpcEndpoint, 'confirmed');
 };
 
@@ -142,10 +142,10 @@ const getEVMProvider = (chainId: number): ethers.JsonRpcProvider => {
   
   switch (chainId) {
     case 1: // Ethereum Mainnet
-      rpcUrl = 'https://rpc.ankr.com/eth/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374';
+      rpcUrl = 'https://rpc.ankr.com/eth/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93';
       break;
     case 56: // BSC Mainnet
-      rpcUrl = 'https://rpc.ankr.com/bsc/0935b8711b527426dac2e2431d0b1ed85200be5d7034988fda8c718e3caa4374';
+      rpcUrl = 'https://rpc.ankr.com/bsc/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93';
       break;
     default:
       // 如果没有配置的 RPC，尝试使用钱包的 provider
