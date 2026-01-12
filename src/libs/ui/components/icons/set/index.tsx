@@ -18,6 +18,7 @@ import {
 export * from './empty-no-data'
 export * from './mtlp'
 export { IconNavArrowDown } from './nav-arrow-down'
+export * from './special-icon-loader'
 
 export const IconInfo = LuInfo
 
