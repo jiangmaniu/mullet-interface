@@ -43,7 +43,11 @@ function AddAccountComp() {
   }, [])
 
   return (
-    <PageContainer renderHeader={() => <Header />} backTitle={<FormattedMessage id="mt.chuangjianxinzhanghu" />} backUrl="/account/type">
+    <PageContainer
+      renderHeader={() => <Header />}
+      backTitle={<FormattedMessage id="mt.chuangjianxinzhanghu" />}
+      backUrl={`/account/create`}
+    >
       <div className="flex justify-center">
         <div className="w-[552px] rounded-xl border border-gray-180">
           <div className="border-[0.5px] border-gray-250 rounded-lg m-7">

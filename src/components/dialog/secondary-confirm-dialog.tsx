@@ -14,7 +14,7 @@ type Props = {
     | {
         className?: string
         label?: React.ReactNode
-        cb?: () => any
+        cb?: () => Promise<Nilable<boolean>> | Nilable<boolean>
         loading?: boolean
       }
     | false
@@ -22,7 +22,7 @@ type Props = {
     loading?: boolean
     className?: string
     label?: React.ReactNode
-    cb?: () => any
+    cb?: () => Promise<Nilable<boolean>> | Nilable<boolean>
   }
 }
 
@@ -88,12 +88,17 @@ export const SecondaryConfirmationDialog = (props: Props) => {
                   setCancelLoading(true)
 
                   try {
-                    await Promise.resolve(props.cancel?.cb?.())
+                    const result = await Promise.resolve(props.cancel?.cb?.())
+                    if (result === false) {
+                      return
+                    }
+
                     if (!props.cancel?.loading) {
                       onClose?.()
                     } else {
                       setIsHandleCancel(true)
                     }
+                  } catch {
                   } finally {
                     setCancelLoading(false)
                   }
@@ -117,12 +122,17 @@ export const SecondaryConfirmationDialog = (props: Props) => {
                   setConfirmLoading(true)
 
                   try {
-                    await Promise.resolve(props.confirm?.cb?.())
+                    const result = await Promise.resolve(props.confirm?.cb?.())
+                    if (result === false) {
+                      return
+                    }
+
                     if (!props.confirm?.loading) {
                       onClose?.()
                     } else {
                       setIsHandleComfirn(true)
                     }
+                  } catch {
                   } finally {
                     setConfirmLoading(false)
                   }

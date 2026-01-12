@@ -7,6 +7,7 @@ import { Tooltip } from 'antd'
 import { observer } from 'mobx-react'
 import React from 'react'
 import { GeneralTooltip } from '../tooltip'
+import { CopyButton } from '../common/copy-button'
 
 type IProps = {
   path: any
@@ -34,24 +35,32 @@ const ExplorerLink = ({ path, address, className, cluster = '', copyable = false
   console.log('[ExplorerLink]', { path, address, cluster, network, networkAlias: currentAccountInfo.networkAlias, explorerUrl })
 
   return (
-    <span>
-      <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className={cn(`!text-brand`, className)}>
-        <LinkOutlined className="mr-1" />
-        {label}
-        {!label && (
+    <div className="flex items-center gap-0.5">
+      <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className={cn(`!text-brand inline-flex items-center`, className)}>
+        {!!label ? (
+          <>
+            <LinkOutlined className="mr-1" />
+            {label}
+          </>
+        ) : (
           <>
             {isFormatAddress ? (
               <GeneralTooltip side={'top'} triggerClassName="inline" content={address}>
+                <LinkOutlined className="mr-1" />
+
                 {formatAddress(address)}
               </GeneralTooltip>
             ) : (
-              address
+              <>
+                <LinkOutlined className="mr-1" />
+                {address}
+              </>
             )}
           </>
         )}
       </a>
-      {copyable && <CopyOutlined className="cursor-pointer text-primary ml-2" onClick={() => copyContent(address)} />}
-    </span>
+      {copyable && <CopyButton text={address} className="size-4 p-0" />}
+    </div>
   )
 }
 export default observer(ExplorerLink)

@@ -23,7 +23,7 @@ export const GeneralTooltip = ({
   align = 'start',
   className,
   alignOffset = -20,
-  side = 'bottom',
+  side = 'top',
   sideOffset,
   defaultOpen,
   isDisabledCursorHelp,

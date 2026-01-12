@@ -417,7 +417,7 @@ function Account() {
           <Button
             icon={<PlusCircleOutlined style={{ fontSize: 16 }} />}
             onClick={() => {
-              push(`/account/type`)
+              push(`/account/create`)
             }}
           >
             <FormattedMessage id="mt.chuangjianxinzhanghu" />
@@ -464,8 +464,8 @@ function Account() {
         </div>
       </Modal>
       {/* 出入金弹窗 */}
-      <WithdrawModal ref={withdrawModalRef} />
-      <DepositModal ref={depositModalRef} />
+      {/* <WithdrawModal  ref={withdrawModalRef} />
+      <DepositModal ref={depositModalRef} /> */}
       {/* Add Funds 菜单 */}
       <AddFundsMenu
         open={showAddFundsMenu}
@@ -476,9 +476,14 @@ function Account() {
         showSwapOption={!!isExternalWallet}
       />
       {/* 跨链充值弹窗 */}
-      <TransferCryptoDialog open={showTransferDialog} onClose={() => setShowTransferDialog(false)} />
+      <TransferCryptoDialog
+        accountId={trade.currentAccountInfo?.id}
+        open={showTransferDialog}
+        onClose={() => setShowTransferDialog(false)}
+      />
       {/* 资产兑换弹窗 */}
       <SwapDialog
+        accountId={trade.currentAccountInfo?.id}
         open={showSwapDialog}
         onClose={() => setShowSwapDialog(false)}
         walletAddress={wallets?.[0]?.address || ''}

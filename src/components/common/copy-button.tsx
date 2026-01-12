@@ -11,19 +11,25 @@ import { IconButton, IconButtonProps } from '@/libs/ui/components/button'
 import { cn } from '@/libs/ui/lib/utils'
 
 export type CopyButtonProps = IconButtonProps & {
-  text: string
+  text?: string
 }
 
 export const CopyButton = ({ text, className, ...props }: CopyButtonProps) => {
   const [isCopied, setIsCopied] = useState(false)
 
+  if (!text) {
+    return null
+  }
+
   return (
-    <GeneralTooltip content={<Trans>Copy address</Trans>}>
+    <GeneralTooltip isDisabledCursorHelp side="top" content={<Trans>Copy address</Trans>} triggerClassName="inline-flex items-center">
       <IconButton
         size="icon-sm"
         variant="ghost"
         className={cn(
-          `size-6 transition-transform duration-200 ${isCopied ? 'scopale-110' : ''}`,
+          `size-6 transition-transform duration-200 ${
+            isCopied ? 'scale-110 text-status-success' : 'text-brand-secondary-3 hover:text-brand-secondary-1'
+          }`,
           { 'pointer-events-none': isCopied },
           className
         )}

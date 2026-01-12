@@ -60,6 +60,8 @@ export const NewThemeColor = {
   'status-success': 'rgb(var(--color-green-500) / <alpha-value>)',
   'status-warning': 'rgb(var(--color-orange-500) / <alpha-value>)',
   'status-danger': 'rgb(var(--color-red-500) / <alpha-value>)',
+
+  'white': 'rgb(var(--color-white) / <alpha-value>)',
 }
 
 export const NewThemeFontSize = {

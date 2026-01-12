@@ -238,7 +238,9 @@ function ModalAction({ ...props }: ModalActionProps) {
       {props.cancel !== false ? (
         <>
           <Button
-            variant="secondary"
+            variant="primary"
+            color={'default'}
+            size="lg"
             loading={cancelLoading}
             type="button"
             {...omit(props.cancel, 'cb', 'label')}
@@ -295,6 +297,9 @@ function ModalAction({ ...props }: ModalActionProps) {
                       props?.hide?.()
                     }
               }
+              variant="primary"
+              color={'primary'}
+              size="lg"
               className={cn('flex-1', props.confirm?.className)}
               /** @ts-ignore */
               disabled={props.confirm?.disabled || props.cancel?.loading}

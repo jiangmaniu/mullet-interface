@@ -93,12 +93,12 @@ export default [
       {
         path: '/:lng/account',
         access: 'canAdmin', // 权限配置
-        component: './web/account'
+        component: './web/account-manage'
       },
       {
-        path: '/:lng/account/type',
+        path: '/:lng/account/create',
         access: 'canAdmin', // 权限配置
-        component: './web/account/accountTypeSelect',
+        component: './web/account-manage/create',
         hideInMenu: true
       },
       {

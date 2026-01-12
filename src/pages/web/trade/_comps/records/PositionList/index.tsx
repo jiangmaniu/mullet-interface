@@ -244,7 +244,7 @@ function Position({ style, parentPopup }: IProps) {
       {
         title: (
           <>
-            <Trans>手续费</Trans>/ <Trans>库存费</Trans>
+            <Trans>手续费</Trans>/<Trans>库存费</Trans>
           </>
         ),
         dataIndex: 'Fees',
@@ -680,12 +680,14 @@ const PositionFeesCell = observer(({ positionInfo, isOneLevel }: { positionInfo:
     <div className="text-paragraph-p2 text-content-1">
       {BNumber.toFormatNumber(handlingFees, {
         volScale: precision,
-        positive: false
+        positive: false,
+        unit: unit
       })}
       {' / '}
       {BNumber.toFormatNumber(interestFees, {
         volScale: precision,
-        positive: false
+        positive: false,
+        unit: unit
       })}
     </div>
   )

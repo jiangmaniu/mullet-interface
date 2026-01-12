@@ -119,6 +119,7 @@
     "moment": "^2.29.4",
     "number-precision": "^1.6.0",
     "numbro": "^2.5.0",
+    "nuqs": "^2.8.6",
     "omit.js": "^2.0.2",
     "qrcode": "^1.5.3",
     "qrcode-with-logos": "^1.0.3",

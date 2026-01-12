@@ -21,10 +21,10 @@ export const TradeSetting = () => {
           </GeneralTooltip>
         </div>
       </PopoverTrigger>
-      <PopoverContent align="start" className="max-h-[700px] p-3 min-h-[500px] w-[330px]">
+      <PopoverContent align="start" className="max-h-[700px] p-3 min-h-[500px] w-[330px]" onOpenAutoFocus={(e) => e.preventDefault()}>
         <div className="flex flex-col gap-2xl">
           <div className="text-important-2 text-content-1">
-            <Trans>设置</Trans>
+            <Trans>交易设置</Trans>
           </div>
           <div className="flex items-center justify-between gap-2">
             <div className="text-paragraph-p3 text-content-4">

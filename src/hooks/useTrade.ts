@@ -186,7 +186,7 @@ export default function useTrade(props?: IProps) {
   // 报价大小 * Math.pow(10, -d)
   const step2 = useMemo(() => Number(symbolConf?.quotationSize || 0) * Math.pow(10, -d) || step, [d, symbolConf, step])
   const lotVolScale = useMemo(() => {
-    return BNumber.from(symbolConf?.tradeStep).decimalPlaces()
+    return BNumber.from(symbolConf?.tradeStep as number | undefined)?.decimalPlaces?.()
   }, [symbolConf?.tradeStep])
 
   const countPrecision = useMemo(() => getPrecisionByNumber(symbolConf?.minTrade), [symbolConf]) // 手数精度
