@@ -11,7 +11,8 @@ import Hidden from '@/components/Base/Hidden'
 import { useStores } from '@/context/mobxProvider'
 import { transferAccount } from '@/services/api/tradeCore/account'
 import { formatNum, toFixed } from '@/utils'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { push } from '@/utils/navigator'
 
 import { validateNonEmptyFields } from '@/utils/form'
@@ -51,7 +52,7 @@ function TransferAccount() {
 
     if (res.success) {
       setStep('THREE')
-      message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+      toast.success(<Trans>操作成功</Trans>)
 
       // 刷新用户信息
       fetchUserInfo(false)

@@ -15,8 +15,10 @@ import type { SearchConfig } from '@ant-design/pro-table/es/components/Form/Form
 import type { OptionConfig } from '@ant-design/pro-table/es/components/ToolBar'
 import { useEmotionCss } from '@ant-design/use-emotion-css'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
-import { FormInstance, Popconfirm, TablePaginationConfig, message } from 'antd'
+import { FormInstance, Popconfirm, TablePaginationConfig } from 'antd'
 import { type TableProps as RcTableProps } from 'antd/es/table/InternalTable'
+import { Trans } from '@/libs/lingui/react/macro'
+import { toast } from '@/libs/ui/components/toast'
 import moment from 'moment'
 import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -194,7 +196,7 @@ export default function OptimizedTable<T extends Record<string, any>, U extends 
       } else {
         await action?.del?.({ id: record.id })
         actionRef.current?.reload()
-        message.success(intl.formatMessage({ id: 'common.deleteSuccess' }))
+        toast.success(<Trans>删除成功</Trans>)
       }
     },
     [onDelete, action, intl]
@@ -398,7 +400,7 @@ export default function OptimizedTable<T extends Record<string, any>, U extends 
             if (!open && dates && Math.abs(moment(dates?.[0]).diff(dates?.[1], 'days')) > 91) {
               dateRangeRef.current = null
               formRef.current?.resetFields(['dates'])
-              message.warning(intl.formatMessage({ id: 'mt.shijianbunengdayusangeyue' }))
+              toast.warning(<Trans>时间不能大于90天</Trans>)
             }
           }
         }

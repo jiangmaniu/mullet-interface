@@ -1,4 +1,5 @@
 import { NumberInput } from '@/components/input/number-input'
+import { Trans } from '@/libs/lingui/react/macro'
 import { NumberInputSourceType } from '@/components/input/number-input-primitive'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
@@ -44,13 +45,13 @@ export const DistributeModal = (props: React.ComponentProps<typeof Modal>) => {
       },
       {
         onSuccess: async () => {
-          toast.success('分发成功')
+          toast.success(<Trans>分发成功</Trans>)
           props.onOpenChange?.(false)
 
           await fetchUserInfo()
         },
         onError: (error) => {
-          toast.error(error instanceof Error ? error.message : '分发失败')
+          toast.error(error instanceof Error ? error.message : <Trans>分发失败</Trans>)
         }
       }
     )

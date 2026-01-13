@@ -4,7 +4,8 @@ import { FormInstance, Modal } from 'antd'
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import { cn } from '@/utils/cn'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import { getEnv } from '@/env'
 import { upload } from './upload'
@@ -159,7 +160,7 @@ export default forwardRef(
         // @ts-ignore
         const beforeRes = await handleBeforeUpload(file).catch((e) => e)
         if (typeof beforeRes === 'string') {
-          // message.info(beforeRes)
+          // toast.info(beforeRes)
           setErrorTip(beforeRes)
           return
         }
@@ -181,10 +182,10 @@ export default forwardRef(
           form?.setFieldValue?.(name, fileName)
           onSuccess?.({ fileName, url })
         } else {
-          message.info(intl.formatMessage({ id: 'common.shangchuanshibai' }))
+          toast.info(<Trans>上传失败</Trans>)
         }
       } catch (error: any) {
-        message.info(error?.message)
+        toast.info(error?.message)
         setFileUrl('')
         setFileName('')
       } finally {

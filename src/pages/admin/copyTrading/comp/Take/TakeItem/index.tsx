@@ -5,8 +5,9 @@ import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { IOrderTakerProps } from '@/models/takers'
 import { formatNum, getColorClass } from '@/utils'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import { push } from '@/utils/navigator'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import { AccountTag } from '../../AccountTag'
 
@@ -20,7 +21,7 @@ export const TakeItem = ({ item, state, onClick, onTake }: IProps) => {
     <div
       onClick={() => {
         if (item.enabledFlag === 1) {
-          message.info(getIntl().formatMessage({ id: 'mt.yibeijinyong' }))
+          toast.info(<Trans>已被禁用</Trans>)
           return
         }
         push(`/copy-trading/take-detail/${leadId}`)

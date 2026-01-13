@@ -22,6 +22,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
           ),
           success: cn('text-[#2EBC84]'),
           error: cn('text-[#FF453A]'),
+          warning: cn('text-[#FFD60A]'),
           info: cn('text-[#2167ff]'),
           icon: cn('flex')
         },

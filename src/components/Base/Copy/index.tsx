@@ -1,6 +1,8 @@
 import { CopyOutlined } from '@ant-design/icons'
 import { useIntl } from '@umijs/max'
-import { message, Typography } from 'antd'
+import { Typography } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 type IProps = {
   children: any
@@ -17,7 +19,7 @@ export default function CopyComp({ children, style, textStyle }: IProps) {
         // icon: <img src="/img/icons/copy@2x.png" className="w-[18px] h-[18px] relative top-[3px]" />,
         icon: <CopyOutlined style={{ fontSize: 14, color: '#9E9E9E' }} />,
         onCopy: (event: any) => {
-          message.success(intl.formatMessage({ id: 'common.fuzhichenggong' }))
+          toast.success(<Trans>复制成功</Trans>)
         },
         text: children
       }}

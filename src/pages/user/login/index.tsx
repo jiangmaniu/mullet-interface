@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { Button } from '@/libs/ui/components/button'
-import { message } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
 import { Trans } from '@/libs/lingui/react/macro'
 
 export default function Login() {
@@ -63,7 +63,7 @@ export default function Login() {
           // 登录失败，显示错误信息
           const errorMsg = result?.msg || intl.formatMessage({ id: 'mt.denglushibai' })
           setLoginError(errorMsg)
-          message.error(errorMsg)
+          toast.error(errorMsg)
           // 退出privy登录
           logout()
           setShowJumpingLoader(false)
@@ -72,7 +72,7 @@ export default function Login() {
         // 请求异常，显示错误信息
         const errorMsg = error?.message || intl.formatMessage({ id: 'mt.denglushibai' })
         setLoginError(errorMsg)
-        message.error(errorMsg)
+        toast.error(errorMsg)
         // 退出privy登录
         logout()
         setShowJumpingLoader(false)

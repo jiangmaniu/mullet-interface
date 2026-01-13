@@ -15,8 +15,9 @@ import { useUpdateFollowStatus } from '@/hooks/useUpdateFollowStatus'
 import { IOrderTakerState } from '@/models/takers'
 import { getTradeFollowLeadPlaza } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import { push } from '@/utils/navigator'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import NoAccountModal from '../NoAccountModal'
 import TradingSettingModal from '../TradingSettingModal'
@@ -170,7 +171,7 @@ function Square({ active }: { active: boolean }) {
     } else if (takerState === 3) {
       setOpenSetting(true)
     } else {
-      message.info(intl.formatMessage({ id: 'mt.yimanyuan' }))
+      toast.info(<Trans>已满员</Trans>)
     }
     // }
   }

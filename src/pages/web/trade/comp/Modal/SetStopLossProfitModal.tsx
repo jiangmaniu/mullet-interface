@@ -12,7 +12,7 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { RecordModalItem } from '@/mobx/trade'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 
 import SetSpSl from '../BuyAndSell/comp/OrderItem/SetSpSl'
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
@@ -28,12 +28,12 @@ const ConfirmButton = observer(({ item, close }: { item: IPositionItem; close: (
     const msg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
 
     if (slFlag) {
-      message.info(msg)
+      toast.info(msg)
       setSl(item.stopLoss)
       return
     }
     if (spFlag) {
-      message.info(msg)
+      toast.info(msg)
       setSp(item.takeProfit)
       return
     }

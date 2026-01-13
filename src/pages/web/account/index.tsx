@@ -35,7 +35,8 @@ import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { usePrivy } from '@privy-io/react-auth'
 import { useFundWallet as useSolanaFundWallet } from '@privy-io/react-auth/solana'
 import { useServerWallet } from '@/hooks/useServerWallet'
-import { message } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 type IAccountItem = User.AccountItem & {
   isEyeOpen?: boolean
@@ -310,13 +311,13 @@ function Account() {
     setShowAddFundsMenu(false)
 
     if (serverWalletLoading) {
-      message.info('正在加载充值地址，请稍候...')
+      toast.info(<Trans>正在加载充值地址，请稍候...</Trans>)
       return
     }
 
     if (!serverSolanaAddress) {
       console.error('[Buy Crypto] No Server Solana address available')
-      message.error('Solana 充值地址未就绪，请稍后重试')
+      toast.error(<Trans>Solana 充值地址未就绪，请稍后重试</Trans>)
       return
     }
 

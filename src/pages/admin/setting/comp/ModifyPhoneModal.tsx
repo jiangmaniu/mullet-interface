@@ -8,7 +8,8 @@ import Button from '@/components/Base/Button'
 import FormCaptcha from '@/components/Form/Captcha'
 import { editPhone, sendCustomPhoneCode, sendPhoneCode } from '@/services/api/user'
 import { validateNonEmptyFields } from '@/utils/form'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { goKefu } from '@/utils/navigator'
 
 type IProps = {
@@ -48,7 +49,7 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
         setSubmitLoading(false)
 
         if (success) {
-          message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+          toast.info(<Trans>操作成功</Trans>)
 
           // 更新用户信息
           fetchUserInfo()
@@ -74,7 +75,7 @@ export default function ModifyPhoneModal({ trigger }: IProps) {
           const phone = form.getFieldValue('newPhone')
           const phoneAreaCode = form.getFieldValue('phoneAreaCode')
           if (!phone) {
-            message.info(intl.formatMessage({ id: 'mt.qingshuruxinshouji' }))
+            toast.info(<Trans>请输入新手机号</Trans>)
             throw {}
           }
           const res = await sendCustomPhoneCode({ phone, phoneAreaCode })

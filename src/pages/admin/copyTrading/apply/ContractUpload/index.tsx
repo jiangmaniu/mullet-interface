@@ -1,22 +1,24 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { FormattedMessage, getIntl } from '@umijs/max'
 import { useHover } from 'ahooks'
-import { GetProp, message, Upload, UploadFile, UploadProps } from 'antd'
+import { GetProp, Upload, UploadFile, UploadProps } from 'antd'
 import { useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { upload } from '@/components/Base/IconUpload/upload'
+import { Trans } from '@/libs/lingui/react/macro'
+import { toast } from '@/libs/ui/components/toast'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
 const beforeUpload = (file: FileType) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
   if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!')
+    toast.error(<Trans>You can only upload JPG/PNG file!</Trans>)
   }
   const isLt10M = file.size / 1024 / 1024 < 10
   if (!isLt10M) {
-    message.error('Image must smaller than 10MB!')
+    toast.error(<Trans>Image must smaller than 10MB!</Trans>)
   }
   return isJpgOrPng && isLt10M
 }
@@ -83,7 +85,7 @@ export default ({ onChange, maxCount = 3 }: { onChange: (p: any) => void; maxCou
           thumbUrl: res.data.link
         }
       }
-      message.info(getIntl().formatMessage({ id: 'common.shangchuanshibai' }))
+      toast.info(<Trans>上传失败</Trans>)
 
       return {
         uid: String(Math.random()),
@@ -92,7 +94,7 @@ export default ({ onChange, maxCount = 3 }: { onChange: (p: any) => void; maxCou
         url: ''
       }
     } catch (error: any) {
-      message.info(error?.message)
+      toast.info(error?.message)
 
       return {
         uid: String(Math.random()),

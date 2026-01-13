@@ -1,4 +1,5 @@
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
+import { Trans } from '@/libs/lingui/react/macro'
 import { observer } from 'mobx-react'
 import { forwardRef, useImperativeHandle, useState, useEffect } from 'react'
 import { usePrivy } from '@privy-io/react-auth'
@@ -9,7 +10,7 @@ import Modal from '@/components/Base/Modal'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { withdrawByAddress } from '@/services/api/tradeCore/account'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import { Form, Input, Select, Space, Avatar } from 'antd'
 import { useServerWallet } from '@/hooks/useServerWallet'
 import { CHAIN_ICONS, getTokenIcon } from '@/config/tokenIcons'
@@ -150,12 +151,12 @@ export default observer(
       const { money, withdrawAddress, targetChain, targetToken } = values
 
       if (!tradeAccountId) {
-        message.error('请先选择交易账户')
+        toast.error(<Trans>请先选择交易账户</Trans>)
         return
       }
 
       if (!solanaWalletAddress) {
-        message.error('Solana 钱包未就绪，请稍后重试')
+        toast.error(<Trans>Solana 钱包未就绪，请稍后重试</Trans>)
         return
       }
 
@@ -216,7 +217,7 @@ export default observer(
               signature: result.txHash // 🔥 传递交易签名
             })
 
-            message.success(`提现成功！交易哈希: ${(result.txHash || '').slice(0, 12)}...`)
+            toast.success(<Trans>提现成功！交易哈希: {(result.txHash || '').slice(0, 12)}...</Trans>)
             close()
             form.resetFields()
             fetchUserInfo(true)
@@ -257,7 +258,7 @@ export default observer(
               signature: txHash || orderId // 🔥 优先使用交易哈希
             })
 
-            message.success(`跨链提现订单已创建！交易哈希: ${(txHash || orderId || '').slice(0, 12)}...`)
+            toast.success(<Trans>跨链提现订单已创建！交易哈希: {(txHash || orderId || '').slice(0, 12)}...</Trans>)
             close()
             form.resetFields()
             fetchUserInfo(true)
@@ -267,7 +268,7 @@ export default observer(
         }
       } catch (error: any) {
         console.error('[WithdrawModal] ❌ Withdraw error:', error)
-        message.error(error.message || '提现失败，请稍后重试')
+        toast.error(error.message || <Trans>提现失败，请稍后重试</Trans>)
       } finally {
         setSubmitLoading(false)
       }

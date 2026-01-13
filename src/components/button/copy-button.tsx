@@ -1,4 +1,5 @@
 // 'use client'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import { isUndefined } from 'lodash-es'
 import { useState } from 'react'
@@ -27,11 +28,11 @@ export const TextCopyButton = ({ text, className, ...props }: TextCopyButtonProp
 
             setIsCopied(true)
 
-            toast.success('Copy Successful!')
+            toast.success(<Trans>Copy Successful!</Trans>)
           } catch (error) {
             console.log(error)
 
-            toast.error('Copy Failed!')
+            toast.error(<Trans>Copy Failed!</Trans>)
           } finally {
             setTimeout(() => {
               setIsCopied(false)

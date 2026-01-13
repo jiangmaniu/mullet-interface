@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Modal, Input, Select, Button, message, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert, Tooltip } from 'antd'
+import { Modal, Input, Select, Button, QRCode, Typography, Space, Spin, Avatar, theme as antdTheme, Alert, Tooltip } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { CopyOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
@@ -368,7 +370,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
       // 🔥 Solana 直接充值，无需桥接
       if (normalizedChain === 'Solana') {
         console.log('[Bridge] Solana deposit detected, no bridge needed')
-        message.success('✅ Solana 充值已到账，无需跨链桥接')
+        toast.success(<Trans>✅ Solana 充值已到账，无需跨链桥接</Trans>)
         setBridgeStep('completed')
         // 🔥 不自动关闭弹窗，让用户手动点击"完成"按钮
         return
@@ -385,7 +387,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
         // Step 1: TRON → BSC
         setBridgeStep('tron-eth')
-        message.loading('步骤 1/2: 正在从 TRON 桥接到 BSC...', 0)
+        toast.loading(<Trans>步骤 1/2: 正在从 TRON 桥接到 BSC...</Trans>)
 
         const step1Response = await fetch(`${API_BASE_URL}/api/server-wallet-bridge/bridge-tron-to-bsc`, {
           method: 'POST',
@@ -410,20 +412,20 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
         const step1Result = await step1Response.json()
         console.log('[Bridge] ✅ TRON→BSC result:', step1Result)
-        message.success(`✅ TRON 交易成功: ${step1Result.txHash.slice(0, 8)}...`)
+        toast.success(<Trans>✅ TRON 交易成功: {step1Result.txHash.slice(0, 8)}...</Trans>)
 
         // 等待 TRON→BSC 完成
         if (step1Result.orderId) {
-          message.loading('等待 TRON → BSC 桥接完成 (约 3-5 分钟)...', 0)
+          toast.loading(<Trans>等待 TRON → BSC 桥接完成 (约 3-5 分钟)...</Trans>)
           await debridgeService.waitForOrderCompletion(step1Result.orderId, 600000, 15000)
         } else {
-          message.loading('等待 TRON → BSC 桥接完成 (约 3-5 分钟)...', 0)
+          toast.loading(<Trans>等待 TRON → BSC 桥接完成 (约 3-5 分钟)...</Trans>)
           await new Promise((resolve) => setTimeout(resolve, 180000)) // 3分钟
         }
 
         // Step 2: BSC → Solana
         setBridgeStep('eth-sol')
-        message.loading('步骤 2/2: 正在从 BSC 桥接到 Solana...', 0)
+        toast.loading(<Trans>步骤 2/2: 正在从 BSC 桥接到 Solana...</Trans>)
 
         // 使用第一步返回的 EVM 钱包信息
         const bscWalletId = step1Result.evmWalletId || evmWalletId
@@ -455,21 +457,21 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
 
         const step2Result = await step2Response.json()
         console.log('[Bridge] ✅ BSC→Solana result:', step2Result)
-        message.success(`✅ BSC 交易成功: ${step2Result.txHash.slice(0, 8)}...`)
+        toast.success(<Trans>✅ BSC 交易成功: {step2Result.txHash.slice(0, 8)}...</Trans>)
 
         // 等待最终确认
         if (step2Result.orderId) {
-          message.loading('等待 BSC → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          toast.loading(<Trans>等待 BSC → Solana 桥接完成 (约 2-3 分钟)...</Trans>)
           await debridgeService.waitForOrderCompletion(step2Result.orderId)
         } else {
-          message.loading('等待 BSC → Solana 桥接完成 (约 2-3 分钟)...', 0)
+          toast.loading(<Trans>等待 BSC → Solana 桥接完成 (约 2-3 分钟)...</Trans>)
           await new Promise((resolve) => setTimeout(resolve, 120000))
         }
       } else if (['Ethereum', 'BSC', 'Polygon', 'Arbitrum', 'Optimism', 'Base', 'Avalanche'].includes(normalizedChain)) {
         // 🔥 EVM → Solana: 调用后端 API 执行桥接
         console.log(`[Bridge] Direct: ${normalizedChain} → Solana (via backend)`)
         setBridgeStep('eth-sol')
-        message.loading(`正在从 ${normalizedChain} 桥接到 Solana...`, 0)
+        toast.loading(<Trans>正在从 {normalizedChain} 桥接到 Solana...</Trans>)
 
         // 调用后端 Server Wallet Bridge API
         const bridgeResponse = await fetch(`${API_BASE_URL}/api/server-wallet-bridge/bridge-to-solana`, {
@@ -496,25 +498,29 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
         const bridgeResult = await bridgeResponse.json()
         console.log('[Bridge] ✅ Backend bridge result:', bridgeResult)
 
-        message.success(`✅ ${normalizedChain} 交易成功: ${bridgeResult.txHash.slice(0, 8)}...`)
+        toast.success(
+          <Trans>
+            ✅ {normalizedChain} 交易成功: {bridgeResult.txHash.slice(0, 8)}...
+          </Trans>
+        )
         console.log(`[Bridge] ${normalizedChain} tx:`, bridgeResult.txHash)
         console.log('[Bridge] Order ID:', bridgeResult.orderId || 'NOT_AVAILABLE')
 
         // 等待最终确认（如果有 orderId）
         if (bridgeResult.orderId) {
-          message.loading(`等待 ${normalizedChain} → Solana 桥接完成 (约 2-3 分钟)...`, 0)
+          toast.loading(<Trans>等待 {normalizedChain} → Solana 桥接完成 (约 2-3 分钟)...</Trans>)
           await debridgeService.waitForOrderCompletion(bridgeResult.orderId)
           console.log(`[Bridge] ✅ waitForOrderCompletion completed for ${normalizedChain}→SOL`)
         } else {
           console.warn('[Bridge] ⚠️ No orderId, waiting 2 minutes for bridge to complete...')
-          message.loading(`等待 ${normalizedChain} → Solana 桥接完成 (约 2-3 分钟)...`, 0)
+          toast.loading(<Trans>等待 {normalizedChain} → Solana 桥接完成 (约 2-3 分钟)...</Trans>)
           await new Promise((resolve) => setTimeout(resolve, 120_000)) // 2 分钟
           console.log(`[Bridge] ✅ Manual wait completed for ${normalizedChain}→SOL`)
         }
       }
 
-      message.destroy()
-      message.success('🎉 跨链桥接全部完成!')
+      toast.dismiss()
+      toast.success(<Trans>🎉 跨链桥接全部完成!</Trans>)
       setBridgeStep('completed')
 
       // 延迟关闭，让用户看到完成状态
@@ -525,20 +531,20 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     } catch (error) {
       console.error('[Bridge] Failed:', error)
       const errorMessage = error instanceof Error ? error.message : '未知错误'
-      message.error(`桥接失败: ${errorMessage}`)
+      toast.error(<Trans>桥接失败: {errorMessage}</Trans>)
     } finally {
       setBridgeInProgress(false)
       if (bridgeStep !== 'completed') {
         setBridgeStep('idle')
       }
-      message.destroy()
+      toast.dismiss()
     }
   }
 
   // 复制地址
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(depositAddress)
-    message.success('Address copied!')
+    toast.success(<Trans>Address copied!</Trans>)
   }
 
   return (

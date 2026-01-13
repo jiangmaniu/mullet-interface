@@ -1,5 +1,6 @@
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { useWallets } from '@privy-io/react-auth'
 import { useSendTransaction } from '@privy-io/react-auth/solana'
 import { LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, TransactionSignature } from '@solana/web3.js'
@@ -59,7 +60,7 @@ export default function useSoLTransfer() {
 
   const onTransfer = async ({ toAddress, amount, onBeforeTransfer }: TransferProps) => {
     if (!connected || !wallet?.address || wallets.length === 0) {
-      message.info('Please connect wallet first')
+      toast.info(<Trans>Please connect wallet first</Trans>)
       return
     }
 
@@ -74,18 +75,18 @@ export default function useSoLTransfer() {
       console.log('balance: ', balance / LAMPORTS_PER_SOL)
 
       if (!toAddress) {
-        message.info(intl.formatMessage({ id: 'mt.zhuanruzhizhiweikong' }))
+        toast.info(<Trans>转入地址不能为空</Trans>)
         return
       }
 
       if (balance < lamports) {
-        message.info(intl.formatMessage({ id: 'mt.yuebuzu' }))
+        toast.info(<Trans>余额不足</Trans>)
         setError(true)
         return
       }
 
       if (fromAddress === toAddress) {
-        message.info(intl.formatMessage({ id: 'mt.zhuanruzhuanchudizhibunengxiangtong' }))
+        toast.info(<Trans>转入转出地址不能相同</Trans>)
         return
       }
 

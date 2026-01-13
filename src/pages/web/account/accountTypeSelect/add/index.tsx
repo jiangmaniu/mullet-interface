@@ -10,7 +10,8 @@ import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { useStores } from '@/context/mobxProvider'
 import { AddAccount } from '@/services/api/tradeCore/account'
 import { getAccountSynopsisByLng } from '@/utils/business'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { push } from '@/utils/navigator'
 import Header from '../../comp/Header'
 function AddAccountComp() {
@@ -81,7 +82,7 @@ function AddAccountComp() {
                 if (res.success) {
                   setTimeout(() => {
                     loadingRef?.current?.close()
-                    message.info(intl.formatMessage({ id: 'mt.chuangjianchanghuchenggong' }))
+                    toast.info(<Trans>创建账户成功</Trans>)
                     push(`/account?key=${searchKey}`)
                   }, 5000)
                 } else {

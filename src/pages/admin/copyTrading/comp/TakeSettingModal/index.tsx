@@ -8,7 +8,8 @@ import { useEffect, useRef } from 'react'
 import ProFormText from '@/components/Admin/Form/ProFormText'
 import { ModalLoading } from '@/components/Base/Lottie/Loading'
 import { setTradeFollowLeadSettings } from '@/services/api/tradeFollow/lead'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import { validateNonEmptyFields } from '@/utils/form'
 import { AvatarUpload } from '../../apply/AvatarUpload'
@@ -83,7 +84,7 @@ export default ({ info, trigger, open, onOpenChange, onConfirm }: IProps) => {
       .then((res) => {
         // form.setFieldsValue(formDefault) // 重置
         if (res.success) {
-          message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
+          toast.success(<Trans>操作成功</Trans>)
           onConfirm?.(values)
         }
       })

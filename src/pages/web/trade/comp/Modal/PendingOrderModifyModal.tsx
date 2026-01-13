@@ -11,7 +11,7 @@ import useTrade from '@/hooks/useTrade'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { RecordModalItem } from '@/mobx/trade'
 import { cn } from '@/utils/cn'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 
 import OrderPrice from '../BuyAndSell/comp/OrderItem/OrderPrice'
 import SetSpSl from '../BuyAndSell/comp/OrderItem/SetSpSl'
@@ -32,12 +32,12 @@ const ConfirmButton = observer(({ item, close }: { item: IPendingItem; close: ()
       const msg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
 
       if (slFlag) {
-        message.info(msg)
+        toast.info(msg)
         return
       }
 
       if (spFlag) {
-        message.info(msg)
+        toast.info(msg)
         return
       }
 

@@ -13,10 +13,10 @@ import {
   STORAGE_SET_PLATFORM_CONFIG,
   STORAGE_SET_USER_INFO
 } from '@/utils/storage'
-import { getIntl } from '@umijs/max'
-import { message } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
 import { action, makeAutoObservable, observable, reaction, runInAction } from 'mobx'
 import PLATFORM_DEFAULT_CONFIG from '../../public/platform/config.json'
+import { t } from '@/libs/lingui/react/macro'
 
 export type TabbarActiveKey = '/app/quote' | '/app/trade' | '/app/position' | '/app/user-center'
 
@@ -251,7 +251,7 @@ export class GlobalStore {
 
   init = async () => {
     await this.getPlatformConfig(() => {
-      message.info(getIntl().formatMessage({ id: 'common.huanjinpeizhiyichang' }))
+      toast.info(t`环境配置异常，请联系管理员`)
     })
 
     this.getRegisterWay()

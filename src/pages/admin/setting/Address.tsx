@@ -5,7 +5,8 @@ import { Segmented } from 'antd'
 import { useEffect, useRef, useState } from 'react'
 
 import { modifyWithdrawalAddress, modifyWithdrawalBank, removeWithdrawalAddress, removeWithdrawalBank } from '@/services/api/wallet'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import BankCard from './address/BankCard'
 import CryptoAddress from './address/CryptoAddress'
 import EditBankModal from './address/EditBankModal'
@@ -75,7 +76,7 @@ export default function Addresss() {
     if (values.id) {
       const res = await modifyWithdrawalBank({ id: values.id, remark: values.remark })
       if (res.success) {
-        message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+        toast.info(<Trans>操作成功</Trans>)
         cryptoAddressRef.current?.onQuery()
         modalRef.current?.close()
       }
@@ -89,7 +90,7 @@ export default function Addresss() {
         remark: values.remark
       })
       if (res.success) {
-        message.info(res.msg)
+        toast.info(res.msg)
         cryptoAddressRef.current?.onQuery()
         modalRef.current?.close()
       }
@@ -100,12 +101,12 @@ export default function Addresss() {
     removeWithdrawalAddress({ id: item.id })
       .then((res) => {
         if (res.success) {
-          message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          toast.info(<Trans>操作成功</Trans>)
           cryptoAddressRef.current?.onQuery()
         }
       })
       .catch((err) => {
-        message.info(err.message)
+        toast.info(err.message)
       })
   }
 
@@ -113,12 +114,12 @@ export default function Addresss() {
     removeWithdrawalBank({ id: item?.id?.toString() ?? '' })
       .then((res) => {
         if (res.success) {
-          message.info(getIntl().formatMessage({ id: 'mt.caozuochenggong' }))
+          toast.info(<Trans>操作成功</Trans>)
           bankCardRef.current?.onQuery()
         }
       })
       .catch((err) => {
-        message.info(err.message)
+        toast.info(err.message)
       })
   }
 

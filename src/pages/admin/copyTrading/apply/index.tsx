@@ -11,7 +11,8 @@ import { SOURCE_CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { addTraadeFollowLead } from '@/services/api/tradeFollow/lead'
 import { formatNum } from '@/utils'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import { getEnv } from '@/env'
 import { validateNonEmptyFields } from '@/utils/form'
@@ -137,11 +138,11 @@ export default function Apply() {
       .then((res) => {
         // form.setFieldsValue(formDefault) // 重置
         if (res.success) {
-          message.info(getIntl().formatMessage({ id: 'common.opSuccess' }))
+          toast.success(<Trans>操作成功</Trans>)
         }
       })
       .catch((error) => {
-        message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
+        toast.info(<Trans>操作失败</Trans>)
       })
     return false
   }

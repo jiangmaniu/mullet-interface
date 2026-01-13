@@ -7,7 +7,8 @@ import { gray } from 'tailwindcss/colors'
 import Button from '@/components/Base/Button'
 import Iconfont from '@/components/Base/Iconfont'
 import { tradeFollowListLeads } from '@/services/api/tradeFollow/lead'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 export default function AccountSelect({
   leadId,
@@ -61,7 +62,7 @@ export default function AccountSelect({
     const item = accountList.find((item) => item.leadId === key)
 
     if (!item) {
-      message.info('error')
+      toast.error(<Trans>错误</Trans>)
       return
     }
     setCurr(item)

@@ -10,7 +10,8 @@ import { CURRENCY } from '@/constants'
 import { getTradeFollowFollowerDetail, postTradeFollowFolloerSave } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { formatNum } from '@/utils'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import { validateNonEmptyFields } from '@/utils/form'
 import AccountSelector from './AccountSelector'
@@ -167,7 +168,7 @@ export default ({ leadId, trigger, open, onOpenChange, onConfirm, followerId, re
             followerId: res.data?.followerId
           })
         } else {
-          message.info(res.message || intl.formatMessage({ id: 'common.opFailed' }))
+          toast.info(res.message || <Trans>操作失败</Trans>)
         }
       })
       .finally(() => {

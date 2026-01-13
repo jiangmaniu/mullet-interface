@@ -13,8 +13,9 @@ import { useStores } from '@/context/mobxProvider'
 import { IOrder } from '@/models/takers'
 import { getTradeFollowFolloerManagementInProgress, postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
 import { colorTextPrimary } from '@/theme/theme.config'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import { push } from '@/utils/navigator'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import EndModal from '../../../copyTradingDetail/EndModal'
 import TradingSettingModal from '../../TradingSettingModal'
@@ -82,7 +83,7 @@ export default ({ active, toSquare }: { active: boolean; toSquare: VoidFunction 
     loadingRef.current?.show()
 
     if (!followerId) {
-      message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+      toast.info(<Trans>操作失败</Trans>)
       return
     }
 
@@ -92,7 +93,7 @@ export default ({ active, toSquare }: { active: boolean; toSquare: VoidFunction 
       })
         .then((res) => {
           if (res.success) {
-            message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+            toast.info(<Trans>操作成功</Trans>)
             // 刷新页面
             window.location.reload()
           }

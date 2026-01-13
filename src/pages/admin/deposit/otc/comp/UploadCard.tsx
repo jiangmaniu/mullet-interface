@@ -7,7 +7,8 @@ import { Image, Upload } from 'antd'
 import { useState } from 'react'
 
 import { getEnv } from '@/env'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { STORAGE_GET_USER_INFO } from '@/utils/storage'
 
 const { Dragger } = Upload
@@ -55,7 +56,7 @@ export default function ({ setImgs, imgs }: IProps) {
 
         setImgs([...imgs.slice(-2), data.name])
       } else if (status === 'error') {
-        message.info(`${info.file.name} file upload failed.`)
+        toast.info(<Trans>{info.file.name} 上传失败</Trans>)
       }
     },
     onDrop(e) {

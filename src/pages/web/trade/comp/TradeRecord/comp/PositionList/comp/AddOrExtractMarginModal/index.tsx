@@ -9,7 +9,8 @@ import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import { addMargin, extractMargin } from '@/services/api/tradeCore/order'
 import { formatNum, getPrecisionByNumber, toFixed } from '@/utils'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { calcForceClosePrice } from '@/utils/wsUtil'
 
 import { IPositionItem } from '../..'
@@ -64,7 +65,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps, ref: any) {
     : ''
 
   const handleSubmit = async () => {
-    if (!inputValue) return message.info(intl.formatMessage({ id: 'mt.qingshurubaozhengjin' }))
+    if (!inputValue) return toast.info(<Trans>请输入保证金</Trans>)
     const params = {
       [isAdd ? 'addMargin' : 'extractMargin']: inputValue,
       bagOrderId: info?.id // 持仓订单号
@@ -80,7 +81,7 @@ function AddOrExtractMarginModal({ trigger, info, onClose }: IProps, ref: any) {
       trade.getPositionList()
       // 刷新账户信息
       await fetchUserInfo(true)
-      message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+      toast.info(<Trans>操作成功</Trans>)
       close()
     }
   }

@@ -4,10 +4,11 @@ import { Base64 } from 'js-base64'
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import type { RequestOptions } from '@@/plugin-request/request'
 
+import { t } from '@/libs/lingui/react/macro'
 import { getAccessToken } from '@privy-io/react-auth'
+import { toast } from '@/libs/ui/components/toast'
 import { getLocaleForBackend } from './constants/enum'
 import { getEnv } from './env'
-import { message } from './utils/message'
 import { onLogout } from './utils/navigator'
 
 type IErrorInfo = {
@@ -75,7 +76,7 @@ export const errorConfig: RequestConfig = {
             return onLogout()
           } else {
             // 业务错误统一提示
-            errorMessage && !opts?.noMessage && message.info(errorMessage)
+            errorMessage && !opts?.noMessage && toast.info(errorMessage)
           }
         }
       } else if (error.response) {
@@ -108,15 +109,15 @@ export const errorConfig: RequestConfig = {
         }
         statusText = errorMessage || statusText
         if (status !== 401) {
-          statusText && message.info(statusText)
+          statusText && toast.info(statusText)
         }
       } else if (error.request) {
         // 请求已经成功发起，但没有收到响应
         // \`error.request\` 在浏览器中是 XMLHttpRequest 的实例，
         // 而在node.js中是 http.ClientRequest 的实例
-        message.info('None response! Please retry.')
+        toast.info(t`None response! Please retry.`)
       } else if (error.message?.startsWith('timeout')) {
-        message.info('Request Timeout')
+        toast.info(t`Request Timeout`)
       } else {
         // 发送请求时出了点问题
         // message.info('Request error, please retry.')

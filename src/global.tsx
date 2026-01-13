@@ -1,5 +1,7 @@
 import { useIntl } from '@umijs/max'
-import { Button, message, notification } from 'antd'
+import { Button, notification } from 'antd'
+import { Trans } from '@/libs/lingui/react/macro'
+import { toast } from '@/libs/ui/components/toast'
 import defaultSettings from '../config/defaultSettings'
 import '@/styles/index.css'
 
@@ -24,7 +26,7 @@ const clearCache = () => {
 if (pwa) {
   // Notify user if offline now
   window.addEventListener('sw.offline', () => {
-    message.warning(useIntl().formatMessage({ id: 'app.pwa.offline' }))
+    toast.warning(<Trans>当前处于离线状态</Trans>)
   })
 
   // Pop up a prompt on the page asking the user if they want to use the latest version
@@ -94,6 +96,6 @@ if (pwa) {
 // 全局请求环境配置
 
 // stores.global.getPlatformConfig(() => {
-//   message.info(getIntl().formatMessage({ id: 'common.huanjinpeizhiyichang' }))
+//   toast.info(<Trans>环境配置异常，请联系管理员</Trans>)
 // })
 // stores.global.getLottieLoadingData()

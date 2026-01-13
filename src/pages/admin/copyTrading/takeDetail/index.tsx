@@ -11,8 +11,9 @@ import { CURRENCY } from '@/constants'
 import { useStores } from '@/context/mobxProvider'
 import { getTradeFollowLeadDetail, tradeFollowLeadClose } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import { push } from '@/utils/navigator'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import AccountSelectFull from '../comp/AccountSelectFull'
 import { CardContainer } from '../comp/CardContainer'
@@ -386,11 +387,11 @@ export default function TakeDetail() {
             })
               .then((res) => {
                 if (res.success) {
-                  // message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+                  // toast.success(<Trans>操作成功</Trans>)
                   setOpenEnd(false)
                   setStatus('disabled')
                 } else {
-                  message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+                  toast.info(<Trans>操作失败</Trans>)
                 }
               })
               .finally(() => {

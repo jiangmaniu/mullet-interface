@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react'
 
 import Button from '@/components/Base/Button'
 import { submitSeniorAuth } from '@/services/api/crm/kycAuth'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import { getEnv } from '@/env'
 import useKycAuth from '@/hooks/useKycAuth'
@@ -47,7 +48,7 @@ export default function KycStepThreeForm({ onSuccess, onClose }: { onSuccess: ()
     const formData = form.getFieldsValue()
 
     if (!formData.authImgsUrl) {
-      return message.info(intl.formatMessage({ id: 'common.qingshangchuantupian' }))
+      return toast.info(<Trans>请上传图片</Trans>)
     }
 
     setSubmitLoading(true)
@@ -58,7 +59,7 @@ export default function KycStepThreeForm({ onSuccess, onClose }: { onSuccess: ()
     setSubmitLoading(false)
 
     if (res.success) {
-      message.info(intl.formatMessage({ id: 'mt.tijiaochenggong' }))
+      toast.info(<Trans>提交成功</Trans>)
 
       // 刷新用户信息
       await fetchUserInfo()

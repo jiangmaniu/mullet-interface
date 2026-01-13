@@ -11,7 +11,8 @@ import PwdTips from '@/components/PwdTips'
 import { useStores } from '@/context/mobxProvider'
 import { forgetPasswordEmail, forgetPasswordPhone } from '@/services/api/user'
 import { regEmail, regPassword } from '@/utils'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { goLogin } from '@/utils/navigator'
 
 import { validateNonEmptyFields } from '@/utils/form'
@@ -54,11 +55,11 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
     const values = form.getFieldsValue()
     // console.log('values', values)
     if (!values.emailOrPhone) {
-      message.info(intl.formatMessage({ id: 'common.qingshuru' }))
+      toast.info(<Trans>请输入</Trans>)
     }
     // 手机方式
     if (!values.phoneAreaCode && !isEmailTab) {
-      message.info(intl.formatMessage({ id: 'common.qingxuanzequhao' }))
+      toast.info(<Trans>请选择区号</Trans>)
     }
     const success = await validateCodeInputRef.current?.sendCode?.({
       emailOrPhone: values.emailOrPhone?.trim(),
@@ -185,10 +186,10 @@ function ResetPwd({ onBack, onConfirm, sendType }: IProps, ref: any) {
                   onClick={() => {
                     const checkSuccess = validateCodeInputRef.current.checkCodeInput()
                     if (!form.getFieldValue('validateCode')) {
-                      return message.info(intl.formatMessage({ id: 'mt.qingshuruyanzhengma' }))
+                      return toast.info(<Trans>请输入验证码</Trans>)
                     }
                     if (!checkSuccess) {
-                      return message.info(intl.formatMessage({ id: 'mt.qingshuruyanzhengma' }))
+                      return toast.info(<Trans>请输入验证码</Trans>)
                     }
                     // 第三步表单
                     setStep('THREE')

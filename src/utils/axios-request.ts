@@ -2,10 +2,11 @@ import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosR
 import { Base64 } from 'js-base64'
 
 import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
+import { t } from '@/libs/lingui/react/macro'
 import { getAccessToken } from '@privy-io/react-auth'
+import { toast } from '@/libs/ui/components/toast'
 import { getLocaleForBackend } from '@/constants/enum'
 import { getEnv } from '@/env'
-import { message } from '@/utils/message'
 import { onLogout } from '@/utils/navigator'
 
 // 错误信息类型
@@ -194,7 +195,7 @@ const handleError = (error: any, opts?: IAxiosRequestConfig): void => {
         return
       } else {
         // 业务错误统一提示
-        errorMessage && !opts?.noMessage && message.info(errorMessage)
+        errorMessage && !opts?.noMessage && toast.info(errorMessage)
       }
     }
   } else if (error.response) {
@@ -228,13 +229,13 @@ const handleError = (error: any, opts?: IAxiosRequestConfig): void => {
 
     statusText = errorMessage || statusText
     if (status !== 401) {
-      statusText && message.info(statusText)
+      statusText && toast.info(statusText)
     }
   } else if (error.request) {
     // 请求已经成功发起，但没有收到响应
-    message.info('None response! Please retry.')
+    toast.info(t`None response! Please retry.`)
   } else if (error.message?.startsWith('timeout')) {
-    message.info('Request Timeout')
+    toast.info(t`Request Timeout`)
   } else {
     // 发送请求时出了点问题
     // message.info('Request error, please retry.')
@@ -262,7 +263,10 @@ const checkBusinessError = (res: any): void => {
  * @param opts 请求配置
  * @returns Promise
  */
-export const request = <T = any>(url: string, opts: IAxiosRequestConfig = { method: 'GET' }): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
+export const request = <T = any>(
+  url: string,
+  opts: IAxiosRequestConfig = { method: 'GET' }
+): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
   return axiosInstance
     .request<T>({
       url,
@@ -309,7 +313,10 @@ export const request = <T = any>(url: string, opts: IAxiosRequestConfig = { meth
  * @param opts 请求配置
  * @returns Promise
  */
-export const get = <T = any>(url: string, opts?: Omit<IAxiosRequestConfig, 'method'>): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
+export const get = <T = any>(
+  url: string,
+  opts?: Omit<IAxiosRequestConfig, 'method'>
+): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
   return request<T>(url, { ...opts, method: 'GET' })
 }
 
@@ -320,7 +327,11 @@ export const get = <T = any>(url: string, opts?: Omit<IAxiosRequestConfig, 'meth
  * @param opts 请求配置
  * @returns Promise
  */
-export const post = <T = any>(url: string, data?: any, opts?: Omit<IAxiosRequestConfig, 'method' | 'data'>): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
+export const post = <T = any>(
+  url: string,
+  data?: any,
+  opts?: Omit<IAxiosRequestConfig, 'method' | 'data'>
+): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
   return request<T>(url, { ...opts, method: 'POST', data })
 }
 
@@ -331,7 +342,11 @@ export const post = <T = any>(url: string, data?: any, opts?: Omit<IAxiosRequest
  * @param opts 请求配置
  * @returns Promise
  */
-export const put = <T = any>(url: string, data?: any, opts?: Omit<IAxiosRequestConfig, 'method' | 'data'>): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
+export const put = <T = any>(
+  url: string,
+  data?: any,
+  opts?: Omit<IAxiosRequestConfig, 'method' | 'data'>
+): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
   return request<T>(url, { ...opts, method: 'PUT', data })
 }
 
@@ -341,7 +356,10 @@ export const put = <T = any>(url: string, data?: any, opts?: Omit<IAxiosRequestC
  * @param opts 请求配置
  * @returns Promise
  */
-export const del = <T = any>(url: string, opts?: Omit<IAxiosRequestConfig, 'method'>): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
+export const del = <T = any>(
+  url: string,
+  opts?: Omit<IAxiosRequestConfig, 'method'>
+): Promise<T & { success: boolean; message?: string; errorInfo?: any }> => {
   return request<T>(url, { ...opts, method: 'DELETE' })
 }
 
@@ -365,6 +383,3 @@ export const appendHideParamIfNeeded = (url: string): string => {
 export { axiosInstance }
 
 export default request
-
-
-

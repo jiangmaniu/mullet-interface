@@ -1,6 +1,7 @@
 import { useStores } from '@/context/mobxProvider'
 import { BNumber } from '@/utils/b-number'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { useSendTransaction, useStandardSignAndSendTransaction, useStandardSignTransaction } from '@privy-io/react-auth/solana'
 import { findAssociatedTokenPda, getTransferInstruction, TOKEN_2022_PROGRAM_ADDRESS } from '@solana-program/token-2022'
 import {
@@ -95,7 +96,7 @@ export function useSPLTransferPDA() {
     const fromTokenAccountAddress = fromAddress ? address(fromAddress) : undefined
 
     if (!connected || !fromTokenAccountAddress || !activeSolanaWallet) {
-      message.info('Please connect wallet first')
+      toast.info(<Trans>Please connect wallet first</Trans>)
       return
     }
 
@@ -108,18 +109,18 @@ export function useSPLTransferPDA() {
       console.log('balance: ', balance)
 
       if (!recipientAddress) {
-        message.info(intl.formatMessage({ id: 'mt.zhuanruzhizhiweikong' }))
+        toast.info(<Trans>转入地址不能为空</Trans>)
         return
       }
       // 检查代币余额
       if (balance.lt(transferAmount)) {
-        message.info(intl.formatMessage({ id: 'mt.yuebuzu' }))
+        toast.info(<Trans>余额不足</Trans>)
         setError(true)
         return
       }
 
       if (fromTokenAccountAddress === toAddress) {
-        message.info(intl.formatMessage({ id: 'mt.zhuanruzhuanchudizhibunengxiangtong' }))
+        toast.info(<Trans>转入转出地址不能相同</Trans>)
         return
       }
 

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
-import { message } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
 import { API_BASE_URL } from '@/constants/api'
+import { t } from '@/libs/lingui/react/macro'
 
 interface UseCoboDepositMonitorParams {
   depositAddress?: string // 充值地址（可选，用于过滤特定地址的充值）
@@ -232,7 +233,7 @@ export const useCoboDepositMonitor = ({
         }
 
         // 显示成功消息
-        message.success(`✅ 充值成功！${newest.destination.amount} ${newest.token_id}`)
+        toast.success(t(`✅ 充值成功！${newest.destination.amount} ${newest.token_id}`))
       }
 
       setError(null)

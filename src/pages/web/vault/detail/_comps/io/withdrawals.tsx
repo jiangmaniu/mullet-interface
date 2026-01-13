@@ -1,4 +1,5 @@
 import { NumberInput } from '@/components/input/number-input'
+import { Trans } from '@/libs/lingui/react/macro'
 import { NumberInputSourceType } from '@/components/input/number-input-primitive'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
@@ -77,18 +78,18 @@ export default function VaultDetailWithdrawals() {
           onSuccess: async (data) => {
             if (data?.success) {
               await fetchUserInfo()
-              toast.success('提取成功')
+              toast.success(<Trans>提取成功</Trans>)
               form.reset()
             }
           },
           onError: (error) => {
-            toast.error(error instanceof Error ? error.message : '提取失败')
+            toast.error(error instanceof Error ? error.message : <Trans>提取失败</Trans>)
           }
         }
       )
     } catch (error) {
       console.error(error)
-      toast.error(error instanceof Error ? error.message : '提取失败')
+      toast.error(error instanceof Error ? error.message : <Trans>提取失败</Trans>)
     }
   }
 

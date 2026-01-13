@@ -7,7 +7,8 @@ import { useStores } from '@/context/mobxProvider'
 import { ITradeTabsOrderType, RecordModalItem } from '@/mobx/trade'
 import { formatNum, getPrecisionByNumber, toFixed, toNegativeOrEmpty } from '@/utils'
 import { add } from '@/utils/float'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { t } from '@/libs/lingui/react/macro'
 import { calcExchangeRate } from '@/utils/wsUtil'
 import { useCurrentQuote } from './useCurrentQuote'
 import { BNumber } from '@/libs/utils/number'
@@ -585,8 +586,8 @@ export default function useTrade(props?: IProps) {
       !spValuePrice || Number(spValuePrice) === 0 || Number.isNaN(spValuePrice)
         ? false
         : isBuy
-          ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
-          : Number(spValuePrice) > sp_scope,
+        ? Number(spValuePrice) < sp_scope || Number(spValuePrice) < 0
+        : Number(spValuePrice) > sp_scope,
     [isBuy, spValuePrice, sp_scope]
   )
   const slFlag = useMemo(
@@ -594,8 +595,8 @@ export default function useTrade(props?: IProps) {
       !slValuePrice || Number(slValuePrice) === 0 || Number.isNaN(slValuePrice)
         ? false
         : isBuy
-          ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
-          : Number(slValuePrice) < sl_scope,
+        ? Number(slValuePrice) > sl_scope || Number(slValuePrice) < 0
+        : Number(slValuePrice) < sl_scope,
     [isBuy, slValuePrice, sl_scope]
   )
 
@@ -651,32 +652,32 @@ export default function useTrade(props?: IProps) {
   // 提交订单之前校验
   const onCheckSubmit = () => {
     if (!count) {
-      message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
+      toast.info(t`请输入手数`)
       onSubmitEnd()
       return false
     }
     if (!maxOpenVolumeRef.current) {
       onSubmitEnd()
-      message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
+      toast.info(t`当前账户余额不足`)
       return false
     }
     // 限价、停损单
     if (['LIMIT_ORDER', 'STOP_LIMIT_ORDER'].includes(orderType) && !orderPrice) {
       onSubmitEnd()
-      message.info(intl.formatMessage({ id: 'mt.qingshurujiage' }))
+      toast.info(t`请输入价格`)
       return false
     }
 
-    const spSlErrorMsg = intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' })
+    const spSlErrorMsg = t`止盈止损设置错误`
 
     if (slFlagRef.current && sl) {
       onSubmitEnd()
-      message.info(spSlErrorMsg)
+      toast.info(spSlErrorMsg)
       return false
     }
     if (spFlagRef.current && sp) {
       onSubmitEnd()
-      message.info(spSlErrorMsg)
+      toast.info(spSlErrorMsg)
       return false
     }
 
