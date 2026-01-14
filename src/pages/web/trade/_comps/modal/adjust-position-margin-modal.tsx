@@ -68,23 +68,23 @@ export const AdjustPositionMarginModal = observer((props: AdjustPositionMarginMo
               <Trans>调整保证金</Trans>
             </div>
           </ModalTitle>
-
-          <Tabs value={selectedTab} size={'md'} variant={'underline'} onValueChange={setSelectedTab}>
-            <TabsList>
-              {TABS_OPTIONS.map((option) => (
-                <TabsTrigger key={option.value} className="flex-1" value={option.value}>
-                  {option.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {TABS_OPTIONS.map((option) => (
-              <TabsContent key={option.value} value={option.value} className="mt-2xl">
-                {option.content}
-              </TabsContent>
-            ))}
-          </Tabs>
         </ModalHeader>
+
+        <Tabs value={selectedTab} size={'md'} variant={'underline'} onValueChange={setSelectedTab}>
+          <TabsList>
+            {TABS_OPTIONS.map((option) => (
+              <TabsTrigger key={option.value} className="flex-1" value={option.value}>
+                {option.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {TABS_OPTIONS.map((option) => (
+            <TabsContent key={option.value} value={option.value} className="mt-2xl">
+              {option.content}
+            </TabsContent>
+          ))}
+        </Tabs>
       </ModalContent>
     </Modal>
   )

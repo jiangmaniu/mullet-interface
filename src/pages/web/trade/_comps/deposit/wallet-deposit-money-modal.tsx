@@ -8,7 +8,7 @@ import { Copy } from 'lucide-react'
 
 import { Button } from '@/libs/ui/components/button'
 import { Modal, ModalContent, ModalHeader, ModalTitle, ModalTrigger, ModalClose, ModalFooter } from '@/libs/ui/components/modal'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/libs/ui/components/select'
+import { Select, SelectTrigger, SelectValue } from '@/libs/ui/components/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/ui/components/tabs'
 import { getTokenIcon, CHAIN_ICONS } from '@/config/tokenIcons'
 import { cn } from '@/libs/ui/lib/utils'
@@ -16,9 +16,12 @@ import { cn } from '@/libs/ui/lib/utils'
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
 import { useMemo } from 'react'
 import { NumberInput } from '@/components/input/number-input'
-import { Iconify, IconSpecialIconLoader } from '@/libs/ui/components/icons'
+import { IconCodexLoader, IconFail, Iconify, IconSpecialIconLoader } from '@/libs/ui/components/icons'
 import { Separator } from '@/libs/ui/components/separator'
 import { AlertTitle, Alert } from '@/libs/ui/components/alert'
+import { RichSelectContent, RichSelectItem, RichSelectTrigger } from '@/libs/ui/components/rich-select'
+import { GeneralTooltip } from '@/components/tooltip'
+import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 
 export const MOCK_DEPOSIT_ADDRESSES: Record<string, string> = {
   Tron: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
@@ -35,22 +38,22 @@ export type DepositModalProps = {
   children?: React.ReactNode
 }
 
-export const WalletDepositModal = ({ isOpen, onClose, children }: DepositModalProps) => {
+export const WalletDepositMoneyModal = ({ isOpen, onClose, children }: DepositModalProps) => {
   const [activeTab, setActiveTab] = useState('deposit')
 
   const TABS_OPTIONS = [
     {
-      label: <Trans>跨链转账</Trans>,
+      label: <Trans>钱包资产入金</Trans>,
       value: 'deposit',
-      content: <DepositTabContent />
-    },
-    {
-      label: <Trans>资产兑换</Trans>,
-      value: 'exchange',
       content: <ExchangeTabContent />
     },
     {
-      label: <Trans>信用卡购买</Trans>,
+      label: <Trans>加密货币入金</Trans>,
+      value: 'exchange',
+      content: <DepositTabContent />
+    },
+    {
+      label: <Trans>信用卡买币</Trans>,
       value: 'buy',
       content: <BuyTabContent />
     }
@@ -60,33 +63,30 @@ export const WalletDepositModal = ({ isOpen, onClose, children }: DepositModalPr
     <Modal open={isOpen} onOpenChange={(open) => !open && onClose?.()}>
       {children && <ModalTrigger asChild>{children}</ModalTrigger>}
 
-      <ModalContent
-        onInteractOutside={(event) => event.preventDefault()}
-        className="flex min-h-[260px] w-full max-w-[360px] min-w-[360px] gap-2xl"
-      >
+      <ModalContent onInteractOutside={(event) => event.preventDefault()} className="flex min-h-[260px] w-full max-w-[360px] min-w-[360px]">
         <ModalHeader className="w-full">
           <ModalTitle className="flex items-center justify-between gap-3">
             <div className={cn('')}>
               <Trans>存款</Trans>
             </div>
           </ModalTitle>
-
-          <Tabs value={activeTab} size={'md'} variant={'underline'} onValueChange={setActiveTab}>
-            <TabsList>
-              {TABS_OPTIONS.map((option) => (
-                <TabsTrigger key={option.value} value={option.value} className="flex-1 [&>div]:p-0 [&>div]:py-xl">
-                  {option.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-
-            {TABS_OPTIONS.map((option) => (
-              <TabsContent key={option.value} value={option.value} className="mt-2xl">
-                {option.content}
-              </TabsContent>
-            ))}
-          </Tabs>
         </ModalHeader>
+
+        <Tabs value={activeTab} size={'md'} variant={'underline'} onValueChange={setActiveTab}>
+          <TabsList>
+            {TABS_OPTIONS.map((option) => (
+              <TabsTrigger key={option.value} value={option.value} className="flex-1 [&>div]:p-0 [&>div]:py-xl">
+                {option.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+
+          {TABS_OPTIONS.map((option) => (
+            <TabsContent key={option.value} value={option.value} className="mt-2xl">
+              {option.content}
+            </TabsContent>
+          ))}
+        </Tabs>
       </ModalContent>
     </Modal>
   )
@@ -134,77 +134,71 @@ const DepositTabContent = () => {
   return (
     <div className="flex flex-col gap-2xl flex-1">
       <div className="flex flex-col relative">
-        <div className="text-xs text-zinc-200 mb-1 absolute left-3 top-[-8px] bg-background px-1 z-10">
-          <Trans>选择币种</Trans>
-        </div>
         <Select value={selectedAsset} onValueChange={(val) => setSelectedAsset(val)}>
-          <SelectTrigger className="w-full h-11 bg-background border-border rounded-xl">
-            <SelectValue placeholder="Select Asset">
-              <div className="flex items-center gap-2">
+          <RichSelectTrigger label={<Trans>选择币种</Trans>} className="w-full h-11">
+            <SelectValue>
+              <div className="flex items-center gap-medium">
                 <img
                   src={getTokenIcon(selectedAsset)}
                   alt={selectedAsset}
-                  className="w-5 h-5 rounded-full object-contain bg-white"
+                  className="w-4 h-4 rounded-full object-contain"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none'
                   }}
                 />
-                <span className="font-medium text-sm">{selectedAsset}</span>
+                <span className="text-paragraph-p2">{selectedAsset}</span>
               </div>
             </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
+          </RichSelectTrigger>
+          <RichSelectContent position="popper">
             {uniqueAssets.map((asset) => (
-              <SelectItem key={asset.symbol} value={asset.symbol} className="py-2.5">
-                <div className="flex items-center gap-2">
+              <RichSelectItem key={asset.symbol} value={asset.symbol} className="py-small">
+                <div className="flex items-center gap-medium">
                   <img
                     src={getTokenIcon(asset.symbol)}
                     alt={asset.symbol}
-                    className="w-5 h-5 rounded-full object-contain bg-white"
+                    className="w-4 h-4 rounded-full object-contain bg-white"
                     onError={(e) => {
                       e.currentTarget.style.display = 'none'
                     }}
                   />
-                  <span className="font-medium text-sm">{asset.symbol}</span>
+                  <span className="text-paragraph-p2">{asset.symbol}</span>
                 </div>
-              </SelectItem>
+              </RichSelectItem>
             ))}
-          </SelectContent>
+          </RichSelectContent>
         </Select>
       </div>
 
       <div className="flex flex-col relative">
-        <div className="text-xs text-zinc-200 mb-1 absolute left-3 top-[-8px] bg-background px-1 z-10">
-          <Trans>选择网络</Trans>
-        </div>
         <Select value={selectedNetwork} onValueChange={(val) => setSelectedNetwork(val)}>
-          <SelectTrigger className="w-full h-11 bg-background border-border rounded-xl">
-            <SelectValue placeholder="Select Network">
+          <RichSelectTrigger label={<Trans>选择网络</Trans>} className="w-full h-11">
+            <SelectValue>
               <div className="flex items-center gap-2">
                 {CHAIN_ICONS[selectedNetwork] && (
-                  <img src={CHAIN_ICONS[selectedNetwork]} alt={selectedNetwork} className="w-5 h-5 rounded-full object-contain" />
+                  <img src={CHAIN_ICONS[selectedNetwork]} alt={selectedNetwork} className="w-4 h-4 rounded-full object-contain" />
                 )}
-                <span className="font-medium text-sm">{selectedNetwork}</span>
+                <span className="text-paragraph-p2">{selectedNetwork}</span>
               </div>
             </SelectValue>
-          </SelectTrigger>
-          <SelectContent>
+          </RichSelectTrigger>
+          <RichSelectContent position="popper">
             {availableNetworks.map((net) => (
-              <SelectItem key={net.displayName} value={net.displayName} className="py-2.5">
-                <div className="flex items-center gap-2">
+              <RichSelectItem key={net.displayName} value={net.displayName} className="py-small">
+                <div className="flex items-center gap-medium">
                   {CHAIN_ICONS[net.displayName] && (
-                    <img src={CHAIN_ICONS[net.displayName]} alt={net.displayName} className="w-5 h-5 rounded-full object-contain" />
+                    <img src={CHAIN_ICONS[net.displayName]} alt={net.displayName} className="w-4 h-4 rounded-full object-contain" />
                   )}
-                  <span className="font-medium text-sm">{net.displayName}</span>
+                  <span className="text-paragraph-p2">{net.displayName}</span>
                 </div>
-              </SelectItem>
+              </RichSelectItem>
             ))}
-          </SelectContent>
+          </RichSelectContent>
         </Select>
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-sm text-zinc-200">
+        <div className="text-sm text-content-4">
           <Trans>存款地址</Trans>
         </div>
 
@@ -218,7 +212,7 @@ const DepositTabContent = () => {
             onClick={handleCopy}
           >
             <div className="font-mono text-xs text-foreground break-all line-clamp-2 flex-1">{depositAddress}</div>
-            <div className="shrink-0 text-zinc-200 group-hover:text-primary transition-colors">
+            <div className="shrink-0 text-content-4 group-hover:text-primary transition-colors">
               <Copy size={14} className="text-zinc-300" />
             </div>
           </div>
@@ -232,18 +226,22 @@ const DepositTabContent = () => {
         </AlertTitle>
       </Alert>
 
-      <div className="flex items-center text-xs text-zinc-200 px-1 gap-9 leading-4">
+      <div className="flex items-center text-xs text-content-4 px-1 gap-9 leading-4">
         <div className="flex flex-1 justify-between">
-          <span>
-            <Trans>预估滑点</Trans>
-          </span>
+          <GeneralTooltip content={<Trans>预估滑点</Trans>}>
+            <TooltipTriggerDottedText>
+              <Trans>预估滑点</Trans>
+            </TooltipTriggerDottedText>
+          </GeneralTooltip>
           <span className="text-foreground ml-2">0.00 USDC</span>
         </div>
 
         <div className="flex flex-1 justify-between">
-          <span>
-            <Trans>交易费用</Trans>
-          </span>
+          <GeneralTooltip content={<Trans>交易费用</Trans>}>
+            <TooltipTriggerDottedText>
+              <Trans>交易费用</Trans>
+            </TooltipTriggerDottedText>
+          </GeneralTooltip>
           <span className="text-foreground ml-2">0.00 USDC</span>
         </div>
       </div>
@@ -328,10 +326,14 @@ const ExchangeTabContent = () => {
               </SelectValue>
             </SelectTrigger>
 
-            <SelectContent align="end" className="w-[328px]">
+            <RichSelectContent position="popper" align="end" className="w-[328px]">
               {allTokenOptions.map((option) => (
-                <SelectItem key={`${option.chainName}:${option.symbol}`} value={`${option.chainName}:${option.symbol}`} className="py-2.5">
-                  <div className="flex items-center gap-3">
+                <RichSelectItem
+                  key={`${option.chainName}:${option.symbol}`}
+                  value={`${option.chainName}:${option.symbol}`}
+                  className="py-2.5"
+                >
+                  <div className="flex items-center gap-2">
                     <div className="relative">
                       <img
                         src={getTokenIcon(option.symbol)}
@@ -349,19 +351,25 @@ const ExchangeTabContent = () => {
                         />
                       )}
                     </div>
-                    <div className="flex flex-col gap-0.5 text-left">
-                      <span className="font-medium text-sm leading-none">{option.symbol}</span>
-                      <span className="text-[10px] text-zinc-200 leading-none">{option.chainName}</span>
+                    <div className="flex flex-col flex-1 justify-center">
+                      <div className="flex items-center justify-between">
+                        <span className="text-paragraph-p2 text-content-1">{option.symbol}</span>
+                        <span className="text-paragraph-p2 tex  t-content-1">19253.00000 USDC</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-paragraph-p3 text-content-4">{option.chainName}</span>
+                        <span className="text-paragraph-p3 text-content-4">US$19253.00000</span>
+                      </div>
                     </div>
                   </div>
-                </SelectItem>
+                </RichSelectItem>
               ))}
-            </SelectContent>
+            </RichSelectContent>
           </Select>
         </div>
 
         <div className="text-xs flex justify-end gap-1">
-          <span className="text-zinc-200">0.000000 {payState.symbol}</span>
+          <span className="text-content-4">0.000000 {payState.symbol}</span>
           <span className="text-white">最大</span>
         </div>
       </div>
@@ -393,18 +401,22 @@ const ExchangeTabContent = () => {
       </Alert>
 
       {/* Fees */}
-      <div className="flex items-center text-xs text-zinc-200 px-1 gap-9 leading-4 my-2xl">
+      <div className="flex items-center text-xs text-content-4 px-1 gap-9 leading-4 my-2xl">
         <div className="flex flex-1 justify-between">
-          <span>
-            <Trans>预估滑点</Trans>
-          </span>
+          <GeneralTooltip content={<Trans>预估滑点</Trans>}>
+            <TooltipTriggerDottedText>
+              <Trans>预估滑点</Trans>
+            </TooltipTriggerDottedText>
+          </GeneralTooltip>
           <span className="text-foreground ml-2">0.00 USDC</span>
         </div>
 
         <div className="flex flex-1 justify-between">
-          <span>
-            <Trans>交易费用</Trans>
-          </span>
+          <GeneralTooltip content={<Trans>交易费用</Trans>}>
+            <TooltipTriggerDottedText>
+              <Trans>交易费用</Trans>
+            </TooltipTriggerDottedText>
+          </GeneralTooltip>
           <span className="text-foreground ml-2">0.00 USDC</span>
         </div>
       </div>
@@ -424,6 +436,36 @@ const BuyTabContent = () => {
   return (
     <div className="flex items-center justify-center py-4xl">
       <IconSpecialIconLoader />
+    </div>
+  )
+}
+
+const ExchangeLoading = () => {
+  return (
+    <div className="flex flex-col items-center justify-center pt-4xl pb-3xl gap-2.5">
+      <img src={getTokenIcon('USDC')} alt="USDC" className="w-[50px] h-[50px] rounded-full bg-white object-contain" />
+      <div className="flex items-center gap-xs">
+        <IconCodexLoader className=" animate-spin" />
+        <span className="text-paragraph-p2">
+          <Trans>正在兑换USDC...</Trans>
+        </span>
+      </div>
+    </div>
+  )
+}
+
+const ExchangeError = () => {
+  return (
+    <div className="flex-col gap-2xl">
+      <div className="flex flex-col items-center justify-center py-4xl gap-2.5">
+        <IconFail width={50} height={50} />
+        <span className="text-paragraph-p2">
+          <Trans>USDC兑换失败</Trans>
+        </span>
+      </div>
+      <Button block color="primary" size="lg">
+        <Trans>重新兑换</Trans>
+      </Button>
     </div>
   )
 }
