@@ -25,13 +25,13 @@ export const RichSelectTrigger = React.forwardRef<React.ElementRef<typeof Select
         {label && (
           <label
             className={cn(
-              'text-paragraph-p2 text-content-5 pointer-events-none absolute left-3 transition-all duration-200 ease-out',
+              'text-paragraph-p3 text-content-4 pointer-events-none absolute left-3 transition-all duration-200 ease-out',
               'top-1/2 -translate-y-1/2 origin-left', // Default center
               // Trigger states for floating
               'bg-background px-1', // Add background and padding for masking
-              'group-data-[state=open]:!top-0 group-data-[state=open]:-translate-y-1/2 group-data-[state=open]:scale-75 group-data-[state=open]:!text-paragraph-p3 group-data-[state=open]:!text-content-5',
+              'group-data-[state=open]:!top-0 group-data-[state=open]:-translate-y-1/2',
               // Float if not placeholder (has value)
-              'group-[&:not([data-placeholder])]:!top-0 group-[&:not([data-placeholder])]:-translate-y-1/2 group-[&:not([data-placeholder])]:scale-75'
+              'group-[&:not([data-placeholder])]:!top-0 group-[&:not([data-placeholder])]:-translate-y-1/2'
             )}
           >
             {label}
