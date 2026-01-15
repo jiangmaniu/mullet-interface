@@ -1,7 +1,6 @@
 import { cloneDeep, merge } from 'lodash'
 import colors from 'tailwindcss/colors'
 
-import { extendColors, themeColorsMobile } from '../pages/webapp/theme/colors'
 import { blue, orange, zinc, getTailwindCssVarColor, gray, green, lightTheme, red, yellow } from './theme.config'
 import { NewThemeBackdropBlur, NewThemeBackgroundColor, NewThemeBorderColor, NewThemeBoxShadow, NewThemeColor, NewThemeFontSize, NewThemeRadius, NewThemeSpacing, NewThemeTextColor } from './theme.new'
 
@@ -104,8 +103,6 @@ export default {
   colors: {
     // =========== 颜色覆盖 ==============
     ...merge(
-      cloneDeep(themeColorsMobile), //h5主题变量
-      // pc主题变量
       cloneDeep({
         // 品牌主色
         brand: {
@@ -153,12 +150,10 @@ export default {
     // ======== 使用css变量，方便切换主题，使用方法：text-primary ==============
     // 主题文字变量
     textColor: {
-      ...extendColors.textColor,
       ...NewThemeTextColor
     }, //包含了pc和h5的同名css变量，通过切换class变化变量
     // 主题背景颜色变量
     backgroundColor: merge({
-      ...extendColors.backgroundColor,
       'primary': 'var(--bg-primary)',
       'secondary': 'rgb(var(--color-zinc-55))',
       'transparent': 'transparent',
@@ -170,9 +165,6 @@ export default {
     borderColor: merge({
       // pc主题变量
       ...themeColor,
-      // h5主题变量
-      ...extendColors.borderColor
-
     }, NewThemeBorderColor),
     outlineColor: {
       'ring': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',

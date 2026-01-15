@@ -3,8 +3,6 @@ import { ClassValue } from 'clsx'
 import { merge } from 'lodash'
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
-import { mobileLightTheme } from '@/pages/webapp/theme/theme.config'
-import { mobileDarkTheme } from '@/pages/webapp/theme/theme.config.dark'
 import themeColor from '@/theme/theme.antd'
 import themeDarkColor from '@/theme/theme.antd.dark'
 import { showInsetEffect } from '@/utils/antdWave'
@@ -27,7 +25,7 @@ interface IThemeContextProps {
     /**antd主题变量 */
     themeToken: typeof themeColor
     /** 主题颜色 */
-    colors: typeof mobileLightTheme
+    colors: typeof themeColor
     /** 0绿涨红跌 1 红涨绿跌 */
     direction: IDirection
     /** 涨 颜色 */
@@ -65,9 +63,8 @@ export const ThemeProvider = ({ children }: IProps): JSX.Element => {
 
   const theme = useMemo(() => {
     const themeToken = mode === 'dark' ? themeDarkColor : themeColor // antd主题色
-    const mobileColors = mode === 'dark' ? mobileDarkTheme : mobileLightTheme // mobile主题色
     // pc端合并antd主题色和mobile主题色，否则取值报错
-    const colors = isPc ? merge(mobileColors, themeToken) : mobileColors
+    const colors = themeToken
 
     return {
       themeToken, // antd主题色

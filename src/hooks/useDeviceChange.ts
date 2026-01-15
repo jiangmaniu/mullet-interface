@@ -1,5 +1,4 @@
 import { MOBILE_HOME_PAGE, MOBILE_LOGIN_PAGE, WEB_HOME_PAGE, WEB_LOGIN_PAGE } from '@/constants'
-import { navigateTo } from '@/pages/webapp/utils/navigator'
 import { isInStandaloneMode } from '@/utils/device'
 import mitt from '@/utils/mitt'
 import { getPathname } from '@/utils/navigator'
@@ -58,7 +57,6 @@ export const useDeviceChange = () => {
     // 切换k线分辨率周期，PC端15分钟，移动端1分钟
     STORAGE_SET_TRADINGVIEW_RESOLUTION(currentDeviceType === 'PC' ? '15' : '1')
 
-    navigateTo(page, searchParams)
   }
 
   /** 检查设备类型，如果设备类型发生变化，则跳转到对应的页面 */

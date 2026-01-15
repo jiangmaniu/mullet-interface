@@ -21,8 +21,6 @@ import { useLang } from './context/languageProvider'
 import { stores } from './context/mobxProvider'
 import { useTheme } from './context/themeProvider'
 import { getEnv } from './env'
-import { mobileCssVars } from './pages/webapp/theme/colors'
-import { handleJumpMobile } from './pages/webapp/utils/navigator'
 import { errorConfig } from './requestErrorConfig'
 import { isPC } from './utils'
 import { seriesLoadScripts } from './utils/loadScript'
@@ -329,8 +327,6 @@ export function onRouteChange({ location, clientRoutes, routes, action, basename
   //   push('/user/login')
   // }
 
-  handleJumpMobile()
-
   beforeCaptureSetUserInfo()
 }
 
@@ -350,7 +346,6 @@ export const rootContainer = (container: JSX.Element) => {
         <Helmet>
           {/* 注入css变量 */}
           <style>{pcCssVars}</style>
-          <style>{mobileCssVars}</style>
           {/* 需要设置一次地址，否则不使用Layout的情况下，iconfont图标使用不显示 */}
           <script async={true} src={ICONFONT_URL}></script>
           <script async={true} src={CONFIG_URL}></script>
