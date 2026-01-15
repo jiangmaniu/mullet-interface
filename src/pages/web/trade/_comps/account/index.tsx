@@ -22,7 +22,6 @@ export const AccountDetails = observer(() => {
   // 没有行情取当前账号余额展示
   const balance = hasQuote ? trade.accountBalanceInfo.balance : trade.currentAccountInfo.money
 
-  const { availableMargin } = trade.getAccountBalance()
   const [count, setCount] = useState(0)
 
   // 提现 Modal ref
@@ -74,9 +73,11 @@ export const AccountDetails = observer(() => {
           </TooltipTriggerDottedText>
         </GeneralTooltip>
       ),
-      value: BNumber.toFormatNumber(occupyMargin, {
+      value: BNumber.toFormatNumber(trade.accountBalanceInfo.totalProfit, {
         unit: currencyUnit,
-        volScale: currencyDecimal
+        volScale: currencyDecimal,
+        positive: false,
+        forceSign: true
       })
     },
     {
@@ -89,7 +90,7 @@ export const AccountDetails = observer(() => {
       ),
       value: (
         <div key={count}>
-          {BNumber.toFormatNumber(availableMargin, {
+          {BNumber.toFormatNumber(occupyMargin, {
             unit: currencyUnit,
             volScale: currencyDecimal
           })}
