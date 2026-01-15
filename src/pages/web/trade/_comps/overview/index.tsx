@@ -40,7 +40,7 @@ const CurrentPrice = observer(() => {
           'text-market-fall': !isPriceChangePositive
         })}
       >
-        {BNumber.toFormatNumber(res?.bid, { volScale: trade.activeSymbolInfo.symbolDecimal })}
+        {BNumber.toFormatNumber(res?.ask, { volScale: trade.activeSymbolInfo.symbolDecimal })}
       </div>
 
       {!isMarketOpen && (
