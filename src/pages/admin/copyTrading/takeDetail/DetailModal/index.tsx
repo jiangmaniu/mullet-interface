@@ -3,7 +3,9 @@ import './style.less'
 import { LeftOutlined } from '@ant-design/icons'
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, getIntl, useIntl } from '@umijs/max'
-import { Form, Radio, message } from 'antd'
+import { Form, Radio } from 'antd'
+import { Trans } from '@/libs/lingui/react/macro'
+import { toast } from '@/libs/ui/components/toast'
 import dayjs from 'dayjs'
 import { Key, useEffect, useMemo, useState } from 'react'
 
@@ -98,7 +100,7 @@ export default ({
           }
         })
         .catch((error) => {
-          message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
+          toast.info(<Trans>操作失败</Trans>)
         })
   }, [info.leadId, open, endDatetime, state.time])
 
@@ -126,7 +128,7 @@ export default ({
         // setDetails(item.details)
       })
       .catch((error) => {
-        message.info(getIntl().formatMessage({ id: 'common.opFailed' }))
+        toast.info(<Trans>操作失败</Trans>)
       })
   }
 
@@ -155,7 +157,7 @@ export default ({
       onFinish={async (values) => {
         await waitTime(2000)
         console.log(values.name)
-        message.success('提交成功')
+        toast.success(<Trans>提交成功</Trans>)
         return true
       }}
       submitter={{

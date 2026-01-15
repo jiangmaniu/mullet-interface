@@ -12,7 +12,8 @@ import { getEnv } from '@/env'
 import { forgetPasswordEmail, forgetPasswordPhone, sendEmailCode, sendPhoneCode } from '@/services/api/user'
 import { regPassword } from '@/utils'
 import { validateNonEmptyFields } from '@/utils/form'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { goKefu, onLogout, push } from '@/utils/navigator'
 import { md5 } from 'js-md5'
 
@@ -78,7 +79,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
         const { newPassword, confirmNewPassword, validateCode } = values
 
         if (newPassword !== confirmNewPassword) {
-          message.info(intl.formatMessage({ id: 'mt.xinmimashurubuyizhi' }))
+          toast.info(<Trans>新密码输入不一致</Trans>)
           return
         }
 
@@ -94,7 +95,7 @@ export default function ModifyPasswordModal({ trigger }: IProps) {
         const success = res.success
 
         if (success) {
-          message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+          toast.info(<Trans>操作成功</Trans>)
 
           setTimeout(() => {
             push('/user/login')

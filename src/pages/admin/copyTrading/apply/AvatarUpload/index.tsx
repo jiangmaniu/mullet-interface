@@ -1,23 +1,25 @@
 import { LoadingOutlined } from '@ant-design/icons'
 import { getIntl } from '@umijs/max'
 import { useHover } from 'ahooks'
-import { GetProp, message, Upload, UploadProps } from 'antd'
+import { GetProp, Upload, UploadProps } from 'antd'
 import classNames from 'classnames'
 import { useRef, useState } from 'react'
 
 import Iconfont from '@/components/Base/Iconfont'
 import { upload } from '@/components/Base/IconUpload/upload'
+import { Trans } from '@/libs/lingui/react/macro'
+import { toast } from '@/libs/ui/components/toast'
 
 type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0]
 
 const beforeUpload = (file: FileType) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
   if (!isJpgOrPng) {
-    message.error('You can only upload JPG/PNG file!')
+    toast.error(<Trans>You can only upload JPG/PNG file!</Trans>)
   }
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
-    message.error('Image must smaller than 2MB!')
+    toast.error(<Trans>Image must smaller than 2MB!</Trans>)
   }
   return isJpgOrPng && isLt2M
 }
@@ -64,10 +66,10 @@ export const AvatarUpload = ({
         setImageUrl(res.data.link)
         onChange?.(res.data)
       } else {
-        message.info(getIntl().formatMessage({ id: 'common.shangchuanshibai' }))
+        toast.info(<Trans>上传失败</Trans>)
       }
     } catch (error: any) {
-      message.info(error?.message)
+      toast.info(error?.message)
 
       // setFileUrl('')
       // setFileName('')

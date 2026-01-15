@@ -12,8 +12,9 @@ import { IOrderTakerState } from '@/models/takers'
 import { getTradeFollowFollowerDetail, postTradeFollowFolloerClose } from '@/services/api/tradeFollow/follower'
 import { getTradeFollowLeadDetail } from '@/services/api/tradeFollow/lead'
 import { colorTextPrimary } from '@/theme/theme.config'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import { push } from '@/utils/navigator'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import AccountSelectFull from '../comp/AccountSelectFull'
 import { CardContainer } from '../comp/CardContainer'
@@ -166,7 +167,7 @@ export default function copyTradingDetail() {
     loadingRef.current?.show()
 
     if (!followerId) {
-      message.info(intl.formatMessage({ id: 'mt.caozuoshibai' }))
+      toast.info(<Trans>操作失败</Trans>)
       return
     }
 
@@ -176,7 +177,7 @@ export default function copyTradingDetail() {
       })
         .then((res) => {
           if (res.success) {
-            message.info(intl.formatMessage({ id: 'mt.caozuochenggong' }))
+            toast.info(<Trans>操作成功</Trans>)
             // 刷新页面
             window.location.reload()
           }

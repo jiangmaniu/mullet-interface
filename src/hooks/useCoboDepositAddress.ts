@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
-import { message } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
 import { API_BASE_URL } from '@/constants/api'
 import { getCachedDepositAddress, setCachedDepositAddress } from '@/services/coboPreloadService'
+import { t } from '@/libs/lingui/react/macro'
 
 interface UseCoboDepositAddressParams {
   userId?: string // 可选，兼容旧代码
@@ -83,13 +84,13 @@ export const useCoboDepositAddress = ({ userId, tradeAccountId, chainId, walletI
         })
 
         if (addressData.isNew) {
-          message.success(`新充值地址已创建: ${chainId}`)
+          toast.success(t(`新充值地址已创建: ${chainId}`))
         }
       } catch (err: any) {
         const errorMsg = err.message || 'Failed to fetch deposit address'
         setError(errorMsg)
         console.error('[Cobo] Error fetching deposit address:', err)
-        message.error(`获取Cobo充值地址失败: ${errorMsg}`)
+        toast.error(t(`获取Cobo充值地址失败: ${errorMsg}`))
       } finally {
         setIsLoading(false)
       }

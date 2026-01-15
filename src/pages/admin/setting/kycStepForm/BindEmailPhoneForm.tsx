@@ -11,7 +11,8 @@ import ValidateCodeInput from '@/components/Form/ValidateCodeInput'
 import { submitKycAuth } from '@/services/api/crm/kycAuth'
 import { bindEmail, bindPhone } from '@/services/api/user'
 import { validateNonEmptyFields } from '@/utils/form'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { goKefu } from '@/utils/navigator'
 
 export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
@@ -76,7 +77,7 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
     console.log('formData', formData)
 
     if (!formData.authImgsUrl) {
-      return message.info(intl.formatMessage({ id: 'common.qingshangchuantupian' }))
+      return toast.info(<Trans>请上传图片</Trans>)
     }
 
     const params = {
@@ -94,7 +95,7 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
     setSubmitLoading(false)
 
     if (res.success) {
-      message.info(intl.formatMessage({ id: 'mt.tijiaochenggong' }))
+      toast.info(<Trans>提交成功</Trans>)
 
       // 刷新用户信息
       await fetchUserInfo()
@@ -154,10 +155,10 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
               dropdownWidth={540}
               onSend={async () => {
                 if (!phone) {
-                  return message.info(intl.formatMessage({ id: 'mt.qingshurushoujihao' }))
+                  return toast.info(<Trans>请输入手机号</Trans>)
                 }
                 if (!phoneAreaCode) {
-                  return message.info(intl.formatMessage({ id: 'mt.qingxuanzequhao' }))
+                  return toast.info(<Trans>请选择区号</Trans>)
                 }
                 const success = await validateCodeInputRef.current?.sendCode({
                   emailOrPhone: phone,
@@ -178,7 +179,7 @@ export default function BindEmailPhoneForm(props: { onSuccess?: () => void }) {
               formItemProps={{ style: { marginBottom: 24 } }}
               onSend={async () => {
                 if (!email) {
-                  message.info(intl.formatMessage({ id: 'mt.qingshuruyouxiang' }))
+                  toast.info(<Trans>请输入邮箱</Trans>)
                   throw {}
                 }
                 const success = await validateCodeInputRef.current?.sendCode({

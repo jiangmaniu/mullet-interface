@@ -5,7 +5,9 @@ import { Upload } from 'antd'
 import { FormInstance } from 'antd/lib'
 import { useState } from 'react'
 
-import { message } from '@/utils/message'
+import { t } from '@/libs/lingui/react/macro'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { STORAGE_GET_USER_INFO } from '@/utils/storage'
 
 const { Dragger } = Upload
@@ -33,7 +35,8 @@ export default function ({ form }: IProps) {
     // beforeUpload: (file) => {
     //   const isLt1MB = file.size / 1024 / 1024 <= 1
     //   if (!isLt1MB) {
-    //     message.info(`${intl.formatMessage({ id: 'mt.kycUploadImgSizeTips' }, { size: 1 })}MB`)
+    //   if (!isLt1MB) {
+    //     toast.info(<Trans>图片大小不能超过 1MB</Trans>)
     //   }
     //   return isLt1MB
     // },
@@ -46,12 +49,12 @@ export default function ({ form }: IProps) {
         console.log(info.file, info.fileList)
       }
       if (status === 'done') {
-        // message.success(`${info.file.name} file uploaded successfully.`)
+        // toast.success(t`${info.file.name} file uploaded successfully.`)
         setFileName(data.name)
         setUrl(data.link)
         form.setFieldValue('authImgsUrl', data.name)
       } else if (status === 'error') {
-        message.info(`${info.file.name} file upload failed.`)
+        toast.info(<Trans>{info.file.name} file upload failed.</Trans>)
       }
     },
     onDrop(e) {
@@ -60,11 +63,11 @@ export default function ({ form }: IProps) {
     beforeUpload(file) {
       const isLt5M = file.size / 1024 / 1024 < 5
       if (!isLt5M) {
-        message.info(intl.formatMessage({ id: 'mt.bunengdayuxxm' }, { size: 5 }))
+        toast.info(<Trans>不能大于 5M</Trans>)
       }
       // // 若返回 false 则停止上传
       // // beforeUpload 返回 false 时，阻止了发送请求，但还是会加到列表中去，如果要在列表中也忽略，返回 Upload.LIST_IGNORE
-      return isLt5M || Upload.LIST_IGNORE
+      return isLt5M || (Upload as any).LIST_IGNORE
     },
     style: {
       background: '#fff'

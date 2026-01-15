@@ -14,7 +14,7 @@ import type { RequestOptions } from '@@/plugin-request/request'
 import { getAccessToken } from '@privy-io/react-auth'
 import { getLocaleForBackend } from '@/constants/enum'
 import { getEnv } from '@/env'
-import { message } from '@/utils/message'
+
 import { onLogout } from '@/utils/navigator'
 
 export const getTradeCoreApiInstance = () => {
@@ -38,7 +38,7 @@ export const getTradeCoreApiInstance = () => {
       const headers: RequestInit['headers'] = {
         // 'Content-Type': 'x-www-form-urlencoded',
         Language: getLocaleForBackend(),
-        'Tenant-Id': '000000', // 默认的租户ID
+        'Tenant-Id': '000000' // 默认的租户ID
       }
       if (privyAccessToken) {
         // 使用Privy的token
@@ -54,14 +54,13 @@ export const getTradeCoreApiInstance = () => {
         headers['Blade-Auth'] = `${userInfo?.token_type || 'Bearer'} ${token}`
       }
 
-
       const requestInit: RequestInit = {
         ...init,
         headers: {
           ...init?.headers,
           // ...(token ? { 'X-Access-Token': `${token}` } : {}),
-          ...headers,
-        },
+          ...headers
+        }
       }
 
       const rs = await fetch(input, requestInit)
@@ -91,8 +90,8 @@ export const getTradeCoreApiInstance = () => {
     baseUrl,
     customFetch,
     baseApiParams: {
-      format: 'json',
-    },
+      format: 'json'
+    }
   })
   const tradeCoreApi = new TradeCoreApi(httpClient)
 

@@ -1,3 +1,4 @@
+import { t } from '@/libs/lingui/react/macro'
 import { getIntl } from '@umijs/max'
 import { keyBy } from 'lodash'
 import { action, computed, configure, makeObservable, observable, runInAction } from 'mobx'
@@ -16,7 +17,7 @@ import {
 } from '@/services/api/tradeCore/order'
 import { getAllSymbols } from '@/services/api/tradeCore/symbol'
 import { isPCByWidth } from '@/utils'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import mitt from '@/utils/mitt'
 import { push } from '@/utils/navigator'
 import {
@@ -842,9 +843,7 @@ class TradeStore {
     if (res.success) {
       runInAction(() => {
         const data = res?.data || []
-        this.symbolCategory = ENV.SHOW_QUOTE_CATEGORY_ALL_TAB
-          ? [{ value: '0', key: '0', label: getIntl().formatMessage({ id: 'common.all' }) }, ...data]
-          : [...data.slice(0, -1)]
+        this.symbolCategory = ENV.SHOW_QUOTE_CATEGORY_ALL_TAB ? [{ value: '0', key: '0', label: t`全部` }, ...data] : [...data.slice(0, -1)]
       })
     }
   }
@@ -1141,7 +1140,7 @@ class TradeStore {
         // this.getPositionList()
         // 携带持仓订单号则为平仓单
         if (params.executeOrderId) {
-          message.info(intl.formatMessage({ id: 'mt.pingcangchenggong' }))
+          toast.info(t`平仓成功`)
         } else {
           // message.info(intl.formatMessage({ id: 'mt.kaicangchenggong' }))
         }
@@ -1161,7 +1160,7 @@ class TradeStore {
       ) {
         // 更新挂单列表,通过ws推送更新
         // this.getPendingList()
-        message.info(getIntl().formatMessage({ id: 'mt.guadanchenggong' }))
+        toast.info(t`挂单成功`)
         // 激活Tab
         trade.setTabKey('PENDING')
       }
@@ -1177,7 +1176,7 @@ class TradeStore {
       // 更新止盈止损列表
       // this.getStopLossProfitList()
 
-      message.info(getIntl().formatMessage({ id: 'mt.xiugaizhiyingzhisunchenggong' }))
+      toast.info(t`修改止盈止损成功`)
       // 激活Tab
       // trade.setTabKey('STOPLOSS_PROFIT')
     }
@@ -1190,7 +1189,7 @@ class TradeStore {
       // 更新挂单列表
       this.getPendingList()
 
-      message.info(getIntl().formatMessage({ id: 'mt.xiugaiguadanchenggong' }))
+      toast.info(t`修改挂单成功`)
     }
     return res
   }
@@ -1202,7 +1201,7 @@ class TradeStore {
       this.getPendingList()
       // 更新止盈止损列表
       // this.getStopLossProfitList()
-      message.info(getIntl().formatMessage({ id: 'mt.cexiaochenggong' }))
+      toast.info(t`撤销成功`)
     }
     return res
   }

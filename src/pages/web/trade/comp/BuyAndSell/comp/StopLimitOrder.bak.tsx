@@ -1,3 +1,4 @@
+import { t } from '@/libs/lingui/react/macro'
 // eslint-disable-next-line simple-import-sort/imports
 import { Button } from 'antd'
 import { observer } from 'mobx-react'
@@ -14,7 +15,7 @@ import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
 import { cn } from '@/utils/cn'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
 import BuyAndSellBtnGroup from '../../BuyAndSellBtnGroup'
@@ -167,27 +168,27 @@ export default observer(
         return
       }
       if (!priceValue) {
-        message.info(intl.formatMessage({ id: 'mt.qingshurujiage' }))
+        toast.info(t`请输入价格`)
         return
       }
       const reg = /^\d+(\.\d{0,2})?$/
       if (!count) {
-        message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
+        toast.info(t`请输入手数`)
         return
       }
       if (!Number(maxOpenVolume)) {
-        return message.info(intl.formatMessage({ id: 'mt.dangqianzhanghuyuebuzu' }))
+        return toast.info(t`当前账户余额不足`)
       }
       // if (count < vmin || count > maxOpenVolume) {
       //   message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
       //   return
       // }
       if (slFlag && sl) {
-        message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+        toast.info(t`止盈止损设置错误`)
         return
       }
       if (spFlag && sp) {
-        message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+        toast.info(t`止盈止损设置错误`)
         return
       }
 

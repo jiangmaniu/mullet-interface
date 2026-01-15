@@ -4,7 +4,8 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 
 import Button from '@/components/Base/Button'
 import ValidateCodeInput, { ISendType, Params } from '@/components/Form/ValidateCodeInput'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import ResetPwd from '../ResetPwd'
 
@@ -68,7 +69,7 @@ function RegisterValidateCode({ onBack, onConfirm, sendType, type, open }: IProp
                 onClick={() => {
                   const checkSuccess = validateCodeInputRef.current.checkCodeInput()
                   if (!checkSuccess) {
-                    return message.info(intl.formatMessage({ id: 'mt.qingshuruyanzhengma' }))
+                    return toast.info(<Trans>请输入验证码</Trans>)
                   }
                   onConfirm()
                 }}

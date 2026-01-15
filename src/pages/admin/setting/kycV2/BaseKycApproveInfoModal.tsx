@@ -12,7 +12,9 @@ import { getEnv } from '@/env'
 import { submitBaseAuth } from '@/services/api/crm/kycAuth'
 import { validateNonEmptyFields } from '@/utils/form'
 import { ProForm } from '@ant-design/pro-components'
-import { Form, message } from 'antd'
+import { Form } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { observer } from 'mobx-react'
 
 type IProps = {
@@ -58,7 +60,7 @@ function BaseKycApproveInfoModal({ trigger, onSuccess }: IProps, ref: any) {
       // submitBaseAuth
       submitBaseAuth({ ...values, identificationType }).then((res) => {
         if (res.success) {
-          message.info(intl.formatMessage({ id: 'mt.tijiaochenggong' }))
+          toast.info(<Trans>提交成功</Trans>)
           // 刷新用户信息
           fetchUserInfo()
 

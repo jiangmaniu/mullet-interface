@@ -1,4 +1,5 @@
 import { NumberInput } from '@/components/input/number-input'
+import { Trans } from '@/libs/lingui/react/macro'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form'
 import { Icons } from '@/components/ui/icons'
@@ -73,18 +74,18 @@ export default function VaultDetailDeposits() {
           if (data?.success) {
             await fetchUserInfo()
 
-            toast.success('存款成功')
+            toast.success(<Trans>存款成功</Trans>)
             form.reset()
           }
         },
         onError: (error) => {
           console.error(error)
-          toast.error(error instanceof Error ? error.message : '存款失败')
+          toast.error(error instanceof Error ? error.message : <Trans>存款失败</Trans>)
         }
       })
     } catch (error) {
       console.error(error)
-      toast.error(error instanceof Error ? error.message : '存款失败')
+      toast.error(error instanceof Error ? error.message : <Trans>存款失败</Trans>)
     }
   }
 

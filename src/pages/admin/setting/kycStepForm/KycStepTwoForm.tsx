@@ -12,7 +12,8 @@ import { submitBaseAuth } from '@/services/api/crm/kycAuth'
 import { DEFAULT_AREA_CODE } from '@/constants'
 import { getEnv } from '@/env'
 import { validateNonEmptyFields } from '@/utils/form'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void }) {
   const [step, setStep] = useState<'ONE' | 'TWO' | 'THREE' | 'FOUR'>('ONE') // 步骤
@@ -72,7 +73,7 @@ export default function KycStepTwoForm({ onSuccess }: { onSuccess: () => void })
       // submitBaseAuth
       submitBaseAuth({ ...values, identificationType }).then((res) => {
         if (res.success) {
-          message.info(intl.formatMessage({ id: 'mt.tijiaochenggong' }))
+          toast.info(<Trans>提交成功</Trans>)
           // 刷新用户信息
           fetchUserInfo()
 

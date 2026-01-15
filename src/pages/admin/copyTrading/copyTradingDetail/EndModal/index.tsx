@@ -2,7 +2,9 @@ import './style.less'
 
 import { ModalForm } from '@ant-design/pro-components'
 import { FormattedMessage, useIntl } from '@umijs/max'
-import { Form, message } from 'antd'
+import { Form } from 'antd'
+import { Trans } from '@/libs/lingui/react/macro'
+import { toast } from '@/libs/ui/components/toast'
 
 import Button from '@/components/Base/Button'
 import { validateNonEmptyFields } from '@/utils/form'
@@ -58,7 +60,7 @@ export default ({ id, trigger, onSuccess, onConfirm, open, onOpenChange }: IProp
         onFinish={async (values) => {
           await waitTime(2000)
           console.log(values.name)
-          message.success('提交成功')
+          toast.success(<Trans>提交成功</Trans>)
           return true
         }}
         submitter={{

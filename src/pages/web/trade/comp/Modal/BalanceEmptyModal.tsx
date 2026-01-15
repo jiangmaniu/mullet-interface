@@ -10,7 +10,8 @@ import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { useTheme } from '@/context/themeProvider'
 import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 // 余额不足提示
 export default observer((props, ref) => {
@@ -41,7 +42,7 @@ export default observer((props, ref) => {
           onClick={() => {
             //  @TODO 跳转入金
             close()
-            message.info('unSupported currency')
+            toast.info(<Trans>unSupported currency</Trans>)
           }}
         >
           <Button block onClick={close} type="primary">

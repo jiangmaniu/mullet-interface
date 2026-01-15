@@ -10,7 +10,8 @@ import { useState, useCallback } from 'react'
 import { useFundWallet as useSolanaFundWallet } from '@privy-io/react-auth/solana'
 import { useFundWallet as useEvmFundWallet } from '@privy-io/react-auth'
 import { useServerWallet } from '@/hooks/useServerWallet'
-import { message } from 'antd'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { useStores } from '@/context/mobxProvider'
 
 export const DepositAssets = () => {
@@ -69,14 +70,14 @@ export const DepositAssets = () => {
 
     // 如果 Server Wallet 还在加载中
     if (serverWalletLoading) {
-      message.info('正在加载充值地址，请稍候...')
+      toast.info(<Trans>正在加载充值地址，请稍候...</Trans>)
       return
     }
 
     // 必须使用 Privy Server Solana 充值地址
     if (!serverSolanaAddress) {
       console.error('[Buy Crypto] No Server Solana address available')
-      message.error('Solana 充值地址未就绪，请稍后重试')
+      toast.error(<Trans>Solana 充值地址未就绪，请稍后重试</Trans>)
       return
     }
 

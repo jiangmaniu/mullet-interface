@@ -8,7 +8,8 @@ import Button from '@/components/Base/Button'
 import FormCaptcha from '@/components/Form/Captcha'
 import { editEmail, sendCustomEmailCode, sendEmailCode } from '@/services/api/user'
 import { validateNonEmptyFields } from '@/utils/form'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { goKefu } from '@/utils/navigator'
 
 type IProps = {
@@ -45,7 +46,7 @@ export default function ModifyEmailModal({ trigger }: IProps) {
         setSubmitLoading(false)
 
         if (success) {
-          message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+          toast.info(<Trans>操作成功</Trans>)
 
           // 更新用户信息
           fetchUserInfo()
@@ -77,7 +78,7 @@ export default function ModifyEmailModal({ trigger }: IProps) {
         onSend={async () => {
           const email = form.getFieldValue('newEmail')
           if (!email) {
-            message.info(intl.formatMessage({ id: 'mt.qingshuruxinyouxiang' }))
+            toast.info(<Trans>请输入新邮箱</Trans>)
             throw {}
           }
           const res = await sendCustomEmailCode({ email })

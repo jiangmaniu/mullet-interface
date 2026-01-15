@@ -19,7 +19,8 @@ import CodeInput from '@/pages/webapp/components/Base/Form/CodeInput'
 import { sendCustomEmailCode, sendCustomPhoneCode } from '@/services/api/user'
 import { withdrawExchangeRate } from '@/utils/deposit'
 import { validateNonEmptyFields } from '@/utils/form'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 export const Step2 = ({
   form,
@@ -134,12 +135,12 @@ export const Step2 = ({
     if (sendTime > 0) return
 
     if (registerWay === 'PHONE' && !currentUser?.userInfo?.phone) {
-      message.info(getIntl().formatMessage({ id: 'mt.qingxianwanshankycrenzheng' }))
+      toast.info(<Trans>请先完善KYC认证</Trans>)
       return
     }
 
     if (registerWay === 'EMAIL' && !currentUser?.userInfo?.email) {
-      message.info(getIntl().formatMessage({ id: 'mt.qingxianwanshankycrenzheng' }))
+      toast.info(<Trans>请先完善KYC认证</Trans>)
       return
     }
 

@@ -1,5 +1,6 @@
-import { AxiosResponse, getIntl } from '@umijs/max'
-import { message } from 'antd'
+import { t } from '@/libs/lingui/react/macro'
+import { AxiosResponse } from '@umijs/max'
+import { toast } from '@/libs/ui/components/toast'
 import FileSaver from 'file-saver'
 import JSZip from 'jszip'
 
@@ -102,9 +103,9 @@ export function handleDownloadReport(url: string) {
   })
     .then((res) => {
       handleDownloadBlobFile(res, fileName)
-      message.success(getIntl().formatMessage({ id: 'common.opSuccess' }))
+      toast.success(t`操作成功`)
     })
     .catch((error) => {
-      message.success(getIntl().formatMessage({ id: 'common.opFailed' }))
+      toast.info(t`操作失败`)
     })
 }

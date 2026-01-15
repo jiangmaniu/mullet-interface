@@ -14,7 +14,8 @@ import SwitchPcOrWapLayout from '@/layouts/SwitchPcOrWapLayout'
 import { toFixed } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/utils/cn'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 import { IPositionItem } from '../TradeRecord/comp/PositionList'
 import CurrentPrice from '../TradeRecord/comp/PositionList/comp/CurrentPrice'
@@ -65,17 +66,17 @@ export default observer(
 
     const onFinish = useCallback(async () => {
       const reg = /^\d+(\.\d{0,2})?$/
-      if (!count) return message.info(intl.formatMessage({ id: 'common.qingshuru' }))
+      if (!count) return toast.info(<Trans>请输入</Trans>)
       if (!reg.test(count)) {
-        message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
+        toast.info(<Trans>手数输入有误</Trans>)
         return
       }
       if (count > orderVolume) {
-        message.info(intl.formatMessage({ id: 'mt.shoushushuruyouwu' }))
+        toast.info(<Trans>手数输入有误</Trans>)
         return
       }
       if (count < 0.01) {
-        message.info(intl.formatMessage({ id: 'mt.zuixiaopingcangshoushuwei0.01shou' }))
+        toast.info(<Trans>最小平仓手数为0.01手</Trans>)
         return
       }
       // 平仓下一个反方向的单

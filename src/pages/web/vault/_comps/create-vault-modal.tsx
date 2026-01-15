@@ -1,4 +1,5 @@
 import { NumberInput } from '@/components/input/number-input'
+import { Trans } from '@/libs/lingui/react/macro'
 import { NumberInputSourceType } from '@/components/input/number-input-primitive'
 import { useNiceModal } from '@/components/providers/nice-modal-provider/hooks'
 import { Button } from '@/components/ui/button'
@@ -77,7 +78,7 @@ export const CreateVaultModal = create((props: React.ComponentProps<typeof Modal
         {
           onSuccess: async (data) => {
             if (data?.success) {
-              toast.success('存款成功')
+              toast.success(<Trans>存款成功</Trans>)
               form.reset()
               modal.hide()
               await fetchUserInfo()
@@ -85,7 +86,7 @@ export const CreateVaultModal = create((props: React.ComponentProps<typeof Modal
           },
           onError: (error) => {
             console.error(error)
-            toast.error(error instanceof Error ? error.message : '存款失败')
+            toast.error(error instanceof Error ? error.message : <Trans>存款失败</Trans>)
           }
         }
       )

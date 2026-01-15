@@ -4,7 +4,8 @@ import { useIntl, useModel } from '@umijs/max'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 export default function AccountSelect({ onClick, style }: { onClick?: (item: any) => void; style?: React.CSSProperties | undefined }) {
   const { initialState } = useModel('@@initialState')
@@ -37,7 +38,7 @@ export default function AccountSelect({ onClick, style }: { onClick?: (item: any
     const item = accountList.find((item) => item.id === key)
 
     if (!item) {
-      message.info('error')
+      toast.error(<Trans>错误</Trans>)
     }
 
     if (onClick) {

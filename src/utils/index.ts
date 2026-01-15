@@ -5,8 +5,9 @@ import moment from 'moment'
 
 import { DATE } from '@/constants/date'
 
+import { t } from '@/libs/lingui/react/macro'
 import { isAndroid, isIOS } from 'react-device-detect'
-import { message } from './message'
+import { toast } from '@/libs/ui/components/toast'
 
 export function isMobileDevice(): boolean {
   const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
@@ -394,7 +395,7 @@ export const waitTime = (time = 100) => {
 }
 
 // 复制功能
-export const copyContent = (cotVal: any, title = getIntl().formatMessage({ id: 'common.fuzhichenggong' })) => {
+export const copyContent = (cotVal: any, title = t`复制成功`) => {
   const pEle = document.createElement('p')
   pEle.innerHTML = cotVal || ''
   document.body.appendChild(pEle)
@@ -405,7 +406,7 @@ export const copyContent = (cotVal: any, title = getIntl().formatMessage({ id: '
   window.getSelection()?.addRange(range) // 执行选中元素
 
   const copyStatus = document.execCommand('Copy') // 执行copy操作
-  message.info(copyStatus ? title : 'copy failed')
+  toast.info(copyStatus ? title : t`copy failed`)
   document.body.removeChild(pEle)
   window.getSelection()?.removeAllRanges() //清除页面中已有的selection
 }
@@ -577,9 +578,9 @@ export const copyToClipboard = (text: string) => {
   textarea.select()
   try {
     document.execCommand('copy')
-    message.info(getIntl().formatMessage({ id: 'mt.fuzhichenggong' }))
+    toast.success(t`复制成功`)
   } catch (err) {
-    message.info(getIntl().formatMessage({ id: 'mt.caozuoshibai' }))
+    toast.info(t`操作失败`)
   }
   document.body.removeChild(textarea)
 }

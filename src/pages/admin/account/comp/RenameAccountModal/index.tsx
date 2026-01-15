@@ -7,7 +7,8 @@ import ModalForm from '@/components/Admin/ModalForm'
 import Button from '@/components/Base/Button'
 import { useStores } from '@/context/mobxProvider'
 import { UpdateAccount } from '@/services/api/tradeCore/account'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 
 type IProps = {
   trigger?: JSX.Element
@@ -47,7 +48,7 @@ function RenameAccountModal({ info }: IProps, ref: any) {
         const success = res.success
 
         if (success) {
-          message.info(intl.formatMessage({ id: 'common.opSuccess' }))
+          toast.success(<Trans>操作成功</Trans>)
 
           // 刷新账户列表
           fetchUserInfo(false)

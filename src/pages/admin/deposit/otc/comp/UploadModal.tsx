@@ -2,7 +2,8 @@ import { FormattedMessage, getIntl } from '@umijs/max'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
 import Modal from '@/components/Admin/Modal'
-import { message } from '@/utils/message'
+import { Trans } from '@/libs/lingui/react/macro'
+import { toast } from '@/libs/ui/components/toast'
 import { GetProp, Image, UploadProps } from 'antd'
 
 import Button from '@/components/Base/Button'
@@ -34,7 +35,7 @@ function UploadModal(props: IProps, ref: any) {
 
   const handleSubmit = () => {
     if (imgs.length === 0) {
-      message.info(getIntl().formatMessage({ id: 'mt.qingshangchuangpingzheng' }))
+      toast.info(<Trans>请上传凭证</Trans>)
       return
     }
 
@@ -43,7 +44,7 @@ function UploadModal(props: IProps, ref: any) {
       certificateUrl: imgs.join(',')
     }).then((res) => {
       if (res.success) {
-        message.info(getIntl().formatMessage({ id: 'common.submitSuccess' }))
+        toast.info(<Trans>提交成功</Trans>)
         modalRef.current.close()
         push(`/deposit/wait`)
       }

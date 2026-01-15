@@ -1,3 +1,4 @@
+import { t } from '@/libs/lingui/react/macro'
 // eslint-disable-next-line simple-import-sort/imports
 import { Button, Form } from 'antd'
 import { observer } from 'mobx-react'
@@ -14,7 +15,7 @@ import Checkbox from '@/components/Base/Checkbox'
 import { ORDER_TYPE } from '@/constants/enum'
 import { cn } from '@/utils/cn'
 import { validateNonEmptyFields } from '@/utils/form'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
 import { calcExchangeRate, getCurrentQuote } from '@/utils/wsUtil'
 import { MinusCircleOutlined } from '@ant-design/icons'
 import { FormattedMessage, useIntl, useModel } from '@umijs/max'
@@ -152,7 +153,7 @@ export default observer(
       }
       const reg = /^\d+(\.\d{0,2})?$/
       if (!count) {
-        message.info(intl.formatMessage({ id: 'mt.qingshurushoushu' }))
+        toast.info(t`请输入手数`)
         return
       }
       // if (!Number(maxOpenVolume)) {
@@ -163,11 +164,11 @@ export default observer(
       //   return
       // }
       if (slFlag && sl) {
-        message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+        toast.info(t`止盈止损设置错误`)
         return
       }
       if (spFlag && sp) {
-        message.info(intl.formatMessage({ id: 'mt.zhiyingzhisunshezhicuowu' }))
+        toast.info(t`止盈止损设置错误`)
         return
       }
 

@@ -1,4 +1,5 @@
 import { SecondaryConfirmationGlobalModalProps } from '@/components/providers/nice-modal-provider/global-modal'
+import { Trans } from '@/libs/lingui/react/macro'
 import { useNiceModal } from '@/components/providers/nice-modal-provider/hooks'
 import { GLOBAL_MODAL_ID } from '@/components/providers/nice-modal-provider/register'
 import { Button } from '@/components/ui/button'
@@ -76,7 +77,7 @@ function WithdrawAndClosePosition() {
         confirm: {
           label: '确定',
           cb: () => {
-            toast.info('尽请期待')
+            toast.info(<Trans>尽请期待</Trans>)
           }
         },
         cancel: {
@@ -114,7 +115,7 @@ const CloseVault = () => {
               },
               {
                 onSuccess: () => {
-                  toast.success('关闭成功')
+                  toast.success(<Trans>关闭成功</Trans>)
                 }
               }
             )

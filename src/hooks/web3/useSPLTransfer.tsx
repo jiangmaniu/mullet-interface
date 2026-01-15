@@ -1,6 +1,7 @@
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { useStores } from '@/context/mobxProvider'
-import { message } from '@/utils/message'
+import { toast } from '@/libs/ui/components/toast'
+import { Trans } from '@/libs/lingui/react/macro'
 import { useWallets } from '@privy-io/react-auth'
 import { useSignAndSendTransaction } from '@privy-io/react-auth/solana'
 import {
@@ -77,7 +78,7 @@ export default function useSPLTransfer() {
     const decimal = Number(decimals || currentAccountInfo.mintDecimals || 6)
 
     if (!connected || !wallet?.address || wallets.length === 0) {
-      message.info('Please connect wallet first')
+      toast.info(<Trans>Please connect wallet first</Trans>)
       return
     }
 
@@ -90,18 +91,18 @@ export default function useSPLTransfer() {
       console.log('balance: ', balance)
 
       if (!toAddress) {
-        message.info(intl.formatMessage({ id: 'mt.zhuanruzhizhiweikong' }))
+        toast.info(<Trans>转入地址不能为空</Trans>)
         return
       }
       // 检查代币余额
       if (balance < transferAmount) {
-        message.info(intl.formatMessage({ id: 'mt.yuebuzu' }))
+        toast.info(<Trans>余额不足</Trans>)
         setError(true)
         return
       }
 
       if (fromAddress === toAddress) {
-        message.info(intl.formatMessage({ id: 'mt.zhuanruzhuanchudizhibunengxiangtong' }))
+        toast.info(<Trans>转入转出地址不能相同</Trans>)
         return
       }
 
