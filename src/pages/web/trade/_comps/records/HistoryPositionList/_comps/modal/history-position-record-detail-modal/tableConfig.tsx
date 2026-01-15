@@ -181,7 +181,7 @@ export const getHistoryPositionRecordDetailModalTableColumns = ({
       renderText(text, record, index, action) {
         return (
           <span className="!text-[13px] text-primary">
-            {BNumber.toFormatNumber(text, { volScale: currentAccountInfo.currencyDecimal })}
+            {BNumber.toFormatNumber(text, { volScale: currentAccountInfo.currencyDecimal, positive: false, forceSign: true })}
           </span>
         )
       }

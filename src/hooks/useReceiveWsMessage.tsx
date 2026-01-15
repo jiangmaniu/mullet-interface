@@ -1,12 +1,12 @@
 import Iconfont from '@/components/Base/Iconfont'
 import { useStores } from '@/context/mobxProvider'
+import { toast } from '@/libs/ui/components/toast'
 import { MessagePopupInfo } from '@/mobx/ws.types'
 import MessageStore from '@/pages/webapp/pages/UserCenter/Message/MessageStore'
 import { isPCByWidth } from '@/utils'
 import { parseOrderMessage, removeOrderMessageFieldNames } from '@/utils/business'
 import mitt from '@/utils/mitt'
 import { getPathname } from '@/utils/navigator'
-import { notification } from 'antd'
 import { Toast } from 'antd-mobile'
 import { useCallback, useEffect } from 'react'
 
@@ -27,14 +27,8 @@ export default function useReceiveWsMessage() {
 
     if (isPCByWidth()) {
       if (location.pathname.indexOf('/trade') === -1) return
-      notification.info({
-        message: <span className="text-primary font-medium">{messagePopupInfo?.title}</span>,
-        description: <span className="text-secondary">{content}</span>,
-        placement: 'bottomRight',
-        style: {
-          background: 'var(--dropdown-bg)'
-        },
-        showProgress: true
+      toast.success(messagePopupInfo?.title, {
+        description: content
       })
     } else {
       // Toast.show({

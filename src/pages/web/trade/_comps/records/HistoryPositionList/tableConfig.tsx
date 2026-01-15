@@ -4,7 +4,6 @@ import { FormattedMessage } from '@umijs/max'
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { getEnum } from '@/constants/enum'
-import { useLang } from '@/context/languageProvider'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
@@ -91,7 +90,7 @@ export const getColumns = ({ currentAccountInfo }: { currentAccountInfo: User.Ac
     {
       title: (
         <>
-          <Trans>手续费</Trans> / <Trans>库存费</Trans>
+          <Trans>手续费({currentAccountInfo.currencyUnit})</Trans> / <Trans>库存费({currentAccountInfo.currencyUnit})</Trans>
         </>
       ),
       dataIndex: 'Fees',
@@ -254,27 +253,6 @@ export const getColumns = ({ currentAccountInfo }: { currentAccountInfo: User.Ac
       width: 150,
       className: 'text-paragraph-p2 text-content-1'
     },
-    {
-      title: <Trans>地址</Trans>,
-      dataIndex: 'pdaAddress',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      width: 180,
-      renderText(text, record, index, action) {
-        return (
-          <>
-            {renderFallback(
-              <span className="text-paragraph-p2 text-content-1">
-                <ExplorerLink path={`address/${record.pdaAddress}`} address={record.pdaAddress} />
-              </span>,
-              {
-                verify: !!record.pdaAddress
-              }
-            )}
-          </>
-        )
-      }
-    },
 
     {
       title: <Trans>操作</Trans>,
@@ -316,19 +294,16 @@ const HistoryPositionFeesCell = observer(({ positionRecord }: { positionRecord: 
 
   const { trade } = useStores()
   const precision = trade.currentAccountInfo.currencyDecimal
-  const unit = 'USDC'
 
   return (
     <div className="text-paragraph-p2 text-content-1">
       {BNumber.toFormatNumber(handlingFees, {
         volScale: precision,
-        unit: unit,
         positive: false
       })}
       {' / '}
       {BNumber.toFormatNumber(interestFees, {
         volScale: precision,
-        unit: unit,
         positive: false
       })}
     </div>

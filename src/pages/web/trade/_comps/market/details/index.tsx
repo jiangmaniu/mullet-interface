@@ -171,7 +171,7 @@ export const MarketDetails = () => {
                   return (
                     <div key={index} className="flex justify-between gap-small">
                       <div className={cn('text-content-4 text-paragraph-p1 ')}>{transferWeekDay(item.weekDay)}</div>
-                      <div className={cn('text-content-4 text-paragraph-p1')}>{formatTimeStr(item.trade)}</div>
+                      <div className={cn('text-content-4 text-paragraph-p1 flex-1 text-right')}>{formatTimeStr(item.trade)}</div>
                     </div>
                   )
                 })}

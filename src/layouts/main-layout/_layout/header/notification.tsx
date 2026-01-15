@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { IconButton } from '@/libs/ui/components/button'
 import { IconBell, IconLanguage } from '@/libs/ui/components/icons'
@@ -41,6 +41,10 @@ export const Notification = observer(() => {
   }
   const messageStore = useLocalObservable(() => MessageStore)
   const unReadCount = messageStore.unReadCount
+
+  useEffect(() => {
+    getMessage(true)
+  }, [unReadCount])
 
   return (
     <Popover>
