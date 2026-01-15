@@ -1,5 +1,6 @@
 import { gray, red, yellow } from '@/pages/webapp/theme/colors'
-import { getIntl, getLocale as getMaxLocale } from '@umijs/max'
+import { t } from '@/libs/lingui/react/macro'
+import { getLocale as getMaxLocale } from '@umijs/max'
 
 export enum Language {
   'en-US' = 'en-US', // 英语
@@ -50,18 +51,18 @@ export const getLocaleForBackend = () => LanuageTransformMap[getMaxLocale() as I
 
 // 转换星期文本
 export type IWeekDay = 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY'
-export const transferWeekDay = (weekDay: IWeekDay) => {
-  const text = {
-    MONDAY: getIntl().formatMessage({ id: 'mt.xingqiyi' }),
-    TUESDAY: getIntl().formatMessage({ id: 'mt.xingqier' }),
-    WEDNESDAY: getIntl().formatMessage({ id: 'mt.xingqisan' }),
-    THURSDAY: getIntl().formatMessage({ id: 'mt.xingqisi' }),
-    FRIDAY: getIntl().formatMessage({ id: 'mt.xingqiwu' }),
-    SATURDAY: getIntl().formatMessage({ id: 'mt.xingqiliu' }),
-    SUNDAY: getIntl().formatMessage({ id: 'mt.xingqiri' })
-  }[weekDay]
+export const transferWeekDay = (weekDay: IWeekDay): string => {
+  const weekDayMap: Record<IWeekDay, string> = {
+    MONDAY: t`周一`,
+    TUESDAY: t`周二`,
+    WEDNESDAY: t`周三`,
+    THURSDAY: t`周四`,
+    FRIDAY: t`周五`,
+    SATURDAY: t`周六`,
+    SUNDAY: t`周日`
+  }
 
-  return text
+  return weekDayMap[weekDay]
 }
 
 // 订单类型
@@ -191,115 +192,98 @@ export const Enums = {
 
 // 业务枚举
 export const getEnum = () => {
-  const intl = getIntl()
-
   //  ============= 业务枚举值 ================
   // 使用text形式命名，方便表格 valueEnum 消费
   const Enum = {
     // 启用、禁用状态
     Status: {
-      DISABLED: { text: intl.formatMessage({ id: 'common.jinyong' }) },
-      ENABLE: { text: intl.formatMessage({ id: 'common.qiyong' }) }
+      DISABLED: { text: t`禁用` },
+      ENABLE: { text: t`启用` }
     },
     // 认证状态
     ApproveStatus: {
-      TODO: { text: intl.formatMessage({ id: 'mt.daishenhe' }), color: yellow['560'] },
-      CANCEL: { text: intl.formatMessage({ id: 'mt.quxiao' }), color: gray['900'] },
-      Disallow: { text: intl.formatMessage({ id: 'mt.shenheshibai' }), color: red['600'] },
-      SUCCESS: { text: intl.formatMessage({ id: 'mt.yirenzheng' }), color: gray['900'] }
+      TODO: { text: t`待审核`, color: yellow['560'] },
+      CANCEL: { text: t`取消`, color: gray['900'] },
+      Disallow: { text: t`审核失败`, color: red['600'] },
+      SUCCESS: { text: t`已认证`, color: gray['900'] }
     },
     // 证件类型
     IdentificationType: {
-      ID_CARD: { text: intl.formatMessage({ id: 'mt.shenfenzheng' }) },
-      PASSPORT: { text: intl.formatMessage({ id: 'mt.huzhao' }) }
+      ID_CARD: { text: t`身份证` },
+      PASSPORT: { text: t`护照` }
     },
     // 银行卡类型
     BankCardType: {
-      DEBIT_CARD: { text: intl.formatMessage({ id: 'mt.chuxuka' }) },
-      CREDIT_CARD: { text: intl.formatMessage({ id: 'mt.xingyongka' }) }
+      DEBIT_CARD: { text: t`储蓄卡` },
+      CREDIT_CARD: { text: t`信用卡` }
     },
     // 交易方向类型：只有两种 买、卖
     TradeBuySell: {
-      BUY: { text: intl.formatMessage({ id: 'mt.mairu' }) },
-      SELL: { text: intl.formatMessage({ id: 'mt.maichu' }) }
+      BUY: { text: t`买入` },
+      SELL: { text: t`卖出` }
     },
     // 订单类型
     OrderType: {
-      MARKET_ORDER: { text: intl.formatMessage({ id: 'mt.shijia' }), value: 10 },
-      STOP_LOSS_ORDER: { text: intl.formatMessage({ id: 'mt.zhisundan' }), value: 20 },
-      TAKE_PROFIT_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyingdan' }), value: 30 },
-      LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamairudan' }), value: 40 },
-      LIMIT_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.xianjiamaichudan' }), value: 50 },
-      STOP_LOSS_LIMIT_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunxianjiamairudan' }), value: 60 },
-      STOP_LOSS_LIMIT_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunxianjiamaichudan' }), value: 70 },
-      STOP_LOSS_MARKET_BUY_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunshijiamairudan' }), value: 80 },
-      STOP_LOSS_MARKET_SELL_ORDER: { text: intl.formatMessage({ id: 'mt.zhiyunshijiamaichudan' }), value: 90 }
+      MARKET_ORDER: { text: t`市价`, value: 10 },
+      STOP_LOSS_ORDER: { text: t`止损单`, value: 20 },
+      TAKE_PROFIT_ORDER: { text: t`止盈单`, value: 30 },
+      LIMIT_BUY_ORDER: { text: t`限价买入单`, value: 40 },
+      LIMIT_SELL_ORDER: { text: t`限价卖出单`, value: 50 },
+      STOP_LOSS_LIMIT_BUY_ORDER: { text: t`止损限价买入单`, value: 60 },
+      STOP_LOSS_LIMIT_SELL_ORDER: { text: t`止损限价卖出单`, value: 70 },
+      STOP_LOSS_MARKET_BUY_ORDER: { text: t`止损市价买入单`, value: 80 },
+      STOP_LOSS_MARKET_SELL_ORDER: { text: t`止损市价卖出单`, value: 90 }
     },
     // 订单状态
     OrderStatus: {
-      CANCEL: { text: intl.formatMessage({ id: 'mt.yicexiao' }) },
-      ENTRUST: { text: intl.formatMessage({ id: 'mt.weituozhong' }) },
-      FAIL: { text: intl.formatMessage({ id: 'mt.shibai' }) },
-      FINISH: { text: intl.formatMessage({ id: 'mt.yichengjiao' }) }
+      CANCEL: { text: t`已撤销` },
+      ENTRUST: { text: t`委托中` },
+      FAIL: { text: t`失败` },
+      FINISH: { text: t`已成交` }
     },
     // 订单成交方向
     OrderInOut: {
-      IN: { text: intl.formatMessage({ id: 'mt.jiancang' }) },
-      OUT: { text: intl.formatMessage({ id: 'mt.pingcang' }) }
+      IN: { text: t`建仓` },
+      OUT: { text: t`平仓` }
     },
     // 持仓单状态
     BGAStatus: {
-      BAG: { text: intl.formatMessage({ id: 'mt.chicangzhong' }) },
-      FINISH: { text: intl.formatMessage({ id: 'mt.yiwancheng' }) }
+      BAG: { text: t`持仓中` },
+      FINISH: { text: t`已完成` }
     },
     // 保证金类型
     MarginType: {
-      CROSS_MARGIN: { text: intl.formatMessage({ id: 'mt.quancang' }) },
-      ISOLATED_MARGIN: { text: intl.formatMessage({ id: 'mt.zhucang' }) }
+      CROSS_MARGIN: { text: t`全仓` },
+      ISOLATED_MARGIN: { text: t`逐仓` }
     },
     // 客户管理-交易账号-结余-表格-类型
     CustomerBalanceRecordType: {
-      DEPOSIT: { text: intl.formatMessage({ id: 'common.chongzhi' }) },
-      DEPOSIT_SIMULATE: { text: intl.formatMessage({ id: 'common.monichongzhi' }) },
-      WITHDRAWAL: { text: intl.formatMessage({ id: 'mt.tixian' }) },
-      MARGIN: { text: intl.formatMessage({ id: 'mt.baozhengjin' }) },
-      PROFIT: { text: intl.formatMessage({ id: 'mt.yingkui' }) },
-      // GIFT: { text: intl.formatMessage({ id: 'mt.zengjin' }) },
-      BALANCE: { text: intl.formatMessage({ id: 'mt.jieyu' }) },
-      TRANSFER: { text: intl.formatMessage({ id: 'common.zhuanzhang' }) },
-      // ZERO: { text: intl.formatMessage({ id: 'mt.guiling' }) },
-      // FOLLOW_PROFIT: { text: intl.formatMessage({ id: 'common.gendanfenrun' }) },
-      HANDLING_FEES: { text: intl.formatMessage({ id: 'mt.shouxufei' }) },
-      INTEREST_FEES: { text: intl.formatMessage({ id: 'mt.kucunfei' }) },
-      FEE: { text: intl.formatMessage({ id: 'mt.shouxufei' }) },
-      ACTIVITY: { text: intl.formatMessage({ id: 'mt.shouchonghuodong' }) }
-      // BACK: { text: intl.formatMessage({ id: 'mt.tixiantuihui' }) }
+      DEPOSIT: { text: t`充值` },
+      DEPOSIT_SIMULATE: { text: t`模拟充值` },
+      WITHDRAWAL: { text: t`提现` },
+      MARGIN: { text: t`保证金` },
+      PROFIT: { text: t`盈亏` },
+      BALANCE: { text: t`结余` },
+      TRANSFER: { text: t`转账` },
+      HANDLING_FEES: { text: t`手续费` },
+      INTEREST_FEES: { text: t`库存费` },
+      FEE: { text: t`手续费` },
+      ACTIVITY: { text: t`首充活动` }
     },
     // 可用预付款
     UsableAdvanceCharge: {
-      NOT_PROFIT_LOSS: { text: intl.formatMessage({ id: 'mt.bujisuanweishixiandyinglikuyun' }) },
-      PROFIT_LOSS: { text: intl.formatMessage({ id: 'mt.jisuanweishixiandyinglikuyun' }) }
-    }, // 出金订单状态
+      NOT_PROFIT_LOSS: { text: t`不计算未实现盈亏` },
+      PROFIT_LOSS: { text: t`计算未实现盈亏` }
+    },
+    // 出金订单状态
     PaymentWithdrawalOrderStatus: {
-      SUCCESS: { text: intl.formatMessage({ id: 'mt.shenhetongguo' }) },
-      RECEIPT: { text: intl.formatMessage({ id: 'mt.yidaozhang' }) },
-      WAIT: { text: intl.formatMessage({ id: 'mt.zhuanzhangzhong' }) },
-      REJECT: { text: intl.formatMessage({ id: 'mt.jujue' }) },
-      FAIL: { text: intl.formatMessage({ id: 'mt.shibai' }) }
+      SUCCESS: { text: t`审核通过` },
+      RECEIPT: { text: t`已到账` },
+      WAIT: { text: t`转账中` },
+      REJECT: { text: t`拒绝` },
+      FAIL: { text: t`失败` }
     }
   }
-  //  ============= 业务枚举值 ================
-  // // 使用text形式命名，方便表格 valueEnum 消费
-  // const Enum = Object.keys(Enums).reduce((acc, key) => {
-  //   acc[key] = Object.keys(Enums[key]).reduce((innerAcc, innerKey) => {
-  //     innerAcc[innerKey] = {
-  //       ...Enums[key][innerKey],
-  //       text: Enums[key][innerKey].key ? intl.formatMessage({ id: Enums[key][innerKey].key }) : undefined
-  //     }
-  //     return innerAcc
-  //   }, {})
-  //   return acc
-  // }, {})
 
   //  ============= 枚举对象转options数组选项 ================
   const enumToOptions = (enumKey: keyof typeof Enum, valueKey?: string) => {

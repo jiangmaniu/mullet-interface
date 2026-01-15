@@ -22,9 +22,7 @@ type EdiAccountNameActionProps = {
 export const EdiAccountNameAction = ({ accountInfo }: EdiAccountNameActionProps) => {
   const ENV = getEnv()
 
-  console.log('EdiAccountNameAction', ENV.HIDE_ACCOUNT_RENAME, accountInfo, ENV.HIDE_ACCOUNT_RENAME || !accountInfo)
   if (ENV.HIDE_ACCOUNT_RENAME || !accountInfo) return null
-  console.log('EdiAccountNameAction2', ENV.HIDE_ACCOUNT_RENAME, accountInfo, ENV.HIDE_ACCOUNT_RENAME || !accountInfo)
 
   return <EdiAccountNameModal accountInfo={accountInfo} />
 }
