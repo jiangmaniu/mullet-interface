@@ -55,7 +55,6 @@
     "./**/*.d.ts",
     "./**/*.ts",
     "./**/*.tsx",
-    "config/plugins/prefetch.ts"
   ],
   "exclude": [
     "node_modules",

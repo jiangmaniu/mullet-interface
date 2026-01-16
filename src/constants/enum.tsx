@@ -1,4 +1,3 @@
-import { gray, red, yellow } from '@/pages/webapp/theme/colors'
 import { t } from '@/libs/lingui/react/macro'
 import { getLocale as getMaxLocale } from '@umijs/max'
 
@@ -101,13 +100,7 @@ export const Enums = {
     DISABLED: { key: 'common.enum.Status.DISABLED' },
     ENABLE: { key: 'common.enum.Status.ENABLE' }
   },
-  // 认证状态
-  ApproveStatus: {
-    TODO: { key: 'common.enum.ApproveStatus.TODO' },
-    CANCEL: { key: 'common.enum.ApproveStatus.CANCEL' },
-    Disallow: { key: 'common.enum.ApproveStatus.FAIL' },
-    SUCCESS: { key: 'common.enum.ApproveStatus.SUCCESS' }
-  },
+
   // 证件类型
   IdentificationType: {
     ID_CARD: { key: 'common.enum.IdentificationType.ID_CARD' },
@@ -200,13 +193,7 @@ export const getEnum = () => {
       DISABLED: { text: t`禁用` },
       ENABLE: { text: t`启用` }
     },
-    // 认证状态
-    ApproveStatus: {
-      TODO: { text: t`待审核`, color: yellow['560'] },
-      CANCEL: { text: t`取消`, color: gray['900'] },
-      Disallow: { text: t`审核失败`, color: red['600'] },
-      SUCCESS: { text: t`已认证`, color: gray['900'] }
-    },
+
     // 证件类型
     IdentificationType: {
       ID_CARD: { text: t`身份证` },

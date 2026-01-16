@@ -30,7 +30,6 @@ export default defineConfig({
   jsMinifier: "terser",
 
   plugins: [
-    require.resolve('./plugins/prefetch.ts'),
     // '@alitajs/sentry'
   ],
 

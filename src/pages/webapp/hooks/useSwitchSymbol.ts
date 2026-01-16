@@ -1,9 +1,9 @@
 import { stores } from '@/context/mobxProvider'
-import useQuote from './trade/useQoute'
+import useTrade from '@/hooks/useTrade'
 
 export const useSwitchSymbol = () => {
   const { switchSymbol: rawSwitchSymbol, setOrderVolume } = stores.trade
-  const { vmin } = useQuote()
+  const { vmin } = useTrade()
 
   return {
     switchSymbol: (symbol: string) => {
