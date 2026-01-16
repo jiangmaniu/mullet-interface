@@ -2,7 +2,6 @@
 import { MainLayoutHeader } from './_layout/header'
 // import { PageLoadingWrapper } from './_layout/page-loading-wrapper'
 import React from 'react'
-// import Header from '@/components/Web/Header'
 import { ServerWalletsProvider } from '@/context/ServerWalletsProvider'
 import { GlobalDepositMonitorProvider } from '@/context/GlobalDepositMonitor'
 

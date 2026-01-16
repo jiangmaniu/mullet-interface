@@ -11,7 +11,7 @@ import { flushSync } from 'react-dom'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { Button } from '@/libs/ui/components/button'
 import { toast } from '@/libs/ui/components/toast'
-import { Trans } from '@/libs/lingui/react/macro'
+import { t, Trans } from '@/libs/lingui/react/macro'
 
 export default function Login() {
   const { ready, authenticated, logout, user, getAccessToken } = usePrivy()
@@ -61,7 +61,7 @@ export default function Login() {
           // push(ADMIN_HOME_PAGE)
         } else {
           // 登录失败，显示错误信息
-          const errorMsg = result?.msg || intl.formatMessage({ id: 'mt.denglushibai' })
+          const errorMsg = result?.msg || t`登录失败`
           setLoginError(errorMsg)
           toast.error(errorMsg)
           // 退出privy登录
@@ -70,7 +70,7 @@ export default function Login() {
         }
       } catch (error: any) {
         // 请求异常，显示错误信息
-        const errorMsg = error?.message || intl.formatMessage({ id: 'mt.denglushibai' })
+        const errorMsg = error?.message || t`登录失败`
         setLoginError(errorMsg)
         toast.error(errorMsg)
         // 退出privy登录

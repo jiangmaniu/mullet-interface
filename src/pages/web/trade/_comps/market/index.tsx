@@ -10,14 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/libs/ui/components/t
 import { MarketDetails } from './details'
 
 import TradingviewWrapper from '@/components/Web/Tradingview/wrapper'
-import Futures from '../../comp/Futures'
 
 export const TradeMarket = () => {
   enum TabEnum {
     charts,
     depth,
-    detail,
-    old
+    detail
   }
   const [activeTab, setActiveTab] = useState(TabEnum.charts)
 
@@ -53,9 +51,7 @@ export const TradeMarket = () => {
         {/* <TabsContent value={TabEnum.depth} forceMount>
           <MarketDepth />
         </TabsContent> */}
-        <TabsContent value={TabEnum.old}>
-          <Futures />
-        </TabsContent>
+
         <TabsContent value={TabEnum.detail}>
           <MarketDetails />
         </TabsContent>

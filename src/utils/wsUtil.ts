@@ -2,7 +2,7 @@ import { toJS } from 'mobx'
 
 import { TRADE_BUY_SELL } from '@/constants/enum'
 import { stores } from '@/context/mobxProvider'
-import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
+import { IPositionItem } from '@/pages/web/trade/_comps/records/PositionList'
 
 import { IQuoteItem } from '@/mobx/ws.types'
 import { toFixed } from '.'

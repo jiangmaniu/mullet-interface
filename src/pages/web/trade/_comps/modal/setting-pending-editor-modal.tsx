@@ -28,7 +28,6 @@ import { COMMON_PERCENT_DISPLAY_DECIMALS } from '@/libs/utils/format'
 import { observer } from 'mobx-react'
 import { toast } from '@/libs/ui/components/toast'
 import { IPendingItem } from '../records/PendingList'
-import OrderPrice from '../../comp/BuyAndSell/comp/OrderItem/OrderPrice'
 import { LOTS_UNIT_LABEL } from '../../_options/trade'
 import { parseSymbolLotsVolScale } from '@/helpers/parse/symbol/parse-lots-vol-scale'
 

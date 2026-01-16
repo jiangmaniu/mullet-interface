@@ -61,6 +61,7 @@ declare namespace User {
     tenant_id: string
     user_name: string
     real_name: string
+    msg: string
     avatar: string
     client_id: string
     role_name: string

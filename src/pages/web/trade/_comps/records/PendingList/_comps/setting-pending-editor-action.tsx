@@ -1,7 +1,7 @@
 import { forwardRef, useImperativeHandle, useState } from 'react'
 import { ClosePositionModal } from '../../../modal/close-position-modal'
 import { observer } from 'mobx-react'
-import { IPositionItem } from '@/pages/web/trade/comp/TradeRecord/comp/PositionList'
+import { IPositionItem } from '@/pages/web/trade/_comps/records/PositionList'
 import { TradeOrderDirectionEnum } from '@/pages/web/trade/_options/order'
 import { ORDER_TYPE } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'

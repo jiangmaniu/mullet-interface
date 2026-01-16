@@ -17,14 +17,7 @@ import { STORAGE_GET_TOKEN, STORAGE_GET_TRADE_THEME, STORAGE_SET_TRADE_PAGE_SHOW
 import { NewTradeRecords } from './_comps/records'
 
 import { checkPageShowTime } from '@/utils/business'
-import BuyAndSell from './comp/BuyAndSell'
-// import Center from './comp/Center'
-// import Footer from './comp/Footer'
-import BalanceEmptyModal from './comp/Modal/BalanceEmptyModal'
-// import Sidebar from './comp/Sidebar'
-// import TradeRecord from './comp/TradeRecord'
-import DepthPrice from './comp/Widget/DepthPrice'
-import Liquidation from './comp/Widget/Liquidation'
+import BalanceEmptyModal from './_comps/modal/BalanceEmptyModal'
 import { Overview } from './_comps/overview'
 import { AccountDetails } from './_comps/account'
 // import { TradeLayout } from './_comps/layout'
@@ -38,7 +31,6 @@ import { TradeContent } from './_layouts/trade-content'
 
 export default observer(() => {
   const sidebarRef = useRef()
-  const buyAndSellRef = useRef<any>(null)
   const { ws, trade, kline } = useStores()
   const { initialState } = useModel('@@initialState')
   const { fetchUserInfo } = useModel('user')

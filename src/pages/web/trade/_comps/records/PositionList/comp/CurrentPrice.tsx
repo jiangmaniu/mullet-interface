@@ -4,7 +4,7 @@ import { TRADE_BUY_SELL } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { useCurrentQuote } from '@/hooks/useCurrentQuote'
 import { cn } from '@/libs/ui/lib/utils'
-import { IPendingItem } from '@/pages/web/trade/comp/TradeRecord/comp/PendingList'
+import { IPendingItem } from '@/pages/web/trade/_comps/records/PendingList'
 import { renderFallback } from '@/libs/utils/format/fallback'
 import { BNumber } from '@/libs/utils/number'
 
