@@ -14,9 +14,17 @@ import { RichSelectContent, RichSelectItem, RichSelectTrigger } from '@/libs/ui/
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 
 import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
-import { MOCK_DEPOSIT_ADDRESSES } from './wallet-deposit-money-modal'
 import { GeneralTooltip } from '@/components/tooltip'
 import { IconSuccess } from '@/libs/ui/components/icons/set/success'
+
+export const MOCK_DEPOSIT_ADDRESSES: Record<string, string> = {
+  Tron: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
+  Ethereum: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+  Solana: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
+  Arbitrum: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+  BSC: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+  Bitcoin: 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'
+}
 
 export const Cryptocurrency = ({ onBack }: { onBack: () => void }) => {
   const [selectedAsset, setSelectedAsset] = useState<string>('USDC')
