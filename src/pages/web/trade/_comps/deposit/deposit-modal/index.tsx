@@ -2,18 +2,11 @@
 
 import { Trans } from '@/libs/lingui/react/macro'
 import { useState, useEffect, useMemo } from 'react'
-import { QRCodeSVG } from 'qrcode.react'
-import { toast } from 'sonner'
-import { Copy, ArrowLeft } from 'lucide-react'
 import { observer } from 'mobx-react'
 
 import { Button } from '@/libs/ui/components/button'
-import { Modal, ModalContent, ModalHeader, ModalTitle, ModalTrigger, ModalClose, ModalFooter } from '@/libs/ui/components/modal'
-import { Select, SelectTrigger, SelectValue } from '@/libs/ui/components/select'
-import { getTokenIcon, CHAIN_ICONS } from '@/config/tokenIcons'
+import { Modal, ModalContent, ModalHeader, ModalTitle, ModalTrigger } from '@/libs/ui/components/modal'
 
-import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
-import { NumberInput } from '@/components/input/number-input'
 import {
   IconArbitrum,
   IconBitcoin,
@@ -26,13 +19,10 @@ import {
   IconVisa
 } from '@/libs/ui/components/icons'
 import { Separator } from '@/libs/ui/components/separator'
-import { AlertTitle, Alert } from '@/libs/ui/components/alert'
-import { RichSelectContent, RichSelectItem, RichSelectTrigger } from '@/libs/ui/components/rich-select'
-import { GeneralTooltip } from '@/components/tooltip'
-import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { IconMasterCord } from '@/libs/ui/components/icons/set/master-cord'
 import { WalletAssets } from './wallet-assets'
 import { Cryptocurrency } from './cryptocurrency'
+import { ArrowLeft } from 'lucide-react'
 
 export const MOCK_DEPOSIT_ADDRESSES: Record<string, string> = {
   Tron: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
