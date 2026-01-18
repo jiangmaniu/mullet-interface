@@ -3,7 +3,7 @@ import { useState, useMemo } from 'react'
 import { QRCodeSVG } from 'qrcode.react'
 import { toast } from 'sonner'
 import { Button, IconButton } from '@/libs/ui/components/button'
-import { ModalClose, ModalFooter, ModalHeader, ModalTitle } from '@/libs/ui/components/modal'
+import { ModalFooter, ModalHeader, ModalTitle } from '@/libs/ui/components/modal'
 
 import { Select, SelectValue } from '@/libs/ui/components/select'
 import { getTokenIcon, CHAIN_ICONS } from '@/config/tokenIcons'
@@ -77,7 +77,7 @@ export const Cryptocurrency = ({ onBack }: { onBack: () => void }) => {
   return (
     <>
       <ModalHeader className="w-full">
-        <ModalTitle className="flex items-center w-full gap-medium" showCloseButton={false}>
+        <ModalTitle className="flex items-center w-full gap-medium">
           <IconButton variant="ghost" className="text-brand-secondary-2" size={'icon-sm'} onClick={onBack}>
             <Iconify icon="iconoir:nav-arrow-left" className="size-4" />
           </IconButton>
@@ -87,11 +87,6 @@ export const Cryptocurrency = ({ onBack }: { onBack: () => void }) => {
               <Trans>钱包余额：${walletBalance}</Trans>
             </div>
           </div>
-          <ModalClose asChild>
-            <IconButton variant="ghost" className="text-content-4 ml-auto" size={'icon-sm'}>
-              <Iconify icon="iconoir:cancel" className="size-5" />
-            </IconButton>
-          </ModalClose>
         </ModalTitle>
       </ModalHeader>
 

@@ -238,7 +238,7 @@ const InputContainer = <T,>({
       >
         {/* LeftContent */}
         {LeftContent && (
-          <div ref={leftContentRef} className="z-10 order-1 flex-shrink-0">
+          <div ref={leftContentRef} className="z-10 order-1 flex-shrink-0 flex items-center">
             {LeftContent}
           </div>
         )}

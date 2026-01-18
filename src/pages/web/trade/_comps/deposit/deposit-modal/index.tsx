@@ -4,7 +4,6 @@ import { Trans } from '@/libs/lingui/react/macro'
 import { useState, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react'
 
-import { Button } from '@/libs/ui/components/button'
 import { Modal, ModalContent, ModalHeader, ModalTitle, ModalTrigger } from '@/libs/ui/components/modal'
 
 import {
@@ -22,7 +21,7 @@ import { Separator } from '@/libs/ui/components/separator'
 import { IconMasterCord } from '@/libs/ui/components/icons/set/master-cord'
 import { WalletAssets } from './wallet-assets'
 import { Cryptocurrency } from './cryptocurrency'
-import { ArrowLeft } from 'lucide-react'
+import { CreditCardBuy } from './credit-card-buy'
 
 export const MOCK_DEPOSIT_ADDRESSES: Record<string, string> = {
   Tron: 'T9yD14Nj9j7xAB4dbGeiX9h8unkKHxuWwb',
@@ -61,7 +60,7 @@ export const DepositModal = observer(({ isOpen, onClose, children }: DepositModa
       case 'crypto':
         return <Cryptocurrency onBack={() => setActiveView('menu')} />
       case 'buy':
-        return <FiatBuyView onBack={() => setActiveView('menu')} />
+        return <CreditCardBuy onBack={() => setActiveView('menu')} />
       default:
         return <DepositMenuContent onSelect={setActiveView} />
     }
@@ -167,24 +166,6 @@ const DepositMenuContent = observer(({ onSelect }: { onSelect: (view: DepositVie
             <IconMasterCord />
           </div>
         </div>
-      </div>
-    </>
-  )
-})
-
-const FiatBuyView = observer(({ onBack }: { onBack: () => void }) => {
-  return (
-    <>
-      <ModalHeader className="w-full">
-        <ModalTitle className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-6 w-6 -ml-1 text-content-4 hover:text-foreground" onClick={onBack}>
-            <ArrowLeft size={16} />
-          </Button>
-          <Trans>信用卡买币</Trans>
-        </ModalTitle>
-      </ModalHeader>
-      <div className="flex items-center justify-center py-4xl min-h-[300px]">
-        <IconSpecialIconLoader />
       </div>
     </>
   )

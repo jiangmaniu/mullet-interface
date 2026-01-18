@@ -2,7 +2,7 @@ import { Trans } from '@/libs/lingui/react/macro'
 import { useState, useMemo, useEffect } from 'react'
 import { toast } from 'sonner'
 import { Button, IconButton } from '@/libs/ui/components/button'
-import { Modal, ModalContent, ModalClose, ModalFooter, ModalHeader, ModalTitle } from '@/libs/ui/components/modal'
+import { Modal, ModalContent, ModalFooter, ModalHeader, ModalTitle } from '@/libs/ui/components/modal'
 import { Select, SelectValue } from '@/libs/ui/components/select'
 import { getTokenIcon, CHAIN_ICONS } from '@/config/tokenIcons'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/libs/ui/components/accordion'
@@ -94,18 +94,10 @@ export const WithdrawalModal = ({ isOpen, onClose }: WithdrawalModalProps) => {
     <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <ModalContent onInteractOutside={(event) => event.preventDefault()} className="flex w-full max-w-[360px] min-w-[360px] gap-2xl p-2xl">
         <ModalHeader className="w-full">
-          <ModalTitle className="flex items-center w-full gap-medium" showCloseButton={false}>
-            {/* Back button logic if needed, currently reusing styles from deposit */}
-            {/* If this is a standalone modal opened directly, onBack might not be needed or closes modal */}
-            {/* Design shows just Title "取现" and Close button X */}
+          <ModalTitle className="flex items-center w-full gap-medium">
             <div className="flex flex-col gap-xs flex-1">
               <Trans>取现</Trans>
             </div>
-            <ModalClose asChild>
-              <IconButton variant="ghost" className="text-content-4 ml-auto" size={'icon-sm'}>
-                <Iconify icon="iconoir:cancel" className="size-5" />
-              </IconButton>
-            </ModalClose>
           </ModalTitle>
         </ModalHeader>
 
