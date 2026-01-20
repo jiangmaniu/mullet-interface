@@ -8,6 +8,7 @@ import { getMoneyRecordsPageList } from '@/services/api/tradeCore/account'
 
 import { getColumns } from './tableConfig'
 import { isUndefined } from 'lodash'
+import { REQUEST_POLLING_INTERVAL } from '../_config'
 
 export default observer(() => {
   const { trade } = useStores()
@@ -22,7 +23,9 @@ export default observer(() => {
         current: pagination.pageIndex,
         size: pagination.pageSize
       }),
-    enabled: !isUndefined(trade.currentAccountInfo.id)
+    enabled: !isUndefined(trade.currentAccountInfo.id),
+    refetchInterval: REQUEST_POLLING_INTERVAL,
+    refetchOnMount: true
   })
 
   const list = useMemo(() => data?.data?.records || [], [data])

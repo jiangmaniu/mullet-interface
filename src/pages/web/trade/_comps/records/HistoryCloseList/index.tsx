@@ -7,6 +7,7 @@ import { useStores } from '@/context/mobxProvider'
 import { getTradeRecordsPage } from '@/services/api/tradeCore/order'
 
 import { getColumns } from './tableConfig'
+import { REQUEST_POLLING_INTERVAL } from '../_config'
 
 // 历史记录
 function HistoryClose() {
@@ -24,7 +25,9 @@ function HistoryClose() {
         current: pagination.pageIndex,
         size: pagination.pageSize
       }),
-    enabled: !isUndefined(trade.currentAccountInfo.id)
+    enabled: !isUndefined(trade.currentAccountInfo.id),
+    refetchInterval: REQUEST_POLLING_INTERVAL,
+    refetchOnMount: true
   })
 
   const list = useMemo(() => data?.data?.records || [], [data])

@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react'
-import { useState, useMemo, useCallback } from 'react'
-import { useQuery, keepPreviousData } from '@tanstack/react-query'
+import { useState, useMemo } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { isUndefined } from 'lodash'
 
 import { DataTable } from '@/libs/table'
@@ -8,6 +8,7 @@ import { useStores } from '@/context/mobxProvider'
 import { getBgaOrderPage } from '@/services/api/tradeCore/order'
 
 import { getColumns } from './tableConfig'
+import { REQUEST_POLLING_INTERVAL } from '../_config'
 
 function HistoryPositionList() {
   const { trade } = useStores()
@@ -26,8 +27,9 @@ function HistoryPositionList() {
         current: pagination.pageIndex,
         size: pagination.pageSize
       }),
-    placeholderData: keepPreviousData,
-    enabled: !isUndefined(trade.currentAccountInfo.id)
+    enabled: !isUndefined(trade.currentAccountInfo.id),
+    refetchInterval: REQUEST_POLLING_INTERVAL,
+    refetchOnMount: true
   })
 
   const list = useMemo(() => data?.data?.records || [], [data])
