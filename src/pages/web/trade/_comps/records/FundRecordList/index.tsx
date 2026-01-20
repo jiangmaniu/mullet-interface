@@ -1,41 +1,40 @@
 import { observer } from 'mobx-react'
+import { useMemo, useState } from 'react'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 
-import StandardTable from '@/components/Admin/StandardTable'
+import { DataTable } from '@/libs/table'
 import { useStores } from '@/context/mobxProvider'
-import useStyle from '@/hooks/useStyle'
 import { getMoneyRecordsPageList } from '@/services/api/tradeCore/account'
 
 import { getColumns } from './tableConfig'
+import { isUndefined } from 'lodash'
 
-export default observer((props, ref) => {
+export default observer(() => {
   const { trade } = useStores()
-  const { recordListClassName } = useStyle()
+
+  const [pagination, setPagination] = useState({ pageIndex: 1, pageSize: 6 })
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['moneyRecords', trade.currentAccountInfo.id, pagination],
+    queryFn: () =>
+      getMoneyRecordsPageList({
+        accountId: trade.currentAccountInfo.id,
+        current: pagination.pageIndex,
+        size: pagination.pageSize
+      }),
+    enabled: !isUndefined(trade.currentAccountInfo.id)
+  })
+
+  const list = useMemo(() => data?.data?.records || [], [data])
+  const total = data?.data?.total || 0
 
   return (
-    <StandardTable
-      columns={getColumns({
-        currentAccountInfo: trade.currentAccountInfo
-      })}
-      key={trade.currentAccountInfo.id}
-      showOptionColumn={false}
-      stripe={false}
-      hasTableBordered
-      hideSearch
-      cardBordered={false}
-      bordered={false}
-      className={recordListClassName}
-      cardProps={{
-        bodyStyle: { padding: 0 },
-        headStyle: { borderRadius: 0 },
-        className: ''
-      }}
-      pageSize={6}
-      size="middle"
-      searchFormBgColor="#fff"
-      params={{ accountId: trade.currentAccountInfo.id }}
-      action={{
-        query: (params) => getMoneyRecordsPageList(params)
-      }}
+    <DataTable
+      columns={getColumns({ currentAccountInfo: trade.currentAccountInfo })}
+      data={list}
+      loading={isLoading}
+      pagination={{ total, ...pagination }}
+      onStateChange={({ pagination }) => setPagination({ pageIndex: pagination.pageIndex + 1, pageSize: pagination.pageSize })}
     />
   )
 })
