@@ -1,276 +1,159 @@
-import { ProColumns } from '@ant-design/pro-components'
-import { FormattedMessage } from '@umijs/max'
+import { ColumnDef } from '@tanstack/react-table'
+import { observer } from 'mobx-react'
+import { useRef } from 'react'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
-import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { getEnum } from '@/constants/enum'
 import { useStores } from '@/context/mobxProvider'
 import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/libs/ui/lib/utils'
-import { observer } from 'mobx-react'
 import { BNumber } from '@/libs/utils/number'
 import { Trans } from '@/libs/lingui/react/macro'
-import { renderFallback } from '@/libs/utils/format/fallback'
 import { Button } from '@/libs/ui/components/button'
 import { HistoryPositionRecordDetailModal } from './_comps/modal/history-position-record-detail-modal'
-import { useRef } from 'react'
 import { GeneralTooltip } from '@/components/tooltip'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 import { formatAddress } from '@/libs/utils/format'
 
-export const getColumns = ({ currentAccountInfo }: { currentAccountInfo: User.AccountItem }): ProColumns<Order.BgaOrderPageListItem>[] => {
+export const getColumns = ({ currentAccountInfo }: { currentAccountInfo: User.AccountItem }): ColumnDef<Order.BgaOrderPageListItem>[] => {
   return [
     {
-      title: (
+      accessorKey: 'category',
+      header: () => (
         <span className="!pl-1">
           <Trans>品种</Trans>
         </span>
-      ), // 与 antd 中基本相同，但是支持通过传入一个方法
-      dataIndex: 'category',
-      className: '!px-1',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
+      ),
+      size: 200,
+      meta: {
+        fixed: 'left'
       },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      fixed: 'left',
-      width: 200,
-      renderText(text, record, index, action) {
-        // const buySellInfo = getBuySellInfo(record)
-        return (
-          // <div className="flex items-center">
-          //   <SymbolIcon src={record.imgUrl} />
-          //   <div className="flex items-center pl-[10px]">
-          //     <span className="text-base font-pf-bold text-primary">{record.symbol}</span>
-          //     <span className={cn('text-xs font-medium pl-2', buySellInfo.colorClassName)}>{buySellInfo.text2}</span>
-          //   </div>
-          // </div>
-
-          <HistoryPositionSymbolInfoCell recordInfo={record} />
-        )
-      }
+      cell: ({ row }) => <HistoryPositionSymbolInfoCell recordInfo={row.original} />
     },
     {
-      title: <Trans>开仓均价</Trans>,
-      dataIndex: 'startPrice',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 120,
-      renderText(text, record, index, action) {
-        return BNumber.toFormatNumber(text, { volScale: record.symbolDecimal })
-      }
+      accessorKey: 'startPrice',
+      header: () => <Trans>开仓均价</Trans>,
+      size: 120,
+      cell: ({ row }) => BNumber.toFormatNumber(row.original.startPrice, { volScale: row.original.symbolDecimal })
     },
-
     {
-      title: <Trans>手数</Trans>,
-      dataIndex: 'orderVolume',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        precision: 2,
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 100,
-      className: 'text-paragraph-p2 text-content-1'
+      accessorKey: 'orderVolume',
+      header: () => <Trans>手数</Trans>,
+      size: 100,
+      cell: ({ row }) => (
+        <span className="text-paragraph-p2 text-content-1">{row.original.orderVolume}</span>
+      )
     },
-
     {
-      title: (
+      accessorKey: 'Fees',
+      header: () => (
         <>
           <Trans>手续费({currentAccountInfo.currencyUnit})</Trans> / <Trans>库存费({currentAccountInfo.currencyUnit})</Trans>
         </>
       ),
-      dataIndex: 'Fees',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 220,
-      renderText(text, record, index, action) {
-        return <HistoryPositionFeesCell positionRecord={record} />
-      }
+      size: 220,
+      cell: ({ row }) => <HistoryPositionFeesCell positionRecord={row.original} />
     },
-
     {
-      title: (
+      accessorKey: 'stopLossProfit',
+      header: () => (
         <>
           <Trans>止盈</Trans> / <Trans>止损</Trans>
         </>
       ),
-      dataIndex: 'stopLossProfit',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      copyable: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 200,
-      renderText(text, record, index, action) {
-        return (
-          <div>
-            <span className="!text-[13px] text-primary">
-              {record?.takeProfit ? formatNum(record?.takeProfit, { precision: record.symbolDecimal }) : '--'}
-            </span>
-            <span className="dark:text-gray-95"> / </span>
-            <span className="!text-[13px] text-primary">
-              {record?.stopLoss ? formatNum(record?.stopLoss, { precision: record.symbolDecimal }) : '--'}
-            </span>
-          </div>
-        )
-      }
+      size: 200,
+      cell: ({ row }) => (
+        <div>
+          <span className="!text-[13px] text-primary">
+            {row.original?.takeProfit ? formatNum(row.original?.takeProfit, { precision: row.original.symbolDecimal }) : '--'}
+          </span>
+          <span className="dark:text-gray-95"> / </span>
+          <span className="!text-[13px] text-primary">
+            {row.original?.stopLoss ? formatNum(row.original?.stopLoss, { precision: row.original.symbolDecimal }) : '--'}
+          </span>
+        </div>
+      )
     },
     {
-      title: (
+      accessorKey: 'profit',
+      header: () => (
         <>
           <Trans>盈亏</Trans>({currentAccountInfo.currencyUnit})
         </>
       ),
-      dataIndex: 'profit',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 120,
-      renderText(text, record, index, action) {
-        return (
-          <span
-            className={cn(
-              '!font-dingpro-medium',
-              BNumber.from(record.profit)?.gt(0) ? 'text-green' : BNumber.from(record.profit)?.lt(0) ? 'text-red' : 'text-content-1'
-            )}
-          >
-            {BNumber.toFormatNumber(record.profit, { volScale: currentAccountInfo.currencyDecimal, positive: false, forceSign: true })}
-          </span>
-        )
+      size: 120,
+      cell: ({ row }) => (
+        <span
+          className={cn(
+            '!font-dingpro-medium',
+            BNumber.from(row.original.profit)?.gt(0)
+              ? 'text-green'
+              : BNumber.from(row.original.profit)?.lt(0)
+              ? 'text-red'
+              : 'text-content-1'
+          )}
+        >
+          {BNumber.toFormatNumber(row.original.profit, {
+            volScale: currentAccountInfo.currencyDecimal,
+            positive: false,
+            forceSign: true
+          })}
+        </span>
+      )
+    },
+    {
+      accessorKey: 'tradeAccountId',
+      header: () => <Trans>交易账号</Trans>,
+      size: 150,
+      cell: ({ row }) => <span className="text-paragraph-p2 text-content-1">{row.original.tradeAccountId}</span>
+    },
+    {
+      accessorKey: 'id',
+      header: () => <Trans>持仓单号</Trans>,
+      size: 150,
+      cell: ({ row }) => (
+        <GeneralTooltip content={<>{row.original?.id}</>} triggerClassName="inline-block">
+          <TooltipTriggerDottedText className="text-paragraph-p2 text-content-1">
+            {formatAddress(row.original?.id, { prefix: 4, suffix: 3 })}
+          </TooltipTriggerDottedText>
+        </GeneralTooltip>
+      )
+    },
+    {
+      accessorKey: 'createTime',
+      header: () => <Trans>开仓时间</Trans>,
+      size: 190,
+      cell: ({ row }) => <span className="text-paragraph-p2 text-content-1">{row.original.createTime}</span>
+    },
+    {
+      accessorKey: 'status',
+      header: () => <Trans>状态</Trans>,
+      size: 150,
+      cell: ({ row }) => {
+        const typeEnum = getEnum().Enum.BGAStatus
+        const text = typeEnum[row.original.status as keyof typeof typeEnum]?.text || row.original.status
+        return <span className="text-paragraph-p2 text-content-1">{text}</span>
       }
     },
-
     {
-      title: <Trans>交易账号</Trans>,
-      dataIndex: 'tradeAccountId',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      copyable: false,
-      fieldProps: {
-        placeholder: ''
+      id: 'option',
+      header: () => (
+        <div className="text-right">
+          <Trans>操作</Trans>
+        </div>
+      ),
+      size: 100,
+      meta: {
+        fixed: 'right'
       },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      className: 'text-paragraph-p2 text-content-1',
-      width: 150
-    },
-
-    {
-      title: <Trans>持仓单号</Trans>,
-      dataIndex: 'id',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: true,
-      copyable: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
-        return (
-          <GeneralTooltip content={<>{record?.id}</>} triggerClassName="inline-block">
-            <TooltipTriggerDottedText className="text-paragraph-p2 text-content-1">
-              {formatAddress(record?.id, { prefix: 4, suffix: 3 })}
-            </TooltipTriggerDottedText>
-          </GeneralTooltip>
-        )
-      }
-    },
-
-    // {
-    //   title: <FormattedMessage id="mt.xiugaishijian" />,
-    //   dataIndex: 'updateTime',
-    //   hideInSearch: true, // 在 table的查询表单 中隐藏
-    //   ellipsis: false,
-    //   fieldProps: {
-    //     placeholder: ''
-    //   },
-    //   formItemProps: {
-    //     label: '' // 去掉form label
-    //   },
-    //   width: 200
-    // },
-
-    {
-      title: <Trans>开仓时间</Trans>,
-      dataIndex: 'createTime',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 190,
-      className: 'text-paragraph-p2 text-content-1'
-    },
-
-    {
-      title: <Trans>状态</Trans>,
-      dataIndex: 'status',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      valueEnum: getEnum().Enum.BGAStatus,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      className: 'text-paragraph-p2 text-content-1'
-    },
-
-    {
-      title: <Trans>操作</Trans>,
-      key: 'option',
-      fixed: 'right',
-      width: 100,
-      align: 'right',
-      hideInForm: true,
-      hideInSearch: true,
-      render: (text, record, _, _action) => {
-        return (
-          <div className="flex gap-2 justify-end">
-            <div>
-              <HistoryPositionActionDetail record={record} />
-            </div>
+      cell: ({ row }) => (
+        <div className="flex gap-2 justify-end">
+          <div>
+            <HistoryPositionActionDetail record={row.original} />
           </div>
-        )
-      }
+        </div>
+      )
     }
   ]
 }
