@@ -15,6 +15,7 @@ import {
   LuX
 } from 'react-icons/lu'
 
+export { IconCodexLoader } from './codex-loader'
 export * from './empty-no-data'
 export * from './mtlp'
 export { IconNavArrowDown } from './nav-arrow-down'
