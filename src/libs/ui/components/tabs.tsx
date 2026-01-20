@@ -349,7 +349,7 @@ function TabsContent<T>({
     <TabsPrimitive.Content
       value={value as string}
       data-slot="tabs-content"
-      className={cn('flex-1 outline-none data-[state=inactive]:hidden', className)}
+      className={cn('flex-1 min-h-0 outline-none data-[state=inactive]:hidden', className)}
       {...props}
     />
   )
