@@ -6,9 +6,12 @@ import {
   type ColumnDef,
   type PaginationState,
   type TableState,
+  type ExpandedState,
+  type OnChangeFn,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getExpandedRowModel,
   useReactTable,
   Column
 } from '@tanstack/react-table'
@@ -31,6 +34,7 @@ const getCommonPinningStyles = (column: Column<any>): React.CSSProperties => {
   const isPinned = column.getIsPinned()
   if (!isPinned) return {}
 
+  console.log('🚀', isPinned, column.getAfter('right'))
   return {
     left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined
@@ -53,6 +57,12 @@ export interface DataTableProps<TData, TValue> {
         onPageChange?: (pageIndex: number, pageSize: number) => void
       }
     | boolean
+  /** 展开状态 */
+  state?: Partial<TableState>
+  /** 展开状态改变回调 */
+  onExpandedChange?: OnChangeFn<ExpandedState>
+  /** 获取子行数据的方法 */
+  getSubRows?: (originalRow: TData, index: number) => TData[] | undefined
 }
 
 export function DataTable<TData, TValue>({
@@ -62,16 +72,19 @@ export function DataTable<TData, TValue>({
   pagination,
   onStateChange,
   emptyState,
-  className
+  className,
+  state: controlledState,
+  onExpandedChange,
+  getSubRows
 }: DataTableProps<TData, TValue>) {
   // 是否是服务端分页 (只有当 pagination 是对象且包含 total 属性时，才认为是服务端分页)
   const isManualPagination = typeof pagination === 'object' && 'total' in pagination
 
   // 处理分页状态
   const paginationState = useMemo(() => {
-    if (isManualPagination && typeof pagination === 'object' && typeof pagination.pageIndex === 'number') {
+    if (isManualPagination && typeof pagination === 'object') {
       return {
-        pageIndex: Math.max(pagination.pageIndex - 1, 0),
+        pageIndex: typeof pagination.pageIndex === 'number' ? Math.max(pagination.pageIndex - 1, 0) : 0,
         pageSize: pagination.pageSize || 10
       }
     }
@@ -82,6 +95,9 @@ export function DataTable<TData, TValue>({
     pageIndex: 0,
     pageSize: (typeof pagination === 'object' ? pagination.pageSize : undefined) || 10
   })
+
+  // 内部展开状态
+  const [internalExpanded, setInternalExpanded] = useState<ExpandedState>({})
 
   // 计算总页数
   const pageCount = useMemo(() => {
@@ -109,20 +125,40 @@ export function DataTable<TData, TValue>({
     }
   }
 
+  // 处理展开状态变更
+  const handleExpandedChange: OnChangeFn<ExpandedState> = (updaterOrValue) => {
+    const old = controlledState?.expanded ?? internalExpanded
+    const next = typeof updaterOrValue === 'function' ? updaterOrValue(old) : updaterOrValue
+
+    if (onExpandedChange) {
+      onExpandedChange(updaterOrValue)
+    }
+
+    // 如果没有传入 expanded 属性，则使用内部状态
+    if (controlledState?.expanded === undefined) {
+      setInternalExpanded(next)
+    }
+  }
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: !isManualPagination ? getPaginationRowModel() : undefined,
+    getExpandedRowModel: getExpandedRowModel(),
+    getSubRows,
     onPaginationChange: handlePaginationChange,
+    onExpandedChange: handleExpandedChange,
     manualPagination: isManualPagination,
     pageCount: isManualPagination ? pageCount : undefined,
     state: {
       pagination: isManualPagination ? paginationState : clientPagination,
+      expanded: controlledState?.expanded ?? internalExpanded,
       columnPinning: {
         left: columns.filter((c: any) => c.fixed === 'left' || c.meta?.fixed === 'left').map((c) => c.id || (c as any).accessorKey),
         right: columns.filter((c: any) => c.fixed === 'right' || c.meta?.fixed === 'right').map((c) => c.id || (c as any).accessorKey)
-      }
+      },
+      ...controlledState
     }
   })
 
@@ -217,7 +253,12 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                  onClick={row.getCanExpand() ? () => row.toggleExpanded() : undefined}
+                  className={cn(row.getCanExpand() && 'cursor-pointer')}
+                >
                   {row.getVisibleCells().map((cell) => {
                     const styles = getCommonPinningStyles(cell.column)
                     const isPinned = cell.column.getIsPinned()

@@ -117,6 +117,10 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
         'group-data-[scroll=middle]/table-container:data-[fixed=right]:before:shadow-[inset_-10px_0_8px_-8px_var(--ant-color-split,rgba(0,0,0,0.15))]',
         'group-data-[scroll=start]/table-container:data-[fixed=right]:before:shadow-[inset_-10px_0_8px_-8px_var(--ant-color-split,rgba(0,0,0,0.15))]',
 
+        // Hide shadow for non-boundary fixed columns
+        '[&[data-fixed=left]:has(+[data-fixed=left])]:after:hidden',
+        '[&[data-fixed=right]~[data-fixed=right]]:before:hidden',
+
         className
       )}
       {...props}
@@ -143,6 +147,10 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
         'data-[fixed=right]:before:transition-[box-shadow] data-[fixed=right]:before:duration-300',
         'group-data-[scroll=middle]/table-container:data-[fixed=right]:before:shadow-[inset_-10px_0_8px_-8px_var(--ant-color-split,rgba(0,0,0,0.15))]',
         'group-data-[scroll=start]/table-container:data-[fixed=right]:before:shadow-[inset_-10px_0_8px_-8px_var(--ant-color-split,rgba(0,0,0,0.15))]',
+
+        // Hide shadow for non-boundary fixed columns
+        '[&[data-fixed=left]:has(+[data-fixed=left])]:after:hidden',
+        '[&[data-fixed=right]~[data-fixed=right]]:before:hidden',
 
         className
       )}
