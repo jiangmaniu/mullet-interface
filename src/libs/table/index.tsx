@@ -47,9 +47,9 @@ export interface DataTableProps<TData, TValue> {
   onStateChange?: (state: TableState) => void
   pagination?:
     | {
-        pageIndex: number
-        pageSize: number
-        total: number
+        pageIndex?: number
+        pageSize?: number
+        total?: number
         onPageChange?: (pageIndex: number, pageSize: number) => void
       }
     | boolean
@@ -64,37 +64,40 @@ export function DataTable<TData, TValue>({
   emptyState,
   className
 }: DataTableProps<TData, TValue>) {
+  // 是否是服务端分页 (只有当 pagination 是对象且包含 total 属性时，才认为是服务端分页)
+  const isManualPagination = typeof pagination === 'object' && 'total' in pagination
+
   // 处理分页状态
   const paginationState = useMemo(() => {
-    if (typeof pagination === 'object') {
+    if (isManualPagination && typeof pagination === 'object' && typeof pagination.pageIndex === 'number') {
       return {
         pageIndex: Math.max(pagination.pageIndex - 1, 0),
-        pageSize: pagination.pageSize
+        pageSize: pagination.pageSize || 10
       }
     }
     return undefined
-  }, [pagination])
+  }, [pagination, isManualPagination])
 
   const [clientPagination, setClientPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 10
+    pageSize: (typeof pagination === 'object' ? pagination.pageSize : undefined) || 10
   })
 
   // 计算总页数
   const pageCount = useMemo(() => {
-    if (typeof pagination === 'object') {
-      return Math.ceil(pagination.total / pagination.pageSize)
+    if (isManualPagination && typeof pagination === 'object' && typeof pagination.total === 'number') {
+      return Math.ceil(pagination.total / (pagination.pageSize || 10))
     }
     return -1 // 自动计算
-  }, [pagination])
+  }, [pagination, isManualPagination])
 
   // 处理分页变更
   const handlePaginationChange = (updaterOrValue: any) => {
     // 获取当前的分页状态
-    const oldState = typeof pagination === 'object' ? paginationState! : clientPagination
+    const oldState = isManualPagination ? paginationState! : clientPagination
     const newState = typeof updaterOrValue === 'function' ? updaterOrValue(oldState) : updaterOrValue
 
-    if (typeof pagination === 'object') {
+    if (isManualPagination && typeof pagination === 'object') {
       // 受控模式
       pagination.onPageChange?.(newState.pageIndex + 1, newState.pageSize)
 
@@ -110,12 +113,12 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: typeof pagination === 'boolean' && pagination ? getPaginationRowModel() : undefined,
+    getPaginationRowModel: !isManualPagination ? getPaginationRowModel() : undefined,
     onPaginationChange: handlePaginationChange,
-    manualPagination: typeof pagination === 'object',
-    pageCount: typeof pagination === 'object' ? pageCount : undefined,
+    manualPagination: isManualPagination,
+    pageCount: isManualPagination ? pageCount : undefined,
     state: {
-      pagination: typeof pagination === 'object' ? paginationState : clientPagination,
+      pagination: isManualPagination ? paginationState : clientPagination,
       columnPinning: {
         left: columns.filter((c: any) => c.fixed === 'left' || c.meta?.fixed === 'left').map((c) => c.id || (c as any).accessorKey),
         right: columns.filter((c: any) => c.fixed === 'right' || c.meta?.fixed === 'right').map((c) => c.id || (c as any).accessorKey)
@@ -126,14 +129,14 @@ export function DataTable<TData, TValue>({
   // 监听状态变化 (主要用于非受控模式或其它状态变更的响应)
   const state = table.getState()
   React.useEffect(() => {
-    if (typeof pagination !== 'object') {
+    if (!isManualPagination) {
       onStateChange?.(state)
     }
-  }, [state, onStateChange]) // eslint-disable-line
+  }, [state, onStateChange, isManualPagination]) // eslint-disable-line
 
   const currentPageIndex = table.getState().pagination.pageIndex
   const totalPages = table.getPageCount()
-  const hasPagination = pagination !== undefined && pagination !== false
+  const hasPagination = pagination !== false
 
   // 渲染分页组件
   const renderPagination = () => {
