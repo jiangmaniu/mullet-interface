@@ -34,7 +34,6 @@ const getCommonPinningStyles = (column: Column<any>): React.CSSProperties => {
   const isPinned = column.getIsPinned()
   if (!isPinned) return {}
 
-  console.log('🚀', isPinned, column.getAfter('right'))
   return {
     left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
     right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined
