@@ -51,8 +51,7 @@ export const HistoryPositionRecordDetailModal = observer(
         })
         return removeEmptyChildren(data)
       },
-      enabled: isOpen && !!record?.id,
-      refetchOnMount: 'always'
+      enabled: isOpen && !!record?.id
     })
 
     const onClose = () => {

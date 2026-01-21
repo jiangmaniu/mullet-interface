@@ -25,7 +25,8 @@ export default observer(() => {
       }),
     enabled: !isUndefined(trade.currentAccountInfo.id),
     refetchInterval: REQUEST_POLLING_INTERVAL,
-    refetchOnMount: true
+    placeholderData: keepPreviousData,
+    refetchOnMount: 'always'
   })
 
   const list = useMemo(() => data?.data?.records || [], [data])

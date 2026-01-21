@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react'
 import { useState, useMemo } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { isUndefined } from 'lodash'
 import { DataTable } from '@/libs/table'
 import { useStores } from '@/context/mobxProvider'
@@ -27,7 +27,8 @@ function HistoryClose() {
       }),
     enabled: !isUndefined(trade.currentAccountInfo.id),
     refetchInterval: REQUEST_POLLING_INTERVAL,
-    refetchOnMount: true
+    placeholderData: keepPreviousData,
+    refetchOnMount: 'always'
   })
 
   const list = useMemo(() => data?.data?.records || [], [data])
