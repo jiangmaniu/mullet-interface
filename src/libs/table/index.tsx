@@ -225,7 +225,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className={cn('h-full flex flex-col overflow-hidden', className)}>
       <div className="relative flex-1 min-h-0">
-        <Table className={cn({ 'h-full': isFullTable })}>
+        <Table>
           <TableHeader sticky>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -233,7 +233,7 @@ export function DataTable<TData, TValue>({
                   const styles = getCommonPinningStyles(header.column)
                   const isPinned = header.column.getIsPinned()
                   return (
-                    <TableHead key={header.id} data-fixed={isPinned || undefined} style={{ ...styles, width: header.getSize() }}>
+                    <TableHead key={header.id} data-fixed={isPinned || undefined} style={{ ...styles, minWidth: header.getSize() }}>
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   )
@@ -242,15 +242,8 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="text-center">
-                  <div className="flex w-full items-center justify-center">
-                    <IconCodexLoader className="size-6 animate-spin" />
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : table.getRowModel().rows?.length ? (
+            {!loading &&
+              table.getRowModel().rows?.length > 0 &&
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -268,16 +261,21 @@ export function DataTable<TData, TValue>({
                     )
                   })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow className="h-full">
-                <TableCell colSpan={columns.length} className="text-center h-full">
-                  {emptyState ? emptyState : <EmptyNoData />}
-                </TableCell>
-              </TableRow>
-            )}
+              ))}
           </TableBody>
         </Table>
+
+        {loading && (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-background/50 z-10">
+            <IconCodexLoader className="size-6 animate-spin" />
+          </div>
+        )}
+
+        {!loading && !table.getRowModel().rows?.length && (
+          <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-background z-10">
+            {emptyState ? emptyState : <EmptyNoData />}
+          </div>
+        )}
       </div>
 
       {renderPagination()}

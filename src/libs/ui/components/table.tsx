@@ -57,12 +57,7 @@ function TableHeader({ className, sticky, ...props }: TableHeaderProps) {
   return (
     <thead
       data-slot="table-header"
-      className={cn(
-        '[&_tr]:border-b border-none',
-        sticky && '[&_th]:sticky [&_th]:top-0 [&_th]:z-20 [&_th]:bg-background',
-        sticky && '[&_th[data-fixed]]:z-30',
-        className
-      )}
+      className={cn(sticky && '[&_th]:sticky [&_th]:top-0 [&_th]:z-20 [&_th]:bg-background [&_th[data-fixed]]:z-30', className)}
       {...props}
     />
   )
@@ -73,13 +68,7 @@ function TableBody({ className, ...props }: React.ComponentProps<'tbody'>) {
 }
 
 function TableFooter({ className, ...props }: React.ComponentProps<'tfoot'>) {
-  return (
-    <tfoot
-      data-slot="table-footer"
-      className={cn('bg-muted/50 border-t border-none font-medium [&>tr]:last:border-b-0', className)}
-      {...props}
-    />
-  )
+  return <tfoot data-slot="table-footer" className={cn('bg-muted/50 font-medium', className)} {...props} />
 }
 
 function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
@@ -87,7 +76,7 @@ function TableRow({ className, ...props }: React.ComponentProps<'tr'>) {
     <tr
       data-slot="table-row"
       className={cn(
-        'hover:bg-muted/50 data-[state=selected]:bg-muted group border-b border-none transition-colors',
+        'hover:bg-muted/50 data-[state=selected]:bg-muted group transition-colors',
         '[&_th]:py-medium [&_th]:px-xl [&_th:last-child]:pr-3xl [&_th:first-child]:pl-3xl',
         '[&_td]:py-medium [&_td]:px-xl [&_td:last-child]:pr-3xl [&_td:first-child]:pl-3xl',
         className
