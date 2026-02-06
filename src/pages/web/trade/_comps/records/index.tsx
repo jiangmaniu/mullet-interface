@@ -131,13 +131,11 @@ export const NewTradeRecords = observer(() => {
         </div>
       </TabsList>
 
-      <div className="flex-1 min-h-0 overflow-y-auto">
-        {TABS_OPTIONS.map((tab) => (
-          <TabsContent key={tab.key} value={tab.key}>
-            {tab.content}
-          </TabsContent>
-        ))}
-      </div>
+      {TABS_OPTIONS.map((tab) => (
+        <TabsContent key={tab.key} value={tab.key}>
+          {tab.content}
+        </TabsContent>
+      ))}
     </Tabs>
   )
 })

@@ -141,6 +141,10 @@ declare namespace Account {
      */
     oldBalance?: number
     /**
+     * 余额
+     */
+    newBalance: number
+    /**
      * 类型
      */
     type?: API.MoneyType
