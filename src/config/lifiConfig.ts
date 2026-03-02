@@ -38,7 +38,7 @@ export const CUSTOM_RPC_URLS = {
   solana: `https://rpc.ankr.com/solana/${process.env.ANKR_API_KEY}`,
 
   // TRON Mainnet
-  tron: `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`,
+  tron: `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`
 }
 
 // LiFi configuration defaults

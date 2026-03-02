@@ -56,7 +56,6 @@ export const useDeviceChange = () => {
 
     // 切换k线分辨率周期，PC端15分钟，移动端1分钟
     STORAGE_SET_TRADINGVIEW_RESOLUTION(currentDeviceType === 'PC' ? '15' : '1')
-
   }
 
   /** 检查设备类型，如果设备类型发生变化，则跳转到对应的页面 */
