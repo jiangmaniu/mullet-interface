@@ -18,8 +18,8 @@ import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
 import type { SupportedChain } from '@/services/serverWalletService'
 import { API_BASE_URL } from '@/constants/api'
 
-// 使用统一的链配置 - 只使用 Privy 链
-const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.filter((chain) => chain.type === 'privy').map((chain) => ({
+// 出金只支持 Solana
+const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.filter((chain) => chain.id === 'solana').map((chain) => ({
   name: chain.name,
   displayName: chain.displayName,
   chainId: chain.id
