@@ -279,7 +279,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     }
   }, [open, resetDetection])
 
-  // 检测到充值后自动触发桥接
+  // 检测到充值后展示状态（桥接由后端 cron 自动处理，前端不重复发起）
   useEffect(() => {
     console.log('[TransferCrypto] useEffect triggered:', {
       hasDeposit: !!deposit,
@@ -288,19 +288,31 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     })
 
     if (deposit && !bridgeInProgress) {
-      console.log('[TransferCrypto] Deposit detected:', deposit)
+      console.log('[TransferCrypto] Deposit detected, backend cron will handle bridge:', deposit)
 
-      // 触发桥接 - 使用 rawAmount（最小单位）
-      // rawAmount 可能是十六进制字符串，需要转换为十进制数字字符串
-      let amountToUse = deposit.amount
-      if (deposit.rawAmount && deposit.rawAmount.startsWith('0x')) {
-        amountToUse = BigInt(deposit.rawAmount).toString() // 转换为十进制字符串
-        console.log('[TransferCrypto] Converted rawAmount:', deposit.rawAmount, '→', amountToUse)
-      } else if (deposit.rawAmount) {
-        amountToUse = deposit.rawAmount
+      const chainLower = deposit.chain?.toLowerCase()
+
+      if (chainLower === 'solana') {
+        // Solana 直接到账，无需桥接
+        toast.success(<Trans>✅ Solana 充值已到账，无需跨链桥接</Trans>)
+        if (onDepositDetected) {
+          onDepositDetected(deposit.amount, deposit.token, deposit.chain)
+        }
+      } else {
+        // 其他链：后端 cron 自动执行桥接，前端只展示进度 UI
+        setBridgeStep(chainLower === 'tron' ? 'tron-eth' : 'eth-sol')
+        setBridgeInProgress(true)
+        toast.loading(<Trans>充值已到账，后端正在处理跨链桥接...</Trans>)
+        if (onDepositDetected) {
+          onDepositDetected(deposit.amount, deposit.token, deposit.chain)
+        }
+        // 后端桥接约 3-5 分钟，5分钟后自动重置 UI
+        setTimeout(() => {
+          setBridgeInProgress(false)
+          setBridgeStep('idle')
+          toast.dismiss()
+        }, 5 * 60 * 1000)
       }
-
-      handleAutoBridge(amountToUse, deposit.token, deposit.chain)
 
       // 清除检测记录
       clearDeposit()
@@ -971,12 +983,12 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
               </Space>
               {bridgeStep === 'tron-eth' && (
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  ⏳ 步骤 1/2: Tron → Ethereum (预计 3-5 分钟)
+                  ⏳ Tron → Solana，后端自动处理中 (预计 5-8 分钟)
                 </Text>
               )}
               {bridgeStep === 'eth-sol' && (
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  ⏳ 步骤 2/2: Ethereum → Solana (预计 2-3 分钟)
+                  ⏳ 跨链桥接到 Solana，后端自动处理中 (预计 2-3 分钟)
                 </Text>
               )}
               {bridgeStep === 'completed' && (
