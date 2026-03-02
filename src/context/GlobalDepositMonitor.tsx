@@ -30,8 +30,8 @@ interface GlobalDepositMonitorContextValue {
   clearDeposit: () => void
 }
 
-// 监听的链
-const MONITORED_CHAINS: SupportedChain[] = ['solana', 'ethereum', 'tron', 'arbitrum', 'bsc']
+// 监听的链（只监听核心 3 条链，减少 Ankr RPC 调用次数）
+const MONITORED_CHAINS: SupportedChain[] = ['solana', 'ethereum', 'tron']
 
 const GlobalDepositMonitorContext = createContext<GlobalDepositMonitorContextValue | null>(null)
 
@@ -173,13 +173,31 @@ export function GlobalDepositMonitorProvider({ children }: { children: React.Rea
     // 立即检查一次
     checkAllDeposits()
 
-    // 每 5 秒检查一次（和 useDepositListenerV2 一致）
-    const interval = setInterval(() => {
-      checkAllDeposits()
-    }, 10000)
+    // 每 10 秒检查一次；标签页隐藏时暂停，节省 Ankr 调用次数
+    const POLL_INTERVAL = 10000
+    let intervalId: ReturnType<typeof setInterval> | null = setInterval(checkAllDeposits, POLL_INTERVAL)
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        if (intervalId !== null) {
+          clearInterval(intervalId)
+          intervalId = null
+          console.log('[GlobalDepositMonitor] ⏸️ 标签页隐藏，暂停轮询')
+        }
+      } else {
+        if (intervalId === null) {
+          checkAllDeposits() // 恢复后立即检查一次
+          intervalId = setInterval(checkAllDeposits, POLL_INTERVAL)
+          console.log('[GlobalDepositMonitor] ▶️ 标签页可见，恢复轮询')
+        }
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
-      clearInterval(interval)
+      if (intervalId !== null) clearInterval(intervalId)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
       abortControllerRef.current?.abort()
       setIsMonitoring(false)
       console.log('[GlobalDepositMonitor] ⏹️ 停止全局充值监听')
