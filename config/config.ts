@@ -270,6 +270,7 @@ export default defineConfig({
   // 开发环境使用环境变量，生产环境使用配置文件
   {
     'process.env.PLATFORM_SEO': process.env.PLATFORM_SEO,
+    'process.env.ANKR_API_KEY': process.env.ANKR_API_KEY,
     // git版本信息，用于sentry日志上报
     'process.env.COMMITHASH': gitRevisionPlugin.commithash(),
     'process.env.BRANCH': gitRevisionPlugin.branch(),

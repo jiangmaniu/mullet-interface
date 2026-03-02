@@ -29,31 +29,16 @@ export const getIntegrator = () => {
   return LIFI_INTEGRATORS[index]
 }
 
-// Custom RPC URLs for different chains
+// Custom RPC URLs for the 3 supported chains (RPC calls go through backend)
 export const CUSTOM_RPC_URLS = {
   // Ethereum Mainnet
-  ethereum: 'https://rpc.ankr.com/eth/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+  ethereum: `https://rpc.ankr.com/eth/${process.env.ANKR_API_KEY}`,
 
   // Solana Mainnet
-  solana: 'https://rpc.ankr.com/solana/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+  solana: `https://rpc.ankr.com/solana/${process.env.ANKR_API_KEY}`,
 
   // TRON Mainnet
-  tron: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // Arbitrum One
-  arbitrum: 'https://rpc.ankr.com/arbitrum/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // Base Mainnet
-  base: 'https://rpc.ankr.com/base/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // Polygon Mainnet
-  polygon: 'https://rpc.ankr.com/polygon/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // BNB Smart Chain
-  bnb: 'https://rpc.ankr.com/bsc/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // HyperEVM
-  hyperevm: 'https://rpc.hyperliquid.xyz/evm'
+  tron: `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`,
 }
 
 // LiFi configuration defaults

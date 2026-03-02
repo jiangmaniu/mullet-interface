@@ -41,43 +41,43 @@ export const EVM_CHAIN_CONFIG: Record<string, {
   Ethereum: {
     chainId: 1,
     name: 'Ethereum',
-    rpcUrl: 'https://rpc.ankr.com/eth/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+    rpcUrl: `https://rpc.ankr.com/eth/${process.env.ANKR_API_KEY}`,
     nativeCurrency: 'ETH'
   },
   BSC: {
     chainId: 56,
     name: 'BNB Smart Chain',
-    rpcUrl: 'https://rpc.ankr.com/bsc/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+    rpcUrl: `https://rpc.ankr.com/bsc/${process.env.ANKR_API_KEY}`,
     nativeCurrency: 'BNB'
   },
   Polygon: {
     chainId: 137,
     name: 'Polygon',
-    rpcUrl: 'https://rpc.ankr.com/polygon/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+    rpcUrl: `https://rpc.ankr.com/polygon/${process.env.ANKR_API_KEY}`,
     nativeCurrency: 'MATIC'
   },
   Arbitrum: {
     chainId: 42161,
     name: 'Arbitrum One',
-    rpcUrl: 'https://rpc.ankr.com/arbitrum/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+    rpcUrl: `https://rpc.ankr.com/arbitrum/${process.env.ANKR_API_KEY}`,
     nativeCurrency: 'ETH'
   },
   Optimism: {
     chainId: 10,
     name: 'Optimism',
-    rpcUrl: 'https://rpc.ankr.com/optimism/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+    rpcUrl: `https://rpc.ankr.com/optimism/${process.env.ANKR_API_KEY}`,
     nativeCurrency: 'ETH'
   },
   Base: {
     chainId: 8453,
     name: 'Base',
-    rpcUrl: 'https://rpc.ankr.com/base/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+    rpcUrl: `https://rpc.ankr.com/base/${process.env.ANKR_API_KEY}`,
     nativeCurrency: 'ETH'
   },
   Avalanche: {
     chainId: 43114,
     name: 'Avalanche C-Chain',
-    rpcUrl: 'https://rpc.ankr.com/avalanche/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+    rpcUrl: `https://rpc.ankr.com/avalanche/${process.env.ANKR_API_KEY}`,
     nativeCurrency: 'AVAX'
   },
   HyperEVM: {
@@ -437,7 +437,7 @@ export async function createDeBridgeOrderTron(
     // 动态导入 TronWeb
     const { TronWeb } = await import('tronweb')
     const tronWeb = new TronWeb({
-      fullHost: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93'
+      fullHost: `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`
     })
 
     const DLN_SOURCE_ADDRESS = tronWeb.address.fromHex(quote.tx.allowanceTarget)

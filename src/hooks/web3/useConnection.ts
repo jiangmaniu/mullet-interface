@@ -22,8 +22,8 @@ type RetutrnConnectType = {
 }
 
 // 使用 Ankr 的可靠 RPC endpoint
-const DEFAULT_SOLANA_RPC = 'https://rpc.ankr.com/solana/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93'
-const DEFAULT_SOLANA_WSS = 'wss://rpc.ankr.com/solana/ws/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93'
+const DEFAULT_SOLANA_RPC = `https://rpc.ankr.com/solana/${process.env.ANKR_API_KEY}`
+const DEFAULT_SOLANA_WSS = `wss://rpc.ankr.com/solana/ws/${process.env.ANKR_API_KEY}`
 
 // privy connection initialization
 export default function useConnection(): RetutrnConnectType {

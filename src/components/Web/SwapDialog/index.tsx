@@ -190,7 +190,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
 
         // 使用 Ankr Premium RPC (已付费)
         const tronWeb = new TronWeb({
-          fullHost: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93'
+          fullHost: `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`
         })
 
         // 获取 TRX 余额
@@ -922,7 +922,7 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     // Import TronWeb and create instance
     const { TronWeb } = await import('tronweb')
     const tronWeb = new TronWeb({
-      fullHost: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93'
+      fullHost: `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`
     })
 
     // Find TRON wallet from user.linkedAccounts (Privy embedded wallet)
