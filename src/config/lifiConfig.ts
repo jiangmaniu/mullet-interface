@@ -76,47 +76,7 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     minDeposit: 10,
     type: 'privy' as const, // 使用 Privy Server Wallet
     displayName: 'Solana'
-  },
-  {
-    id: 'arbitrum', // 小写，匹配 Privy chainType
-    name: 'Arbitrum',
-    color: '#28A0F0',
-    minDeposit: 10,
-    type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'Arbitrum'
-  },
-  // {
-  //   id: 'BASE_ETH',
-  //   name: 'Base',
-  //   color: '#0052FF',
-  //   minDeposit: 10,
-  //   type: 'cobo' as const,
-  //   displayName: 'Base'
-  // },
-  // {
-  //   id: 'MATIC',
-  //   name: 'Polygon',
-  //   color: '#8247E5',
-  //   minDeposit: 10,
-  //   type: 'cobo' as const,
-  //   displayName: 'Polygon'
-  // },
-  {
-    id: 'bsc', // 小写，匹配 Privy chainType
-    name: 'BSC',
-    color: '#F0B90B',
-    minDeposit: 10,
-    type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'BSC'
   }
-  // {
-  //   id: 'HYPEREVM_HYPE',
-  //   name: 'HyperEVM',
-  //   color: '#00D4AA',
-  //   minDeposit: 10,
-  //   type: 'cobo' as const,
-  //   displayName: 'HyperEVM'
-  // }
 ] as const
 
 // Supported tokens for each chain
