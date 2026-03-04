@@ -11,6 +11,8 @@ import { useDepositListener } from '@/hooks/useDepositListenerV2'
 import { useStores } from '@/context/mobxProvider'
 import { useServerWallet } from '@/hooks/useServerWallet'
 import type { SupportedChain } from '@/services/serverWalletService'
+import { useDepositAddress } from '@/hooks/useDepositAddress'
+import type { DepositChainId } from '@/services/depositService'
 import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
 import { useCoboDepositMonitor } from '@/hooks/useCoboDepositMonitor'
@@ -48,8 +50,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const isCoboChain = selectedChainConfig?.type === 'cobo'
   const isPrivyChain = selectedChainConfig?.type === 'privy'
 
-  // Privy Server Wallet - 根据选择的链创建钱包
-  // 将链名转换为 API 需要的格式
+  // 将链名转换为旧版 serverWalletService 使用的格式（仅用于 BSC 桥接步骤）
   const getChainId = (chainName: string): SupportedChain => {
     const chainMap: Record<string, SupportedChain> = {
       Tron: 'tron',
@@ -61,17 +62,35 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     return chainMap[chainName] || 'tron'
   }
 
-  const currentChainId = getChainId(selectedChain)
+  // 将链名转换为新版 /api/deposit/address 使用的格式
+  const getDepositChainId = (chainName: string): DepositChainId | undefined => {
+    const chainMap: Record<string, DepositChainId> = {
+      Tron: 'TRON',
+      Ethereum: 'ETH',
+      Solana: 'SOL'
+    }
+    return chainMap[chainName]
+  }
+
+  const currentChainId = getChainId(selectedChain)           // 用于 BSC 桥接
+  const depositChainId = getDepositChainId(selectedChain)   // 用于充值地址 API
   const tradeAccountId = trade.currentAccountInfo?.id
 
-  // 🔥 直接使用 useServerWallet，传入当前账户 ID，确保切换账户后地址正确更新
+  // 🔥 使用新版统一接口获取充值地址（自动 check → create，无需单独调用 create）
   const {
     address: serverWalletAddress,
     walletId: serverWalletId,
-    isCreating: isServerWalletCreating
-  } = useServerWallet(currentChainId, open && isPrivyChain && !!tradeAccountId, tradeAccountId)
+    isLoading: isServerWalletCreating,
+    iconUrl: depositChainIconUrl,
+    supportedTokens: depositSupportedTokens,
+    minDeposit: depositMinDeposit,
+  } = useDepositAddress(
+    depositChainId,
+    tradeAccountId,
+    open && isPrivyChain && !!tradeAccountId && !!depositChainId
+  )
 
-  // 🔥 额外获取 BSC/EVM 钱包信息，用于 TRON → BSC → Solana 桥接
+  // 🔥 额外获取 BSC/EVM 钱包信息，用于 TRON → BSC → Solana 桥接（保持原有逻辑）
   const { address: evmWalletAddress, walletId: evmWalletId } = useServerWallet(
     'bsc', // BSC 代表所有 EVM 链，地址相同
     open && currentChainId === 'tron' && !!tradeAccountId, // 仅在 TRON 页面时获取

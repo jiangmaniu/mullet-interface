@@ -12,7 +12,7 @@ import { useWallets, usePrivy, useSendTransaction } from '@privy-io/react-auth'
 import { useSignAndSendTransaction, useWallets as useSolanaWallets } from '@privy-io/react-auth/solana'
 import { useTronWallet } from '@/hooks/useTronWallet'
 import { useTokenPrices } from '@/hooks/useTokenPrices'
-import { useSolanaBalance } from '@/hooks/useSolanaBalance'
+import { useSolanaServerBalance } from '@/hooks/useSolanaServerBalance'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import useConnection from '@/hooks/web3/useConnection'
 import { checkBalance } from '@/services/balanceService'
@@ -142,8 +142,8 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     trade.currentAccountInfo?.id
   )
 
-  // Fetch balances
-  const { balances: solBalances } = useSolanaBalance(solanaWallet?.address)
+  // Fetch balances — 走后端 API（Ankr 付费 RPC + Binance 价格）
+  const { balances: solBalances, solPrice: solanaServerPrice } = useSolanaServerBalance(solanaWallet?.address)
   const [ethBalance, setEthBalance] = useState(0)
   const [ethUsdtBalance, setEthUsdtBalance] = useState(0)
   const [trxBalance, setTrxBalance] = useState(0)
@@ -229,17 +229,18 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     list.push({
       symbol: 'USDC',
       balance: solanaUsdcBalance,
-      usdValue: solanaUsdcBalance,
+      usdValue: solBalances?.['USDC']?.usdValue ?? solanaUsdcBalance,
       icon: TOKEN_ICONS.USDC,
       network: 'Solana'
     })
 
-    // SOL
+    // SOL — 优先使用后端返回的实时价格，fallback 到行情接口
     const solAmount = parseFloat(solBalances?.['SOL']?.balance || '0')
+    const solUsdValue = solBalances?.['SOL']?.usdValue ?? solAmount * (prices.solana || solanaServerPrice || 0)
     list.push({
       symbol: 'SOL',
       balance: solAmount,
-      usdValue: solAmount * (prices.solana || 0),
+      usdValue: solUsdValue,
       icon: TOKEN_ICONS.SOL,
       network: 'Solana'
     })
@@ -249,14 +250,14 @@ const SwapDialog: React.FC<SwapDialogProps> = ({ open, onClose, onBack, walletAd
     list.push({
       symbol: 'USDT',
       balance: solanaUsdtAmount,
-      usdValue: solanaUsdtAmount,
+      usdValue: solBalances?.['USDT']?.usdValue ?? solanaUsdtAmount,
       icon: TOKEN_ICONS.USDT,
       network: 'Solana'
     })
 
     // Sort by USD value descending
     return list.sort((a, b) => b.usdValue - a.usdValue)
-  }, [solBalances, prices])
+  }, [solBalances, prices, solanaServerPrice])
 
   // Reset when dialog opens
   useEffect(() => {
