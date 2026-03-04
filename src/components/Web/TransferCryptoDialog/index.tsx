@@ -607,18 +607,17 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           <div style={{ flex: 1 }}>
             <Text strong>Supported token</Text>
             <Select value={selectedToken} onChange={setSelectedToken} style={{ width: '100%', marginTop: 8 }} size="large">
-              <Select.Option value="USDT">
-                <Space>
-                  <Avatar src={TOKEN_ICONS.USDT} size="small" />
-                  USDT
-                </Space>
-              </Select.Option>
-              <Select.Option value="USDC">
-                <Space>
-                  <Avatar src={TOKEN_ICONS.USDC} size="small" />
-                  USDC
-                </Space>
-              </Select.Option>
+              {(depositSupportedTokens.length > 0 ? depositSupportedTokens : [
+                { symbol: 'USDT', iconUrl: TOKEN_ICONS.USDT, displayName: 'USDT' },
+                { symbol: 'USDC', iconUrl: TOKEN_ICONS.USDC, displayName: 'USDC' },
+              ]).map((t) => (
+                <Select.Option key={t.symbol} value={t.symbol}>
+                  <Space>
+                    <Avatar src={t.iconUrl} size="small" />
+                    {t.symbol}
+                  </Space>
+                </Select.Option>
+              ))}
             </Select>
           </div>
 
@@ -634,7 +633,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
               {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
                 <Select.Option key={chain.name} value={chain.name}>
                   <Space>
-                    <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
+                    <Avatar src={chain.iconUrl || CHAIN_ICONS[chain.name]} size="small" />
                     {chain.displayName || chain.name}
                   </Space>
                 </Select.Option>
@@ -668,7 +667,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                     boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
                   }}
                 >
-                  <Avatar src={CHAIN_ICONS[selectedChain]} size={28} />
+                  <Avatar src={depositChainIconUrl || CHAIN_ICONS[selectedChain]} size={28} />
                 </div>
               </div>
               <Text type="secondary" style={{ display: 'block', marginTop: 8, fontSize: 12 }}>

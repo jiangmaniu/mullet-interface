@@ -59,7 +59,8 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     color: '#c62828',
     minDeposit: 20,
     type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'Tron'
+    displayName: 'Tron',
+    iconUrl: 'https://assets.coingecko.com/coins/images/1094/standard/tron-logo.png'
   },
   {
     id: 'ethereum', // 小写，匹配 Privy chainType
@@ -67,7 +68,8 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     color: '#627EEA',
     minDeposit: 10,
     type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'Ethereum'
+    displayName: 'Ethereum',
+    iconUrl: 'https://assets.coingecko.com/coins/images/279/standard/ethereum.png'
   },
   {
     id: 'solana', // 小写，匹配 Privy chainType
@@ -75,7 +77,8 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     color: '#14F195',
     minDeposit: 10,
     type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'Solana'
+    displayName: 'Solana',
+    iconUrl: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'
   }
 ] as const
 
