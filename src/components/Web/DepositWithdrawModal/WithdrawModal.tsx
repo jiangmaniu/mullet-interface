@@ -13,17 +13,9 @@ import { withdrawByAddress } from '@/services/api/tradeCore/account'
 import { toast } from '@/libs/ui/components/toast'
 import { Form, Input, Select, Space, Avatar } from 'antd'
 import { useServerWallet } from '@/hooks/useServerWallet'
-import { CHAIN_ICONS, getTokenIcon } from '@/config/tokenIcons'
-import { SUPPORTED_BRIDGE_CHAINS, SUPPORTED_TOKENS } from '@/config/lifiConfig'
+import { WITHDRAWAL_CHAINS } from '@/config/lifiConfig'
 import type { SupportedChain } from '@/services/serverWalletService'
 import { API_BASE_URL } from '@/constants/api'
-
-// 出金只支持 Solana
-const SUPPORTED_CHAINS = SUPPORTED_BRIDGE_CHAINS.filter((chain) => chain.id === 'solana').map((chain) => ({
-  name: chain.name,
-  displayName: chain.displayName,
-  chainId: chain.id
-}))
 
 // 地址验证规则
 const ADDRESS_VALIDATION: Record<string, RegExp> = {
@@ -137,11 +129,11 @@ export default observer(
     // 避免重复渲染
     if (!open) return null
 
-    // 获取选中链支持的代币
-    const getChainTokens = (chainName: string) => {
-      const chainKey = chainName.toLowerCase() as keyof typeof SUPPORTED_TOKENS
-      return SUPPORTED_TOKENS[chainKey] || SUPPORTED_TOKENS.solana
-    }
+    // 获取选中链配置
+    const getSelectedChainConfig = (chainName: string) =>
+      WITHDRAWAL_CHAINS.find((c) => c.id === chainName) ?? WITHDRAWAL_CHAINS[0]
+
+    const currentWithdrawChain = getSelectedChainConfig(selectedChain)
 
     // 提交提现请求
     const handleSubmit = async (values: any) => {
@@ -169,7 +161,7 @@ export default observer(
         }
 
         // 获取选中的链配置
-        const selectedChainConfig = SUPPORTED_CHAINS.find((c) => c.name === targetChain)
+        const selectedChainConfig = WITHDRAWAL_CHAINS.find((c) => c.id === targetChain)
         if (!selectedChainConfig) {
           throw new Error('不支持的目标链')
         }
@@ -280,7 +272,7 @@ export default observer(
         return Promise.reject(new Error('请输入目标地址'))
       }
 
-      const pattern = ADDRESS_VALIDATION[selectedChain]
+      const pattern = currentWithdrawChain?.addressRegex ?? ADDRESS_VALIDATION[selectedChain]
       if (pattern && !pattern.test(value)) {
         return Promise.reject(new Error(`无效的 ${selectedChain} 地址格式`))
       }
@@ -321,20 +313,20 @@ export default observer(
                     // 清空地址字段以重新验证
                     form.setFieldValue('withdrawAddress', '')
                     // 检查当前代币是否在新链支持
-                    const tokens = getChainTokens(value)
+                    const newChain = WITHDRAWAL_CHAINS.find((c) => c.id === value)
                     const currentToken = form.getFieldValue('targetToken')
-                    if (!tokens.find((t) => t.symbol === currentToken)) {
-                      form.setFieldValue('targetToken', tokens[0]?.symbol || 'USDC')
-                      setSelectedToken(tokens[0]?.symbol || 'USDC')
+                    if (newChain && !newChain.supportedTokens.find((t) => t.symbol === currentToken)) {
+                      form.setFieldValue('targetToken', newChain.supportedTokens[0]?.symbol || 'USDC')
+                      setSelectedToken(newChain.supportedTokens[0]?.symbol || 'USDC')
                     }
                   }}
                   size="large"
                   className="!h-[38px]"
                 >
-                  {SUPPORTED_CHAINS.map((chain) => (
-                    <Select.Option key={chain.name} value={chain.name}>
+                  {WITHDRAWAL_CHAINS.map((chain) => (
+                    <Select.Option key={chain.id} value={chain.id}>
                       <Space>
-                        <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
+                        <Avatar src={chain.iconUrl} size="small" />
                         {chain.displayName}
                       </Space>
                     </Select.Option>
@@ -358,12 +350,12 @@ export default observer(
                   size="large"
                   className="!h-[38px]"
                 >
-                  {getChainTokens(selectedChain).map((token) => (
+                  {currentWithdrawChain.supportedTokens.map((token) => (
                     <Select.Option key={token.symbol} value={token.symbol}>
                       <Space>
-                        <Avatar src={getTokenIcon(token.symbol)} size="small" />
+                        <Avatar src={token.iconUrl} size="small" />
                         {token.symbol}
-                        <span className="text-gray-400 text-xs">({token.name})</span>
+                        <span className="text-gray-400 text-xs">({token.displayName})</span>
                       </Space>
                     </Select.Option>
                   ))}
@@ -458,8 +450,10 @@ export default observer(
                       if (Number(value) > availableBalance) {
                         return Promise.reject(new Error(`余额不足，可用: ${walletBalance} USD`))
                       }
-                      if (Number(value) < 0.001) {
-                        return Promise.reject(new Error('最低提现金额为 0.001 USD'))
+                      const selectedTokenConfig = currentWithdrawChain.supportedTokens.find((t) => t.symbol === selectedToken)
+                      const minWithdraw = selectedTokenConfig?.minWithdraw ?? 200
+                      if (Number(value) < minWithdraw) {
+                        return Promise.reject(new Error(`最低取现金额为 ${minWithdraw} USDC`))
                       }
                       return Promise.resolve()
                     }
@@ -493,14 +487,15 @@ export default observer(
               >
                 <div className="flex items-center gap-2 mb-2">
                   <span className={`font-medium ${theme.isDark ? 'text-blue-400' : 'text-blue-600'}`}>
-                    ℹ️ 提现 {selectedToken} 到 {selectedChain}
+                    ℹ️ 提现 {selectedToken} 到 {currentWithdrawChain.displayName}
                   </span>
                 </div>
                 <div className={`text-xs space-y-1 ${theme.isDark ? 'text-gray-400' : 'text-gray-600'}`}>
                   <div>• 提现通过 Privy Server Wallet 处理</div>
-                  <div>• 预计到账时间: {selectedChain === 'Solana' ? '即时 (1-2秒)' : '2-10 分钟'}</div>
+                  <div>• 预计到账时间: {currentWithdrawChain.estimatedTime}</div>
+                  <div>• 最低取现: {currentWithdrawChain.supportedTokens.find((t) => t.symbol === selectedToken)?.minWithdraw ?? 200} {selectedToken}</div>
                   <div>• 网络费用由平台支付 (Gas Sponsorship)</div>
-                  {selectedChain !== 'Solana' && <div>• 跨链提现使用 DeBridge 桥接</div>}
+                  {currentWithdrawChain.requiresBridge && <div>• 跨链提现使用 DeBridge 桥接</div>}
                   {isWalletLoading && <div className="text-blue-600 mt-2">🔄 正在加载钱包信息...</div>}
                 </div>
               </div>

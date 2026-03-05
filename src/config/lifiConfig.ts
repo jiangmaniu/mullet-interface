@@ -82,6 +82,27 @@ export const SUPPORTED_BRIDGE_CHAINS = [
   }
 ] as const
 
+// ================================================================
+// 出金链配置（独立于入金 SUPPORTED_BRIDGE_CHAINS）
+// 可独立控制哪些链/币种支持出金，与入金配置互不影响
+// ================================================================
+export const WITHDRAWAL_CHAINS = [
+  {
+    id: 'Solana',
+    name: 'Solana',
+    displayName: 'Solana',
+    iconUrl: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+    addressRegex: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+    addressPlaceholder: '请输入 Solana 地址',
+    requiresBridge: false,
+    estimatedTime: '< 10s',
+    supportedTokens: [
+      { symbol: 'USDC', displayName: 'USD Coin', minWithdraw: 200, iconUrl: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png' },
+      { symbol: 'USDT', displayName: 'Tether USD', minWithdraw: 200, iconUrl: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png' },
+    ],
+  },
+] as const
+
 // Supported tokens for each chain
 export const SUPPORTED_TOKENS = {
   tron: [

@@ -145,6 +145,40 @@ export interface SolanaBalanceResult {
   balances: Record<string, [number, string, boolean]>
 }
 
+// ─── Withdrawal Config ──────────────────────────────────────────────────────
+
+export interface WithdrawalTokenConfig {
+  symbol: string
+  contractAddress: string
+  decimals: number
+  displayDecimals: number
+  displayName: string
+  iconUrl: string
+  minWithdraw: string
+}
+
+export interface WithdrawalChainConfig {
+  chainId: string
+  displayName: string
+  shortName: string
+  icon: string
+  iconUrl: string
+  addressRegex: string
+  addressPlaceholder: string
+  requiresBridge: boolean
+  estimatedTime: string
+  minWithdraw: string
+  supportedTokens: WithdrawalTokenConfig[]
+}
+
+/**
+ * GET /api/withdraw/supportedChains
+ * @param token 可选：按币种过滤（USDC / USDT）
+ */
+export async function getWithdrawalChains(token?: string): Promise<WithdrawalChainConfig[]> {
+  return get<WithdrawalChainConfig[]>('/api/withdraw/supportedChains', token ? { token } : undefined)
+}
+
 /**
  * GET /api/solana-wallet/balance?address=<address>
  * 公开接口（链上数据），无需认证
