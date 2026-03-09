@@ -1,108 +1,64 @@
 import { Trans } from '@/libs/lingui/react/macro'
 import { useState, useEffect } from 'react'
-import { Loader2, Check, X } from 'lucide-react'
 
 import { Button, IconButton } from '@/libs/ui/components/button'
 import { ModalHeader, ModalTitle } from '@/libs/ui/components/modal'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/libs/ui/components/accordion'
-import { cn } from '@/libs/ui/lib/utils'
-import { IconChevronRight, IconCodexLoader, Iconify, IconMmullet, IconSuccess, IconUSDC } from '@/libs/ui/components/icons'
+import { IconChevronRight, Iconify, IconMmullet, IconSuccess, IconUSDC } from '@/libs/ui/components/icons'
 import { IconMetamask } from '@/libs/ui/components/icons/set/metamask'
 import { IconFail } from '@/libs/ui/components/icons/set/fail'
-import { IconMtlp } from '@/libs/ui/components/icons/set/mtlp'
 import { GeneralTooltip } from '@/components/tooltip'
 import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 
-export const WalletAssetsStep3 = ({
+export const SwapStep3 = ({
   onBack,
   onClose,
+  fromToken,
+  toToken,
   amount,
-  selectedAsset,
   onRetry
 }: {
   onBack: () => void
   onClose: () => void
+  fromToken: string
+  toToken: string
   amount: string
-  selectedAsset: { symbol: string; chainName: string } | null
   onRetry: () => void
 }) => {
-  const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'failure'>('idle')
-  const [countdown, setCountdown] = useState(30)
+  const [status, setStatus] = useState<'success' | 'failure'>('success')
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout
-    if (status === 'idle') {
-      timer = setInterval(() => {
-        setCountdown((c) => {
-          if (c <= 0) return 30
-          return c - 1
-        })
-      }, 1000)
-    }
-    return () => clearInterval(timer)
-  }, [status])
-
-  const handleConfirm = () => {
-    setStatus('processing')
-    setTimeout(() => {
-      setStatus('success')
-    }, 3000)
-  }
-
-  const isFinalState = status === 'success' || status === 'failure'
+  const receiveAmount = (parseFloat(amount) * 1.02).toFixed(2)
 
   return (
     <>
       <ModalHeader className="w-full">
         <ModalTitle className="flex items-center justify-between w-full">
-          {!isFinalState ? (
-            <div className="flex items-center gap-medium">
-              <IconButton
-                variant="ghost"
-                className="text-brand-secondary-2"
-                size={'icon-sm'}
-                onClick={onBack}
-                disabled={status === 'processing'}
-              >
-                <Iconify icon="iconoir:nav-arrow-left" className="size-4" />
-              </IconButton>
-              <Trans>钱包转入</Trans>
-            </div>
-          ) : (
-            <div className="flex items-center gap-medium">
-              <IconButton variant="ghost" className="text-brand-secondary-2" size={'icon-sm'} onClick={onBack}>
-                <Iconify icon="iconoir:nav-arrow-left" className="size-4" />
-              </IconButton>
-              <Trans>钱包转入</Trans>
-            </div>
-          )}
-
-          {status === 'idle' && <div className="text-paragraph-p2 text-status-warning !font-normal">{countdown}S</div>}
+          <div className="flex items-center gap-medium">
+            <IconButton variant="ghost" className="text-brand-secondary-2" size={'icon-sm'} onClick={onBack}>
+              <Iconify icon="iconoir:nav-arrow-left" className="size-4" />
+            </IconButton>
+            <Trans>订单确认</Trans>
+          </div>
         </ModalTitle>
       </ModalHeader>
 
       <div className="flex flex-col flex-1 gap-2xl">
-        {/* Main Status Display */}
-        <div className="flex flex-col items-center justify-center py-xl gap-medium">
-          {status === 'idle' || status === 'processing' ? (
-            <div className="text-title-h2 text-white flex items-center gap-xs">
-              <span className="text-content-1">$</span>
-              {amount || '75,000.00'}
-            </div>
-          ) : status === 'success' ? (
-            <div className="flex flex-col items-center gap-large fade-in">
+        {/* Status Display */}
+        <div className="flex flex-col items-center justify-center py-xl gap-large">
+          {status === 'success' ? (
+            <>
               <IconSuccess width={50} height={50} />
               <div className="text-paragraph-p2 text-white">
-                <Trans>您的资金已成功存入</Trans>
+                <Trans>签名成功</Trans>
               </div>
-            </div>
+            </>
           ) : (
-            <div className="flex flex-col items-center gap-large fade-in">
+            <>
               <IconFail width={50} height={50} />
               <div className="text-paragraph-p2 text-white">
-                <Trans>您的资金存入失败</Trans>
+                <Trans>签名失败</Trans>
               </div>
-            </div>
+            </>
           )}
         </div>
 
@@ -136,27 +92,16 @@ export const WalletAssetsStep3 = ({
             </a>
           </div>
 
-          {isFinalState ? (
-            <div className="flex items-center justify-between text-paragraph-p2">
-              <span className="text-content-4">
-                <Trans>状态</Trans>
-              </span>
-              <span className={status === 'success' ? 'text-market-rise' : 'text-market-fall'}>
-                {status === 'success' ? <Trans>成功</Trans> : <Trans>失败</Trans>}
-              </span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between text-paragraph-p2">
-              <span className="text-content-4">
-                <Trans>预计时间</Trans>
-              </span>
-              <span className="text-white">
-                &lt; 1<Trans>分钟</Trans>
-              </span>
-            </div>
-          )}
+          <div className="flex items-center justify-between text-paragraph-p2">
+            <span className="text-content-4">
+              <Trans>状态</Trans>
+            </span>
+            <span className={status === 'success' ? 'text-market-rise' : 'text-market-fall'}>
+              {status === 'success' ? <Trans>成功</Trans> : <Trans>失败</Trans>}
+            </span>
+          </div>
 
-          {isFinalState && (
+          {status === 'success' && (
             <div className="flex items-center justify-between text-paragraph-p2">
               <span className="text-content-4">
                 <Trans>总用时</Trans>
@@ -169,25 +114,15 @@ export const WalletAssetsStep3 = ({
 
           <div className="flex items-center justify-between text-paragraph-p2">
             <span className="text-content-4">
-              {status === 'success' || status === 'processing' || status === 'failure' ? <Trans>您收到</Trans> : <Trans>您将发送</Trans>}
+              <Trans>您收到</Trans>
             </span>
             <div className="flex items-center gap-medium">
               <IconUSDC className="size-6" />
-              <span className="text-white">{amount} USDC</span>
+              <span className="text-white">
+                {receiveAmount} {toToken}
+              </span>
             </div>
           </div>
-
-          {!isFinalState && (
-            <div className="flex items-center justify-between text-paragraph-p2">
-              <span className="text-content-4">
-                <Trans>您将收到</Trans>
-              </span>
-              <div className="flex items-center gap-medium">
-                <IconUSDC className="size-6" />
-                <span className="text-white">{amount} USDC</span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Transaction Details Accordion */}
@@ -223,7 +158,7 @@ export const WalletAssetsStep3 = ({
                         </TooltipTriggerDottedText>
                       </GeneralTooltip>
                     </span>
-                    <span className="text-white">0.00 USDC</span>
+                    <span className="text-white">0.001 SOL</span>
                   </div>
                   <div className="flex items-center justify-between text-paragraph-p3">
                     <span className="text-content-4">
@@ -247,7 +182,7 @@ export const WalletAssetsStep3 = ({
                         </TooltipTriggerDottedText>
                       </GeneralTooltip>
                     </span>
-                    <span className="text-white">0.00%</span>
+                    <span className="text-white">0.05%</span>
                   </div>
                   <div className="flex items-center justify-between text-paragraph-p3">
                     <span className="text-content-4">
@@ -269,7 +204,7 @@ export const WalletAssetsStep3 = ({
                       </GeneralTooltip>
                     </span>
                     <span className="text-white">
-                      <Trans>自动</Trans> 0.00%
+                      <Trans>自动</Trans> 0.5%
                     </span>
                   </div>
                 </div>
@@ -278,23 +213,12 @@ export const WalletAssetsStep3 = ({
           </Accordion>
         </div>
 
-        {!isFinalState && (
-          <div className="text-paragraph-p3 text-content-4">
-            <Trans>点击确认订单，即表示您同意</Trans>
-            <a href="#" className="underline text-white ml-1">
-              <Trans>我们的条款</Trans>
-            </a>
-          </div>
-        )}
-
-        {isFinalState && (
-          <div className="text-paragraph-p3 text-content-4">
-            <Trans>遇到问题？</Trans>
-            <a href="#" className="underline text-white ml-1">
-              <Trans>获取帮助</Trans>
-            </a>
-          </div>
-        )}
+        <div className="text-paragraph-p3 text-content-4">
+          <Trans>遇到问题？</Trans>
+          <a href="#" className="underline text-white ml-1">
+            <Trans>获取帮助</Trans>
+          </a>
+        </div>
 
         {/* Footer Actions */}
         <div className="flex gap-medium">
@@ -307,20 +231,9 @@ export const WalletAssetsStep3 = ({
                 <Trans>继续入金</Trans>
               </Button>
             </>
-          ) : status === 'failure' ? (
+          ) : (
             <Button block color="primary" size="lg" onClick={onRetry}>
               <Trans>重新入金</Trans>
-            </Button>
-          ) : (
-            <Button block color="primary" size="lg" onClick={handleConfirm} disabled={status === 'processing'}>
-              {status === 'processing' ? (
-                <div className="flex items-center gap-xs text-content-1 text-button-2">
-                  <IconCodexLoader className="animate-spin size-4" />
-                  <Trans>资产兑换中</Trans>
-                </div>
-              ) : (
-                <Trans>确定订单</Trans>
-              )}
             </Button>
           )}
         </div>

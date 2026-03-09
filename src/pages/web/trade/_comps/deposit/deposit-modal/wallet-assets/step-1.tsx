@@ -61,9 +61,12 @@ export const WalletAssetsStep1 = ({
             <IconButton variant="ghost" className="text-brand-secondary-2" size={'icon-sm'} onClick={onBack}>
               <Iconify icon="iconoir:nav-arrow-left" className="size-4" />
             </IconButton>
-            <Trans>选择要兑换的资产</Trans>
+            <Trans>钱包转入</Trans>
           </div>
         </ModalTitle>
+        <div className="text-paragraph-p3 text-content-4">
+          <Trans>选择要转入的代币</Trans>
+        </div>
       </ModalHeader>
 
       <div className="flex flex-col gap-2 flex-1 overflow-y-auto">

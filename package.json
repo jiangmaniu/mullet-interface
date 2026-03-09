@@ -159,7 +159,8 @@
     "url-loader": "^4.1.1",
     "vaul": "^1.1.2",
     "viem": "^2.41.2",
-    "zod": "^4.1.9"
+    "zod": "^4.1.9",
+    "zustand": "^5.0.11"
   },
   "devDependencies": {
     "@alitajs/sentry": "^2.0.0",

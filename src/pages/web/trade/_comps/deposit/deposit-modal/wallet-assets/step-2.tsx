@@ -45,7 +45,7 @@ export const WalletAssetsStep2 = ({
             <Iconify icon="iconoir:nav-arrow-left" className="size-4" />
           </IconButton>
           <div className="flex flex-col gap-xs">
-            <Trans>充值您的钱包</Trans>
+            <Trans>钱包转入</Trans>
             <div className="text-paragraph-p3 text-content-4 !font-normal">
               <Trans>钱包余额：$153,568.00</Trans>
             </div>
@@ -64,6 +64,7 @@ export const WalletAssetsStep2 = ({
                 value={amount}
                 onValueChange={(val: any) => {
                   onAmountChange(val.value)
+                  setPercent(null)
                 }}
                 placeholder="0.00"
                 thousandSeparator
@@ -88,6 +89,23 @@ export const WalletAssetsStep2 = ({
               ))}
             </TabsList>
           </Tabs>
+        </div>
+
+        {/* Quick Amount Buttons */}
+        <div className="grid grid-cols-4 gap-medium">
+          {[200, 500, 1000, 2000].map((val) => (
+            <Button
+              key={val}
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                onAmountChange(val.toString())
+                setPercent(null)
+              }}
+            >
+              ${val}
+            </Button>
+          ))}
         </div>
 
         {/* Send -> Receive Visual */}
