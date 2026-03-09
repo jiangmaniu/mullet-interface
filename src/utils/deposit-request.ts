@@ -55,7 +55,7 @@ async function fetchWithTimeout(url: string, options: RequestInit, timeout: numb
   try {
     const response = await fetch(url, {
       ...options,
-      signal: controller.signal,
+      signal: controller.signal
     })
     clearTimeout(timeoutId)
     return response
@@ -96,15 +96,13 @@ export async function depositRequest<T = any>(url: string, config?: DepositReque
     }
 
     // 构建完整 URL
-    const baseURL = process.env.DEPOSIT_API_BASE_URL || '/api'
-    const cleanBaseURL = baseURL.replace(/\/$/, '')
-    const cleanUrl = url.startsWith('/') ? url : `/${url}`
-    const fullUrl = buildUrlWithParams(`${cleanBaseURL}${cleanUrl}`, config?.params)
+    const baseURL = process.env.NODE_ENV === 'development' ? '/deposit-api' : process.env.DEPOSIT_API_BASE_URL
+    const fullUrl = buildUrlWithParams(`${baseURL}${url}`, config?.params)
 
     // 构建 headers
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
-      ...(config?.headers || {}),
+      ...(config?.headers || {})
     }
 
     // 添加语言
@@ -122,7 +120,7 @@ export async function depositRequest<T = any>(url: string, config?: DepositReque
     const method = config?.method?.toUpperCase() || 'GET'
     const fetchOptions: RequestInit = {
       method,
-      headers,
+      headers
     }
 
     // 添加请求体（仅对非 GET 请求）
