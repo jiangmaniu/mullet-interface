@@ -271,6 +271,7 @@ export default defineConfig({
   {
     'process.env.PLATFORM_SEO': process.env.PLATFORM_SEO,
     'process.env.ANKR_API_KEY': process.env.ANKR_API_KEY,
+    'process.env.DEPOSIT_API_BASE_URL': process.env.DEPOSIT_API_BASE_URL,
     // git版本信息，用于sentry日志上报
     'process.env.COMMITHASH': gitRevisionPlugin.commithash(),
     'process.env.BRANCH': gitRevisionPlugin.branch(),

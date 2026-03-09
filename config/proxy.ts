@@ -25,45 +25,15 @@ export default {
       changeOrigin: true,
       secure: false,
       pathRewrite: { '^/api/': '/api/' }
-      // onProxyReq: (proxyReq: any, req: any, res: any) => {
-      //   // console.log('[请求拦截]', req.method, req.url, proxyReq.getHeaders())
-      // },
-      // onProxyRes: (proxyRes: any, req: any, res: any) => {
-      //   // console.log('[响应拦截]', req.method, req.url)
-
-      //   // let body: any = []
-
-      //   // proxyRes.on('data', (chunk: any) => {
-      //   //   body.push(chunk)
-      //   // })
-
-      //   // proxyRes.on('end', () => {
-      //   //   body = Buffer.concat(body)
-
-      //   //   // 检查是否是 Gzip 或 Deflate 压缩
-      //   //   const encoding = proxyRes.headers['content-encoding']
-      //   //   if (encoding === 'gzip') {
-      //   //     zlib.gunzip(body, (err: any, decoded: any) => {
-      //   //       if (!err) {
-      //   //         console.log(decoded.toString('utf8')) // 解码后打印
-      //   //       } else {
-      //   //         console.error('Gzip 解压失败:', err)
-      //   //       }
-      //   //     })
-      //   //   } else if (encoding === 'deflate') {
-      //   //     zlib.inflate(body, (err: any, decoded: any) => {
-      //   //       if (!err) {
-      //   //         console.log(decoded.toString('utf8'))
-      //   //       } else {
-      //   //         console.error('Deflate 解压失败:', err)
-      //   //       }
-      //   //     })
-      //   //   } else {
-      //   //     // 直接转换为字符串
-      //   //     console.log(body.toString('utf8'))
-      //   //   }
-      //   // })
-      // }
+      // onProxyReq: (proxyReq: any, req: any, res: any) => {\n      //   // console.log('[请求拦截]', req.method, req.url, proxyReq.getHeaders())\n      // },
+      // onProxyRes: (proxyRes: any, req: any, res: any) => {\n      //   // console.log('[响应拦截]', req.method, req.url)\n\n      //   // let body: any = []\n\n      //   // proxyRes.on('data', (chunk: any) => {\n      //   //   body.push(chunk)\n      //   // })\n\n      //   // proxyRes.on('end', () => {\n      //   //   body = Buffer.concat(body)\n\n      //   //   // 检查是否是 Gzip 或 Deflate 压缩\n      //   //   const encoding = proxyRes.headers['content-encoding']\n      //   //   if (encoding === 'gzip') {\n      //   //     zlib.gunzip(body, (err: any, decoded: any) => {\n      //   //       if (!err) {\n      //   //         console.log(decoded.toString('utf8')) // 解码后打印\n      //   //       } else {\n      //   //         console.error('Gzip 解压失败:', err)\n      //   //       }\n      //   //     })\n      //   //   } else if (encoding === 'deflate') {\n      //   //     zlib.inflate(body, (err: any, decoded: any) => {\n      //   //       if (!err) {\n      //   //         console.log(decoded.toString('utf8'))\n      //   //       } else {\n      //   //         console.error('Deflate 解压失败:', err)\n      //   //       }\n      //   //     })\n      //   //   } else {\n      //   //     // 直接转换为字符串\n      //   //     console.log(body.toString('utf8'))\n      //   //   }\n      //   // })\n      // }
+    },
+    // Deposit API 代理配置（避免 CORS 问题）
+    '/deposit-api/': {
+      target: 'https://api.mulletfinance.xyz',
+      changeOrigin: true,
+      secure: false,
+      pathRewrite: { '^/deposit-api/': '/' }
     },
     // WebSocket 代理配置
     '/websocketServer': {

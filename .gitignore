@@ -50,3 +50,6 @@ build
 *.zip
 *.tar.gz
 *.tgz
+
+.env.*.local
+.env.local
