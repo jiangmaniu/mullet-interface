@@ -679,6 +679,10 @@ declare namespace Order {
      * 配置
      */
     conf?: Symbol.SymbolConf
+    /**
+     * 保证金类型
+     */
+    marginType: API.MarginType
   }
   // 追加保证金
   type AddMarginParams = {

@@ -1,9 +1,7 @@
-import { ProColumns } from '@ant-design/pro-components'
-import { FormattedMessage } from '@umijs/max'
+import { ColumnDef } from '@tanstack/react-table'
 
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { getEnum } from '@/constants/enum'
-import { useStores } from '@/context/mobxProvider'
 import { cn } from '@/utils/cn'
 import { BNumber } from '@/libs/utils/number'
 import { Trans } from '@/libs/lingui/react/macro'
@@ -13,51 +11,33 @@ export const getColumns = ({
   currentAccountInfo
 }: {
   currentAccountInfo: User.AccountItem
-}): ProColumns<Account.MoneyRecordsPageListItem>[] => {
+}): ColumnDef<Account.MoneyRecordsPageListItem>[] => {
   return [
     {
-      title: <Trans>时间</Trans>, // 与 antd 中基本相同，但是支持通过传入一个方法
-      dataIndex: 'createTime',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
+      accessorKey: 'createTime',
+      header: () => <Trans>时间</Trans>,
+      size: 150,
+      meta: {
+        fixed: 'left'
       },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      fixed: 'left',
-      width: 150,
-      className: 'text-paragraph-p2 text-content-1'
+      cell: ({ row }) => <span className="text-paragraph-p2 text-content-1">{row.original.createTime}</span>
     },
     {
-      title: <Trans>类型</Trans>,
-      dataIndex: 'type',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      valueEnum: getEnum().Enum.CustomerBalanceRecordType,
-      className: 'text-paragraph-p2 text-content-1'
+      accessorKey: 'type',
+      header: () => <Trans>类型</Trans>,
+      size: 150,
+      cell: ({ row }) => {
+        const typeEnum = getEnum().Enum.CustomerBalanceRecordType
+        const text = typeEnum[row.original.type as keyof typeof typeEnum]?.text || row.original.type
+        return <span className="text-paragraph-p2 text-content-1">{text}</span>
+      }
     },
     {
-      title: <Trans>金额</Trans>,
-      dataIndex: 'money',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
+      accessorKey: 'money',
+      header: () => <Trans>金额</Trans>,
+      size: 150,
+      cell: ({ row }) => {
+        const text = row.original.money ?? 0
         return (
           <span
             className={cn(
@@ -76,59 +56,60 @@ export const getColumns = ({
       }
     },
     {
-      title: <Trans>余额</Trans>,
-      dataIndex: 'newBalance',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
-        return BNumber.toFormatNumber(text, { volScale: currentAccountInfo.currencyDecimal, unit: currentAccountInfo.currencyUnit })
-      },
-      className: 'text-paragraph-p2 text-content-1'
-    },
-    {
-      title: <Trans>变动前</Trans>,
-      dataIndex: 'oldBalance',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 150,
-      renderText(text, record, index, action) {
-        return BNumber.toFormatNumber(text, { volScale: currentAccountInfo.currencyDecimal, unit: currentAccountInfo.currencyUnit })
-      },
-      className: 'text-paragraph-p2 text-content-1'
-    },
-    {
-      title: <Trans>交易签名</Trans>,
-      dataIndex: 'signature',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      width: 180,
-      align: 'right',
-      fixed: 'right',
-      renderText(text, record, index, action) {
+      accessorKey: 'newBalance',
+      header: () => <Trans>余额</Trans>,
+      size: 150,
+      cell: ({ row }) => {
+        const text = row.original.newBalance
         return (
-          <>
+          <span className="text-paragraph-p2 text-content-1">
+            {BNumber.toFormatNumber(text, {
+              volScale: currentAccountInfo.currencyDecimal,
+              unit: currentAccountInfo.currencyUnit
+            })}
+          </span>
+        )
+      }
+    },
+    {
+      accessorKey: 'oldBalance',
+      header: () => <Trans>变动前</Trans>,
+      size: 150,
+      cell: ({ row }) => {
+        const text = row.original.oldBalance
+        return (
+          <span className="text-paragraph-p2 text-content-1">
+            {BNumber.toFormatNumber(text, {
+              volScale: currentAccountInfo.currencyDecimal,
+              unit: currentAccountInfo.currencyUnit
+            })}
+          </span>
+        )
+      }
+    },
+    {
+      accessorKey: 'signature',
+      header: () => (
+        <div className="text-right">
+          <Trans>交易签名</Trans>
+        </div>
+      ),
+      size: 180,
+      meta: {
+        fixed: 'right'
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="flex justify-end">
             {renderFallback(
               <span className="text-paragraph-p2 text-content-1">
-                <ExplorerLink path={`tx/${record.signature}`} address={record.signature} />
+                <ExplorerLink path={`tx/${row.original.signature}`} address={row.original.signature} />
               </span>,
               {
-                verify: !!record.signature
+                verify: !!row.original.signature
               }
             )}
-          </>
+          </div>
         )
       }
     }

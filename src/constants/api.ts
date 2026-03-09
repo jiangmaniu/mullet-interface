@@ -36,4 +36,4 @@ export const TRON_API_ENDPOINTS = {
  * TRON RPC 端点
  * Ankr Premium RPC for TRON
  */
-export const TRON_RPC_URL = 'https://rpc.ankr.com/premium-http/tron'
+export const TRON_RPC_URL = `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`

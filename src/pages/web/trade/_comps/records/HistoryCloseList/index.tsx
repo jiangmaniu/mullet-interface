@@ -1,55 +1,49 @@
-import { useIntl } from '@umijs/max'
 import { observer } from 'mobx-react'
-
-import StandardTable from '@/components/Admin/StandardTable'
-import { useEnv } from '@/context/envProvider'
+import { useState, useMemo } from 'react'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { isUndefined } from 'lodash'
+import { DataTable } from '@/libs/table'
 import { useStores } from '@/context/mobxProvider'
-import useStyle from '@/hooks/useStyle'
 import { getTradeRecordsPage } from '@/services/api/tradeCore/order'
 
 import { getColumns } from './tableConfig'
+import { REQUEST_POLLING_INTERVAL } from '../_config'
 
 // 历史记录
 function HistoryClose() {
-  const { isPc } = useEnv()
-  const { ws, trade } = useStores()
-  const { recordListClassName } = useStyle()
-  const symbol = trade.showActiveSymbol ? trade.activeSymbolName : undefined
+  const { trade } = useStores()
 
-  const onQuery = async (params: Order.TradeRecordsPageListParams) => {
-    const res = await getTradeRecordsPage({ current: 1, size: 10, ...params })
-    return res
-  }
+  const symbol = trade.showActiveSymbol ? trade.activeSymbolName : undefined
+  const [pagination, setPagination] = useState({ pageIndex: 1, pageSize: 6 })
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['tradeRecordsPage', trade.currentAccountInfo.id, symbol, pagination],
+    queryFn: () =>
+      getTradeRecordsPage({
+        accountId: trade.currentAccountInfo.id,
+        symbol,
+        current: pagination.pageIndex,
+        size: pagination.pageSize
+      }),
+    enabled: !isUndefined(trade.currentAccountInfo.id),
+    refetchInterval: REQUEST_POLLING_INTERVAL,
+    placeholderData: keepPreviousData,
+    refetchOnMount: 'always'
+  })
+
+  const list = useMemo(() => data?.data?.records || [], [data])
+  const total = data?.data?.total || 0
 
   return (
     <>
-      <StandardTable
+      <DataTable
         columns={getColumns({
           currentAccountInfo: trade.currentAccountInfo
         })}
-        key={trade.currentAccountInfo.id}
-        // ghost
-        showOptionColumn={false}
-        stripe={false}
-        hasTableBordered
-        hideSearch
-        cardBordered={false}
-        bordered={false}
-        className={recordListClassName}
-        cardProps={{
-          bodyStyle: { padding: 0 },
-          headStyle: { borderRadius: 0 },
-          className: ''
-        }}
-        rowClassName={(record, i) => {
-          return record.buySell === 'BUY' ? 'table-row-green' : 'table-row-red'
-        }}
-        size="small"
-        pageSize={6}
-        params={{ accountId: trade.currentAccountInfo?.id, symbol }}
-        action={{
-          query: (params: Order.TradeRecordsPageListParams) => onQuery(params)
-        }}
+        data={list}
+        loading={isLoading}
+        pagination={{ total, ...pagination }}
+        onStateChange={({ pagination }) => setPagination({ pageIndex: pagination.pageIndex + 1, pageSize: pagination.pageSize })}
       />
     </>
   )

@@ -11,6 +11,8 @@ import { useDepositListener } from '@/hooks/useDepositListenerV2'
 import { useStores } from '@/context/mobxProvider'
 import { useServerWallet } from '@/hooks/useServerWallet'
 import type { SupportedChain } from '@/services/serverWalletService'
+import { useDepositAddress } from '@/hooks/useDepositAddress'
+import type { DepositChainId } from '@/services/depositService'
 import { useCoboWallet } from '@/hooks/useCoboWallet'
 import { useCoboDepositAddress } from '@/hooks/useCoboDepositAddress'
 import { useCoboDepositMonitor } from '@/hooks/useCoboDepositMonitor'
@@ -48,8 +50,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
   const isCoboChain = selectedChainConfig?.type === 'cobo'
   const isPrivyChain = selectedChainConfig?.type === 'privy'
 
-  // Privy Server Wallet - 根据选择的链创建钱包
-  // 将链名转换为 API 需要的格式
+  // 将链名转换为旧版 serverWalletService 使用的格式（仅用于 BSC 桥接步骤）
   const getChainId = (chainName: string): SupportedChain => {
     const chainMap: Record<string, SupportedChain> = {
       Tron: 'tron',
@@ -61,17 +62,35 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     return chainMap[chainName] || 'tron'
   }
 
-  const currentChainId = getChainId(selectedChain)
+  // 将链名转换为新版 /api/deposit/address 使用的格式
+  const getDepositChainId = (chainName: string): DepositChainId | undefined => {
+    const chainMap: Record<string, DepositChainId> = {
+      Tron: 'TRON',
+      Ethereum: 'ETH',
+      Solana: 'SOL'
+    }
+    return chainMap[chainName]
+  }
+
+  const currentChainId = getChainId(selectedChain)           // 用于 BSC 桥接
+  const depositChainId = getDepositChainId(selectedChain)   // 用于充值地址 API
   const tradeAccountId = trade.currentAccountInfo?.id
 
-  // 🔥 直接使用 useServerWallet，传入当前账户 ID，确保切换账户后地址正确更新
+  // 🔥 使用新版统一接口获取充值地址（自动 check → create，无需单独调用 create）
   const {
     address: serverWalletAddress,
     walletId: serverWalletId,
-    isCreating: isServerWalletCreating
-  } = useServerWallet(currentChainId, open && isPrivyChain && !!tradeAccountId, tradeAccountId)
+    isLoading: isServerWalletCreating,
+    iconUrl: depositChainIconUrl,
+    supportedTokens: depositSupportedTokens,
+    minDeposit: depositMinDeposit,
+  } = useDepositAddress(
+    depositChainId,
+    tradeAccountId,
+    open && isPrivyChain && !!tradeAccountId && !!depositChainId
+  )
 
-  // 🔥 额外获取 BSC/EVM 钱包信息，用于 TRON → BSC → Solana 桥接
+  // 🔥 额外获取 BSC/EVM 钱包信息，用于 TRON → BSC → Solana 桥接（保持原有逻辑）
   const { address: evmWalletAddress, walletId: evmWalletId } = useServerWallet(
     'bsc', // BSC 代表所有 EVM 链，地址相同
     open && currentChainId === 'tron' && !!tradeAccountId, // 仅在 TRON 页面时获取
@@ -279,7 +298,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     }
   }, [open, resetDetection])
 
-  // 检测到充值后自动触发桥接
+  // 检测到充值后展示状态（桥接由后端 cron 自动处理，前端不重复发起）
   useEffect(() => {
     console.log('[TransferCrypto] useEffect triggered:', {
       hasDeposit: !!deposit,
@@ -288,19 +307,31 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
     })
 
     if (deposit && !bridgeInProgress) {
-      console.log('[TransferCrypto] Deposit detected:', deposit)
+      console.log('[TransferCrypto] Deposit detected, backend cron will handle bridge:', deposit)
 
-      // 触发桥接 - 使用 rawAmount（最小单位）
-      // rawAmount 可能是十六进制字符串，需要转换为十进制数字字符串
-      let amountToUse = deposit.amount
-      if (deposit.rawAmount && deposit.rawAmount.startsWith('0x')) {
-        amountToUse = BigInt(deposit.rawAmount).toString() // 转换为十进制字符串
-        console.log('[TransferCrypto] Converted rawAmount:', deposit.rawAmount, '→', amountToUse)
-      } else if (deposit.rawAmount) {
-        amountToUse = deposit.rawAmount
+      const chainLower = deposit.chain?.toLowerCase()
+
+      if (chainLower === 'solana') {
+        // Solana 直接到账，无需桥接
+        toast.success(<Trans>✅ Solana 充值已到账，无需跨链桥接</Trans>)
+        if (onDepositDetected) {
+          onDepositDetected(deposit.amount, deposit.token, deposit.chain)
+        }
+      } else {
+        // 其他链：后端 cron 自动执行桥接，前端只展示进度 UI
+        setBridgeStep(chainLower === 'tron' ? 'tron-eth' : 'eth-sol')
+        setBridgeInProgress(true)
+        toast.loading(<Trans>充值已到账，后端正在处理跨链桥接...</Trans>)
+        if (onDepositDetected) {
+          onDepositDetected(deposit.amount, deposit.token, deposit.chain)
+        }
+        // 后端桥接约 3-5 分钟，5分钟后自动重置 UI
+        setTimeout(() => {
+          setBridgeInProgress(false)
+          setBridgeStep('idle')
+          toast.dismiss()
+        }, 5 * 60 * 1000)
       }
-
-      handleAutoBridge(amountToUse, deposit.token, deposit.chain)
 
       // 清除检测记录
       clearDeposit()
@@ -576,18 +607,17 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
           <div style={{ flex: 1 }}>
             <Text strong>Supported token</Text>
             <Select value={selectedToken} onChange={setSelectedToken} style={{ width: '100%', marginTop: 8 }} size="large">
-              <Select.Option value="USDT">
-                <Space>
-                  <Avatar src={TOKEN_ICONS.USDT} size="small" />
-                  USDT
-                </Space>
-              </Select.Option>
-              <Select.Option value="USDC">
-                <Space>
-                  <Avatar src={TOKEN_ICONS.USDC} size="small" />
-                  USDC
-                </Space>
-              </Select.Option>
+              {(depositSupportedTokens.length > 0 ? depositSupportedTokens : [
+                { symbol: 'USDT', iconUrl: TOKEN_ICONS.USDT, displayName: 'USDT' },
+                { symbol: 'USDC', iconUrl: TOKEN_ICONS.USDC, displayName: 'USDC' },
+              ]).map((t) => (
+                <Select.Option key={t.symbol} value={t.symbol}>
+                  <Space>
+                    <Avatar src={t.iconUrl} size="small" />
+                    {t.symbol}
+                  </Space>
+                </Select.Option>
+              ))}
             </Select>
           </div>
 
@@ -603,7 +633,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
               {SUPPORTED_BRIDGE_CHAINS.map((chain) => (
                 <Select.Option key={chain.name} value={chain.name}>
                   <Space>
-                    <Avatar src={CHAIN_ICONS[chain.name]} size="small" />
+                    <Avatar src={chain.iconUrl || CHAIN_ICONS[chain.name]} size="small" />
                     {chain.displayName || chain.name}
                   </Space>
                 </Select.Option>
@@ -637,7 +667,7 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
                     boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
                   }}
                 >
-                  <Avatar src={CHAIN_ICONS[selectedChain]} size={28} />
+                  <Avatar src={depositChainIconUrl || CHAIN_ICONS[selectedChain]} size={28} />
                 </div>
               </div>
               <Text type="secondary" style={{ display: 'block', marginTop: 8, fontSize: 12 }}>
@@ -971,12 +1001,12 @@ const TransferCryptoDialog: React.FC<TransferCryptoDialogProps> = ({ open, onClo
               </Space>
               {bridgeStep === 'tron-eth' && (
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  ⏳ 步骤 1/2: Tron → Ethereum (预计 3-5 分钟)
+                  ⏳ Tron → Solana，后端自动处理中 (预计 5-8 分钟)
                 </Text>
               )}
               {bridgeStep === 'eth-sol' && (
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  ⏳ 步骤 2/2: Ethereum → Solana (预计 2-3 分钟)
+                  ⏳ 跨链桥接到 Solana，后端自动处理中 (预计 2-3 分钟)
                 </Text>
               )}
               {bridgeStep === 'completed' && (

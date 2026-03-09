@@ -1,16 +1,13 @@
-import { ProColumns } from '@ant-design/pro-components'
-import { FormattedMessage } from '@umijs/max'
+import { ColumnDef } from '@tanstack/react-table'
+import { observer } from 'mobx-react'
 
 import SymbolIcon from '@/components/Base/SymbolIcon'
 import ExplorerLink from '@/components/Wallet/ExplorerLink'
 import { getEnum } from '@/constants/enum'
 import { useLang } from '@/context/languageProvider'
-import { formatNum } from '@/utils'
 import { getBuySellInfo } from '@/utils/business'
 import { cn } from '@/libs/ui/lib/utils'
-import { observer } from 'mobx-react'
 import { BNumber } from '@/libs/utils/number'
-import CurrentPrice from '../PositionList/_comps/CurrentPrice'
 import { Trans } from '@/libs/lingui/react/macro'
 import { formatAddress } from '@/libs/utils/format'
 import { GeneralTooltip } from '@/components/tooltip'
@@ -22,217 +19,120 @@ export const getColumns = ({
   currentAccountInfo
 }: {
   currentAccountInfo: User.AccountItem
-}): ProColumns<Order.TradeRecordsPageListItem>[] => {
+}): ColumnDef<Order.TradeRecordsPageListItem>[] => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { lng } = useLang()
   const isZh = lng === 'zh-TW'
   const currencyDecimal = currentAccountInfo.currencyDecimal
   const currencyUnit = currentAccountInfo.currencyUnit
+
   return [
     {
-      title: (
+      accessorKey: 'category',
+      header: () => (
         <span className="!pl-1">
           <Trans>品种</Trans>
         </span>
-      ), // 与 antd 中基本相同，但是支持通过传入一个方法
-      dataIndex: 'category',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
+      ),
+      size: 230,
+      meta: {
+        fixed: 'left'
       },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      fixed: 'left',
-      width: 230,
-      renderText(text, record, index, action) {
-        return <HistoryOrderSymbolInfoCell orderInfo={record} />
-      }
+      cell: ({ row }) => <HistoryOrderSymbolInfoCell orderInfo={row.original} />
     },
     {
-      title: <Trans>交易类型</Trans>,
-      dataIndex: 'type',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      copyable: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 120,
-      align: 'left',
-      className: '!text-[13px] text-primary',
-      renderText(text, record, index, action) {
-        return renderFallback(getEnum().Enum.OrderInOut?.[record.inOut!]?.text)
-      }
+      accessorKey: 'type',
+      header: () => <Trans>交易类型</Trans>,
+      size: 120,
+      cell: ({ row }) => (
+        <span className="text-paragraph-p2 text-content-1">{renderFallback(getEnum().Enum.OrderInOut?.[row.original.inOut!]?.text)}</span>
+      )
     },
-
     {
-      title: (
+      accessorKey: 'price',
+      header: () => (
         <>
           <Trans>开仓均价</Trans> / <Trans>成交价</Trans>
         </>
       ),
-      dataIndex: ' price',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 200,
-      renderText(text, record, index, action) {
-        return <HistoryOrderPriceCell orderInfo={record} />
-      }
+      size: 200,
+      cell: ({ row }) => <HistoryOrderPriceCell orderInfo={row.original} />
     },
     {
-      title: <Trans>手数</Trans>,
-      dataIndex: 'tradingVolume',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      copyable: false,
-      fieldProps: {
-        precision: 2,
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 100,
-      align: 'left',
-      renderText(text, record, index, action) {
-        const lotVolScale = parseSymbolLotsVolScale(record.conf)
+      accessorKey: 'tradingVolume',
+      header: () => <Trans>手数</Trans>,
+      size: 100,
+      cell: ({ row }) => {
+        const lotVolScale = parseSymbolLotsVolScale(row.original.conf)
         return (
           <span className="text-paragraph-p2 text-content-1">
-            {BNumber.toFormatNumber(record.tradingVolume, { volScale: lotVolScale })}
+            {BNumber.toFormatNumber(row.original.tradingVolume, { volScale: lotVolScale })}
           </span>
         )
       }
     },
-    // {
-    //   title: (
-    //     <>
-    //       <FormattedMessage id="mt.shouxufei" />
-    //       (USD)
-    //     </>
-    //   ),
-    //   dataIndex: 'handlingFees',
-    //   hideInSearch: true, // 在 table的查询表单 中隐藏
-    //   ellipsis: false,
-    //   fieldProps: {
-    //     placeholder: ''
-    //   },
-    //   formItemProps: {
-    //     label: '' // 去掉form label
-    //   },
-    //   width: 150,
-    //   renderText(text, record, index, action) {
-    //     return <span className="!text-[13px] text-primary">{formatNum(text)}</span>
-    //   }
-    // },
     {
-      title: <Trans>保证金类型</Trans>,
-      dataIndex: 'marginType',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      valueEnum: getEnum().Enum.MarginType,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 140,
-      className: 'text-paragraph-p2 text-content-1'
-    },
-
-    {
-      title: <Trans>成交单号</Trans>,
-      dataIndex: 'id',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      copyable: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 140,
-      renderText(text, record, index, action) {
-        return (
-          <div>
-            <GeneralTooltip content={<>{record.id}</>} triggerClassName="inline-block">
-              <TooltipTriggerDottedText className="text-paragraph-p2 text-content-1">
-                {formatAddress(record.id, { prefix: 3, suffix: 3 })}
-              </TooltipTriggerDottedText>
-            </GeneralTooltip>
-          </div>
-        )
+      accessorKey: 'marginType',
+      header: () => <Trans>保证金类型</Trans>,
+      size: 140,
+      cell: ({ row }) => {
+        const typeEnum = getEnum().Enum.MarginType
+        const text = typeEnum[row.original.marginType as keyof typeof typeEnum]?.text || row.original.marginType
+        return <span className="text-paragraph-p2 text-content-1">{text}</span>
       }
     },
     {
-      title: <Trans>交易签名</Trans>,
-      dataIndex: 'signature',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      width: 180,
-      renderText(text, record, index, action) {
-        return (
-          <>
-            {renderFallback(
-              <span className="text-content-1 text-paragraph-p2">
-                <ExplorerLink path={`tx/${record.signature}`} address={record.signature} />
-              </span>,
-              {
-                verify: !!record.signature
-              }
-            )}
-          </>
-        )
-      }
+      accessorKey: 'id',
+      header: () => <Trans>成交单号</Trans>,
+      size: 140,
+      cell: ({ row }) => (
+        <div>
+          <GeneralTooltip content={<>{row.original.id}</>} triggerClassName="inline-block">
+            <TooltipTriggerDottedText className="text-paragraph-p2 text-content-1">
+              {formatAddress(row.original.id, { prefix: 3, suffix: 3 })}
+            </TooltipTriggerDottedText>
+          </GeneralTooltip>
+        </div>
+      )
     },
     {
-      title: <Trans>交易时间</Trans>,
-      dataIndex: 'createTime',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      fieldProps: {
-        placeholder: ''
-      },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: 180,
-      className: 'text-paragraph-p2 text-content-1'
-    },
-    {
-      title: (
+      accessorKey: 'signature',
+      header: () => <Trans>交易签名</Trans>,
+      size: 180,
+      cell: ({ row }) => (
         <>
-          <Trans>盈亏</Trans>({currencyUnit})
+          {renderFallback(
+            <span className="text-content-1 text-paragraph-p2">
+              <ExplorerLink path={`tx/${row.original.signature}`} address={row.original.signature} />
+            </span>,
+            {
+              verify: !!row.original.signature
+            }
+          )}
         </>
+      )
+    },
+    {
+      accessorKey: 'createTime',
+      header: () => <Trans>交易时间</Trans>,
+      size: 180,
+      cell: ({ row }) => <span className="text-paragraph-p2 text-content-1">{row.original.createTime}</span>
+    },
+    {
+      accessorKey: 'profit',
+      header: () => (
+        <div className="text-right">
+          <Trans>盈亏</Trans>({currencyUnit})
+        </div>
       ),
-      dataIndex: 'profit',
-      hideInSearch: true, // 在 table的查询表单 中隐藏
-      ellipsis: false,
-      copyable: false,
-      fieldProps: {
-        placeholder: ''
+      size: isZh ? 120 : 140,
+      meta: {
+        fixed: 'right'
       },
-      formItemProps: {
-        label: '' // 去掉form label
-      },
-      width: isZh ? 120 : 140,
-      align: 'right',
-      fixed: 'right',
-      renderText(text, record, index, action) {
-        const profit = record.profit
+      cell: ({ row }) => {
+        const profit = row.original.profit
         return (
-          <>
+          <div className="text-right">
             <span
               className={cn(
                 'text-paragraph-p2',
@@ -241,7 +141,7 @@ export const getColumns = ({
             >
               {BNumber.toFormatNumber(profit, { forceSign: true, positive: false, volScale: currencyDecimal })}
             </span>
-          </>
+          </div>
         )
       }
     }

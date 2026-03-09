@@ -61,7 +61,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
   const checkSolanaBalance = useCallback(
     async (address: string) => {
       try {
-        const connection = new Connection('https://rpc.ankr.com/solana/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93')
+        const connection = new Connection(`https://rpc.ankr.com/solana/${process.env.ANKR_API_KEY}`)
 
         // 检查 USDT
         const usdtTokenInfo = SUPPORTED_TOKENS.solana.find((t) => t.symbol === 'USDT')
@@ -110,7 +110,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
 
         // 使用 Ankr Premium RPC (已付费)
         const tronWeb = new TronWeb({
-          fullHost: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93'
+          fullHost: `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`
         })
 
         // 检查 USDT TRC20 余额
@@ -171,7 +171,7 @@ export function useDepositListener(options: UseDepositListenerOptions = {}) {
           // 使用 Ankr Premium RPC 调用 ERC20 balanceOf
           const balanceOfData = `0x70a08231000000000000000000000000${address.slice(2).toLowerCase()}`
 
-          const response = await fetch('https://rpc.ankr.com/eth/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93', {
+          const response = await fetch(`https://rpc.ankr.com/eth/${process.env.ANKR_API_KEY}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

@@ -29,31 +29,16 @@ export const getIntegrator = () => {
   return LIFI_INTEGRATORS[index]
 }
 
-// Custom RPC URLs for different chains
+// Custom RPC URLs for the 3 supported chains (RPC calls go through backend)
 export const CUSTOM_RPC_URLS = {
   // Ethereum Mainnet
-  ethereum: 'https://rpc.ankr.com/eth/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+  ethereum: `https://rpc.ankr.com/eth/${process.env.ANKR_API_KEY}`,
 
   // Solana Mainnet
-  solana: 'https://rpc.ankr.com/solana/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
+  solana: `https://rpc.ankr.com/solana/${process.env.ANKR_API_KEY}`,
 
   // TRON Mainnet
-  tron: 'https://rpc.ankr.com/premium-http/tron/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // Arbitrum One
-  arbitrum: 'https://rpc.ankr.com/arbitrum/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // Base Mainnet
-  base: 'https://rpc.ankr.com/base/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // Polygon Mainnet
-  polygon: 'https://rpc.ankr.com/polygon/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // BNB Smart Chain
-  bnb: 'https://rpc.ankr.com/bsc/ac6e9c5a2f23e042f1f63c8235e84b8bec0cdae478e82e2e7519f0693fbadb93',
-
-  // HyperEVM
-  hyperevm: 'https://rpc.hyperliquid.xyz/evm'
+  tron: `https://rpc.ankr.com/premium-http/tron/${process.env.ANKR_API_KEY}`
 }
 
 // LiFi configuration defaults
@@ -74,7 +59,8 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     color: '#c62828',
     minDeposit: 20,
     type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'Tron'
+    displayName: 'Tron',
+    iconUrl: 'https://assets.coingecko.com/coins/images/1094/standard/tron-logo.png'
   },
   {
     id: 'ethereum', // 小写，匹配 Privy chainType
@@ -82,7 +68,8 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     color: '#627EEA',
     minDeposit: 10,
     type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'Ethereum'
+    displayName: 'Ethereum',
+    iconUrl: 'https://assets.coingecko.com/coins/images/279/standard/ethereum.png'
   },
   {
     id: 'solana', // 小写，匹配 Privy chainType
@@ -90,48 +77,30 @@ export const SUPPORTED_BRIDGE_CHAINS = [
     color: '#14F195',
     minDeposit: 10,
     type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'Solana'
-  },
-  {
-    id: 'arbitrum', // 小写，匹配 Privy chainType
-    name: 'Arbitrum',
-    color: '#28A0F0',
-    minDeposit: 10,
-    type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'Arbitrum'
-  },
-  // {
-  //   id: 'BASE_ETH',
-  //   name: 'Base',
-  //   color: '#0052FF',
-  //   minDeposit: 10,
-  //   type: 'cobo' as const,
-  //   displayName: 'Base'
-  // },
-  // {
-  //   id: 'MATIC',
-  //   name: 'Polygon',
-  //   color: '#8247E5',
-  //   minDeposit: 10,
-  //   type: 'cobo' as const,
-  //   displayName: 'Polygon'
-  // },
-  {
-    id: 'bsc', // 小写，匹配 Privy chainType
-    name: 'BSC',
-    color: '#F0B90B',
-    minDeposit: 10,
-    type: 'privy' as const, // 使用 Privy Server Wallet
-    displayName: 'BSC'
+    displayName: 'Solana',
+    iconUrl: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'
   }
-  // {
-  //   id: 'HYPEREVM_HYPE',
-  //   name: 'HyperEVM',
-  //   color: '#00D4AA',
-  //   minDeposit: 10,
-  //   type: 'cobo' as const,
-  //   displayName: 'HyperEVM'
-  // }
+] as const
+
+// ================================================================
+// 出金链配置（独立于入金 SUPPORTED_BRIDGE_CHAINS）
+// 可独立控制哪些链/币种支持出金，与入金配置互不影响
+// ================================================================
+export const WITHDRAWAL_CHAINS = [
+  {
+    id: 'Solana',
+    name: 'Solana',
+    displayName: 'Solana',
+    iconUrl: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+    addressRegex: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+    addressPlaceholder: '请输入 Solana 地址',
+    requiresBridge: false,
+    estimatedTime: '< 10s',
+    supportedTokens: [
+      { symbol: 'USDC', displayName: 'USD Coin', minWithdraw: 200, iconUrl: 'https://assets.coingecko.com/coins/images/6319/standard/usdc.png' },
+      { symbol: 'USDT', displayName: 'Tether USD', minWithdraw: 200, iconUrl: 'https://assets.coingecko.com/coins/images/325/standard/Tether.png' },
+    ],
+  },
 ] as const
 
 // Supported tokens for each chain

@@ -18,6 +18,7 @@ import {
 export * from './arbitrum'
 export * from './bitcoin'
 export * from './codex-loade'
+export { IconCodexLoader } from './codex-loader'
 export * from './empty-no-data'
 export * from './ethereum-eth'
 export * from './fail'
