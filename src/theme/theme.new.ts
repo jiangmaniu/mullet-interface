@@ -7,21 +7,22 @@ export const NewThemeTextColor = {
   'content-6': 'rgb(var(--color-zinc-400))',
   'content-foreground': 'rgb(var(--color-zinc-800))',
   // shadcn/ui 兼容变量
-  'foreground': 'rgb(var(--color-white))',
+  foreground: 'rgb(var(--color-white))'
 }
 
 export const NewThemeBackgroundColor = {
-  'primary': 'rgb(var(--color-zinc-500))',
-  'secondary': 'rgb(var(--color-zinc-800))',
-  'transparent': 'transparent',
+  primary: 'rgb(var(--color-zinc-500))',
+  secondary: 'rgb(var(--color-zinc-800))',
+  transparent: 'transparent',
   'move-in': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 10%, transparent)',
-  'button': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 20%, transparent)',
+  button: 'color-mix(in srgb, rgb(var(--color-zinc-300)) 20%, transparent)',
   'button-box': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
-  'card': 'color-mix(in srgb, rgb(var(--color-zinc-800)) 50%, transparent)',
-  'navigation': 'color-mix(in srgb, rgb(var(--color-zinc-800)) 80%, transparent)',
+  card: 'color-mix(in srgb, rgb(var(--color-zinc-800)) 50%, transparent)',
+  navigation: 'color-mix(in srgb, rgb(var(--color-zinc-800)) 80%, transparent)',
   'pop-up-mask': 'color-mix(in srgb, rgb(var(--color-zinc-800)) 90%, transparent)',
+  special: '#14172B',
   // shadcn/ui 兼容变量
-  'background': 'rgb(var(--color-zinc-500))',
+  background: 'rgb(var(--color-zinc-500))'
 }
 
 export const NewThemeBorderColor = {
@@ -32,14 +33,14 @@ export const NewThemeBorderColor = {
   'yellow-base': 'color-mix(in srgb, rgb(var(--color-yellow-500)) 100%, transparent)',
   'orange-base': 'color-mix(in srgb, rgb(var(--color-orange-500)) 100%, transparent)',
   // shadcn/ui 兼容变量
-  'border': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
+  border: 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
 
-  'warning': 'rgb(var(--color-orange-500) / <alpha-value>)',
+  warning: 'rgb(var(--color-orange-500) / <alpha-value>)',
   'divider-line': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 20%, transparent)',
-  'default': 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
-  'special': 'rgb(var(--color-zinc-300) / <alpha-value>)',
-  'important': 'rgb(var(--color-white) / <alpha-value>)',
-  'primary': 'rgb(var(--color-yellow-500) / <alpha-value>)',
+  default: 'color-mix(in srgb, rgb(var(--color-zinc-300)) 40%, transparent)',
+  special: 'rgb(var(--color-zinc-300) / <alpha-value>)',
+  important: 'rgb(var(--color-white) / <alpha-value>)',
+  primary: 'rgb(var(--color-yellow-500) / <alpha-value>)'
 }
 
 export const NewThemeColor = {
@@ -61,15 +62,15 @@ export const NewThemeColor = {
   'status-warning': 'rgb(var(--color-orange-500) / <alpha-value>)',
   'status-danger': 'rgb(var(--color-red-500) / <alpha-value>)',
 
-  'white': 'rgb(var(--color-white) / <alpha-value>)',
+  white: 'rgb(var(--color-white) / <alpha-value>)'
 }
 
 export const NewThemeFontSize = {
-  'xs': '12px',
-  'small': '14px',
-  'medium': '16px',
-  'large': '18px',
-  'xl': '24px',
+  xs: '12px',
+  small: '14px',
+  medium: '16px',
+  large: '18px',
+  xl: '24px',
   '2xl': '28px',
   '3xl': '30px',
 
@@ -77,127 +78,125 @@ export const NewThemeFontSize = {
     '32px',
     {
       lineHeight: 'var(--leading-2xl)',
-      fontWeight: 'var(--font-weight-semibold)',
-    },
+      fontWeight: 'var(--font-weight-semibold)'
+    }
   ],
-
 
   'title-h2': [
     '28px',
     {
       lineHeight: 'var(--leading-xl)',
-      fontWeight: 'var(--font-weight-semibold)',
-    },
+      fontWeight: 'var(--font-weight-semibold)'
+    }
   ],
 
   'title-h3': [
     '24px',
     {
       lineHeight: 'var(--leading-large)',
-      fontWeight: 'var(--font-weight-semibold)',
-    },
+      fontWeight: 'var(--font-weight-semibold)'
+    }
   ],
 
   'title-h4': [
     'var(--font-size-large)',
     {
       lineHeight: 'var(--leading-medium)',
-      fontWeight: 'var(--font-weight-semibold)',
-    },
+      fontWeight: 'var(--font-weight-semibold)'
+    }
   ],
 
   'paragraph-p1': [
     '16px',
     {
       lineHeight: 'var(--leading-medium)',
-      fontWeight: 'var(--font-weight-regular)',
-    },
+      fontWeight: 'var(--font-weight-regular)'
+    }
   ],
 
   'paragraph-p2': [
     '14px',
     {
       lineHeight: 'var(--leading-small)',
-      fontWeight: 'var(--font-weight-regular)',
-    },
+      fontWeight: 'var(--font-weight-regular)'
+    }
   ],
 
   'paragraph-p3': [
     '12px',
     {
       lineHeight: 'var(--leading-xs)',
-      fontWeight: 'var(--font-weight-regular)',
-    },
+      fontWeight: 'var(--font-weight-regular)'
+    }
   ],
 
   'important-1': [
     'var(--font-size-medium)',
     {
       lineHeight: 'var(--leading-small)',
-      fontWeight: 'var(--font-weight-semibold)',
-    },
+      fontWeight: 'var(--font-weight-semibold)'
+    }
   ],
 
   'important-2': [
     '12px',
     {
       lineHeight: 'var(--leading-xs)',
-      fontWeight: 'var(--font-weight-semibold)',
-    },
+      fontWeight: 'var(--font-weight-semibold)'
+    }
   ],
-
 
   'button-1': [
     '12px',
     {
       lineHeight: 'var(--leading-xs)',
-      fontWeight: 'var(--font-weight-medium)',
-    },
+      fontWeight: 'var(--font-weight-medium)'
+    }
   ],
 
   'button-2': [
     '14px',
     {
       lineHeight: 'var(--leading-xs)',
-      fontWeight: 'var(--font-weight-medium)',
-    },
+      fontWeight: 'var(--font-weight-medium)'
+    }
   ],
   'clickable-1': [
     'var(--font-size-xs)',
     {
-      lineHeight: 'var(--leading-xs)',
+      lineHeight: 'var(--leading-xs)'
       // fontWeight: 'var(--font-weight-medium)',
-    },
-  ],
+    }
+  ]
 }
 
 export const NewThemeLineHeight = {
-  'xs': '16px',
-  'small': '20px',
-  'medium': '24px',
-  'large': '28px',
-  'xl': '32px',
+  xs: '16px',
+  small: '20px',
+  medium: '24px',
+  large: '28px',
+  xl: '32px',
   '2xl': '36px',
-  '3xl': '40px',
+  '3xl': '40px'
 }
 
 export const NewThemeFontWeight = {
-  'regular': 'regular',
-  'medium': 'medium',
-  'semibold': 'semibold',
+  regular: 'regular',
+  medium: 'medium',
+  semibold: 'semibold'
 }
 
 export const NewThemeBaseSize = 4
 
 export const NewThemeRadius = {
-  'xs': '4px',
-  'small': '8px',
-  'medium': '12px',
-  'large': '16px',
-  'xl': '24px',
+  xs: '4px',
+  small: '8px',
+  medium: '12px',
+  large: '16px',
+  xl: '24px',
   '2xl': '28px',
   '3xl': '32px',
-  'none': '0px',
+  none: '0px',
   '1': `${NewThemeBaseSize * 1}px`,
   '2': `${NewThemeBaseSize * 2}px`,
   '3': `${NewThemeBaseSize * 3}px`,
@@ -207,9 +206,8 @@ export const NewThemeRadius = {
   '7': `${NewThemeBaseSize * 7}px`,
   '8': `${NewThemeBaseSize * 8}px`,
   '9': `${NewThemeBaseSize * 9}px`,
-  '10': `${NewThemeBaseSize * 10}px`,
+  '10': `${NewThemeBaseSize * 10}px`
 }
-
 
 export const NewThemeSpacing = {
   xs: `${NewThemeBaseSize * 1}px`,
@@ -219,14 +217,14 @@ export const NewThemeSpacing = {
   xl: `${NewThemeBaseSize * 3}px`,
   '2xl': `${NewThemeBaseSize * 4}px`,
   '3xl': `${NewThemeBaseSize * 6}px`,
-  '4xl': `${NewThemeBaseSize * 8}px`,
+  '4xl': `${NewThemeBaseSize * 8}px`
 }
 
 export const NewThemeBoxShadow = {
-  'base': '0px 4px 4px 0px color-mix(in srgb, rgb(var(--color-black)) 10%, transparent)',
-  'inset-base': 'inset 0px 2px 4px 0px color-mix(in srgb, rgb(var(--color-black)) 50%, transparent)',
+  base: '0px 4px 4px 0px color-mix(in srgb, rgb(var(--color-black)) 10%, transparent)',
+  'inset-base': 'inset 0px 2px 4px 0px color-mix(in srgb, rgb(var(--color-black)) 50%, transparent)'
 }
 
 export const NewThemeBackdropBlur = {
-  'base': `${NewThemeBaseSize * 3}px`,
+  base: `${NewThemeBaseSize * 3}px`
 }

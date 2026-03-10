@@ -22,8 +22,7 @@ import { Separator } from '@/libs/ui/components/separator'
 import { IconMasterCord } from '@/libs/ui/components/icons/set/master-cord'
 import { WalletAssets } from './wallet-assets'
 import { SwapDeposit } from './swap-deposit'
-import { Cryptocurrency } from './cryptocurrency'
-import { CreditCardBuy } from './credit-card-buy'
+import { CryptoDeposit } from './crypto-deposit'
 import { BNumber } from '@/utils/b-number'
 import { WalletDepositCard } from './_comps/wallet-deposit-card'
 
@@ -48,7 +47,10 @@ export const DepositModal = observer(({ isOpen, onClose, children, initialAccoun
     <Modal open={isOpen} onOpenChange={(open) => !open && onClose?.()}>
       {children && <ModalTrigger asChild>{children}</ModalTrigger>}
 
-      <ModalContent onInteractOutside={(event) => event.preventDefault()} className="flex w-full max-w-[360px] min-w-[360px] gap-2xl p-2xl">
+      <ModalContent
+        onInteractOutside={(event) => event.preventDefault()}
+        className="flex w-full max-w-[360px] min-w-[360px] gap-2xl p-2xl bg-special"
+      >
         <DepositContent isOpen={isOpen} initialAccountId={initialAccountId} />
       </ModalContent>
     </Modal>
@@ -80,9 +82,7 @@ const DepositContent = observer(({ isOpen, initialAccountId }: { isOpen?: boolea
       case 'swap':
         return <SwapDeposit onBack={() => setActiveView('menu')} />
       case 'crypto':
-        return <Cryptocurrency onBack={() => setActiveView('menu')} />
-      case 'buy':
-        return <CreditCardBuy onBack={() => setActiveView('menu')} />
+        return <CryptoDeposit onBack={() => setActiveView('menu')} />
       default:
         return <DepositMenuContent onSelect={setActiveView} initialAccountId={initialAccountId} />
     }

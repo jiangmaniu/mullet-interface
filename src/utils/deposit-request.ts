@@ -1,5 +1,6 @@
 import { getIntl } from '@umijs/max'
 import { STORAGE_GET_TOKEN } from '@/utils/storage'
+import { getAccessToken } from '@privy-io/react-auth'
 
 interface DepositRequestConfig {
   /** 请求方法 */
@@ -89,7 +90,7 @@ export async function depositRequest<T = any>(url: string, config?: DepositReque
     // 获取 Token
     let token: string | null = null
     if (needAuth) {
-      token = STORAGE_GET_TOKEN()
+      token = await getAccessToken()
       if (!token) {
         throw new Error('Authentication token not available')
       }
