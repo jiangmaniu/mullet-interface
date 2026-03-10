@@ -200,6 +200,21 @@ const ModalTitle = forwardRef<
 })
 ModalTitle.displayName = 'ModalTitle'
 
+const ModalCloseButton = forwardRef<
+  React.ElementRef<typeof IconButton>,
+  React.ComponentPropsWithoutRef<typeof IconButton> & { iconClassName?: string }
+>(({ className, iconClassName, ...props }, ref) => {
+  return (
+    <ModalClose asChild>
+      <IconButton variant="ghost" className={cn('text-brand-secondary-2', className)} size={'icon-sm'}>
+        <Iconify icon="iconoir:xmark" className={cn('size-4', iconClassName)} />
+        <span className="sr-only">Close</span>
+      </IconButton>
+    </ModalClose>
+  )
+})
+ModalCloseButton.displayName = 'ModalCloseButton'
+
 const ModalDescription = forwardRef<
   React.ElementRef<typeof DialogDescription>,
   ComponentProps<typeof DialogDescription | typeof DrawerDescription>
@@ -208,7 +223,7 @@ const ModalDescription = forwardRef<
 
   const Comp = isDesktop ? DialogDescription : DrawerDescription
 
-  return <Comp ref={ref as any} className={cn('text-sm leading-[22px] text-gray-600', className)} {...props} />
+  return <Comp ref={ref as any} className={cn('!text-paragraph-p3 text-content-4', className)} {...props} />
 })
 ModalDescription.displayName = 'ModalDescription'
 
@@ -328,6 +343,7 @@ export {
   Modal,
   ModalAction,
   ModalClose,
+  ModalCloseButton,
   ModalContent,
   ModalDescription,
   ModalFooter,
