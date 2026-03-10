@@ -8,21 +8,15 @@ import { BNumber } from '@/libs/utils/number'
 import { formatAddress } from '@/libs/utils/format'
 import { useSelectedDepositAccount } from '../../_hooks/use-selected-account'
 
+interface ConnectedWalletCardProps {
+  onSelect: () => void
+}
+
 /**
- * 钱包信息卡片
- * - Web2 登录：不显示此卡片
- * - Web3 登录：显示当前连接的钱包地址和余额
- *
- * 登录类型判断逻辑：
- * - Web3 登录：用户通过 Privy 连接了钱包（activeSolanaWallet 存在）
- * - Web2 登录：用户通过邮箱/手机号登录（activeSolanaWallet 不存在）
- *
- * 注：登录类型在登录时由后端根据 grant_type 判断：
- * - grant_type: 'privy_token' → Web3 登录
- * - grant_type: 'password' | 'captcha' → Web2 登录
+ * 已连接钱包卡片
  */
-export const WalletInfoCard = () => {
-  const { activeSolanaWallet, connected } = usePrivyInfo()
+export const ConnectedWalletCard = ({ onSelect }: ConnectedWalletCardProps) => {
+  const { activeSolanaWallet } = usePrivyInfo()
   const selectedAccount = useSelectedDepositAccount()
 
   // 查询钱包余额
@@ -31,13 +25,8 @@ export const WalletInfoCard = () => {
     refetchInterval: 30000 // 30秒自动刷新
   })
 
-  // Web2 登录或未连接钱包，不显示
-  if (!connected || !activeSolanaWallet) {
-    return null
-  }
-
   return (
-    <div className="border border-default rounded-small px-xl py-medium flex items-center gap-2">
+    <div onClick={() => onSelect()} className="border border-default rounded-small px-xl py-medium flex items-center gap-2">
       {/* 钱包图标 */}
       <div className="relative shrink-0 size-6">
         <Iconify icon="iconoir:wallet-solid" className="w-6 h-6" />

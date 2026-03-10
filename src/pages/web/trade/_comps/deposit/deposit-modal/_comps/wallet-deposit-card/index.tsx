@@ -1,8 +1,8 @@
 'use client'
 
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
-import { WalletInfoCard } from './wallet-info-card'
-import { WalletConnectOption } from './wallet-connect-option'
+import { ConnectedWalletCard } from './connected-wallet-card'
+import { UnconnectedWalletCard } from './unconnected-wallet-card'
 
 type DepositView = 'menu' | 'wallet' | 'swap' | 'crypto' | 'buy'
 
@@ -18,11 +18,11 @@ interface WalletDepositCardProps {
 export const WalletDepositCard = ({ onSelect }: WalletDepositCardProps) => {
   const { activeSolanaWallet, connected } = usePrivyInfo()
 
-  // Web3 登录：显示钱包信息卡片
+  // 已连接钱包：显示已连接钱包卡片
   if (connected && activeSolanaWallet) {
-    return <WalletInfoCard />
+    return <ConnectedWalletCard onSelect={() => onSelect('wallet')} />
   }
 
-  // Web2 登录：显示连接钱包选项
-  return <WalletConnectOption onSelect={() => onSelect('wallet')} />
+  // 未连接钱包：显示未连接钱包卡片
+  return <UnconnectedWalletCard onSelect={() => onSelect('wallet')} />
 }

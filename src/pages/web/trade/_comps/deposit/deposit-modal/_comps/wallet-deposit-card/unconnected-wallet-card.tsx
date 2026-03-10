@@ -4,27 +4,14 @@ import { Trans } from '@/libs/lingui/react/macro'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { Iconify, IconMetamask, IconOkxWallet, IconArbitrum } from '@/libs/ui/components/icons'
 
-interface WalletConnectOptionProps {
+interface UnconnectedWalletCardProps {
   onSelect: () => void
 }
 
 /**
- * 直连钱包转入选项
- * - Web2 登录：显示此选项，引导用户连接钱包
- * - Web3 登录：不显示此选项（已经连接钱包，显示 WalletInfoCard）
- *
- * 登录类型判断逻辑：
- * - Web3 登录：用户通过 Privy 连接了钱包（activeSolanaWallet 存在）
- * - Web2 登录：用户通过邮箱/手机号登录（activeSolanaWallet 不存在）
+ * 未连接钱包卡片
  */
-export const WalletConnectOption = ({ onSelect }: WalletConnectOptionProps) => {
-  const { activeSolanaWallet, connected } = usePrivyInfo()
-
-  // Web3 登录时不显示（已经连接钱包，显示 WalletInfoCard）
-  if (connected && activeSolanaWallet) {
-    return null
-  }
-
+export const UnconnectedWalletCard = ({ onSelect }: UnconnectedWalletCardProps) => {
   return (
     <div
       onClick={onSelect}
