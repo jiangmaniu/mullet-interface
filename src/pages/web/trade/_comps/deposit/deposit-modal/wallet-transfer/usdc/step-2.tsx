@@ -1,6 +1,5 @@
 import { Trans } from '@/libs/lingui/react/macro'
-import { useState, useEffect, useRef } from 'react'
-
+import { useState, useRef } from 'react'
 import { Button, IconButton } from '@/libs/ui/components/button'
 import { ModalCloseButton, ModalFooter, ModalHeader, ModalTitle } from '@/libs/ui/components/modal'
 import { Iconify, IconUSDC } from '@/libs/ui/components/icons'
@@ -11,8 +10,6 @@ import { useSelectedTokenConfig } from '../_hooks/use-selected-balance-info'
 import usePrivyInfo from '@/hooks/web3/usePrivyInfo'
 import { formatAddress } from '@/libs/utils/format'
 import { renderFallback } from '@/utils/format/fallback'
-
-const COUNTDOWN_SECONDS = 60
 
 export const UsdcStep2 = ({
   onBack,
@@ -61,6 +58,7 @@ export const UsdcStep2 = ({
       // })
 
       onSuccess()
+      // onFail()
     } catch (error) {
       console.error('Transaction failed:', error)
       onFail()

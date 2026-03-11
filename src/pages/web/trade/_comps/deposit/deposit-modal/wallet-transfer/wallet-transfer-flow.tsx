@@ -30,7 +30,7 @@ export const WalletTransferFlow = observer(({ onBack, onClose }: { onBack: () =>
   }
 
   if (view === 'usdc-deposit') {
-    return <UsdcDeposit onBack={handleBackFromFlow} onClose={onClose} />
+    return <UsdcDeposit onBack={handleBackFromFlow} onBackToMenu={onBack} onClose={onClose} />
   }
 
   // TODO: Implement swap flow

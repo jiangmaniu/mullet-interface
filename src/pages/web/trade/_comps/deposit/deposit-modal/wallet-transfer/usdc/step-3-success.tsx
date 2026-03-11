@@ -1,35 +1,22 @@
 import { Trans } from '@/libs/lingui/react/macro'
 import { Button, IconButton } from '@/libs/ui/components/button'
 import { ModalHeader, ModalTitle, ModalCloseButton } from '@/libs/ui/components/modal'
-import { Iconify, IconSuccess } from '@/libs/ui/components/icons'
+import { Iconify, IconSuccess, IconUSDC } from '@/libs/ui/components/icons'
 import { BNumber } from '@/libs/utils/number'
-import { formatAddress } from '@/libs/utils/format'
+import { useSelectedTokenConfig } from '../_hooks/use-selected-balance-info'
+import { useDepositState } from '../../_hooks/use-deposit-state'
+import { useUSDCTokenConfig } from '../_hooks/use-token-config'
 
 interface Step3SuccessProps {
   onBack: () => void
   onClose: () => void
   onConfirm: () => void
-  toAddress: string
-  amount: string
-  tokenSymbol?: string
-  tokenDecimals?: number
 }
 
-export const UsdcStep3Success = ({
-  onBack,
-  onClose,
-  onConfirm,
-  toAddress,
-  amount,
-  tokenSymbol = 'USDC',
-  tokenDecimals = 2
-}: Step3SuccessProps) => {
-  const formattedAmount = BNumber.toFormatNumber(amount, {
-    volScale: tokenDecimals,
-    unit: tokenSymbol
-  })
-
-  const formattedAddress = formatAddress(toAddress)
+export const UsdcStep3Success = ({ onBack, onClose, onConfirm }: Step3SuccessProps) => {
+  const { depositAmount } = useDepositState()
+  const selectedTokenConfig = useSelectedTokenConfig()
+  const usdcTokenConfig = useUSDCTokenConfig()
 
   return (
     <>
@@ -48,29 +35,66 @@ export const UsdcStep3Success = ({
         <div className="flex flex-col items-center justify-center py-xl gap-large">
           <IconSuccess width={50} height={50} />
           <div className="text-paragraph-p2 text-white">
-            <Trans>取现提交成功，等待链上交易确认</Trans>
+            <Trans>签名成功，等待链上确认交易</Trans>
           </div>
         </div>
 
         {/* Transaction Info */}
-        <div className="flex flex-col gap-none">
+        <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between text-paragraph-p2">
             <span className="text-content-4">
-              <Trans>向{formattedAddress} 转入</Trans>
+              <Trans>您发送</Trans>
             </span>
-            <span className="text-content-1">{formattedAmount}</span>
+            <div className="flex items-center gap-medium">
+              {selectedTokenConfig?.iconUrl ? (
+                <img src={selectedTokenConfig.iconUrl} className="size-6 rounded-full object-contain" alt={selectedTokenConfig.symbol} />
+              ) : (
+                <IconUSDC className="size-6" />
+              )}
+              <span className="text-content-1">
+                {BNumber.toFormatNumber(depositAmount, {
+                  volScale: selectedTokenConfig?.displayDecimals,
+                  unit: selectedTokenConfig?.symbol
+                })}
+              </span>
+            </div>
+          </div>
+          <div className="flex items-center justify-between text-paragraph-p2">
+            <span className="text-content-4">
+              <Trans>您收到</Trans>
+            </span>
+            <div className="flex items-center gap-medium">
+              {usdcTokenConfig?.iconUrl ? (
+                <img src={usdcTokenConfig.iconUrl} className="size-6 rounded-full object-contain" alt={usdcTokenConfig.symbol} />
+              ) : (
+                <IconUSDC className="size-6" />
+              )}
+              <span className="text-content-1">
+                {BNumber.toFormatNumber(depositAmount, {
+                  volScale: usdcTokenConfig?.displayDecimals,
+                  unit: usdcTokenConfig?.symbol
+                })}
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Notice */}
         <div className="text-paragraph-p3 text-content-5">
-          <Trans>等待链上交易确认后Mullet以站内消息通知您，请您注意关注站内消息</Trans>
+          <Trans>此次签名仅作为当前交易请求，签名完成交易后此次签名失效</Trans>
+          <br />
+          <Trans>请您仔细核对签名信息</Trans>
         </div>
 
-        {/* Footer Button */}
-        <Button block color="primary" size="lg" onClick={onConfirm}>
-          <Trans>我知道了</Trans>
-        </Button>
+        {/* Footer Buttons */}
+        <div className="flex gap-2xl">
+          <Button className="flex-1" variant="secondary" size="lg" onClick={onClose}>
+            <Trans>关闭</Trans>
+          </Button>
+          <Button className="flex-1" color="primary" size="lg" onClick={onConfirm}>
+            <Trans>继续入金</Trans>
+          </Button>
+        </div>
       </div>
     </>
   )
