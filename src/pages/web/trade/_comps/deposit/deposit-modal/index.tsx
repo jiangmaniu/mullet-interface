@@ -20,8 +20,7 @@ import {
 } from '@/libs/ui/components/icons'
 import { Separator } from '@/libs/ui/components/separator'
 import { IconMasterCord } from '@/libs/ui/components/icons/set/master-cord'
-import { WalletAssets } from './wallet-assets'
-import { SwapDeposit } from './swap-deposit'
+import { WalletTransferFlow } from './wallet-transfer/wallet-transfer-flow'
 import { CryptoDeposit } from './crypto-deposit'
 import { BNumber } from '@/utils/b-number'
 import { WalletDepositCard } from './_comps/wallet-deposit-card'
@@ -51,47 +50,47 @@ export const DepositModal = observer(({ isOpen, onClose, children, initialAccoun
         onInteractOutside={(event) => event.preventDefault()}
         className="flex w-full max-w-[360px] min-w-[360px] gap-2xl p-2xl bg-special"
       >
-        <DepositContent isOpen={isOpen} initialAccountId={initialAccountId} />
+        <DepositContent isOpen={isOpen} initialAccountId={initialAccountId} onClose={onClose} />
       </ModalContent>
     </Modal>
   )
 })
 
-const DepositContent = observer(({ isOpen, initialAccountId }: { isOpen?: boolean; initialAccountId?: string }) => {
-  type DepositView = 'menu' | 'wallet' | 'swap' | 'crypto' | 'buy'
-  const [activeView, setActiveView] = useState<DepositView>('menu')
-  const { reset } = useDepositActions()
+const DepositContent = observer(
+  ({ isOpen, initialAccountId, onClose }: { isOpen?: boolean; initialAccountId?: string; onClose?: () => void }) => {
+    type DepositView = 'menu' | 'wallet' | 'crypto' | 'buy'
+    const [activeView, setActiveView] = useState<DepositView>('menu')
+    const { reset } = useDepositActions()
 
-  // Reset to menu when modal closes
-  useEffect(() => {
-    if (!isOpen) {
-      const t = setTimeout(() => {
-        setActiveView('menu')
-        reset() // 重置 deposit store 状态
-      }, 300)
-      return () => clearTimeout(t)
-    }
-  }, [isOpen, reset])
+    // Reset to menu when modal closes
+    useEffect(() => {
+      if (!isOpen) {
+        const t = setTimeout(() => {
+          setActiveView('menu')
+          reset() // 重置 deposit store 状态
+        }, 300)
+        return () => clearTimeout(t)
+      }
+    }, [isOpen, reset])
 
-  const content = useMemo(() => {
-    switch (activeView) {
-      case 'menu':
-        return <DepositMenuContent onSelect={setActiveView} initialAccountId={initialAccountId} />
-      case 'wallet':
-        return <WalletAssets onBack={() => setActiveView('menu')} />
-      case 'swap':
-        return <SwapDeposit onBack={() => setActiveView('menu')} />
-      case 'crypto':
-        return <CryptoDeposit onBack={() => setActiveView('menu')} />
-      default:
-        return <DepositMenuContent onSelect={setActiveView} initialAccountId={initialAccountId} />
-    }
-  }, [activeView, initialAccountId])
+    const content = useMemo(() => {
+      switch (activeView) {
+        case 'menu':
+          return <DepositMenuContent onSelect={setActiveView} initialAccountId={initialAccountId} />
+        case 'wallet':
+          return <WalletTransferFlow onBack={() => setActiveView('menu')} onClose={() => onClose?.()} />
+        case 'crypto':
+          return <CryptoDeposit onBack={() => setActiveView('menu')} />
+        default:
+          return <DepositMenuContent onSelect={setActiveView} initialAccountId={initialAccountId} />
+      }
+    }, [activeView, initialAccountId, onClose])
 
-  return content
-})
+    return content
+  }
+)
 
-type DepositView = 'menu' | 'wallet' | 'swap' | 'crypto' | 'buy'
+type DepositView = 'menu' | 'wallet' | 'crypto' | 'buy'
 
 const DepositMenuContent = observer(
   ({ onSelect, initialAccountId }: { onSelect: (view: DepositView) => void; initialAccountId?: string }) => {
@@ -234,7 +233,7 @@ const DepositMenuContent = observer(
           </div>
 
           {/* Wallet Deposit Card - Shows different content based on login type */}
-          <WalletDepositCard onSelect={onSelect} />
+          <WalletDepositCard onSelect={() => onSelect('wallet')} />
 
           {/* Crypto Deposit */}
           <div

@@ -61,15 +61,20 @@ export function useSolanaWalletBalance(
   options?: {
     refetchInterval?: number | false
     enabled?: boolean
-  },
+  }
 ) {
   return useQuery({
     queryKey: ['solana-wallet', 'balance', address],
     queryFn: async () => {
       const response = await depositRequest<SolanaWalletBalanceResponse>('/api/solana-wallet/balance', {
         method: 'GET',
-        params: address ? { address } : undefined,
+        params: address ? { address } : undefined
       })
+
+      // // 模拟数据
+      // response.data.balances = response.data.balances.map((item) => {
+      //   return { ...item, usdValue: 12.0, amount: '12.000000' }
+      // })
       return response.data
     },
     // 数据新鲜度：30 秒内认为数据是新鲜的，不会自动重新请求
@@ -83,6 +88,6 @@ export function useSolanaWalletBalance(
     // 自动轮询刷新间隔（默认 30 秒）
     refetchInterval: options?.refetchInterval ?? 30000,
     // 是否启用查询
-    enabled: options?.enabled ?? true,
+    enabled: options?.enabled ?? true
   })
 }

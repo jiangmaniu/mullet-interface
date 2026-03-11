@@ -10,12 +10,14 @@ import { TooltipTriggerDottedText } from '@/libs/ui/components/tooltip'
 
 export const SwapStep2 = ({
   onBack,
+  onClose,
   fromToken,
   toToken,
   amount,
   onNext
 }: {
   onBack: () => void
+  onClose: () => void
   fromToken: string
   toToken: string
   amount: string
@@ -63,7 +65,12 @@ export const SwapStep2 = ({
             <Trans>订单确认</Trans>
           </div>
 
-          {!isWaitingSignature && <div className="text-paragraph-p2 text-status-warning !font-normal">{countdown}S</div>}
+          <div className="flex items-center gap-medium">
+            {!isWaitingSignature && <div className="text-paragraph-p2 text-status-warning !font-normal">{countdown}S</div>}
+            <IconButton variant="ghost" className="text-brand-secondary-2" size={'icon-sm'} onClick={onClose}>
+              <Iconify icon="iconoir:xmark" className="size-6" />
+            </IconButton>
+          </div>
         </ModalTitle>
       </ModalHeader>
 

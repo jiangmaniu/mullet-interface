@@ -6,9 +6,9 @@ import { SwapStep3 } from './step-3'
 
 type Step = 'step-1' | 'step-2' | 'step-3'
 
-export const SwapDeposit = observer(({ onBack }: { onBack: () => void }) => {
+export const SwapDeposit = observer(({ onBack, onClose, initialToken }: { onBack: () => void; onClose: () => void; initialToken?: string }) => {
   const [step, setStep] = useState<Step>('step-1')
-  const [fromToken, setFromToken] = useState<string>('SOL')
+  const [fromToken, setFromToken] = useState<string>(initialToken || 'SOL')
   const [toToken, setToToken] = useState<string>('USDC')
   const [amount, setAmount] = useState<string>('')
 
@@ -39,6 +39,7 @@ export const SwapDeposit = observer(({ onBack }: { onBack: () => void }) => {
       {step === 'step-2' && (
         <SwapStep2
           onBack={handleStepBack}
+          onClose={onClose}
           fromToken={fromToken}
           toToken={toToken}
           amount={amount}
