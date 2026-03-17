@@ -8,7 +8,7 @@ window.PLATFORM_CONFIG = {
   "CLIENT_ID_H5": "trade-h5-client",
   "CLIENT_SECRET_H5": "trade-h5-client-secret",
   "ws": "wss://websocket.mullet.top/websocketServer",
-  "imgDomain": "https://file.mullet.top/trade/",
+  "imgDomain": "https://file.mullet.top/files/",
   "domain": "https://client.mullet.top",
   "REGISTER_MODULE": true,
   "SKIP_KYC_STEP_ONE": true,
