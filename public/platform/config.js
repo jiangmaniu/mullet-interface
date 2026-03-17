@@ -7,9 +7,9 @@ window.PLATFORM_CONFIG = {
   "CLIENT_SECRET_PC": "trade-pc-client-secret",
   "CLIENT_ID_H5": "trade-h5-client",
   "CLIENT_SECRET_H5": "trade-h5-client-secret",
-  "ws": "wss://websocket-test.mullet.top/websocketServer",
-  "imgDomain": "https://file-test.mullet.top/trade/",
-  "domain": "https://client-test.mullet.top",
+  "ws": "wss://websocket.mullet.top/websocketServer",
+  "imgDomain": "https://file.mullet.top/trade/",
+  "domain": "https://client.mullet.top",
   "REGISTER_MODULE": true,
   "SKIP_KYC_STEP_ONE": true,
   "ID_CARD_ONLY": true,
@@ -20,5 +20,4 @@ window.PLATFORM_CONFIG = {
   "DEBUG": false,
   "HIDE_SWITCH_LANGUAGE": false,
   "salesmartlyJSUrl": "https://plugin-code.salesmartly.com/js/project_247867_254558_1739880055.js",
-  "KYC_FACE": false
 };

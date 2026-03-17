@@ -2,6 +2,9 @@
 
 import { STORAGE_GET_REGISTER_CODE } from '@/utils/storage'
 
+// 默认租户ID
+export const DEFAULT_TENANT_ID = '999999'
+
 // 配置文件地址
 export const CONFIG_URL = '/platform/config.js'
 

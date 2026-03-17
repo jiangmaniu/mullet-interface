@@ -13,6 +13,7 @@ import type { RequestOptions } from '@@/plugin-request/request'
 
 import { getAccessToken } from '@privy-io/react-auth'
 import { getLocaleForBackend } from '@/constants/enum'
+import { DEFAULT_TENANT_ID } from '@/constants/config'
 import { getEnv } from '@/env'
 
 import { onLogout } from '@/utils/navigator'
@@ -38,7 +39,8 @@ export const getTradeCoreApiInstance = () => {
       const headers: RequestInit['headers'] = {
         // 'Content-Type': 'x-www-form-urlencoded',
         Language: getLocaleForBackend(),
-        'Tenant-Id': '000000' // 默认的租户ID
+        'Tenant-Id': DEFAULT_TENANT_ID,
+        'Blade-Requested-With': 'BladeHttpRequest'
       }
       if (privyAccessToken) {
         // 使用Privy的token

@@ -166,7 +166,7 @@ function send(cmd = {}, header = {}) {
   if (socket && socket.readyState === 1) {
     socket.send(
       JSON.stringify({
-        header: { tenantId: '000000', userId, msgId: 'subscribe', flowId: Date.now(), ...header },
+        header: { tenantId: '999999', userId, msgId: 'subscribe', flowId: Date.now(), ...header },
         body: {
           cancel: false,
           ...cmd
@@ -219,8 +219,8 @@ function parseQuoteBodyData(body: string) {
       .split('-')
       .filter((v: any) => v)
     const sbl = symbol === '0' ? dataSourceSymbol : symbol // 兼容没有使用账户组订阅情况
-    // 1.数据源 + 品种名称作为唯一标识 通过该方式订阅的没有账户组 const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
-    // 2.账户组 + 品种名称作为唯一标识 通过该方式订阅的有账户组 const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
+    // 1.数据源 + 品种名称作为唯一标识 通过该方式订阅的没有账户组 const topicNoAccount = `/999999/symbol/${item.dataSourceCode}/${item.symbol}`
+    // 2.账户组 + 品种名称作为唯一标识 通过该方式订阅的有账户组 const topicAccount = `/999999/symbol/${item.symbol}/${item.accountGroupId}`
     const dataSourceKey = Number(accountGroupId) ? `${accountGroupId}/${sbl}` : `${dataSourceCode}/${sbl}`
 
     quoteItem.symbol = sbl
@@ -381,8 +381,8 @@ function batchSubscribeSymbol({
   // 一次性订阅
   const topics = symbolList
     .map((item) => {
-      // const topicNoAccount = `/000000/symbol/${item.dataSourceCode}/${item.symbol}`
-      const topicAccount = `/000000/symbol/${item.symbol}/${item.accountGroupId}`
+      // const topicNoAccount = `/999999/symbol/${item.dataSourceCode}/${item.symbol}`
+      const topicAccount = `/999999/symbol/${item.symbol}/${item.accountGroupId}`
       // 如果有账户id，订阅该账户组下的行情，此时行情会加上点差
       // return item.accountGroupId ? topicAccount : topicNoAccount
       return topicAccount
@@ -399,8 +399,8 @@ function batchSubscribeSymbol({
 function subscribeDepth({ cancel, symbolInfo }: { cancel?: boolean; symbolInfo: Account.TradeSymbolListItem }) {
   if (!symbolInfo?.symbol) return
 
-  // const topicNoAccount = `/000000/depth/${symbolInfo.dataSourceCode}/${symbolInfo.symbol}`
-  const topicAccount = `/000000/depth/${symbolInfo.symbol}/${symbolInfo?.accountGroupId}`
+  // const topicNoAccount = `/999999/depth/${symbolInfo.dataSourceCode}/${symbolInfo.symbol}`
+  const topicAccount = `/999999/depth/${symbolInfo.symbol}/${symbolInfo?.accountGroupId}`
   // 区分带账户组id和不带账户组情况
   // const topic = symbolInfo?.accountGroupId ? topicAccount : topicNoAccount
   const topic = topicAccount
@@ -432,23 +432,23 @@ function subscribeMessage({ cancel }: { cancel?: boolean }) {
   // 岗位订阅：/{租户ID}/post/{岗位ID}
   // 用户订阅：/{租户ID}/user/{用户ID}
   send({
-    topic: `/000000/public/1`,
+    topic: `/999999/public/1`,
     cancel
   })
   send({
-    topic: `/000000/role/${userInfo.role_id}`,
+    topic: `/999999/role/${userInfo.role_id}`,
     cancel
   })
   send({
-    topic: `/000000/dept/${userInfo.dept_id}`,
+    topic: `/999999/dept/${userInfo.dept_id}`,
     cancel
   })
   send({
-    topic: `/000000/post/${userInfo.post_id}`,
+    topic: `/999999/post/${userInfo.post_id}`,
     cancel
   })
   send({
-    topic: `/000000/user/${userInfo?.user_id}`,
+    topic: `/999999/user/${userInfo?.user_id}`,
     cancel
   })
 }
@@ -457,9 +457,9 @@ function subscribeMessage({ cancel }: { cancel?: boolean }) {
 function subscribeNotify({ cancel }: { cancel?: boolean }) {
   if (!userInfo?.user_id) return
 
-  console.log('=========订阅响应消息', `/000000/msg/${userInfo?.user_id}`, cancel)
+  console.log('=========订阅响应消息', `/999999/msg/${userInfo?.user_id}`, cancel)
   send({
-    topic: `/000000/msg/${userInfo?.user_id}`,
+    topic: `/999999/msg/${userInfo?.user_id}`,
     cancel
   })
 }

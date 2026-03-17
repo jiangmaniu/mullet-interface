@@ -6,6 +6,7 @@ import { t } from '@/libs/lingui/react/macro'
 import { getAccessToken } from '@privy-io/react-auth'
 import { toast } from '@/libs/ui/components/toast'
 import { getLocaleForBackend } from '@/constants/enum'
+import { DEFAULT_TENANT_ID } from '@/constants/config'
 import { getEnv } from '@/env'
 import { onLogout } from '@/utils/navigator'
 
@@ -72,7 +73,8 @@ axiosInstance.interceptors.request.use(
     // 设置请求头
     config.headers.set('Content-Type', 'x-www-form-urlencoded')
     config.headers.set('Language', getLocaleForBackend())
-    config.headers.set('Tenant-Id', '000000') // 默认的租户ID
+    config.headers.set('Tenant-Id', DEFAULT_TENANT_ID)
+    config.headers.set('Blade-Requested-With', 'BladeHttpRequest')
 
     if (privyAccessToken) {
       // 使用Privy的token

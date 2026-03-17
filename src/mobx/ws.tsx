@@ -7,6 +7,7 @@ import { STORAGE_GET_TOKEN, STORAGE_GET_USER_INFO } from '@/utils/storage'
 import { getCurrentQuoteV2 } from '@/utils/wsUtil'
 
 import { getEnv } from '@/env'
+import { DEFAULT_TENANT_ID } from '@/constants/config'
 import { isPCByWidth } from '@/utils'
 import mitt from '@/utils/mitt'
 import klineStore from './kline'
@@ -385,7 +386,7 @@ class WSStore {
     this.sendWorkerMessage({
       type: 'SUBSCRIBE_TRADE',
       data: {
-        topic: `/000000/trade/${accountId}`,
+        topic: `/${DEFAULT_TENANT_ID}/trade/${accountId}`,
         cancel
       }
     })

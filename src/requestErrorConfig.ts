@@ -8,6 +8,7 @@ import { t } from '@/libs/lingui/react/macro'
 import { getAccessToken } from '@privy-io/react-auth'
 import { toast } from '@/libs/ui/components/toast'
 import { getLocaleForBackend } from './constants/enum'
+import { DEFAULT_TENANT_ID } from './constants/config'
 import { getEnv } from './env'
 import { onLogout } from './utils/navigator'
 
@@ -141,7 +142,8 @@ export const errorConfig: RequestConfig = {
       const headers: any = {
         'Content-Type': 'x-www-form-urlencoded',
         Language: getLocaleForBackend(),
-        'Tenant-Id': '000000', // 默认的租户ID
+        'Tenant-Id': DEFAULT_TENANT_ID,
+        'Blade-Requested-With': 'BladeHttpRequest',
         ...config.headers
       }
       if (privyAccessToken) {
